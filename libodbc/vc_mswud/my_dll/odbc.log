@@ -1,0 +1,9 @@
+﻿Build started 2/14/2016 1:18:52 AM.
+     1>Project "C:\Users\Igor\OneDrive\Documents\dbhandler_app\odbc_dll\odbc.vcxproj" on node 2 (clean target(s)).
+     1>_PrepareForClean:
+         Deleting file "vc_mswud\my_dll\odbc.lastbuildstate".
+     1>Done Building Project "C:\Users\Igor\OneDrive\Documents\dbhandler_app\odbc_dll\odbc.vcxproj" (clean target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.18

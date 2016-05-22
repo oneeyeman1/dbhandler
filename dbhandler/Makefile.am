@@ -1,0 +1,17 @@
+## Process this file with automake to produce Makefile.in
+
+
+bin_PROGRAMS =  \
+	dbhandler
+
+dbhandler_SOURCES =  \
+	doc.cpp \
+	doc.h \
+	docview.cpp \
+	docview.h \
+	mainframe.cpp \
+	mainframe.h \
+	view.cpp \
+	view.h \
+	viewbase.cpp \
+	viewbase.h
