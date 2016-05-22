@@ -1,0 +1,20 @@
+﻿Build started 5/22/2016 12:23:12 AM.
+     1>Project "C:\Users\Igor\OneDrive\Documents\dbhandler_app\dbinterface\dbinterface.vcxproj" on node 2 (rebuild target(s)).
+     1>_PrepareForClean:
+         Deleting file "Debug\dbinterface.lastbuildstate".
+       InitializeBuildStatus:
+         Creating "Debug\dbinterface.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W4 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"StdAfx.h" /Fp"Debug\dbinterface.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+       Lib:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"C:\Users\Igor\OneDrive\Documents\dbhandler_app\docview\Debug\dbinterface.lib" /NOLOGO Debug\stdafx.obj
+         dbinterface.vcxproj -> C:\Users\Igor\OneDrive\Documents\dbhandler_app\docview\Debug\dbinterface.lib
+       FinalizeBuildStatus:
+         Deleting file "Debug\dbinterface.unsuccessfulbuild".
+         Touching "Debug\dbinterface.lastbuildstate".
+     1>Done Building Project "C:\Users\Igor\OneDrive\Documents\dbhandler_app\dbinterface\dbinterface.vcxproj" (rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.45

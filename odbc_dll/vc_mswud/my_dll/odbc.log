@@ -1,0 +1,14 @@
+﻿Build started 4/25/2016 11:23:30 PM.
+     1>Project "C:\Users\Igor\OneDrive\Documents\dbhandler_app\odbc_dll\odbc.vcxproj" on node 3 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "vc_mswud\my_dll\odbc.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I..\dbinterface /Zi /nologo /W4 /WX- /Od /Oy- /D WIN32 /D _USRDLL /D DLL_EXPORTS /D _DEBUG /D _CRT_SECURE_NO_DEPRECATE=1 /D _CRT_NON_CONFORMING_SWPRINTFS=1 /D _SCL_SECURE_NO_WARNINGS=1 /D _UNICODE /D MY_DLL_BUILDING /D _WINDLL /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"vc_mswud\my_dll\\" /Fd"vc_mswud\my_dll.pdb" /Gd /TP /analyze- /errorReport:prompt database_odbc.cpp /MP 
+         database_odbc.cpp
+     1>database_odbc.cpp(260): error C2040: 'pkName' : 'SQLWCHAR [31]' differs in levels of indirection from 'std::wstring'
+     1>database_odbc.cpp(274): warning C4244: 'argument' : conversion from 'int' to 'SQLUSMALLINT', possible loss of data
+     1>Done Building Project "C:\Users\Igor\OneDrive\Documents\dbhandler_app\odbc_dll\odbc.vcxproj" (build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:01.93
