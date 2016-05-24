@@ -37,12 +37,17 @@
 #include "wx/config.h"
 #include "wx/dynlib.h"
 #include "wx/vector.h"
+#include "database.h"
 #include "odbcconfigure.h"
 /*#include "resource.h"
 #include "table.h"*/
 
+typedef Database *(*GETDRIVERLIST)(std::map<std::wstring, std::vector<std::wstring> > &, std::vector<std::wstring> &);
+typedef int (*ADDNEWDSN)(Database *, wxWindow *, const wxString &);
+
 CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):wxDialog(parent, id, title, pos, size, wxDEFAULT_DIALOG_STYLE)
 {
+    m_db = NULL;
 #ifdef __WXMSW__
     m_lib = new wxDynamicLibrary( "dbloader" );
 #else
@@ -76,23 +81,26 @@ CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title, 
 
 CODBCConfigure::~CODBCConfigure()
 {
+    delete m_db;
+    m_db = NULL;
     delete m_lib;
+    m_lib = NULL;
 }
 
 void CODBCConfigure::set_properties()
 {
 	std::vector<std::wstring> errorMsg;
-    bool res = GetDriverList();
-    if( !res )
+    GETDRIVERLIST func = (GETDRIVERLIST) m_lib->GetSymbol( "GetDriverList" );
+    m_db = func( m_driversDSN, errorMsg );
+//    bool res = GetDriverList();
+    if( !m_db )
     {
-		for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
-            wxMessageBox( (*it), _( "ODBC Configuration Error" ) );
         m_createdsn->Disable();
         m_editdsn->Disable();
         m_removedsn->Disable();
         return;
     }
-    for( std::map<wxString,std::vector<wxString> >::iterator it1 = m_driversDSN.begin(); it1 != m_driversDSN.end(); it1++ )
+    for( std::map<std::wstring,std::vector<std::wstring> >::iterator it1 = m_driversDSN.begin(); it1 != m_driversDSN.end(); it1++ )
  		m_drivers->Append( (*it1).first );
     if( m_drivers->GetCount() != 0 )
     {
@@ -172,35 +180,6 @@ void CODBCConfigure::do_layout()
     Layout();
 }
 
-bool CODBCConfigure::AddDsn(WXWidget hwnd, const wxString &driver)
-{
-    bool result = true;
-    wxString error;
-    SQLWCHAR buf[256];
-    SQLSMALLINT i = 1;
-    DWORD nativeError;
-    SQLWCHAR errMsg[SQL_MAX_MESSAGE_LENGTH];
-    WORD cbErrorMsg;
-    SQLWCHAR *temp1;
-//    ConvertFromString( driver, temp1 );
-temp1 = func1( driver );
-    BOOL ret = SQLConfigDataSource( hwnd, ODBC_ADD_DSN, temp1, buf );
-    if( !ret )
-    {
-        result = false;
-        while( ( ret = SQLInstallerError( i, &nativeError, errMsg, SQL_MAX_MESSAGE_LENGTH - 1, &cbErrorMsg ) ) == SQL_SUCCESS )
-        {
-            func( errMsg, error );
-            wxMessageBox( error );
-            i++;
-        }
-    }
-    else
-        FillDSNComboBox();
-    delete temp1;
-    return result;
-}
-
 bool CODBCConfigure::EditDsn(WXWidget hwnd, const wxString &driver, const wxString &dsn)
 {
     bool result = true;
@@ -237,17 +216,9 @@ void CODBCConfigure::OnCreateDSN(wxCommandEvent &WXUNUSED(event))
         wxMessageBox( _( "No driver specified to create a Data Source Name!" ), _( "Error Creating DSN!" ), wxOK | wxICON_ERROR );
         return;
     };
-	if( !AddDsn( this->GetHandle(), driver.c_str() ) )
+	ADDNEWDSN func = (ADDNEWDSN) m_lib->GetSymbol( "AddNewDSN" );
+	if( func( m_db, this, driver ) )
     {
-        for( std::vector<char *>::iterator it = errorMsg.begin(); it != errorMsg.end(); it++ )
-        {
-            wxString temp = wxMBConvUTF16().cMB2WC( (const char *) (*it) );
-            wxMessageBox( temp );
-//            char *temp = *(it);
-//            wxString str( temp, wxConvLocal );
-//            std::string s( temp );
-            wxMessageBox( temp );
-        }
         return;
     }
     if( m_dsn->GetCount() > 0 )
@@ -312,12 +283,12 @@ void CODBCConfigure::OnDsnNameChange(wxCommandEvent &WXUNUSED(event))
 void CODBCConfigure::FillDSNComboBox()
 {
     wxString selDriver = m_drivers->GetStringSelection();
-    for( std::map<wxString, std::vector<wxString> >::iterator it = m_driversDSN.begin(); it != m_driversDSN.end(); it++ )
+    for( std::map<std::wstring, std::vector<std::wstring> >::iterator it = m_driversDSN.begin(); it != m_driversDSN.end(); it++ )
     {
         wxString driver = (*it).first;
         if( selDriver == driver )
         {
-            for( std::vector<wxString>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+            for( std::vector<std::wstring>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
             {
 //                wxString temp( (const char *) (*it1).c_str() );
                 if( (*it1) != wxEmptyString )

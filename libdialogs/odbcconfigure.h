@@ -42,14 +42,14 @@ private:
     HENV m_henv;
     void set_properties();
     void do_layout();
-    std::map<wxString, std::vector<wxString> > m_driversDSN;
+    std::map<std::wstring, std::vector<std::wstring> > m_driversDSN;
     wxDynamicLibrary *m_lib;
+    Database *m_db;
     CONVERTFROMSQLWCHAR func;
     CONVERTFROMWXSTRING func1;
 
 protected:
     void FillDSNComboBox();
-    bool AddDsn(WXWidget hwnd, const wxString &driver);
     bool EditDsn(WXWidget hwnd, const wxString &driver, const wxString &dsn);
 //    wxString ConvertFromSQLWCHAR(SQLWCHAR *str);
 //    SQLWCHAR *ConvertFromString(wxString str/*, size_t &len*/);
