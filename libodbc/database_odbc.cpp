@@ -4,11 +4,6 @@
 #ifndef WIN32
 #include <sstream>
 #endif
-
-#ifdef __WXGTK__
-#define SQL_WCHART_CONVERT
-#endif
-
 #include <map>
 #include <set>
 #include <vector>
@@ -16,9 +11,11 @@
 #ifdef _IODBCUNIX_H
 #include "iODBC/sql.h"
 #include "iODBC/sqlext.h"
+#include "iODBC/odbcinst.h"
 #else
 #include <sql.h>
 #include <sqlext.h>
+#include <odbcinst.h>
 #endif
 #include "string.h"
 //#include <odbcinst.h>
@@ -32,6 +29,7 @@ ODBCDatabase::ODBCDatabase() : Database()
     m_hstmt = 0;
     pimpl = new Impl;
     m_oneStatement = false;
+    m_connectString = NULL;
 }
 
 ODBCDatabase::~ODBCDatabase()
@@ -63,26 +61,20 @@ ODBCDatabase::~ODBCDatabase()
     }
 }
 
-bool ODBCDatabase::GetDriverList()
+bool ODBCDatabase::GetDriverList(std::map<std::wstring, std::vector<std::wstring> > &driversDSN, std::vector<std::wstring> &errMsg)
 {
     bool result = true;
     std::wstring s1, s2, error, dsn_result;
-    SQLWCHAR driverDesc[1024], driverAttributes[256], dsn[SQL_MAX_DSN_LENGTH+1], sqlState[20], errMsg[SQL_MAX_MESSAGE_LENGTH], dsnDescr[255];
-    SQLSMALLINT i = 1, attr_ret;
-    SQLINTEGER nativeError;
+    SQLWCHAR driverDesc[1024], driverAttributes[256], dsn[SQL_MAX_DSN_LENGTH+1], dsnDescr[255];
+    SQLSMALLINT attr_ret;
     SWORD pcbDSN, pcbDesc;
-    SQLSMALLINT cbErrorMsg, descriptionLength;
+    SQLSMALLINT descriptionLength;
     SQLUSMALLINT direction = SQL_FETCH_FIRST, direct = SQL_FETCH_FIRST;
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_ENV, SQL_NULL_HENV, &m_env ), ret1, ret2;
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         result = false;
-        while( ( ret = SQLGetDiagRec( SQL_HANDLE_ENV, m_env, i, sqlState, &nativeError, errMsg, sizeof( errMsg ), &cbErrorMsg ) ) == SQL_SUCCESS )
-        {
-            func( errMsg, error );
-            wxMessageBox( error );
-            i++;
-        }
+        GetErrorMessage( errMsg, 0, m_env );
     }
     else
     {
@@ -90,37 +82,30 @@ bool ODBCDatabase::GetDriverList()
         if( ret != SQL_SUCCESS )
         {
             result = false;
-            while( ( ret = SQLGetDiagRec( SQL_HANDLE_ENV, m_env, i, sqlState, &nativeError, errMsg, sizeof( errMsg ), &cbErrorMsg ) ) == SQL_SUCCESS )
-            {
-                func( errMsg, error );
-                wxMessageBox( error );
-                i++;
-            }
+            GetErrorMessage( errMsg, 0, m_env );
         }
         else
         {
             while( ( ret1 = SQLDrivers( m_env, direction, driverDesc, sizeof( driverDesc ) - 1, &descriptionLength, driverAttributes, sizeof( driverAttributes ), &attr_ret ) ) == SQL_SUCCESS )
             {
-                func( driverDesc, s1 );
+                str_to_uc_cpy( s1, driverDesc );
                 while( ( ret2 = SQLDataSources( m_env, direct, dsn, SQL_MAX_DSN_LENGTH, &pcbDSN, dsnDescr, 254, &pcbDesc ) ) == SQL_SUCCESS )
                 {
-                    func( dsnDescr, s2 );
+                    str_to_uc_cpy( s2, dsnDescr );
                     if( s1 == s2 )
                     {
-                        func( dsn, dsn_result );
-                        m_driversDSN[s1].push_back( dsn_result );
+                        str_to_uc_cpy( dsn_result, dsn  );
+                        driversDSN[s1].push_back( dsn_result );
+                        s1 = L"";
                     }
                     direct = SQL_FETCH_NEXT;
+                    s2 = L"";
                 }
                 if( ret2 != SQL_SUCCESS && ret2 != SQL_NO_DATA )
                 {
                     result = false;
-                    while( ( ret = SQLGetDiagRec( SQL_HANDLE_ENV, m_env, i, sqlState, &nativeError, errMsg, sizeof( errMsg ), &cbErrorMsg ) ) == SQL_SUCCESS )
-                    {
-                        func( errMsg, error );
-                        wxMessageBox( error );
-                        i++;
-                    }
+                    GetErrorMessage( errMsg, 0, m_env );
+					driversDSN.clear();
                     break;
                 }
                 else
@@ -128,23 +113,41 @@ bool ODBCDatabase::GetDriverList()
                     direction = SQL_FETCH_FIRST;
                     direct = SQL_FETCH_FIRST;
                 }
-                if( m_driversDSN.find( s1 ) == m_driversDSN.end() )
-                    m_driversDSN[s1].push_back( L"" );
+                if( driversDSN.find( s1 ) == driversDSN.end() )
+                    driversDSN[s1].push_back( L"" );
                 if( ret2 == SQL_NO_DATA )
                     ret2 = SQL_SUCCESS;
                 direction = SQL_FETCH_NEXT;
+                s1 = L"";
             }
             if( ret1 != SQL_SUCCESS && ret1 != SQL_NO_DATA )
             {
                 result = false;
-                while( ( ret = SQLGetDiagRec( SQL_HANDLE_ENV, m_env, i, sqlState, &nativeError, errMsg, sizeof( errMsg ), &cbErrorMsg ) ) == SQL_SUCCESS )
-                {
-                    func( errMsg, error );
-                    wxMessageBox( error );
-                    i++;
-                }
+				driversDSN.clear();
+                GetErrorMessage( errMsg, 0, m_env );
             }
         }
+    }
+    return result;
+}
+
+bool ODBCDatabase::AddDsn(SQLHWND hwnd, const std::wstring &driver, std::vector<std::wstring> &errorMsg)
+{
+    bool result = true;
+    std::wstring error;
+    SQLWCHAR buf[256];
+    SQLWCHAR temp1[512];
+    memset( temp1, 0, 512 );
+    memset( buf, 0, 256 );
+//    ConvertFromString( driver, temp1 );
+    uc_to_str_cpy( temp1, driver );
+    uc_to_str_cpy( buf, L"Driver=" );
+    uc_to_str_cpy( buf, driver );
+    BOOL ret = SQLConfigDataSource( hwnd, ODBC_ADD_DSN, temp1, buf );
+    if( !ret )
+    {
+        result = false;
+        GetDSNErrorMessage( errorMsg );
     }
     return result;
 }
@@ -191,6 +194,22 @@ int ODBCDatabase::GetErrorMessage(std::vector<std::wstring> &errorMsg, int type,
     return 0;
 }
 
+int ODBCDatabase::GetDSNErrorMessage(std::vector<std::wstring> &errorMsg)
+{
+    WORD i = 1, cbErrorMsgMax = SQL_MAX_MESSAGE_LENGTH, pcbErrorMsg;
+    SQLWCHAR errorMessage[512];
+    DWORD pfErrorCode;
+    RETCODE ret;
+    while( ( ret = SQLInstallerError( i, &pfErrorCode, errorMessage, cbErrorMsgMax, &pcbErrorMsg ) ) == SQL_SUCCESS )
+    {
+        std::wstring strMsg;
+        i++;
+        str_to_uc_cpy( strMsg, errorMessage );
+		errorMsg.push_back( strMsg );
+    }
+    return 0;
+}
+
 void ODBCDatabase::uc_to_str_cpy(SQLWCHAR *dest, const std::wstring &src)
 {
 	const wchar_t *temp = src.c_str();
@@ -204,6 +223,7 @@ void ODBCDatabase::uc_to_str_cpy(SQLWCHAR *dest, const std::wstring &src)
         *dest++;
         *temp++;
     }
+    *dest++ = 0;
     *dest = 0;
 }
 
@@ -279,6 +299,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
     m_connectString = new SQLWCHAR[sizeof(SQLWCHAR) * 1024];
     memset( dsn, 0, sizeof( dsn ) );
     memset( connectStrIn, 0, sizeof( connectStrIn ) );
+    memset( driver, 0, sizeof( driver ) );
 	uc_to_str_cpy( dsn, selectedDSN.c_str() );
     ret = SQLAllocHandle( SQL_HANDLE_ENV, SQL_NULL_HENV, &m_env );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
@@ -347,7 +368,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
     {
         for( std::vector<SQLWCHAR *>::iterator it = errorMessage.begin(); it != errorMessage.end(); it++ )
         {
-            std::wstring strMsg;
+			std::wstring strMsg;
             str_to_uc_cpy( strMsg, (*it) );
             errorMsg.push_back( strMsg );
         }
@@ -436,8 +457,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     {
         catalog[i].TargetType = SQL_C_WCHAR;
         catalog[i].BufferLength = ( bufferSize + 1 );
-		catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
-		ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
+        catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
+        ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
     }
     ret = SQLTables( m_hstmt, NULL, 0, NULL, 0, NULL, 0, NULL, 0 );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -1306,5 +1327,10 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             }
         }
 	}
+    for( int i = 0; i < 5; i++ )
+    {
+        free( catalog[i].TargetValuePtr );
+    }
+    free( catalog );
     return result;
 }
