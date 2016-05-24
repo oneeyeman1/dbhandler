@@ -114,6 +114,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
     bool ask = false;
     Database *pdb = NULL;
     wxDynamicLibrary lib;
+    wxBeginBusyCursor();
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #else
@@ -160,15 +161,40 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             }
         }
     }
+    wxEndBusyCursor();
     return pdb;
 }
 
-/*extern "C" */WXEXPORT void DisconnectFromDB(Database *db, const wxString &engine)
+extern "C" WXEXPORT Database *GetDriverList(std::map<std::wstring, std::vector<std::wstring> > &driversDSN, std::vector<std::wstring> &errMsg)
 {
-    delete db;
-    db = NULL;
-//    std::vector<std::wstring> errorMsg;
-//    db->Disconnect( errorMsg );
+    Database *db = new ODBCDatabase();
+    bool result = dynamic_cast<ODBCDatabase *>( db )->GetDriverList( driversDSN, errMsg );
+    if( !result )
+    {
+        delete db;
+        db = NULL;
+        result = 1;
+        for( std::vector<std::wstring>::iterator it = errMsg.begin(); it < errMsg.end(); it++ )
+        {
+            wxMessageBox( (*it) );
+        }
+        wxMessageBox( _( L"Problem retrieving database information. Please check the database is running and operational and try again" ) );
+    }
+    return db;
 }
 
-extern "C" 
+extern "C" WXEXPORT int AddNewDSN(Database *db, wxWindow *win, const wxString &driver)
+{
+	std::vector<std::wstring> errorMsg;
+	int result = dynamic_cast<ODBCDatabase *>( db )->AddDsn( win->GetHandle(), driver.ToStdWstring(), errorMsg );
+    if( !result )
+    {
+        result = 1;
+        for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
+        {
+            wxMessageBox( (*it) );
+        }
+        wxMessageBox( _( L"Problem adding Data Source Name" ) );
+    }
+    return result;
+}
