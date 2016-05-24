@@ -172,10 +172,10 @@
       <AdditionalIncludeDirectories>.\..\..\lib\vc_lib\mswud;.\..\..\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions> /EXPORT:ConvertFromString /EXPORT:ConvertFromSQLWCHAR %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>dbinterface.lib;sqlite_dll.lib;odbc_dll.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\docview\vc_mswud\dbloader.dll</OutputFile>
-      <ImportLibrary>vc_mswud\my_dll.lib</ImportLibrary>
+      <OutputFile>..\docview\vc_mswuddll\dbloader.dll</OutputFile>
+      <ImportLibrary>vc_mswud\dbloader.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>c:\wxWidgets\lib\vc_lib;..\sqlite_dll\vc_mswud;..\odbc_dll\vc_mswud\;..\docview\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
