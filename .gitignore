@@ -3,3 +3,4 @@ libdbloader/vc_mswud/
 libsqlite/vc_mswud/
 libodbc/vc_mswud/
 libsqlite/sqlite3.lib
+dbinterface/Debug
