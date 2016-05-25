@@ -60,7 +60,6 @@ LT_INIT
 
 AC_OUTPUT([
 Makefile
-dbhandler/Makefile
 po/Makefile.in
 dbinterface/Makefile
 libsqlite/Makefile
