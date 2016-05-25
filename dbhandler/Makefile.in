@@ -101,14 +101,18 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_dbhandler_OBJECTS = doc.$(OBJEXT) docview.$(OBJEXT) \
-	mainframe.$(OBJEXT) view.$(OBJEXT) viewbase.$(OBJEXT)
+am_dbhandler_OBJECTS = dbhandler-doc.$(OBJEXT) \
+	dbhandler-docview.$(OBJEXT) dbhandler-mainframe.$(OBJEXT) \
+	dbhandler-view.$(OBJEXT) dbhandler-viewbase.$(OBJEXT)
 dbhandler_OBJECTS = $(am_dbhandler_OBJECTS)
 dbhandler_LDADD = $(LDADD)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+dbhandler_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(dbhandler_CXXFLAGS) \
+	$(CXXFLAGS) $(dbhandler_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -353,6 +357,25 @@ dbhandler_SOURCES = \
 	viewbase.cpp \
 	viewbase.h
 
+dbhandler_CXXFLAGS = -I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
+	-I/home/igor/wxWidgets/include \
+	-D_FILE_OFFSET_BITS=64 \
+	-DWXUSINGDLL \
+	-D__WXGTK__ \
+	-pthread 
+
+dbhandler_LDFLAGS = -L/home/igor/wxWidgets/buildGTK2/lib \
+	-pthread \
+	-Wl,-rpath,/home/igor/wxWidgets/buildGTK2/lib \
+	-lwx_gtk2u_xrc-3.1 \
+	-lwx_gtk2u_html-3.1 \
+	-lwx_gtk2u_qa-3.1 \
+	-lwx_gtk2u_adv-3.1 \
+	-lwx_gtk2u_core-3.1 \
+	-lwx_baseu_xml-3.1 \
+	-lwx_baseu_net-3.1 \
+	-lwx_baseu-3.1 
+
 all: all-am
 
 .SUFFIXES:
@@ -438,7 +461,7 @@ clean-binPROGRAMS:
 
 dbhandler$(EXEEXT): $(dbhandler_OBJECTS) $(dbhandler_DEPENDENCIES) $(EXTRA_dbhandler_DEPENDENCIES) 
 	@rm -f dbhandler$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(dbhandler_OBJECTS) $(dbhandler_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(dbhandler_LINK) $(dbhandler_OBJECTS) $(dbhandler_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -446,11 +469,11 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/doc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/docview.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mainframe.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/view.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/viewbase.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbhandler-doc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbhandler-docview.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbhandler-mainframe.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbhandler-view.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbhandler-viewbase.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -472,6 +495,76 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
+
+dbhandler-doc.o: doc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -MT dbhandler-doc.o -MD -MP -MF $(DEPDIR)/dbhandler-doc.Tpo -c -o dbhandler-doc.o `test -f 'doc.cpp' || echo '$(srcdir)/'`doc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dbhandler-doc.Tpo $(DEPDIR)/dbhandler-doc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='doc.cpp' object='dbhandler-doc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -c -o dbhandler-doc.o `test -f 'doc.cpp' || echo '$(srcdir)/'`doc.cpp
+
+dbhandler-doc.obj: doc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -MT dbhandler-doc.obj -MD -MP -MF $(DEPDIR)/dbhandler-doc.Tpo -c -o dbhandler-doc.obj `if test -f 'doc.cpp'; then $(CYGPATH_W) 'doc.cpp'; else $(CYGPATH_W) '$(srcdir)/doc.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dbhandler-doc.Tpo $(DEPDIR)/dbhandler-doc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='doc.cpp' object='dbhandler-doc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -c -o dbhandler-doc.obj `if test -f 'doc.cpp'; then $(CYGPATH_W) 'doc.cpp'; else $(CYGPATH_W) '$(srcdir)/doc.cpp'; fi`
+
+dbhandler-docview.o: docview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -MT dbhandler-docview.o -MD -MP -MF $(DEPDIR)/dbhandler-docview.Tpo -c -o dbhandler-docview.o `test -f 'docview.cpp' || echo '$(srcdir)/'`docview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dbhandler-docview.Tpo $(DEPDIR)/dbhandler-docview.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='docview.cpp' object='dbhandler-docview.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -c -o dbhandler-docview.o `test -f 'docview.cpp' || echo '$(srcdir)/'`docview.cpp
+
+dbhandler-docview.obj: docview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -MT dbhandler-docview.obj -MD -MP -MF $(DEPDIR)/dbhandler-docview.Tpo -c -o dbhandler-docview.obj `if test -f 'docview.cpp'; then $(CYGPATH_W) 'docview.cpp'; else $(CYGPATH_W) '$(srcdir)/docview.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dbhandler-docview.Tpo $(DEPDIR)/dbhandler-docview.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='docview.cpp' object='dbhandler-docview.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -c -o dbhandler-docview.obj `if test -f 'docview.cpp'; then $(CYGPATH_W) 'docview.cpp'; else $(CYGPATH_W) '$(srcdir)/docview.cpp'; fi`
+
+dbhandler-mainframe.o: mainframe.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -MT dbhandler-mainframe.o -MD -MP -MF $(DEPDIR)/dbhandler-mainframe.Tpo -c -o dbhandler-mainframe.o `test -f 'mainframe.cpp' || echo '$(srcdir)/'`mainframe.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dbhandler-mainframe.Tpo $(DEPDIR)/dbhandler-mainframe.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='mainframe.cpp' object='dbhandler-mainframe.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -c -o dbhandler-mainframe.o `test -f 'mainframe.cpp' || echo '$(srcdir)/'`mainframe.cpp
+
+dbhandler-mainframe.obj: mainframe.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -MT dbhandler-mainframe.obj -MD -MP -MF $(DEPDIR)/dbhandler-mainframe.Tpo -c -o dbhandler-mainframe.obj `if test -f 'mainframe.cpp'; then $(CYGPATH_W) 'mainframe.cpp'; else $(CYGPATH_W) '$(srcdir)/mainframe.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dbhandler-mainframe.Tpo $(DEPDIR)/dbhandler-mainframe.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='mainframe.cpp' object='dbhandler-mainframe.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -c -o dbhandler-mainframe.obj `if test -f 'mainframe.cpp'; then $(CYGPATH_W) 'mainframe.cpp'; else $(CYGPATH_W) '$(srcdir)/mainframe.cpp'; fi`
+
+dbhandler-view.o: view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -MT dbhandler-view.o -MD -MP -MF $(DEPDIR)/dbhandler-view.Tpo -c -o dbhandler-view.o `test -f 'view.cpp' || echo '$(srcdir)/'`view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dbhandler-view.Tpo $(DEPDIR)/dbhandler-view.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='view.cpp' object='dbhandler-view.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -c -o dbhandler-view.o `test -f 'view.cpp' || echo '$(srcdir)/'`view.cpp
+
+dbhandler-view.obj: view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -MT dbhandler-view.obj -MD -MP -MF $(DEPDIR)/dbhandler-view.Tpo -c -o dbhandler-view.obj `if test -f 'view.cpp'; then $(CYGPATH_W) 'view.cpp'; else $(CYGPATH_W) '$(srcdir)/view.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dbhandler-view.Tpo $(DEPDIR)/dbhandler-view.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='view.cpp' object='dbhandler-view.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -c -o dbhandler-view.obj `if test -f 'view.cpp'; then $(CYGPATH_W) 'view.cpp'; else $(CYGPATH_W) '$(srcdir)/view.cpp'; fi`
+
+dbhandler-viewbase.o: viewbase.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -MT dbhandler-viewbase.o -MD -MP -MF $(DEPDIR)/dbhandler-viewbase.Tpo -c -o dbhandler-viewbase.o `test -f 'viewbase.cpp' || echo '$(srcdir)/'`viewbase.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dbhandler-viewbase.Tpo $(DEPDIR)/dbhandler-viewbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='viewbase.cpp' object='dbhandler-viewbase.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -c -o dbhandler-viewbase.o `test -f 'viewbase.cpp' || echo '$(srcdir)/'`viewbase.cpp
+
+dbhandler-viewbase.obj: viewbase.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -MT dbhandler-viewbase.obj -MD -MP -MF $(DEPDIR)/dbhandler-viewbase.Tpo -c -o dbhandler-viewbase.obj `if test -f 'viewbase.cpp'; then $(CYGPATH_W) 'viewbase.cpp'; else $(CYGPATH_W) '$(srcdir)/viewbase.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dbhandler-viewbase.Tpo $(DEPDIR)/dbhandler-viewbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='viewbase.cpp' object='dbhandler-viewbase.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -c -o dbhandler-viewbase.obj `if test -f 'viewbase.cpp'; then $(CYGPATH_W) 'viewbase.cpp'; else $(CYGPATH_W) '$(srcdir)/viewbase.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
