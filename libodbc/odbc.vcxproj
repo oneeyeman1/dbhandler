@@ -155,7 +155,6 @@
       <AdditionalIncludeDirectories>.\..\..\lib\vc_lib\mswud;.\..\..\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\dbinterface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_USRDLL;DLL_EXPORTS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;_UNICODE;MY_DLL_BUILDING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -164,11 +163,14 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <ObjectFileName>vc_mswud\</ObjectFileName>
-      <ProgramDataBaseFileName>vc_mswud\odbc_dll.pdb</ProgramDataBaseFileName>
+      <ObjectFileName>vc_mswuddll\</ObjectFileName>
+      <ProgramDataBaseFileName>vc_mswuddll\odbc_dll.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PrecompiledHeaderOutputFile>vcmswuddll\odbc_dll.pch</PrecompiledHeaderOutputFile>
+      <BrowseInformationFile>vc_mswuddll\</BrowseInformationFile>
+      <AssemblerListingLocation>vc_mswuddll\</AssemblerListingLocation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;MY_DLL_BUILDING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -179,12 +181,14 @@
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>dbinterface.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>..\docview\vc_mswuddll\odbc_lib.dll</OutputFile>
-      <ImportLibrary>vc_mswud\odbc_dll.lib</ImportLibrary>
+      <ImportLibrary>vc_mswuddll\odbc_dll.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\docview\debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>vc_mswud\odbc_dll.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>vc_mswuddll\odbc_dll.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
+      <ManifestFile>vc_mswuddll\$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
+      <ProfileGuidedDatabase>C:\Users\Igor\OneDrive\Documents\dbhandler_app\libodbc\vc_mswuddll\odbc.pgd</ProfileGuidedDatabase>
     </Link>
     <Bscmake>
       <OutputFile>vc_mswud\dll_vc9_my_dll.bsc</OutputFile>
