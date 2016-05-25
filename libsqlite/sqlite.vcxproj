@@ -37,7 +37,9 @@
   <ItemGroup>
     <ClCompile Include="database_sqlite.cpp" />
     <ClCompile Include="sqlite.cpp" />
-    <ClCompile Include="sqlite3.c" />
+    <ClCompile Include="sqlite3.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database_sqlite.h" />
@@ -167,8 +169,8 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <ObjectFileName>vc_mswud\my_dll\</ObjectFileName>
-      <ProgramDataBaseFileName>vc_mswud\my_dll.pdb</ProgramDataBaseFileName>
+      <ObjectFileName>vc_mswud\</ObjectFileName>
+      <ProgramDataBaseFileName>vc_mswud\sqlite.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -181,12 +183,12 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>dbinterface.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\docview\vc_mswud\sqlite.dll</OutputFile>
+      <OutputFile>..\docview\vc_mswuddll\sqlite.dll</OutputFile>
       <ImportLibrary>vc_mswud\sqlite_dll.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\docview\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>vc_&#x1F;mswud\;..\docview\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>vc_mswud\sqlite_dll.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>vc_mswuddll\sqlite_dll.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Bscmake>
