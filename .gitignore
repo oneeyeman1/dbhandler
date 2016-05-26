@@ -5,3 +5,5 @@ libodbc/vc_mswuddll/
 libdialogs/vc_mswuddll
 libsqlite/sqlite3.lib
 dbinterface/Debug
+dbhandler/*.cpp~
+dbhandler/*.h~

@@ -85,13 +85,6 @@ void MyApp::MacNewFile()
 
 bool MyApp::OnInit()
 {
-    int tmpDbgFlag;
-    _CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_FILE );
-    _CrtSetReportFile( _CRT_ERROR, _CRTDBG_FILE_STDERR );
-    tmpDbgFlag = _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG );
-    tmpDbgFlag |= _CRTDBG_DELAY_FREE_MEM_DF;
-    tmpDbgFlag |= _CRTDBG_LEAK_CHECK_DF;
-    _CrtSetDbgFlag(tmpDbgFlag);
     if( !wxApp::OnInit() )
         return false;
 
@@ -152,13 +145,7 @@ int MyApp::OnExit()
 #if wxUSE_CONFIG
     manager->FileHistorySave( *wxConfig::Get() );
 #endif // wxUSE_CONFIG
-    delete manager;
-    
-	tmpDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
-    tmpDbgFlag |= _CRTDBG_ALLOC_MEM_DF;
-    tmpDbgFlag &= ~_CRTDBG_DELAY_FREE_MEM_DF;
-    _CrtSetDbgFlag( tmpDbgFlag );
-    
+    delete manager;    
     return wxApp::OnExit();
 }
 
