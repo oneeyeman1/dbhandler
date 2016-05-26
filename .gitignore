@@ -8,3 +8,4 @@ dbinterface/Debug/
 dbhandler/*.cpp~
 dbhandler/*.h~
 docview/Debug/
+docview/vc_mswuddll/
