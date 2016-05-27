@@ -85,7 +85,7 @@ IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
 extern "C" WXEXPORT SQLWCHAR *ConvertFromString(wxString str)
 {
-	SQLWCHAR *s = new SQLWCHAR[str.length() * sizeof( SQLWCHAR )];
+    SQLWCHAR *s = new SQLWCHAR[str.length() * sizeof( SQLWCHAR )];
     SQLWCHAR *tmp;
 #if defined(__WXMSW__) || defined( SQL_ATTR_UNIXODBC_VERSION )
     tmp = const_cast<SQLWCHAR *>( str.wc_str() );
@@ -96,7 +96,7 @@ extern "C" WXEXPORT SQLWCHAR *ConvertFromString(wxString str)
     return s;
 }
 
-/*extern "C" */WXEXPORT void ConvertFromSQLWCHAR(SQLWCHAR *str, wxString &result)
+extern "C" WXEXPORT void ConvertFromSQLWCHAR(SQLWCHAR *str, wxString &result)
 {
     wxString string;
 #if defined(__WXMSW__) || defined( SQL_ATTR_UNIXODBC_VERSION )
@@ -104,7 +104,6 @@ extern "C" WXEXPORT SQLWCHAR *ConvertFromString(wxString str)
 #elif defined(  _IODBCUNIX_H )
     string = str.wc_str();
 #endif
-//    return string;
     result = string;
 }
 
@@ -185,8 +184,8 @@ extern "C" WXEXPORT Database *GetDriverList(std::map<std::wstring, std::vector<s
 
 extern "C" WXEXPORT int AddNewDSN(Database *db, wxWindow *win, const wxString &driver)
 {
-	std::vector<std::wstring> errorMsg;
-	int result = dynamic_cast<ODBCDatabase *>( db )->AddDsn( win->GetHandle(), driver.ToStdWstring(), errorMsg );
+    std::vector<std::wstring> errorMsg;
+    int result = dynamic_cast<ODBCDatabase *>( db )->AddDsn( win->GetHandle(), driver.ToStdWstring(), errorMsg );
     if( !result )
     {
         result = 1;
@@ -201,8 +200,8 @@ extern "C" WXEXPORT int AddNewDSN(Database *db, wxWindow *win, const wxString &d
 
 extern "C" WXEXPORT int EditDSN(Database *db, wxWindow *win, const wxString &driver, const wxString &dsn)
 {
-	std::vector<std::wstring> errorMsg;
-	int result = dynamic_cast<ODBCDatabase *>( db )->EditDsn( win->GetHandle(), driver.ToStdWstring(), dsn.ToStdWstring(), errorMsg );
+    std::vector<std::wstring> errorMsg;
+    int result = dynamic_cast<ODBCDatabase *>( db )->EditDsn( win->GetHandle(), driver.ToStdWstring(), dsn.ToStdWstring(), errorMsg );
     if( !result )
     {
         result = 1;
