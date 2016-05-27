@@ -20,7 +20,7 @@ public:
     SQLiteConnect(wxWizard *parent);
     virtual wxWizardPage *GetPrev() const;
     virtual wxWizardPage *GetNext() const;
-	wxFilePickerCtrl *GetFileCtrl() const { return dbName; }
+    wxFilePickerCtrl *GetFileCtrl() const { return dbName; }
 private:
     wxFilePickerCtrl *dbName;
 };
@@ -49,8 +49,8 @@ class DatabaseType : public wxWizard
 public:
     DatabaseType(wxWindow *parent, const wxString &title, const wxString &name, const wxString &engine);
     wxWizardPage *GetFirstPage() const { return page1; }
-	SQLiteConnect *GetSQLitePage() { return page2; }
-	ODBCConnect *GetODBCPage() {return page3; }
+    SQLiteConnect *GetSQLitePage() { return page2; }
+    ODBCConnect *GetODBCPage() {return page3; }
     void GetDatabaseEngine(wxString &databaseEngine);
     bool GetODBCConnectionParam();
     wxString GetDatabaseName();

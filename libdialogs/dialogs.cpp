@@ -78,7 +78,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-/*extern "C" */WXEXPORT void ODBCSetup(wxWindow *pParent)
+extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
 {
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( pParent );
@@ -93,11 +93,11 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
     wxTheApp->SetTopWindow( parent );
 #endif
     DatabaseType dlg( parent, title, name, dbEngine );
-	int result = dlg.RunWizard( dlg.GetFirstPage() );
+    int result = dlg.RunWizard( dlg.GetFirstPage() );
     if( result != wxID_CANCEL )
     {
         dlg.GetDatabaseEngine( dbEngine );
-		name = dlg.GetDatabaseName();
+        name = dlg.GetDatabaseName();
         ask = dlg.GetODBCConnectionParam();
     }
     return result;

@@ -54,16 +54,6 @@ CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title, 
 #else
     m_lib = new wxDynamicLibrary( "libdbloader" );
 #endif
-    if( m_lib->IsLoaded() )
-    {
-        func = (CONVERTFROMSQLWCHAR) m_lib->GetSymbol( "ConvertFromSQLWCHAR" );
-        func1 = (CONVERTFROMWXSTRING) m_lib->GetSymbol( "ConvertFromString" );
-    }
-    else
-    {
-        func = NULL;
-        func1 = NULL;
-    }
     style = style;
     panel_1 = new wxPanel( this, -1 );
     label_1 = new wxStaticText( panel_1, wxID_ANY, _( "Installed Drivers:" ) );
@@ -90,10 +80,9 @@ CODBCConfigure::~CODBCConfigure()
 
 void CODBCConfigure::set_properties()
 {
-	std::vector<std::wstring> errorMsg;
+    std::vector<std::wstring> errorMsg;
     GETDRIVERLIST func = (GETDRIVERLIST) m_lib->GetSymbol( "GetDriverList" );
     m_db = func( m_driversDSN, errorMsg );
-//    bool res = GetDriverList();
     if( !m_db )
     {
         m_createdsn->Disable();
@@ -102,7 +91,7 @@ void CODBCConfigure::set_properties()
         return;
     }
     for( std::map<std::wstring,std::vector<std::wstring> >::iterator it1 = m_driversDSN.begin(); it1 != m_driversDSN.end(); it1++ )
- 		m_drivers->Append( (*it1).first );
+        m_drivers->Append( (*it1).first );
     if( m_drivers->GetCount() != 0 )
     {
         m_drivers->SetSelection( 0 );
@@ -190,8 +179,8 @@ void CODBCConfigure::OnCreateDSN(wxCommandEvent &WXUNUSED(event))
         wxMessageBox( _( "No driver specified to create a Data Source Name!" ), _( "Error Creating DSN!" ), wxOK | wxICON_ERROR );
         return;
     };
-	ADDNEWDSN func = (ADDNEWDSN) m_lib->GetSymbol( "AddNewDSN" );
-	if( func( m_db, this, driver ) )
+    ADDNEWDSN func = (ADDNEWDSN) m_lib->GetSymbol( "AddNewDSN" );
+    if( func( m_db, this, driver ) )
     {
         return;
     }
@@ -205,7 +194,7 @@ void CODBCConfigure::OnEditDSN(wxCommandEvent &WXUNUSED(event))
     std::vector<char *> errorMsg;
     wxString driver = m_drivers->GetStringSelection();
     wxString dsnStr = m_dsn->GetStringSelection();
-	EDITDSN func = (EDITDSN) m_lib->GetSymbol( "EditDSN" );
+    EDITDSN func = (EDITDSN) m_lib->GetSymbol( "EditDSN" );
     if( func( m_db, this, driver, dsnStr ) )
     {
         return;
@@ -228,7 +217,7 @@ void CODBCConfigure::OnRemoveDSN(wxCommandEvent &WXUNUSED(event))
         }
         else*/
         {
-			m_dsn->Delete( m_dsn->FindString( dsnStr ) );
+            m_dsn->Delete( m_dsn->FindString( dsnStr ) );
             m_editdsn->Disable();
             m_removedsn->Disable();
         }

@@ -44,9 +44,9 @@ DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxStri
         page1->GetComboBoxTypes()->SetValue( "ODBC" );
         page3->GetDSNTypesCtrl()->SetStringSelection( name );
     }
-	Bind( wxEVT_WIZARD_PAGE_CHANGED, &DatabaseType::OnPageChanged, this );
-	Bind( wxEVT_WIZARD_FINISHED, &DatabaseType::OnConnect, this );
-	button->Bind( wxEVT_UPDATE_UI, &DatabaseType::OnButtonUpdateUI, this );
+    Bind( wxEVT_WIZARD_PAGE_CHANGED, &DatabaseType::OnPageChanged, this );
+    Bind( wxEVT_WIZARD_FINISHED, &DatabaseType::OnConnect, this );
+    button->Bind( wxEVT_UPDATE_UI, &DatabaseType::OnButtonUpdateUI, this );
 }
 
 void DatabaseType::OnButtonUpdateUI(wxUpdateUIEvent &event)
@@ -55,52 +55,40 @@ void DatabaseType::OnButtonUpdateUI(wxUpdateUIEvent &event)
     {
         if( page2->GetFileCtrl()->GetFileName() == wxEmptyString )
             event.Enable( false );
-		else
-			event.Enable( true );
-    }
-	else if( GetCurrentPage() == page3 )
-    {
-		if( dynamic_cast<ODBCConnect *>( page3 )->GetDSNTypesCtrl()->GetSelection() != wxNOT_FOUND )
+        else
             event.Enable( true );
-		else
-			event.Enable( false );
+    }
+    else if( GetCurrentPage() == page3 )
+    {
+        if( dynamic_cast<ODBCConnect *>( page3 )->GetDSNTypesCtrl()->GetSelection() != wxNOT_FOUND )
+            event.Enable( true );
+        else
+            event.Enable( false );
     }
 }
 
 void DatabaseType::OnPageChanged(wxWizardEvent &event)
 {
-	if( event.GetPage() == page1 )
+    if( event.GetPage() == page1 )
     {
         button = FindWindowById( wxID_FORWARD );
         if( button )
         {
-			button->SetLabel( _( "Next" ) );
-			button->Enable( true );
+            button->SetLabel( _( "Next" ) );
+            button->Enable( true );
         }
     }
-	else
+    else
     {
         button = FindWindowById( wxID_FORWARD );
         if( button )
         {
-			button->SetLabel( _( "Connect" ) );
-			button->Enable( false );
+            button->SetLabel( _( "Connect" ) );
+            button->Enable( false );
         }
     }
-//    m_lib = new wxDynamicLibrary;
-	if( event.GetPage() == page2 )
+/*    if( event.GetPage() == page3 )
     {
-        m_dbEngine = "SQLite";
-/*		m_lib->Load( "sqlite3" );
-        if( !m_db )
-            m_db = new SQLiteDatabase( m_lib );*/
-    }
-    if( event.GetPage() == page3 )
-    {
-        m_dbEngine = "ODBC";
-/*		m_lib->Load( "odbc32" );
-        if( !m_db )
-            m_db = new ODBCDatabase( m_lib );
         std::vector<std::string> dsns;
         std::vector<SQLWCHAR *> errorMsg;
         if( static_cast<ODBCDatabase *>( m_db )->GetDsnList( dsns, errorMsg ) )
@@ -111,9 +99,9 @@ void DatabaseType::OnPageChanged(wxWizardEvent &event)
                 wxMessageBox( temp, "Error!" );
             }
         }
-		else
-            dynamic_cast<ODBCConnect *>( page3 )->AppendDSNsToList( dsns );*/
-    }
+        else
+            dynamic_cast<ODBCConnect *>( page3 )->AppendDSNsToList( dsns );
+    }*/
     event.Skip();
 }
 
@@ -121,15 +109,21 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
 {
     if( m_dbEngine == "SQLite" )
     {
+        m_dbEngine = "SQLite";
         m_dbName = page2->GetFileCtrl()->GetPath();
         m_askForConnectParameter = false;
+        if( !m_db )
+            m_db = new SQLiteDatabase( m_lib );
     }
     if( m_dbEngine == "ODBC" )
     {
+        m_dbEngine = "ODBC";
         wxListBox *lbox = page3->GetDSNTypesCtrl();
         m_dbName = lbox->GetString( lbox->GetSelection() );
         wxCheckBox *check = page3->GetAskForParameters();
         m_askForConnectParameter = check->GetValue();
+        if( !m_db )
+            m_db = new ODBCDatabase( m_lib );
     }
 /*    WXWidget hwnd = 0;
     wxString driver;
@@ -186,7 +180,7 @@ DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
 {
     wxSizer *main = new wxBoxSizer( wxHORIZONTAL );
     wxSizer *sizer1 = new wxBoxSizer( wxVERTICAL );
-	const wxString choices[] = { "SQLite", "ODBC", "MS SQL Server", "Sybase", "Oracle" };
+    const wxString choices[] = { "SQLite", "ODBC", "MS SQL Server", "Sybase", "Oracle" };
     wxStaticText *label = new wxStaticText( this, wxID_ANY, _( "Please select the database type" ) );
     m_types = new wxComboBox( this, wxID_ANY, "SQLite", wxDefaultPosition, wxDefaultSize, 5, choices, wxCB_READONLY );
     wxFont font = label->GetFont();
@@ -194,11 +188,11 @@ DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
 	label->SetFont( font );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-	sizer1->Add( label, 0, wxEXPAND, 0 );
+    sizer1->Add( label, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-	sizer1->Add( m_types, 0, wxEXPAND, 0 );
+    sizer1->Add( m_types, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-	main->Add( sizer1, 0, wxEXPAND, 0 );
+    main->Add( sizer1, 0, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizerAndFit( main );
 }
@@ -210,16 +204,16 @@ wxWizardPage *DBType::GetPrev() const
 
 wxWizardPage *DBType::GetNext() const
 {
-	wxString type = m_types->GetStringSelection();
+    wxString type = m_types->GetStringSelection();
     if( type == "SQLite" )
     {
         return dynamic_cast<DatabaseType *>( GetParent() )->GetSQLitePage();
     }
-	else if( type == "ODBC" )
+    else if( type == "ODBC" )
     {
-		return dynamic_cast<DatabaseType *>( GetParent() )->GetODBCPage();
+        return dynamic_cast<DatabaseType *>( GetParent() )->GetODBCPage();
     }
-	else
+    else
         return NULL;
 }
 
@@ -236,14 +230,14 @@ SQLiteConnect::SQLiteConnect(wxWizard *parent) : wxWizardPage( parent )
     dbName = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr, "*.db", wxDefaultPosition, wxDefaultSize, wxFLP_OPEN | wxFLP_USE_TEXTCTRL );
     wxFont font = label->GetFont();
     font.MakeBold();
-	label->SetFont( font );
+    label->SetFont( font );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-	sizer1->Add( label, 0, wxEXPAND, 0 );
+    sizer1->Add( label, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-	sizer1->Add( dbName, 0, wxEXPAND, 0 );
+    sizer1->Add( dbName, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-	main->Add( sizer1, 0, wxEXPAND, 0 );
+    main->Add( sizer1, 0, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizerAndFit( main );
 }
@@ -266,17 +260,17 @@ ODBCConnect::ODBCConnect(wxWizard *parent) : wxWizardPage( parent )
     m_types = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
     wxFont font = label->GetFont();
     font.MakeBold();
-	label->SetFont( font );
+    label->SetFont( font );
     m_ask = new wxCheckBox( this, wxID_ANY, _( "Prompt for Database Information" ) );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-	sizer1->Add( label, 0, wxEXPAND, 0 );
+    sizer1->Add( label, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-	sizer1->Add( m_types, 0, wxEXPAND, 0 );
+    sizer1->Add( m_types, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-	sizer1->Add( m_ask, 0, wxEXPAND, 0 );
+    sizer1->Add( m_ask, 0, wxEXPAND, 0 );
 	sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-	main->Add( sizer1, 0, wxEXPAND, 0 );
+    main->Add( sizer1, 0, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     GetDSNList();
     SetSizerAndFit( main );
@@ -296,7 +290,7 @@ void ODBCConnect::GetDSNList()
 {
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
-	lib.Load( "dbloader" );
+    lib.Load( "dbloader" );
 #else
     lib.Load( "libdbloader" );
 #endif
@@ -334,8 +328,6 @@ void ODBCConnect::GetDSNList()
             {
                 while( ( ret = SQLDataSources( m_henv, direct, dsn, SQL_MAX_DSN_LENGTH, &pcbDSN, dsnDescr, 254, &pcbDesc ) ) == SQL_SUCCESS )
                 {
-//                wxString s1 = func( dsnDescr );
-//                wxString s2 = func( dsn );
                     wxString s1, s2;
                     func( dsnDescr, s1 );
                     func( dsn, s2 );
