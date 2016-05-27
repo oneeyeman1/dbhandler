@@ -44,6 +44,7 @@
 
 typedef Database *(*GETDRIVERLIST)(std::map<std::wstring, std::vector<std::wstring> > &, std::vector<std::wstring> &);
 typedef int (*ADDNEWDSN)(Database *, wxWindow *, const wxString &);
+typedef int (*EDITDSN)(Database *, wxWindow *, const wxString &, const wxString &);
 
 CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):wxDialog(parent, id, title, pos, size, wxDEFAULT_DIALOG_STYLE)
 {
@@ -180,33 +181,6 @@ void CODBCConfigure::do_layout()
     Layout();
 }
 
-bool CODBCConfigure::EditDsn(WXWidget hwnd, const wxString &driver, const wxString &dsn)
-{
-    bool result = true;
-    wxString error;
-    SQLSMALLINT i = 1;
-    DWORD nativeError;
-    SQLWCHAR errMsg[SQL_MAX_MESSAGE_LENGTH];
-    WORD cbErrorMsg;
-	wxString temp = wxString::Format( "Driver = %s;%s", driver.c_str(), dsn.c_str() );
-SQLWCHAR *temp1 = NULL;// = const_cast<SQLWCHAR *>( driver.wc_str() );
-SQLWCHAR *temp2 = NULL;// = const_cast<SQLWCHAR *>( temp.wc_str() );
-//    ConvertFromString( driver, temp1 );
-//    ConvertFromString( temp, temp2 );
-	BOOL ret= SQLConfigDataSource( hwnd, ODBC_CONFIG_DSN, temp1, temp2 );
-    if( !ret )
-    {
-        result = false;
-        while( ( ret = SQLInstallerError( i, &nativeError, errMsg, SQL_MAX_MESSAGE_LENGTH - 1, &cbErrorMsg ) ) == SQL_SUCCESS )
-        {
-            func( errMsg, error );
-            wxMessageBox( error );
-            i++;
-        }
-    }
-    return result;
-}
-
 void CODBCConfigure::OnCreateDSN(wxCommandEvent &WXUNUSED(event))
 {
     std::vector<char *> errorMsg;
@@ -231,15 +205,9 @@ void CODBCConfigure::OnEditDSN(wxCommandEvent &WXUNUSED(event))
     std::vector<char *> errorMsg;
     wxString driver = m_drivers->GetStringSelection();
     wxString dsnStr = m_dsn->GetStringSelection();
-    dsnStr = _T( "DSN=" ) + dsnStr + '\0';
-    driver = driver + '\0';
-	if( !EditDsn( this->GetHandle(), driver.c_str(), dsnStr.c_str() ) )
+	EDITDSN func = (EDITDSN) m_lib->GetSymbol( "EditDSN" );
+    if( func( m_db, this, driver, dsnStr ) )
     {
-        for( std::vector<char *>::iterator it = errorMsg.begin(); it != errorMsg.end(); it++ )
-        {
-            wxString temp = wxMBConvUTF16().cMB2WC( (const char *) (*it) );
-            wxMessageBox( temp );
-        }
         return;
     }
 }

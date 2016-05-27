@@ -198,3 +198,19 @@ extern "C" WXEXPORT int AddNewDSN(Database *db, wxWindow *win, const wxString &d
     }
     return result;
 }
+
+extern "C" WXEXPORT int EditDSN(Database *db, wxWindow *win, const wxString &driver, const wxString &dsn)
+{
+	std::vector<std::wstring> errorMsg;
+	int result = dynamic_cast<ODBCDatabase *>( db )->EditDsn( win->GetHandle(), driver.ToStdWstring(), dsn.ToStdWstring(), errorMsg );
+    if( !result )
+    {
+        result = 1;
+        for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
+        {
+            wxMessageBox( (*it) );
+        }
+        wxMessageBox( _( L"Problem adding Data Source Name" ) );
+    }
+    return result;
+}
