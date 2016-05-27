@@ -10,11 +10,11 @@ class SQLiteDatabase : public Database
 public:
     SQLiteDatabase();
     virtual ~SQLiteDatabase();
-	virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
-	virtual int Disconnect(std::vector<std::wstring> &errorMsg);
+    virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
+    virtual int Disconnect(std::vector<std::wstring> &errorMsg);
 protected:
-	void GetErrorMessage(int code, std::wstring &errorMsg);
-	virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
+    void GetErrorMessage(int code, std::wstring &errorMsg);
+    virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
 private:
     sqlite3 *m_db;
     std::wstring m_catalog;
