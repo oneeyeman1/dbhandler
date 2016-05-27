@@ -45,7 +45,7 @@ private:
 
 struct FKField
 {
-	FKField(const std::wstring &table_name, const std::wstring &original_field, const std::wstring &referenced_field, const std::wstring &schema, FK_ONUPDATE update_constraint, FK_ONDELETE delete_constraint)
+    FKField(const std::wstring &table_name, const std::wstring &original_field, const std::wstring &referenced_field, const std::wstring &schema, FK_ONUPDATE update_constraint, FK_ONDELETE delete_constraint)
     {
         schemaName = schema;
         tableName = table_name;
@@ -75,24 +75,7 @@ private:
     std::vector<Field> table_fields;
     std::map<int,std::vector<FKField> > foreign_keys;
 };
-/*
-#ifdef WIN32
-class __declspec(dllexport) DatabaseServer
-#else
-class DatabaseServer
-#endif
-{
-protected:
-    struct ServerImpl;
-    ServerImpl *pimpl;
-    virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
-public:
-    virtual ~DatabaseServer() = 0;
-    ServerImpl &GetTableVector() { return *pimpl; };
-    virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int Disconnect(std::vector<std::wstring> &errorMsg) = 0;
-};
-*/
+
 #ifdef WIN32
 class __declspec(dllexport) Database
 #else
@@ -112,14 +95,9 @@ public:
 
 struct Database::Impl
 {
-	std::map<std::wstring, std::vector<Table> > m_tables;
+    std::map<std::wstring, std::vector<Table> > m_tables;
 };
-/*
-struct DatabaseServer::ServerImpl
-{
-	std::map<std::string, std::pair<std::string, Database> > m_server;
-};
-*/
+
 inline Database::~Database()
 {
     delete pimpl;
