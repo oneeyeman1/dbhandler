@@ -139,15 +139,13 @@ bool ODBCDatabase::AddDsn(SQLHWND hwnd, const std::wstring &driver, std::vector<
     SQLWCHAR temp1[512];
     memset( temp1, 0, 512 );
     memset( buf, 0, 256 );
-//    ConvertFromString( driver, temp1 );
     uc_to_str_cpy( temp1, driver );
-    uc_to_str_cpy( buf, L"Driver=" );
-    uc_to_str_cpy( buf, driver );
     BOOL ret = SQLConfigDataSource( hwnd, ODBC_ADD_DSN, temp1, buf );
     if( !ret )
     {
-        result = false;
         GetDSNErrorMessage( errorMsg );
+        if( !errorMsg.empty() )
+            result = false;
     }
     return result;
 }
@@ -202,10 +200,14 @@ int ODBCDatabase::GetDSNErrorMessage(std::vector<std::wstring> &errorMsg)
     RETCODE ret;
     while( ( ret = SQLInstallerError( i, &pfErrorCode, errorMessage, cbErrorMsgMax, &pcbErrorMsg ) ) == SQL_SUCCESS )
     {
-        std::wstring strMsg;
-        i++;
-        str_to_uc_cpy( strMsg, errorMessage );
-		errorMsg.push_back( strMsg );
+        if( pfErrorCode != ODBC_ERROR_USER_CANCELED )
+        {
+            std::wstring strMsg;
+            i++;
+            str_to_uc_cpy( strMsg, errorMessage );
+            errorMsg.push_back( strMsg );
+        }
+        else break;
     }
     return 0;
 }
