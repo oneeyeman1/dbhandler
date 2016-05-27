@@ -35,7 +35,7 @@ ODBCDatabase::ODBCDatabase() : Database()
 ODBCDatabase::~ODBCDatabase()
 {
     RETCODE ret;
-	std::vector<std::wstring> errorMsg;
+    std::vector<std::wstring> errorMsg;
     delete m_connectString;
     m_connectString = 0;
     if( m_hstmt != 0 )
@@ -105,7 +105,7 @@ bool ODBCDatabase::GetDriverList(std::map<std::wstring, std::vector<std::wstring
                 {
                     result = false;
                     GetErrorMessage( errMsg, 0, m_env );
-					driversDSN.clear();
+                    driversDSN.clear();
                     break;
                 }
                 else
@@ -123,7 +123,7 @@ bool ODBCDatabase::GetDriverList(std::map<std::wstring, std::vector<std::wstring
             if( ret1 != SQL_SUCCESS && ret1 != SQL_NO_DATA )
             {
                 result = false;
-				driversDSN.clear();
+                driversDSN.clear();
                 GetErrorMessage( errMsg, 0, m_env );
             }
         }
@@ -160,7 +160,7 @@ bool ODBCDatabase::EditDsn(SQLHWND hwnd, const std::wstring &driver, const std::
     uc_to_str_cpy( temp1, driver );
     uc_to_str_cpy( temp2, L"DSN=" );
     uc_to_str_cpy( temp2, dsn );
-	BOOL ret= SQLConfigDataSource( hwnd, ODBC_CONFIG_DSN, temp1, temp2 );
+    BOOL ret= SQLConfigDataSource( hwnd, ODBC_CONFIG_DSN, temp1, temp2 );
     if( !ret )
     {
         GetDSNErrorMessage( errorMsg );
@@ -234,7 +234,7 @@ int ODBCDatabase::GetDSNErrorMessage(std::vector<std::wstring> &errorMsg)
 
 void ODBCDatabase::uc_to_str_cpy(SQLWCHAR *dest, const std::wstring &src)
 {
-	const wchar_t *temp = src.c_str();
+    const wchar_t *temp = src.c_str();
     while( *dest )
     {
         *dest++;
@@ -322,7 +322,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
     memset( dsn, 0, sizeof( dsn ) );
     memset( connectStrIn, 0, sizeof( connectStrIn ) );
     memset( driver, 0, sizeof( driver ) );
-	uc_to_str_cpy( dsn, selectedDSN.c_str() );
+    uc_to_str_cpy( dsn, selectedDSN.c_str() );
     ret = SQLAllocHandle( SQL_HANDLE_ENV, SQL_NULL_HENV, &m_env );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
@@ -372,14 +372,6 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
             GetErrorMessage( errorMsg, 0 );
             result = 1;
         }
-/*                uc_to_str_cpy( connectStrIn, driver.c_str() );
-            }
-            else
-            {
-                GetErrorMessage( msg );
-                result = 1;
-            }
-        }*/
     }
     else
     {
@@ -390,7 +382,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
     {
         for( std::vector<SQLWCHAR *>::iterator it = errorMessage.begin(); it != errorMessage.end(); it++ )
         {
-			std::wstring strMsg;
+            std::wstring strMsg;
             str_to_uc_cpy( strMsg, (*it) );
             errorMsg.push_back( strMsg );
         }
@@ -458,9 +450,9 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     RETCODE ret;
     int result = 0, bufferSize = 1024;
     std::vector<Field> fields;
-	std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkTable, fkName;
+    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkTable, fkName;
     std::set<SQLWCHAR *> pk_fields;
-	std::set<SQLWCHAR *> autoinc_fields;
+    std::set<SQLWCHAR *> autoinc_fields;
     std::map<int,std::vector<FKField> > foreign_keys;
     SQLWCHAR *catalogName, *schemaName, *tableName;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0;
@@ -492,11 +484,11 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     {
         for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
         {
-			if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
+            if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
                 catalogName = (SQLWCHAR *) catalog[0].TargetValuePtr;
-			if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
+            if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
                 schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
-			if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
+            if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
                 tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
 //            if( equal( schemaName, L"sys" ) || equal( schemaName, L"INFORMATION_SCHEMA" ) )
 //                continue;
@@ -609,7 +601,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     break;
                                 }
                                 if( autoincrement == SQL_TRUE )
-									autoinc_fields.insert( columnNames[i] );
+                                    autoinc_fields.insert( columnNames[i] );
                             }
                             ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -723,12 +715,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         else
                         {
                             for( ret = SQLFetch( stmt_pk ); ( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_pk ) )
-								pk_fields.insert( pkName );
+                                pk_fields.insert( pkName );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                             {
                                 GetErrorMessage( errorMsg, 1 );
                                 result = 1;
-								pk_fields.clear();
+                                pk_fields.clear();
                                 fields.clear();
                                 SQLFreeHandle( SQL_HANDLE_STMT, stmt_pk );
                                 SQLDisconnect( hdbc_pk );
@@ -1052,7 +1044,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             str_to_uc_cpy( fieldName, szColumnName );
                             str_to_uc_cpy( fieldType, szTypeName );
                             str_to_uc_cpy( defaultValue, szColumnDefault );
-							fields.push_back( Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, autoinc_fields.find( szColumnName ) == autoinc_fields.end(), pk_fields.find( szColumnName ) == pk_fields.end() ) );
+                            fields.push_back( Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, autoinc_fields.find( szColumnName ) == autoinc_fields.end(), pk_fields.find( szColumnName ) == pk_fields.end() ) );
                             fieldName = L"";
                             fieldType = L"";
                             defaultValue = L"";
@@ -1273,7 +1265,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             result = 1;
                             fields.clear();
                             pk_fields.clear();
-							foreign_keys.clear();
+                            foreign_keys.clear();
                         }
                         else
                         {
@@ -1309,7 +1301,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         pk_fields.clear();
                                         foreign_keys.clear();
                                     }
-									else
+                                    else
                                         hdbc_fk = 0;
                                 }
                             }
@@ -1319,15 +1311,15 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             }
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
             {
-				std::wstring catalog_name, schema_name, table_name;
+                std::wstring catalog_name, schema_name, table_name;
                 str_to_uc_cpy( catalog_name, catalogName );
                 str_to_uc_cpy( schema_name, schemaName );
                 schema_name += L".";
                 str_to_uc_cpy( table_name, tableName );
                 schema_name += table_name;
-				pimpl->m_tables[catalog_name].push_back( Table( schema_name, fields, foreign_keys ) );
-				fields.clear();
-				foreign_keys.clear();
+                pimpl->m_tables[catalog_name].push_back( Table( schema_name, fields, foreign_keys ) );
+                fields.clear();
+                foreign_keys.clear();
             }
             else
             {
@@ -1348,7 +1340,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 pk_fields.clear();
             }
         }
-	}
+    }
     for( int i = 0; i < 5; i++ )
     {
         free( catalog[i].TargetValuePtr );
