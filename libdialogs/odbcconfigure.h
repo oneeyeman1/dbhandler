@@ -45,15 +45,10 @@ private:
     std::map<std::wstring, std::vector<std::wstring> > m_driversDSN;
     wxDynamicLibrary *m_lib;
     Database *m_db;
-    CONVERTFROMSQLWCHAR func;
-    CONVERTFROMWXSTRING func1;
 
 protected:
     void FillDSNComboBox();
     bool EditDsn(WXWidget hwnd, const wxString &driver, const wxString &dsn);
-//    wxString ConvertFromSQLWCHAR(SQLWCHAR *str);
-//    SQLWCHAR *ConvertFromString(wxString str/*, size_t &len*/);
-//    void ConvertFromString(const wxString &str, SQLWCHAR *string);
     wxStaticText* label_1;
     wxListBox* m_drivers;
     wxButton* m_OK;
