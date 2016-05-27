@@ -6,9 +6,6 @@
 #pragma hdrstop
 #endif
 
-#include <map>
-#include <vector>
-
 #ifdef _WINDOWS
 
 BOOL APIENTRY DllMain( HANDLE hModule, DWORD fdwReason, LPVOID lpReserved)
@@ -27,13 +24,3 @@ BOOL APIENTRY DllMain( HANDLE hModule, DWORD fdwReason, LPVOID lpReserved)
     return TRUE;
 }
 #endif
-/*
-extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
-{
-#ifdef __WXMSW__
-    wxTheApp->SetTopWindow( pParent );
-#endif
-    CODBCConfigure dlg( pParent, wxID_ANY, _T( "Configure ODBC" ) );
-    dlg.ShowModal();
-}
-*/

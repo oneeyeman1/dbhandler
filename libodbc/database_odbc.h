@@ -18,13 +18,13 @@ class ODBCDatabase : public Database
 public:
     ODBCDatabase();
     virtual ~ODBCDatabase();
-	virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
-	virtual int Disconnect(std::vector<std::wstring> &errorMsg);
+    virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
+    virtual int Disconnect(std::vector<std::wstring> &errorMsg);
     void SetWindowHandle(SQLHWND handle);
     void AskForConnectionParameter(bool ask);
     bool GetDriverList(std::map<std::wstring, std::vector<std::wstring> > &driversDSN, std::vector<std::wstring> &errMsg);
-	bool AddDsn(SQLHWND hwnd, const std::wstring &driver, std::vector<std::wstring> &errorMsg);
-	bool EditDsn(SQLHWND hwnd, const std::wstring &driver, const std::wstring &dsn, std::vector<std::wstring> &errorMsg);
+    bool AddDsn(SQLHWND hwnd, const std::wstring &driver, std::vector<std::wstring> &errorMsg);
+    bool EditDsn(SQLHWND hwnd, const std::wstring &driver, const std::wstring &dsn, std::vector<std::wstring> &errorMsg);
 protected:
     int GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<std::wstring> &errorMsg);
     int GetSQLStringSize(SQLWCHAR *str);
@@ -32,9 +32,9 @@ protected:
     void uc_to_str_cpy(SQLWCHAR *dest, const std::wstring &src);
     void copy_uc_to_uc(SQLWCHAR *dest, SQLWCHAR *src);
     bool equal(SQLWCHAR *dest, SQLWCHAR *src);
-	int GetErrorMessage(std::vector<std::wstring> &errorMsg, int type, SQLHSTMT stmt = 0);
-	int GetDSNErrorMessage(std::vector<std::wstring> &errorMsg);
-	virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
+    int GetErrorMessage(std::vector<std::wstring> &errorMsg, int type, SQLHSTMT stmt = 0);
+    int GetDSNErrorMessage(std::vector<std::wstring> &errorMsg);
+    virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
 private:
     SQLHENV m_env;
     SQLHDBC m_hdbc;
