@@ -150,6 +150,26 @@ bool ODBCDatabase::AddDsn(SQLHWND hwnd, const std::wstring &driver, std::vector<
     return result;
 }
 
+bool ODBCDatabase::EditDsn(SQLHWND hwnd, const std::wstring &driver, const std::wstring &dsn, std::vector<std::wstring> &errorMsg)
+{
+    bool result = true;
+    SQLWCHAR temp1[1024];
+    SQLWCHAR temp2[1024];
+    memset( temp1, 0, 1024 );
+    memset( temp2, 0, 1024 );
+    uc_to_str_cpy( temp1, driver );
+    uc_to_str_cpy( temp2, L"DSN=" );
+    uc_to_str_cpy( temp2, dsn );
+	BOOL ret= SQLConfigDataSource( hwnd, ODBC_CONFIG_DSN, temp1, temp2 );
+    if( !ret )
+    {
+        GetDSNErrorMessage( errorMsg );
+        if( !errorMsg.empty() )
+            result = false;
+    }
+    return result;
+}
+
 void ODBCDatabase::SetWindowHandle(SQLHWND handle)
 {
     m_handle = handle;
