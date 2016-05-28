@@ -9,3 +9,4 @@ dbhandler/*.cpp~
 dbhandler/*.h~
 docview/Debug/
 docview/vc_mswuddll/
+libdatabaseview/vc_mswud
