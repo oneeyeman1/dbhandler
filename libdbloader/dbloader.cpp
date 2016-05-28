@@ -128,35 +128,22 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             if( engine == "SQLite" )
             {
                 pdb = new SQLiteDatabase();
-                result = pdb->Connect( name.ToStdWstring(), errorMsg );
-                if( result )
-                {
-                    for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
-                    {
-                        wxMessageBox( (*it) );
-                    }
-                    delete pdb;
-                    pdb = NULL;
-                    result = 1;
-                }
             }
             if( engine == "ODBC" )
             {
                 pdb = new ODBCDatabase();
                 dynamic_cast<ODBCDatabase *>( pdb )->SetWindowHandle( parent->GetHandle() );
-                result = pdb->Connect( name.ToStdWstring(), errorMsg );
-                if( result )
+            }
+            result = pdb->Connect( name.ToStdWstring(), errorMsg );
+            if( result )
+            {
+                for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
                 {
-                    pdb->Disconnect( errorMsg );
-                    delete pdb;
-                    pdb = NULL;
-                    result = 1;
-                    for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
-                    {
-                        wxMessageBox( (*it) );
-                    }
-                    wxMessageBox( _( L"Problem retrieving database information. Please check the database is running and operational and try again" ) );
+                    wxMessageBox( (*it) );
                 }
+                delete pdb;
+                pdb = NULL;
+                result = 1;
             }
         }
     }

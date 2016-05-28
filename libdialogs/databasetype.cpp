@@ -112,8 +112,6 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         m_dbEngine = "SQLite";
         m_dbName = page2->GetFileCtrl()->GetPath();
         m_askForConnectParameter = false;
-        if( !m_db )
-            m_db = new SQLiteDatabase( m_lib );
     }
     if( m_dbEngine == "ODBC" )
     {
@@ -122,8 +120,6 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         m_dbName = lbox->GetString( lbox->GetSelection() );
         wxCheckBox *check = page3->GetAskForParameters();
         m_askForConnectParameter = check->GetValue();
-        if( !m_db )
-            m_db = new ODBCDatabase( m_lib );
     }
 /*    WXWidget hwnd = 0;
     wxString driver;
