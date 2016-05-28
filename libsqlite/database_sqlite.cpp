@@ -37,6 +37,7 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
     }
     else
     {
+        m_catalog = selectedDSN;
         GetTableListFromDb( errorMsg );
         res = sqlite3_exec( m_db, "PRAGMA foreign_keys = ON", NULL, NULL, NULL );
         if( res != SQLITE_OK )
@@ -45,8 +46,6 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
             GetErrorMessage( res, errorMessage );
             errorMsg.push_back( errorMessage );
         }
-        else
-            m_catalog = selectedDSN;
     }
     return result;
 }
