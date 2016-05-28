@@ -10,8 +10,14 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dbinterface", "..\dbinterface\dbinterface.vcxproj", "{FD87BACC-A171-41D8-9F84-F51E0812D30D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite", "..\libsqlite\sqlite.vcxproj", "{43FB2FA3-ADA4-498B-9B95-7A80056DA7BD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FD87BACC-A171-41D8-9F84-F51E0812D30D} = {FD87BACC-A171-41D8-9F84-F51E0812D30D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "odbc", "..\libodbc\odbc.vcxproj", "{FB4DCDE9-41C9-4E4E-B243-62911D690A8E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FD87BACC-A171-41D8-9F84-F51E0812D30D} = {FD87BACC-A171-41D8-9F84-F51E0812D30D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dbloader", "..\libdbloader\dbloader.vcxproj", "{DCCD0C7A-A668-4758-9620-D8323E67D1D1}"
 EndProject
