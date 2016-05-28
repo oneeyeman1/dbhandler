@@ -125,7 +125,7 @@ void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
             delete m_db;
             m_db = NULL;
             wxGetApp().SetDBEngine( engine );
-			wxGetApp().SetDBName( name );
+            wxGetApp().SetDBName( name );
         }
         m_db = db;
     }
