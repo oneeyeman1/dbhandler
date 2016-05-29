@@ -14,4 +14,4 @@ autom4te.cache/
 .anjuta_sym_db.db
 *~
 .directory
-docview/ipch/
+dbhandler/ipch/
