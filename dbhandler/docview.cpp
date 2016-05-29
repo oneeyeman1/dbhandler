@@ -145,7 +145,7 @@ int MyApp::OnExit()
 #if wxUSE_CONFIG
     manager->FileHistorySave( *wxConfig::Get() );
 #endif // wxUSE_CONFIG
-    delete manager;    
+    delete manager;
     return wxApp::OnExit();
 }
 
