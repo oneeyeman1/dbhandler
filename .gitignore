@@ -16,3 +16,5 @@ autom4te.cache/
 *~
 .directory
 dbhandler/ipch/
+dbhandler/docview_vc9.sdf
+dbhandler/docview_vc9.suo
