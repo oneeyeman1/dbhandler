@@ -1,7 +1,9 @@
 Debug/
 libdbloader/vc_mswud/
 libsqlite/vc_mswuddll/
+libsqlite/vc_mswud/
 libodbc/vc_mswuddll/
+libodbc/vc_mswud/
 libdialogs/vc_mswuddll/
 libdialogs/vc_mswud/
 libsqlite/sqlite3.lib
