@@ -13,4 +13,5 @@ libodbc_lib_la_CXXFLAGS = -I../../dbinterface \
 
 libodbc_lib_la_LDFLAGS = -L../ \
 	-ldbinterface \
-	-lodbc 
+	-lodbc \
+	-lodbcinst 
