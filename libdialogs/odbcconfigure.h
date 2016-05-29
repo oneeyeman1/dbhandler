@@ -24,9 +24,6 @@
 @author Igor Korot
 */
 
-typedef void (*CONVERTFROMSQLWCHAR)(SQLWCHAR *, wxString &);
-typedef SQLWCHAR *(*CONVERTFROMWXSTRING)(wxString);
-
 class CODBCConfigure : public wxDialog
 {
 public:
@@ -39,7 +36,6 @@ private:
     void OnRemoveDSN(wxCommandEvent &event);
     void OnDriverNameChange(wxCommandEvent &event);
     void OnDsnNameChange(wxCommandEvent &event);
-    HENV m_henv;
     void set_properties();
     void do_layout();
     std::map<std::wstring, std::vector<std::wstring> > m_driversDSN;

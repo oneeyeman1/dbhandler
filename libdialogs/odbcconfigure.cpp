@@ -27,13 +27,6 @@
 
 #include <map>
 #include <vector>
-#ifdef _IODBCUNIX_H
-#include "iODBC/sqlext.h"
-#include "iODBC/odbcinst.h"
-#else
-#include <sqlext.h>
-#include <odbcinst.h>
-#endif
 #include "wx/config.h"
 #include "wx/dynlib.h"
 #include "wx/vector.h"
@@ -45,6 +38,7 @@
 typedef Database *(*GETDRIVERLIST)(std::map<std::wstring, std::vector<std::wstring> > &, std::vector<std::wstring> &);
 typedef int (*ADDNEWDSN)(Database *, wxWindow *, const wxString &);
 typedef int (*EDITDSN)(Database *, wxWindow *, const wxString &, const wxString &);
+typedef int (*DELETEDSN)(Database *, const wxString &, const wxString &);
 
 CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):wxDialog(parent, id, title, pos, size, wxDEFAULT_DIALOG_STYLE)
 {
@@ -194,6 +188,7 @@ void CODBCConfigure::OnEditDSN(wxCommandEvent &WXUNUSED(event))
     std::vector<char *> errorMsg;
     wxString driver = m_drivers->GetStringSelection();
     wxString dsnStr = m_dsn->GetStringSelection();
+    wxMessageBox( "Hello1" );
     EDITDSN func = (EDITDSN) m_lib->GetSymbol( "EditDSN" );
     if( func( m_db, this, driver, dsnStr ) )
     {
@@ -209,6 +204,7 @@ void CODBCConfigure::OnRemoveDSN(wxCommandEvent &WXUNUSED(event))
     int res = wxMessageBox( _( "OK to delete " ) + dsnStr, _( "Configure ODBC" ), wxOK | wxCANCEL, this );
     if( res == wxOK )
     {
+		DELETEDSN func = (DELETEDSN) m_lib->GetSymbol( "RemoveDSN" );
         dsnStr = _T( "DSN=" ) + dsnStr + '\0';
 /*        if( !m_db->RemoveDSN( dsnStr, driver, (HWND ) this->GetHandle() ) )
         {
