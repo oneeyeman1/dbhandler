@@ -9,7 +9,9 @@ libdialogs/vc_mswud/
 libsqlite/sqlite3.lib
 dbinterface/Debug/
 dbhandler/*.cpp~
+libdbloader/*.cpp~
 dbhandler/*.h~
+libdbloader/*.h~
 dbhandler/Debug/
 dbhandler/vc_mswuddll/
 dbhandler/vc_mswud
