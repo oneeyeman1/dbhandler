@@ -37,6 +37,4 @@ libdialogs_la_LDFLAGS = -Wl,-rpath,/home/igor/dbhandler/Debug/libsqlite/.libs \
 	-lwx_gtk2u_core-3.1 \
 	-lwx_baseu_xml-3.1 \
 	-lwx_baseu_net-3.1 \
-	-lwx_baseu-3.1 \
-	-lodbc \
-	-lodbcinst 
+	-lwx_baseu-3.1 
