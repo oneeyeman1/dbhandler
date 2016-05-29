@@ -4,6 +4,9 @@
 lib_LTLIBRARIES =  \
 	libdatabaseview.la
 
+libdatabaseview_la_SOURCES =  \
+	dbview.cpp
+
 libdatabaseview_la_CXXFLAGS = -I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
 	-I/home/igor/wxWidgets/include \
 	-D_FILE_OFFSET_BITS=64 \
