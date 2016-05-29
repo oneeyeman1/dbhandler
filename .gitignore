@@ -7,8 +7,8 @@ libsqlite/sqlite3.lib
 dbinterface/Debug/
 dbhandler/*.cpp~
 dbhandler/*.h~
-docview/Debug/
-docview/vc_mswuddll/
+dbhandler/Debug/
+dbhandler/vc_mswuddll/
 libdatabaseview/vc_mswud
 autom4te.cache/
 .anjuta_sym_db.db
