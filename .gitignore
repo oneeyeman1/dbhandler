@@ -9,6 +9,7 @@ dbhandler/*.cpp~
 dbhandler/*.h~
 dbhandler/Debug/
 dbhandler/vc_mswuddll/
+dbhandler/vc_mswud
 libdatabaseview/vc_mswud
 autom4te.cache/
 .anjuta_sym_db.db
