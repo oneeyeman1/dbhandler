@@ -11,6 +11,7 @@
 		E33448331CA76B5F00846B48 /* database_odbc.h in Headers */ = {isa = PBXBuildFile; fileRef = E33448311CA76B5F00846B48 /* database_odbc.h */; };
 		E33448371CA76C7600846B48 /* libdbinterface.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E33448361CA76C7600846B48 /* libdbinterface.a */; settings = {ATTRIBUTES = (Required, ); }; };
 		E3ABF1C11CBC6AB300ED706B /* iODBC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3ABF1C01CBC6AB300ED706B /* iODBC.framework */; };
+		E3ABF1EC1CFCF72A00ED706B /* iODBCinst.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3ABF1C21CBC6ACE00ED706B /* iODBCinst.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3ABF1EC1CFCF72A00ED706B /* iODBCinst.framework in Frameworks */,
 				E3ABF1C11CBC6AB300ED706B /* iODBC.framework in Frameworks */,
 				E33448371CA76C7600846B48 /* libdbinterface.a in Frameworks */,
 			);
