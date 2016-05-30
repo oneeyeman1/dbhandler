@@ -111,7 +111,7 @@ void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
         m_lib->Load( "dbloader" );
 #else
-        lib.Load( "libdbloader" );
+        m_lib->Load( "libdbloader" );
 #endif
     }
     if( m_lib->IsLoaded() )
