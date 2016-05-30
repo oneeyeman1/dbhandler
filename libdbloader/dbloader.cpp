@@ -83,30 +83,6 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT SQLWCHAR *ConvertFromString(wxString str)
-{
-    SQLWCHAR *s = new SQLWCHAR[str.length() * sizeof( SQLWCHAR )];
-    SQLWCHAR *tmp;
-#if defined(__WXMSW__) || defined( SQL_ATTR_UNIXODBC_VERSION )
-    tmp = const_cast<SQLWCHAR *>( str.wc_str() );
-#elif defined(  _IODBCUNIX_H )
-    tmp = str.wc_str();
-#endif
-    wcscpy( s, tmp/*, sizeof( temp )*/ );
-    return s;
-}
-
-extern "C" WXEXPORT void ConvertFromSQLWCHAR(SQLWCHAR *str, wxString &result)
-{
-    wxString string;
-#if defined(__WXMSW__) || defined( SQL_ATTR_UNIXODBC_VERSION )
-    string = str;
-#elif defined(  _IODBCUNIX_H )
-    string = str.wc_str();
-#endif
-    result = string;
-}
-
 extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine)
 {
     std::vector<std::wstring> errorMsg, dsn;
