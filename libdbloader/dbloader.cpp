@@ -23,7 +23,7 @@
 #include "database_sqlite.h"
 #include "database_odbc.h"
 
-typedef int (*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, bool);
+typedef int (*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, bool, const std::vector<std::wstring> &);
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -133,7 +133,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             }
         }
         DBPROFILE func = (DBPROFILE) lib.GetSymbol( "DatabaseProfile" );
-        int result = func( parent, _( "Select Database Profile" ), name, engine, ask );
+        int result = func( parent, _( "Select Database Profile" ), name, engine, ask, dsn );
         if( result != wxID_CANCEL )
         {
             if( engine == "SQLite" )

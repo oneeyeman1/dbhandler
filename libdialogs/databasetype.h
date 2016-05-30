@@ -30,7 +30,7 @@ typedef void (*CONVERTFROMSQLWCHAR)(SQLWCHAR *, wxString &);
 class ODBCConnect : public wxWizardPage
 {
 public:
-    ODBCConnect(wxWizard *parent);
+    ODBCConnect(wxWizard *parent, const std::vector<std::wstring> &dsn);
     virtual wxWizardPage *GetPrev() const;
     virtual wxWizardPage *GetNext() const;
     void AppendDSNsToList(const std::vector<std::string> &dsns);
@@ -47,7 +47,7 @@ private:
 class DatabaseType : public wxWizard
 {
 public:
-    DatabaseType(wxWindow *parent, const wxString &title, const wxString &name, const wxString &engine);
+    DatabaseType(wxWindow *parent, const wxString &title, const wxString &name, const wxString &engine, const std::vector<std::wstring> &dsn);
     wxWizardPage *GetFirstPage() const { return page1; }
     SQLiteConnect *GetSQLitePage() { return page2; }
     ODBCConnect *GetODBCPage() {return page3; }
