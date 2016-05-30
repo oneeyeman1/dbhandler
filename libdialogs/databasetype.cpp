@@ -281,69 +281,6 @@ wxWizardPage *ODBCConnect::GetNext() const
 {
     return NULL;
 }
-
-void ODBCConnect::GetDSNList()
-{
-    wxDynamicLibrary lib;
-#ifdef __WXMSW__
-    lib.Load( "dbloader" );
-#else
-    lib.Load( "libdbloader" );
-#endif
-    if( lib.IsLoaded() )
-    {
-        wxString error;
-        CONVERTFROMSQLWCHAR func = (CONVERTFROMSQLWCHAR) lib.GetSymbol( "ConvertFromSQLWCHAR" );
-        SQLSMALLINT i = 1, cbErrorMsg, direct = SQL_FETCH_FIRST;
-        SQLWCHAR dsn[SQL_MAX_DSN_LENGTH+1], sqlState[20], errMsg[SQL_MAX_MESSAGE_LENGTH], dsnDescr[255];
-        SWORD pcbDSN, pcbDesc;
-        SQLINTEGER nativeError;
-        RETCODE ret = SQLAllocHandle( SQL_HANDLE_ENV, SQL_NULL_HENV, &m_henv );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            while( ( ret = SQLGetDiagRec( SQL_HANDLE_ENV, m_henv, i, sqlState, &nativeError, errMsg, sizeof( errMsg ), &cbErrorMsg ) ) == SQL_SUCCESS )
-            {
-                func( errMsg, error );
-                wxMessageBox( error );
-                i++;
-            }
-        }
-        else
-        {
-            ret = SQLSetEnvAttr( m_henv, SQL_ATTR_ODBC_VERSION, (void *) SQL_OV_ODBC3, 0 );
-            if( ret != SQL_SUCCESS )
-            {
-                while( ( ret = SQLGetDiagRec( SQL_HANDLE_ENV, m_henv, i, sqlState, &nativeError, errMsg, sizeof( errMsg ), &cbErrorMsg ) ) == SQL_SUCCESS )
-                {
-                    func( errMsg, error );
-                    wxMessageBox( error );
-                    i++;
-                }
-            }
-            else
-            {
-                while( ( ret = SQLDataSources( m_henv, direct, dsn, SQL_MAX_DSN_LENGTH, &pcbDSN, dsnDescr, 254, &pcbDesc ) ) == SQL_SUCCESS )
-                {
-                    wxString s1, s2;
-                    func( dsnDescr, s1 );
-                    func( dsn, s2 );
-                    m_types->Append( s2, new wxStringClientData( s1 ) );
-                    direct = SQL_FETCH_NEXT;
-                }
-                if( ret != SQL_SUCCESS && ret != SQL_NO_DATA )
-                {
-                    while( ( ret = SQLGetDiagRec( SQL_HANDLE_ENV, m_henv, i, sqlState, &nativeError, errMsg, sizeof( errMsg ), &cbErrorMsg ) ) == SQL_SUCCESS )
-                    {
-                        func( errMsg, error );
-                        wxMessageBox( error );
-                        i++;
-                    }
-                }
-            }
-            SQLFreeHandle( SQL_HANDLE_ENV, m_henv );
-        }
-    }
-}
 /*
 void ODBCConnect::AppendDSNsToList(const std::vector<std::string> &dsns)
 {

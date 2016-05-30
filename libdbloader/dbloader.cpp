@@ -109,7 +109,7 @@ extern "C" WXEXPORT void ConvertFromSQLWCHAR(SQLWCHAR *str, wxString &result)
 
 extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine)
 {
-    std::vector<std::wstring> errorMsg;
+    std::vector<std::wstring> errorMsg, dsn;
     bool ask = false;
     Database *pdb = NULL;
     wxDynamicLibrary lib;
@@ -121,6 +121,17 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
 #endif
     if( lib.IsLoaded() )
     {
+        pdb = new ODBCDatabase();
+        bool res = dynamic_cast<ODBCDatabase *>( pdb )->GetDSNList( dsn, errorMsg );
+        delete pdb;
+        pdb = NULL;
+        if( res )
+        {
+            for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
+            {
+                wxMessageBox( (*it) );
+            }
+        }
         DBPROFILE func = (DBPROFILE) lib.GetSymbol( "DatabaseProfile" );
         int result = func( parent, _( "Select Database Profile" ), name, engine, ask );
         if( result != wxID_CANCEL )
