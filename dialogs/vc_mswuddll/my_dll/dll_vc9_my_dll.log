@@ -1,0 +1,9 @@
+﻿Build started 3/18/2016 5:54:21 PM.
+     1>Project "C:\Users\Igor\OneDrive\Documents\dbhandler_app\dialogs\dll_vc9_my_dll.vcxproj" on node 2 (clean target(s)).
+     1>_PrepareForClean:
+         Deleting file "vc_mswuddll\my_dll\dialogs.lastbuildstate".
+     1>Done Building Project "C:\Users\Igor\OneDrive\Documents\dbhandler_app\dialogs\dll_vc9_my_dll.vcxproj" (clean target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.46

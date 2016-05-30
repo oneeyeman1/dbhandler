@@ -1,0 +1,76 @@
+﻿Build started 3/9/2016 9:54:36 PM.
+     1>Project "C:\Users\Igor\OneDrive\Documents\dbhandler_app\dialogs\dll_vc9_my_dll.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Touching "vc_mswud\my_dll\dialogs.unsuccessfulbuild".
+       ClCompile:
+         All outputs are up-to-date.
+       ManifestResourceCompile:
+         All outputs are up-to-date.
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppBuild.targets(990,5): warning MSB8012: TargetPath(C:\Users\Igor\OneDrive\Documents\dbhandler_app\dialogs\vc_mswud\dialogs.dll) does not match the Linker's OutputFile property value (C:\Users\Igor\OneDrive\Documents\dbhandler_app\docview\vc_mswud\dialogs.dll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\docview\vc_mswud\dialogs.dll" /INCREMENTAL /NOLOGO /LIBPATH:c:\wxWidgets\lib\vc_dll /LIBPATH:..\docview\Debug\ dbinterface.lib wxmsw31ud_adv.lib wxmsw31ud_core.lib wxbase31ud.lib wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib wxregexud.lib wxexpatd.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib shlwapi.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib version.lib wsock32.lib wininet.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"vc_mswud\my_dll\dialogs.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"vc_mswud\my_dll.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"vc_mswud\my_dll.lib" /MACHINE:X86 /DLL vc_mswud\my_dll\dialogs.dll.embed.manifest.res
+         vc_mswud\my_dll\databasetype.obj
+         vc_mswud\my_dll\dialogs.obj
+         vc_mswud\my_dll\odbcconfigure.obj
+         vc_mswud\my_dll\selecttables.obj
+            Creating library vc_mswud\my_dll.lib and object vc_mswud\my_dll.exp
+     1>databasetype.obj : error LNK2001: unresolved external symbol "class wxEventTypeTag<class wxUpdateUIEvent> const wxEVT_UPDATE_UI" (?wxEVT_UPDATE_UI@@3V?$wxEventTypeTag@VwxUpdateUIEvent@@@@B)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "class wxEventTypeTag<class wxWizardEvent> const wxEVT_WIZARD_FINISHED" (?wxEVT_WIZARD_FINISHED@@3V?$wxEventTypeTag@VwxWizardEvent@@@@B)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "class wxEventTypeTag<class wxWizardEvent> const wxEVT_WIZARD_PAGE_CHANGED" (?wxEVT_WIZARD_PAGE_CHANGED@@3V?$wxEventTypeTag@VwxWizardEvent@@@@B)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "class wxBitmap wxNullBitmap" (?wxNullBitmap@@3VwxBitmap@@A)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "class wxPoint const wxDefaultPosition" (?wxDefaultPosition@@3VwxPoint@@B)
+     1>dialogs.obj : error LNK2001: unresolved external symbol "class wxPoint const wxDefaultPosition" (?wxDefaultPosition@@3VwxPoint@@B)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "class wxPoint const wxDefaultPosition" (?wxDefaultPosition@@3VwxPoint@@B)
+     1>selecttables.obj : error LNK2001: unresolved external symbol "class wxPoint const wxDefaultPosition" (?wxDefaultPosition@@3VwxPoint@@B)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "class wxSize const wxDefaultSize" (?wxDefaultSize@@3VwxSize@@B)
+     1>dialogs.obj : error LNK2001: unresolved external symbol "class wxSize const wxDefaultSize" (?wxDefaultSize@@3VwxSize@@B)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "class wxSize const wxDefaultSize" (?wxDefaultSize@@3VwxSize@@B)
+     1>selecttables.obj : error LNK2001: unresolved external symbol "class wxSize const wxDefaultSize" (?wxDefaultSize@@3VwxSize@@B)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "bool wxTrapInAssert" (?wxTrapInAssert@@3_NA)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "bool wxTrapInAssert" (?wxTrapInAssert@@3_NA)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "void (__cdecl* wxTheAssertHandler)(class wxString const &,int,class wxString const &,class wxString const &,class wxString const &)" (?wxTheAssertHandler@@3P6AXABVwxString@@H000@ZA)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "void (__cdecl* wxTheAssertHandler)(class wxString const &,int,class wxString const &,class wxString const &,class wxString const &)" (?wxTheAssertHandler@@3P6AXABVwxString@@H000@ZA)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "wchar_t const * const wxEmptyString" (?wxEmptyString@@3PB_WB)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "wchar_t const * const wxEmptyString" (?wxEmptyString@@3PB_WB)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "class wxMBConv * wxConvLibcPtr" (?wxConvLibcPtr@@3PAVwxMBConv@@A)
+     1>dialogs.obj : error LNK2001: unresolved external symbol "class wxMBConv * wxConvLibcPtr" (?wxConvLibcPtr@@3PAVwxMBConv@@A)
+     1>odbcconfigure.obj : error LNK2019: unresolved external symbol "class wxMBConv * wxConvLibcPtr" (?wxConvLibcPtr@@3PAVwxMBConv@@A) referenced in function "public: virtual bool __thiscall wxBitmap::Create(class wxSize const &,int)" (?Create@wxBitmap@@UAE_NABVwxSize@@H@Z)
+     1>selecttables.obj : error LNK2001: unresolved external symbol "class wxMBConv * wxConvLibcPtr" (?wxConvLibcPtr@@3PAVwxMBConv@@A)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "public: static unsigned int const wxString::npos" (?npos@wxString@@2IB)
+     1>dialogs.obj : error LNK2001: unresolved external symbol "public: static unsigned int const wxString::npos" (?npos@wxString@@2IB)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "public: static unsigned int const wxString::npos" (?npos@wxString@@2IB)
+     1>selecttables.obj : error LNK2001: unresolved external symbol "public: static unsigned int const wxString::npos" (?npos@wxString@@2IB)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "class wxValidator const wxDefaultValidator" (?wxDefaultValidator@@3VwxValidator@@B)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "class wxValidator const wxDefaultValidator" (?wxDefaultValidator@@3VwxValidator@@B)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "char const * const wxComboBoxNameStr" (?wxComboBoxNameStr@@3QBDB)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "char const * const wxStaticTextNameStr" (?wxStaticTextNameStr@@3QBDB)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "char const * const wxStaticTextNameStr" (?wxStaticTextNameStr@@3QBDB)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "char const * const wxFileSelectorPromptStr" (?wxFileSelectorPromptStr@@3QBDB)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "char const * const wxFilePickerCtrlNameStr" (?wxFilePickerCtrlNameStr@@3QBDB)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "class wxEventTypeTag<class wxFileDirPickerEvent> const wxEVT_FILEPICKER_CHANGED" (?wxEVT_FILEPICKER_CHANGED@@3V?$wxEventTypeTag@VwxFileDirPickerEvent@@@@B)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "char const * const wxFilePickerWidgetLabel" (?wxFilePickerWidgetLabel@@3QBDB)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "char const * const wxFilePickerWidgetNameStr" (?wxFilePickerWidgetNameStr@@3QBDB)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "char const * const wxListBoxNameStr" (?wxListBoxNameStr@@3QBDB)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "char const * const wxListBoxNameStr" (?wxListBoxNameStr@@3QBDB)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "char const * const wxMessageBoxCaptionStr" (?wxMessageBoxCaptionStr@@3QBDB)
+     1>odbcconfigure.obj : error LNK2019: unresolved external symbol "char const * const wxMessageBoxCaptionStr" (?wxMessageBoxCaptionStr@@3QBDB) referenced in function "public: __thiscall std::_Vector_const_iterator<class std::_Vector_val<char *,class std::allocator<char *> > >::_Vector_const_iterator<class std::_Vector_val<char *,class std::allocator<char *> > >(class std::_Vector_const_iterator<class std::_Vector_val<char *,class std::allocator<char *> > > const &)" (??0?$_Vector_const_iterator@V?$_Vector_val@PADV?$allocator@PAD@std@@@std@@@std@@QAE@ABV01@@Z)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "class wxEventTypeTag<class wxChildFocusEvent> const wxEVT_CHILD_FOCUS" (?wxEVT_CHILD_FOCUS@@3V?$wxEventTypeTag@VwxChildFocusEvent@@@@B)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "class wxEventTypeTag<class wxChildFocusEvent> const wxEVT_CHILD_FOCUS" (?wxEVT_CHILD_FOCUS@@3V?$wxEventTypeTag@VwxChildFocusEvent@@@@B)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "class wxEventTypeTag<class wxFocusEvent> const wxEVT_SET_FOCUS" (?wxEVT_SET_FOCUS@@3V?$wxEventTypeTag@VwxFocusEvent@@@@B)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "class wxEventTypeTag<class wxFocusEvent> const wxEVT_SET_FOCUS" (?wxEVT_SET_FOCUS@@3V?$wxEventTypeTag@VwxFocusEvent@@@@B)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "class wxEventTypeTag<class wxNavigationKeyEvent> const wxEVT_NAVIGATION_KEY" (?wxEVT_NAVIGATION_KEY@@3V?$wxEventTypeTag@VwxNavigationKeyEvent@@@@B)
+     1>odbcconfigure.obj : error LNK2019: unresolved external symbol "class wxEventTypeTag<class wxNavigationKeyEvent> const wxEVT_NAVIGATION_KEY" (?wxEVT_NAVIGATION_KEY@@3V?$wxEventTypeTag@VwxNavigationKeyEvent@@@@B) referenced in function "public: __thiscall std::vector<char *,class std::allocator<char *> >::~vector<char *,class std::allocator<char *> >(void)" (??1?$vector@PADV?$allocator@PAD@std@@@std@@QAE@XZ)
+     1>databasetype.obj : error LNK2001: unresolved external symbol "public: static class wxClassInfo wxFileDialog::ms_classInfo" (?ms_classInfo@wxFileDialog@@2VwxClassInfo@@A)
+     1>dialogs.obj : error LNK2001: unresolved external symbol "protected: static class wxAppConsole * wxAppConsoleBase::ms_appInstance" (?ms_appInstance@wxAppConsoleBase@@1PAVwxAppConsole@@A)
+     1>dialogs.obj : error LNK2001: unresolved external symbol "protected: static class wxAppConsole * (__cdecl* wxAppConsoleBase::ms_appInitFn)(void)" (?ms_appInitFn@wxAppConsoleBase@@1P6APAVwxAppConsole@@XZA)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "char const * const wxButtonNameStr" (?wxButtonNameStr@@3QBDB)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "char const * const wxPanelNameStr" (?wxPanelNameStr@@3QBDB)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "char const * const wxDialogNameStr" (?wxDialogNameStr@@3QBDB)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "class wxEventTypeTag<class wxCommandEvent> const wxEVT_LISTBOX" (?wxEVT_LISTBOX@@3V?$wxEventTypeTag@VwxCommandEvent@@@@B)
+     1>odbcconfigure.obj : error LNK2001: unresolved external symbol "class wxEventTypeTag<class wxCommandEvent> const wxEVT_BUTTON" (?wxEVT_BUTTON@@3V?$wxEventTypeTag@VwxCommandEvent@@@@B)
+     1>..\docview\vc_mswud\dialogs.dll : fatal error LNK1120: 32 unresolved externals
+     1>Done Building Project "C:\Users\Igor\OneDrive\Documents\dbhandler_app\dialogs\dll_vc9_my_dll.vcxproj" (build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:01.27

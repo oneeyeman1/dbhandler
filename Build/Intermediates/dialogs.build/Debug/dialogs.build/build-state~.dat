@@ -1,0 +1,155 @@
+Tdialogs
+v6
+r1
+cCheck dependencies
+cCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/selecttables.o /Users/igorkorot/dbhandler/dbhandler/dialogs/selecttables.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/odbcconfigure.o /Users/igorkorot/dbhandler/dbhandler/dialogs/odbcconfigure.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/my_dll.o /Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/databasetype.o /Users/igorkorot/dbhandler/dbhandler/dialogs/databasetype.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/SDKSettings.plist
+c00000000533B9F35000000000000044C
+t1396416309
+s1100
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/CoreServices/SystemVersion.plist
+c00000000533B9F3500000000000001DE
+t1396416309
+s478
+
+N/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/include/module.map
+c00000000533B6DFC0000000000000ADC
+t1396403708
+s2780
+
+N/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/databasetype.o
+t2
+s0
+
+N/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/my_dll.o
+t2
+s0
+
+N/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/odbcconfigure.o
+t2
+s0
+
+N/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/selecttables.o
+t2
+s0
+
+N/Users/igorkorot/dbhandler/dbhandler/dialogs/databasetype.cpp
+c0000000056E8CED80000000000002AB6
+t1458097880
+s10934
+
+N/Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp
+c00000000562D1778000000000000292C
+t1445795704
+s10540
+
+N/Users/igorkorot/dbhandler/dbhandler/dialogs/odbcconfigure.cpp
+c0000000056E8D0EA0000000000003ECF
+t1458098410
+s16079
+
+N/Users/igorkorot/dbhandler/dbhandler/dialogs/selecttables.cpp
+c00000000569D6060000000000000076E
+t1453154400
+s1902
+
+CBuild AST from /Users/igorkorot/dbhandler/dbhandler/dialogs/databasetype.cpp
+r0
+
+CBuild AST from /Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp
+r0
+
+CBuild AST from /Users/igorkorot/dbhandler/dbhandler/dialogs/odbcconfigure.cpp
+r0
+
+CBuild AST from /Users/igorkorot/dbhandler/dbhandler/dialogs/selecttables.cpp
+r0
+
+CCheck dependencies
+r0
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies18"Check dependencies66142f6275a7bc41^a56a2f6275a7bc41^---0#1#1#--18"Check dependencies36"E169AB58-1EC7-49A2-8784-BF3D6EFDB931-
+
+CCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/databasetype.o /Users/igorkorot/dbhandler/dbhandler/dialogs/databasetype.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s480736610.187920
+e480736613.195705
+r0
+xCompileC
+x/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/databasetype.o
+x/Users/igorkorot/dbhandler/dbhandler/dialogs/databasetype.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+o/Users/igorkorot/dbhandler/dbhandler/dialogs/databasetype.cpp:14:10: fatal error: 'sqlext.h' file not found
+o#include <sqlext.h>
+o         ^
+o1 error generated.
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection69"Compile /Users/igorkorot/dbhandler/dbhandler/dialogs/databasetype.cpp215"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/databasetype.o databasetype.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler9337306275a7bc41^0d35326575a7bc41^-158"/Users/igorkorot/dbhandler/dbhandler/dialogs/databasetype.cpp:14:10: fatal error: 'sqlext.h' file not found#include <sqlext.h>         ^1 error generated.-0#0#1#-19%DVTDocumentLocation2@77"file://localhost/Users/igorkorot/dbhandler/dbhandler/dialogs/databasetype.cpp0000000000000000^3165"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/databasetype.o databasetype.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/igorkorot/dbhandler/dbhandler/dialogs    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -stdlib=libstdc++ -fmodules -fmodules-cache-path=/Users/igorkorot/Library/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -DDEBUG=1 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXMAC__ -D__WXOSX__ -D__WXOSX_COCOA__ -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-generated-files.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-own-target-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-all-target-headers.hmap -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-project-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/igorkorot/wxWidgets/buildMac/lib/wx/include/osx_cocoa-unicode-3.1 -I/Users/igorkorot/wxWidgets/include -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/DerivedSources/x86_64 -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/DerivedSources -F/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -MMD -MT dependencies -MF /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/databasetype.d --serialize-diagnostics /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/databasetype.dia -c /Users/igorkorot/dbhandler/dbhandler/dialogs/databasetype.cpp -o /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/databasetype.o36"FD465092-1138-4C9E-916C-88512EF9E961-
+b6980E92B-B82B-48F2-AB7F-B9A9E898DB44
+
+CCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/my_dll.o /Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s480736610.187854
+e480736612.389875
+r0
+xCompileC
+x/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/my_dll.o
+x/Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+o/Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp:25:6: error: "This sample is Windows-only"
+o    #error "This sample is Windows-only"
+o     ^
+oIn file included from /Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp:37:
+o/Users/igorkorot/wxWidgets/include/wx/msw/wrapwin.h:52:10: fatal error: 'windows.h' file not found
+o#include <windows.h>
+o         ^
+o2 errors generated.
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection63"Compile /Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp203"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/my_dll.o my_dll.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compilera034306275a7bc41^e7c3636475a7bc41^-380"/Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp:25:6: error: "This sample is Windows-only"    #error "This sample is Windows-only"     ^In file included from /Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp:37:/Users/igorkorot/wxWidgets/include/wx/msw/wrapwin.h:52:10: fatal error: 'windows.h' file not found#include <windows.h>         ^2 errors generated.2(36%IDEClangDiagnosticActivityLogMessage2@29""This sample is Windows-only"-480736612#18446744073709551615#0#-2#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@71"file://localhost/Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp0000000000000000^24#5#24#5#840#0#19"User Defined Issues--2@26"'windows.h' file not found-480736612#18446744073709551615#0#1(2@81"In file included from /Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp:37:-480736612#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@71"file://localhost/Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp0000000000000000^36#9#36#9#1108#0#21"Apple LLVM 5.0 Notice--2#27"com.apple.dt.IDE.diagnostic3@67"file://localhost/Users/igorkorot/wxWidgets/include/wx/msw/wrapwin.h0000000000000000^51#9#51#9#1623#0#29"Lexical or Preprocessor Issue--0#0#1#-19%DVTDocumentLocation4@71"file://localhost/Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp0000000000000000^3129"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/my_dll.o my_dll.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/igorkorot/dbhandler/dbhandler/dialogs    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -stdlib=libstdc++ -fmodules -fmodules-cache-path=/Users/igorkorot/Library/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -DDEBUG=1 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXMAC__ -D__WXOSX__ -D__WXOSX_COCOA__ -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-generated-files.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-own-target-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-all-target-headers.hmap -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-project-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/igorkorot/wxWidgets/buildMac/lib/wx/include/osx_cocoa-unicode-3.1 -I/Users/igorkorot/wxWidgets/include -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/DerivedSources/x86_64 -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/DerivedSources -F/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -MMD -MT dependencies -MF /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/my_dll.d --serialize-diagnostics /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/my_dll.dia -c /Users/igorkorot/dbhandler/dbhandler/dialogs/my_dll.cpp -o /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/my_dll.o36"1DD00A94-E0B4-43F9-925F-42603FC99EC4-
+b6980E92B-B82B-48F2-AB7F-B9A9E898DB44
+
+CCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/odbcconfigure.o /Users/igorkorot/dbhandler/dbhandler/dialogs/odbcconfigure.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s480736610.187294
+e480736613.195771
+r0
+xCompileC
+x/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/odbcconfigure.o
+x/Users/igorkorot/dbhandler/dbhandler/dialogs/odbcconfigure.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+o/Users/igorkorot/dbhandler/dbhandler/dialogs/odbcconfigure.cpp:30:10: fatal error: 'sqlext.h' file not found
+o#include <sqlext.h>
+o         ^
+o1 error generated.
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection70"Compile /Users/igorkorot/dbhandler/dbhandler/dialogs/odbcconfigure.cpp217"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/odbcconfigure.o odbcconfigure.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compilerdc0f306275a7bc41^7139326575a7bc41^-159"/Users/igorkorot/dbhandler/dbhandler/dialogs/odbcconfigure.cpp:30:10: fatal error: 'sqlext.h' file not found#include <sqlext.h>         ^1 error generated.-0#0#1#-19%DVTDocumentLocation2@78"file://localhost/Users/igorkorot/dbhandler/dbhandler/dialogs/odbcconfigure.cpp0000000000000000^3171"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/odbcconfigure.o odbcconfigure.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/igorkorot/dbhandler/dbhandler/dialogs    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -stdlib=libstdc++ -fmodules -fmodules-cache-path=/Users/igorkorot/Library/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -DDEBUG=1 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXMAC__ -D__WXOSX__ -D__WXOSX_COCOA__ -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-generated-files.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-own-target-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-all-target-headers.hmap -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-project-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/igorkorot/wxWidgets/buildMac/lib/wx/include/osx_cocoa-unicode-3.1 -I/Users/igorkorot/wxWidgets/include -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/DerivedSources/x86_64 -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/DerivedSources -F/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -MMD -MT dependencies -MF /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/odbcconfigure.d --serialize-diagnostics /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/odbcconfigure.dia -c /Users/igorkorot/dbhandler/dbhandler/dialogs/odbcconfigure.cpp -o /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/odbcconfigure.o36"FBE02FEE-8802-4157-B920-E9D252A11981-
+b6980E92B-B82B-48F2-AB7F-B9A9E898DB44
+
+CCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/selecttables.o /Users/igorkorot/dbhandler/dbhandler/dialogs/selecttables.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s480736610.187124
+e480736613.195555
+r0
+xCompileC
+x/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/selecttables.o
+x/Users/igorkorot/dbhandler/dbhandler/dialogs/selecttables.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+o/Users/igorkorot/dbhandler/dbhandler/dialogs/selecttables.cpp:30:10: fatal error: 'sqlext.h' file not found
+o#include <sqlext.h>
+o         ^
+o1 error generated.
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection69"Compile /Users/igorkorot/dbhandler/dbhandler/dialogs/selecttables.cpp215"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/selecttables.o selecttables.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler6807306275a7bc41^5a2f326575a7bc41^-158"/Users/igorkorot/dbhandler/dbhandler/dialogs/selecttables.cpp:30:10: fatal error: 'sqlext.h' file not found#include <sqlext.h>         ^1 error generated.-0#0#1#-19%DVTDocumentLocation2@77"file://localhost/Users/igorkorot/dbhandler/dbhandler/dialogs/selecttables.cpp0000000000000000^3165"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/selecttables.o selecttables.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/igorkorot/dbhandler/dbhandler/dialogs    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -stdlib=libstdc++ -fmodules -fmodules-cache-path=/Users/igorkorot/Library/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -DDEBUG=1 -D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXMAC__ -D__WXOSX__ -D__WXOSX_COCOA__ -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-generated-files.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-own-target-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-all-target-headers.hmap -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/dialogs-project-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/igorkorot/wxWidgets/buildMac/lib/wx/include/osx_cocoa-unicode-3.1 -I/Users/igorkorot/wxWidgets/include -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/DerivedSources/x86_64 -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/DerivedSources -F/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -MMD -MT dependencies -MF /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/selecttables.d --serialize-diagnostics /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/selecttables.dia -c /Users/igorkorot/dbhandler/dbhandler/dialogs/selecttables.cpp -o /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dialogs.build/Debug/dialogs.build/Objects-normal/x86_64/selecttables.o36"AB0B344C-3DF4-4F13-892F-E3DDD20560B1-
+b6980E92B-B82B-48F2-AB7F-B9A9E898DB44
+
+CLd /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libdialogs.dylib normal x86_64
+r0
+

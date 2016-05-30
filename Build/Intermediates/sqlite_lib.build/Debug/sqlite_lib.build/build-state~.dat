@@ -1,0 +1,91 @@
+Tsqlite_lib
+v6
+r1
+cCheck dependencies
+cCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cLd /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib normal x86_64
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk
+c00000000530295C100000000000000AA
+t1392678337
+s170
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/SDKSettings.plist
+c00000000533B9F35000000000000044C
+t1396416309
+s1100
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/CoreServices/SystemVersion.plist
+c00000000533B9F3500000000000001DE
+t1396416309
+s478
+
+N/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/include/module.map
+c00000000533B6DFC0000000000000ADC
+t1396403708
+s2780
+
+N/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o
+t1459031817
+s82772
+
+N/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite_lib.LinkFileList
+c0000000056F70F090000000000000089
+t1459031817
+s137
+
+N/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib
+t2
+s0
+
+N/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp
+c0000000056F6DAA200000000000032A2
+t1459018402
+s12962
+
+CBuild AST from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp
+r0
+
+CCheck dependencies
+r0
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies18"Check dependencies03b22f8946a7bc41^293e328946a7bc41^---0#1#1#--18"Check dependencies36"4036DE41-542E-4C1C-9EF7-725FDA5F45B9-
+
+CCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s480724617.198749
+e480724617.494475
+r1
+xCompileC
+x/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o
+x/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+d/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp
+d/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.h
+d/Users/igorkorot/dbhandler/dbhandler/dbinterface/database.h
+d/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.h
+o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp:285:48: warning: unused variable 'stmt3' [-Wunused-variable]
+o    sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL;
+o                                               ^
+o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp:289:51: warning: implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'int' [-Wshorten-64-to-32]
+o    if( sqlite3_prepare_v2( m_db, query1.c_str(), query1.length(), &stmt, 0 ) == SQLITE_OK )
+o        ~~~~~~~~~~~~~~~~~~                        ^~~~~~~~~~~~~~~
+o2 warnings generated.
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection75"Compile /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp227"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o database_sqlite.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler7eff328946a7bc41^c0977e8946a7bc41^-614"/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp:285:48: warning: unused variable 'stmt3' [-Wunused-variable]    sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL;                                               ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp:289:51: warning: implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'int' [-Wshorten-64-to-32]    if( sqlite3_prepare_v2( m_db, query1.c_str(), query1.length(), &stmt, 0 ) == SQLITE_OK )        ~~~~~~~~~~~~~~~~~~                        ^~~~~~~~~~~~~~~2 warnings generated.2(36%IDEClangDiagnosticActivityLogMessage2@23"Unused variable 'stmt3'-480724617#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@83"file://localhost/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp0000000000000000^284#47#284#47#11104#0#19"Unused Entity Issue--2@87"Implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'int'-480724617#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic3@83"file://localhost/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp0000000000000000^288#50#288#50#11361#0#22"Value Conversion Issue2(3@83"file://localhost/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp0000000000000000^288#50#288#65#11361#14#3@83"file://localhost/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp0000000000000000^288#8#288#26#11319#0#-0#0#1#-19%DVTDocumentLocation4@83"file://localhost/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp0000000000000000^3078"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o database_sqlite.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/igorkorot/dbhandler/dbhandler/sqlite_lib    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -stdlib=libstdc++ -fmodules -fmodules-cache-path=/Users/igorkorot/Library/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/sqlite_lib-generated-files.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/sqlite_lib-own-target-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/sqlite_lib-all-target-headers.hmap -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/sqlite_lib-project-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I../dbinterface -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/DerivedSources/x86_64 -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/DerivedSources -F/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -MMD -MT dependencies -MF /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.d --serialize-diagnostics /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.dia -c /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp -o /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o36"B1F39823-686E-4CFC-8D9F-4663BB3E2B60-
+bAF247D1B-EE20-4C64-A85A-D28622708A21
+
+CLd /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib normal x86_64
+s480724617.503638
+e480724617.532774
+r0
+xLd
+x/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib
+xnormal
+xx86_64
+d/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite_lib.LinkFileList
+old: library not found for -ldbinterface.a
+oclang: error: linker command failed with exit code 1 (use -v to see invocation)
+lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection82"Link /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib94"Ld /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib normal x86_645307818946a7bc41^1f65888946a7bc41^-122"ld: library not found for -ldbinterface.aclang: error: linker command failed with exit code 1 (use -v to see invocation)2(21%IDEActivityLogMessage2@37"Library not found for -ldbinterface.a-480724617#0#42#-0#-23%DVTTextDocumentLocation3@-0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#31"Apple Mach-O Linker (ld) Notice--2@65"Linker command failed with exit code 1 (use -v to see invocation)-480724617#42#80#-2#-3@-0000000000000000^18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#18446744073709551615#0#30"Apple Mach-O Linker (ld) Error--0#0#1#--1131"Ld /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib normal x86_64    cd /Users/igorkorot/dbhandler/dbhandler/sqlite_lib    export MACOSX_DEPLOYMENT_TARGET=10.8    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -arch x86_64 -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -L/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -F/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -filelist /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite_lib.LinkFileList -install_name /usr/local/lib/libsqlite_lib.dylib -mmacosx-version-min=10.8 -ldbinterface.a -stdlib=libstdc++ -single_module -compatibility_version 1 -current_version 1 -Xlinker -dependency_info -Xlinker /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite_lib_dependency_info.dat -o /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib36"6E9260B3-6F57-4CD2-AC47-FE660713E9B0-
+bAF247D1B-EE20-4C64-A85A-D28622708A21
+
