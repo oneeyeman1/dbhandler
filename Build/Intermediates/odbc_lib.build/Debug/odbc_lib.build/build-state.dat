@@ -1,395 +1,0 @@
-Todbc_lib
-v6
-r1
-cCheck dependencies
-cCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o /Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-cLd /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libodbc_lib.dylib normal x86_64
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk
-c00000000530295C100000000000000AA
-t1392678337
-s170
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/SDKSettings.plist
-c00000000533B9F35000000000000044C
-t1396416309
-s1100
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/CoreServices/SystemVersion.plist
-c00000000533B9F3500000000000001DE
-t1396416309
-s478
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libSystem.dylib
-c00000000533B9F45000000000000681C
-t1396416325
-s26652
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libc++.dylib
-c00000000533B9F45000000000006E8B0
-t1396416325
-s452784
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libstdc++.dylib
-c00000000533B9F4600000000000A2A44
-t1396416326
-s666180
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcache.dylib
-c00000000533B9F460000000000004734
-t1396416326
-s18228
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcommonCrypto.dylib
-c00000000533B9F46000000000000FC6C
-t1396416326
-s64620
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcompiler_rt.dylib
-c00000000533B9F46000000000000F6A0
-t1396416326
-s63136
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcopyfile.dylib
-c00000000533B9F460000000000006254
-t1396416326
-s25172
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcorecrypto.dylib
-c00000000533B9F46000000000000E0F8
-t1396416326
-s57592
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdispatch.dylib
-c00000000533B9F46000000000000D6DC
-t1396416326
-s55004
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdyld.dylib
-c00000000533B9F460000000000006308
-t1396416326
-s25352
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libkeymgr.dylib
-c00000000533B9F460000000000004050
-t1396416326
-s16464
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/liblaunch.dylib
-c00000000533B9F460000000000008570
-t1396416326
-s34160
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libmacho.dylib
-c00000000533B9F460000000000005EA0
-t1396416326
-s24224
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libquarantine.dylib
-c00000000533B9F460000000000005FAC
-t1396416326
-s24492
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libremovefile.dylib
-c00000000533B9F460000000000004440
-t1396416326
-s17472
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_asl.dylib
-c00000000533B9F46000000000000AA28
-t1396416326
-s43560
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_blocks.dylib
-c00000000533B9F460000000000003E2C
-t1396416326
-s15916
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_c.dylib
-c00000000533B9F460000000000030B04
-t1396416326
-s199428
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_configuration.dylib
-c00000000533B9F460000000000005E54
-t1396416326
-s24148
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_dnssd.dylib
-c00000000533B9F460000000000006A90
-t1396416326
-s27280
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_info.dylib
-c00000000533B9F4600000000000178AC
-t1396416326
-s96428
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_kernel.dylib
-c00000000533B9F46000000000001ADC8
-t1396416326
-s110024
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_m.dylib
-c00000000533B9F46000000000001028C
-t1396416326
-s66188
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_malloc.dylib
-c00000000533B9F460000000000008800
-t1396416326
-s34816
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_network.dylib
-c00000000533B9F460000000000011090
-t1396416326
-s69776
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_notify.dylib
-c00000000533B9F46000000000000882C
-t1396416326
-s34860
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_platform.dylib
-c00000000533B9F4600000000000067AC
-t1396416326
-s26540
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_pthread.dylib
-c00000000533B9F460000000000008DEC
-t1396416326
-s36332
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_sandbox.dylib
-c00000000533B9F460000000000004C08
-t1396416326
-s19464
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_stats.dylib
-c00000000533B9F460000000000002428
-t1396416326
-s9256
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunc.dylib
-c00000000533B9F46000000000000439C
-t1396416326
-s17308
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunwind.dylib
-c00000000533B9F460000000000006768
-t1396416326
-s26472
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libxpc.dylib
-c00000000533B9F4600000000000172F4
-t1396416326
-s94964
-
-N/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/include/module.map
-c00000000533B6DFC0000000000000ADC
-t1396403708
-s2780
-
-N/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/lib/darwin/libclang_rt.osx.a
-c00000000533B9F790000000000001770
-t1396416377
-s6000
-
-N/Library/Frameworks/iODBC.framework/Headers/iodbcunix.h
-c00000000552D13730000000000001260
-t1429017459
-s4704
-
-N/Library/Frameworks/iODBC.framework/Headers/sql.h
-c00000000552D13730000000000007A46
-t1429017459
-s31302
-
-N/Library/Frameworks/iODBC.framework/Headers/sqlext.h
-c00000000552D13730000000000011411
-t1429017459
-s70673
-
-N/Library/Frameworks/iODBC.framework/Headers/sqltypes.h
-c00000000552D137300000000000026EA
-t1429017459
-s9962
-
-N/Library/Frameworks/iODBC.framework/Headers/sqlucode.h
-c00000000552D137300000000000058E3
-t1429017459
-s22755
-
-N/Library/Frameworks/iODBC.framework/iODBC
-c00000000552D136D0000000000089AD4
-t1429017453
-s563924
-
-N/Library/Frameworks/iodbc.framework/Headers/sql.h
-c00000000552D13730000000000007A46
-t1429017459
-s31302
-
-N/Library/Frameworks/iodbc.framework/Headers/sqlext.h
-c00000000552D13730000000000011411
-t1429017459
-s70673
-
-N/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o
-t1463698823
-s516948
-
-N/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/odbc_lib.LinkFileList
-c0000000056F734000000000000000083
-t1459041280
-s131
-
-N/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libdbinterface.a
-c0000000056F70F39000000000002F3F8
-t1459031865
-s193528
-
-N/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libodbc_lib.dylib
-t1463698823
-s258492
-
-N/Users/igorkorot/dbhandler/dbhandler/dbinterface/database.h
-c00000000573BE16B0000000000000DF0
-t1463542123
-s3568
-
-N/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp
-c00000000573E4586000000000000D8FA
-t1463698822
-s55546
-
-N/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.h
-c00000000573BD336000000000000057D
-t1463538486
-s1405
-
-CBuild AST from /Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp
-r0
-
-CCheck dependencies
-r0
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies18"Check dependenciesd2523175fdfbbc41^310a3275fdfbbc41^---0#1#1#--18"Check dependencies36"2DBEE3B7-E459-424A-96F4-3E462059A89E-
-
-CCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o /Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-s485391623.064365
-e485391623.676650
-r1
-xCompileC
-x/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o
-x/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp
-xnormal
-xx86_64
-xc++
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp
-d/Library/Frameworks/iODBC.framework/Headers/sqlext.h
-d/Library/Frameworks/iODBC.framework/Headers/sql.h
-d/Library/Frameworks/iODBC.framework/Headers/sqltypes.h
-d/Library/Frameworks/iODBC.framework/Headers/sqlucode.h
-d/Users/igorkorot/dbhandler/dbhandler/dbinterface/database.h
-d/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.h
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:112:9: warning: expression result unused [-Wunused-value]
-o        *dest++;
-o        ^~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:117:9: warning: expression result unused [-Wunused-value]
-o        *dest++;
-o        ^~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:118:9: warning: expression result unused [-Wunused-value]
-o        *temp++;
-o        ^~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:143:9: warning: expression result unused [-Wunused-value]
-o        *dest++;
-o        ^~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:925:55: warning: implicit conversion loses integer precision: 'SQLINTEGER' (aka 'long') to 'int' [-Wshorten-64-to-32]
-o                                                        fields.push_back( Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, autoinc_fields.find( szColumnName ) == autoinc_fields.end(), pk_fields.find( szColumnName ) == pk_fields.end() ) );
-o                                                                          ~~~~~                        ^~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:579:56: warning: variable 'catalogName' may be uninitialized when used here [-Wconditional-uninitialized]
-o                        ret = SQLPrimaryKeys( stmt_pk, catalogName, SQL_NTS, schemaName, SQL_NTS, tableName, SQL_NTS );
-o                                                       ^~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:335:26: note: initialize the variable 'catalogName' to silence this warning
-o    SQLWCHAR *catalogName, *schemaName, *tableName;
-o                         ^
-o                          = NULL
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:413:51: warning: variable 'schemaName' may be uninitialized when used here [-Wconditional-uninitialized]
-o                        size += GetSQLStringSize( schemaName );
-o                                                  ^~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:335:39: note: initialize the variable 'schemaName' to silence this warning
-o    SQLWCHAR *catalogName, *schemaName, *tableName;
-o                                      ^
-o                                       = NULL
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:412:54: warning: variable 'tableName' may be uninitialized when used here [-Wconditional-uninitialized]
-o                        int size = GetSQLStringSize( tableName );
-o                                                     ^~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:335:51: note: initialize the variable 'tableName' to silence this warning
-o    SQLWCHAR *catalogName, *schemaName, *tableName;
-o                                                  ^
-o                                                   = NULL
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:1134:114: warning: variable 'update_constraint' may be uninitialized when used here [-Wconditional-uninitialized]
-o                            foreign_keys[keySequence].push_back( FKField( fkTable, primaryKey, fkName, fkSchema, update_constraint, delete_constraint ) );
-o                                                                                                                 ^~~~~~~~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:1098:29: note: variable 'update_constraint' is declared here
-o                            FK_ONUPDATE update_constraint;
-o                            ^
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:1134:133: warning: variable 'delete_constraint' may be uninitialized when used here [-Wconditional-uninitialized]
-o                            foreign_keys[keySequence].push_back( FKField( fkTable, primaryKey, fkName, fkSchema, update_constraint, delete_constraint ) );
-o                                                                                                                                    ^~~~~~~~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:1099:29: note: variable 'delete_constraint' is declared here
-o                            FK_ONDELETE delete_constraint;
-o                            ^
-o10 warnings generated.
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection71"Compile /Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp219"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o database_odbc.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler3d9c10077deebc41^6539ad077deebc41^-4366"/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:112:9: warning: expression result unused [-Wunused-value]        *dest++;        ^~~~~~~/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:117:9: warning: expression result unused [-Wunused-value]        *dest++;        ^~~~~~~/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:118:9: warning: expression result unused [-Wunused-value]        *temp++;        ^~~~~~~/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:143:9: warning: expression result unused [-Wunused-value]        *dest++;        ^~~~~~~/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:925:55: warning: implicit conversion loses integer precision: 'SQLINTEGER' (aka 'long') to 'int' [-Wshorten-64-to-32]                                                        fields.push_back( Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, autoinc_fields.find( szColumnName ) == autoinc_fields.end(), pk_fields.find( szColumnName ) == pk_fields.end() ) );                                                                          ~~~~~                        ^~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:579:56: warning: variable 'catalogName' may be uninitialized when used here [-Wconditional-uninitialized]                        ret = SQLPrimaryKeys( stmt_pk, catalogName, SQL_NTS, schemaName, SQL_NTS, tableName, SQL_NTS );                                                       ^~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:335:26: note: initialize the variable 'catalogName' to silence this warning    SQLWCHAR *catalogName, *schemaName, *tableName;                         ^                          = NULL/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:413:51: warning: variable 'schemaName' may be uninitialized when used here [-Wconditional-uninitialized]                        size += GetSQLStringSize( schemaName );                                                  ^~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:335:39: note: initialize the variable 'schemaName' to silence this warning    SQLWCHAR *catalogName, *schemaName, *tableName;                                      ^                                       = NULL/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:412:54: warning: variable 'tableName' may be uninitialized when used here [-Wconditional-uninitialized]                        int size = GetSQLStringSize( tableName );                                                     ^~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:335:51: note: initialize the variable 'tableName' to silence this warning    SQLWCHAR *catalogName, *schemaName, *tableName;                                                  ^                                                   = NULL/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:1134:114: warning: variable 'update_constraint' may be uninitialized when used here [-Wconditional-uninitialized]                            foreign_keys[keySequence].push_back( FKField( fkTable, primaryKey, fkName, fkSchema, update_constraint, delete_constraint ) );                                                                                                                 ^~~~~~~~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:1098:29: note: variable 'update_constraint' is declared here                            FK_ONUPDATE update_constraint;                            ^/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:1134:133: warning: variable 'delete_constraint' may be uninitialized when used here [-Wconditional-uninitialized]                            foreign_keys[keySequence].push_back( FKField( fkTable, primaryKey, fkName, fkSchema, update_constraint, delete_constraint ) );                                                                                                                                    ^~~~~~~~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:1099:29: note: variable 'delete_constraint' is declared here                            FK_ONDELETE delete_constraint;                            ^10 warnings generated.10(36%IDEClangDiagnosticActivityLogMessage2@24"Expression result unused-485391623#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^111#8#111#8#2625#0#19"Unused Entity Issue1(3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^111#9#111#15#2626#4#-2@24"Expression result unused-485391623#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^116#8#116#8#2701#0#19"Unused Entity Issue1(3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^116#9#116#15#2702#4#-2@24"Expression result unused-485391623#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^117#8#117#8#2719#0#19"Unused Entity Issue1(3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^117#9#117#15#2720#4#-2@24"Expression result unused-485391623#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^142#8#142#8#3180#0#19"Unused Entity Issue1(3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^142#9#142#15#3181#4#-2@79"Implicit conversion loses integer precision: 'SQLINTEGER' (aka 'long') to 'int'-485391623#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^924#54#924#54#41262#0#22"Value Conversion Issue2(3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^924#54#924#64#41262#0#3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^924#25#924#30#41233#0#-2@58"Variable 'catalogName' may be uninitialized when used here-485391623#18446744073709551615#0#1(2@61"Initialize the variable 'catalogName' to silence this warning-485391623#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^334#25#334#25#9546#0#14"Semantic Issue1(3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^334#25#334#25#9546#0#-1#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^578#55#578#55#22763#0#14"Semantic Issue1(3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^578#55#578#66#22763#0#-2@57"Variable 'schemaName' may be uninitialized when used here-485391623#18446744073709551615#0#1(2@60"Initialize the variable 'schemaName' to silence this warning-485391623#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^334#38#334#38#9559#0#14"Semantic Issue1(3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^334#38#334#38#9559#0#-1#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^412#50#412#50#13919#0#14"Semantic Issue1(3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^412#50#412#60#13919#0#-2@56"Variable 'tableName' may be uninitialized when used here-485391623#18446744073709551615#0#1(2@59"Initialize the variable 'tableName' to silence this warning-485391623#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^334#50#334#50#9571#0#14"Semantic Issue1(3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^334#50#334#50#9571#0#-1#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^411#53#411#53#13855#0#14"Semantic Issue1(3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^411#53#411#62#13855#0#-2@64"Variable 'update_constraint' may be uninitialized when used here-485391623#18446744073709551615#0#1(2@45"Variable 'update_constraint' is declared here-485391623#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^1097#28#1097#28#49615#0#14"Semantic Issue--1#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^1133#113#1133#113#51685#0#14"Semantic Issue1(3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^1133#113#1133#130#51685#0#-2@64"Variable 'delete_constraint' may be uninitialized when used here-485391623#18446744073709551615#0#1(2@45"Variable 'delete_constraint' is declared here-485391623#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^1098#28#1098#28#49675#0#14"Semantic Issue--1#27"com.apple.dt.IDE.diagnostic3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^1133#132#1133#132#51704#0#14"Semantic Issue1(3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^1133#132#1133#149#51704#0#-0#0#1#-19%DVTDocumentLocation4@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^3071"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o database_odbc.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/igorkorot/dbhandler/dbhandler/odbc_lib    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -stdlib=libstdc++ -fmodules -fmodules-cache-path=/Users/igorkorot/Library/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -DDEBUG=1 -DUNICODE -D_IODBCUNIX_H -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/odbc_lib-generated-files.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/odbc_lib-own-target-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/odbc_lib-all-target-headers.hmap -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/odbc_lib-project-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I../dbinterface -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/DerivedSources/x86_64 -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/DerivedSources -F/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -F/Library/Frameworks -MMD -MT dependencies -MF /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.d --serialize-diagnostics /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.dia -c /Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp -o /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o36"E56BF514-2610-43AA-9EEC-5A1E41D184B5-
-bDBD28B96-9F04-4A8F-AA5E-15466A1F832B
-
-CLd /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libodbc_lib.dylib normal x86_64
-s485391623.686710
-e485391623.730776
-r1
-xLd
-x/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libodbc_lib.dylib
-xnormal
-xx86_64
-d/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/odbc_lib.LinkFileList
-d/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o
-d/Library/Frameworks/iODBC.framework/iODBC
-d/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libdbinterface.a
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libstdc++.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libSystem.dylib
-d/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/lib/darwin/libclang_rt.osx.a
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcache.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcommonCrypto.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcompiler_rt.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcopyfile.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcorecrypto.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdispatch.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdyld.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libkeymgr.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/liblaunch.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libmacho.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libquarantine.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libremovefile.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_asl.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_blocks.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_c.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_configuration.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_dnssd.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_info.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_kernel.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_m.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_malloc.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_network.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_notify.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_platform.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_pthread.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_sandbox.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_stats.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunc.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunwind.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libxpc.dylib
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection80"Link /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libodbc_lib.dylib92"Ld /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libodbc_lib.dylib normal x86_64e6e6af077deebc41^8714bb077deebc41^---0#0#1#--1148"Ld /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libodbc_lib.dylib normal x86_64    cd /Users/igorkorot/dbhandler/dbhandler/odbc_lib    export MACOSX_DEPLOYMENT_TARGET=10.8    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -arch x86_64 -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -L/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -F/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -F/Library/Frameworks -filelist /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/odbc_lib.LinkFileList -install_name /usr/local/lib/libodbc_lib.dylib -mmacosx-version-min=10.8 -stdlib=libstdc++ -framework iODBC -ldbinterface -single_module -compatibility_version 1 -current_version 1 -Xlinker -dependency_info -Xlinker /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/odbc_lib_dependency_info.dat -o /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libodbc_lib.dylib36"2DB4EDA7-8EF2-40F2-9B0B-8C14DB4BBFEF-
-bDBD28B96-9F04-4A8F-AA5E-15466A1F832B
-

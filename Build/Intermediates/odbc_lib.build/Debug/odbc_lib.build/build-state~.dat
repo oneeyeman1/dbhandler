@@ -1,58 +1,0 @@
-Todbc_lib
-v6
-r1
-cCheck dependencies
-cCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o /Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/SDKSettings.plist
-c00000000533B9F35000000000000044C
-t1396416309
-s1100
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/CoreServices/SystemVersion.plist
-c00000000533B9F3500000000000001DE
-t1396416309
-s478
-
-N/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/include/module.map
-c00000000533B6DFC0000000000000ADC
-t1396403708
-s2780
-
-N/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o
-t2
-s0
-
-N/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp
-c0000000056BEBC260000000000002944
-t1455340582
-s10564
-
-CBuild AST from /Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp
-r0
-
-CCheck dependencies
-r0
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies18"Check dependenciesd6c743806ba7bc41^507346806ba7bc41^---0#1#1#--18"Check dependencies36"840944E5-E60A-4282-BFB9-C8C68DFE19B2-
-
-CCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o /Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-s480734080.277253
-e480734080.710552
-r0
-xCompileC
-x/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o
-x/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp
-xnormal
-xx86_64
-xc++
-xcom.apple.compilers.llvm.clang.1_0.compiler
-o/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:6:10: fatal error: 'database.h' file not found
-o#include "database.h"
-o         ^
-o1 error generated.
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection71"Compile /Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp219"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o database_odbc.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compilerc30e47806ba7bc41^79e6b5806ba7bc41^-163"/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp:6:10: fatal error: 'database.h' file not found#include "database.h"         ^1 error generated.1(36%IDEClangDiagnosticActivityLogMessage2@27"'database.h' file not found-480734080#18446744073709551615#0#-2#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^5#9#5#9#109#0#29"Lexical or Preprocessor Issue--0#0#1#-19%DVTDocumentLocation4@79"file://localhost/Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp0000000000000000^3007"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o database_odbc.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/igorkorot/dbhandler/dbhandler/odbc_lib    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu++11 -stdlib=libc++ -fmodules -fmodules-cache-path=/Users/igorkorot/Library/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/odbc_lib-generated-files.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/odbc_lib-own-target-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/odbc_lib-all-target-headers.hmap -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/odbc_lib-project-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/DerivedSources/x86_64 -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/DerivedSources -F/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -MMD -MT dependencies -MF /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.d --serialize-diagnostics /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.dia -c /Users/igorkorot/dbhandler/dbhandler/odbc_lib/database_odbc.cpp -o /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/odbc_lib.build/Debug/odbc_lib.build/Objects-normal/x86_64/database_odbc.o36"C729069C-7D73-4A59-8547-3C22A4F59677-
-b598A325F-3FB9-45AD-BC54-A29C19C7CEED
-
-CLd /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libodbc_lib.dylib normal x86_64
-r0
-

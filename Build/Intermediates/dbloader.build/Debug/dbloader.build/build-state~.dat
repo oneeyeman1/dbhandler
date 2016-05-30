@@ -1,58 +1,0 @@
-Tdbloader
-v6
-r1
-cCheck dependencies
-cCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/Objects-normal/x86_64/dbloader.o /Users/igorkorot/dbhandler/dbhandler/dbloader/dbloader.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/SDKSettings.plist
-c00000000533B9F35000000000000044C
-t1396416309
-s1100
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/CoreServices/SystemVersion.plist
-c00000000533B9F3500000000000001DE
-t1396416309
-s478
-
-N/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/include/module.map
-c00000000533B6DFC0000000000000ADC
-t1396403708
-s2780
-
-N/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/Objects-normal/x86_64/dbloader.o
-t2
-s0
-
-N/Users/igorkorot/dbhandler/dbhandler/dbloader/dbloader.cpp
-c00000000573BE21700000000000011F4
-t1463542295
-s4596
-
-CBuild AST from /Users/igorkorot/dbhandler/dbhandler/dbloader/dbloader.cpp
-r0
-
-CCheck dependencies
-r0
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies18"Check dependenciesafcd4ed43af2bc41^933952d43af2bc41^---0#1#1#--18"Check dependencies36"D1F1CD4B-5F14-4D46-A456-7827873BE82E-
-
-CCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/Objects-normal/x86_64/dbloader.o /Users/igorkorot/dbhandler/dbhandler/dbloader/dbloader.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-s485636820.324071
-e485636820.873441
-r0
-xCompileC
-x/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/Objects-normal/x86_64/dbloader.o
-x/Users/igorkorot/dbhandler/dbhandler/dbloader/dbloader.cpp
-xnormal
-xx86_64
-xc++
-xcom.apple.compilers.llvm.clang.1_0.compiler
-o/Users/igorkorot/dbhandler/dbhandler/dbloader/dbloader.cpp:18:10: fatal error: 'wx/wx.h' file not found
-o#include "wx/wx.h"
-o         ^
-o1 error generated.
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection66"Compile /Users/igorkorot/dbhandler/dbhandler/dbloader/dbloader.cpp209"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/Objects-normal/x86_64/dbloader.o dbloader.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler151b53d43af2bc41^5b9adfd43af2bc41^-153"/Users/igorkorot/dbhandler/dbhandler/dbloader/dbloader.cpp:18:10: fatal error: 'wx/wx.h' file not found#include "wx/wx.h"         ^1 error generated.1(36%IDEClangDiagnosticActivityLogMessage2@24"'wx/wx.h' file not found-485636820#18446744073709551615#0#-2#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@74"file://localhost/Users/igorkorot/dbhandler/dbhandler/dbloader/dbloader.cpp0000000000000000^17#9#17#9#270#0#29"Lexical or Preprocessor Issue--0#0#1#-19%DVTDocumentLocation4@74"file://localhost/Users/igorkorot/dbhandler/dbhandler/dbloader/dbloader.cpp0000000000000000^2977"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/Objects-normal/x86_64/dbloader.o dbloader.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/igorkorot/dbhandler/dbhandler/dbloader    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu++11 -stdlib=libc++ -fmodules -fmodules-cache-path=/Users/igorkorot/Library/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/dbloader-generated-files.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/dbloader-own-target-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/dbloader-all-target-headers.hmap -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/dbloader-project-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/DerivedSources/x86_64 -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/DerivedSources -F/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -MMD -MT dependencies -MF /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/Objects-normal/x86_64/dbloader.d --serialize-diagnostics /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/Objects-normal/x86_64/dbloader.dia -c /Users/igorkorot/dbhandler/dbhandler/dbloader/dbloader.cpp -o /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/dbloader.build/Debug/dbloader.build/Objects-normal/x86_64/dbloader.o36"24FEC2D4-97ED-4D57-8B10-801FB2926813-
-b9F111CA9-B381-4155-B4C4-72072E6CB655
-
-CLd /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libdbloader.dylib normal x86_64
-r0
-

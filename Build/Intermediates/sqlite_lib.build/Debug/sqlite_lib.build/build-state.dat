@@ -1,690 +1,0 @@
-Tsqlite_lib
-v6
-r1
-cCheck dependencies
-cCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite3.o /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c normal x86_64 c com.apple.compilers.llvm.clang.1_0.compiler
-cLd /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib normal x86_64
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk
-c00000000530295C100000000000000AA
-t1392678337
-s170
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/SDKSettings.plist
-c00000000533B9F35000000000000044C
-t1396416309
-s1100
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/CoreServices/SystemVersion.plist
-c00000000533B9F3500000000000001DE
-t1396416309
-s478
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libSystem.dylib
-c00000000533B9F45000000000000681C
-t1396416325
-s26652
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libc++.dylib
-c00000000533B9F45000000000006E8B0
-t1396416325
-s452784
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libstdc++.dylib
-c00000000533B9F4600000000000A2A44
-t1396416326
-s666180
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcache.dylib
-c00000000533B9F460000000000004734
-t1396416326
-s18228
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcommonCrypto.dylib
-c00000000533B9F46000000000000FC6C
-t1396416326
-s64620
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcompiler_rt.dylib
-c00000000533B9F46000000000000F6A0
-t1396416326
-s63136
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcopyfile.dylib
-c00000000533B9F460000000000006254
-t1396416326
-s25172
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcorecrypto.dylib
-c00000000533B9F46000000000000E0F8
-t1396416326
-s57592
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdispatch.dylib
-c00000000533B9F46000000000000D6DC
-t1396416326
-s55004
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdyld.dylib
-c00000000533B9F460000000000006308
-t1396416326
-s25352
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libkeymgr.dylib
-c00000000533B9F460000000000004050
-t1396416326
-s16464
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/liblaunch.dylib
-c00000000533B9F460000000000008570
-t1396416326
-s34160
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libmacho.dylib
-c00000000533B9F460000000000005EA0
-t1396416326
-s24224
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libquarantine.dylib
-c00000000533B9F460000000000005FAC
-t1396416326
-s24492
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libremovefile.dylib
-c00000000533B9F460000000000004440
-t1396416326
-s17472
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_asl.dylib
-c00000000533B9F46000000000000AA28
-t1396416326
-s43560
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_blocks.dylib
-c00000000533B9F460000000000003E2C
-t1396416326
-s15916
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_c.dylib
-c00000000533B9F460000000000030B04
-t1396416326
-s199428
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_configuration.dylib
-c00000000533B9F460000000000005E54
-t1396416326
-s24148
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_dnssd.dylib
-c00000000533B9F460000000000006A90
-t1396416326
-s27280
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_info.dylib
-c00000000533B9F4600000000000178AC
-t1396416326
-s96428
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_kernel.dylib
-c00000000533B9F46000000000001ADC8
-t1396416326
-s110024
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_m.dylib
-c00000000533B9F46000000000001028C
-t1396416326
-s66188
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_malloc.dylib
-c00000000533B9F460000000000008800
-t1396416326
-s34816
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_network.dylib
-c00000000533B9F460000000000011090
-t1396416326
-s69776
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_notify.dylib
-c00000000533B9F46000000000000882C
-t1396416326
-s34860
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_platform.dylib
-c00000000533B9F4600000000000067AC
-t1396416326
-s26540
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_pthread.dylib
-c00000000533B9F460000000000008DEC
-t1396416326
-s36332
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_sandbox.dylib
-c00000000533B9F460000000000004C08
-t1396416326
-s19464
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_stats.dylib
-c00000000533B9F460000000000002428
-t1396416326
-s9256
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunc.dylib
-c00000000533B9F46000000000000439C
-t1396416326
-s17308
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunwind.dylib
-c00000000533B9F460000000000006768
-t1396416326
-s26472
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libxpc.dylib
-c00000000533B9F4600000000000172F4
-t1396416326
-s94964
-
-N/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/include/module.map
-c00000000533B6DFC0000000000000ADC
-t1396403708
-s2780
-
-N/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/lib/darwin/libclang_rt.osx.a
-c00000000533B9F790000000000001770
-t1396416377
-s6000
-
-N/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o
-t1463698585
-s734608
-
-N/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite3.o
-t1460083035
-s1897908
-
-N/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite_lib.LinkFileList
-c0000000056F73155000000000000010A
-t1459040597
-s266
-
-N/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libdbinterface.a
-c0000000056F70F39000000000002F3F8
-t1459031865
-s193528
-
-N/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib
-t1463698585
-s1294976
-
-N/Users/igorkorot/dbhandler/dbhandler/dbinterface/database.h
-c00000000573BE16B0000000000000DF0
-t1463542123
-s3568
-
-N/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp
-c00000000573C5E87000000000000336E
-t1463574151
-s13166
-
-N/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.h
-c00000000573BD32D0000000000000265
-t1463538477
-s613
-
-N/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c
-c00000000563857B400000000006297B9
-t1446533044
-s6461369
-
-N/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.h
-c00000000563857B40000000000062F0F
-t1446533044
-s405263
-
-CBuild AST from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp
-r0
-
-CBuild AST from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c
-r0
-
-CCheck dependencies
-r0
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies18"Check dependenciesfd823175fdfbbc41^410e3275fdfbbc41^---0#1#1#--18"Check dependencies36"42B52240-5A03-45E1-99D0-D6FE097D1F1D-
-
-CCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-s485391384.614516
-e485391385.605668
-r1
-xCompileC
-x/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o
-x/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp
-xnormal
-xx86_64
-xc++
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp
-d/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.h
-d/Users/igorkorot/dbhandler/dbhandler/dbinterface/database.h
-d/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.h
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp:172:59: warning: implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'int' [-Wshorten-64-to-32]
-o    if( ( res = sqlite3_prepare_v2( m_db, query1.c_str(), query1.length(), &stmt, 0 ) ) == SQLITE_OK )
-o                ~~~~~~~~~~~~~~~~~~                        ^~~~~~~~~~~~~~~
-o1 warning generated.
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection75"Compile /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp227"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o database_sqlite.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler2c659d187ceebc41^4e0e9b197ceebc41^-392"/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp:172:59: warning: implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'int' [-Wshorten-64-to-32]    if( ( res = sqlite3_prepare_v2( m_db, query1.c_str(), query1.length(), &stmt, 0 ) ) == SQLITE_OK )                ~~~~~~~~~~~~~~~~~~                        ^~~~~~~~~~~~~~~1 warning generated.1(36%IDEClangDiagnosticActivityLogMessage2@87"Implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'int'-485391385#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@83"file://localhost/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp0000000000000000^171#58#171#58#4898#0#22"Value Conversion Issue2(3@83"file://localhost/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp0000000000000000^171#58#171#73#4898#14#3@83"file://localhost/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp0000000000000000^171#16#171#34#4856#0#-0#0#1#-19%DVTDocumentLocation4@83"file://localhost/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp0000000000000000^3199"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o database_sqlite.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/igorkorot/dbhandler/dbhandler/sqlite_lib    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=c++11 -stdlib=libc++ -fmodules -fmodules-cache-path=/Users/igorkorot/Library/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/sqlite_lib-generated-files.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/sqlite_lib-own-target-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/sqlite_lib-all-target-headers.hmap -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/sqlite_lib-project-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I../dbinterface -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/DerivedSources/x86_64 -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/DerivedSources -F/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -MMD -MT dependencies -MF /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.d --serialize-diagnostics /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.dia -c /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/database_sqlite.cpp -o /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o36"A938A64B-5986-4903-B8F9-EF935043AFDE-
-bDC7B9D3B-E6F0-4370-9FA9-C4ABBD04571E
-
-CCompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite3.o /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c normal x86_64 c com.apple.compilers.llvm.clang.1_0.compiler
-s481775833.087349
-e481775835.369961
-r1
-xCompileC
-x/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite3.o
-x/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c
-xnormal
-xx86_64
-xc
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:22623:13: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]
-o        if( MAX(e2,0)+(i64)precision+(i64)width > etBUFSIZE - 15 ){
-o            ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'
-o#define MAX(a,b) (((a)>(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'
-o#define MAX(A,B) ((A)>(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:22625:32: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]
-o              = sqlite3Malloc( MAX(e2,0)+(i64)precision+(i64)width+15 );
-o                               ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'
-o#define MAX(a,b) (((a)>(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'
-o#define MAX(A,B) ((A)>(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:27908:14: warning: implicit conversion loses integer precision: 'ssize_t' (aka 'long') to 'int' [-Wshorten-64-to-32]
-o    do{ rc = osWrite(fd, "S", 1); }while( rc<0 && errno==EINTR );
-o           ~ ^~~~~~~~~~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:27030:21: note: expanded from macro 'osWrite'
-o#define osWrite     ((ssize_t(*)(int,const void*,size_t))aSyscall[11].pCurrent)
-o                    ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:29627:42: warning: implicit conversion loses integer precision: 'unsigned long long' to 'int' [-Wshorten-64-to-32]
-o        int sharedLockByte = SHARED_FIRST+pInode->sharedByte;
-o            ~~~~~~~~~~~~~~   ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:29789:11: warning: implicit conversion loses integer precision: 'ssize_t' (aka 'long') to 'int' [-Wshorten-64-to-32]
-o    got = osRead(id->h, pBuf, cnt);
-o        ~ ^~~~~~~~~~~~~~~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:27013:21: note: expanded from macro 'osRead'
-o#define osRead      ((ssize_t(*)(int,void*,size_t))aSyscall[8].pCurrent)
-o                    ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:29844:35: warning: implicit conversion loses integer precision: 'long long' to 'int' [-Wshorten-64-to-32]
-o      int nCopy = pFile->mmapSize - offset;
-o          ~~~~~   ~~~~~~~~~~~~~~~~^~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:29901:10: warning: implicit conversion loses integer precision: 'ssize_t' (aka 'long') to 'int' [-Wshorten-64-to-32]
-o    rc = osWrite(fd, pBuf, nBuf);
-o       ~ ^~~~~~~~~~~~~~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:27030:21: note: expanded from macro 'osWrite'
-o#define osWrite     ((ssize_t(*)(int,const void*,size_t))aSyscall[11].pCurrent)
-o                    ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:29979:35: warning: implicit conversion loses integer precision: 'long long' to 'int' [-Wshorten-64-to-32]
-o      int nCopy = pFile->mmapSize - offset;
-o          ~~~~~   ~~~~~~~~~~~~~~~~^~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:31101:33: warning: implicit conversion loses integer precision: 'long long' to 'int' [-Wshorten-64-to-32]
-o          for(iPg=(sStat.st_size/pgsz); iPg<(nByte/pgsz); iPg++){
-o                 ~ ~~~~~~~~~~~~~^~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:32772:17: warning: implicit conversion loses integer precision: 'ssize_t' (aka 'long') to 'int' [-Wshorten-64-to-32]
-o      do{ got = osRead(fd, zBuf, nBuf); }while( got<0 && errno==EINTR );
-o              ~ ^~~~~~~~~~~~~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:27013:21: note: expanded from macro 'osRead'
-o#define osRead      ((ssize_t(*)(int,void*,size_t))aSyscall[8].pCurrent)
-o                    ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:33083:11: warning: implicit conversion loses integer precision: 'unsigned long' to 'int' [-Wshorten-64-to-32]
-o    len = strlcat(lPath, "sqliteplocks", maxLen);    
-o        ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:33091:11: warning: implicit conversion loses integer precision: 'unsigned long' to 'int' [-Wshorten-64-to-32]
-o    len = strlcat(lPath, "/", maxLen);
-o        ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:33384:19: warning: implicit conversion loses integer precision: 'ssize_t' (aka 'long') to 'int' [-Wshorten-64-to-32]
-o        int len = osPread(conchFile->h, tBuf, PROXY_MAXCONCHLEN, 0);
-o            ~~~   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:27020:21: note: expanded from macro 'osPread'
-o#define osPread     ((ssize_t(*)(int,void*,size_t,off_t))aSyscall[9].pCurrent)
-o                    ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:33547:37: warning: implicit conversion loses integer precision: 'unsigned long' to 'int' [-Wshorten-64-to-32]
-o        writeSize = PROXY_PATHINDEX + strlen(&writeBuffer[PROXY_PATHINDEX]);
-o                  ~ ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:33762:53: warning: implicit conversion loses integer precision: 'unsigned long' to 'int' [-Wshorten-64-to-32]
-o    int len = strlen((char *)pFile->lockingContext) - strlen(DOTLOCK_SUFFIX);
-o        ~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:56684:43: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]
-o      char *zFullPathname = sqlite3Malloc(MAX(nFullPathname,nFilename));
-o                                          ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'
-o#define MAX(a,b) (((a)>(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'
-o#define MAX(A,B) ((A)>(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:61122:16: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o    int nAdd = MIN(nNew,iOld-iNew);
-o               ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:64402:21: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o  const int nCopy = MIN(nSrcPgsz, nDestPgsz);
-o                    ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:64694:18: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o          iEnd = MIN(PENDING_BYTE + pgszDest, iSize);
-o                 ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:65866:44: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]
-o    if( sqlite3VdbeMemClearAndResize(pMem, MAX(nAlloc,32)) ){
-o                                           ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'
-o#define MAX(a,b) (((a)>(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'
-o#define MAX(A,B) ((A)>(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:70467:22: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o          int nCmp = MIN(mem1.n, pRhs->n);
-o                     ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:70488:22: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o          int nCmp = MIN(nStr, pRhs->n);
-o                     ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:70663:12: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o    nCmp = MIN( pPKey2->aMem[0].n, nStr );
-o           ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:72382:42: warning: implicit conversion loses integer precision: 'sqlite3_uint64' (aka 'unsigned long long') to 'int' [-Wshorten-64-to-32]
-o    rc = sqlite3_bind_zeroblob(pStmt, i, n);
-o         ~~~~~~~~~~~~~~~~~~~~~           ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:77388:42: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]
-o  if( sqlite3VdbeMemClearAndResize(pOut, MAX(n,32)) ){
-o                                         ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'
-o#define MAX(a,b) (((a)>(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'
-o#define MAX(A,B) ((A)>(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:75667:21: warning: implicit conversion loses integer precision: 'i64' (aka 'long long') to 'int' [-Wshorten-64-to-32]
-o    pOut->u.nZero = nZero;
-o                  ~ ^~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:80618:18: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]
-o      int nNew = MAX(128, p->nAlloc*2);
-o                 ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'
-o#define MAX(a,b) (((a)>(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'
-o#define MAX(A,B) ((A)>(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:80898:24: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o  res = memcmp(v1, v2, MIN(n1, n2));
-o                       ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:81072:28: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o      pSorter->mxPmaSize = MIN((i64)mxCache*pgsz, SQLITE_MAX_PMASZ);
-o                           ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:81072:44: warning: implicit conversion loses integer precision: 'long long' to 'int' [-Wshorten-64-to-32]
-o      pSorter->mxPmaSize = MIN((i64)mxCache*pgsz, SQLITE_MAX_PMASZ);
-o                         ~     ~~~~~~~~~~~~^~~~~
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:30: note: expanded from macro 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o                             ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:82061:19: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]
-o    pIncr->mxSz = MAX(pTask->pSorter->mxKeysize+9,pTask->pSorter->mxPmaSize/2);
-o                  ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'
-o#define MAX(a,b) (((a)>(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'
-o#define MAX(A,B) ((A)>(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:82509:21: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o          nReader = MIN(pTask->nPMA - i, SORTER_MAX_MERGE_COUNT);
-o                    ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:83161:17: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o    int nCopy = MIN(nRead, (JOURNAL_CHUNKSIZE - iChunkOffset));
-o                ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:83195:18: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o    int iSpace = MIN(nWrite, JOURNAL_CHUNKSIZE - iChunkOffset);
-o                 ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:91004:18: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]
-o  pParse->nMem = MAX(pParse->nMem, iMem);
-o                 ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'
-o#define MAX(a,b) (((a)>(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'
-o#define MAX(A,B) ((A)>(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:91035:18: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]
-o  pParse->nTab = MAX(pParse->nTab, iTab);
-o                 ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'
-o#define MAX(a,b) (((a)>(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'
-o#define MAX(A,B) ((A)>(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:91098:20: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]
-o    pParse->nMem = MAX(pParse->nMem, regPrev+nColTest);
-o                   ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'
-o#define MAX(a,b) (((a)>(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'
-o#define MAX(A,B) ((A)>(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:96203:15: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o  int nCopy = MIN(ArraySize(aVal), pIdx->nKeyCol);
-o              ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:105051:26: warning: implicit conversion loses integer precision: 'u64' (aka 'unsigned long long') to 'int' [-Wshorten-64-to-32]
-o        sqlite3_snprintf(nMsg, zErrmsg, 
-o        ~~~~~~~~~~~~~~~~ ^~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:105053:36: warning: implicit conversion loses integer precision: 'unsigned long long' to 'int' [-Wshorten-64-to-32]
-o        sqlite3OsDlError(pVfs, nMsg-1, zErrmsg);
-o        ~~~~~~~~~~~~~~~~       ~~~~^~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:105099:26: warning: implicit conversion loses integer precision: 'u64' (aka 'unsigned long long') to 'int' [-Wshorten-64-to-32]
-o        sqlite3_snprintf(nMsg, zErrmsg,
-o        ~~~~~~~~~~~~~~~~ ^~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:105101:36: warning: implicit conversion loses integer precision: 'unsigned long long' to 'int' [-Wshorten-64-to-32]
-o        sqlite3OsDlError(pVfs, nMsg-1, zErrmsg);
-o        ~~~~~~~~~~~~~~~~       ~~~~^~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:107250:22: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]
-o      pParse->nMem = MAX( pParse->nMem, cnt+8 );
-o                     ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'
-o#define MAX(a,b) (((a)>(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'
-o#define MAX(A,B) ((A)>(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:107287:24: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]
-o        pParse->nMem = MAX(pParse->nMem, 8+j);
-o                       ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'
-o#define MAX(a,b) (((a)>(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'
-o#define MAX(A,B) ((A)>(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:122066:14: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o  mxBitCol = MIN(BMS-1,pTable->nCol);
-o             ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:122155:28: warning: variable 'addrCounter' may be uninitialized when used here [-Wconditional-uninitialized]
-o    sqlite3VdbeChangeP2(v, addrCounter, regBase+n);
-o                           ^~~~~~~~~~~
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:122004:18: note: initialize the variable 'addrCounter' to silence this warning
-o  int addrCounter;            /* Address where integer counter is initialized */
-o                 ^
-o                  = 0
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:124929:19: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]
-o  aFrom[0].nRow = MIN(pParse->nQueryLoop, 48);  assert( 48==sqlite3LogEst(28) );
-o                  ^
-oIn module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:
-o/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'
-o#define MIN(a,b) (((a)<(b))?(a):(b))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'
-o#define MIN(A,B) ((A)<(B)?(A):(B))
-o        ^
-o/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9704:26: warning: unused variable 'sqlite3one' [-Wunused-const-variable]
-oSQLITE_PRIVATE const int sqlite3one = 1;
-o                         ^
-o48 warnings generated.
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection65"Compile /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c207"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite3.o sqlite3.c normal x86_64 c com.apple.compilers.llvm.clang.1_0.compiler257916d950b7bc41^07b65edb50b7bc41^-24840"/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:22623:13: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]        if( MAX(e2,0)+(i64)precision+(i64)width > etBUFSIZE - 15 ){            ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'#define MAX(a,b) (((a)>(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'#define MAX(A,B) ((A)>(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:22625:32: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]              = sqlite3Malloc( MAX(e2,0)+(i64)precision+(i64)width+15 );                               ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'#define MAX(a,b) (((a)>(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'#define MAX(A,B) ((A)>(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:27908:14: warning: implicit conversion loses integer precision: 'ssize_t' (aka 'long') to 'int' [-Wshorten-64-to-32]    do{ rc = osWrite(fd, "S", 1); }while( rc<0 && errno==EINTR );           ~ ^~~~~~~~~~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:27030:21: note: expanded from macro 'osWrite'#define osWrite     ((ssize_t(*)(int,const void*,size_t))aSyscall[11].pCurrent)                    ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:29627:42: warning: implicit conversion loses integer precision: 'unsigned long long' to 'int' [-Wshorten-64-to-32]        int sharedLockByte = SHARED_FIRST+pInode->sharedByte;            ~~~~~~~~~~~~~~   ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:29789:11: warning: implicit conversion loses integer precision: 'ssize_t' (aka 'long') to 'int' [-Wshorten-64-to-32]    got = osRead(id->h, pBuf, cnt);        ~ ^~~~~~~~~~~~~~~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:27013:21: note: expanded from macro 'osRead'#define osRead      ((ssize_t(*)(int,void*,size_t))aSyscall[8].pCurrent)                    ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:29844:35: warning: implicit conversion loses integer precision: 'long long' to 'int' [-Wshorten-64-to-32]      int nCopy = pFile->mmapSize - offset;          ~~~~~   ~~~~~~~~~~~~~~~~^~~~~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:29901:10: warning: implicit conversion loses integer precision: 'ssize_t' (aka 'long') to 'int' [-Wshorten-64-to-32]    rc = osWrite(fd, pBuf, nBuf);       ~ ^~~~~~~~~~~~~~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:27030:21: note: expanded from macro 'osWrite'#define osWrite     ((ssize_t(*)(int,const void*,size_t))aSyscall[11].pCurrent)                    ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:29979:35: warning: implicit conversion loses integer precision: 'long long' to 'int' [-Wshorten-64-to-32]      int nCopy = pFile->mmapSize - offset;          ~~~~~   ~~~~~~~~~~~~~~~~^~~~~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:31101:33: warning: implicit conversion loses integer precision: 'long long' to 'int' [-Wshorten-64-to-32]          for(iPg=(sStat.st_size/pgsz); iPg<(nByte/pgsz); iPg++){                 ~ ~~~~~~~~~~~~~^~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:32772:17: warning: implicit conversion loses integer precision: 'ssize_t' (aka 'long') to 'int' [-Wshorten-64-to-32]      do{ got = osRead(fd, zBuf, nBuf); }while( got<0 && errno==EINTR );              ~ ^~~~~~~~~~~~~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:27013:21: note: expanded from macro 'osRead'#define osRead      ((ssize_t(*)(int,void*,size_t))aSyscall[8].pCurrent)                    ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:33083:11: warning: implicit conversion loses integer precision: 'unsigned long' to 'int' [-Wshorten-64-to-32]    len = strlcat(lPath, "sqliteplocks", maxLen);            ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:33091:11: warning: implicit conversion loses integer precision: 'unsigned long' to 'int' [-Wshorten-64-to-32]    len = strlcat(lPath, "/", maxLen);        ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:33384:19: warning: implicit conversion loses integer precision: 'ssize_t' (aka 'long') to 'int' [-Wshorten-64-to-32]        int len = osPread(conchFile->h, tBuf, PROXY_MAXCONCHLEN, 0);            ~~~   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:27020:21: note: expanded from macro 'osPread'#define osPread     ((ssize_t(*)(int,void*,size_t,off_t))aSyscall[9].pCurrent)                    ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:33547:37: warning: implicit conversion loses integer precision: 'unsigned long' to 'int' [-Wshorten-64-to-32]        writeSize = PROXY_PATHINDEX + strlen(&writeBuffer[PROXY_PATHINDEX]);                  ~ ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:33762:53: warning: implicit conversion loses integer precision: 'unsigned long' to 'int' [-Wshorten-64-to-32]    int len = strlen((char *)pFile->lockingContext) - strlen(DOTLOCK_SUFFIX);        ~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:56684:43: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]      char *zFullPathname = sqlite3Malloc(MAX(nFullPathname,nFilename));                                          ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'#define MAX(a,b) (((a)>(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'#define MAX(A,B) ((A)>(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:61122:16: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]    int nAdd = MIN(nNew,iOld-iNew);               ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:64402:21: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]  const int nCopy = MIN(nSrcPgsz, nDestPgsz);                    ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:64694:18: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]          iEnd = MIN(PENDING_BYTE + pgszDest, iSize);                 ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:65866:44: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]    if( sqlite3VdbeMemClearAndResize(pMem, MAX(nAlloc,32)) ){                                           ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'#define MAX(a,b) (((a)>(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'#define MAX(A,B) ((A)>(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:70467:22: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]          int nCmp = MIN(mem1.n, pRhs->n);                     ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:70488:22: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]          int nCmp = MIN(nStr, pRhs->n);                     ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:70663:12: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]    nCmp = MIN( pPKey2->aMem[0].n, nStr );           ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:72382:42: warning: implicit conversion loses integer precision: 'sqlite3_uint64' (aka 'unsigned long long') to 'int' [-Wshorten-64-to-32]    rc = sqlite3_bind_zeroblob(pStmt, i, n);         ~~~~~~~~~~~~~~~~~~~~~           ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:77388:42: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]  if( sqlite3VdbeMemClearAndResize(pOut, MAX(n,32)) ){                                         ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'#define MAX(a,b) (((a)>(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'#define MAX(A,B) ((A)>(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:75667:21: warning: implicit conversion loses integer precision: 'i64' (aka 'long long') to 'int' [-Wshorten-64-to-32]    pOut->u.nZero = nZero;                  ~ ^~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:80618:18: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]      int nNew = MAX(128, p->nAlloc*2);                 ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'#define MAX(a,b) (((a)>(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'#define MAX(A,B) ((A)>(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:80898:24: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]  res = memcmp(v1, v2, MIN(n1, n2));                       ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:81072:28: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]      pSorter->mxPmaSize = MIN((i64)mxCache*pgsz, SQLITE_MAX_PMASZ);                           ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:81072:44: warning: implicit conversion loses integer precision: 'long long' to 'int' [-Wshorten-64-to-32]      pSorter->mxPmaSize = MIN((i64)mxCache*pgsz, SQLITE_MAX_PMASZ);                         ~     ~~~~~~~~~~~~^~~~~In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:30: note: expanded from macro 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))                             ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:82061:19: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]    pIncr->mxSz = MAX(pTask->pSorter->mxKeysize+9,pTask->pSorter->mxPmaSize/2);                  ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'#define MAX(a,b) (((a)>(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'#define MAX(A,B) ((A)>(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:82509:21: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]          nReader = MIN(pTask->nPMA - i, SORTER_MAX_MERGE_COUNT);                    ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:83161:17: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]    int nCopy = MIN(nRead, (JOURNAL_CHUNKSIZE - iChunkOffset));                ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:83195:18: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]    int iSpace = MIN(nWrite, JOURNAL_CHUNKSIZE - iChunkOffset);                 ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:91004:18: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]  pParse->nMem = MAX(pParse->nMem, iMem);                 ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'#define MAX(a,b) (((a)>(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'#define MAX(A,B) ((A)>(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:91035:18: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]  pParse->nTab = MAX(pParse->nTab, iTab);                 ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'#define MAX(a,b) (((a)>(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'#define MAX(A,B) ((A)>(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:91098:20: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]    pParse->nMem = MAX(pParse->nMem, regPrev+nColTest);                   ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'#define MAX(a,b) (((a)>(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'#define MAX(A,B) ((A)>(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:96203:15: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]  int nCopy = MIN(ArraySize(aVal), pIdx->nKeyCol);              ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:105051:26: warning: implicit conversion loses integer precision: 'u64' (aka 'unsigned long long') to 'int' [-Wshorten-64-to-32]        sqlite3_snprintf(nMsg, zErrmsg,         ~~~~~~~~~~~~~~~~ ^~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:105053:36: warning: implicit conversion loses integer precision: 'unsigned long long' to 'int' [-Wshorten-64-to-32]        sqlite3OsDlError(pVfs, nMsg-1, zErrmsg);        ~~~~~~~~~~~~~~~~       ~~~~^~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:105099:26: warning: implicit conversion loses integer precision: 'u64' (aka 'unsigned long long') to 'int' [-Wshorten-64-to-32]        sqlite3_snprintf(nMsg, zErrmsg,        ~~~~~~~~~~~~~~~~ ^~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:105101:36: warning: implicit conversion loses integer precision: 'unsigned long long' to 'int' [-Wshorten-64-to-32]        sqlite3OsDlError(pVfs, nMsg-1, zErrmsg);        ~~~~~~~~~~~~~~~~       ~~~~^~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:107250:22: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]      pParse->nMem = MAX( pParse->nMem, cnt+8 );                     ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'#define MAX(a,b) (((a)>(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'#define MAX(A,B) ((A)>(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:107287:24: warning: ambiguous expansion of macro 'MAX' [-Wambiguous-macro]        pParse->nMem = MAX(pParse->nMem, 8+j);                       ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:218:9: note: expanding this definition of 'MAX'#define MAX(a,b) (((a)>(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9565:9: note: other definition of 'MAX'#define MAX(A,B) ((A)>(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:122066:14: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]  mxBitCol = MIN(BMS-1,pTable->nCol);             ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:122155:28: warning: variable 'addrCounter' may be uninitialized when used here [-Wconditional-uninitialized]    sqlite3VdbeChangeP2(v, addrCounter, regBase+n);                           ^~~~~~~~~~~/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:122004:18: note: initialize the variable 'addrCounter' to silence this warning  int addrCounter;            /* Address where integer counter is initialized */                 ^                  = 0/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:124929:19: warning: ambiguous expansion of macro 'MIN' [-Wambiguous-macro]  aFrom[0].nRow = MIN(pParse->nQueryLoop, 48);  assert( 48==sqlite3LogEst(28) );                  ^In module 'Darwin' imported from /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:249:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/param.h:215:9: note: expanding this definition of 'MIN'#define MIN(a,b) (((a)<(b))?(a):(b))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9564:9: note: other definition of 'MIN'#define MIN(A,B) ((A)<(B)?(A):(B))        ^/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c:9704:26: warning: unused variable 'sqlite3one' [-Wunused-const-variable]SQLITE_PRIVATE const int sqlite3one = 1;                         ^48 warnings generated.-0#0#1#-19%DVTDocumentLocation2@73"file://localhost/Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c0000000000000000^3001"CompileC /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite3.o sqlite3.c normal x86_64 c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/igorkorot/dbhandler/dbhandler/sqlite_lib    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c -arch x86_64 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -std=gnu99 -fmodules -fmodules-cache-path=/Users/igorkorot/Library/Developer/Xcode/DerivedData/ModuleCache -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -mmacosx-version-min=10.8 -g -Wno-sign-conversion -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/sqlite_lib-generated-files.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/sqlite_lib-own-target-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/sqlite_lib-all-target-headers.hmap -iquote /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/sqlite_lib-project-headers.hmap -I/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I../dbinterface -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/DerivedSources/x86_64 -I/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/DerivedSources -F/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -MMD -MT dependencies -MF /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite3.d --serialize-diagnostics /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite3.dia -c /Users/igorkorot/dbhandler/dbhandler/sqlite_lib/sqlite3.c -o /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite3.o36"17759E34-C9A3-47F6-A573-8570544E37C4-
-b58EEEBB5-5B07-4427-AD44-0758FE2D48AE
-
-CLd /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib normal x86_64
-s485391385.616837
-e485391385.703649
-r1
-xLd
-x/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib
-xnormal
-xx86_64
-d/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite_lib.LinkFileList
-d/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/database_sqlite.o
-d/Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite3.o
-d/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libdbinterface.a
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libc++.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libSystem.dylib
-d/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/5.1/lib/darwin/libclang_rt.osx.a
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcache.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcommonCrypto.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcompiler_rt.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcopyfile.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libcorecrypto.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdispatch.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libdyld.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libkeymgr.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/liblaunch.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libmacho.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libquarantine.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libremovefile.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_asl.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_blocks.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_c.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_configuration.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_dnssd.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_info.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_kernel.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_m.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_malloc.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_network.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_notify.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_platform.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_pthread.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_sandbox.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libsystem_stats.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunc.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libunwind.dylib
-d/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/system/libxpc.dylib
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection82"Link /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib94"Ld /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib normal x86_6471039e197ceebc41^a723b4197ceebc41^---0#0#1#--1126"Ld /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib normal x86_64    cd /Users/igorkorot/dbhandler/dbhandler/sqlite_lib    export MACOSX_DEPLOYMENT_TARGET=10.8    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -arch x86_64 -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -L/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -F/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug -filelist /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite_lib.LinkFileList -install_name /usr/local/lib/libsqlite_lib.dylib -mmacosx-version-min=10.8 -stdlib=libc++ -ldbinterface -single_module -compatibility_version 1 -current_version 1 -Xlinker -dependency_info -Xlinker /Users/igorkorot/dbhandler/dbhandler/Build/Intermediates/sqlite_lib.build/Debug/sqlite_lib.build/Objects-normal/x86_64/sqlite_lib_dependency_info.dat -o /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/libsqlite_lib.dylib36"FF5B4CA7-134A-4029-B783-D584B0C7BC95-
-bDC7B9D3B-E6F0-4370-9FA9-C4ABBD04571E
-
