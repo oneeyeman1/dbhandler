@@ -131,6 +131,51 @@ bool ODBCDatabase::GetDriverList(std::map<std::wstring, std::vector<std::wstring
     return result;
 }
 
+bool ODBCDatabase::GetDSNList(std::vector<std::wstring> &dsns, std::vector<std::wstring> &errorMsg)
+{
+    bool result = false;
+    SQLWCHAR dsn[SQL_MAX_DSN_LENGTH+1], dsnDescr[255];
+    SQLSMALLINT direct = SQL_FETCH_FIRST;
+    SWORD pcbDSN, pcbDesc;
+    RETCODE ret = SQLAllocHandle( SQL_HANDLE_ENV, SQL_NULL_HENV, &m_env );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 0, m_env );
+        result = true;
+    }
+    else
+    {
+        ret = SQLSetEnvAttr( m_env, SQL_ATTR_ODBC_VERSION, (void *) SQL_OV_ODBC3, 0 );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 0, m_env );
+            result = true;
+        }
+        else
+        {
+            while( ( ret = SQLDataSources( m_env, direct, dsn, SQL_MAX_DSN_LENGTH, &pcbDSN, dsnDescr, 254, &pcbDesc ) ) == SQL_SUCCESS )
+            {
+                std::wstring s1;
+                str_to_uc_cpy( s1, dsn );
+                dsns.push_back( s1 );
+                direct = SQL_FETCH_NEXT;
+            }
+            if( ret != SQL_SUCCESS && ret != SQL_NO_DATA )
+            {
+                GetErrorMessage( errorMsg, 0, m_env );
+                result = true;
+            }
+        }
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
+    if( ret != SQL_SUCCESS && ret != SQL_NO_DATA )
+    {
+        GetErrorMessage( errorMsg, 0, m_env );
+        result = true;
+    }
+    return result;
+}
+
 bool ODBCDatabase::AddDsn(SQLHWND hwnd, const std::wstring &driver, std::vector<std::wstring> &errorMsg)
 {
     bool result = true;
