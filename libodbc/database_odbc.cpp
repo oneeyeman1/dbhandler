@@ -11,7 +11,7 @@
 #ifdef _IODBCUNIX_H
 #include "iODBC/sql.h"
 #include "iODBC/sqlext.h"
-#include "iODBC/odbcinst.h"
+#include "iODBCinst/odbcinst.h"
 #else
 #include <sql.h>
 #include <sqlext.h>
