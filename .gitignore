@@ -16,6 +16,8 @@ dbhandler/Debug/
 dbhandler/vc_mswuddll/
 dbhandler/vc_mswud
 libdatabaseview/vc_mswud
+libdatabaseview/vc_mswuddll
+libdbloader/vc_mswuddll
 autom4te.cache/
 .anjuta_sym_db.db
 *~
