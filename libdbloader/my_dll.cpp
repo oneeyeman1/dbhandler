@@ -21,10 +21,13 @@
     #pragma hdrstop
 #endif
 
+<<<<<<< HEAD:libdbloader/my_dll.cpp:libdbloader/my_dll.cpp
 #ifndef __WINDOWS__
     #error "This sample is Windows-only"
 #endif
 
+=======
+>>>>>>> 36c585dbff2e5da9e02e1f4050b9956eef6ee621:dialogs/my_dll.cpp:dialogs/my_dll.cpp
 #include "wx/app.h"
 #include "wx/dynlib.h"
 #include "wx/frame.h"
