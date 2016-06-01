@@ -12,7 +12,6 @@
 
 #include <map>
 #include <vector>
-#include <sqlext.h>
 #include "wx/wizard.h"
 #include "wx/filepicker.h"
 #include "wx/dynlib.h"
