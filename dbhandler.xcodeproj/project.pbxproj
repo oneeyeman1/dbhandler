@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E3ABF2941CFE93AF00ED706B /* liblibdialogs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3ABF2841CFE889B00ED706B /* liblibdialogs.dylib */; };
+		E3ABF2951CFE93BA00ED706B /* liblibdbloader.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3ABF2631CFE783200ED706B /* liblibdbloader.dylib */; };
 		E3D05D3E1CA4AB1D002CB677 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D05D3D1CA4AB1D002CB677 /* Cocoa.framework */; };
 		E3D05D481CA4AB1D002CB677 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E3D05D461CA4AB1D002CB677 /* InfoPlist.strings */; };
 		E3D05D4E1CA4AB1D002CB677 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E3D05D4C1CA4AB1D002CB677 /* Credits.rtf */; };
@@ -105,6 +107,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3ABF2951CFE93BA00ED706B /* liblibdbloader.dylib in Frameworks */,
+				E3ABF2941CFE93AF00ED706B /* liblibdialogs.dylib in Frameworks */,
 				E3D05D3E1CA4AB1D002CB677 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -557,6 +561,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"/Users/igorkorot/wxWidgets/buildMac/lib/wx/include/osx_cocoa-unicode-3.1",
 					/Users/igorkorot/wxWidgets/include,
+					./dbinterface,
 				);
 				INFOPLIST_FILE = "dbhandler/dbhandler-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
