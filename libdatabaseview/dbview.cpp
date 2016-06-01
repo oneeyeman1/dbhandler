@@ -12,7 +12,7 @@
 
 #include <map>
 #include <vector>
-#include <sqlext.h>
+//#include <sqlext.h>
 //#include "odbcconfigure.h"
 
 #ifdef __WXMSW__
