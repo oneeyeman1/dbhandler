@@ -2,7 +2,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "docview", "docview_vc9.vcxproj", "{C7CB6A06-F2AE-5909-894B-558223A98719}"
 	ProjectSection(ProjectDependencies) = postProject
-		{546E5D91-8631-5380-BF07-6CC3AAF357B3} = {546E5D91-8631-5380-BF07-6CC3AAF357B3}
 		{C4825DF9-9961-4BF7-BCD9-B9AC8CCCFF09} = {C4825DF9-9961-4BF7-BCD9-B9AC8CCCFF09}
 	EndProjectSection
 EndProject
@@ -30,6 +29,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dialogs", "..\libdialogs\di
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dbview", "..\libdatabaseview\dbview.vcxproj", "{C4825DF9-9961-4BF7-BCD9-B9AC8CCCFF09}"
+	ProjectSection(ProjectDependencies) = postProject
+		{546E5D91-8631-5380-BF07-6CC3AAF357B3} = {546E5D91-8631-5380-BF07-6CC3AAF357B3}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
