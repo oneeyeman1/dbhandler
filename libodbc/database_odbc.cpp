@@ -8,7 +8,7 @@
 #include <set>
 #include <vector>
 #include <string>
-#ifdef _IODBCUNIX_H
+#ifdef _IODBCUNIX_FRAMEWORK
 #include "iODBC/sql.h"
 #include "iODBC/sqlext.h"
 #include "iODBCinst/odbcinst.h"
@@ -18,7 +18,6 @@
 #include <odbcinst.h>
 #endif
 #include "string.h"
-//#include <odbcinst.h>
 #include "database.h"
 #include "database_odbc.h"
 

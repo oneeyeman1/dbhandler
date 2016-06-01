@@ -215,7 +215,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
-					_IODBCUNIX_H,
+					_IODBCUNIX_FRAMEWORK,
+					UNICODE,
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
