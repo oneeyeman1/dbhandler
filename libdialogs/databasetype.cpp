@@ -11,11 +11,11 @@
 #endif
 
 #include <map>
-#ifdef _IODBCUNIX_H
+/*#ifdef _IODBCUNIX_H
 #include "iODBC/sqlext.h"
 #else
 #include <sqlext.h>
-#endif
+#endif*/
 #include "wx/wizard.h"
 #include "wx/filepicker.h"
 #include "wx/dynlib.h"

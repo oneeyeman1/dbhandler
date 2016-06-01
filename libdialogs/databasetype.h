@@ -25,8 +25,6 @@ private:
     wxFilePickerCtrl *dbName;
 };
 
-typedef void (*CONVERTFROMSQLWCHAR)(SQLWCHAR *, wxString &);
-
 class ODBCConnect : public wxWizardPage
 {
 public:
@@ -41,7 +39,6 @@ protected:
 private:
     wxListBox *m_types;
     wxCheckBox *m_ask;
-    HENV m_henv;
 };
 
 class DatabaseType : public wxWizard
