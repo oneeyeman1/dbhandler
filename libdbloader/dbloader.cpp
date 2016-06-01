@@ -16,7 +16,11 @@
 
 #include <map>
 #include <vector>
+#ifdef _IODBCUNIX_FRAMEWORK
+#include "iODBC/sqlext.h"
+#else
 #include <sqlext.h>
+#endif
 #include "wx/dynlib.h"
 #include "sqlite3.h"
 #include "database.h"
