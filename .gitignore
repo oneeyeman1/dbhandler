@@ -31,3 +31,5 @@ dbhandler/res/database.xpm
 .DS_Store
 dbhandler/.DS_Store
 Build/
+*.xcuserstatte
+project.xcworkspace
