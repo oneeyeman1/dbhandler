@@ -138,9 +138,7 @@ bool MyApp::OnInit()
 }
 
 int MyApp::OnExit()
-{
-    int tmpDbgFlag;
-    
+{    
     wxDocManager * const manager = wxDocManager::GetDocumentManager();
 #if wxUSE_CONFIG
     manager->FileHistorySave( *wxConfig::Get() );
