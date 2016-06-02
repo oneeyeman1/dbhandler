@@ -92,6 +92,8 @@ void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
 	lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "libdialogs.dylib" );
 #else
     lib.Load( "libdialogs" );
 #endif
@@ -110,6 +112,8 @@ void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
         m_lib = new wxDynamicLibrary();
 #ifdef __WXMSW__
         m_lib->Load( "dbloader" );
+#elif __WXMAC__
+        m_lib->Load( "dbloader.dylib" );
 #else
         m_lib->Load( "libdbloader" );
 #endif
