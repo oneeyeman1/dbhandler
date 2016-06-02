@@ -79,7 +79,6 @@ bool MyApp::OnCmdLineParsed(wxCmdLineParser& parser)
 #ifdef __WXMAC__
 void MyApp::MacNewFile()
 {
-    wxDocManager::GetDocumentManager()->CreateNewDocument();
 }
 #endif // __WXMAC__
 
@@ -138,7 +137,7 @@ bool MyApp::OnInit()
 }
 
 int MyApp::OnExit()
-{    
+{
     wxDocManager * const manager = wxDocManager::GetDocumentManager();
 #if wxUSE_CONFIG
     manager->FileHistorySave( *wxConfig::Get() );
