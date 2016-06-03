@@ -95,7 +95,7 @@ bool ODBCDatabase::GetDriverList(std::map<std::wstring, std::vector<std::wstring
                     {
                         str_to_uc_cpy( dsn_result, dsn  );
                         driversDSN[s1].push_back( dsn_result );
-                        s1 = L"";
+                        dsn_result = L"";
                     }
                     direct = SQL_FETCH_NEXT;
                     s2 = L"";

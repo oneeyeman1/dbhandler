@@ -188,7 +188,6 @@ void CODBCConfigure::OnEditDSN(wxCommandEvent &WXUNUSED(event))
     std::vector<char *> errorMsg;
     wxString driver = m_drivers->GetStringSelection();
     wxString dsnStr = m_dsn->GetStringSelection();
-    wxMessageBox( "Hello1" );
     EDITDSN func = (EDITDSN) m_lib->GetSymbol( "EditDSN" );
     if( func( m_db, this, driver, dsnStr ) )
     {
