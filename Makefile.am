@@ -19,7 +19,7 @@ INTLTOOL_FILES = intltool-extract.in \
 EXTRA_DIST = \
 	$(INTLTOOL_FILES)
 
-AM_CXXFLAGS = -DUNICODE 
+AM_CXXFLAGS = -DUNICODE
 
 DISTCLEANFILES = intltool-extract \
 	intltool-merge \
