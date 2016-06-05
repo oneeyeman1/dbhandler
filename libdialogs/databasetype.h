@@ -51,6 +51,7 @@ public:
     void GetDatabaseEngine(wxString &databaseEngine);
     bool GetODBCConnectionParam();
     wxString GetDatabaseName();
+    void SetDbEngine(const wxString &engine);
 protected:
     void OnPageChanged(wxWizardEvent &event);
     void OnConnect(wxWizardEvent &event);

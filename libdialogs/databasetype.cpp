@@ -157,6 +157,11 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
     }*/
 }
 
+void DatabaseType::SetDbEngine(const wxString &engine)
+{
+    m_dbEngine = engine;
+}
+
 void DatabaseType::GetDatabaseEngine(wxString &engineName)
 {
     engineName = page1->GetComboBoxTypes()->GetStringSelection();
@@ -203,10 +208,12 @@ wxWizardPage *DBType::GetNext() const
     wxString type = m_types->GetStringSelection();
     if( type == "SQLite" )
     {
+        dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( "SQLite" );
         return dynamic_cast<DatabaseType *>( GetParent() )->GetSQLitePage();
     }
     else if( type == "ODBC" )
     {
+        dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( "ODBC" );
         return dynamic_cast<DatabaseType *>( GetParent() )->GetODBCPage();
     }
     else
