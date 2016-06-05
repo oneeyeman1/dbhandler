@@ -26,6 +26,10 @@
     #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
 
+#ifdef __WXMSW__
+#include <vld.h>
+#endif
+
 #include <vector>
 #include <map>
 #include "wx/docview.h"
