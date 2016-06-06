@@ -87,24 +87,7 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 }
 #endif
 
-void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
-{
-    wxDynamicLibrary lib;
-#ifdef __WXMSW__
-	lib.Load( "dialogs" );
-#elif __WXMAC__
-    lib.Load( "libdialogs.dylib" );
-#else
-    lib.Load( "libdialogs" );
-#endif
-    if( lib.IsLoaded() )
-    {
-        ODBCSETUP func = (ODBCSETUP) lib.GetSymbol( "ODBCSetup" );
-        func( this );
-    }
-}
-
-void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
+void MainFrame::Connect()
 {
     Database *db = NULL;
     if( !m_lib )
@@ -133,4 +116,26 @@ void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
         }
         m_db = db;
     }
+}
+
+void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
+{
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+	lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "libdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        ODBCSETUP func = (ODBCSETUP) lib.GetSymbol( "ODBCSetup" );
+        func( this );
+    }
+}
+
+void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
+{
+    Connect();
 }

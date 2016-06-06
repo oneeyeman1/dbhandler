@@ -14,6 +14,8 @@ class MainFrame : public wxDocParentFrame
 public:
     MainFrame(wxDocManager *manager);
     ~MainFrame();
+protected:
+    void Connect();
 private:
     void InitToolBar(wxToolBar* toolBar);
 
