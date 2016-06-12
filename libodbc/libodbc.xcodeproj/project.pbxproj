@@ -7,136 +7,130 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E3D1390D1D05250C00A5A0F7 /* database_sqlite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D139081D05250C00A5A0F7 /* database_sqlite.cpp */; };
-		E3D1390E1D05250C00A5A0F7 /* database_sqlite.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D139091D05250C00A5A0F7 /* database_sqlite.h */; };
-		E3D1390F1D05250C00A5A0F7 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E3D1390A1D05250C00A5A0F7 /* sqlite3.c */; };
-		E3D139101D05250C00A5A0F7 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D1390B1D05250C00A5A0F7 /* sqlite3.h */; };
-		E3D139111D05250C00A5A0F7 /* sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D1390C1D05250C00A5A0F7 /* sqlite3ext.h */; };
+		E3D1392D1D0C43C900A5A0F7 /* database_odbc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D1392B1D0C43C900A5A0F7 /* database_odbc.cpp */; };
+		E3D1392E1D0C43C900A5A0F7 /* database_odbc.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D1392C1D0C43C900A5A0F7 /* database_odbc.h */; };
+		E3D139311D0C445700A5A0F7 /* iODBC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D1392F1D0C445700A5A0F7 /* iODBC.framework */; };
+		E3D139321D0C445700A5A0F7 /* iODBCinst.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D139301D0C445700A5A0F7 /* iODBCinst.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E3D138FA1D05248A00A5A0F7 /* liblibsqlite.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibsqlite.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		E3D139081D05250C00A5A0F7 /* database_sqlite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = database_sqlite.cpp; sourceTree = "<group>"; };
-		E3D139091D05250C00A5A0F7 /* database_sqlite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = database_sqlite.h; sourceTree = "<group>"; };
-		E3D1390A1D05250C00A5A0F7 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
-		E3D1390B1D05250C00A5A0F7 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
-		E3D1390C1D05250C00A5A0F7 /* sqlite3ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3ext.h; sourceTree = "<group>"; };
-		E3D139121D0525EF00A5A0F7 /* libdbinterface.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdbinterface.a; path = ../dbinterface/build/Debug/libdbinterface.a; sourceTree = "<group>"; };
+		E3D1391D1D0C42FF00A5A0F7 /* liblibodbc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibodbc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3D1392B1D0C43C900A5A0F7 /* database_odbc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = database_odbc.cpp; sourceTree = "<group>"; };
+		E3D1392C1D0C43C900A5A0F7 /* database_odbc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = database_odbc.h; sourceTree = "<group>"; };
+		E3D1392F1D0C445700A5A0F7 /* iODBC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iODBC.framework; path = ../../../../../Library/Frameworks/iODBC.framework; sourceTree = "<group>"; };
+		E3D139301D0C445700A5A0F7 /* iODBCinst.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iODBCinst.framework; path = ../../../../../Library/Frameworks/iODBCinst.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		E3D138F71D05248A00A5A0F7 /* Frameworks */ = {
+		E3D1391A1D0C42FF00A5A0F7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3D139311D0C445700A5A0F7 /* iODBC.framework in Frameworks */,
+				E3D139321D0C445700A5A0F7 /* iODBCinst.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		E3D138F11D05248A00A5A0F7 = {
+		E3D139141D0C42FF00A5A0F7 = {
 			isa = PBXGroup;
 			children = (
-				E3D139121D0525EF00A5A0F7 /* libdbinterface.a */,
-				E3D139071D0524A700A5A0F7 /* libsqlite */,
-				E3D138FB1D05248A00A5A0F7 /* Products */,
+				E3D1392F1D0C445700A5A0F7 /* iODBC.framework */,
+				E3D139301D0C445700A5A0F7 /* iODBCinst.framework */,
+				E3D1392A1D0C430D00A5A0F7 /* libodbc */,
+				E3D1391E1D0C42FF00A5A0F7 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		E3D138FB1D05248A00A5A0F7 /* Products */ = {
+		E3D1391E1D0C42FF00A5A0F7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E3D138FA1D05248A00A5A0F7 /* liblibsqlite.dylib */,
+				E3D1391D1D0C42FF00A5A0F7 /* liblibodbc.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E3D139071D0524A700A5A0F7 /* libsqlite */ = {
+		E3D1392A1D0C430D00A5A0F7 /* libodbc */ = {
 			isa = PBXGroup;
 			children = (
-				E3D139081D05250C00A5A0F7 /* database_sqlite.cpp */,
-				E3D139091D05250C00A5A0F7 /* database_sqlite.h */,
-				E3D1390A1D05250C00A5A0F7 /* sqlite3.c */,
-				E3D1390B1D05250C00A5A0F7 /* sqlite3.h */,
-				E3D1390C1D05250C00A5A0F7 /* sqlite3ext.h */,
+				E3D1392B1D0C43C900A5A0F7 /* database_odbc.cpp */,
+				E3D1392C1D0C43C900A5A0F7 /* database_odbc.h */,
 			);
-			name = libsqlite;
+			name = libodbc;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		E3D138F81D05248A00A5A0F7 /* Headers */ = {
+		E3D1391B1D0C42FF00A5A0F7 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3D139101D05250C00A5A0F7 /* sqlite3.h in Headers */,
-				E3D1390E1D05250C00A5A0F7 /* database_sqlite.h in Headers */,
-				E3D139111D05250C00A5A0F7 /* sqlite3ext.h in Headers */,
+				E3D1392E1D0C43C900A5A0F7 /* database_odbc.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		E3D138F91D05248A00A5A0F7 /* libsqlite */ = {
+		E3D1391C1D0C42FF00A5A0F7 /* libodbc */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E3D138FE1D05248A00A5A0F7 /* Build configuration list for PBXNativeTarget "libsqlite" */;
+			buildConfigurationList = E3D139211D0C42FF00A5A0F7 /* Build configuration list for PBXNativeTarget "libodbc" */;
 			buildPhases = (
-				E3D138F61D05248A00A5A0F7 /* Sources */,
-				E3D138F71D05248A00A5A0F7 /* Frameworks */,
-				E3D138F81D05248A00A5A0F7 /* Headers */,
+				E3D139191D0C42FF00A5A0F7 /* Sources */,
+				E3D1391A1D0C42FF00A5A0F7 /* Frameworks */,
+				E3D1391B1D0C42FF00A5A0F7 /* Headers */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = libsqlite;
-			productName = libsqlite;
-			productReference = E3D138FA1D05248A00A5A0F7 /* liblibsqlite.dylib */;
+			name = libodbc;
+			productName = libodbc;
+			productReference = E3D1391D1D0C42FF00A5A0F7 /* liblibodbc.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		E3D138F21D05248A00A5A0F7 /* Project object */ = {
+		E3D139151D0C42FF00A5A0F7 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Igor Korot";
 			};
-			buildConfigurationList = E3D138F51D05248A00A5A0F7 /* Build configuration list for PBXProject "libsqlite" */;
+			buildConfigurationList = E3D139181D0C42FF00A5A0F7 /* Build configuration list for PBXProject "libodbc" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = E3D138F11D05248A00A5A0F7;
-			productRefGroup = E3D138FB1D05248A00A5A0F7 /* Products */;
+			mainGroup = E3D139141D0C42FF00A5A0F7;
+			productRefGroup = E3D1391E1D0C42FF00A5A0F7 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E3D138F91D05248A00A5A0F7 /* libsqlite */,
+				E3D1391C1D0C42FF00A5A0F7 /* libodbc */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		E3D138F61D05248A00A5A0F7 /* Sources */ = {
+		E3D139191D0C42FF00A5A0F7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3D1390D1D05250C00A5A0F7 /* database_sqlite.cpp in Sources */,
-				E3D1390F1D05250C00A5A0F7 /* sqlite3.c in Sources */,
+				E3D1392D1D0C43C900A5A0F7 /* database_odbc.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		E3D138FC1D05248A00A5A0F7 /* Debug */ = {
+		E3D1391F1D0C42FF00A5A0F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -174,7 +168,7 @@
 			};
 			name = Debug;
 		};
-		E3D138FD1D05248A00A5A0F7 /* Release */ = {
+		E3D139201D0C42FF00A5A0F7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -206,32 +200,38 @@
 			};
 			name = Release;
 		};
-		E3D138FF1D05248A00A5A0F7 /* Debug */ = {
+		E3D139221D0C42FF00A5A0F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					_IODBCUNIX_FRAMEWORK,
+					UNICODE,
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					../dbinterface,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/dbinterface/build/Debug,
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		E3D139001D05248A00A5A0F7 /* Release */ = {
+		E3D139231D0C42FF00A5A0F7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				EXECUTABLE_PREFIX = lib;
-				LIBRARY_SEARCH_PATHS = (
+				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/dbinterface/build/Debug,
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -240,24 +240,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E3D138F51D05248A00A5A0F7 /* Build configuration list for PBXProject "libsqlite" */ = {
+		E3D139181D0C42FF00A5A0F7 /* Build configuration list for PBXProject "libodbc" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E3D138FC1D05248A00A5A0F7 /* Debug */,
-				E3D138FD1D05248A00A5A0F7 /* Release */,
+				E3D1391F1D0C42FF00A5A0F7 /* Debug */,
+				E3D139201D0C42FF00A5A0F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E3D138FE1D05248A00A5A0F7 /* Build configuration list for PBXNativeTarget "libsqlite" */ = {
+		E3D139211D0C42FF00A5A0F7 /* Build configuration list for PBXNativeTarget "libodbc" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E3D138FF1D05248A00A5A0F7 /* Debug */,
-				E3D139001D05248A00A5A0F7 /* Release */,
+				E3D139221D0C42FF00A5A0F7 /* Debug */,
+				E3D139231D0C42FF00A5A0F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = E3D138F21D05248A00A5A0F7 /* Project object */;
+	rootObject = E3D139151D0C42FF00A5A0F7 /* Project object */;
 }

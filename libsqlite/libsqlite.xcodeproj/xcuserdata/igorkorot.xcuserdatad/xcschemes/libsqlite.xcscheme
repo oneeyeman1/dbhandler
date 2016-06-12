@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E3ABF2121CFD162B00ED706B"
+               BlueprintIdentifier = "E3D138F91D05248A00A5A0F7"
                BuildableName = "liblibsqlite.dylib"
                BlueprintName = "libsqlite"
                ReferencedContainer = "container:libsqlite.xcodeproj">

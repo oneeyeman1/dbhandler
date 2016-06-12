@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E3D138E01D051EE100A5A0F7"
-               BuildableName = "libdbinterface.a"
-               BlueprintName = "dbinterface"
-               ReferencedContainer = "container:dbinterface.xcodeproj">
+               BlueprintIdentifier = "E3D1391C1D0C42FF00A5A0F7"
+               BuildableName = "liblibodbc.dylib"
+               BlueprintName = "libodbc"
+               ReferencedContainer = "container:libodbc.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E3ABF2941CFE93AF00ED706B /* liblibdialogs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3ABF2841CFE889B00ED706B /* liblibdialogs.dylib */; };
-		E3ABF2951CFE93BA00ED706B /* liblibdbloader.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3ABF2631CFE783200ED706B /* liblibdbloader.dylib */; };
 		E3D05D3E1CA4AB1D002CB677 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D05D3D1CA4AB1D002CB677 /* Cocoa.framework */; };
 		E3D05D481CA4AB1D002CB677 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E3D05D461CA4AB1D002CB677 /* InfoPlist.strings */; };
 		E3D05D4E1CA4AB1D002CB677 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E3D05D4C1CA4AB1D002CB677 /* Credits.rtf */; };
@@ -25,48 +23,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		E33447E91CA709F800846B48 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E33447E51CA709F800846B48 /* dbinterface.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E33447DE1CA709F800846B48;
-			remoteInfo = dbinterface;
-		};
-		E3ABF21E1CFD162B00ED706B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E3ABF21A1CFD162B00ED706B /* libsqlite.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E3ABF2131CFD162B00ED706B;
-			remoteInfo = libsqlite;
-		};
-		E3ABF2411CFD3A6E00ED706B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E3ABF23D1CFD3A6D00ED706B /* libodbc.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E3ABF2361CFD3A6D00ED706B;
-			remoteInfo = libodbc;
-		};
-		E3ABF2621CFE783200ED706B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E3ABF25E1CFE783100ED706B /* libdbloader.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E3ABF2571CFE783100ED706B;
-			remoteInfo = libdbloader;
-		};
-		E3ABF2831CFE889B00ED706B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E3ABF27F1CFE889A00ED706B /* libdialogs.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E3ABF2781CFE889A00ED706B;
-			remoteInfo = libdialogs;
-		};
-		E3ABF2AA1CFE985200ED706B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E3ABF2A61CFE985100ED706B /* libdatabaseview.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E3ABF29F1CFE985100ED706B;
-			remoteInfo = libdatabaseview;
-		};
 		E3D05D5F1CA4AB1E002CB677 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E3D05D321CA4AB1D002CB677 /* Project object */;
@@ -74,15 +30,30 @@
 			remoteGlobalIDString = E3D05D391CA4AB1D002CB677;
 			remoteInfo = dbhandler;
 		};
+		E3D138EC1D051EE200A5A0F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3D138E81D051EE100A5A0F7 /* dbinterface.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3D138E11D051EE100A5A0F7;
+			remoteInfo = dbinterface;
+		};
+		E3D139051D05248B00A5A0F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3D139011D05248A00A5A0F7 /* libsqlite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3D138FA1D05248A00A5A0F7;
+			remoteInfo = libsqlite;
+		};
+		E3D139281D0C42FF00A5A0F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3D139241D0C42FF00A5A0F7 /* libodbc.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3D1391D1D0C42FF00A5A0F7;
+			remoteInfo = libodbc;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		E33447E51CA709F800846B48 /* dbinterface.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = dbinterface.xcodeproj; path = dbinterface/dbinterface.xcodeproj; sourceTree = "<group>"; };
-		E3ABF21A1CFD162B00ED706B /* libsqlite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libsqlite.xcodeproj; path = libsqlite/libsqlite.xcodeproj; sourceTree = "<group>"; };
-		E3ABF23D1CFD3A6D00ED706B /* libodbc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libodbc.xcodeproj; path = libodbc/libodbc.xcodeproj; sourceTree = "<group>"; };
-		E3ABF25E1CFE783100ED706B /* libdbloader.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdbloader.xcodeproj; path = libdbloader/libdbloader.xcodeproj; sourceTree = "<group>"; };
-		E3ABF27F1CFE889A00ED706B /* libdialogs.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdialogs.xcodeproj; path = libdialogs/libdialogs.xcodeproj; sourceTree = "<group>"; };
-		E3ABF2A61CFE985100ED706B /* libdatabaseview.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdatabaseview.xcodeproj; path = libdatabaseview/libdatabaseview.xcodeproj; sourceTree = "<group>"; };
 		E3D05D3A1CA4AB1D002CB677 /* dbhandler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dbhandler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D05D3D1CA4AB1D002CB677 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		E3D05D401CA4AB1D002CB677 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -108,6 +79,9 @@
 		E3D05D781CA564F5002CB677 /* view.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = view.h; sourceTree = "<group>"; };
 		E3D05D791CA564F5002CB677 /* viewbase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = viewbase.cpp; sourceTree = "<group>"; };
 		E3D05D7A1CA564F5002CB677 /* viewbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = viewbase.h; sourceTree = "<group>"; };
+		E3D138E81D051EE100A5A0F7 /* dbinterface.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = dbinterface.xcodeproj; path = dbinterface/dbinterface.xcodeproj; sourceTree = "<group>"; };
+		E3D139011D05248A00A5A0F7 /* libsqlite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libsqlite.xcodeproj; path = libsqlite/libsqlite.xcodeproj; sourceTree = "<group>"; };
+		E3D139241D0C42FF00A5A0F7 /* libodbc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libodbc.xcodeproj; path = libodbc/libodbc.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,8 +89,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3ABF2951CFE93BA00ED706B /* liblibdbloader.dylib in Frameworks */,
-				E3ABF2941CFE93AF00ED706B /* liblibdialogs.dylib in Frameworks */,
 				E3D05D3E1CA4AB1D002CB677 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -133,63 +105,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		E33447E61CA709F800846B48 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E33447EA1CA709F800846B48 /* libdbinterface.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		E3ABF21B1CFD162B00ED706B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E3ABF21F1CFD162B00ED706B /* liblibsqlite.dylib */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		E3ABF23E1CFD3A6D00ED706B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E3ABF2421CFD3A6E00ED706B /* liblibodbc.dylib */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		E3ABF25F1CFE783100ED706B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E3ABF2631CFE783200ED706B /* liblibdbloader.dylib */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		E3ABF2801CFE889A00ED706B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E3ABF2841CFE889B00ED706B /* liblibdialogs.dylib */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		E3ABF2A71CFE985100ED706B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E3ABF2AB1CFE985200ED706B /* liblibdatabaseview.dylib */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		E3D05D311CA4AB1D002CB677 = {
 			isa = PBXGroup;
 			children = (
-				E3ABF2A61CFE985100ED706B /* libdatabaseview.xcodeproj */,
-				E3ABF27F1CFE889A00ED706B /* libdialogs.xcodeproj */,
-				E3ABF25E1CFE783100ED706B /* libdbloader.xcodeproj */,
-				E3ABF23D1CFD3A6D00ED706B /* libodbc.xcodeproj */,
-				E3ABF21A1CFD162B00ED706B /* libsqlite.xcodeproj */,
-				E33447E51CA709F800846B48 /* dbinterface.xcodeproj */,
+				E3D139241D0C42FF00A5A0F7 /* libodbc.xcodeproj */,
+				E3D139011D05248A00A5A0F7 /* libsqlite.xcodeproj */,
+				E3D138E81D051EE100A5A0F7 /* dbinterface.xcodeproj */,
 				E3D05D431CA4AB1D002CB677 /* dbhandler */,
 				E3D05D611CA4AB1E002CB677 /* dbhandlerTests */,
 				E3D05D3C1CA4AB1D002CB677 /* Frameworks */,
@@ -274,6 +195,30 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		E3D138E91D051EE100A5A0F7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3D138ED1D051EE200A5A0F7 /* libdbinterface.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3D139021D05248A00A5A0F7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3D139061D05248B00A5A0F7 /* liblibsqlite.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3D139251D0C42FF00A5A0F7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3D139291D0C42FF00A5A0F7 /* liblibodbc.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -339,28 +284,16 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = E33447E61CA709F800846B48 /* Products */;
-					ProjectRef = E33447E51CA709F800846B48 /* dbinterface.xcodeproj */;
+					ProductGroup = E3D138E91D051EE100A5A0F7 /* Products */;
+					ProjectRef = E3D138E81D051EE100A5A0F7 /* dbinterface.xcodeproj */;
 				},
 				{
-					ProductGroup = E3ABF2A71CFE985100ED706B /* Products */;
-					ProjectRef = E3ABF2A61CFE985100ED706B /* libdatabaseview.xcodeproj */;
+					ProductGroup = E3D139251D0C42FF00A5A0F7 /* Products */;
+					ProjectRef = E3D139241D0C42FF00A5A0F7 /* libodbc.xcodeproj */;
 				},
 				{
-					ProductGroup = E3ABF25F1CFE783100ED706B /* Products */;
-					ProjectRef = E3ABF25E1CFE783100ED706B /* libdbloader.xcodeproj */;
-				},
-				{
-					ProductGroup = E3ABF2801CFE889A00ED706B /* Products */;
-					ProjectRef = E3ABF27F1CFE889A00ED706B /* libdialogs.xcodeproj */;
-				},
-				{
-					ProductGroup = E3ABF23E1CFD3A6D00ED706B /* Products */;
-					ProjectRef = E3ABF23D1CFD3A6D00ED706B /* libodbc.xcodeproj */;
-				},
-				{
-					ProductGroup = E3ABF21B1CFD162B00ED706B /* Products */;
-					ProjectRef = E3ABF21A1CFD162B00ED706B /* libsqlite.xcodeproj */;
+					ProductGroup = E3D139021D05248A00A5A0F7 /* Products */;
+					ProjectRef = E3D139011D05248A00A5A0F7 /* libsqlite.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -372,46 +305,25 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		E33447EA1CA709F800846B48 /* libdbinterface.a */ = {
+		E3D138ED1D051EE200A5A0F7 /* libdbinterface.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libdbinterface.a;
-			remoteRef = E33447E91CA709F800846B48 /* PBXContainerItemProxy */;
+			remoteRef = E3D138EC1D051EE200A5A0F7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		E3ABF21F1CFD162B00ED706B /* liblibsqlite.dylib */ = {
+		E3D139061D05248B00A5A0F7 /* liblibsqlite.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
 			path = liblibsqlite.dylib;
-			remoteRef = E3ABF21E1CFD162B00ED706B /* PBXContainerItemProxy */;
+			remoteRef = E3D139051D05248B00A5A0F7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		E3ABF2421CFD3A6E00ED706B /* liblibodbc.dylib */ = {
+		E3D139291D0C42FF00A5A0F7 /* liblibodbc.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
 			path = liblibodbc.dylib;
-			remoteRef = E3ABF2411CFD3A6E00ED706B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E3ABF2631CFE783200ED706B /* liblibdbloader.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = liblibdbloader.dylib;
-			remoteRef = E3ABF2621CFE783200ED706B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E3ABF2841CFE889B00ED706B /* liblibdialogs.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = liblibdialogs.dylib;
-			remoteRef = E3ABF2831CFE889B00ED706B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E3ABF2AB1CFE985200ED706B /* liblibdatabaseview.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = liblibdatabaseview.dylib;
-			remoteRef = E3ABF2AA1CFE985200ED706B /* PBXContainerItemProxy */;
+			remoteRef = E3D139281D0C42FF00A5A0F7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -570,8 +482,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dbhandler/dbhandler-Prefix.pch";
@@ -587,14 +499,19 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"/Users/igorkorot/wxWidgets/buildMac/lib/wx/include/osx_cocoa-unicode-3.1",
-					/Users/igorkorot/wxWidgets/include,
 					./dbinterface,
+					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.1",
+					/Users/igorkorot/wxWidgets/include,
 				);
 				INFOPLIST_FILE = "dbhandler/dbhandler-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++11",
+					"-stdlib=libc++",
+				);
 				OTHER_LDFLAGS = (
-					"-L/Users/igorkorot/wxWidgets/buildMac/lib",
+					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
 					"-framework",
 					IOKit,
 					"-framework",
@@ -625,8 +542,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
-				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "dbhandler/dbhandler-Prefix.pch";
@@ -638,29 +555,7 @@
 				);
 				INFOPLIST_FILE = "dbhandler/dbhandler-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_LDFLAGS = (
-					"-L/Users/igorkorot/wxWidgets/buildMac/lib",
-					"-framework",
-					IOKit,
-					"-framework",
-					Carbon,
-					"-framework",
-					Cocoa,
-					"-framework",
-					AudioToolbox,
-					"-framework",
-					System,
-					"-framework",
-					OpenGL,
-					"-lwx_osx_cocoau_xrc-3.1",
-					"-lwx_osx_cocoau_html-3.1",
-					"-lwx_osx_cocoau_qa-3.1",
-					"-lwx_osx_cocoau_adv-3.1",
-					"-lwx_osx_cocoau_core-3.1",
-					"-lwx_baseu_xml-3.1",
-					"-lwx_baseu_net-3.1",
-					"-lwx_baseu-3.1",
-				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
