@@ -18,11 +18,14 @@ protected:
     void Connect();
 private:
     void InitToolBar(wxToolBar* toolBar);
-
+    void InitMenuBar(int id);
+    void DatabaseMenu();
     void OnConfigureODBC(wxCommandEvent &event);
     void OnDatabaseProfile(wxCommandEvent &event);
+    void OnDatabase(wxCommandEvent &event);
     Database *m_db;
     wxDynamicLibrary *m_lib;
+    wxMenu *m_menuFile;
 //    void *m_db;
     wxDECLARE_EVENT_TABLE();
 };

@@ -75,7 +75,9 @@ private:
 
 wxDECLARE_APP(MyApp);
 
-#define wxID_CONFIGUREODBC 1
+#define wxID_CONFIGUREODBC  1
 #define wxID_DATABASEWINDOW 2
-
+#define wxID_DATABASE       3
+#define wxID_CREATEDATABASE 4
+#define wxID_DELETEDATABASE 5
 #endif // _WX_SAMPLES_DOCVIEW_DOCVIEW_H_
