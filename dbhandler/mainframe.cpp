@@ -48,12 +48,6 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocParentFrame(manager, NULL, wx
     m_menuFile->Append( wxID_NEW );
     m_menuFile->Append( wxID_OPEN );
     m_menuFile->AppendSeparator();
-    // A nice touch: a history of files visited. Use this menu.
-/*    manager->FileHistoryUseMenu( m_menuFile );
-#if wxUSE_CONFIG
-    manager->FileHistoryLoad( *wxConfig::Get() );
-#endif // wxUSE_CONFIG
-    m_menuFile->AppendSeparator();*/
     m_menuFile->Append( wxID_EXIT );
     wxMenuBar *menubar = new wxMenuBar;
     menubar->Append( m_menuFile, wxGetStockLabel( wxID_FILE ) );
@@ -84,8 +78,8 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[1] = wxBitmap( database );
     bitmaps[2] = wxBitmap( database );
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), bitmaps[0], bitmaps[0], wxITEM_NORMAL, _( "Configure ODBC" ), _( "Configure ODBC data source" ) );
-    toolBar->AddTool( wxID_DATABASEWINDOW, _( "DB Profile" ), bitmaps[1], bitmaps[1], wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-	toolBar->AddTool( wxID_DATABASE, _( "Database" ), bitmaps[2], bitmaps[2], wxITEM_NORMAL, _( "Database" ), _( "Run database options" ) );
+    toolBar->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), bitmaps[1], bitmaps[1], wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
+    toolBar->AddTool( wxID_DATABASE, _( "Database" ), bitmaps[2], bitmaps[2], wxITEM_NORMAL, _( "Database" ), _( "Database" ) );
     toolBar->Realize();
 }
 #endif
@@ -105,10 +99,9 @@ void MainFrame::InitMenuBar(int id)
 
 void MainFrame::DatabaseMenu()
 {
-    m_menuFile->Insert( 0, wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
-	m_menuFile->Insert( 2, wxID_CREATEDATABASE, _( "Create Database..." ), _( "Create Database" ) );
+    m_menuFile->Insert( 2, wxID_CREATEDATABASE, _( "Create Database..." ), _( "Create Database" ) );
     m_menuFile->Insert( 3, wxID_DELETEDATABASE, _( "Delete Database..." ), _( "Delete Database" ) );
-	m_menuFile->InsertSeparator( 4 );
+    m_menuFile->InsertSeparator( 4 );
 }
 
 void MainFrame::Connect()
@@ -162,8 +155,8 @@ void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
 void MainFrame::OnDatabase(wxCommandEvent &event)
 {
     InitMenuBar( event.GetId() );
-//    if( !m_db )
-//        Connect();
+    if( !m_db )
+        Connect();
 }
 
 void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))

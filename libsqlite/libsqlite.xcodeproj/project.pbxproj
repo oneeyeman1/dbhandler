@@ -7,86 +7,164 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E3D1390D1D05250C00A5A0F7 /* database_sqlite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D139081D05250C00A5A0F7 /* database_sqlite.cpp */; };
-		E3D1390E1D05250C00A5A0F7 /* database_sqlite.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D139091D05250C00A5A0F7 /* database_sqlite.h */; };
-		E3D1390F1D05250C00A5A0F7 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E3D1390A1D05250C00A5A0F7 /* sqlite3.c */; };
-		E3D139101D05250C00A5A0F7 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D1390B1D05250C00A5A0F7 /* sqlite3.h */; };
-		E3D139111D05250C00A5A0F7 /* sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D1390C1D05250C00A5A0F7 /* sqlite3ext.h */; };
+		E3D139EF1D12CEC000A5A0F7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D139EE1D12CEC000A5A0F7 /* Cocoa.framework */; };
+		E3D139F91D12CEC000A5A0F7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E3D139F71D12CEC000A5A0F7 /* InfoPlist.strings */; };
+		E3D139FD1D12CEC000A5A0F7 /* libsqlite.m in Sources */ = {isa = PBXBuildFile; fileRef = E3D139FC1D12CEC000A5A0F7 /* libsqlite.m */; };
+		E3D13A041D12CEC000A5A0F7 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D13A031D12CEC000A5A0F7 /* XCTest.framework */; };
+		E3D13A051D12CEC000A5A0F7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D139EE1D12CEC000A5A0F7 /* Cocoa.framework */; };
+		E3D13A081D12CEC000A5A0F7 /* libsqlite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D139EB1D12CEC000A5A0F7 /* libsqlite.framework */; };
+		E3D13A0E1D12CEC000A5A0F7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E3D13A0C1D12CEC000A5A0F7 /* InfoPlist.strings */; };
+		E3D13A101D12CEC000A5A0F7 /* libsqliteTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E3D13A0F1D12CEC000A5A0F7 /* libsqliteTests.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		E3D13A061D12CEC000A5A0F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3D139E21D12CEC000A5A0F7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E3D139EA1D12CEC000A5A0F7;
+			remoteInfo = libsqlite;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		E3D138FA1D05248A00A5A0F7 /* liblibsqlite.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibsqlite.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		E3D139081D05250C00A5A0F7 /* database_sqlite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = database_sqlite.cpp; sourceTree = "<group>"; };
-		E3D139091D05250C00A5A0F7 /* database_sqlite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = database_sqlite.h; sourceTree = "<group>"; };
-		E3D1390A1D05250C00A5A0F7 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
-		E3D1390B1D05250C00A5A0F7 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
-		E3D1390C1D05250C00A5A0F7 /* sqlite3ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3ext.h; sourceTree = "<group>"; };
-		E3D139121D0525EF00A5A0F7 /* libdbinterface.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdbinterface.a; path = ../dbinterface/build/Debug/libdbinterface.a; sourceTree = "<group>"; };
+		E3D139EB1D12CEC000A5A0F7 /* libsqlite.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libsqlite.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3D139EE1D12CEC000A5A0F7 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		E3D139F11D12CEC000A5A0F7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		E3D139F21D12CEC000A5A0F7 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		E3D139F31D12CEC000A5A0F7 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		E3D139F61D12CEC000A5A0F7 /* libsqlite-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "libsqlite-Info.plist"; sourceTree = "<group>"; };
+		E3D139F81D12CEC000A5A0F7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E3D139FA1D12CEC000A5A0F7 /* libsqlite-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "libsqlite-Prefix.pch"; sourceTree = "<group>"; };
+		E3D139FB1D12CEC000A5A0F7 /* libsqlite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libsqlite.h; sourceTree = "<group>"; };
+		E3D139FC1D12CEC000A5A0F7 /* libsqlite.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = libsqlite.m; sourceTree = "<group>"; };
+		E3D13A021D12CEC000A5A0F7 /* libsqliteTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = libsqliteTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3D13A031D12CEC000A5A0F7 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		E3D13A0B1D12CEC000A5A0F7 /* libsqliteTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "libsqliteTests-Info.plist"; sourceTree = "<group>"; };
+		E3D13A0D1D12CEC000A5A0F7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E3D13A0F1D12CEC000A5A0F7 /* libsqliteTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = libsqliteTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		E3D138F71D05248A00A5A0F7 /* Frameworks */ = {
+		E3D139E71D12CEC000A5A0F7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3D139EF1D12CEC000A5A0F7 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3D139FF1D12CEC000A5A0F7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3D13A051D12CEC000A5A0F7 /* Cocoa.framework in Frameworks */,
+				E3D13A081D12CEC000A5A0F7 /* libsqlite.framework in Frameworks */,
+				E3D13A041D12CEC000A5A0F7 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		E3D138F11D05248A00A5A0F7 = {
+		E3D139E11D12CEC000A5A0F7 = {
 			isa = PBXGroup;
 			children = (
-				E3D139121D0525EF00A5A0F7 /* libdbinterface.a */,
-				E3D139071D0524A700A5A0F7 /* libsqlite */,
-				E3D138FB1D05248A00A5A0F7 /* Products */,
+				E3D139F41D12CEC000A5A0F7 /* libsqlite */,
+				E3D13A091D12CEC000A5A0F7 /* libsqliteTests */,
+				E3D139ED1D12CEC000A5A0F7 /* Frameworks */,
+				E3D139EC1D12CEC000A5A0F7 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		E3D138FB1D05248A00A5A0F7 /* Products */ = {
+		E3D139EC1D12CEC000A5A0F7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E3D138FA1D05248A00A5A0F7 /* liblibsqlite.dylib */,
+				E3D139EB1D12CEC000A5A0F7 /* libsqlite.framework */,
+				E3D13A021D12CEC000A5A0F7 /* libsqliteTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E3D139071D0524A700A5A0F7 /* libsqlite */ = {
+		E3D139ED1D12CEC000A5A0F7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E3D139081D05250C00A5A0F7 /* database_sqlite.cpp */,
-				E3D139091D05250C00A5A0F7 /* database_sqlite.h */,
-				E3D1390A1D05250C00A5A0F7 /* sqlite3.c */,
-				E3D1390B1D05250C00A5A0F7 /* sqlite3.h */,
-				E3D1390C1D05250C00A5A0F7 /* sqlite3ext.h */,
+				E3D139EE1D12CEC000A5A0F7 /* Cocoa.framework */,
+				E3D13A031D12CEC000A5A0F7 /* XCTest.framework */,
+				E3D139F01D12CEC000A5A0F7 /* Other Frameworks */,
 			);
-			name = libsqlite;
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E3D139F01D12CEC000A5A0F7 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E3D139F11D12CEC000A5A0F7 /* Foundation.framework */,
+				E3D139F21D12CEC000A5A0F7 /* CoreData.framework */,
+				E3D139F31D12CEC000A5A0F7 /* AppKit.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		E3D139F41D12CEC000A5A0F7 /* libsqlite */ = {
+			isa = PBXGroup;
+			children = (
+				E3D139FB1D12CEC000A5A0F7 /* libsqlite.h */,
+				E3D139FC1D12CEC000A5A0F7 /* libsqlite.m */,
+				E3D139F51D12CEC000A5A0F7 /* Supporting Files */,
+			);
+			path = libsqlite;
+			sourceTree = "<group>";
+		};
+		E3D139F51D12CEC000A5A0F7 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				E3D139F61D12CEC000A5A0F7 /* libsqlite-Info.plist */,
+				E3D139F71D12CEC000A5A0F7 /* InfoPlist.strings */,
+				E3D139FA1D12CEC000A5A0F7 /* libsqlite-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E3D13A091D12CEC000A5A0F7 /* libsqliteTests */ = {
+			isa = PBXGroup;
+			children = (
+				E3D13A0F1D12CEC000A5A0F7 /* libsqliteTests.m */,
+				E3D13A0A1D12CEC000A5A0F7 /* Supporting Files */,
+			);
+			path = libsqliteTests;
+			sourceTree = "<group>";
+		};
+		E3D13A0A1D12CEC000A5A0F7 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				E3D13A0B1D12CEC000A5A0F7 /* libsqliteTests-Info.plist */,
+				E3D13A0C1D12CEC000A5A0F7 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		E3D138F81D05248A00A5A0F7 /* Headers */ = {
+		E3D139E81D12CEC000A5A0F7 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3D139101D05250C00A5A0F7 /* sqlite3.h in Headers */,
-				E3D1390E1D05250C00A5A0F7 /* database_sqlite.h in Headers */,
-				E3D139111D05250C00A5A0F7 /* sqlite3ext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		E3D138F91D05248A00A5A0F7 /* libsqlite */ = {
+		E3D139EA1D12CEC000A5A0F7 /* libsqlite */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E3D138FE1D05248A00A5A0F7 /* Build configuration list for PBXNativeTarget "libsqlite" */;
+			buildConfigurationList = E3D13A131D12CEC000A5A0F7 /* Build configuration list for PBXNativeTarget "libsqlite" */;
 			buildPhases = (
-				E3D138F61D05248A00A5A0F7 /* Sources */,
-				E3D138F71D05248A00A5A0F7 /* Frameworks */,
-				E3D138F81D05248A00A5A0F7 /* Headers */,
+				E3D139E61D12CEC000A5A0F7 /* Sources */,
+				E3D139E71D12CEC000A5A0F7 /* Frameworks */,
+				E3D139E81D12CEC000A5A0F7 /* Headers */,
+				E3D139E91D12CEC000A5A0F7 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -94,49 +172,126 @@
 			);
 			name = libsqlite;
 			productName = libsqlite;
-			productReference = E3D138FA1D05248A00A5A0F7 /* liblibsqlite.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
+			productReference = E3D139EB1D12CEC000A5A0F7 /* libsqlite.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		E3D13A011D12CEC000A5A0F7 /* libsqliteTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E3D13A161D12CEC000A5A0F7 /* Build configuration list for PBXNativeTarget "libsqliteTests" */;
+			buildPhases = (
+				E3D139FE1D12CEC000A5A0F7 /* Sources */,
+				E3D139FF1D12CEC000A5A0F7 /* Frameworks */,
+				E3D13A001D12CEC000A5A0F7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E3D13A071D12CEC000A5A0F7 /* PBXTargetDependency */,
+			);
+			name = libsqliteTests;
+			productName = libsqliteTests;
+			productReference = E3D13A021D12CEC000A5A0F7 /* libsqliteTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		E3D138F21D05248A00A5A0F7 /* Project object */ = {
+		E3D139E21D12CEC000A5A0F7 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Igor Korot";
+				TargetAttributes = {
+					E3D13A011D12CEC000A5A0F7 = {
+						TestTargetID = E3D139EA1D12CEC000A5A0F7;
+					};
+				};
 			};
-			buildConfigurationList = E3D138F51D05248A00A5A0F7 /* Build configuration list for PBXProject "libsqlite" */;
+			buildConfigurationList = E3D139E51D12CEC000A5A0F7 /* Build configuration list for PBXProject "libsqlite" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = E3D138F11D05248A00A5A0F7;
-			productRefGroup = E3D138FB1D05248A00A5A0F7 /* Products */;
+			mainGroup = E3D139E11D12CEC000A5A0F7;
+			productRefGroup = E3D139EC1D12CEC000A5A0F7 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E3D138F91D05248A00A5A0F7 /* libsqlite */,
+				E3D139EA1D12CEC000A5A0F7 /* libsqlite */,
+				E3D13A011D12CEC000A5A0F7 /* libsqliteTests */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		E3D139E91D12CEC000A5A0F7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3D139F91D12CEC000A5A0F7 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3D13A001D12CEC000A5A0F7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3D13A0E1D12CEC000A5A0F7 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
-		E3D138F61D05248A00A5A0F7 /* Sources */ = {
+		E3D139E61D12CEC000A5A0F7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3D1390D1D05250C00A5A0F7 /* database_sqlite.cpp in Sources */,
-				E3D1390F1D05250C00A5A0F7 /* sqlite3.c in Sources */,
+				E3D139FD1D12CEC000A5A0F7 /* libsqlite.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3D139FE1D12CEC000A5A0F7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3D13A101D12CEC000A5A0F7 /* libsqliteTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		E3D13A071D12CEC000A5A0F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E3D139EA1D12CEC000A5A0F7 /* libsqlite */;
+			targetProxy = E3D13A061D12CEC000A5A0F7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		E3D139F71D12CEC000A5A0F7 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E3D139F81D12CEC000A5A0F7 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		E3D13A0C1D12CEC000A5A0F7 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E3D13A0D1D12CEC000A5A0F7 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
-		E3D138FC1D05248A00A5A0F7 /* Debug */ = {
+		E3D13A111D12CEC000A5A0F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -174,7 +329,7 @@
 			};
 			name = Debug;
 		};
-		E3D138FD1D05248A00A5A0F7 /* Release */ = {
+		E3D13A121D12CEC000A5A0F7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -206,58 +361,105 @@
 			};
 			name = Release;
 		};
-		E3D138FF1D05248A00A5A0F7 /* Debug */ = {
+		E3D13A141D12CEC000A5A0F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
-				EXECUTABLE_PREFIX = lib;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../dbinterface,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/dbinterface/build/Debug,
-				);
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "libsqlite/libsqlite-Prefix.pch";
+				INFOPLIST_FILE = "libsqlite/libsqlite-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
 		};
-		E3D139001D05248A00A5A0F7 /* Release */ = {
+		E3D13A151D12CEC000A5A0F7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
-				EXECUTABLE_PREFIX = lib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/dbinterface/build/Debug,
-				);
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "libsqlite/libsqlite-Prefix.pch";
+				INFOPLIST_FILE = "libsqlite/libsqlite-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+		E3D13A171D12CEC000A5A0F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/libsqlite.framework/Versions/A/libsqlite";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "libsqlite/libsqlite-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "libsqliteTests/libsqliteTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		E3D13A181D12CEC000A5A0F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/libsqlite.framework/Versions/A/libsqlite";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "libsqlite/libsqlite-Prefix.pch";
+				INFOPLIST_FILE = "libsqliteTests/libsqliteTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E3D138F51D05248A00A5A0F7 /* Build configuration list for PBXProject "libsqlite" */ = {
+		E3D139E51D12CEC000A5A0F7 /* Build configuration list for PBXProject "libsqlite" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E3D138FC1D05248A00A5A0F7 /* Debug */,
-				E3D138FD1D05248A00A5A0F7 /* Release */,
+				E3D13A111D12CEC000A5A0F7 /* Debug */,
+				E3D13A121D12CEC000A5A0F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E3D138FE1D05248A00A5A0F7 /* Build configuration list for PBXNativeTarget "libsqlite" */ = {
+		E3D13A131D12CEC000A5A0F7 /* Build configuration list for PBXNativeTarget "libsqlite" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E3D138FF1D05248A00A5A0F7 /* Debug */,
-				E3D139001D05248A00A5A0F7 /* Release */,
+				E3D13A141D12CEC000A5A0F7 /* Debug */,
+				E3D13A151D12CEC000A5A0F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		E3D13A161D12CEC000A5A0F7 /* Build configuration list for PBXNativeTarget "libsqliteTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3D13A171D12CEC000A5A0F7 /* Debug */,
+				E3D13A181D12CEC000A5A0F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = E3D138F21D05248A00A5A0F7 /* Project object */;
+	rootObject = E3D139E21D12CEC000A5A0F7 /* Project object */;
 }
