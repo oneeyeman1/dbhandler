@@ -210,7 +210,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 }
                                 fields.push_back( Field( myconv.from_bytes( fieldName ), myconv.from_bytes( fieldType ), 0, 0, myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK == 1 ? true : false ) );
                             }
-                            else if( res == SQLITE_DONE )
+                            else if( res1 == SQLITE_DONE )
                                 break;
                             else
                             {
