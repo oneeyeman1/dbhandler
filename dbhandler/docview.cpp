@@ -104,8 +104,6 @@ bool MyApp::OnInit()
     //// Create a document manager
     wxDocManager *docManager = new wxDocManager;
 
-    //// Create a template relating drawing documents to their views
-    new wxDocTemplate( docManager, "Drawing", "*.drw", "", "drw", "Drawing Doc", "Drawing View", CLASSINFO( DrawingDocument ), CLASSINFO( DrawingView ) );
 #if defined( __WXMAC__ )  && wxOSX_USE_CARBON
     wxFileName::MacRegisterDefaultTypeAndCreator( "drw" , 'WXMB' , 'WXMA' );
 #endif

@@ -35,7 +35,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="databasedoc.cpp" />
+    <ClCompile Include="databaseview.cpp" />
     <ClCompile Include="dbview.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="databasedoc.h" />
+    <ClInclude Include="databaseview.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>dbview</ProjectName>

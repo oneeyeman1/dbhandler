@@ -12,8 +12,10 @@
 
 #include <map>
 #include <vector>
-//#include <sqlext.h>
-//#include "odbcconfigure.h"
+#include "wx/docview.h"
+#include "wx/cmdproc.h"
+#include "databasedoc.h"
+#include "databaseview.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -72,6 +74,15 @@ public:
 };
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
+
+extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *docManager)
+{
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    new wxDocTemplate( docManager, "Drawing", "*.drw", "", "drw", "Drawing Doc", "Drawing View", CLASSINFO(DrawingDocument), CLASSINFO(DrawingView) );
+}
+
 /*
 extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
 {
