@@ -5,7 +5,11 @@ lib_LTLIBRARIES =  \
 	libdatabaseview.la
 
 libdatabaseview_la_SOURCES =  \
-	dbview.cpp
+	dbview.cpp \
+	databasedoc.cpp \
+	databasedoc.h \
+	databaseview.cpp \
+	databaseview.h
 
 libdatabaseview_la_CXXFLAGS = -I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
 	-I/home/igor/wxWidgets/include \

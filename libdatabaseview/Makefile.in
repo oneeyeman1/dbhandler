@@ -128,7 +128,9 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libdatabaseview_la_LIBADD =
-am_libdatabaseview_la_OBJECTS = libdatabaseview_la-dbview.lo
+am_libdatabaseview_la_OBJECTS = libdatabaseview_la-dbview.lo \
+	libdatabaseview_la-databasedoc.lo \
+	libdatabaseview_la-databaseview.lo
 libdatabaseview_la_OBJECTS = $(am_libdatabaseview_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -172,6 +174,24 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
+CCLD = $(CC)
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 SOURCES = $(libdatabaseview_la_SOURCES)
 DIST_SOURCES = $(libdatabaseview_la_SOURCES)
 am__can_run_installinfo = \
@@ -356,7 +376,11 @@ lib_LTLIBRARIES = \
 	libdatabaseview.la
 
 libdatabaseview_la_SOURCES = \
-	dbview.cpp
+	dbview.cpp \
+	databasedoc.cpp \
+	databasedoc.h \
+	databaseview.cpp \
+	databaseview.h
 
 libdatabaseview_la_CXXFLAGS = -I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
 	-I/home/igor/wxWidgets/include \
@@ -455,6 +479,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdatabaseview_la-databasedoc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdatabaseview_la-databaseview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdatabaseview_la-dbview.Plo@am__quote@
 
 .cpp.o:
@@ -484,6 +510,20 @@ libdatabaseview_la-dbview.lo: dbview.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dbview.cpp' object='libdatabaseview_la-dbview.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdatabaseview_la_CXXFLAGS) $(CXXFLAGS) -c -o libdatabaseview_la-dbview.lo `test -f 'dbview.cpp' || echo '$(srcdir)/'`dbview.cpp
+
+libdatabaseview_la-databasedoc.lo: databasedoc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdatabaseview_la_CXXFLAGS) $(CXXFLAGS) -MT libdatabaseview_la-databasedoc.lo -MD -MP -MF $(DEPDIR)/libdatabaseview_la-databasedoc.Tpo -c -o libdatabaseview_la-databasedoc.lo `test -f 'databasedoc.cpp' || echo '$(srcdir)/'`databasedoc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdatabaseview_la-databasedoc.Tpo $(DEPDIR)/libdatabaseview_la-databasedoc.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='databasedoc.cpp' object='libdatabaseview_la-databasedoc.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdatabaseview_la_CXXFLAGS) $(CXXFLAGS) -c -o libdatabaseview_la-databasedoc.lo `test -f 'databasedoc.cpp' || echo '$(srcdir)/'`databasedoc.cpp
+
+libdatabaseview_la-databaseview.lo: databaseview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdatabaseview_la_CXXFLAGS) $(CXXFLAGS) -MT libdatabaseview_la-databaseview.lo -MD -MP -MF $(DEPDIR)/libdatabaseview_la-databaseview.Tpo -c -o libdatabaseview_la-databaseview.lo `test -f 'databaseview.cpp' || echo '$(srcdir)/'`databaseview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdatabaseview_la-databaseview.Tpo $(DEPDIR)/libdatabaseview_la-databaseview.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='databaseview.cpp' object='libdatabaseview_la-databaseview.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdatabaseview_la_CXXFLAGS) $(CXXFLAGS) -c -o libdatabaseview_la-databaseview.lo `test -f 'databaseview.cpp' || echo '$(srcdir)/'`databaseview.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
