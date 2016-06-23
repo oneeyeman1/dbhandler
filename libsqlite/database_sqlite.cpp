@@ -162,7 +162,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring errorMessage;
     sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL;
     std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    int result = 0, res = SQLITE_OK, res1, res2 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc;
+    int result = 0, res = SQLITE_OK, res1, res2 = SQLITE_OK, res3 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = ?";
@@ -238,8 +238,8 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         {
                             for( ; ; )
                             {
-                                res2 = sqlite3_step( stmt3 );
-                                if( res2 == SQLITE_ROW )
+                                res3 = sqlite3_step( stmt3 );
+                                if( res3 == SQLITE_ROW )
                                 {
                                     fkReference = sqlite3_column_int( stmt3, 1 );
                                     fkTable = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 2 ) );
@@ -269,7 +269,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         delete_constraint = CASCADE_DELETE;
                                     foreign_keys[fkReference].push_back( FKField( myconv.from_bytes( fkTable ), myconv.from_bytes( fkField ), myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
                                 }
-                                else if( res2 == SQLITE_DONE )
+                                else if( res3 == SQLITE_DONE )
                                     break;
                                 else
                                 {
