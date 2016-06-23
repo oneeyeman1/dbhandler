@@ -113,7 +113,7 @@ void MainFrame::Connect()
 #ifdef __WXMSW__
         m_lib->Load( "dbloader" );
 #elif __WXMAC__
-        m_lib->Load( "dbloader.dylib" );
+        m_lib->Load( "liblibdbloader.dylib" );
 #else
         m_lib->Load( "libdbloader" );
 #endif
@@ -141,7 +141,7 @@ void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
 	lib.Load( "dialogs" );
 #elif __WXMAC__
-    lib.Load( "libdialogs.dylib" );
+    lib.Load( "liblibdialogs.dylib" );
 #else
     lib.Load( "libdialogs" );
 #endif

@@ -96,6 +96,8 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
     wxBeginBusyCursor();
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
+#elif __WXOSX__
+    lib.Load( "liblibdialogs.dylib" );
 #else
     lib.Load( "libdialogs" );
 #endif
