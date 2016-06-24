@@ -68,6 +68,8 @@ MainFrame::~MainFrame()
 {
     delete m_db;
     m_db = NULL;
+    delete m_lib;
+    m_lib = NULL;
 }
 
 #if wxUSE_TOOLBAR
