@@ -20,6 +20,7 @@ libdatabaseview/vc_mswuddll
 libdbloader/vc_mswuddll
 autom4te.cache/
 .anjuta_sym_db.db
+dbinterface/.DS_Store
 *~
 .directory
 dbhandler/ipch/
