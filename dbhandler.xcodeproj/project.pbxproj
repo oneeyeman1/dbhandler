@@ -592,6 +592,7 @@
 					/Users/igorkorot/wxWidgets/include,
 				);
 				INFOPLIST_FILE = "dbhandler/dbhandler-Info.plist";
+				LIBRARY_SEARCH_PATHS = /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -620,6 +621,7 @@
 					"-lwx_baseu_xml-3.1",
 					"-lwx_baseu_net-3.1",
 					"-lwx_baseu-3.1",
+					"-L/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
