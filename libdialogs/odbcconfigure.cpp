@@ -45,6 +45,8 @@ CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title, 
     m_db = NULL;
 #ifdef __WXMSW__
     m_lib = new wxDynamicLibrary( "dbloader" );
+#elif __WXOSX__
+    m_lib = new wxDynamicLibrary( "liblibdbloader.dylib" );
 #else
     m_lib = new wxDynamicLibrary( "libdbloader" );
 #endif
