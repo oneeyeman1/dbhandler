@@ -159,6 +159,17 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
     InitMenuBar( event.GetId() );
     if( !m_db )
         Connect();
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+	lib.Load( "dbview" );
+#elif __WXOSX__
+    lib.Load( "liblibdbview.dylib" );
+#else
+    lib.Load( "libdbview" );
+#endif
+    if( lib.IsLoaded() )
+    {
+    }
 }
 
 void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
