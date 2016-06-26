@@ -66,6 +66,15 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocParentFrame(manager, NULL, wx
 
 MainFrame::~MainFrame()
 {
+	std::vector<std::wstring> errorMsg;
+	int result = m_db->Disconnect( errorMsg );
+    if( result )
+    {
+        for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
+        {
+            wxMessageBox( (*it) );
+        }
+    }
     delete m_db;
     m_db = NULL;
     delete m_lib;
