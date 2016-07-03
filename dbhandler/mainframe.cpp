@@ -84,6 +84,8 @@ MainFrame::~MainFrame()
     m_db = NULL;
     delete m_lib;
     m_lib = NULL;
+    delete m_lib1;
+    m_lib1 = NULL;
 }
 
 #if wxUSE_TOOLBAR
@@ -173,17 +175,17 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
     InitMenuBar( event.GetId() );
     if( !m_db )
         Connect();
-    wxDynamicLibrary lib;
+    m_lib1 = new wxDynamicLibrary;
 #ifdef __WXMSW__
-	lib.Load( "dbview" );
+    m_lib1->Load( "dbview" );
 #elif __WXOSX__
-    lib.Load( "liblibdbview.dylib" );
+    m_lib1->Load( "liblibdbview.dylib" );
 #else
-    lib.Load( "libdbview" );
+    m_lib1->Load( "libdbview" );
 #endif
-    if( lib.IsLoaded() )
+    if( m_lib1->IsLoaded() )
     {
-        DATABASE func = (DATABASE) lib.GetSymbol( "CreateDatabaseWindow" );
+        DATABASE func = (DATABASE) m_lib1->GetSymbol( "CreateDatabaseWindow" );
         func( this, m_manager );
     }
 }

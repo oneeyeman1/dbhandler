@@ -25,6 +25,7 @@ private:
     void OnDatabase(wxCommandEvent &event);
     Database *m_db;
     wxDynamicLibrary *m_lib;
+    wxDynamicLibrary *m_lib1;
     wxMenu *m_menuFile;
     wxDocManager *m_manager;
 //    void *m_db;
