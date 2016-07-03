@@ -9,7 +9,7 @@
 #ifndef _WX_SAMPLES_MAINFRAME_H_
 #define _WX_SAMPLES_MAINFRAME_H_
 
-class MainFrame : public wxDocParentFrame
+class MainFrame : public wxDocMDIParentFrame
 {
 public:
     MainFrame(wxDocManager *manager);
@@ -26,6 +26,7 @@ private:
     Database *m_db;
     wxDynamicLibrary *m_lib;
     wxMenu *m_menuFile;
+    wxDocManager *m_manager;
 //    void *m_db;
     wxDECLARE_EVENT_TABLE();
 };

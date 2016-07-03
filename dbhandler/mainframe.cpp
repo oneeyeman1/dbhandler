@@ -21,6 +21,7 @@
 #include <vector>
 #include <map>
 #include "wx/docview.h"
+#include "wx/docmdi.h"
 #include "wx/config.h"
 #include "wx/dynlib.h"
 #include "database.h"
@@ -32,18 +33,20 @@
 
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
+typedef void (*DATABASE)(wxWindow *, wxDocManager *);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 
-BEGIN_EVENT_TABLE(MainFrame, wxDocParentFrame)
+BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_CONFIGUREODBC, MainFrame::OnConfigureODBC)
     EVT_MENU(wxID_DATABASEWINDOW, MainFrame::OnDatabaseProfile)
     EVT_MENU(wxID_DATABASE, MainFrame::OnDatabase)
 END_EVENT_TABLE()
 
-MainFrame::MainFrame(wxDocManager *manager) : wxDocParentFrame(manager, NULL, wxID_ANY, "DB Handler" )
+MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL, wxID_ANY, "DB Handler" )
 {
     m_db = NULL;
     m_lib = NULL;
+    m_manager = manager;
     m_menuFile = new wxMenu;
     m_menuFile->Append( wxID_NEW );
     m_menuFile->Append( wxID_OPEN );
@@ -178,6 +181,8 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
 #endif
     if( lib.IsLoaded() )
     {
+        DATABASE func = (DATABASE) lib.GetSymbol( "CreateDatabaseWindow" );
+        func( this, m_manager );
     }
 }
 
