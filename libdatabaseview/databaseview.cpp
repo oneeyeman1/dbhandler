@@ -37,11 +37,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         return false;
     wxFrame *frame;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
-	wxRect clientRect = parent->GetClientRect();
-	frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
-//    MyApp& app = wxGetApp();
-    // create a new window and canvas inside it
-//    wxFrame* frame = app.CreateChildFrame(this, true);
+    wxRect clientRect = parent->GetClientRect();
+    frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
     wxASSERT( frame == GetFrame() );
     m_canvas = new MyCanvas( this );
     frame->Show();
