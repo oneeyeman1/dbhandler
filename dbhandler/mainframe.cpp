@@ -69,8 +69,10 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
 
 MainFrame::~MainFrame()
 {
-	std::vector<std::wstring> errorMsg;
-	int result = m_db->Disconnect( errorMsg );
+    std::vector<std::wstring> errorMsg;
+    int result = 0;
+    if( m_db )
+        result = m_db->Disconnect( errorMsg );
     if( result )
     {
         for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
