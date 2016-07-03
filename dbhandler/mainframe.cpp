@@ -181,7 +181,7 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
 #elif __WXOSX__
     m_lib1->Load( "liblibdbview.dylib" );
 #else
-    m_lib1->Load( "libdbview" );
+    m_lib1->Load( "libdatabaseview" );
 #endif
     if( m_lib1->IsLoaded() )
     {
