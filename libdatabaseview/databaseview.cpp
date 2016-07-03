@@ -39,6 +39,14 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     wxRect clientRect = parent->GetClientRect();
     frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+#ifdef __WXOSX__
+    wxRect parentRect = parent->GetRect();
+    wxSize parentClientSize = parent->GetClientSize();
+    wxPoint pt;
+    pt.x = -1;
+    pt.y = parentRect.height - parentClientSize.GetHeight();
+    frame->Move( pt.x, pt.y );
+#endif
     wxASSERT( frame == GetFrame() );
     m_canvas = new MyCanvas( this );
     frame->Show();
