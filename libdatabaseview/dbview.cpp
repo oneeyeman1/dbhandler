@@ -81,6 +81,7 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
     wxTheApp->SetTopWindow( parent );
 #endif
     new wxDocTemplate( docManager, "Drawing", "*.drw", "", "drw", "Drawing Doc", "Drawing View", CLASSINFO(DrawingDocument), CLASSINFO(DrawingView) );
+	docManager->CreateDocument( "*.drw", wxDOC_NEW | wxDOC_SILENT );
 }
 
 /*
