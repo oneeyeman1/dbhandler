@@ -33,7 +33,7 @@
 
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
-typedef void (*DATABASE)(wxWindow *, wxDocManager *);
+typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
@@ -186,7 +186,7 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
     if( m_lib1->IsLoaded() )
     {
         DATABASE func = (DATABASE) m_lib1->GetSymbol( "CreateDatabaseWindow" );
-        func( this, m_manager );
+        func( this, m_manager, m_db );
     }
 }
 

@@ -14,6 +14,7 @@
 #include <vector>
 #include "wx/docview.h"
 #include "wx/cmdproc.h"
+#include "database.h"
 #include "databasedoc.h"
 #include "databaseview.h"
 
@@ -75,7 +76,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *docManager)
+extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *docManager, Database *db)
 {
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
