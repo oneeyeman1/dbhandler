@@ -47,6 +47,7 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
             errorMsg.push_back( errorMessage );
         }
     }
+    pimpl->m_dbName = m_catalog;
     return result;
 }
 

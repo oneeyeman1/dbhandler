@@ -22,7 +22,7 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
 {
     // begin wxGlade: SelectTables::SelectTables
     m_panel = new wxPanel( this, wxID_ANY );
-    m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 1, NULL, wxLB_MULTIPLE );
+    m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
     m_showSystem = new wxCheckBox( m_panel, wxID_ANY, _( "&Show system tables" ) );
     m_open = new wxButton( m_panel, wxID_ANY, _( "&Open" ) );
     m_new = new wxButton( m_panel, wxID_ANY, _( "&New..." ) );
@@ -32,6 +32,16 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
     set_properties();
     do_layout();
     // end wxGlade
+    std::map<std::wstring,std::vector<Table> > tables = db->GetTableVector().m_tables;
+    std::wstring dbName = db->GetTableVector().m_dbName;
+    for( std::map<std::wstring,std::vector<Table> >::iterator it = tables.begin(); it != tables.end(); it++ )
+    {
+        if( (*it).first == dbName )
+        {
+            for( std::vector<Table>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+				m_tables->Append( (*it1).GetTableName() );
+        }
+    }
 }
 
 
