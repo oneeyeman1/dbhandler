@@ -12,6 +12,7 @@
 
 #include <map>
 #include <vector>
+#include "wx/docmdi.h"
 #include "wx/docview.h"
 #include "wx/cmdproc.h"
 #include "database.h"

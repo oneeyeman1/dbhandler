@@ -21,7 +21,7 @@
 #include "databasedoc.h"
 #include "databaseview.h"
 
-typedef void (*TABLESELECTION)(wxDocMDIParentFrame *, Database *);
+typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -39,10 +39,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
     if( !wxView::OnCreate( doc, flags ) )
         return false;
-    wxFrame *frame;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     wxRect clientRect = parent->GetClientRect();
-    frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
 #ifdef __WXOSX__
     wxRect parentRect = parent->GetRect();
     wxSize parentClientSize = parent->GetClientSize();
@@ -51,9 +50,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     pt.y = parentRect.height - parentClientSize.GetHeight();
     frame->Move( pt.x, pt.y );
 #endif
-    wxASSERT( frame == GetFrame() );
+    wxASSERT( m_frame == GetFrame() );
     m_canvas = new MyCanvas( this );
-    frame->Show();
+    m_frame->Show();
     return true;
 }
 
@@ -91,7 +90,7 @@ std::vector<Table> &DrawingView::GetTablesForView(Database *db)
     if( lib.IsLoaded() )
     {
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        func( wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame ), db );
+        func( /*wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame )*/m_frame, db );
     }
     return tables;
 }

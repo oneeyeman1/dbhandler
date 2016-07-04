@@ -50,6 +50,7 @@ void SelectTables::set_properties()
     // begin wxGlade: SelectTables::set_properties
     SetTitle( _( "Select Tables" ) );
     m_open->Enable( false );
+    m_open->SetDefault();
     // end wxGlade
 }
 
@@ -77,6 +78,7 @@ void SelectTables::do_layout()
     sizer_8->Add( m_cancel, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
     sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_8->Add( m_help, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
+    sizer_8->Add( 30, 30, 0, wxEXPAND, 0 );
     sizer_6->Add( sizer_8, 1, 0, 0 );
     sizer_5->Add( sizer_6, 1, 0, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );

@@ -21,6 +21,7 @@
 #include "wx/wfstream.h"
 
 #include "wx/docview.h"
+#include "wx/docmdi.h"
 #include "wx/cmdproc.h"
 #include "database.h"
 #include "databasedoc.h"

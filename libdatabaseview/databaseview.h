@@ -59,7 +59,7 @@ private:
     void OnCut(wxCommandEvent& event);
 
     MyCanvas *m_canvas;
-
+    wxDocMDIChildFrame *m_frame;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
