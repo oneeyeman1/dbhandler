@@ -8,7 +8,7 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
-
+#include <string>
 #include "database.h"
 #include "selecttables.h"
 
