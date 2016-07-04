@@ -9,6 +9,7 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 
+#include "database.h"
 #include "selecttables.h"
 
 // begin wxGlade: ::extracode
@@ -16,7 +17,7 @@
 
 
 
-SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
+SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     // begin wxGlade: SelectTables::SelectTables

@@ -47,7 +47,7 @@ class DrawingView : public wxView
 {
 public:
     DrawingView() : wxView(), m_canvas(NULL) {}
-
+    std::vector<Table> &GetTablesForView(Database *db);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;

@@ -15,10 +15,14 @@
 
 #include "wx/docview.h"
 #include "wx/docmdi.h"
+#include "wx/dynlib.h"
 #include "wx/cmdproc.h"
-//#include "docview.h"
+#include "database.h"
 #include "databasedoc.h"
 #include "databaseview.h"
+
+typedef void (*TABLESELECTION)(wxDocMDIParentFrame *, Database *);
+
 // ----------------------------------------------------------------------------
 // DrawingView implementation
 // ----------------------------------------------------------------------------
@@ -71,6 +75,25 @@ void DrawingView::OnDraw(wxDC *dc)
             dc->DrawLine( line.x1, line.y1, line.x2, line.y2 );
         }
     }
+}
+
+std::vector<Table> &DrawingView::GetTablesForView(Database *db)
+{
+    std::vector<Table> tables;
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
+        func( wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame ), db );
+    }
+    return tables;
 }
 
 DrawingDocument* DrawingView::GetDocument()

@@ -34,7 +34,7 @@ public:
     // begin wxGlade: SelectTables::ids
     // end wxGlade
 
-    SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
 
 private:
     // begin wxGlade: SelectTables::methods
