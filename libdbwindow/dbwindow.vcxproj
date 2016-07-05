@@ -34,6 +34,12 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="databasecanvas.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="databasecanvas.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>dbwindow</ProjectName>
     <ProjectGuid>{622CA63B-2182-4AF6-92CF-3396D386AF85}</ProjectGuid>
@@ -480,9 +486,6 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="my_dll.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

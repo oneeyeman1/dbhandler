@@ -17,6 +17,7 @@
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/cmdproc.h"
+#include "databasecanvas.h"
 #include "database.h"
 #include "databasedoc.h"
 #include "databaseview.h"
@@ -51,9 +52,14 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     frame->Move( pt.x, pt.y );
 #endif
     wxASSERT( m_frame == GetFrame() );
-    m_canvas = new MyCanvas( this );
+    m_canvas = new DatabaseCanvas( this );
     m_frame->Show();
+	Bind( wxEVT_CONTEXT_MENU, &DrawingView::OnContextMenu, this );
     return true;
+}
+
+void DrawingView::OnContextMenu(wxContextMenuEvent &event)
+{
 }
 
 // Sneakily gets used for default print/preview as well as drawing on the

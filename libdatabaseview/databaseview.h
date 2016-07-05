@@ -52,13 +52,14 @@ public:
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
     virtual bool OnClose(bool deleteWindow = true) wxOVERRIDE;
+    void OnContextMenu(wxContextMenuEvent &event);
 
     DrawingDocument* GetDocument();
 
 private:
     void OnCut(wxCommandEvent& event);
 
-    MyCanvas *m_canvas;
+    DatabaseCanvas *m_canvas;
     wxDocMDIChildFrame *m_frame;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
