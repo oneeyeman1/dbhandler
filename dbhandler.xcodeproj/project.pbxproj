@@ -25,6 +25,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		E38708C91D2B61D7004EF478 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E38708C51D2B61D7004EF478 /* libdbwindow.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E38708BE1D2B61D7004EF478;
+			remoteInfo = libdbwindow;
+		};
 		E3D05D5F1CA4AB1E002CB677 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E3D05D321CA4AB1D002CB677 /* Project object */;
@@ -77,6 +84,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E38708C51D2B61D7004EF478 /* libdbwindow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdbwindow.xcodeproj; path = libdbwindow/libdbwindow.xcodeproj; sourceTree = "<group>"; };
 		E3D05D3A1CA4AB1D002CB677 /* dbhandler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dbhandler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D05D3D1CA4AB1D002CB677 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		E3D05D401CA4AB1D002CB677 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -133,9 +141,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E38708C61D2B61D7004EF478 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E38708CA1D2B61D7004EF478 /* liblibdbwindow.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		E3D05D311CA4AB1D002CB677 = {
 			isa = PBXGroup;
 			children = (
+				E38708C51D2B61D7004EF478 /* libdbwindow.xcodeproj */,
 				E3D1398C1D0D174F00A5A0F7 /* libdatabaseview.xcodeproj */,
 				E3D1396D1D0D110A00A5A0F7 /* libdbloader.xcodeproj */,
 				E3D139431D0D0CD100A5A0F7 /* libdialogs.xcodeproj */,
@@ -351,6 +368,10 @@
 					ProjectRef = E3D1396D1D0D110A00A5A0F7 /* libdbloader.xcodeproj */;
 				},
 				{
+					ProductGroup = E38708C61D2B61D7004EF478 /* Products */;
+					ProjectRef = E38708C51D2B61D7004EF478 /* libdbwindow.xcodeproj */;
+				},
+				{
 					ProductGroup = E3D139441D0D0CD100A5A0F7 /* Products */;
 					ProjectRef = E3D139431D0D0CD100A5A0F7 /* libdialogs.xcodeproj */;
 				},
@@ -372,6 +393,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		E38708CA1D2B61D7004EF478 /* liblibdbwindow.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibdbwindow.dylib;
+			remoteRef = E38708C91D2B61D7004EF478 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		E3D138ED1D051EE200A5A0F7 /* libdbinterface.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;

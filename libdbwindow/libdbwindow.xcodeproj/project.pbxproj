@@ -7,142 +7,122 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E38708D11D2B6449004EF478 /* liblibdbwindow.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E38708D01D2B6449004EF478 /* liblibdbwindow.dylib */; };
-		E38708D31D2B6537004EF478 /* liblibdialogs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E38708D21D2B6537004EF478 /* liblibdialogs.dylib */; };
-		E3D139941D0D17B800A5A0F7 /* dbview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D139931D0D17B800A5A0F7 /* dbview.cpp */; };
-		E3D13B311D1B4DBF00A5A0F7 /* databasedoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D13B2D1D1B4DBF00A5A0F7 /* databasedoc.cpp */; };
-		E3D13B321D1B4DBF00A5A0F7 /* databasedoc.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D13B2E1D1B4DBF00A5A0F7 /* databasedoc.h */; };
-		E3D13B331D1B4DBF00A5A0F7 /* databaseview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D13B2F1D1B4DBF00A5A0F7 /* databaseview.cpp */; };
-		E3D13B341D1B4DBF00A5A0F7 /* databaseview.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D13B301D1B4DBF00A5A0F7 /* databaseview.h */; };
+		E38708CE1D2B6251004EF478 /* databasecanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38708CC1D2B6251004EF478 /* databasecanvas.cpp */; };
+		E38708CF1D2B6251004EF478 /* databasecanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = E38708CD1D2B6251004EF478 /* databasecanvas.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E38708D01D2B6449004EF478 /* liblibdbwindow.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibdbwindow.dylib; path = ../libdbwindow/build/Debug/liblibdbwindow.dylib; sourceTree = "<group>"; };
-		E38708D21D2B6537004EF478 /* liblibdialogs.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibdialogs.dylib; path = ../Build/Products/Debug/liblibdialogs.dylib; sourceTree = "<group>"; };
-		E3D139851D0D174F00A5A0F7 /* liblibdatabaseview.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdatabaseview.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		E3D139931D0D17B800A5A0F7 /* dbview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbview.cpp; sourceTree = "<group>"; };
-		E3D13B2D1D1B4DBF00A5A0F7 /* databasedoc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasedoc.cpp; sourceTree = "<group>"; };
-		E3D13B2E1D1B4DBF00A5A0F7 /* databasedoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasedoc.h; sourceTree = "<group>"; };
-		E3D13B2F1D1B4DBF00A5A0F7 /* databaseview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databaseview.cpp; sourceTree = "<group>"; };
-		E3D13B301D1B4DBF00A5A0F7 /* databaseview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databaseview.h; sourceTree = "<group>"; };
+		E38708BE1D2B61D7004EF478 /* liblibdbwindow.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdbwindow.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		E38708CC1D2B6251004EF478 /* databasecanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasecanvas.cpp; sourceTree = "<group>"; };
+		E38708CD1D2B6251004EF478 /* databasecanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasecanvas.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		E3D139821D0D174F00A5A0F7 /* Frameworks */ = {
+		E38708BB1D2B61D7004EF478 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E38708D31D2B6537004EF478 /* liblibdialogs.dylib in Frameworks */,
-				E38708D11D2B6449004EF478 /* liblibdbwindow.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		E3D1397C1D0D174F00A5A0F7 = {
+		E38708B51D2B61D7004EF478 = {
 			isa = PBXGroup;
 			children = (
-				E38708D21D2B6537004EF478 /* liblibdialogs.dylib */,
-				E38708D01D2B6449004EF478 /* liblibdbwindow.dylib */,
-				E3D139921D0D176000A5A0F7 /* libdatabaseview */,
-				E3D139861D0D174F00A5A0F7 /* Products */,
+				E38708CB1D2B61E9004EF478 /* libdbwindow */,
+				E38708BF1D2B61D7004EF478 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		E3D139861D0D174F00A5A0F7 /* Products */ = {
+		E38708BF1D2B61D7004EF478 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E3D139851D0D174F00A5A0F7 /* liblibdatabaseview.dylib */,
+				E38708BE1D2B61D7004EF478 /* liblibdbwindow.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E3D139921D0D176000A5A0F7 /* libdatabaseview */ = {
+		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
-				E3D13B2D1D1B4DBF00A5A0F7 /* databasedoc.cpp */,
-				E3D13B2E1D1B4DBF00A5A0F7 /* databasedoc.h */,
-				E3D13B2F1D1B4DBF00A5A0F7 /* databaseview.cpp */,
-				E3D13B301D1B4DBF00A5A0F7 /* databaseview.h */,
-				E3D139931D0D17B800A5A0F7 /* dbview.cpp */,
+				E38708CC1D2B6251004EF478 /* databasecanvas.cpp */,
+				E38708CD1D2B6251004EF478 /* databasecanvas.h */,
 			);
-			name = libdatabaseview;
+			name = libdbwindow;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		E3D139831D0D174F00A5A0F7 /* Headers */ = {
+		E38708BC1D2B61D7004EF478 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3D13B341D1B4DBF00A5A0F7 /* databaseview.h in Headers */,
-				E3D13B321D1B4DBF00A5A0F7 /* databasedoc.h in Headers */,
+				E38708CF1D2B6251004EF478 /* databasecanvas.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		E3D139841D0D174F00A5A0F7 /* libdatabaseview */ = {
+		E38708BD1D2B61D7004EF478 /* libdbwindow */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E3D139891D0D174F00A5A0F7 /* Build configuration list for PBXNativeTarget "libdatabaseview" */;
+			buildConfigurationList = E38708C21D2B61D7004EF478 /* Build configuration list for PBXNativeTarget "libdbwindow" */;
 			buildPhases = (
-				E3D139811D0D174F00A5A0F7 /* Sources */,
-				E3D139821D0D174F00A5A0F7 /* Frameworks */,
-				E3D139831D0D174F00A5A0F7 /* Headers */,
+				E38708BA1D2B61D7004EF478 /* Sources */,
+				E38708BB1D2B61D7004EF478 /* Frameworks */,
+				E38708BC1D2B61D7004EF478 /* Headers */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = libdatabaseview;
-			productName = libdatabaseview;
-			productReference = E3D139851D0D174F00A5A0F7 /* liblibdatabaseview.dylib */;
+			name = libdbwindow;
+			productName = libdbwindow;
+			productReference = E38708BE1D2B61D7004EF478 /* liblibdbwindow.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		E3D1397D1D0D174F00A5A0F7 /* Project object */ = {
+		E38708B61D2B61D7004EF478 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Igor Korot";
 			};
-			buildConfigurationList = E3D139801D0D174F00A5A0F7 /* Build configuration list for PBXProject "libdatabaseview" */;
+			buildConfigurationList = E38708B91D2B61D7004EF478 /* Build configuration list for PBXProject "libdbwindow" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = E3D1397C1D0D174F00A5A0F7;
-			productRefGroup = E3D139861D0D174F00A5A0F7 /* Products */;
+			mainGroup = E38708B51D2B61D7004EF478;
+			productRefGroup = E38708BF1D2B61D7004EF478 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E3D139841D0D174F00A5A0F7 /* libdatabaseview */,
+				E38708BD1D2B61D7004EF478 /* libdbwindow */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		E3D139811D0D174F00A5A0F7 /* Sources */ = {
+		E38708BA1D2B61D7004EF478 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3D139941D0D17B800A5A0F7 /* dbview.cpp in Sources */,
-				E3D13B311D1B4DBF00A5A0F7 /* databasedoc.cpp in Sources */,
-				E3D13B331D1B4DBF00A5A0F7 /* databaseview.cpp in Sources */,
+				E38708CE1D2B6251004EF478 /* databasecanvas.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		E3D139871D0D174F00A5A0F7 /* Debug */ = {
+		E38708C01D2B61D7004EF478 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -180,7 +160,7 @@
 			};
 			name = Debug;
 		};
-		E3D139881D0D174F00A5A0F7 /* Release */ = {
+		E38708C11D2B61D7004EF478 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -212,7 +192,7 @@
 			};
 			name = Release;
 		};
-		E3D1398A1D0D174F00A5A0F7 /* Debug */ = {
+		E38708C31D2B61D7004EF478 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
@@ -231,14 +211,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.1",
 					/Users/igorkorot/wxWidgets/include,
-					../dbinterface,
-					../libdbwindow,
-				);
-				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/libdbwindow/build/Debug,
-					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
 				);
 				OTHER_LDFLAGS = (
 					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
@@ -267,16 +239,11 @@
 			};
 			name = Debug;
 		};
-		E3D1398B1D0D174F00A5A0F7 /* Release */ = {
+		E38708C41D2B61D7004EF478 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				EXECUTABLE_PREFIX = lib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/libdbwindow/build/Debug,
-					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -284,25 +251,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E3D139801D0D174F00A5A0F7 /* Build configuration list for PBXProject "libdatabaseview" */ = {
+		E38708B91D2B61D7004EF478 /* Build configuration list for PBXProject "libdbwindow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E3D139871D0D174F00A5A0F7 /* Debug */,
-				E3D139881D0D174F00A5A0F7 /* Release */,
+				E38708C01D2B61D7004EF478 /* Debug */,
+				E38708C11D2B61D7004EF478 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E3D139891D0D174F00A5A0F7 /* Build configuration list for PBXNativeTarget "libdatabaseview" */ = {
+		E38708C21D2B61D7004EF478 /* Build configuration list for PBXNativeTarget "libdbwindow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E3D1398A1D0D174F00A5A0F7 /* Debug */,
-				E3D1398B1D0D174F00A5A0F7 /* Release */,
+				E38708C31D2B61D7004EF478 /* Debug */,
+				E38708C41D2B61D7004EF478 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = E3D1397D1D0D174F00A5A0F7 /* Project object */;
+	rootObject = E38708B61D2B61D7004EF478 /* Project object */;
 }

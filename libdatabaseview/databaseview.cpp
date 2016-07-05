@@ -49,7 +49,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxPoint pt;
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
-    frame->Move( pt.x, pt.y );
+    m_frame->Move( pt.x, pt.y );
 #endif
     wxASSERT( m_frame == GetFrame() );
     m_canvas = new DatabaseCanvas( this );
