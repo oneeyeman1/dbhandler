@@ -17174,7 +17174,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-ac_config_files="$ac_config_files Makefile po/Makefile.in dbinterface/Makefile libsqlite/Makefile libdialogs/Makefile libdbloader/Makefile libodbc/Makefile dbhandler/Makefile libdatabaseview/Makefile"
+ac_config_files="$ac_config_files Makefile po/Makefile.in dbinterface/Makefile libsqlite/Makefile libdialogs/Makefile libdbloader/Makefile libodbc/Makefile dbhandler/Makefile libdbwindow/Makefile libdatabaseview/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -18303,6 +18303,7 @@ do
     "libdbloader/Makefile") CONFIG_FILES="$CONFIG_FILES libdbloader/Makefile" ;;
     "libodbc/Makefile") CONFIG_FILES="$CONFIG_FILES libodbc/Makefile" ;;
     "dbhandler/Makefile") CONFIG_FILES="$CONFIG_FILES dbhandler/Makefile" ;;
+    "libdbwindow/Makefile") CONFIG_FILES="$CONFIG_FILES libdbwindow/Makefile" ;;
     "libdatabaseview/Makefile") CONFIG_FILES="$CONFIG_FILES libdatabaseview/Makefile" ;;
     "po/stamp-it") CONFIG_COMMANDS="$CONFIG_COMMANDS po/stamp-it" ;;
 
