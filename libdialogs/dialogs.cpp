@@ -107,7 +107,7 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
     return res;
 }
 
-extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db)
+extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std::vector<wxString> &tableNames)
 {
     int res;
 #ifdef __WXMSW__
@@ -115,5 +115,7 @@ extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db)
 #endif
     SelectTables dlg( parent, wxID_ANY, "", db );
 	res = dlg.ShowModal();
+    if( res != wxID_CANCEL )
+        dlg.GetSelectedTableNames( tableNames );
     return res;
 }

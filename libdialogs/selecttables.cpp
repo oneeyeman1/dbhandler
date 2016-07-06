@@ -42,8 +42,16 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
 				m_tables->Append( (*it1).GetTableName() );
         }
     }
+	m_open->Bind( wxEVT_BUTTON, &SelectTables::OnOpenTables, this );
 }
 
+void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames)
+{
+    wxArrayInt selections;
+    m_tables->GetSelections( selections );
+    for( size_t i = 0; i < selections.GetCount(); i++ )
+		tableNames.push_back( m_tables->GetString( i ) );
+}
 
 void SelectTables::set_properties()
 {
@@ -106,6 +114,10 @@ void SelectTables::OnSelectingLBItem(wxCommandEvent &event)
     event.Skip();
 }
 
+void SelectTables::OnOpenTables(wxCommandEvent &event)
+{
+	EndModal( dynamic_cast<wxButton *>( event.GetEventObject() )->GetId() );
+}
 
 // wxGlade: add SelectTables event handlers
 

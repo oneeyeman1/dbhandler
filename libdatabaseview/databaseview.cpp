@@ -22,7 +22,7 @@
 #include "databasedoc.h"
 #include "databaseview.h"
 
-typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *);
+typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -82,9 +82,10 @@ void DrawingView::OnDraw(wxDC *dc)
     }
 }
 
-std::vector<Table> &DrawingView::GetTablesForView(Database *db)
+//std::vector<Table> &DrawingView::GetTablesForView(Database *db)
+void DrawingView::GetTablesForView(Database *db)
 {
-    std::vector<Table> tables;
+    std::vector<wxString> tables;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
@@ -96,9 +97,9 @@ std::vector<Table> &DrawingView::GetTablesForView(Database *db)
     if( lib.IsLoaded() )
     {
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        func( /*wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame )*/m_frame, db );
+        func( /*wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame )*/m_frame, db, tables );
     }
-    return tables;
+//    return tables;
 }
 
 DrawingDocument* DrawingView::GetDocument()

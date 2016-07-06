@@ -35,7 +35,7 @@ public:
     // end wxGlade
 
     SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
-
+    void GetSelectedTableNames(std::vector<wxString> &tableNames);
 private:
     // begin wxGlade: SelectTables::methods
     void set_properties();
@@ -57,6 +57,7 @@ protected:
 
 public:
     void OnSelectingLBItem(wxCommandEvent &event); // wxGlade: <event_handler>
+    void OnOpenTables(wxCommandEvent &event);
 }; // wxGlade: end class
 
 
