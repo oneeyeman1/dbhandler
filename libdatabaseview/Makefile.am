@@ -21,6 +21,7 @@ libdatabaseview_la_CXXFLAGS = -I../../libdbwindow \
 	-pthread 
 
 libdatabaseview_la_LDFLAGS = -L/home/igor/wxWidgets/buildGTK2/lib \
+	-L../libdbwindow \
 	-pthread \
 	-Wl,-rpath,/home/igor/wxWidgets/buildGTK2/lib \
 	-lwx_gtk2u_xrc-3.1 \
