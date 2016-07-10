@@ -96,7 +96,7 @@ public:
 struct Database::Impl
 {
     std::map<std::wstring, std::vector<Table> > m_tables;
-    std::wstring m_dbName;
+    std::wstring m_dbName, m_type, m_subtype;
 };
 
 inline Database::~Database()

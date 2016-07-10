@@ -17,6 +17,8 @@ SQLiteDatabase::SQLiteDatabase() : Database()
 {
     m_db = NULL;
     pimpl = new Impl;
+    pimpl->m_type = L"SQLite";
+    pimpl->m_subtype = L"";
 }
 
 SQLiteDatabase::~SQLiteDatabase()
