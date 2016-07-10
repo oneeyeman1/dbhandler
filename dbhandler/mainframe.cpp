@@ -183,11 +183,15 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
 #else
     m_lib1->Load( "libdatabaseview" );
 #endif
-    if( m_lib1->IsLoaded() )
+    if( m_db && m_lib1->IsLoaded() )
     {
         DATABASE func = (DATABASE) m_lib1->GetSymbol( "CreateDatabaseWindow" );
         func( this, m_manager, m_db );
     }
+    else if( m_db )
+        wxMessageBox( "Error loading the library. Please re-install the software and try again." );
+    else
+        wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
 }
 
 void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))

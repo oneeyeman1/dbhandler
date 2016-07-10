@@ -520,7 +520,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::map<int,std::vector<FKField> > foreign_keys;
     SQLWCHAR *catalogName, *schemaName, *tableName;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0;
-    SQLHDBC hdbc_col = 0, hdbc_pk = 0, hdbc_colattr = 0, hdbc_fk = 0, hdbc_info = 0;
+    SQLHDBC hdbc_col = 0, hdbc_pk = 0, hdbc_colattr = 0, hdbc_fk = 0;
     SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1], dbName[1024];
     SQLWCHAR szFkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szFkTableSchema[SQL_MAX_SCHEMA_NAME_LEN + 1], szFkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szFkCatalog[SQL_MAX_CATALOG_NAME_LEN + 1];
     SQLSMALLINT updateRule, deleteRule, keySequence;
@@ -606,7 +606,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         ret = SQLExecDirect( stmt_colattr, szTableName, SQL_NTS );
                         delete szTableName;
                         szTableName = NULL;
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NULL_DATA )
                         {
                             GetErrorMessage( errorMsg, 1, stmt_colattr );
                             result = 1;
@@ -617,7 +617,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             hdbc_colattr = 0;
                             break;
                         }
-                        else
+                        else if( ret != SQL_NULL_DATA )
                         {
                             SQLSMALLINT lenUsed;
                             int bufferSize = 1024;
@@ -1125,9 +1125,13 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
 				}
             }
-            for( int i = 0; i < numCols; i++ )
-                delete columnNames[i];
-            delete columnNames;
+            if( columnNames )
+            {
+                for( int i = 0; i < numCols; i++ )
+                    delete columnNames[i];
+                delete columnNames;
+                columnNames = NULL;
+            }
             ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
@@ -1404,30 +1408,17 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 pk_fields.clear();
             }
         }
-        ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_info );
+        ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
-            GetErrorMessage( errorMsg, 0 );
+            GetErrorMessage( errorMsg, 2 );
             result = 1;
             fields.clear();
             pk_fields.clear();
         }
         else
         {
-            ret = SQLGetInfo( hdbc_info, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 2, hdbc_info );
-                result = 1;
-				fields.clear();
-				pk_fields.clear();
-            }
-            else
-            {
-                str_to_uc_cpy( pimpl->m_dbName, dbName );
-                ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_info );
-                hdbc_info = 0;
-            }
+            str_to_uc_cpy( pimpl->m_dbName, dbName );
         }
     }
     for( int i = 0; i < 5; i++ )
