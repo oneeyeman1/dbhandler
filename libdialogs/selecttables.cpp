@@ -20,6 +20,7 @@
 SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
+    m_db = db;
     // begin wxGlade: SelectTables::SelectTables
     m_panel = new wxPanel( this, wxID_ANY );
     m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
@@ -32,16 +33,6 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
     set_properties();
     do_layout();
     // end wxGlade
-    std::map<std::wstring,std::vector<Table> > tables = db->GetTableVector().m_tables;
-    std::wstring dbName = db->GetTableVector().m_dbName;
-    for( std::map<std::wstring,std::vector<Table> >::iterator it = tables.begin(); it != tables.end(); it++ )
-    {
-        if( (*it).first == dbName )
-        {
-            for( std::vector<Table>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
-				m_tables->Append( (*it1).GetTableName() );
-        }
-    }
 	m_open->Bind( wxEVT_BUTTON, &SelectTables::OnOpenTables, this );
 }
 
@@ -59,6 +50,7 @@ void SelectTables::set_properties()
     SetTitle( _( "Select Tables" ) );
     m_open->Enable( false );
     m_open->SetDefault();
+    FillTableList();
     // end wxGlade
 }
 
@@ -121,3 +113,20 @@ void SelectTables::OnOpenTables(wxCommandEvent &event)
 
 // wxGlade: add SelectTables event handlers
 
+void SelectTables::FillTableList()
+{
+    std::map<std::wstring,std::vector<Table> > tables = db->GetTableVector().m_tables;
+    std::wstring dbName = db->GetTableVector().m_dbName;
+    for( std::map<std::wstring,std::vector<Table> >::iterator it = tables.begin(); it != tables.end(); it++ )
+    {
+        if( (*it).first == dbName )
+        {
+            for( std::vector<Table>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+            {
+                std::wstring tableName = (*it1).GetTableName();
+                if( tableName.find( L"." ) && ( ( tableName.substr( 0, 2 ) != L"sys" ) && ( tableName.substr( 0, 2 ) != L"INF" ) ) )
+                    m_tables->Append( (*it1).GetTableName().substr( 4 ) );
+            }
+        }
+    }
+}
