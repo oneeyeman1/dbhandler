@@ -554,8 +554,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
             if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
                 tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
-//            if( equal( schemaName, L"sys" ) || equal( schemaName, L"INFORMATION_SCHEMA" ) )
-//                continue;
             ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_colattr );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
@@ -667,44 +665,44 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 if( autoincrement == SQL_TRUE )
                                     autoinc_fields.insert( columnNames[i] );
                             }
-                            ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, 1, stmt_colattr );
-                                result = 1;
-                                fields.clear();
-                                pk_fields.clear();
-                                autoinc_fields.clear();
-                                SQLDisconnect( hdbc_colattr );
-                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                                stmt_colattr = 0;
-                                hdbc_colattr = 0;
-                                break;
-                            }
+                        }
+                        ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, stmt_colattr );
+                            result = 1;
+                            fields.clear();
+                            pk_fields.clear();
+                            autoinc_fields.clear();
+                            SQLDisconnect( hdbc_colattr );
+                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
                             stmt_colattr = 0;
-                            ret = SQLDisconnect( hdbc_colattr );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, 2, hdbc_colattr );
-                                result = 1;
-                                fields.clear();
-                                pk_fields.clear();
-                                autoinc_fields.clear();
-                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                                hdbc_colattr = 0;
-                                break;
-                            }
-                            ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, 2, hdbc_colattr );
-                                result = 1;
-                                fields.clear();
-                                pk_fields.clear();
-                                autoinc_fields.clear();
-                                hdbc_colattr = 0;
-                                break;
-                            }
+                            hdbc_colattr = 0;
+                            break;
+                        }
+                        stmt_colattr = 0;
+                        ret = SQLDisconnect( hdbc_colattr );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 2, hdbc_colattr );
+                            result = 1;
+                            fields.clear();
+                            pk_fields.clear();
+                            autoinc_fields.clear();
+                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                            hdbc_colattr = 0;
+                            break;
+                        }
+                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 2, hdbc_colattr );
+                            result = 1;
+                            fields.clear();
+                            pk_fields.clear();
+                            autoinc_fields.clear();
+                            hdbc_colattr = 0;
+                            break;
                         }
                     }
                 }
