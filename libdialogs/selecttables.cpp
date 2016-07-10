@@ -34,6 +34,7 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
     do_layout();
     // end wxGlade
 	m_open->Bind( wxEVT_BUTTON, &SelectTables::OnOpenTables, this );
+	m_showSystem->Bind( wxEVT_CHECKBOX, &SelectTables::OnShowSystemTables, this );
 }
 
 void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames)
@@ -50,7 +51,7 @@ void SelectTables::set_properties()
     SetTitle( _( "Select Tables" ) );
     m_open->Enable( false );
     m_open->SetDefault();
-    FillTableList();
+    FillTableList( false );
     // end wxGlade
 }
 
@@ -113,8 +114,10 @@ void SelectTables::OnOpenTables(wxCommandEvent &event)
 
 // wxGlade: add SelectTables event handlers
 
-void SelectTables::FillTableList()
+void SelectTables::FillTableList(bool sysTableIncluded)
 {
+    m_tables->Clear();
+    std::wstring type = m_db->GetTableVector().m_type;
     std::map<std::wstring,std::vector<Table> > tables = m_db->GetTableVector().m_tables;
     std::wstring dbName = m_db->GetTableVector().m_dbName;
     for( std::map<std::wstring,std::vector<Table> >::iterator it = tables.begin(); it != tables.end(); it++ )
@@ -124,9 +127,30 @@ void SelectTables::FillTableList()
             for( std::vector<Table>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
             {
                 std::wstring tableName = (*it1).GetTableName();
-                if( tableName.find( L"." ) && ( ( tableName.substr( 0, 2 ) != L"sys" ) && ( tableName.substr( 0, 2 ) != L"INF" ) ) )
-                    m_tables->Append( (*it1).GetTableName().substr( 4 ) );
+                if( type == L"SQLite" )
+                {
+                    if( !sysTableIncluded && tableName.substr( 0, 6 ) != L"sqlite" )
+                        m_tables->Append( tableName );
+                    else if( sysTableIncluded )
+                        m_tables->Append( tableName );
+                }
+                if( type == L"ODBC" )
+                {
+                    if( !sysTableIncluded )
+                    {
+                        if( ( ( tableName.substr( 0, 2 ) != L"sys" ) && ( tableName.substr( 0, 2 ) != L"INF" ) ) )
+                            m_tables->Append( (*it1).GetTableName().substr( 4 ) );
+                    }
+                }
             }
         }
     }
+}
+
+void SelectTables::OnShowSystemTables(wxCommandEvent &event)
+{
+    if( m_showSystem->IsChecked() )
+        FillTableList( true );
+    else
+        FillTableList( false );
 }

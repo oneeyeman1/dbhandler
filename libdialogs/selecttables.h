@@ -44,7 +44,7 @@ private:
     // end wxGlade
 
 protected:
-    void FillTableList();
+    void FillTableList(bool sysTableIncluded);
     // begin wxGlade: SelectTables::attributes
     wxListBox* m_tables;
     wxCheckBox* m_showSystem;
@@ -60,6 +60,7 @@ protected:
 public:
     void OnSelectingLBItem(wxCommandEvent &event); // wxGlade: <event_handler>
     void OnOpenTables(wxCommandEvent &event);
+    void OnShowSystemTables(wxCommandEvent &event);
 }; // wxGlade: end class
 
 
