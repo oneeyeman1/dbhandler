@@ -115,8 +115,8 @@ void SelectTables::OnOpenTables(wxCommandEvent &event)
 
 void SelectTables::FillTableList()
 {
-    std::map<std::wstring,std::vector<Table> > tables = db->GetTableVector().m_tables;
-    std::wstring dbName = db->GetTableVector().m_dbName;
+    std::map<std::wstring,std::vector<Table> > tables = m_db->GetTableVector().m_tables;
+    std::wstring dbName = m_db->GetTableVector().m_dbName;
     for( std::map<std::wstring,std::vector<Table> >::iterator it = tables.begin(); it != tables.end(); it++ )
     {
         if( (*it).first == dbName )
