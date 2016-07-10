@@ -60,8 +60,6 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     int res = sqlite3_close( m_db );
     if( res != SQLITE_OK )
     {
-        sqlite3_stmt *stmt = sqlite3_next_stmt( m_db, NULL );
-        const char *query = sqlite3_sql( stmt );
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
         result = 1;
