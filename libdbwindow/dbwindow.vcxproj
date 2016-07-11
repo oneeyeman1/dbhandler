@@ -36,9 +36,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="databasecanvas.h" />
+    <ClInclude Include="DiagramManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="databasecanvas.cpp" />
+    <ClCompile Include="DiagramManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>dbwindow</ProjectName>

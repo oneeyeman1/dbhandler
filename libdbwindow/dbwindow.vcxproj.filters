@@ -13,9 +13,15 @@
     <ClInclude Include="databasecanvas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DiagramManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="databasecanvas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DiagramManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
