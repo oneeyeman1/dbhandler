@@ -9,12 +9,16 @@
 /* Begin PBXBuildFile section */
 		E38708CE1D2B6251004EF478 /* databasecanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38708CC1D2B6251004EF478 /* databasecanvas.cpp */; };
 		E38708CF1D2B6251004EF478 /* databasecanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = E38708CD1D2B6251004EF478 /* databasecanvas.h */; };
+		E38708D61D334B49004EF478 /* DiagramManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38708D41D334B49004EF478 /* DiagramManager.cpp */; };
+		E38708D71D334B49004EF478 /* DiagramManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E38708D51D334B49004EF478 /* DiagramManager.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		E38708BE1D2B61D7004EF478 /* liblibdbwindow.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdbwindow.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E38708CC1D2B6251004EF478 /* databasecanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasecanvas.cpp; sourceTree = "<group>"; };
 		E38708CD1D2B6251004EF478 /* databasecanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasecanvas.h; sourceTree = "<group>"; };
+		E38708D41D334B49004EF478 /* DiagramManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiagramManager.cpp; sourceTree = "<group>"; };
+		E38708D51D334B49004EF478 /* DiagramManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagramManager.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +51,8 @@
 		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
+				E38708D41D334B49004EF478 /* DiagramManager.cpp */,
+				E38708D51D334B49004EF478 /* DiagramManager.h */,
 				E38708CC1D2B6251004EF478 /* databasecanvas.cpp */,
 				E38708CD1D2B6251004EF478 /* databasecanvas.h */,
 			);
@@ -60,6 +66,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E38708D71D334B49004EF478 /* DiagramManager.h in Headers */,
 				E38708CF1D2B6251004EF478 /* databasecanvas.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -116,6 +123,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E38708CE1D2B6251004EF478 /* databasecanvas.cpp in Sources */,
+				E38708D61D334B49004EF478 /* DiagramManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
