@@ -138,13 +138,20 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                 {
                     if( !sysTableIncluded )
                     {
-                        if( ( ( tableName.substr( 0, 2 ) != L"sys" ) && ( tableName.substr( 0, 2 ) != L"INF" ) ) )
-                            m_tables->Append( (*it1).GetTableName().substr( 4 ) );
+                        if( ( ( tableName.substr( 0, 3 ) != L"sys" ) && ( tableName.substr( 0, 18 ) != L"INFORMATION_SCHEMA" ) ) )
+                            m_tables->Append( tableName.substr( 4 ) );
+                    }
+                    else
+                    {
+                        if( tableName.substr( 0, 3 ) == L"dbo" )
+                            tableName = tableName.substr( 4 );
+                        m_tables->Append( tableName );
                     }
                 }
             }
         }
     }
+    Layout();
 }
 
 void SelectTables::OnShowSystemTables(wxCommandEvent &event)
