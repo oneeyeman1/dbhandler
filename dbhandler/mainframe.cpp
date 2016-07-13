@@ -45,7 +45,7 @@ END_EVENT_TABLE()
 MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL, wxID_ANY, "DB Handler" )
 {
     m_db = NULL;
-    m_lib = NULL;
+    m_lib = m_lib1 = NULL;
     m_manager = manager;
     m_menuFile = new wxMenu;
     m_menuFile->Append( wxID_NEW );
