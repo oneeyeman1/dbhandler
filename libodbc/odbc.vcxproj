@@ -183,7 +183,7 @@
       <OutputFile>..\docview\vc_mswuddll\odbc_lib.dll</OutputFile>
       <ImportLibrary>vc_mswuddll\odbc_dll.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\docview\debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\dbhandler\debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll\odbc_dll.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
