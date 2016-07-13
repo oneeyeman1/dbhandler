@@ -176,7 +176,7 @@
       <OutputFile>..\docview\vc_mswuddll\dbloader.dll</OutputFile>
       <ImportLibrary>vc_mswud\dbloader.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>c:\wxWidgets\lib\vc_lib;..\libsqlite\vc_mswuddll;..\libodbc\vc_mswuddll\;..\docview\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>c:\wxWidgets\lib\vc_lib;..\libsqlite\vc_mswuddll;..\libodbc\vc_mswuddll\;..\dbhandler\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswud\my_dll.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
