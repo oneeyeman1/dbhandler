@@ -186,7 +186,7 @@
       <OutputFile>..\docview\vc_mswuddll\sqlite.dll</OutputFile>
       <ImportLibrary>vc_mswuddll\sqlite_dll.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>vc_&#x1F;mswud\;..\docview\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>vc_&#x1F;mswud\;..\dbhandler\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll\sqlite_dll.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
