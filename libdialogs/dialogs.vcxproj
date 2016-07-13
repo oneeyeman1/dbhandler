@@ -178,7 +178,7 @@
       <OutputFile>..\docview\vc_mswud\dialogs.dll</OutputFile>
       <ImportLibrary>vc_mswuddll\dialogs.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>c:\wxWidgets\lib\vc_lib;..\docview\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>c:\wxWidgets\lib\vc_lib;..\dbhandler\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll\dialogs.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
