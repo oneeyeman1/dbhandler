@@ -233,6 +233,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         errorMsg.push_back( errorMessage );
                     }
                     sqlite3_finalize( stmt2 );
+                    sqlite3_free( z );
                     if( res1 == SQLITE_DONE )
                     {
                         char *y = sqlite3_mprintf( query3.c_str(), tableName );
@@ -292,6 +293,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             errorMsg.push_back( errorMessage );
                         }
                         sqlite3_finalize( stmt3 );
+                        sqlite3_free( y );
                     }
                     if( res1 == SQLITE_DONE && res3 == SQLITE_DONE )
                         pimpl->m_tables[m_catalog].push_back( Table( myconv.from_bytes( (const char *) tableName ), fields, foreign_keys ) );
