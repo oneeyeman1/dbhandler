@@ -35,6 +35,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dbview", "..\libdatabasevie
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dbwindow", "..\libdbwindow\dbwindow.vcxproj", "{622CA63B-2182-4AF6-92CF-3396D386AF85}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F} = {3EA1F0FB-D6C1-4E80-A024-662A74C3719F}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shapeframework", "..\libshapeframework\shapeframework.vcxproj", "{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -172,6 +177,22 @@ Global
 		{622CA63B-2182-4AF6-92CF-3396D386AF85}.Release|Win32.Build.0 = Release|Win32
 		{622CA63B-2182-4AF6-92CF-3396D386AF85}.Release|x64.ActiveCfg = Release|x64
 		{622CA63B-2182-4AF6-92CF-3396D386AF85}.Release|x64.Build.0 = Release|x64
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.Debug|Win32.Build.0 = Debug|Win32
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.Debug|x64.ActiveCfg = Debug|x64
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.Debug|x64.Build.0 = Debug|x64
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.DLL Debug|Win32.ActiveCfg = DLL Debug|Win32
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.DLL Debug|Win32.Build.0 = DLL Debug|Win32
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.DLL Debug|x64.ActiveCfg = DLL Debug|x64
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.DLL Debug|x64.Build.0 = DLL Debug|x64
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.DLL Release|Win32.ActiveCfg = DLL Release|Win32
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.DLL Release|Win32.Build.0 = DLL Release|Win32
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.DLL Release|x64.ActiveCfg = DLL Release|x64
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.DLL Release|x64.Build.0 = DLL Release|x64
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.Release|Win32.ActiveCfg = Release|Win32
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.Release|Win32.Build.0 = Release|Win32
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.Release|x64.ActiveCfg = Release|x64
+		{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

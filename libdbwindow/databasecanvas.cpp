@@ -6,6 +6,9 @@
 #endif
 
 #include "wx/docview.h"
+#include "Defs.h"
+#include "wxsf/ShapeCanvas.h"
+#include "DiagramManager.h"
 #include "databasecanvas.h"
 
 DatabaseCanvas::DatabaseCanvas(wxView *view, wxWindow *parent) : wxScrolledWindow(view->GetFrame())
