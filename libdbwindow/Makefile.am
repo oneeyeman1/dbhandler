@@ -6,11 +6,10 @@ lib_LTLIBRARIES =  \
 
 libdbwindow_la_SOURCES =  \
 	databasecanvas.cpp \
-	databasecanvas.h \
-	DiagramManager.cpp \
-	DiagramManager.h
+	databasecanvas.h
 
-libdbwindow_la_CXXFLAGS = -I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
+libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
+	-I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
 	-I/home/igor/wxWidgets/include \
 	-D_FILE_OFFSET_BITS=64 \
 	-DWXUSINGDLL \

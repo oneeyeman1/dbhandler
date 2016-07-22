@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = libdbwindow
+subdir = libshapeframework
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -127,18 +127,59 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libdbwindow_la_LIBADD =
-am_libdbwindow_la_OBJECTS = libdbwindow_la-databasecanvas.lo \
-	libdbwindow_la-DiagramManager.lo
-libdbwindow_la_OBJECTS = $(am_libdbwindow_la_OBJECTS)
+libshapeframework_la_LIBADD =
+am_libshapeframework_la_OBJECTS = libshapeframework_la-ArrowBase.lo \
+	libshapeframework_la-AutoLayout.lo \
+	libshapeframework_la-BitmapShape.lo \
+	libshapeframework_la-BitmapShapeXml.lo \
+	libshapeframework_la-CanvasHistory.lo \
+	libshapeframework_la-CanvasState.lo \
+	libshapeframework_la-CircleArrow.lo \
+	libshapeframework_la-CircleShape.lo \
+	libshapeframework_la-CommonFcn.lo \
+	libshapeframework_la-ControlShape.lo \
+	libshapeframework_la-CurveShape.lo \
+	libshapeframework_la-DiagramManager.lo \
+	libshapeframework_la-DiamondArrow.lo \
+	libshapeframework_la-DiamondShape.lo \
+	libshapeframework_la-EditTextShape.lo \
+	libshapeframework_la-EllipseShape.lo \
+	libshapeframework_la-FixedRectShape.lo \
+	libshapeframework_la-FlexGridShape.lo \
+	libshapeframework_la-GridShape.lo \
+	libshapeframework_la-LineShape.lo \
+	libshapeframework_la-MultiSelRect.lo \
+	libshapeframework_la-OpenArrow.lo \
+	libshapeframework_la-OrthoShape.lo \
+	libshapeframework_la-PolygonShape.lo \
+	libshapeframework_la-PolygonShapeXml.lo \
+	libshapeframework_la-Printout.lo \
+	libshapeframework_la-RectShape.lo \
+	libshapeframework_la-RoundOrthoShape.lo \
+	libshapeframework_la-RoundRectShape.lo \
+	libshapeframework_la-SFEvents.lo \
+	libshapeframework_la-ScaledDC.lo \
+	libshapeframework_la-ShapeBase.lo \
+	libshapeframework_la-ShapeBaseXml.lo \
+	libshapeframework_la-ShapeCanvas.lo \
+	libshapeframework_la-ShapeDataObject.lo \
+	libshapeframework_la-ShapeDockpoint.lo \
+	libshapeframework_la-ShapeHandle.lo \
+	libshapeframework_la-SolidArrow.lo \
+	libshapeframework_la-TextShape.lo \
+	libshapeframework_la-TextShapeXml.lo \
+	libshapeframework_la-Thumbnail.lo \
+	libshapeframework_la-PropertyIO.lo \
+	libshapeframework_la-XmlSerializer.lo
+libshapeframework_la_OBJECTS = $(am_libshapeframework_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-libdbwindow_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+libshapeframework_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) \
-	$(libdbwindow_la_LDFLAGS) $(LDFLAGS) -o $@
+	$(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) \
+	$(libshapeframework_la_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -191,8 +232,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libdbwindow_la_SOURCES)
-DIST_SOURCES = $(libdbwindow_la_SOURCES)
+SOURCES = $(libshapeframework_la_SOURCES)
+DIST_SOURCES = $(libshapeframework_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -372,22 +413,111 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = \
-	libdbwindow.la
+	libshapeframework.la
 
-libdbwindow_la_SOURCES = \
-	databasecanvas.cpp \
-	databasecanvas.h \
+libshapeframework_la_SOURCES = \
+	ArrowBase.cpp \
+	AutoLayout.cpp \
+	BitmapShape.cpp \
+	BitmapShapeXml.cpp \
+	CanvasHistory.cpp \
+	CanvasState.cpp \
+	CircleArrow.cpp \
+	CircleShape.cpp \
+	CommonFcn.cpp \
+	ControlShape.cpp \
+	CurveShape.cpp \
+	Defs.h \
 	DiagramManager.cpp \
-	DiagramManager.h
+	DiagramManager.h \
+	DiamondArrow.cpp \
+	DiamondShape.cpp \
+	EditTextShape.cpp \
+	EllipseShape.cpp \
+	FixedRectShape.cpp \
+	FlexGridShape.cpp \
+	GridShape.cpp \
+	LineShape.cpp \
+	MultiSelRect.cpp \
+	OpenArrow.cpp \
+	OrthoShape.cpp \
+	PolygonShape.cpp \
+	PolygonShapeXml.cpp \
+	Printout.cpp \
+	PropertyIO.h \
+	RectShape.cpp \
+	RoundOrthoShape.cpp \
+	RoundRectShape.cpp \
+	SFEvents.cpp \
+	ScaledDC.cpp \
+	ShapeBase.cpp \
+	ShapeBaseXml.cpp \
+	ShapeCanvas.cpp \
+	ShapeDataObject.cpp \
+	ShapeDockpoint.cpp \
+	ShapeHandle.cpp \
+	SolidArrow.cpp \
+	TextShape.cpp \
+	TextShapeXml.cpp \
+	Thumbnail.cpp \
+	XmlSerializer.h \
+	wxxmlserializer/Defs.h \
+	wxxmlserializer/PropertyIO.cpp \
+	wxxmlserializer/PropertyIO.h \
+	wxxmlserializer/XmlSerializer.cpp \
+	wxxmlserializer/XmlSerializer.h \
+	wxsf/ArrowBase.h \
+	wxsf/AutoLayout.h \
+	wxsf/BitmapShape.h \
+	wxsf/CanvasHistory.h \
+	wxsf/CanvasState.h \
+	wxsf/CircleArrow.h \
+	wxsf/CircleShape.h \
+	wxsf/CommonFcn.h \
+	wxsf/ControlShape.h \
+	wxsf/CurveShape.h \
+	wxsf/Defs.h \
+	wxsf/DiagramManager.h \
+	wxsf/DiamondArrow.h \
+	wxsf/DiamondShape.h \
+	wxsf/EditTextShape.h \
+	wxsf/EllipseShape.h \
+	wxsf/FixedRectShape.h \
+	wxsf/FlexGridShape.h \
+	wxsf/GridShape.h \
+	wxsf/LineShape.h \
+	wxsf/MultiSelRect.h \
+	wxsf/OpenArrow.h \
+	wxsf/OrthoShape.h \
+	wxsf/PolygonShape.h \
+	wxsf/Printout.h \
+	wxsf/RectShape.h \
+	wxsf/RoundOrthoShape.h \
+	wxsf/RoundRectShape.h \
+	wxsf/SFEvents.h \
+	wxsf/ScaledDC.h \
+	wxsf/ShapeBase.h \
+	wxsf/ShapeCanvas.h \
+	wxsf/ShapeDataObject.h \
+	wxsf/ShapeDockpoint.h \
+	wxsf/ShapeHandle.h \
+	wxsf/SolidArrow.h \
+	wxsf/TextShape.h \
+	wxsf/Thumbnail.h \
+	wxsf/wxShapeFramework.h
 
-libdbwindow_la_CXXFLAGS = -I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
+libshapeframework_la_CXXFLAGS = -I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
 	-I/home/igor/wxWidgets/include \
 	-D_FILE_OFFSET_BITS=64 \
 	-DWXUSINGDLL \
 	-D__WXGTK__ \
-	-pthread 
+	-pthread \
+	-DUNICODE \
+	-DWXUSINGDLL \
+	-DWXUSINGDLL_CL \
+	-DWXUSINGDLL_SDK 
 
-libdbwindow_la_LDFLAGS = -L/home/igor/wxWidgets/buildGTK2/lib \
+libshapeframework_la_LDFLAGS = -L/home/igor/wxWidgets/buildGTK2/lib \
 	-pthread \
 	-Wl,-rpath,/home/igor/wxWidgets/buildGTK2/lib \
 	-lwx_gtk2u_xrc-3.1 \
@@ -412,9 +542,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libdbwindow/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libshapeframework/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu libdbwindow/Makefile
+	  $(AUTOMAKE) --gnu libshapeframework/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -468,8 +598,8 @@ clean-libLTLIBRARIES:
 	  rm -f $${locs}; \
 	}
 
-libdbwindow.la: $(libdbwindow_la_OBJECTS) $(libdbwindow_la_DEPENDENCIES) $(EXTRA_libdbwindow_la_DEPENDENCIES) 
-	$(AM_V_CXXLD)$(libdbwindow_la_LINK) -rpath $(libdir) $(libdbwindow_la_OBJECTS) $(libdbwindow_la_LIBADD) $(LIBS)
+libshapeframework.la: $(libshapeframework_la_OBJECTS) $(libshapeframework_la_DEPENDENCIES) $(EXTRA_libshapeframework_la_DEPENDENCIES) 
+	$(AM_V_CXXLD)$(libshapeframework_la_LINK) -rpath $(libdir) $(libshapeframework_la_OBJECTS) $(libshapeframework_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -477,8 +607,49 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-DiagramManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-databasecanvas.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-ArrowBase.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-AutoLayout.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-BitmapShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-BitmapShapeXml.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-CanvasHistory.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-CanvasState.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-CircleArrow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-CircleShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-CommonFcn.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-ControlShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-CurveShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-DiagramManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-DiamondArrow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-DiamondShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-EditTextShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-EllipseShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-FixedRectShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-FlexGridShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-GridShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-LineShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-MultiSelRect.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-OpenArrow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-OrthoShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-PolygonShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-PolygonShapeXml.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-Printout.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-PropertyIO.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-RectShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-RoundOrthoShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-RoundRectShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-SFEvents.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-ScaledDC.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-ShapeBase.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-ShapeBaseXml.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-ShapeCanvas.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-ShapeDataObject.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-ShapeDockpoint.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-ShapeHandle.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-SolidArrow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-TextShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-TextShapeXml.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-Thumbnail.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libshapeframework_la-XmlSerializer.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -501,19 +672,306 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
-libdbwindow_la-databasecanvas.lo: databasecanvas.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-databasecanvas.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-databasecanvas.Tpo -c -o libdbwindow_la-databasecanvas.lo `test -f 'databasecanvas.cpp' || echo '$(srcdir)/'`databasecanvas.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-databasecanvas.Tpo $(DEPDIR)/libdbwindow_la-databasecanvas.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='databasecanvas.cpp' object='libdbwindow_la-databasecanvas.lo' libtool=yes @AMDEPBACKSLASH@
+libshapeframework_la-ArrowBase.lo: ArrowBase.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-ArrowBase.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-ArrowBase.Tpo -c -o libshapeframework_la-ArrowBase.lo `test -f 'ArrowBase.cpp' || echo '$(srcdir)/'`ArrowBase.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-ArrowBase.Tpo $(DEPDIR)/libshapeframework_la-ArrowBase.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ArrowBase.cpp' object='libshapeframework_la-ArrowBase.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-databasecanvas.lo `test -f 'databasecanvas.cpp' || echo '$(srcdir)/'`databasecanvas.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-ArrowBase.lo `test -f 'ArrowBase.cpp' || echo '$(srcdir)/'`ArrowBase.cpp
 
-libdbwindow_la-DiagramManager.lo: DiagramManager.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-DiagramManager.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-DiagramManager.Tpo -c -o libdbwindow_la-DiagramManager.lo `test -f 'DiagramManager.cpp' || echo '$(srcdir)/'`DiagramManager.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-DiagramManager.Tpo $(DEPDIR)/libdbwindow_la-DiagramManager.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='DiagramManager.cpp' object='libdbwindow_la-DiagramManager.lo' libtool=yes @AMDEPBACKSLASH@
+libshapeframework_la-AutoLayout.lo: AutoLayout.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-AutoLayout.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-AutoLayout.Tpo -c -o libshapeframework_la-AutoLayout.lo `test -f 'AutoLayout.cpp' || echo '$(srcdir)/'`AutoLayout.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-AutoLayout.Tpo $(DEPDIR)/libshapeframework_la-AutoLayout.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='AutoLayout.cpp' object='libshapeframework_la-AutoLayout.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-DiagramManager.lo `test -f 'DiagramManager.cpp' || echo '$(srcdir)/'`DiagramManager.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-AutoLayout.lo `test -f 'AutoLayout.cpp' || echo '$(srcdir)/'`AutoLayout.cpp
+
+libshapeframework_la-BitmapShape.lo: BitmapShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-BitmapShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-BitmapShape.Tpo -c -o libshapeframework_la-BitmapShape.lo `test -f 'BitmapShape.cpp' || echo '$(srcdir)/'`BitmapShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-BitmapShape.Tpo $(DEPDIR)/libshapeframework_la-BitmapShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='BitmapShape.cpp' object='libshapeframework_la-BitmapShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-BitmapShape.lo `test -f 'BitmapShape.cpp' || echo '$(srcdir)/'`BitmapShape.cpp
+
+libshapeframework_la-BitmapShapeXml.lo: BitmapShapeXml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-BitmapShapeXml.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-BitmapShapeXml.Tpo -c -o libshapeframework_la-BitmapShapeXml.lo `test -f 'BitmapShapeXml.cpp' || echo '$(srcdir)/'`BitmapShapeXml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-BitmapShapeXml.Tpo $(DEPDIR)/libshapeframework_la-BitmapShapeXml.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='BitmapShapeXml.cpp' object='libshapeframework_la-BitmapShapeXml.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-BitmapShapeXml.lo `test -f 'BitmapShapeXml.cpp' || echo '$(srcdir)/'`BitmapShapeXml.cpp
+
+libshapeframework_la-CanvasHistory.lo: CanvasHistory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-CanvasHistory.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-CanvasHistory.Tpo -c -o libshapeframework_la-CanvasHistory.lo `test -f 'CanvasHistory.cpp' || echo '$(srcdir)/'`CanvasHistory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-CanvasHistory.Tpo $(DEPDIR)/libshapeframework_la-CanvasHistory.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='CanvasHistory.cpp' object='libshapeframework_la-CanvasHistory.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-CanvasHistory.lo `test -f 'CanvasHistory.cpp' || echo '$(srcdir)/'`CanvasHistory.cpp
+
+libshapeframework_la-CanvasState.lo: CanvasState.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-CanvasState.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-CanvasState.Tpo -c -o libshapeframework_la-CanvasState.lo `test -f 'CanvasState.cpp' || echo '$(srcdir)/'`CanvasState.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-CanvasState.Tpo $(DEPDIR)/libshapeframework_la-CanvasState.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='CanvasState.cpp' object='libshapeframework_la-CanvasState.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-CanvasState.lo `test -f 'CanvasState.cpp' || echo '$(srcdir)/'`CanvasState.cpp
+
+libshapeframework_la-CircleArrow.lo: CircleArrow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-CircleArrow.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-CircleArrow.Tpo -c -o libshapeframework_la-CircleArrow.lo `test -f 'CircleArrow.cpp' || echo '$(srcdir)/'`CircleArrow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-CircleArrow.Tpo $(DEPDIR)/libshapeframework_la-CircleArrow.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='CircleArrow.cpp' object='libshapeframework_la-CircleArrow.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-CircleArrow.lo `test -f 'CircleArrow.cpp' || echo '$(srcdir)/'`CircleArrow.cpp
+
+libshapeframework_la-CircleShape.lo: CircleShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-CircleShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-CircleShape.Tpo -c -o libshapeframework_la-CircleShape.lo `test -f 'CircleShape.cpp' || echo '$(srcdir)/'`CircleShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-CircleShape.Tpo $(DEPDIR)/libshapeframework_la-CircleShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='CircleShape.cpp' object='libshapeframework_la-CircleShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-CircleShape.lo `test -f 'CircleShape.cpp' || echo '$(srcdir)/'`CircleShape.cpp
+
+libshapeframework_la-CommonFcn.lo: CommonFcn.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-CommonFcn.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-CommonFcn.Tpo -c -o libshapeframework_la-CommonFcn.lo `test -f 'CommonFcn.cpp' || echo '$(srcdir)/'`CommonFcn.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-CommonFcn.Tpo $(DEPDIR)/libshapeframework_la-CommonFcn.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='CommonFcn.cpp' object='libshapeframework_la-CommonFcn.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-CommonFcn.lo `test -f 'CommonFcn.cpp' || echo '$(srcdir)/'`CommonFcn.cpp
+
+libshapeframework_la-ControlShape.lo: ControlShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-ControlShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-ControlShape.Tpo -c -o libshapeframework_la-ControlShape.lo `test -f 'ControlShape.cpp' || echo '$(srcdir)/'`ControlShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-ControlShape.Tpo $(DEPDIR)/libshapeframework_la-ControlShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ControlShape.cpp' object='libshapeframework_la-ControlShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-ControlShape.lo `test -f 'ControlShape.cpp' || echo '$(srcdir)/'`ControlShape.cpp
+
+libshapeframework_la-CurveShape.lo: CurveShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-CurveShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-CurveShape.Tpo -c -o libshapeframework_la-CurveShape.lo `test -f 'CurveShape.cpp' || echo '$(srcdir)/'`CurveShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-CurveShape.Tpo $(DEPDIR)/libshapeframework_la-CurveShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='CurveShape.cpp' object='libshapeframework_la-CurveShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-CurveShape.lo `test -f 'CurveShape.cpp' || echo '$(srcdir)/'`CurveShape.cpp
+
+libshapeframework_la-DiagramManager.lo: DiagramManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-DiagramManager.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-DiagramManager.Tpo -c -o libshapeframework_la-DiagramManager.lo `test -f 'DiagramManager.cpp' || echo '$(srcdir)/'`DiagramManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-DiagramManager.Tpo $(DEPDIR)/libshapeframework_la-DiagramManager.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='DiagramManager.cpp' object='libshapeframework_la-DiagramManager.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-DiagramManager.lo `test -f 'DiagramManager.cpp' || echo '$(srcdir)/'`DiagramManager.cpp
+
+libshapeframework_la-DiamondArrow.lo: DiamondArrow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-DiamondArrow.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-DiamondArrow.Tpo -c -o libshapeframework_la-DiamondArrow.lo `test -f 'DiamondArrow.cpp' || echo '$(srcdir)/'`DiamondArrow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-DiamondArrow.Tpo $(DEPDIR)/libshapeframework_la-DiamondArrow.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='DiamondArrow.cpp' object='libshapeframework_la-DiamondArrow.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-DiamondArrow.lo `test -f 'DiamondArrow.cpp' || echo '$(srcdir)/'`DiamondArrow.cpp
+
+libshapeframework_la-DiamondShape.lo: DiamondShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-DiamondShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-DiamondShape.Tpo -c -o libshapeframework_la-DiamondShape.lo `test -f 'DiamondShape.cpp' || echo '$(srcdir)/'`DiamondShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-DiamondShape.Tpo $(DEPDIR)/libshapeframework_la-DiamondShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='DiamondShape.cpp' object='libshapeframework_la-DiamondShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-DiamondShape.lo `test -f 'DiamondShape.cpp' || echo '$(srcdir)/'`DiamondShape.cpp
+
+libshapeframework_la-EditTextShape.lo: EditTextShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-EditTextShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-EditTextShape.Tpo -c -o libshapeframework_la-EditTextShape.lo `test -f 'EditTextShape.cpp' || echo '$(srcdir)/'`EditTextShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-EditTextShape.Tpo $(DEPDIR)/libshapeframework_la-EditTextShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='EditTextShape.cpp' object='libshapeframework_la-EditTextShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-EditTextShape.lo `test -f 'EditTextShape.cpp' || echo '$(srcdir)/'`EditTextShape.cpp
+
+libshapeframework_la-EllipseShape.lo: EllipseShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-EllipseShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-EllipseShape.Tpo -c -o libshapeframework_la-EllipseShape.lo `test -f 'EllipseShape.cpp' || echo '$(srcdir)/'`EllipseShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-EllipseShape.Tpo $(DEPDIR)/libshapeframework_la-EllipseShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='EllipseShape.cpp' object='libshapeframework_la-EllipseShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-EllipseShape.lo `test -f 'EllipseShape.cpp' || echo '$(srcdir)/'`EllipseShape.cpp
+
+libshapeframework_la-FixedRectShape.lo: FixedRectShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-FixedRectShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-FixedRectShape.Tpo -c -o libshapeframework_la-FixedRectShape.lo `test -f 'FixedRectShape.cpp' || echo '$(srcdir)/'`FixedRectShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-FixedRectShape.Tpo $(DEPDIR)/libshapeframework_la-FixedRectShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='FixedRectShape.cpp' object='libshapeframework_la-FixedRectShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-FixedRectShape.lo `test -f 'FixedRectShape.cpp' || echo '$(srcdir)/'`FixedRectShape.cpp
+
+libshapeframework_la-FlexGridShape.lo: FlexGridShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-FlexGridShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-FlexGridShape.Tpo -c -o libshapeframework_la-FlexGridShape.lo `test -f 'FlexGridShape.cpp' || echo '$(srcdir)/'`FlexGridShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-FlexGridShape.Tpo $(DEPDIR)/libshapeframework_la-FlexGridShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='FlexGridShape.cpp' object='libshapeframework_la-FlexGridShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-FlexGridShape.lo `test -f 'FlexGridShape.cpp' || echo '$(srcdir)/'`FlexGridShape.cpp
+
+libshapeframework_la-GridShape.lo: GridShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-GridShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-GridShape.Tpo -c -o libshapeframework_la-GridShape.lo `test -f 'GridShape.cpp' || echo '$(srcdir)/'`GridShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-GridShape.Tpo $(DEPDIR)/libshapeframework_la-GridShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='GridShape.cpp' object='libshapeframework_la-GridShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-GridShape.lo `test -f 'GridShape.cpp' || echo '$(srcdir)/'`GridShape.cpp
+
+libshapeframework_la-LineShape.lo: LineShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-LineShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-LineShape.Tpo -c -o libshapeframework_la-LineShape.lo `test -f 'LineShape.cpp' || echo '$(srcdir)/'`LineShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-LineShape.Tpo $(DEPDIR)/libshapeframework_la-LineShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='LineShape.cpp' object='libshapeframework_la-LineShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-LineShape.lo `test -f 'LineShape.cpp' || echo '$(srcdir)/'`LineShape.cpp
+
+libshapeframework_la-MultiSelRect.lo: MultiSelRect.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-MultiSelRect.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-MultiSelRect.Tpo -c -o libshapeframework_la-MultiSelRect.lo `test -f 'MultiSelRect.cpp' || echo '$(srcdir)/'`MultiSelRect.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-MultiSelRect.Tpo $(DEPDIR)/libshapeframework_la-MultiSelRect.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='MultiSelRect.cpp' object='libshapeframework_la-MultiSelRect.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-MultiSelRect.lo `test -f 'MultiSelRect.cpp' || echo '$(srcdir)/'`MultiSelRect.cpp
+
+libshapeframework_la-OpenArrow.lo: OpenArrow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-OpenArrow.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-OpenArrow.Tpo -c -o libshapeframework_la-OpenArrow.lo `test -f 'OpenArrow.cpp' || echo '$(srcdir)/'`OpenArrow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-OpenArrow.Tpo $(DEPDIR)/libshapeframework_la-OpenArrow.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='OpenArrow.cpp' object='libshapeframework_la-OpenArrow.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-OpenArrow.lo `test -f 'OpenArrow.cpp' || echo '$(srcdir)/'`OpenArrow.cpp
+
+libshapeframework_la-OrthoShape.lo: OrthoShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-OrthoShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-OrthoShape.Tpo -c -o libshapeframework_la-OrthoShape.lo `test -f 'OrthoShape.cpp' || echo '$(srcdir)/'`OrthoShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-OrthoShape.Tpo $(DEPDIR)/libshapeframework_la-OrthoShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='OrthoShape.cpp' object='libshapeframework_la-OrthoShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-OrthoShape.lo `test -f 'OrthoShape.cpp' || echo '$(srcdir)/'`OrthoShape.cpp
+
+libshapeframework_la-PolygonShape.lo: PolygonShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-PolygonShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-PolygonShape.Tpo -c -o libshapeframework_la-PolygonShape.lo `test -f 'PolygonShape.cpp' || echo '$(srcdir)/'`PolygonShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-PolygonShape.Tpo $(DEPDIR)/libshapeframework_la-PolygonShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='PolygonShape.cpp' object='libshapeframework_la-PolygonShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-PolygonShape.lo `test -f 'PolygonShape.cpp' || echo '$(srcdir)/'`PolygonShape.cpp
+
+libshapeframework_la-PolygonShapeXml.lo: PolygonShapeXml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-PolygonShapeXml.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-PolygonShapeXml.Tpo -c -o libshapeframework_la-PolygonShapeXml.lo `test -f 'PolygonShapeXml.cpp' || echo '$(srcdir)/'`PolygonShapeXml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-PolygonShapeXml.Tpo $(DEPDIR)/libshapeframework_la-PolygonShapeXml.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='PolygonShapeXml.cpp' object='libshapeframework_la-PolygonShapeXml.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-PolygonShapeXml.lo `test -f 'PolygonShapeXml.cpp' || echo '$(srcdir)/'`PolygonShapeXml.cpp
+
+libshapeframework_la-Printout.lo: Printout.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-Printout.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-Printout.Tpo -c -o libshapeframework_la-Printout.lo `test -f 'Printout.cpp' || echo '$(srcdir)/'`Printout.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-Printout.Tpo $(DEPDIR)/libshapeframework_la-Printout.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Printout.cpp' object='libshapeframework_la-Printout.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-Printout.lo `test -f 'Printout.cpp' || echo '$(srcdir)/'`Printout.cpp
+
+libshapeframework_la-RectShape.lo: RectShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-RectShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-RectShape.Tpo -c -o libshapeframework_la-RectShape.lo `test -f 'RectShape.cpp' || echo '$(srcdir)/'`RectShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-RectShape.Tpo $(DEPDIR)/libshapeframework_la-RectShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='RectShape.cpp' object='libshapeframework_la-RectShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-RectShape.lo `test -f 'RectShape.cpp' || echo '$(srcdir)/'`RectShape.cpp
+
+libshapeframework_la-RoundOrthoShape.lo: RoundOrthoShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-RoundOrthoShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-RoundOrthoShape.Tpo -c -o libshapeframework_la-RoundOrthoShape.lo `test -f 'RoundOrthoShape.cpp' || echo '$(srcdir)/'`RoundOrthoShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-RoundOrthoShape.Tpo $(DEPDIR)/libshapeframework_la-RoundOrthoShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='RoundOrthoShape.cpp' object='libshapeframework_la-RoundOrthoShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-RoundOrthoShape.lo `test -f 'RoundOrthoShape.cpp' || echo '$(srcdir)/'`RoundOrthoShape.cpp
+
+libshapeframework_la-RoundRectShape.lo: RoundRectShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-RoundRectShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-RoundRectShape.Tpo -c -o libshapeframework_la-RoundRectShape.lo `test -f 'RoundRectShape.cpp' || echo '$(srcdir)/'`RoundRectShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-RoundRectShape.Tpo $(DEPDIR)/libshapeframework_la-RoundRectShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='RoundRectShape.cpp' object='libshapeframework_la-RoundRectShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-RoundRectShape.lo `test -f 'RoundRectShape.cpp' || echo '$(srcdir)/'`RoundRectShape.cpp
+
+libshapeframework_la-SFEvents.lo: SFEvents.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-SFEvents.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-SFEvents.Tpo -c -o libshapeframework_la-SFEvents.lo `test -f 'SFEvents.cpp' || echo '$(srcdir)/'`SFEvents.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-SFEvents.Tpo $(DEPDIR)/libshapeframework_la-SFEvents.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='SFEvents.cpp' object='libshapeframework_la-SFEvents.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-SFEvents.lo `test -f 'SFEvents.cpp' || echo '$(srcdir)/'`SFEvents.cpp
+
+libshapeframework_la-ScaledDC.lo: ScaledDC.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-ScaledDC.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-ScaledDC.Tpo -c -o libshapeframework_la-ScaledDC.lo `test -f 'ScaledDC.cpp' || echo '$(srcdir)/'`ScaledDC.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-ScaledDC.Tpo $(DEPDIR)/libshapeframework_la-ScaledDC.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ScaledDC.cpp' object='libshapeframework_la-ScaledDC.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-ScaledDC.lo `test -f 'ScaledDC.cpp' || echo '$(srcdir)/'`ScaledDC.cpp
+
+libshapeframework_la-ShapeBase.lo: ShapeBase.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-ShapeBase.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-ShapeBase.Tpo -c -o libshapeframework_la-ShapeBase.lo `test -f 'ShapeBase.cpp' || echo '$(srcdir)/'`ShapeBase.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-ShapeBase.Tpo $(DEPDIR)/libshapeframework_la-ShapeBase.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ShapeBase.cpp' object='libshapeframework_la-ShapeBase.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-ShapeBase.lo `test -f 'ShapeBase.cpp' || echo '$(srcdir)/'`ShapeBase.cpp
+
+libshapeframework_la-ShapeBaseXml.lo: ShapeBaseXml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-ShapeBaseXml.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-ShapeBaseXml.Tpo -c -o libshapeframework_la-ShapeBaseXml.lo `test -f 'ShapeBaseXml.cpp' || echo '$(srcdir)/'`ShapeBaseXml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-ShapeBaseXml.Tpo $(DEPDIR)/libshapeframework_la-ShapeBaseXml.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ShapeBaseXml.cpp' object='libshapeframework_la-ShapeBaseXml.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-ShapeBaseXml.lo `test -f 'ShapeBaseXml.cpp' || echo '$(srcdir)/'`ShapeBaseXml.cpp
+
+libshapeframework_la-ShapeCanvas.lo: ShapeCanvas.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-ShapeCanvas.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-ShapeCanvas.Tpo -c -o libshapeframework_la-ShapeCanvas.lo `test -f 'ShapeCanvas.cpp' || echo '$(srcdir)/'`ShapeCanvas.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-ShapeCanvas.Tpo $(DEPDIR)/libshapeframework_la-ShapeCanvas.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ShapeCanvas.cpp' object='libshapeframework_la-ShapeCanvas.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-ShapeCanvas.lo `test -f 'ShapeCanvas.cpp' || echo '$(srcdir)/'`ShapeCanvas.cpp
+
+libshapeframework_la-ShapeDataObject.lo: ShapeDataObject.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-ShapeDataObject.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-ShapeDataObject.Tpo -c -o libshapeframework_la-ShapeDataObject.lo `test -f 'ShapeDataObject.cpp' || echo '$(srcdir)/'`ShapeDataObject.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-ShapeDataObject.Tpo $(DEPDIR)/libshapeframework_la-ShapeDataObject.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ShapeDataObject.cpp' object='libshapeframework_la-ShapeDataObject.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-ShapeDataObject.lo `test -f 'ShapeDataObject.cpp' || echo '$(srcdir)/'`ShapeDataObject.cpp
+
+libshapeframework_la-ShapeDockpoint.lo: ShapeDockpoint.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-ShapeDockpoint.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-ShapeDockpoint.Tpo -c -o libshapeframework_la-ShapeDockpoint.lo `test -f 'ShapeDockpoint.cpp' || echo '$(srcdir)/'`ShapeDockpoint.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-ShapeDockpoint.Tpo $(DEPDIR)/libshapeframework_la-ShapeDockpoint.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ShapeDockpoint.cpp' object='libshapeframework_la-ShapeDockpoint.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-ShapeDockpoint.lo `test -f 'ShapeDockpoint.cpp' || echo '$(srcdir)/'`ShapeDockpoint.cpp
+
+libshapeframework_la-ShapeHandle.lo: ShapeHandle.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-ShapeHandle.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-ShapeHandle.Tpo -c -o libshapeframework_la-ShapeHandle.lo `test -f 'ShapeHandle.cpp' || echo '$(srcdir)/'`ShapeHandle.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-ShapeHandle.Tpo $(DEPDIR)/libshapeframework_la-ShapeHandle.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ShapeHandle.cpp' object='libshapeframework_la-ShapeHandle.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-ShapeHandle.lo `test -f 'ShapeHandle.cpp' || echo '$(srcdir)/'`ShapeHandle.cpp
+
+libshapeframework_la-SolidArrow.lo: SolidArrow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-SolidArrow.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-SolidArrow.Tpo -c -o libshapeframework_la-SolidArrow.lo `test -f 'SolidArrow.cpp' || echo '$(srcdir)/'`SolidArrow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-SolidArrow.Tpo $(DEPDIR)/libshapeframework_la-SolidArrow.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='SolidArrow.cpp' object='libshapeframework_la-SolidArrow.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-SolidArrow.lo `test -f 'SolidArrow.cpp' || echo '$(srcdir)/'`SolidArrow.cpp
+
+libshapeframework_la-TextShape.lo: TextShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-TextShape.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-TextShape.Tpo -c -o libshapeframework_la-TextShape.lo `test -f 'TextShape.cpp' || echo '$(srcdir)/'`TextShape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-TextShape.Tpo $(DEPDIR)/libshapeframework_la-TextShape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='TextShape.cpp' object='libshapeframework_la-TextShape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-TextShape.lo `test -f 'TextShape.cpp' || echo '$(srcdir)/'`TextShape.cpp
+
+libshapeframework_la-TextShapeXml.lo: TextShapeXml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-TextShapeXml.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-TextShapeXml.Tpo -c -o libshapeframework_la-TextShapeXml.lo `test -f 'TextShapeXml.cpp' || echo '$(srcdir)/'`TextShapeXml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-TextShapeXml.Tpo $(DEPDIR)/libshapeframework_la-TextShapeXml.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='TextShapeXml.cpp' object='libshapeframework_la-TextShapeXml.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-TextShapeXml.lo `test -f 'TextShapeXml.cpp' || echo '$(srcdir)/'`TextShapeXml.cpp
+
+libshapeframework_la-Thumbnail.lo: Thumbnail.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-Thumbnail.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-Thumbnail.Tpo -c -o libshapeframework_la-Thumbnail.lo `test -f 'Thumbnail.cpp' || echo '$(srcdir)/'`Thumbnail.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-Thumbnail.Tpo $(DEPDIR)/libshapeframework_la-Thumbnail.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Thumbnail.cpp' object='libshapeframework_la-Thumbnail.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-Thumbnail.lo `test -f 'Thumbnail.cpp' || echo '$(srcdir)/'`Thumbnail.cpp
+
+libshapeframework_la-PropertyIO.lo: wxxmlserializer/PropertyIO.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-PropertyIO.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-PropertyIO.Tpo -c -o libshapeframework_la-PropertyIO.lo `test -f 'wxxmlserializer/PropertyIO.cpp' || echo '$(srcdir)/'`wxxmlserializer/PropertyIO.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-PropertyIO.Tpo $(DEPDIR)/libshapeframework_la-PropertyIO.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='wxxmlserializer/PropertyIO.cpp' object='libshapeframework_la-PropertyIO.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-PropertyIO.lo `test -f 'wxxmlserializer/PropertyIO.cpp' || echo '$(srcdir)/'`wxxmlserializer/PropertyIO.cpp
+
+libshapeframework_la-XmlSerializer.lo: wxxmlserializer/XmlSerializer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -MT libshapeframework_la-XmlSerializer.lo -MD -MP -MF $(DEPDIR)/libshapeframework_la-XmlSerializer.Tpo -c -o libshapeframework_la-XmlSerializer.lo `test -f 'wxxmlserializer/XmlSerializer.cpp' || echo '$(srcdir)/'`wxxmlserializer/XmlSerializer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshapeframework_la-XmlSerializer.Tpo $(DEPDIR)/libshapeframework_la-XmlSerializer.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='wxxmlserializer/XmlSerializer.cpp' object='libshapeframework_la-XmlSerializer.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshapeframework_la_CXXFLAGS) $(CXXFLAGS) -c -o libshapeframework_la-XmlSerializer.lo `test -f 'wxxmlserializer/XmlSerializer.cpp' || echo '$(srcdir)/'`wxxmlserializer/XmlSerializer.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

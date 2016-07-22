@@ -382,7 +382,8 @@ libdatabaseview_la_SOURCES = \
 	databaseview.cpp \
 	databaseview.h
 
-libdatabaseview_la_CXXFLAGS = -I../../libdbwindow \
+libdatabaseview_la_CXXFLAGS = -I../../libshapeframework \
+	-I../../libdbwindow \
 	-I../../dbinterface \
 	-I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
 	-I/home/igor/wxWidgets/include \
