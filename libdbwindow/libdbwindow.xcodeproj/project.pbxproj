@@ -9,16 +9,14 @@
 /* Begin PBXBuildFile section */
 		E38708CE1D2B6251004EF478 /* databasecanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38708CC1D2B6251004EF478 /* databasecanvas.cpp */; };
 		E38708CF1D2B6251004EF478 /* databasecanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = E38708CD1D2B6251004EF478 /* databasecanvas.h */; };
-		E38708D61D334B49004EF478 /* DiagramManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38708D41D334B49004EF478 /* DiagramManager.cpp */; };
-		E38708D71D334B49004EF478 /* DiagramManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E38708D51D334B49004EF478 /* DiagramManager.h */; };
+		E38709A41D43BA9C004EF478 /* liblibshapeframework.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E38709A31D43BA9C004EF478 /* liblibshapeframework.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		E38708BE1D2B61D7004EF478 /* liblibdbwindow.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdbwindow.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E38708CC1D2B6251004EF478 /* databasecanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasecanvas.cpp; sourceTree = "<group>"; };
 		E38708CD1D2B6251004EF478 /* databasecanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasecanvas.h; sourceTree = "<group>"; };
-		E38708D41D334B49004EF478 /* DiagramManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiagramManager.cpp; sourceTree = "<group>"; };
-		E38708D51D334B49004EF478 /* DiagramManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagramManager.h; sourceTree = "<group>"; };
+		E38709A31D43BA9C004EF478 /* liblibshapeframework.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibshapeframework.dylib; path = ../Build/Products/Debug/liblibshapeframework.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,6 +24,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E38709A41D43BA9C004EF478 /* liblibshapeframework.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -35,6 +34,7 @@
 		E38708B51D2B61D7004EF478 = {
 			isa = PBXGroup;
 			children = (
+				E38709A31D43BA9C004EF478 /* liblibshapeframework.dylib */,
 				E38708CB1D2B61E9004EF478 /* libdbwindow */,
 				E38708BF1D2B61D7004EF478 /* Products */,
 			);
@@ -51,8 +51,6 @@
 		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
-				E38708D41D334B49004EF478 /* DiagramManager.cpp */,
-				E38708D51D334B49004EF478 /* DiagramManager.h */,
 				E38708CC1D2B6251004EF478 /* databasecanvas.cpp */,
 				E38708CD1D2B6251004EF478 /* databasecanvas.h */,
 			);
@@ -66,7 +64,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E38708D71D334B49004EF478 /* DiagramManager.h in Headers */,
 				E38708CF1D2B6251004EF478 /* databasecanvas.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -123,7 +120,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E38708CE1D2B6251004EF478 /* databasecanvas.cpp in Sources */,
-				E38708D61D334B49004EF478 /* DiagramManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,6 +215,11 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.1",
 					/Users/igorkorot/wxWidgets/include,
+					../libshapeframework,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
 				);
 				OTHER_LDFLAGS = (
 					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
@@ -252,6 +253,10 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				EXECUTABLE_PREFIX = lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
