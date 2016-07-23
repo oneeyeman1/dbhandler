@@ -24,6 +24,7 @@ autom4te.cache/
 .anjuta_sym_db.db
 dbinterface/.DS_Store
 libdbwindow/.DS_Store
+libdatabaseview/.DS_Store
 *~
 .directory
 dbhandler/ipch/
