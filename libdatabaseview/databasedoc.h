@@ -69,11 +69,14 @@ public:
     // get direct access to our segments (for DrawingView)
     const DoodleSegments& GetSegments() const { return m_doodleSegments; }
 
+    void AddTables(const std::vector<wxString> &selections);
+
 private:
     void DoUpdate();
 
     DoodleSegments m_doodleSegments;
     Database *m_db;
+    std::vector<Table> m_tables;
     wxDECLARE_DYNAMIC_CLASS(DrawingDocument);
 };
 

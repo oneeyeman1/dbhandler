@@ -98,7 +98,8 @@ void DrawingView::GetTablesForView(Database *db)
     if( lib.IsLoaded() )
     {
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        func( /*wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame )*/m_frame, db, tables );
+        func( m_frame, db, tables );
+        ((DrawingDocument *) GetDocument())->AddTables( tables );
     }
 //    return tables;
 }

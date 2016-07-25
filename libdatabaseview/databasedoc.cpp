@@ -13,19 +13,20 @@
     #include "wx/wx.h"
 #endif
 
+#include <vector>
+#include <map>
 #if wxUSE_STD_IOSTREAM
     #include "wx/ioswrap.h"
 #else
     #include "wx/txtstrm.h"
 #endif
 #include "wx/wfstream.h"
-
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"
 #include "wxsf/ShapeCanvas.h"
-#include "databasecanvas.h"
 #include "database.h"
+#include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"
 
@@ -122,6 +123,22 @@ void DrawingDocument::SetDatabase(Database *db)
 {
     m_db = db;
     dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db );
+}
+
+void DrawingDocument::AddTables(const std::vector<wxString> &selections)
+{
+    std::map<std::wstring, std::vector<Table> > tables = m_db->GetTableVector().m_tables;
+    std::vector<Table> tableVec = tables.at( m_db->GetTableVector().m_dbName );
+    for( std::vector<wxString>::const_iterator it = selections.begin(); it < selections.end(); it++ )
+    {
+        for( std::vector<Table>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
+        {
+            if( (*it).ToStdWstring() == (*it1).GetTableName() )
+            {
+                m_tables.push_back( (*it1) );
+            }
+        }
+    }
 }
 
 // ----------------------------------------------------------------------------
