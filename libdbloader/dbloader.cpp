@@ -93,7 +93,6 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
     bool ask = false;
     Database *pdb = NULL;
     wxDynamicLibrary lib;
-    wxBeginBusyCursor();
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXOSX__
@@ -127,7 +126,9 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
                 pdb = new ODBCDatabase();
                 dynamic_cast<ODBCDatabase *>( pdb )->SetWindowHandle( parent->GetHandle() );
             }
+            wxBeginBusyCursor();
             result = pdb->Connect( name.ToStdWstring(), errorMsg );
+            wxEndBusyCursor();
             if( result )
             {
                 for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
@@ -140,7 +141,6 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             }
         }
     }
-    wxEndBusyCursor();
     return pdb;
 }
 
