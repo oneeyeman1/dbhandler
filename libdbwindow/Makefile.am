@@ -16,7 +16,10 @@ libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-D__WXGTK__ \
 	-pthread 
 
-libdbwindow_la_LDFLAGS = -L/home/igor/wxWidgets/buildGTK2/lib \
+libdbwindow_la_LDFLAGS = -L../libshapeframework \
+	 \
+	-lshapeframework \
+	-L/home/igor/wxWidgets/buildGTK2/lib \
 	-pthread \
 	-Wl,-rpath,/home/igor/wxWidgets/buildGTK2/lib \
 	-lwx_gtk2u_xrc-3.1 \

@@ -392,7 +392,10 @@ libdatabaseview_la_CXXFLAGS = -I../../libshapeframework \
 	-D__WXGTK__ \
 	-pthread 
 
-libdatabaseview_la_LDFLAGS = -L../libdbwindow \
+libdatabaseview_la_LDFLAGS = -L../libshapeframework \
+	 \
+	-lshapeframework \
+	-L../libdbwindow \
 	-L/home/igor/wxWidgets/buildGTK2/lib \
 	-pthread \
 	-Wl,-rpath,/home/igor/wxWidgets/buildGTK2/lib \
