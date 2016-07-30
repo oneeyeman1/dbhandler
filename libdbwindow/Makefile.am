@@ -6,7 +6,23 @@ lib_LTLIBRARIES =  \
 
 libdbwindow_la_SOURCES =  \
 	databasecanvas.cpp \
-	databasecanvas.h
+	databasecanvas.h \
+	ErdForeignKey.cpp \
+	ErdForeignKey.h \
+	ErdTable.cpp \
+	ErdTable.h \
+	IDbAdapter.h \
+	IDbType.h \
+	NArrow.cpp \
+	NArrow.h \
+	OneArrow.cpp \
+	OneArrow.h \
+	column.cpp \
+	column.h \
+	constraint.cpp \
+	constraint.h \
+	table.cpp \
+	table.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
