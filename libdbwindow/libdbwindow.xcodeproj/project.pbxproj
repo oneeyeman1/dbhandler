@@ -10,6 +10,22 @@
 		E38708CE1D2B6251004EF478 /* databasecanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38708CC1D2B6251004EF478 /* databasecanvas.cpp */; };
 		E38708CF1D2B6251004EF478 /* databasecanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = E38708CD1D2B6251004EF478 /* databasecanvas.h */; };
 		E38709A41D43BA9C004EF478 /* liblibshapeframework.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E38709A31D43BA9C004EF478 /* liblibshapeframework.dylib */; };
+		E38709B51D4CF564004EF478 /* column.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38709A51D4CF564004EF478 /* column.cpp */; };
+		E38709B61D4CF564004EF478 /* column.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709A61D4CF564004EF478 /* column.h */; };
+		E38709B71D4CF564004EF478 /* constraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38709A71D4CF564004EF478 /* constraint.cpp */; };
+		E38709B81D4CF564004EF478 /* constraint.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709A81D4CF564004EF478 /* constraint.h */; };
+		E38709B91D4CF564004EF478 /* ErdForeignKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38709A91D4CF564004EF478 /* ErdForeignKey.cpp */; };
+		E38709BA1D4CF564004EF478 /* ErdForeignKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709AA1D4CF564004EF478 /* ErdForeignKey.h */; };
+		E38709BB1D4CF564004EF478 /* ErdTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38709AB1D4CF564004EF478 /* ErdTable.cpp */; };
+		E38709BC1D4CF564004EF478 /* ErdTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709AC1D4CF564004EF478 /* ErdTable.h */; };
+		E38709BD1D4CF564004EF478 /* IDbAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709AD1D4CF564004EF478 /* IDbAdapter.h */; };
+		E38709BE1D4CF564004EF478 /* IDbType.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709AE1D4CF564004EF478 /* IDbType.h */; };
+		E38709BF1D4CF564004EF478 /* NArrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38709AF1D4CF564004EF478 /* NArrow.cpp */; };
+		E38709C01D4CF564004EF478 /* NArrow.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709B01D4CF564004EF478 /* NArrow.h */; };
+		E38709C11D4CF564004EF478 /* OneArrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38709B11D4CF564004EF478 /* OneArrow.cpp */; };
+		E38709C21D4CF564004EF478 /* OneArrow.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709B21D4CF564004EF478 /* OneArrow.h */; };
+		E38709C31D4CF564004EF478 /* table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38709B31D4CF564004EF478 /* table.cpp */; };
+		E38709C41D4CF564004EF478 /* table.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709B41D4CF564004EF478 /* table.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -17,6 +33,22 @@
 		E38708CC1D2B6251004EF478 /* databasecanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasecanvas.cpp; sourceTree = "<group>"; };
 		E38708CD1D2B6251004EF478 /* databasecanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasecanvas.h; sourceTree = "<group>"; };
 		E38709A31D43BA9C004EF478 /* liblibshapeframework.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibshapeframework.dylib; path = ../Build/Products/Debug/liblibshapeframework.dylib; sourceTree = "<group>"; };
+		E38709A51D4CF564004EF478 /* column.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = column.cpp; sourceTree = "<group>"; };
+		E38709A61D4CF564004EF478 /* column.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = column.h; sourceTree = "<group>"; };
+		E38709A71D4CF564004EF478 /* constraint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = constraint.cpp; sourceTree = "<group>"; };
+		E38709A81D4CF564004EF478 /* constraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = constraint.h; sourceTree = "<group>"; };
+		E38709A91D4CF564004EF478 /* ErdForeignKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErdForeignKey.cpp; sourceTree = "<group>"; };
+		E38709AA1D4CF564004EF478 /* ErdForeignKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErdForeignKey.h; sourceTree = "<group>"; };
+		E38709AB1D4CF564004EF478 /* ErdTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErdTable.cpp; sourceTree = "<group>"; };
+		E38709AC1D4CF564004EF478 /* ErdTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErdTable.h; sourceTree = "<group>"; };
+		E38709AD1D4CF564004EF478 /* IDbAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDbAdapter.h; sourceTree = "<group>"; };
+		E38709AE1D4CF564004EF478 /* IDbType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDbType.h; sourceTree = "<group>"; };
+		E38709AF1D4CF564004EF478 /* NArrow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NArrow.cpp; sourceTree = "<group>"; };
+		E38709B01D4CF564004EF478 /* NArrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NArrow.h; sourceTree = "<group>"; };
+		E38709B11D4CF564004EF478 /* OneArrow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OneArrow.cpp; sourceTree = "<group>"; };
+		E38709B21D4CF564004EF478 /* OneArrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OneArrow.h; sourceTree = "<group>"; };
+		E38709B31D4CF564004EF478 /* table.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = table.cpp; sourceTree = "<group>"; };
+		E38709B41D4CF564004EF478 /* table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = table.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +83,22 @@
 		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
+				E38709A51D4CF564004EF478 /* column.cpp */,
+				E38709A61D4CF564004EF478 /* column.h */,
+				E38709A71D4CF564004EF478 /* constraint.cpp */,
+				E38709A81D4CF564004EF478 /* constraint.h */,
+				E38709A91D4CF564004EF478 /* ErdForeignKey.cpp */,
+				E38709AA1D4CF564004EF478 /* ErdForeignKey.h */,
+				E38709AB1D4CF564004EF478 /* ErdTable.cpp */,
+				E38709AC1D4CF564004EF478 /* ErdTable.h */,
+				E38709AD1D4CF564004EF478 /* IDbAdapter.h */,
+				E38709AE1D4CF564004EF478 /* IDbType.h */,
+				E38709AF1D4CF564004EF478 /* NArrow.cpp */,
+				E38709B01D4CF564004EF478 /* NArrow.h */,
+				E38709B11D4CF564004EF478 /* OneArrow.cpp */,
+				E38709B21D4CF564004EF478 /* OneArrow.h */,
+				E38709B31D4CF564004EF478 /* table.cpp */,
+				E38709B41D4CF564004EF478 /* table.h */,
 				E38708CC1D2B6251004EF478 /* databasecanvas.cpp */,
 				E38708CD1D2B6251004EF478 /* databasecanvas.h */,
 			);
@@ -64,7 +112,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E38709B61D4CF564004EF478 /* column.h in Headers */,
+				E38709B81D4CF564004EF478 /* constraint.h in Headers */,
+				E38709C21D4CF564004EF478 /* OneArrow.h in Headers */,
 				E38708CF1D2B6251004EF478 /* databasecanvas.h in Headers */,
+				E38709BA1D4CF564004EF478 /* ErdForeignKey.h in Headers */,
+				E38709C41D4CF564004EF478 /* table.h in Headers */,
+				E38709BD1D4CF564004EF478 /* IDbAdapter.h in Headers */,
+				E38709BE1D4CF564004EF478 /* IDbType.h in Headers */,
+				E38709BC1D4CF564004EF478 /* ErdTable.h in Headers */,
+				E38709C01D4CF564004EF478 /* NArrow.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,7 +176,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E38709BF1D4CF564004EF478 /* NArrow.cpp in Sources */,
+				E38709BB1D4CF564004EF478 /* ErdTable.cpp in Sources */,
+				E38709C31D4CF564004EF478 /* table.cpp in Sources */,
+				E38709B91D4CF564004EF478 /* ErdForeignKey.cpp in Sources */,
+				E38709B71D4CF564004EF478 /* constraint.cpp in Sources */,
 				E38708CE1D2B6251004EF478 /* databasecanvas.cpp in Sources */,
+				E38709C11D4CF564004EF478 /* OneArrow.cpp in Sources */,
+				E38709B51D4CF564004EF478 /* column.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
