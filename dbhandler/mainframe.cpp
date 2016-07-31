@@ -29,6 +29,7 @@
 #include "mainframe.h"
 
 #include "res/odbc1.xpm"
+#include "res/database_profile.xpm"
 #include "res/database.xpm"
 
 typedef void (*ODBCSETUP)(wxWindow *);
@@ -93,7 +94,7 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 {
     wxBitmap bitmaps[9];
     bitmaps[0] = wxBitmap( odbc1 );
-    bitmaps[1] = wxBitmap( database );
+    bitmaps[1] = wxBitmap( database_profile );
     bitmaps[2] = wxBitmap( database );
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), bitmaps[0], bitmaps[0], wxITEM_NORMAL, _( "Configure ODBC" ), _( "Configure ODBC data source" ) );
     toolBar->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), bitmaps[1], bitmaps[1], wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
