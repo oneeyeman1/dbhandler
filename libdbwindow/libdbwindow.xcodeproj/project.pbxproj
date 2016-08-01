@@ -280,6 +280,8 @@
 					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.1",
 					/Users/igorkorot/wxWidgets/include,
 					../libshapeframework,
+					../dbinterface,
+					../libdatabaseview,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
