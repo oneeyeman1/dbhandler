@@ -39,3 +39,5 @@ libdbwindow/vc_mswuddll
 #Build/
 #*.xcuserstatte
 #project.xcworkspace
+.anjuta/
+
