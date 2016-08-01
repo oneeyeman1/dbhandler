@@ -141,6 +141,11 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
     }
 }
 
+std::vector<Table> &DrawingDocument::GetTables()
+{
+    return m_tables;
+}
+
 // ----------------------------------------------------------------------------
 // DoodleSegment implementation
 // ----------------------------------------------------------------------------

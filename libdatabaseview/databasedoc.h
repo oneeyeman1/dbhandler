@@ -50,7 +50,7 @@ private:
 
 typedef wxVector<DoodleSegment> DoodleSegments;
 // The drawing document (model) class itself
-class DrawingDocument : public wxDocument
+class WXEXPORT DrawingDocument : public wxDocument
 {
 public:
     DrawingDocument() : wxDocument() { }
@@ -70,6 +70,7 @@ public:
     const DoodleSegments& GetSegments() const { return m_doodleSegments; }
 
     void AddTables(const std::vector<wxString> &selections);
+    std::vector<Table> &GetTables();
 
 private:
     void DoUpdate();
