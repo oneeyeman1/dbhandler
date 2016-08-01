@@ -5,6 +5,7 @@ class WXEXPORT DatabaseCanvas : public wxScrolledWindow
 {
 public:
     DatabaseCanvas(wxView *view, wxWindow *parent = NULL);
+    void DisplayTables();
     virtual ~DatabaseCanvas();
     inline wxSFDiagramManager* GetDiagramManager() { return m_pManager; }
     virtual void OnDraw(wxDC& dc) wxOVERRIDE;

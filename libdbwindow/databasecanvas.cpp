@@ -6,9 +6,13 @@
 #endif
 
 #include "wx/docview.h"
+#include "wx/docmdi.h"
+#include "wx/cmdproc.h"
 #include "Defs.h"
 #include "wxsf/ShapeCanvas.h"
 #include "DiagramManager.h"
+#include "database.h"
+#include "databasedoc.h"
 #include "databasecanvas.h"
 
 DatabaseCanvas::DatabaseCanvas(wxView *view, wxWindow *parent) : wxScrolledWindow(view->GetFrame())
@@ -28,4 +32,9 @@ void DatabaseCanvas::OnDraw(wxDC& dc)
 {
 /*    if( m_view )
         m_view->OnDraw( &dc );*/
+}
+
+void DatabaseCanvas::DisplayTables()
+{
+	((DrawingDocument *)m_view->GetDocument());
 }
