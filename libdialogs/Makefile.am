@@ -14,7 +14,7 @@ libdialogs_la_SOURCES =  \
 	selecttables.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
-	-I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
+	-I/home/igor/wxWidgets/buildGTK/lib/wx/include/gtk2-unicode-3.1 \
 	-I/home/igor/wxWidgets/include \
 	-D_FILE_OFFSET_BITS=64 \
 	-DWXUSINGDLL \
@@ -27,7 +27,7 @@ libdialogs_la_LDFLAGS = -Wl,-rpath,/home/igor/dbhandler/Debug/libsqlite/.libs \
 	-L/home/igor/dbhandler/Debug/dbinterface \
 	-ldbinterface \
 	-lsqlite_lib \
-	-L/home/igor/wxWidgets/buildGTK2/lib \
+	-L/home/igor/wxWidgets/buildGTK/lib \
 	-pthread \
 	-Wl,-rpath,/home/igor/wxWidgets/buildGTK/lib \
 	-lwx_gtk2u_xrc-3.1 \

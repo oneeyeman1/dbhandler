@@ -17,16 +17,16 @@ dbhandler_SOURCES =  \
 	viewbase.h
 
 dbhandler_CXXFLAGS = -I../../dbinterface \
-	-I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
+	-I/home/igor/wxWidgets/buildGTK/lib/wx/include/gtk2-unicode-3.1 \
 	-I/home/igor/wxWidgets/include \
 	-D_FILE_OFFSET_BITS=64 \
 	-DWXUSINGDLL \
 	-D__WXGTK__ \
 	-pthread 
 
-dbhandler_LDFLAGS = -L/home/igor/wxWidgets/buildGTK2/lib \
+dbhandler_LDFLAGS = -L/home/igor/wxWidgets/buildGTK/lib \
 	-pthread \
-	-Wl,-rpath,/home/igor/wxWidgets/buildGTK2/lib \
+	-Wl,-rpath,/home/igor/wxWidgets/buildGTK/lib \
 	-lwx_gtk2u_xrc-3.1 \
 	-lwx_gtk2u_html-3.1 \
 	-lwx_gtk2u_qa-3.1 \

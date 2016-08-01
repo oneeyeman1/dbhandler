@@ -11,7 +11,7 @@ libdbloader_la_CXXFLAGS = -I/usr/include \
 	-I../../dbinterface \
 	-I../../libsqlite \
 	-I../../libodbc \
-	-I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
+	-I/home/igor/wxWidgets/buildGTK/lib/wx/include/gtk2-unicode-3.1 \
 	-I/home/igor/wxWidgets/include \
 	-D_FILE_OFFSET_BITS=64 \
 	-DWXUSINGDLL \
@@ -21,7 +21,7 @@ libdbloader_la_CXXFLAGS = -I/usr/include \
 	-DUNICODE 
 
 libdbloader_la_LDFLAGS = -L../libodbc \
-	-L/home/igor/wxWidgets/buildGTK2/lib \
+	-L/home/igor/wxWidgets/buildGTK/lib \
 	-pthread \
 	-Wl,-rpath,/home/igor/wxWidgets/buildGTK/lib \
 	-lwx_gtk2u_xrc-3.1 \
