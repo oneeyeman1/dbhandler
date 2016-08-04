@@ -35,11 +35,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="databasecanvas.cpp" />
     <ClCompile Include="databasedoc.cpp" />
     <ClCompile Include="databaseview.cpp" />
     <ClCompile Include="dbview.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="databasecanvas.h" />
     <ClInclude Include="databasedoc.h" />
     <ClInclude Include="databaseview.h" />
   </ItemGroup>

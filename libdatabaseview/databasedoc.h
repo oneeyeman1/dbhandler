@@ -50,7 +50,7 @@ private:
 
 typedef wxVector<DoodleSegment> DoodleSegments;
 // The drawing document (model) class itself
-class WXEXPORT DrawingDocument : public wxDocument
+class DrawingDocument : public wxDocument
 {
 public:
     DrawingDocument() : wxDocument() { }

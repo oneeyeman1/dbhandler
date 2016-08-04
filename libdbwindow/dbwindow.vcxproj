@@ -37,7 +37,6 @@
   <ItemGroup>
     <ClInclude Include="column.h" />
     <ClInclude Include="constraint.h" />
-    <ClInclude Include="databasecanvas.h" />
     <ClInclude Include="ErdForeignKey.h" />
     <ClInclude Include="ErdTable.h" />
     <ClInclude Include="IDbAdapter.h" />
@@ -49,7 +48,6 @@
   <ItemGroup>
     <ClCompile Include="column.cpp" />
     <ClCompile Include="constraint.cpp" />
-    <ClCompile Include="databasecanvas.cpp" />
     <ClCompile Include="ErdForeignKey.cpp" />
     <ClCompile Include="ErdTable.cpp" />
     <ClCompile Include="NArrow.cpp" />
