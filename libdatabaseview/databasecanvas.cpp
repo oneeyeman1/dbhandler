@@ -15,6 +15,7 @@
 #include "wx/cmdproc.h"
 #include "Defs.h"
 #include "wxsf/ShapeCanvas.h"
+#include "ErdPanel.h"
 #include "DiagramManager.h"
 #include "database.h"
 #include "databasedoc.h"
@@ -42,4 +43,8 @@ void DatabaseCanvas::OnDraw(wxDC& dc)
 void DatabaseCanvas::DisplayTables()
 {
 	int size = ((DrawingDocument *)m_view->GetDocument())->GetTables().size();
+    if( size == 1 )
+    {
+        ErdPanel *panel = new ErdPanel( this, );
+    }
 }
