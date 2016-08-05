@@ -20,7 +20,11 @@ libdbwindow_la_SOURCES =  \
 	constraint.cpp \
 	constraint.h \
 	table.cpp \
-	table.h
+	table.h \
+	ErdPanel.cpp \
+	ErdPanel.h \
+	GUI.cpp \
+	GUI.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libdatabaseview \
