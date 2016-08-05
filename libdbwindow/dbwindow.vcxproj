@@ -37,26 +37,38 @@
   <ItemGroup>
     <ClInclude Include="column.h" />
     <ClInclude Include="constraint.h" />
+    <ClInclude Include="CreateForeignKey.h" />
     <ClInclude Include="ErdForeignKey.h" />
     <ClInclude Include="ErdPanel.h" />
     <ClInclude Include="ErdTable.h" />
+    <ClInclude Include="ErdView.h" />
+    <ClInclude Include="FrameCanvas.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="IDbAdapter.h" />
     <ClInclude Include="IDbType.h" />
     <ClInclude Include="NArrow.h" />
     <ClInclude Include="OneArrow.h" />
     <ClInclude Include="table.h" />
+    <ClInclude Include="TableSettings.h" />
+    <ClInclude Include="view.h" />
+    <ClInclude Include="ViewSettings.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="column.cpp" />
     <ClCompile Include="constraint.cpp" />
+    <ClCompile Include="CreateForeignKey.cpp" />
     <ClCompile Include="ErdForeignKey.cpp" />
     <ClCompile Include="ErdPanel.cpp" />
     <ClCompile Include="ErdTable.cpp" />
+    <ClCompile Include="ErdView.cpp" />
+    <ClCompile Include="FrameCanvas.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="NArrow.cpp" />
     <ClCompile Include="OneArrow.cpp" />
     <ClCompile Include="table.cpp" />
+    <ClCompile Include="TableSettings.cpp" />
+    <ClCompile Include="view.cpp" />
+    <ClCompile Include="ViewSettings.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>dbwindow</ProjectName>
