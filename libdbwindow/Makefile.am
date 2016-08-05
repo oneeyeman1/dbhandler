@@ -24,7 +24,19 @@ libdbwindow_la_SOURCES =  \
 	ErdPanel.cpp \
 	ErdPanel.h \
 	GUI.cpp \
-	GUI.h
+	GUI.h \
+	CreateForeignKey.cpp \
+	CreateForeignKey.h \
+	ErdView.cpp \
+	ErdView.h \
+	FrameCanvas.cpp \
+	FrameCanvas.h \
+	TableSettings.cpp \
+	TableSettings.h \
+	ViewSettings.cpp \
+	ViewSettings.h \
+	view.cpp \
+	view.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libdatabaseview \

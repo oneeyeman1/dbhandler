@@ -132,7 +132,10 @@ am_libdbwindow_la_OBJECTS = libdbwindow_la-ErdForeignKey.lo \
 	libdbwindow_la-ErdTable.lo libdbwindow_la-NArrow.lo \
 	libdbwindow_la-OneArrow.lo libdbwindow_la-column.lo \
 	libdbwindow_la-constraint.lo libdbwindow_la-table.lo \
-	libdbwindow_la-ErdPanel.lo libdbwindow_la-GUI.lo
+	libdbwindow_la-ErdPanel.lo libdbwindow_la-GUI.lo \
+	libdbwindow_la-CreateForeignKey.lo libdbwindow_la-ErdView.lo \
+	libdbwindow_la-FrameCanvas.lo libdbwindow_la-TableSettings.lo \
+	libdbwindow_la-ViewSettings.lo libdbwindow_la-view.lo
 libdbwindow_la_OBJECTS = $(am_libdbwindow_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -397,7 +400,19 @@ libdbwindow_la_SOURCES = \
 	ErdPanel.cpp \
 	ErdPanel.h \
 	GUI.cpp \
-	GUI.h
+	GUI.h \
+	CreateForeignKey.cpp \
+	CreateForeignKey.h \
+	ErdView.cpp \
+	ErdView.h \
+	FrameCanvas.cpp \
+	FrameCanvas.h \
+	TableSettings.cpp \
+	TableSettings.h \
+	ViewSettings.cpp \
+	ViewSettings.h \
+	view.cpp \
+	view.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libdatabaseview \
@@ -502,15 +517,21 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-CreateForeignKey.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-ErdForeignKey.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-ErdPanel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-ErdTable.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-ErdView.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-FrameCanvas.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-GUI.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-NArrow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-OneArrow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-TableSettings.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-ViewSettings.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-column.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-constraint.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-table.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-view.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -595,6 +616,48 @@ libdbwindow_la-GUI.lo: GUI.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='GUI.cpp' object='libdbwindow_la-GUI.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-GUI.lo `test -f 'GUI.cpp' || echo '$(srcdir)/'`GUI.cpp
+
+libdbwindow_la-CreateForeignKey.lo: CreateForeignKey.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-CreateForeignKey.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-CreateForeignKey.Tpo -c -o libdbwindow_la-CreateForeignKey.lo `test -f 'CreateForeignKey.cpp' || echo '$(srcdir)/'`CreateForeignKey.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-CreateForeignKey.Tpo $(DEPDIR)/libdbwindow_la-CreateForeignKey.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='CreateForeignKey.cpp' object='libdbwindow_la-CreateForeignKey.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-CreateForeignKey.lo `test -f 'CreateForeignKey.cpp' || echo '$(srcdir)/'`CreateForeignKey.cpp
+
+libdbwindow_la-ErdView.lo: ErdView.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-ErdView.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-ErdView.Tpo -c -o libdbwindow_la-ErdView.lo `test -f 'ErdView.cpp' || echo '$(srcdir)/'`ErdView.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-ErdView.Tpo $(DEPDIR)/libdbwindow_la-ErdView.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ErdView.cpp' object='libdbwindow_la-ErdView.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-ErdView.lo `test -f 'ErdView.cpp' || echo '$(srcdir)/'`ErdView.cpp
+
+libdbwindow_la-FrameCanvas.lo: FrameCanvas.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-FrameCanvas.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-FrameCanvas.Tpo -c -o libdbwindow_la-FrameCanvas.lo `test -f 'FrameCanvas.cpp' || echo '$(srcdir)/'`FrameCanvas.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-FrameCanvas.Tpo $(DEPDIR)/libdbwindow_la-FrameCanvas.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='FrameCanvas.cpp' object='libdbwindow_la-FrameCanvas.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-FrameCanvas.lo `test -f 'FrameCanvas.cpp' || echo '$(srcdir)/'`FrameCanvas.cpp
+
+libdbwindow_la-TableSettings.lo: TableSettings.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-TableSettings.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-TableSettings.Tpo -c -o libdbwindow_la-TableSettings.lo `test -f 'TableSettings.cpp' || echo '$(srcdir)/'`TableSettings.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-TableSettings.Tpo $(DEPDIR)/libdbwindow_la-TableSettings.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='TableSettings.cpp' object='libdbwindow_la-TableSettings.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-TableSettings.lo `test -f 'TableSettings.cpp' || echo '$(srcdir)/'`TableSettings.cpp
+
+libdbwindow_la-ViewSettings.lo: ViewSettings.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-ViewSettings.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-ViewSettings.Tpo -c -o libdbwindow_la-ViewSettings.lo `test -f 'ViewSettings.cpp' || echo '$(srcdir)/'`ViewSettings.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-ViewSettings.Tpo $(DEPDIR)/libdbwindow_la-ViewSettings.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ViewSettings.cpp' object='libdbwindow_la-ViewSettings.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-ViewSettings.lo `test -f 'ViewSettings.cpp' || echo '$(srcdir)/'`ViewSettings.cpp
+
+libdbwindow_la-view.lo: view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-view.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-view.Tpo -c -o libdbwindow_la-view.lo `test -f 'view.cpp' || echo '$(srcdir)/'`view.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-view.Tpo $(DEPDIR)/libdbwindow_la-view.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='view.cpp' object='libdbwindow_la-view.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-view.lo `test -f 'view.cpp' || echo '$(srcdir)/'`view.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
