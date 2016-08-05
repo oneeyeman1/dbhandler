@@ -128,11 +128,10 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libdbwindow_la_LIBADD =
-am_libdbwindow_la_OBJECTS = libdbwindow_la-databasecanvas.lo \
-	libdbwindow_la-ErdForeignKey.lo libdbwindow_la-ErdTable.lo \
-	libdbwindow_la-NArrow.lo libdbwindow_la-OneArrow.lo \
-	libdbwindow_la-column.lo libdbwindow_la-constraint.lo \
-	libdbwindow_la-table.lo
+am_libdbwindow_la_OBJECTS = libdbwindow_la-ErdForeignKey.lo \
+	libdbwindow_la-ErdTable.lo libdbwindow_la-NArrow.lo \
+	libdbwindow_la-OneArrow.lo libdbwindow_la-column.lo \
+	libdbwindow_la-constraint.lo libdbwindow_la-table.lo
 libdbwindow_la_OBJECTS = $(am_libdbwindow_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -378,8 +377,6 @@ lib_LTLIBRARIES = \
 	libdbwindow.la
 
 libdbwindow_la_SOURCES = \
-	databasecanvas.cpp \
-	databasecanvas.h \
 	ErdForeignKey.cpp \
 	ErdForeignKey.h \
 	ErdTable.cpp \
@@ -506,7 +503,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-OneArrow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-column.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-constraint.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-databasecanvas.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-table.Plo@am__quote@
 
 .cpp.o:
@@ -529,13 +525,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
-
-libdbwindow_la-databasecanvas.lo: databasecanvas.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-databasecanvas.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-databasecanvas.Tpo -c -o libdbwindow_la-databasecanvas.lo `test -f 'databasecanvas.cpp' || echo '$(srcdir)/'`databasecanvas.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-databasecanvas.Tpo $(DEPDIR)/libdbwindow_la-databasecanvas.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='databasecanvas.cpp' object='libdbwindow_la-databasecanvas.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-databasecanvas.lo `test -f 'databasecanvas.cpp' || echo '$(srcdir)/'`databasecanvas.cpp
 
 libdbwindow_la-ErdForeignKey.lo: ErdForeignKey.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-ErdForeignKey.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-ErdForeignKey.Tpo -c -o libdbwindow_la-ErdForeignKey.lo `test -f 'ErdForeignKey.cpp' || echo '$(srcdir)/'`ErdForeignKey.cpp

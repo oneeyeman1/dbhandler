@@ -5,8 +5,6 @@ lib_LTLIBRARIES =  \
 	libdbwindow.la
 
 libdbwindow_la_SOURCES =  \
-	databasecanvas.cpp \
-	databasecanvas.h \
 	ErdForeignKey.cpp \
 	ErdForeignKey.h \
 	ErdTable.cpp \
