@@ -9,7 +9,9 @@ libdatabaseview_la_SOURCES =  \
 	databasedoc.cpp \
 	databasedoc.h \
 	databaseview.cpp \
-	databaseview.h
+	databaseview.h \
+	databasecanvas.cpp \
+	databasecanvas.h
 
 libdatabaseview_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libdbwindow \

@@ -130,7 +130,8 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 libdatabaseview_la_LIBADD =
 am_libdatabaseview_la_OBJECTS = libdatabaseview_la-dbview.lo \
 	libdatabaseview_la-databasedoc.lo \
-	libdatabaseview_la-databaseview.lo
+	libdatabaseview_la-databaseview.lo \
+	libdatabaseview_la-databasecanvas.lo
 libdatabaseview_la_OBJECTS = $(am_libdatabaseview_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -380,7 +381,9 @@ libdatabaseview_la_SOURCES = \
 	databasedoc.cpp \
 	databasedoc.h \
 	databaseview.cpp \
-	databaseview.h
+	databaseview.h \
+	databasecanvas.cpp \
+	databasecanvas.h
 
 libdatabaseview_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libdbwindow \
@@ -487,6 +490,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdatabaseview_la-databasecanvas.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdatabaseview_la-databasedoc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdatabaseview_la-databaseview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdatabaseview_la-dbview.Plo@am__quote@
@@ -532,6 +536,13 @@ libdatabaseview_la-databaseview.lo: databaseview.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='databaseview.cpp' object='libdatabaseview_la-databaseview.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdatabaseview_la_CXXFLAGS) $(CXXFLAGS) -c -o libdatabaseview_la-databaseview.lo `test -f 'databaseview.cpp' || echo '$(srcdir)/'`databaseview.cpp
+
+libdatabaseview_la-databasecanvas.lo: databasecanvas.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdatabaseview_la_CXXFLAGS) $(CXXFLAGS) -MT libdatabaseview_la-databasecanvas.lo -MD -MP -MF $(DEPDIR)/libdatabaseview_la-databasecanvas.Tpo -c -o libdatabaseview_la-databasecanvas.lo `test -f 'databasecanvas.cpp' || echo '$(srcdir)/'`databasecanvas.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdatabaseview_la-databasecanvas.Tpo $(DEPDIR)/libdatabaseview_la-databasecanvas.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='databasecanvas.cpp' object='libdatabaseview_la-databasecanvas.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdatabaseview_la_CXXFLAGS) $(CXXFLAGS) -c -o libdatabaseview_la-databasecanvas.lo `test -f 'databasecanvas.cpp' || echo '$(srcdir)/'`databasecanvas.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
