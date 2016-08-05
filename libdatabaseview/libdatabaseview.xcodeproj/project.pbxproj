@@ -7,24 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E38708D11D2B6449004EF478 /* liblibdbwindow.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E38708D01D2B6449004EF478 /* liblibdbwindow.dylib */; };
 		E38708D31D2B6537004EF478 /* liblibdialogs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E38708D21D2B6537004EF478 /* liblibdialogs.dylib */; };
 		E3D139941D0D17B800A5A0F7 /* dbview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D139931D0D17B800A5A0F7 /* dbview.cpp */; };
 		E3D13B311D1B4DBF00A5A0F7 /* databasedoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D13B2D1D1B4DBF00A5A0F7 /* databasedoc.cpp */; };
 		E3D13B321D1B4DBF00A5A0F7 /* databasedoc.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D13B2E1D1B4DBF00A5A0F7 /* databasedoc.h */; };
 		E3D13B331D1B4DBF00A5A0F7 /* databaseview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D13B2F1D1B4DBF00A5A0F7 /* databaseview.cpp */; };
 		E3D13B341D1B4DBF00A5A0F7 /* databaseview.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D13B301D1B4DBF00A5A0F7 /* databaseview.h */; };
+		E3E91CE81D54338300675CF8 /* databasecanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91CE61D54338300675CF8 /* databasecanvas.cpp */; };
+		E3E91CE91D54338300675CF8 /* databasecanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91CE71D54338300675CF8 /* databasecanvas.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		E38708D01D2B6449004EF478 /* liblibdbwindow.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibdbwindow.dylib; path = ../libdbwindow/build/Debug/liblibdbwindow.dylib; sourceTree = "<group>"; };
 		E38708D21D2B6537004EF478 /* liblibdialogs.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibdialogs.dylib; path = ../Build/Products/Debug/liblibdialogs.dylib; sourceTree = "<group>"; };
+		E38709C91D5049F9004EF478 /* liblibdbwindow.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibdbwindow.dylib; path = ../libdbwindow/build/Debug/liblibdbwindow.dylib; sourceTree = "<group>"; };
 		E3D139851D0D174F00A5A0F7 /* liblibdatabaseview.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdatabaseview.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D139931D0D17B800A5A0F7 /* dbview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbview.cpp; sourceTree = "<group>"; };
 		E3D13B2D1D1B4DBF00A5A0F7 /* databasedoc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasedoc.cpp; sourceTree = "<group>"; };
 		E3D13B2E1D1B4DBF00A5A0F7 /* databasedoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasedoc.h; sourceTree = "<group>"; };
 		E3D13B2F1D1B4DBF00A5A0F7 /* databaseview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databaseview.cpp; sourceTree = "<group>"; };
 		E3D13B301D1B4DBF00A5A0F7 /* databaseview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databaseview.h; sourceTree = "<group>"; };
+		E3E91CE41D51605A00675CF8 /* liblibdbwindow.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibdbwindow.dylib; path = ../libdbwindow/build/Debug/liblibdbwindow.dylib; sourceTree = "<group>"; };
+		E3E91CE61D54338300675CF8 /* databasecanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasecanvas.cpp; sourceTree = "<group>"; };
+		E3E91CE71D54338300675CF8 /* databasecanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasecanvas.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,7 +38,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E38708D31D2B6537004EF478 /* liblibdialogs.dylib in Frameworks */,
-				E38708D11D2B6449004EF478 /* liblibdbwindow.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,6 +47,8 @@
 		E3D1397C1D0D174F00A5A0F7 = {
 			isa = PBXGroup;
 			children = (
+				E3E91CE41D51605A00675CF8 /* liblibdbwindow.dylib */,
+				E38709C91D5049F9004EF478 /* liblibdbwindow.dylib */,
 				E38708D21D2B6537004EF478 /* liblibdialogs.dylib */,
 				E38708D01D2B6449004EF478 /* liblibdbwindow.dylib */,
 				E3D139921D0D176000A5A0F7 /* libdatabaseview */,
@@ -61,6 +67,8 @@
 		E3D139921D0D176000A5A0F7 /* libdatabaseview */ = {
 			isa = PBXGroup;
 			children = (
+				E3E91CE61D54338300675CF8 /* databasecanvas.cpp */,
+				E3E91CE71D54338300675CF8 /* databasecanvas.h */,
 				E3D13B2D1D1B4DBF00A5A0F7 /* databasedoc.cpp */,
 				E3D13B2E1D1B4DBF00A5A0F7 /* databasedoc.h */,
 				E3D13B2F1D1B4DBF00A5A0F7 /* databaseview.cpp */,
@@ -79,6 +87,7 @@
 			files = (
 				E3D13B341D1B4DBF00A5A0F7 /* databaseview.h in Headers */,
 				E3D13B321D1B4DBF00A5A0F7 /* databasedoc.h in Headers */,
+				E3E91CE91D54338300675CF8 /* databasecanvas.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,6 +142,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3E91CE81D54338300675CF8 /* databasecanvas.cpp in Sources */,
 				E3D139941D0D17B800A5A0F7 /* dbview.cpp in Sources */,
 				E3D13B311D1B4DBF00A5A0F7 /* databasedoc.cpp in Sources */,
 				E3D13B331D1B4DBF00A5A0F7 /* databaseview.cpp in Sources */,
@@ -238,8 +248,8 @@
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/,
 					/Users/igorkorot/dbhandler/dbhandler/libdbwindow/build/Debug,
-					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
 				);
 				OTHER_LDFLAGS = (
 					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
