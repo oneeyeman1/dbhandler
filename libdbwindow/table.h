@@ -44,7 +44,7 @@ protected:
 	int m_rowCount;	
 	bool m_isSaved;	
 	bool m_isView;
-	
+    DatabaseTable *m_table;
 	void initSerializable();
 	
 public:
@@ -52,7 +52,7 @@ public:
 	/*! \brief Default consturctors */
 	Table();
 	Table(const Table& obj);
-	Table(/*IDbAdapter* dbAdapter,*/const wxString& tableName, const wxString& parentName, bool isView);
+	Table(const DatabaseTable *table, const wxString& parentName, bool isView);
 	/*! \brief Default destructor*/
 	virtual ~Table();
 	/*! \brief Return table name */

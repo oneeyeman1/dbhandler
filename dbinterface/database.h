@@ -59,10 +59,10 @@ struct FKField
     FK_ONDELETE deleteConstraint;
 };
 
-class Table
+class DatabaseTable
 {
 public:
-    Table(const std::wstring &tableName, const std::vector<Field> &tableFields, const std::map<int,std::vector<FKField> > &foreignKeys)
+    DatabaseTable(const std::wstring &tableName, const std::vector<Field> &tableFields, const std::map<int,std::vector<FKField> > &foreignKeys)
     {
         table_name = tableName;
         table_fields = tableFields;
@@ -95,7 +95,7 @@ public:
 
 struct Database::Impl
 {
-    std::map<std::wstring, std::vector<Table> > m_tables;
+    std::map<std::wstring, std::vector<DatabaseTable> > m_tables;
     std::wstring m_dbName, m_type, m_subtype;
 };
 

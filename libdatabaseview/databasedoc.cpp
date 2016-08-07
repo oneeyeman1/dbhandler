@@ -26,6 +26,7 @@
 #include "wx/cmdproc.h"
 #include "wxsf/ShapeCanvas.h"
 #include "database.h"
+#include "table.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"
@@ -127,15 +128,15 @@ void DrawingDocument::SetDatabase(Database *db)
 
 void DrawingDocument::AddTables(const std::vector<wxString> &selections)
 {
-    std::map<std::wstring, std::vector<Table> > tables = m_db->GetTableVector().m_tables;
-    std::vector<Table> tableVec = tables.at( m_db->GetTableVector().m_dbName );
+    std::map<std::wstring, std::vector<DatabaseTable> > tables = m_db->GetTableVector().m_tables;
+    std::vector<DatabaseTable> tableVec = tables.at( m_db->GetTableVector().m_dbName );
     for( std::vector<wxString>::const_iterator it = selections.begin(); it < selections.end(); it++ )
     {
-        for( std::vector<Table>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
+        for( std::vector<DatabaseTable>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
         {
             if( (*it).ToStdWstring() == (*it1).GetTableName() )
             {
-                m_tables.push_back( (*it1) );
+                m_tables.push_back( Table( &(*it1), "", true ) );
             }
         }
     }

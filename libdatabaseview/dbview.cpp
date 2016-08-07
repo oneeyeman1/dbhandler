@@ -16,8 +16,9 @@
 #include "wx/docview.h"
 #include "wx/cmdproc.h"
 #include "wxsf/ShapeCanvas.h"
-#include "databasecanvas.h"
 #include "database.h"
+#include "table.h"
+#include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"
 

@@ -13,11 +13,12 @@
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"
-#include "Defs.h"
-#include "wxsf/ShapeCanvas.h"
-#include "ErdPanel.h"
+//#include "Defs.h"
+//#include "wxsf/ShapeCanvas.h"
+//#include "ErdTable.h"
 #include "DiagramManager.h"
 #include "database.h"
+#include "table.h"
 #include "databasedoc.h"
 #include "databasecanvas.h"
 
@@ -45,6 +46,7 @@ void DatabaseCanvas::DisplayTables()
 	int size = ((DrawingDocument *)m_view->GetDocument())->GetTables().size();
     if( size == 1 )
     {
-        ErdPanel *panel = new ErdPanel( this, );
+//        Table table = new Table( 
+//        ErdTable *panel = new ErdTable( this, );
     }
 }
