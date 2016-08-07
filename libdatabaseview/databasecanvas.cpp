@@ -15,7 +15,7 @@
 #include "wx/cmdproc.h"
 //#include "Defs.h"
 //#include "wxsf/ShapeCanvas.h"
-//#include "ErdTable.h"
+#include "ErdTable.h"
 #include "DiagramManager.h"
 #include "database.h"
 #include "table.h"
@@ -43,10 +43,12 @@ void DatabaseCanvas::OnDraw(wxDC& dc)
 
 void DatabaseCanvas::DisplayTables()
 {
+    wxPoint startPoint( 10, 10 );
 	int size = ((DrawingDocument *)m_view->GetDocument())->GetTables().size();
-    if( size == 1 )
+    std::vector<Table> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
+    for( std::vector<Table>::iterator it = tables.begin(); it < tables.end(); it++ ) 
     {
-//        Table table = new Table( 
-//        ErdTable *panel = new ErdTable( this, );
+        ErdTable *panel = new ErdTable( (*it) );
+        m_pManager.AddShape( panel, NULL, startPoint, sfInitialize, sfDONT_SAVE_STATE ); 
     }
 }

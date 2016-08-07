@@ -27,6 +27,7 @@ libdatabaseview_la_LDFLAGS = -L../libshapeframework \
 	 \
 	-lshapeframework \
 	-L../libdbwindow \
+	-ldbwindow \
 	-L/home/igor/wxWidgets/buildGTK/lib \
 	-pthread \
 	-Wl,-rpath,/home/igor/wxWidgets/buildGTK/lib \
@@ -37,6 +38,5 @@ libdatabaseview_la_LDFLAGS = -L../libshapeframework \
 	-lwx_gtk2u_core-3.1 \
 	-lwx_baseu_xml-3.1 \
 	-lwx_baseu_net-3.1 \
-	-lwx_baseu-3.1 \
-	-ldbwindow
+	-lwx_baseu-3.1
 	 
