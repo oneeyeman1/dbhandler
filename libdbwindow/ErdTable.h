@@ -39,7 +39,7 @@
 #include "NArrow.h"
 #include "IDbType.h"
 /*! \brief Class representig table graphics in ERD diagram. For more info see wxSF manual. */
-class ErdTable : public wxSFRoundRectShape {
+class WXEXPORT ErdTable : public wxSFRoundRectShape {
 
 public:
 	XS_DECLARE_CLONABLE_CLASS(ErdTable);	

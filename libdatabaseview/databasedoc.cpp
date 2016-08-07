@@ -136,13 +136,13 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
         {
             if( (*it).ToStdWstring() == (*it1).GetTableName() )
             {
-                m_tables.push_back( Table( &(*it1), "", true ) );
+                m_tables.push_back( new Table( &(*it1), "", true ) );
             }
         }
     }
 }
 
-std::vector<Table> &DrawingDocument::GetTables()
+std::vector<Table *> &DrawingDocument::GetTables()
 {
     return m_tables;
 }

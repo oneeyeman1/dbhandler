@@ -36,7 +36,7 @@
 // Trida databazove tabulky
 // -------------------------------------------------
 /*! \brief Class representing one database table */
-class WXEXPORT Table : public xsSerializable {
+class Table : public xsSerializable {
 protected:
 	wxString m_name;
 	wxString m_parentName;
