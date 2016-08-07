@@ -15,10 +15,10 @@
 #include "wx/cmdproc.h"
 //#include "Defs.h"
 //#include "wxsf/ShapeCanvas.h"
-#include "ErdTable.h"
-#include "DiagramManager.h"
 #include "database.h"
 #include "table.h"
+#include "ErdTable.h"
+#include "DiagramManager.h"
 #include "databasedoc.h"
 #include "databasecanvas.h"
 
