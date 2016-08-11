@@ -15,10 +15,10 @@
 #include "wx/cmdproc.h"
 //#include "Defs.h"
 //#include "wxsf/ShapeCanvas.h"
-#include "ErdTable.h"
-#include "DiagramManager.h"
 #include "database.h"
 #include "table.h"
+#include "ErdTable.h"
+#include "DiagramManager.h"
 #include "databasedoc.h"
 #include "databasecanvas.h"
 
@@ -49,6 +49,6 @@ void DatabaseCanvas::DisplayTables()
     for( std::vector<Table>::iterator it = tables.begin(); it < tables.end(); it++ ) 
     {
         ErdTable *panel = new ErdTable( (*it) );
-        m_pManager.AddShape( panel, NULL, startPoint, sfInitialize, sfDONT_SAVE_STATE ); 
+        m_pManager.AddShape( panel, NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE ); 
     }
 }
