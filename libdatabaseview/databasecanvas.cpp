@@ -45,8 +45,8 @@ void DatabaseCanvas::DisplayTables()
 {
     wxPoint startPoint( 10, 10 );
 	int size = ((DrawingDocument *)m_view->GetDocument())->GetTables().size();
-    std::vector<Table> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
-    for( std::vector<Table>::iterator it = tables.begin(); it < tables.end(); it++ ) 
+    std::vector<Table *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
+    for( std::vector<Table *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
     {
         ErdTable *panel = new ErdTable( (*it) );
         m_pManager.AddShape( panel, NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE ); 
