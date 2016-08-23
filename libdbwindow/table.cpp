@@ -30,7 +30,7 @@ XS_IMPLEMENT_CLONABLE_CLASS(Table,xsSerializable);
 Table::Table()
 {
 	m_isView = false;
-    m_table = NULL;
+
 	initSerializable();
 }
 
@@ -40,17 +40,15 @@ Table::Table(const Table& obj): xsSerializable(obj)
 	this->m_parentName = obj.m_parentName;
 	this->m_rowCount = obj.m_rowCount;
 	this->m_isView = obj.m_isView;
-	this->m_table = obj.m_table;
 	//this->m_pDbAdapter = obj.m_pDbAdapter;
 
 	initSerializable();
 
 }
 
-Table::Table(const DatabaseTable *table, const wxString& parentName, bool isView)
+Table::Table(IDbAdapter* dbAdapter, const wxString& parentName, bool isView)
 {
-	this->m_table = const_cast<DatabaseTable *>( table );
-	this->m_name = const_cast<DatabaseTable *>( table )->GetTableName();
+    this->m_name = "";
 	this->m_parentName = parentName;
 	this->m_rowCount = 0;
 	this->m_isView = isView;

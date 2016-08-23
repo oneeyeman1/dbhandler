@@ -37,6 +37,21 @@
     <ClInclude Include="IDbAdapter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="databasecanvas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="databasedoc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="databaseview.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIDatabaseTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIColumn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ErdTable.cpp">
@@ -58,6 +73,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="column.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="databasecanvas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="databasedoc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="databaseview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dbview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIDatabaseTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIColumn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

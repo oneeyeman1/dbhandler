@@ -178,11 +178,11 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
         Connect();
     m_lib1 = new wxDynamicLibrary;
 #ifdef __WXMSW__
-    m_lib1->Load( "dbview" );
+    m_lib1->Load( "dbwindow" );
 #elif __WXOSX__
-    m_lib1->Load( "liblibdatabaseview.dylib" );
+    m_lib1->Load( "liblibdbwindow.dylib" );
 #else
-    m_lib1->Load( "libdatabaseview" );
+    m_lib1->Load( "libdbwindow" );
 #endif
     if( m_db && m_lib1->IsLoaded() )
     {
