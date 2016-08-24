@@ -26,7 +26,9 @@
 #include "wx/cmdproc.h"
 #include "wxsf/ShapeCanvas.h"
 #include "database.h"
-#include "table.h"
+#include "column.h"
+#include "GUIColumn.h"
+#include "GUIDatabaseTable.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"
@@ -136,13 +138,24 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
         {
             if( (*it).ToStdWstring() == (*it1).GetTableName() )
             {
-                m_tables.push_back( new Table( &(*it1), "", true ) );
+                DatabaseTable dbTable = (*it1);
+                GUIDatabaseTable table( &dbTable );
+                for( std::vector<Field>::const_iterator it = dbTable.GetFields().begin(); it < dbTable.GetFields().end(); it++ )
+                {
+                    long properties;
+                    if( const_cast<Field &>( (*it) ).IsPrimaryKey() )
+                        properties |= GUIColumn::dbtPRIMARY_KEY;
+					if( const_cast<Field &>( (*it) ).IsAutoIncrement() )
+                        properties |= GUIColumn::dbtAUTO_INCREMENT;
+					table.AddColumn( new GUIColumn( const_cast<Field &>( (*it) ).GetFieldName(), properties ) );
+                }
+                m_tables.push_back( table );
             }
         }
     }
 }
 
-std::vector<Table *> &DrawingDocument::GetTables()
+std::vector<GUIDatabaseTable> &DrawingDocument::GetTables()
 {
     return m_tables;
 }

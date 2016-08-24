@@ -36,6 +36,12 @@ public:
         autoIncrement = autoincrement;
         column_pk = columnPK;
     }
+    const std::wstring &GetFieldName() { return column_name; }
+    const std::wstring &GetFieldType() { return column_type; }
+    int GetFieldSize() { return field_size; }
+    int GetPrecision() { return decimal_size; }
+    bool IsPrimaryKey() { return column_pk; }
+    bool IsAutoIncrement() { return autoIncrement; }
 private:
     std::wstring column_name, column_type, column_defaultValue;
     bool autoIncrement;
@@ -68,8 +74,9 @@ public:
         table_fields = tableFields;
         foreign_keys = foreignKeys;
     }
-	const std::wstring &GetTableName() { return table_name; }
-	std::map<int,std::vector<FKField> > &GetForeignKeyVector() { return foreign_keys; }
+    const std::wstring &GetTableName() { return table_name; }
+    const std::vector<Field> &GetFields() { return table_fields; }
+    std::map<int,std::vector<FKField> > &GetForeignKeyVector() { return foreign_keys; }
 private:
     std::wstring table_name;
     std::vector<Field> table_fields;

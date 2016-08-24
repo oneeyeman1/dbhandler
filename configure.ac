@@ -69,5 +69,4 @@ libodbc/Makefile
 dbhandler/Makefile
 libshapeframework/Makefile
 libdbwindow/Makefile
-libdatabaseview/Makefile
 ])

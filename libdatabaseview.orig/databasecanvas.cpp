@@ -25,6 +25,7 @@
 DatabaseCanvas::DatabaseCanvas(wxView *view, wxWindow *parent) : wxScrolledWindow(view->GetFrame())
 {
     m_view = view;
+//    ErdInfo *info = new ErdInfo();
     SetVirtualSize( 1000, 1000 );
     SetScrollRate( 20, 20 );
 
@@ -44,11 +45,11 @@ void DatabaseCanvas::OnDraw(wxDC& dc)
 void DatabaseCanvas::DisplayTables()
 {
     wxPoint startPoint( 10, 10 );
-	int size = ((DrawingDocument *)m_view->GetDocument())->GetTables().size();
-    std::vector<Table *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
-    for( std::vector<Table *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
+//	int size = ((DrawingDocument *)m_view->GetDocument())->GetTables().size();
+//    std::vector<Table> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
+//    for( std::vector<Table>::iterator it = tables.begin(); it < tables.end(); it++ ) 
     {
-        ErdTable *panel = new ErdTable( (*it) );
-        m_pManager.AddShape( panel, NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE ); 
+//        ErdTable *panel = new ErdTable( (*it) );
+//        m_pManager.AddShape( panel, NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE ); 
     }
 }
