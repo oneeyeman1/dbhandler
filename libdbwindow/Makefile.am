@@ -24,10 +24,16 @@ libdbwindow_la_SOURCES =  \
 	GUIColumn.cpp \
 	GUIColumn.h \
 	GUIDatabaseTable.cpp \
-	GUIDatabaseTable.h
+	GUIDatabaseTable.h \
+	databasecanvas.cpp \
+	databasecanvas.h \
+	databasedoc.cpp \
+	databasedoc.h \
+	databaseview.cpp \
+	databaseview.h \
+	dbview.cpp
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
-	-I../../libdatabaseview \
 	-I../../dbinterface \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
