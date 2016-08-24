@@ -24,22 +24,6 @@
 		E38709C21D4CF564004EF478 /* OneArrow.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709B21D4CF564004EF478 /* OneArrow.h */; };
 		E38709C31D4CF564004EF478 /* table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38709B31D4CF564004EF478 /* table.cpp */; };
 		E38709C41D4CF564004EF478 /* table.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709B41D4CF564004EF478 /* table.h */; };
-		E3E91CEE1D54456C00675CF8 /* ErdPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91CEA1D54456C00675CF8 /* ErdPanel.cpp */; };
-		E3E91CEF1D54456C00675CF8 /* ErdPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91CEB1D54456C00675CF8 /* ErdPanel.h */; };
-		E3E91CF01D54456C00675CF8 /* GUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91CEC1D54456C00675CF8 /* GUI.cpp */; };
-		E3E91CF11D54456C00675CF8 /* GUI.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91CED1D54456C00675CF8 /* GUI.h */; };
-		E3E91CFE1D554E2F00675CF8 /* CreateForeignKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91CF21D554E2F00675CF8 /* CreateForeignKey.cpp */; };
-		E3E91CFF1D554E2F00675CF8 /* CreateForeignKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91CF31D554E2F00675CF8 /* CreateForeignKey.h */; };
-		E3E91D001D554E2F00675CF8 /* ErdView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91CF41D554E2F00675CF8 /* ErdView.cpp */; };
-		E3E91D011D554E2F00675CF8 /* ErdView.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91CF51D554E2F00675CF8 /* ErdView.h */; };
-		E3E91D021D554E2F00675CF8 /* FrameCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91CF61D554E2F00675CF8 /* FrameCanvas.cpp */; };
-		E3E91D031D554E2F00675CF8 /* FrameCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91CF71D554E2F00675CF8 /* FrameCanvas.h */; };
-		E3E91D041D554E2F00675CF8 /* TableSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91CF81D554E2F00675CF8 /* TableSettings.cpp */; };
-		E3E91D051D554E2F00675CF8 /* TableSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91CF91D554E2F00675CF8 /* TableSettings.h */; };
-		E3E91D061D554E2F00675CF8 /* view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91CFA1D554E2F00675CF8 /* view.cpp */; };
-		E3E91D071D554E2F00675CF8 /* view.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91CFB1D554E2F00675CF8 /* view.h */; };
-		E3E91D081D554E2F00675CF8 /* ViewSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91CFC1D554E2F00675CF8 /* ViewSettings.cpp */; };
-		E3E91D091D554E2F00675CF8 /* ViewSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91CFD1D554E2F00675CF8 /* ViewSettings.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,22 +46,6 @@
 		E38709B31D4CF564004EF478 /* table.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = table.cpp; sourceTree = "<group>"; };
 		E38709B41D4CF564004EF478 /* table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = table.h; sourceTree = "<group>"; };
 		E38709C51D4EF1D3004EF478 /* liblibdatabaseview.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibdatabaseview.dylib; path = ../Build/Products/Debug/liblibdatabaseview.dylib; sourceTree = "<group>"; };
-		E3E91CEA1D54456C00675CF8 /* ErdPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErdPanel.cpp; sourceTree = "<group>"; };
-		E3E91CEB1D54456C00675CF8 /* ErdPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErdPanel.h; sourceTree = "<group>"; };
-		E3E91CEC1D54456C00675CF8 /* GUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUI.cpp; sourceTree = "<group>"; };
-		E3E91CED1D54456C00675CF8 /* GUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUI.h; sourceTree = "<group>"; };
-		E3E91CF21D554E2F00675CF8 /* CreateForeignKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateForeignKey.cpp; sourceTree = "<group>"; };
-		E3E91CF31D554E2F00675CF8 /* CreateForeignKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateForeignKey.h; sourceTree = "<group>"; };
-		E3E91CF41D554E2F00675CF8 /* ErdView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErdView.cpp; sourceTree = "<group>"; };
-		E3E91CF51D554E2F00675CF8 /* ErdView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErdView.h; sourceTree = "<group>"; };
-		E3E91CF61D554E2F00675CF8 /* FrameCanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameCanvas.cpp; sourceTree = "<group>"; };
-		E3E91CF71D554E2F00675CF8 /* FrameCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameCanvas.h; sourceTree = "<group>"; };
-		E3E91CF81D554E2F00675CF8 /* TableSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TableSettings.cpp; sourceTree = "<group>"; };
-		E3E91CF91D554E2F00675CF8 /* TableSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableSettings.h; sourceTree = "<group>"; };
-		E3E91CFA1D554E2F00675CF8 /* view.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = view.cpp; sourceTree = "<group>"; };
-		E3E91CFB1D554E2F00675CF8 /* view.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = view.h; sourceTree = "<group>"; };
-		E3E91CFC1D554E2F00675CF8 /* ViewSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewSettings.cpp; sourceTree = "<group>"; };
-		E3E91CFD1D554E2F00675CF8 /* ViewSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewSettings.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,22 +81,6 @@
 		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
-				E3E91CF21D554E2F00675CF8 /* CreateForeignKey.cpp */,
-				E3E91CF31D554E2F00675CF8 /* CreateForeignKey.h */,
-				E3E91CF41D554E2F00675CF8 /* ErdView.cpp */,
-				E3E91CF51D554E2F00675CF8 /* ErdView.h */,
-				E3E91CF61D554E2F00675CF8 /* FrameCanvas.cpp */,
-				E3E91CF71D554E2F00675CF8 /* FrameCanvas.h */,
-				E3E91CF81D554E2F00675CF8 /* TableSettings.cpp */,
-				E3E91CF91D554E2F00675CF8 /* TableSettings.h */,
-				E3E91CFA1D554E2F00675CF8 /* view.cpp */,
-				E3E91CFB1D554E2F00675CF8 /* view.h */,
-				E3E91CFC1D554E2F00675CF8 /* ViewSettings.cpp */,
-				E3E91CFD1D554E2F00675CF8 /* ViewSettings.h */,
-				E3E91CEA1D54456C00675CF8 /* ErdPanel.cpp */,
-				E3E91CEB1D54456C00675CF8 /* ErdPanel.h */,
-				E3E91CEC1D54456C00675CF8 /* GUI.cpp */,
-				E3E91CED1D54456C00675CF8 /* GUI.h */,
 				E38709A51D4CF564004EF478 /* column.cpp */,
 				E38709A61D4CF564004EF478 /* column.h */,
 				E38709A71D4CF564004EF478 /* constraint.cpp */,
@@ -156,23 +108,15 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3E91CF11D54456C00675CF8 /* GUI.h in Headers */,
 				E38709B61D4CF564004EF478 /* column.h in Headers */,
 				E38709B81D4CF564004EF478 /* constraint.h in Headers */,
-				E3E91CFF1D554E2F00675CF8 /* CreateForeignKey.h in Headers */,
 				E38709C21D4CF564004EF478 /* OneArrow.h in Headers */,
-				E3E91D091D554E2F00675CF8 /* ViewSettings.h in Headers */,
-				E3E91D051D554E2F00675CF8 /* TableSettings.h in Headers */,
 				E38709BA1D4CF564004EF478 /* ErdForeignKey.h in Headers */,
-				E3E91D071D554E2F00675CF8 /* view.h in Headers */,
 				E38709C41D4CF564004EF478 /* table.h in Headers */,
 				E38709BD1D4CF564004EF478 /* IDbAdapter.h in Headers */,
-				E3E91D031D554E2F00675CF8 /* FrameCanvas.h in Headers */,
 				E38709BE1D4CF564004EF478 /* IDbType.h in Headers */,
-				E3E91D011D554E2F00675CF8 /* ErdView.h in Headers */,
 				E38709BC1D4CF564004EF478 /* ErdTable.h in Headers */,
 				E38709C01D4CF564004EF478 /* NArrow.h in Headers */,
-				E3E91CEF1D54456C00675CF8 /* ErdPanel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,21 +171,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3E91CFE1D554E2F00675CF8 /* CreateForeignKey.cpp in Sources */,
-				E3E91CEE1D54456C00675CF8 /* ErdPanel.cpp in Sources */,
-				E3E91D041D554E2F00675CF8 /* TableSettings.cpp in Sources */,
 				E38709BF1D4CF564004EF478 /* NArrow.cpp in Sources */,
 				E38709BB1D4CF564004EF478 /* ErdTable.cpp in Sources */,
-				E3E91CF01D54456C00675CF8 /* GUI.cpp in Sources */,
-				E3E91D081D554E2F00675CF8 /* ViewSettings.cpp in Sources */,
 				E38709C31D4CF564004EF478 /* table.cpp in Sources */,
-				E3E91D001D554E2F00675CF8 /* ErdView.cpp in Sources */,
 				E38709B91D4CF564004EF478 /* ErdForeignKey.cpp in Sources */,
 				E38709B71D4CF564004EF478 /* constraint.cpp in Sources */,
-				E3E91D061D554E2F00675CF8 /* view.cpp in Sources */,
 				E38709C11D4CF564004EF478 /* OneArrow.cpp in Sources */,
 				E38709B51D4CF564004EF478 /* column.cpp in Sources */,
-				E3E91D021D554E2F00675CF8 /* FrameCanvas.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

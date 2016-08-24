@@ -15,6 +15,7 @@
 		E3D13B341D1B4DBF00A5A0F7 /* databaseview.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D13B301D1B4DBF00A5A0F7 /* databaseview.h */; };
 		E3E91CE81D54338300675CF8 /* databasecanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91CE61D54338300675CF8 /* databasecanvas.cpp */; };
 		E3E91CE91D54338300675CF8 /* databasecanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91CE71D54338300675CF8 /* databasecanvas.h */; };
+		E3E91D0B1D56EBB900675CF8 /* liblibdbwindow.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3E91D0A1D56EBB900675CF8 /* liblibdbwindow.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		E3E91CE41D51605A00675CF8 /* liblibdbwindow.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibdbwindow.dylib; path = ../libdbwindow/build/Debug/liblibdbwindow.dylib; sourceTree = "<group>"; };
 		E3E91CE61D54338300675CF8 /* databasecanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasecanvas.cpp; sourceTree = "<group>"; };
 		E3E91CE71D54338300675CF8 /* databasecanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasecanvas.h; sourceTree = "<group>"; };
+		E3E91D0A1D56EBB900675CF8 /* liblibdbwindow.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibdbwindow.dylib; path = ../Build/Products/Debug/liblibdbwindow.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3E91D0B1D56EBB900675CF8 /* liblibdbwindow.dylib in Frameworks */,
 				E38708D31D2B6537004EF478 /* liblibdialogs.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -47,6 +50,7 @@
 		E3D1397C1D0D174F00A5A0F7 = {
 			isa = PBXGroup;
 			children = (
+				E3E91D0A1D56EBB900675CF8 /* liblibdbwindow.dylib */,
 				E3E91CE41D51605A00675CF8 /* liblibdbwindow.dylib */,
 				E38709C91D5049F9004EF478 /* liblibdbwindow.dylib */,
 				E38708D21D2B6537004EF478 /* liblibdialogs.dylib */,
@@ -246,11 +250,7 @@
 					../libshapeframework,
 				);
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug/,
-					/Users/igorkorot/dbhandler/dbhandler/libdbwindow/build/Debug,
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
 					"-framework",
@@ -283,11 +283,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				EXECUTABLE_PREFIX = lib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/libdbwindow/build/Debug,
-					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
