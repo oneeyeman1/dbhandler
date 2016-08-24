@@ -24,6 +24,17 @@
 		E38709C21D4CF564004EF478 /* OneArrow.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709B21D4CF564004EF478 /* OneArrow.h */; };
 		E38709C31D4CF564004EF478 /* table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38709B31D4CF564004EF478 /* table.cpp */; };
 		E38709C41D4CF564004EF478 /* table.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709B41D4CF564004EF478 /* table.h */; };
+		E3E91D1E1D6D467C00675CF8 /* databasecanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D131D6D467C00675CF8 /* databasecanvas.cpp */; };
+		E3E91D1F1D6D467C00675CF8 /* databasecanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D141D6D467C00675CF8 /* databasecanvas.h */; };
+		E3E91D201D6D467C00675CF8 /* databasedoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D151D6D467C00675CF8 /* databasedoc.cpp */; };
+		E3E91D211D6D467C00675CF8 /* databasedoc.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D161D6D467C00675CF8 /* databasedoc.h */; };
+		E3E91D221D6D467C00675CF8 /* databaseview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D171D6D467C00675CF8 /* databaseview.cpp */; };
+		E3E91D231D6D467C00675CF8 /* databaseview.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D181D6D467C00675CF8 /* databaseview.h */; };
+		E3E91D241D6D467C00675CF8 /* dbview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D191D6D467C00675CF8 /* dbview.cpp */; };
+		E3E91D251D6D467C00675CF8 /* GUIColumn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D1A1D6D467C00675CF8 /* GUIColumn.cpp */; };
+		E3E91D261D6D467C00675CF8 /* GUIColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D1B1D6D467C00675CF8 /* GUIColumn.h */; };
+		E3E91D271D6D467C00675CF8 /* GUIDatabaseTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D1C1D6D467C00675CF8 /* GUIDatabaseTable.cpp */; };
+		E3E91D281D6D467C00675CF8 /* GUIDatabaseTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D1D1D6D467C00675CF8 /* GUIDatabaseTable.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,7 +56,17 @@
 		E38709B21D4CF564004EF478 /* OneArrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OneArrow.h; sourceTree = "<group>"; };
 		E38709B31D4CF564004EF478 /* table.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = table.cpp; sourceTree = "<group>"; };
 		E38709B41D4CF564004EF478 /* table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = table.h; sourceTree = "<group>"; };
-		E38709C51D4EF1D3004EF478 /* liblibdatabaseview.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibdatabaseview.dylib; path = ../Build/Products/Debug/liblibdatabaseview.dylib; sourceTree = "<group>"; };
+		E3E91D131D6D467C00675CF8 /* databasecanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasecanvas.cpp; sourceTree = "<group>"; };
+		E3E91D141D6D467C00675CF8 /* databasecanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasecanvas.h; sourceTree = "<group>"; };
+		E3E91D151D6D467C00675CF8 /* databasedoc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasedoc.cpp; sourceTree = "<group>"; };
+		E3E91D161D6D467C00675CF8 /* databasedoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasedoc.h; sourceTree = "<group>"; };
+		E3E91D171D6D467C00675CF8 /* databaseview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databaseview.cpp; sourceTree = "<group>"; };
+		E3E91D181D6D467C00675CF8 /* databaseview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databaseview.h; sourceTree = "<group>"; };
+		E3E91D191D6D467C00675CF8 /* dbview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbview.cpp; sourceTree = "<group>"; };
+		E3E91D1A1D6D467C00675CF8 /* GUIColumn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIColumn.cpp; sourceTree = "<group>"; };
+		E3E91D1B1D6D467C00675CF8 /* GUIColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIColumn.h; sourceTree = "<group>"; };
+		E3E91D1C1D6D467C00675CF8 /* GUIDatabaseTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIDatabaseTable.cpp; sourceTree = "<group>"; };
+		E3E91D1D1D6D467C00675CF8 /* GUIDatabaseTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIDatabaseTable.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,7 +84,6 @@
 		E38708B51D2B61D7004EF478 = {
 			isa = PBXGroup;
 			children = (
-				E38709C51D4EF1D3004EF478 /* liblibdatabaseview.dylib */,
 				E38709A31D43BA9C004EF478 /* liblibshapeframework.dylib */,
 				E38708CB1D2B61E9004EF478 /* libdbwindow */,
 				E38708BF1D2B61D7004EF478 /* Products */,
@@ -81,6 +101,17 @@
 		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
+				E3E91D131D6D467C00675CF8 /* databasecanvas.cpp */,
+				E3E91D141D6D467C00675CF8 /* databasecanvas.h */,
+				E3E91D151D6D467C00675CF8 /* databasedoc.cpp */,
+				E3E91D161D6D467C00675CF8 /* databasedoc.h */,
+				E3E91D171D6D467C00675CF8 /* databaseview.cpp */,
+				E3E91D181D6D467C00675CF8 /* databaseview.h */,
+				E3E91D191D6D467C00675CF8 /* dbview.cpp */,
+				E3E91D1A1D6D467C00675CF8 /* GUIColumn.cpp */,
+				E3E91D1B1D6D467C00675CF8 /* GUIColumn.h */,
+				E3E91D1C1D6D467C00675CF8 /* GUIDatabaseTable.cpp */,
+				E3E91D1D1D6D467C00675CF8 /* GUIDatabaseTable.h */,
 				E38709A51D4CF564004EF478 /* column.cpp */,
 				E38709A61D4CF564004EF478 /* column.h */,
 				E38709A71D4CF564004EF478 /* constraint.cpp */,
@@ -109,14 +140,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				E38709B61D4CF564004EF478 /* column.h in Headers */,
+				E3E91D211D6D467C00675CF8 /* databasedoc.h in Headers */,
+				E3E91D281D6D467C00675CF8 /* GUIDatabaseTable.h in Headers */,
 				E38709B81D4CF564004EF478 /* constraint.h in Headers */,
 				E38709C21D4CF564004EF478 /* OneArrow.h in Headers */,
 				E38709BA1D4CF564004EF478 /* ErdForeignKey.h in Headers */,
+				E3E91D261D6D467C00675CF8 /* GUIColumn.h in Headers */,
 				E38709C41D4CF564004EF478 /* table.h in Headers */,
 				E38709BD1D4CF564004EF478 /* IDbAdapter.h in Headers */,
 				E38709BE1D4CF564004EF478 /* IDbType.h in Headers */,
+				E3E91D231D6D467C00675CF8 /* databaseview.h in Headers */,
 				E38709BC1D4CF564004EF478 /* ErdTable.h in Headers */,
 				E38709C01D4CF564004EF478 /* NArrow.h in Headers */,
+				E3E91D1F1D6D467C00675CF8 /* databasecanvas.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,8 +210,14 @@
 				E38709BF1D4CF564004EF478 /* NArrow.cpp in Sources */,
 				E38709BB1D4CF564004EF478 /* ErdTable.cpp in Sources */,
 				E38709C31D4CF564004EF478 /* table.cpp in Sources */,
+				E3E91D241D6D467C00675CF8 /* dbview.cpp in Sources */,
+				E3E91D221D6D467C00675CF8 /* databaseview.cpp in Sources */,
+				E3E91D201D6D467C00675CF8 /* databasedoc.cpp in Sources */,
 				E38709B91D4CF564004EF478 /* ErdForeignKey.cpp in Sources */,
+				E3E91D1E1D6D467C00675CF8 /* databasecanvas.cpp in Sources */,
 				E38709B71D4CF564004EF478 /* constraint.cpp in Sources */,
+				E3E91D271D6D467C00675CF8 /* GUIDatabaseTable.cpp in Sources */,
+				E3E91D251D6D467C00675CF8 /* GUIColumn.cpp in Sources */,
 				E38709C11D4CF564004EF478 /* OneArrow.cpp in Sources */,
 				E38709B51D4CF564004EF478 /* column.cpp in Sources */,
 			);

@@ -21,7 +21,6 @@
 		E3D05D7E1CA564F5002CB677 /* view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D05D771CA564F5002CB677 /* view.cpp */; };
 		E3D05D7F1CA564F5002CB677 /* viewbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D05D791CA564F5002CB677 /* viewbase.cpp */; };
 		E3D1395C1D0D102B00A5A0F7 /* liblibdialogs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D139481D0D0CD200A5A0F7 /* liblibdialogs.dylib */; };
-		E3D139951D0D17E900A5A0F7 /* liblibdatabaseview.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D139911D0D175000A5A0F7 /* liblibdatabaseview.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,13 +80,6 @@
 			remoteGlobalIDString = E3D139661D0D110A00A5A0F7;
 			remoteInfo = libdbloader;
 		};
-		E3D139901D0D175000A5A0F7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E3D1398C1D0D174F00A5A0F7 /* libdatabaseview.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E3D139851D0D174F00A5A0F7;
-			remoteInfo = libdatabaseview;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -123,7 +115,6 @@
 		E3D139241D0C42FF00A5A0F7 /* libodbc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libodbc.xcodeproj; path = libodbc/libodbc.xcodeproj; sourceTree = "<group>"; };
 		E3D139431D0D0CD100A5A0F7 /* libdialogs.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdialogs.xcodeproj; path = libdialogs/libdialogs.xcodeproj; sourceTree = "<group>"; };
 		E3D1396D1D0D110A00A5A0F7 /* libdbloader.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdbloader.xcodeproj; path = libdbloader/libdbloader.xcodeproj; sourceTree = "<group>"; };
-		E3D1398C1D0D174F00A5A0F7 /* libdatabaseview.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdatabaseview.xcodeproj; path = libdatabaseview/libdatabaseview.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,7 +122,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3D139951D0D17E900A5A0F7 /* liblibdatabaseview.dylib in Frameworks */,
 				E3D1395C1D0D102B00A5A0F7 /* liblibdialogs.dylib in Frameworks */,
 				E3D05D3E1CA4AB1D002CB677 /* Cocoa.framework in Frameworks */,
 			);
@@ -170,7 +160,6 @@
 			children = (
 				E38708E81D431E9B004EF478 /* libshapeframework.xcodeproj */,
 				E38708C51D2B61D7004EF478 /* libdbwindow.xcodeproj */,
-				E3D1398C1D0D174F00A5A0F7 /* libdatabaseview.xcodeproj */,
 				E3D1396D1D0D110A00A5A0F7 /* libdbloader.xcodeproj */,
 				E3D139431D0D0CD100A5A0F7 /* libdialogs.xcodeproj */,
 				E3D139241D0C42FF00A5A0F7 /* libodbc.xcodeproj */,
@@ -300,14 +289,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E3D1398D1D0D174F00A5A0F7 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E3D139911D0D175000A5A0F7 /* liblibdatabaseview.dylib */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -375,10 +356,6 @@
 				{
 					ProductGroup = E3D138E91D051EE100A5A0F7 /* Products */;
 					ProjectRef = E3D138E81D051EE100A5A0F7 /* dbinterface.xcodeproj */;
-				},
-				{
-					ProductGroup = E3D1398D1D0D174F00A5A0F7 /* Products */;
-					ProjectRef = E3D1398C1D0D174F00A5A0F7 /* libdatabaseview.xcodeproj */;
 				},
 				{
 					ProductGroup = E3D1396E1D0D110A00A5A0F7 /* Products */;
@@ -461,13 +438,6 @@
 			fileType = "compiled.mach-o.dylib";
 			path = liblibdbloader.dylib;
 			remoteRef = E3D139711D0D110A00A5A0F7 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E3D139911D0D175000A5A0F7 /* liblibdatabaseview.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = liblibdatabaseview.dylib;
-			remoteRef = E3D139901D0D175000A5A0F7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
