@@ -1,3 +1,4 @@
+#include <string>
 #include "database.h"
 #include "XmlSerializer.h"
 #include "GUIColumn.h"

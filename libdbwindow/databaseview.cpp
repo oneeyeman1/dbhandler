@@ -4,7 +4,7 @@
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
-
+#include <string>
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
 #endif

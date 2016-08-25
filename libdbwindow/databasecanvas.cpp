@@ -4,7 +4,7 @@
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
-
+#include <string>
 #if wxUSE_STD_IOSTREAM
     #include "wx/ioswrap.h"
 #else

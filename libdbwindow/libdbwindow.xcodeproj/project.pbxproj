@@ -317,7 +317,6 @@
 					/Users/igorkorot/wxWidgets/include,
 					../libshapeframework,
 					../dbinterface,
-					../libdatabaseview,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
