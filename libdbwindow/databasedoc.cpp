@@ -130,12 +130,11 @@ void DrawingDocument::SetDatabase(Database *db)
 
 void DrawingDocument::AddTables(const std::vector<wxString> &selections)
 {
-    bool found = false;
     std::map<std::wstring, std::vector<DatabaseTable> > tables = m_db->GetTableVector().m_tables;
     std::vector<DatabaseTable> tableVec = tables.at( m_db->GetTableVector().m_dbName );
     for( std::vector<wxString>::const_iterator it = selections.begin(); it < selections.end(); it++ )
     {
-        for( std::vector<DatabaseTable>::iterator it1 = tableVec.begin(); it1 < tableVec.end() && !found; it1++ )
+        for( std::vector<DatabaseTable>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
         {
             if( (*it).ToStdWstring() == (*it1).GetTableName() )
             {
@@ -148,28 +147,11 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
                         properties |= GUIColumn::dbtPRIMARY_KEY;
 					if( const_cast<Field &>( (*it) ).IsAutoIncrement() )
                         properties |= GUIColumn::dbtAUTO_INCREMENT;
-					GUIColumn *pCol = new GUIColumn( const_cast<Field &>( (*it) ).GetFieldName(),
-                                                    const_cast<Field &>( (*it) ).GetFieldType(),
-                                                    properties,
-													const_cast<Field &>( (*it) ).GetFieldSize(),
-													const_cast<Field &>( (*it) ).GetPrecision() );
-					table.AddColumn( pCol );
+					table.AddColumn( new GUIColumn( const_cast<Field &>( (*it) ).GetFieldName(), properties ) );
                 }
                 m_tables.push_back( table );
-                found = true;
             }
         }
-    }
-    for( std::vector<GUIDatabaseTable>::iterator it = m_tables.begin(); it < m_tables.end(); it++ ) 
-    {
-				// DEBUGGING!!! FOR REMOVAL
-        SerializableList::compatibility_iterator node = (*it).GetFirstChildNode();
-        while( node )
-        {
-            GUIColumn *pCol = wxDynamicCast( node->GetData(), GUIColumn );
-			node = node->GetNext();
-		}
-				// DEBUGGING!!! FOR REMOVAL
     }
 }
 

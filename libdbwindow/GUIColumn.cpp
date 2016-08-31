@@ -2,12 +2,10 @@
 #include "column.h"
 #include "GUIColumn.h"
 
-GUIColumn::GUIColumn(const wxString &name, const wxString &type, long propertyflags, long size, long decimal/*, UNIVERSAL_TYPE type*/)
+GUIColumn::GUIColumn(const wxString &name, long propertyflags/*, UNIVERSAL_TYPE type*/)
 {
-    m_name = name;
-    m_type = type;
-    m_size = size;
-    m_decimal = decimal;
+    m_typeName = name;
+//    m_parentName = parentName;
     if( propertyflags & dbtPRIMARY_KEY )
         m_isPK = true;
 	else
@@ -16,8 +14,7 @@ GUIColumn::GUIColumn(const wxString &name, const wxString &type, long propertyfl
         m_isAutoInc = true;
 	else
         m_isAutoInc = false;
-    XS_SERIALIZE( m_name, wxT( "m_name" ) );
-    XS_SERIALIZE( m_type, wxT( "m_type" ) );
+    XS_SERIALIZE( m_typeName, wxT( "m_typeName" ) );
 //	XS_SERIALIZE_LONG(m_dbtPropertyFlags,wxT("m_dbtPropertyFlags"));
     XS_SERIALIZE_LONG( m_size, wxT( "m_size" ) );
     XS_SERIALIZE_LONG( m_decimal, wxT( "m_decimal" ) );
@@ -26,9 +23,4 @@ GUIColumn::GUIColumn(const wxString &name, const wxString &type, long propertyfl
     XS_SERIALIZE( m_isNotNull, wxT( "m_notNull" ) );
     XS_SERIALIZE( m_isAutoInc, wxT( "m_isAutoInc" ) );
 //	XS_SERIALIZE_LONG(m_universalType, wxT("m_universalType"));
-}
-
-wxString &GUIColumn::GetName()
-{
-    return m_name;
 }

@@ -20,8 +20,3 @@ void GUIDatabaseTable::AddColumn(GUIColumn *column)
 {
     AddChild( column );
 }
-
-GUIColumn *GUIDatabaseTable::GetFirstColumn()
-{
-    return (GUIColumn *) GetFirstChild( CLASSINFO( GUIColumn ) );
-}

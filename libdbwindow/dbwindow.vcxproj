@@ -46,7 +46,6 @@
     <ClInclude Include="GUIDatabaseTable.h" />
     <ClInclude Include="IDbAdapter.h" />
     <ClInclude Include="IDbType.h" />
-    <ClInclude Include="MyErdTable.h" />
     <ClInclude Include="NArrow.h" />
     <ClInclude Include="OneArrow.h" />
     <ClInclude Include="table.h" />
@@ -62,7 +61,6 @@
     <ClCompile Include="ErdTable.cpp" />
     <ClCompile Include="GUIColumn.cpp" />
     <ClCompile Include="GUIDatabaseTable.cpp" />
-    <ClCompile Include="MyErdTable.cpp" />
     <ClCompile Include="NArrow.cpp" />
     <ClCompile Include="OneArrow.cpp" />
     <ClCompile Include="table.cpp" />

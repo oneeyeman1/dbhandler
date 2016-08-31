@@ -22,7 +22,6 @@
 #include "GUIDatabaseTable.h"
 #include "wxsf/ShapeCanvas.h"
 #include "ErdTable.h"
-#include "MyErdTable.h"
 #include "DiagramManager.h"
 #include "databasedoc.h"
 #include "databasecanvas.h"
@@ -54,13 +53,13 @@ void DatabaseCanvas::OnDraw(wxDC& dc)
 void DatabaseCanvas::DisplayTables()
 {
     wxPoint startPoint( 10, 10 );
+    int size = ((DrawingDocument *)m_view->GetDocument())->GetTables().size();
     std::vector<GUIDatabaseTable> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
-    int size = tables.size();
     for( std::vector<GUIDatabaseTable>::iterator it = tables.begin(); it < tables.end(); it++ ) 
     {
-        MyErdTable *panel = new MyErdTable( &(*it) );
+        ErdTable *panel = new ErdTable( &(*it) );
         m_pManager.AddShape( panel, NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
-		panel->UpdateColumn();
+		panel->UpdateColumns();
 		startPoint.x += 200;
     }
 }
