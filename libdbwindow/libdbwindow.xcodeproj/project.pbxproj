@@ -35,6 +35,8 @@
 		E3E91D261D6D467C00675CF8 /* GUIColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D1B1D6D467C00675CF8 /* GUIColumn.h */; };
 		E3E91D271D6D467C00675CF8 /* GUIDatabaseTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D1C1D6D467C00675CF8 /* GUIDatabaseTable.cpp */; };
 		E3E91D281D6D467C00675CF8 /* GUIDatabaseTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D1D1D6D467C00675CF8 /* GUIDatabaseTable.h */; };
+		E3E91D2C1D821A5600675CF8 /* MyErdTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D2A1D821A5600675CF8 /* MyErdTable.cpp */; };
+		E3E91D2D1D821A5600675CF8 /* MyErdTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D2B1D821A5600675CF8 /* MyErdTable.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +69,8 @@
 		E3E91D1B1D6D467C00675CF8 /* GUIColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIColumn.h; sourceTree = "<group>"; };
 		E3E91D1C1D6D467C00675CF8 /* GUIDatabaseTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIDatabaseTable.cpp; sourceTree = "<group>"; };
 		E3E91D1D1D6D467C00675CF8 /* GUIDatabaseTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIDatabaseTable.h; sourceTree = "<group>"; };
+		E3E91D2A1D821A5600675CF8 /* MyErdTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MyErdTable.cpp; sourceTree = "<group>"; };
+		E3E91D2B1D821A5600675CF8 /* MyErdTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyErdTable.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +105,8 @@
 		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
+				E3E91D2A1D821A5600675CF8 /* MyErdTable.cpp */,
+				E3E91D2B1D821A5600675CF8 /* MyErdTable.h */,
 				E3E91D131D6D467C00675CF8 /* databasecanvas.cpp */,
 				E3E91D141D6D467C00675CF8 /* databasecanvas.h */,
 				E3E91D151D6D467C00675CF8 /* databasedoc.cpp */,
@@ -148,6 +154,7 @@
 				E3E91D261D6D467C00675CF8 /* GUIColumn.h in Headers */,
 				E38709C41D4CF564004EF478 /* table.h in Headers */,
 				E38709BD1D4CF564004EF478 /* IDbAdapter.h in Headers */,
+				E3E91D2D1D821A5600675CF8 /* MyErdTable.h in Headers */,
 				E38709BE1D4CF564004EF478 /* IDbType.h in Headers */,
 				E3E91D231D6D467C00675CF8 /* databaseview.h in Headers */,
 				E38709BC1D4CF564004EF478 /* ErdTable.h in Headers */,
@@ -209,6 +216,7 @@
 			files = (
 				E38709BF1D4CF564004EF478 /* NArrow.cpp in Sources */,
 				E38709BB1D4CF564004EF478 /* ErdTable.cpp in Sources */,
+				E3E91D2C1D821A5600675CF8 /* MyErdTable.cpp in Sources */,
 				E38709C31D4CF564004EF478 /* table.cpp in Sources */,
 				E3E91D241D6D467C00675CF8 /* dbview.cpp in Sources */,
 				E3E91D221D6D467C00675CF8 /* databaseview.cpp in Sources */,

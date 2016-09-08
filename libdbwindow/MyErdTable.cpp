@@ -1,3 +1,4 @@
+#include <string>
 #include "database.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/BitmapShape.h"
