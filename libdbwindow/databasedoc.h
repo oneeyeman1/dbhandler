@@ -54,7 +54,7 @@ class DrawingDocument : public wxDocument
 {
 public:
     DrawingDocument() : wxDocument() { }
-
+    ~DrawingDocument();
     DocumentOstream& SaveObject(DocumentOstream& stream) wxOVERRIDE;
     DocumentIstream& LoadObject(DocumentIstream& stream) wxOVERRIDE;
 
@@ -70,14 +70,14 @@ public:
     const DoodleSegments& GetSegments() const { return m_doodleSegments; }
 
     void AddTables(const std::vector<wxString> &selections);
-    std::vector<GUIDatabaseTable> &GetTables();
+    std::vector<MyErdTable *> &GetTables();
 
 private:
     void DoUpdate();
 
     DoodleSegments m_doodleSegments;
     Database *m_db;
-    std::vector<GUIDatabaseTable> m_tables;
+    std::vector<MyErdTable *> m_tables;
     wxDECLARE_DYNAMIC_CLASS(DrawingDocument);
 };
 

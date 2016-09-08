@@ -25,10 +25,14 @@
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"
 #include "wxsf/ShapeCanvas.h"
+#include "wxsf/RoundRectShape.h"
+#include "wxsf/TextShape.h"
+#include "wxsf/FlexGridShape.h"
 #include "database.h"
 #include "column.h"
+#include "constraint.h"
 #include "GUIColumn.h"
-#include "GUIDatabaseTable.h"
+#include "MyErdTable.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"
@@ -38,6 +42,12 @@
 // ----------------------------------------------------------------------------
 
 wxIMPLEMENT_DYNAMIC_CLASS(DrawingDocument, wxDocument);
+
+DrawingDocument::~DrawingDocument()
+{
+    for( std::vector<MyErdTable *>::iterator it = m_tables.begin(); it < m_tables.end(); it++ )
+        delete (*it);
+}
 
 DocumentOstream& DrawingDocument::SaveObject(DocumentOstream& ostream)
 {
@@ -130,32 +140,40 @@ void DrawingDocument::SetDatabase(Database *db)
 
 void DrawingDocument::AddTables(const std::vector<wxString> &selections)
 {
+    bool found = false;
     std::map<std::wstring, std::vector<DatabaseTable> > tables = m_db->GetTableVector().m_tables;
     std::vector<DatabaseTable> tableVec = tables.at( m_db->GetTableVector().m_dbName );
     for( std::vector<wxString>::const_iterator it = selections.begin(); it < selections.end(); it++ )
     {
-        for( std::vector<DatabaseTable>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
+        for( std::vector<DatabaseTable>::iterator it1 = tableVec.begin(); it1 < tableVec.end() && !found; it1++ )
         {
             if( (*it).ToStdWstring() == (*it1).GetTableName() )
             {
                 DatabaseTable dbTable = (*it1);
-                GUIDatabaseTable table( &dbTable );
-                for( std::vector<Field>::const_iterator it = dbTable.GetFields().begin(); it < dbTable.GetFields().end(); it++ )
+                MyErdTable *table = new MyErdTable( dbTable );
+/*                for( std::vector<Field>::const_iterator it = dbTable.GetFields().begin(); it < dbTable.GetFields().end(); it++ )
                 {
                     long properties;
                     if( const_cast<Field &>( (*it) ).IsPrimaryKey() )
                         properties |= GUIColumn::dbtPRIMARY_KEY;
 					if( const_cast<Field &>( (*it) ).IsAutoIncrement() )
                         properties |= GUIColumn::dbtAUTO_INCREMENT;
-					table.AddColumn( new GUIColumn( const_cast<Field &>( (*it) ).GetFieldName(), properties ) );
-                }
+					table.AddColumn( new GUIColumn( const_cast<Field &>( (*it) ).GetFieldName(), 
+                                                    const_cast<Field &>( (*it) ).GetFieldType(),
+                                                    properties,
+													const_cast<Field &>( (*it) ).GetFieldSize(),
+                                                    const_cast<Field &>( (*it) ).GetPrecision() ) );
+                }*/
                 m_tables.push_back( table );
+                table->UpdateTable();
+                found = true;
             }
         }
+        found = false;
     }
 }
 
-std::vector<GUIDatabaseTable> &DrawingDocument::GetTables()
+std::vector<MyErdTable *> &DrawingDocument::GetTables()
 {
     return m_tables;
 }

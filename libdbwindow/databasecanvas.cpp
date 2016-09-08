@@ -13,13 +13,13 @@
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"
-//#include "Defs.h"
-//#include "wxsf/ShapeCanvas.h"
-#include "XmlSerializer.h"
 #include "database.h"
-#include "table.h"
+#include "wxsf/RoundRectShape.h"
+#include "wxsf/TextShape.h"
+#include "wxsf/FlexGridShape.h"
+#include "constraint.h"
 #include "GUIColumn.h"
-#include "GUIDatabaseTable.h"
+#include "MyErdTable.h"
 #include "wxsf/ShapeCanvas.h"
 #include "ErdTable.h"
 #include "DiagramManager.h"
@@ -53,15 +53,16 @@ void DatabaseCanvas::OnDraw(wxDC& dc)
 void DatabaseCanvas::DisplayTables()
 {
     wxPoint startPoint( 10, 10 );
-    int size = ((DrawingDocument *)m_view->GetDocument())->GetTables().size();
-    std::vector<GUIDatabaseTable> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
-    for( std::vector<GUIDatabaseTable>::iterator it = tables.begin(); it < tables.end(); it++ ) 
+    std::vector<MyErdTable *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
+    int size = tables.size();
+    for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
     {
-        ErdTable *panel = new ErdTable( &(*it) );
-        m_pManager.AddShape( panel, NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
-		panel->UpdateColumns();
+//        ErdTable *panel = new ErdTable( &(*it) );
+        m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
+//		panel->UpdateColumns();
 		startPoint.x += 200;
     }
+    Refresh();
 }
 
 void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)

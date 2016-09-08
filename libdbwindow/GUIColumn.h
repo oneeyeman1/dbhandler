@@ -2,10 +2,11 @@
 class GUIColumn : public xsSerializable
 {
 protected:
-    wxString m_typeName;//;, m_type;
+    wxString m_name, m_type;
     long m_size, m_decimal;
     bool m_isNotNull, m_isPK, m_isAutoInc;
 public:
+    XS_DECLARE_CLONABLE_CLASS(GUIColumn);
     enum PROPERTY
     {
         /*! \brief Enable parameter Not NULL */
@@ -32,6 +33,8 @@ public:
         dbtTYPE_BOOLEAN = 6,
         dbtTYPE_OTHER = 7
     };
-
-    GUIColumn(const wxString &name, long propertyflags/*, UNIVERSAL_TYPE type*/);
+    GUIColumn();
+    GUIColumn(const wxString &name, const wxString &type, long propertyflags, long size, long decimal);
+    const wxString &GetName();
+    bool IsPrimaryKey();
 };
