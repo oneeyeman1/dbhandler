@@ -49,8 +49,9 @@ private:
     int field_size, decimal_size;
 };
 
-struct FKField
+class FKField
 {
+public:
     FKField(const std::wstring &table_name, const std::wstring &original_field, const std::wstring &referenced_field, const std::wstring &schema, FK_ONUPDATE update_constraint, FK_ONDELETE delete_constraint)
     {
         schemaName = schema;
@@ -60,6 +61,10 @@ struct FKField
         updateConstraint = update_constraint;
         deleteConstraint = delete_constraint;
     }
+    const std::wstring &GetReferencedTableName() { return tableName; }
+	const std::wstring &GetOriginalFieldName() { return originalField; }
+	const std::wstring &GetReferencedFieldName() { return referencedField; }
+private:
     std::wstring schemaName, tableName, originalField, referencedField;
     FK_ONUPDATE updateConstraint;
     FK_ONDELETE deleteConstraint;

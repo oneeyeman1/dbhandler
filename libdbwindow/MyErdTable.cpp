@@ -56,10 +56,10 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
 	}
 }
 
-MyErdTable::MyErdTable(const DatabaseTable &table) : wxSFRoundRectShape()
+MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
 {
-    m_table = &( const_cast<DatabaseTable &>( table ) );
-	std::vector<Field> fields = const_cast<DatabaseTable &>( table ).GetFields();
+    m_table = table;
+	std::vector<Field> fields = m_table->GetFields();
     SetBorder( wxPen( wxColour( 70, 125, 170 ), 1, wxPENSTYLE_SOLID ) );
     SetFill( wxBrush( wxColour( 210, 225, 245 ) ) );
     SetRadius(15);
@@ -73,7 +73,7 @@ MyErdTable::MyErdTable(const DatabaseTable &table) : wxSFRoundRectShape()
         m_pLabel->SetHBorder( 5 );
         m_pLabel->GetFont().SetPointSize( 8 );
         m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
-		m_pLabel->SetText( const_cast<DatabaseTable &>( table ).GetTableName() );
+		m_pLabel->SetText( m_table->GetTableName() );
         m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
         SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         m_pGrid->SetRelativePosition( 0, 17 );
@@ -232,4 +232,9 @@ void MyErdTable::SetCommonProps(wxSFShapeBase* shape)
     shape->SetVBorder( 0 );
     shape->SetHBorder( 0 );
     shape->Activate( false );
+}
+
+const DatabaseTable &MyErdTable::GetTable()
+{
+    return *m_table;
 }

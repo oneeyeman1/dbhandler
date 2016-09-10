@@ -149,27 +149,27 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
         {
             if( (*it).ToStdWstring() == (*it1).GetTableName() )
             {
-                DatabaseTable dbTable = (*it1);
+                DatabaseTable *dbTable = &(*it1);
                 MyErdTable *table = new MyErdTable( dbTable );
-/*                for( std::vector<Field>::const_iterator it = dbTable.GetFields().begin(); it < dbTable.GetFields().end(); it++ )
-                {
-                    long properties;
-                    if( const_cast<Field &>( (*it) ).IsPrimaryKey() )
-                        properties |= GUIColumn::dbtPRIMARY_KEY;
-					if( const_cast<Field &>( (*it) ).IsAutoIncrement() )
-                        properties |= GUIColumn::dbtAUTO_INCREMENT;
-					table.AddColumn( new GUIColumn( const_cast<Field &>( (*it) ).GetFieldName(), 
-                                                    const_cast<Field &>( (*it) ).GetFieldType(),
-                                                    properties,
-													const_cast<Field &>( (*it) ).GetFieldSize(),
-                                                    const_cast<Field &>( (*it) ).GetPrecision() ) );
-                }*/
                 m_tables.push_back( table );
                 table->UpdateTable();
                 found = true;
             }
         }
         found = false;
+    }
+    for( std::vector<MyErdTable *>::iterator it2 = m_tables.begin(); it2 < m_tables.end(); it2++ )
+    {
+        std::map<int, std::vector<FKField> > foreignKeys = const_cast<DatabaseTable &>( (*it2)->GetTable() ).GetForeignKeyVector();
+        for( std::map<int, std::vector<FKField> >::iterator it3 = foreignKeys.begin(); it3 != foreignKeys.end(); it3++ )
+        {
+            for( std::vector<FKField>::iterator it4 = (*it3).second.begin(); it4 < (*it3).second.end(); it4++ )
+            {
+				if( std::find( selections.begin(), selections.end(), (*it4).GetReferencedTableName() ) != selections.end() )
+                {
+                }
+            }
+        }
     }
 }
 

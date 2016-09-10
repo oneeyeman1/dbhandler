@@ -6,10 +6,11 @@ class MyErdTable : public wxSFRoundRectShape
 public:
     XS_DECLARE_CLONABLE_CLASS(MyErdTable);
     MyErdTable();
-    MyErdTable(const DatabaseTable &table);
+    MyErdTable(DatabaseTable *table);
     virtual ~MyErdTable();
     void AddColumn(GUIColumn *col);
     void UpdateTable();
+    const DatabaseTable &GetTable();
 protected:
     void ClearGrid();
     void ClearConnections();

@@ -42,7 +42,7 @@ void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames)
     wxArrayInt selections;
     m_tables->GetSelections( selections );
     for( size_t i = 0; i < selections.GetCount(); i++ )
-		tableNames.push_back( m_tables->GetString( i ) );
+		tableNames.push_back( m_tables->GetString( selections.Item( i ) ) );
 }
 
 void SelectTables::set_properties()
