@@ -1385,6 +1385,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 str_to_uc_cpy( table_name, tableName );
                 schema_name += table_name;
                 pimpl->m_tables[catalog_name].push_back( new DatabaseTable( schema_name, fields, foreign_keys ) );
+				fields.erase( fields.begin(), fields.end() );
+				foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                 fields.clear();
                 foreign_keys.clear();
             }

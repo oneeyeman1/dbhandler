@@ -296,7 +296,11 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         sqlite3_free( y );
                     }
                     if( res1 == SQLITE_DONE && res3 == SQLITE_DONE )
+                    {
                         pimpl->m_tables[m_catalog].push_back( new DatabaseTable( myconv.from_bytes( (const char *) tableName ), fields, foreign_keys ) );
+                        fields.erase( fields.begin(), fields.end() );
+						foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                    }
                 }
                 else if( res == SQLITE_DONE )
                     break;
