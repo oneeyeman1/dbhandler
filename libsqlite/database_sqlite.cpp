@@ -160,8 +160,8 @@ void SQLiteDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
 
 int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
-    std::vector<Field> fields;
-    std::map<int,std::vector<FKField> > foreign_keys;
+    std::vector<Field *> fields;
+    std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
     sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL;
     std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
@@ -211,7 +211,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     errorMsg.push_back( errorMessage );
                                     break;
                                 }
-                                fields.push_back( Field( myconv.from_bytes( fieldName ), myconv.from_bytes( fieldType ), 0, 0, myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK == 1 ? true : false ) );
+                                fields.push_back( new Field( myconv.from_bytes( fieldName ), myconv.from_bytes( fieldType ), 0, 0, myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK == 1 ? true : false ) );
                             }
                             else if( res1 == SQLITE_DONE )
                                 break;
@@ -271,7 +271,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         delete_constraint = SET_DEFAULT_DELETE;
                                     if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
                                         delete_constraint = CASCADE_DELETE;
-                                    foreign_keys[fkReference].push_back( FKField( myconv.from_bytes( fkTable ), myconv.from_bytes( fkField ), myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
+                                    foreign_keys[fkReference].push_back( new FKField( myconv.from_bytes( fkTable ), myconv.from_bytes( fkField ), myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
                                 }
                                 else if( res3 == SQLITE_DONE )
                                     break;
@@ -296,7 +296,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         sqlite3_free( y );
                     }
                     if( res1 == SQLITE_DONE && res3 == SQLITE_DONE )
-                        pimpl->m_tables[m_catalog].push_back( DatabaseTable( myconv.from_bytes( (const char *) tableName ), fields, foreign_keys ) );
+                        pimpl->m_tables[m_catalog].push_back( new DatabaseTable( myconv.from_bytes( (const char *) tableName ), fields, foreign_keys ) );
                 }
                 else if( res == SQLITE_DONE )
                     break;

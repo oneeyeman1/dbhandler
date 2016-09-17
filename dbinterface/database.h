@@ -25,6 +25,14 @@ enum FK_ONDELETE
 class Field
 {
 public:
+    Field()
+    {
+        column_name = column_type = column_defaultValue = L"";
+        field_size = -1;
+        decimal_size = -1;
+        column_isNull = autoIncrement = column_pk = false;
+    }
+
     Field(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false)
     {
         column_name = columnName;
@@ -36,6 +44,7 @@ public:
         autoIncrement = autoincrement;
         column_pk = columnPK;
     }
+
     const std::wstring &GetFieldName() { return column_name; }
     const std::wstring &GetFieldType() { return column_type; }
     int GetFieldSize() { return field_size; }
@@ -73,19 +82,19 @@ private:
 class DatabaseTable
 {
 public:
-    DatabaseTable(const std::wstring &tableName, const std::vector<Field> &tableFields, const std::map<int,std::vector<FKField> > &foreignKeys)
+    DatabaseTable(const std::wstring &tableName, const std::vector<Field *> &tableFields, const std::map<int,std::vector<FKField *> > &foreignKeys)
     {
         table_name = tableName;
         table_fields = tableFields;
         foreign_keys = foreignKeys;
     }
     const std::wstring &GetTableName() { return table_name; }
-    const std::vector<Field> &GetFields() { return table_fields; }
-    std::map<int,std::vector<FKField> > &GetForeignKeyVector() { return foreign_keys; }
+    const std::vector<Field *> &GetFields() { return table_fields; }
+    std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
 private:
     std::wstring table_name;
-    std::vector<Field> table_fields;
-    std::map<int,std::vector<FKField> > foreign_keys;
+    std::vector<Field *> table_fields;
+    std::map<int,std::vector<FKField *> > foreign_keys;
 };
 
 #ifdef WIN32
@@ -107,7 +116,7 @@ public:
 
 struct Database::Impl
 {
-    std::map<std::wstring, std::vector<DatabaseTable> > m_tables;
+    std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
     std::wstring m_dbName, m_type, m_subtype;
 };
 

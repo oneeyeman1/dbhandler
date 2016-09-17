@@ -59,9 +59,13 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
 MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
 {
     m_table = table;
-	std::vector<Field> fields = m_table->GetFields();
+	std::vector<Field *> fields = m_table->GetFields();
     SetBorder( wxPen( wxColour( 70, 125, 170 ), 1, wxPENSTYLE_SOLID ) );
     SetFill( wxBrush( wxColour( 210, 225, 245 ) ) );
+    AcceptConnection( wxT( "All" ) );
+    AcceptTrgNeighbour( wxT( "All" ) );
+    AcceptSrcNeighbour( wxT( "All" ) );
+    AddStyle( sfsLOCK_CHILDREN );
     SetRadius(15);
     m_pLabel = new wxSFTextShape();
     m_pGrid = new wxSFFlexGridShape();
@@ -98,7 +102,7 @@ MyErdTable::~MyErdTable()
 
 void MyErdTable::UpdateTable()
 {
-	std::vector<Field> fields = m_table->GetFields();
+	std::vector<Field *> fields = m_table->GetFields();
     int i = 0;
     ClearGrid();
     ClearConnections();
@@ -107,14 +111,14 @@ void MyErdTable::UpdateTable()
     wxSFDiagramManager *manager = GetShapeManager();
     if( manager )
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
-    for( std::vector<Field>::iterator it = fields.begin(); it < fields.end(); it++ )
+    for( std::vector<Field *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
         long properties = 0;
-        if( (*it).IsPrimaryKey() )
+        if( (*it)->IsPrimaryKey() )
             properties |= GUIColumn::dbtPRIMARY_KEY;
-        if( (*it).IsAutoIncrement() )
+        if( (*it)->IsAutoIncrement() )
             properties |= GUIColumn::dbtAUTO_INCREMENT;
-        GUIColumn *col = new GUIColumn( (*it).GetFieldName(), (*it).GetFieldType(), properties, (*it).GetFieldSize(), (*it).GetPrecision() );
+        GUIColumn *col = new GUIColumn( (*it)->GetFieldName(), (*it)->GetFieldType(), properties, (*it)->GetFieldSize(), (*it)->GetPrecision() );
         m_columns.push_back( col );
         AddColumn( col->GetName(), i, col->IsPrimaryKey() ? Constraint::primaryKey : Constraint::noKey );
         i += 2;
@@ -237,4 +241,22 @@ void MyErdTable::SetCommonProps(wxSFShapeBase* shape)
 const DatabaseTable &MyErdTable::GetTable()
 {
     return *m_table;
+}
+
+long MyErdTable::GetColumnId(const wxString &columnName)
+{
+    long id = -1;
+    bool found = false;
+    SerializableList::compatibility_iterator child = m_pGrid->GetFirstChildNode();
+    while( child && !found)
+    {
+		wxSFTextShape *pCol = wxDynamicCast( child->GetData(), wxSFTextShape );
+        if( pCol && pCol->GetText() == columnName )
+        {
+            id = pCol->GetId();
+            found = true;
+        }
+        child = child->GetNext();
+    }
+    return id;
 }

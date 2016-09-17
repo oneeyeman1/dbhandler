@@ -514,11 +514,11 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     RETCODE ret;
     int result = 0, bufferSize = 1024;
-    std::vector<Field> fields;
+    std::vector<Field *> fields;
     std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkTable, fkName;
     std::set<SQLWCHAR *> pk_fields;
     std::set<SQLWCHAR *> autoinc_fields;
-    std::map<int,std::vector<FKField> > foreign_keys;
+    std::map<int,std::vector<FKField *> > foreign_keys;
     SQLWCHAR *catalogName, *schemaName, *tableName;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0;
     SQLHDBC hdbc_col = 0, hdbc_pk = 0, hdbc_colattr = 0, hdbc_fk = 0;
@@ -1107,7 +1107,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             str_to_uc_cpy( fieldName, szColumnName );
                             str_to_uc_cpy( fieldType, szTypeName );
                             str_to_uc_cpy( defaultValue, szColumnDefault );
-                            fields.push_back( Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, autoinc_fields.find( szColumnName ) == autoinc_fields.end(), pk_fields.find( szColumnName ) == pk_fields.end() ) );
+                            fields.push_back( new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, autoinc_fields.find( szColumnName ) == autoinc_fields.end(), pk_fields.find( szColumnName ) == pk_fields.end() ) );
                             fieldName = L"";
                             fieldType = L"";
                             defaultValue = L"";
@@ -1320,7 +1320,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     delete_constraint = CASCADE_DELETE;
                                     break;
                             }
-                            foreign_keys[keySequence].push_back( FKField( fkTable, primaryKey, fkName, fkSchema, update_constraint, delete_constraint ) );
+                            foreign_keys[keySequence].push_back( new FKField( fkTable, primaryKey, fkName, fkSchema, update_constraint, delete_constraint ) );
                             primaryKey = L"";
                             fkSchema = L"";
                             fkTable = L"";
@@ -1384,7 +1384,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 schema_name += L".";
                 str_to_uc_cpy( table_name, tableName );
                 schema_name += table_name;
-                pimpl->m_tables[catalog_name].push_back( DatabaseTable( schema_name, fields, foreign_keys ) );
+                pimpl->m_tables[catalog_name].push_back( new DatabaseTable( schema_name, fields, foreign_keys ) );
                 fields.clear();
                 foreign_keys.clear();
             }

@@ -50,7 +50,7 @@ void DatabaseCanvas::OnDraw(wxDC& dc)
         m_view->OnDraw( &dc );*/
 }
 
-void DatabaseCanvas::DisplayTables()
+void DatabaseCanvas::DisplayTables(const std::vector<wxString> &selections)
 {
     wxPoint startPoint( 10, 10 );
     std::vector<MyErdTable *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
@@ -59,8 +59,33 @@ void DatabaseCanvas::DisplayTables()
     {
 //        ErdTable *panel = new ErdTable( &(*it) );
         m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
-//		panel->UpdateColumns();
+		(*it)->UpdateTable();
 		startPoint.x += 200;
+    }
+    Refresh();
+    for( std::vector<MyErdTable *>::iterator it2 = tables.begin(); it2 < tables.end(); it2++ )
+    {
+        std::map<int, std::vector<FKField *> > foreignKeys = const_cast<DatabaseTable &>( (*it2)->GetTable() ).GetForeignKeyVector();
+        for( std::map<int, std::vector<FKField *> >::iterator it3 = foreignKeys.begin(); it3 != foreignKeys.end(); it3++ )
+        {
+            for( std::vector<FKField *>::iterator it4 = (*it3).second.begin(); it4 < (*it3).second.end(); it4++ )
+            {
+                wxString referencedTableName = (*it4)->GetReferencedTableName();
+                Constraint* pConstr = new Constraint();
+				pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
+				pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
+				pConstr->SetRefTable( referencedTableName );
+                pConstr->SetType( Constraint::foreignKey );
+//                pConstr->SetOnDelete( (Constraint::constraintAction) m_radioOnDelete->GetSelection() );
+//                pConstr->SetOnUpdate( (Constraint::constraintAction) m_radioOnUpdate->GetSelection() );
+                if( std::find( selections.begin(), selections.end(), referencedTableName ) != selections.end() )
+                {
+                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetColumnId( (*it4)->GetOriginalFieldName() ),
+                                                                  dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( referencedTableName )->GetColumnId( (*it4)->GetReferencedFieldName() ),
+                                                                  new ErdForeignKey( pConstr ), sfDONT_SAVE_STATE );
+                }
+            }
+        }
     }
     Refresh();
 }

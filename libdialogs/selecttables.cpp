@@ -118,15 +118,15 @@ void SelectTables::FillTableList(bool sysTableIncluded)
 {
     m_tables->Clear();
     std::wstring type = m_db->GetTableVector().m_type;
-    std::map<std::wstring,std::vector<DatabaseTable> > tables = m_db->GetTableVector().m_tables;
+    std::map<std::wstring,std::vector<DatabaseTable *> > tables = m_db->GetTableVector().m_tables;
     std::wstring dbName = m_db->GetTableVector().m_dbName;
-    for( std::map<std::wstring,std::vector<DatabaseTable> >::iterator it = tables.begin(); it != tables.end(); it++ )
+    for( std::map<std::wstring,std::vector<DatabaseTable *> >::iterator it = tables.begin(); it != tables.end(); it++ )
     {
         if( (*it).first == dbName )
         {
-            for( std::vector<DatabaseTable>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+            for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
             {
-                std::wstring tableName = (*it1).GetTableName();
+                std::wstring tableName = (*it1)->GetTableName();
                 if( type == L"SQLite" )
                 {
                     if( !sysTableIncluded && tableName.substr( 0, 6 ) != L"sqlite" )

@@ -24,6 +24,7 @@
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"
+#include "ErdForeignKey.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/TextShape.h"
@@ -141,36 +142,62 @@ void DrawingDocument::SetDatabase(Database *db)
 void DrawingDocument::AddTables(const std::vector<wxString> &selections)
 {
     bool found = false;
-    std::map<std::wstring, std::vector<DatabaseTable> > tables = m_db->GetTableVector().m_tables;
-    std::vector<DatabaseTable> tableVec = tables.at( m_db->GetTableVector().m_dbName );
+    std::map<std::wstring, std::vector<DatabaseTable *> > tables = m_db->GetTableVector().m_tables;
+    std::vector<DatabaseTable *> tableVec = tables.at( m_db->GetTableVector().m_dbName );
     for( std::vector<wxString>::const_iterator it = selections.begin(); it < selections.end(); it++ )
     {
-        for( std::vector<DatabaseTable>::iterator it1 = tableVec.begin(); it1 < tableVec.end() && !found; it1++ )
+        for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end() && !found; it1++ )
         {
-            if( (*it).ToStdWstring() == (*it1).GetTableName() )
+            if( (*it).ToStdWstring() == (*it1)->GetTableName() )
             {
-                DatabaseTable *dbTable = &(*it1);
+                DatabaseTable *dbTable = (*it1);
                 MyErdTable *table = new MyErdTable( dbTable );
                 m_tables.push_back( table );
-                table->UpdateTable();
+/*                table->UpdateTable();*/
                 found = true;
             }
         }
         found = false;
     }
-    for( std::vector<MyErdTable *>::iterator it2 = m_tables.begin(); it2 < m_tables.end(); it2++ )
+/*    for( std::vector<MyErdTable *>::iterator it2 = m_tables.begin(); it2 < m_tables.end(); it2++ )
     {
         std::map<int, std::vector<FKField> > foreignKeys = const_cast<DatabaseTable &>( (*it2)->GetTable() ).GetForeignKeyVector();
         for( std::map<int, std::vector<FKField> >::iterator it3 = foreignKeys.begin(); it3 != foreignKeys.end(); it3++ )
         {
             for( std::vector<FKField>::iterator it4 = (*it3).second.begin(); it4 < (*it3).second.end(); it4++ )
             {
-				if( std::find( selections.begin(), selections.end(), (*it4).GetReferencedTableName() ) != selections.end() )
+                wxString referencedTableName = (*it4).GetReferencedTableName();
+                Constraint* pConstr = new Constraint();
+				pConstr->SetLocalColumn( (*it4).GetOriginalFieldName() );
+				pConstr->SetRefCol( (*it4).GetReferencedFieldName() );
+				pConstr->SetRefTable( referencedTableName );
+                pConstr->SetType( Constraint::foreignKey );
+//                pConstr->SetOnDelete( (Constraint::constraintAction) m_radioOnDelete->GetSelection() );
+//                pConstr->SetOnUpdate( (Constraint::constraintAction) m_radioOnUpdate->GetSelection() );
+                if( std::find( selections.begin(), selections.end(), referencedTableName ) != selections.end() )
                 {
+                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetColumnId( (*it4).GetOriginalFieldName() ),
+                                                                  GetReferencedTable( referencedTableName )->GetColumnId( (*it4).GetReferencedFieldName() ),
+                                                                  new ErdForeignKey( pConstr ), sfDONT_SAVE_STATE );
                 }
             }
         }
+    }*/
+}
+
+MyErdTable *DrawingDocument::GetReferencedTable(const wxString &tableName)
+{
+    bool found = false;
+    MyErdTable *table = NULL;
+    for( std::vector<MyErdTable *>::iterator it2 = m_tables.begin(); it2 < m_tables.end() && !found; it2++ )
+    {
+        if( const_cast<DatabaseTable &>( (*it2)->GetTable() ).GetTableName() == tableName )
+        {
+            table = (*it2);
+            found = true;
+        }
     }
+    return table;
 }
 
 std::vector<MyErdTable *> &DrawingDocument::GetTables()

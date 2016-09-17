@@ -105,7 +105,7 @@ void DrawingView::GetTablesForView(Database *db)
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
         func( m_frame, db, tables );
         ((DrawingDocument *) GetDocument())->AddTables( tables );
-		((DatabaseCanvas *) m_canvas)->DisplayTables();
+		((DatabaseCanvas *) m_canvas)->DisplayTables( tables );
     }
 //    return tables;
 }
