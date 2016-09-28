@@ -31,7 +31,11 @@ libdbwindow_la_SOURCES =  \
 	databasedoc.h \
 	databaseview.cpp \
 	databaseview.h \
-	dbview.cpp
+	dbview.cpp \
+	MyErdTable.cpp \
+	MyErdTable.h \
+	ErdLineShape.cpp \
+	ErdLineShape.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../dbinterface \

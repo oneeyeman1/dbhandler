@@ -1,3 +1,5 @@
+#include "wx/wx.h"
+
 #include "database.h"
 #include "wxsf/CommonFcn.h"
 #include "wxsf/LineShape.h"
