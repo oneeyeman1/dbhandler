@@ -11,7 +11,8 @@ public:
     void AddColumn(GUIColumn *col);
     void UpdateTable();
     const DatabaseTable &GetTable();
-    long GetColumnId(const wxString &columnName);
+    wxSFTextShape *GetLabel();
+    wxSFFlexGridShape *GetFieldGrid();
 protected:
     void ClearGrid();
     void ClearConnections();

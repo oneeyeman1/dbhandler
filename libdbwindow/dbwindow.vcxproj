@@ -41,6 +41,7 @@
     <ClInclude Include="databasedoc.h" />
     <ClInclude Include="databaseview.h" />
     <ClInclude Include="ErdForeignKey.h" />
+    <ClInclude Include="ErdLineShape.h" />
     <ClInclude Include="ErdTable.h" />
     <ClInclude Include="GUIColumn.h" />
     <ClInclude Include="GUIDatabaseTable.h" />
@@ -59,6 +60,7 @@
     <ClCompile Include="databaseview.cpp" />
     <ClCompile Include="dbview.cpp" />
     <ClCompile Include="ErdForeignKey.cpp" />
+    <ClCompile Include="ErdLineShape.cpp" />
     <ClCompile Include="ErdTable.cpp" />
     <ClCompile Include="GUIColumn.cpp" />
     <ClCompile Include="GUIDatabaseTable.cpp" />

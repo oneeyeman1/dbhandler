@@ -80,9 +80,10 @@ void DatabaseCanvas::DisplayTables(const std::vector<wxString> &selections)
 //                pConstr->SetOnUpdate( (Constraint::constraintAction) m_radioOnUpdate->GetSelection() );
                 if( std::find( selections.begin(), selections.end(), referencedTableName ) != selections.end() )
                 {
-                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetColumnId( (*it4)->GetOriginalFieldName() ),
+/*                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetColumnId( (*it4)->GetOriginalFieldName() ),
                                                                   dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( referencedTableName )->GetColumnId( (*it4)->GetReferencedFieldName() ),
-                                                                  new ErdForeignKey( pConstr ), sfDONT_SAVE_STATE );
+                                                                  new ErdForeignKey( pConstr ), sfDONT_SAVE_STATE );*/
+                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( referencedTableName )->GetId(), new ErdForeignKey( pConstr ), sfDONT_SAVE_STATE );
                 }
             }
         }

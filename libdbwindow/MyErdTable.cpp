@@ -243,20 +243,12 @@ const DatabaseTable &MyErdTable::GetTable()
     return *m_table;
 }
 
-long MyErdTable::GetColumnId(const wxString &columnName)
+wxSFTextShape *MyErdTable::GetLabel()
 {
-    long id = -1;
-    bool found = false;
-    SerializableList::compatibility_iterator child = m_pGrid->GetFirstChildNode();
-    while( child && !found)
-    {
-		wxSFTextShape *pCol = wxDynamicCast( child->GetData(), wxSFTextShape );
-        if( pCol && pCol->GetText() == columnName )
-        {
-            id = pCol->GetId();
-            found = true;
-        }
-        child = child->GetNext();
-    }
-    return id;
+    return m_pLabel;
+}
+
+wxSFFlexGridShape *MyErdTable::GetFieldGrid()
+{
+    return m_pGrid;
 }

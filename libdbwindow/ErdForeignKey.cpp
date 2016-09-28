@@ -27,14 +27,14 @@
 
 XS_IMPLEMENT_CLONABLE_CLASS(ErdForeignKey,wxSFRoundOrthoLineShape);
 
-ErdForeignKey::ErdForeignKey():wxSFRoundOrthoLineShape()
+ErdForeignKey::ErdForeignKey():ErdLineShape()
 {
 	m_pConstraint = NULL;
 	
 	EnableSerialization( false );
 }
 
-ErdForeignKey::ErdForeignKey(Constraint* pConstraint):wxSFRoundOrthoLineShape()
+ErdForeignKey::ErdForeignKey(Constraint* pConstraint):ErdLineShape( pConstraint )
 {
 	m_pConstraint = pConstraint;
 	wxSFTextShape* pLabel = new wxSFTextShape();
@@ -63,7 +63,7 @@ ErdForeignKey::ErdForeignKey(Constraint* pConstraint):wxSFRoundOrthoLineShape()
 	EnableSerialization( false );
 }
 
-ErdForeignKey::ErdForeignKey(const ErdForeignKey& obj):wxSFRoundOrthoLineShape(obj)
+ErdForeignKey::ErdForeignKey(const ErdForeignKey& obj):ErdLineShape(obj)
 {
 	m_pConstraint = obj.m_pConstraint;
 }
