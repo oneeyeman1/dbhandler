@@ -35,6 +35,7 @@ public:
     };
     GUIColumn();
     GUIColumn(const wxString &name, const wxString &type, long propertyflags, long size, long decimal);
+    virtual ~GUIColumn();
     const wxString &GetName();
     bool IsPrimaryKey();
 };

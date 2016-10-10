@@ -45,6 +45,10 @@ GUIColumn::GUIColumn(const wxString &name, const wxString &type, long propertyfl
     XS_SERIALIZE( m_isAutoInc, wxT( "m_isAutoInc" ) );
 }
 
+GUIColumn::~GUIColumn()
+{
+}
+
 const wxString &GUIColumn::GetName()
 {
     return m_name;
