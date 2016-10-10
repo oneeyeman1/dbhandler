@@ -5,12 +5,14 @@ class ErdLineShape : public wxSFRoundOrthoLineShape
 {
 public:
     ErdLineShape();
+    virtual ~ErdLineShape();
     ErdLineShape(Constraint *pConstraint);
     virtual wxRect GetBoundingBox();
     wxRealPoint GetModTrgPoint();
     wxRealPoint GetModSrcPoint();
     Constraint *GetConstraint();
     bool GetLineSegment(size_t index, wxRealPoint& src, wxRealPoint& trg);
+    void EnableDisableFK(bool enable);
 protected:
     virtual void DrawNormal(wxDC& dc);
     virtual void DrawCompleteLine(wxDC& dc);

@@ -26,6 +26,10 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint)
     m_isEnabled = true;
 }
 
+ErdLineShape::~ErdLineShape()
+{
+}
+
 wxRealPoint ErdLineShape::GetModSrcPoint()
 {
     bool found = false;
@@ -423,4 +427,9 @@ bool ErdLineShape::GetLineSegment(size_t index, wxRealPoint& src, wxRealPoint& t
         else
             return false;
     }
+}
+
+void ErdLineShape::EnableDisableFK(bool enable)
+{
+    m_isEnabled = enable;
 }
