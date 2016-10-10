@@ -46,8 +46,6 @@ wxIMPLEMENT_DYNAMIC_CLASS(DrawingDocument, wxDocument);
 
 DrawingDocument::~DrawingDocument()
 {
-    for( std::vector<MyErdTable *>::iterator it = m_tables.begin(); it < m_tables.end(); it++ )
-        delete (*it);
 }
 
 DocumentOstream& DrawingDocument::SaveObject(DocumentOstream& ostream)
