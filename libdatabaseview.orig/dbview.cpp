@@ -91,14 +91,3 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
     docManager->CreateDocument( "*.drw", wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<DrawingDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db );
 }
-
-/*
-extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
-{
-#ifdef __WXMSW__
-    wxTheApp->SetTopWindow( pParent );
-#endif
-    CODBCConfigure dlg( pParent, wxID_ANY, _T( "Configure ODBC" ) );
-    dlg.ShowModal();
-}
-*/

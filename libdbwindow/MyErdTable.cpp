@@ -121,6 +121,7 @@ void MyErdTable::UpdateTable()
         GUIColumn *col = new GUIColumn( (*it)->GetFieldName(), (*it)->GetFieldType(), properties, (*it)->GetFieldSize(), (*it)->GetPrecision() );
         m_columns.push_back( col );
         AddColumn( col->GetName(), i, col->IsPrimaryKey() ? Constraint::primaryKey : Constraint::noKey );
+        delete col;
         i += 2;
     }
     m_pGrid->Update();
