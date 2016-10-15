@@ -73,6 +73,8 @@ public:
     const std::wstring &GetReferencedTableName() { return tableName; }
 	const std::wstring &GetOriginalFieldName() { return originalField; }
 	const std::wstring &GetReferencedFieldName() { return referencedField; }
+    const FK_ONUPDATE GetOnUpdateConstraint() { return updateConstraint; }
+    const FK_ONDELETE GetOnDeleteConstraint() { return deleteConstraint; }
 private:
     std::wstring schemaName, tableName, originalField, referencedField;
     FK_ONUPDATE updateConstraint;

@@ -71,18 +71,45 @@ void DatabaseCanvas::DisplayTables(const std::vector<wxString> &selections)
             for( std::vector<FKField *>::iterator it4 = (*it3).second.begin(); it4 < (*it3).second.end(); it4++ )
             {
                 wxString referencedTableName = (*it4)->GetReferencedTableName();
-                Constraint* pConstr = new Constraint();
-				pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
-				pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
-				pConstr->SetRefTable( referencedTableName );
-                pConstr->SetType( Constraint::foreignKey );
-//                pConstr->SetOnDelete( (Constraint::constraintAction) m_radioOnDelete->GetSelection() );
-//                pConstr->SetOnUpdate( (Constraint::constraintAction) m_radioOnUpdate->GetSelection() );
                 if( std::find( selections.begin(), selections.end(), referencedTableName ) != selections.end() )
                 {
-/*                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetColumnId( (*it4)->GetOriginalFieldName() ),
-                                                                  dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( referencedTableName )->GetColumnId( (*it4)->GetReferencedFieldName() ),
-                                                                  new ErdForeignKey( pConstr ), sfDONT_SAVE_STATE );*/
+                    Constraint* pConstr = new Constraint();
+                    pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
+                    pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
+                    pConstr->SetRefTable( referencedTableName );
+                    pConstr->SetType( Constraint::foreignKey );
+                    switch( (*it4)->GetOnUpdateConstraint() )
+                    {
+                        case RESTRICT_UPDATE:
+                            pConstr->SetOnUpdate( Constraint::restrict );
+                            break;
+                        case SET_NULL_UPDATE:
+                            pConstr->SetOnUpdate( Constraint::setNull );
+                            break;
+                        case SET_DEFAULT_UPDATE:
+                        case CASCADE_UPDATE:
+                            pConstr->SetOnUpdate( Constraint::cascade );
+                            break;
+                        case NO_ACTION_UPDATE:
+                            pConstr->SetOnUpdate( Constraint::noAction );
+                            break;
+                    }
+                    switch( (*it4)->GetOnDeleteConstraint() )
+                    {
+                        case RESTRICT_DELETE:
+                            pConstr->SetOnUpdate( Constraint::restrict );
+                            break;
+                        case SET_NULL_DELETE:
+                            pConstr->SetOnUpdate( Constraint::setNull );
+                            break;
+                        case SET_DEFAULT_UPDATE:
+                        case CASCADE_DELETE:
+                            pConstr->SetOnUpdate( Constraint::cascade );
+                            break;
+                        case NO_ACTION_DELETE:
+                            pConstr->SetOnUpdate( Constraint::noAction );
+                            break;
+                    }
                     (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( referencedTableName )->GetId(), new ErdForeignKey( pConstr ), sfDONT_SAVE_STATE );
                 }
             }
