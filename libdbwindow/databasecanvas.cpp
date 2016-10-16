@@ -36,7 +36,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, wxWindow *parent) : wxSFShapeCanvas
     SetVirtualSize( 1000, 1000 );
     SetScrollRate( 20, 20 );
     m_mode = modeDESIGN;
-    SetBackgroundColour( *wxWHITE );
+    SetCanvasColour( *wxWHITE );
 //    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
 }
 
