@@ -28,7 +28,7 @@ private:
     wxDynamicLibrary *m_lib1;
     wxMenu *m_menuFile;
     wxDocManager *m_manager;
-//    void *m_db;
+    wxToolBar *m_tb;
     wxDECLARE_EVENT_TABLE();
 };
 

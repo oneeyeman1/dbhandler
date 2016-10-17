@@ -13,6 +13,7 @@
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"
+#include "wx/dynlib.h"
 #include "database.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/TextShape.h"
@@ -25,6 +26,12 @@
 #include "DiagramManager.h"
 #include "databasedoc.h"
 #include "databasecanvas.h"
+
+typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
+
+BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
+	EVT_MENU(wxID_VIEWSELECTTABLES, DatabaseCanvas::OnViewSelectedTables)
+END_EVENT_TABLE()
 
 DatabaseCanvas::DatabaseCanvas(wxView *view, wxWindow *parent) : wxSFShapeCanvas()
 {
@@ -57,7 +64,6 @@ void DatabaseCanvas::DisplayTables(const std::vector<wxString> &selections)
     int size = tables.size();
     for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
     {
-//        ErdTable *panel = new ErdTable( &(*it) );
         m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
 		(*it)->UpdateTable();
 		startPoint.x += 200;
@@ -180,4 +186,21 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
 {
     wxMessageBox( "Table is dropping!" );
+}
+
+void DatabaseCanvas::OnViewSelectedTables(wxCommandEvent &event)
+{
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
+//        func( this->GetParent(), db, tables );
+    }
 }

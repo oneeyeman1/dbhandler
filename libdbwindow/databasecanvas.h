@@ -15,6 +15,9 @@ public:
     void OnDropTable(wxCommandEvent &event);
     inline wxSFDiagramManager &GetDiagramManager() { return m_pManager; }
     virtual void OnDraw(wxDC& dc) wxOVERRIDE;
+protected:
+    void OnViewSelectedTables(wxCommandEvent &event);
+    DECLARE_EVENT_TABLE()
 private:
     wxView *m_view;
     wxSFDiagramManager m_pManager;

@@ -46,6 +46,7 @@ END_EVENT_TABLE()
 MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL, wxID_ANY, "DB Handler" )
 {
     m_db = NULL;
+    m_tb = NULL;
     m_lib = m_lib1 = NULL;
     m_manager = manager;
     m_menuFile = new wxMenu;
@@ -105,12 +106,17 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 
 void MainFrame::InitMenuBar(int id)
 {
+    if( !m_tb )
+        m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP );
     m_menuFile->Delete( wxID_NEW );
     m_menuFile->Delete( wxID_OPEN );
     m_menuFile->Insert( 0, wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
     switch( id )
     {
         case wxID_DATABASE:
+			m_tb->ClearTools();
+			m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
+			m_tb->Realize();
             DatabaseMenu();
             break;
     }
