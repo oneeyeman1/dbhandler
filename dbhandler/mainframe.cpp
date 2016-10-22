@@ -106,20 +106,26 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 
 void MainFrame::InitMenuBar(int id)
 {
+#if defined __WXMSW__ || defined __WXGTK__
     if( !m_tb )
         m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP );
+#endif
     m_menuFile->Delete( wxID_NEW );
     m_menuFile->Delete( wxID_OPEN );
     m_menuFile->Insert( 0, wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
     switch( id )
     {
         case wxID_DATABASE:
-			m_tb->ClearTools();
-			m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-			m_tb->Realize();
+            m_tb->ClearTools();
+            m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
+            m_tb->Realize();
             DatabaseMenu();
             break;
     }
+#if defined __WXMSW__ || defined __WXGTK__
+	m_tb->Move( 0, 0 );
+	m_tb->SetSize( GetClientSize().GetX(), -1 );
+#endif
 }
 
 void MainFrame::DatabaseMenu()
@@ -179,9 +185,9 @@ void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
 
 void MainFrame::OnDatabase(wxCommandEvent &event)
 {
-    InitMenuBar( event.GetId() );
     if( !m_db )
         Connect();
+    InitMenuBar( event.GetId() );
     m_lib1 = new wxDynamicLibrary;
 #ifdef __WXMSW__
     m_lib1->Load( "dbwindow" );
@@ -195,7 +201,7 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
         DATABASE func = (DATABASE) m_lib1->GetSymbol( "CreateDatabaseWindow" );
         func( this, m_manager, m_db );
     }
-    else if( m_db )
+    else if( !m_lib1->IsLoaded() )
         wxMessageBox( "Error loading the library. Please re-install the software and try again." );
     else
         wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
