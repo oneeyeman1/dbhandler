@@ -108,7 +108,7 @@ void MainFrame::InitMenuBar(int id)
 {
 #if defined __WXMSW__ || defined __WXGTK__
     if( !m_tb )
-        m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP );
+        m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
 #endif
     m_menuFile->Delete( wxID_NEW );
     m_menuFile->Delete( wxID_OPEN );
