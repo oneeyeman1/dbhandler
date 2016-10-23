@@ -47,8 +47,22 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
+    wxWindowList children = parent->GetChildren();
+    bool found = false;
+    int height = 0;
+    for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
+    {
+        wxToolBar *tb = wxDynamicCast( *it, wxToolBar );
+        if( tb && tb->GetName() == "Second Toolbar" )
+        {
+            found = true;
+			height = tb->GetSize().GetHeight();
+        }
+    }
+    wxPoint start( 0, height );
     wxRect clientRect = parent->GetClientRect();
-    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+    clientRect.height -= height;
+    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), /*wxDefaultPosition*/start, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
 #ifdef __WXOSX__
     wxRect parentRect = parent->GetRect();
     wxSize parentClientSize = parent->GetClientSize();
