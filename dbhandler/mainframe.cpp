@@ -117,28 +117,22 @@ void MainFrame::InitMenuBar(int id)
     size.SetHeight( GetToolBar()->GetSize().GetHeight() );
     size.SetWidth( -1 );
 #endif
-#if defined __WXMSW__ || defined __WXGTK__
     if( !m_tb )
         m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, size, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
-#endif
     m_menuFile->Delete( wxID_NEW );
     m_menuFile->Delete( wxID_OPEN );
     m_menuFile->Insert( 0, wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
     switch( id )
     {
         case wxID_DATABASE:
-#if defined __WXMSW__ || defined __WXGTK__
             m_tb->ClearTools();
             m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
             m_tb->Realize();
-#endif
             DatabaseMenu();
             break;
     }
-#if defined __WXMSW__ || defined __WXGTK__
 	m_tb->Move( 0, 0 );
 	m_tb->SetSize( GetClientSize().GetX(), -1 );
-#endif
 }
 
 void MainFrame::DatabaseMenu()
