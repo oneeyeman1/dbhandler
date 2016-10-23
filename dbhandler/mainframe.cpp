@@ -46,7 +46,9 @@ END_EVENT_TABLE()
 MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL, wxID_ANY, "DB Handler" )
 {
     m_db = NULL;
+#if defined __WXMSW__ || defined __WXGTK__
     m_tb = NULL;
+#endif
     m_lib = m_lib1 = NULL;
     m_manager = manager;
     m_menuFile = new wxMenu;
@@ -125,9 +127,11 @@ void MainFrame::InitMenuBar(int id)
     switch( id )
     {
         case wxID_DATABASE:
+#if defined __WXMSW__ || defined __WXGTK__
             m_tb->ClearTools();
             m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
             m_tb->Realize();
+#endif
             DatabaseMenu();
             break;
     }
