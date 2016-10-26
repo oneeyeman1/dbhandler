@@ -60,10 +60,13 @@ public:
 
 private:
     void OnCut(wxCommandEvent& event);
-
+#ifdef __WXOSX__
+    wxToolBar *m_tb;
+#endif
     DatabaseCanvas *m_canvas;
     wxDocMDIChildFrame *m_frame;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
 
+#define wxID_DATABASEWINDOW 2

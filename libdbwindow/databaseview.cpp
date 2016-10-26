@@ -4,7 +4,7 @@
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
-#include <string>
+
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
 #endif
@@ -13,6 +13,11 @@
     #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
 
+#ifdef __WXOSX__
+#include "../dbhandler/res/database_profile.xpm"
+#endif
+
+#include <string>
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
@@ -50,9 +55,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxWindowList children = parent->GetChildren();
     bool found = false;
     int height = 0;
+    wxToolBar *tb;
     for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
     {
-        wxToolBar *tb = wxDynamicCast( *it, wxToolBar );
+        tb = wxDynamicCast( *it, wxToolBar );
         if( tb && tb->GetName() == "Second Toolbar" )
         {
             found = true;
@@ -70,6 +76,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
     m_frame->Move( pt.x, pt.y );
+//    m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
+//    m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
+//    m_tb->Realize();
 #endif
     wxASSERT( m_frame == GetFrame() );
     m_canvas = new DatabaseCanvas( this );
