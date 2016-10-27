@@ -37,6 +37,8 @@
 		E3E91D281D6D467C00675CF8 /* GUIDatabaseTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D1D1D6D467C00675CF8 /* GUIDatabaseTable.h */; };
 		E3E91D2C1D821A5600675CF8 /* MyErdTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D2A1D821A5600675CF8 /* MyErdTable.cpp */; };
 		E3E91D2D1D821A5600675CF8 /* MyErdTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D2B1D821A5600675CF8 /* MyErdTable.h */; };
+		E3E91D381DBF812100675CF8 /* ErdLineShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D361DBF812100675CF8 /* ErdLineShape.cpp */; };
+		E3E91D391DBF812100675CF8 /* ErdLineShape.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D371DBF812100675CF8 /* ErdLineShape.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +73,8 @@
 		E3E91D1D1D6D467C00675CF8 /* GUIDatabaseTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIDatabaseTable.h; sourceTree = "<group>"; };
 		E3E91D2A1D821A5600675CF8 /* MyErdTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MyErdTable.cpp; sourceTree = "<group>"; };
 		E3E91D2B1D821A5600675CF8 /* MyErdTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyErdTable.h; sourceTree = "<group>"; };
+		E3E91D361DBF812100675CF8 /* ErdLineShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErdLineShape.cpp; sourceTree = "<group>"; };
+		E3E91D371DBF812100675CF8 /* ErdLineShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErdLineShape.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +109,8 @@
 		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
+				E3E91D361DBF812100675CF8 /* ErdLineShape.cpp */,
+				E3E91D371DBF812100675CF8 /* ErdLineShape.h */,
 				E3E91D2A1D821A5600675CF8 /* MyErdTable.cpp */,
 				E3E91D2B1D821A5600675CF8 /* MyErdTable.h */,
 				E3E91D131D6D467C00675CF8 /* databasecanvas.cpp */,
@@ -153,6 +159,7 @@
 				E38709BA1D4CF564004EF478 /* ErdForeignKey.h in Headers */,
 				E3E91D261D6D467C00675CF8 /* GUIColumn.h in Headers */,
 				E38709C41D4CF564004EF478 /* table.h in Headers */,
+				E3E91D391DBF812100675CF8 /* ErdLineShape.h in Headers */,
 				E38709BD1D4CF564004EF478 /* IDbAdapter.h in Headers */,
 				E3E91D2D1D821A5600675CF8 /* MyErdTable.h in Headers */,
 				E38709BE1D4CF564004EF478 /* IDbType.h in Headers */,
@@ -224,6 +231,7 @@
 				E38709B91D4CF564004EF478 /* ErdForeignKey.cpp in Sources */,
 				E3E91D1E1D6D467C00675CF8 /* databasecanvas.cpp in Sources */,
 				E38709B71D4CF564004EF478 /* constraint.cpp in Sources */,
+				E3E91D381DBF812100675CF8 /* ErdLineShape.cpp in Sources */,
 				E3E91D271D6D467C00675CF8 /* GUIDatabaseTable.cpp in Sources */,
 				E3E91D251D6D467C00675CF8 /* GUIColumn.cpp in Sources */,
 				E38709C11D4CF564004EF478 /* OneArrow.cpp in Sources */,
