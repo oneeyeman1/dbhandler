@@ -137,6 +137,11 @@ void DrawingDocument::SetDatabase(Database *db)
     dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db );
 }
 
+Database *DrawingDocument::GetDatabase()
+{
+    return m_db;
+}
+
 void DrawingDocument::AddTables(const std::vector<wxString> &selections)
 {
     bool found = false;

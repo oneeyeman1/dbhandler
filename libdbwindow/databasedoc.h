@@ -61,6 +61,7 @@ public:
     // add a new segment to the document
     void AddDoodleSegment(const DoodleSegment& segment);
     void SetDatabase(Database *db);
+    Database *GetDatabase();
     // remove the last segment, if any, and copy it in the provided pointer if
     // not NULL and return true or return false and do nothing if there are no
     // segments

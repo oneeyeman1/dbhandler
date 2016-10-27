@@ -29,10 +29,10 @@
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
 
-BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
-	EVT_MENU(wxID_VIEWSELECTTABLES, DatabaseCanvas::OnViewSelectedTables)
+/*BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
+	EVT_MENU(OnViewSelectedTables, DatabaseCanvas::OnViewSelectedTables)
 END_EVENT_TABLE()
-
+*/
 DatabaseCanvas::DatabaseCanvas(wxView *view, wxWindow *parent) : wxSFShapeCanvas()
 {
     m_view = view;
@@ -171,7 +171,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     }
     else
     {
-        mnu.Append( wxID_VIEWSELECTTABLES, _( "Select Table..." ), _( "Select Table" ), false );
+        mnu.Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select Table" ), false );
         mnu.Append( wxID_VIEWARRANGETABLES, _( "Arramge Tables..." ), _( "Arrange Tables" ), false );
         mnu.AppendCheckItem( wxID_VIEWSHOWCOMMENTS, _( "Show Comments" ), _( "Show Comments" ) );
         mnu.AppendCheckItem( wxID_VIEWSHOWINDEXKEYS, _( "Show Index Keys" ), _( "Show Index Keys" ) );
@@ -186,21 +186,4 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
 {
     wxMessageBox( "Table is dropping!" );
-}
-
-void DatabaseCanvas::OnViewSelectedTables(wxCommandEvent &event)
-{
-    wxDynamicLibrary lib;
-#ifdef __WXMSW__
-    lib.Load( "dialogs" );
-#elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
-#else
-    lib.Load( "libdialogs" );
-#endif
-    if( lib.IsLoaded() )
-    {
-        TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-//        func( this->GetParent(), db, tables );
-    }
 }

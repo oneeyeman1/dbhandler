@@ -146,6 +146,11 @@ void MainFrame::DatabaseMenu()
     m_menuFile->Insert( 2, wxID_CREATEDATABASE, _( "Create Database..." ), _( "Create Database" ) );
     m_menuFile->Insert( 3, wxID_DELETEDATABASE, _( "Delete Database..." ), _( "Delete Database" ) );
     m_menuFile->InsertSeparator( 4 );
+    wxMenu *menuObject = new wxMenu();
+    menuObject->Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select tables" ) );
+    GetMenuBar()->Insert( 1, menuObject, _( "&Object" ) );
+    wxMenu *menuDesign = new wxMenu();
+    GetMenuBar()->Insert( 2, menuDesign, _( "&Design" ) );
 }
 
 void MainFrame::Connect()

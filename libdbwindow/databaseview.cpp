@@ -38,6 +38,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(DrawingView, wxView);
 
 wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_CUT, DrawingView::OnCut)
+    EVT_MENU(wxID_SELECTTABLE, DrawingView::OnViewSelectedTables)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -235,3 +236,7 @@ void MyCanvas::OnMouseEvent(wxMouseEvent& event)
     m_lastMousePos = pt;
 }
 
+void DrawingView::OnViewSelectedTables(wxCommandEvent &event)
+{
+	GetTablesForView( GetDocument()->GetDatabase() );
+}

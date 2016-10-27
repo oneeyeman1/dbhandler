@@ -16,8 +16,6 @@ public:
     inline wxSFDiagramManager &GetDiagramManager() { return m_pManager; }
     virtual void OnDraw(wxDC& dc) wxOVERRIDE;
 protected:
-    void OnViewSelectedTables(wxCommandEvent &event);
-    DECLARE_EVENT_TABLE()
 private:
     wxView *m_view;
     wxSFDiagramManager m_pManager;
@@ -34,7 +32,7 @@ private:
 #define wxID_TABLEEDITDATA        25
 #define wxID_TABLEDATATRANSFER    26
 #define wxID_TABLEPRINTDEFINITION 27
-#define wxID_VIEWSELECTTABLES     30
+#define wxID_SELECTTABLE          102
 #define wxID_VIEWARRANGETABLES    31
 #define wxID_VIEWSHOWCOMMENTS     32
 #define wxID_VIEWSHOWINDEXKEYS    33
