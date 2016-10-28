@@ -33,7 +33,7 @@
 #include "databasedoc.h"
 #include "databaseview.h"
 
-typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
+typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -127,9 +127,12 @@ void DrawingView::GetTablesForView(Database *db)
     if( lib.IsLoaded() )
     {
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        func( m_frame, db, tables );
-        ((DrawingDocument *) GetDocument())->AddTables( tables );
-		((DatabaseCanvas *) m_canvas)->DisplayTables( tables );
+        int res = func( m_frame, db, tables );
+        if( res != wxID_CANCEL )
+        {
+            ((DrawingDocument *) GetDocument())->AddTables( tables );
+            ((DatabaseCanvas *) m_canvas)->DisplayTables( tables );
+        }
     }
 //    return tables;
 }
