@@ -253,3 +253,8 @@ wxSFFlexGridShape *MyErdTable::GetFieldGrid()
 {
     return m_pGrid;
 }
+
+std::wstring &MyErdTable::GetTableName()
+{
+	return const_cast<std::wstring &>( m_table->GetTableName() );
+}

@@ -13,6 +13,7 @@ public:
     const DatabaseTable &GetTable();
     wxSFTextShape *GetLabel();
     wxSFFlexGridShape *GetFieldGrid();
+    std::wstring &GetTableName();
 protected:
     void ClearGrid();
     void ClearConnections();
