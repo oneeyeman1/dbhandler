@@ -31,6 +31,7 @@
 #include "res/odbc1.xpm"
 #include "res/database_profile.xpm"
 #include "res/database.xpm"
+#include "res/table.xpm"
 
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
@@ -130,6 +131,7 @@ void MainFrame::InitMenuBar(int id)
 #if defined __WXMSW__ || defined __WXGTK__
             m_tb->ClearTools();
             m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
+            m_tb->AddTool( wxID_SELECTTABLE, _( "" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "" ), _( "" ) );
             m_tb->Realize();
 #endif
             DatabaseMenu();
@@ -148,6 +150,12 @@ void MainFrame::DatabaseMenu()
     m_menuFile->InsertSeparator( 4 );
     wxMenu *menuObject = new wxMenu();
     menuObject->Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select tables" ) );
+    wxMenu *menuNewObject = new wxMenu();
+    menuNewObject->Append( wxID_OBJECTNEWTABLE, _( "Table..." ), _( "New Table" ) );
+    menuNewObject->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );
+    menuNewObject->Append( wxID_OBJECTNEWVIEW, _( "View" ), _( "New View" ) );
+    menuNewObject->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
+    menuObject->AppendSubMenu( menuNewObject, _( "New" ), _( "New Object" ) );
     GetMenuBar()->Insert( 1, menuObject, _( "&Object" ) );
     wxMenu *menuDesign = new wxMenu();
     GetMenuBar()->Insert( 2, menuDesign, _( "&Design" ) );
