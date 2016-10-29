@@ -15,12 +15,11 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-
-
-SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, const wxPoint& pos, const wxSize& size, long style):
+SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     m_db = db;
+    m_names = names;
     // begin wxGlade: SelectTables::SelectTables
     m_panel = new wxPanel( this, wxID_ANY );
     m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
@@ -127,25 +126,28 @@ void SelectTables::FillTableList(bool sysTableIncluded)
             for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
             {
                 std::wstring tableName = (*it1)->GetTableName();
-                if( type == L"SQLite" )
-                {
-                    if( !sysTableIncluded && tableName.substr( 0, 6 ) != L"sqlite" )
-                        m_tables->Append( tableName );
-                    else if( sysTableIncluded )
-                        m_tables->Append( tableName );
-                }
-                if( type == L"ODBC" )
-                {
-                    if( !sysTableIncluded )
+                if( std::find( m_names.begin(), m_names.end(), tableName ) == m_names.end() )
+				{
+                    if( type == L"SQLite" )
                     {
-                        if( ( ( tableName.substr( 0, 3 ) != L"sys" ) && ( tableName.substr( 0, 18 ) != L"INFORMATION_SCHEMA" ) ) )
-                            m_tables->Append( tableName.substr( 4 ) );
+                        if( !sysTableIncluded && tableName.substr( 0, 6 ) != L"sqlite" )
+                            m_tables->Append( tableName );
+                        else if( sysTableIncluded )
+                            m_tables->Append( tableName );
                     }
-                    else
+                    if( type == L"ODBC" )
                     {
-                        if( tableName.substr( 0, 3 ) == L"dbo" )
-                            tableName = tableName.substr( 4 );
-                        m_tables->Append( tableName );
+                        if( !sysTableIncluded )
+                        {
+                            if( ( ( tableName.substr( 0, 3 ) != L"sys" ) && ( tableName.substr( 0, 18 ) != L"INFORMATION_SCHEMA" ) ) )
+                                m_tables->Append( tableName.substr( 4 ) );
+                        }
+                        else
+                        {
+                            if( tableName.substr( 0, 3 ) == L"dbo" )
+                                tableName = tableName.substr( 4 );
+                            m_tables->Append( tableName );
+                        }
                     }
                 }
             }

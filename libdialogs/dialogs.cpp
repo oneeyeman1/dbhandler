@@ -113,7 +113,7 @@ extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std:
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    SelectTables dlg( parent, wxID_ANY, "", db );
+    SelectTables dlg( parent, wxID_ANY, "", db, names );
 	res = dlg.ShowModal();
     if( res != wxID_CANCEL )
         dlg.GetSelectedTableNames( tableNames );
