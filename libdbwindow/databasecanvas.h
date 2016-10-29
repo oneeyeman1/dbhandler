@@ -16,12 +16,14 @@ public:
     inline wxSFDiagramManager &GetDiagramManager() { return m_pManager; }
     virtual void OnDraw(wxDC& dc) wxOVERRIDE;
 protected:
+    bool IsTableDisplayed(const std::wstring &name);
 private:
     wxView *m_view;
     wxSFDiagramManager m_pManager;
     bool m_showComments, m_showIndexKeys, m_showIntegrity;
     wxSFShapeBase *m_selectedShape;
     MODE m_mode;
+    wxPoint startPoint;
 };
 
 #define wxID_TABLECLOSE           20

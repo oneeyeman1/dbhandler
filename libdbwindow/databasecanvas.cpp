@@ -36,6 +36,8 @@ END_EVENT_TABLE()
 DatabaseCanvas::DatabaseCanvas(wxView *view, wxWindow *parent) : wxSFShapeCanvas()
 {
     m_view = view;
+    startPoint.x = 10;
+    startPoint.y = 10;
     m_showComments = m_showIndexKeys = m_showIntegrity = true;
 	m_pManager.SetRootItem( new xsSerializable() );
     SetDiagramManager( &m_pManager );
@@ -59,14 +61,16 @@ void DatabaseCanvas::OnDraw(wxDC& dc)
 
 void DatabaseCanvas::DisplayTables(const std::vector<wxString> &selections)
 {
-    wxPoint startPoint( 10, 10 );
     std::vector<MyErdTable *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
     int size = tables.size();
     for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
     {
-        m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
-		(*it)->UpdateTable();
-		startPoint.x += 200;
+		if( !IsTableDisplayed( (*it)->GetTableName() ) )
+        {
+            m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
+            (*it)->UpdateTable();
+            startPoint.x += 200;
+        }
     }
     Refresh();
     for( std::vector<MyErdTable *>::iterator it2 = tables.begin(); it2 < tables.end(); it2++ )
@@ -122,6 +126,19 @@ void DatabaseCanvas::DisplayTables(const std::vector<wxString> &selections)
         }
     }
     Refresh();
+}
+
+bool DatabaseCanvas::IsTableDisplayed(const std::wstring &name)
+{
+    ShapeList listShapes;
+    m_pManager.GetShapes( CLASSINFO( MyErdTable ), listShapes );
+    bool found = false;
+    for( ShapeList::iterator it = listShapes.begin(); it != listShapes.end() && !found; ++it )
+    {
+        if( dynamic_cast<MyErdTable *>( (*it) )->GetTableName() == name )
+            found = true;
+    }
+    return found;
 }
 
 void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
