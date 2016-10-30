@@ -138,8 +138,9 @@ void MainFrame::InitMenuBar(int id)
             break;
     }
 #if defined __WXMSW__ || defined __WXGTK__
-	m_tb->Move( 0, 0 );
-	m_tb->SetSize( GetClientSize().GetX(), -1 );
+    m_tb->Move( 0, 0 );
+    m_tb->SetSize( GetClientSize().GetX(), -1 );
+    SetToolBar( m_tb );
 #endif
 }
 
@@ -236,4 +237,8 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
 void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
 {
     Connect();
+}
+
+void MainFrame::OnNewIndex(wxCommandEvent &event)
+{
 }

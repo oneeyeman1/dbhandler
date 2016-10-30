@@ -22,6 +22,9 @@
     <ClCompile Include="databasetype.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="createindex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="odbcconfigure.h">
@@ -31,6 +34,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="databasetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="createindex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -23,6 +23,7 @@ private:
     void OnConfigureODBC(wxCommandEvent &event);
     void OnDatabaseProfile(wxCommandEvent &event);
     void OnDatabase(wxCommandEvent &event);
+    void OnNewIndex(wxCommandEvent &event);
     Database *m_db;
     wxDynamicLibrary *m_lib;
     wxDynamicLibrary *m_lib1;
