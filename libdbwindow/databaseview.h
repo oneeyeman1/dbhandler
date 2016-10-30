@@ -55,7 +55,7 @@ public:
     virtual bool OnClose(bool deleteWindow = true) wxOVERRIDE;
     void OnContextMenu(wxContextMenuEvent &event);
     void OnViewSelectedTables(wxCommandEvent &event);
-
+    void OnNewIndex(wxCommandEvent &event);
     DrawingDocument* GetDocument();
 
 private:

@@ -19,6 +19,7 @@
 #include "databasetype.h"
 #include "odbcconfigure.h"
 #include "selecttables.h"
+#include "createindex.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -117,5 +118,16 @@ extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std:
 	res = dlg.ShowModal();
     if( res != wxID_CANCEL )
         dlg.GetSelectedTableNames( tableNames );
+    return res;
+}
+
+extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent)
+{
+    int res;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    CreateIndex dlg( parent, wxID_ANY, "" );
+    res = dlg.ShowModal();
     return res;
 }

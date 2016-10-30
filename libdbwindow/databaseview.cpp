@@ -34,6 +34,7 @@
 #include "databaseview.h"
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
+typedef int (*CREATEINDEX)(wxWindow *);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -44,6 +45,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(DrawingView, wxView);
 wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_CUT, DrawingView::OnCut)
     EVT_MENU(wxID_SELECTTABLE, DrawingView::OnViewSelectedTables)
+    EVT_MENU(wxID_OBJECTNEWINDEX, DrawingView::OnNewIndex)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -252,4 +254,23 @@ void MyCanvas::OnMouseEvent(wxMouseEvent& event)
 void DrawingView::OnViewSelectedTables(wxCommandEvent &event)
 {
 	GetTablesForView( GetDocument()->GetDatabase() );
+}
+
+void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
+{
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        CREATEINDEX func = (CREATEINDEX) lib.GetSymbol( "CreateIndexForDatabase" );
+		func( this->m_frame->GetParent() );
+    }
+    else
+        wxMessageBox( _( "Error loading the DLL/so" ) );
 }

@@ -197,7 +197,7 @@ void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
 {
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
-	lib.Load( "dialogs" );
+    lib.Load( "dialogs" );
 #elif __WXMAC__
     lib.Load( "liblibdialogs.dylib" );
 #else
@@ -208,6 +208,8 @@ void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
         ODBCSETUP func = (ODBCSETUP) lib.GetSymbol( "ODBCSetup" );
         func( this );
     }
+    else
+        wxMessageBox( _( "Error loading the DLL/so" ) );
 }
 
 void MainFrame::OnDatabase(wxCommandEvent &event)
@@ -239,6 +241,3 @@ void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
     Connect();
 }
 
-void MainFrame::OnNewIndex(wxCommandEvent &event)
-{
-}

@@ -34,10 +34,14 @@ private:
 #define wxID_TABLEEDITDATA        25
 #define wxID_TABLEDATATRANSFER    26
 #define wxID_TABLEPRINTDEFINITION 27
-#define wxID_SELECTTABLE          102
 #define wxID_VIEWARRANGETABLES    31
 #define wxID_VIEWSHOWCOMMENTS     32
 #define wxID_VIEWSHOWINDEXKEYS    33
 #define wxID_VIEWSHOWINTEGRITY    34
+#define wxID_SELECTTABLE          102
+#define wxID_OBJECTNEWTABLE       103
+#define wxID_OBJECTNEWINDEX       104
+#define wxID_OBJECTNEWVIEW        105
+#define wxID_OBJECTNEWFF          106
 
 #endif
