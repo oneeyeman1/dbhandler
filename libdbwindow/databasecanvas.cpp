@@ -68,6 +68,8 @@ void DatabaseCanvas::DisplayTables(const std::vector<wxString> &selections)
 		if( !IsTableDisplayed( (*it)->GetTableName() ) )
         {
             m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
+            if( (*it) == tables.back() )
+                (*it)->Select( true );
             (*it)->UpdateTable();
             startPoint.x += 200;
         }
