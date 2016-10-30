@@ -35,6 +35,7 @@ dbhandler/res/odbc1.xpm
 dbhandler/res/database.xpm
 libdbwindow/vc_mswuddll
 libdatabaseview.orig/
+wxglade/
 #.DS_Store
 #dbhandler/.DS_Store
 #Build/
