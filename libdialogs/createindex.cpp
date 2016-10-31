@@ -9,6 +9,7 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 #include <string>
+#include "wx/listctrl.h"
 #include "database.h"
 #include "createindex.h"
 
@@ -33,7 +34,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_descending = new wxRadioButton( panel_1, wxID_ANY, _( "&Descending" ) );
     m_label3 = new wxStaticText( panel_1, wxID_ANY, _( "Index Columns:" ) );
     m_indexColumns = new wxTextCtrl( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHSCROLL | wxTE_MULTILINE );
-    m_table = new wxListBox( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
+    m_table = new wxListCtrl( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
     m_OK = new wxButton( panel_1, wxID_OK, _( "OK" ) );
     m_logOnly = new wxButton( panel_1, wxID_ANY, _( "&Log Only" ) );
     m_cancel = new wxButton( panel_1, wxID_CANCEL, _( "Cancel" ) );
@@ -47,7 +48,15 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
 
 void CreateIndex::set_properties()
 {
-	m_tableName->SetLabel( m_dbTable->GetTableName() );
+	std::vector<Field *> fields = m_dbTable->GetFields();
+	std::wstring tableName = m_dbTable->GetTableName();
+	m_tableName->SetLabel( tableName );
+	m_table->AppendColumn( tableName );
+    int row = 0;
+    for( std::vector<Field *>::iterator it = fields.begin(); it < fields.end(); it++ )
+    {
+        m_table->InsertItem( row++, (*it)->GetFieldName() );
+    }
     // begin wxGlade: CreateIndex::set_properties
     SetTitle( _( "Create Index" ) );
     m_OK->SetDefault();

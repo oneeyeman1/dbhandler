@@ -15,6 +15,7 @@
 #include "wx/wizard.h"
 #include "wx/filepicker.h"
 #include "wx/dynlib.h"
+#include "wx/listctrl.h"
 #include "database.h"
 #include "databasetype.h"
 #include "odbcconfigure.h"

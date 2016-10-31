@@ -54,7 +54,7 @@ protected:
     wxRadioButton* m_descending;
     wxStaticText* m_label3;
     wxTextCtrl* m_indexColumns;
-    wxListBox* m_table;
+    wxListCtrl* m_table;
     wxButton* m_OK;
     wxButton* m_logOnly;
     wxButton* m_cancel;
