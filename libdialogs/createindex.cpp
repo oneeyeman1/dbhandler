@@ -8,7 +8,8 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
-
+#include <string>
+#include "database.h"
 #include "createindex.h"
 
 // begin wxGlade: ::extracode
@@ -16,9 +17,10 @@
 
 
 
-CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
-    wxDialog(parent, id, title, pos, size, style)
+CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table):
+    wxDialog(parent, id, title)
 {
+    m_dbTable = table;
     // begin wxGlade: CreateIndex::CreateIndex
     panel_1 = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( panel_1, wxID_ANY, _( "Table" ) );
@@ -45,6 +47,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
 
 void CreateIndex::set_properties()
 {
+	m_tableName->SetLabel( m_dbTable->GetTableName() );
     // begin wxGlade: CreateIndex::set_properties
     SetTitle( _( "Create Index" ) );
     m_OK->SetDefault();
