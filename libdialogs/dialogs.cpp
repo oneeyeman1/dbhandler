@@ -122,7 +122,7 @@ extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std:
     return res;
 }
 
-extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *table)
+extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *table, Database *db)
 {
     int res;
 #ifdef __WXMSW__

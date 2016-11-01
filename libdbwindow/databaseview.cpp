@@ -34,7 +34,7 @@
 #include "databaseview.h"
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
-typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *);
+typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -277,7 +277,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         CREATEINDEX func = (CREATEINDEX) lib.GetSymbol( "CreateIndexForDatabase" );
-		func( this->m_frame->GetParent(), table );
+        func( this->m_frame->GetParent(), table, GetDocument()->GetDatabase() );
     }
     else
         wxMessageBox( _( "Error loading the DLL/so" ) );
