@@ -129,6 +129,7 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     wxTheApp->SetTopWindow( parent );
 #endif
     CreateIndex dlg( parent, wxID_ANY, "", table );
+    dlg.Center();
     res = dlg.ShowModal();
     return res;
 }
