@@ -1,0 +1,28 @@
+﻿Build started 11/1/2016 11:30:42 PM.
+     1>Project "C:\Users\Igor\OneDrive\Documents\dbhandler_app\libfieldswindow\fieldswindow.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "vc_mswuddll\my_dll\fieldswindow.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I..\dbinterface /Ic:\wxWidgets\lib\vc_dll\mswud /Ic:\wxWidgets\include /I. /Zi /nologo /W4 /WX- /Od /Oy- /D WIN32 /D _USRDLL /D DLL_EXPORTS /D _DEBUG /D _CRT_SECURE_NO_DEPRECATE=1 /D _CRT_NON_CONFORMING_SWPRINTFS=1 /D _SCL_SECURE_NO_WARNINGS=1 /D __WXMSW__ /D _UNICODE /D WXUSINGDLL /D MY_DLL_BUILDING /D _WINDLL /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"vc_mswuddll\\" /Fd"vc_mswuddll\fieldswindow.pdb" /Gd /TP /analyze- /errorReport:prompt fieldwindow.cpp /MP 
+         fieldwindow.cpp
+       ManifestResourceCompile:
+         All outputs are up-to-date.
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppBuild.targets(990,5): warning MSB8012: TargetPath(C:\Users\Igor\OneDrive\Documents\dbhandler_app\libfieldswindow\vc_mswuddll\fieldswindow.dll) does not match the Linker's OutputFile property value (C:\Users\Igor\OneDrive\Documents\dbhandler_app\dbhandler\vc_mswuddll\fieldswindow.dll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\dbhandler\vc_mswuddll\fieldswindow.dll" /INCREMENTAL /NOLOGO /LIBPATH:..\dbhandler\Debug /LIBPATH:c:\wxWidgets\lib\vc_dll dbinterface.lib wxmsw31ud_adv.lib wxmsw31ud_core.lib wxbase31ud.lib wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib wxregexud.lib wxexpatd.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib shlwapi.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib version.lib wsock32.lib wininet.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"vc_mswuddll\fieldswindow.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"vc_mswuddll\fieldswindow.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"vc_mswuddll\fieldswindow.lib" /MACHINE:X86 /DLL vc_mswuddll\my_dll\fieldswindow.dll.embed.manifest.res
+         vc_mswuddll\fieldswindow.obj
+         vc_mswuddll\fieldwindow.obj
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"vc_mswuddll\my_dll\fieldswindow.dll.embed.manifest" /manifest vc_mswuddll\fieldswindow.dll.intermediate.manifest
+         All outputs are up-to-date.
+       LinkEmbedManifest:
+         All outputs are up-to-date.
+         fieldswindow.vcxproj -> C:\Users\Igor\OneDrive\Documents\dbhandler_app\libfieldswindow\vc_mswuddll\fieldswindow.dll
+       FinalizeBuildStatus:
+         Deleting file "vc_mswuddll\my_dll\fieldswindow.unsuccessfulbuild".
+         Touching "vc_mswuddll\my_dll\fieldswindow.lastbuildstate".
+     1>Done Building Project "C:\Users\Igor\OneDrive\Documents\dbhandler_app\libfieldswindow\fieldswindow.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:11.51

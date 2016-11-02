@@ -20,23 +20,18 @@
 #define APP_CATALOG "app"  // replace with the appropriate catalog name
 #endif
 
-
-// begin wxGlade: ::dependencies
-// end wxGlade
-
-// begin wxGlade: ::extracode
-// end wxGlade
-
-
-class CreateIndex: public wxDialog {
+class CreateIndex: public wxDialog
+{
 public:
     // begin wxGlade: CreateIndex::ids
     // end wxGlade
 
     CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table);
+    ~CreateIndex();
 
 private:
     DatabaseTable *m_dbTable;
+    Database *m_db;
     // begin wxGlade: CreateIndex::methods
     void set_properties();
     void do_layout();
@@ -53,7 +48,7 @@ protected:
     wxRadioButton* m_ascending;
     wxRadioButton* m_descending;
     wxStaticText* m_label3;
-    wxTextCtrl* m_indexColumns;
+    FieldWindow* m_indexColumns;
     wxListCtrl* m_table;
     wxButton* m_OK;
     wxButton* m_logOnly;

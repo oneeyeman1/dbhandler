@@ -20,6 +20,7 @@
 #include "databasetype.h"
 #include "odbcconfigure.h"
 #include "selecttables.h"
+#include "fieldwindow.h"
 #include "createindex.h"
 
 #ifdef __WXMSW__
