@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = libdialogs
+subdir = libfieldswindow
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -127,19 +127,18 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libdialogs_la_LIBADD =
-am_libdialogs_la_OBJECTS = libdialogs_la-databasetype.lo \
-	libdialogs_la-dialogs.lo libdialogs_la-odbcconfigure.lo \
-	libdialogs_la-selecttables.lo
-libdialogs_la_OBJECTS = $(am_libdialogs_la_OBJECTS)
+libfieldswindow_la_LIBADD =
+am_libfieldswindow_la_OBJECTS = libfieldswindow_la-fieldswindow.lo \
+	libfieldswindow_la-fieldwindow.lo
+libfieldswindow_la_OBJECTS = $(am_libfieldswindow_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-libdialogs_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+libfieldswindow_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(libdialogs_la_CXXFLAGS) $(CXXFLAGS) $(libdialogs_la_LDFLAGS) \
-	$(LDFLAGS) -o $@
+	$(libfieldswindow_la_CXXFLAGS) $(CXXFLAGS) \
+	$(libfieldswindow_la_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -192,8 +191,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libdialogs_la_SOURCES)
-DIST_SOURCES = $(libdialogs_la_SOURCES)
+SOURCES = $(libfieldswindow_la_SOURCES)
+DIST_SOURCES = $(libfieldswindow_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -373,26 +372,19 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = \
-	libdialogs.la
+	libfieldswindow.la
 
-libdialogs_la_SOURCES = \
-	databasetype.cpp \
-	databasetype.h \
-	dialogs.cpp \
-	odbcconfigure.cpp \
-	odbcconfigure.h \
-	selecttables.cpp \
-	selecttables.h
+libfieldswindow_la_SOURCES = \
+	fieldswindow.cpp \
+	fieldwindow.cpp \
+	fieldwindow.h
 
-libdialogs_la_CXXFLAGS = -I../../dbinterface \
+libfieldswindow_la_CXXFLAGS = -I../../dbinterface \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
-libdialogs_la_LDFLAGS = -Wl,-rpath,/home/igor/dbhandler/Debug/libsqlite/.libs \
-	-L/home/igor/dbhandler/Debug/libsqlite/.libs \
-	-L/home/igor/dbhandler/Debug/dbinterface \
+libfieldswindow_la_LDFLAGS = -L/home/igor/dbhandler/Debug/dbinterface \
 	-ldbinterface \
-	-lsqlite_lib \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 
 
@@ -409,9 +401,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libdialogs/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libfieldswindow/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu libdialogs/Makefile
+	  $(AUTOMAKE) --gnu libfieldswindow/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -465,8 +457,8 @@ clean-libLTLIBRARIES:
 	  rm -f $${locs}; \
 	}
 
-libdialogs.la: $(libdialogs_la_OBJECTS) $(libdialogs_la_DEPENDENCIES) $(EXTRA_libdialogs_la_DEPENDENCIES) 
-	$(AM_V_CXXLD)$(libdialogs_la_LINK) -rpath $(libdir) $(libdialogs_la_OBJECTS) $(libdialogs_la_LIBADD) $(LIBS)
+libfieldswindow.la: $(libfieldswindow_la_OBJECTS) $(libfieldswindow_la_DEPENDENCIES) $(EXTRA_libfieldswindow_la_DEPENDENCIES) 
+	$(AM_V_CXXLD)$(libfieldswindow_la_LINK) -rpath $(libdir) $(libfieldswindow_la_OBJECTS) $(libfieldswindow_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -474,10 +466,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-databasetype.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-dialogs.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-odbcconfigure.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-selecttables.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfieldswindow_la-fieldswindow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfieldswindow_la-fieldwindow.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -500,33 +490,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
-libdialogs_la-databasetype.lo: databasetype.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-databasetype.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-databasetype.Tpo -c -o libdialogs_la-databasetype.lo `test -f 'databasetype.cpp' || echo '$(srcdir)/'`databasetype.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-databasetype.Tpo $(DEPDIR)/libdialogs_la-databasetype.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='databasetype.cpp' object='libdialogs_la-databasetype.lo' libtool=yes @AMDEPBACKSLASH@
+libfieldswindow_la-fieldswindow.lo: fieldswindow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libfieldswindow_la_CXXFLAGS) $(CXXFLAGS) -MT libfieldswindow_la-fieldswindow.lo -MD -MP -MF $(DEPDIR)/libfieldswindow_la-fieldswindow.Tpo -c -o libfieldswindow_la-fieldswindow.lo `test -f 'fieldswindow.cpp' || echo '$(srcdir)/'`fieldswindow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfieldswindow_la-fieldswindow.Tpo $(DEPDIR)/libfieldswindow_la-fieldswindow.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fieldswindow.cpp' object='libfieldswindow_la-fieldswindow.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-databasetype.lo `test -f 'databasetype.cpp' || echo '$(srcdir)/'`databasetype.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libfieldswindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libfieldswindow_la-fieldswindow.lo `test -f 'fieldswindow.cpp' || echo '$(srcdir)/'`fieldswindow.cpp
 
-libdialogs_la-dialogs.lo: dialogs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-dialogs.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-dialogs.Tpo -c -o libdialogs_la-dialogs.lo `test -f 'dialogs.cpp' || echo '$(srcdir)/'`dialogs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-dialogs.Tpo $(DEPDIR)/libdialogs_la-dialogs.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dialogs.cpp' object='libdialogs_la-dialogs.lo' libtool=yes @AMDEPBACKSLASH@
+libfieldswindow_la-fieldwindow.lo: fieldwindow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libfieldswindow_la_CXXFLAGS) $(CXXFLAGS) -MT libfieldswindow_la-fieldwindow.lo -MD -MP -MF $(DEPDIR)/libfieldswindow_la-fieldwindow.Tpo -c -o libfieldswindow_la-fieldwindow.lo `test -f 'fieldwindow.cpp' || echo '$(srcdir)/'`fieldwindow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfieldswindow_la-fieldwindow.Tpo $(DEPDIR)/libfieldswindow_la-fieldwindow.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fieldwindow.cpp' object='libfieldswindow_la-fieldwindow.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-dialogs.lo `test -f 'dialogs.cpp' || echo '$(srcdir)/'`dialogs.cpp
-
-libdialogs_la-odbcconfigure.lo: odbcconfigure.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-odbcconfigure.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-odbcconfigure.Tpo -c -o libdialogs_la-odbcconfigure.lo `test -f 'odbcconfigure.cpp' || echo '$(srcdir)/'`odbcconfigure.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-odbcconfigure.Tpo $(DEPDIR)/libdialogs_la-odbcconfigure.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='odbcconfigure.cpp' object='libdialogs_la-odbcconfigure.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-odbcconfigure.lo `test -f 'odbcconfigure.cpp' || echo '$(srcdir)/'`odbcconfigure.cpp
-
-libdialogs_la-selecttables.lo: selecttables.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-selecttables.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-selecttables.Tpo -c -o libdialogs_la-selecttables.lo `test -f 'selecttables.cpp' || echo '$(srcdir)/'`selecttables.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-selecttables.Tpo $(DEPDIR)/libdialogs_la-selecttables.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selecttables.cpp' object='libdialogs_la-selecttables.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-selecttables.lo `test -f 'selecttables.cpp' || echo '$(srcdir)/'`selecttables.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libfieldswindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libfieldswindow_la-fieldwindow.lo `test -f 'fieldwindow.cpp' || echo '$(srcdir)/'`fieldwindow.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

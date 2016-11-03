@@ -11,16 +11,21 @@ libdialogs_la_SOURCES =  \
 	odbcconfigure.cpp \
 	odbcconfigure.h \
 	selecttables.cpp \
-	selecttables.h
+	selecttables.h \
+	createindex.cpp \
+	createindex.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
+	-I../../libfieldswindow \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
 libdialogs_la_LDFLAGS = -Wl,-rpath,/home/igor/dbhandler/Debug/libsqlite/.libs \
 	-L/home/igor/dbhandler/Debug/libsqlite/.libs \
+	-L/home/igor/dbhandler/Debug/libfieldswindow/.libs \
 	-L/home/igor/dbhandler/Debug/dbinterface \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
+	--libs` \
 	-ldbinterface \
 	-lsqlite_lib \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs` 
+	-lfieldswindow 

@@ -130,7 +130,7 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 libdialogs_la_LIBADD =
 am_libdialogs_la_OBJECTS = libdialogs_la-databasetype.lo \
 	libdialogs_la-dialogs.lo libdialogs_la-odbcconfigure.lo \
-	libdialogs_la-selecttables.lo
+	libdialogs_la-selecttables.lo libdialogs_la-createindex.lo
 libdialogs_la_OBJECTS = $(am_libdialogs_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -382,19 +382,24 @@ libdialogs_la_SOURCES = \
 	odbcconfigure.cpp \
 	odbcconfigure.h \
 	selecttables.cpp \
-	selecttables.h
+	selecttables.h \
+	createindex.cpp \
+	createindex.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
+	-I../../libfieldswindow \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
 libdialogs_la_LDFLAGS = -Wl,-rpath,/home/igor/dbhandler/Debug/libsqlite/.libs \
 	-L/home/igor/dbhandler/Debug/libsqlite/.libs \
+	-L/home/igor/dbhandler/Debug/libfieldswindow/.libs \
 	-L/home/igor/dbhandler/Debug/dbinterface \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
+	--libs` \
 	-ldbinterface \
 	-lsqlite_lib \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs` 
+	-lfieldswindow 
 
 all: all-am
 
@@ -474,6 +479,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-createindex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-databasetype.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-dialogs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-odbcconfigure.Plo@am__quote@
@@ -527,6 +533,13 @@ libdialogs_la-selecttables.lo: selecttables.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selecttables.cpp' object='libdialogs_la-selecttables.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-selecttables.lo `test -f 'selecttables.cpp' || echo '$(srcdir)/'`selecttables.cpp
+
+libdialogs_la-createindex.lo: createindex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-createindex.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-createindex.Tpo -c -o libdialogs_la-createindex.lo `test -f 'createindex.cpp' || echo '$(srcdir)/'`createindex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-createindex.Tpo $(DEPDIR)/libdialogs_la-createindex.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='createindex.cpp' object='libdialogs_la-createindex.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-createindex.lo `test -f 'createindex.cpp' || echo '$(srcdir)/'`createindex.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

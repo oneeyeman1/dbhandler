@@ -67,6 +67,7 @@ libdialogs/Makefile
 libdbloader/Makefile
 libodbc/Makefile
 dbhandler/Makefile
+libfieldswindow/Makefile
 libshapeframework/Makefile
 libdbwindow/Makefile
 ])
