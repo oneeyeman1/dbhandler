@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		E3E91D761DCC310600675CF8 /* fieldwindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D731DCC310600675CF8 /* fieldwindow.cpp */; };
 		E3E91D771DCC310600675CF8 /* fieldwindow.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D741DCC310600675CF8 /* fieldwindow.h */; };
+		E3E91D7B1DCC3AFE00675CF8 /* fieldswindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D7A1DCC3AFE00675CF8 /* fieldswindow.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		E3E91D641DCC2E8900675CF8 /* liblibfieldswindow.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibfieldswindow.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3E91D731DCC310600675CF8 /* fieldwindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fieldwindow.cpp; sourceTree = "<group>"; };
 		E3E91D741DCC310600675CF8 /* fieldwindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fieldwindow.h; sourceTree = "<group>"; };
+		E3E91D7A1DCC3AFE00675CF8 /* fieldswindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fieldswindow.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +49,7 @@
 		E3E91D711DCC30AB00675CF8 /* libfieldswindow */ = {
 			isa = PBXGroup;
 			children = (
+				E3E91D7A1DCC3AFE00675CF8 /* fieldswindow.cpp */,
 				E3E91D731DCC310600675CF8 /* fieldwindow.cpp */,
 				E3E91D741DCC310600675CF8 /* fieldwindow.h */,
 			);
@@ -115,6 +118,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3E91D7B1DCC3AFE00675CF8 /* fieldswindow.cpp in Sources */,
 				E3E91D761DCC310600675CF8 /* fieldwindow.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
