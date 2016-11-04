@@ -81,6 +81,13 @@
 			remoteGlobalIDString = E3D139661D0D110A00A5A0F7;
 			remoteInfo = libdbloader;
 		};
+		E3E91D6F1DCC2E8A00675CF8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3E91D641DCC2E8900675CF8;
+			remoteInfo = libfieldswindow;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -116,6 +123,7 @@
 		E3D139241D0C42FF00A5A0F7 /* libodbc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libodbc.xcodeproj; path = libodbc/libodbc.xcodeproj; sourceTree = "<group>"; };
 		E3D139431D0D0CD100A5A0F7 /* libdialogs.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdialogs.xcodeproj; path = libdialogs/libdialogs.xcodeproj; sourceTree = "<group>"; };
 		E3D1396D1D0D110A00A5A0F7 /* libdbloader.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdbloader.xcodeproj; path = libdbloader/libdbloader.xcodeproj; sourceTree = "<group>"; };
+		E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libfieldswindow.xcodeproj; path = libfieldswindow/libfieldswindow.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +168,7 @@
 		E3D05D311CA4AB1D002CB677 = {
 			isa = PBXGroup;
 			children = (
+				E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */,
 				E38708E81D431E9B004EF478 /* libshapeframework.xcodeproj */,
 				E38708C51D2B61D7004EF478 /* libdbwindow.xcodeproj */,
 				E3D1396D1D0D110A00A5A0F7 /* libdbloader.xcodeproj */,
@@ -291,6 +300,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		E3E91D6C1DCC2E8900675CF8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3E91D701DCC2E8A00675CF8 /* liblibfieldswindow.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -372,6 +389,10 @@
 					ProjectRef = E3D139431D0D0CD100A5A0F7 /* libdialogs.xcodeproj */;
 				},
 				{
+					ProductGroup = E3E91D6C1DCC2E8900675CF8 /* Products */;
+					ProjectRef = E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */;
+				},
+				{
 					ProductGroup = E3D139251D0C42FF00A5A0F7 /* Products */;
 					ProjectRef = E3D139241D0C42FF00A5A0F7 /* libodbc.xcodeproj */;
 				},
@@ -440,6 +461,13 @@
 			fileType = "compiled.mach-o.dylib";
 			path = liblibdbloader.dylib;
 			remoteRef = E3D139711D0D110A00A5A0F7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E3E91D701DCC2E8A00675CF8 /* liblibfieldswindow.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibfieldswindow.dylib;
+			remoteRef = E3E91D6F1DCC2E8A00675CF8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

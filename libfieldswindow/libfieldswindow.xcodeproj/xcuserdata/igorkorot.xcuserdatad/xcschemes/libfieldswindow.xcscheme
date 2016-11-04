@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E3D1393B1D0D0CD100A5A0F7"
-               BuildableName = "liblibdialogs.dylib"
-               BlueprintName = "libdialogs"
-               ReferencedContainer = "container:libdialogs.xcodeproj">
+               BlueprintIdentifier = "E3E91D631DCC2E8900675CF8"
+               BuildableName = "liblibfieldswindow.dylib"
+               BlueprintName = "libfieldswindow"
+               ReferencedContainer = "container:libfieldswindow.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
