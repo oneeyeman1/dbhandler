@@ -266,7 +266,7 @@
       <OutputFile>..\dbhandler\vc_mswuddll\fieldswindow.dll</OutputFile>
       <ImportLibrary>vc_mswuddll\fieldswindow.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\dbhandler\Debug;c:\wxWidgets\lib\vc_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\dbhandler\Debug;c:\wxWidgets\lib\vc_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll\fieldswindow.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
