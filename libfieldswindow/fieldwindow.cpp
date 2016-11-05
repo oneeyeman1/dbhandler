@@ -37,8 +37,6 @@ FieldWindow::FieldWindow(wxWindow *parent, int type)
 
 FieldWindow::~FieldWindow(void)
 {
-    delete m_win;
-    m_win = NULL;
 }
 
 wxSFShapeCanvas *FieldWindow::GetFieldsWindow()
