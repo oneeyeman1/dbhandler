@@ -352,3 +352,53 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     sqlite3_finalize( stmt );
     return result;
 }
+
+int SQLiteDatabase::CreateIndex(std::wstring command, bool isUnique, bool isAscending, const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+    std::wstring_convert<std::codecvt_utf8<wchar_t> > myconv;
+    std::string query = "PRAGMA index_list( \"%w\" );";
+    std::wstring errorMessage, dbIndexName;
+    int res = SQLITE_OK, result = 0;
+    sqlite3_stmt *stmt = NULL;
+    char *z = sqlite3_mprintf( query.c_str(), tableName );
+    if( ( res = sqlite3_prepare_v2( m_db, z, -1, &stmt, 0 ) ) == SQLITE_OK )
+    {
+        for( ; ; )
+        {
+            res = sqlite3_step( stmt );
+            if( res == SQLITE_ROW )
+            {
+				dbIndexName = myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt, 2 ) ) );
+                if( dbIndexName == indexName )
+                {
+                    result = 1;
+                    errorMsg.push_back( L"Index already exist." );
+                    break;
+                }
+            }
+            else if( res == SQLITE_DONE )
+                break;
+            else
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+                break;
+            }
+        }
+    }
+    else
+    {
+        result = 1;
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    if( result == SQLITE_OK )
+    {
+        command = L"CREATE ";
+        if( isUnique )
+            command += L"UNIQUE ";
+        command += L"INDEX ";
+	}
+    return result;
+}

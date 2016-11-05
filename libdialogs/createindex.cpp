@@ -28,7 +28,7 @@
 
 
 
-CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table):
+CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db):
     wxDialog(parent, id, title)
 {
     m_dbTable = table;

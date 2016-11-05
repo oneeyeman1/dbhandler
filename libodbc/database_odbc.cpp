@@ -1443,3 +1443,9 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     free( catalog );
     return result;
 }
+
+int ODBCDatabase::CreateIndex(std::wstring command, bool isUnique, bool isAscending, const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+	command = L"CREATE INDEX ";
+    return 0;
+}

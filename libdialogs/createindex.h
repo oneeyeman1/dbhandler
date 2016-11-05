@@ -26,7 +26,7 @@ public:
     // begin wxGlade: CreateIndex::ids
     // end wxGlade
 
-    CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table);
+    CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db);
     ~CreateIndex();
 
 private:
