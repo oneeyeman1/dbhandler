@@ -360,7 +360,7 @@ int SQLiteDatabase::CreateIndex(std::wstring command, bool isUnique, bool isAsce
     std::wstring errorMessage, dbIndexName;
     int res = SQLITE_OK, result = 0;
     sqlite3_stmt *stmt = NULL;
-    char *z = sqlite3_mprintf( query.c_str(), tableName );
+    char *z = sqlite3_mprintf( query.c_str(), tableName.c_str() );
     if( ( res = sqlite3_prepare_v2( m_db, z, -1, &stmt, 0 ) ) == SQLITE_OK )
     {
         for( ; ; )
