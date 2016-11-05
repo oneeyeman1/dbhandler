@@ -19,21 +19,20 @@
 
 #include "wx/window.h"
 #include "wx/sizer.h"
+#include "wxsf/ShapeCanvas.h"
 #include "fieldwindow.h"
 
 FieldWindow::FieldWindow(wxWindow *parent, int type)
 {
-	m_win = new wxWindow( parent, wxID_ANY, wxDefaultPosition, wxSize( parent->GetSize().GetWidth(), 50 ), wxBORDER_SIMPLE/* | wxHSCROLL*/ );
-    m_win->SetBackgroundColour( *wxWHITE );
+    m_win = new wxSFShapeCanvas();
+    m_win->Create( parent, wxID_ANY, wxDefaultPosition, wxSize( parent->GetSize().GetWidth(), 50 ), wxBORDER_SIMPLE | wxHSCROLL );
     m_startPoint.x = 10;
     m_startPoint.y = 10;
-    if( type == 1 )
-    {
-        m_sizer = new wxBoxSizer( wxVERTICAL );
-        m_sizer->Add( m_win, 0, wxEXPAND, 0 );
-        m_columnsScrollbar = new wxScrollBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSB_HORIZONTAL );
-        m_sizer->Add( m_columnsScrollbar, 0, wxEXPAND, 0 );
-    }
+    m_manager.SetRootItem( new xsSerializable() );
+    m_win->SetDiagramManager( &m_manager );
+    m_win->SetVirtualSize( 1000, 1000 );
+    m_win->SetScrollRate( 20, 20 );
+    m_win->SetCanvasColour( *wxWHITE );
 }
 
 FieldWindow::~FieldWindow(void)
@@ -42,7 +41,7 @@ FieldWindow::~FieldWindow(void)
     m_win = NULL;
 }
 
-wxBoxSizer *FieldWindow::GetSizer()
+wxSFShapeCanvas *FieldWindow::GetFieldsWindow()
 {
-    return m_sizer;
+    return m_win;
 }

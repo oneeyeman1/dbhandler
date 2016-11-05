@@ -4,11 +4,10 @@ class WXEXPORT FieldWindow
 public:
     FieldWindow(wxWindow *parent, int type);
     ~FieldWindow(void);
-    wxBoxSizer *GetSizer();
+    wxSFShapeCanvas *GetFieldsWindow();
 private:
-    wxWindow *m_win;
-    wxBoxSizer *m_sizer;
+    wxSFShapeCanvas *m_win;
     wxPoint m_startPoint;
-    wxScrollBar *m_columnsScrollbar;
+    wxSFDiagramManager m_manager;
 };
 

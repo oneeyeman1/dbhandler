@@ -20,13 +20,12 @@
 #include <string>
 #include "wx/listctrl.h"
 #include "database.h"
+#include "wxsf/ShapeCanvas.h"
 #include "fieldwindow.h"
 #include "createindex.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
-
-
 
 CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db):
     wxDialog(parent, id, title)
@@ -53,8 +52,9 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     set_properties();
     do_layout();
     // end wxGlade
+	m_table->Bind( wxEVT_LIST_ITEM_SELECTED, &CreateIndex::OnFieldSelection, this );
+	m_table->Bind( wxEVT_LIST_ITEM_DESELECTED, &CreateIndex::OnFieldsDeselection, this );
 }
-
 
 void CreateIndex::set_properties()
 {
@@ -72,7 +72,6 @@ void CreateIndex::set_properties()
     m_OK->SetDefault();
     // end wxGlade
 }
-
 
 void CreateIndex::do_layout()
 {
@@ -117,7 +116,7 @@ void CreateIndex::do_layout()
     sizer_5->Add( 30, 30, 0, wxEXPAND, 0 );
     sizer_13->Add( m_label3, 0, wxEXPAND, 0 );
     sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
-	sizer_13->Add( m_indexColumns->GetSizer(), 0, wxEXPAND, 0 );
+	sizer_13->Add( m_indexColumns->GetFieldsWindow(), 0, wxEXPAND, 0 );
     sizer_5->Add( sizer_13, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_14->Add( m_table, 0, wxALIGN_BOTTOM, 0 );
@@ -145,4 +144,12 @@ CreateIndex::~CreateIndex()
 {
     delete m_indexColumns;
     m_indexColumns = NULL;
+}
+
+void CreateIndex::OnFieldSelection(wxListEvent &event)
+{
+}
+
+void CreateIndex::OnFieldsDeselection(wxListEvent &event)
+{
 }

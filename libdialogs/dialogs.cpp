@@ -17,6 +17,7 @@
 #include "wx/dynlib.h"
 #include "wx/listctrl.h"
 #include "database.h"
+#include "wxsf/ShapeCanvas.h"
 #include "databasetype.h"
 #include "odbcconfigure.h"
 #include "selecttables.h"

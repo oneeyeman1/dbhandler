@@ -38,6 +38,8 @@ private:
     // end wxGlade
 
 protected:
+    void OnFieldSelection(wxListEvent &event);
+    void OnFieldsDeselection(wxListEvent &event);
     // begin wxGlade: CreateIndex::attributes
     wxStaticText* m_label1;
     wxStaticText* m_tableName;
