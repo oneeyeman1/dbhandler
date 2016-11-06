@@ -151,12 +151,12 @@ CreateIndex::~CreateIndex()
 bool CreateIndex::Verify()
 {
     bool success = true;
-    if( m_indexName->GetLabel().IsEmpty() )
+    if( m_indexName->GetValue().IsEmpty() )
     {
         wxMessageBox( _( "Key name is required" ), _( "Database" ) );
         success = false;
     }
-    if( m_fields.empty() )
+    if( success && m_fields.empty() )
     {
         wxMessageBox( _( "At least one index column is required" ), _( "Database" ) );
         success = false;
@@ -168,6 +168,7 @@ void CreateIndex::OnFieldSelection(wxListEvent &event)
 {
     wxString item = event.GetLabel();
     m_indexColumns->AddField( item );
+	m_fields.push_back( item.ToStdWstring() );
 }
 
 void CreateIndex::OnFieldsDeselection(wxListEvent &event)
