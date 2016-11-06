@@ -156,6 +156,11 @@ bool CreateIndex::Verify()
         wxMessageBox( _( "Key name is required" ), _( "Database" ) );
         success = false;
     }
+    if( m_fields.empty() )
+    {
+        wxMessageBox( _( "At least one index column is required" ), _( "Database" ) );
+        success = false;
+    }
     return success;
 }
 
@@ -173,4 +178,8 @@ void CreateIndex::OnFieldsDeselection(wxListEvent &event)
 
 void CreateIndex::OnOkShowLog(wxCommandEvent &event)
 {
+    std::wstring command;
+    std::vector<std::wstring> errorMsg;
+    if( Verify() )
+        m_db->CreateIndex( command, m_unique->GetValue(), m_ascending->GetValue(), m_indexName->GetLabel().ToStdWstring(), m_dbTable->GetTableName(), m_fields, errorMsg );
 }

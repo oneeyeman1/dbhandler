@@ -30,6 +30,7 @@ public:
     ~CreateIndex();
 
 private:
+    std::vector<std::wstring> m_fields;
     DatabaseTable *m_dbTable;
     Database *m_db;
     // begin wxGlade: CreateIndex::methods
