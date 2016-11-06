@@ -17,15 +17,18 @@ libdialogs_la_SOURCES =  \
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
+	-I../../libshapeframework \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
 libdialogs_la_LDFLAGS = -Wl,-rpath,/home/igor/dbhandler/Debug/libsqlite/.libs \
 	-L/home/igor/dbhandler/Debug/libsqlite/.libs \
 	-L/home/igor/dbhandler/Debug/libfieldswindow/.libs \
-	-L/home/igor/dbhandler/Debug/dbinterface \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs` \
+	-L/home/igor/dbhandler/libshapeframework/.libs \
 	-ldbinterface \
 	-lsqlite_lib \
-	-lfieldswindow 
+	-lfieldswindow \
+	-lshapeframework \
+	-L/home/igor/dbhandler/Debug/dbinterface \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
+	--libs` 

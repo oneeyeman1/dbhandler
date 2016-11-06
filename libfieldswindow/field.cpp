@@ -1,4 +1,4 @@
-#include "wxsf/rectshape.h"
+#include "wxsf/RectShape.h"
 #include "wxsf/DiagramManager.h"
 #include "wxsf/TextShape.h"
 #include "field.h"
