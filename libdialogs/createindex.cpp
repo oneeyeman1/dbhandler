@@ -54,6 +54,8 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     // end wxGlade
 	m_table->Bind( wxEVT_LIST_ITEM_SELECTED, &CreateIndex::OnFieldSelection, this );
 	m_table->Bind( wxEVT_LIST_ITEM_DESELECTED, &CreateIndex::OnFieldsDeselection, this );
+	m_OK->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
+	m_logOnly->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
 }
 
 void CreateIndex::set_properties()
@@ -146,6 +148,17 @@ CreateIndex::~CreateIndex()
     m_indexColumns = NULL;
 }
 
+bool CreateIndex::Verify()
+{
+    bool success = true;
+    if( m_indexName->GetLabel().IsEmpty() )
+    {
+        wxMessageBox( _( "Key name is required" ), _( "Database" ) );
+        success = false;
+    }
+    return success;
+}
+
 void CreateIndex::OnFieldSelection(wxListEvent &event)
 {
     wxString item = event.GetLabel();
@@ -156,4 +169,8 @@ void CreateIndex::OnFieldsDeselection(wxListEvent &event)
 {
     wxString item = event.GetLabel();
     m_indexColumns->RemoveField( item );
+}
+
+void CreateIndex::OnOkShowLog(wxCommandEvent &event)
+{
 }
