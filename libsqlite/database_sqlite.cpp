@@ -353,7 +353,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::CreateIndex(std::wstring command, bool isUnique, bool isAscending, const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::CreateIndex(std::wstring command, bool isUnique, bool isAscending, const std::wstring &indexName, const std::wstring &tableName, const std::vector<std::wstring> &fields, std::vector<std::wstring> &errorMsg)
 {
     std::wstring_convert<std::codecvt_utf8<wchar_t> > myconv;
     std::string query = "PRAGMA index_list( \"%w\" );";
