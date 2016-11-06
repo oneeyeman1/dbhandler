@@ -148,8 +148,12 @@ CreateIndex::~CreateIndex()
 
 void CreateIndex::OnFieldSelection(wxListEvent &event)
 {
+    wxString item = event.GetLabel();
+    m_indexColumns->AddField( item );
 }
 
 void CreateIndex::OnFieldsDeselection(wxListEvent &event)
 {
+    wxString item = event.GetLabel();
+    m_indexColumns->RemoveField( item );
 }

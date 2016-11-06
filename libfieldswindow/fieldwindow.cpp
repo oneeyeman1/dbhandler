@@ -20,12 +20,14 @@
 #include "wx/window.h"
 #include "wx/sizer.h"
 #include "wxsf/ShapeCanvas.h"
+#include "wxsf/TextShape.h"
+#include "field.h"
 #include "fieldwindow.h"
 
 FieldWindow::FieldWindow(wxWindow *parent, int type)
 {
     m_win = new wxSFShapeCanvas();
-    m_win->Create( parent, wxID_ANY, wxDefaultPosition, wxSize( parent->GetSize().GetWidth(), 50 ), wxBORDER_SIMPLE | wxHSCROLL );
+    m_win->Create( parent, wxID_ANY, wxDefaultPosition, wxSize( parent->GetSize().GetWidth(), 55 ), wxBORDER_SIMPLE | wxHSCROLL );
     m_startPoint.x = 10;
     m_startPoint.y = 10;
     m_manager.SetRootItem( new xsSerializable() );
@@ -42,4 +44,14 @@ FieldWindow::~FieldWindow(void)
 wxSFShapeCanvas *FieldWindow::GetFieldsWindow()
 {
     return m_win;
+}
+
+void FieldWindow::AddField(const wxString &fieldName)
+{
+	m_manager.AddShape( new Field( wxRealPoint( m_startPoint.x, m_startPoint.y ), fieldName, m_manager ), NULL, m_startPoint, sfINITIALIZE );
+    m_win->Refresh();
+}
+
+void FieldWindow::RemoveField(const wxString &fieldName)
+{
 }

@@ -488,10 +488,12 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="field.cpp" />
     <ClCompile Include="fieldswindow.cpp" />
     <ClCompile Include="fieldwindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="field.h" />
     <ClInclude Include="fieldwindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
