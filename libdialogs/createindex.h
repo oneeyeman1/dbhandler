@@ -28,9 +28,12 @@ public:
 
     CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db);
     ~CreateIndex();
+    std::wstring &GetCommand();
 
 private:
+    std::vector<int> m_selectedItems;
     std::vector<std::wstring> m_fields;
+    std::wstring m_command;
     DatabaseTable *m_dbTable;
     Database *m_db;
     // begin wxGlade: CreateIndex::methods

@@ -148,6 +148,11 @@ CreateIndex::~CreateIndex()
     m_indexColumns = NULL;
 }
 
+std::wstring &CreateIndex::GetCommand()
+{
+    return m_command;
+}
+
 bool CreateIndex::Verify()
 {
     bool success = true;
@@ -168,19 +173,23 @@ void CreateIndex::OnFieldSelection(wxListEvent &event)
 {
     wxString item = event.GetLabel();
     m_indexColumns->AddField( item );
-	m_fields.push_back( item.ToStdWstring() );
+    m_fields.push_back( item.ToStdWstring() );
+    m_selectedItems.push_back( event.GetIndex() );
 }
 
 void CreateIndex::OnFieldsDeselection(wxListEvent &event)
 {
     wxString item = event.GetLabel();
     m_indexColumns->RemoveField( item );
+    m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), item ), m_fields.end() );
 }
 
 void CreateIndex::OnOkShowLog(wxCommandEvent &event)
 {
-    std::wstring command;
     std::vector<std::wstring> errorMsg;
     if( Verify() )
-        m_db->CreateIndex( command, m_unique->GetValue(), m_ascending->GetValue(), m_indexName->GetLabel().ToStdWstring(), m_dbTable->GetTableName(), m_fields, errorMsg );
+    {
+        m_db->CreateIndex( m_command, m_unique->GetValue(), m_ascending->GetValue(), m_indexName->GetLabel().ToStdWstring(), m_dbTable->GetTableName(), m_fields, errorMsg );
+		EndModal( event.GetId() );
+    }
 }
