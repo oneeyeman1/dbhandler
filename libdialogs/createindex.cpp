@@ -189,7 +189,7 @@ void CreateIndex::OnOkShowLog(wxCommandEvent &event)
     std::vector<std::wstring> errorMsg;
     if( Verify() )
     {
-        m_db->CreateIndex( m_command, m_unique->GetValue(), m_ascending->GetValue(), m_indexName->GetLabel().ToStdWstring(), m_dbTable->GetTableName(), m_fields, errorMsg );
+        m_db->CreateIndex( m_command, m_unique->GetValue(), m_ascending->GetValue(), m_indexName->GetLabel().ToStdWstring(), m_dbTable->GetTableName(), m_fields, event.GetEventObject() == m_logOnly, errorMsg );
 		EndModal( event.GetId() );
     }
 }
