@@ -1,10 +1,12 @@
 #pragma once
-class Field : public wxSFRectShape
+class FieldWin : public wxSFRectShape
 {
 public:
-    Field(const wxRealPoint &pt, const wxString &name, wxSFDiagramManager manager);
-    ~Field(void);
+    FieldWin(const wxRealPoint &pt, const wxString &name, wxSFDiagramManager manager);
+    ~FieldWin(void);
+    wxString &GetFieldName();
 private:
     wxSFTextShape *m_text;
+    wxString m_fieldName;
 };
 

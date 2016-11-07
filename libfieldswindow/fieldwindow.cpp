@@ -48,7 +48,7 @@ wxSFShapeCanvas *FieldWindow::GetFieldsWindow()
 
 void FieldWindow::AddField(const wxString &fieldName)
 {
-    Field *field = new Field( wxRealPoint( m_startPoint.x, m_startPoint.y ), fieldName, m_manager );
+    FieldWin *field = new FieldWin( wxRealPoint( m_startPoint.x, m_startPoint.y ), fieldName, m_manager );
     m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
     m_win->Refresh();
     m_startPoint.x += field->GetBoundingBox().GetWidth() + 5;
@@ -56,4 +56,20 @@ void FieldWindow::AddField(const wxString &fieldName)
 
 void FieldWindow::RemoveField(const wxString &fieldName)
 {
+    ShapeList shapes;
+    m_manager.GetShapes( CLASSINFO( FieldWin ), shapes );
+    for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
+    {
+        if( ((FieldWin *) *it)->GetFieldName() == fieldName )
+        {
+            wxRect rect = (*it)->GetBoundingBox();
+            m_manager.RemoveShape( (*it) );
+            for( ShapeList::iterator it1 = ++it; it1 != shapes.end(); ++it1 )
+            {
+                m_manager.AddShape( (*it1), NULL, wxPoint( rect.GetLeft(), rect.GetTop() ), sfINITIALIZE );
+                m_win->Refresh();
+				rect.x += (*it1)->GetBoundingBox().GetWidth() + 5;
+            }
+        }
+    }
 }

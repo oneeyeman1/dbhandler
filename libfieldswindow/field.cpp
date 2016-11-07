@@ -3,7 +3,7 @@
 #include "wxsf/TextShape.h"
 #include "field.h"
 
-Field::Field(const wxRealPoint &pt, const wxString &name, wxSFDiagramManager manager) : wxSFRectShape( pt, wxRealPoint( 0, 0 ), &manager )
+FieldWin::FieldWin(const wxRealPoint &pt, const wxString &name, wxSFDiagramManager manager) : wxSFRectShape( pt, wxRealPoint( 0, 0 ), &manager )
 {
     AcceptChild( wxT("wxSFTextShape") );
     m_text = new wxSFTextShape();
@@ -12,8 +12,14 @@ Field::Field(const wxRealPoint &pt, const wxString &name, wxSFDiagramManager man
     m_text->SetText( name );
     m_text->SetHBorder( 5.0 );
     m_text->SetVBorder( 5.0 );
+    m_fieldName = name;
 }
 
-Field::~Field(void)
+FieldWin::~FieldWin(void)
 {
+}
+
+wxString &FieldWin::GetFieldName()
+{
+    return m_fieldName;
 }
