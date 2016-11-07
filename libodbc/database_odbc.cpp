@@ -1446,6 +1446,26 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 
 int ODBCDatabase::CreateIndex(std::wstring command, bool isUnique, bool isAscending, const std::wstring &indexName, const std::wstring &tableName, const std::vector<std::wstring> &fields, bool logOnly, std::vector<std::wstring> &errorMsg)
 {
-	command = L"CREATE INDEX ";
+    command = L"CREATE ";
+    if( isUnique )
+        command += L"UNIQUE ";
+    command += L"INDEX ";
+    command += indexName;
+    command += L" ON " + tableName + L"(";
+    for( std::vector<std::wstring>::const_iterator it = fields.begin(); it < fields.end(); it++ )
+    {
+        command += (*it);
+        if( isAscending )
+            command += L" ASC ";
+        else
+            command += L" DESC ";
+        if( it < fields.end() - 1 )
+            command += L",";
+        else
+            command += L")";
+    }
+    if( !logOnly )
+    {
+    }
     return 0;
 }

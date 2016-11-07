@@ -407,17 +407,17 @@ int SQLiteDatabase::CreateIndex(std::wstring command, bool isUnique, bool isAsce
             command += (*it);
             if( isAscending )
                 command += L" \"ASC\" ";
-			else
+            else
                 command += L" \"DESC\" ";
             if( it < fields.end() - 1 )
                 command += L",";
-			else
+            else
                 command += L")";
         }
-	}
+    }
     if( !logOnly )
     {
-		if( ( res = sqlite3_prepare_v2( m_db, myconv.to_bytes( command.c_str() ).c_str(), -1, &stmt, 0 ) ) == SQLITE_OK )
+        if( ( res = sqlite3_prepare_v2( m_db, myconv.to_bytes( command.c_str() ).c_str(), -1, &stmt, 0 ) ) == SQLITE_OK )
         {
             res = sqlite3_step( stmt );
             if( res != SQLITE_DONE )
