@@ -31,6 +31,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     wxDialog(parent, id, title)
 {
     m_dbTable = table;
+    m_db = db;
     // begin wxGlade: CreateIndex::CreateIndex
     panel_1 = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( panel_1, wxID_ANY, _( "Table" ) );
@@ -189,7 +190,7 @@ void CreateIndex::OnOkShowLog(wxCommandEvent &event)
     std::vector<std::wstring> errorMsg;
     if( Verify() )
     {
-        m_db->CreateIndex( m_command, m_unique->GetValue(), m_ascending->GetValue(), m_indexName->GetLabel().ToStdWstring(), m_dbTable->GetTableName(), m_fields, errorMsg );
+        m_db->CreateIndex( m_command, m_unique->GetValue(), m_ascending->GetValue(), m_indexName->GetValue().ToStdWstring(), m_dbTable->GetTableName(), m_fields, event.GetEventObject() == m_logOnly, errorMsg );
 		EndModal( event.GetId() );
     }
 }
