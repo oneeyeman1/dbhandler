@@ -31,6 +31,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     wxDialog(parent, id, title)
 {
     m_dbTable = table;
+    m_db = db;
     // begin wxGlade: CreateIndex::CreateIndex
     panel_1 = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( panel_1, wxID_ANY, _( "Table" ) );

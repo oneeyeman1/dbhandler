@@ -56,4 +56,20 @@ void FieldWindow::AddField(const wxString &fieldName)
 
 void FieldWindow::RemoveField(const wxString &fieldName)
 {
+    ShapeList shapes;
+    m_manager.GetShapes( CLASSINFO( FieldWin ), shapes );
+    for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
+    {
+        if( ((FieldWin *) *it)->GetFieldName() == fieldName )
+        {
+            wxRect rect = (*it)->GetBoundingBox();
+            m_manager.RemoveShape( (*it) );
+            for( ShapeList::iterator it1 = ++it; it1 != shapes.end(); ++it1 )
+            {
+                m_manager.AddShape( (*it1), NULL, wxPoint( rect.GetLeft(), rect.GetTop() ), sfINITIALIZE );
+                m_win->Refresh();
+				rect.x += (*it1)->GetBoundingBox().GetWidth() + 5;
+            }
+        }
+    }
 }

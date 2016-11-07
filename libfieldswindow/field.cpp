@@ -12,8 +12,14 @@ FieldWin::FieldWin(const wxRealPoint &pt, const wxString &name, wxSFDiagramManag
     m_text->SetText( name );
     m_text->SetHBorder( 5.0 );
     m_text->SetVBorder( 5.0 );
+    m_fieldName = name;
 }
 
 FieldWin::~FieldWin(void)
 {
+}
+
+wxString &FieldWin::GetFieldName()
+{
+    return m_fieldName;
 }
