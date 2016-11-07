@@ -48,7 +48,7 @@ wxSFShapeCanvas *FieldWindow::GetFieldsWindow()
 
 void FieldWindow::AddField(const wxString &fieldName)
 {
-    Field *field = new Field( wxRealPoint( m_startPoint.x, m_startPoint.y ), fieldName, m_manager );
+    FieldWin *field = new FieldWin( wxRealPoint( m_startPoint.x, m_startPoint.y ), fieldName, m_manager );
     m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
     m_win->Refresh();
     m_startPoint.x += field->GetBoundingBox().GetWidth() + 5;
