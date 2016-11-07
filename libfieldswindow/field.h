@@ -1,9 +1,9 @@
 #pragma once
-class Field : public wxSFRectShape
+class FieldWin : public wxSFRectShape
 {
 public:
-    Field(const wxRealPoint &pt, const wxString &name, wxSFDiagramManager manager);
-    ~Field(void);
+    FieldWin(const wxRealPoint &pt, const wxString &name, wxSFDiagramManager manager);
+    virtual ~FieldWin(void);
 private:
     wxSFTextShape *m_text;
 };
