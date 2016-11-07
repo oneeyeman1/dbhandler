@@ -393,6 +393,7 @@ int SQLiteDatabase::CreateIndex(std::wstring command, bool isUnique, bool isAsce
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
     }
+    sqlite3_finalize( stmt );
     if( result == SQLITE_OK )
     {
         command = L"CREATE ";
@@ -414,5 +415,25 @@ int SQLiteDatabase::CreateIndex(std::wstring command, bool isUnique, bool isAsce
                 command += L")";
         }
 	}
+    if( !logOnly )
+    {
+		if( ( res = sqlite3_prepare_v2( m_db, myconv.to_bytes( command.c_str() ).c_str(), -1, &stmt, 0 ) ) == SQLITE_OK )
+        {
+            res = sqlite3_step( stmt );
+            if( res != SQLITE_DONE )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+        else
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+        sqlite3_finalize( stmt );
+    }
     return result;
 }
