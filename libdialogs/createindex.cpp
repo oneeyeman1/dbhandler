@@ -181,8 +181,8 @@ void CreateIndex::OnFieldSelection(wxListEvent &event)
 void CreateIndex::OnFieldsDeselection(wxListEvent &event)
 {
     wxString item = event.GetLabel();
-    m_indexColumns->RemoveField( item );
     m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), item ), m_fields.end() );
+    m_indexColumns->RemoveField( m_fields );
 }
 
 void CreateIndex::OnOkShowLog(wxCommandEvent &event)
