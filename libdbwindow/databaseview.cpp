@@ -34,7 +34,7 @@
 #include "databaseview.h"
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
-typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString);
+typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
