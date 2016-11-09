@@ -166,19 +166,22 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
 
 void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 {
-    wxSFShapeCanvas::OnRightDown( event );
     wxPoint pt = event.GetPosition();
     wxMenu mnu;
 	mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_TABLEDROPTABLE );
     m_selectedShape = GetShapeUnderCursor();
     if( m_selectedShape )
     {
+        m_selectedShape->Select( true );
         mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
         mnu.AppendSeparator();
         mnu.Append( wxID_TABLEALTERTABLE, _( "Alter Table" ), _( "Alter Table" ), false );
         mnu.Append( wxID_TABLEPROPERTIES, _( "Properties..." ), _( "Table Properties" ), false );
         mnu.AppendSeparator();
-        mnu.Append( wxID_TABLENEW, _( "New" ), _( "New" ), false );
+        wxMenu *newObjectMenu = new wxMenu();
+        newObjectMenu->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );
+        newObjectMenu->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
+        mnu.AppendSubMenu( newObjectMenu, _( "New" ), _( "New" ) );
         mnu.AppendSeparator();
         mnu.Append( wxID_TABLEDROPTABLE, _( "Drop Table" ), _( "Drop Table" ), false );
         mnu.AppendSeparator();
