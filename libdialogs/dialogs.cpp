@@ -124,7 +124,7 @@ extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std:
     return res;
 }
 
-extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *table, Database *db)
+extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *table, Database *db, wxString command)
 {
     int res;
 #ifdef __WXMSW__
@@ -133,5 +133,7 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     CreateIndex dlg( parent, wxID_ANY, "", table, db );
     dlg.Center();
     res = dlg.ShowModal();
+    if( res != wxID_OK && res != wxID_CANCEL )
+        command = dlg.GetCommand();
     return res;
 }
