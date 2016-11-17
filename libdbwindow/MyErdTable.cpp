@@ -41,7 +41,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
-        m_pGrid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION  );
+        m_pGrid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
         m_pGrid->SetDimensions( 1, 2 );
         m_pGrid->SetFill( *wxTRANSPARENT_BRUSH );
         m_pGrid->SetBorder( *wxTRANSPARENT_PEN );
@@ -51,7 +51,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         m_pGrid->AcceptChild( wxT( "wxSFTextShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFBitmapShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFShapeBase" ) );
-        m_pGrid->Activate( false );
+        m_pGrid->Activate( true );
         SF_ADD_COMPONENT( m_pGrid, wxT( "main_grid" ) );
 	}
 }
@@ -81,7 +81,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
         m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
         SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         m_pGrid->SetRelativePosition( 0, 17 );
-        m_pGrid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION  );
+        m_pGrid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
         m_pGrid->SetDimensions( 1, 2 );
         m_pGrid->SetFill( *wxTRANSPARENT_BRUSH );
         m_pGrid->SetBorder( *wxTRANSPARENT_PEN);
@@ -91,7 +91,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
         m_pGrid->AcceptChild( wxT( "wxSFTextShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFBitmapShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFShapeBase" ) );
-        m_pGrid->Activate( false );
+        m_pGrid->Activate( true );
         SF_ADD_COMPONENT( m_pGrid, wxT( "main_grid" ) );
 	}
 }
@@ -180,8 +180,10 @@ void MyErdTable::AddColumn(const wxString &colName, int id, Constraint::constrai
 		wxSFBitmapShape* pBitmap = new wxSFBitmapShape();
 		if( pBitmap )
 		{
-			pBitmap->SetId(id + 10000);
-			if( m_pGrid->AppendToGrid(pBitmap) )
+            pBitmap->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+			pBitmap->SetId( id + 10000 );
+			pBitmap->Activate( true );
+			if( m_pGrid->AppendToGrid( pBitmap ) )
 			{
 				if( type == Constraint::primaryKey )
 				{
@@ -200,12 +202,14 @@ void MyErdTable::AddColumn(const wxString &colName, int id, Constraint::constrai
 	{
 		// spacer
 		wxSFShapeBase* pSpacer = new wxSFShapeBase();
+		pSpacer->Activate( true );
+        pSpacer->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
 		if( pSpacer )
 		{
-			pSpacer->SetId(id+10000);
-			if( m_pGrid->AppendToGrid(pSpacer) )
+			pSpacer->SetId( id + 10000 );
+			if( m_pGrid->AppendToGrid( pSpacer ) )
 			{
-				SetCommonProps(pSpacer);
+				SetCommonProps( pSpacer );
 			}
 			else
 				delete pSpacer;
@@ -216,7 +220,9 @@ void MyErdTable::AddColumn(const wxString &colName, int id, Constraint::constrai
     wxSFTextShape *pCol = new wxSFTextShape();
     if( pCol )
     {
-        pCol->SetId( id +10000+ 1 );
+        pCol->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+        pCol->SetId( id + 10000 + 1 );
+        pCol->Activate( true );
         if( m_pGrid->AppendToGrid( pCol ) )
         {
             SetCommonProps( pCol );
@@ -236,7 +242,6 @@ void MyErdTable::SetCommonProps(wxSFShapeBase* shape)
     shape->SetVAlign( wxSFShapeBase::valignMIDDLE );
     shape->SetVBorder( 0 );
     shape->SetHBorder( 0 );
-    shape->Activate( false );
 }
 
 const DatabaseTable &MyErdTable::GetTable()
