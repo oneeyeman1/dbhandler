@@ -221,23 +221,26 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             DeselectAll();
         }
         m_selectedShape->Select( true );*/
-        mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
-        mnu.AppendSeparator();
-        mnu.Append( wxID_TABLEALTERTABLE, _( "Alter Table" ), _( "Alter Table" ), false );
-        mnu.Append( wxID_TABLEPROPERTIES, _( "Properties..." ), _( "Table Properties" ), false );
-        mnu.AppendSeparator();
-        wxMenu *newObjectMenu = new wxMenu();
-        newObjectMenu->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );
-        newObjectMenu->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
-        mnu.AppendSubMenu( newObjectMenu, _( "New" ), _( "New" ) );
-        mnu.AppendSeparator();
-        mnu.Append( wxID_TABLEDROPTABLE, _( "Drop Table" ), _( "Drop Table" ), false );
-        mnu.AppendSeparator();
-        mnu.Append( wxID_TABLEEDITDATA, _( "Edit Data" ), _( "Edit Data" ), false );
-        mnu.AppendSeparator();
-        mnu.Append( wxID_TABLEDATATRANSFER, _( "Data Transfer" ), _( "Data Transfer" ), false );
-        mnu.AppendSeparator();
-        mnu.Append( wxID_TABLEPRINTDEFINITION, _( "Print Definition" ), _( "Print Definition" ), false );
+        if( !fieldSelected )
+        {
+            mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
+            mnu.AppendSeparator();
+            mnu.Append( wxID_TABLEALTERTABLE, _( "Alter Table" ), _( "Alter Table" ), false );
+            mnu.Append( wxID_TABLEPROPERTIES, _( "Properties..." ), _( "Table Properties" ), false );
+            mnu.AppendSeparator();
+            wxMenu *newObjectMenu = new wxMenu();
+            newObjectMenu->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );
+            newObjectMenu->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
+            mnu.AppendSubMenu( newObjectMenu, _( "New" ), _( "New" ) );
+            mnu.AppendSeparator();
+            mnu.Append( wxID_TABLEDROPTABLE, _( "Drop Table" ), _( "Drop Table" ), false );
+            mnu.AppendSeparator();
+            mnu.Append( wxID_TABLEEDITDATA, _( "Edit Data" ), _( "Edit Data" ), false );
+            mnu.AppendSeparator();
+            mnu.Append( wxID_TABLEDATATRANSFER, _( "Data Transfer" ), _( "Data Transfer" ), false );
+            mnu.AppendSeparator();
+            mnu.Append( wxID_TABLEPRINTDEFINITION, _( "Print Definition" ), _( "Print Definition" ), false );
+        }
     }
     else
     {
