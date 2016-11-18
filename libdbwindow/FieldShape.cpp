@@ -37,3 +37,8 @@ void FieldShape::DrawNormal(wxDC &dc)
     dc.SetFont( wxNullFont );
     dc.SetBrush( wxNullBrush );
 }
+
+void FieldShape::SetParentRect(const wxRect &rect)
+{
+    m_parentRect = rect;
+}

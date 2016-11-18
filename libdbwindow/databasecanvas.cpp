@@ -197,6 +197,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                     if( field && fieldSelected )
                     {
                         field->Select( true );
+                        field->SetParentRect( tableRect );
                     }
                 }
             }
