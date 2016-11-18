@@ -22,6 +22,7 @@
 #include "GUIColumn.h"
 #include "MyErdTable.h"
 #include "wxsf/ShapeCanvas.h"
+#include "FieldShape.h"
 #include "ErdTable.h"
 #include "DiagramManager.h"
 #include "databasedoc.h"
