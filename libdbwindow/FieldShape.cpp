@@ -15,10 +15,15 @@ void FieldShape::DrawNormal(wxDC &dc)
     wxString line;
     int i = 0;
     dc.SetBrush( m_Fill );
-    dc.SetBackgroundMode( wxTRANSPARENT );
+//    dc.SetBackgroundMode( wxTRANSPARENT );
     dc.SetTextForeground( m_TextColor );
     if( this->m_fSelected )
+    {
 		dc.SetTextBackground( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+        dc.SetBackgroundMode( wxSOLID );
+    }
+    else
+        dc.SetBackgroundMode( wxTRANSPARENT );
     dc.SetFont( m_Font );
     wxRealPoint pos = GetAbsolutePosition();
     // draw all text lines
