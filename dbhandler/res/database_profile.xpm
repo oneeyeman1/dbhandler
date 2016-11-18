@@ -1,5 +1,5 @@
 /* XPM */
-static char *database_profile[] = {
+static const char *database_profile[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 192 2 ",
 "   c #404448",
