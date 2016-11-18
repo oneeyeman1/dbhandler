@@ -8,6 +8,7 @@
 #include "wxsf/DiagramManager.h"
 #include "constraint.h"
 #include "GUIColumn.h"
+#include "FieldShape.h"
 #include "MyErdTable.h"
 #include "res/gui/key-p.xpm"
 #include "res/gui/key-f.xpm"
@@ -217,7 +218,7 @@ void MyErdTable::AddColumn(const wxString &colName, int id, Constraint::constrai
 	}
 	
     // label
-    wxSFTextShape *pCol = new wxSFTextShape();
+    FieldShape *pCol = new FieldShape();
     if( pCol )
     {
         pCol->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );

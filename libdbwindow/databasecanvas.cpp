@@ -192,7 +192,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                     fieldSelected = true;
                 else
                 {
-                    wxSFTextShape *field = wxDynamicCast( (*it), wxSFTextShape );
+                    FieldShape *field = wxDynamicCast( (*it), FieldShape );
                     if( field && fieldSelected )
                     {
                         field->Select( true );
@@ -200,6 +200,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 }
             }
         }
+        Refresh();
 /*        MyErdTable *table = wxDynamicCast( m_selectedShape, MyErdTable );
         if( !table )
         {
