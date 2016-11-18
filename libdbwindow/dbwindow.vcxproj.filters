@@ -58,6 +58,7 @@
     <ClInclude Include="ErdLineShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FieldShape.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ErdTable.cpp">
@@ -103,6 +104,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ErdLineShape.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldShape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

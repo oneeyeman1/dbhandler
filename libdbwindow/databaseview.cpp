@@ -34,7 +34,7 @@
 #include "databaseview.h"
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
-typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *);
+typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -258,6 +258,8 @@ void DrawingView::OnViewSelectedTables(wxCommandEvent &event)
 
 void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
 {
+    int result;
+    wxString command;
     DatabaseTable *table;
     ShapeList shapes;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
@@ -277,7 +279,11 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         CREATEINDEX func = (CREATEINDEX) lib.GetSymbol( "CreateIndexForDatabase" );
-        func( this->m_frame->GetParent(), table, GetDocument()->GetDatabase() );
+        result = func( this->m_frame->GetParent(), table, GetDocument()->GetDatabase(), command );
+        if( result != wxID_OK && result != wxID_CANCEL )
+        {
+            wxMessageBox( command );
+        }
     }
     else
         wxMessageBox( _( "Error loading the DLL/so" ) );

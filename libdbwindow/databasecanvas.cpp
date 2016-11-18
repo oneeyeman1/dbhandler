@@ -166,19 +166,69 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
 
 void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 {
-    wxSFShapeCanvas::OnRightDown( event );
     wxPoint pt = event.GetPosition();
     wxMenu mnu;
 	mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_TABLEDROPTABLE );
     m_selectedShape = GetShapeUnderCursor();
     if( m_selectedShape )
     {
+        ShapeList list;
+        GetShapesAtPosition( pt, list );
+        DeselectAll();
+        wxRect tableRect;
+        bool fieldSelected = false;
+        for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
+        {
+            MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
+            if( table )
+            {
+                table->Select( true );
+                tableRect = table->GetBoundingBox();
+            }
+            else
+            {
+                wxSFFlexGridShape *grid = wxDynamicCast( (*it), wxSFFlexGridShape );
+                if( grid )
+                    fieldSelected = true;
+                else
+                {
+                    FieldShape *field = wxDynamicCast( (*it), FieldShape );
+                    if( field && fieldSelected )
+                    {
+                        field->Select( true );
+                    }
+                }
+            }
+        }
+        Refresh();
+/*        MyErdTable *table = wxDynamicCast( m_selectedShape, MyErdTable );
+        if( !table )
+        {
+		    table = wxDynamicCast( m_selectedShape->GetParent(), MyErdTable );
+            if( table )
+            {
+                m_selectedShape = table;
+                DeselectAll();
+            }
+            else
+            {
+            }
+        }
+        else
+        {
+            m_selectedShape = table;
+            DeselectAll();
+        }
+        m_selectedShape->Select( true );*/
         mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
         mnu.AppendSeparator();
         mnu.Append( wxID_TABLEALTERTABLE, _( "Alter Table" ), _( "Alter Table" ), false );
         mnu.Append( wxID_TABLEPROPERTIES, _( "Properties..." ), _( "Table Properties" ), false );
         mnu.AppendSeparator();
-        mnu.Append( wxID_TABLENEW, _( "New" ), _( "New" ), false );
+        wxMenu *newObjectMenu = new wxMenu();
+        newObjectMenu->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );
+        newObjectMenu->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
+        mnu.AppendSubMenu( newObjectMenu, _( "New" ), _( "New" ) );
         mnu.AppendSeparator();
         mnu.Append( wxID_TABLEDROPTABLE, _( "Drop Table" ), _( "Drop Table" ), false );
         mnu.AppendSeparator();
