@@ -88,7 +88,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
         m_pGrid->SetHAlign( wxSFShapeBase::halignLEFT );
         m_pGrid->SetVBorder( 13 );
         m_pGrid->SetHBorder( 5 );
-        m_pGrid->AcceptChild( wxT( "wxSFTextShape" ) );
+        m_pGrid->AcceptChild( wxT( "FieldShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFBitmapShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFShapeBase" ) );
         m_pGrid->Activate( true );

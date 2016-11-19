@@ -1,9 +1,26 @@
 #include "wxsf/textshape.h"
 #include "FieldShape.h"
 
-FieldShape::FieldShape(void)
+XS_IMPLEMENT_CLONABLE_CLASS(FieldShape,wxSFTextShape);
+
+FieldShape::FieldShape()
 {
+    m_name = wxEmptyString;
+    m_type = wxEmptyString;
+    m_size = 0;
+    m_decimal = 0;
+    m_isNotNull = false;
+    m_isPK = false;
+    m_isAutoInc = false;
     m_backColour = wxColour( 210, 225, 245 );
+    XS_SERIALIZE( m_name, wxT( "m_name" ) );
+    XS_SERIALIZE( m_type, wxT( "m_type" ) );
+    XS_SERIALIZE_LONG( m_size, wxT( "m_size" ) );
+    XS_SERIALIZE_LONG( m_decimal, wxT( "m_decimal" ) );
+    XS_SERIALIZE( m_isPK, wxT( "m_isPK" ) );
+    XS_SERIALIZE( m_isNotNull, wxT( "m_notNull" ) );
+    XS_SERIALIZE( m_isAutoInc, wxT( "m_isAutoInc" ) );
+    XS_SERIALIZE( m_backColour, wxT( "m_backColour" ) );
 }
 
 FieldShape::~FieldShape(void)
@@ -12,7 +29,7 @@ FieldShape::~FieldShape(void)
 
 void FieldShape::DrawNormal(wxDC &dc)
 {
-//    wxSFRectShape::DrawNormal(dc);
+    wxSFRectShape::DrawNormal(dc);
     wxRect rect = this->GetBoundingBox();
     wxString line;
     int i = 0;
@@ -26,6 +43,7 @@ void FieldShape::DrawNormal(wxDC &dc)
     {
         m_backColour = wxColour( 210, 225, 245 );
         dc.SetBrush( m_Fill );
+        dc.SetBackgroundMode(wxTRANSPARENT);
     }
     dc.DrawRectangle( m_parentRect.x, rect.y, m_parentRect.width, rect.height );
     dc.SetFont( m_Font );
