@@ -3,6 +3,7 @@
 
 FieldShape::FieldShape(void)
 {
+    m_backColour = wxColour( 210, 225, 245 );
 }
 
 FieldShape::~FieldShape(void)
@@ -12,18 +13,21 @@ FieldShape::~FieldShape(void)
 void FieldShape::DrawNormal(wxDC &dc)
 {
     wxSFRectShape::DrawNormal(dc);
+    wxRect rect = this->GetBoundingBox();
     wxString line;
     int i = 0;
-    dc.SetBrush( m_Fill );
-//    dc.SetBackgroundMode( wxTRANSPARENT );
     dc.SetTextForeground( m_TextColor );
     if( this->m_fSelected )
     {
-		dc.SetTextBackground( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-        dc.SetBackgroundMode( wxSOLID );
+		m_backColour = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
+        dc.SetBrush( m_backColour );
     }
     else
-        dc.SetBackgroundMode( wxTRANSPARENT );
+    {
+        m_backColour = wxColour( 210, 225, 245 );
+        dc.SetBrush( m_Fill );
+    }
+    dc.DrawRectangle( m_parentRect.x, rect.y, m_parentRect.width, rect.height );
     dc.SetFont( m_Font );
     wxRealPoint pos = GetAbsolutePosition();
     // draw all text lines
