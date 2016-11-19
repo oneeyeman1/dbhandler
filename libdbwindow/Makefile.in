@@ -132,7 +132,7 @@ am_libdbwindow_la_OBJECTS = libdbwindow_la-ErdForeignKey.lo \
 	libdbwindow_la-ErdTable.lo libdbwindow_la-NArrow.lo \
 	libdbwindow_la-OneArrow.lo libdbwindow_la-column.lo \
 	libdbwindow_la-constraint.lo libdbwindow_la-table.lo \
-	libdbwindow_la-GUIColumn.lo libdbwindow_la-GUIDatabaseTable.lo \
+	libdbwindow_la-GUIDatabaseTable.lo \
 	libdbwindow_la-databasecanvas.lo libdbwindow_la-databasedoc.lo \
 	libdbwindow_la-databaseview.lo libdbwindow_la-dbview.lo \
 	libdbwindow_la-MyErdTable.lo libdbwindow_la-ErdLineShape.lo
@@ -397,8 +397,6 @@ libdbwindow_la_SOURCES = \
 	constraint.h \
 	table.cpp \
 	table.h \
-	GUIColumn.cpp \
-	GUIColumn.h \
 	GUIDatabaseTable.cpp \
 	GUIDatabaseTable.h \
 	databasecanvas.cpp \
@@ -503,7 +501,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-ErdForeignKey.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-ErdLineShape.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-ErdTable.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-GUIColumn.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-GUIDatabaseTable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-MyErdTable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-NArrow.Plo@am__quote@
@@ -585,13 +582,6 @@ libdbwindow_la-table.lo: table.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='table.cpp' object='libdbwindow_la-table.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-table.lo `test -f 'table.cpp' || echo '$(srcdir)/'`table.cpp
-
-libdbwindow_la-GUIColumn.lo: GUIColumn.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-GUIColumn.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-GUIColumn.Tpo -c -o libdbwindow_la-GUIColumn.lo `test -f 'GUIColumn.cpp' || echo '$(srcdir)/'`GUIColumn.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-GUIColumn.Tpo $(DEPDIR)/libdbwindow_la-GUIColumn.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='GUIColumn.cpp' object='libdbwindow_la-GUIColumn.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-GUIColumn.lo `test -f 'GUIColumn.cpp' || echo '$(srcdir)/'`GUIColumn.cpp
 
 libdbwindow_la-GUIDatabaseTable.lo: GUIDatabaseTable.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-GUIDatabaseTable.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-GUIDatabaseTable.Tpo -c -o libdbwindow_la-GUIDatabaseTable.lo `test -f 'GUIDatabaseTable.cpp' || echo '$(srcdir)/'`GUIDatabaseTable.cpp

@@ -21,8 +21,6 @@ libdbwindow_la_SOURCES =  \
 	constraint.h \
 	table.cpp \
 	table.h \
-	GUIColumn.cpp \
-	GUIColumn.h \
 	GUIDatabaseTable.cpp \
 	GUIDatabaseTable.h \
 	databasecanvas.cpp \
