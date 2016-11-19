@@ -7,7 +7,6 @@
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/DiagramManager.h"
 #include "constraint.h"
-#include "GUIColumn.h"
 #include "FieldShape.h"
 #include "MyErdTable.h"
 #include "res/gui/key-p.xpm"
@@ -103,7 +102,7 @@ MyErdTable::~MyErdTable()
 
 void MyErdTable::UpdateTable()
 {
-	std::vector<Field *> fields = m_table->GetFields();
+    std::vector<Field *> fields = m_table->GetFields();
     int i = 0;
     ClearGrid();
     ClearConnections();
@@ -114,15 +113,7 @@ void MyErdTable::UpdateTable()
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
     for( std::vector<Field *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
-        long properties = 0;
-        if( (*it)->IsPrimaryKey() )
-            properties |= GUIColumn::dbtPRIMARY_KEY;
-        if( (*it)->IsAutoIncrement() )
-            properties |= GUIColumn::dbtAUTO_INCREMENT;
-        GUIColumn *col = new GUIColumn( (*it)->GetFieldName(), (*it)->GetFieldType(), properties, (*it)->GetFieldSize(), (*it)->GetPrecision() );
-        m_columns.push_back( col );
-        AddColumn( col->GetName(), i, col->IsPrimaryKey() ? Constraint::primaryKey : Constraint::noKey );
-        delete col;
+        AddColumn( (*it)->GetFieldName(), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : Constraint::noKey );
         i += 2;
     }
     m_pGrid->Update();
@@ -141,11 +132,6 @@ void MyErdTable::ClearGrid()
 
 void MyErdTable::ClearConnections()
 {
-}
-
-void MyErdTable::AddColumn(GUIColumn *col)
-{
-	m_columns.push_back( col );
 }
 
 void MyErdTable::DrawDetail(wxDC &dc)

@@ -8,7 +8,6 @@ public:
     MyErdTable();
     MyErdTable(DatabaseTable *table);
     virtual ~MyErdTable();
-    void AddColumn(GUIColumn *col);
     void UpdateTable();
     const DatabaseTable &GetTable();
     wxSFTextShape *GetLabel();
@@ -26,7 +25,6 @@ protected:
 private:
     wxSFTextShape *m_pLabel;
     wxSFFlexGridShape* m_pGrid;
-    std::vector<GUIColumn *> m_columns;
     DatabaseTable *m_table;
 };
 

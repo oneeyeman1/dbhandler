@@ -12,7 +12,7 @@ FieldShape::~FieldShape(void)
 
 void FieldShape::DrawNormal(wxDC &dc)
 {
-    wxSFRectShape::DrawNormal(dc);
+//    wxSFRectShape::DrawNormal(dc);
     wxRect rect = this->GetBoundingBox();
     wxString line;
     int i = 0;
