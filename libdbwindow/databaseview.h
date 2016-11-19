@@ -57,6 +57,7 @@ public:
     void OnViewSelectedTables(wxCommandEvent &event);
     void OnNewIndex(wxCommandEvent &event);
     void OnFieldDefinition(wxCommandEvent &event);
+    void OnFieldProperties(wxCommandEvent &event);
     DrawingDocument* GetDocument();
 
 private:

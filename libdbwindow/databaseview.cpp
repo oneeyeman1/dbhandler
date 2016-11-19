@@ -46,6 +46,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_SELECTTABLE, DrawingView::OnViewSelectedTables)
     EVT_MENU(wxID_OBJECTNEWINDEX, DrawingView::OnNewIndex)
     EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
+    EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -215,6 +216,11 @@ void DrawingView::OnViewSelectedTables(wxCommandEvent &event)
 void DrawingView::OnFieldDefinition(wxCommandEvent &event)
 {
     wxMessageBox( "Field definition" );
+}
+
+void DrawingView::OnFieldProperties(wxCommandEvent &event)
+{
+    wxMessageBox( "Field properties" );
 }
 
 // ----------------------------------------------------------------------------
