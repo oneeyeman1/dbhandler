@@ -32,7 +32,6 @@
 #include "database.h"
 #include "column.h"
 #include "constraint.h"
-#include "GUIColumn.h"
 #include "MyErdTable.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"

@@ -7,7 +7,6 @@
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/RoundRectShape.h"
-#include "GUIColumn.h"
 #include "constraint.h"
 #include "MyErdTable.h"
 #include "ErdLineShape.h"
