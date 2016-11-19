@@ -49,9 +49,6 @@
     <ClInclude Include="GUIDatabaseTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUIColumn.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MyErdTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -95,9 +92,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GUIDatabaseTable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GUIColumn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MyErdTable.cpp">
