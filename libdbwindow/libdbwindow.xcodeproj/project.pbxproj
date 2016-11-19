@@ -31,8 +31,6 @@
 		E3E91D221D6D467C00675CF8 /* databaseview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D171D6D467C00675CF8 /* databaseview.cpp */; };
 		E3E91D231D6D467C00675CF8 /* databaseview.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D181D6D467C00675CF8 /* databaseview.h */; };
 		E3E91D241D6D467C00675CF8 /* dbview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D191D6D467C00675CF8 /* dbview.cpp */; };
-		E3E91D251D6D467C00675CF8 /* GUIColumn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D1A1D6D467C00675CF8 /* GUIColumn.cpp */; };
-		E3E91D261D6D467C00675CF8 /* GUIColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D1B1D6D467C00675CF8 /* GUIColumn.h */; };
 		E3E91D271D6D467C00675CF8 /* GUIDatabaseTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D1C1D6D467C00675CF8 /* GUIDatabaseTable.cpp */; };
 		E3E91D281D6D467C00675CF8 /* GUIDatabaseTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D1D1D6D467C00675CF8 /* GUIDatabaseTable.h */; };
 		E3E91D2C1D821A5600675CF8 /* MyErdTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D2A1D821A5600675CF8 /* MyErdTable.cpp */; };
@@ -69,8 +67,6 @@
 		E3E91D171D6D467C00675CF8 /* databaseview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databaseview.cpp; sourceTree = "<group>"; };
 		E3E91D181D6D467C00675CF8 /* databaseview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databaseview.h; sourceTree = "<group>"; };
 		E3E91D191D6D467C00675CF8 /* dbview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbview.cpp; sourceTree = "<group>"; };
-		E3E91D1A1D6D467C00675CF8 /* GUIColumn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIColumn.cpp; sourceTree = "<group>"; };
-		E3E91D1B1D6D467C00675CF8 /* GUIColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIColumn.h; sourceTree = "<group>"; };
 		E3E91D1C1D6D467C00675CF8 /* GUIDatabaseTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIDatabaseTable.cpp; sourceTree = "<group>"; };
 		E3E91D1D1D6D467C00675CF8 /* GUIDatabaseTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIDatabaseTable.h; sourceTree = "<group>"; };
 		E3E91D2A1D821A5600675CF8 /* MyErdTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MyErdTable.cpp; sourceTree = "<group>"; };
@@ -126,8 +122,6 @@
 				E3E91D171D6D467C00675CF8 /* databaseview.cpp */,
 				E3E91D181D6D467C00675CF8 /* databaseview.h */,
 				E3E91D191D6D467C00675CF8 /* dbview.cpp */,
-				E3E91D1A1D6D467C00675CF8 /* GUIColumn.cpp */,
-				E3E91D1B1D6D467C00675CF8 /* GUIColumn.h */,
 				E3E91D1C1D6D467C00675CF8 /* GUIDatabaseTable.cpp */,
 				E3E91D1D1D6D467C00675CF8 /* GUIDatabaseTable.h */,
 				E38709A51D4CF564004EF478 /* column.cpp */,
@@ -163,7 +157,6 @@
 				E38709B81D4CF564004EF478 /* constraint.h in Headers */,
 				E38709C21D4CF564004EF478 /* OneArrow.h in Headers */,
 				E38709BA1D4CF564004EF478 /* ErdForeignKey.h in Headers */,
-				E3E91D261D6D467C00675CF8 /* GUIColumn.h in Headers */,
 				E38709C41D4CF564004EF478 /* table.h in Headers */,
 				E3E91D391DBF812100675CF8 /* ErdLineShape.h in Headers */,
 				E3E91D851DDEB73400675CF8 /* FieldShape.h in Headers */,
@@ -241,7 +234,6 @@
 				E38709B71D4CF564004EF478 /* constraint.cpp in Sources */,
 				E3E91D381DBF812100675CF8 /* ErdLineShape.cpp in Sources */,
 				E3E91D271D6D467C00675CF8 /* GUIDatabaseTable.cpp in Sources */,
-				E3E91D251D6D467C00675CF8 /* GUIColumn.cpp in Sources */,
 				E38709C11D4CF564004EF478 /* OneArrow.cpp in Sources */,
 				E38709B51D4CF564004EF478 /* column.cpp in Sources */,
 			);
