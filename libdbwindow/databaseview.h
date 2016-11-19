@@ -56,6 +56,7 @@ public:
     void OnContextMenu(wxContextMenuEvent &event);
     void OnViewSelectedTables(wxCommandEvent &event);
     void OnNewIndex(wxCommandEvent &event);
+    void OnFieldDefinition(wxCommandEvent &event);
     DrawingDocument* GetDocument();
 
 private:

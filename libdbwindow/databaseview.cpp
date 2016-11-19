@@ -45,6 +45,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_CUT, DrawingView::OnCut)
     EVT_MENU(wxID_SELECTTABLE, DrawingView::OnViewSelectedTables)
     EVT_MENU(wxID_OBJECTNEWINDEX, DrawingView::OnNewIndex)
+    EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -173,6 +174,49 @@ void DrawingView::OnCut(wxCommandEvent& WXUNUSED(event))
 
 }
 
+void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
+{
+    int result;
+    wxString command;
+    DatabaseTable *table;
+    ShapeList shapes;
+    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
+    for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
+    {
+        if( (*it)->IsSelected() )
+            table = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
+    }
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        CREATEINDEX func = (CREATEINDEX) lib.GetSymbol( "CreateIndexForDatabase" );
+        result = func( this->m_frame->GetParent(), table, GetDocument()->GetDatabase(), command );
+        if( result != wxID_OK && result != wxID_CANCEL )
+        {
+            wxMessageBox( command );
+        }
+    }
+    else
+        wxMessageBox( _( "Error loading the DLL/so" ) );
+}
+
+void DrawingView::OnViewSelectedTables(wxCommandEvent &event)
+{
+	GetTablesForView( GetDocument()->GetDatabase() );
+}
+
+void DrawingView::OnFieldDefinition(wxCommandEvent &event)
+{
+    wxMessageBox( "Field definition" );
+}
+
 // ----------------------------------------------------------------------------
 // MyCanvas implementation
 // ----------------------------------------------------------------------------
@@ -248,42 +292,4 @@ void MyCanvas::OnMouseEvent(wxMouseEvent& event)
     }
 
     m_lastMousePos = pt;
-}
-
-void DrawingView::OnViewSelectedTables(wxCommandEvent &event)
-{
-	GetTablesForView( GetDocument()->GetDatabase() );
-}
-
-void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
-{
-    int result;
-    wxString command;
-    DatabaseTable *table;
-    ShapeList shapes;
-    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
-    for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
-    {
-        if( (*it)->IsSelected() )
-            table = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
-    }
-    wxDynamicLibrary lib;
-#ifdef __WXMSW__
-    lib.Load( "dialogs" );
-#elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
-#else
-    lib.Load( "libdialogs" );
-#endif
-    if( lib.IsLoaded() )
-    {
-        CREATEINDEX func = (CREATEINDEX) lib.GetSymbol( "CreateIndexForDatabase" );
-        result = func( this->m_frame->GetParent(), table, GetDocument()->GetDatabase(), command );
-        if( result != wxID_OK && result != wxID_CANCEL )
-        {
-            wxMessageBox( command );
-        }
-    }
-    else
-        wxMessageBox( _( "Error loading the DLL/so" ) );
 }
