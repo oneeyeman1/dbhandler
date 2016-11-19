@@ -202,25 +202,6 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             }
         }
         Refresh();
-/*        MyErdTable *table = wxDynamicCast( m_selectedShape, MyErdTable );
-        if( !table )
-        {
-		    table = wxDynamicCast( m_selectedShape->GetParent(), MyErdTable );
-            if( table )
-            {
-                m_selectedShape = table;
-                DeselectAll();
-            }
-            else
-            {
-            }
-        }
-        else
-        {
-            m_selectedShape = table;
-            DeselectAll();
-        }
-        m_selectedShape->Select( true );*/
         if( !fieldSelected )
         {
             mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
@@ -240,6 +221,11 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             mnu.Append( wxID_TABLEDATATRANSFER, _( "Data Transfer" ), _( "Data Transfer" ), false );
             mnu.AppendSeparator();
             mnu.Append( wxID_TABLEPRINTDEFINITION, _( "Print Definition" ), _( "Print Definition" ), false );
+        }
+        else
+        {
+            mnu.Append( wxID_FIELDDEFINITION, _( "Definition" ), _( "Edit definition of selected object" ), false );
+            mnu.Append( wxID_FIELDPROPERTIES, _( "Properties..." ), _( "Show properties of selected object" ), false );
         }
     }
     else

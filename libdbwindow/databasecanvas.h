@@ -43,5 +43,7 @@ private:
 #define wxID_OBJECTNEWINDEX       104
 #define wxID_OBJECTNEWVIEW        105
 #define wxID_OBJECTNEWFF          106
+#define wxID_FIELDDEFINITION      107
+#define wxID_FIELDPROPERTIES      108
 
 #endif
