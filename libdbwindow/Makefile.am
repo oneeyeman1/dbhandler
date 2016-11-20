@@ -40,7 +40,11 @@ libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
-libdbwindow_la_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs`-L../libshapeframework \
-	-lshapeframework
+libdbwindow_la_LDFLAGS = -L../libshapeframework \
+	-lshapeframework \
+	-L../libfieldswindow \
+	-lfieldswindow \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
+	--libs`
+	
 

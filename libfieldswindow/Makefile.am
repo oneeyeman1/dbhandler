@@ -15,5 +15,7 @@ libfieldswindow_la_CXXFLAGS = -I../../libshapeframework \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
-libfieldswindow_la_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
+libfieldswindow_la_LDFLAGS = -L../libshapeframework \
+	-lshapeframework \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 
