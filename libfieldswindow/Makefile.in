@@ -128,8 +128,9 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libfieldswindow_la_LIBADD =
-am_libfieldswindow_la_OBJECTS = libfieldswindow_la-fieldswindow.lo \
-	libfieldswindow_la-fieldwindow.lo libfieldswindow_la-field.lo
+am_libfieldswindow_la_OBJECTS = libfieldswindow_la-field.lo \
+	libfieldswindow_la-fieldswindow.lo \
+	libfieldswindow_la-fieldwindow.lo
 libfieldswindow_la_OBJECTS = $(am_libfieldswindow_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -375,22 +376,16 @@ lib_LTLIBRARIES = \
 	libfieldswindow.la
 
 libfieldswindow_la_SOURCES = \
+	field.cpp \
+	field.h \
 	fieldswindow.cpp \
 	fieldwindow.cpp \
-	fieldwindow.h \
-	field.cpp \
-	field.h
+	fieldwindow.h
 
-libfieldswindow_la_CXXFLAGS = -I../../dbinterface \
-	-I../../libshapeframework \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+libfieldswindow_la_CXXFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
-libfieldswindow_la_LDFLAGS = -L/home/igor/dbhandler/Debug/dbinterface \
-	-L/home/igor/dbhandler/Debug/libshapeframework/.libs \
-	-lshapeframework \
-	-ldbinterface \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+libfieldswindow_la_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 
 
 all: all-am
@@ -496,6 +491,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
+libfieldswindow_la-field.lo: field.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libfieldswindow_la_CXXFLAGS) $(CXXFLAGS) -MT libfieldswindow_la-field.lo -MD -MP -MF $(DEPDIR)/libfieldswindow_la-field.Tpo -c -o libfieldswindow_la-field.lo `test -f 'field.cpp' || echo '$(srcdir)/'`field.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfieldswindow_la-field.Tpo $(DEPDIR)/libfieldswindow_la-field.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='field.cpp' object='libfieldswindow_la-field.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libfieldswindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libfieldswindow_la-field.lo `test -f 'field.cpp' || echo '$(srcdir)/'`field.cpp
+
 libfieldswindow_la-fieldswindow.lo: fieldswindow.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libfieldswindow_la_CXXFLAGS) $(CXXFLAGS) -MT libfieldswindow_la-fieldswindow.lo -MD -MP -MF $(DEPDIR)/libfieldswindow_la-fieldswindow.Tpo -c -o libfieldswindow_la-fieldswindow.lo `test -f 'fieldswindow.cpp' || echo '$(srcdir)/'`fieldswindow.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfieldswindow_la-fieldswindow.Tpo $(DEPDIR)/libfieldswindow_la-fieldswindow.Plo
@@ -509,13 +511,6 @@ libfieldswindow_la-fieldwindow.lo: fieldwindow.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fieldwindow.cpp' object='libfieldswindow_la-fieldwindow.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libfieldswindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libfieldswindow_la-fieldwindow.lo `test -f 'fieldwindow.cpp' || echo '$(srcdir)/'`fieldwindow.cpp
-
-libfieldswindow_la-field.lo: field.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libfieldswindow_la_CXXFLAGS) $(CXXFLAGS) -MT libfieldswindow_la-field.lo -MD -MP -MF $(DEPDIR)/libfieldswindow_la-field.Tpo -c -o libfieldswindow_la-field.lo `test -f 'field.cpp' || echo '$(srcdir)/'`field.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfieldswindow_la-field.Tpo $(DEPDIR)/libfieldswindow_la-field.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='field.cpp' object='libfieldswindow_la-field.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libfieldswindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libfieldswindow_la-field.lo `test -f 'field.cpp' || echo '$(srcdir)/'`field.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

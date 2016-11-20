@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ## Created by Anjuta
 
-SUBDIRS = dbinterface libsqlite libodbc libdbloader libfieldswindow libdialogs libshapeframework libdbwindow po dbhandler
+SUBDIRS = dbinterface libsqlite libodbc libdbloader libfieldswindow libfieldswindow libdialogs libshapeframework libdbwindow po dbhandler
 
 dist_doc_DATA = \
 	README \
