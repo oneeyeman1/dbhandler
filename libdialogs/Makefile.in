@@ -393,13 +393,11 @@ libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	--cxxflags` 
 
 libdialogs_la_LDFLAGS = -L../libsqlite \
-	-L../libfieldswindow/ \
 	-L../libshapeframework/ \
 	-L../dbinterface \
 	-L../libfieldswindow \
 	-ldbinterface \
 	-lsqlite_lib \
-	-lfieldswindow \
 	-lshapeframework \
 	-lfieldswindow \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
