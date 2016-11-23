@@ -383,6 +383,11 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
     SQLSMALLINT OutConnStrLen;
     SQLRETURN ret;
     SQLUSMALLINT options;
+    std::wstring query1 = L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254) PRIMARY KEY abc_tnam, abc_ownr, abc_cnam);";
+    std::wstring query2 = L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32) PRIMARY KEY abe_name, abe_seqn);";
+    std::wstring query3 = L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer PRIMARY KEY abf_name);";
+    std::wstring query4 = L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254) PRIMARY KEY abl_tnam, abl_ownr);";
+    std::wstring query5 = L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254) PRIMARY KEY abv_name);";
     m_connectString = new SQLWCHAR[sizeof(SQLWCHAR) * 1024];
     memset( dsn, 0, sizeof( dsn ) );
     memset( connectStrIn, 0, sizeof( connectStrIn ) );
@@ -413,6 +418,73 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                     }
                     else
                     {
+                        ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 2 );
+                            result = 1;
+                        }
+                        else
+                        {
+                            ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                            {
+                                SQLWCHAR *query = new SQLWCHAR[query1.length()];
+                                uc_to_str_cpy( query, query1 );
+                                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                delete query;
+                                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                {
+                                    SQLWCHAR *query = new SQLWCHAR[query2.length()];
+                                    uc_to_str_cpy( query, query2 );
+                                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                    delete query;
+                                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        SQLWCHAR *query = new SQLWCHAR[query3.length()];
+                                        uc_to_str_cpy( query, query3 );
+                                        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                        delete query;
+                                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            SQLWCHAR *query = new SQLWCHAR[query4.length()];
+                                            uc_to_str_cpy( query, query4 );
+                                            ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                            delete query;
+                                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                SQLWCHAR *query = new SQLWCHAR[query5.length()];
+                                                uc_to_str_cpy( query, query5 );
+                                                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                                delete query;
+                                                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                                {
+                                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 2 );
+                            result = 1;
+                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                        }
+                        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 2 );
+                            result = 1;
+                        }
+                        ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) TRUE, 0 );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 2 );
+                            result = 1;
+                        }
                         ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {

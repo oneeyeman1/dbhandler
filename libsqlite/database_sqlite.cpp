@@ -51,6 +51,12 @@ SQLiteDatabase::~SQLiteDatabase()
 int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    char *err;
+    std::string query1 = "CREATE TABLE IF NOT EXISTS \"sys.abcatcol\"(\"abc_tnam\" char(129) NOT NULL, \"abc_tid\" integer, \"abc_ownr\" char(129) NOT NULL, \"abc_cnam\" char(129) NOT NULL, \"abc_cid\" smallint, \"abc_labl\" char(254), \"abc_lpos\" smallint, \"abc_hdr\" char(254), \"abc_hpos\" smallint, \"abc_itfy\" smallint, \"abc_mask\" char(31), \"abc_case\" smallint, \"abc_hght\" smallint, \"abc_wdth\" smallint, \"abc_ptrn\" char(31), \"abc_bmap\" char(1), \"abc_init\" char(254), \"abc_cmnt\" char(254), \"abc_edit\" char(31), \"abc_tag\" char(254), PRIMARY KEY( \"abc_tnam\", \"abc_ownr\", \"abc_cnam\" ));";
+    std::string query2 = "CREATE TABLE IF NOT EXISTS \"sys.abcatedt\"(\"abe_name\" char(30) NOT NULL, \"abe_edit\" char(254), \"abe_type\" smallint, \"abe_cntr\" integer, \"abe_seqn\" smallint NOT NULL, \"abe_flag\" integer, \"abe_work\" char(32), PRIMARY KEY( \"abe_name\", \"abe_seqn\" ));";
+    std::string query3 = "CREATE TABLE IF NOT EXISTS \"sys.abcatfmt\"(\"abf_name\" char(30) NOT NULL, \"abf_frmt\" char(254), \"abf_type\" smallint, \"abf_cntr\" integer, PRIMARY KEY( \"abf_name\" ));";
+    std::string query4 = "CREATE TABLE IF NOT EXISTS \"sys.abcattbl\"(\"abt_tnam\" char(129) NOT NULL, \"abt_tid\" integer, \"abt_ownr\" char(129) NOT NULL, \"abd_fhgt\" smallint, \"abd_fwgt\" smallint, \"abd_fitl\" char(1), \"abd_funl\" char(1), \"abd_fchr\" smallint, \"abd_fptc\" smallint, \"abd_ffce\" char(18), \"abh_fhgt\" smallint, \"abh_fwgt\" smallint, \"abh_fitl\" char(1), \"abh_funl\" char(1), \"abh_fchr\" smallint, \"abh_fptc\" smallint, \"abh_ffce\" char(18), \"abl_fhgt\" smallint, \"abl_fwgt\" smallint, \"abl_fitl\" char(1), \"abl_funl\" char(1), \"abl_fchr\" smallint, \"abl_fptc\" smallint, \"abl_ffce\" char(18), \"abt_cmnt\" char(254), PRIMARY KEY( \"abt_tnam\", \"abt_ownr\" ));";
+    std::string query5 = "CREATE TABLE IF NOT EXISTS \"sys.abcatvld\"(\"abv_name\" char(30) NOT NULL, \"abv_vald\" char(254), \"abv_type\" smallint, \"abv_cntr\" integer, \"abv_msg\" char(254), PRIMARY KEY( \"abv_name\" ));";
     std::wstring errorMessage;
     std::wstring_convert<std::codecvt_utf8<wchar_t> > myconv;
     int res = sqlite3_open( myconv.to_bytes( selectedDSN.c_str() ).c_str(), &m_db );
@@ -62,17 +68,59 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
     }
     else
     {
-        m_catalog = selectedDSN;
-        GetTableListFromDb( errorMsg );
-        res = sqlite3_exec( m_db, "PRAGMA foreign_keys = ON", NULL, NULL, NULL );
+        res = sqlite3_exec( m_db, "BEGIN TRANSACTION", NULL, NULL, &err );
         if( res != SQLITE_OK )
         {
-            result = 1;
             GetErrorMessage( res, errorMessage );
             errorMsg.push_back( errorMessage );
+            result = 1;
+            sqlite3_free( err );
+        }
+        else
+        {
+            res = sqlite3_exec( m_db, query1.c_str(), NULL, NULL, &err );
+            if( res == SQLITE_OK )
+            {
+                res = sqlite3_exec( m_db, query2.c_str(), NULL, NULL, &err );
+                if( res == SQLITE_OK )
+                {
+                    res = sqlite3_exec( m_db, query3.c_str(), NULL, NULL, &err );
+                    if( res == SQLITE_OK )
+					{
+                        res = sqlite3_exec( m_db, query4.c_str(), NULL, NULL, &err );
+                        if( res == SQLITE_OK )
+                        {
+                            res = sqlite3_exec( m_db, query5.c_str(), NULL, NULL, &err );
+                            if( res == SQLITE_OK )
+                                sqlite3_exec( m_db, "COMMIT", NULL, NULL, &err );
+                        }
+					}
+                }
+            }
+        }
+        if( res != SQLITE_OK )
+        {
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+            res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
+            result = 1;
+            sqlite3_free( err );
+        }
+		else
+        {
+            m_catalog = selectedDSN;
+            GetTableListFromDb( errorMsg );
+            res = sqlite3_exec( m_db, "PRAGMA foreign_keys = ON", NULL, NULL, NULL );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+			else
+                pimpl->m_dbName = m_catalog;
         }
     }
-    pimpl->m_dbName = m_catalog;
     return result;
 }
 

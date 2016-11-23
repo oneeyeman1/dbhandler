@@ -27,6 +27,7 @@ class Field
 public:
     Field()
     {
+        comment = L"";
         column_name = column_type = column_defaultValue = L"";
         field_size = -1;
         decimal_size = -1;
@@ -35,6 +36,7 @@ public:
 
     Field(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false)
     {
+        comment = L"";
         column_name = columnName;
         column_type = columnType;
         field_size = size;
@@ -52,7 +54,7 @@ public:
     bool IsPrimaryKey() { return column_pk; }
     bool IsAutoIncrement() { return autoIncrement; }
 private:
-    std::wstring column_name, column_type, column_defaultValue;
+    std::wstring column_name, column_type, column_defaultValue, comment;
     bool autoIncrement;
     bool column_isNull, column_pk;
     int field_size, decimal_size;
@@ -86,6 +88,7 @@ class DatabaseTable
 public:
     DatabaseTable(const std::wstring &tableName, const std::vector<Field *> &tableFields, const std::map<int,std::vector<FKField *> > &foreignKeys)
     {
+        comment = L"";
         table_name = tableName;
         table_fields = tableFields;
         foreign_keys = foreignKeys;
@@ -94,7 +97,7 @@ public:
     const std::vector<Field *> &GetFields() { return table_fields; }
     std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
 private:
-    std::wstring table_name;
+    std::wstring table_name, comment;
     std::vector<Field *> table_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
 };
