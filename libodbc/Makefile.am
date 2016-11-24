@@ -9,7 +9,8 @@ libodbc_lib_la_SOURCES =  \
 	database_odbc.h
 
 libodbc_lib_la_CXXFLAGS = -I../../dbinterface \
-	-DUNICODE 
+	-DUNICODE \
+	-DUNIXODBC 
 
 libodbc_lib_la_LDFLAGS = -L../dbinterface \
 	-ldbinterface \

@@ -63,11 +63,11 @@ Makefile
 po/Makefile.in
 dbinterface/Makefile
 libsqlite/Makefile
+libodbc/Makefile
+libshapeframework/Makefile
+libfieldswindow/Makefile
 libdialogs/Makefile
 libdbloader/Makefile
-libodbc/Makefile
-dbhandler/Makefile
-libfieldswindow/Makefile
-libshapeframework/Makefile
 libdbwindow/Makefile
+dbhandler/Makefile
 ])

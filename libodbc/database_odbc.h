@@ -9,6 +9,11 @@ struct SQLTablesDataBinding
     SQLLEN StrLen_or_Ind;
 };
 
+#ifdef UNIXODBC
+#define TRUE 1
+#define FALSE 0
+#endif
+
 #ifdef WIN32
 class __declspec(dllexport) ODBCDatabase : public Database
 #else
