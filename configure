@@ -17174,7 +17174,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-ac_config_files="$ac_config_files Makefile po/Makefile.in dbinterface/Makefile libsqlite/Makefile libdialogs/Makefile libdbloader/Makefile libodbc/Makefile dbhandler/Makefile libfieldswindow/Makefile libshapeframework/Makefile libdbwindow/Makefile"
+ac_config_files="$ac_config_files Makefile po/Makefile.in dbinterface/Makefile libsqlite/Makefile libodbc/Makefile libshapeframework/Makefile libfieldswindow/Makefile libdialogs/Makefile libdbloader/Makefile libdbwindow/Makefile dbhandler/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -18299,13 +18299,13 @@ do
     "po/Makefile.in") CONFIG_FILES="$CONFIG_FILES po/Makefile.in" ;;
     "dbinterface/Makefile") CONFIG_FILES="$CONFIG_FILES dbinterface/Makefile" ;;
     "libsqlite/Makefile") CONFIG_FILES="$CONFIG_FILES libsqlite/Makefile" ;;
+    "libodbc/Makefile") CONFIG_FILES="$CONFIG_FILES libodbc/Makefile" ;;
+    "libshapeframework/Makefile") CONFIG_FILES="$CONFIG_FILES libshapeframework/Makefile" ;;
+    "libfieldswindow/Makefile") CONFIG_FILES="$CONFIG_FILES libfieldswindow/Makefile" ;;
     "libdialogs/Makefile") CONFIG_FILES="$CONFIG_FILES libdialogs/Makefile" ;;
     "libdbloader/Makefile") CONFIG_FILES="$CONFIG_FILES libdbloader/Makefile" ;;
-    "libodbc/Makefile") CONFIG_FILES="$CONFIG_FILES libodbc/Makefile" ;;
-    "dbhandler/Makefile") CONFIG_FILES="$CONFIG_FILES dbhandler/Makefile" ;;
-    "libfieldswindow/Makefile") CONFIG_FILES="$CONFIG_FILES libfieldswindow/Makefile" ;;
-    "libshapeframework/Makefile") CONFIG_FILES="$CONFIG_FILES libshapeframework/Makefile" ;;
     "libdbwindow/Makefile") CONFIG_FILES="$CONFIG_FILES libdbwindow/Makefile" ;;
+    "dbhandler/Makefile") CONFIG_FILES="$CONFIG_FILES dbhandler/Makefile" ;;
     "po/stamp-it") CONFIG_COMMANDS="$CONFIG_COMMANDS po/stamp-it" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
