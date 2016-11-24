@@ -84,6 +84,7 @@ void DatabaseType::OnPageChanged(wxWizardEvent &event)
         if( button )
         {
             button->SetLabel( _( "Connect" ) );
+            dynamic_cast<wxButton *>( button )->SetDefault();
             button->Enable( false );
         }
     }
