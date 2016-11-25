@@ -450,32 +450,36 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                 ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                 {
-                                    SQLWCHAR *query = new SQLWCHAR[query1.length() + 1];
-                                    memset( query, '\0', query1.size() + 1 );
+                                    SQLWCHAR *query = new SQLWCHAR[query1.length() + 2];
+                                    memset( query, '\0', query1.size() + 2 );
                                     uc_to_str_cpy( query, query1 );
                                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                     delete query;
                                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                     {
-                                        SQLWCHAR *query = new SQLWCHAR[query2.length()];
+                                        SQLWCHAR *query = new SQLWCHAR[query2.length() + 2];
+                                        memset( query, '\0', query1.size() + 2 );
                                         uc_to_str_cpy( query, query2 );
                                         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                         delete query;
                                         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                         {
-                                            SQLWCHAR *query = new SQLWCHAR[query3.length()];
+                                            SQLWCHAR *query = new SQLWCHAR[query3.length() + 2];
+                                            memset( query, '\0', query1.size() + 2 );
                                             uc_to_str_cpy( query, query3 );
                                             ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                             delete query;
                                             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                             {
-                                                SQLWCHAR *query = new SQLWCHAR[query4.length()];
+                                                SQLWCHAR *query = new SQLWCHAR[query4.length() + 2];
+                                                memset( query, '\0', query1.size() + 2 );
                                                 uc_to_str_cpy( query, query4 );
                                                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                 delete query;
                                                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                                 {
-                                                    SQLWCHAR *query = new SQLWCHAR[query5.length()];
+                                                    SQLWCHAR *query = new SQLWCHAR[query5.length() + 2];
+                                                    memset( query, '\0', query1.size() + 2 );
                                                     uc_to_str_cpy( query, query5 );
                                                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                     delete query;
@@ -490,6 +494,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                 }
                                 if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO )
                                 {
+                                    GetErrorMessage( errorMsg, 2 );
                                     ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                                     result = 1;
                                 }
