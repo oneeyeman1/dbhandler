@@ -130,7 +130,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
 				{
                     if( type == L"SQLite" )
                     {
-                        if( !sysTableIncluded && tableName.substr( 0, 6 ) != L"sqlite" )
+						if( !sysTableIncluded && ( ( tableName.substr( 0, 6 ) != L"sqlite" ) && ( tableName.substr( 0, 3 ) != L"sys" ) ) )
                             m_tables->Append( tableName );
                         else if( sysTableIncluded )
                             m_tables->Append( tableName );
