@@ -49,10 +49,12 @@ public:
 
     const std::wstring &GetFieldName() { return column_name; }
     const std::wstring &GetFieldType() { return column_type; }
+    const std::wstring &GetComment() { return comment; }
     int GetFieldSize() { return field_size; }
     int GetPrecision() { return decimal_size; }
     bool IsPrimaryKey() { return column_pk; }
     bool IsAutoIncrement() { return autoIncrement; }
+    void SetComment(const std::wstring &comment) { this->comment = comment; }
 private:
     std::wstring column_name, column_type, column_defaultValue, comment;
     bool autoIncrement;
@@ -94,6 +96,8 @@ public:
         foreign_keys = foreignKeys;
     }
     const std::wstring &GetTableName() { return table_name; }
+    const std::wstring &GetComment() { return comment; }
+    void SetComment(const std::wstring &comment) { this->comment = comment; }
     const std::vector<Field *> &GetFields() { return table_fields; }
     std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
 private:
