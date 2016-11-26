@@ -24,6 +24,7 @@ protected:
     virtual void DrawNormal(wxDC &dc);
 private:
     wxSFTextShape *m_pLabel;
+    wxSFTextShape *m_comment;
     wxSFFlexGridShape* m_pGrid;
     DatabaseTable *m_table;
 };

@@ -28,8 +28,9 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
     SetFill( wxBrush( wxColour( 210, 225, 245 ) ) );
     SetRadius( 15 );
     m_pLabel = new wxSFTextShape();
+    m_comment = new wxSFTextShape();
     m_pGrid = new wxSFFlexGridShape();
-    if( m_pLabel && m_pGrid )
+    if( m_pLabel && m_comment && m_pGrid )
     {
         m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
         m_pLabel->SetHAlign( wxSFShapeBase::halignCENTER );
@@ -39,6 +40,15 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
         m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
         SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
+        // table comment
+        m_comment->SetVAlign( wxSFShapeBase::valignTOP );
+        m_comment->SetHAlign( wxSFShapeBase::halignRIGHT );
+        m_comment->SetVBorder( 1 );
+        m_comment->SetHBorder( 5 );
+        m_comment->GetFont().SetPointSize( 8 );
+        m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
+        m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+        SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
         // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
         m_pGrid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
@@ -69,8 +79,9 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
     AddStyle( sfsLOCK_CHILDREN );
     SetRadius(15);
     m_pLabel = new wxSFTextShape();
+    m_comment = new wxSFTextShape();
     m_pGrid = new wxSFFlexGridShape();
-    if( m_pLabel && m_pGrid )
+    if( m_pLabel && m_comment && m_pGrid )
     {
         m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
         m_pLabel->SetHAlign( wxSFShapeBase::halignCENTER );
@@ -81,6 +92,17 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
 		m_pLabel->SetText( m_table->GetTableName() );
         m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
         SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
+        // table comment
+        m_comment->SetVAlign( wxSFShapeBase::valignTOP );
+        m_comment->SetHAlign( wxSFShapeBase::halignRIGHT );
+        m_comment->SetVBorder( 1 );
+        m_comment->SetHBorder( 5 );
+        m_comment->GetFont().SetPointSize( 8 );
+        m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
+		m_comment->SetText( m_table->GetComment() );
+        m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+        SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
+        // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
         m_pGrid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
         m_pGrid->SetDimensions( 1, 3 );
@@ -116,7 +138,7 @@ void MyErdTable::UpdateTable()
     for( std::vector<Field *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
 		AddColumn( (*it)->GetFieldName(), (*it)->GetComment(), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : Constraint::noKey );
-        i += 3;
+        i += 2;
     }
     m_pGrid->Update();
     Update();
