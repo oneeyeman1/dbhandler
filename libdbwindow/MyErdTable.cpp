@@ -48,6 +48,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         m_pGrid->SetHAlign( wxSFShapeBase::halignLEFT );
         m_pGrid->SetVBorder( 13 );
         m_pGrid->SetHBorder( 5 );
+        m_pGrid->AcceptChild( wxT( "FieldShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFTextShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFBitmapShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFShapeBase" ) );
@@ -89,6 +90,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
         m_pGrid->SetVBorder( 13 );
         m_pGrid->SetHBorder( 5 );
         m_pGrid->AcceptChild( wxT( "FieldShape" ) );
+        m_pGrid->AcceptChild( wxT( "wxSFTextShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFBitmapShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFShapeBase" ) );
         m_pGrid->Activate( true );
@@ -179,7 +181,7 @@ void MyErdTable::AddColumn(const wxString &colName, const wxString &comment, int
 				else
 					pBitmap->CreateFromXPM( key_f_xpm );
 				
-				SetCommonProps(pBitmap);
+				SetCommonProps( pBitmap );
 			}
 			else
 				delete pBitmap;
@@ -223,7 +225,7 @@ void MyErdTable::AddColumn(const wxString &colName, const wxString &comment, int
     if( comment_shape )
     {
         comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-        comment_shape->SetId( id + 10000 + 1 );
+        comment_shape->SetId( id + 10000 + 2 );
         comment_shape->Activate( true );
         if( m_pGrid->AppendToGrid( comment_shape ) )
         {
