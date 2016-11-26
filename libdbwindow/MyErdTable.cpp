@@ -42,7 +42,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
         m_pGrid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-        m_pGrid->SetDimensions( 1, 2 );
+        m_pGrid->SetDimensions( 1, 3 );
         m_pGrid->SetFill( *wxTRANSPARENT_BRUSH );
         m_pGrid->SetBorder( *wxTRANSPARENT_PEN );
         m_pGrid->SetHAlign( wxSFShapeBase::halignLEFT );
@@ -82,7 +82,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
         SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         m_pGrid->SetRelativePosition( 0, 17 );
         m_pGrid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-        m_pGrid->SetDimensions( 1, 2 );
+        m_pGrid->SetDimensions( 1, 3 );
         m_pGrid->SetFill( *wxTRANSPARENT_BRUSH );
         m_pGrid->SetBorder( *wxTRANSPARENT_PEN);
         m_pGrid->SetHAlign( wxSFShapeBase::halignLEFT );
@@ -113,8 +113,8 @@ void MyErdTable::UpdateTable()
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
     for( std::vector<Field *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
-        AddColumn( (*it)->GetFieldName(), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : Constraint::noKey );
-        i += 2;
+		AddColumn( (*it)->GetFieldName(), (*it)->GetComment(), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : Constraint::noKey );
+        i += 3;
     }
     m_pGrid->Update();
     Update();
@@ -159,7 +159,7 @@ void MyErdTable::DrawNormal(wxDC &dc)
     DrawDetail( dc );
 }
 
-void MyErdTable::AddColumn(const wxString &colName, int id, Constraint::constraintType type)
+void MyErdTable::AddColumn(const wxString &colName, const wxString &comment, int id, Constraint::constraintType type)
 {
 	if( type != Constraint::noKey )
 	{
@@ -215,6 +215,21 @@ void MyErdTable::AddColumn(const wxString &colName, int id, Constraint::constrai
             SetCommonProps( pCol );
             pCol->GetFont().SetPointSize( 8 );
             pCol->SetText( colName );
+        }
+        else
+            delete pCol;
+    }
+    wxSFTextShape *comment_shape = new wxSFTextShape();
+    if( comment_shape )
+    {
+        comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+        comment_shape->SetId( id + 10000 + 1 );
+        comment_shape->Activate( true );
+        if( m_pGrid->AppendToGrid( comment_shape ) )
+        {
+            SetCommonProps( comment_shape );
+            comment_shape->GetFont().SetPointSize( 8 );
+            comment_shape->SetText( comment );
         }
         else
             delete pCol;
