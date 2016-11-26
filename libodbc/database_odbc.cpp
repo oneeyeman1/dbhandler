@@ -428,6 +428,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                             {
                                 GetErrorMessage( errorMsg, 2 );
                                 result = 1;
+                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                             }
                             else
                             {
@@ -491,15 +492,21 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                             }
                                         }
                                     }
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 1 );
+                                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                        result = 1;
+                                    }
                                 }
-                                if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO )
+								else
                                 {
                                     GetErrorMessage( errorMsg, 2 );
                                     ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                                     result = 1;
                                 }
                             }
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+/*                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 if( !result )
                                 {
@@ -507,7 +514,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                     result = 1;
                                 }
                                 ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                            }
+                            }*/
                             if( m_hstmt )
                             {
                                 ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
