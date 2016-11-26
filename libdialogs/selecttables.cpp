@@ -135,18 +135,23 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                         else if( sysTableIncluded )
                             m_tables->Append( tableName );
                     }
-                    if( type == L"ODBC" )
+                    else
                     {
-                        if( !sysTableIncluded )
+                        if( tableName.substr( 0, 5 ) != L"abcat" && !sysTableIncluded )
+                            continue;
+                        if( type == L"ODBC" )
                         {
-                            if( ( ( tableName.substr( 0, 3 ) != L"sys" ) && ( tableName.substr( 0, 18 ) != L"INFORMATION_SCHEMA" ) ) && tableName.substr( 0, 5 ) != L"abcat" )
-                                m_tables->Append( tableName.substr( 4 ) );
-                        }
-                        else
-                        {
-                            if( tableName.substr( 0, 3 ) == L"dbo" )
-                                tableName = tableName.substr( 4 );
-                            m_tables->Append( tableName );
+                            if( !sysTableIncluded )
+                            {
+                                if( ( ( tableName.substr( 0, 3 ) != L"sys" ) && ( tableName.substr( 0, 18 ) != L"INFORMATION_SCHEMA" ) ) )
+                                    m_tables->Append( tableName.substr( 4 ) );
+                            }
+                            else
+                            {
+                                if( tableName.substr( 0, 3 ) == L"dbo" )
+                                    tableName = tableName.substr( 4 );
+                                m_tables->Append( tableName );
+                            }
                         }
                     }
                 }
