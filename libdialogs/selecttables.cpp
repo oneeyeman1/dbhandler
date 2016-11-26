@@ -139,7 +139,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                     {
                         if( !sysTableIncluded )
                         {
-                            if( ( ( tableName.substr( 0, 3 ) != L"sys" ) && ( tableName.substr( 0, 18 ) != L"INFORMATION_SCHEMA" ) ) )
+                            if( ( ( tableName.substr( 0, 3 ) != L"sys" ) && ( tableName.substr( 0, 18 ) != L"INFORMATION_SCHEMA" ) ) && tableName.substr( 0, 5 ) != L"abcat" )
                                 m_tables->Append( tableName.substr( 4 ) );
                         }
                         else
