@@ -109,18 +109,24 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 
 void MainFrame::InitMenuBar(int id)
 {
+    wxPoint pt;
     wxSize size;
 #ifdef __WXMSW__
+    pt.x = -1;
+    pt.y = -1;
     size.SetHeight( -1 );
-	size.SetHeight( -1 );
+    size.SetHeight( -1 );
 #endif
 #ifdef __WXGTK__
+    wxPoint tbPoint = GetToolBar()->GetPosition();
+    pt.x = -1;
+    pt.y = tbPoint.y + 1;
     size.SetHeight( GetToolBar()->GetSize().GetHeight() );
     size.SetWidth( -1 );
 #endif
 #if defined __WXMSW__ || defined __WXGTK__
     if( !m_tb )
-        m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, size, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
+        m_tb = new wxToolBar( this, wxID_ANY, pt, size, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
 #endif
     m_menuFile->Delete( wxID_NEW );
     m_menuFile->Delete( wxID_OPEN );
