@@ -33,7 +33,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
     if( m_pLabel && m_comment && m_pGrid )
     {
         m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
-        m_pLabel->SetHAlign( wxSFShapeBase::halignCENTER );
+        m_pLabel->SetHAlign( wxSFShapeBase::halignLEFT );
         m_pLabel->SetVBorder( 1 );
         m_pLabel->SetHBorder( 5 );
         m_pLabel->GetFont().SetPointSize( 8 );
@@ -84,7 +84,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
     if( m_pLabel && m_comment && m_pGrid )
     {
         m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
-        m_pLabel->SetHAlign( wxSFShapeBase::halignCENTER );
+        m_pLabel->SetHAlign( wxSFShapeBase::halignLEFT );
         m_pLabel->SetVBorder( 1 );
         m_pLabel->SetHBorder( 5 );
         m_pLabel->GetFont().SetPointSize( 8 );
