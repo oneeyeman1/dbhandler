@@ -130,7 +130,6 @@ void DrawingView::GetTablesForView(Database *db)
     if( lib.IsLoaded() )
     {
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        DrawingDocument *doc = GetDocument();
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames() );
         if( res != wxID_CANCEL )
         {
