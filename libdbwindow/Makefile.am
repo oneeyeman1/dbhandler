@@ -33,7 +33,9 @@ libdbwindow_la_SOURCES =  \
 	MyErdTable.cpp \
 	MyErdTable.h \
 	ErdLineShape.cpp \
-	ErdLineShape.h
+	ErdLineShape.h \
+	FieldShape.cpp \
+	FieldShape.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../dbinterface \
