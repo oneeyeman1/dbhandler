@@ -137,7 +137,7 @@ void MainFrame::InitMenuBar(int id)
 #if defined __WXMSW__ || defined __WXGTK__
             m_tb->ClearTools();
             m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-            m_tb->AddTool( wxID_SELECTTABLE, _( "" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "" ), _( "" ) );
+            m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
             m_tb->Realize();
 #endif
             DatabaseMenu();
