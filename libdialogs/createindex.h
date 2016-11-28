@@ -12,14 +12,6 @@
 #ifndef CREATEINDEX_H
 #define CREATEINDEX_H
 
-#include <wx/wx.h>
-#include <wx/image.h>
-#include <wx/intl.h>
-
-#ifndef APP_CATALOG
-#define APP_CATALOG "app"  // replace with the appropriate catalog name
-#endif
-
 class CreateIndex: public wxDialog
 {
 public:
@@ -55,6 +47,15 @@ protected:
     wxRadioButton* m_duplicate;
     wxRadioButton* m_ascending;
     wxRadioButton* m_descending;
+    wxRadioButton *m_indextypeBtree;
+    wxRadioButton *m_indextypeHash;
+    wxRadioButton *m_algorythmDefault;
+    wxRadioButton *m_algorythmInPlace;
+    wxRadioButton *m_algorythmCopy;
+    wxRadioButton *m_lockDefault;
+    wxRadioButton *m_lockNone;
+    wxRadioButton *m_lockShared;
+    wxRadioButton *m_lockExclusive;
     wxStaticText* m_label3;
     FieldWindow* m_indexColumns;
     wxListCtrl* m_table;
