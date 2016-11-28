@@ -22,11 +22,14 @@ libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	--cxxflags` 
 
 libdialogs_la_LDFLAGS = -L../libsqlite \
-	-L../libshapeframework/ \
+	-L../libshapeframework \
 	-L../dbinterface \
 	-L../libfieldswindow \
+	-L../libodbc \
+	-Wl,-rpath,/home/igor/dbhandler/libfieldswindow/.lib \
 	-ldbinterface \
 	-lsqlite_lib \
+	-lodbc_lib \
 	-lshapeframework \
 	-lfieldswindow \
 	`/home/igor/wxWidgets/buildGTK/wx-config \

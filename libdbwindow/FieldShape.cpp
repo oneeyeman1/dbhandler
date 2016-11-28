@@ -1,4 +1,4 @@
-#include "wxsf/textshape.h"
+#include "wxsf/TextShape.h"
 #include "FieldShape.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(FieldShape,wxSFTextShape);
