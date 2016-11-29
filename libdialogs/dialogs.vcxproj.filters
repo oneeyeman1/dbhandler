@@ -25,6 +25,9 @@
     <ClCompile Include="createindex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="properties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="odbcconfigure.h">
@@ -37,6 +40,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="createindex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="properties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
