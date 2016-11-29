@@ -25,7 +25,7 @@ public:
 private:
     std::vector<int> m_selectedItems;
     std::vector<std::wstring> m_fields;
-    std::wstring m_command;
+    std::wstring m_command, m_dbType, m_dbSubType;
     DatabaseTable *m_dbTable;
     Database *m_db;
     // begin wxGlade: CreateIndex::methods
@@ -56,6 +56,12 @@ protected:
     wxRadioButton *m_lockNone;
     wxRadioButton *m_lockShared;
     wxRadioButton *m_lockExclusive;
+    wxRadioButton *m_concurrently;
+    wxRadioButton *m_nonConcurrently;
+    wxRadioButton *m_indextypeGist;
+    wxRadioButton *m_indextypeGin;
+    wxRadioButton *m_nullsFirst;
+    wxRadioButton *m_nullsLast;
     wxStaticText* m_label3;
     FieldWindow* m_indexColumns;
     wxListCtrl* m_table;

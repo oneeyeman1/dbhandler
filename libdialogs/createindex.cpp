@@ -32,6 +32,8 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
 {
     m_dbTable = table;
     m_db = db;
+    m_dbType = m_db->GetTableVector().m_type;
+    m_dbSubType = m_db->GetTableVector().m_subtype;
     // begin wxGlade: CreateIndex::CreateIndex
     panel_1 = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( panel_1, wxID_ANY, _( "Table" ) );
@@ -42,7 +44,18 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_duplicate = new wxRadioButton( panel_1, wxID_ANY, _( "&Duplicate" ) );
     m_ascending = new wxRadioButton( panel_1, wxID_ANY, _( "&Ascending" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
     m_descending = new wxRadioButton( panel_1, wxID_ANY, _( "&Descending" ) );
-	if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"mySQL" ) || m_db->GetTableVector().m_type == L"mySQL" )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Postgres" ) || m_dbType == L"Postgres" )
+    {
+        m_nonConcurrently = new wxRadioButton( panel_1, wxID_ANY, _( "Non-Concurrently" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+        m_concurrently = new wxRadioButton( panel_1, wxID_ANY, _( "Concurrently" ) );
+        m_indextypeBtree = new wxRadioButton( panel_1, wxID_ANY, _( "Using Btrree" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+        m_indextypeHash = new wxRadioButton( panel_1, wxID_ANY, _( "Using Hash" ) );
+        m_indextypeGist = new wxRadioButton( panel_1, wxID_ANY, _( "Using Gist" ) );
+        m_indextypeGin = new wxRadioButton( panel_1, wxID_ANY, _( "Using Gin" ) );
+        m_nullsFirst = new wxRadioButton( panel_1, wxID_ANY, _( "NULLS: First" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+        m_nullsLast = new wxRadioButton( panel_1, wxID_ANY, _( "NULLS: Last" ) );
+    }
+	if( ( m_dbType == L"ODBC" && m_dbSubType == L"mySQL" ) || m_dbType == L"mySQL" )
     {
         m_indextypeBtree = new wxRadioButton( panel_1, wxID_ANY, _( "Using Btrree" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
         m_indextypeHash = new wxRadioButton( panel_1, wxID_ANY, _( "Using Hash" ) );
@@ -106,16 +119,22 @@ void CreateIndex::do_layout()
     wxBoxSizer *sizer_9 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer_8 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer_1 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer *sizer_16 = NULL;
-    wxBoxSizer *sizer_17 = NULL;
-    wxBoxSizer *sizer_18 = NULL;
-    wxBoxSizer *sizer_19 = NULL;
-    if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"mySQL" ) || m_db->GetTableVector().m_type == L"mySQL" )
+    wxBoxSizer *sizer_16;
+    wxBoxSizer *sizer_17;
+    wxBoxSizer *sizer_18;
+    wxBoxSizer *sizer_19;
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"mySQL" ) || m_dbType == L"mySQL" )
     {
         wxBoxSizer *sizer_16 = new wxBoxSizer( wxHORIZONTAL );
         wxBoxSizer *sizer_17 = new wxBoxSizer( wxVERTICAL );
         wxBoxSizer *sizer_18 = new wxBoxSizer( wxVERTICAL );
         wxBoxSizer *sizer_19 = new wxBoxSizer( wxVERTICAL );
+    }
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Postgres" ) || m_dbType == L"Postgres" )
+    {
+        wxBoxSizer *sizer_16 = new wxBoxSizer( wxHORIZONTAL );
+        wxBoxSizer *sizer_17 = new wxBoxSizer( wxVERTICAL );
+        wxBoxSizer *sizer_18 = new wxBoxSizer( wxVERTICAL );
     }
     sizer_3->Add( 10, 10, 0, wxEXPAND, 0 );
     sizer_4->Add( 10, 10, 0, wxEXPAND, 0 );
@@ -136,11 +155,33 @@ void CreateIndex::do_layout()
     sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_12->Add( m_ascending, 0, wxEXPAND, 0 );
     sizer_12->Add( m_descending, 0, wxEXPAND, 0 );
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Postgres" ) || m_dbType == L"Postgres" )
+    {
+        sizer_12->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_12->Add( m_nonConcurrently, 0, wxEXPAND, 0 );
+        sizer_12->Add( 5, 5, 0, wxEXPAND, 0 );
+		sizer_12->Add( m_concurrently, 0, wxEXPAND, 0 );
+    }
     sizer_10->Add( sizer_12, 0, wxEXPAND, 0 );
     sizer_6->Add( sizer_10, 0, wxEXPAND, 0 );
     sizer_5->Add( sizer_6, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-	if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"mySQL" ) || m_db->GetTableVector().m_type == L"mySQL" )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Postgres" ) || m_dbType == L"Postgres" )
+    {
+        sizer_17->Add( m_indextypeBtree, 0, wxEXPAND, 0 );
+        sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_17->Add( m_indextypeHash, 0, wxEXPAND, 0 );
+        sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_17->Add( m_indextypeGist, 0, wxEXPAND, 0 );
+        sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_17->Add( m_indextypeGin, 0, wxEXPAND, 0 );
+        sizer_16->Add( sizer_17, 0, wxEXPAND, 0 );
+        sizer_18->Add( m_nullsFirst, 0, wxEXPAND, 0 );
+        sizer_18->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_18->Add( m_nullsLast, 0, wxEXPAND, 0 );
+        sizer_16->Add( sizer_18, 0, wxEXPAND, 0 );
+    }
+	if( ( m_dbType == L"ODBC" && m_dbSubType == L"mySQL" ) || m_dbType == L"mySQL" )
     {
         sizer_17->Add( m_indextypeBtree, 0, wxEXPAND, 0 );
         sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
