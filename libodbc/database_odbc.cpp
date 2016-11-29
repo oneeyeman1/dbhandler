@@ -264,7 +264,7 @@ int ODBCDatabase::GetErrorMessage(std::vector<std::wstring> &errorMsg, int type,
         break;
     case 2:
         option = SQL_HANDLE_DBC;
-        handle = m_hdbc == 0 ? m_hdbc : stmt;
+        handle = stmt == 0 ? m_hdbc : stmt;
         break;
     }
     while( ( ret = SQLGetDiagRec( option, handle, i, sqlstate, &native_error, msg, sizeof( msg ), &msglen ) ) == SQL_SUCCESS )
