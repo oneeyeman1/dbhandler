@@ -32,6 +32,7 @@
 #include "res/database_profile.xpm"
 #include "res/database.xpm"
 #include "res/table.xpm"
+#include "res/properties.xpm"
 
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
@@ -138,6 +139,7 @@ void MainFrame::InitMenuBar(int id)
             m_tb->ClearTools();
             m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
             m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+            m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
             m_tb->Realize();
 #endif
             DatabaseMenu();

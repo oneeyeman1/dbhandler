@@ -78,6 +78,7 @@ wxDECLARE_APP(MyApp);
 #define wxID_CONFIGUREODBC          1
 #define wxID_DATABASEWINDOW         2
 #define wxID_DATABASE               3
+#define wxID_PROPERTIES            50
 #define wxID_CREATEDATABASE       100
 #define wxID_DELETEDATABASE       101
 #define wxID_SELECTTABLE          102
