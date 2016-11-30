@@ -16,6 +16,7 @@
 #include "wx/filepicker.h"
 #include "wx/dynlib.h"
 #include "wx/listctrl.h"
+#include "wx/notebook.h"
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
 #include "databasetype.h"
@@ -23,6 +24,7 @@
 #include "selecttables.h"
 #include "fieldwindow.h"
 #include "createindex.h"
+#include "properties.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -136,4 +138,11 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     if( res != wxID_OK && res != wxID_CANCEL )
         command = dlg.GetCommand();
     return res;
+}
+
+extern "C" WXEXPORT void CreatePropertiesDialog(wxWindow *parent, int type, void *object)
+{
+    PropertiesDialog dlg( parent, wxID_ANY, "" );
+	dlg.Center();
+    dlg.ShowModal();
 }

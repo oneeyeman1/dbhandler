@@ -207,7 +207,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
             mnu.AppendSeparator();
             mnu.Append( wxID_TABLEALTERTABLE, _( "Alter Table" ), _( "Alter Table" ), false );
-            mnu.Append( wxID_TABLEPROPERTIES, _( "Properties..." ), _( "Table Properties" ), false );
+            mnu.Append( wxID_PROPERTIES, _( "Properties..." ), _( "Table Properties" ), false );
             mnu.AppendSeparator();
             wxMenu *newObjectMenu = new wxMenu();
             newObjectMenu->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );

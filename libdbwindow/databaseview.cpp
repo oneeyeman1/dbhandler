@@ -34,6 +34,7 @@
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
+typedef void (*CREATEPROPERTIESDIALOG)(wxWindow *parent, int type, void *object);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -47,6 +48,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_OBJECTNEWINDEX, DrawingView::OnNewIndex)
     EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
+	EVT_MENU(wxID_PROPERTIES, DrawingView::OnFieldProperties)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -197,7 +199,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         CREATEINDEX func = (CREATEINDEX) lib.GetSymbol( "CreateIndexForDatabase" );
-        result = func( this->m_frame->GetParent(), table, GetDocument()->GetDatabase(), command );
+        result = func( m_frame, table, GetDocument()->GetDatabase(), command );
         if( result != wxID_OK && result != wxID_CANCEL )
         {
             wxMessageBox( command );
@@ -219,7 +221,19 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &event)
 
 void DrawingView::OnFieldProperties(wxCommandEvent &event)
 {
-    wxMessageBox( "Field properties" );
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
+        func( m_frame, 0, NULL );
+    }
 }
 
 // ----------------------------------------------------------------------------
