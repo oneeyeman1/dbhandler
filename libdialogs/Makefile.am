@@ -13,7 +13,9 @@ libdialogs_la_SOURCES =  \
 	selecttables.cpp \
 	selecttables.h \
 	createindex.cpp \
-	createindex.h
+	createindex.h \
+	properties.cpp \
+	properties.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
