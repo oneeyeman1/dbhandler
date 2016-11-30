@@ -15,6 +15,8 @@
 
 #ifdef __WXOSX__
 #include "../dbhandler/res/database_profile.xpm"
+#include "../dbhandler/res/table.xpm"
+#include "../dbhandler/res/properties.xpm"
 #endif
 
 #include <string>
@@ -82,9 +84,14 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
     m_frame->Move( pt.x, pt.y );
-//    m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
-//    m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-//    m_tb->Realize();
+    m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
+    wxBitmap tmp = wxBitmap( database_profile );
+    bool ok = tmp.IsOk();
+    m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
+    m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+    m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
+    m_tb->Realize();
+    m_frame->SetToolBar( m_tb );
 #endif
     wxASSERT( m_frame == GetFrame() );
     m_canvas = new DatabaseCanvas( this );
