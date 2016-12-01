@@ -59,7 +59,7 @@ void DatabaseCanvas::OnDraw(wxDC& dc)
         m_view->OnDraw( &dc );*/
 }
 
-void DatabaseCanvas::DisplayTables(const std::vector<wxString> &selections)
+void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
 {
     std::vector<MyErdTable *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
     int size = tables.size();
@@ -72,7 +72,14 @@ void DatabaseCanvas::DisplayTables(const std::vector<wxString> &selections)
                 (*it)->Select( true );
             (*it)->UpdateTable();
             startPoint.x += 200;
+			m_displayedTables.push_back( (*it) );
         }
+    }
+    for( std::vector<MyErdTable *>::iterator it1 = m_displayedTables.begin(); it1 < m_displayedTables.end(); it1++ )
+    {
+        wxString name = const_cast<DatabaseTable &>( (*it1)->GetTable() ).GetTableName();
+		if( std::find( selections.begin(), selections.end(), name ) == selections.end() )
+			selections.push_back( name );
     }
     Refresh();
     for( std::vector<MyErdTable *>::iterator it2 = tables.begin(); it2 < tables.end(); it2++ )

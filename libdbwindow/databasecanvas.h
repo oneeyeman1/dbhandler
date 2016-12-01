@@ -8,7 +8,7 @@ class WXEXPORT DatabaseCanvas : public wxSFShapeCanvas
 public:
     enum MODE { modeDESIGN, modeTABLE, modeVIEW, modeLine };
     DatabaseCanvas(wxView *view, wxWindow *parent = NULL);
-    void DisplayTables(const std::vector<wxString> &selections);
+    void DisplayTables(std::vector<wxString> &selections);
     virtual ~DatabaseCanvas();
     virtual void OnLeftDown(wxMouseEvent &event);
     virtual void OnRightDown(wxMouseEvent &event);
@@ -18,6 +18,7 @@ public:
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:
+    std::vector<MyErdTable *> m_displayedTables;
     wxView *m_view;
     wxSFDiagramManager m_pManager;
     bool m_showComments, m_showIndexKeys, m_showIntegrity;
