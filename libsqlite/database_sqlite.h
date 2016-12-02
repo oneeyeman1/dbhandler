@@ -16,10 +16,16 @@ public:
     virtual const std::wstring &GetTableComments(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual void SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
 protected:
+    struct SQLiteImpl;
+    SQLiteImpl *sqlite_pimpl;
     void GetErrorMessage(int code, std::wstring &errorMsg);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
 private:
     sqlite3 *m_db;
+};
+
+struct SQLiteDatabase::SQLiteImpl
+{
     std::wstring m_catalog;
     std::wstring_convert<std::codecvt_utf8<wchar_t> > m_myconv;
 };

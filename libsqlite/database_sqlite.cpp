@@ -19,11 +19,13 @@ SQLiteDatabase::SQLiteDatabase() : Database()
     pimpl = new Impl;
     pimpl->m_type = L"SQLite";
     pimpl->m_subtype = L"";
+    sqlite_pimpl = new SQLiteImpl;
+    sqlite_pimpl->m_catalog = L"";
 }
 
 SQLiteDatabase::~SQLiteDatabase()
 {
-    std::vector<DatabaseTable *> tableVec = pimpl->m_tables[m_catalog];
+    std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
     for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
     {
         std::vector<Field *> fields = (*it)->GetFields();
@@ -58,7 +60,7 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
     std::string query4 = "CREATE TABLE IF NOT EXISTS \"sys.abcattbl\"(\"abt_tnam\" char(129) NOT NULL, \"abt_tid\" integer, \"abt_ownr\" char(129) NOT NULL, \"abd_fhgt\" smallint, \"abd_fwgt\" smallint, \"abd_fitl\" char(1), \"abd_funl\" char(1), \"abd_fchr\" smallint, \"abd_fptc\" smallint, \"abd_ffce\" char(18), \"abh_fhgt\" smallint, \"abh_fwgt\" smallint, \"abh_fitl\" char(1), \"abh_funl\" char(1), \"abh_fchr\" smallint, \"abh_fptc\" smallint, \"abh_ffce\" char(18), \"abl_fhgt\" smallint, \"abl_fwgt\" smallint, \"abl_fitl\" char(1), \"abl_funl\" char(1), \"abl_fchr\" smallint, \"abl_fptc\" smallint, \"abl_ffce\" char(18), \"abt_cmnt\" char(254), PRIMARY KEY( \"abt_tnam\", \"abt_ownr\" ));";
     std::string query5 = "CREATE TABLE IF NOT EXISTS \"sys.abcatvld\"(\"abv_name\" char(30) NOT NULL, \"abv_vald\" char(254), \"abv_type\" smallint, \"abv_cntr\" integer, \"abv_msg\" char(254), PRIMARY KEY( \"abv_name\" ));";
     std::wstring errorMessage;
-    int res = sqlite3_open( m_myconv.to_bytes( selectedDSN.c_str() ).c_str(), &m_db );
+    int res = sqlite3_open( sqlite_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str(), &m_db );
     if( res != SQLITE_OK )
     {
         GetErrorMessage( res, errorMessage );
@@ -107,7 +109,7 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
         }
 		else
         {
-            m_catalog = selectedDSN;
+            sqlite_pimpl->m_catalog = selectedDSN;
             GetTableListFromDb( errorMsg );
             res = sqlite3_exec( m_db, "PRAGMA foreign_keys = ON", NULL, NULL, NULL );
             if( res != SQLITE_OK )
@@ -117,7 +119,7 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
                 errorMsg.push_back( errorMessage );
             }
 			else
-                pimpl->m_dbName = m_catalog;
+                pimpl->m_dbName = sqlite_pimpl->m_catalog;
         }
     }
     return result;
@@ -280,7 +282,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     errorMsg.push_back( errorMessage );
                                     break;
                                 }
-                                fields.push_back( new Field( m_myconv.from_bytes( fieldName ), m_myconv.from_bytes( fieldType ), 0, 0, m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK == 1 ? true : false ) );
+                                fields.push_back( new Field( sqlite_pimpl->m_myconv.from_bytes( fieldName ), sqlite_pimpl->m_myconv.from_bytes( fieldType ), 0, 0, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK == 1 ? true : false ) );
                             }
                             else if( res1 == SQLITE_DONE )
                                 break;
@@ -340,7 +342,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         delete_constraint = SET_DEFAULT_DELETE;
                                     if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
                                         delete_constraint = CASCADE_DELETE;
-                                    foreign_keys[fkReference].push_back( new FKField( m_myconv.from_bytes( fkTable ), m_myconv.from_bytes( fkField ), m_myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
+                                    foreign_keys[fkReference].push_back( new FKField( sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkField ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
                                 }
                                 else if( res3 == SQLITE_DONE )
                                     break;
@@ -366,7 +368,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( res1 == SQLITE_DONE && res3 == SQLITE_DONE )
                     {
-                        pimpl->m_tables[m_catalog].push_back( new DatabaseTable( m_myconv.from_bytes( (const char *) tableName ), fields, foreign_keys ) );
+                        pimpl->m_tables[sqlite_pimpl->m_catalog].push_back( new DatabaseTable( sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName ), fields, foreign_keys ) );
                         fields.erase( fields.begin(), fields.end() );
 						foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                     }
@@ -413,7 +415,7 @@ int SQLiteDatabase::CreateIndex(std::wstring &command, bool isUnique, bool isAsc
             res = sqlite3_step( stmt );
             if( res == SQLITE_ROW )
             {
-				dbIndexName = m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt, 2 ) ) );
+				dbIndexName = sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt, 2 ) ) );
                 if( dbIndexName == indexName )
                 {
                     result = 1;
@@ -462,7 +464,7 @@ int SQLiteDatabase::CreateIndex(std::wstring &command, bool isUnique, bool isAsc
     }
     if( !logOnly )
     {
-        if( ( res = sqlite3_prepare_v2( m_db, m_myconv.to_bytes( command.c_str() ).c_str(), -1, &stmt, 0 ) ) == SQLITE_OK )
+        if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), -1, &stmt, 0 ) ) == SQLITE_OK )
         {
             res = sqlite3_step( stmt );
             if( res != SQLITE_DONE )
@@ -489,15 +491,15 @@ const std::wstring &SQLiteDatabase::GetTableComments(const std::wstring &tableNa
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
     std::wstring query = L"SELECT \"abt_cmnt\" FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ?;";
-    if( int res = sqlite3_prepare_v2( m_db, m_myconv.to_bytes( query.c_str() ).c_str(), query.length(), &stmt, 0 ) == SQLITE_OK )
+    if( int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length(), &stmt, 0 ) == SQLITE_OK )
     {
-        res = sqlite3_bind_text( stmt, 1, m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_STATIC );
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_STATIC );
         if( res == SQLITE_OK )
         {
             res = sqlite3_step( stmt );
             if( res == SQLITE_ROW )
             {
-                comment = m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 0 ) );
+                comment = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 0 ) );
             }
             else if( res != SQLITE_DONE )
             {
