@@ -485,3 +485,11 @@ int SQLiteDatabase::CreateIndex(std::wstring &command, bool isUnique, bool isAsc
     }
     return result;
 }
+
+void SQLiteDatabase::GetTableComments(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+}
+
+void SQLiteDatabase::SetTableComments(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+}

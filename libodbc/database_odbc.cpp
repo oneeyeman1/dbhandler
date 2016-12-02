@@ -1586,3 +1586,11 @@ int ODBCDatabase::CreateIndex(std::wstring &command, bool isUnique, bool isAscen
     }
     return 0;
 }
+
+void ODBCDatabase::GetTableComments(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+}
+
+void ODBCDatabase::SetTableComments(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+}
