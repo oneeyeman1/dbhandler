@@ -16,6 +16,7 @@
 
 #include <map>
 #include <vector>
+#include <codecvt>
 #ifdef _IODBCUNIX_FRAMEWORK
 #include "iODBC/sqlext.h"
 #else
