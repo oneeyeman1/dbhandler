@@ -467,28 +467,28 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                     {
                                         SQLWCHAR *query = new SQLWCHAR[query2.length() + 2];
-                                        memset( query, '\0', query1.size() + 2 );
+                                        memset( query, '\0', query2.size() + 2 );
                                         uc_to_str_cpy( query, query2 );
                                         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                         delete query;
                                         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                         {
                                             SQLWCHAR *query = new SQLWCHAR[query3.length() + 2];
-                                            memset( query, '\0', query1.size() + 2 );
+                                            memset( query, '\0', query3.size() + 2 );
                                             uc_to_str_cpy( query, query3 );
                                             ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                             delete query;
                                             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                             {
                                                 SQLWCHAR *query = new SQLWCHAR[query4.length() + 2];
-                                                memset( query, '\0', query1.size() + 2 );
+                                                memset( query, '\0', query4.size() + 2 );
                                                 uc_to_str_cpy( query, query4 );
                                                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                 delete query;
                                                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                                 {
                                                     SQLWCHAR *query = new SQLWCHAR[query5.length() + 2];
-                                                    memset( query, '\0', query1.size() + 2 );
+                                                    memset( query, '\0', query5.size() + 2 );
                                                     uc_to_str_cpy( query, query5 );
                                                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                     delete query;
@@ -1507,15 +1507,18 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             }
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
             {
-                std::wstring catalog_name, schema_name, table_name;
+                std::wstring catalog_name, schema_name, table_name, comment;
                 str_to_uc_cpy( catalog_name, catalogName );
                 str_to_uc_cpy( schema_name, schemaName );
                 schema_name += L".";
                 str_to_uc_cpy( table_name, tableName );
                 schema_name += table_name;
-                pimpl->m_tables[catalog_name].push_back( new DatabaseTable( schema_name, fields, foreign_keys ) );
-				fields.erase( fields.begin(), fields.end() );
-				foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                DatabaseTable *table = new DatabaseTable( schema_name, fields, foreign_keys );
+                GetTableComments( schema_name, comment, errorMsg );
+                table->SetComment( comment );
+                pimpl->m_tables[catalog_name].push_back( table );
+                fields.erase( fields.begin(), fields.end() );
+                foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                 fields.clear();
                 foreign_keys.clear();
             }
@@ -1589,6 +1592,7 @@ int ODBCDatabase::CreateIndex(std::wstring &command, bool isUnique, bool isAscen
 
 void ODBCDatabase::GetTableComments(const std::wstring &tableName, std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
+    std::wstring query = L"SELECT abt_cmnt FROM abcattbl WHERE abt_tnam = ?;";
 }
 
 void ODBCDatabase::SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
