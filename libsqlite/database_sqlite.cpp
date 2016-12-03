@@ -368,12 +368,14 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( res1 == SQLITE_DONE && res3 == SQLITE_DONE )
                     {
+                        std::wstring comment = L"";
                         std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName );
                         DatabaseTable *table = new DatabaseTable( name, fields, foreign_keys );
-						table->SetComment( GetTableComments( name, errorMsg ) );
+                        GetTableComments( name, comment, errorMsg );
+                        table->SetComment( comment );
                         pimpl->m_tables[sqlite_pimpl->m_catalog].push_back( table );
                         fields.erase( fields.begin(), fields.end() );
-						foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                        foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                     }
                 }
                 else if( res == SQLITE_DONE )
@@ -488,16 +490,15 @@ int SQLiteDatabase::CreateIndex(std::wstring &command, bool isUnique, bool isAsc
     return result;
 }
 
-const std::wstring &SQLiteDatabase::GetTableComments(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+void SQLiteDatabase::GetTableComments(const std::wstring &tableName, std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
-    std::wstring comment = L"";
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
     std::wstring query = L"SELECT \"abt_cmnt\" FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ?;";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
-        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_STATIC );
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
         if( res == SQLITE_OK )
         {
             res = sqlite3_step( stmt );
@@ -522,7 +523,6 @@ const std::wstring &SQLiteDatabase::GetTableComments(const std::wstring &tableNa
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
     }
-    return comment;
 }
 
 void SQLiteDatabase::SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
