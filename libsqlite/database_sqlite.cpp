@@ -368,7 +368,10 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( res1 == SQLITE_DONE && res3 == SQLITE_DONE )
                     {
-                        pimpl->m_tables[sqlite_pimpl->m_catalog].push_back( new DatabaseTable( sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName ), fields, foreign_keys ) );
+                        std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName );
+                        DatabaseTable *table = new DatabaseTable( name, fields, foreign_keys );
+						table->SetComment( GetTableComments( name, errorMsg ) );
+                        pimpl->m_tables[sqlite_pimpl->m_catalog].push_back( table );
                         fields.erase( fields.begin(), fields.end() );
 						foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                     }
@@ -491,7 +494,8 @@ const std::wstring &SQLiteDatabase::GetTableComments(const std::wstring &tableNa
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
     std::wstring query = L"SELECT \"abt_cmnt\" FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ?;";
-    if( int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length(), &stmt, 0 ) == SQLITE_OK )
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length(), &stmt, 0 );
+    if( res == SQLITE_OK )
     {
         res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_STATIC );
         if( res == SQLITE_OK )
@@ -523,4 +527,75 @@ const std::wstring &SQLiteDatabase::GetTableComments(const std::wstring &tableNa
 
 void SQLiteDatabase::SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
+    bool found = false;
+    std::wstring errorMessage;
+    sqlite3_stmt *stmt = NULL;
+    std::wstring query1 = L"SELECT count(*) FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ?;", query2;
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), query1.length(), &stmt, 0 );
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_STATIC );
+        if( res == SQLITE_OK )
+        {
+            res = sqlite3_step( stmt );
+            if( res == SQLITE_ROW )
+            {
+                found = true;
+            }
+            else if( res != SQLITE_DONE )
+            {
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+        else
+        {
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    sqlite3_finalize( stmt );
+    if( found )
+        query2 = L"UPDATE \"sys.abcattbl\" SET \"abt_cmnt\" = ? WHERE \"abt_tnam\" = ?";
+    else
+        query2 = L"INSERT INTO \"sys.abcattbl\"(\"abt_cmnt\", \"abt_nam\", \"abt_ownr\"  ) VALUES( ?, ?, \"\" );";
+    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), query2.length(), &stmt, 0 );
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_STATIC );
+        if( res == SQLITE_OK )
+        {
+            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( comment.c_str() ).c_str(), -1, SQLITE_STATIC );
+            if( res == SQLITE_OK )
+            {
+                res = sqlite3_step( stmt );
+                if( res != SQLITE_DONE )
+                {
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                }
+            }
+            else
+            {
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+        else
+        {
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    sqlite3_finalize( stmt );
 }
