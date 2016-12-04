@@ -136,6 +136,10 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
         errorMsg.push_back( errorMessage );
         result = 1;
     }
+//  For debugging purposes - helps find non-closed statements
+    sqlite3_stmt *statement = sqlite3_next_stmt( m_db, NULL );
+    const char *query = sqlite3_sql( statement );
+//  For debugging purposes - helps find non-closed statements
     return result;
 }
 
@@ -534,7 +538,7 @@ void SQLiteDatabase::SetTableComments(const std::wstring &tableName, const std::
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), query1.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
-        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_STATIC );
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
         if( res == SQLITE_OK )
         {
             res = sqlite3_step( stmt );
@@ -567,10 +571,10 @@ void SQLiteDatabase::SetTableComments(const std::wstring &tableName, const std::
     res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), query2.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
-        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_STATIC );
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
         if( res == SQLITE_OK )
         {
-            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( comment.c_str() ).c_str(), -1, SQLITE_STATIC );
+            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( comment.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
             if( res == SQLITE_OK )
             {
                 res = sqlite3_step( stmt );
