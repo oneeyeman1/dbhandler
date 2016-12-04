@@ -55,7 +55,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         m_nullsFirst = new wxRadioButton( panel_1, wxID_ANY, _( "NULLS: First" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
         m_nullsLast = new wxRadioButton( panel_1, wxID_ANY, _( "NULLS: Last" ) );
     }
-	if( ( m_dbType == L"ODBC" && m_dbSubType == L"mySQL" ) || m_dbType == L"mySQL" )
+	if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         m_indextypeBtree = new wxRadioButton( panel_1, wxID_ANY, _( "Using Btrree" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
         m_indextypeHash = new wxRadioButton( panel_1, wxID_ANY, _( "Using Hash" ) );
@@ -123,7 +123,7 @@ void CreateIndex::do_layout()
     wxBoxSizer *sizer_17;
     wxBoxSizer *sizer_18;
     wxBoxSizer *sizer_19;
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"mySQL" ) || m_dbType == L"mySQL" )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         wxBoxSizer *sizer_16 = new wxBoxSizer( wxHORIZONTAL );
         wxBoxSizer *sizer_17 = new wxBoxSizer( wxVERTICAL );
@@ -181,7 +181,7 @@ void CreateIndex::do_layout()
         sizer_18->Add( m_nullsLast, 0, wxEXPAND, 0 );
         sizer_16->Add( sizer_18, 0, wxEXPAND, 0 );
     }
-	if( ( m_dbType == L"ODBC" && m_dbSubType == L"mySQL" ) || m_dbType == L"mySQL" )
+	if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         sizer_17->Add( m_indextypeBtree, 0, wxEXPAND, 0 );
         sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
