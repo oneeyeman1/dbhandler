@@ -37,8 +37,14 @@ dbhandler/res/database.xpm
 libdbwindow/vc_mswuddll
 libdatabaseview.orig/
 wxglade/
-#.DS_Store
-#dbhandler/.DS_Store
+.DS_Store
+dbhandler/.DS_Store
+libdbloader/.DS_Store
+libdialogs/.DS_Store
+libfieldswindow/.DS_Store
+libodbc/.DS_Store
+libpropertypages/.DS_Store
+libsqlite/.DS_Store
 #Build/
 #*.xcuserstatte
 #project.xcworkspace

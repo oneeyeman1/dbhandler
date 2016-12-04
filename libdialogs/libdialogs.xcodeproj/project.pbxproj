@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E39501D31DF3C4730046E51B /* liblibpropertypages.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E39501D21DF3C4730046E51B /* liblibpropertypages.dylib */; };
 		E3D139511D0D0D7100A5A0F7 /* databasetype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D1394A1D0D0D7100A5A0F7 /* databasetype.cpp */; };
 		E3D139521D0D0D7100A5A0F7 /* databasetype.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D1394B1D0D0D7100A5A0F7 /* databasetype.h */; };
 		E3D139531D0D0D7100A5A0F7 /* dialogs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D1394C1D0D0D7100A5A0F7 /* dialogs.cpp */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E39501D21DF3C4730046E51B /* liblibpropertypages.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibpropertypages.dylib; path = ../libpropertypages/build/Debug/liblibpropertypages.dylib; sourceTree = "<group>"; };
 		E3D1393C1D0D0CD100A5A0F7 /* liblibdialogs.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdialogs.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D1394A1D0D0D7100A5A0F7 /* databasetype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasetype.cpp; sourceTree = "<group>"; };
 		E3D1394B1D0D0D7100A5A0F7 /* databasetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasetype.h; sourceTree = "<group>"; };
@@ -46,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E39501D31DF3C4730046E51B /* liblibpropertypages.dylib in Frameworks */,
 				E3E91D791DCC333900675CF8 /* liblibfieldswindow.dylib in Frameworks */,
 				E3D1397B1D0D144A00A5A0F7 /* liblibdbloader.dylib in Frameworks */,
 			);
@@ -57,6 +60,7 @@
 		E3D139331D0D0CD100A5A0F7 = {
 			isa = PBXGroup;
 			children = (
+				E39501D21DF3C4730046E51B /* liblibpropertypages.dylib */,
 				E3E91D781DCC333900675CF8 /* liblibfieldswindow.dylib */,
 				E3D1397A1D0D144A00A5A0F7 /* liblibdbloader.dylib */,
 				E3D139581D0D100B00A5A0F7 /* liblibodbc.dylib */,
@@ -268,6 +272,7 @@
 					"$(inherited)",
 					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
 					/Users/igorkorot/dbhandler/dbhandler/libfieldswindow/build/Debug,
+					/Users/igorkorot/dbhandler/dbhandler/libpropertypages/build/Debug,
 				);
 				OTHER_LDFLAGS = (
 					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
@@ -301,6 +306,7 @@
 					"$(inherited)",
 					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
 					/Users/igorkorot/dbhandler/dbhandler/libfieldswindow/build/Debug,
+					/Users/igorkorot/dbhandler/dbhandler/libpropertypages/build/Debug,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx10.8;
