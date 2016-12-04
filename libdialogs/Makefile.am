@@ -29,7 +29,6 @@ libdialogs_la_LDFLAGS = -L../libsqlite \
 	-L../dbinterface \
 	-L../libfieldswindow \
 	-L../libodbc \
-	-Wl,-rpath,/home/igor/dbhandler/libfieldswindow/.lib \
 	-ldbinterface \
 	-lsqlite_lib \
 	-lodbc_lib \
