@@ -1592,7 +1592,7 @@ int ODBCDatabase::CreateIndex(std::wstring &command, bool isUnique, bool isAscen
 
 void ODBCDatabase::GetTableComments(const std::wstring &tableName, std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
-    SQLINTEGER owner_size = SQL_NTS, name_size = SQL_NTS;
+    SQLLEN owner_size = SQL_NTS, name_size = SQL_NTS;
     SQLHDBC dbc_comment;
     SQLHSTMT stmt_comment;
     SQLWCHAR sql_comment[254];
