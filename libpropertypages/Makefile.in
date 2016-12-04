@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = libdialogs
+subdir = libpropertypages
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -127,20 +127,17 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libdialogs_la_LIBADD =
-am_libdialogs_la_OBJECTS = libdialogs_la-databasetype.lo \
-	libdialogs_la-dialogs.lo libdialogs_la-odbcconfigure.lo \
-	libdialogs_la-selecttables.lo libdialogs_la-createindex.lo \
-	libdialogs_la-properties.lo
-libdialogs_la_OBJECTS = $(am_libdialogs_la_OBJECTS)
+libpropertypages_la_LIBADD =
+am_libpropertypages_la_OBJECTS = libpropertypages_la-tablegeneral.lo
+libpropertypages_la_OBJECTS = $(am_libpropertypages_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-libdialogs_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+libpropertypages_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(libdialogs_la_CXXFLAGS) $(CXXFLAGS) $(libdialogs_la_LDFLAGS) \
-	$(LDFLAGS) -o $@
+	$(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) \
+	$(libpropertypages_la_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -193,8 +190,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libdialogs_la_SOURCES)
-DIST_SOURCES = $(libdialogs_la_SOURCES)
+SOURCES = $(libpropertypages_la_SOURCES)
+DIST_SOURCES = $(libpropertypages_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -374,40 +371,16 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = \
-	libdialogs.la
+	libpropertypages.la
 
-libdialogs_la_SOURCES = \
-	databasetype.cpp \
-	databasetype.h \
-	dialogs.cpp \
-	odbcconfigure.cpp \
-	odbcconfigure.h \
-	selecttables.cpp \
-	selecttables.h \
-	createindex.cpp \
-	createindex.h \
-	properties.cpp \
-	properties.h
+libpropertypages_la_SOURCES = \
+	tablegeneral.cpp \
+	tablegeneral.h
 
-libdialogs_la_CXXFLAGS = -I../../dbinterface \
-	-I../../libfieldswindow \
-	-I../../libshapeframework \
-	-I../../libpropertypages \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+libpropertypages_la_CXXFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
-libdialogs_la_LDFLAGS = -L../libsqlite \
-	-L../libshapeframework \
-	-L../dbinterface \
-	-L../libfieldswindow \
-	-L../libodbc \
-	-Wl,-rpath,/home/igor/dbhandler/libfieldswindow/.lib \
-	-ldbinterface \
-	-lsqlite_lib \
-	-lodbc_lib \
-	-lshapeframework \
-	-lfieldswindow \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+libpropertypages_la_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 
 
 all: all-am
@@ -423,9 +396,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libdialogs/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libpropertypages/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu libdialogs/Makefile
+	  $(AUTOMAKE) --gnu libpropertypages/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -479,8 +452,8 @@ clean-libLTLIBRARIES:
 	  rm -f $${locs}; \
 	}
 
-libdialogs.la: $(libdialogs_la_OBJECTS) $(libdialogs_la_DEPENDENCIES) $(EXTRA_libdialogs_la_DEPENDENCIES) 
-	$(AM_V_CXXLD)$(libdialogs_la_LINK) -rpath $(libdir) $(libdialogs_la_OBJECTS) $(libdialogs_la_LIBADD) $(LIBS)
+libpropertypages.la: $(libpropertypages_la_OBJECTS) $(libpropertypages_la_DEPENDENCIES) $(EXTRA_libpropertypages_la_DEPENDENCIES) 
+	$(AM_V_CXXLD)$(libpropertypages_la_LINK) -rpath $(libdir) $(libpropertypages_la_OBJECTS) $(libpropertypages_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -488,12 +461,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-createindex.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-databasetype.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-dialogs.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-odbcconfigure.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-properties.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-selecttables.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-tablegeneral.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -516,47 +484,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
-libdialogs_la-databasetype.lo: databasetype.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-databasetype.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-databasetype.Tpo -c -o libdialogs_la-databasetype.lo `test -f 'databasetype.cpp' || echo '$(srcdir)/'`databasetype.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-databasetype.Tpo $(DEPDIR)/libdialogs_la-databasetype.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='databasetype.cpp' object='libdialogs_la-databasetype.lo' libtool=yes @AMDEPBACKSLASH@
+libpropertypages_la-tablegeneral.lo: tablegeneral.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertypages_la-tablegeneral.lo -MD -MP -MF $(DEPDIR)/libpropertypages_la-tablegeneral.Tpo -c -o libpropertypages_la-tablegeneral.lo `test -f 'tablegeneral.cpp' || echo '$(srcdir)/'`tablegeneral.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertypages_la-tablegeneral.Tpo $(DEPDIR)/libpropertypages_la-tablegeneral.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tablegeneral.cpp' object='libpropertypages_la-tablegeneral.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-databasetype.lo `test -f 'databasetype.cpp' || echo '$(srcdir)/'`databasetype.cpp
-
-libdialogs_la-dialogs.lo: dialogs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-dialogs.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-dialogs.Tpo -c -o libdialogs_la-dialogs.lo `test -f 'dialogs.cpp' || echo '$(srcdir)/'`dialogs.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-dialogs.Tpo $(DEPDIR)/libdialogs_la-dialogs.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dialogs.cpp' object='libdialogs_la-dialogs.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-dialogs.lo `test -f 'dialogs.cpp' || echo '$(srcdir)/'`dialogs.cpp
-
-libdialogs_la-odbcconfigure.lo: odbcconfigure.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-odbcconfigure.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-odbcconfigure.Tpo -c -o libdialogs_la-odbcconfigure.lo `test -f 'odbcconfigure.cpp' || echo '$(srcdir)/'`odbcconfigure.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-odbcconfigure.Tpo $(DEPDIR)/libdialogs_la-odbcconfigure.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='odbcconfigure.cpp' object='libdialogs_la-odbcconfigure.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-odbcconfigure.lo `test -f 'odbcconfigure.cpp' || echo '$(srcdir)/'`odbcconfigure.cpp
-
-libdialogs_la-selecttables.lo: selecttables.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-selecttables.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-selecttables.Tpo -c -o libdialogs_la-selecttables.lo `test -f 'selecttables.cpp' || echo '$(srcdir)/'`selecttables.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-selecttables.Tpo $(DEPDIR)/libdialogs_la-selecttables.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selecttables.cpp' object='libdialogs_la-selecttables.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-selecttables.lo `test -f 'selecttables.cpp' || echo '$(srcdir)/'`selecttables.cpp
-
-libdialogs_la-createindex.lo: createindex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-createindex.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-createindex.Tpo -c -o libdialogs_la-createindex.lo `test -f 'createindex.cpp' || echo '$(srcdir)/'`createindex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-createindex.Tpo $(DEPDIR)/libdialogs_la-createindex.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='createindex.cpp' object='libdialogs_la-createindex.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-createindex.lo `test -f 'createindex.cpp' || echo '$(srcdir)/'`createindex.cpp
-
-libdialogs_la-properties.lo: properties.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-properties.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-properties.Tpo -c -o libdialogs_la-properties.lo `test -f 'properties.cpp' || echo '$(srcdir)/'`properties.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-properties.Tpo $(DEPDIR)/libdialogs_la-properties.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='properties.cpp' object='libdialogs_la-properties.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-properties.lo `test -f 'properties.cpp' || echo '$(srcdir)/'`properties.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-tablegeneral.lo `test -f 'tablegeneral.cpp' || echo '$(srcdir)/'`tablegeneral.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

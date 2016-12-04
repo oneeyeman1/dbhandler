@@ -70,4 +70,5 @@ libdialogs/Makefile
 libdbloader/Makefile
 libdbwindow/Makefile
 dbhandler/Makefile
+libpropertypages/Makefile
 ])

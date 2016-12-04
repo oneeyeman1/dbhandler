@@ -20,6 +20,7 @@ libdialogs_la_SOURCES =  \
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
 	-I../../libshapeframework \
+	-I../../libpropertypages \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
