@@ -437,7 +437,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                     query1 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254) PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
                                     query2 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatedt' AND xtype='U') CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32) PRIMARY KEY( abe_name, abe_seqn ));";
                                     query3 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatfmt' AND xtype='U') CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer PRIMARY KEY( abf_name ));";
-                                    query4 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254) PRIMARY KEY( abl_tnam, abl_ownr ));";
+                                    query4 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254) PRIMARY KEY( abt_tnam, abt_ownr ));";
                                     query5 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatvld' AND xtype='U') CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254) PRIMARY KEY( abv_name ));";
                                 }
                                 if( pimpl->m_subtype == L"mySQL" || pimpl->m_subtype == L"PostgreSQL" )
@@ -1592,7 +1592,92 @@ int ODBCDatabase::CreateIndex(std::wstring &command, bool isUnique, bool isAscen
 
 void ODBCDatabase::GetTableComments(const std::wstring &tableName, std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
-    std::wstring query = L"SELECT abt_cmnt FROM abcattbl WHERE abt_tnam = ?;";
+    SQLINTEGER owner_size = SQL_NTS, name_size = SQL_NTS;
+    SQLHDBC dbc_comment;
+    SQLHSTMT stmt_comment;
+    SQLWCHAR sql_comment[254];
+    SQLLEN sql_comment_length = 0;
+    int pos = tableName.find( '.' );
+    std::wstring owner = tableName.substr( 0, pos );
+    std::wstring name = tableName.substr( pos + 1 );
+    std::wstring query = L"SELECT abt_cmnt FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
+    RETCODE ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &dbc_comment );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        SQLSMALLINT OutConnStrLen;
+        ret = SQLDriverConnect( dbc_comment, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+        {
+            ret = SQLAllocHandle( SQL_HANDLE_STMT, dbc_comment, &stmt_comment );
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+            {
+                SQLWCHAR *temp = new SQLWCHAR[query.length() + 2];
+                memset( temp, '\0', query.length() + 2 );
+                uc_to_str_cpy( temp, query );
+                SQLWCHAR *sql_owner = new SQLWCHAR[owner.length() + 2];
+                memset( sql_owner, '\0', owner.length() + 2 );
+                uc_to_str_cpy( sql_owner, owner );
+                SQLWCHAR *sql_name = new SQLWCHAR[name.length() + 2];
+                memset( sql_name, '\0', name.length() + 2 );
+                uc_to_str_cpy( sql_name, name );
+                ret = SQLPrepare( stmt_comment, temp, SQL_NTS );
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                {
+                    ret = SQLBindParameter( stmt_comment, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, name.length() + 2, 0, sql_name, 0, &name_size );
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    {
+                        ret = SQLBindParameter( stmt_comment, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, owner.length() + 2, 0, sql_owner, 0, &owner_size );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            ret = SQLExecute( stmt_comment );
+                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                            {
+                                ret = SQLBindCol( stmt_comment, 1, SQL_C_WCHAR, &sql_comment, SQL_NTS, &sql_comment_length );
+                                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                {
+                                }
+                                else
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt_comment );
+                                }
+                            }
+                            else
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_comment );
+                            }
+                        }
+                        else
+                        {
+                            GetErrorMessage( errorMsg, 1, stmt_comment );
+                        }
+                    }
+                    else
+                    {
+                        GetErrorMessage( errorMsg, 1, stmt_comment );
+                    }
+                }
+                else
+                {
+                    GetErrorMessage( errorMsg, 1, stmt_comment );
+                }
+                delete temp;
+                delete sql_owner;
+                delete sql_name;
+            }
+            else
+            {
+                GetErrorMessage( errorMsg, 2, dbc_comment );
+            }
+        }
+        else
+        {
+            GetErrorMessage( errorMsg, 2, dbc_comment );
+        }
+    }
+    else
+    {
+        GetErrorMessage( errorMsg, 0, m_env );
+    }
 }
 
 void ODBCDatabase::SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
