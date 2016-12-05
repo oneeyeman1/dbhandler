@@ -117,6 +117,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
 {
     m_tables->Clear();
     std::wstring type = m_db->GetTableVector().m_type;
+    std::wstring subType = m_db->GetTableVector().m_subtype;
     std::map<std::wstring,std::vector<DatabaseTable *> > tables = m_db->GetTableVector().m_tables;
     std::wstring dbName = m_db->GetTableVector().m_dbName;
     for( std::map<std::wstring,std::vector<DatabaseTable *> >::iterator it = tables.begin(); it != tables.end(); it++ )
@@ -135,23 +136,20 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                         else if( sysTableIncluded )
                             m_tables->Append( tableName );
                     }
-                    else
+                    else if( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
                     {
-                        if( tableName.substr( 0, 5 ) != L"abcat" && !sysTableIncluded )
+                        if( tableName.substr( 0, 9 ) == L"dbo.abcat" && !sysTableIncluded )
                             continue;
-                        if( type == L"ODBC" )
+                        if( !sysTableIncluded )
                         {
-                            if( !sysTableIncluded )
-                            {
-                                if( ( ( tableName.substr( 0, 3 ) != L"sys" ) && ( tableName.substr( 0, 18 ) != L"INFORMATION_SCHEMA" ) ) )
-                                    m_tables->Append( tableName.substr( 4 ) );
-                            }
-                            else
-                            {
-                                if( tableName.substr( 0, 3 ) == L"dbo" )
-                                    tableName = tableName.substr( 4 );
-                                m_tables->Append( tableName );
-                            }
+                            if( ( ( tableName.substr( 0, 3 ) != L"sys" ) && ( tableName.substr( 0, 18 ) != L"INFORMATION_SCHEMA" ) ) )
+                                m_tables->Append( tableName.substr( 4 ) );
+                        }
+                        else
+                        {
+                            if( tableName.substr( 0, 3 ) == L"dbo" )
+                                tableName = tableName.substr( 4 );
+                            m_tables->Append( tableName );
                         }
                     }
                 }
