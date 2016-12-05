@@ -149,6 +149,8 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                         {
                             if( tableName.substr( 0, 3 ) == L"dbo" )
                                 tableName = tableName.substr( 4 );
+                            if( tableName.substr( 0, 18 ) == L"INFORMATION_SCHEMA" )
+                                tableName = tableName.substr( 19 );
                             m_tables->Append( tableName );
                         }
                     }
