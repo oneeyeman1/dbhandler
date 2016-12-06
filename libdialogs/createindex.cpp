@@ -119,22 +119,22 @@ void CreateIndex::do_layout()
     wxBoxSizer *sizer_9 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer_8 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer_1 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer *sizer_16;
-    wxBoxSizer *sizer_17;
-    wxBoxSizer *sizer_18;
-    wxBoxSizer *sizer_19;
+    wxBoxSizer *sizer_16 = NULL;
+    wxBoxSizer *sizer_17 = NULL;
+    wxBoxSizer *sizer_18 = NULL;
+    wxBoxSizer *sizer_19 = NULL;
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
-        wxBoxSizer *sizer_16 = new wxBoxSizer( wxHORIZONTAL );
-        wxBoxSizer *sizer_17 = new wxBoxSizer( wxVERTICAL );
-        wxBoxSizer *sizer_18 = new wxBoxSizer( wxVERTICAL );
-        wxBoxSizer *sizer_19 = new wxBoxSizer( wxVERTICAL );
+        sizer_16 = new wxBoxSizer( wxHORIZONTAL );
+        sizer_17 = new wxBoxSizer( wxVERTICAL );
+        sizer_18 = new wxBoxSizer( wxVERTICAL );
+        sizer_19 = new wxBoxSizer( wxVERTICAL );
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Postgres" ) || m_dbType == L"Postgres" )
     {
-        wxBoxSizer *sizer_16 = new wxBoxSizer( wxHORIZONTAL );
-        wxBoxSizer *sizer_17 = new wxBoxSizer( wxVERTICAL );
-        wxBoxSizer *sizer_18 = new wxBoxSizer( wxVERTICAL );
+        sizer_16 = new wxBoxSizer( wxHORIZONTAL );
+        sizer_17 = new wxBoxSizer( wxVERTICAL );
+        sizer_18 = new wxBoxSizer( wxVERTICAL );
     }
     sizer_3->Add( 10, 10, 0, wxEXPAND, 0 );
     sizer_4->Add( 10, 10, 0, wxEXPAND, 0 );
