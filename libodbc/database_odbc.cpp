@@ -1527,7 +1527,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 std::wstring catalog_name, schema_name, table_name, comment = L"";
                 str_to_uc_cpy( catalog_name, catalogName );
                 str_to_uc_cpy( schema_name, schemaName );
-                schema_name += L".";
+                if( !schema_name.empty() )
+                    schema_name += L".";
                 str_to_uc_cpy( table_name, tableName );
                 schema_name += table_name;
                 DatabaseTable *table = new DatabaseTable( schema_name, fields, foreign_keys );

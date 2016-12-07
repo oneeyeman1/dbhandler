@@ -154,6 +154,12 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                             m_tables->Append( tableName );
                         }
                     }
+                    else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
+                    {
+                        if( tableName.substr( 0, 5 ) == L"abcat" && !sysTableIncluded )
+                            continue;
+                        m_tables->Append( tableName );
+                    }
                 }
             }
         }

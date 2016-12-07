@@ -401,13 +401,16 @@ libdialogs_la_LDFLAGS = -L../libsqlite \
 	-L../dbinterface \
 	-L../libfieldswindow \
 	-L../libodbc \
+	-L../libpropertypages \
+	-Wl,-rpath,/home/igor/dbhandler/Debug/libpropertypages/.libs \
 	-ldbinterface \
 	-lsqlite_lib \
 	-lodbc_lib \
 	-lshapeframework \
 	-lfieldswindow \
+	-lpropertypages \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs` 
+	--libs`
 
 all: all-am
 
