@@ -384,6 +384,8 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
     SQLRETURN ret;
     SQLUSMALLINT options;
     std::wstring query1, query2, query3, query4, query5;
+    if( !pimpl )
+        pimpl = new Impl;
     m_connectString = new SQLWCHAR[sizeof(SQLWCHAR) * 1024];
     memset( dsn, 0, sizeof( dsn ) );
     memset( connectStrIn, 0, sizeof( connectStrIn ) );
@@ -643,9 +645,28 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
             }
         }
     }
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
+	for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
     {
-        for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+        std::vector<DatabaseTable *> tableVec = (*it).second;
+        for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
+        {
+            std::vector<Field *> fields = (*it1)->GetFields();
+            for( std::vector<Field *>::iterator it2 = fields.begin(); it2 < fields.end(); it2++ )
+            {
+                delete (*it2);
+                (*it2) = NULL;
+            }
+            std::map<int,std::vector<FKField *> > fk_fields = (*it1)->GetForeignKeyVector();
+            for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
+            {
+                for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
+                {
+                    delete (*it3);
+                    (*it3) = NULL;
+                }
+            }
+        }
+        for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
         {
             delete (*it1);
             (*it1) = NULL;
