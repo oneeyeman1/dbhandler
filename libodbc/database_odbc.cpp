@@ -379,7 +379,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
 {
     int result = 0, bufferSize = 1024;
     std::vector<SQLWCHAR *> errorMessage;
-    SQLWCHAR connectStrIn[sizeof(SQLWCHAR) * 255], driver[1024], dsn[1024], dbType[1024];
+    SQLWCHAR connectStrIn[sizeof(SQLWCHAR) * 255], driver[1024], dsn[1024], dbType[1024], *query = NULL;
     SQLSMALLINT OutConnStrLen;
     SQLRETURN ret;
     SQLUSMALLINT options;
@@ -459,39 +459,44 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                 ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                 {
-                                    SQLWCHAR *query = new SQLWCHAR[query1.length() + 2];
+                                    query = new SQLWCHAR[query1.length() + 2];
                                     memset( query, '\0', query1.size() + 2 );
                                     uc_to_str_cpy( query, query1 );
                                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                     delete query;
+                                    query = NULL;
                                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                     {
-                                        SQLWCHAR *query = new SQLWCHAR[query2.length() + 2];
+                                        query = new SQLWCHAR[query2.length() + 2];
                                         memset( query, '\0', query2.size() + 2 );
                                         uc_to_str_cpy( query, query2 );
                                         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                         delete query;
+                                        query = NULL;
                                         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                         {
-                                            SQLWCHAR *query = new SQLWCHAR[query3.length() + 2];
+                                            query = new SQLWCHAR[query3.length() + 2];
                                             memset( query, '\0', query3.size() + 2 );
                                             uc_to_str_cpy( query, query3 );
                                             ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                             delete query;
+                                            query = NULL;
                                             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                             {
-                                                SQLWCHAR *query = new SQLWCHAR[query4.length() + 2];
+                                                query = new SQLWCHAR[query4.length() + 2];
                                                 memset( query, '\0', query4.size() + 2 );
                                                 uc_to_str_cpy( query, query4 );
                                                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                 delete query;
+                                                query = NULL;
                                                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                                 {
-                                                    SQLWCHAR *query = new SQLWCHAR[query5.length() + 2];
+                                                    query = new SQLWCHAR[query5.length() + 2];
                                                     memset( query, '\0', query5.size() + 2 );
                                                     uc_to_str_cpy( query, query5 );
                                                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                     delete query;
+                                                    query = NULL;
                                                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                                     {
                                                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
@@ -583,6 +588,8 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
     }
     delete m_connectString;
     m_connectString = 0;
+    delete query;
+    query = NULL;
     return result;
 }
 
@@ -636,6 +643,16 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
             }
         }
     }
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
+    {
+        for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+        {
+            delete (*it1);
+            (*it1) = NULL;
+        }
+    }
+    delete pimpl;
+    pimpl = NULL;
     return result;
 }
 
@@ -1507,7 +1524,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             }
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
             {
-                std::wstring catalog_name, schema_name, table_name, comment;
+                std::wstring catalog_name, schema_name, table_name, comment = L"";
                 str_to_uc_cpy( catalog_name, catalogName );
                 str_to_uc_cpy( schema_name, schemaName );
                 schema_name += L".";
@@ -1594,8 +1611,8 @@ void ODBCDatabase::GetTableComments(const std::wstring &tableName, std::wstring 
 {
     SQLLEN owner_size = SQL_NTS, name_size = SQL_NTS;
     SQLHDBC dbc_comment;
-    SQLHSTMT stmt_comment;
-    SQLWCHAR sql_comment[254];
+    SQLHSTMT stmt_comment = 0;
+    SQLWCHAR sql_comment[254], *temp = NULL, *sql_name = NULL, *sql_owner = NULL;
     SQLLEN sql_comment_length = 0;
     int pos = tableName.find( '.' );
     std::wstring owner = tableName.substr( 0, pos );
@@ -1611,13 +1628,13 @@ void ODBCDatabase::GetTableComments(const std::wstring &tableName, std::wstring 
             ret = SQLAllocHandle( SQL_HANDLE_STMT, dbc_comment, &stmt_comment );
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
-                SQLWCHAR *temp = new SQLWCHAR[query.length() + 2];
+                temp = new SQLWCHAR[query.length() + 2];
                 memset( temp, '\0', query.length() + 2 );
                 uc_to_str_cpy( temp, query );
-                SQLWCHAR *sql_owner = new SQLWCHAR[owner.length() + 2];
+                sql_owner = new SQLWCHAR[owner.length() + 2];
                 memset( sql_owner, '\0', owner.length() + 2 );
                 uc_to_str_cpy( sql_owner, owner );
-                SQLWCHAR *sql_name = new SQLWCHAR[name.length() + 2];
+                sql_name = new SQLWCHAR[name.length() + 2];
                 memset( sql_name, '\0', name.length() + 2 );
                 uc_to_str_cpy( sql_name, name );
                 ret = SQLPrepare( stmt_comment, temp, SQL_NTS );
@@ -1632,9 +1649,21 @@ void ODBCDatabase::GetTableComments(const std::wstring &tableName, std::wstring 
                             ret = SQLExecute( stmt_comment );
                             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                             {
-                                ret = SQLBindCol( stmt_comment, 1, SQL_C_WCHAR, &sql_comment, SQL_NTS, &sql_comment_length );
+                                ret = SQLBindCol( stmt_comment, 1, SQL_C_WCHAR, &sql_comment, 254 * 2, &sql_comment_length );
                                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                 {
+                                    ret = SQLFetch( stmt_comment );
+                                    if( ret != SQL_NO_DATA )
+                                    {
+                                        if( ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA )
+                                        {
+                                            str_to_uc_cpy( comment, sql_comment );
+                                        }
+                                        else
+                                        {
+                                            GetErrorMessage( errorMsg, 1, stmt_comment );
+                                        }
+                                    }
                                 }
                                 else
                                 {
@@ -1660,9 +1689,6 @@ void ODBCDatabase::GetTableComments(const std::wstring &tableName, std::wstring 
                 {
                     GetErrorMessage( errorMsg, 1, stmt_comment );
                 }
-                delete temp;
-                delete sql_owner;
-                delete sql_name;
             }
             else
             {
@@ -1678,6 +1704,12 @@ void ODBCDatabase::GetTableComments(const std::wstring &tableName, std::wstring 
     {
         GetErrorMessage( errorMsg, 0, m_env );
     }
+    delete temp;
+    delete sql_name;
+    delete sql_owner;
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_comment );
+    ret = SQLDisconnect( dbc_comment );
+    ret = SQLFreeHandle( SQL_HANDLE_DBC, dbc_comment );
 }
 
 void ODBCDatabase::SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)

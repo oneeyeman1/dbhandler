@@ -140,6 +140,16 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     sqlite3_stmt *statement = sqlite3_next_stmt( m_db, NULL );
     const char *query = sqlite3_sql( statement );
 //  For debugging purposes - helps find non-closed statements
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
+    {
+        for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+        {
+            delete (*it1);
+            (*it1) = NULL;
+        }
+    }
+    delete pimpl;
+    pimpl = NULL;
     return result;
 }
 
