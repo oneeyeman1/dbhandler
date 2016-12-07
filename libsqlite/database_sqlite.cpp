@@ -25,29 +25,32 @@ SQLiteDatabase::SQLiteDatabase() : Database()
 
 SQLiteDatabase::~SQLiteDatabase()
 {
-    std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
-    for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
+    if( pimpl )
     {
-        std::vector<Field *> fields = (*it)->GetFields();
-        for( std::vector<Field *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
+        std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
+        for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
         {
-            delete (*it1);
-            (*it1) = NULL;
-        }
-        std::map<int,std::vector<FKField *> > fk_fields = (*it)->GetForeignKeyVector();
-        for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
-        {
-			for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
+            std::vector<Field *> fields = (*it)->GetFields();
+            for( std::vector<Field *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
             {
-                delete (*it3);
-                (*it3) = NULL;
+                delete (*it1);
+                (*it1) = NULL;
             }
+            std::map<int,std::vector<FKField *> > fk_fields = (*it)->GetForeignKeyVector();
+            for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
+            {
+                for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
+                {
+                    delete (*it3);
+                    (*it3) = NULL;
+                }
+            }
+            delete (*it);
+            (*it) = NULL;
         }
-        delete (*it);
-        (*it) = NULL;
+        delete pimpl;
+        pimpl = NULL;
     }
-    delete pimpl;
-    pimpl = NULL;
 }
 
 int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
@@ -60,6 +63,10 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
     std::string query4 = "CREATE TABLE IF NOT EXISTS \"sys.abcattbl\"(\"abt_tnam\" char(129) NOT NULL, \"abt_tid\" integer, \"abt_ownr\" char(129) NOT NULL, \"abd_fhgt\" smallint, \"abd_fwgt\" smallint, \"abd_fitl\" char(1), \"abd_funl\" char(1), \"abd_fchr\" smallint, \"abd_fptc\" smallint, \"abd_ffce\" char(18), \"abh_fhgt\" smallint, \"abh_fwgt\" smallint, \"abh_fitl\" char(1), \"abh_funl\" char(1), \"abh_fchr\" smallint, \"abh_fptc\" smallint, \"abh_ffce\" char(18), \"abl_fhgt\" smallint, \"abl_fwgt\" smallint, \"abl_fitl\" char(1), \"abl_funl\" char(1), \"abl_fchr\" smallint, \"abl_fptc\" smallint, \"abl_ffce\" char(18), \"abt_cmnt\" char(254), PRIMARY KEY( \"abt_tnam\", \"abt_ownr\" ));";
     std::string query5 = "CREATE TABLE IF NOT EXISTS \"sys.abcatvld\"(\"abv_name\" char(30) NOT NULL, \"abv_vald\" char(254), \"abv_type\" smallint, \"abv_cntr\" integer, \"abv_msg\" char(254), PRIMARY KEY( \"abv_name\" ));";
     std::wstring errorMessage;
+    if( !pimpl )
+        pimpl = new Impl;
+    if( !sqlite_pimpl )
+        sqlite_pimpl = new SQLiteImpl;
     int res = sqlite3_open( sqlite_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str(), &m_db );
     if( res != SQLITE_OK )
     {
@@ -140,16 +147,31 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 //    sqlite3_stmt *statement = sqlite3_next_stmt( m_db, NULL );
 //    const char *query = sqlite3_sql( statement );
 //  For debugging purposes - helps find non-closed statements
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
+    std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
+    for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
     {
-        for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+        std::vector<Field *> fields = (*it)->GetFields();
+        for( std::vector<Field *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
         {
             delete (*it1);
             (*it1) = NULL;
         }
+        std::map<int,std::vector<FKField *> > fk_fields = (*it)->GetForeignKeyVector();
+        for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
+        {
+            for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
+            {
+                delete (*it3);
+                (*it3) = NULL;
+            }
+        }
+        delete (*it);
+        (*it) = NULL;
     }
     delete pimpl;
     pimpl = NULL;
+    delete sqlite_pimpl;
+    sqlite_pimpl = NULL;
     return result;
 }
 
