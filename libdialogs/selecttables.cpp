@@ -20,6 +20,7 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
 {
     m_db = db;
     m_names = names;
+    sizer_1 = NULL;
     // begin wxGlade: SelectTables::SelectTables
     m_panel = new wxPanel( this, wxID_ANY );
     m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
@@ -58,7 +59,7 @@ void SelectTables::set_properties()
 void SelectTables::do_layout()
 {
     // begin wxGlade: SelectTables::do_layout
-    wxBoxSizer* sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+    sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer* sizer_4 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer* sizer_5 = new wxBoxSizer( wxVERTICAL );
     wxBoxSizer* sizer_6 = new wxBoxSizer( wxHORIZONTAL );
@@ -127,6 +128,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
             for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
             {
                 std::wstring tableName = (*it1)->GetTableName();
+                std::wstring schemaName = (*it1)->GetSchemaName();
                 if( std::find( m_names.begin(), m_names.end(), tableName ) == m_names.end() )
 				{
                     if( type == L"SQLite" )
@@ -138,19 +140,19 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                     }
                     else if( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
                     {
-                        if( tableName.substr( 0, 9 ) == L"dbo.abcat" && !sysTableIncluded )
+                        if( tableName.substr( 0, 5 ) == L"abcat" && !sysTableIncluded )
                             continue;
                         if( !sysTableIncluded )
                         {
-                            if( ( ( tableName.substr( 0, 3 ) != L"sys" ) && ( tableName.substr( 0, 18 ) != L"INFORMATION_SCHEMA" ) ) )
-                                m_tables->Append( tableName.substr( 4 ) );
+                            if( ( ( schemaName != L"sys" ) && ( schemaName != L"INFORMATION_SCHEMA" ) ) )
+                                m_tables->Append( tableName );
                         }
                         else
                         {
-                            if( tableName.substr( 0, 3 ) == L"dbo" )
-                                tableName = tableName.substr( 4 );
-                            if( tableName.substr( 0, 18 ) == L"INFORMATION_SCHEMA" )
-                                tableName = tableName.substr( 19 );
+                            if( schemaName == L"dbo" || schemaName == L"INFORMATION_SCHEMA" )
+                                tableName = tableName;
+                            else
+                                tableName = schemaName + "." + tableName;
                             m_tables->Append( tableName );
                         }
                     }
@@ -164,6 +166,8 @@ void SelectTables::FillTableList(bool sysTableIncluded)
             }
         }
     }
+    if( sizer_1 )
+        sizer_1->Fit( this );
     Layout();
 }
 

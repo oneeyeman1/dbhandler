@@ -1548,12 +1548,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 std::wstring catalog_name, schema_name, table_name, comment = L"";
                 str_to_uc_cpy( catalog_name, catalogName );
                 str_to_uc_cpy( schema_name, schemaName );
-                if( !schema_name.empty() )
-                    schema_name += L".";
+/*                if( !schema_name.empty() )
+                    schema_name += L".";*/
                 str_to_uc_cpy( table_name, tableName );
-                schema_name += table_name;
-                DatabaseTable *table = new DatabaseTable( schema_name, fields, foreign_keys );
-                GetTableComments( schema_name, comment, errorMsg );
+/*                schema_name += table_name;*/
+                DatabaseTable *table = new DatabaseTable( table_name, schema_name, fields, foreign_keys );
+                GetTableComments( table_name, comment, errorMsg );
                 table->SetComment( comment );
                 pimpl->m_tables[catalog_name].push_back( table );
                 fields.erase( fields.begin(), fields.end() );

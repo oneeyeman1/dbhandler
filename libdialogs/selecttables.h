@@ -37,6 +37,7 @@ public:
     SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
     void GetSelectedTableNames(std::vector<wxString> &tableNames);
 private:
+    wxBoxSizer* sizer_1;
     Database *m_db;
 	std::vector<std::wstring> m_names;
     // begin wxGlade: SelectTables::methods

@@ -406,7 +406,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     {
                         std::wstring comment = L"";
                         std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName );
-                        DatabaseTable *table = new DatabaseTable( name, fields, foreign_keys );
+                        DatabaseTable *table = new DatabaseTable( name, L"", fields, foreign_keys );
                         GetTableComments( name, comment, errorMsg );
                         table->SetComment( comment );
                         pimpl->m_tables[sqlite_pimpl->m_catalog].push_back( table );

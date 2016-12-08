@@ -88,20 +88,22 @@ private:
 class DatabaseTable
 {
 public:
-    DatabaseTable(const std::wstring &tableName, const std::vector<Field *> &tableFields, const std::map<int,std::vector<FKField *> > &foreignKeys)
+    DatabaseTable(const std::wstring &tableName, const std::wstring &schemaName, const std::vector<Field *> &tableFields, const std::map<int,std::vector<FKField *> > &foreignKeys)
     {
         comment = L"";
         table_name = tableName;
+        schema_name = schemaName;
         table_fields = tableFields;
         foreign_keys = foreignKeys;
     }
     const std::wstring &GetTableName() { return table_name; }
+	const std::wstring &GetSchemaName() { return schema_name; }
     const std::wstring &GetComment() { return comment; }
     void SetComment(const std::wstring &comment) { this->comment = comment; }
     const std::vector<Field *> &GetFields() { return table_fields; }
     std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
 private:
-    std::wstring table_name, comment;
+    std::wstring table_name, schema_name, comment;
     std::vector<Field *> table_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
 };
