@@ -149,10 +149,6 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                         }
                         else
                         {
-                            if( schemaName == L"dbo" || schemaName == L"INFORMATION_SCHEMA" )
-                                tableName = tableName;
-                            else
-                                tableName = schemaName + "." + tableName;
                             m_tables->Append( tableName );
                         }
                     }

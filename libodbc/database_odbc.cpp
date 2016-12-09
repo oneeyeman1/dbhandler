@@ -1548,10 +1548,9 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 std::wstring catalog_name, schema_name, table_name, comment = L"";
                 str_to_uc_cpy( catalog_name, catalogName );
                 str_to_uc_cpy( schema_name, schemaName );
-/*                if( !schema_name.empty() )
-                    schema_name += L".";*/
                 str_to_uc_cpy( table_name, tableName );
-/*                schema_name += table_name;*/
+                if( pimpl->m_subtype == L"Microsoft SQL Server" && schema_name == L"sys" )
+                    table_name = schema_name + L"." + table_name;
                 DatabaseTable *table = new DatabaseTable( table_name, schema_name, fields, foreign_keys );
                 GetTableComments( table_name, comment, errorMsg );
                 table->SetComment( comment );
