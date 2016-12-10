@@ -17,10 +17,10 @@ bool GridTableShape::InsertToTableGrid(wxSFShapeBase *shape)
     int col;
     int row = m_arrCells.GetCount() / m_nCols;
     if( wxDynamicCast( shape, FieldShape ) )
-        col = 2;
-    else if( wxDynamicCast( shape, wxSFTextShape ) )
-        col = 3;
-    else
         col = 1;
+    else if( wxDynamicCast( shape, wxSFTextShape ) )
+        col = 2;
+    else
+        col = 0;
     return InsertToGrid( row, col, shape );
 }

@@ -150,7 +150,7 @@ void MyErdTable::ClearGrid()
     m_pGrid->RemoveChildren();
     // re-initialize grid control
     m_pGrid->ClearGrid();
-    m_pGrid->SetDimensions( 1, 2 );
+    m_pGrid->SetDimensions( 1, 3 );
     m_pGrid->SetCellSpace( 2 );
     Refresh();
 }
