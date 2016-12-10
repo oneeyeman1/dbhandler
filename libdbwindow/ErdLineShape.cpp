@@ -8,6 +8,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/RoundRectShape.h"
 #include "constraint.h"
+#include "GridTableShape.h"
 #include "MyErdTable.h"
 #include "ErdLineShape.h"
 

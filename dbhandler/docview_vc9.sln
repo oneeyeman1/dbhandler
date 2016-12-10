@@ -27,6 +27,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dialogs", "..\libdialogs\di
 	ProjectSection(ProjectDependencies) = postProject
 		{EF89C84B-B5ED-496F-A980-5C7071081A19} = {EF89C84B-B5ED-496F-A980-5C7071081A19}
 		{DCCD0C7A-A668-4758-9620-D8323E67D1D1} = {DCCD0C7A-A668-4758-9620-D8323E67D1D1}
+		{22017CA3-FB1B-44E4-AC21-E02576A36937} = {22017CA3-FB1B-44E4-AC21-E02576A36937}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dbwindow", "..\libdbwindow\dbwindow.vcxproj", "{622CA63B-2182-4AF6-92CF-3396D386AF85}"
@@ -42,6 +43,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shapeframework", "..\libsha
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fieldswindow", "..\libfieldswindow\fieldswindow.vcxproj", "{EF89C84B-B5ED-496F-A980-5C7071081A19}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "propertypages", "..\libpropertypages\propertypages.vcxproj", "{22017CA3-FB1B-44E4-AC21-E02576A36937}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -195,6 +198,22 @@ Global
 		{EF89C84B-B5ED-496F-A980-5C7071081A19}.Release|Win32.Build.0 = Release|Win32
 		{EF89C84B-B5ED-496F-A980-5C7071081A19}.Release|x64.ActiveCfg = Release|x64
 		{EF89C84B-B5ED-496F-A980-5C7071081A19}.Release|x64.Build.0 = Release|x64
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.Debug|Win32.ActiveCfg = Debug|Win32
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.Debug|Win32.Build.0 = Debug|Win32
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.Debug|x64.ActiveCfg = Debug|x64
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.Debug|x64.Build.0 = Debug|x64
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.DLL Debug|Win32.ActiveCfg = DLL Debug|Win32
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.DLL Debug|Win32.Build.0 = DLL Debug|Win32
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.DLL Debug|x64.ActiveCfg = DLL Debug|x64
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.DLL Debug|x64.Build.0 = DLL Debug|x64
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.DLL Release|Win32.ActiveCfg = DLL Release|Win32
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.DLL Release|Win32.Build.0 = DLL Release|Win32
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.DLL Release|x64.ActiveCfg = DLL Release|x64
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.DLL Release|x64.Build.0 = DLL Release|x64
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.Release|Win32.ActiveCfg = Release|Win32
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.Release|Win32.Build.0 = Release|Win32
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.Release|x64.ActiveCfg = Release|x64
+		{22017CA3-FB1B-44E4-AC21-E02576A36937}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

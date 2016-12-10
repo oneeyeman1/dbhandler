@@ -255,7 +255,7 @@ void MyErdTable::AddColumn(const wxString &colName, const wxString &comment, int
             comment_shape->SetText( comment );
         }
         else
-            delete pCol;
+            delete comment_shape;
     }
 }
 
