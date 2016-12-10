@@ -8,6 +8,7 @@ libdialogs/vc_mswuddll/
 libdialogs/vc_mswud/
 libdbwindow/vc_mswuddll/
 libfieldswindow/vc_mswuddll
+libpropertypages/vc_mswuddll
 libsqlite/sqlite3.lib
 dbinterface/Debug/
 dbhandler/*.cpp~
