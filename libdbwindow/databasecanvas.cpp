@@ -19,6 +19,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "constraint.h"
+#include "GridTableShape.h"
 #include "MyErdTable.h"
 #include "wxsf/ShapeCanvas.h"
 #include "FieldShape.h"

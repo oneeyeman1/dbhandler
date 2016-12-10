@@ -11,7 +11,7 @@ public:
     void UpdateTable();
     const DatabaseTable &GetTable();
     wxSFTextShape *GetLabel();
-    wxSFFlexGridShape *GetFieldGrid();
+    GridTableShape *GetFieldGrid();
     std::wstring &GetTableName();
 protected:
     void ClearGrid();
@@ -25,7 +25,7 @@ protected:
 private:
     wxSFTextShape *m_pLabel;
     wxSFTextShape *m_comment;
-    wxSFFlexGridShape* m_pGrid;
+    GridTableShape* m_pGrid;
     DatabaseTable *m_table;
 };
 

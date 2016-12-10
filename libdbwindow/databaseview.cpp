@@ -29,6 +29,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
 #include "table.h"
+#include "GridTableShape.h"
 #include "MyErdTable.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"

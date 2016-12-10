@@ -318,7 +318,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     errorMsg.push_back( errorMessage );
                                     break;
                                 }
-                                fields.push_back( new Field( sqlite_pimpl->m_myconv.from_bytes( fieldName ), sqlite_pimpl->m_myconv.from_bytes( fieldType ), 0, 0, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK == 1 ? true : false ) );
+                                fields.push_back( new Field( sqlite_pimpl->m_myconv.from_bytes( fieldName ), sqlite_pimpl->m_myconv.from_bytes( fieldType ), 0, 0, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK >= 1 ? true : false ) );
                             }
                             else if( res1 == SQLITE_DONE )
                                 break;

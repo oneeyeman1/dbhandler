@@ -7,6 +7,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/DiagramManager.h"
 #include "constraint.h"
+#include "GridTableShape.h"
 #include "FieldShape.h"
 #include "MyErdTable.h"
 #include "res/gui/key-p.xpm"
@@ -29,7 +30,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
     SetRadius( 15 );
     m_pLabel = new wxSFTextShape();
     m_comment = new wxSFTextShape();
-    m_pGrid = new wxSFFlexGridShape();
+    m_pGrid = new GridTableShape();
     if( m_pLabel && m_comment && m_pGrid )
     {
         m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
@@ -80,7 +81,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
     SetRadius(15);
     m_pLabel = new wxSFTextShape();
     m_comment = new wxSFTextShape();
-    m_pGrid = new wxSFFlexGridShape();
+    m_pGrid = new GridTableShape();
     if( m_pLabel && m_comment && m_pGrid )
     {
         m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
@@ -138,7 +139,7 @@ void MyErdTable::UpdateTable()
     for( std::vector<Field *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
 		AddColumn( (*it)->GetFieldName(), (*it)->GetComment(), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : Constraint::noKey );
-        i += 2;
+        i += 3;
     }
     m_pGrid->Update();
     Update();
@@ -185,48 +186,46 @@ void MyErdTable::DrawNormal(wxDC &dc)
 
 void MyErdTable::AddColumn(const wxString &colName, const wxString &comment, int id, Constraint::constraintType type)
 {
-	if( type != Constraint::noKey )
-	{
-		// key bitmap
-		wxSFBitmapShape* pBitmap = new wxSFBitmapShape();
-		if( pBitmap )
-		{
+    if( type != Constraint::noKey )
+    {
+        // key bitmap
+        wxSFBitmapShape* pBitmap = new wxSFBitmapShape();
+        if( pBitmap )
+        {
             pBitmap->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-			pBitmap->SetId( id + 10000 );
-			pBitmap->Activate( true );
-			if( m_pGrid->AppendToGrid( pBitmap ) )
-			{
-				if( type == Constraint::primaryKey )
-				{
-					pBitmap->CreateFromXPM( key_p_xpm );
-				}
-				else
-					pBitmap->CreateFromXPM( key_f_xpm );
-				
-				SetCommonProps( pBitmap );
-			}
-			else
-				delete pBitmap;
-		}
-	}
-	else
-	{
-		// spacer
-		wxSFShapeBase* pSpacer = new wxSFShapeBase();
-		pSpacer->Activate( true );
+            pBitmap->SetId( id + 10000 );
+            pBitmap->Activate( true );
+            if( m_pGrid->InsertToTableGrid( pBitmap ) )
+            {
+                if( type == Constraint::primaryKey )
+                {
+                    pBitmap->CreateFromXPM( key_p_xpm );
+                }
+                else
+                    pBitmap->CreateFromXPM( key_f_xpm );
+                SetCommonProps( pBitmap );
+            }
+            else
+                delete pBitmap;
+        }
+    }
+    else
+    {
+        // spacer
+        wxSFShapeBase* pSpacer = new wxSFShapeBase();
+        pSpacer->Activate( true );
         pSpacer->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-		if( pSpacer )
-		{
-			pSpacer->SetId( id + 10000 );
-			if( m_pGrid->AppendToGrid( pSpacer ) )
-			{
-				SetCommonProps( pSpacer );
-			}
-			else
-				delete pSpacer;
-		}
-	}
-	
+        if( pSpacer )
+        {
+            pSpacer->SetId( id + 10000 );
+            if( m_pGrid->AppendToGrid( pSpacer ) )
+            {
+                SetCommonProps( pSpacer );
+            }
+            else
+                delete pSpacer;
+        }
+    }
     // label
     FieldShape *pCol = new FieldShape();
     if( pCol )
@@ -234,7 +233,7 @@ void MyErdTable::AddColumn(const wxString &colName, const wxString &comment, int
         pCol->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
         pCol->SetId( id + 10000 + 1 );
         pCol->Activate( true );
-        if( m_pGrid->AppendToGrid( pCol ) )
+        if( m_pGrid->InsertToTableGrid( pCol ) )
         {
             SetCommonProps( pCol );
             pCol->GetFont().SetPointSize( 8 );
@@ -249,7 +248,7 @@ void MyErdTable::AddColumn(const wxString &colName, const wxString &comment, int
         comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
         comment_shape->SetId( id + 10000 + 2 );
         comment_shape->Activate( true );
-        if( m_pGrid->AppendToGrid( comment_shape ) )
+        if( m_pGrid->InsertToTableGrid( comment_shape ) )
         {
             SetCommonProps( comment_shape );
             comment_shape->GetFont().SetPointSize( 8 );
@@ -280,7 +279,7 @@ wxSFTextShape *MyErdTable::GetLabel()
     return m_pLabel;
 }
 
-wxSFFlexGridShape *MyErdTable::GetFieldGrid()
+GridTableShape *MyErdTable::GetFieldGrid()
 {
     return m_pGrid;
 }
