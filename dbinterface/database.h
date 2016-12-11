@@ -118,14 +118,15 @@ protected:
     struct Impl;
     Impl *pimpl;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
+	virtual void GetTableComments(const std::wstring &tableName, std::wstring &comment, std::vector<std::wstring> &errorMsg) = 0;
+    virtual void SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg) = 0;
+    virtual void GetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &comment, std::vector<std::wstring> &errorMsg) {}
 public:
     virtual ~Database() = 0;
     Impl &GetTableVector() { return *pimpl; };
     virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg) = 0;
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) = 0;
 	virtual int CreateIndex(std::wstring &command, bool isUnique, bool isAscending, const std::wstring &indexName, const std::wstring &tableName, const std::vector<std::wstring> &fields, bool logOnly, std::vector<std::wstring> &errorMsg) = 0;
-	virtual void GetTableComments(const std::wstring &tableName, std::wstring &comment, std::vector<std::wstring> &errorMsg) = 0;
-    virtual void SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg) = 0;
 };
 
 struct Database::Impl

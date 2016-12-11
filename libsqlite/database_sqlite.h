@@ -13,13 +13,14 @@ public:
     virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
     virtual int Disconnect(std::vector<std::wstring> &errorMsg);
     virtual int CreateIndex(std::wstring &command, bool isUnique, bool isAscending, const std::wstring &indexName, const std::wstring &tableName, const std::vector<std::wstring> &fields, bool logOnly, std::vector<std::wstring> &errorMsg);
-    virtual void GetTableComments(const std::wstring &tableName, std::wstring &comment, std::vector<std::wstring> &errorMsg);
-    virtual void SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
 protected:
     struct SQLiteImpl;
     SQLiteImpl *sqlite_pimpl;
     void GetErrorMessage(int code, std::wstring &errorMsg);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
+    virtual void GetTableComments(const std::wstring &tableName, std::wstring &comment, std::vector<std::wstring> &errorMsg);
+    virtual void SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
+    virtual void GetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &comment, std::vector<std::wstring> &errorMsg);
 private:
     sqlite3 *m_db;
 };

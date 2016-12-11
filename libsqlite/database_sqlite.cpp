@@ -318,7 +318,14 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     errorMsg.push_back( errorMessage );
                                     break;
                                 }
-                                fields.push_back( new Field( sqlite_pimpl->m_myconv.from_bytes( fieldName ), sqlite_pimpl->m_myconv.from_bytes( fieldType ), 0, 0, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK >= 1 ? true : false ) );
+	                            std::wstring fieldComment = L"";
+                                GetColumnComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName ), sqlite_pimpl->m_myconv.from_bytes( fieldName ), fieldComment, errorMsg );
+	                            if( errorMsg.empty() )
+	                            {
+	                                Field *field = new Field( sqlite_pimpl->m_myconv.from_bytes( fieldName ), sqlite_pimpl->m_myconv.from_bytes( fieldType ), 0, 0, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK >= 1 ? true : false );
+	                                field->SetComment( fieldComment );
+                                    fields.push_back( field );
+	                            }
                             }
                             else if( res1 == SQLITE_DONE )
                                 break;
@@ -612,6 +619,51 @@ void SQLiteDatabase::SetTableComments(const std::wstring &tableName, const std::
             {
                 res = sqlite3_step( stmt );
                 if( res != SQLITE_DONE )
+                {
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                }
+            }
+            else
+            {
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+        else
+        {
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    sqlite3_finalize( stmt );
+}
+
+void SQLiteDatabase::GetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &comment, std::vector<std::wstring> &errorMsg)
+{
+    sqlite3_stmt *stmt;
+    std::wstring errorMessage;
+    std::wstring query = L"SELECT \"pbc_cmnt\" FROM \"sys.abcatcol\" WHERE \"pbc_tname\" = ? AND \"pbc_cnam\" = ?;";
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length(), &stmt, 0 );
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res == SQLITE_OK )
+        {
+            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+            if( res == SQLITE_OK )
+            {
+                res = sqlite3_step( stmt );
+                if( res == SQLITE_ROW )
+                {
+                    comment = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 0 ) );
+                }
+                else if( res != SQLITE_DONE )
                 {
                     GetErrorMessage( res, errorMessage );
                     errorMsg.push_back( errorMessage );
