@@ -8,6 +8,7 @@
 #include <set>
 #include <vector>
 #include <string>
+#include <algorithm>
 #ifdef _IODBCUNIX_FRAMEWORK
 #include "iODBC/sql.h"
 #include "iODBC/sqlext.h"
@@ -683,8 +684,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     int result = 0, bufferSize = 1024;
     std::vector<Field *> fields;
     std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkTable, fkName;
-    std::set<SQLWCHAR *> pk_fields;
-    std::set<SQLWCHAR *> autoinc_fields;
+    std::vector<SQLWCHAR *> pk_fields;
+    std::vector<SQLWCHAR *> autoinc_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     SQLWCHAR *catalogName, *schemaName, *tableName;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0;
@@ -831,7 +832,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     break;
                                 }
                                 if( autoincrement == SQL_TRUE )
-                                    autoinc_fields.insert( columnNames[i] );
+                                    autoinc_fields.push_back( columnNames[i] );
                             }
                         }
                         ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
@@ -945,7 +946,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         else
                         {
                             for( ret = SQLFetch( stmt_pk ); ( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_pk ) )
-                                pk_fields.insert( pkName );
+                                pk_fields.push_back( pkName );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                             {
                                 GetErrorMessage( errorMsg, 1 );
@@ -1274,7 +1275,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             str_to_uc_cpy( fieldName, szColumnName );
                             str_to_uc_cpy( fieldType, szTypeName );
                             str_to_uc_cpy( defaultValue, szColumnDefault );
-                            fields.push_back( new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, autoinc_fields.find( szColumnName ) == autoinc_fields.end(), pk_fields.find( szColumnName ) == pk_fields.end() ) );
+							fields.push_back( new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), szColumnName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), szColumnName ) != pk_fields.end() ) );
                             fieldName = L"";
                             fieldType = L"";
                             defaultValue = L"";
@@ -1559,6 +1560,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                 fields.clear();
                 foreign_keys.clear();
+                autoinc_fields.clear();
             }
             else
             {
@@ -1734,5 +1736,13 @@ void ODBCDatabase::GetTableComments(const std::wstring &tableName, std::wstring 
 }
 
 void ODBCDatabase::SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
+{
+}
+
+void ODBCDatabase::GetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &comment, std::vector<std::wstring> &errorMsg)
+{
+}
+
+void ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
 }
