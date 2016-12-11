@@ -1,4 +1,4 @@
-#include "wxsf/gridshape.h"
+#include "wxsf/GridShape.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/ShapeBase.h"
 #include "FieldShape.h"
