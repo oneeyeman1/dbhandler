@@ -158,6 +158,12 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                             continue;
                         m_tables->Append( tableName );
                     }
+                    else if( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" )
+                    {
+                        if( tableName.substr( 0, 5 ) == L"abcat" && !sysTableIncluded )
+                            continue;
+                        m_tables->Append( tableName );
+                    }
                 }
             }
         }

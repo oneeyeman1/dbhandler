@@ -15,7 +15,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "26"
             endingLineNumber = "26"
-            landmarkName = "SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString&amp; title, Database *db, const wxPoint&amp; pos, const wxSize&amp; size, long style)"
+            landmarkName = "SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString&amp; title, Database *db, std::vector&lt;std::wstring&gt; &amp;names, const wxPoint&amp; pos, const wxSize&amp; size, long style)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -128,6 +128,22 @@
             startingLineNumber = "393"
             endingLineNumber = "393"
             landmarkName = "wxSFShapeCanvas::DrawBackground(wxDC&amp; dc, bool fromPaint)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "libdialogs/selecttables.cpp"
+            timestampString = "503127329.342935"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "124"
+            endingLineNumber = "124"
+            landmarkName = "SelectTables::FillTableList(bool sysTableIncluded)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
