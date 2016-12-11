@@ -648,7 +648,7 @@ void SQLiteDatabase::GetColumnComment(const std::wstring &tableName, const std::
 {
     sqlite3_stmt *stmt;
     std::wstring errorMessage;
-    std::wstring query = L"SELECT \"pbc_cmnt\" FROM \"sys.abcatcol\" WHERE \"pbc_tname\" = ? AND \"pbc_cnam\" = ?;";
+    std::wstring query = L"SELECT \"abc_cmnt\" FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_cnam\" = ?;";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
@@ -687,4 +687,87 @@ void SQLiteDatabase::GetColumnComment(const std::wstring &tableName, const std::
         errorMsg.push_back( errorMessage );
     }
     sqlite3_finalize( stmt );
+}
+
+void SQLiteDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
+{
+    bool found = false;
+    std::wstring errorMessage;
+    sqlite3_stmt *stmt = NULL;
+    std::wstring query1 = L"SELECT count(*) FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_cnam\" = ?;", query2;
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), query1.length(), &stmt, 0 );
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res == SQLITE_OK )
+        {
+            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+            if( res == SQLITE_OK )
+            {
+                res = sqlite3_step( stmt );
+                if( res == SQLITE_ROW )
+                {
+                    found = true;
+                }
+                else if( res != SQLITE_DONE )
+                {
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                }
+            }
+            else
+            {
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+        else
+        {
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    sqlite3_finalize( stmt );
+    if( found )
+        query2 = L"UPDATE \"sys.abcatcol\" SET \"abc_cmnt\" = ? WHERE \"abc_tnam\" = ? AND \"abc_ownr\" == \"\" AND \"abc_cnam\" = ?;";
+    else
+        query2 = L"INSERT INTO \"sys.abcattbl\"(\"abc_cmnt\", \"abc_tnam\", \"abc_ownr\", \"abc_cnam\" ) VALUES( ?, ?, \"\", ? );";
+    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), query2.length(), &stmt, 0 );
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res == SQLITE_OK )
+        {
+            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( comment.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+            if( res == SQLITE_OK )
+            {
+                res = sqlite3_step( stmt );
+                if( res != SQLITE_DONE )
+                {
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                }
+            }
+            else
+            {
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+        else
+        {
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
 }

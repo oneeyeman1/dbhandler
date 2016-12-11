@@ -21,6 +21,7 @@ protected:
     virtual void GetTableComments(const std::wstring &tableName, std::wstring &comment, std::vector<std::wstring> &errorMsg);
     virtual void SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
     virtual void GetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &comment, std::vector<std::wstring> &errorMsg);
+    virtual void SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
 private:
     sqlite3 *m_db;
 };
