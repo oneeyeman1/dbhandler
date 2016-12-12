@@ -684,8 +684,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     int result = 0, bufferSize = 1024;
     std::vector<Field *> fields;
     std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkTable, fkName;
-    std::vector<SQLWCHAR *> pk_fields;
-    std::vector<SQLWCHAR *> autoinc_fields;
+    std::vector<std::wstring> pk_fields;
+    std::vector<std::wstring> autoinc_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     SQLWCHAR *catalogName, *schemaName, *tableName;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0;
@@ -835,7 +835,11 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     break;
                                 }
                                 if( autoincrement == SQL_TRUE )
-                                    autoinc_fields.push_back( columnNames[i] );
+                                {
+                                    std::wstring autoincFieldName;
+                                    str_to_uc_cpy( autoincFieldName, columnNames[i] );
+                                    autoinc_fields.push_back( autoincFieldName );
+                                }
                             }
                         }
                         ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
@@ -949,7 +953,11 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         else
                         {
                             for( ret = SQLFetch( stmt_pk ); ( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_pk ) )
-                                pk_fields.push_back( pkName );
+	                        {
+	                            std::wstring pkFieldName;
+	                            str_to_uc_cpy( pkFieldName, pkName );
+                                pk_fields.push_back( pkFieldName );
+	                        }
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                             {
                                 GetErrorMessage( errorMsg, 1 );
@@ -1278,7 +1286,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             str_to_uc_cpy( fieldName, szColumnName );
                             str_to_uc_cpy( fieldType, szTypeName );
                             str_to_uc_cpy( defaultValue, szColumnDefault );
-							fields.push_back( new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), szColumnName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), szColumnName ) != pk_fields.end() ) );
+							fields.push_back( new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end() ) );
                             fieldName = L"";
                             fieldType = L"";
                             defaultValue = L"";
