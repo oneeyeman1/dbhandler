@@ -767,8 +767,11 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         SQLWCHAR *szTableName = new SQLWCHAR[size + 16];
                         memset( szTableName, 0, size + 16 );
                         uc_to_str_cpy( szTableName, L"SELECT * FROM " );
-                        copy_uc_to_uc( szTableName, schemaName );
-                        uc_to_str_cpy( szTableName, L"." );
+                        if( *schemaName != 0 )
+                        {
+                            copy_uc_to_uc( szTableName, schemaName );
+                            uc_to_str_cpy( szTableName, L"." );
+                        }
                         copy_uc_to_uc( szTableName, tableName );
                         ret = SQLExecDirect( stmt_colattr, szTableName, SQL_NTS );
                         delete szTableName;
@@ -932,7 +935,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         ret = SQLPrimaryKeys( stmt_pk, catalogName, SQL_NTS, schemaName, SQL_NTS, tableName, SQL_NTS );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, 1 );
+                            GetErrorMessage( errorMsg, 1, stmt_pk );
                             result = 1;
                             fields.clear();
                             pk_fields.clear();
