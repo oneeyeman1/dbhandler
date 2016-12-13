@@ -38,15 +38,20 @@ protected:
     void OnFieldsDeselection(wxListEvent &event);
     void OnOkShowLog(wxCommandEvent &event);
     bool Verify();
+    void GenerateQuery();
     // begin wxGlade: CreateIndex::attributes
     wxStaticText* m_label1;
     wxStaticText* m_tableName;
     wxStaticText* m_label2;
     wxTextCtrl* m_indexName;
+    wxRadioButton *m_defaultIndex;
+    wxRadioButton *m_fullText;
+    wxRadioButton *m_spatial;
     wxRadioButton* m_unique;
     wxRadioButton* m_duplicate;
     wxRadioButton* m_ascending;
     wxRadioButton* m_descending;
+    wxRadioButton *m_indextypeDefault;
     wxRadioButton *m_indextypeBtree;
     wxRadioButton *m_indextypeHash;
     wxRadioButton *m_algorythmDefault;

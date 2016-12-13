@@ -34,14 +34,26 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_db = db;
     m_dbType = m_db->GetTableVector().m_type;
     m_dbSubType = m_db->GetTableVector().m_subtype;
+    m_defaultIndex = NULL;
+    m_fullText = NULL;
+    m_spatial = NULL;
+    m_nonConcurrent = NULL;
+    m_concurrent = NULL;
     // begin wxGlade: CreateIndex::CreateIndex
     panel_1 = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( panel_1, wxID_ANY, _( "Table" ) );
     m_tableName = new wxStaticText( panel_1, wxID_ANY, wxEmptyString );
     m_label2 = new wxStaticText( panel_1, wxID_ANY, _( "&Index Name" ) );
     m_indexName = new wxTextCtrl( panel_1, wxID_ANY, wxEmptyString );
-    m_unique = new wxRadioButton( panel_1, wxID_ANY, _( "&Unique" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
-    m_duplicate = new wxRadioButton( panel_1, wxID_ANY, _( "&Duplicate" ) );
+    m_defaultIndex = new wxRadioButton( panel_1, wxID_ANY, _( "&Default" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+    m_unique = new wxRadioButton( panel_1, wxID_ANY, _( "&Unique" ) );
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    {
+        m_fullText = new wxRadioButton( panel_1, wxID_ANY, _( "FullText" ) );
+        m_spatial = new wxRadioButton( panel_1, wxID_ANY, _( "Spatial" ) );
+    }
+	else
+        m_duplicate = new wxRadioButton( panel_1, wxID_ANY, _( "&Duplicate" ) );
     m_ascending = new wxRadioButton( panel_1, wxID_ANY, _( "&Ascending" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
     m_descending = new wxRadioButton( panel_1, wxID_ANY, _( "&Descending" ) );
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Postgres" ) || m_dbType == L"Postgres" )
@@ -57,7 +69,8 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
-        m_indextypeBtree = new wxRadioButton( panel_1, wxID_ANY, _( "Using Btrree" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+        m_indextypeDefault = new wxRadioButton( panel_1, wxID_ANY, _( "Default" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+        m_indextypeBtree = new wxRadioButton( panel_1, wxID_ANY, _( "Using Btrree" ) );
         m_indextypeHash = new wxRadioButton( panel_1, wxID_ANY, _( "Using Hash" ) );
         m_algorythmDefault = new wxRadioButton( panel_1, wxID_ANY, _( "Algorythm: Default" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
         m_algorythmInPlace = new wxRadioButton( panel_1, wxID_ANY, _( "Algorythm: InPlace" ) );
@@ -149,8 +162,15 @@ void CreateIndex::do_layout()
     sizer_7->Add( sizer_9, 0, wxEXPAND, 0 );
     sizer_6->Add( sizer_7, 0, wxEXPAND, 0 );
     sizer_6->Add( 20, 20, 0, wxEXPAND, 0 );
+    sizer_11->Add( m_defaultIndex, 0, wxEXPAND, 0 );
     sizer_11->Add( m_unique, 0, wxEXPAND, 0 );
-    sizer_11->Add( m_duplicate, 0, wxEXPAND, 0 );
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    {
+        sizer_11->Add( m_fullText, 0, wxEXPAND, 0 );
+        sizer_11->Add( m_spatial, 0, wxEXPAND, 0 );
+    }
+	else
+        sizer_11->Add( m_duplicate, 0, wxEXPAND, 0 );
     sizer_10->Add( sizer_11, 0, wxEXPAND, 0 );
     sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_12->Add( m_ascending, 0, wxEXPAND, 0 );
@@ -183,6 +203,8 @@ void CreateIndex::do_layout()
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
+        sizer_17->Add( m_indextypeDefault, 0, wxEXPAND, 0 );
+        sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer_17->Add( m_indextypeBtree, 0, wxEXPAND, 0 );
         sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer_17->Add( m_indextypeHash, 0, wxEXPAND, 0 );
@@ -282,4 +304,46 @@ void CreateIndex::OnOkShowLog(wxCommandEvent &event)
         m_db->CreateIndex( m_command, m_unique->GetValue(), m_ascending->GetValue(), m_indexName->GetValue().ToStdWstring(), m_dbTable->GetTableName(), m_fields, event.GetEventObject() == m_logOnly, errorMsg );
         EndModal( event.GetId() );
     }
+}
+
+void CreateIndex::GenerateQuery()
+{
+    wxString command;
+    command = "CREATE ";
+    if( m_unique->GetValue() )
+        command += L"UNIQUE ";
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    {
+        if( m_fullText->GetValue() )
+            command += L"FULLTEXT ";
+        if( m_spatial->GetValue() )
+            command += L"SPATIAL ";
+    }
+    command += "INDEX ";
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        if( m_concurrent->GetValue() )
+            command += L"CONCURRENTLY ";
+    }
+    command += m_indexName->GetValue() + " ";
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    {
+        if( m_indextypeBtree->GetValue() )
+            command += L"USING BTREE ";
+        if( m_indextypeHash->GetValue() )
+            command += L"USING HASH ";
+    }
+    command += "ON " + m_dbTable->GetTableName() + " ";
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        if( m_indextypeBtree->GetValue() )
+            command += L"USING BTREE ";
+        if( m_indextypeHash->GetValue() )
+            command += L"USING HASH ";
+        if( m_indextypeGist->GetValue() )
+            command += L"USING GIST ";
+        if( m_indextypeGin->GetValue() )
+            command += L"USING GIN ";
+    }
+    command += "(";
 }
