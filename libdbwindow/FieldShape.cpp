@@ -36,7 +36,7 @@ void FieldShape::DrawNormal(wxDC &dc)
     dc.SetTextForeground( m_TextColor );
     if( this->m_fSelected )
     {
-		m_backColour = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
+        m_backColour = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
         dc.SetBrush( m_backColour );
     }
     else

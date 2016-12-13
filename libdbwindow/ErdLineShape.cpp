@@ -56,7 +56,7 @@ wxRealPoint ErdLineShape::GetModSrcPoint()
             {
                 wxString columnText = pColumn->GetText();
                 wxString constraintColumn = m_constraint->GetLocalColumn();
-				if( columnText != constraintColumn )
+                if( columnText != constraintColumn )
                     y += pColumn->GetBoundingBox().GetHeight();
                 if( columnText == constraintColumn )
                 {

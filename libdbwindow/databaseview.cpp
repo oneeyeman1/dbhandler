@@ -51,7 +51,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_OBJECTNEWINDEX, DrawingView::OnNewIndex)
     EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
-	EVT_MENU(wxID_PROPERTIES, DrawingView::OnFieldProperties)
+    EVT_MENU(wxID_PROPERTIES, DrawingView::OnFieldProperties)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -71,7 +71,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         if( tb && tb->GetName() == "Second Toolbar" )
         {
             found = true;
-			height = tb->GetSize().GetHeight();
+            height = tb->GetSize().GetHeight();
         }
     }
     wxPoint start( 0, height );
@@ -97,7 +97,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxASSERT( m_frame == GetFrame() );
     m_canvas = new DatabaseCanvas( this );
     m_frame->Show();
-	Bind( wxEVT_CONTEXT_MENU, &DrawingView::OnContextMenu, this );
+    Bind( wxEVT_CONTEXT_MENU, &DrawingView::OnContextMenu, this );
     return true;
 }
 
@@ -219,7 +219,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnViewSelectedTables(wxCommandEvent &event)
 {
-	GetTablesForView( GetDocument()->GetDatabase() );
+    GetTablesForView( GetDocument()->GetDatabase() );
 }
 
 void DrawingView::OnFieldDefinition(wxCommandEvent &event)

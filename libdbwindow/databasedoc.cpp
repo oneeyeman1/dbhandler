@@ -156,7 +156,7 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
                 DatabaseTable *dbTable = (*it1);
                 MyErdTable *table = new MyErdTable( dbTable );
                 m_tables.push_back( table );
-				m_tableNames.push_back( table->GetTableName() );
+                m_tableNames.push_back( table->GetTableName() );
                 found = true;
             }
         }
