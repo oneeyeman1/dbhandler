@@ -55,7 +55,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         m_nullsFirst = new wxRadioButton( panel_1, wxID_ANY, _( "NULLS: First" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
         m_nullsLast = new wxRadioButton( panel_1, wxID_ANY, _( "NULLS: Last" ) );
     }
-	if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         m_indextypeBtree = new wxRadioButton( panel_1, wxID_ANY, _( "Using Btrree" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
         m_indextypeHash = new wxRadioButton( panel_1, wxID_ANY, _( "Using Hash" ) );
@@ -78,18 +78,18 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     set_properties();
     do_layout();
     // end wxGlade
-	m_table->Bind( wxEVT_LIST_ITEM_SELECTED, &CreateIndex::OnFieldSelection, this );
-	m_table->Bind( wxEVT_LIST_ITEM_DESELECTED, &CreateIndex::OnFieldsDeselection, this );
-	m_OK->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
-	m_logOnly->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
+    m_table->Bind( wxEVT_LIST_ITEM_SELECTED, &CreateIndex::OnFieldSelection, this );
+    m_table->Bind( wxEVT_LIST_ITEM_DESELECTED, &CreateIndex::OnFieldsDeselection, this );
+    m_OK->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
+    m_logOnly->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
 }
 
 void CreateIndex::set_properties()
 {
-	std::vector<Field *> fields = m_dbTable->GetFields();
-	std::wstring tableName = m_dbTable->GetTableName();
-	m_tableName->SetLabel( tableName );
-	m_table->AppendColumn( tableName );
+    std::vector<Field *> fields = m_dbTable->GetFields();
+    std::wstring tableName = m_dbTable->GetTableName();
+    m_tableName->SetLabel( tableName );
+    m_table->AppendColumn( tableName );
     int row = 0;
     for( std::vector<Field *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
@@ -160,7 +160,7 @@ void CreateIndex::do_layout()
         sizer_12->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer_12->Add( m_nonConcurrently, 0, wxEXPAND, 0 );
         sizer_12->Add( 5, 5, 0, wxEXPAND, 0 );
-		sizer_12->Add( m_concurrently, 0, wxEXPAND, 0 );
+        sizer_12->Add( m_concurrently, 0, wxEXPAND, 0 );
     }
     sizer_10->Add( sizer_12, 0, wxEXPAND, 0 );
     sizer_6->Add( sizer_10, 0, wxEXPAND, 0 );
@@ -181,7 +181,7 @@ void CreateIndex::do_layout()
         sizer_18->Add( m_nullsLast, 0, wxEXPAND, 0 );
         sizer_16->Add( sizer_18, 0, wxEXPAND, 0 );
     }
-	if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         sizer_17->Add( m_indextypeBtree, 0, wxEXPAND, 0 );
         sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -208,7 +208,7 @@ void CreateIndex::do_layout()
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_13->Add( m_label3, 0, wxEXPAND, 0 );
     sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
-	sizer_13->Add( m_indexColumns->GetFieldsWindow(), 0, wxEXPAND, 0 );
+    sizer_13->Add( m_indexColumns->GetFieldsWindow(), 0, wxEXPAND, 0 );
     sizer_5->Add( sizer_13, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_14->Add( m_table, 0, wxALIGN_BOTTOM, 0 );
@@ -280,6 +280,6 @@ void CreateIndex::OnOkShowLog(wxCommandEvent &event)
     if( Verify() )
     {
         m_db->CreateIndex( m_command, m_unique->GetValue(), m_ascending->GetValue(), m_indexName->GetValue().ToStdWstring(), m_dbTable->GetTableName(), m_fields, event.GetEventObject() == m_logOnly, errorMsg );
-		EndModal( event.GetId() );
+        EndModal( event.GetId() );
     }
 }

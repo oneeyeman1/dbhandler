@@ -205,7 +205,7 @@ void CODBCConfigure::OnRemoveDSN(wxCommandEvent &WXUNUSED(event))
     int res = wxMessageBox( _( "OK to delete " ) + dsnStr, _( "Configure ODBC" ), wxOK | wxCANCEL, this );
     if( res == wxOK )
     {
-		DELETEDSN func = (DELETEDSN) m_lib->GetSymbol( "RemoveDSN" );
+        DELETEDSN func = (DELETEDSN) m_lib->GetSymbol( "RemoveDSN" );
         dsnStr = _T( "DSN=" ) + dsnStr + '\0';
 /*        if( !m_db->RemoveDSN( dsnStr, driver, (HWND ) this->GetHandle() ) )
         {
