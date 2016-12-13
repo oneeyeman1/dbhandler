@@ -351,7 +351,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     sqlite3_finalize( stmt3 );
                     sqlite3_free( y );
-                    if( res1 == SQLITE_DONE )
+                    if( res3 == SQLITE_DONE )
                     {
                         char *z = sqlite3_mprintf( query2.c_str(), tableName );
                         if( ( res1 = sqlite3_prepare_v2( m_db, z, -1, &stmt2, 0 ) ) == SQLITE_OK )
