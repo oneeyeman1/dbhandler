@@ -165,7 +165,7 @@ void MainFrame::DatabaseMenu()
     menuNewObject->Append( wxID_OBJECTNEWVIEW, _( "View" ), _( "New View" ) );
     menuNewObject->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
     menuObject->AppendSubMenu( menuNewObject, _( "New" ), _( "New Object" ) );
-	menuObject->Append( wxID_PROPERTIES, _( "Properties..." ), _( "Properties" ) );
+    menuObject->Append( wxID_PROPERTIES, _( "Properties..." ), _( "Properties" ) );
     GetMenuBar()->Insert( 1, menuObject, _( "&Object" ) );
     wxMenu *menuDesign = new wxMenu();
     GetMenuBar()->Insert( 2, menuDesign, _( "&Design" ) );

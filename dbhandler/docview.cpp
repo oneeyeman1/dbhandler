@@ -96,7 +96,7 @@ bool MyApp::OnInit()
     // Fill in the application information fields before creating wxConfig.
     wxConfigBase *config = wxConfigBase::Get( "DBManager" );
     m_dbName = config->Read( "Database Name", "" );
-	m_dbEngine = config->Read( "Database Engine", "" );
+    m_dbEngine = config->Read( "Database Engine", "" );
     SetVendorName( "wxWidgets" );
     SetAppName( "dbhandler" );
     SetAppDisplayName( "DB Handler" );
