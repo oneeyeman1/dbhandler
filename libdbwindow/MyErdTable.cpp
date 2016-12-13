@@ -138,7 +138,7 @@ void MyErdTable::UpdateTable()
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
     for( std::vector<Field *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
-        AddColumn( (*it)->GetFieldName(), (*it)->GetComment(), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : Constraint::noKey );
+		AddColumn( (*it)->GetFieldName(), (*it)->GetComment(), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : (*it)->IsForeignKey() ? Constraint::foreignKey : Constraint::noKey );
         i += 3;
     }
     m_pGrid->Update();
