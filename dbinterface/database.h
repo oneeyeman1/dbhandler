@@ -31,10 +31,10 @@ public:
         column_name = column_type = column_defaultValue = L"";
         field_size = -1;
         decimal_size = -1;
-        column_isNull = autoIncrement = column_pk = false;
+        column_isNull = autoIncrement = column_pk = column_fk = false;
     }
 
-    Field(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false)
+    Field(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false, const bool columnFK = false)
     {
         comment = L"";
         column_name = columnName;
@@ -45,6 +45,7 @@ public:
         column_isNull = columnIsNull;
         autoIncrement = autoincrement;
         column_pk = columnPK;
+        column_fk = columnFK;
     }
 
     const std::wstring &GetFieldName() { return column_name; }
@@ -53,12 +54,12 @@ public:
     int GetFieldSize() { return field_size; }
     int GetPrecision() { return decimal_size; }
     bool IsPrimaryKey() { return column_pk; }
+    bool IsForeignKey() { return column_fk; }
     bool IsAutoIncrement() { return autoIncrement; }
     void SetComment(const std::wstring &comment) { this->comment = comment; }
 private:
     std::wstring column_name, column_type, column_defaultValue, comment;
-    bool autoIncrement;
-    bool column_isNull, column_pk;
+    bool autoIncrement, column_isNull, column_pk, column_fk;
     int field_size, decimal_size;
 };
 
