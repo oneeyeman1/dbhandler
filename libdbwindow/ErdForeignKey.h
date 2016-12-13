@@ -39,19 +39,18 @@
 #include "ErdLineShape.h"
 
 /*! \brief Class representing line in ERD diagram constructed on Foreign Key base. For more info see wxSF manual */
-class ErdForeignKey : public ErdLineShape {
+class ErdForeignKey : public ErdLineShape
+{
 public:
-	XS_DECLARE_CLONABLE_CLASS(ErdForeignKey);	
-	ErdForeignKey();
-	ErdForeignKey(const ErdForeignKey& obj);
-	ErdForeignKey(Constraint* pConstraint);
-
-	virtual ~ErdForeignKey();
-	
-	virtual void CreateHandles();
+    XS_DECLARE_CLONABLE_CLASS(ErdForeignKey);	
+    ErdForeignKey();
+    ErdForeignKey(const ErdForeignKey& obj);
+    ErdForeignKey(Constraint* pConstraint);
+    virtual ~ErdForeignKey();
+    virtual void CreateHandles();
 
 protected:
-	Constraint* m_pConstraint;
+    Constraint* m_pConstraint;
 };
 
 #endif // ERDFOREIGNKEY_H

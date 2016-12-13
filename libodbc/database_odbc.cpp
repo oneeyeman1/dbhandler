@@ -362,7 +362,7 @@ int ODBCDatabase::GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<s
         if( equal( dsn, dsnRead ) )
             found = true;
         direct = SQL_FETCH_NEXT;
-	}
+    }
     if( ret1 != SQL_SUCCESS && ret1 != SQL_NO_DATA )
     {
         GetErrorMessage( errorMsg, 0 );
@@ -515,7 +515,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                         result = 1;
                                     }
                                 }
-								else
+                                else
                                 {
                                     GetErrorMessage( errorMsg, 2 );
                                     ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
@@ -568,7 +568,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                     result = 1;
                 }
             }
-		}
+        }
         else
         {
             GetErrorMessage( errorMsg, 0 );
@@ -646,7 +646,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
             }
         }
     }
-	for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
     {
         std::vector<DatabaseTable *> tableVec = (*it).second;
         for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
@@ -953,11 +953,11 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         else
                         {
                             for( ret = SQLFetch( stmt_pk ); ( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_pk ) )
-	                        {
-	                            std::wstring pkFieldName;
-	                            str_to_uc_cpy( pkFieldName, pkName );
+                            {
+                                std::wstring pkFieldName;
+                                str_to_uc_cpy( pkFieldName, pkName );
                                 pk_fields.push_back( pkFieldName );
-	                        }
+                            }
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                             {
                                 GetErrorMessage( errorMsg, 1 );
@@ -1301,7 +1301,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             break;
                         }
                     }
-				}
+                }
             }
             if( columnNames )
             {

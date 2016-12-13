@@ -103,7 +103,7 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
                             if( res == SQLITE_OK )
                                 sqlite3_exec( m_db, "COMMIT", NULL, NULL, &err );
                         }
-					}
+                    }
                 }
             }
         }
@@ -115,7 +115,7 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
             result = 1;
             sqlite3_free( err );
         }
-		else
+        else
         {
             sqlite_pimpl->m_catalog = selectedDSN;
             GetTableListFromDb( errorMsg );
@@ -126,7 +126,7 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
                 GetErrorMessage( res, errorMessage );
                 errorMsg.push_back( errorMessage );
             }
-			else
+            else
                 pimpl->m_dbName = sqlite_pimpl->m_catalog;
         }
     }
@@ -145,8 +145,9 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
         result = 1;
     }
 //  For debugging purposes - helps find non-closed statements
-//    sqlite3_stmt *statement = sqlite3_next_stmt( m_db, NULL );
-//    const char *query = sqlite3_sql( statement );
+    sqlite3_stmt *statement = sqlite3_next_stmt( m_db, NULL );
+    if( statement )
+        const char *query = sqlite3_sql( statement );
 //  For debugging purposes - helps find non-closed statements
     std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
     for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
@@ -467,7 +468,7 @@ int SQLiteDatabase::CreateIndex(std::wstring &command, bool isUnique, bool isAsc
             res = sqlite3_step( stmt );
             if( res == SQLITE_ROW )
             {
-				dbIndexName = sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt, 2 ) ) );
+                dbIndexName = sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt, 2 ) ) );
                 if( dbIndexName == indexName )
                 {
                     result = 1;

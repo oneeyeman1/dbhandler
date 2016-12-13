@@ -187,7 +187,7 @@ DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
     m_types = new wxComboBox( this, wxID_ANY, "SQLite", wxDefaultPosition, wxDefaultSize, 5, choices, wxCB_READONLY );
     wxFont font = label->GetFont();
     font.MakeBold();
-	label->SetFont( font );
+    label->SetFont( font );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( label, 0, wxEXPAND, 0 );
@@ -273,7 +273,7 @@ ODBCConnect::ODBCConnect(wxWizard *parent, const std::vector<std::wstring> &dsn)
     sizer1->Add( m_types, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( m_ask, 0, wxEXPAND, 0 );
-	sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     main->Add( sizer1, 0, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     for( std::vector<std::wstring>::const_iterator it = dsn.begin(); it < dsn.end(); it++ )

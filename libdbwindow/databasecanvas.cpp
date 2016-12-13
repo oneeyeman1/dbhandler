@@ -40,9 +40,9 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, wxWindow *parent) : wxSFShapeCanvas
     startPoint.x = 10;
     startPoint.y = 10;
     m_showComments = m_showIndexKeys = m_showIntegrity = true;
-	m_pManager.SetRootItem( new xsSerializable() );
+    m_pManager.SetRootItem( new xsSerializable() );
     SetDiagramManager( &m_pManager );
-	Create( view->GetFrame(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL | wxVSCROLL );
+    Create( view->GetFrame(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL | wxVSCROLL );
     SetVirtualSize( 1000, 1000 );
     SetScrollRate( 20, 20 );
     m_mode = modeDESIGN;
@@ -66,21 +66,21 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
     int size = tables.size();
     for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
     {
-		if( !IsTableDisplayed( (*it)->GetTableName() ) )
+        if( !IsTableDisplayed( (*it)->GetTableName() ) )
         {
             m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
             if( (*it) == tables.back() )
                 (*it)->Select( true );
             (*it)->UpdateTable();
             startPoint.x += 200;
-			m_displayedTables.push_back( (*it) );
+            m_displayedTables.push_back( (*it) );
         }
     }
     for( std::vector<MyErdTable *>::iterator it1 = m_displayedTables.begin(); it1 < m_displayedTables.end(); it1++ )
     {
         wxString name = const_cast<DatabaseTable &>( (*it1)->GetTable() ).GetTableName();
-		if( std::find( selections.begin(), selections.end(), name ) == selections.end() )
-			selections.push_back( name );
+        if( std::find( selections.begin(), selections.end(), name ) == selections.end() )
+            selections.push_back( name );
     }
     Refresh();
     for( std::vector<MyErdTable *>::iterator it2 = tables.begin(); it2 < tables.end(); it2++ )
@@ -176,7 +176,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 {
     wxPoint pt = event.GetPosition();
     wxMenu mnu;
-	mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_TABLEDROPTABLE );
+    mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_TABLEDROPTABLE );
     m_selectedShape = GetShapeUnderCursor();
     if( m_selectedShape )
     {

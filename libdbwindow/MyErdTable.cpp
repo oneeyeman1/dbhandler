@@ -71,7 +71,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
 MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
 {
     m_table = table;
-	std::vector<Field *> fields = m_table->GetFields();
+    std::vector<Field *> fields = m_table->GetFields();
     SetBorder( wxPen( wxColour( 70, 125, 170 ), 1, wxPENSTYLE_SOLID ) );
     SetFill( wxBrush( wxColour( 210, 225, 245 ) ) );
     AcceptConnection( wxT( "All" ) );
@@ -90,7 +90,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
         m_pLabel->SetHBorder( 5 );
         m_pLabel->GetFont().SetPointSize( 8 );
         m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
-		m_pLabel->SetText( m_table->GetTableName() );
+        m_pLabel->SetText( m_table->GetTableName() );
         m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
         SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         // table comment
@@ -100,7 +100,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
         m_comment->SetHBorder( 5 );
         m_comment->GetFont().SetPointSize( 8 );
         m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
-		m_comment->SetText( m_table->GetComment() );
+        m_comment->SetText( m_table->GetComment() );
         m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
         SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
         // set grid
@@ -138,7 +138,7 @@ void MyErdTable::UpdateTable()
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
     for( std::vector<Field *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
-		AddColumn( (*it)->GetFieldName(), (*it)->GetComment(), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : Constraint::noKey );
+		AddColumn( (*it)->GetFieldName(), (*it)->GetComment(), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : (*it)->IsForeignKey() ? Constraint::foreignKey : Constraint::noKey );
         i += 3;
     }
     m_pGrid->Update();
@@ -162,8 +162,8 @@ void MyErdTable::ClearConnections()
 void MyErdTable::DrawDetail(wxDC &dc)
 {
     dc.SetPen( *wxWHITE_PEN );
-	dc.SetBrush( *wxLIGHT_GREY_BRUSH );
-	dc.DrawRectangle( Conv2Point( GetAbsolutePosition() + wxRealPoint( 1, m_nRadius ) ), Conv2Size( m_nRectSize - wxRealPoint( 2, 2 * m_nRadius - 2 ) ) );
+    dc.SetBrush( *wxLIGHT_GREY_BRUSH );
+    dc.DrawRectangle( Conv2Point( GetAbsolutePosition() + wxRealPoint( 1, m_nRadius ) ), Conv2Size( m_nRectSize - wxRealPoint( 2, 2 * m_nRadius - 2 ) ) );
 }
 /*
 void MyErdTable::DrawHighlighted(wxDC &dc)

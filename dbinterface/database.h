@@ -76,8 +76,8 @@ public:
         deleteConstraint = delete_constraint;
     }
     const std::wstring &GetReferencedTableName() { return tableName; }
-	const std::wstring &GetOriginalFieldName() { return originalField; }
-	const std::wstring &GetReferencedFieldName() { return referencedField; }
+    const std::wstring &GetOriginalFieldName() { return originalField; }
+    const std::wstring &GetReferencedFieldName() { return referencedField; }
     const FK_ONUPDATE GetOnUpdateConstraint() { return updateConstraint; }
     const FK_ONDELETE GetOnDeleteConstraint() { return deleteConstraint; }
 private:
@@ -98,7 +98,7 @@ public:
         foreign_keys = foreignKeys;
     }
     const std::wstring &GetTableName() { return table_name; }
-	const std::wstring &GetSchemaName() { return schema_name; }
+    const std::wstring &GetSchemaName() { return schema_name; }
     const std::wstring &GetComment() { return comment; }
     void SetComment(const std::wstring &comment) { this->comment = comment; }
     const std::vector<Field *> &GetFields() { return table_fields; }
@@ -119,7 +119,7 @@ protected:
     struct Impl;
     Impl *pimpl;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
-	virtual void GetTableComments(const std::wstring &tableName, std::wstring &comment, std::vector<std::wstring> &errorMsg) = 0;
+    virtual void GetTableComments(const std::wstring &tableName, std::wstring &comment, std::vector<std::wstring> &errorMsg) = 0;
     virtual void SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg) = 0;
     virtual void GetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &comment, std::vector<std::wstring> &errorMsg) {}
     virtual void SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg) {}
@@ -128,7 +128,7 @@ public:
     Impl &GetTableVector() { return *pimpl; };
     virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg) = 0;
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) = 0;
-	virtual int CreateIndex(std::wstring &command, bool isUnique, bool isAscending, const std::wstring &indexName, const std::wstring &tableName, const std::vector<std::wstring> &fields, bool logOnly, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int CreateIndex(std::wstring &command, bool isUnique, bool isAscending, const std::wstring &indexName, const std::wstring &tableName, const std::vector<std::wstring> &fields, bool logOnly, std::vector<std::wstring> &errorMsg) = 0;
 };
 
 struct Database::Impl
