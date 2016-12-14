@@ -145,9 +145,9 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
         result = 1;
     }
 //  For debugging purposes - helps find non-closed statements
-    sqlite3_stmt *statement = sqlite3_next_stmt( m_db, NULL );
-    if( statement )
-        const char *query = sqlite3_sql( statement );
+//    sqlite3_stmt *statement = sqlite3_next_stmt( m_db, NULL );
+//    if( statement )
+//        const char *query = sqlite3_sql( statement );
 //  For debugging purposes - helps find non-closed statements
     std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
     for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )

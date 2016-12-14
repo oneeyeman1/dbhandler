@@ -37,8 +37,6 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_defaultIndex = NULL;
     m_fullText = NULL;
     m_spatial = NULL;
-    m_nonConcurrent = NULL;
-    m_concurrent = NULL;
     // begin wxGlade: CreateIndex::CreateIndex
     panel_1 = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( panel_1, wxID_ANY, _( "Table" ) );
@@ -322,7 +320,7 @@ void CreateIndex::GenerateQuery()
     command += "INDEX ";
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
-        if( m_concurrent->GetValue() )
+        if( m_concurrently->GetValue() )
             command += L"CONCURRENTLY ";
     }
     command += m_indexName->GetValue() + " ";
