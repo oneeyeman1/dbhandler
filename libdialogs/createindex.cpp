@@ -54,7 +54,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         m_duplicate = new wxRadioButton( panel_1, wxID_ANY, _( "&Duplicate" ) );
     m_ascending = new wxRadioButton( panel_1, wxID_ANY, _( "&Ascending" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
     m_descending = new wxRadioButton( panel_1, wxID_ANY, _( "&Descending" ) );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Postgres" ) || m_dbType == L"Postgres" )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         m_nonConcurrently = new wxRadioButton( panel_1, wxID_ANY, _( "Non-Concurrently" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
         m_concurrently = new wxRadioButton( panel_1, wxID_ANY, _( "Concurrently" ) );
@@ -141,7 +141,7 @@ void CreateIndex::do_layout()
         sizer_18 = new wxBoxSizer( wxVERTICAL );
         sizer_19 = new wxBoxSizer( wxVERTICAL );
     }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Postgres" ) || m_dbType == L"Postgres" )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         sizer_16 = new wxBoxSizer( wxHORIZONTAL );
         sizer_17 = new wxBoxSizer( wxVERTICAL );
@@ -173,7 +173,7 @@ void CreateIndex::do_layout()
     sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_12->Add( m_ascending, 0, wxEXPAND, 0 );
     sizer_12->Add( m_descending, 0, wxEXPAND, 0 );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Postgres" ) || m_dbType == L"Postgres" )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         sizer_12->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer_12->Add( m_nonConcurrently, 0, wxEXPAND, 0 );
@@ -184,7 +184,7 @@ void CreateIndex::do_layout()
     sizer_6->Add( sizer_10, 0, wxEXPAND, 0 );
     sizer_5->Add( sizer_6, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Postgres" ) || m_dbType == L"Postgres" )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         sizer_17->Add( m_indextypeBtree, 0, wxEXPAND, 0 );
         sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
