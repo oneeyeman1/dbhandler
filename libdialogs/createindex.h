@@ -39,6 +39,8 @@ protected:
     void OnFieldsDeselection(wxListEvent &event);
     void OnOkShowLog(wxCommandEvent &event);
     bool Verify();
+    void OnFillFactorUpdateUI(wxUpdateUIEvent &event);
+    void OnFastUpdateUpdateUI(wxUpdateUIEvent &event);
     void GenerateQuery();
     // begin wxGlade: CreateIndex::attributes
     wxStaticText* m_label1;

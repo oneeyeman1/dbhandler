@@ -151,6 +151,15 @@ void CreateIndex::set_properties()
     SetTitle( _( "Create Index" ) );
     m_OK->SetDefault();
     // end wxGlade
+    m_defaultIndex->SetValue( true );
+    m_ascending->SetValue( true );
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        m_nonConcurrently->SetValue( true );
+        m_indextypeBtree->SetValue( true );
+        m_fillFactor->Bind( wxEVT_UPDATE_UI, &CreatteIndex::OnFillFactorUpdateUI, this );
+        m_fastUpdate->Bind( wxEVT_UPDATE_UI, &CreateIndex::nFillFactorUpdateUI, this );
+    }
 }
 
 void CreateIndex::do_layout()
@@ -473,4 +482,14 @@ void CreateIndex::GenerateQuery()
         }
     }
     command += L";";
+}
+
+void CreateIndex::OnFillFactorUpdateUI(wxUpdateUIEvent &event)
+{
+    
+}
+
+void OnFastUpdateUpdateUI(wxUpdateUIEvent &event)
+{
+    
 }
