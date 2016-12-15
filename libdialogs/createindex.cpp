@@ -19,7 +19,7 @@
 
 #include <string>
 #include "wx/listctrl.h"
-#include "wx/valnum.h"
+#include "wx/spinctrl.h"
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
 #include "fieldwindow.h"
@@ -261,7 +261,7 @@ void CreateIndex::do_layout()
         sizer_18->Add( m_maxDop, 0, wxEXPAND, 0 );
         sizer_16->Add( sizer_18, 0, wxEXPAND, 0 );
         sizer_5->Add( sizer_16, 0, wxEXPAND, 0 );
-        sizer_19->Add( m_dataCompressionNone, 0, WXEXPAND, 0 );
+        sizer_19->Add( m_dataCompressionNone, 0, wxEXPAND, 0 );
         sizer_19->Add( m_dataCompressionRow, 0, wxEXPAND, 0 );
         sizer_19->Add( m_dataCompressionPage, 0, wxEXPAND, 0 );
         sizer_5->Add( sizer_19, 0, wxEXPAND, 0 );

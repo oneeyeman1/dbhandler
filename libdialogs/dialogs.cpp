@@ -17,6 +17,7 @@
 #include "wx/dynlib.h"
 #include "wx/listctrl.h"
 #include "wx/notebook.h"
+#include "wx/spinctrl.h"
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
 #include "databasetype.h"
