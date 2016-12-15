@@ -157,8 +157,8 @@ void CreateIndex::set_properties()
     {
         m_nonConcurrently->SetValue( true );
         m_indextypeBtree->SetValue( true );
-        m_fillFactor->Bind( wxEVT_UPDATE_UI, &CreatteIndex::OnFillFactorUpdateUI, this );
-        m_fastUpdate->Bind( wxEVT_UPDATE_UI, &CreateIndex::nFillFactorUpdateUI, this );
+        m_fillfactor->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnFillFactorUpdateUI, this );
+        m_fastUpdate->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnFastUpdateUpdateUI, this );
     }
 }
 
@@ -486,10 +486,22 @@ void CreateIndex::GenerateQuery()
 
 void CreateIndex::OnFillFactorUpdateUI(wxUpdateUIEvent &event)
 {
-    
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        if( m_indextypeBtree->GetValue() || m_indextypeHash->GetValue() || m_indextypeGist->GetValue() )
+            event.Enable( true );
+        else
+            event.Enable( false );
+    }
 }
 
-void OnFastUpdateUpdateUI(wxUpdateUIEvent &event)
+void CreateIndex::OnFastUpdateUpdateUI(wxUpdateUIEvent &event)
 {
-    
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        if( m_indextypeGin->GetValue() )
+            event.Enable( true );
+        else
+            event.Enable( false );
+    }
 }
