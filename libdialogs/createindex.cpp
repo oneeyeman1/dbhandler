@@ -19,6 +19,7 @@
 
 #include <string>
 #include "wx/listctrl.h"
+#include "wx/valnum.h"
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
 #include "fieldwindow.h"
@@ -43,6 +44,11 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_tableName = new wxStaticText( panel_1, wxID_ANY, wxEmptyString );
     m_label2 = new wxStaticText( panel_1, wxID_ANY, _( "&Index Name" ) );
     m_indexName = new wxTextCtrl( panel_1, wxID_ANY, wxEmptyString );
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+    {
+        m_unclustered = new wxRadioButton( panel_1, wxID_ANY, _( "Unclustered" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+        m_clustered = new wxRadioButton( panel_1, wxID_ANY, _( "Clustered" ) );
+    }
     m_defaultIndex = new wxRadioButton( panel_1, wxID_ANY, _( "&Default" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
     m_unique = new wxRadioButton( panel_1, wxID_ANY, _( "&Unique" ) );
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
@@ -54,6 +60,17 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         m_duplicate = new wxRadioButton( panel_1, wxID_ANY, _( "&Duplicate" ) );
     m_ascending = new wxRadioButton( panel_1, wxID_ANY, _( "&Ascending" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
     m_descending = new wxRadioButton( panel_1, wxID_ANY, _( "&Descending" ) );
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+    {
+        wxIntegerValidator<unsigned int> val( &m_fillFactor );
+		val.SetRange( 0, 100 );
+        m_padIndex = new wxCheckBox( panel_1, wxID_ANY, _( "PAD ONLY" ) );
+        m_padIndex->SetValue( false );
+        m_label4 = new wxStaticText( panel_1, wxID_ANY, _( "FILLFACTOR" ) );
+        m_fillfactor = new wxTextCtrl( panel_1, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, 0, val );
+        m_sortTempDB = new wxCheckBox( panel_1, wxID_ANY, _( "SORT TEMP DB" ) );
+        m_sortTempDB->SetValue( false );
+    }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Postgres" ) || m_dbType == L"Postgres" )
     {
         m_nonConcurrently = new wxRadioButton( panel_1, wxID_ANY, _( "Non-Concurrently" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
@@ -130,10 +147,14 @@ void CreateIndex::do_layout()
     wxBoxSizer *sizer_9 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer_8 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer_1 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer *sizer_16 = NULL;
+    wxSizer *sizer_16 = NULL;
     wxBoxSizer *sizer_17 = NULL;
     wxBoxSizer *sizer_18 = NULL;
     wxBoxSizer *sizer_19 = NULL;
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+    {
+        sizer_16 = new wxFlexGridSizer( 2, 2, 5, 5 );
+    }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         sizer_16 = new wxBoxSizer( wxHORIZONTAL );
@@ -160,6 +181,12 @@ void CreateIndex::do_layout()
     sizer_7->Add( sizer_9, 0, wxEXPAND, 0 );
     sizer_6->Add( sizer_7, 0, wxEXPAND, 0 );
     sizer_6->Add( 20, 20, 0, wxEXPAND, 0 );
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+    {
+        sizer_11->Add( m_unclustered, 0, wxEXPAND, 0 );
+		sizer_11->Add( m_clustered, 0, wxEXPAND, 0 );
+        sizer_11->Add( 5, 5, 0, wxEXPAND, 0 );
+    }
     sizer_11->Add( m_defaultIndex, 0, wxEXPAND, 0 );
     sizer_11->Add( m_unique, 0, wxEXPAND, 0 );
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
@@ -184,6 +211,12 @@ void CreateIndex::do_layout()
     sizer_6->Add( sizer_10, 0, wxEXPAND, 0 );
     sizer_5->Add( sizer_6, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+    {
+        sizer_16->Add( m_padIndex, 0, wxEXPAND, 0 );
+        sizer_16->Add( m_sortTempDB, 0, wxEXPAND, 0 );
+        sizer_5->Add( sizer_16, 0, wxEXPAND, 0 );
+    }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Postgres" ) || m_dbType == L"Postgres" )
     {
         sizer_17->Add( m_indextypeBtree, 0, wxEXPAND, 0 );
@@ -310,6 +343,13 @@ void CreateIndex::GenerateQuery()
     command = "CREATE ";
     if( m_unique->GetValue() )
         command += L"UNIQUE ";
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+    {
+        if( m_unclustered->GetValue() )
+            command += L"UNCLUSTERED ";
+        if( m_clustered->GetValue() )
+            command += L"CLUSTERED ";
+    }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         if( m_fullText->GetValue() )
