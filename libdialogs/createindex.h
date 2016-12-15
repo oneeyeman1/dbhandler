@@ -28,6 +28,7 @@ private:
     std::wstring m_command, m_dbType, m_dbSubType;
     DatabaseTable *m_dbTable;
     Database *m_db;
+    unsigned int m_fillFactor;
     // begin wxGlade: CreateIndex::methods
     void set_properties();
     void do_layout();
@@ -44,6 +45,8 @@ protected:
     wxStaticText* m_tableName;
     wxStaticText* m_label2;
     wxTextCtrl* m_indexName;
+    wxRadioButton *m_clustered;
+    wxRadioButton *m_unclustered;
     wxRadioButton *m_defaultIndex;
     wxRadioButton *m_fullText;
     wxRadioButton *m_spatial;
@@ -51,6 +54,10 @@ protected:
     wxRadioButton* m_duplicate;
     wxRadioButton* m_ascending;
     wxRadioButton* m_descending;
+    wxCheckBox *m_padIndex;
+    wxStaticText *m_label4;
+    wxTextCtrl *m_fillfactor;
+    wxCheckBox *m_sortTempDB;
     wxRadioButton *m_indextypeDefault;
     wxRadioButton *m_indextypeBtree;
     wxRadioButton *m_indextypeHash;
