@@ -62,14 +62,31 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_descending = new wxRadioButton( panel_1, wxID_ANY, _( "&Descending" ) );
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
-        wxIntegerValidator<unsigned int> val( &m_fillFactor );
-		val.SetRange( 0, 100 );
         m_padIndex = new wxCheckBox( panel_1, wxID_ANY, _( "PAD ONLY" ) );
         m_padIndex->SetValue( false );
         m_label4 = new wxStaticText( panel_1, wxID_ANY, _( "FILLFACTOR" ) );
-        m_fillfactor = new wxTextCtrl( panel_1, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, 0, val );
+        m_fillfactor = new wxSpinCtrl( panel_1, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxTE_PROCESS_ENTER );
         m_sortTempDB = new wxCheckBox( panel_1, wxID_ANY, _( "SORT TEMP DB" ) );
         m_sortTempDB->SetValue( false );
+        m_ignoreDupKeys = new wxCheckBox( panel_1, wxID_ANY, _( "IGNORE DUP KEYS" ) );
+        m_ignoreDupKeys->SetValue( false );
+        m_statisticsNoRecompute = new wxCheckBox( panel_1, wxID_ANY, _( "STATISTICS NORECOMPUTE" ) );
+        m_statisticsNoRecompute->SetValue( false );
+        m_statisticsIncremental = new wxCheckBox( panel_1, wxID_ANY, _( "STATISTICS INCREMENTAL" ) );
+        m_statisticsIncremental->SetValue( false );
+        m_dropExisting = new wxCheckBox( panel_1, wxID_ANY, _( "DROP EXISTING" ) );
+        m_dropExisting->SetValue( false );
+        m_online = new wxCheckBox( panel_1, wxID_ANY, _( "ONLINE" ) );
+        m_online->SetValue( false );
+        m_allowRowLocks = new wxCheckBox( panel_1, wxID_ANY, _( "ALLOW ROW LOCKS" ) );
+        m_allowRowLocks->SetValue( false );
+        m_allowPageLocks = new wxCheckBox( panel_1, wxID_ANY, _( "ALLOW PAGE LOCKS" ) );
+        m_allowPageLocks->SetValue( false );
+        m_label5 = new wxStaticText( panel_1, wxID_ANY, _( "MAXDOP" ) );
+        m_maxDop = new wxSpinCtrl( panel_1, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxTE_PROCESS_ENTER, 0, 64, 0 );
+        m_dataCompressionNone = new wxRadioButton( panel_1, wxID_ANY, _( "DATA COMPRESSION NONE" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+        m_dataCompressionRow = new wxRadioButton( panel_1, wxID_ANY, _( "DATA COMPRESSION ROW" ) );
+        m_dataCompressionPage = new wxRadioButton( panel_1, wxID_ANY, _( "DATA COMPRESSION PAGE" ) );
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
@@ -153,7 +170,10 @@ void CreateIndex::do_layout()
     wxBoxSizer *sizer_19 = NULL;
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
-        sizer_16 = new wxFlexGridSizer( 2, 2, 5, 5 );
+        sizer_16 = new wxFlexGridSizer( 4, 3, 5, 5 );
+        sizer_17 = new wxBoxSizer( wxHORIZONTAL );
+        sizer_18 = new wxBoxSizer( wxHORIZONTAL );
+        sizer_19 = new wxBoxSizer( wxHORIZONTAL );
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
@@ -214,8 +234,27 @@ void CreateIndex::do_layout()
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
         sizer_16->Add( m_padIndex, 0, wxEXPAND, 0 );
+        sizer_17->Add( m_label4, 0, wxEXPAND, 0 );
+        sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_17->Add( m_fillfactor, 0, wxEXPAND, 0 );
+        sizer_16->Add( sizer_17, 0, wxEXPAND, 0 );
         sizer_16->Add( m_sortTempDB, 0, wxEXPAND, 0 );
+        sizer_16->Add( m_ignoreDupKeys, 0, wxEXPAND, 0 );
+        sizer_16->Add( m_statisticsNoRecompute, 0, wxEXPAND, 0 );
+        sizer_16->Add( m_statisticsIncremental, 0, wxEXPAND, 0 );
+        sizer_16->Add( m_dropExisting, 0, wxEXPAND, 0 );
+        sizer_16->Add( m_online, 0, wxEXPAND, 0 );
+        sizer_16->Add( m_allowRowLocks, 0, wxEXPAND, 0 );
+        sizer_16->Add( m_allowPageLocks, 0, wxEXPAND, 0 );
+        sizer_18->Add( m_label5, 0, wxEXPAND, 0 );
+        sizer_18->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_18->Add( m_maxDop, 0, wxEXPAND, 0 );
+        sizer_16->Add( sizer_18, 0, wxEXPAND, 0 );
         sizer_5->Add( sizer_16, 0, wxEXPAND, 0 );
+        sizer_19->Add( m_dataCompressionNone, 0, WXEXPAND, 0 );
+        sizer_19->Add( m_dataCompressionRow, 0, wxEXPAND, 0 );
+        sizer_19->Add( m_dataCompressionPage, 0, wxEXPAND, 0 );
+        sizer_5->Add( sizer_19, 0, wxEXPAND, 0 );
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
@@ -231,6 +270,7 @@ void CreateIndex::do_layout()
         sizer_18->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer_18->Add( m_nullsLast, 0, wxEXPAND, 0 );
         sizer_16->Add( sizer_18, 0, wxEXPAND, 0 );
+        sizer_5->Add( sizer_16, 0, wxEXPAND, 0 );
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
