@@ -62,6 +62,7 @@ protected:
     wxCheckBox *m_statisticsNoRecompute;
     wxCheckBox *m_statisticsIncremental;
     wxCheckBox *m_dropExisting;
+    wxCheckBox *m_fastUpdate;
     wxCheckBox *m_online;
     wxCheckBox *m_allowRowLocks;
     wxCheckBox *m_allowPageLocks;

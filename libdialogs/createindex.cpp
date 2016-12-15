@@ -114,6 +114,13 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     }
     m_label3 = new wxStaticText( panel_1, wxID_ANY, _( "Index Columns:" ) );
     m_indexColumns = new FieldWindow( panel_1, 1 );
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        m_label4 = new wxStaticText( panel_1, wxID_ANY, _( "FILLFACTOR:" ) );
+        m_fillfactor = new wxSpinCtrl( panel_1, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxTE_PROCESS_ENTER );
+        m_fastUpdate = new wxCheckBox( panel_1, wxID_ANY, _( "FASTUPDATE" ) );
+        m_fastUpdate->SetValue( true );
+    }
     m_table = new wxListCtrl( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
     m_OK = new wxButton( panel_1, wxID_OK, _( "OK" ) );
     m_logOnly = new wxButton( panel_1, wxID_ANY, _( "&Log Only" ) );
@@ -168,6 +175,7 @@ void CreateIndex::do_layout()
     wxBoxSizer *sizer_17 = NULL;
     wxBoxSizer *sizer_18 = NULL;
     wxBoxSizer *sizer_19 = NULL;
+    wxBoxSizer *sizer_20 = NULL;
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
         sizer_16 = new wxFlexGridSizer( 4, 3, 5, 5 );
@@ -187,6 +195,8 @@ void CreateIndex::do_layout()
         sizer_16 = new wxBoxSizer( wxHORIZONTAL );
         sizer_17 = new wxBoxSizer( wxVERTICAL );
         sizer_18 = new wxBoxSizer( wxVERTICAL );
+        sizer_19 = new wxBoxSizer( wxHORIZONTAL );
+        sizer_20 = new wxBoxSizer( wxHORIZONTAL );
     }
     sizer_3->Add( 10, 10, 0, wxEXPAND, 0 );
     sizer_4->Add( 10, 10, 0, wxEXPAND, 0 );
@@ -304,6 +314,17 @@ void CreateIndex::do_layout()
     sizer_13->Add( m_indexColumns->GetFieldsWindow(), 0, wxEXPAND, 0 );
     sizer_5->Add( sizer_13, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        sizer_20->Add( m_label4, 0, wxEXPAND, 0 );
+        sizer_20->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_20->Add( m_fillfactor, 0, wxEXPAND, 0 );
+        sizer_19->Add( sizer_20, 0, wxEXPAND, 0 );
+        sizer_19->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_19->Add( m_fastUpdate, 0, wxEXPAND, 0 );
+        sizer_5->Add( sizer_19, 0, wxEXPAND, 0 );
+        sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
+    }
     sizer_14->Add( m_table, 0, wxALIGN_BOTTOM, 0 );
     sizer_14->Add( 30, 30, 0, wxEXPAND, 0 );
     sizer_15->Add( m_OK, 0, wxALIGN_TOP | wxALIGN_RIGHT, 0 );
@@ -424,4 +445,32 @@ void CreateIndex::GenerateQuery()
             command += L"USING GIN ";
     }
     command += "(";
+    command += ")";
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    {
+        if( m_algorythmInPlace->IsEnabled() && m_algorythmInPlace->GetValue() )
+            command += L" ALGORITHM=INPLACE";
+        if( m_algorythmCopy->IsEnabled() && m_algorythmCopy->GetValue() )
+            command += L" ALGORITHM=COPY";
+        if( m_lockNone->IsEnabled() && m_lockNone->GetValue() )
+            command += L" LOCK=NONE";
+        if( m_lockShared->IsEnabled() && m_lockShared->GetValue() )
+            command += L" LOCK=SHARED";
+        if( m_lockExclusive->IsEnabled() && m_lockExclusive->GetValue() )
+            command += L" LOCK=EXCLUSIVE";
+    }
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        if( m_fillfactor->IsEnabled() )
+        {
+        }
+        if( m_fastUpdate->IsEnabled() )
+        {
+            if( m_fastUpdate->GetValue() )
+                command = L" WITH FASTUPDATE=ON";
+            else
+                command = L" WITH FASTUPDATE=OFF";
+        }
+    }
+    command += L";";
 }
