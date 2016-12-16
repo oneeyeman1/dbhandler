@@ -157,8 +157,11 @@ void CreateIndex::set_properties()
     {
         m_nonConcurrently->SetValue( true );
         m_indextypeBtree->SetValue( true );
+        m_nullsLast->SetValue( true );
         m_fillfactor->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnFillFactorUpdateUI, this );
         m_fastUpdate->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnFastUpdateUpdateUI, this );
+		m_ascending->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAscending, this );
+		m_descending->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnDescending, this );
     }
 }
 
@@ -505,3 +508,20 @@ void CreateIndex::OnFastUpdateUpdateUI(wxUpdateUIEvent &event)
             event.Enable( false );
     }
 }
+
+void CreateIndex::OnAscending(wxCommandEvent &WXUNUSED(event))
+{
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        m_nullsLast->SetValue( true );
+    }
+}
+
+void CreateIndex::OnDescending(wxCommandEvent &WXUNUSED(event))
+{
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        m_nullsFirst->SetValue( true );
+    }
+}
+

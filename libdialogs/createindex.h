@@ -41,6 +41,8 @@ protected:
     bool Verify();
     void OnFillFactorUpdateUI(wxUpdateUIEvent &event);
     void OnFastUpdateUpdateUI(wxUpdateUIEvent &event);
+    void OnAscending(wxCommandEvent &event);
+    void OnDescending(wxCommandEvent &event);
     void GenerateQuery();
     // begin wxGlade: CreateIndex::attributes
     wxStaticText* m_label1;
