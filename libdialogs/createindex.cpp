@@ -165,6 +165,17 @@ void CreateIndex::set_properties()
 		m_ascending->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAscending, this );
 		m_descending->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnDescending, this );
     }
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    {
+        m_algorythmDefault->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAlgorythmLockDefault, this );
+        m_lockDefault->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAlgorythmLockDefault, this );
+		m_algorythmInPlace->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAlgorythm, this );
+		m_algorythmCopy->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAlgorythm, this );
+        m_lockDefault->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAlgorythmLockDefault, this );
+        m_lockNone->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnLock, this );
+		m_lockShared->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnLock, this );
+		m_lockExclusive->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnLock, this );
+    }
 }
 
 void CreateIndex::do_layout()
@@ -545,3 +556,44 @@ void CreateIndex::OnDescending(wxCommandEvent &WXUNUSED(event))
     }
 }
 
+void CreateIndex::OnAlgorythmLockDefault(wxCommandEvent &event)
+{
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    {
+        m_algorythmDefault->Enable( true );
+        m_algorythmInPlace->Enable( true );
+        m_algorythmCopy->Enable( true );
+        m_lockDefault->Enable( true );
+        m_lockNone->Enable( true );
+        m_lockShared->Enable( true );
+        m_lockExclusive->Enable( true );
+    }
+}
+
+void CreateIndex::OnAlgorythm(wxCommandEvent &event)
+{
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    {
+        m_algorythmDefault->Enable( true );
+        m_algorythmInPlace->Enable( true );
+        m_algorythmCopy->Enable( true );
+        m_lockDefault->Enable( false );
+        m_lockNone->Enable( false );
+        m_lockShared->Enable( false );
+        m_lockExclusive->Enable( false );
+    }
+}
+
+void CreateIndex::OnLock(wxCommandEvent &event)
+{
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    {
+        m_algorythmDefault->Enable( false );
+        m_algorythmInPlace->Enable( false );
+        m_algorythmCopy->Enable( false );
+        m_lockDefault->Enable( true );
+        m_lockNone->Enable( true );
+        m_lockShared->Enable( true );
+        m_lockExclusive->Enable( true );
+    }
+}

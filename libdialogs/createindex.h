@@ -43,6 +43,9 @@ protected:
     void OnFastUpdateUpdateUI(wxUpdateUIEvent &event);
     void OnAscending(wxCommandEvent &event);
     void OnDescending(wxCommandEvent &event);
+    void OnAlgorythmLockDefault(wxCommandEvent &event);
+    void OnAlgorythm(wxCommandEvent &event);
+    void OnLock(wxCommandEvent &event);
     void GenerateQuery();
     // begin wxGlade: CreateIndex::attributes
     wxStaticText* m_label1;
