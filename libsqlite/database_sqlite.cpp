@@ -454,7 +454,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::CreateIndex(std::wstring &command, bool isUnique, bool isAscending, const std::wstring &indexName, const std::wstring &tableName, const std::vector<std::wstring> &fields, bool logOnly, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring &tableName, const std::wstring &indexName, std::vector<std::wstring> &errorMsg)
 {
     std::string query = "PRAGMA index_list( \"%w\" );";
     std::wstring errorMessage, dbIndexName;
@@ -496,27 +496,6 @@ int SQLiteDatabase::CreateIndex(std::wstring &command, bool isUnique, bool isAsc
     sqlite3_finalize( stmt );
     if( result == SQLITE_OK )
     {
-        command = L"CREATE ";
-        if( isUnique )
-            command += L"UNIQUE ";
-        command += L"INDEX ";
-        command += indexName;
-        command += L" ON " + tableName + L"(";
-        for( std::vector<std::wstring>::const_iterator it = fields.begin(); it < fields.end(); it++ )
-        {
-            command += (*it);
-            if( isAscending )
-                command += L" \"ASC\" ";
-            else
-                command += L" \"DESC\" ";
-            if( it < fields.end() - 1 )
-                command += L",";
-            else
-                command += L")";
-        }
-    }
-    if( !logOnly )
-    {
         if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), -1, &stmt, 0 ) ) == SQLITE_OK )
         {
             res = sqlite3_step( stmt );
@@ -534,6 +513,12 @@ int SQLiteDatabase::CreateIndex(std::wstring &command, bool isUnique, bool isAsc
             errorMsg.push_back( errorMessage );
         }
         sqlite3_finalize( stmt );
+    }
+    else
+    {
+        result = 1;
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
     }
     return result;
 }

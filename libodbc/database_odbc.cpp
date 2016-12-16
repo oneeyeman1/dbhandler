@@ -1637,30 +1637,67 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int ODBCDatabase::CreateIndex(std::wstring &command, bool isUnique, bool isAscending, const std::wstring &indexName, const std::wstring &tableName, const std::vector<std::wstring> &fields, bool logOnly, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &tableName, const std::wstring &indexName, std::vector<std::wstring> &errorMsg)
 {
-    command = L"CREATE ";
-    if( isUnique )
-        command += L"UNIQUE ";
-    command += L"INDEX ";
-    command += indexName;
-    command += L" ON " + tableName + L"(";
-    for( std::vector<std::wstring>::const_iterator it = fields.begin(); it < fields.end(); it++ )
+    SQLRETURN ret;
+    SQLWCHAR query;
+    std::wstring query1;
+    SQLWCHAR *index_name, *table_name;
+    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        query1 = L"SELECT count(*) FROM sys.indexes WHERE name = ? AND object_id = OBJECT_ID( ? ) );";
+    if( pimpl->m_subtype == L"MySQL" )
+        query1 = L"SELECT count(*) FROM information_schema.statistics WHERE index_name = ? AND table_schema = ?
+    if( pimpl->m_subtype == L"PostgreSQL" )
+        query1 = L"SELECT count(*) FROM pg_class, pg_namespace WHERE pg_namespace.oid = pg_class.relnamespace AND pg_class.relname = ? AND pg_namespace.nspname = ?;";
+    index_name = new SQLWCHAR[indexName.length() + 2];
+    table_name = new SQLWCHAR[tableName.length() + 2];
+    memset( index_name, '\0', indexName.length() + 2 );
+    memset( table_name, '\0', table_name.length() + 2 );
+    uc_to_str_cpy( index_name, indexName );
+    uc_to_str_cpy( table_name, tableName );
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        command += (*it);
-        if( isAscending )
-            command += L" ASC ";
+        query = new SQLWCHAR[query1.length() + 2];
+        memset( query, '\0', query1.size() + 2 );
+        uc_to_str_cpy( query, query1 );
+        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, indexName.length(), 0, index_name, 0, SQL_NTS );
+        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+        {
+            ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, SQL_NTS );
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+            {
+                ret = SQLPrepare( m_hstmt, query, SQL_NTS );
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                {
+                    ret = SQLExecute( m_hstmt, query, SQL_NTS );
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    {
+                    }
+                    else
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                    }
+                }
+                else
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                }
+            }
+            else
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+            }
+        }
         else
-            command += L" DESC ";
-        if( it < fields.end() - 1 )
-            command += L",";
-        else
-            command += L")";
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+        }
     }
-    if( !logOnly )
+    else
     {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
     }
-    return 0;
 }
 
 void ODBCDatabase::GetTableComments(const std::wstring &tableName, std::wstring &comment, std::vector<std::wstring> &errorMsg)

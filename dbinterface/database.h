@@ -128,7 +128,7 @@ public:
     Impl &GetTableVector() { return *pimpl; };
     virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg) = 0;
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) = 0;
-    virtual int CreateIndex(std::wstring &command, bool isUnique, bool isAscending, const std::wstring &indexName, const std::wstring &tableName, const std::vector<std::wstring> &fields, bool logOnly, std::vector<std::wstring> &errorMsg) = 0;
+	virtual int CreateIndex(const std::wstring &command, const std::wstring &tableName, const std::wstring &indexName, std::vector<std::wstring> &errorMsg) = 0;
 };
 
 struct Database::Impl
