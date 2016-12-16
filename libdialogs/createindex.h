@@ -93,6 +93,8 @@ protected:
     wxRadioButton *m_nullsLast;
     wxStaticText* m_label3;
     FieldWindow* m_indexColumns;
+    wxStaticText *m_label6;
+    wxTextCtrl *m_tablespace;
     wxListCtrl* m_table;
     wxButton* m_OK;
     wxButton* m_logOnly;

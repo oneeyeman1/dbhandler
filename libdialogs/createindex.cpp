@@ -120,6 +120,8 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         m_fillfactor = new wxSpinCtrl( panel_1, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxTE_PROCESS_ENTER );
         m_fastUpdate = new wxCheckBox( panel_1, wxID_ANY, _( "FASTUPDATE" ) );
         m_fastUpdate->SetValue( true );
+        m_label6 = new wxStaticText( panel_1, wxID_ANY, _( "TABLESPACE:" ) );
+        m_tablespace = new wxTextCtrl( panel_1, wxID_ANY );
     }
     m_table = new wxListCtrl( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
     m_OK = new wxButton( panel_1, wxID_OK, _( "OK" ) );
@@ -188,6 +190,7 @@ void CreateIndex::do_layout()
     wxBoxSizer *sizer_18 = NULL;
     wxBoxSizer *sizer_19 = NULL;
     wxBoxSizer *sizer_20 = NULL;
+    wxBoxSizer *sizer_21 = NULL;
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
         sizer_16 = new wxFlexGridSizer( 4, 3, 5, 5 );
@@ -209,6 +212,7 @@ void CreateIndex::do_layout()
         sizer_18 = new wxBoxSizer( wxVERTICAL );
         sizer_19 = new wxBoxSizer( wxHORIZONTAL );
         sizer_20 = new wxBoxSizer( wxHORIZONTAL );
+        sizer_21 = new wxBoxSizer( wxHORIZONTAL );
     }
     sizer_3->Add( 10, 10, 0, wxEXPAND, 0 );
     sizer_4->Add( 10, 10, 0, wxEXPAND, 0 );
@@ -336,6 +340,11 @@ void CreateIndex::do_layout()
         sizer_19->Add( m_fastUpdate, 0, wxEXPAND, 0 );
         sizer_5->Add( sizer_19, 0, wxEXPAND, 0 );
         sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_21->Add( m_label6, 0, wxEXPAND, 0 );
+        sizer_21->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_21->Add( m_tablespace, 0, wxEXPAND, 0 );
+        sizer_5->Add( sizer_21, 0, wxEXPAND, 0 );
+        sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     }
     sizer_14->Add( m_table, 0, wxALIGN_BOTTOM, 0 );
     sizer_14->Add( 30, 30, 0, wxEXPAND, 0 );
@@ -405,7 +414,8 @@ void CreateIndex::OnOkShowLog(wxCommandEvent &event)
     std::vector<std::wstring> errorMsg;
     if( Verify() )
     {
-        m_db->CreateIndex( m_command, m_unique->GetValue(), m_ascending->GetValue(), m_indexName->GetValue().ToStdWstring(), m_dbTable->GetTableName(), m_fields, event.GetEventObject() == m_logOnly, errorMsg );
+        GenerateQuery();
+//        m_db->CreateIndex( m_command, m_unique->GetValue(), m_ascending->GetValue(), m_indexName->GetValue().ToStdWstring(), m_dbTable->GetTableName(), m_fields, event.GetEventObject() == m_logOnly, errorMsg );
         EndModal( event.GetId() );
     }
 }
@@ -476,7 +486,7 @@ void CreateIndex::GenerateQuery()
         if( m_fillfactor->IsEnabled() )
         {
             command += L" WITH FILLFACTOR=";
-            command += wxString::Format( "%d", )m_fillFactor->GetValue() );
+            command += wxString::Format( "%d", m_fillfactor->GetValue() );
         }
         if( m_fastUpdate->IsEnabled() )
         {
@@ -485,6 +495,9 @@ void CreateIndex::GenerateQuery()
             else
                 command = L" WITH FASTUPDATE=OFF";
         }
+        wxString temp = m_tablespace->GetValue();
+        if( temp != wxEmptyString )
+            command += wxString::Format( " TABLESPACE %s", temp );
     }
     command += L";";
 }
