@@ -408,15 +408,17 @@ bool CreateIndex::Verify()
 void CreateIndex::OnFieldSelection(wxListEvent &event)
 {
     wxString item = event.GetLabel();
-    m_indexColumns->AddField( item );
-    m_fields.push_back( item.ToStdWstring() );
+    wxString sort_order = m_ascending->GetValue() ? " ASC" : " DESC";
+    m_indexColumns->AddField( item + sort_order );
+    m_fields.push_back( item.ToStdWstring() + sort_order.ToStdWstring() );
     m_selectedItems.push_back( event.GetIndex() );
 }
 
 void CreateIndex::OnFieldsDeselection(wxListEvent &event)
 {
     wxString item = event.GetLabel();
-    m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), item ), m_fields.end() );
+    m_fields.erase( std::remove_if( m_fields.begin(), m_fields.end(), 
+		[&item](const auto &e1) { return e1.find( item + " " ) != e1.npos; } ), m_fields.end() );
     m_indexColumns->RemoveField( m_fields );
 }
 
