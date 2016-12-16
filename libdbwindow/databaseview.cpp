@@ -210,7 +210,9 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         result = func( m_frame, table, GetDocument()->GetDatabase(), command );
         if( result != wxID_OK && result != wxID_CANCEL )
         {
-            wxMessageBox( command );
+            wxFrame *log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX /*| wxMAXIMIZE_BOX */| wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN  );
+            wxTextCtrl *text = new wxTextCtrl( log, wxID_ANY, command, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+            log->Show();
         }
     }
     else

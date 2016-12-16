@@ -422,84 +422,83 @@ void CreateIndex::OnOkShowLog(wxCommandEvent &event)
 
 void CreateIndex::GenerateQuery()
 {
-    wxString command;
-    command = "CREATE ";
+    m_command = L"CREATE ";
     if( m_unique->GetValue() )
-        command += L"UNIQUE ";
+        m_command += L"UNIQUE ";
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
         if( m_unclustered->GetValue() )
-            command += L"UNCLUSTERED ";
+            m_command += L"UNCLUSTERED ";
         if( m_clustered->GetValue() )
-            command += L"CLUSTERED ";
+            m_command += L"CLUSTERED ";
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         if( m_fullText->GetValue() )
-            command += L"FULLTEXT ";
+            m_command += L"FULLTEXT ";
         if( m_spatial->GetValue() )
-            command += L"SPATIAL ";
+            m_command += L"SPATIAL ";
     }
-    command += "INDEX ";
+    m_command += L"INDEX ";
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         if( m_concurrently->GetValue() )
-            command += L"CONCURRENTLY ";
+            m_command += L"CONCURRENTLY ";
     }
-    command += m_indexName->GetValue() + " ";
+    m_command += m_indexName->GetValue() + " ";
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         if( m_indextypeBtree->GetValue() )
-            command += L"USING BTREE ";
+            m_command += L"USING BTREE ";
         if( m_indextypeHash->GetValue() )
-            command += L"USING HASH ";
+            m_command += L"USING HASH ";
     }
-    command += "ON " + m_dbTable->GetTableName() + " ";
+    m_command += "ON " + m_dbTable->GetTableName() + " ";
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         if( m_indextypeBtree->GetValue() )
-            command += L"USING BTREE ";
+            m_command += L"USING BTREE ";
         if( m_indextypeHash->GetValue() )
-            command += L"USING HASH ";
+            m_command += L"USING HASH ";
         if( m_indextypeGist->GetValue() )
-            command += L"USING GIST ";
+            m_command += L"USING GIST ";
         if( m_indextypeGin->GetValue() )
-            command += L"USING GIN ";
+            m_command += L"USING GIN ";
     }
-    command += "(";
-    command += ")";
+    m_command += L"(";
+    m_command += L")";
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         if( m_algorythmInPlace->IsEnabled() && m_algorythmInPlace->GetValue() )
-            command += L" ALGORITHM=INPLACE";
+            m_command += L" ALGORITHM=INPLACE";
         if( m_algorythmCopy->IsEnabled() && m_algorythmCopy->GetValue() )
-            command += L" ALGORITHM=COPY";
+            m_command += L" ALGORITHM=COPY";
         if( m_lockNone->IsEnabled() && m_lockNone->GetValue() )
-            command += L" LOCK=NONE";
+            m_command += L" LOCK=NONE";
         if( m_lockShared->IsEnabled() && m_lockShared->GetValue() )
-            command += L" LOCK=SHARED";
+            m_command += L" LOCK=SHARED";
         if( m_lockExclusive->IsEnabled() && m_lockExclusive->GetValue() )
-            command += L" LOCK=EXCLUSIVE";
+            m_command += L" LOCK=EXCLUSIVE";
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         if( m_fillfactor->IsEnabled() )
         {
-            command += L" WITH FILLFACTOR=";
-            command += wxString::Format( "%d", m_fillfactor->GetValue() );
+            m_command += L" WITH FILLFACTOR=";
+            m_command += wxString::Format( "%d", m_fillfactor->GetValue() );
         }
         if( m_fastUpdate->IsEnabled() )
         {
             if( m_fastUpdate->GetValue() )
-                command = L" WITH FASTUPDATE=ON";
+                m_command = L" WITH FASTUPDATE=ON";
             else
-                command = L" WITH FASTUPDATE=OFF";
+                m_command = L" WITH FASTUPDATE=OFF";
         }
         wxString temp = m_tablespace->GetValue();
         if( temp != wxEmptyString )
-            command += wxString::Format( " TABLESPACE %s", temp );
+            m_command += wxString::Format( " TABLESPACE %s", temp );
     }
-    command += L";";
+    m_command += L";";
 }
 
 void CreateIndex::OnFillFactorUpdateUI(wxUpdateUIEvent &event)

@@ -136,8 +136,6 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     CreateIndex dlg( parent, wxID_ANY, "", table, db );
     dlg.Center();
     res = dlg.ShowModal();
-    if( res != wxID_OK && res != wxID_CANCEL )
-        command = dlg.GetCommand();
     return res;
 }
 
