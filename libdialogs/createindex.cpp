@@ -475,6 +475,8 @@ void CreateIndex::GenerateQuery()
     {
         if( m_fillfactor->IsEnabled() )
         {
+            command += L" WITH FILLFACTOR=";
+            command += wxString::Format( "%d", )m_fillFactor->GetValue() );
         }
         if( m_fastUpdate->IsEnabled() )
         {
@@ -492,9 +494,15 @@ void CreateIndex::OnFillFactorUpdateUI(wxUpdateUIEvent &event)
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         if( m_indextypeBtree->GetValue() || m_indextypeHash->GetValue() || m_indextypeGist->GetValue() )
+        {
             event.Enable( true );
+            m_label4->Enable( true );
+        }
         else
+        {
             event.Enable( false );
+            m_label4->Enable( false );
+        }
     }
 }
 
