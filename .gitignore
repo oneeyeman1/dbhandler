@@ -46,7 +46,7 @@ libfieldswindow/.DS_Store
 libodbc/.DS_Store
 libpropertypages/.DS_Store
 libsqlite/.DS_Store
-#Build/
+Build/
 #*.xcuserstatte
 #project.xcworkspace
 .anjuta/
