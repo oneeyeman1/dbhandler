@@ -479,6 +479,12 @@ void CreateIndex::GenerateQuery()
             m_command += L"USING GIN ";
     }
     m_command += L"(";
+	for( std::vector<std::wtring>::iterator it = m_fields.begin(); it < m_fields.end(); it++ )
+    {
+        command += (*it);
+        if( *it != m_fields.end() )
+            command += L",";
+    }
     m_command += L")";
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
