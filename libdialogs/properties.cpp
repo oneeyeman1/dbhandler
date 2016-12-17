@@ -21,6 +21,7 @@
 #endif
 
 #include "wx/notebook.h"
+#include "tablegeneral.h"
 #include "properties.h"
 
 PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
