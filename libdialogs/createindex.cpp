@@ -56,7 +56,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         m_fullText = new wxRadioButton( panel_1, wxID_ANY, _( "FullText" ) );
         m_spatial = new wxRadioButton( panel_1, wxID_ANY, _( "Spatial" ) );
     }
-	else
+    else
         m_duplicate = new wxRadioButton( panel_1, wxID_ANY, _( "&Duplicate" ) );
     m_ascending = new wxRadioButton( panel_1, wxID_ANY, _( "&Ascending" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
     m_descending = new wxRadioButton( panel_1, wxID_ANY, _( "&Descending" ) );
@@ -162,19 +162,19 @@ void CreateIndex::set_properties()
         m_nullsLast->SetValue( true );
         m_fillfactor->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnFillFactorUpdateUI, this );
         m_fastUpdate->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnFastUpdateUpdateUI, this );
-		m_ascending->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAscending, this );
-		m_descending->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnDescending, this );
+        m_ascending->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAscending, this );
+        m_descending->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnDescending, this );
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         m_algorythmDefault->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAlgorythmLockDefault, this );
         m_lockDefault->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAlgorythmLockDefault, this );
-		m_algorythmInPlace->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAlgorythm, this );
-		m_algorythmCopy->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAlgorythm, this );
+        m_algorythmInPlace->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAlgorythm, this );
+        m_algorythmCopy->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAlgorythm, this );
         m_lockDefault->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnAlgorythmLockDefault, this );
         m_lockNone->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnLock, this );
-		m_lockShared->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnLock, this );
-		m_lockExclusive->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnLock, this );
+        m_lockShared->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnLock, this );
+        m_lockExclusive->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnLock, this );
     }
 }
 
@@ -241,7 +241,7 @@ void CreateIndex::do_layout()
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
         sizer_11->Add( m_unclustered, 0, wxEXPAND, 0 );
-		sizer_11->Add( m_clustered, 0, wxEXPAND, 0 );
+        sizer_11->Add( m_clustered, 0, wxEXPAND, 0 );
         sizer_11->Add( 5, 5, 0, wxEXPAND, 0 );
     }
     sizer_11->Add( m_defaultIndex, 0, wxEXPAND, 0 );
@@ -251,7 +251,7 @@ void CreateIndex::do_layout()
         sizer_11->Add( m_fullText, 0, wxEXPAND, 0 );
         sizer_11->Add( m_spatial, 0, wxEXPAND, 0 );
     }
-	else
+    else
         sizer_11->Add( m_duplicate, 0, wxEXPAND, 0 );
     sizer_10->Add( sizer_11, 0, wxEXPAND, 0 );
     sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -418,7 +418,7 @@ void CreateIndex::OnFieldsDeselection(wxListEvent &event)
 {
     wxString item = event.GetLabel();
     m_fields.erase( std::remove_if( m_fields.begin(), m_fields.end(), 
-		[&item](const auto &e1) { return e1.find( item + " " ) != e1.npos; } ), m_fields.end() );
+        [&item](const std::wstring &e1) { return e1.find( item + " " ) != e1.npos; } ), m_fields.end() );
     m_indexColumns->RemoveField( m_fields );
 }
 
@@ -479,13 +479,15 @@ void CreateIndex::GenerateQuery()
             m_command += L"USING GIN ";
     }
     m_command += L"(";
-	for( std::vector<std::wtring>::iterator it = m_fields.begin(); it < m_fields.end(); it++ )
+    for( std::vector<std::wstring>::iterator it = m_fields.begin(); it < m_fields.end(); it++ )
     {
-        command += (*it);
-        if( *it != m_fields.end() )
-            command += L",";
+        m_command += (*it);
+        if( it == m_fields.end() - 1 )
+            m_command += L")";
+        else
+            m_command += L",";
     }
-    m_command += L")";
+//    m_command += L")";
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         if( m_algorythmInPlace->IsEnabled() && m_algorythmInPlace->GetValue() )

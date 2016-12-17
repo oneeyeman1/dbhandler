@@ -214,6 +214,8 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
             wxTextCtrl *text = new wxTextCtrl( log, wxID_ANY, command, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
             log->Show();
         }
+        else if( result == wxID_OK )
+            wxMessageBox( "Actually creating index" );
     }
     else
         wxMessageBox( _( "Error loading the DLL/so" ) );
