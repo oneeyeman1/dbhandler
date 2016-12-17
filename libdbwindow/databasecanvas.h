@@ -27,18 +27,19 @@ private:
     wxPoint startPoint;
 };
 
-#define wxID_TABLECLOSE           20
-#define wxID_TABLEALTERTABLE      21
-#define wxID_TABLEPROPERTIES      22
-#define wxID_TABLENEW             23
-#define wxID_TABLEDROPTABLE       24
-#define wxID_TABLEEDITDATA        25
-#define wxID_TABLEDATATRANSFER    26
-#define wxID_TABLEPRINTDEFINITION 27
-#define wxID_VIEWARRANGETABLES    31
-#define wxID_VIEWSHOWCOMMENTS     32
-#define wxID_VIEWSHOWINDEXKEYS    33
-#define wxID_VIEWSHOWINTEGRITY    34
+#define wxID_TABLECLOSE            20
+#define wxID_TABLEALTERTABLE       21
+#define wxID_TABLEPROPERTIES       22
+#define wxID_TABLENEW              23
+#define wxID_TABLEDROPTABLE        24
+#define wxID_TABLEEDITDATA         25
+#define wxID_TABLEDATATRANSFER     26
+#define wxID_TABLEPRINTDEFINITION  27
+#define wxID_VIEWARRANGETABLES     31
+#define wxID_VIEWSHOWCOMMENTS      32
+#define wxID_VIEWSHOWINDEXKEYS     33
+#define wxID_VIEWSHOWINTEGRITY     34
+#define wxID_PROPERTIES            50
 #define wxID_SELECTTABLE          102
 #define wxID_OBJECTNEWTABLE       103
 #define wxID_OBJECTNEWINDEX       104

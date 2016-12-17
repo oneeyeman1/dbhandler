@@ -37,7 +37,7 @@
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
-typedef void (*CREATEPROPERTIESDIALOG)(wxWindow *parent, int type, void *object);
+typedef void (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -52,6 +52,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_PROPERTIES, DrawingView::OnFieldProperties)
+    EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -233,6 +234,21 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &event)
 
 void DrawingView::OnFieldProperties(wxCommandEvent &event)
 {
+    int type;
+    DatabaseTable *table;
+    ShapeList shapes;
+    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
+    for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
+    {
+        if( (*it)->IsSelected() )
+        {
+            if( event.GetId() == wxID_PROPERTIES )
+            {
+                table = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
+                type = 0;
+            }
+        }
+    }
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
@@ -244,7 +260,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-        func( m_frame, 0, NULL );
+        func( m_frame, GetDocument()->GetDatabase(), type, table );
     }
 }
 

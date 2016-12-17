@@ -21,6 +21,7 @@
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
 #include "databasetype.h"
+#include "tablegeneral.h"
 #include "odbcconfigure.h"
 #include "selecttables.h"
 #include "fieldwindow.h"
@@ -141,9 +142,9 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     return res;
 }
 
-extern "C" WXEXPORT void CreatePropertiesDialog(wxWindow *parent, int type, void *object)
+extern "C" WXEXPORT void CreatePropertiesDialog(wxWindow *parent, Database *db, int type, void *object)
 {
-    PropertiesDialog dlg( parent, wxID_ANY, "" );
+    PropertiesDialog dlg( parent, wxID_ANY, "", db, type, object );
 	dlg.Center();
     dlg.ShowModal();
 }

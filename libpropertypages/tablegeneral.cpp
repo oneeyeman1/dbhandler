@@ -24,7 +24,7 @@
 
 #include "tablegeneral.h"
 
-TableGeneralProperty::TableGeneralProperty() : wxPanel()
+TableGeneralProperty::TableGeneralProperty(wxWindow *parent) : wxPanel( parent )
 {
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Pwner" ) );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Table" ) );
