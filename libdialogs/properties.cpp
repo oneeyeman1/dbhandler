@@ -21,13 +21,20 @@
 #endif
 
 #include "wx/notebook.h"
+#include "database.h"
+#include "tablegeneral.h"
 #include "properties.h"
 
-PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
+PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     // begin wxGlade: PropertiesDialog::PropertiesDialog
     m_properties = new wxNotebook( this, wxID_ANY );
+    if( type == 0 )
+    {
+        m_page1 = new TableGeneralProperty( m_properties );
+        m_properties->AddPage( m_page1, _( "General" ) );
+    }
     notebook_1_pane_1 = new wxPanel( m_properties, wxID_ANY );
 
     set_properties();

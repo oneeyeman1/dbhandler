@@ -1,10 +1,10 @@
 #ifndef _TABLEGENERALPROPERTY
 #define _TABLEGENERALPROPERTY
 
-class TableGeneralProperty : public wxPanel
+class WXEXPORT TableGeneralProperty : public wxPanel
 {
 public:
-    TableGeneralProperty();
+    TableGeneralProperty(wxWindow *parent);
     ~TableGeneralProperty();
 private:
     void set_properties();
