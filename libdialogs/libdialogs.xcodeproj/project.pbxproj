@@ -266,6 +266,7 @@
 					../dbinterface,
 					../libfieldswindow,
 					../libshapeframework,
+					../libpropertypages,
 				);
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
