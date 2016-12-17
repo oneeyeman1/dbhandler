@@ -1641,7 +1641,7 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &t
 {
     SQLRETURN ret;
     SQLWCHAR *query;
-    SQLINTEGER cbIndexName = SQL_NTS, cbTableName = SQL_NTS;
+    SQLLEN cbIndexName = SQL_NTS, cbTableName = SQL_NTS;
     std::wstring query1;
     SQLWCHAR *index_name, *table_name;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
