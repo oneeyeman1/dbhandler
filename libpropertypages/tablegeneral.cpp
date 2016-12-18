@@ -26,12 +26,19 @@
 
 TableGeneralProperty::TableGeneralProperty(wxWindow *parent) : wxPanel( parent )
 {
-    m_label1 = new wxStaticText( this, wxID_ANY, _( "Pwner" ) );
+    m_label1 = new wxStaticText( this, wxID_ANY, _( "Owner" ) );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Table" ) );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "&Table comment:" ) );
     m_owner = new wxTextCtrl( this, wxID_ANY );
     m_table = new wxTextCtrl( this, wxID_ANY );
-    m_comment = new wxTextCtrl( this, wxID_ANY );
+    m_comment = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_PROCESS_ENTER );
+    m_comment->SetMaxLength( 215 );
+    m_log = new wxCheckBox( this, wxID_ANY, _( "Log Only" ) );
+    set_properties();
+    do_layout();
+    wxButton *ok = dynamic_cast<wxButton *>( FindWindowById( wxID_OK ) );
+    if( ok )
+        ok->SetDefault();
 }
 
 TableGeneralProperty::~TableGeneralProperty()
@@ -46,8 +53,22 @@ void TableGeneralProperty::do_layout()
 {
     wxBoxSizer *sizer1 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer2 = new wxBoxSizer( wxVERTICAL );
-
+    wxFlexGridSizer *sizer3 = new wxFlexGridSizer( 2, 2, 5, 10 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer3->Add( m_label1, 0, wxEXPAND, 0 );
+    sizer3->Add( m_owner, 0, wxEXPAND, 0 );
+    sizer3->Add( m_label2, 0, wxEXPAND, 0 );
+    sizer3->Add( m_table, 0, wxEXPAND, 0 );
+    sizer2->Add( sizer3, 0, wxEXPAND, 0 );
+    sizer2->Add( m_label3, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer2->Add( m_comment, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer2->Add( m_log, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    SetSizer( sizer1 );
 }

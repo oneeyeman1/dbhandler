@@ -28,6 +28,7 @@
 PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
+    m_type = type;
     // begin wxGlade: PropertiesDialog::PropertiesDialog
     m_properties = new wxNotebook( this, wxID_ANY );
     if( type == 0 )
@@ -46,7 +47,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
 void PropertiesDialog::set_properties()
 {
     // begin wxGlade: PropertiesDialog::set_properties
-    SetTitle( _( "dialog_1" ) );
+//    SetTitle( _( "dialog_1" ) );
     // end wxGlade
 }
 
@@ -60,13 +61,12 @@ void PropertiesDialog::do_layout()
     wxSizer* buttonSizer = CreateButtonSizer( wxOK | wxCANCEL | wxAPPLY | wxHELP );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_properties->AddPage( notebook_1_pane_1, _( "tab1" ) );
-    sizer_3->Add( m_properties, 1, 0, 0 );
+    sizer_3->Add( m_properties, 0, wxEXPAND, 0 );
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_3->Add( buttonSizer, 1, 0, 0 );
-    sizer_2->Add( sizer_3, 1, 0, 0 );
+    sizer_3->Add( buttonSizer, 0, wxEXPAND, 0 );
+    sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_1->Add( sizer_2, 1, 0, 0 );
+    sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( sizer_1 );
     sizer_1->Fit( this );

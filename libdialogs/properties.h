@@ -19,6 +19,7 @@ public:
 
 private:
     TableGeneralProperty *m_page1;
+    int m_type;
     // begin wxGlade: PropertiesDialog::methods
     void set_properties();
     void do_layout();

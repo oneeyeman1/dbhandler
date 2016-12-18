@@ -15,6 +15,7 @@ private:
     wxTextCtrl *m_owner;
     wxTextCtrl *m_table;
     wxTextCtrl *m_comment;
+    wxCheckBox *m_log;
 };
 
 #endif

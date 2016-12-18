@@ -144,7 +144,13 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
 
 extern "C" WXEXPORT void CreatePropertiesDialog(wxWindow *parent, Database *db, int type, void *object)
 {
-    PropertiesDialog dlg( parent, wxID_ANY, "", db, type, object );
+    wxString title;
+    if( type == 0 )
+    {
+        title = _( "Table " );
+        title += static_cast<DatabaseTable *>( object )->GetTableName();
+    }
+    PropertiesDialog dlg( parent, wxID_ANY, title, db, type, object );
 	dlg.Center();
     dlg.ShowModal();
 }
