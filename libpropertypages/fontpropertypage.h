@@ -21,73 +21,59 @@
 #ifndef FONTPROPERTYPAGE_H
 #define FONTPROPERTYPAGE_H
 
-enum
-{
-	wxID_FONT_UNDERLINE = 3000,
-	wxID_FONT_STYLE,
-	wxID_FONT_WEIGHT,
-	wxID_FONT_FAMILY,
-	wxID_FONT_COLOUR,
-	wxID_FONT_SIZE
-};
-
-
 class WXEXPORT wxFontPreviewer : public wxWindow
 {
 public:
-	wxFontPreviewer(wxWindow *parent, CFont font, wxString text, const wxSize& sz = wxDefaultSize) : wxWindow(parent, wxID_ANY, wxDefaultPosition, sz, wxBORDER_NONE)
-	{
-		m_text = text;
-		m_font = font;
-	}
-	wxFontPreviewer(wxWindow *parent, const wxString text, wxWindowID id = wxID_ANY ) : wxWindow(parent, id, wxDefaultPosition, wxDefaultSize)
-	{
-		m_text = text;
-	}
-	void SetForegroundColor( wxString name ) { m_font.SetTextDescription( name ); };
-	void SetBackgroundColor( wxString name ) { m_font.SetBackgroundDescription( name ); };
-	void SetCFont( CFont font ) { m_font = font; };
-	DECLARE_EVENT_TABLE()
-
+    wxFontPreviewer(wxWindow *parent, wxFont font, wxString text, const wxSize& sz = wxDefaultSize) : wxWindow(parent, wxID_ANY, wxDefaultPosition, sz, wxBORDER_NONE)
+    {
+        m_text = text;
+        m_font = font;
+    }
+    wxFontPreviewer(wxWindow *parent, const wxString text, wxWindowID id = wxID_ANY ) : wxWindow(parent, id, wxDefaultPosition, wxDefaultSize)
+    {
+        m_text = text;
+    }
+//	void SetForegroundColor(wxString name) { m_font.SetTextDescription( name ); };
+//	void SetBackgroundColor(wxString name) { m_font.SetBackgroundDescription( name ); };
+    void SetCFont(wxFont font) { m_font = font; };
+    DECLARE_EVENT_TABLE()
 private:
-	CFont m_font;
-	wxString m_text;
-	void OnPaint(wxPaintEvent& event);
+    wxFont m_font;
+    wxString m_text;
+    void OnPaint(wxPaintEvent& event);
 };
 
-#ifdef __WXMSW__
 class CFontNamesComboBox : public wxBitmapComboBox
 {
 public:
-	CFontNamesComboBox(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString &value = wxEmptyString, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_SIMPLE|wxCB_SORT);
-	~CFontNamesComboBox();
-	int AddFont( LOGFONT *plf, int type );
-	virtual wxSize DoGetBestSize() const;
-	virtual void DoSetSize( int x, int y, int width, int height, int sizeFlags = wxSIZE_AUTO );
+    CFontNamesComboBox(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString &value = wxEmptyString, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_SIMPLE|wxCB_SORT);
+    ~CFontNamesComboBox();
+    int AddFont( LOGFONT *plf, int type );
+//    virtual wxSize DoGetBestSize() const;
+//    virtual void DoSetSize( int x, int y, int width, int height, int sizeFlags = wxSIZE_AUTO );
 private:
-	wxBitmap *m_bmp1, *m_bmp2;
+    wxBitmap *m_bmp1, *m_bmp2;
 };
 
 class CStyleComboBox : public wxComboBox
 {
 public:
-	CStyleComboBox(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString &value = wxEmptyString, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_SIMPLE|wxCB_SORT);
-	virtual wxSize DoGetBestSize() const;
-	virtual void DoSetSize( int x, int y, int width, int height, int sizeFlags = wxSIZE_AUTO );
+    CStyleComboBox(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString &value = wxEmptyString, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_SIMPLE|wxCB_SORT);
+//    virtual wxSize DoGetBestSize() const;
+//    virtual void DoSetSize( int x, int y, int width, int height, int sizeFlags = wxSIZE_AUTO );
 };
 
 class CSizeComboBox : public wxComboBox
 {
 public:
-	CSizeComboBox(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString &value = wxEmptyString, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_SIMPLE|wxCB_SORT);
-	int AddSize(int size, int lfHeight);
-	LONG GetFontHeight();
-	virtual wxSize DoGetBestSize() const;
-	virtual void DoSetSize( int x, int y, int width, int height, int sizeFlags = wxSIZE_AUTO );
+    CSizeComboBox(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString &value = wxEmptyString, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_SIMPLE|wxCB_SORT);
+    int AddSize(int size, int lfHeight);
+    LONG GetFontHeight();
+//    virtual wxSize DoGetBestSize() const;
+//    virtual void DoSetSize( int x, int y, int width, int height, int sizeFlags = wxSIZE_AUTO );
 private:
-	int m_cyppi;
+    int m_cyppi;
 };
-#endif
 
 #ifndef __WXMSW__
 class MyFontEnumerator : public wxFontEnumerator
@@ -108,71 +94,55 @@ private:
 };
 #endif
 
-class WXEXPORT CFontPropertyPage: public CPropertySheet
+class WXEXPORT CFontPropertyPage: public wxPanel
 {
 public:
-	CFontPropertyPage(wxWindow* parent, CFont font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
-	~CFontPropertyPage();
-	void GetData(void *data);
-
-	void FillFacenameList();
-	void FillSizeList();
-	void UpdateSampleFont();
-	void OnChangeFont(wxCommandEvent &event);
-	DECLARE_EVENT_TABLE()
-
+    CFontPropertyPage(wxWindow* parent, wxFont font=wxNullFont, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
+    ~CFontPropertyPage();
+    void GetData(void *data);
+    void FillFacenameList();
+    void FillSizeList();
+    void UpdateSampleFont();
+    void OnChangeFont(wxCommandEvent &event);
 protected:
-	wxStaticText *itemStaticText6;
-#ifdef __WXMSW__
-	CFontNamesComboBox *itemChoice7;
-#else
-	wxListBox *itemChoice7;
-#endif
-	wxStaticText *itemStaticText9;
-#ifdef __WXMSW__
-	CStyleComboBox *itemChoice10;
-#else
-	wxListBox *itemChoice10;
-#endif
-	wxStaticText *itemStaticText18;
-#ifdef __WXMSW__
-	CSizeComboBox *itemChoice19;
-#else
-	wxListBox *itemChoice19;
-#endif
-	wxCheckBox *itemCheckBox1;
-	wxCheckBox *itemCheckBox2;
-	wxStaticBox *itemStaticBox1;
-	wxStaticBox *itemStaticBox2;
-	wxStaticText *itemStaticText15;
-	CColorComboBox *itemChoice16;
-	wxStaticText *itemStaticText23;
-	CColorComboBox *itemChoice17;
+    wxStaticText *itemStaticText6;
+    CFontNamesComboBox *itemChoice7;
+    wxStaticText *itemStaticText9;
+    CStyleComboBox *itemChoice10;
+    wxStaticText *itemStaticText18;
+    CSizeComboBox *itemChoice19;
+    wxCheckBox *itemCheckBox1;
+    wxCheckBox *itemCheckBox2;
+    wxStaticBox *itemStaticBox1;
+    wxStaticBox *itemStaticBox2;
+    wxStaticText *itemStaticText15;
+    CColorComboBox *itemChoice16;
+    wxStaticText *itemStaticText23;
+    CColorComboBox *itemChoice17;
 //	wxFontPreviewer *itemWindow24;
-	wxFontPreviewer *itemWindow24;
-	wxStaticText *itemStaticText30;
-
+    wxFontPreviewer *itemWindow24;
+    wxStaticText *itemStaticText30;
 #ifdef __WXMSW__
-	static int CALLBACK EnumFontFamiliesCallback(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *, int FontType, LPARAM lParam);
-	static int CALLBACK EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *, int FontType, LPARAM lParam);
+    static int CALLBACK EnumFontFamiliesCallback(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *, int FontType, LPARAM lParam);
+    static int CALLBACK EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *, int FontType, LPARAM lParam);
 #endif
 private:
-	void set_properties();
-	void do_layout();
-	wxFont m_font;
+    void set_properties();
+    void do_layout();
+    wxFont m_font;
 //#ifdef __WXMSW__
 //	DWORD m_nStyles;
 //	DWORD m_nCurrentStyle;
 //	DWORD m_nActualStyle;
 //#else
-	unsigned long m_nStyles;
-	unsigned long m_nCurrentStyle;
-	unsigned long m_nActualStyle;
+    unsigned long m_nStyles;
+    unsigned long m_nCurrentStyle;
+    unsigned long m_nActualStyle;
 //#endif
-	bool m_bUnderline;
-	wxString m_fontSize, m_textStr, m_backgroundStr;
-	wxColour m_text, m_background;
-	bool m_dirty;
+    bool m_bUnderline;
+    wxString m_fontSize, m_textStr, m_backgroundStr;
+    wxColour m_text, m_background;
+    bool m_dirty;
 };
 
 #endif // FONTPROPERTYPAGE_H

@@ -21,8 +21,11 @@
 #endif
 
 #include "wx/notebook.h"
+#include "wx/bmpcbox.h"
 #include "database.h"
 #include "tablegeneral.h"
+#include "colorcombobox.h"
+#include "fontpropertypage.h"
 #include "properties.h"
 
 PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxPoint& pos, const wxSize& size, long style):
@@ -35,12 +38,18 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     {
         m_page1 = new TableGeneralProperty( m_properties );
         m_properties->AddPage( m_page1, _( "General" ) );
+#ifdef __WXMSW__
+        m_page2 = new CFontPropertyPage( m_properties );
+#endif
+        m_properties->AddPage( m_page2, _( "Data Font" ) );
     }
     notebook_1_pane_1 = new wxPanel( m_properties, wxID_ANY );
 
     set_properties();
     do_layout();
     // end wxGlade
+    dynamic_cast<wxButton *>( FindWindowById( wxID_OK ) )->SetDefault();
+    dynamic_cast<wxButton *>( FindWindowById( wxID_APPLY ) )->Enable( false );
 }
 
 

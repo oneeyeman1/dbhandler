@@ -19,6 +19,9 @@ public:
 
 private:
     TableGeneralProperty *m_page1;
+#ifdef __WXMSW__
+    CFontPropertyPage *m_page2;
+#endif
     int m_type;
     // begin wxGlade: PropertiesDialog::methods
     void set_properties();

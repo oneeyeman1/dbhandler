@@ -13,9 +13,21 @@
     <ClInclude Include="tablegeneral.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fontpropertypage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colorcombobox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tablegeneral.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fontpropertypage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="colorcombobox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
