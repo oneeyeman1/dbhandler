@@ -176,6 +176,11 @@ void CreateIndex::set_properties()
         m_lockShared->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnLock, this );
         m_lockExclusive->Bind( wxEVT_RADIOBUTTON, &CreateIndex::OnLock, this );
     }
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+    {
+		m_padIndex->Bind( wxEVT_CHECKBOX, &CreateIndex::OnPadIndex, this );
+		m_fillfactor->Bind( wxEVT_SPINCTRL, &CreateIndex::OnFillFactor, this );
+    }
 }
 
 void CreateIndex::do_layout()
@@ -606,4 +611,24 @@ void CreateIndex::OnLock(wxCommandEvent &event)
         m_lockShared->Enable( true );
         m_lockExclusive->Enable( true );
     }
+}
+
+void CreateIndex::OnPadIndex(wxCommandEvent &event)
+{
+    if( event.IsChecked() )
+    {
+        m_fillfactor->SetValue( 1 );
+    }
+    else
+    {
+        m_fillfactor->SetValue( 0 );
+    }
+}
+
+void CreateIndex::OnFillFactor(wxCommandEvent &event)
+{
+    if( m_fillfactor->GetValue() == 0 )
+        m_padIndex->SetValue( false );
+    else
+        m_padIndex->SetValue( true );
 }
