@@ -189,6 +189,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
 {
     int result;
     wxString command;
+    std::vector<std::wstring> errors;
     DatabaseTable *table;
     ShapeList shapes;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
@@ -216,7 +217,11 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
             log->Show();
         }
         else if( result == wxID_OK )
-            wxMessageBox( "Actually creating index" );
+        {
+            dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->CreateIndex( command, errors );
+            for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
+                wxMessageBox( (*it) );
+        }
     }
     else
         wxMessageBox( _( "Error loading the DLL/so" ) );
