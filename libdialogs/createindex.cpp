@@ -523,7 +523,7 @@ void CreateIndex::GenerateQuery()
             m_command += wxString::Format( "%d", m_fillfactor->GetValue() );
         }
         if( m_fastUpdate->IsEnabled() )
-        {
+        {`
             if( m_fastUpdate->GetValue() )
                 m_command = L" WITH FASTUPDATE=ON";
             else
@@ -532,6 +532,138 @@ void CreateIndex::GenerateQuery()
         wxString temp = m_tablespace->GetValue();
         if( temp != wxEmptyString )
             m_command += wxString::Format( " TABLESPACE %s", temp );
+    }
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        bool with = false;
+        if( m_padIndex->GetValue() )
+        {
+            with = true;
+            m_command += L" WITH PAD_INDEX = ON | FILLFACTOR = ";
+            m_command << m_fillfactor->GetValue;
+        }
+        if( m_sortTempDB->GetValue() )
+        {
+            if( with )
+                m_command += L" | ";
+            else
+            {
+                with = true;
+                m_command += L" WITH ";
+            }
+            m_command += L"SORT_IN_TEMPDB = ON";
+        }
+        if( m_ignoreDupKeys->GetValue() )
+        {
+            if( with )
+                m_command += L" | ";
+            else
+            {
+                with = true;
+                m_command += L" WITH ";
+            }
+            m_command += L"IGNORE_DUP_KEY = ON";
+        }
+        if( m_statisticsNoRecompute->GetValue() )
+        {
+            if( with )
+                m_command += L" | ";
+            else
+            {
+                with = true;
+                m_command += L" WITH ";
+            }
+            m_command += L"STATISTICS_NORECOMPUTE = ON";
+        }
+        if( m_statisticsIncremental->GetValue() )
+        {
+            if( with )
+                m_command += L" | ";
+            else
+            {
+                with = true;
+                m_command += L" WITH ";
+            }
+            m_command += L"STATISTICS_INCREMENTAL = ON";
+        }
+        if( m_dropExisting->GetValue() )
+        {
+            if( with )
+                m_command += L" | ";
+            else
+            {
+                with = true;
+                m_command += L" WITH ";
+            }
+            m_command += L"DROP_EXISTING = ON";
+        }
+        if( m_online->GetValue() )
+        {
+            if( with )
+                m_command += L" | ";
+            else
+            {
+                with = true;
+                m_command += L" WITH ";
+            }
+            m_command += L"ONLINE = ON";
+        }
+        if( m_allowRowLocks->GetValue() )
+        {
+            if( with )
+                m_command += L" | ";
+            else
+            {
+                with = true;
+                m_command += L" WITH ";
+            }
+            m_command += L"ALLOW_ROW_LOCKS = ON";
+        }
+        if( m_allowPageLocks->GetValue() )
+        {
+            if( with )
+                m_command += L" | ";
+            else
+            {
+                with = true;
+                m_command += L" WITH ";
+            }
+            m_command += L"ALLOW_PAGE_LOCKS = ON";
+        }
+        if( m_maxDop->GetValue() > 0 )
+        {
+            if( with )
+                m_command += L" | ";
+            else
+            {
+                with = true;
+                m_command += L" WITH ";
+            }
+            m_command += L"MAXDOP = ";
+            m_command << m_maxDop->GetValue();
+        }
+        if( m_dataCompressionRow->GetValue() )
+        {
+            if( with )
+                m_command += L" | ";
+            else
+            {
+                with = true;
+                m_command += L" WITH ";
+            }
+            m_command += L"DATA_COMPRESSION = ROW";
+        }
+        if( m_dataCompressionPage->GetValue() )
+        {
+            if( with )
+                m_command += L" | ";
+            else
+            {
+                with = true;
+                m_command += L" WITH ";
+            }
+            m_command += L"DATA_COMPRESSION = PAGE";
+        }
     }
     m_command += L";";
 }
