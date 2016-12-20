@@ -1637,68 +1637,13 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &tableName, const std::wstring &indexName, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     SQLRETURN ret;
     SQLWCHAR *query;
     SQLLEN cbIndexName = SQL_NTS, cbTableName = SQL_NTS;
     std::wstring query1;
     SQLWCHAR *index_name, *table_name;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
-        query1 = L"SELECT count(*) FROM sys.indexes WHERE name = ? AND object_id = OBJECT_ID( ? ) );";
-    if( pimpl->m_subtype == L"MySQL" )
-        query1 = L"SELECT count(*) FROM information_schema.statistics WHERE index_name = ? AND table_schema = ?;";
-    if( pimpl->m_subtype == L"PostgreSQL" )
-        query1 = L"SELECT count(*) FROM pg_class, pg_namespace WHERE pg_namespace.oid = pg_class.relnamespace AND pg_class.relname = ? AND pg_namespace.nspname = ?;";
-    index_name = new SQLWCHAR[indexName.length() + 2];
-    table_name = new SQLWCHAR[tableName.length() + 2];
-    memset( index_name, '\0', indexName.length() + 2 );
-    memset( table_name, '\0', tableName.length() + 2 );
-    uc_to_str_cpy( index_name, indexName );
-    uc_to_str_cpy( table_name, tableName );
-    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-    {
-        query = new SQLWCHAR[query1.length() + 2];
-        memset( query, '\0', query1.size() + 2 );
-        uc_to_str_cpy( query, query1 );
-        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, indexName.length(), 0, index_name, 0, &cbIndexName );
-        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-        {
-            ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
-            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-            {
-                ret = SQLPrepare( m_hstmt, query, SQL_NTS );
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                {
-                    ret = SQLExecute( m_hstmt );
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                    }
-                    else
-                    {
-                        GetErrorMessage( errorMsg, 1, m_hstmt );
-                    }
-                }
-                else
-                {
-                    GetErrorMessage( errorMsg, 1, m_hstmt );
-                }
-            }
-            else
-            {
-                GetErrorMessage( errorMsg, 1, m_hstmt );
-            }
-        }
-        else
-        {
-            GetErrorMessage( errorMsg, 1, m_hstmt );
-        }
-    }
-    else
-    {
-        GetErrorMessage( errorMsg, 1, m_hstmt );
-    }
     return 0;
 }
 
@@ -1817,4 +1762,78 @@ void ODBCDatabase::GetColumnComment(const std::wstring &tableName, const std::ws
 
 void ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
+}
+
+bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+    SQLRETURN ret;
+    SQLWCHAR *query;
+    bool exists = false;
+    std::wstring query1;
+    SQLWCHAR *index_name, *table_name;
+    SQLLEN cbIndexName = SQL_NTS, cbTableName = SQL_NTS;
+    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        query1 = L"SELECT count(*) FROM sys.indexes WHERE name = ? AND object_id = OBJECT_ID( ? ) );";
+    if( pimpl->m_subtype == L"MySQL" )
+        query1 = L"SELECT count(*) FROM information_schema.statistics WHERE index_name = ? AND table_schema = ?;";
+    if( pimpl->m_subtype == L"PostgreSQL" )
+        query1 = L"SELECT count(*) FROM pg_class, pg_namespace WHERE pg_namespace.oid = pg_class.relnamespace AND pg_class.relname = ? AND pg_namespace.nspname = ?;";
+    index_name = new SQLWCHAR[indexName.length() + 2];
+    table_name = new SQLWCHAR[tableName.length() + 2];
+    memset( index_name, '\0', indexName.length() + 2 );
+    memset( table_name, '\0', tableName.length() + 2 );
+    uc_to_str_cpy( index_name, indexName );
+    uc_to_str_cpy( table_name, tableName );
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        query = new SQLWCHAR[query1.length() + 2];
+        memset( query, '\0', query1.size() + 2 );
+        uc_to_str_cpy( query, query1 );
+        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, indexName.length(), 0, index_name, 0, &cbIndexName );
+        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+        {
+            ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+            {
+                ret = SQLPrepare( m_hstmt, query, SQL_NTS );
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                {
+                    ret = SQLExecute( m_hstmt );
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    {
+                        ret = SQLFetch( m_hstmt );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            exists = true;
+                        }
+                        else
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                        }
+                    }
+                    else
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                    }
+                }
+                else
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                }
+            }
+            else
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+            }
+        }
+        else
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+        }
+    }
+    else
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+    }
 }

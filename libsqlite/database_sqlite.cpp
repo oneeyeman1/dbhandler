@@ -454,46 +454,11 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring &tableName, const std::wstring &indexName, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
-    std::string query = "PRAGMA index_list( \"%w\" );";
-    std::wstring errorMessage, dbIndexName;
+    std::wstring errorMessage;
     int res = SQLITE_OK, result = 0;
     sqlite3_stmt *stmt = NULL;
-    char *z = sqlite3_mprintf( query.c_str(), tableName.c_str() );
-    if( ( res = sqlite3_prepare_v2( m_db, z, -1, &stmt, 0 ) ) == SQLITE_OK )
-    {
-        for( ; ; )
-        {
-            res = sqlite3_step( stmt );
-            if( res == SQLITE_ROW )
-            {
-                dbIndexName = sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt, 2 ) ) );
-                if( dbIndexName == indexName )
-                {
-                    result = 1;
-                    errorMsg.push_back( L"Index already exist." );
-                    break;
-                }
-            }
-            else if( res == SQLITE_DONE )
-                break;
-            else
-            {
-                result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-                break;
-            }
-        }
-    }
-    else
-    {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-    }
-    sqlite3_finalize( stmt );
     if( result == SQLITE_OK )
     {
         if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), -1, &stmt, 0 ) ) == SQLITE_OK )
@@ -760,4 +725,49 @@ void SQLiteDatabase::SetColumnComment(const std::wstring &tableName, const std::
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
     }
+}
+
+bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+    bool exists = false;
+    int res = SQLITE_OK, result = 0;
+    sqlite3_stmt *stmt = NULL;
+    std::wstring errorMessage, dbIndexName;
+    std::string query = "PRAGMA index_list( \"%w\" );";
+    char *z = sqlite3_mprintf( query.c_str(), tableName.c_str() );
+    if( ( res = sqlite3_prepare_v2( m_db, z, -1, &stmt, 0 ) ) == SQLITE_OK )
+    {
+        for( ; ; )
+        {
+            res = sqlite3_step( stmt );
+            if( res == SQLITE_ROW )
+            {
+                dbIndexName = sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt, 2 ) ) );
+                if( dbIndexName == indexName )
+                {
+                    result = 1;
+                    errorMsg.push_back( L"Index already exist." );
+                    exists = true;
+                    break;
+                }
+            }
+            else if( res == SQLITE_DONE )
+                break;
+            else
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+                break;
+            }
+        }
+    }
+    else
+    {
+        result = 1;
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    sqlite3_finalize( stmt );
+    return exists;
 }
