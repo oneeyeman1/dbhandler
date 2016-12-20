@@ -1641,9 +1641,22 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstr
 {
     SQLRETURN ret;
     SQLWCHAR *query;
-    SQLLEN cbIndexName = SQL_NTS, cbTableName = SQL_NTS;
-    std::wstring query1;
-    SQLWCHAR *index_name, *table_name;
+    query = new SQLWCHAR[command.length() + 2];
+    memset( query, '\0', command.length() + 2 );
+    uc_to_str_cpy( query, command );
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+        }
+    }
+    else
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+    }
     return 0;
 }
 
