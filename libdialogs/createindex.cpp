@@ -397,6 +397,7 @@ std::wstring &CreateIndex::GetCommand()
 bool CreateIndex::Verify()
 {
     bool success = true;
+    std::vector<std::wstring> errors;
     if( m_indexName->GetValue().IsEmpty() )
     {
         wxMessageBox( _( "Key name is required" ), _( "Database" ) );
@@ -405,6 +406,14 @@ bool CreateIndex::Verify()
     if( success && m_fields.empty() )
     {
         wxMessageBox( _( "At least one index column is required" ), _( "Database" ) );
+        success = false;
+    }
+    if( success && m_db->IsIndexExists( m_indexName->GetValue().ToStdWstring(), m_dbTable->GetTableName(), errors ) )
+    {
+        for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
+            wxMessageBox( (*it) );
+        if( errors.empty() )
+            wxMessageBox( _( "At least one index column is required" ), _( "Database" ) );
         success = false;
     }
     return success;

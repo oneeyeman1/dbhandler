@@ -47,6 +47,7 @@ protected:
     void OnAlgorythm(wxCommandEvent &event);
     void OnLock(wxCommandEvent &event);
     void OnPadIndex(wxCommandEvent &event);
+    void OnFillFactor(wxCommandEvent &event);
     void GenerateQuery();
     // begin wxGlade: CreateIndex::attributes
     wxStaticText* m_label1;
