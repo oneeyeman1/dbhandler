@@ -128,8 +128,8 @@ public:
     Impl &GetTableVector() { return *pimpl; };
     virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg) = 0;
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) = 0;
-	virtual int CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg) { command = command; errorMsg = errorMsg; }
-    virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) { indexName = indexName; tableName = tableName; errorMsg = errorMsg; }
+    virtual int CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
+    virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
 };
 
 struct Database::Impl

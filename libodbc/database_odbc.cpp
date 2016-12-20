@@ -1836,4 +1836,5 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
     }
+    return exists;
 }
