@@ -1640,7 +1640,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     SQLRETURN ret;
-    SQLWCHAR *query;
+    SQLWCHAR *query = NULL;
     query = new SQLWCHAR[command.length() + 2];
     memset( query, '\0', command.length() + 2 );
     uc_to_str_cpy( query, command );
@@ -1657,6 +1657,8 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstr
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
     }
+    delete query;
+    query = NULL;
     return 0;
 }
 
@@ -1780,10 +1782,10 @@ void ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::ws
 bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     SQLRETURN ret;
-    SQLWCHAR *query;
+    SQLWCHAR *query = NULL;
     bool exists = false;
     std::wstring query1;
-    SQLWCHAR *index_name, *table_name;
+    SQLWCHAR *index_name = NULL, *table_name = NULL;
     SQLLEN cbIndexName = SQL_NTS, cbTableName = SQL_NTS;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query1 = L"SELECT count(*) FROM sys.indexes WHERE name = ? AND object_id = OBJECT_ID( ? ) );";
@@ -1849,5 +1851,11 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
     }
+    delete index_name;
+    index_name = NULL;
+    delete table_name;
+    table_name = NULL;
+    delete query;
+    query = NULL;
     return exists;
 }
