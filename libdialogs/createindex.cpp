@@ -540,7 +540,7 @@ void CreateIndex::GenerateQuery()
         {
             with = true;
             m_command += L" WITH PAD_INDEX = ON | FILLFACTOR = ";
-            m_command += m_fillfactor->GetValue();
+            m_command += wxString::Format( "%d", m_fillfactor->GetValue() ).ToStdWstring();
         }
         if( m_sortTempDB->GetValue() )
         {
@@ -640,7 +640,7 @@ void CreateIndex::GenerateQuery()
                 m_command += L" WITH ";
             }
             m_command += L"MAXDOP = ";
-            m_command += m_maxDop->GetValue();
+            m_command += wxString::Format( "%d", m_maxDop->GetValue() ).ToStdWstring();
         }
         if( m_dataCompressionRow->GetValue() )
         {
