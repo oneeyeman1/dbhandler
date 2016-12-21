@@ -20,7 +20,7 @@ public:
 private:
     TableGeneralProperty *m_page1;
 #ifdef __WXMSW__
-    CFontPropertyPage *m_page2;
+    CFontPropertyPage *m_page2, *m_page3;
 #endif
     int m_type;
     // begin wxGlade: PropertiesDialog::methods
@@ -30,7 +30,6 @@ private:
 
 protected:
     // begin wxGlade: PropertiesDialog::attributes
-    wxPanel* notebook_1_pane_1;
     wxNotebook* m_properties;
     // end wxGlade
 }; // wxGlade: end class

@@ -40,8 +40,10 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         m_properties->AddPage( m_page1, _( "General" ) );
 #ifdef __WXMSW__
         m_page2 = new CFontPropertyPage( m_properties );
+        m_page3 = new CFontPropertyPage( m_properties );
 #endif
         m_properties->AddPage( m_page2, _( "Data Font" ) );
+        m_properties->AddPage( m_page3, _( "Label Font" ) );
     }
     set_properties();
     do_layout();
