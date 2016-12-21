@@ -225,6 +225,45 @@ LONG CSizeComboBox::GetFontHeight()
     return GetSelection();
 }
 
+wxSize CSizeComboBox::DoGetBestSize() const
+{
+	int wChoice = 0;
+	int hChoice;
+	const unsigned int nItems = GetCount();
+	for( unsigned int i = 0; i < nItems; i++ )
+	{
+		int wLine;
+		GetTextExtent( GetString( i ), &wLine, NULL );
+		if( wLine > wChoice )
+			wChoice = wLine;
+	}
+	if( wChoice == 0 )
+		wChoice = 100;
+	wChoice += 5 * GetCharWidth();
+	int cx, cy;
+	wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
+	int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
+	hChoice = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem  - 6;
+	wxSize best( wChoice, hChoice );
+	CacheBestSize( best );
+	return best;
+}
+
+void CSizeComboBox::DoSetSize( int x, int y, int width, int height, int sizeFlags )
+{
+	int heightOrig = height;
+	if( height != wxDefaultCoord )
+	{
+		int cx, cy;
+		wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
+		int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
+		height = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem;
+	}
+	wxControl::DoSetSize( x, y, width, height, sizeFlags );
+	if( m_pendingSize != wxDefaultSize )
+		m_pendingSize = wxSize( width, heightOrig );
+}
+
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, const wxPoint& pos, const wxSize& size, long style)
  : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL)
 {
@@ -321,10 +360,13 @@ void CFontPropertyPage::do_layout()
     sizer_3->Add( itemChoice7, 0, wxEXPAND, 0 );
     sizer_3->Add( itemChoice10, 0, wxEXPAND, 0 );
     sizer_3->Add( itemChoice19, 0, wxEXPAND, 0 );
-/*    sizer_4->Add( itemCheckBox1, 0, wxEXPAND, 0 );
+    sizer2->Add( sizer_3, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
+    sizer_4->Add( itemCheckBox1, 0, wxEXPAND, 0 );
     sizer_4->Add( 20, 5, 0, wxEXPAND, 0 );
     sizer_4->Add( itemCheckBox2, 0, wxEXPAND, 0 );
-    sizer_3->Add( sizer_4, wxGBPosition( 3, 0 ), wxDefaultSpan, wxEXPAND );
+    sizer2->Add( sizer_4, 0, wxEXPAND, 0 );
+/*    sizer_3->Add( sizer_4, wxGBPosition( 3, 0 ), wxDefaultSpan, wxEXPAND );
     sizer_3->Add( 5, 20, wxGBPosition( 3, 1 ), wxDefaultSpan, wxEXPAND );
     sizer_5->Add( itemWindow24, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 0 );
     sizer_3->Add( sizer_5, wxGBPosition( 3, 2 ), wxGBSpan( 1, 3 ), wxEXPAND );
@@ -348,7 +390,7 @@ void CFontPropertyPage::do_layout()
     sizer_3->Add( 5, 5, wxGBPosition( 6, 3 ), wxDefaultSpan, wxEXPAND );
     sizer_3->Add( 20, 5, wxGBPosition( 6, 4 ), wxDefaultSpan, wxEXPAND );
     sizer_3->Add( itemStaticText30, wxGBPosition( 7, 0 ), wxGBSpan( 1, 5 ), wxEXPAND | wxALIGN_CENTER_HORIZONTAL, 0 );*/
-    sizer2->Add( sizer_3, 0, wxEXPAND, 0 );
+//    sizer2->Add( sizer_3, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND|wxGROW|wxALL, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );

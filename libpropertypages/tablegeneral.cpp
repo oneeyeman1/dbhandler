@@ -39,6 +39,7 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent) : wxPanel( parent )
     wxButton *ok = dynamic_cast<wxButton *>( FindWindowById( wxID_OK ) );
     if( ok )
         ok->SetDefault();
+    m_comment->Bind( wxEVT_CHAR, &TableGeneralProperty::OnCommentKeyEntered, this );
 }
 
 TableGeneralProperty::~TableGeneralProperty()
@@ -57,13 +58,13 @@ void TableGeneralProperty::do_layout()
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer3->Add( m_label1, 0, wxEXPAND, 0 );
-    sizer3->Add( m_owner, 0, wxEXPAND, 0 );
+    sizer3->Add( m_owner, 1, wxEXPAND, 0 );
     sizer3->Add( m_label2, 0, wxEXPAND, 0 );
-    sizer3->Add( m_table, 0, wxEXPAND, 0 );
+    sizer3->Add( m_table, 1, wxEXPAND, 0 );
     sizer2->Add( sizer3, 0, wxEXPAND, 0 );
     sizer2->Add( m_label3, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer2->Add( m_comment, 0, wxEXPAND, 0 );
+    sizer2->Add( m_comment, 1, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( m_log, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -71,4 +72,13 @@ void TableGeneralProperty::do_layout()
     sizer1->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( sizer1 );
+}
+
+void TableGeneralProperty::OnCommentKeyEntered(wxKeyEvent &event)
+{
+    if( event.GetKeyCode() != WXK_RETURN )
+    {
+        dynamic_cast<wxButton *>( GetParent()->GetParent()->FindWindowById( wxID_APPLY ) )->Enable( true );
+        event.Skip();
+    }
 }

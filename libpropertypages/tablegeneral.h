@@ -6,6 +6,8 @@ class WXEXPORT TableGeneralProperty : public wxPanel
 public:
     TableGeneralProperty(wxWindow *parent);
     ~TableGeneralProperty();
+protected:
+    void OnCommentKeyEntered(wxKeyEvent &event);
 private:
     void set_properties();
     void do_layout();
