@@ -523,7 +523,7 @@ void CreateIndex::GenerateQuery()
             m_command += wxString::Format( "%d", m_fillfactor->GetValue() );
         }
         if( m_fastUpdate->IsEnabled() )
-        {`
+        {
             if( m_fastUpdate->GetValue() )
                 m_command = L" WITH FASTUPDATE=ON";
             else
@@ -533,14 +533,14 @@ void CreateIndex::GenerateQuery()
         if( temp != wxEmptyString )
             m_command += wxString::Format( " TABLESPACE %s", temp );
     }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
         bool with = false;
         if( m_padIndex->GetValue() )
         {
             with = true;
             m_command += L" WITH PAD_INDEX = ON | FILLFACTOR = ";
-            m_command << m_fillfactor->GetValue;
+            m_command += m_fillfactor->GetValue();
         }
         if( m_sortTempDB->GetValue() )
         {
@@ -640,7 +640,7 @@ void CreateIndex::GenerateQuery()
                 m_command += L" WITH ";
             }
             m_command += L"MAXDOP = ";
-            m_command << m_maxDop->GetValue();
+            m_command += m_maxDop->GetValue();
         }
         if( m_dataCompressionRow->GetValue() )
         {

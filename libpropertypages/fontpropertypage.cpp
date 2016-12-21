@@ -116,6 +116,56 @@ int CFontNamesComboBox::AddFont( LOGFONT *plf, int type )
     return 1;
 }
 
+wxSize CFontNamesComboBox::DoGetBestSize() const
+{
+	int hBitmap = 0;
+	int wChoice = 0;
+	int hChoice;
+	const unsigned int nItems = GetCount();
+	for( unsigned int i = 0; i < nItems; i++ )
+	{
+		int wLine;
+		GetTextExtent( GetString( i ), &wLine, NULL );
+		if( wLine > wChoice )
+			wChoice = wLine;
+	}
+	if( wChoice == 0 )
+		wChoice = 100;
+	wChoice += 5 * GetCharWidth();
+	if( m_bmp1 )
+	{
+		wChoice += m_bmp1->GetWidth();
+		hBitmap = m_bmp1->GetHeight();
+	}
+	int cx, cy;
+	wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
+	if( hBitmap > cy )
+		cy = hBitmap;
+	int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
+	hChoice = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem - 6;
+	wxSize best( wChoice, hChoice );
+	CacheBestSize( best );
+	return best;
+}
+
+void CFontNamesComboBox::DoSetSize( int x, int y, int width, int height, int sizeFlags )
+{
+	int heightOrig = height;
+    wxSize bitmapSize( 0, 0 );
+	if( height != wxDefaultCoord )
+	{
+		int cx, cy;
+		wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
+		int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
+		if( m_bmp1 )
+			bitmapSize = m_bmp1->GetSize();
+		height = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem - 6;
+	}
+	wxControl::DoSetSize( x, y, width, height, sizeFlags );
+	if( m_pendingSize != wxDefaultSize )
+		m_pendingSize = wxSize( width, heightOrig );
+}
+
 CStyleComboBox::CStyleComboBox(wxWindow *parent, wxWindowID id, const wxString &value, const wxPoint &pos, const wxSize &size, int n, const wxString choices[], long style)
 	: wxComboBox( parent, id, value, pos, size, n, choices, style )
 {
@@ -244,12 +294,13 @@ void CFontPropertyPage::do_layout()
     wxBoxSizer* sizer2 = new wxBoxSizer( wxHORIZONTAL );
     sizer1->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
-    wxGridBagSizer *sizer_3 = new wxGridBagSizer();
+//    wxGridBagSizer *sizer_3 = new wxGridBagSizer();
+    wxFlexGridSizer *sizer_3 = new wxFlexGridSizer( 2, 3, 5, 5 );
     wxStaticBoxSizer *sizer_4 = new wxStaticBoxSizer( itemStaticBox1, wxVERTICAL );
     wxStaticBoxSizer *sizer_5 = new wxStaticBoxSizer( itemStaticBox2, wxVERTICAL );
     wxBoxSizer *sizer_6 = new wxBoxSizer( wxVERTICAL );
     wxBoxSizer *sizer_7 = new wxBoxSizer( wxVERTICAL );
-    sizer_3->Add( itemStaticText6, wxGBPosition( 0, 0 ), wxDefaultSpan, wxEXPAND );
+/*    sizer_3->Add( itemStaticText6, wxGBPosition( 0, 0 ), wxDefaultSpan, wxEXPAND );
     sizer_3->Add( 5, 20, wxGBPosition( 0, 1 ), wxDefaultSpan, wxEXPAND );
     sizer_3->Add( itemStaticText9, wxGBPosition( 0, 2 ), wxDefaultSpan, wxEXPAND );
     sizer_3->Add( 5, 20, wxGBPosition( 0, 3 ), wxDefaultSpan, wxEXPAND );
@@ -263,8 +314,14 @@ void CFontPropertyPage::do_layout()
     sizer_3->Add( 5, 20, wxGBPosition( 2, 1 ), wxDefaultSpan, wxEXPAND );
     sizer_3->Add( 20, 5, wxGBPosition( 2, 2 ), wxDefaultSpan, wxEXPAND );
     sizer_3->Add( 5, 20, wxGBPosition( 2, 3 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 20, 5, wxGBPosition( 2, 4 ), wxDefaultSpan, wxEXPAND );
-    sizer_4->Add( itemCheckBox1, 0, wxEXPAND, 0 );
+    sizer_3->Add( 20, 5, wxGBPosition( 2, 4 ), wxDefaultSpan, wxEXPAND );*/
+    sizer_3->Add( itemStaticText6, 0, wxEXPAND, 0 );
+    sizer_3->Add( itemStaticText9, 0, wxEXPAND, 0 );
+    sizer_3->Add( itemStaticText18, 0, wxEXPAND, 0 );
+    sizer_3->Add( itemChoice7, 0, wxEXPAND, 0 );
+    sizer_3->Add( itemChoice10, 0, wxEXPAND, 0 );
+    sizer_3->Add( itemChoice19, 0, wxEXPAND, 0 );
+/*    sizer_4->Add( itemCheckBox1, 0, wxEXPAND, 0 );
     sizer_4->Add( 20, 5, 0, wxEXPAND, 0 );
     sizer_4->Add( itemCheckBox2, 0, wxEXPAND, 0 );
     sizer_3->Add( sizer_4, wxGBPosition( 3, 0 ), wxDefaultSpan, wxEXPAND );
@@ -290,7 +347,7 @@ void CFontPropertyPage::do_layout()
     sizer_3->Add( 20, 5, wxGBPosition( 6, 2 ), wxDefaultSpan, wxEXPAND );
     sizer_3->Add( 5, 5, wxGBPosition( 6, 3 ), wxDefaultSpan, wxEXPAND );
     sizer_3->Add( 20, 5, wxGBPosition( 6, 4 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( itemStaticText30, wxGBPosition( 7, 0 ), wxGBSpan( 1, 5 ), wxEXPAND | wxALIGN_CENTER_HORIZONTAL, 0 );
+    sizer_3->Add( itemStaticText30, wxGBPosition( 7, 0 ), wxGBSpan( 1, 5 ), wxEXPAND | wxALIGN_CENTER_HORIZONTAL, 0 );*/
     sizer2->Add( sizer_3, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND|wxGROW|wxALL, 0 );

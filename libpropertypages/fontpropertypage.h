@@ -49,8 +49,8 @@ public:
     CFontNamesComboBox(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString &value = wxEmptyString, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_SIMPLE|wxCB_SORT);
     ~CFontNamesComboBox();
     int AddFont( LOGFONT *plf, int type );
-//    virtual wxSize DoGetBestSize() const;
-//    virtual void DoSetSize( int x, int y, int width, int height, int sizeFlags = wxSIZE_AUTO );
+    virtual wxSize DoGetBestSize() const;
+    virtual void DoSetSize( int x, int y, int width, int height, int sizeFlags = wxSIZE_AUTO );
 private:
     wxBitmap *m_bmp1, *m_bmp2;
 };
