@@ -43,8 +43,6 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
 #endif
         m_properties->AddPage( m_page2, _( "Data Font" ) );
     }
-    notebook_1_pane_1 = new wxPanel( m_properties, wxID_ANY );
-
     set_properties();
     do_layout();
     // end wxGlade
