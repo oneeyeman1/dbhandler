@@ -22,7 +22,9 @@
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
 #include "colorcombobox.h"
+#ifdef __WXMSW__
 #include "fontpropertypage.h"
+#endif
 #include "databasetype.h"
 #include "tablegeneral.h"
 #include "odbcconfigure.h"
