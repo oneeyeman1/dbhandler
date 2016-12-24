@@ -1,5 +1,5 @@
 /* XPM */
-static char *properties[] = {
+static const char *properties[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 33 1 ",
 "  c gray38",
