@@ -771,3 +771,13 @@ bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wst
     sqlite3_finalize( stmt );
     return exists;
 }
+
+void SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+{
+    
+}
+
+void SQLiteDatabase::SetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+{
+    
+}

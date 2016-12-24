@@ -1859,3 +1859,13 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
     query = NULL;
     return exists;
 }
+
+void ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+{
+    
+}
+
+void ODBCDatabase::SetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+{
+    
+}

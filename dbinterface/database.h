@@ -107,6 +107,12 @@ private:
     std::wstring table_name, schema_name, comment;
     std::vector<Field *> table_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
+    std::wstring m_dataFontName, m_labelFontName;
+    int m_dataFontWeight, m_labelFontWeight;
+    bool m_dataFontItalic, m_labelFontItalic;
+    int m_dataFontSize, m_labelFontSize;
+    bool m_dataFontUnderline, m_labelFontUnderline;
+    bool m_m_dataFontStrikethrough, m_labelFontStrikethrough;
 };
 
 #ifdef WIN32
@@ -130,6 +136,8 @@ public:
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) = 0;
     virtual int CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
+    virtual void GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
+    virtual void SetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
 };
 
 struct Database::Impl
