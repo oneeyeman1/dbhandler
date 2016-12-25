@@ -276,13 +276,13 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring errorMessage;
     sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL;
     std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    int result = 0, res = SQLITE_OK, res1, res2 = SQLITE_OK, res3 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc;
+    int result = 0, res = SQLITE_OK, res1 = SQLITE_OK, res2 = SQLITE_OK, res3 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = ?";
     std::string query2 = "PRAGMA table_info(\"%w\");";
     std::string query3 = "PRAGMA foreign_key_list(\"%w\")";
-    if( ( res = sqlite3_prepare_v2( m_db, query1.c_str(), query1.length(), &stmt, 0 ) ) == SQLITE_OK )
+    if( ( res = sqlite3_prepare_v2( m_db, query1.c_str(), (int) query1.length(), &stmt, 0 ) ) == SQLITE_OK )
     {
         res = sqlite3_bind_text( stmt, 1, "table", -1, SQLITE_STATIC );
         if( res == SQLITE_OK )
@@ -493,7 +493,7 @@ void SQLiteDatabase::GetTableComments(const std::wstring &tableName, std::wstrin
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
     std::wstring query = L"SELECT \"abt_cmnt\" FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ?;";
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length(), &stmt, 0 );
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
         res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
@@ -530,7 +530,7 @@ void SQLiteDatabase::SetTableComments(const std::wstring &tableName, const std::
     std::wstring errorMessage;
     sqlite3_stmt *stmt = NULL;
     std::wstring query1 = L"SELECT count(*) FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ?;", query2;
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), query1.length(), &stmt, 0 );
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), (int) query1.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
         res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
@@ -563,7 +563,7 @@ void SQLiteDatabase::SetTableComments(const std::wstring &tableName, const std::
         query2 = L"UPDATE \"sys.abcattbl\" SET \"abt_cmnt\" = ? WHERE \"abt_tnam\" = ?";
     else
         query2 = L"INSERT INTO \"sys.abcattbl\"(\"abt_cmnt\", \"abt_nam\", \"abt_ownr\"  ) VALUES( ?, ?, \"\" );";
-    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), query2.length(), &stmt, 0 );
+    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), (int) query2.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
         res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
@@ -604,7 +604,7 @@ void SQLiteDatabase::GetColumnComment(const std::wstring &tableName, const std::
     sqlite3_stmt *stmt;
     std::wstring errorMessage;
     std::wstring query = L"SELECT \"abc_cmnt\" FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_cnam\" = ?;";
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length(), &stmt, 0 );
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
         res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
@@ -650,7 +650,7 @@ void SQLiteDatabase::SetColumnComment(const std::wstring &tableName, const std::
     std::wstring errorMessage;
     sqlite3_stmt *stmt = NULL;
     std::wstring query1 = L"SELECT count(*) FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_cnam\" = ?;", query2;
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), query1.length(), &stmt, 0 );
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), (int) query1.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
         res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
@@ -692,7 +692,7 @@ void SQLiteDatabase::SetColumnComment(const std::wstring &tableName, const std::
         query2 = L"UPDATE \"sys.abcatcol\" SET \"abc_cmnt\" = ? WHERE \"abc_tnam\" = ? AND \"abc_ownr\" == \"\" AND \"abc_cnam\" = ?;";
     else
         query2 = L"INSERT INTO \"sys.abcattbl\"(\"abc_cmnt\", \"abc_tnam\", \"abc_ownr\", \"abc_cnam\" ) VALUES( ?, ?, \"\", ? );";
-    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), query2.length(), &stmt, 0 );
+    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), (int) query2.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
         res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
@@ -774,7 +774,56 @@ bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wst
 
 void SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
-    
+    sqlite3_stmt *stmt = NULL;
+    std::wstring errorMessage;
+    int result;
+    std::string query = "SELECT * FROM \"sys.abcattbl\" WHERE abt_tname = ? AND abt_ownr = "";";
+    int dataFontSize, dataFontWeight;
+    char *dataFontItalic, *dataFontUnderline;
+    int res = sqlite3_prepare_v2( m_db, query.c_str(), (int) query.length(), &stmt, 0 );
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( table->GetTableName().c_str() ).c_str(), -1, SQLITE_STATIC );
+        if( res == SQLITE_OK )
+        {
+            while( true )
+            {
+                res = sqlite3_step( stmt );
+                if( res == SQLITE_ROW )
+                {
+                    dataFontSize = sqlite3_column_int( stmt, 3 );
+                    table->SetDataFontSize( dataFontSize );
+                    dataFontWeight = sqlite3_column_int( stmt, 4 );
+                    table->SetDataFontWeight( dataFontWeight );
+                    dataFontItalic = (char *) sqlite3_column_text( stmt, 5 );
+                    table->SetDataFontItalic( *dataFontItalic == 'Y' );
+                    dataFontUnderline = (char *) sqlite3_column_text( stmt, 6 );
+                    table->SetDataFontUnderline( *dataFontUnderline == 'Y' );
+                }
+                else if( res == SQLITE_DONE )
+                    break;
+                else
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                }
+            }
+        }
+        else
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        result = 1;
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    sqlite3_finalize( stmt );
 }
 
 void SQLiteDatabase::SetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
