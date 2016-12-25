@@ -22,15 +22,17 @@
     #include "wx/stockitem.h"
 #endif
 
+#include "database.h"
 #include "tablegeneral.h"
 
-TableGeneralProperty::TableGeneralProperty(wxWindow *parent) : wxPanel( parent )
+TableGeneralProperty::TableGeneralProperty(wxWindow *parent, DatabaseTable *table) : wxPanel( parent )
 {
+    m_table = table;
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Owner" ) );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Table" ) );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "&Table comment:" ) );
     m_owner = new wxTextCtrl( this, wxID_ANY );
-    m_table = new wxTextCtrl( this, wxID_ANY );
+    m_tableName = new wxTextCtrl( this, wxID_ANY );
     m_comment = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_PROCESS_ENTER );
     m_comment->SetMaxLength( 215 );
     m_log = new wxCheckBox( this, wxID_ANY, _( "Log Only" ) );
@@ -48,6 +50,11 @@ TableGeneralProperty::~TableGeneralProperty()
 
 void TableGeneralProperty::set_properties()
 {
+    m_owner->Enable( false );
+    m_owner->SetValue( m_table->GetSchemaName() );
+    m_tableName->Enable( false );
+    m_tableName->SetValue( m_table->GetTableName() );
+    m_comment->SetValue( m_table->GetComment() );
 }
 
 void TableGeneralProperty::do_layout()
@@ -60,7 +67,7 @@ void TableGeneralProperty::do_layout()
     sizer3->Add( m_label1, 0, wxEXPAND, 0 );
     sizer3->Add( m_owner, 1, wxEXPAND, 0 );
     sizer3->Add( m_label2, 0, wxEXPAND, 0 );
-    sizer3->Add( m_table, 1, wxEXPAND, 0 );
+    sizer3->Add( m_tableName, 1, wxEXPAND, 0 );
     sizer2->Add( sizer3, 0, wxEXPAND, 0 );
     sizer2->Add( m_label3, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );

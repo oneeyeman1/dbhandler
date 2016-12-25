@@ -4,7 +4,7 @@
 class WXEXPORT TableGeneralProperty : public wxPanel
 {
 public:
-    TableGeneralProperty(wxWindow *parent);
+    TableGeneralProperty(wxWindow *parent, DatabaseTable *table);
     ~TableGeneralProperty();
 protected:
     void OnCommentKeyEntered(wxKeyEvent &event);
@@ -15,9 +15,10 @@ private:
     wxStaticText *m_label2;
     wxStaticText *m_label3;
     wxTextCtrl *m_owner;
-    wxTextCtrl *m_table;
+    wxTextCtrl *m_tableName;
     wxTextCtrl *m_comment;
     wxCheckBox *m_log;
+    DatabaseTable *m_table;
 };
 
 #endif

@@ -38,7 +38,8 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_properties = new wxNotebook( this, wxID_ANY );
     if( type == 0 )
     {
-        m_page1 = new TableGeneralProperty( m_properties );
+        DatabaseTable *table = static_cast<DatabaseTable *>( object );
+        m_page1 = new TableGeneralProperty( m_properties, table );
         m_properties->AddPage( m_page1, _( "General" ) );
 #ifdef __WXMSW__
         m_page2 = new CFontPropertyPage( m_properties );
