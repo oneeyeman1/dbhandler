@@ -687,7 +687,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::vector<std::wstring> autoinc_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
-    SQLWCHAR *catalogName, *schemaName, *tableName;
+    SQLWCHAR *catalogName = NULL, *schemaName = NULL, *tableName = NULL;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0;
     SQLHDBC hdbc_col = 0, hdbc_pk = 0, hdbc_colattr = 0, hdbc_fk = 0;
     SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1], dbName[1024];
@@ -1152,8 +1152,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         for( ret = SQLFetch( stmt_fk ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_fk ) )
                         {
-                            FK_ONUPDATE update_constraint;
-                            FK_ONDELETE delete_constraint;
+                            FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
+                            FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
                             str_to_uc_cpy( primaryKey, szPkCol );
                             str_to_uc_cpy( fkSchema, szPkSchema );
                             str_to_uc_cpy( fkTable, szPkTable );
@@ -1584,7 +1584,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 if( pimpl->m_subtype == L"Microsoft SQL Server" && schema_name == L"sys" )
                     table_name = schema_name + L"." + table_name;
                 DatabaseTable *table = new DatabaseTable( table_name, schema_name, fields, foreign_keys );
-//                GetTableComments( table_name, comment, errorMsg );
+                GetTableProperties( table, errorMsg );
                 table->SetComment( comment );
                 pimpl->m_tables[catalog_name].push_back( table );
                 fields.erase( fields.begin(), fields.end() );
