@@ -46,7 +46,6 @@ typedef void (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, v
 wxIMPLEMENT_DYNAMIC_CLASS(DrawingView, wxView);
 
 wxBEGIN_EVENT_TABLE(DrawingView, wxView)
-    EVT_MENU(wxID_CUT, DrawingView::OnCut)
     EVT_MENU(wxID_SELECTTABLE, DrawingView::OnViewSelectedTables)
     EVT_MENU(wxID_OBJECTNEWINDEX, DrawingView::OnNewIndex)
     EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
@@ -88,7 +87,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_frame->Move( pt.x, pt.y );
     m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
     wxBitmap tmp = wxBitmap( database_profile );
-    bool ok = tmp.IsOk();
     m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
     m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
     m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
@@ -179,18 +177,12 @@ bool DrawingView::OnClose(bool deleteWindow)
     return true;
 }
 
-void DrawingView::OnCut(wxCommandEvent& WXUNUSED(event))
-{
-    DrawingDocument * const doc = GetDocument();
-
-}
-
 void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
 {
     int result;
     wxString command;
     std::vector<std::wstring> errors;
-    DatabaseTable *table;
+    DatabaseTable *table = NULL;
     ShapeList shapes;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
@@ -239,8 +231,8 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &event)
 
 void DrawingView::OnFieldProperties(wxCommandEvent &event)
 {
-    int type;
-    DatabaseTable *table;
+    int type = 0;
+    DatabaseTable *table = NULL;
     ShapeList shapes;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )

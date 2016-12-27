@@ -61,7 +61,6 @@ public:
     DrawingDocument* GetDocument();
 
 private:
-    void OnCut(wxCommandEvent& event);
 #ifdef __WXOSX__
     wxToolBar *m_tb;
 #endif
