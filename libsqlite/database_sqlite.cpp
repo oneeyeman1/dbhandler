@@ -808,6 +808,7 @@ void SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::w
                     table->SetLabelFontUnderline( *(char *) sqlite3_column_text( stmt, 20 ) == 'Y' );
                     dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 23 );
                     table->SetLabelFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
+                    table->SetComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 23 ) ) );
                 }
                 else if( res == SQLITE_DONE )
                     break;
