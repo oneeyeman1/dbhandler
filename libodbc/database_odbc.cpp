@@ -1584,7 +1584,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 if( pimpl->m_subtype == L"Microsoft SQL Server" && schema_name == L"sys" )
                     table_name = schema_name + L"." + table_name;
                 DatabaseTable *table = new DatabaseTable( table_name, schema_name, fields, foreign_keys );
-                GetTableComments( table_name, comment, errorMsg );
+//                GetTableComments( table_name, comment, errorMsg );
                 table->SetComment( comment );
                 pimpl->m_tables[catalog_name].push_back( table );
                 fields.erase( fields.begin(), fields.end() );
@@ -1660,115 +1660,6 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstr
     delete query;
     query = NULL;
     return 0;
-}
-
-void ODBCDatabase::GetTableComments(const std::wstring &tableName, std::wstring &comment, std::vector<std::wstring> &errorMsg)
-{
-    SQLLEN owner_size = SQL_NTS, name_size = SQL_NTS;
-    SQLHDBC dbc_comment;
-    SQLHSTMT stmt_comment = 0;
-    SQLWCHAR sql_comment[254], *temp = NULL, *sql_name = NULL, *sql_owner = NULL;
-    SQLLEN sql_comment_length = 0;
-    int pos = tableName.find( '.' );
-    std::wstring owner = tableName.substr( 0, pos );
-    std::wstring name = tableName.substr( pos + 1 );
-    std::wstring query = L"SELECT abt_cmnt FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
-    RETCODE ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &dbc_comment );
-    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-    {
-        SQLSMALLINT OutConnStrLen;
-        ret = SQLDriverConnect( dbc_comment, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
-        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-        {
-            ret = SQLAllocHandle( SQL_HANDLE_STMT, dbc_comment, &stmt_comment );
-            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-            {
-                temp = new SQLWCHAR[query.length() + 2];
-                memset( temp, '\0', query.length() + 2 );
-                uc_to_str_cpy( temp, query );
-                sql_owner = new SQLWCHAR[owner.length() + 2];
-                memset( sql_owner, '\0', owner.length() + 2 );
-                uc_to_str_cpy( sql_owner, owner );
-                sql_name = new SQLWCHAR[name.length() + 2];
-                memset( sql_name, '\0', name.length() + 2 );
-                uc_to_str_cpy( sql_name, name );
-                ret = SQLPrepare( stmt_comment, temp, SQL_NTS );
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                {
-                    ret = SQLBindParameter( stmt_comment, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, name.length() + 2, 0, sql_name, 0, &name_size );
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        ret = SQLBindParameter( stmt_comment, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, owner.length() + 2, 0, sql_owner, 0, &owner_size );
-                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                        {
-                            ret = SQLExecute( stmt_comment );
-                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                            {
-                                ret = SQLBindCol( stmt_comment, 1, SQL_C_WCHAR, &sql_comment, 254 * 2, &sql_comment_length );
-                                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                                {
-                                    ret = SQLFetch( stmt_comment );
-                                    if( ret != SQL_NO_DATA )
-                                    {
-                                        if( ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA )
-                                        {
-                                            str_to_uc_cpy( comment, sql_comment );
-                                        }
-                                        else
-                                        {
-                                            GetErrorMessage( errorMsg, 1, stmt_comment );
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    GetErrorMessage( errorMsg, 1, stmt_comment );
-                                }
-                            }
-                            else
-                            {
-                                GetErrorMessage( errorMsg, 1, stmt_comment );
-                            }
-                        }
-                        else
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_comment );
-                        }
-                    }
-                    else
-                    {
-                        GetErrorMessage( errorMsg, 1, stmt_comment );
-                    }
-                }
-                else
-                {
-                    GetErrorMessage( errorMsg, 1, stmt_comment );
-                }
-            }
-            else
-            {
-                GetErrorMessage( errorMsg, 2, dbc_comment );
-            }
-        }
-        else
-        {
-            GetErrorMessage( errorMsg, 2, dbc_comment );
-        }
-    }
-    else
-    {
-        GetErrorMessage( errorMsg, 0, m_env );
-    }
-    delete temp;
-    delete sql_name;
-    delete sql_owner;
-    ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_comment );
-    ret = SQLDisconnect( dbc_comment );
-    ret = SQLFreeHandle( SQL_HANDLE_DBC, dbc_comment );
-}
-
-void ODBCDatabase::SetTableComments(const std::wstring &tableName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
-{
 }
 
 void ODBCDatabase::GetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &comment, std::vector<std::wstring> &errorMsg)
