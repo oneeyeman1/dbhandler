@@ -796,6 +796,18 @@ void SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::w
                     table->SetDataFontUnderline( *(char *) sqlite3_column_text( stmt, 6 ) == 'Y' );
                     dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 9 );
                     table->SetDataFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
+                    table->SetHeadingFontSize( sqlite3_column_int( stmt, 10 ) );
+                    table->SetHeadingFontWeight( sqlite3_column_int( stmt, 11 ) );
+                    table->SetHeadingFontItalic( *(char *) sqlite3_column_text( stmt, 12 ) == 'Y' );
+                    table->SetHeadingFontUnderline( *(char *) sqlite3_column_text( stmt, 13 ) == 'Y' );
+                    dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 16 );
+                    table->SetHeadingFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
+                    table->SetLabelFontSize( sqlite3_column_int( stmt, 17 ) );
+                    table->SetLabelFontWeight( sqlite3_column_int( stmt, 18 ) );
+                    table->SetLabelFontItalic( *(char *) sqlite3_column_text( stmt, 19 ) == 'Y' );
+                    table->SetLabelFontUnderline( *(char *) sqlite3_column_text( stmt, 20 ) == 'Y' );
+                    dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 23 );
+                    table->SetLabelFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
                 }
                 else if( res == SQLITE_DONE )
                     break;
