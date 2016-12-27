@@ -113,62 +113,102 @@ int CFontNamesComboBox::AddFont( LOGFONT *plf, int type )
     {
         Append( plf->lfFaceName, wxNullBitmap, &type );
     }
+    SetSize( GetBestSize() );
     return 1;
 }
 
 wxSize CFontNamesComboBox::DoGetBestSize() const
 {
-	int hBitmap = 0;
-	int wChoice = 0;
-	int hChoice;
-	const unsigned int nItems = GetCount();
-	for( unsigned int i = 0; i < nItems; i++ )
-	{
-		int wLine;
-		GetTextExtent( GetString( i ), &wLine, NULL );
-		if( wLine > wChoice )
-			wChoice = wLine;
-	}
-	if( wChoice == 0 )
-		wChoice = 100;
-	wChoice += 5 * GetCharWidth();
-	if( m_bmp1 )
-	{
-		wChoice += m_bmp1->GetWidth();
-		hBitmap = m_bmp1->GetHeight();
-	}
-	int cx, cy;
-	wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
-	if( hBitmap > cy )
-		cy = hBitmap;
-	int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
-	hChoice = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem - 6;
-	wxSize best( wChoice, hChoice );
-	CacheBestSize( best );
-	return best;
+    int hBitmap = 0;
+    int wChoice = 0;
+    int hChoice;
+    const unsigned int nItems = GetCount();
+    for( unsigned int i = 0; i < nItems; i++ )
+    {
+        int wLine;
+        GetTextExtent( GetString( i ), &wLine, NULL );
+        if( wLine > wChoice )
+            wChoice = wLine;
+    }
+    if( wChoice == 0 )
+        wChoice = 100;
+    wChoice += 5 * GetCharWidth();
+    if( m_bmp1 )
+    {
+        wChoice += m_bmp1->GetWidth();
+        hBitmap = m_bmp1->GetHeight();
+    }
+    int cx, cy;
+    wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
+    if( hBitmap > cy )
+        cy = hBitmap;
+    int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
+    hChoice = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem - 6;
+    wxSize best( wChoice, hChoice );
+    CacheBestSize( best );
+    return best;
 }
 
 void CFontNamesComboBox::DoSetSize( int x, int y, int width, int height, int sizeFlags )
 {
-	int heightOrig = height;
+    int heightOrig = height;
     wxSize bitmapSize( 0, 0 );
-	if( height != wxDefaultCoord )
-	{
-		int cx, cy;
-		wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
-		int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
-		if( m_bmp1 )
-			bitmapSize = m_bmp1->GetSize();
-		height = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem - 6;
-	}
-	wxControl::DoSetSize( x, y, width, height, sizeFlags );
-	if( m_pendingSize != wxDefaultSize )
-		m_pendingSize = wxSize( width, heightOrig );
+    if( height != wxDefaultCoord )
+    {
+        int cx, cy;
+        wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
+        int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
+        if( m_bmp1 )
+            bitmapSize = m_bmp1->GetSize();
+        height = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem - 6;
+    }
+    wxBitmapComboBox::DoSetSize( x, y, width, height, sizeFlags );
+    if( m_pendingSize != wxDefaultSize )
+        m_pendingSize = wxSize( width, heightOrig );
 }
 
 CStyleComboBox::CStyleComboBox(wxWindow *parent, wxWindowID id, const wxString &value, const wxPoint &pos, const wxSize &size, int n, const wxString choices[], long style)
 	: wxComboBox( parent, id, value, pos, size, n, choices, style )
 {
+}
+
+wxSize CStyleComboBox::DoGetBestSize() const
+{
+    int wChoice = 0;
+    int hChoice;
+    const unsigned int nItems = GetCount();
+    for( unsigned int i = 0; i < nItems; i++ )
+    {
+        int wLine;
+        GetTextExtent( GetString( i ), &wLine, NULL );
+        if( wLine > wChoice )
+            wChoice = wLine;
+    }
+    if( wChoice == 0 )
+        wChoice = 100;
+    wChoice += 5 * GetCharWidth();
+    int cx, cy;
+    wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
+    int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
+    hChoice = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem  - 6;
+    wxSize best( wChoice, hChoice );
+    CacheBestSize( best );
+    return best;
+}
+
+void CStyleComboBox::DoSetSize( int x, int y, int width, int height, int sizeFlags )
+{
+    int heightOrig = height;
+    if( height != wxDefaultCoord )
+    {
+        int cx, cy;
+        wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
+        int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
+        height = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem;
+    }
+    wxControl::DoSetSize( x, y, width, height, sizeFlags );
+    if( m_pendingSize != wxDefaultSize )
+        m_pendingSize = wxSize( width, heightOrig );
 }
 
 CSizeComboBox::CSizeComboBox(wxWindow *parent, wxWindowID id, const wxString &value, const wxPoint &pos, const wxSize &size, int n, const wxString choices[], long style)
@@ -227,41 +267,41 @@ LONG CSizeComboBox::GetFontHeight()
 
 wxSize CSizeComboBox::DoGetBestSize() const
 {
-	int wChoice = 0;
-	int hChoice;
-	const unsigned int nItems = GetCount();
-	for( unsigned int i = 0; i < nItems; i++ )
-	{
-		int wLine;
-		GetTextExtent( GetString( i ), &wLine, NULL );
-		if( wLine > wChoice )
-			wChoice = wLine;
-	}
-	if( wChoice == 0 )
-		wChoice = 100;
-	wChoice += 5 * GetCharWidth();
-	int cx, cy;
-	wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
-	int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
-	hChoice = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem  - 6;
-	wxSize best( wChoice, hChoice );
-	CacheBestSize( best );
-	return best;
+    int wChoice = 0;
+    int hChoice;
+    const unsigned int nItems = GetCount();
+    for( unsigned int i = 0; i < nItems; i++ )
+    {
+        int wLine;
+        GetTextExtent( GetString( i ), &wLine, NULL );
+        if( wLine > wChoice )
+            wChoice = wLine;
+    }
+    if( wChoice == 0 )
+        wChoice = 100;
+    wChoice += 5 * GetCharWidth();
+    int cx, cy;
+    wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
+    int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
+    hChoice = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem  - 6;
+    wxSize best( wChoice, hChoice );
+    CacheBestSize( best );
+    return best;
 }
 
 void CSizeComboBox::DoSetSize( int x, int y, int width, int height, int sizeFlags )
 {
-	int heightOrig = height;
-	if( height != wxDefaultCoord )
-	{
-		int cx, cy;
-		wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
-		int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
-		height = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem;
-	}
-	wxControl::DoSetSize( x, y, width, height, sizeFlags );
-	if( m_pendingSize != wxDefaultSize )
-		m_pendingSize = wxSize( width, heightOrig );
+    int heightOrig = height;
+    if( height != wxDefaultCoord )
+    {
+        int cx, cy;
+        wxGetCharSize( GetHWND(), &cx, &cy, GetFont() );
+        int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
+        height = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem;
+    }
+    wxControl::DoSetSize( x, y, width, height, sizeFlags );
+    if( m_pendingSize != wxDefaultSize )
+        m_pendingSize = wxSize( width, heightOrig );
 }
 
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, const wxPoint& pos, const wxSize& size, long style)
@@ -329,8 +369,8 @@ CFontPropertyPage::~CFontPropertyPage()
 
 void CFontPropertyPage::do_layout()
 {
-    wxBoxSizer* sizer1 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer* sizer2 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* sizer1 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* sizer2 = new wxBoxSizer( wxVERTICAL );
     sizer1->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
 //    wxGridBagSizer *sizer_3 = new wxGridBagSizer();
@@ -339,6 +379,7 @@ void CFontPropertyPage::do_layout()
     wxStaticBoxSizer *sizer_5 = new wxStaticBoxSizer( itemStaticBox2, wxVERTICAL );
     wxBoxSizer *sizer_6 = new wxBoxSizer( wxVERTICAL );
     wxBoxSizer *sizer_7 = new wxBoxSizer( wxVERTICAL );
+    wxFlexGridSizer *sizer_8 = new wxFlexGridSizer( 2, 2, 5, 5 );
 /*    sizer_3->Add( itemStaticText6, wxGBPosition( 0, 0 ), wxDefaultSpan, wxEXPAND );
     sizer_3->Add( 5, 20, wxGBPosition( 0, 1 ), wxDefaultSpan, wxEXPAND );
     sizer_3->Add( itemStaticText9, wxGBPosition( 0, 2 ), wxDefaultSpan, wxEXPAND );
@@ -365,7 +406,18 @@ void CFontPropertyPage::do_layout()
     sizer_4->Add( itemCheckBox1, 0, wxEXPAND, 0 );
     sizer_4->Add( 20, 5, 0, wxEXPAND, 0 );
     sizer_4->Add( itemCheckBox2, 0, wxEXPAND, 0 );
-    sizer2->Add( sizer_4, 0, wxEXPAND, 0 );
+    sizer_8->Add( sizer_4, 0, wxEXPAND, 0 );
+    sizer_5->Add( itemWindow24, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 0 );
+    sizer_8->Add( sizer_5, 0, wxEXPAND, 0 );
+    sizer_6->Add( itemStaticText15, 0, wxEXPAND, 0 );
+    sizer_6->Add( 20, 5, 0, wxEXPAND, 0 );
+    sizer_6->Add( itemChoice16, 0, wxEXPAND, 0 );
+    sizer_8->Add( sizer_6, 0, wxEXPAND, 0 );
+    sizer_7->Add( itemStaticText23, 0, wxEXPAND, 0 );
+    sizer_7->Add( 20, 5, 0, wxEXPAND, 0 );
+    sizer_7->Add( itemChoice17, 0, wxEXPAND, 0 );
+    sizer_8->Add( sizer_7, 0, wxEXPAND, 0 );
+    sizer2->Add( sizer_8, 0, wxEXPAND, 0 );
 /*    sizer_3->Add( sizer_4, wxGBPosition( 3, 0 ), wxDefaultSpan, wxEXPAND );
     sizer_3->Add( 5, 20, wxGBPosition( 3, 1 ), wxDefaultSpan, wxEXPAND );
     sizer_5->Add( itemWindow24, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 0 );
@@ -395,8 +447,8 @@ void CFontPropertyPage::do_layout()
     sizer1->Add( sizer2, 0, wxEXPAND|wxGROW|wxALL, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
     SetSizer( sizer1 );
-    sizer1->Fit( this );
-    Layout();
+//    sizer1->Fit( this );
+//    Layout();
 }
 
 void CFontPropertyPage::set_properties()
@@ -439,6 +491,7 @@ void CFontPropertyPage::set_properties()
 
 void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
 {
+    m_dirty = true;
     if( event.GetEventObject() == itemChoice7 )
         FillSizeList();
     int curSel = itemChoice10->GetSelection();
@@ -593,4 +646,20 @@ void CFontPropertyPage::UpdateSampleFont()
 void CFontPropertyPage::GetData(void *WXUNUSED(data))
 {
 //    SetDirty( false );
+}
+
+void CFontPropertyPage::SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough)
+{
+    m_fontName = name;
+    if( name == L"" )
+    {
+        wxFont font( size, wxFONTFAMILY_DEFAULT, italic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, underline, name );
+        m_font = m_font;
+    }
+    else
+    {
+        wxFont font( size, wxFONTFAMILY_DEFAULT, italic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, underline, name );
+        font.SetStrikethrough( strikethrough );
+        m_font = font;
+    }
 }

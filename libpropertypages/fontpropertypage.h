@@ -59,8 +59,8 @@ class CStyleComboBox : public wxComboBox
 {
 public:
     CStyleComboBox(wxWindow *parent, wxWindowID id = wxID_ANY, const wxString &value = wxEmptyString, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_SIMPLE|wxCB_SORT);
-//    virtual wxSize DoGetBestSize() const;
-//    virtual void DoSetSize( int x, int y, int width, int height, int sizeFlags = wxSIZE_AUTO );
+    virtual wxSize DoGetBestSize() const;
+    virtual void DoSetSize( int x, int y, int width, int height, int sizeFlags = wxSIZE_AUTO );
 };
 
 class CSizeComboBox : public wxComboBox
@@ -99,6 +99,7 @@ class WXEXPORT CFontPropertyPage: public wxPanel
 public:
     CFontPropertyPage(wxWindow* parent, wxFont font=wxNullFont, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
     ~CFontPropertyPage();
+    void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough);
     void GetData(void *data);
     void FillFacenameList();
     void FillSizeList();
@@ -140,7 +141,7 @@ private:
     unsigned long m_nActualStyle;
 //#endif
     bool m_bUnderline;
-    wxString m_fontSize, m_textStr, m_backgroundStr;
+    wxString m_fontSize, m_textStr, m_backgroundStr, m_fontName;
     wxColour m_text, m_background;
     bool m_dirty;
 };
