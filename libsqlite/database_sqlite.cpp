@@ -778,7 +778,7 @@ void SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::w
     std::wstring errorMessage;
     int result;
     std::string query = "SELECT * FROM \"sys.abcattbl\" WHERE abt_tname = ? AND abt_ownr = "";";
-    const unsigned char *dataFontName;
+    const unsigned char *dataFontName, *headingFontName, *labelFontName;
     int res = sqlite3_prepare_v2( m_db, query.c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
@@ -800,13 +800,13 @@ void SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::w
                     table->SetHeadingFontWeight( sqlite3_column_int( stmt, 11 ) );
                     table->SetHeadingFontItalic( *(char *) sqlite3_column_text( stmt, 12 ) == 'Y' );
                     table->SetHeadingFontUnderline( *(char *) sqlite3_column_text( stmt, 13 ) == 'Y' );
-                    dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 16 );
+                    headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 16 );
                     table->SetHeadingFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
                     table->SetLabelFontSize( sqlite3_column_int( stmt, 17 ) );
                     table->SetLabelFontWeight( sqlite3_column_int( stmt, 18 ) );
                     table->SetLabelFontItalic( *(char *) sqlite3_column_text( stmt, 19 ) == 'Y' );
                     table->SetLabelFontUnderline( *(char *) sqlite3_column_text( stmt, 20 ) == 'Y' );
-                    dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 23 );
+                    labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 23 );
                     table->SetLabelFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
                     table->SetComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 23 ) ) );
                 }
