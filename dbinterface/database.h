@@ -115,26 +115,38 @@ public:
     void SetComment(const std::wstring &comment) { this->comment = comment; }
     void SetDataFontName(const std::wstring &name) { m_dataFontName = name; }
     const std::wstring &GetDataFontName() { return m_dataFontName; }
+    void SetHeadingFontName(const std::wstring &name) { m_headingFontName = name; }
+    const std::wstring &GetHeadingFontName() { return m_headingFontName; }
     void SetLabelFontName(const std::wstring &name) { m_labelFontName = name; }
     const std::wstring &GetLabelFontName() { return m_labelFontName; }
     void SetDataFontWeight(int weight) { m_dataFontWeight = weight; }
     int GetDataFontWeight() { return m_dataFontWeight; }
+    void SetHeadingFontWeight(int weight) { m_headingFontWeight = weight; }
+    int GetHeadingFontWeight() { return m_headingFontWeight; }
     void SetLabelFontWeight(int weight) { m_labelFontWeight = weight; }
     int GetLabelFontWeight() { return m_labelFontWeight; }
     void SetDataFontItalic(bool italic) { m_dataFontItalic = italic; }
     bool GetDataFontItalic() { return m_dataFontItalic; }
+    void SetHeadingFontItalic(bool italic) { m_headingFontItalic = italic; }
+    bool GetHeadingFontItalic() { return m_headingFontItalic; }
     void SetLabelFontItalic(bool italic) { m_labelFontItalic = italic; }
     bool GetLabelFontItalic() { return m_labelFontItalic; }
     void SetDataFontSize(int size) { m_dataFontSize = size; }
     int GetDataFontSize() { return m_dataFontSize; }
+    void SetHeadingFontSize(int size) { m_headingFontSize = size; }
+    int GetHeadingFontSize() { return m_headingFontSize; }
     void SetLabelFontSize(int size) { m_labelFontSize = size; }
     int GetLabelFontSize() { return m_labelFontSize; }
     void SetDataFontUnderline(bool param) { m_dataFontUnderline = param; }
     bool GetDataFontUnderline() { return m_dataFontUnderline; }
+    void SetHeadingFontUnderline(bool underline) { m_headingFontUnderline = underline; }
+    bool GetHeadingFontUnderline() { return m_headingFontUnderline; }
     void SetLabelFontUnderline(bool param) { m_labelFontUnderline = param; }
     bool GetLabelFontUnderline() { return m_labelFontUnderline; }
     void SetDataFontStrikethrough(bool param) { m_dataFontStrikethrough = param; }
     bool GetDataFontStrikethrough() { return m_dataFontStrikethrough; }
+    void SetHeadingFontStrikethrough(bool strikethrough) { m_headingFontStrikethrough = strikethrough; }
+    bool GetHeadingFontStrikethrough() { return m_headingFontStrikethrough; }
     void SetLabelFontStrikethrough(bool param) { m_labelFontStrikethrough = param; }
     bool GetLabelFontStrikethrough() { return m_labelFontStrikethrough; }
     const std::vector<Field *> &GetFields() { return table_fields; }
@@ -143,12 +155,12 @@ private:
     std::wstring table_name, schema_name, comment;
     std::vector<Field *> table_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
-    std::wstring m_dataFontName, m_labelFontName;
-    int m_dataFontWeight, m_labelFontWeight;
-    bool m_dataFontItalic, m_labelFontItalic;
-    int m_dataFontSize, m_labelFontSize;
-    bool m_dataFontUnderline, m_labelFontUnderline;
-    bool m_dataFontStrikethrough, m_labelFontStrikethrough;
+    std::wstring m_dataFontName, m_labelFontName, m_headingFontName;
+    int m_dataFontWeight, m_labelFontWeight, m_headingFontWeight;
+    bool m_dataFontItalic, m_labelFontItalic, m_headingFontItalic;
+    int m_dataFontSize, m_labelFontSize, m_headingFontSize;
+    bool m_dataFontUnderline, m_labelFontUnderline, m_headingFontUnderline;
+    bool m_dataFontStrikethrough, m_labelFontStrikethrough, m_headingFontStrikethrough;
 };
 
 #ifdef WIN32
