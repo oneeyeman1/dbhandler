@@ -33,19 +33,23 @@
 PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
+    std::vector<std::wstring> errors;
     m_type = type;
     // begin wxGlade: PropertiesDialog::PropertiesDialog
     m_properties = new wxNotebook( this, wxID_ANY );
     if( type == 0 )
     {
         DatabaseTable *table = static_cast<DatabaseTable *>( object );
+        db->GetTableProperties( table, errors );
         m_page1 = new TableGeneralProperty( m_properties, table );
         m_properties->AddPage( m_page1, _( "General" ) );
 #ifdef __WXMSW__
         m_page2 = new CFontPropertyPage( m_properties );
         m_page3 = new CFontPropertyPage( m_properties );
+        m_page4 = new CFontPropertyPage( m_properties );
         m_properties->AddPage( m_page2, _( "Data Font" ) );
-        m_properties->AddPage( m_page3, _( "Label Font" ) );
+        m_properties->AddPage( m_page3, _( "Heading Font" ) );
+        m_properties->AddPage( m_page4, _( "Label Font" ) );
 #endif
     }
     set_properties();

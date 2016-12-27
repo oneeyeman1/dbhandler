@@ -20,7 +20,7 @@ public:
 private:
     TableGeneralProperty *m_page1;
 #ifdef __WXMSW__
-    CFontPropertyPage *m_page2, *m_page3;
+    CFontPropertyPage *m_page2, *m_page3, *m_page4;
 #endif
     int m_type;
     // begin wxGlade: PropertiesDialog::methods
