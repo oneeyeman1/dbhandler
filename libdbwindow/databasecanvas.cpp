@@ -63,7 +63,6 @@ void DatabaseCanvas::OnDraw(wxDC& dc)
 void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
 {
     std::vector<MyErdTable *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
-    int size = tables.size();
     for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
     {
         if( !IsTableDisplayed( (*it)->GetTableName() ) )
