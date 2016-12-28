@@ -653,7 +653,7 @@ void CFontPropertyPage::SetFont(const std::wstring &name, int size, bool italic,
     m_fontName = name;
     if( name == L"" )
     {
-        wxFont font( size, wxFONTFAMILY_DEFAULT, italic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, underline, name );
+        wxFont font( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
         m_font = m_font;
     }
     else
@@ -661,5 +661,21 @@ void CFontPropertyPage::SetFont(const std::wstring &name, int size, bool italic,
         wxFont font( size, wxFONTFAMILY_DEFAULT, italic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, underline, name );
         font.SetStrikethrough( strikethrough );
         m_font = font;
+    }
+    if( m_fontName != wxEmptyString )
+    {
+        itemChoice7->SetSelection( itemChoice7->FindString( m_fontName ) );
+        if( bold && italic )
+            itemChoice10->SetStringSelection( "Bold Italic" );
+        else if( bold )
+            itemChoice10->SetStringSelection( "Bold" );
+        else if( italic )
+            itemChoice10->SetStringSelection( "Italic" );
+        else
+            itemChoice10->SetStringSelection( "Regular" );
+        if( underline )
+            itemCheckBox1->SetValue( true );
+        if( strikethrough )
+            itemCheckBox2->SetValue( true );
     }
 }
