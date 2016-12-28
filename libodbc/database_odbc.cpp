@@ -1753,7 +1753,74 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
 
 void ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
-    
+    unsigned short dataFontSize;
+    SQLLEN cbDataFontSize = 0;
+    SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS;
+    std::wstring query = L"SELECT * FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
+    std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName();
+    int tableNameLen = tableName.length(), schemaNameLen = schemaName.length();
+    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tableNameLen + 2], *schema_name = new SQLWCHAR[schemaNameLen + 2];
+    SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    memset( schema_name, '\0', schemaNameLen );
+    memset( table_name, '\0', tableNameLen );
+    uc_to_str_cpy( schema_name, schemaName );
+    uc_to_str_cpy( table_name, tableName );
+    memset( qry, '\0', query.size() + 2 );
+    uc_to_str_cpy( qry, query );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
+        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+        {
+            ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, schema_name, 0, &cbSchemaName );
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+            {
+                ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                {
+                    ret = SQLExecute( m_hstmt );
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    {
+                        ret = SQLBindCol( m_hstmt, 4, SQL_C_SSHORT, &dataFontSize, SQL_MAX_COLUMN_NAME_LEN + 1, &cbDataFontSize );
+                        ret = SQLFetch( m_hstmt );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                        }
+                        else
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                        }
+                    }
+                    else
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                    }
+                }
+                else
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                }
+            }
+            else
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+            }
+        }
+        else
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+        }
+    }
+    else
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+    }
+    delete qry;
+    qry = NULL;
+    delete table_name;
+    table_name = NULL;
+    delete schema_name;
+    schema_name = NULL;
 }
 
 void ODBCDatabase::SetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
