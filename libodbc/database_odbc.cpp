@@ -1754,8 +1754,9 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
 void ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     unsigned short dataFontSize;
-    SQLLEN cbDataFontSize = 0;
-    SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS;
+    SQLWCHAR dataFontItalic[2], headingFontItalic[2], dataFontUnderline[2], dataFontName[20];
+    SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = 0, cbDataFontUnderline = 0, dataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
+    SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbHeadingFontItalic = 0;
     std::wstring query = L"SELECT * FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName();
     int tableNameLen = tableName.length(), schemaNameLen = schemaName.length();
@@ -1781,10 +1782,76 @@ void ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                     ret = SQLExecute( m_hstmt );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
-                        ret = SQLBindCol( m_hstmt, 4, SQL_C_SSHORT, &dataFontSize, SQL_MAX_COLUMN_NAME_LEN + 1, &cbDataFontSize );
-                        ret = SQLFetch( m_hstmt );
+                        ret = SQLBindCol( m_hstmt, 4, SQL_C_SSHORT, &m_dataFontSize, 0, &cbDataFontSize );
                         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                         {
+                            ret = SQLBindCol( m_hstmt, 5, SQL_C_SSHORT, &m_dataFontWeight, 0, &cbDataFontWeight );
+                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                            {
+                                ret = SQLBindCol( m_hstmt, 6, SQL_C_WCHAR, &dataFontItalic, 3, &cbDataFontItalic );
+                                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                {
+                                    ret = SQLBindCol( m_hstmt, 7, SQL_C_WCHAR, &dataFontUnderline, 3, &cbDataFontUnderline );
+                                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        ret = SQLBindCol( m_hstmt, 10, SQL_C_WCHAR, &m_dataFontName, 22, &cbDataFontName );
+                                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            ret = SQLBindCol( m_hstmt, 11, SQL_C_SSHORT, &m_headingFontSize, 0, &cbHeadingFontSize );
+                                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                ret = SQLBindCol( m_hstmt, 12, SQL_C_SSHORT, &m_headingFontWeight, 0, &cbHeadingFontWeight );
+                                                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                                {
+                                                    ret = SQLBindCol( m_hstmt, 13, SQL_C_SSHORT, &headingFontItalic, 3, &cbHeadingFontItalic );
+                                                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                                    {
+                                                        ret = SQLFetch( m_hstmt );
+                                                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                                        {
+                                                            m_dataFontItalic = dataFontItalic[0] == 'Y';
+                                                            m_headingFontItalic = headingFontItalic[0] == 'Y';
+                                                            m_dataFontUnderline = dataFontUnderline[0] == 'Y';
+                                                        }
+                                                        else if( ret != SQL_NO_DATA )
+                                                        {
+                                                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                }
+											}
+                                            else
+                                            {
+                                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                            }
+                                        }
+                                        else
+                                        {
+                                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                                        }
+                                    }
+                                    else
+                                    {
+                                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                                    }
+                                }
+                                else
+                                {
+                                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                                }
+                            }
+                            else
+                            {
+                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                            }
                         }
                         else
                         {
