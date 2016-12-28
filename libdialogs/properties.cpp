@@ -24,7 +24,6 @@
 #include "wx/bmpcbox.h"
 #include "database.h"
 #include "tablegeneral.h"
-#include "colorcombobox.h"
 #ifdef __WXMSW__
 #include "fontpropertypage.h"
 #endif
@@ -45,8 +44,11 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         m_properties->AddPage( m_page1, _( "General" ) );
 #ifdef __WXMSW__
         m_page2 = new CFontPropertyPage( m_properties );
+        m_page2->SetFont( table->GetDataFontName(), table->GetDataFontSize(), table->GetDataFontItalic(), table->GetDataFontWeight(), table->GetDataFontUnderline(), table->GetDataFontStrikethrough() );
         m_page3 = new CFontPropertyPage( m_properties );
+        m_page3->SetFont( table->GetHeadingFontName(), table->GetHeadingFontSize(), table->GetHeadingFontItalic(), table->GetHeadingFontWeight(), table->GetHeadingFontUnderline(), table->GetHeadingFontStrikethrough() );
         m_page4 = new CFontPropertyPage( m_properties );
+        m_page4->SetFont( table->GetLabelFontName(), table->GetLabelFontSize(), table->GetLabelFontItalic(), table->GetLabelFontWeight(), table->GetLabelFontUnderline(), table->GetLabelFontStrikethrough() );
         m_properties->AddPage( m_page2, _( "Data Font" ) );
         m_properties->AddPage( m_page3, _( "Heading Font" ) );
         m_properties->AddPage( m_page4, _( "Label Font" ) );
