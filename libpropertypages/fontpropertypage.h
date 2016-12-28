@@ -21,6 +21,8 @@
 #ifndef FONTPROPERTYPAGE_H
 #define FONTPROPERTYPAGE_H
 
+#define MAX_COLORS 16
+
 class WXEXPORT wxFontPreviewer : public wxWindow
 {
 public:
@@ -94,10 +96,28 @@ private:
 };
 #endif
 
+struct ColorStruct
+{
+    ColorStruct()
+    {
+        ::ZeroMemory( this, sizeof( ColorStruct ) );
+    }
+    ColorStruct(COLORREF color, wxString name)
+    {
+        ::ZeroMemory( this, sizeof( ColorStruct ) );
+        m_color = color;
+        m_name = name;
+    }
+    COLORREF m_color;
+    wxString m_name;
+};
+
 class WXEXPORT CColorComboBox : public wxBitmapComboBox
 {
 public:
     CColorComboBox( wxWindow *parent, wxWindowID = wxID_ANY, wxString selection = wxEmptyString, const wxPoint &pos =  wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_READONLY );
+private:
+    ColorStruct m_colors[MAX_COLORS];
 };
 
 class WXEXPORT CFontPropertyPage: public wxPanel
