@@ -35,7 +35,6 @@
 #include "wx/font.h"
 #include "wx/vector.h"
 #include "wx/bmpcbox.h"
-#include "colorcombobox.h"
 #include "fontpropertypage.h"
 
 BEGIN_EVENT_TABLE(wxFontPreviewer, wxWindow)
@@ -302,6 +301,31 @@ void CSizeComboBox::DoSetSize( int x, int y, int width, int height, int sizeFlag
     wxControl::DoSetSize( x, y, width, height, sizeFlags );
     if( m_pendingSize != wxDefaultSize )
         m_pendingSize = wxSize( width, heightOrig );
+}
+
+CColorComboBox::CColorComboBox( wxWindow *parent, wxWindowID id, wxString selection, const wxPoint &pos, const wxSize &size, int n, const wxString choices[], long style ) :
+wxBitmapComboBox( parent, id, selection, pos, size, n, choices, style )
+{
+    wxFont font;
+//    wxVector<colorEntries> m_colourDialogNames = font.GetColors();
+    for( unsigned i = 0; i < 27; i++ )
+    {
+        int w = 20, h = 10;
+        wxMemoryDC dc;
+        wxBitmap bmp( w, h );
+        dc.SelectObject( bmp );
+        wxColour magic( 255, 0, 255 );
+        wxBrush magicBrush( magic );
+        dc.SetBrush( magicBrush );
+        dc.SetPen( *wxBLACK_PEN );
+        dc.DrawRectangle( 0, 0, w, h );
+//        dc.SetBrush( wxBrush( m_colourDialogNames.at( i ).m_rgb ) );
+        dc.DrawRectangle( 0, 0, w, h );
+        dc.SelectObject( wxNullBitmap );
+        wxMask *mask = new wxMask( bmp, magic );
+        bmp.SetMask( mask );
+//        Append( m_colourDialogNames.at( i ).m_name, bmp, &m_colourDialogNames.at( i ).m_rgb );
+    }
 }
 
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, const wxPoint& pos, const wxSize& size, long style)

@@ -94,6 +94,12 @@ private:
 };
 #endif
 
+class WXEXPORT CColorComboBox : public wxBitmapComboBox
+{
+public:
+    CColorComboBox( wxWindow *parent, wxWindowID = wxID_ANY, wxString selection = wxEmptyString, const wxPoint &pos =  wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_READONLY );
+};
+
 class WXEXPORT CFontPropertyPage: public wxPanel
 {
 public:

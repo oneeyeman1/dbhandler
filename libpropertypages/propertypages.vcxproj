@@ -35,12 +35,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="colorcombobox.h" />
     <ClInclude Include="fontpropertypage.h" />
     <ClInclude Include="tablegeneral.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="colorcombobox.cpp" />
     <ClCompile Include="fontpropertypage.cpp" />
     <ClCompile Include="tablegeneral.cpp" />
   </ItemGroup>
