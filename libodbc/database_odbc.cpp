@@ -1754,21 +1754,21 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
 void ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     unsigned short dataFontSize, dataFontWeight, headingFontSize, headingFontWeight;
-    SQLWCHAR dataFontItalic[2], headingFontItalic[2], dataFontUnderline[2], dataFontName[20];
+    SQLWCHAR dataFontItalic[2], headingFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], dataFontName[20];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = 0, cbDataFontUnderline = 0, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
-    SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbHeadingFontItalic = 0;
+    SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0;
     std::wstring query = L"SELECT * FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName();
     int tableNameLen = tableName.length(), schemaNameLen = schemaName.length();
     SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tableNameLen + 2], *schema_name = new SQLWCHAR[schemaNameLen + 2];
-    SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     memset( schema_name, '\0', schemaNameLen );
     memset( table_name, '\0', tableNameLen );
     uc_to_str_cpy( schema_name, schemaName );
     uc_to_str_cpy( table_name, tableName );
     memset( qry, '\0', query.size() + 2 );
     uc_to_str_cpy( qry, query );
-    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    SQLRETURN ret;// = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+//    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
         ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
@@ -1806,16 +1806,24 @@ void ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                                                     ret = SQLBindCol( m_hstmt, 13, SQL_C_SSHORT, &headingFontItalic, 3, &cbHeadingFontItalic );
                                                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                                     {
-                                                        ret = SQLFetch( m_hstmt );
+                                                        ret = SQLBindCol( m_hstmt, 14, SQL_C_SSHORT, &headingFontUnderline, 3, &cbHeadingFontUnderline );
                                                         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                                         {
-                                                            table->SetDataFontSize( dataFontSize );
-                                                            table->SetDataFontWeight( dataFontWeight );
-                                                            table->SetDataFontItalic( dataFontItalic[0] == 'Y' );
-                                                            table->SetHeadingFontItalic( headingFontItalic[0] == 'Y' );
-                                                            table->SetDataFontUnderline( dataFontUnderline[0] == 'Y' );
+                                                            ret = SQLFetch( m_hstmt );
+                                                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                                            {
+                                                                table->SetDataFontSize( dataFontSize );
+                                                                table->SetDataFontWeight( dataFontWeight );
+                                                                table->SetDataFontItalic( dataFontItalic[0] == 'Y' );
+                                                                table->SetHeadingFontItalic( headingFontItalic[0] == 'Y' );
+                                                                table->SetDataFontUnderline( dataFontUnderline[0] == 'Y' );
+                                                            }
+                                                            else if( ret != SQL_NO_DATA )
+                                                            {
+                                                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                            }
                                                         }
-                                                        else if( ret != SQL_NO_DATA )
+                                                        else
                                                         {
                                                             GetErrorMessage( errorMsg, 1, m_hstmt );
                                                         }
@@ -1880,10 +1888,10 @@ void ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
             GetErrorMessage( errorMsg, 1, m_hstmt );
         }
     }
-    else
+/*    else
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
-    }
+    }*/
     delete qry;
     qry = NULL;
     delete table_name;
