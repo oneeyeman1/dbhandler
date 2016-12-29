@@ -419,7 +419,13 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName );
                         DatabaseTable *table = new DatabaseTable( name, L"", fields, foreign_keys );
                         if( GetTableProperties( table, errorMsg ) )
-                            return;
+                        {
+                            fields.erase( fields.begin(), fields.end() );
+                            foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                            fk_names.clear();
+                            sqlite3_finalize( stmt );
+                            return 1;
+                        }
                         pimpl->m_tables[sqlite_pimpl->m_catalog].push_back( table );
                         fields.erase( fields.begin(), fields.end() );
                         foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
