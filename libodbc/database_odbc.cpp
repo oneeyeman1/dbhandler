@@ -1766,9 +1766,11 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLHDBC hdbc_tableProp;
     SQLHSTMT stmt_tableProp;
     unsigned short dataFontSize, dataFontWeight, headingFontSize, headingFontWeight;
-    SQLWCHAR dataFontItalic[2], headingFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], dataFontName[20];
+    SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], labelFontUnderline[2], dataFontName[20], headingFontName[20], labelFontName[20];
+    SQLWCHAR comments[225];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = 0, cbDataFontUnderline = 0, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
-    SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0;
+    SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontName = 0, cbComment;
+    SQLLEN cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontName = 0;
     std::wstring query = L"SELECT * FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName();
     int tableNameLen = tableName.length(), schemaNameLen = schemaName.length();
@@ -1959,14 +1961,118 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         schema_name = NULL;
         return 1;
     }
+    ret = SQLBindCol( stmt_tableProp, 17, SQL_C_WCHAR, &headingFontName, 22, &cbHeadingFontName );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 18, SQL_C_SSHORT, &labelFontSize, 0, &cbLabelFontSize );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 19, SQL_C_SSHORT, &labelFontWeight, 0, &cbLabelFontWeight );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 20, SQL_C_SSHORT, &labelFontItalic, 3, &cbLabelFontItalic );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 21, SQL_C_SSHORT, &labelFontUnderline, 3, &cbLabelFontUnderline );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 24, SQL_C_WCHAR, &labelFontName, 22, &cbLabelFontName );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 25, SQL_C_WCHAR, &comment, 225, &cbComment );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
     ret = SQLFetch( stmt_tableProp );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
+        std::wstring name;
         table->SetDataFontSize( dataFontSize );
         table->SetDataFontWeight( dataFontWeight );
         table->SetDataFontItalic( dataFontItalic[0] == 'Y' );
-        table->SetHeadingFontItalic( headingFontItalic[0] == 'Y' );
         table->SetDataFontUnderline( dataFontUnderline[0] == 'Y' );
+        str_to_uc_cpy( name, dataFontName );
+        table->SetDataFontName( name );
+        name = L"";
+        table->SetHeadingFontSize( headingFontSize );
+        table->SetHeadingFontWeight( headingFontWeight );
+        table->SetHeadingFontItalic( headingFontItalic[0] == 'Y' );
+        table->SetHeadingFontUnderline( headingFontUnderline[0] == 'Y' );
+        str_to_uc_cpy( name, headingFontName );
+        table->SetHeadingFontName( name );
+        name = L"";
+        table->SetLabelFontSize( labelFontSize );
+        table->SetLabelFontWeight( labelFontWeight );
+        table->SetLabelFontItalic( labelFontItalic[0] == 'Y' );
+        table->SetLabelFontUnderline( labelFontUnderline[0] == 'Y' );
+        str_to_uc_cpy( name, labelFontName );
+        table->SetLabelFontName( name );
+        name = L"";
+        str_to_uc_cpy( name, comment );
+        table->SetComment( name );
+        name = L"";
     }
     else if( ret != SQL_NO_DATA )
     {
