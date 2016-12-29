@@ -1584,7 +1584,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 if( pimpl->m_subtype == L"Microsoft SQL Server" && schema_name == L"sys" )
                     table_name = schema_name + L"." + table_name;
                 DatabaseTable *table = new DatabaseTable( table_name, schema_name, fields, foreign_keys );
-                GetTableProperties( table, errorMsg );
+                if( GetTableProperties( table, errorMsg ) )
+                    return 1;
                 table->SetComment( comment );
                 pimpl->m_tables[catalog_name].push_back( table );
                 fields.erase( fields.begin(), fields.end() );
@@ -1754,6 +1755,7 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
 int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     SQLHDBC hdbc_tableProp;
+    SQLHSTMT stmt_tableProp;
     unsigned short dataFontSize, dataFontWeight, headingFontSize, headingFontWeight;
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], dataFontName[20];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = 0, cbDataFontUnderline = 0, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
@@ -1769,130 +1771,204 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     memset( qry, '\0', query.size() + 2 );
     uc_to_str_cpy( qry, query );
     SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_tableProp );
-    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 0, m_env );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &stmt_tableProp );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 2, m_hdbc );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindParameter( stmt_tableProp, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindParameter( stmt_tableProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, schema_name, 0, &cbSchemaName );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLPrepare( stmt_tableProp, qry, SQL_NTS );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
-        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-        {
-            ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, schema_name, 0, &cbSchemaName );
-            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-            {
-                ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                {
-                    ret = SQLExecute( m_hstmt );
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        ret = SQLBindCol( m_hstmt, 4, SQL_C_SSHORT, &dataFontSize, 0, &cbDataFontSize );
-                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                        {
-                            ret = SQLBindCol( m_hstmt, 5, SQL_C_SSHORT, &dataFontWeight, 0, &cbDataFontWeight );
-                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                            {
-                                ret = SQLBindCol( m_hstmt, 6, SQL_C_WCHAR, &dataFontItalic, 3, &cbDataFontItalic );
-                                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                                {
-                                    ret = SQLBindCol( m_hstmt, 7, SQL_C_WCHAR, &dataFontUnderline, 3, &cbDataFontUnderline );
-                                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        ret = SQLBindCol( m_hstmt, 10, SQL_C_WCHAR, &dataFontName, 22, &cbDataFontName );
-                                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                                        {
-                                            ret = SQLBindCol( m_hstmt, 11, SQL_C_SSHORT, &headingFontSize, 0, &cbHeadingFontSize );
-                                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                                            {
-                                                ret = SQLBindCol( m_hstmt, 12, SQL_C_SSHORT, &headingFontWeight, 0, &cbHeadingFontWeight );
-                                                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                                                {
-                                                    ret = SQLBindCol( m_hstmt, 13, SQL_C_SSHORT, &headingFontItalic, 3, &cbHeadingFontItalic );
-                                                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                                                    {
-                                                        ret = SQLBindCol( m_hstmt, 14, SQL_C_SSHORT, &headingFontUnderline, 3, &cbHeadingFontUnderline );
-                                                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                                                        {
-                                                            ret = SQLFetch( m_hstmt );
-                                                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                                                            {
-                                                                table->SetDataFontSize( dataFontSize );
-                                                                table->SetDataFontWeight( dataFontWeight );
-                                                                table->SetDataFontItalic( dataFontItalic[0] == 'Y' );
-                                                                table->SetHeadingFontItalic( headingFontItalic[0] == 'Y' );
-                                                                table->SetDataFontUnderline( dataFontUnderline[0] == 'Y' );
-                                                            }
-                                                            else if( ret != SQL_NO_DATA )
-                                                            {
-                                                                GetErrorMessage( errorMsg, 1, m_hstmt );
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            GetErrorMessage( errorMsg, 1, m_hstmt );
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        GetErrorMessage( errorMsg, 1, m_hstmt );
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    GetErrorMessage( errorMsg, 1, m_hstmt );
-                                                }
-											}
-                                            else
-                                            {
-                                                GetErrorMessage( errorMsg, 1, m_hstmt );
-                                            }
-                                        }
-                                        else
-                                        {
-                                            GetErrorMessage( errorMsg, 1, m_hstmt );
-                                        }
-                                    }
-                                    else
-                                    {
-                                        GetErrorMessage( errorMsg, 1, m_hstmt );
-                                    }
-                                }
-                                else
-                                {
-                                    GetErrorMessage( errorMsg, 1, m_hstmt );
-                                }
-                            }
-                            else
-                            {
-                                GetErrorMessage( errorMsg, 1, m_hstmt );
-                            }
-                        }
-                        else
-                        {
-                            GetErrorMessage( errorMsg, 1, m_hstmt );
-                        }
-                    }
-                    else
-                    {
-                        GetErrorMessage( errorMsg, 1, m_hstmt );
-                    }
-                }
-                else
-                {
-                    GetErrorMessage( errorMsg, 1, m_hstmt );
-                }
-            }
-            else
-            {
-                GetErrorMessage( errorMsg, 1, m_hstmt );
-            }
-        }
-        else
-        {
-            GetErrorMessage( errorMsg, 1, m_hstmt );
-        }
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
     }
-    else
+    ret = SQLExecute( stmt_tableProp );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        GetErrorMessage( errorMsg, 1, m_hstmt );
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 4, SQL_C_SSHORT, &dataFontSize, 0, &cbDataFontSize );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 5, SQL_C_SSHORT, &dataFontWeight, 0, &cbDataFontWeight );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 6, SQL_C_WCHAR, &dataFontItalic, 3, &cbDataFontItalic );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 7, SQL_C_WCHAR, &dataFontUnderline, 3, &cbDataFontUnderline );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 10, SQL_C_WCHAR, &dataFontName, 22, &cbDataFontName );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 11, SQL_C_SSHORT, &headingFontSize, 0, &cbHeadingFontSize );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 12, SQL_C_SSHORT, &headingFontWeight, 0, &cbHeadingFontWeight );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 13, SQL_C_SSHORT, &headingFontItalic, 3, &cbHeadingFontItalic );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 14, SQL_C_SSHORT, &headingFontUnderline, 3, &cbHeadingFontUnderline );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLFetch( stmt_tableProp );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        table->SetDataFontSize( dataFontSize );
+        table->SetDataFontWeight( dataFontWeight );
+        table->SetDataFontItalic( dataFontItalic[0] == 'Y' );
+        table->SetHeadingFontItalic( headingFontItalic[0] == 'Y' );
+        table->SetDataFontUnderline( dataFontUnderline[0] == 'Y' );
+    }
+    else if( ret != SQL_NO_DATA )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
     }
     delete qry;
     qry = NULL;
