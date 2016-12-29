@@ -418,7 +418,8 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         std::wstring comment = L"";
                         std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName );
                         DatabaseTable *table = new DatabaseTable( name, L"", fields, foreign_keys );
-                        GetTableProperties( table, errorMsg );
+                        if( GetTableProperties( table, errorMsg ) )
+                            return;
                         pimpl->m_tables[sqlite_pimpl->m_catalog].push_back( table );
                         fields.erase( fields.begin(), fields.end() );
                         foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
@@ -664,7 +665,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
 {
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
-    int result;
+    int result = 0;
     std::wstring query = L"SELECT * FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ?;";
     const unsigned char *dataFontName, *headingFontName, *labelFontName;
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
@@ -747,7 +748,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
         errorMsg.push_back( errorMessage );
     }
     sqlite3_finalize( stmt );
-    return 0;
+    return result;
 }
 
 void SQLiteDatabase::SetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
