@@ -665,9 +665,9 @@ void SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::w
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
     int result;
-    std::string query = "SELECT * FROM \"sys.abcattbl\" WHERE abt_tname = ? AND abt_ownr = "";";
+    std::wstring query = L"SELECT * FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = '';";
     const unsigned char *dataFontName, *headingFontName, *labelFontName;
-    int res = sqlite3_prepare_v2( m_db, query.c_str(), (int) query.length(), &stmt, 0 );
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
         res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( table->GetTableName().c_str() ).c_str(), -1, SQLITE_STATIC );
@@ -675,6 +675,7 @@ void SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::w
         {
             while( true )
             {
+//char *result_query = sqlite3_expanded_sql( stmt );
                 res = sqlite3_step( stmt );
                 if( res == SQLITE_ROW )
                 {
