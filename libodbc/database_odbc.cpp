@@ -1585,7 +1585,16 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     table_name = schema_name + L"." + table_name;
                 DatabaseTable *table = new DatabaseTable( table_name, schema_name, fields, foreign_keys );
                 if( GetTableProperties( table, errorMsg ) )
+                {
+                    fields.erase( fields.begin(), fields.end() );
+                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                    fields.clear();
+                    foreign_keys.clear();
+                    autoinc_fields.clear();
+                    pk_fields.clear();
+                    fk_fieldNames.clear();
                     return 1;
+                }
                 table->SetComment( comment );
                 pimpl->m_tables[catalog_name].push_back( table );
                 fields.erase( fields.begin(), fields.end() );
