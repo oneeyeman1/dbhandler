@@ -187,7 +187,7 @@ public:
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) = 0;
     virtual int CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
-    virtual void GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
     virtual void SetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
 };
 

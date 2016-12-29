@@ -1751,8 +1751,9 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
     return exists;
 }
 
-void ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
+    SQLHDBC hdbc_tableProp;
     unsigned short dataFontSize, dataFontWeight, headingFontSize, headingFontWeight;
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], dataFontName[20];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = 0, cbDataFontUnderline = 0, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
@@ -1767,8 +1768,9 @@ void ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
     uc_to_str_cpy( table_name, tableName );
     memset( qry, '\0', query.size() + 2 );
     uc_to_str_cpy( qry, query );
-    SQLRETURN ret;// = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-//    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_tableProp );
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
         ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
@@ -1888,16 +1890,17 @@ void ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
             GetErrorMessage( errorMsg, 1, m_hstmt );
         }
     }
-/*    else
+    else
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
-    }*/
+    }
     delete qry;
     qry = NULL;
     delete table_name;
     table_name = NULL;
     delete schema_name;
     schema_name = NULL;
+    return 0;
 }
 
 void ODBCDatabase::SetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)

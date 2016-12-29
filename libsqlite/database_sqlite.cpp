@@ -660,7 +660,7 @@ bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wst
     return exists;
 }
 
-void SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
@@ -747,6 +747,7 @@ void SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::w
         errorMsg.push_back( errorMessage );
     }
     sqlite3_finalize( stmt );
+    return 0;
 }
 
 void SQLiteDatabase::SetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
