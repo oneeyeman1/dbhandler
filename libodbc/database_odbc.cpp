@@ -1763,14 +1763,15 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
 
 int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
+    SQLSMALLINT OutConnStrLen;
     SQLHDBC hdbc_tableProp;
     SQLHSTMT stmt_tableProp;
-    unsigned short dataFontSize, dataFontWeight, headingFontSize, headingFontWeight;
+    unsigned short dataFontSize, dataFontWeight, headingFontSize, headingFontWeight, labelFontSize, labelFontWeight;
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], labelFontUnderline[2], dataFontName[20], headingFontName[20], labelFontName[20];
     SQLWCHAR comments[225];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = 0, cbDataFontUnderline = 0, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontName = 0, cbComment;
-    SQLLEN cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontName = 0;
+    SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontName = 0;
     std::wstring query = L"SELECT * FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName();
     int tableNameLen = tableName.length(), schemaNameLen = schemaName.length();
@@ -1793,7 +1794,19 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         schema_name = NULL;
         return 1;
     }
-    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &stmt_tableProp );
+    ret = SQLDriverConnect( hdbc_tableProp, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 2, m_env );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc_tableProp, &stmt_tableProp );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 2, m_hdbc );
@@ -1830,7 +1843,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         return 1;
     }
     ret = SQLPrepare( stmt_tableProp, qry, SQL_NTS );
-    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, stmt_tableProp );
         delete qry;
@@ -2033,7 +2046,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         schema_name = NULL;
         return 1;
     }
-    ret = SQLBindCol( stmt_tableProp, 25, SQL_C_WCHAR, &comment, 225, &cbComment );
+    ret = SQLBindCol( stmt_tableProp, 25, SQL_C_WCHAR, &comments, 225, &cbComment );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2070,11 +2083,47 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         str_to_uc_cpy( name, labelFontName );
         table->SetLabelFontName( name );
         name = L"";
-        str_to_uc_cpy( name, comment );
+        str_to_uc_cpy( name, comments );
         table->SetComment( name );
         name = L"";
     }
     else if( ret != SQL_NO_DATA )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLDisconnect( hdbc_tableProp );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, stmt_tableProp );
         delete qry;
