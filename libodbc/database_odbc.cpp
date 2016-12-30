@@ -2147,3 +2147,79 @@ void ODBCDatabase::SetTableProperties(DatabaseTable *table, std::vector<std::wst
 {
     
 }
+
+bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
+{
+    bool result = false;
+    SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
+    std::wstring query = L"SELECT count(*) FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
+    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tableName.length() + 2], *schema_name = new SQLWCHAR[schemaName.length() + 2];
+    memset( schema_name, '\0', schemaName.length() + 2 );
+    memset( table_name, '\0', tableName.length() + 2 );
+    uc_to_str_cpy( schema_name, schemaName );
+    uc_to_str_cpy( table_name, tableName );
+    memset( qry, '\0', query.size() + 2 );
+    uc_to_str_cpy( qry, query );
+    SQLRETURN ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+    }
+    else
+    {
+        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, schema_name, 0, &cbSchemaName );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            delete qry;
+            qry = NULL;
+            delete table_name;
+            table_name = NULL;
+            delete schema_name;
+            schema_name = NULL;
+        }
+        else
+        {
+            ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                delete qry;
+                qry = NULL;
+                delete table_name;
+                table_name = NULL;
+                delete schema_name;
+                schema_name = NULL;
+            }
+            else
+            {
+                ret = SQLExecute( m_hstmt );
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    result = true;
+                else if( ret != SQL_NO_DATA )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    delete qry;
+                    qry = NULL;
+                    delete table_name;
+                    table_name = NULL;
+                    delete schema_name;
+                    schema_name = NULL;
+                }
+            }
+        }
+    }
+    delete qry;
+    qry = NULL;
+    delete table_name;
+    table_name = NULL;
+    delete schema_name;
+    schema_name = NULL;
+    return result;
+}

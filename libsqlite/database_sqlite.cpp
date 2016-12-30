@@ -761,3 +761,39 @@ void SQLiteDatabase::SetTableProperties(DatabaseTable *table, std::vector<std::w
 {
     
 }
+
+bool SQLiteDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
+{
+    bool result = false;
+    sqlite3_stmt *stmt = NULL;
+    std::wstring errorMessage;
+    std::wstring query = L"SELECT count(*) FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = '';";
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res == SQLITE_OK )
+        {
+            res = sqlite3_step( stmt );
+            if( res == SQLITE_ROW )
+                result = true;
+            else if( res != SQLITE_DONE )
+            {
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+        else
+        {
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    sqlite3_finalize( stmt );
+    return result;
+}
