@@ -21,7 +21,6 @@
 #include "wx/bmpcbox.h"
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
-#include "colorcombobox.h"
 #ifdef __WXMSW__
 #include "fontpropertypage.h"
 #endif
