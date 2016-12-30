@@ -2152,7 +2152,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
 {
     bool result = false;
     SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
-    std::wstring query = L"SELECT count(*) FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
+    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
     SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tableName.length() + 2], *schema_name = new SQLWCHAR[schemaName.length() + 2];
     memset( schema_name, '\0', schemaName.length() + 2 );
     memset( table_name, '\0', tableName.length() + 2 );

@@ -767,7 +767,7 @@ bool SQLiteDatabase::IsTablePropertiesExist(const std::wstring &tableName, const
     bool result = false;
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
-    std::wstring query = L"SELECT count(*) FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = '';";
+    std::wstring query = L"SELECT 1 FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = '';";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
