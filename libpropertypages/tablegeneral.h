@@ -7,6 +7,7 @@ public:
     TableGeneralProperty(wxWindow *parent, DatabaseTable *table);
     ~TableGeneralProperty();
     bool IsModified();
+    const std::wstring &GetComment();
 protected:
     void OnCommentKeyEntered(wxKeyEvent &event);
     void OnEditComment(wxCommandEvent &event);

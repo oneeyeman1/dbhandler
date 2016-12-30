@@ -34,11 +34,14 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
 {
     std::vector<std::wstring> errors;
     m_type = type;
+    m_db = db;
+    m_dbType = m_db->GetTableVector().m_type;
+    m_object = object;
     // begin wxGlade: PropertiesDialog::PropertiesDialog
     m_properties = new wxNotebook( this, wxID_ANY );
     if( type == 0 )
     {
-        DatabaseTable *table = static_cast<DatabaseTable *>( object );
+        DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
         db->GetTableProperties( table, errors );
         m_page1 = new TableGeneralProperty( m_properties, table );
         m_properties->AddPage( m_page1, _( "General" ) );
@@ -109,14 +112,68 @@ void PropertiesDialog::OnOk(wxCommandEvent &event)
 
 bool PropertiesDialog::ApplyProperties()
 {
+    bool exist;
     std::vector<std::wstring> errors;
+    std::wstring command;
     if( m_type == 0 )
     {
+        DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
         if( m_page1->IsModified() )
         {
-            
+            if( m_db->IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), errors ) && errors.size() == 0 )
+                exist = true;
+            else
+                exist = false;
+            if( exist )
+            {
+                command = L"UPDATE ";
+                if( m_dbType == L"SQLite" )
+                    command += L"\"sys.abcattbl\" ";
+                else
+                    command += L"abcattbl ";
+                command += L"SET ";
+                if( m_dbType == L"SQLite" )
+                    command += L"\"abt_cmnt\" ";
+                else
+                    command += L"abt_cmnt ";
+                command += L"= ";
+                command += m_page1->GetComment();
+                command += L" WHERE ";
+                if( m_dbType == L"SQLite" )
+                    command += L"\"abt_tnam\" = ";
+                else
+                    command += L"abt_tnam = ";
+                command += table->GetTableName();
+                command += L" AND ";
+                if( m_dbType == L"SQLite" )
+                    command += L"\"abt_ownr\" = '';";
+                else
+                {
+                    command += L"abt_ownr = ";
+                    command += table->GetSchemaName();
+                }
+            }
+            else
+            {
+                command = L"INSERT INTO ";
+                if( m_dbType == L"SQLite" )
+                    command += L"\"sys.abcattbl\"(\"abt_tnam\", \"abt_ownr\", \"abt_cmnt\") ";
+                else
+                    command += L"abcattbl(abt_tnam, abt_ownr, abt_cmnt) ";
+                command += L"VALUES(";
+                command += table->GetTableName();
+                if( m_dbType == L"SQLite" )
+                    command += L", '', ";
+                else
+                {
+                    command += L", ";
+                    command += table->GetSchemaName();
+                    command += L", ";
+                }
+                command += m_page1->GetComment();
+                command += L");";
+            }
         }
     }
     return true;
 }
-

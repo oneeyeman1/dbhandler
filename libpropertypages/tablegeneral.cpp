@@ -101,3 +101,8 @@ void TableGeneralProperty::OnEditComment(wxCommandEvent &event)
 {
     m_isModified = true;
 }
+
+const std::wstring &TableGeneralProperty::GetComment()
+{
+    return m_comment->GetValue().ToStdWstring();
+}

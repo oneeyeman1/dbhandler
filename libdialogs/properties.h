@@ -23,6 +23,9 @@ private:
     CFontPropertyPage *m_page2, *m_page3, *m_page4;
 #endif
     int m_type;
+    Database *m_db;
+    void *m_object;
+    std::wstring m_dbType;
     // begin wxGlade: PropertiesDialog::methods
     void set_properties();
     void do_layout();
