@@ -28,6 +28,7 @@
 TableGeneralProperty::TableGeneralProperty(wxWindow *parent, DatabaseTable *table) : wxPanel( parent )
 {
     m_table = table;
+    m_isModified = false;
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Owner" ) );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Table" ) );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "&Table comment:" ) );
@@ -42,6 +43,7 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, DatabaseTable *tabl
     if( ok )
         ok->SetDefault();
     m_comment->Bind( wxEVT_CHAR, &TableGeneralProperty::OnCommentKeyEntered, this );
+    m_comment->Bind( wxEVT_TEXT, &TableGeneralProperty::OnEditComment, this );
 }
 
 TableGeneralProperty::~TableGeneralProperty()
@@ -88,4 +90,14 @@ void TableGeneralProperty::OnCommentKeyEntered(wxKeyEvent &event)
         dynamic_cast<wxButton *>( GetParent()->GetParent()->FindWindowById( wxID_APPLY ) )->Enable( true );
         event.Skip();
     }
+}
+
+bool TableGeneralProperty::IsModified()
+{
+    return m_isModified;
+}
+
+void TableGeneralProperty::OnEditComment(wxCommandEvent &event)
+{
+    m_isModified = true;
 }

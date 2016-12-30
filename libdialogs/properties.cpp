@@ -57,8 +57,12 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     set_properties();
     do_layout();
     // end wxGlade
-    dynamic_cast<wxButton *>( FindWindowById( wxID_OK ) )->SetDefault();
-    dynamic_cast<wxButton *>( FindWindowById( wxID_APPLY ) )->Enable( false );
+    wxButton *apply = dynamic_cast<wxButton *>( FindWindowById( wxID_APPLY ) );
+    wxButton *ok = dynamic_cast<wxButton *>( FindWindowById( wxID_OK ) );
+    ok->SetDefault();
+    apply->Enable( false );
+    apply->Bind( wxEVT_BUTTON, &PropertiesDialog::OnApply, this );
+    ok->Bind( wxEVT_BUTTON, &PropertiesDialog::OnOk, this );
 }
 
 
@@ -90,5 +94,29 @@ void PropertiesDialog::do_layout()
     sizer_1->Fit( this );
     Layout();
     // end wxGlade
+}
+
+void PropertiesDialog::OnApply(wxCommandEvent &event)
+{
+    ApplyProperties();
+}
+
+void PropertiesDialog::OnOk(wxCommandEvent &event)
+{
+    ApplyProperties();
+    EndModal( wxID_OK );
+}
+
+bool PropertiesDialog::ApplyProperties()
+{
+    std::vector<std::wstring> errors;
+    if( m_type == 0 )
+    {
+        if( m_page1->IsModified() )
+        {
+            
+        }
+    }
+    return true;
 }
 

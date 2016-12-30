@@ -29,6 +29,9 @@ private:
     // end wxGlade
 
 protected:
+    void OnApply(wxCommandEvent &event);
+    void OnOk(wxCommandEvent &event);
+    bool ApplyProperties();
     // begin wxGlade: PropertiesDialog::attributes
     wxNotebook* m_properties;
     // end wxGlade
