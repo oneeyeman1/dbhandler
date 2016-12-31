@@ -114,7 +114,6 @@ bool PropertiesDialog::ApplyProperties()
 {
     bool exist;
     std::vector<std::wstring> errors;
-    std::wstring command;
     if( m_type == 0 )
     {
         DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
@@ -126,54 +125,59 @@ bool PropertiesDialog::ApplyProperties()
                 exist = false;
             if( exist )
             {
-                command = L"UPDATE ";
+                m_command = L"UPDATE ";
                 if( m_dbType == L"SQLite" )
-                    command += L"\"sys.abcattbl\" ";
+                    m_command += L"\"sys.abcattbl\" ";
                 else
-                    command += L"abcattbl ";
-                command += L"SET ";
+                    m_command += L"abcattbl ";
+                m_command += L"SET ";
                 if( m_dbType == L"SQLite" )
-                    command += L"\"abt_cmnt\" ";
+                    m_command += L"\"abt_cmnt\" ";
                 else
-                    command += L"abt_cmnt ";
-                command += L"= ";
-                command += m_page1->GetComment();
-                command += L" WHERE ";
+                    m_command += L"abt_cmnt ";
+                m_command += L"= ";
+                m_command += m_page1->GetComment();
+                m_command += L" WHERE ";
                 if( m_dbType == L"SQLite" )
-                    command += L"\"abt_tnam\" = ";
+                    m_command += L"\"abt_tnam\" = ";
                 else
-                    command += L"abt_tnam = ";
-                command += table->GetTableName();
-                command += L" AND ";
+                    m_command += L"abt_tnam = ";
+                m_command += table->GetTableName();
+                m_command += L" AND ";
                 if( m_dbType == L"SQLite" )
-                    command += L"\"abt_ownr\" = '';";
+                    m_command += L"\"abt_ownr\" = '';";
                 else
                 {
-                    command += L"abt_ownr = ";
-                    command += table->GetSchemaName();
+                    m_command += L"abt_ownr = ";
+                    m_command += table->GetSchemaName();
                 }
             }
             else
             {
-                command = L"INSERT INTO ";
+                m_command = L"INSERT INTO ";
                 if( m_dbType == L"SQLite" )
-                    command += L"\"sys.abcattbl\"(\"abt_tnam\", \"abt_ownr\", \"abt_cmnt\") ";
+                    m_command += L"\"sys.abcattbl\"(\"abt_tnam\", \"abt_ownr\", \"abt_cmnt\") ";
                 else
-                    command += L"abcattbl(abt_tnam, abt_ownr, abt_cmnt) ";
-                command += L"VALUES(";
-                command += table->GetTableName();
+                    m_command += L"abcattbl(abt_tnam, abt_ownr, abt_cmnt) ";
+                m_command += L"VALUES(";
+                m_command += table->GetTableName();
                 if( m_dbType == L"SQLite" )
-                    command += L", '', ";
+                    m_command += L", '', ";
                 else
                 {
-                    command += L", ";
-                    command += table->GetSchemaName();
-                    command += L", ";
+                    m_command += L", ";
+                    m_command += table->GetSchemaName();
+                    m_command += L", ";
                 }
-                command += m_page1->GetComment();
-                command += L");";
+                m_command += m_page1->GetComment();
+                m_command += L");";
             }
         }
     }
     return true;
+}
+
+const std::wstring &PropertiesDialog::GetCommand()
+{
+    return m_command;
 }
