@@ -589,8 +589,6 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
             errorMsg.push_back( strMsg );
         }
     }
-    delete m_connectString;
-    m_connectString = 0;
     delete query;
     query = NULL;
     return result;
@@ -1776,8 +1774,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName();
     int tableNameLen = tableName.length(), schemaNameLen = schemaName.length();
     SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tableNameLen + 2], *schema_name = new SQLWCHAR[schemaNameLen + 2];
-    memset( schema_name, '\0', schemaNameLen );
-    memset( table_name, '\0', tableNameLen );
+    memset( schema_name, '\0', schemaNameLen + 2 );
+    memset( table_name, '\0', tableNameLen + 2 );
     uc_to_str_cpy( schema_name, schemaName );
     uc_to_str_cpy( table_name, tableName );
     memset( qry, '\0', query.size() + 2 );
