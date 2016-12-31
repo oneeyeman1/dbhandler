@@ -129,27 +129,22 @@ bool PropertiesDialog::ApplyProperties()
                 if( m_dbType == L"SQLite" )
                     m_command += L"\"sys.abcattbl\" ";
                 else
-                    m_command += L"abcattbl ";
+                    m_command += L"\"abcattbl\" ";
                 m_command += L"SET ";
-                if( m_dbType == L"SQLite" )
-                    m_command += L"\"abt_cmnt\" ";
-                else
-                    m_command += L"abt_cmnt ";
-                m_command += L"= ";
+                m_command += L"\"abt_cmnt\" ";
+                m_command += L"= '";
                 m_command += m_page1->GetComment();
-                m_command += L" WHERE ";
-                if( m_dbType == L"SQLite" )
-                    m_command += L"\"abt_tnam\" = ";
-                else
-                    m_command += L"abt_tnam = ";
+                m_command += L"' WHERE ";
+                m_command += L"\"abt_tnam\" = '";
                 m_command += table->GetTableName();
-                m_command += L" AND ";
+                m_command += L"' AND ";
                 if( m_dbType == L"SQLite" )
                     m_command += L"\"abt_ownr\" = '';";
                 else
                 {
-                    m_command += L"abt_ownr = ";
+                    m_command += L"\"abt_ownr\" = '";
                     m_command += table->GetSchemaName();
+                    m_command += L"'";
                 }
             }
             else
@@ -158,18 +153,20 @@ bool PropertiesDialog::ApplyProperties()
                 if( m_dbType == L"SQLite" )
                     m_command += L"\"sys.abcattbl\"(\"abt_tnam\", \"abt_ownr\", \"abt_cmnt\") ";
                 else
-                    m_command += L"abcattbl(abt_tnam, abt_ownr, abt_cmnt) ";
-                m_command += L"VALUES(";
+                    m_command += L"\"abcattbl\"(\"abt_tnam\", \"abt_ownr\", \"abt_cmnt\") ";
+                m_command += L"VALUES('";
                 m_command += table->GetTableName();
                 if( m_dbType == L"SQLite" )
-                    m_command += L", '', ";
+                    m_command += L"', '', ";
                 else
                 {
-                    m_command += L", ";
+                    m_command += L"', '";
                     m_command += table->GetSchemaName();
-                    m_command += L", ";
+                    m_command += L"', ";
                 }
+                m_command += L"'";
                 m_command += m_page1->GetComment();
+                m_command += L"'";
                 m_command += L");";
             }
         }

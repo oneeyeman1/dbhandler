@@ -442,7 +442,6 @@ void CreateIndex::OnOkShowLog(wxCommandEvent &event)
     if( Verify() )
     {
         GenerateQuery();
-//        m_db->CreateIndex( m_command, m_unique->GetValue(), m_ascending->GetValue(), m_indexName->GetValue().ToStdWstring(), m_dbTable->GetTableName(), m_fields, event.GetEventObject() == m_logOnly, errorMsg );
         EndModal( event.GetId() );
     }
 }
@@ -495,13 +494,14 @@ void CreateIndex::GenerateQuery()
     m_command += L"(";
     for( std::vector<std::wstring>::iterator it = m_fields.begin(); it < m_fields.end(); it++ )
     {
+        m_command += L"\"";
         m_command += (*it);
+        m_command += L"\"";
         if( it == m_fields.end() - 1 )
             m_command += L")";
         else
             m_command += L",";
     }
-//    m_command += L")";
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         if( m_algorythmInPlace->IsEnabled() && m_algorythmInPlace->GetValue() )
