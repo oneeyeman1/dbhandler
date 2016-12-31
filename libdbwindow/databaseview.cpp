@@ -78,8 +78,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxRect clientRect = parent->GetClientRect();
     clientRect.height -= height;
     m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), /*wxDefaultPosition*/start, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
-    m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN  );
-    m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+    m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
+    m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
 #ifdef __WXOSX__
     wxRect parentRect = parent->GetRect();
     wxSize parentClientSize = parent->GetClientSize();
@@ -213,6 +213,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         if( result != wxID_OK && result != wxID_CANCEL )
         {
             m_text->AppendText( command );
+            m_text->AppendText( "\n\r\n\r" );
             if( !m_log->IsShown() )
                 m_log->Show();
         }
@@ -271,6 +272,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
         if( logOnly )
         {
             m_text->AppendText( command );
+            m_text->AppendText( "\n\r\n\r" );
             if( !m_log->IsShown() )
                 m_log->Show();
         }
