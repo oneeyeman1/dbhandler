@@ -24,9 +24,7 @@
 #include "wx/bmpcbox.h"
 #include "database.h"
 #include "tablegeneral.h"
-#ifdef __WXMSW__
-#include "fontpropertypage.h"
-#endif
+#include "fontpropertypagebase.h"
 #include "properties.h"
 
 PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxPoint& pos, const wxSize& size, long style):
