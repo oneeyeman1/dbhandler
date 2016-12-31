@@ -8,6 +8,7 @@ public:
     ~TableGeneralProperty();
     bool IsModified();
     const std::wstring &GetComment();
+    bool IsLogOnly();
 protected:
     void OnCommentKeyEntered(wxKeyEvent &event);
     void OnEditComment(wxCommandEvent &event);

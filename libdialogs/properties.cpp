@@ -181,3 +181,8 @@ const std::wstring &PropertiesDialog::GetCommand()
 {
     return m_command;
 }
+
+bool PropertiesDialog::IsLogOnly()
+{
+    return m_page1->IsLogOnly();
+}

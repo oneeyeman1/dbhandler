@@ -106,3 +106,8 @@ const std::wstring &TableGeneralProperty::GetComment()
 {
     return m_comment->GetValue().ToStdWstring();
 }
+
+bool TableGeneralProperty::IsLogOnly()
+{
+    return m_log->GetValue();
+}

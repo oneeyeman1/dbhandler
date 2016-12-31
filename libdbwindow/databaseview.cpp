@@ -37,7 +37,7 @@
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
-typedef void (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object);
+typedef void (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -78,6 +78,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxRect clientRect = parent->GetClientRect();
     clientRect.height -= height;
     m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), /*wxDefaultPosition*/start, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+    m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN  );
+    m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
 #ifdef __WXOSX__
     wxRect parentRect = parent->GetRect();
     wxSize parentClientSize = parent->GetClientSize();
@@ -97,6 +99,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_canvas = new DatabaseCanvas( this );
     m_frame->Show();
     Bind( wxEVT_CONTEXT_MENU, &DrawingView::OnContextMenu, this );
+    m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     return true;
 }
 
@@ -122,6 +125,11 @@ void DrawingView::OnDraw(wxDC *dc)
             dc->DrawLine( line.x1, line.y1, line.x2, line.y2 );
         }
     }
+}
+
+void DrawingView::OnCloseLogWindow(wxCloseEvent &event)
+{
+    m_log->Hide();
 }
 
 //std::vector<Table> &DrawingView::GetTablesForView(Database *db)
@@ -204,9 +212,9 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         result = func( m_frame, table, GetDocument()->GetDatabase(), command );
         if( result != wxID_OK && result != wxID_CANCEL )
         {
-            wxFrame *log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX /*| wxMAXIMIZE_BOX */| wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN  );
-            wxTextCtrl *text = new wxTextCtrl( log, wxID_ANY, command, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
-            log->Show();
+            m_text->AppendText( command );
+            if( !m_log->IsShown() )
+                m_log->Show();
         }
         else if( result == wxID_OK )
         {
@@ -234,6 +242,8 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     int type = 0;
     DatabaseTable *table = NULL;
     ShapeList shapes;
+    wxString command;
+    bool logOnly;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
     {
@@ -257,7 +267,13 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-        func( m_frame, GetDocument()->GetDatabase(), type, table );
+        func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly );
+        if( logOnly )
+        {
+            m_text->AppendText( command );
+            if( !m_log->IsShown() )
+                m_log->Show();
+        }
     }
 }
 

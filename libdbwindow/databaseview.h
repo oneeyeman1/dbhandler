@@ -58,12 +58,15 @@ public:
     void OnNewIndex(wxCommandEvent &event);
     void OnFieldDefinition(wxCommandEvent &event);
     void OnFieldProperties(wxCommandEvent &event);
+    void OnCloseLogWindow(wxCloseEvent &event);
     DrawingDocument* GetDocument();
 
 private:
 #ifdef __WXOSX__
     wxToolBar *m_tb;
 #endif
+    wxFrame *m_log;
+    wxTextCtrl *m_text;
     DatabaseCanvas *m_canvas;
     wxDocMDIChildFrame *m_frame;
     wxDECLARE_EVENT_TABLE();

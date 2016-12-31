@@ -17,6 +17,7 @@ class PropertiesDialog: public wxDialog
 public:
     PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
     const std::wstring &GetCommand();
+    bool IsLogOnly();
 
 private:
     TableGeneralProperty *m_page1;
