@@ -27,7 +27,7 @@
 #endif
 
 #include "wx/font.h"
-#include "../fontpropertypagebase.h"
+#include "fontpropertypagebase.h"
 
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, const wxPoint& pos, const wxSize& size, long style)
  : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
