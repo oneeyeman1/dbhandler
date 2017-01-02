@@ -66,14 +66,12 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     ok->Bind( wxEVT_BUTTON, &PropertiesDialog::OnOk, this );
 }
 
-
 void PropertiesDialog::set_properties()
 {
     // begin wxGlade: PropertiesDialog::set_properties
 //    SetTitle( _( "dialog_1" ) );
     // end wxGlade
 }
-
 
 void PropertiesDialog::do_layout()
 {
