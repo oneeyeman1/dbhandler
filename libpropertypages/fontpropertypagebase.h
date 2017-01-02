@@ -18,8 +18,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef FONTPROPERTYPAGE_H
-#define FONTPROPERTYPAGE_H
+#ifndef FONTPROPERTYPAGEBASE_H
+#define FONTPROPERTYPAGEBASE_H
 
 class WXEXPORT CFontPropertyPageBase : public wxPanel
 {
