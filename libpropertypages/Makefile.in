@@ -128,7 +128,9 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libpropertypages_la_LIBADD =
-am_libpropertypages_la_OBJECTS = libpropertypages_la-tablegeneral.lo
+am_libpropertypages_la_OBJECTS = libpropertypages_la-tablegeneral.lo \
+	libpropertypages_la-fontpropertypagebase.lo \
+	libpropertypages_la-fontpropertypage.lo
 libpropertypages_la_OBJECTS = $(am_libpropertypages_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -375,7 +377,11 @@ lib_LTLIBRARIES = \
 
 libpropertypages_la_SOURCES = \
 	tablegeneral.cpp \
-	tablegeneral.h
+	tablegeneral.h \
+	fontpropertypagebase.cpp \
+	fontpropertypagebase.h \
+	gtk/fontpropertypage.cpp \
+	gtk/fontpropertypage.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
@@ -462,6 +468,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fontpropertypage.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fontpropertypagebase.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-tablegeneral.Plo@am__quote@
 
 .cpp.o:
@@ -491,6 +499,20 @@ libpropertypages_la-tablegeneral.lo: tablegeneral.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tablegeneral.cpp' object='libpropertypages_la-tablegeneral.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-tablegeneral.lo `test -f 'tablegeneral.cpp' || echo '$(srcdir)/'`tablegeneral.cpp
+
+libpropertypages_la-fontpropertypagebase.lo: fontpropertypagebase.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertypages_la-fontpropertypagebase.lo -MD -MP -MF $(DEPDIR)/libpropertypages_la-fontpropertypagebase.Tpo -c -o libpropertypages_la-fontpropertypagebase.lo `test -f 'fontpropertypagebase.cpp' || echo '$(srcdir)/'`fontpropertypagebase.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertypages_la-fontpropertypagebase.Tpo $(DEPDIR)/libpropertypages_la-fontpropertypagebase.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fontpropertypagebase.cpp' object='libpropertypages_la-fontpropertypagebase.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-fontpropertypagebase.lo `test -f 'fontpropertypagebase.cpp' || echo '$(srcdir)/'`fontpropertypagebase.cpp
+
+libpropertypages_la-fontpropertypage.lo: gtk/fontpropertypage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertypages_la-fontpropertypage.lo -MD -MP -MF $(DEPDIR)/libpropertypages_la-fontpropertypage.Tpo -c -o libpropertypages_la-fontpropertypage.lo `test -f 'gtk/fontpropertypage.cpp' || echo '$(srcdir)/'`gtk/fontpropertypage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertypages_la-fontpropertypage.Tpo $(DEPDIR)/libpropertypages_la-fontpropertypage.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtk/fontpropertypage.cpp' object='libpropertypages_la-fontpropertypage.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-fontpropertypage.lo `test -f 'gtk/fontpropertypage.cpp' || echo '$(srcdir)/'`gtk/fontpropertypage.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

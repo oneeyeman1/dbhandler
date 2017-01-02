@@ -6,7 +6,11 @@ lib_LTLIBRARIES =  \
 
 libpropertypages_la_SOURCES =  \
 	tablegeneral.cpp \
-	tablegeneral.h
+	tablegeneral.h \
+	fontpropertypagebase.cpp \
+	fontpropertypagebase.h \
+	gtk/fontpropertypage.cpp \
+	gtk/fontpropertypage.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
