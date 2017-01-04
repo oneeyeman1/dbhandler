@@ -41,10 +41,10 @@ static void set_font(GtkWidget *widget, wxFont *font)
    gtk_font_selection_set_font_name( GTK_FONT_SELECTION( widget ), buf );  
 }
 
-CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, const wxPoint& pos, const wxSize& size, long style)
+CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, const wxPoint& pos, const wxSize& size, long style)
  : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
 {
-    m_font = &font;
+    m_font = font;
     m_fontPanel = gtk_font_selection_new();
     g_object_ref( m_fontPanel );
     g_signal_connect( m_fontPanel, "realize", G_CALLBACK( set_font ), &font );

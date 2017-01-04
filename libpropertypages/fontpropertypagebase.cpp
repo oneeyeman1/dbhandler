@@ -29,7 +29,7 @@
 #include "wx/font.h"
 #include "fontpropertypagebase.h"
 
-CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, wxFont font, int id, const wxPoint& pos, const wxSize& size, long style)
+CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, wxFont *font, int id, const wxPoint& pos, const wxSize& size, long style)
  : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL)
 {
 }
@@ -40,12 +40,6 @@ CFontPropertyPageBase::~CFontPropertyPageBase()
 
 void CFontPropertyPageBase::SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough)
 {
-    if( name == L"" )
-        m_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
-    else
-        m_font = wxFont::New( size, wxFONTFAMILY_DEFAULT, italic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, underline, name );
-    if( strikethrough )
-        m_font->SetStrikethrough( true );
 }
 
 wxFont &CFontPropertyPageBase::GetFont()

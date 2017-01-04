@@ -39,16 +39,32 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_properties = new wxNotebook( this, wxID_ANY );
     if( type == 0 )
     {
+        wxFont *data_font, *heading_font, *label_font;
         DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
         db->GetTableProperties( table, errors );
+        if( table->GetDataFontName() == L"" )
+            data_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
+        else
+            data_font = wxFont::New( table->GetDataFontSize(), wxFONTFAMILY_DEFAULT, table->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetDataFontUnderline(), table->GetDataFontName() );
+        if( table->GetDataFontStrikethrough() )
+            data_font->SetStrikethrough( true );
+        if( table->GetDataFontName() == L"" )
+            heading_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
+        else
+            heading_font = wxFont::New( table->GetDataFontSize(), wxFONTFAMILY_DEFAULT, table->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetDataFontUnderline(), table->GetDataFontName() );
+        if( table->GetHeadingFontStrikethrough() )
+            heading_font->SetStrikethrough( true );
+        if( table->GetDataFontName() == L"" )
+            label_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
+        else
+            label_font = wxFont::New( table->GetDataFontSize(), wxFONTFAMILY_DEFAULT, table->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetDataFontUnderline(), table->GetDataFontName() );
+        if( table->GetLabelFontStrikethrough() )
+            label_font->SetStrikethrough( true );
         m_page1 = new TableGeneralProperty( m_properties, table );
         m_properties->AddPage( m_page1, _( "General" ) );
-        m_page2 = new CFontPropertyPage( m_properties );
-        m_page2->SetFont( table->GetDataFontName(), table->GetDataFontSize(), table->GetDataFontItalic(), table->GetDataFontWeight(), table->GetDataFontUnderline(), table->GetDataFontStrikethrough() );
-        m_page3 = new CFontPropertyPage( m_properties );
-        m_page3->SetFont( table->GetHeadingFontName(), table->GetHeadingFontSize(), table->GetHeadingFontItalic(), table->GetHeadingFontWeight(), table->GetHeadingFontUnderline(), table->GetHeadingFontStrikethrough() );
-        m_page4 = new CFontPropertyPage( m_properties );
-        m_page4->SetFont( table->GetLabelFontName(), table->GetLabelFontSize(), table->GetLabelFontItalic(), table->GetLabelFontWeight(), table->GetLabelFontUnderline(), table->GetLabelFontStrikethrough() );
+        m_page2 = new CFontPropertyPage( m_properties, data_font );
+        m_page3 = new CFontPropertyPage( m_properties, heading_font );
+        m_page4 = new CFontPropertyPage( m_properties, label_font );
         m_properties->AddPage( m_page2, _( "Data Font" ) );
         m_properties->AddPage( m_page3, _( "Heading Font" ) );
         m_properties->AddPage( m_page4, _( "Label Font" ) );
