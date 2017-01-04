@@ -35,7 +35,9 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, DatabaseTable *tabl
     m_owner = new wxTextCtrl( this, wxID_ANY );
     m_tableName = new wxTextCtrl( this, wxID_ANY );
     m_comment = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_PROCESS_ENTER );
+#ifdef __WXMSW__
     m_comment->SetMaxLength( 215 );
+#endif
     m_log = new wxCheckBox( this, wxID_ANY, _( "Log Only" ) );
     set_properties();
     do_layout();
@@ -70,7 +72,7 @@ void TableGeneralProperty::do_layout()
     sizer3->Add( m_owner, 1, wxEXPAND, 0 );
     sizer3->Add( m_label2, 0, wxEXPAND, 0 );
     sizer3->Add( m_tableName, 1, wxEXPAND, 0 );
-    sizer2->Add( sizer3, 0, wxEXPAND, 0 );
+    sizer2->Add( sizer3, 1, wxEXPAND, 0 );
     sizer2->Add( m_label3, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( m_comment, 1, wxEXPAND, 0 );
@@ -99,6 +101,11 @@ bool TableGeneralProperty::IsModified()
 
 void TableGeneralProperty::OnEditComment(wxCommandEvent &event)
 {
+#if __WXGTK__
+    int length = m_comment->GetValue().length();
+    if( length < 5 )
+        event.Skip();
+#endif
     m_isModified = true;
 }
 

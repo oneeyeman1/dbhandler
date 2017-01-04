@@ -30,6 +30,7 @@
 #include "selecttables.h"
 #include "fieldwindow.h"
 #include "createindex.h"
+#include "fontpropertypagebase.h"
 #include "properties.h"
 
 #ifdef __WXMSW__

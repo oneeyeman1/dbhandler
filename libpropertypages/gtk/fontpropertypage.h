@@ -29,6 +29,7 @@ public:
     virtual void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough);
     virtual wxFont &GetFont();
 private:
+     GtkWidget *m_fontPanel;
 };
 
 #endif // FONTPROPERTYPAGE_H

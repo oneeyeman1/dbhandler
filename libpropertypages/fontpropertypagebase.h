@@ -29,7 +29,7 @@ public:
     virtual void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough);
     virtual wxFont &GetFont();
 protected:
-    wxFont m_font;
+    wxFont *m_font;
     bool m_dirty;
 };
 

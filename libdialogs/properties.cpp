@@ -43,7 +43,6 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         db->GetTableProperties( table, errors );
         m_page1 = new TableGeneralProperty( m_properties, table );
         m_properties->AddPage( m_page1, _( "General" ) );
-#ifdef __WXMSW__
         m_page2 = new CFontPropertyPage( m_properties );
         m_page2->SetFont( table->GetDataFontName(), table->GetDataFontSize(), table->GetDataFontItalic(), table->GetDataFontWeight(), table->GetDataFontUnderline(), table->GetDataFontStrikethrough() );
         m_page3 = new CFontPropertyPage( m_properties );
@@ -53,7 +52,6 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         m_properties->AddPage( m_page2, _( "Data Font" ) );
         m_properties->AddPage( m_page3, _( "Heading Font" ) );
         m_properties->AddPage( m_page4, _( "Label Font" ) );
-#endif
     }
     set_properties();
     do_layout();
