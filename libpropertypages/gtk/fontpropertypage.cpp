@@ -28,11 +28,17 @@
 
 #include <gtk/gtk.h>
 #include "wx/font.h"
+#include "wx/fontutil.h"
 #include "fontpropertypagebase.h"
+#include "wx/gtk/private.h"
 
-static void set_font(GtkWidget *widget, gpointer user_data)
+static void set_font(GtkWidget *widget, wxFont *font)
 {
-   gtk_font_selection_set_font_name( GTK_FONT_SELECTION( widget ), "Monospace Bold 18" );  
+   gchar buf[1024];
+   PangoFontDescription *font_description = font->GetNativeFontInfo()->description;
+   wxGtkString font_string( pango_font_description_to_string( font_description ) );
+   g_snprintf( buf, sizeof( buf ), "%s", font_string.c_str() );
+   gtk_font_selection_set_font_name( GTK_FONT_SELECTION( widget ), buf );  
 }
 
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, const wxPoint& pos, const wxSize& size, long style)

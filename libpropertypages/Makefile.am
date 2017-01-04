@@ -20,6 +20,7 @@ libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	--cxxflags` 
 
 libpropertypages_la_LDFLAGS = `pkg-config \
-	--libsgtk+-2.0` \
+	--libs \
+	gtk+-2.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 

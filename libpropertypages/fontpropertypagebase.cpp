@@ -47,3 +47,8 @@ void CFontPropertyPageBase::SetFont(const std::wstring &name, int size, bool ita
     if( strikethrough )
         m_font->SetStrikethrough( true );
 }
+
+wxFont &CFontPropertyPageBase::GetFont()
+{
+    return *m_font;
+}
