@@ -145,7 +145,7 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     return res;
 }
 
-extern "C" WXEXPORT void CreatePropertiesDialog(wxWindow *parent, Database *db, int type, void *object, wxString &command, bool logOnly)
+extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, int type, void *object, wxString &command, bool logOnly)
 {
     wxString title;
     int res;
@@ -162,4 +162,5 @@ extern "C" WXEXPORT void CreatePropertiesDialog(wxWindow *parent, Database *db, 
         command = dlg.GetCommand();
         logOnly = dlg.IsLogOnly();
     }
+    return res;
 }

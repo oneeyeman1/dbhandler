@@ -37,7 +37,7 @@
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
-typedef void (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -243,8 +243,8 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     int type = 0;
     DatabaseTable *table = NULL;
     ShapeList shapes;
-    wxString command;
-    bool logOnly;
+    wxString command = "";
+    bool logOnly = false;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
     {
@@ -268,8 +268,8 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-        func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly );
-        if( logOnly )
+        int res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly );
+        if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );
             m_text->AppendText( "\n\r\n\r" );
