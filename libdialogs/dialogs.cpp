@@ -21,9 +21,7 @@
 #include "wx/bmpcbox.h"
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
-#ifdef __WXMSW__
-#include "fontpropertypage.h"
-#endif
+#include "fontpropertypagebase.h"
 #include "databasetype.h"
 #include "tablegeneral.h"
 #include "odbcconfigure.h"
