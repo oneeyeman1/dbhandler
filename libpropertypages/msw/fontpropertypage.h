@@ -26,7 +26,7 @@
 class WXEXPORT wxFontPreviewer : public wxWindow
 {
 public:
-    wxFontPreviewer(wxWindow *parent, wxFont font, wxString text, const wxSize& sz = wxDefaultSize) : wxWindow(parent, wxID_ANY, wxDefaultPosition, sz, wxBORDER_NONE)
+    wxFontPreviewer(wxWindow *parent, wxFont *font, wxString text, const wxSize& sz = wxDefaultSize) : wxWindow(parent, wxID_ANY, wxDefaultPosition, sz, wxBORDER_NONE)
     {
         m_text = text;
         m_font = font;
@@ -35,12 +35,12 @@ public:
     {
         m_text = text;
     }
-//	void SetForegroundColor(wxString name) { m_font.SetTextDescription( name ); };
-//	void SetBackgroundColor(wxString name) { m_font.SetBackgroundDescription( name ); };
-    void SetCFont(wxFont font) { m_font = font; };
+//    void SetForegroundColor(wxString name) { m_font.SetTextDescription( name ); };
+//    void SetBackgroundColor(wxString name) { m_font.SetBackgroundDescription( name ); };
+//    void SetCFont(wxFont font) { m_font = font; };
     DECLARE_EVENT_TABLE()
 private:
-    wxFont m_font;
+    wxFont *m_font;
     wxString m_text;
     void OnPaint(wxPaintEvent& event);
 };
@@ -120,10 +120,10 @@ private:
     ColorStruct m_colors[MAX_COLORS];
 };
 
-class WXEXPORT CFontPropertyPage: public wxPanel
+class WXEXPORT CFontPropertyPage: public CFontPropertyPageBase
 {
 public:
-    CFontPropertyPage(wxWindow* parent, wxFont font=wxNullFont, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
+    CFontPropertyPage(wxWindow* parent, wxFont *font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
     ~CFontPropertyPage();
     void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough);
     void GetData(void *data);
@@ -156,7 +156,6 @@ protected:
 private:
     void set_properties();
     void do_layout();
-    wxFont m_font;
 //#ifdef __WXMSW__
 //	DWORD m_nStyles;
 //	DWORD m_nCurrentStyle;

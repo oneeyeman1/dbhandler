@@ -13,7 +13,10 @@
     <ClInclude Include="tablegeneral.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fontpropertypage.h">
+    <ClInclude Include="msw\fontpropertypage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fontpropertypagebase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -21,7 +24,10 @@
     <ClCompile Include="tablegeneral.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="fontpropertypage.cpp">
+    <ClCompile Include="fontpropertypagebase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msw\fontpropertypage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

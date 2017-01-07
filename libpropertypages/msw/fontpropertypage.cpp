@@ -35,7 +35,7 @@
 #include "wx/font.h"
 #include "wx/vector.h"
 #include "wx/bmpcbox.h"
-#include "fontpropertypage.h"
+#include "fontpropertypagebase.h"
 
 BEGIN_EVENT_TABLE(wxFontPreviewer, wxWindow)
     EVT_PAINT(wxFontPreviewer::OnPaint)
@@ -51,9 +51,9 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
     dc.DrawRectangle( 0, 0, size.x, size.y );
 //    if( !font.Ok() )
 //        font = GetFont();
-    if( m_font.Ok() )
+    if( m_font->Ok() )
     {
-        dc.SetFont( m_font );
+        dc.SetFont( *m_font );
 //        dc.SetTextForeground( m_font.GetTextColour() );
         wxSize sizeString = dc.GetTextExtent( m_text );
         // Calculate vertical centre
@@ -328,26 +328,26 @@ wxBitmapComboBox( parent, id, selection, pos, size, n, choices, style )
     }
 }
 
-CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, const wxPoint& pos, const wxSize& size, long style)
- : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL)
+CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, const wxPoint& pos, const wxSize& size, long style)
+ : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
 {
     m_bUnderline = false;
     wxString text;
     text = "AaBbYyZz";
     style = style;
     m_font = font;
-    if( m_font.IsOk() )
+    if( m_font->IsOk() )
     {
-        m_fontSize.Format( "%d", m_font.GetPointSize() );
-        if( m_font.GetStyle() == wxFONTSTYLE_ITALIC && m_font.GetWeight() == wxFONTWEIGHT_BOLD )
+        m_fontSize.Format( "%d", m_font->GetPointSize() );
+        if( m_font->GetStyle() == wxFONTSTYLE_ITALIC && m_font->GetWeight() == wxFONTWEIGHT_BOLD )
             m_nCurrentStyle = NTM_ITALIC | NTM_BOLD;
-        else if( m_font.GetStyle() == wxFONTSTYLE_ITALIC )
+        else if( m_font->GetStyle() == wxFONTSTYLE_ITALIC )
             m_nCurrentStyle = NTM_ITALIC;
-        else if( m_font.GetWeight() == wxFONTWEIGHT_BOLD )
+        else if( m_font->GetWeight() == wxFONTWEIGHT_BOLD )
             m_nCurrentStyle = NTM_BOLD;
         else
             m_nCurrentStyle = NTM_REGULAR;
-        if( m_font.GetUnderlined() )
+        if( m_font->GetUnderlined() )
             m_bUnderline = true;
         else
             m_bUnderline = false;
@@ -482,9 +482,9 @@ void CFontPropertyPage::set_properties()
     itemChoice10->AppendString( "Italic" );
     itemChoice10->AppendString( "Bold" );
     itemChoice10->AppendString( "Bold Italic" );
-    if( m_font.IsOk() )
+    if( m_font->IsOk() )
     {
-        int sel = itemChoice7->FindString( m_font.GetFaceName() );
+        int sel = itemChoice7->FindString( m_font->GetFaceName() );
         if( sel != wxNOT_FOUND )
         {
             itemChoice7->SetSelection( sel );
@@ -495,13 +495,13 @@ void CFontPropertyPage::set_properties()
     itemChoice17->SetValue( m_backgroundStr );
     if( m_bUnderline )
         itemCheckBox2->Enable( true );
-    if( m_font.IsOk() )
+    if( m_font->IsOk() )
     {
-        if( m_font.GetStyle() == wxFONTSTYLE_ITALIC && m_font.GetWeight() == wxFONTWEIGHT_BOLD )
+        if( m_font->GetStyle() == wxFONTSTYLE_ITALIC && m_font->GetWeight() == wxFONTWEIGHT_BOLD )
             itemChoice10->SetSelection( itemChoice10->FindString( "Bold Italic" ) );
-        else if( m_font.GetStyle() == wxFONTSTYLE_ITALIC )
+        else if( m_font->GetStyle() == wxFONTSTYLE_ITALIC )
             itemChoice10->SetSelection( itemChoice10->FindString( "Italic" ) );
-        else if( m_font.GetWeight() == wxFONTWEIGHT_BOLD )
+        else if( m_font->GetWeight() == wxFONTWEIGHT_BOLD )
             itemChoice10->SetSelection( itemChoice10->FindString( "Bold" ) );
         else
             itemChoice10->SetSelection( itemChoice10->FindString( "Regular" ) );
@@ -677,14 +677,12 @@ void CFontPropertyPage::SetFont(const std::wstring &name, int size, bool italic,
     m_fontName = name;
     if( name == L"" )
     {
-        wxFont font( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
-        m_font = m_font;
+        m_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
     }
     else
     {
-        wxFont font( size, wxFONTFAMILY_DEFAULT, italic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, underline, name );
-        font.SetStrikethrough( strikethrough );
-        m_font = font;
+        m_font = wxFont::New( size, wxFONTFAMILY_DEFAULT, italic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, underline, name );
+        m_font->SetStrikethrough( strikethrough );
     }
     if( m_fontName != wxEmptyString )
     {
