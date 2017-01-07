@@ -48,16 +48,16 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             data_font = wxFont::New( table->GetDataFontSize(), wxFONTFAMILY_DEFAULT, table->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetDataFontUnderline(), table->GetDataFontName() );
         if( table->GetDataFontStrikethrough() )
             data_font->SetStrikethrough( true );
-        if( table->GetDataFontName() == L"" )
+        if( table->GetHeadingFontName() == L"" )
             heading_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
         else
-            heading_font = wxFont::New( table->GetDataFontSize(), wxFONTFAMILY_DEFAULT, table->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetDataFontUnderline(), table->GetDataFontName() );
+            heading_font = wxFont::New( table->GetHeadingFontSize(), wxFONTFAMILY_DEFAULT, table->GetHeadingFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetHeadingFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetHeadingFontUnderline(), table->GetHeadingFontName() );
         if( table->GetHeadingFontStrikethrough() )
             heading_font->SetStrikethrough( true );
-        if( table->GetDataFontName() == L"" )
+        if( table->GetLabelFontName() == L"" )
             label_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
         else
-            label_font = wxFont::New( table->GetDataFontSize(), wxFONTFAMILY_DEFAULT, table->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetDataFontUnderline(), table->GetDataFontName() );
+            label_font = wxFont::New( table->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, table->GetLabelFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetLabelFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetLabelFontUnderline(), table->GetLabelFontName() );
         if( table->GetLabelFontStrikethrough() )
             label_font->SetStrikethrough( true );
         m_page1 = new TableGeneralProperty( m_properties, table );
