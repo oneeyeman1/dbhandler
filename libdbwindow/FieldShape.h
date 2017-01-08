@@ -7,6 +7,7 @@ public:
     virtual ~FieldShape(void);
     void SetParentRect(const wxRect &rect);
     void SetField(Field *field);
+    Field *GetField();
 protected:    
     virtual void DrawNormal(wxDC &dc);
 private:

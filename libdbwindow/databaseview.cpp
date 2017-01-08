@@ -30,6 +30,7 @@
 #include "database.h"
 #include "table.h"
 #include "GridTableShape.h"
+#include "FieldShape.h"
 #include "MyErdTable.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
@@ -243,6 +244,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     bool found = false;
     int type = 0;
     DatabaseTable *table = NULL;
+    Field *field = NULL;
     ShapeList shapes;
     wxString command = "";
     bool logOnly = false;
@@ -262,6 +264,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
         {
             if( (*it)->IsSelected() )
             {
+                field = const_cast<Field *>( ((FieldShape *) *it)->GetField() );
                 type = 1;
                 found = true;
             }
@@ -275,10 +278,14 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
 #else
     lib.Load( "libdialogs" );
 #endif
+    int res;
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-        int res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly );
+        if( type == 0 )
+            res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly );
+        if( type == 0 )
+            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly );
         if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );

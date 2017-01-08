@@ -70,3 +70,8 @@ void FieldShape::SetField(Field *field)
 {
     m_field = field;
 }
+
+Field *FieldShape::GetField()
+{
+    return m_field;
+}
