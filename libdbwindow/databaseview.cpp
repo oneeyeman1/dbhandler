@@ -240,13 +240,14 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &event)
 
 void DrawingView::OnFieldProperties(wxCommandEvent &event)
 {
+    bool found = false;
     int type = 0;
     DatabaseTable *table = NULL;
     ShapeList shapes;
     wxString command = "";
     bool logOnly = false;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
-    for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
+    for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
     {
         if( (*it)->IsSelected() )
         {
@@ -254,6 +255,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             {
                 table = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
                 type = 0;
+                found = true;
             }
         }
     }
