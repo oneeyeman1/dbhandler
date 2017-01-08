@@ -60,7 +60,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             label_font = wxFont::New( table->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, table->GetLabelFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetLabelFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetLabelFontUnderline(), table->GetLabelFontName() );
         if( table->GetLabelFontStrikethrough() )
             label_font->SetStrikethrough( true );
-        m_page1 = new TableGeneralProperty( m_properties, table );
+        m_page1 = new TableGeneralProperty( m_properties, table, type );
         m_properties->AddPage( m_page1, _( "General" ) );
         m_page2 = new CFontPropertyPage( m_properties, data_font );
         m_page3 = new CFontPropertyPage( m_properties, heading_font );
@@ -128,12 +128,13 @@ bool PropertiesDialog::ApplyProperties()
     if( m_type == 0 )
     {
         DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
-        if( m_page1->IsModified() )
+        if( m_db->IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), errors ) && errors.size() == 0 )
+            exist = true;
+        else
+            exist = false;
+        bool fontChanged = m_page2->IsDirty() && m_page3->IsDirty() && m_page4->IsDirty();
+        if( !fontChanged && m_page1->IsModified() )
         {
-            if( m_db->IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), errors ) && errors.size() == 0 )
-                exist = true;
-            else
-                exist = false;
             if( exist )
             {
                 m_command = L"UPDATE ";
@@ -181,7 +182,61 @@ bool PropertiesDialog::ApplyProperties()
                 m_command += L");";
             }
         }
+        else
+        {
+            if( exist )
+            {
+                m_command = L"UPDATE ";
+                if( m_dbType == L"SQLite" )
+                    m_command += L"\"sys.abcattbl\" ";
+                else
+                    m_command += L"abcattbl ";
+                m_command += L"SET ";
+                m_command += L"\"abd_fhgt\" = ";
+                m_command += wxString::Format( "%d", m_page2->GetFont().GetPointSize() );
+                m_command += L", \"abd_fwgt\" = ";
+                m_command += wxString::Format( "%d", m_page2->GetFont().GetWeight() );
+                m_command += L", \"abd_fitl\" = ";
+                m_command += m_page2->GetFont().GetStyle() == wxFONTSTYLE_ITALIC ? L"Y" : L"N";
+                m_command += L", \"abd_funl\" = ";
+                m_command += m_page2->GetFont().GetUnderlined() ? L"Y" : L"N";
+                m_command += L", \"abd_fchr\" = ";
+                m_command += wxString::Format( "%d", m_page2->GetFont().GetEncoding() );
+                m_command += L", \"abd_fptc\" = ";
+                m_command += wxString::Format( "%d", m_page2->GetFont().GetPointSize() );
+                m_command += L", \"abd_ffce\" = ";
+                m_command += m_page2->GetFont().GetFaceName();
+            }
+            else
+            {
+                m_command = L"INSERT INTO ";
+                if( m_dbType == L"SQLite" )
+                    m_command += L"\"sys.abcattbl\"(\"abt_tnam\", \"abt_ownr\", \"abd_fhgt\", \"abd_fwgt\", \"abd_fitl\", \"abd_funl\", \"abd_fchr\", \"abd_fptc\", \"abd_ffce\", \"abt_cmnt\") ";
+                else
+                    m_command += L"abcattbl(abt_tnam, abt_ownr, abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, abd_ffce, abt_cmnt) ";
+                m_command += L"\r\\n\tVALUES(";
+                m_command += table->GetTableName();
+                m_command += L", ";
+                m_command += table->GetSchemaName();
+                m_command += L", ";
+                m_command += wxString::Format( "%d", m_page2->GetFont().GetPointSize() );
+                m_command += L", ";
+                m_command += wxString::Format( "%d", m_page2->GetFont().GetWeight() );
+				m_command += L", ";
+                m_command += m_page2->GetFont().GetStyle() == wxFONTSTYLE_ITALIC ? L"Y" : L"N";
+                m_command += L", ";
+                m_command += m_page2->GetFont().GetUnderlined() ? L"Y" : L"N";
+                m_command += L", ";
+                m_command += wxString::Format( "%d", m_page2->GetFont().GetEncoding() );
+                m_command += L", ";
+                m_command += wxString::Format( "%d", m_page2->GetFont().GetPointSize() );
+                m_command += L", ";
+                m_command += m_page2->GetFont().GetFaceName();
+                m_command += L");";
+            }
+        }
     }
+//\"abh_fhgt\" smallint, \"abh_fwgt\" smallint, \"abh_fitl\" char(1), \"abh_funl\" char(1), \"abh_fchr\" smallint, \"abh_fptc\" smallint, \"abh_ffce\" char(18), \"abl_fhgt\" smallint, \"abl_fwgt\" smallint, \"abl_fitl\" char(1), \"abl_funl\" char(1), \"abl_fchr\" smallint, \"abl_fptc\" smallint, \"abl_ffce\" char(18), \"abt_cmnt\" char(254)
     return true;
 }
 
