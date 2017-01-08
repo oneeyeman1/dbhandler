@@ -194,17 +194,12 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             }
             else
             {
-                wxSFFlexGridShape *grid = wxDynamicCast( (*it), wxSFFlexGridShape );
-                if( grid )
-                    fieldSelected = true;
-                else
+                FieldShape *field = wxDynamicCast( (*it), FieldShape );
+                if( field )
                 {
-                    FieldShape *field = wxDynamicCast( (*it), FieldShape );
-                    if( field && fieldSelected )
-                    {
-                        field->Select( true );
-                        field->SetParentRect( tableRect );
-                    }
+                    field->Select( true );
+                    field->SetParentRect( tableRect );
+                    fieldSelected = true;
                 }
             }
         }
