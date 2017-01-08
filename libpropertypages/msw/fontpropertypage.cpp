@@ -658,6 +658,7 @@ void CFontPropertyPage::FillFacenameList()
 
 void CFontPropertyPage::UpdateSampleFont()
 {
+    m_dirty = true;
     bool isBold = false, isItalic = false, isUnderline = false;
 //    wxString name = itemChoice7->GetSelection();
     int height = itemChoice19->GetFontHeight();
