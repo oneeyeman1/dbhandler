@@ -27,7 +27,7 @@ public:
     CFontPropertyPageBase(wxWindow* parent, wxFont *font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
     ~CFontPropertyPageBase();
     virtual void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough);
-    virtual wxFont &GetFont();
+    wxFont &GetFont();
 protected:
     wxFont *m_font;
     bool m_dirty;

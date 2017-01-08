@@ -68,6 +68,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         m_properties->AddPage( m_page2, _( "Data Font" ) );
         m_properties->AddPage( m_page3, _( "Heading Font" ) );
         m_properties->AddPage( m_page4, _( "Label Font" ) );
+        m_page1->GetCommentCtrl()->SetFocus();
     }
     set_properties();
     do_layout();

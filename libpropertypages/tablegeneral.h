@@ -7,6 +7,7 @@ public:
     TableGeneralProperty(wxWindow *parent, DatabaseTable *table);
     ~TableGeneralProperty();
     bool IsModified();
+    wxTextCtrl *GetCommentCtrl();
     const std::wstring &GetComment();
     bool IsLogOnly();
 protected:

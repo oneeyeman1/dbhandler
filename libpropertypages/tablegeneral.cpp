@@ -35,9 +35,7 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, DatabaseTable *tabl
     m_owner = new wxTextCtrl( this, wxID_ANY );
     m_tableName = new wxTextCtrl( this, wxID_ANY );
     m_comment = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_PROCESS_ENTER );
-#ifdef __WXMSW__
     m_comment->SetMaxLength( 215 );
-#endif
     m_log = new wxCheckBox( this, wxID_ANY, _( "Log Only" ) );
     set_properties();
     do_layout();
@@ -117,4 +115,9 @@ const std::wstring &TableGeneralProperty::GetComment()
 bool TableGeneralProperty::IsLogOnly()
 {
     return m_log->GetValue();
+}
+
+wxTextCtrl *TableGeneralProperty::GetCommentCtrl()
+{
+    return m_comment;
 }
