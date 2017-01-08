@@ -138,7 +138,7 @@ void MyErdTable::UpdateTable()
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
     for( std::vector<Field *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
-		AddColumn( (*it)->GetFieldName(), (*it)->GetComment(), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : (*it)->IsForeignKey() ? Constraint::foreignKey : Constraint::noKey );
+		AddColumn( (*it), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : (*it)->IsForeignKey() ? Constraint::foreignKey : Constraint::noKey );
         i += 3;
     }
     m_pGrid->Update();
@@ -184,7 +184,7 @@ void MyErdTable::DrawNormal(wxDC &dc)
     DrawDetail( dc );
 }
 
-void MyErdTable::AddColumn(const wxString &colName, const wxString &comment, int id, Constraint::constraintType type)
+void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type)
 {
     if( type != Constraint::noKey )
     {
@@ -237,7 +237,8 @@ void MyErdTable::AddColumn(const wxString &colName, const wxString &comment, int
         {
             SetCommonProps( pCol );
             pCol->GetFont().SetPointSize( 8 );
-            pCol->SetText( colName );
+            pCol->SetText( field->GetFieldName() );
+            pCol->SetField( field );
         }
         else
             delete pCol;
@@ -252,7 +253,7 @@ void MyErdTable::AddColumn(const wxString &colName, const wxString &comment, int
         {
             SetCommonProps( comment_shape );
             comment_shape->GetFont().SetPointSize( 8 );
-            comment_shape->SetText( comment );
+            comment_shape->SetText( field->GetComment() );
         }
         else
             delete comment_shape;

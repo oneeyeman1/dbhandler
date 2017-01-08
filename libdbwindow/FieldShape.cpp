@@ -1,11 +1,12 @@
 #include "wxsf/TextShape.h"
+#include "database.h"
 #include "FieldShape.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(FieldShape,wxSFTextShape);
 
 FieldShape::FieldShape()
 {
-    m_name = wxEmptyString;
+/*    m_name = wxEmptyString;
     m_type = wxEmptyString;
     m_size = 0;
     m_decimal = 0;
@@ -20,7 +21,7 @@ FieldShape::FieldShape()
     XS_SERIALIZE( m_isPK, wxT( "m_isPK" ) );
     XS_SERIALIZE( m_isNotNull, wxT( "m_notNull" ) );
     XS_SERIALIZE( m_isAutoInc, wxT( "m_isAutoInc" ) );
-    XS_SERIALIZE( m_backColour, wxT( "m_backColour" ) );
+    XS_SERIALIZE( m_backColour, wxT( "m_backColour" ) );*/
 }
 
 FieldShape::~FieldShape(void)
@@ -63,4 +64,9 @@ void FieldShape::DrawNormal(wxDC &dc)
 void FieldShape::SetParentRect(const wxRect &rect)
 {
     m_parentRect = rect;
+}
+
+void FieldShape::SetField(Field *field)
+{
+    m_field = field;
 }

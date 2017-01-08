@@ -6,13 +6,11 @@ public:
     FieldShape(void);
     virtual ~FieldShape(void);
     void SetParentRect(const wxRect &rect);
-protected:
-    wxString m_name, m_type;
-    long m_size, m_decimal;
-    bool m_isNotNull, m_isPK, m_isAutoInc;
-    
+    void SetField(Field *field);
+protected:    
     virtual void DrawNormal(wxDC &dc);
 private:
+    Field *m_field;
     wxRect m_parentRect;
     wxColour m_backColour;
 };
