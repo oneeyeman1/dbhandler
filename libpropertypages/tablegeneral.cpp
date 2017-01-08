@@ -25,7 +25,7 @@
 #include "database.h"
 #include "tablegeneral.h"
 
-TableGeneralProperty::TableGeneralProperty(wxWindow *parent, DatabaseTable *table) : wxPanel( parent )
+TableGeneralProperty::TableGeneralProperty(wxWindow *parent, DatabaseTable *table, int type) : wxPanel( parent )
 {
     m_table = table;
     m_isModified = false;
@@ -67,9 +67,9 @@ void TableGeneralProperty::do_layout()
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer3->Add( m_label1, 0, wxEXPAND, 0 );
-    sizer3->Add( m_owner, 1, wxEXPAND, 0 );
+    sizer3->Add( m_owner, 0, wxEXPAND, 0 );
     sizer3->Add( m_label2, 0, wxEXPAND, 0 );
-    sizer3->Add( m_tableName, 1, wxEXPAND, 0 );
+    sizer3->Add( m_tableName, 0, wxEXPAND, 0 );
     sizer2->Add( sizer3, 1, wxEXPAND, 0 );
     sizer2->Add( m_label3, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -78,7 +78,7 @@ void TableGeneralProperty::do_layout()
     sizer2->Add( m_log, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer1->Add( sizer2, 0, wxEXPAND, 0 );
+    sizer1->Add( sizer2, 1, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( sizer1 );
 }
@@ -97,13 +97,8 @@ bool TableGeneralProperty::IsModified()
     return m_isModified;
 }
 
-void TableGeneralProperty::OnEditComment(wxCommandEvent &event)
+void TableGeneralProperty::OnEditComment(wxCommandEvent &WXUNUSED(event))
 {
-#if __WXGTK__
-    int length = m_comment->GetValue().length();
-    if( length < 5 )
-        event.Skip();
-#endif
     m_isModified = true;
 }
 

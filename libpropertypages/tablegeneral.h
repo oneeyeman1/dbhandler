@@ -4,7 +4,7 @@
 class WXEXPORT TableGeneralProperty : public wxPanel
 {
 public:
-    TableGeneralProperty(wxWindow *parent, DatabaseTable *table);
+    TableGeneralProperty(wxWindow *parent, DatabaseTable *table, int type);
     ~TableGeneralProperty();
     bool IsModified();
     wxTextCtrl *GetCommentCtrl();
