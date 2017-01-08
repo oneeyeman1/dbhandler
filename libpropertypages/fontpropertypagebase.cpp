@@ -35,6 +35,7 @@
 CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, wxFont *font, int id, const wxPoint& pos, const wxSize& size, long style)
  : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL)
 {
+    m_dirty = false;
 }
 
 CFontPropertyPageBase::~CFontPropertyPageBase()
@@ -48,4 +49,9 @@ void CFontPropertyPageBase::SetFont(const std::wstring &name, int size, bool ita
 wxFont &CFontPropertyPageBase::GetFont()
 {
     return *m_font;
+}
+
+bool CFontPropertyPageBase::IsDirty()
+{
+    return m_dirty;
 }
