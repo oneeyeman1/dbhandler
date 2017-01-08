@@ -249,12 +249,20 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
     {
-        if( (*it)->IsSelected() )
+        if( event.GetId() == wxID_PROPERTIES )
         {
-            if( event.GetId() == wxID_PROPERTIES )
+            if( (*it)->IsSelected() )
             {
                 table = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
                 type = 0;
+                found = true;
+            }
+        }
+        if( event.GetId() == wxID_FIELDPROPERTIES )
+        {
+            if( (*it)->IsSelected() )
+            {
+                type = 1;
                 found = true;
             }
         }
