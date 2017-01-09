@@ -248,7 +248,8 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     ShapeList shapes;
     wxString command = "";
     bool logOnly = false;
-    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
+    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
+    wxString tableName;
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
     {
         if( event.GetId() == wxID_PROPERTIES )
@@ -264,9 +265,19 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
         {
             if( (*it)->IsSelected() )
             {
-                field = const_cast<Field *>( ((FieldShape *) *it)->GetField() );
-                type = 1;
-                found = true;
+                MyErdTable *erdTable = dynamic_cast<MyErdTable *>( *it );
+//                table = dynamic_cast<DatabaseTable *>( ((MyErdTable *) *it)->GetTable() );
+                if( erdTable )
+                {
+                    tableName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetTableName();
+                    continue;
+                }
+                if( !table )
+                {
+                    field = dynamic_cast<Field *>( ((FieldShape *) *it)->GetField() );
+                    type = 1;
+                    found = true;
+                }
             }
         }
     }
