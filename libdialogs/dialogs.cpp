@@ -154,6 +154,10 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, i
         title = _( "Table " );
         title += static_cast<DatabaseTable *>( object )->GetTableName();
     }
+    if( type == 1 )
+    {
+        title = _( "Column " );
+    }
     PropertiesDialog dlg( parent, wxID_ANY, title, db, type, object );
 	dlg.Center();
     res = dlg.ShowModal();
