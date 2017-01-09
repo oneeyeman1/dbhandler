@@ -1,6 +1,7 @@
 #include "wxsf/GridShape.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/ShapeBase.h"
+#include "database.h"
 #include "FieldShape.h"
 #include "GridTableShape.h"
 
