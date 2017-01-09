@@ -25,9 +25,10 @@
 #include "database.h"
 #include "tablegeneral.h"
 
-TableGeneralProperty::TableGeneralProperty(wxWindow *parent, DatabaseTable *table, int type) : wxPanel( parent )
+TableGeneralProperty::TableGeneralProperty(wxWindow *parent, void *table, int type) : wxPanel( parent )
 {
     m_table = table;
+    m_type = type;
     m_isModified = false;
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Owner" ) );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Table" ) );
@@ -52,11 +53,18 @@ TableGeneralProperty::~TableGeneralProperty()
 
 void TableGeneralProperty::set_properties()
 {
-    m_owner->Enable( false );
-    m_owner->SetValue( m_table->GetSchemaName() );
-    m_tableName->Enable( false );
-    m_tableName->SetValue( m_table->GetTableName() );
-    m_comment->SetValue( m_table->GetComment() );
+    if( m_type == 0 )
+    {
+        m_owner->Enable( false );
+        m_owner->SetValue( static_cast<DatabaseTable *>( m_table )->GetSchemaName() );
+        m_tableName->Enable( false );
+        m_tableName->SetValue( static_cast<DatabaseTable *>( m_table )->GetTableName() );
+        m_comment->SetValue( static_cast<DatabaseTable *>( m_table )->GetComment() );
+    }
+    if( m_type == 1 )
+    {
+        m_comment->SetValue( static_cast<Field *>( m_table )->GetComment() );
+    }
 }
 
 void TableGeneralProperty::do_layout()
