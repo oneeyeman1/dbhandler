@@ -70,6 +70,12 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         m_properties->AddPage( m_page4, _( "Label Font" ) );
         m_page1->GetCommentCtrl()->SetFocus();
     }
+    if( type == 1 )
+    {
+        Field *field = static_cast<Field *>( m_object );
+        m_page1 = new TableGeneralProperty( m_properties, field, type );
+        m_properties->AddPage( m_page1, _( "General" ) );
+    }
     set_properties();
     do_layout();
     // end wxGlade

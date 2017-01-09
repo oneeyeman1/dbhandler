@@ -284,7 +284,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == 0 )
             res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly );
-        if( type == 0 )
+        if( type == 1 )
             res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly );
         if( res != wxID_CANCEL && logOnly )
         {
