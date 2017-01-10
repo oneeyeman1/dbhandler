@@ -38,7 +38,7 @@
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
-typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -294,9 +294,9 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == 0 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly );
+            res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly, wxEmptyString );
         if( type == 1 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly );
+            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName );
         if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );
