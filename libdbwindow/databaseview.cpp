@@ -99,13 +99,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxASSERT( m_frame == GetFrame() );
     m_canvas = new DatabaseCanvas( this );
     m_frame->Show();
-    Bind( wxEVT_CONTEXT_MENU, &DrawingView::OnContextMenu, this );
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     return true;
-}
-
-void DrawingView::OnContextMenu(wxContextMenuEvent &event)
-{
 }
 
 // Sneakily gets used for default print/preview as well as drawing on the
@@ -128,7 +123,7 @@ void DrawingView::OnDraw(wxDC *dc)
     }
 }
 
-void DrawingView::OnCloseLogWindow(wxCloseEvent &event)
+void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
 {
     m_log->Hide();
 }
@@ -229,12 +224,12 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         wxMessageBox( _( "Error loading the DLL/so" ) );
 }
 
-void DrawingView::OnViewSelectedTables(wxCommandEvent &event)
+void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
 {
     GetTablesForView( GetDocument()->GetDatabase() );
 }
 
-void DrawingView::OnFieldDefinition(wxCommandEvent &event)
+void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
 {
     wxMessageBox( "Field definition" );
 }
@@ -250,7 +245,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     bool logOnly = false;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
     wxString tableName;
-    MyErdTable *erdTable;
+    MyErdTable *erdTable = NULL;
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
     {
         if( event.GetId() == wxID_PROPERTIES )
@@ -267,7 +262,6 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             if( (*it)->IsSelected() )
             {
                 MyErdTable *table = dynamic_cast<MyErdTable *>( *it );
-//                table = dynamic_cast<DatabaseTable *>( ((MyErdTable *) *it)->GetTable() );
                 if( table )
                 {
                     erdTable = table;
@@ -294,7 +288,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
 #else
     lib.Load( "libdialogs" );
 #endif
-    int res;
+    int res = 0;
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );

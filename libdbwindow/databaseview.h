@@ -53,7 +53,6 @@ public:
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
     virtual bool OnClose(bool deleteWindow = true) wxOVERRIDE;
-    void OnContextMenu(wxContextMenuEvent &event);
     void OnViewSelectedTables(wxCommandEvent &event);
     void OnNewIndex(wxCommandEvent &event);
     void OnFieldDefinition(wxCommandEvent &event);
