@@ -173,6 +173,8 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
 
 void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 {
+    FieldShape *field = NULL;
+    MyErdTable *erdTable = NULL;
     wxPoint pt = event.GetPosition();
     wxMenu mnu;
     mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_TABLEDROPTABLE );
@@ -191,10 +193,11 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             {
                 table->Select( true );
                 tableRect = table->GetBoundingBox();
+                erdTable = table;
             }
             else
             {
-                FieldShape *field = wxDynamicCast( (*it), FieldShape );
+                field = wxDynamicCast( (*it), FieldShape );
                 if( field )
                 {
                     field->Select( true );
@@ -241,7 +244,17 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         mnu.Check( wxID_VIEWSHOWINDEXKEYS, true );
         mnu.Check( wxID_VIEWSHOWINTEGRITY, true );
     }
-    PopupMenu( &mnu, pt.x, pt.y );
+    int rc = GetPopupMenuSelectionFromUser( mnu, pt );
+    if( rc == wxID_NONE && field )
+    {
+        field->Select( false );
+        erdTable->UpdateTable();
+    }
+    else
+    {
+        wxCommandEvent evt( wxEVT_MENU, rc );
+        m_view->ProcessEvent( evt );
+    }
 }
 
 void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
