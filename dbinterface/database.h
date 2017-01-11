@@ -46,8 +46,13 @@ public:
         autoIncrement = autoincrement;
         column_pk = columnPK;
         column_fk = columnFK;
+        label = columnName;
+        heading = columnName;
     }
-
+	const std::wstring &GetLabel() { return label; }
+	const std::wstring &GetHeading() { return heading; }
+	void SetLabel(const std::wstring &lbl) { label = lbl; }
+	void SetHeading(const std::wstring &hding) { heading = hding; }
     const std::wstring &GetFieldName() { return column_name; }
     const std::wstring &GetFieldType() { return column_type; }
     const std::wstring &GetComment() { return comment; }
@@ -58,7 +63,7 @@ public:
     bool IsAutoIncrement() { return autoIncrement; }
     void SetComment(const std::wstring &comment) { this->comment = comment; }
 private:
-    std::wstring column_name, column_type, column_defaultValue, comment;
+    std::wstring column_name, column_type, column_defaultValue, comment, label, heading;
     bool autoIncrement, column_isNull, column_pk, column_fk;
     int field_size, decimal_size;
 };
