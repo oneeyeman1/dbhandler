@@ -35,7 +35,7 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, void *table, int ty
     m_label3 = new wxStaticText( this, wxID_ANY, _( "&Table comment:" ) );
     m_owner = new wxTextCtrl( this, wxID_ANY );
     m_tableName = new wxTextCtrl( this, wxID_ANY );
-    m_comment = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_PROCESS_ENTER );
+    m_comment = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_PROCESS_ENTER | wxTE_NO_VSCROLL );
     m_comment->SetMaxLength( 215 );
     m_log = new wxCheckBox( this, wxID_ANY, _( "Log Only" ) );
     set_properties();
@@ -45,6 +45,13 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, void *table, int ty
         ok->SetDefault();
     m_comment->Bind( wxEVT_CHAR, &TableGeneralProperty::OnCommentKeyEntered, this );
     m_comment->Bind( wxEVT_TEXT, &TableGeneralProperty::OnEditComment, this );
+    if( m_type == 1 )
+    {
+        m_owner->Hide();
+        m_tableName->Hide();
+        m_label1->Hide();
+        m_label2->Hide();
+    }
 }
 
 TableGeneralProperty::~TableGeneralProperty()
