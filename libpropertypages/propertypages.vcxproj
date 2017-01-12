@@ -35,11 +35,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fieldheader.h" />
     <ClInclude Include="fontpropertypagebase.h" />
     <ClInclude Include="msw\fontpropertypage.h" />
     <ClInclude Include="tablegeneral.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="fieldheader.cpp" />
     <ClCompile Include="fontpropertypagebase.cpp" />
     <ClCompile Include="msw\fontpropertypage.cpp" />
     <ClCompile Include="tablegeneral.cpp" />
