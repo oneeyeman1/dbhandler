@@ -2217,3 +2217,9 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
     schema_name = NULL;
     return result;
 }
+
+int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+}
