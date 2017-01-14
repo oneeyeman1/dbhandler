@@ -1670,10 +1670,6 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstr
     return 0;
 }
 
-void ODBCDatabase::GetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &comment, std::vector<std::wstring> &errorMsg)
-{
-}
-
 void ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
 }
