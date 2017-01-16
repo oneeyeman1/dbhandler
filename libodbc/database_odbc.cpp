@@ -2396,6 +2396,42 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         str_to_uc_cpy( comment, commentField );
 		field->SetComment( comment );
     }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fieldProp );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLDisconnect( hdbc_fieldProp );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, hdbc_fieldProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_fieldProp );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, hdbc_fieldProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return 1;
+    }
     delete table_name;
     delete schema_name;
     delete field_name;
