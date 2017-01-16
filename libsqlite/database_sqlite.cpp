@@ -136,6 +136,7 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
 int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    const char *query = NULL;
     std::wstring errorMessage;
     int res = sqlite3_close( m_db );
     if( res != SQLITE_OK )
@@ -143,12 +144,12 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
         result = 1;
+//  For debugging purposes - helps find non-closed statements
+        sqlite3_stmt *statement = sqlite3_next_stmt( m_db, NULL );
+        if( statement )
+            query = sqlite3_sql( statement );
+//  For debugging purposes - helps find non-closed statements
     }
-//  For debugging purposes - helps find non-closed statements
-//    sqlite3_stmt *statement = sqlite3_next_stmt( m_db, NULL );
-//    if( statement )
-//        const char *query = sqlite3_sql( statement );
-//  For debugging purposes - helps find non-closed statements
     std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
     for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
     {
@@ -387,7 +388,14 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     if( errorMsg.empty() )
                                     {
                                         Field *field = new Field( sqlite_pimpl->m_myconv.from_bytes( fieldName ), sqlite_pimpl->m_myconv.from_bytes( fieldType ), 0, 0, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK >= 1 ? true : false, std::find( fk_names.begin(), fk_names.end(), sqlite_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
-                                        field->SetComment( fieldComment );
+			                            if( GetFieldProperties( sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName ), L"", sqlite_pimpl->m_myconv.from_bytes( fieldName ), field, errorMsg ) )
+                                        {
+                                            result = 1;
+                                            GetErrorMessage( res, errorMessage );
+                                            errorMsg.push_back( errorMessage );
+                                            sqlite3_finalize( stmt2 );
+                                            break;
+                                        }
                                         fields.push_back( field );
                                     }
                                 }
@@ -772,11 +780,11 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 if( res == SQLITE_OK )
                 {
                     res = sqlite3_step( stmt );
-                    if( res == SQLITE_OK )
+                    if( res == SQLITE_ROW )
                     {
                         table->SetComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 17 ) ) );
                     }
-                    else
+                    else if( res != SQLITE_DONE )
                     {
                         result = 1;
                         GetErrorMessage( res, errorMessage );
