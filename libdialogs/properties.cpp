@@ -27,7 +27,7 @@
 #include "fontpropertypagebase.h"
 #include "properties.h"
 
-PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxPoint& pos, const wxSize& size, long style):
+PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     std::vector<std::wstring> errors;
@@ -35,36 +35,46 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_db = db;
     m_dbType = m_db->GetTableVector().m_type;
     m_object = object;
+    int res;
     // begin wxGlade: PropertiesDialog::PropertiesDialog
     m_properties = new wxNotebook( this, wxID_ANY );
     if( type == 0 )
     {
         wxFont *data_font, *heading_font, *label_font;
         DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
-        db->GetTableProperties( table, errors );
-        if( table->GetDataFontName() == L"" )
+        int res = db->GetTableProperties( table, errors );
+        bool isdataFontName = table->GetDataFontName() == L"";
+        bool isheadingFontName = table->GetHeadingFontName() == L"";
+        bool islabelFontName = table->GetLabelFontName() == L"";
+        if( isdataFontName )
             data_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
         else
+        {
             data_font = wxFont::New( table->GetDataFontSize(), wxFONTFAMILY_DEFAULT, table->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetDataFontUnderline(), table->GetDataFontName() );
-        if( table->GetDataFontStrikethrough() )
-            data_font->SetStrikethrough( true );
-        if( table->GetHeadingFontName() == L"" )
+            if( table->GetDataFontStrikethrough() )
+                data_font->SetStrikethrough( true );
+        }
+        if( isheadingFontName )
             heading_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
         else
+        {
             heading_font = wxFont::New( table->GetHeadingFontSize(), wxFONTFAMILY_DEFAULT, table->GetHeadingFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetHeadingFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetHeadingFontUnderline(), table->GetHeadingFontName() );
-        if( table->GetHeadingFontStrikethrough() )
-            heading_font->SetStrikethrough( true );
-        if( table->GetLabelFontName() == L"" )
+            if( table->GetHeadingFontStrikethrough() )
+                heading_font->SetStrikethrough( true );
+        }
+        if( islabelFontName )
             label_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
         else
+        {
             label_font = wxFont::New( table->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, table->GetLabelFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetLabelFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetLabelFontUnderline(), table->GetLabelFontName() );
-        if( table->GetLabelFontStrikethrough() )
-            label_font->SetStrikethrough( true );
+            if( table->GetLabelFontStrikethrough() )
+                label_font->SetStrikethrough( true );
+        }
         m_page1 = new TableGeneralProperty( m_properties, table, type );
         m_properties->AddPage( m_page1, _( "General" ) );
-        m_page2 = new CFontPropertyPage( m_properties, data_font );
-        m_page3 = new CFontPropertyPage( m_properties, heading_font );
-        m_page4 = new CFontPropertyPage( m_properties, label_font );
+        m_page2 = new CFontPropertyPage( m_properties, data_font, isdataFontName );
+        m_page3 = new CFontPropertyPage( m_properties, heading_font, isheadingFontName );
+        m_page4 = new CFontPropertyPage( m_properties, label_font, islabelFontName );
         m_properties->AddPage( m_page2, _( "Data Font" ) );
         m_properties->AddPage( m_page3, _( "Heading Font" ) );
         m_properties->AddPage( m_page4, _( "Label Font" ) );
@@ -72,19 +82,33 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     }
     if( type == 1 )
     {
+        wxString tableName = title.substr( 0, title.find( '.' ) );
+        wxString fieldName = title.substr( title.find( '.' ) + 1 );
         Field *field = static_cast<Field *>( m_object );
-        m_page1 = new TableGeneralProperty( m_properties, field, type );
-        m_properties->AddPage( m_page1, _( "General" ) );
+        res = db->GetFieldProperties( tableName.ToStdWstring(), schemaName.ToStdWstring(), field->GetFieldName(), field, errors );
+        if( !res )
+        {
+            m_page1 = new TableGeneralProperty( m_properties, field, type );
+            m_properties->AddPage( m_page1, _( "General" ) );
+        }
+        else
+        {
+            for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
+                wxMessageBox( (*it) );
+        }
     }
-    set_properties();
-    do_layout();
-    // end wxGlade
-    wxButton *apply = dynamic_cast<wxButton *>( FindWindowById( wxID_APPLY ) );
-    wxButton *ok = dynamic_cast<wxButton *>( FindWindowById( wxID_OK ) );
-    ok->SetDefault();
-    apply->Enable( false );
-    apply->Bind( wxEVT_BUTTON, &PropertiesDialog::OnApply, this );
-    ok->Bind( wxEVT_BUTTON, &PropertiesDialog::OnOk, this );
+    if( !res )
+    {
+        set_properties();
+        do_layout();
+        // end wxGlade
+        wxButton *apply = dynamic_cast<wxButton *>( FindWindowById( wxID_APPLY ) );
+        wxButton *ok = dynamic_cast<wxButton *>( FindWindowById( wxID_OK ) );
+        ok->SetDefault();
+        apply->Enable( false );
+        apply->Bind( wxEVT_BUTTON, &PropertiesDialog::OnApply, this );
+        ok->Bind( wxEVT_BUTTON, &PropertiesDialog::OnOk, this );
+    }
 }
 
 void PropertiesDialog::set_properties()

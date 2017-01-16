@@ -38,7 +38,7 @@
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
-typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -244,7 +244,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     wxString command = "";
     bool logOnly = false;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
-    wxString tableName;
+    wxString tableName, schemaName;
     MyErdTable *erdTable = NULL;
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
     {
@@ -266,6 +266,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
                 {
                     erdTable = table;
                     tableName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetTableName();
+                    schemaName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetSchemaName();
                     continue;
                 }
                 if( !table )
@@ -293,9 +294,9 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == 0 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly, wxEmptyString );
+            res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly, wxEmptyString, wxEmptyString );
         if( type == 1 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName );
+            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName );
         if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );
