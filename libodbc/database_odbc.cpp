@@ -1509,10 +1509,21 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         int i = 0;
                         for( ret = SQLFetch( stmt_col ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_col ) )
                         {
+                            std::wstring schema_name, table_name;
+                            str_to_uc_cpy( schema_name, schemaName );
+                            str_to_uc_cpy( table_name, tableName );
                             str_to_uc_cpy( fieldName, szColumnName );
                             str_to_uc_cpy( fieldType, szTypeName );
                             str_to_uc_cpy( defaultValue, szColumnDefault );
                             Field *field = new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
+                            if( GetFieldProperties( table_name, schema_name, fieldName, field, errorMsg ) )
+                            {
+                                GetErrorMessage( errorMsg, 2 );
+                                result = 1;
+                                fields.clear();
+                                pk_fields.clear();
+                                break;
+                            }
                             fields.push_back( field );
                             fieldName = L"";
                             fieldType = L"";
@@ -2238,6 +2249,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     uc_to_str_cpy( table_name, tableName );
     uc_to_str_cpy( schema_name, schemaName );
     uc_to_str_cpy( field_name, fieldName );
+    uc_to_str_cpy( qry, query );
     SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_fieldProp );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -2350,7 +2362,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         field_name = NULL;
         return 1;
     }
-    ret = SQLBindCol( stmt_fieldProp, 17, SQL_C_WCHAR, &commentField, 3, &cbDataFontItalic );
+    ret = SQLBindCol( stmt_fieldProp, 18, SQL_C_WCHAR, &commentField, 3, &cbDataFontItalic );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, stmt_fieldProp );
@@ -2365,7 +2377,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         return 1;
     }
     ret = SQLFetch( stmt_fieldProp );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
     {
         GetErrorMessage( errorMsg, 1, stmt_fieldProp );
         delete qry;
@@ -2378,7 +2390,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         field_name = NULL;
         return 1;
     }
-    else
+    else if( ret != SQL_NO_DATA )
     {
         std::wstring comment;
         str_to_uc_cpy( comment, commentField );
