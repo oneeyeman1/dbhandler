@@ -720,9 +720,10 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
     return result;
 }
 
-void SQLiteDatabase::SetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
-    
+    int result = 0;
+    return result;
 }
 
 bool SQLiteDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)

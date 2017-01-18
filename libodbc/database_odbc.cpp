@@ -2147,9 +2147,10 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     return 0;
 }
 
-void ODBCDatabase::SetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
-    
+    int result = 0;
+    return result;
 }
 
 bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)

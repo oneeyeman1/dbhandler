@@ -236,6 +236,7 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnFieldProperties(wxCommandEvent &event)
 {
+    std::vector<std::wstring> errors;
     bool found = false;
     int type = 0;
     DatabaseTable *table = NULL;
@@ -292,6 +293,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     int res = 0;
     if( lib.IsLoaded() )
     {
+        int res;
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == 0 )
             res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly, wxEmptyString, wxEmptyString );
@@ -303,6 +305,18 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             m_text->AppendText( "\n\r\n\r" );
             if( !m_log->IsShown() )
                 m_log->Show();
+        }
+        if( res != wxID_CANCEL )
+        {
+            if( type == 0 )
+                res = GetDocument()->GetDatabase()->SetTableProperties( command.ToStdWstring(), errors );
+            if( type == 1 )
+                GetDocument()->GetDatabase();
+            if( res )
+            {
+                for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
+                    wxMessageBox( (*it) );
+            }
         }
     }
 }
