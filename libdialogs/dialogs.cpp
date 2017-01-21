@@ -148,7 +148,7 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
 extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, int type, void *object, wxString &command, bool logOnly, const wxString &tableName, const wxString &schemaName)
 {
     wxString title;
-    int res;
+    int res = 0;
     if( type == 0 )
     {
         title = _( "Table " );

@@ -35,14 +35,14 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_db = db;
     m_dbType = m_db->GetTableVector().m_type;
     m_object = object;
-    int res;
+    int res = -1;
     // begin wxGlade: PropertiesDialog::PropertiesDialog
     m_properties = new wxNotebook( this, wxID_ANY );
     if( type == 0 )
     {
         wxFont *data_font, *heading_font, *label_font;
         DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
-        int res = db->GetTableProperties( table, errors );
+        res = db->GetTableProperties( table, errors );
         bool isdataFontName = table->GetDataFontName() == L"";
         bool isheadingFontName = table->GetHeadingFontName() == L"";
         bool islabelFontName = table->GetLabelFontName() == L"";
@@ -175,19 +175,16 @@ bool PropertiesDialog::ApplyProperties()
                 m_command += L"SET ";
                 m_command += L"\"abt_cmnt\" ";
                 m_command += L"= '";
-                m_command += m_page1->GetComment();
+                m_command += m_page1->GetCommentCtrl()->GetValue().ToStdWstring();
                 m_command += L"' WHERE ";
                 m_command += L"\"abt_tnam\" = '";
                 m_command += table->GetTableName();
                 m_command += L"' AND ";
+                m_command += L"\"abt_ownr\" = ";
                 if( m_dbType == L"SQLite" )
-                    m_command += L"\"abt_ownr\" = '';";
+                    m_command += L"'';";
                 else
-                {
-                    m_command += L"\"abt_ownr\" = '";
-                    m_command += table->GetSchemaName();
-                    m_command += L"'";
-                }
+                    m_command += L"'" + table->GetSchemaName() + L"'";
             }
             else
             {
@@ -207,7 +204,7 @@ bool PropertiesDialog::ApplyProperties()
                     m_command += L"', ";
                 }
                 m_command += L"'";
-                m_command += m_page1->GetComment();
+                m_command += m_page1->GetCommentCtrl()->GetValue().ToStdWstring();
                 m_command += L"'";
                 m_command += L");";
             }
