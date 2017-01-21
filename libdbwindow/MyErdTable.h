@@ -9,6 +9,7 @@ public:
     MyErdTable(DatabaseTable *table);
     virtual ~MyErdTable();
     void UpdateTable();
+    void SetTableComment(const wxString &comment);
     const DatabaseTable &GetTable();
     wxSFTextShape *GetLabel();
     GridTableShape *GetFieldGrid();

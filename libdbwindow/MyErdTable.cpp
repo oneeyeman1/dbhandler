@@ -145,6 +145,12 @@ void MyErdTable::UpdateTable()
     Update();
 }
 
+void MyErdTable::SetTableComment(const wxString &comment)
+{
+    m_table->SetComment( comment.ToStdWstring() );
+    m_comment->SetText( m_table->GetComment() );
+}
+
 void MyErdTable::ClearGrid()
 {
     m_pGrid->RemoveChildren();
