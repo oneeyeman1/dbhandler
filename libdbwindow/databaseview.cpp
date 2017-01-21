@@ -253,6 +253,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
         {
             if( (*it)->IsSelected() )
             {
+                erdTable = (MyErdTable *)(*it);
                 table = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
                 type = 0;
                 found = true;
@@ -316,6 +317,14 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             {
                 for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
                     wxMessageBox( (*it) );
+            }
+            else
+            {
+                if( type == 0 )
+                {
+                    erdTable->SetTableComment( "test" );
+                    erdTable->UpdateTable();
+                }
             }
         }
     }
