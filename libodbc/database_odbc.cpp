@@ -2233,12 +2233,16 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
 {
     SQLHDBC hdbc_fieldProp;
     SQLHSTMT stmt_fieldProp;
+    std::wstring query;
     int result = 0;
     SQLWCHAR *commentField;
     SQLWCHAR *table_name = NULL, *schema_name = NULL, *field_name = NULL, *qry = NULL;
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbDataFontItalic;
     SQLSMALLINT OutConnStrLen;
-    std::wstring query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
+    if( pimpl->m_subtype == L"MySQL" )
+        query = L"SELECT * FROM abcatcol WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
+    else
+        query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     table_name = new SQLWCHAR[tableName.length() + 2];
     schema_name = new SQLWCHAR[schemaName.length() + 2];
     field_name = new SQLWCHAR[fieldName.length() + 2];
