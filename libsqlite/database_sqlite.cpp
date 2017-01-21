@@ -722,7 +722,27 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
 
 int SQLiteDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
+    std::wstring errorMessage;
+    sqlite3_stmt *stmt = NULL;
     int result = 0;
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), (int) command.length(), &stmt, 0 );
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_step( stmt );
+        if( res != SQLITE_DONE )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        result = 1;
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    sqlite3_finalize( stmt );
     return result;
 }
 
