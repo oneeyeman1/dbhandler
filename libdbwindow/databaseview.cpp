@@ -322,7 +322,8 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             {
                 if( type == 0 )
                 {
-                    erdTable->SetTableComment( "test" );
+                    GetDocument()->GetDatabase()->GetTableProperties( table, errors );
+                    erdTable->SetTableComment( table->GetComment() );
                     erdTable->UpdateTable();
                 }
             }
