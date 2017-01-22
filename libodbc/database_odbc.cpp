@@ -39,25 +39,18 @@ ODBCDatabase::~ODBCDatabase()
     std::vector<std::wstring> errorMsg;
     delete m_connectString;
     m_connectString = 0;
-    if( m_hstmt != 0 )
+    if( m_hdbc != 0 )
     {
-        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
         if( ret != SQL_SUCCESS )
-            GetErrorMessage( errorMsg, 1 );
-        m_hstmt = 0;
-        if( m_hdbc != 0 )
+            GetErrorMessage( errorMsg, 2 );
+        m_hdbc = 0;
+        if( m_env != 0 )
         {
-            ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
+            ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
             if( ret != SQL_SUCCESS )
-                GetErrorMessage( errorMsg, 2 );
-            m_hdbc = 0;
-            if( m_env != 0 )
-            {
-                ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
-                if( ret != SQL_SUCCESS )
-                    GetErrorMessage( errorMsg, 0 );
-                m_env = 0;
-            }
+                GetErrorMessage( errorMsg, 0 );
+            m_env = 0;
         }
     }
 }
