@@ -580,18 +580,17 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     RETCODE ret;
-    if( m_hstmt != 0 )
+    ret = SQLDisconnect( m_hdbc );
+    if( ret != SQL_SUCCESS )
     {
-        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-        if( ret != SQL_SUCCESS )
+        GetErrorMessage( errorMsg, 2 );
+        result = 1;
+    }
+    else
+    {
+        if( m_hdbc != 0 )
         {
-            GetErrorMessage( errorMsg, 1 );
-            result = 1;
-        }
-        else
-        {
-            m_hstmt = 0;
-            ret = SQLDisconnect( m_hdbc );
+            ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
             if( ret != SQL_SUCCESS )
             {
                 GetErrorMessage( errorMsg, 2 );
@@ -599,29 +598,17 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
             }
             else
             {
-                if( m_hdbc != 0 )
+                m_hdbc = 0;
+                if( m_env != 0 )
                 {
-                    ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
+                    ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
                     if( ret != SQL_SUCCESS )
                     {
-                        GetErrorMessage( errorMsg, 2 );
-                        result = 1;
+                        GetErrorMessage( errorMsg, 0 );
+                        return 1;
                     }
                     else
-                    {
-                        m_hdbc = 0;
-                        if( m_env != 0 )
-                        {
-                            ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
-                            if( ret != SQL_SUCCESS )
-                            {
-                                GetErrorMessage( errorMsg, 0 );
-                                return 1;
-                            }
-                            else
-                                m_env = 0;
-                        }
-                    }
+                        m_env = 0;
                 }
             }
         }
