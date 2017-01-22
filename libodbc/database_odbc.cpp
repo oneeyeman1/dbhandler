@@ -522,15 +522,6 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                     result = 1;
                                 }
                             }
-/*                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                if( !result )
-                                {
-                                    GetErrorMessage( errorMsg, 2 );
-                                    result = 1;
-                                }
-                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                            }*/
                             if( m_hstmt )
                             {
                                 ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
@@ -548,16 +539,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                     GetErrorMessage( errorMsg, 2 );
                                     result = 1;
                                 }
-                                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, 2 );
-                                    result = 1;
-                                }
-                                else
-                                {
-                                    result = GetTableListFromDb( errorMsg );
-                                }
+                                result = GetTableListFromDb( errorMsg );
                             }
                         }
                     }
@@ -698,6 +680,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     SQLSMALLINT DataType, DecimalDigits, NumPrecRadix, Nullable, SQLDataType, DatetimeSubtypeCode, numCols = 0;
     SQLINTEGER ColumnSize, BufferLength, CharOctetLength, OrdinalPosition;
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1 );
+        return 1;
+    }
     for( int i = 0; i < 5; i++ )
     {
         catalog[i].TargetType = SQL_C_WCHAR;
@@ -1652,12 +1640,21 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         free( catalog[i].TargetValuePtr );
     }
     free( catalog );
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 2 );
+        result = 1;
+        fields.clear();
+        pk_fields.clear();
+    }
     return result;
 }
 
 int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     SQLRETURN ret;
+    int result = 0;
     SQLWCHAR *query = NULL;
     query = new SQLWCHAR[command.length() + 2];
     memset( query, '\0', command.length() + 2 );
@@ -1669,15 +1666,23 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstr
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
         }
     }
     else
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
+        result = 1;
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+        result = 1;
     }
     delete query;
     query = NULL;
-    return 0;
+    return result;
 }
 
 void ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
@@ -1753,6 +1758,11 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
         }
     }
     else
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
     }
@@ -2150,6 +2160,36 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
 int ODBCDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    SQLWCHAR *query = new SQLWCHAR[command.length() + 2];
+    memset( query, '\0', command.length() + 2 );
+    uc_to_str_cpy( query, command );
+    SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+        delete query;
+        query = NULL;
+        result = 1;
+    }
+    else
+    {
+        SQLRETURN ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            delete query;
+            query = NULL;
+            result = 1;
+        }
+    }
+    delete query;
+    query = NULL;
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+        result = 1;
+    }
     return result;
 }
 
@@ -2165,7 +2205,19 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
     uc_to_str_cpy( table_name, tableName );
     memset( qry, '\0', query.size() + 2 );
     uc_to_str_cpy( qry, query );
-    SQLRETURN ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
+    SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        return false;
+    }
+    ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -2226,6 +2278,11 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
     table_name = NULL;
     delete schema_name;
     schema_name = NULL;
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+    }
     return result;
 }
 
