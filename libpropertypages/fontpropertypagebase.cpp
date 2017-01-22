@@ -41,6 +41,7 @@ CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, wxFont *font, int
 CFontPropertyPageBase::~CFontPropertyPageBase()
 {
     delete m_font;
+    m_font = NULL;
 }
 
 void CFontPropertyPageBase::SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough)
