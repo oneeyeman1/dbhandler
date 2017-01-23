@@ -2444,7 +2444,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     {
         std::wstring comment;
         str_to_uc_cpy( comment, commentField );
-		field->SetComment( comment );
+        field->SetComment( comment );
     }
     ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fieldProp );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
