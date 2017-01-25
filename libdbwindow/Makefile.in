@@ -417,6 +417,7 @@ libdbwindow_la_SOURCES = \
 	GridTableShape.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
+	-I../../libfieldswindow \
 	-I../../dbinterface \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
