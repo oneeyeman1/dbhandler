@@ -48,6 +48,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fieldswindow", "..\libfield
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "propertypages", "..\libpropertypages\propertypages.vcxproj", "{22017CA3-FB1B-44E4-AC21-E02576A36937}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EF89C84B-B5ED-496F-A980-5C7071081A19} = {EF89C84B-B5ED-496F-A980-5C7071081A19}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

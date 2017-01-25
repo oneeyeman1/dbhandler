@@ -57,6 +57,7 @@ public:
     void OnNewIndex(wxCommandEvent &event);
     void OnFieldDefinition(wxCommandEvent &event);
     void OnFieldProperties(wxCommandEvent &event);
+    void OnSetProperties(wxCommandEvent &event);
     void OnCloseLogWindow(wxCloseEvent &event);
     DrawingDocument* GetDocument();
 

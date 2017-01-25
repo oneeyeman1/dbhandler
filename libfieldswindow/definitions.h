@@ -1,0 +1,6 @@
+#ifndef __DEFINITIONS
+#define __DEFINITIONS
+
+wxDECLARE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
+
+#endif

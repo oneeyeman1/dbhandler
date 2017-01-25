@@ -32,9 +32,12 @@
 #include "GridTableShape.h"
 #include "FieldShape.h"
 #include "MyErdTable.h"
+#include "definitions.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"
+
+#define EVT_SET_TABLE_PROPERTY(id, fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_SET_TABLE_PROPERTY, id, wxID_ANY, wxCommandEventHandler(fn), (wxObject *) NULL ),
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
@@ -53,6 +56,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_PROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
+    EVT_SET_TABLE_PROPERTY(wxID_ANY, DrawingView::OnSetProperties)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -121,6 +125,10 @@ void DrawingView::OnDraw(wxDC *dc)
             dc->DrawLine( line.x1, line.y1, line.x2, line.y2 );
         }
     }
+}
+
+void DrawingView::OnSetProperties(wxCommandEvent &event)
+{
 }
 
 void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
