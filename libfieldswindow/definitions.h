@@ -3,4 +3,5 @@
 
 wxDECLARE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
 
+wxDEFINE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
 #endif

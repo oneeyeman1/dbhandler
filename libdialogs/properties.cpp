@@ -29,7 +29,7 @@
 #include "fontpropertypagebase.h"
 #include "properties.h"
 
-wxDEFINE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
+//wxDEFINE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
 
 PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
@@ -271,7 +271,8 @@ bool PropertiesDialog::ApplyProperties()
     wxCommandEvent event( wxEVT_SET_TABLE_PROPERTY );
     event.SetInt( IsLogOnly() );
     event.SetClientData( &m_command );
-    wxPostEvent( dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView(), event );
+//    wxPostEvent( dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView(), event );
+    dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
     return true;
 }
 
