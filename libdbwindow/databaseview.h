@@ -73,4 +73,6 @@ private:
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
 
+wxDECLARE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
+
 #define wxID_DATABASEWINDOW 2

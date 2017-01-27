@@ -32,12 +32,11 @@
 #include "GridTableShape.h"
 #include "FieldShape.h"
 #include "MyErdTable.h"
-#include "definitions.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"
 
-#define EVT_SET_TABLE_PROPERTY(id, fn) DECLARE_EVENT_TABLE_ENTRY(wxEVT_SET_TABLE_PROPERTY, id, wxID_ANY, wxCommandEventHandler(fn), (wxObject *) NULL ),
+const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
@@ -56,7 +55,6 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_PROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
-    EVT_SET_TABLE_PROPERTY(wxID_ANY, DrawingView::OnSetProperties)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -104,6 +102,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_canvas = new DatabaseCanvas( this );
     m_frame->Show();
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
+    Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
     return true;
 }
 
@@ -129,6 +128,57 @@ void DrawingView::OnDraw(wxDC *dc)
 
 void DrawingView::OnSetProperties(wxCommandEvent &event)
 {
+    std::vector<std::wstring> errors;
+    DatabaseTable *table;
+    int res;
+    ShapeList shapes;
+    bool found = false;
+    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
+    wxString tableName, schemaName;
+    MyErdTable *erdTable = NULL;
+    int isLogOnly = event.GetInt();
+    int type = event.GetExtraLong();
+    wxString *command = (wxString *) event.GetClientData();
+    for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
+    {
+        if( type == 0 )
+        {
+            if( (*it)->IsSelected() )
+            {
+                erdTable = (MyErdTable *)(*it);
+                found = true;
+            }
+        }
+    }
+    if( isLogOnly )
+    {
+        m_text->AppendText( *command );
+        m_text->AppendText( "\n\r\n\r" );
+        if( !m_log->IsShown() )
+            m_log->Show();
+    }
+    else
+    {
+        if( type == 0 )
+            res = GetDocument()->GetDatabase()->SetTableProperties( command->ToStdWstring(), errors );
+        if( type == 1 )
+            GetDocument()->GetDatabase();
+        if( res )
+        {
+            for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
+                wxMessageBox( (*it) );
+        }
+        else
+        {
+            if( type == 0 )
+            {
+                table = const_cast<DatabaseTable *>( &((MyErdTable *) erdTable)->GetTable() );
+                GetDocument()->GetDatabase()->GetTableProperties( table, errors );
+                erdTable->SetTableComment( table->GetComment() );
+                erdTable->UpdateTable();
+            }
+        }
+    }
 }
 
 void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
@@ -308,14 +358,14 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly, wxEmptyString, wxEmptyString );
         if( type == 1 )
             res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName );
-        if( res != wxID_CANCEL && logOnly )
+/*        if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );
             m_text->AppendText( "\n\r\n\r" );
             if( !m_log->IsShown() )
                 m_log->Show();
-        }
-        if( res != wxID_CANCEL )
+        }*/
+/*        if( res != wxID_CANCEL )
         {
             if( type == 0 )
                 res = GetDocument()->GetDatabase()->SetTableProperties( command.ToStdWstring(), errors );
@@ -335,7 +385,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
                     erdTable->UpdateTable();
                 }
             }
-        }
+        }*/
     }
 }
 

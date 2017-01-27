@@ -26,6 +26,7 @@ private:
     Database *m_db;
     void *m_object;
     std::wstring m_dbType, m_command;
+    bool m_isApplied;
     // begin wxGlade: PropertiesDialog::methods
     void set_properties();
     void do_layout();
@@ -39,5 +40,7 @@ protected:
     wxNotebook* m_properties;
     // end wxGlade
 }; // wxGlade: end class
+
+wxDECLARE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
 
 #endif // PROPERTIES_H

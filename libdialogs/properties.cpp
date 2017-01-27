@@ -24,17 +24,17 @@
 #include "wx/bmpcbox.h"
 #include "wx/docmdi.h"
 #include "database.h"
-#include "definitions.h"
 #include "tablegeneral.h"
 #include "fontpropertypagebase.h"
 #include "properties.h"
 
-//wxDEFINE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
+const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 
 PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     std::vector<std::wstring> errors;
+    m_isApplied = false;
     m_type = type;
     m_db = db;
     m_dbType = m_db->GetTableVector().m_type;
@@ -151,7 +151,8 @@ void PropertiesDialog::OnApply(wxCommandEvent &event)
 
 void PropertiesDialog::OnOk(wxCommandEvent &event)
 {
-    ApplyProperties();
+    if( !m_isApplied && ( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() ) )
+        ApplyProperties();
     EndModal( wxID_OK );
 }
 
@@ -270,9 +271,10 @@ bool PropertiesDialog::ApplyProperties()
 //\"abh_fhgt\" smallint, \"abh_fwgt\" smallint, \"abh_fitl\" char(1), \"abh_funl\" char(1), \"abh_fchr\" smallint, \"abh_fptc\" smallint, \"abh_ffce\" char(18), \"abl_fhgt\" smallint, \"abl_fwgt\" smallint, \"abl_fitl\" char(1), \"abl_funl\" char(1), \"abl_fchr\" smallint, \"abl_fptc\" smallint, \"abl_ffce\" char(18), \"abt_cmnt\" char(254)
     wxCommandEvent event( wxEVT_SET_TABLE_PROPERTY );
     event.SetInt( IsLogOnly() );
+    event.SetExtraLong( m_type );
     event.SetClientData( &m_command );
-//    wxPostEvent( dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView(), event );
     dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
+    m_isApplied = true;
     return true;
 }
 

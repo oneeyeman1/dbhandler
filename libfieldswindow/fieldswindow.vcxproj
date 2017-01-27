@@ -493,7 +493,6 @@
     <ClCompile Include="fieldwindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="definitions.h" />
     <ClInclude Include="field.h" />
     <ClInclude Include="fieldwindow.h" />
   </ItemGroup>
