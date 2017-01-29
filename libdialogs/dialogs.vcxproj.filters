@@ -28,6 +28,9 @@
     <ClCompile Include="properties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="foreignkey.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="odbcconfigure.h">
@@ -43,6 +46,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="properties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="foreignkey.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
