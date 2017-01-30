@@ -1,5 +1,7 @@
 #include "wxsf/TextShape.h"
+#include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "GridTableShape.h"
 #include "FieldShape.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(FieldShape,wxSFTextShape);
@@ -74,4 +76,13 @@ void FieldShape::SetField(Field *field)
 Field *FieldShape::GetField()
 {
     return m_field;
+}
+
+wxRect FieldShape::GetBoundingBox()
+{
+    wxRect rectParent = dynamic_cast<GridTableShape *>( GetParent() )->GetBoundingBox();
+    wxRect rect = wxSFTextShape::GetBoundingBox();
+    rect.SetX( rectParent.GetX() );
+    rect.SetWidth( rectParent.GetWidth() );
+    return rect;
 }

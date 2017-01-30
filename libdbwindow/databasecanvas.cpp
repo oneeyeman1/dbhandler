@@ -71,7 +71,8 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
             if( (*it) == tables.back() )
                 (*it)->Select( true );
             (*it)->UpdateTable();
-            startPoint.x += 200;
+            wxRect rect = (*it)->GetBoundingBox();
+            startPoint.x += 200 + rect.GetWidth();
             m_displayedTables.push_back( (*it) );
         }
     }
@@ -200,6 +201,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 field = wxDynamicCast( (*it), FieldShape );
                 if( field )
                 {
+                    wxRect rect = field->GetBoundingBox();
                     field->Select( true );
                     field->SetParentRect( tableRect );
                     fieldSelected = true;
@@ -248,7 +250,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     if( rc == wxID_NONE && field )
     {
         field->Select( false );
-        erdTable->UpdateTable();
+        erdTable->Refresh();
     }
     else
     {

@@ -5,6 +5,7 @@ public:
     XS_DECLARE_CLONABLE_CLASS(FieldShape);
     FieldShape(void);
     virtual ~FieldShape(void);
+    virtual wxRect GetBoundingBox();
     void SetParentRect(const wxRect &rect);
     void SetField(Field *field);
     Field *GetField();
