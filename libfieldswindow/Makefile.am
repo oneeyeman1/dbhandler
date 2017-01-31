@@ -9,8 +9,7 @@ libfieldswindow_la_SOURCES =  \
 	field.h \
 	fieldswindow.cpp \
 	fieldwindow.cpp \
-	fieldwindow.h \
-	definitions.h
+	fieldwindow.h
 
 libfieldswindow_la_CXXFLAGS = -I../../libshapeframework \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
