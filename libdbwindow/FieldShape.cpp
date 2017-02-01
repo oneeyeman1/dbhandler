@@ -46,6 +46,7 @@ void FieldShape::DrawNormal(wxDC &dc)
     {
         m_backColour = wxColour( 210, 225, 245 );
         dc.SetBrush( m_Fill );
+        dc.SetPen( wxPen( wxColour( 210, 225, 245 ) ) );
         dc.SetBackgroundMode(wxTRANSPARENT);
     }
     dc.DrawRectangle( m_parentRect.x, rect.y, m_parentRect.width, rect.height );
@@ -59,6 +60,7 @@ void FieldShape::DrawNormal(wxDC &dc)
         dc.DrawText( line, (int)pos.x, (int)pos.y + i * 12 );
         i++;
     }
+    dc.SetPen( wxNullPen );
     dc.SetFont( wxNullFont );
     dc.SetBrush( wxNullBrush );
 }
