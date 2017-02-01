@@ -59,6 +59,7 @@ public:
     void OnFieldProperties(wxCommandEvent &event);
     void OnSetProperties(wxCommandEvent &event);
     void OnCloseLogWindow(wxCloseEvent &event);
+    void OnForeignKey(wxCommandEvent &event);
     DrawingDocument* GetDocument();
 
 private:

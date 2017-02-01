@@ -12,15 +12,6 @@
 #ifndef FOREIGNKEY_H
 #define FOREIGNKEY_H
 
-#include <wx/wx.h>
-#include <wx/image.h>
-#include <wx/intl.h>
-
-#ifndef APP_CATALOG
-#define APP_CATALOG "app"  // replace with the appropriate catalog name
-#endif
-
-
 // begin wxGlade: ::dependencies
 #include <wx/listctrl.h>
 // end wxGlade
@@ -28,18 +19,19 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-
-class ForeignKeyDialog: public wxDialog {
+class ForeignKeyDialog: public wxDialog
+{
 public:
     // begin wxGlade: ForeignKeyDialog::ids
     // end wxGlade
-
-    ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
 
 private:
     // begin wxGlade: ForeignKeyDialog::methods
     void set_properties();
     void do_layout();
+    Database *m_db;
+    DatabaseTable *m_table;
     // end wxGlade
 
 protected:
@@ -61,6 +53,5 @@ protected:
     wxRadioBox* m_onDelete;
     // end wxGlade
 }; // wxGlade: end class
-
 
 #endif // FOREIGNKEY_H

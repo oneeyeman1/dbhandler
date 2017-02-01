@@ -8,7 +8,18 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
+// For compilers that support precompilation, includes "wx/wx.h".
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
+
+#ifndef WX_PRECOMP
+    #include "wx/wx.h"
+#endif
+
+#include "database.h"
 #include "foreignkey.h"
 
 // begin wxGlade: ::extracode
@@ -16,31 +27,32 @@
 
 
 
-ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
+ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
+    m_db = db;
+    m_table = table;
     // begin wxGlade: ForeignKeyDialog::ForeignKeyDialog
-    m_label1 = new wxStaticText(this, wxID_ANY, _("Foreign Key Name:"));
-    m_foreignKeyName = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    m_label2 = new wxStaticText(this, wxID_ANY, _("Foreign Key Columns:"));
-    m_foreignKeyColumns = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    m_label3 = new wxStaticText(this, wxID_ANY, _("Primary Key Table:"));
-    m_primaryKeyTable = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_DROPDOWN);
-    m_label4 = new wxStaticText(this, wxID_ANY, _("Primary Key Columns:"));
-    m_primaryKeyColumns = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
-    m_OK = new wxButton(this, wxID_OK, _("OK"));
-    m_cancel = new wxButton(this, wxID_CANCEL, _("Cancel"));
-    m_help = new wxButton(this, wxID_HELP, _("&Help"));
-    m_logOnly = new wxButton(this, wxID_ANY, _("Log Only"));
-    m_label6 = new wxStaticText(this, wxID_ANY, _("Select Columns:"));
-    list_ctrl_1 = new wxListCtrl(this, wxID_ANY);
+    m_label1 = new wxStaticText( this, wxID_ANY, _( "Foreign Key Name:" ) );
+    m_foreignKeyName = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    m_label2 = new wxStaticText( this, wxID_ANY, _( "Foreign Key Columns:" ) );
+    m_foreignKeyColumns = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    m_label3 = new wxStaticText( this, wxID_ANY, _( "Primary Key Table:" ) );
+    m_primaryKeyTable = new wxComboBox( this, wxID_ANY, wxT( "" ), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_DROPDOWN );
+    m_label4 = new wxStaticText( this, wxID_ANY, _( "Primary Key Columns:" ) );
+    m_primaryKeyColumns = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    m_OK = new wxButton( this, wxID_OK, _( "OK" ) );
+    m_cancel = new wxButton( this, wxID_CANCEL, _( "Cancel" ) );
+    m_help = new wxButton( this, wxID_HELP, _( "&Help" ) );
+    m_logOnly = new wxButton( this, wxID_ANY, _( "Log Only" ) );
+    m_label6 = new wxStaticText( this, wxID_ANY, _( "Select Columns:" ) );
+    list_ctrl_1 = new wxListCtrl( this, wxID_ANY );
     const wxString m_onDelete_choices[] = {
         _("Disallow if Dependent Row Exist (RESTRICT)"),
         _("Delete any Dependent Row (CASCADE)"),
         _("Set Dependent Columns to NULL (SET NULL)"),
     };
-    m_onDelete = new wxRadioBox(this, wxID_ANY, _("On Delete of Primary Table Row"), wxDefaultPosition, wxDefaultSize, 3, m_onDelete_choices, 1, wxRA_SPECIFY_COLS);
-
+    m_onDelete = new wxRadioBox( this, wxID_ANY, _( "On Delete of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 3, m_onDelete_choices, 1, wxRA_SPECIFY_COLS );
     set_properties();
     do_layout();
     // end wxGlade
@@ -50,9 +62,9 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
 void ForeignKeyDialog::set_properties()
 {
     // begin wxGlade: ForeignKeyDialog::set_properties
-    SetTitle(_("Foreign Key Definition - "));
+    SetTitle( _( "Foreign Key Definition - " ) + m_table->GetTableName() );
     m_OK->SetDefault();
-    m_onDelete->SetSelection(0);
+    m_onDelete->SetSelection( 0 );
     // end wxGlade
 }
 
@@ -60,46 +72,45 @@ void ForeignKeyDialog::set_properties()
 void ForeignKeyDialog::do_layout()
 {
     // begin wxGlade: ForeignKeyDialog::do_layout
-    wxBoxSizer* sizer_1 = new wxBoxSizer(wxHORIZONTAL);
-    wxBoxSizer* sizer_2 = new wxBoxSizer(wxVERTICAL);
-    wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer(2, 3, 5, 5);
-    wxBoxSizer* sizer_5 = new wxBoxSizer(wxVERTICAL);
-    wxBoxSizer* sizer_6 = new wxBoxSizer(wxVERTICAL);
-    wxBoxSizer* sizer_4 = new wxBoxSizer(wxVERTICAL);
-    wxBoxSizer* sizer_3 = new wxBoxSizer(wxVERTICAL);
-    sizer_1->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_2->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_3->Add(m_label1, 0, wxEXPAND, 0);
-    sizer_3->Add(m_foreignKeyName, 0, wxEXPAND, 0);
-    sizer_3->Add(m_label2, 0, wxEXPAND, 0);
-    sizer_3->Add(m_foreignKeyColumns, 0, wxEXPAND, 0);
-    grid_sizer_1->Add(sizer_3, 0, 0, 0);
-    sizer_4->Add(m_label3, 0, wxEXPAND, 0);
-    sizer_4->Add(m_primaryKeyTable, 0, wxEXPAND, 0);
-    sizer_4->Add(m_label4, 0, wxEXPAND, 0);
-    sizer_4->Add(m_primaryKeyColumns, 0, wxEXPAND, 0);
-    grid_sizer_1->Add(sizer_4, 1, 0, 0);
-    sizer_6->Add(m_OK, 0, 0, 0);
-    sizer_6->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_6->Add(m_cancel, 0, wxEXPAND, 0);
-    sizer_6->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_6->Add(m_help, 0, 0, 0);
-    sizer_6->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_6->Add(m_logOnly, 0, wxEXPAND, 0);
-    grid_sizer_1->Add(sizer_6, 1, 0, 0);
-    sizer_5->Add(m_label6, 0, wxEXPAND, 0);
-    sizer_5->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_5->Add(list_ctrl_1, 1, 0, 0);
-    grid_sizer_1->Add(sizer_5, 1, 0, 0);
-    grid_sizer_1->Add(m_onDelete, 0, wxEXPAND, 0);
-    grid_sizer_1->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_2->Add(grid_sizer_1, 0, 0, 0);
-    sizer_2->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_1->Add(sizer_2, 0, 0, 0);
-    sizer_1->Add(5, 5, 0, wxEXPAND, 0);
-    SetSizer(sizer_1);
-    sizer_1->Fit(this);
+    wxBoxSizer* sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* sizer_2 = new wxBoxSizer( wxVERTICAL );
+    wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer( 2, 3, 5, 5 );
+    wxBoxSizer* sizer_5 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* sizer_6 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* sizer_4 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* sizer_3 = new wxBoxSizer( wxVERTICAL );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_3->Add( m_label1, 0, wxEXPAND, 0 );
+    sizer_3->Add( m_foreignKeyName, 0, wxEXPAND, 0 );
+    sizer_3->Add( m_label2, 0, wxEXPAND, 0 );
+    sizer_3->Add( m_foreignKeyColumns, 0, wxEXPAND, 0 );
+    grid_sizer_1->Add( sizer_3, 0, 0, 0 );
+    sizer_4->Add( m_label3, 0, wxEXPAND, 0 );
+    sizer_4->Add( m_primaryKeyTable, 0, wxEXPAND, 0 );
+    sizer_4->Add( m_label4, 0, wxEXPAND, 0 );
+    sizer_4->Add( m_primaryKeyColumns, 0, wxEXPAND, 0 );
+    grid_sizer_1->Add( sizer_4, 1, 0, 0 );
+    sizer_6->Add( m_OK, 0, 0, 0 );
+    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_6->Add( m_cancel, 0, wxEXPAND, 0 );
+    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_6->Add( m_help, 0, 0, 0 );
+    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_6->Add( m_logOnly, 0, wxEXPAND, 0 );
+    grid_sizer_1->Add( sizer_6, 1, 0, 0 );
+    sizer_5->Add( m_label6, 0, wxEXPAND, 0 );
+    sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_5->Add( list_ctrl_1, 1, 0, 0 );
+    grid_sizer_1->Add( sizer_5, 1, 0, 0 );
+    grid_sizer_1->Add( m_onDelete, 0, wxEXPAND, 0 );
+    grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_2->Add( grid_sizer_1, 0, 0, 0 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_1->Add( sizer_2, 0, 0, 0 );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    SetSizer( sizer_1 );
+    sizer_1->Fit( this );
     Layout();
     // end wxGlade
 }
-

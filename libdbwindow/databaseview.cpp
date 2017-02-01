@@ -41,6 +41,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
+typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -55,6 +56,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_PROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
+    EVT_MENU(wxID_OBJECTNEWFF, DrawingView::OnForeignKey)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -277,6 +279,34 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
                 wxMessageBox( (*it) );
         }
+    }
+    else
+        wxMessageBox( _( "Error loading the DLL/so" ) );
+}
+
+void DrawingView::OnForeignKey(wxCommandEvent &event)
+{
+    int result;
+    DatabaseTable *table = NULL;
+    ShapeList shapes;
+    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
+    for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
+    {
+        if( (*it)->IsSelected() )
+            table = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
+    }
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
+        result = func( m_frame, table, GetDocument()->GetDatabase() );
     }
     else
         wxMessageBox( _( "Error loading the DLL/so" ) );

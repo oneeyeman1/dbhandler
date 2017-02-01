@@ -29,6 +29,7 @@
 #include "fieldwindow.h"
 #include "createindex.h"
 #include "fontpropertypagebase.h"
+#include "foreignkey.h"
 #include "properties.h"
 
 #ifdef __WXMSW__
@@ -168,5 +169,16 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, i
         command = dlg.GetCommand();
         logOnly = dlg.IsLogOnly();
     }
+    return res;
+}
+
+extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, DatabaseTable *table, Database *db)
+{
+    int res;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    ForeignKeyDialog dlg( parent, wxID_ANY, _( "" ), table, db );
+    res = dlg.ShowModal();
     return res;
 }
