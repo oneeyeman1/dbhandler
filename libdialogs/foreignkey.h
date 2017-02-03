@@ -25,7 +25,7 @@ public:
     // begin wxGlade: ForeignKeyDialog::ids
     // end wxGlade
     ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
-
+    void OnApplyCommand(wxCommandEvent &event);
 private:
     // begin wxGlade: ForeignKeyDialog::methods
     void set_properties();
@@ -35,14 +35,17 @@ private:
     // end wxGlade
 
 protected:
+    bool Verify();
     // begin wxGlade: ForeignKeyDialog::attributes
     wxStaticText* m_label1;
     wxTextCtrl* m_foreignKeyName;
     wxStaticText* m_label2;
-    wxTextCtrl* m_foreignKeyColumns;
-    wxStaticText* m_label3;
     wxComboBox* m_primaryKeyTable;
+    wxStaticText* m_label3;
+    FieldWindow* m_foreignKeyColumnsFields;
+    wxTextCtrl *m_foreignKeyColumns;
     wxStaticText* m_label4;
+    FieldWindow* m_primaryKeyColumnsFields;
     wxTextCtrl* m_primaryKeyColumns;
     wxButton* m_OK;
     wxButton* m_cancel;

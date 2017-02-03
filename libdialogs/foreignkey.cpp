@@ -20,6 +20,8 @@
 #endif
 
 #include "database.h"
+#include "wxsf/ShapeCanvas.h"
+#include "fieldwindow.h"
 #include "foreignkey.h"
 
 // begin wxGlade: ::extracode
@@ -35,10 +37,10 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     // begin wxGlade: ForeignKeyDialog::ForeignKeyDialog
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Foreign Key Name:" ) );
     m_foreignKeyName = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    m_label3 = new wxStaticText( this, wxID_ANY, _( "Primary Key Table:" ) );
+    m_primaryKeyTable = new wxComboBox( this, wxID_ANY, wxT( "" ), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Foreign Key Columns:" ) );
     m_foreignKeyColumns = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
-    m_label3 = new wxStaticText( this, wxID_ANY, _( "Primary Key Table:" ) );
-    m_primaryKeyTable = new wxComboBox( this, wxID_ANY, wxT( "" ), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_DROPDOWN );
     m_label4 = new wxStaticText( this, wxID_ANY, _( "Primary Key Columns:" ) );
     m_primaryKeyColumns = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
     m_OK = new wxButton( this, wxID_OK, _( "OK" ) );
@@ -56,6 +58,8 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     set_properties();
     do_layout();
     // end wxGlade
+    m_OK->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
+    m_logOnly->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
 }
 
 
@@ -65,6 +69,14 @@ void ForeignKeyDialog::set_properties()
     SetTitle( _( "Foreign Key Definition - " ) + m_table->GetTableName() );
     m_OK->SetDefault();
     m_onDelete->SetSelection( 0 );
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end(); it++ )
+    {
+        for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+        {
+            if( (*it1)->GetTableName() != m_table->GetTableName() )
+                m_primaryKeyTable->AppendString( (*it1)->GetTableName() );
+        }
+    }
     // end wxGlade
 }
 
@@ -113,4 +125,26 @@ void ForeignKeyDialog::do_layout()
     sizer_1->Fit( this );
     Layout();
     // end wxGlade
+}
+
+bool ForeignKeyDialog::Verify()
+{
+    bool verified = true;
+    if( m_foreignKeyName->GetValue().IsEmpty() )
+    {
+        wxMessageBox( _( "Key name is required" ) );
+        verified = false;
+    }
+    if( m_primaryKeyTable->GetValue().IsEmpty() )
+    {
+        wxMessageBox( _( "Primary key table name is required" ) );
+        verified = false;
+    }
+    return verified;
+}
+
+void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
+{
+    if( Verify() )
+        EndModal( event.GetId() );
 }
