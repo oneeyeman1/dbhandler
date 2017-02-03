@@ -2,7 +2,7 @@
 class WXEXPORT FieldWindow
 {
 public:
-    FieldWindow(wxWindow *parent, int type);
+    FieldWindow(wxWindow *parent, int type, const wxPoint &pos = wxDefaultPosition, int width = -1);
     ~FieldWindow(void);
     wxSFShapeCanvas *GetFieldsWindow();
     void AddField(const wxString &fieldName);

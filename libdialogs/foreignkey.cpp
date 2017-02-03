@@ -60,8 +60,23 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     // end wxGlade
     m_OK->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
     m_logOnly->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
+    wxPoint pt1 = m_foreignKeyColumns->GetPosition();
+    int width1 = m_foreignKeyColumns->GetSize().GetWidth();
+    m_foreignKeyColumns->Hide();
+    m_foreignKeyColumnsFields = new FieldWindow( this, 0, pt1, width1 );
+    wxPoint pt2 = m_primaryKeyColumns->GetPosition();
+    int width2 = m_primaryKeyColumns->GetSize().GetWidth();
+    m_primaryKeyColumns->Hide();
+    m_primaryKeyColumnsFields = new FieldWindow( this, 0, pt2, width2 );
 }
 
+ForeignKeyDialog::~ForeignKeyDialog()
+{
+    delete m_foreignKeyColumnsFields;
+    m_foreignKeyColumnsFields = NULL;
+    delete m_primaryKeyColumnsFields;
+    m_primaryKeyColumnsFields = NULL;
+}
 
 void ForeignKeyDialog::set_properties()
 {
@@ -97,29 +112,29 @@ void ForeignKeyDialog::do_layout()
     sizer_3->Add( m_foreignKeyName, 0, wxEXPAND, 0 );
     sizer_3->Add( m_label2, 0, wxEXPAND, 0 );
     sizer_3->Add( m_foreignKeyColumns, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( sizer_3, 0, 0, 0 );
+    grid_sizer_1->Add( sizer_3, 0, wxEXPAND, 0 );
     sizer_4->Add( m_label3, 0, wxEXPAND, 0 );
     sizer_4->Add( m_primaryKeyTable, 0, wxEXPAND, 0 );
     sizer_4->Add( m_label4, 0, wxEXPAND, 0 );
     sizer_4->Add( m_primaryKeyColumns, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( sizer_4, 1, 0, 0 );
-    sizer_6->Add( m_OK, 0, 0, 0 );
+    grid_sizer_1->Add( sizer_4, 0, wxEXPAND, 0 );
+    sizer_6->Add( m_OK, 0, wxEXPAND, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_6->Add( m_cancel, 0, wxEXPAND, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_6->Add( m_help, 0, 0, 0 );
+    sizer_6->Add( m_help, 0, wxEXPAND, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_6->Add( m_logOnly, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( sizer_6, 1, 0, 0 );
+    grid_sizer_1->Add( sizer_6, 0, wxEXPAND, 0 );
     sizer_5->Add( m_label6, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_5->Add( list_ctrl_1, 1, 0, 0 );
-    grid_sizer_1->Add( sizer_5, 1, 0, 0 );
+    sizer_5->Add( list_ctrl_1, 0, wxEXPAND, 0 );
+    grid_sizer_1->Add( sizer_5, 0, wxEXPAND, 0 );
     grid_sizer_1->Add( m_onDelete, 0, wxEXPAND, 0 );
     grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_2->Add( grid_sizer_1, 0, 0, 0 );
+    sizer_2->Add( grid_sizer_1, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_1->Add( sizer_2, 0, 0, 0 );
+    sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
@@ -135,7 +150,7 @@ bool ForeignKeyDialog::Verify()
         wxMessageBox( _( "Key name is required" ) );
         verified = false;
     }
-    if( m_primaryKeyTable->GetValue().IsEmpty() )
+    else if( m_primaryKeyTable->GetValue().IsEmpty() )
     {
         wxMessageBox( _( "Primary key table name is required" ) );
         verified = false;

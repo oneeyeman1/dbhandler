@@ -24,10 +24,10 @@
 #include "field.h"
 #include "fieldwindow.h"
 
-FieldWindow::FieldWindow(wxWindow *parent, int type)
+FieldWindow::FieldWindow(wxWindow *parent, int type, const wxPoint &pos, int width)
 {
     m_win = new wxSFShapeCanvas();
-    m_win->Create( parent, wxID_ANY, wxDefaultPosition, wxSize( parent->GetSize().GetWidth(), 55 ), wxBORDER_SIMPLE | wxHSCROLL );
+    m_win->Create( parent, wxID_ANY, pos == wxDefaultPosition ? wxDefaultPosition : pos, wxSize( width == -1 ? parent->GetSize().GetWidth() : width, 55 ), wxBORDER_SIMPLE | wxHSCROLL );
     m_startPoint.x = 10;
     m_startPoint.y = 10;
     m_manager.SetRootItem( new xsSerializable() );

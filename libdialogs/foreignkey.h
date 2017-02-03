@@ -25,6 +25,7 @@ public:
     // begin wxGlade: ForeignKeyDialog::ids
     // end wxGlade
     ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    ~ForeignKeyDialog();
     void OnApplyCommand(wxCommandEvent &event);
 private:
     // begin wxGlade: ForeignKeyDialog::methods

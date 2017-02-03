@@ -179,6 +179,7 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, DatabaseTable *table,
     wxTheApp->SetTopWindow( parent );
 #endif
     ForeignKeyDialog dlg( parent, wxID_ANY, _( "" ), table, db );
+    dlg.Center();
     res = dlg.ShowModal();
     return res;
 }
