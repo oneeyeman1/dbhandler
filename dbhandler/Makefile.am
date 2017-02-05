@@ -17,6 +17,7 @@ dbhandler_SOURCES =  \
 	viewbase.h
 
 dbhandler_CXXFLAGS = -I../../dbinterface \
+	-I../../libdbwindow/res/gui \
 	-I/home/igor/wxWidgets/buildGTK/lib/wx/include/gtk2-unicode-3.1 \
 	-I/home/igor/wxWidgets/include \
 	-D_FILE_OFFSET_BITS=64 \

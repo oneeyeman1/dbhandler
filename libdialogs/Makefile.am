@@ -15,7 +15,9 @@ libdialogs_la_SOURCES =  \
 	createindex.cpp \
 	createindex.h \
 	properties.cpp \
-	properties.h
+	properties.h \
+	foreignkey.cpp \
+	foreignkey.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
