@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E33E6F381E46EE1C003A0B92 /* foreignkey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F361E46EE1C003A0B92 /* foreignkey.cpp */; };
+		E33E6F391E46EE1C003A0B92 /* foreignkey.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F371E46EE1C003A0B92 /* foreignkey.h */; };
 		E39501D31DF3C4730046E51B /* liblibpropertypages.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E39501D21DF3C4730046E51B /* liblibpropertypages.dylib */; };
 		E3D139511D0D0D7100A5A0F7 /* databasetype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D1394A1D0D0D7100A5A0F7 /* databasetype.cpp */; };
 		E3D139521D0D0D7100A5A0F7 /* databasetype.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D1394B1D0D0D7100A5A0F7 /* databasetype.h */; };
@@ -24,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E33E6F361E46EE1C003A0B92 /* foreignkey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = foreignkey.cpp; sourceTree = "<group>"; };
+		E33E6F371E46EE1C003A0B92 /* foreignkey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = foreignkey.h; sourceTree = "<group>"; };
 		E39501D21DF3C4730046E51B /* liblibpropertypages.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibpropertypages.dylib; path = ../libpropertypages/build/Debug/liblibpropertypages.dylib; sourceTree = "<group>"; };
 		E3D1393C1D0D0CD100A5A0F7 /* liblibdialogs.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdialogs.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D1394A1D0D0D7100A5A0F7 /* databasetype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasetype.cpp; sourceTree = "<group>"; };
@@ -81,6 +85,8 @@
 		E3D139491D0D0CDE00A5A0F7 /* libdialogs */ = {
 			isa = PBXGroup;
 			children = (
+				E33E6F361E46EE1C003A0B92 /* foreignkey.cpp */,
+				E33E6F371E46EE1C003A0B92 /* foreignkey.h */,
 				E3E91D861DEE520B00675CF8 /* properties.cpp */,
 				E3E91D871DEE520B00675CF8 /* properties.h */,
 				E3E91D3A1DC678C900675CF8 /* createindex.cpp */,
@@ -106,6 +112,7 @@
 				E3D139521D0D0D7100A5A0F7 /* databasetype.h in Headers */,
 				E3D139571D0D0D7100A5A0F7 /* selecttables.h in Headers */,
 				E3D139551D0D0D7100A5A0F7 /* odbcconfigure.h in Headers */,
+				E33E6F391E46EE1C003A0B92 /* foreignkey.h in Headers */,
 				E3E91D3D1DC678C900675CF8 /* createindex.h in Headers */,
 				E3E91D891DEE520B00675CF8 /* properties.h in Headers */,
 			);
@@ -163,6 +170,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3D139561D0D0D7100A5A0F7 /* selecttables.cpp in Sources */,
+				E33E6F381E46EE1C003A0B92 /* foreignkey.cpp in Sources */,
 				E3D139541D0D0D7100A5A0F7 /* odbcconfigure.cpp in Sources */,
 				E3E91D3C1DC678C900675CF8 /* createindex.cpp in Sources */,
 				E3D139511D0D0D7100A5A0F7 /* databasetype.cpp in Sources */,
