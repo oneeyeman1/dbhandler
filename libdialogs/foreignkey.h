@@ -27,7 +27,13 @@ public:
     ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
     ~ForeignKeyDialog();
     void OnApplyCommand(wxCommandEvent &event);
+    void OnFieldSelection(wxListEvent &event);
+    void OnFieldsDeselection(wxListEvent &event);
+    void OnPrimaryKeyTableSelection(wxCommandEvent &event);
 private:
+    std::vector<std::wstring> m_foreignKey, m_primaryKey;
+    std::vector<int> m_selectedForeignKeyField;
+    DatabaseTable *m_pkTable;
     // begin wxGlade: ForeignKeyDialog::methods
     void set_properties();
     void do_layout();
