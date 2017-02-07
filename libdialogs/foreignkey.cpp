@@ -19,6 +19,7 @@
     #include "wx/wx.h"
 #endif
 
+#include "wx/gbsizer.h"
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
 #include "fieldwindow.h"
@@ -48,11 +49,11 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_help = new wxButton( this, wxID_HELP, _( "&Help" ) );
     m_logOnly = new wxButton( this, wxID_ANY, _( "Log Only" ) );
     m_label6 = new wxStaticText( this, wxID_ANY, _( "Select Columns:" ) );
-    list_ctrl_1 = new wxListCtrl( this, wxID_ANY );
+    list_ctrl_1 = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
     const wxString m_onDelete_choices[] = {
-        _("Disallow if Dependent Row Exist (RESTRICT)"),
-        _("Delete any Dependent Row (CASCADE)"),
-        _("Set Dependent Columns to NULL (SET NULL)"),
+        _( "Disallow if Dependent Row Exist (RESTRICT)" ),
+        _( "Delete any Dependent Row (CASCADE)" ),
+        _( "Set Dependent Columns to NULL (SET NULL)" ),
     };
     m_onDelete = new wxRadioBox( this, wxID_ANY, _( "On Delete of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 3, m_onDelete_choices, 1, wxRA_SPECIFY_COLS );
     set_properties();
@@ -68,6 +69,9 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     int width2 = m_primaryKeyColumns->GetSize().GetWidth();
     m_primaryKeyColumns->Hide();
     m_primaryKeyColumnsFields = new FieldWindow( this, 0, pt2, width2 );
+    list_ctrl_1->Bind( wxEVT_LIST_ITEM_SELECTED, &ForeignKeyDialog::OnFieldSelection, this );
+    list_ctrl_1->Bind( wxEVT_LIST_ITEM_DESELECTED, &ForeignKeyDialog::OnFieldsDeselection, this );
+    m_primaryKeyTable->Bind( wxEVT_COMBOBOX, &ForeignKeyDialog::OnPrimaryKeyTableSelection, this );
 }
 
 ForeignKeyDialog::~ForeignKeyDialog()
@@ -92,6 +96,12 @@ void ForeignKeyDialog::set_properties()
                 m_primaryKeyTable->AppendString( (*it1)->GetTableName() );
         }
     }
+    list_ctrl_1->AppendColumn( m_table->GetTableName() );
+    int row = 0;
+    for( std::vector<Field *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
+    {
+        list_ctrl_1->InsertItem( row++, (*it)->GetFieldName() );
+    }
     // end wxGlade
 }
 
@@ -101,36 +111,31 @@ void ForeignKeyDialog::do_layout()
     // begin wxGlade: ForeignKeyDialog::do_layout
     wxBoxSizer* sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer* sizer_2 = new wxBoxSizer( wxVERTICAL );
-    wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer( 2, 3, 5, 5 );
-    wxBoxSizer* sizer_5 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer* sizer_6 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer* sizer_4 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer* sizer_3 = new wxBoxSizer( wxVERTICAL );
+    wxGridBagSizer* grid_sizer_1 = new wxGridBagSizer( 5, 5 );
+    wxBoxSizer *buttonSizer = new wxBoxSizer( wxVERTICAL );
+    buttonSizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    buttonSizer->Add( m_OK, 0, wxEXPAND, 0 );
+    buttonSizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    buttonSizer->Add( m_cancel, 0, wxEXPAND, 0 );
+    buttonSizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    buttonSizer->Add( m_help, 0, wxEXPAND, 0 );
+    buttonSizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    buttonSizer->Add( m_logOnly, 0, wxEXPAND, 0 );
+    buttonSizer->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_3->Add( m_label1, 0, wxEXPAND, 0 );
-    sizer_3->Add( m_foreignKeyName, 0, wxEXPAND, 0 );
-    sizer_3->Add( m_label2, 0, wxEXPAND, 0 );
-    sizer_3->Add( m_foreignKeyColumns, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( sizer_3, 0, wxEXPAND, 0 );
-    sizer_4->Add( m_label3, 0, wxEXPAND, 0 );
-    sizer_4->Add( m_primaryKeyTable, 0, wxEXPAND, 0 );
-    sizer_4->Add( m_label4, 0, wxEXPAND, 0 );
-    sizer_4->Add( m_primaryKeyColumns, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( sizer_4, 0, wxEXPAND, 0 );
-    sizer_6->Add( m_OK, 0, wxEXPAND, 0 );
-    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_6->Add( m_cancel, 0, wxEXPAND, 0 );
-    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_6->Add( m_help, 0, wxEXPAND, 0 );
-    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_6->Add( m_logOnly, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( sizer_6, 0, wxEXPAND, 0 );
-    sizer_5->Add( m_label6, 0, wxEXPAND, 0 );
-    sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_5->Add( list_ctrl_1, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( sizer_5, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( m_onDelete, 0, wxEXPAND, 0 );
+    grid_sizer_1->Add( m_label1, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND );
+    grid_sizer_1->Add( m_label3, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxEXPAND );
+    grid_sizer_1->Add( buttonSizer, wxGBPosition( 0, 2 ), wxGBSpan( 4, 1 ), wxEXPAND );
+    grid_sizer_1->Add( m_foreignKeyName, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxEXPAND );
+    grid_sizer_1->Add( m_primaryKeyTable, wxGBPosition( 1, 1 ), wxGBSpan( 1, 1 ), wxEXPAND );
+    grid_sizer_1->Add( m_label2, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxEXPAND );
+    grid_sizer_1->Add( m_label4, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxEXPAND );
+    grid_sizer_1->Add( m_foreignKeyColumns, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxEXPAND );
+    grid_sizer_1->Add( m_primaryKeyColumns, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxEXPAND );
+    grid_sizer_1->Add( m_label6, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxEXPAND );
+    grid_sizer_1->Add( list_ctrl_1, wxGBPosition( 5, 0 ), wxGBSpan( 1, 1 ), wxEXPAND );
+    grid_sizer_1->Add( m_onDelete, wxGBPosition( 5, 1 ), wxGBSpan( 2, 2 ), wxEXPAND );
     grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( grid_sizer_1, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -155,6 +160,18 @@ bool ForeignKeyDialog::Verify()
         wxMessageBox( _( "Primary key table name is required" ) );
         verified = false;
     }
+    else if( m_foreignKey.empty() )
+    {
+        wxMessageBox( _( "Please select columns for Foreign key" ) );
+        verified = false;
+    }
+	else
+    {
+        bool found = false;
+        for( std::vector<Field *>::const_iterator it = m_pkTable->GetFields().begin(); it <m_pkTable->GetFields().end() && !found; it++ )
+        {
+        }
+    }
     return verified;
 }
 
@@ -162,4 +179,47 @@ void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
 {
     if( Verify() )
         EndModal( event.GetId() );
+}
+
+void ForeignKeyDialog::OnFieldSelection(wxListEvent &event)
+{
+    wxString item = event.GetLabel();
+    m_foreignKeyColumnsFields->AddField( item );
+    m_foreignKey.push_back( item.ToStdWstring() );
+    m_selectedForeignKeyField.push_back( event.GetIndex() );
+}
+
+void ForeignKeyDialog::OnFieldsDeselection(wxListEvent &event)
+{
+    wxString item = event.GetLabel();
+    m_foreignKey.erase( std::remove_if( m_foreignKey.begin(), m_foreignKey.end(), 
+        [&item](const std::wstring &e1) { return e1.find( item + " " ) != e1.npos; } ), m_foreignKey.end() );
+    m_foreignKeyColumnsFields->RemoveField( m_foreignKey );
+}
+
+void ForeignKeyDialog::OnPrimaryKeyTableSelection(wxCommandEvent &WXUNUSED(event))
+{
+    bool found = false;
+    m_primaryKeyColumnsFields->RemoveField( m_primaryKey );
+    m_primaryKey.clear();
+    std::map<std::wstring, std::vector<DatabaseTable *> > tableVec = m_db->GetTableVector().m_tables;
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = tableVec.begin(); it != tableVec.end() && !found; it++ )
+    {
+        for( std::vector<DatabaseTable *>::iterator it1 = (it)->second.begin(); it1 < (*it).second.end() && !found; it1++ )
+        {
+            if( (*it1)->GetTableName() == m_primaryKeyTable->GetValue() )
+            {
+                m_pkTable = (*it1);
+                found = true;
+            }
+        }
+    }
+    for( std::vector<Field *>::const_iterator it = m_pkTable->GetFields().begin(); it < m_pkTable->GetFields().end(); it++ )
+    {
+        if( (*it)->IsPrimaryKey() )
+        {
+            m_primaryKeyColumnsFields->AddField( (*it)->GetFieldName() );
+            m_primaryKey.push_back( (*it)->GetFieldName() );
+        }
+    }
 }
