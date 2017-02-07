@@ -71,6 +71,7 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_primaryKeyColumnsFields = new FieldWindow( this, 0, pt2, width2 );
     list_ctrl_1->Bind( wxEVT_LIST_ITEM_SELECTED, &ForeignKeyDialog::OnFieldSelection, this );
     list_ctrl_1->Bind( wxEVT_LIST_ITEM_DESELECTED, &ForeignKeyDialog::OnFieldsDeselection, this );
+    m_primaryKeyTable->Bind( wxEVT_COMBOBOX, &ForeignKeyDialog::OnPrimaryKeyTableSelection, this );
 }
 
 ForeignKeyDialog::~ForeignKeyDialog()
@@ -94,6 +95,12 @@ void ForeignKeyDialog::set_properties()
             if( (*it1)->GetTableName() != m_table->GetTableName() )
                 m_primaryKeyTable->AppendString( (*it1)->GetTableName() );
         }
+    }
+    list_ctrl_1->AppendColumn( m_table->GetTableName() );
+    int row = 0;
+    for( std::vector<Field *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
+    {
+        list_ctrl_1->InsertItem( row++, (*it)->GetFieldName() );
     }
     // end wxGlade
 }
@@ -195,12 +202,16 @@ void ForeignKeyDialog::OnPrimaryKeyTableSelection(wxCommandEvent &WXUNUSED(event
     bool found = false;
     m_primaryKeyColumnsFields->RemoveField( m_primaryKey );
     m_primaryKey.clear();
-    for( std::vector<DatabaseTable *>::iterator it = m_db->GetTableVector().m_tables.begin()->second.begin(); it < m_db->GetTableVector().m_tables.end()->second.end() && !false; it++ )
+    std::map<std::wstring, std::vector<DatabaseTable *> > tableVec = m_db->GetTableVector().m_tables;
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = tableVec.begin(); it != tableVec.end() && !found; it++ )
     {
-        if( (*it)->GetTableName() == m_primaryKeyTable->GetValue() )
+        for( std::vector<DatabaseTable *>::iterator it1 = (it)->second.begin(); it1 < (*it).second.end() && !found; it1++ )
         {
-            m_pkTable = (*it);
-            found = true;
+            if( (*it1)->GetTableName() == m_primaryKeyTable->GetValue() )
+            {
+                m_pkTable = (*it1);
+                found = true;
+            }
         }
     }
     for( std::vector<Field *>::const_iterator it = m_pkTable->GetFields().begin(); it < m_pkTable->GetFields().end(); it++ )
