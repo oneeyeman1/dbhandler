@@ -7,6 +7,7 @@ public:
     wxSFShapeCanvas *GetFieldsWindow();
     void AddField(const wxString &fieldName);
     void RemoveField(const std::vector<std::wstring> &names);
+    void Clear();
 private:
     wxSFShapeCanvas *m_win;
     wxPoint m_startPoint;

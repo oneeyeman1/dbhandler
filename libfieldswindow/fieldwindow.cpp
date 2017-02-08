@@ -32,7 +32,7 @@ FieldWindow::FieldWindow(wxWindow *parent, int type, const wxPoint &pos, int wid
     m_startPoint.y = 10;
     m_manager.SetRootItem( new xsSerializable() );
     m_win->SetDiagramManager( &m_manager );
-    m_win->SetVirtualSize( 1000, 1000 );
+    m_win->SetVirtualSize( 1000, 50 );
     m_win->SetScrollRate( 20, 20 );
     m_win->SetCanvasColour( *wxWHITE );
 }
@@ -66,5 +66,13 @@ void FieldWindow::RemoveField(const std::vector<std::wstring> &names)
         m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
         m_startPoint.x += field->GetBoundingBox().GetWidth() + 5;
     }
+    m_win->Refresh();
+}
+
+void FieldWindow::Clear()
+{
+    m_manager.Clear();
+    m_startPoint.x = 10;
+    m_startPoint.y = 10;
     m_win->Refresh();
 }

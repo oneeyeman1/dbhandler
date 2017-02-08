@@ -165,12 +165,10 @@ bool ForeignKeyDialog::Verify()
         wxMessageBox( _( "Please select columns for Foreign key" ) );
         verified = false;
     }
-	else
+	else if( m_foreignKey.size() != m_primaryKey.size() )
     {
-        bool found = false;
-        for( std::vector<Field *>::const_iterator it = m_pkTable->GetFields().begin(); it <m_pkTable->GetFields().end() && !found; it++ )
-        {
-        }
+        wxMessageBox( _( "Number of columns in Foreign Key must match number of columns in Primary Key" ) );
+        verified = false;
     }
     return verified;
 }
@@ -178,7 +176,10 @@ bool ForeignKeyDialog::Verify()
 void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
 {
     if( Verify() )
+    {
+        GenerateQuery();
         EndModal( event.GetId() );
+    }
 }
 
 void ForeignKeyDialog::OnFieldSelection(wxListEvent &event)
@@ -193,14 +194,14 @@ void ForeignKeyDialog::OnFieldsDeselection(wxListEvent &event)
 {
     wxString item = event.GetLabel();
     m_foreignKey.erase( std::remove_if( m_foreignKey.begin(), m_foreignKey.end(), 
-        [&item](const std::wstring &e1) { return e1.find( item + " " ) != e1.npos; } ), m_foreignKey.end() );
+        [&item](const std::wstring &e1) { return e1.find( item ) != e1.npos; } ), m_foreignKey.end() );
     m_foreignKeyColumnsFields->RemoveField( m_foreignKey );
 }
 
 void ForeignKeyDialog::OnPrimaryKeyTableSelection(wxCommandEvent &WXUNUSED(event))
 {
     bool found = false;
-    m_primaryKeyColumnsFields->RemoveField( m_primaryKey );
+    m_primaryKeyColumnsFields->Clear();
     m_primaryKey.clear();
     std::map<std::wstring, std::vector<DatabaseTable *> > tableVec = m_db->GetTableVector().m_tables;
     for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = tableVec.begin(); it != tableVec.end() && !found; it++ )
@@ -220,6 +221,44 @@ void ForeignKeyDialog::OnPrimaryKeyTableSelection(wxCommandEvent &WXUNUSED(event
         {
             m_primaryKeyColumnsFields->AddField( (*it)->GetFieldName() );
             m_primaryKey.push_back( (*it)->GetFieldName() );
+        }
+    }
+}
+
+const wxString &ForeignKeyDialog::GetCommand()
+{
+    return m_command;
+}
+
+void ForeignKeyDialog::GenerateQuery()
+{
+    wxString keyName = m_foreignKeyName->GetValue();
+    wxString pkTable = m_primaryKeyTable->GetValue();
+    if( m_db->GetTableVector().m_type == L"SQLite" )
+    {
+        m_command = "BEGIN TRANSACTION; CREATE TEMPORARY TABLE temp AS SELECT * FROM " + m_table->GetTableName();
+        m_command += "; DROP TABLE " + m_table->GetTableName();
+        m_command += "CREATE TABLE " + m_table->GetTableName();
+        m_command += "(";
+        for( std::vector<Field *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
+        {
+            m_command += (*it)->GetFieldName();
+            m_command += " ";
+            m_command += (*it)->GetFieldType();
+            if( (*it)->IsPrimaryKey() )
+                m_command += " PRIMARY KEY";
+            m_command += ", ";
+        }
+        m_command += "CONSTRAINT ";
+        m_command += keyName;
+        m_command += " FOREIGN KEY(";
+        for( std::vector<std::wstring>::iterator it = m_foreignKey.begin(); it < m_foreignKey.end(); it++ )
+        {
+            m_command += (*it);
+            if( it == m_foreignKey.end() - 1 )
+                m_command += ")";
+			else
+                m_command += ", ";
         }
     }
 }
