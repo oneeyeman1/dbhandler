@@ -674,6 +674,7 @@
 					./dbinterface,
 					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.1",
 					/Users/igorkorot/wxWidgets/include,
+					./libdbwindow/res/gui/,
 				);
 				INFOPLIST_FILE = "dbhandler/dbhandler-Info.plist";
 				LIBRARY_SEARCH_PATHS = /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug;
