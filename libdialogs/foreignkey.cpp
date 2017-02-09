@@ -51,11 +51,19 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_label6 = new wxStaticText( this, wxID_ANY, _( "Select Columns:" ) );
     list_ctrl_1 = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
     const wxString m_onDelete_choices[] = {
+        _( "Perform No Action (NO ACTION)" ),
         _( "Disallow if Dependent Row Exist (RESTRICT)" ),
         _( "Delete any Dependent Row (CASCADE)" ),
         _( "Set Dependent Columns to NULL (SET NULL)" ),
     };
-    m_onDelete = new wxRadioBox( this, wxID_ANY, _( "On Delete of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 3, m_onDelete_choices, 1, wxRA_SPECIFY_COLS );
+    const wxString m_onUpdate_choices[] = {
+        _( "Perform No Action (NO ACTION)" ),
+        _( "Disallow if Dependent Row Exist (RESTRICT)" ),
+        _( "Update any Dependent Row (CASCADE)" ),
+        _( "Set Dependent Columns to NULL (SET NULL)" ),
+    };
+    m_onDelete = new wxRadioBox( this, wxID_ANY, _( "On Delete of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 4, m_onDelete_choices, 1, wxRA_SPECIFY_COLS );
+    m_onUpdate = new wxRadioBox( this, wxID_ANY, _( "On Update of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 4, m_onUpdate_choices, 1, wxRA_SPECIFY_COLS );
     set_properties();
     do_layout();
     // end wxGlade
@@ -113,6 +121,7 @@ void ForeignKeyDialog::do_layout()
     wxBoxSizer* sizer_2 = new wxBoxSizer( wxVERTICAL );
     wxGridBagSizer* grid_sizer_1 = new wxGridBagSizer( 5, 5 );
     wxBoxSizer *buttonSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer *optionsSizer = new wxBoxSizer( wxVERTICAL );
     buttonSizer->Add( 5, 5, 0, wxEXPAND, 0 );
     buttonSizer->Add( m_OK, 0, wxEXPAND, 0 );
     buttonSizer->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -122,6 +131,9 @@ void ForeignKeyDialog::do_layout()
     buttonSizer->Add( 5, 5, 0, wxEXPAND, 0 );
     buttonSizer->Add( m_logOnly, 0, wxEXPAND, 0 );
     buttonSizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    optionsSizer->Add( m_onDelete, 0, 0, 0 );
+    optionsSizer->Add( 5, 5, 0, 0, 0 );
+    optionsSizer->Add( m_onUpdate, 0, 0, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     grid_sizer_1->Add( m_label1, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND );
@@ -135,7 +147,7 @@ void ForeignKeyDialog::do_layout()
     grid_sizer_1->Add( m_primaryKeyColumns, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxEXPAND );
     grid_sizer_1->Add( m_label6, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxEXPAND );
     grid_sizer_1->Add( list_ctrl_1, wxGBPosition( 5, 0 ), wxGBSpan( 1, 1 ), wxEXPAND );
-    grid_sizer_1->Add( m_onDelete, wxGBPosition( 5, 1 ), wxGBSpan( 2, 2 ), wxEXPAND );
+    grid_sizer_1->Add( optionsSizer, wxGBPosition( 5, 1 ), wxGBSpan( 2, 2 ),/*, wxEXPAND*/0 );
     grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( grid_sizer_1, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -234,11 +246,13 @@ void ForeignKeyDialog::GenerateQuery()
 {
     wxString keyName = m_foreignKeyName->GetValue();
     wxString pkTable = m_primaryKeyTable->GetValue();
+    int onDelete = m_onDelete->GetSelection();
+    int onUpdate = m_onUpdate->GetSelection();
     if( m_db->GetTableVector().m_type == L"SQLite" )
     {
-        m_command = "BEGIN TRANSACTION; CREATE TEMPORARY TABLE temp AS SELECT * FROM " + m_table->GetTableName();
-        m_command += "; DROP TABLE " + m_table->GetTableName();
-        m_command += "CREATE TABLE " + m_table->GetTableName();
+        m_command = "BEGIN TRANSACTION;\n\r CREATE TEMPORARY TABLE temp AS SELECT * FROM " + m_table->GetTableName();
+        m_command += ";\n\r DROP TABLE " + m_table->GetTableName();
+        m_command += ";\n\r CREATE TABLE " + m_table->GetTableName();
         m_command += "(";
         for( std::vector<Field *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
         {
@@ -260,5 +274,46 @@ void ForeignKeyDialog::GenerateQuery()
 			else
                 m_command += ", ";
         }
+        m_command += " REFERENCES " + pkTable;
+        m_command += "(";
+        for( std::vector<std::wstring>::iterator it = m_primaryKey.begin(); it < m_primaryKey.end(); it++ )
+        {
+            m_command += (*it);
+            if( it == m_foreignKey.end() - 1 )
+                m_command += ")";
+			else
+                m_command += ", ";
+        }
+        switch( onDelete )
+        {
+            case 1:
+                m_command += " ON DELETE RESTRICT";
+                break;
+            case 2:
+                m_command += " ON DELETE CASCADE";
+                break;
+            case 3:
+                m_command += " ON DELETE SET NULL";
+                break;
+            default:
+                break;
+        }
+        switch( onUpdate )
+        {
+            case 1:
+                m_command += " ON UPDATE RESTRICT";
+                break;
+            case 2:
+                m_command += " ON UPDATE CASCADE";
+                break;
+            case 3:
+                m_command += " ON UPDATE SET NULL";
+                break;
+            default:
+                break;
+        }
+        m_command += " );\r\n";
+        m_command += "INSERT INTO " + m_table->GetTableName();
+        m_command += " SELECT * FROM temp;\r\nDROP TABLE temp;\r\n";
     }
 }
