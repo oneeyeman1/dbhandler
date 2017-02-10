@@ -100,7 +100,7 @@ void ForeignKeyDialog::set_properties()
     {
         for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
         {
-            if( (*it1)->GetTableName() != m_table->GetTableName() )
+            if( (*it1)->GetTableName() != m_table->GetTableName() && (*it1)->GetSchemaName() == m_table->GetSchemaName() )
                 m_primaryKeyTable->AppendString( (*it1)->GetTableName() );
         }
     }
@@ -315,5 +315,58 @@ void ForeignKeyDialog::GenerateQuery()
         m_command += " );\r\n";
         m_command += "INSERT INTO " + m_table->GetTableName();
         m_command += " SELECT * FROM temp;\r\nDROP TABLE temp;\r\n";
+    }
+	else
+    {
+        m_command = "ALTER TABLE " + m_table->GetTableName();
+        m_command += " ADD CONSTRAINT " + keyName;
+        m_command += " FOREIGN KEY (";
+        for( std::vector<std::wstring>::iterator it = m_foreignKey.begin(); it < m_foreignKey.end(); it++ )
+        {
+            m_command += (*it);
+            if( it == m_foreignKey.end() - 1 )
+                m_command += ")";
+			else
+                m_command += ", ";
+        }
+        m_command += " REFERENCES " + pkTable;
+        m_command += "(";
+        for( std::vector<std::wstring>::iterator it = m_primaryKey.begin(); it < m_primaryKey.end(); it++ )
+        {
+            m_command += (*it);
+            if( it == m_foreignKey.end() - 1 )
+                m_command += ")";
+			else
+                m_command += ", ";
+        }
+        switch( onDelete )
+        {
+            case 1:
+                m_command += " ON DELETE RESTRICT";
+                break;
+            case 2:
+                m_command += " ON DELETE CASCADE";
+                break;
+            case 3:
+                m_command += " ON DELETE SET NULL";
+                break;
+            default:
+                break;
+        }
+        switch( onUpdate )
+        {
+            case 1:
+                m_command += " ON UPDATE RESTRICT";
+                break;
+            case 2:
+                m_command += " ON UPDATE CASCADE";
+                break;
+            case 3:
+                m_command += " ON UPDATE SET NULL";
+                break;
+            default:
+                break;
+        }
+        m_command += " );\r\n";
     }
 }
