@@ -71,8 +71,9 @@ private:
 class FKField
 {
 public:
-    FKField(const std::wstring &table_name, const std::wstring &original_field, const std::wstring &referenced_field, const std::wstring &schema, FK_ONUPDATE update_constraint, FK_ONDELETE delete_constraint)
+    FKField(int id, const std::wstring &table_name, const std::wstring &original_field, const std::wstring &referenced_field, const std::wstring &schema, FK_ONUPDATE update_constraint, FK_ONDELETE delete_constraint)
     {
+        fkId = id;
         schemaName = schema;
         tableName = table_name;
         originalField = original_field;
@@ -80,12 +81,14 @@ public:
         updateConstraint = update_constraint;
         deleteConstraint = delete_constraint;
     }
+    const int GetForeignKeyId() { return fkId; } 
     const std::wstring &GetReferencedTableName() { return tableName; }
     const std::wstring &GetOriginalFieldName() { return originalField; }
     const std::wstring &GetReferencedFieldName() { return referencedField; }
     const FK_ONUPDATE GetOnUpdateConstraint() { return updateConstraint; }
     const FK_ONDELETE GetOnDeleteConstraint() { return deleteConstraint; }
 private:
+    int fkId;
     std::wstring schemaName, tableName, originalField, referencedField;
     FK_ONUPDATE updateConstraint;
     FK_ONDELETE deleteConstraint;

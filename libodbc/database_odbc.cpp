@@ -1162,7 +1162,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     delete_constraint = CASCADE_DELETE;
                                     break;
                             }
-                            foreign_keys[keySequence].push_back( new FKField( fkTable, primaryKey, fkName, fkSchema, update_constraint, delete_constraint ) );
+                            foreign_keys[keySequence].push_back( new FKField( keySequence, fkTable, primaryKey, fkName, fkSchema, update_constraint, delete_constraint ) );
                             fk_fieldNames.push_back( primaryKey );
                             primaryKey = L"";
                             fkSchema = L"";
