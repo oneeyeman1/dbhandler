@@ -41,7 +41,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
-typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *);
+typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *, wxString &, bool);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -70,10 +70,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     bool found = false;
     int height = 0;
     wxToolBar *tb;
-    for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
+    for( wxWindowList::iterator it = children.begin(); it != children.end()/* && !found*/; it++ )
     {
         tb = wxDynamicCast( *it, wxToolBar );
-        if( tb && tb->GetName() == "Second Toolbar" )
+        if( tb /*&& tb->GetName() == "Second Toolbar" */)
         {
             found = true;
             height = tb->GetSize().GetHeight();
@@ -289,6 +289,8 @@ void DrawingView::OnForeignKey(wxCommandEvent &event)
     int result;
     DatabaseTable *table = NULL;
     ShapeList shapes;
+    wxString command;
+    bool logOnly = false;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
     {
@@ -306,7 +308,14 @@ void DrawingView::OnForeignKey(wxCommandEvent &event)
     if( lib.IsLoaded() )
     {
         CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-        result = func( m_frame, table, GetDocument()->GetDatabase() );
+        result = func( m_frame, table, GetDocument()->GetDatabase(), command, logOnly );
+        if( logOnly )
+        {
+            m_text->AppendText( command );
+            m_text->AppendText( "\n\r\n\r" );
+            if( !m_log->IsShown() )
+                m_log->Show();
+        }
     }
     else
         wxMessageBox( _( "Error loading the DLL/so" ) );
