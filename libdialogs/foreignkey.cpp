@@ -35,6 +35,7 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
 {
     m_db = db;
     m_table = table;
+    m_isLogOnly = false;
     // begin wxGlade: ForeignKeyDialog::ForeignKeyDialog
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Foreign Key Name:" ) );
     m_foreignKeyName = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
@@ -189,6 +190,8 @@ void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
 {
     if( Verify() )
     {
+        if( event.GetEventObject() == m_logOnly )
+            m_isLogOnly = true;
         GenerateQuery();
         EndModal( event.GetId() );
     }
@@ -276,6 +279,11 @@ void ForeignKeyDialog::GenerateQuery()
                 temp3 = (*it1)->GetReferencedTableName();
                 onUpdate = (*it1)->GetOnUpdateConstraint();
                 onDelete = (*it1)->GetOnDeleteConstraint();
+                if( it1 != (*it).second.end() - 1 )
+                {
+                    temp1 += ", ";
+                    temp2 += ", ";
+                }
             }
             m_command += "FOREIGN KEY(";
             m_command += temp1;
@@ -425,4 +433,9 @@ void ForeignKeyDialog::GenerateQuery()
         }
         m_command += ";\r\n";
     }
+}
+
+bool ForeignKeyDialog::IsLogOnlyI()
+{
+    return m_isLogOnly;
 }

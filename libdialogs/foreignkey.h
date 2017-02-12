@@ -27,6 +27,7 @@ public:
     ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
     ~ForeignKeyDialog();
     const wxString &GetCommand();
+    bool IsLogOnlyI();
     void OnApplyCommand(wxCommandEvent &event);
     void OnFieldSelection(wxListEvent &event);
     void OnFieldsDeselection(wxListEvent &event);
@@ -36,6 +37,7 @@ private:
     std::vector<int> m_selectedForeignKeyField;
     DatabaseTable *m_pkTable;
     wxString m_command;
+    bool m_isLogOnly;
     // begin wxGlade: ForeignKeyDialog::methods
     void set_properties();
     void do_layout();
