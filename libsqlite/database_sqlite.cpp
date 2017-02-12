@@ -330,7 +330,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     delete_constraint = SET_DEFAULT_DELETE;
                                 if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
                                     delete_constraint = CASCADE_DELETE;
-                                foreign_keys[fkReference].push_back( new FKField( fkId, sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkField ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
+                                foreign_keys[fkId].push_back( new FKField( fkReference, sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkField ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
 	                            fk_names.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
                             }
                             else if( res3 == SQLITE_DONE )
