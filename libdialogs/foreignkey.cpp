@@ -263,6 +263,62 @@ void ForeignKeyDialog::GenerateQuery()
                 m_command += " PRIMARY KEY";
             m_command += ", ";
         }
+        wxString temp1, temp2, temp3;
+        FK_ONUPDATE onUpdate;
+        FK_ONDELETE onDelete;
+        std::map<int,std::vector<FKField *> > fk = m_table->GetForeignKeyVector();
+        for( std::map<int,std::vector<FKField *> >::iterator it = fk.begin(); it != fk.end(); it++ )
+		{
+            for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+            {
+                temp1 += (*it1)->GetOriginalFieldName();
+                temp2 += (*it1)->GetReferencedFieldName();
+                temp3 = (*it1)->GetReferencedTableName();
+                onUpdate = (*it1)->GetOnUpdateConstraint();
+                onDelete = (*it1)->GetOnDeleteConstraint();
+            }
+            m_command += "FOREIGN KEY(";
+            m_command += temp1;
+            m_command += ") REFERENCES ";
+            m_command += temp3;
+            m_command += "(";
+            m_command += temp2;
+            m_command += ") ";
+            switch( onUpdate )
+            {
+                case RESTRICT_UPDATE:
+                    m_command += "ON UPDATE RESTRICT ";
+                    break;
+                case SET_NULL_UPDATE:
+                    m_command += "ON UPDATE SET NULL ";
+                    break;
+                case SET_DEFAULT_UPDATE:
+                    m_command += "ON UPDATE SET DEFAULT ";
+                    break;
+                case CASCADE_UPDATE:
+                    m_command += "ON UPDATE CASCADE ";
+                    break;
+                default:
+                    break;
+            }
+            switch( onDelete )
+            {
+                case RESTRICT_DELETE:
+                    m_command += "ON DELETE RESTRICT ";
+                    break;
+                case SET_NULL_DELETE:
+                    m_command += "ON DELETE SET NULL ";
+                    break;
+                case SET_DEFAULT_DELETE:
+                    m_command += "ON DELETE SET DEFAULT ";
+                    break;
+                case CASCADE_DELETE:
+                    m_command += "ON DELETE CASCADE ";
+                    break;
+                default:
+                    break;
+            }
+		}
         m_command += "CONSTRAINT ";
         m_command += keyName;
         m_command += " FOREIGN KEY(";
@@ -326,7 +382,7 @@ void ForeignKeyDialog::GenerateQuery()
             m_command += (*it);
             if( it == m_foreignKey.end() - 1 )
                 m_command += ")";
-			else
+            else
                 m_command += ", ";
         }
         m_command += " REFERENCES " + pkTable;
@@ -334,9 +390,9 @@ void ForeignKeyDialog::GenerateQuery()
         for( std::vector<std::wstring>::iterator it = m_primaryKey.begin(); it < m_primaryKey.end(); it++ )
         {
             m_command += (*it);
-            if( it == m_foreignKey.end() - 1 )
+            if( it == m_primaryKey.end() - 1 )
                 m_command += ")";
-			else
+            else
                 m_command += ", ";
         }
         switch( onDelete )
@@ -367,6 +423,6 @@ void ForeignKeyDialog::GenerateQuery()
             default:
                 break;
         }
-        m_command += " );\r\n";
+        m_command += ";\r\n";
     }
 }
