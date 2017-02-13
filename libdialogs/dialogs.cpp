@@ -172,7 +172,7 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, i
     return res;
 }
 
-extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, DatabaseTable *table, Database *db, wxString &command, bool logOnly)
+extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, DatabaseTable *table, Database *db, wxString &command, bool &logOnly)
 {
     int res;
 #ifdef __WXMSW__

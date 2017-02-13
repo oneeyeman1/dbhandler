@@ -326,6 +326,7 @@ void ForeignKeyDialog::GenerateQuery()
                 default:
                     break;
             }
+            m_command += ", ";
 		}
         m_command += "CONSTRAINT ";
         m_command += keyName;
@@ -343,7 +344,7 @@ void ForeignKeyDialog::GenerateQuery()
         for( std::vector<std::wstring>::iterator it = m_primaryKey.begin(); it < m_primaryKey.end(); it++ )
         {
             m_command += (*it);
-            if( it == m_foreignKey.end() - 1 )
+            if( it == m_primaryKey.end() - 1 )
                 m_command += ")";
 			else
                 m_command += ", ";
@@ -376,9 +377,9 @@ void ForeignKeyDialog::GenerateQuery()
             default:
                 break;
         }
-        m_command += " );\r\n";
+        m_command += " );\r\n\r\n";
         m_command += "INSERT INTO " + m_table->GetTableName();
-        m_command += " SELECT * FROM temp;\r\nDROP TABLE temp;\r\n";
+        m_command += " SELECT * FROM temp;\r\n\r\nDROP TABLE temp;\r\n\r\n";
     }
 	else
     {
