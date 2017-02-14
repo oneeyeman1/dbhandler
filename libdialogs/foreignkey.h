@@ -38,6 +38,7 @@ private:
     DatabaseTable *m_pkTable;
     wxString m_command;
     bool m_isLogOnly;
+    int m_nextKey;
     // begin wxGlade: ForeignKeyDialog::methods
     void set_properties();
     void do_layout();
