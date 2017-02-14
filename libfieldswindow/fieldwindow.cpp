@@ -35,6 +35,7 @@ FieldWindow::FieldWindow(wxWindow *parent, int type, const wxPoint &pos, int wid
     m_win->SetVirtualSize( 1000, 50 );
     m_win->SetScrollRate( 20, 20 );
     m_win->SetCanvasColour( *wxWHITE );
+    m_win->Bind( wxEVT_LEFT_DOWN, &FieldWindow::OnLeftDown, this );
 }
 
 FieldWindow::~FieldWindow(void)
@@ -75,4 +76,8 @@ void FieldWindow::Clear()
     m_startPoint.x = 10;
     m_startPoint.y = 10;
     m_win->Refresh();
+}
+
+void FieldWindow::OnLeftDown(wxMouseEvent &event)
+{
 }
