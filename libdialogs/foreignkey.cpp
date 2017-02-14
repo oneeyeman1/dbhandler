@@ -327,6 +327,7 @@ void ForeignKeyDialog::GenerateQuery()
                     break;
             }
             m_command += ", ";
+            temp1 = temp2 = temp3 = "";
 		}
         m_command += "CONSTRAINT ";
         m_command += keyName;
