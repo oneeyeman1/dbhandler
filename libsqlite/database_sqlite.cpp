@@ -843,3 +843,109 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     sqlite3_finalize( stmt );
     return result;
 }
+
+int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
+{
+    sqlite3_stmt *stmt = NULL;
+    std::wstring errorMessage;
+    char **error;
+    std::vector<std::wstring> references;
+    std::wstring query0 = L"PRAGMA foreign_keys=OFF", query1 = L"PRAGMA foreign_keys=ON";
+    std::wstring query = L"SELECT type, sql FROM sqlite_master WHERE tbl_name = ";
+    query += tableName.GetTableName();
+    query += L" AND type <> 'table'";
+    int result = 0;
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length(), &stmt, NULL );
+    if( res != SQLITE_OK )
+    {
+        result = 1;
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+        return result;
+    }
+    while( true )
+    {
+        res = sqlite3_step( stmt );
+        if( res == SQLITE_ROW )
+            references.push_back( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 1 ) ) );
+        else if( res == SQLITE_DONE )
+            break;
+		else
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+            break;
+        }
+    }
+    sqlite3_finalize( stmt );
+    if( res != SQLITE_DONE )
+        return 1;
+    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query0.c_str() ).c_str(), NULL, NULL, error );
+    if( res != SQLITE_OK )
+    {
+        result = 1;
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+        return result;
+    }
+    std::wstring alterQuery = command.substr( 0, command.find( ';' ) );
+    while( alterQuery != L"" )
+    {
+        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( alterQuery.c_str() ).c_str(), alterQuery.length(), &stmt, NULL );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+            return result;
+        }
+        while( true )
+        {
+            res = sqlite3_step( stmt );
+            if( res == SQLITE_ROW )
+                references.push_back( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 1 ) ) );
+            else if( res == SQLITE_DONE )
+                break;
+		    else
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+                break;
+            }
+        }
+        sqlite3_finalize( stmt );
+        if( res != SQLITE_DONE )
+            break;
+        alterQuery = alterQuery.substr( 2 );
+        alterQuery = alterQuery.substr( 0, alterQuery.find( ';' ) );
+    }
+    if( res != SQLITE_DONE )
+    {
+        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, error );
+        return 1;
+    }
+    for( std::vector<std::wstring>::iterator it = references.begin(); it < references.end(); it++ )
+    {
+        res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( (*it).c_str() ).c_str(), NULL, NULL, error );
+        if( res != SQLITE_OK )
+            break;
+    }
+    if( res != SQLITE_OK )
+    {
+        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, error );
+        return 1;
+    }
+    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), NULL, NULL, error );
+    if( res != SQLITE_OK )
+    {
+        result = 1;
+        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, error );
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+	else
+        sqlite3_exec( m_db, "COMMIT", NULL, NULL, error );
+    return result;
+}

@@ -198,6 +198,7 @@ public:
     virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg) = 0;
     virtual int SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
     virtual bool IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg) = 0;
 };
 
 struct Database::Impl
