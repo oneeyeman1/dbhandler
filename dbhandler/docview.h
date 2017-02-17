@@ -89,5 +89,9 @@ wxDECLARE_APP(MyApp);
 #define wxID_FIELDDEFINITION      107
 #define wxID_FIELDPROPERTIES      108
 #define wxID_OBJECTNEWPK          109
+#define wxID_STARTLOG             110
+#define wxID_STOPLOG              111
+#define wxID_SAVELOG              112
+#define wxID_CLEARLOG             113
 
 #endif // _WX_SAMPLES_DOCVIEW_DOCVIEW_H_

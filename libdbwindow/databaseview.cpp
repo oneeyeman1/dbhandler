@@ -57,6 +57,14 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_PROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_OBJECTNEWFF, DrawingView::OnForeignKey)
+    EVT_UPDATE_UI(wxID_STARTLOG, DrawingView::OnLogUpdateUI)
+    EVT_UPDATE_UI(wxID_STOPLOG, DrawingView::OnLogUpdateUI)
+    EVT_UPDATE_UI(wxID_SAVELOG, DrawingView::OnLogUpdateUI)
+    EVT_UPDATE_UI(wxID_CLEARLOG, DrawingView::OnLogUpdateUI)
+    EVT_MENU(wxID_STARTLOG, DrawingView::OnStartLog)
+    EVT_MENU(wxID_STOPLOG, DrawingView::OnStopLog)
+    EVT_MENU(wxID_SAVELOG, DrawingView::OnSaveLog)
+    EVT_MENU(wxID_CLEARLOG, DrawingView::OnClearLog)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -284,8 +292,9 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         wxMessageBox( _( "Error loading the DLL/so" ) );
 }
 
-void DrawingView::OnForeignKey(wxCommandEvent &event)
+void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
 {
+    std::vector<std::wstring> errors;
     int result;
     DatabaseTable *table = NULL;
     ShapeList shapes;
@@ -315,6 +324,10 @@ void DrawingView::OnForeignKey(wxCommandEvent &event)
             m_text->AppendText( "\n\r\n\r" );
             if( !m_log->IsShown() )
                 m_log->Show();
+        }
+		else
+        {
+            GetDocument()->GetDatabase()->ApplyForeignKey( command.ToStdWstring(), *table, errors );
         }
     }
     else
@@ -426,6 +439,51 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             }
         }*/
     }
+}
+
+void DrawingView::OnLogUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_log->IsShown() )
+    {
+        if( event.GetId() == wxID_STARTLOG )
+            event.Enable( false );
+        if( event.GetId() == wxID_STOPLOG )
+            event.Enable( true );
+        if( event.GetId() == wxID_SAVELOG )
+            event.Enable( true );
+        if( event.GetId() == wxID_CLEARLOG )
+            event.Enable( true );
+    }
+    else
+    {
+        if( event.GetId() == wxID_STARTLOG )
+            event.Enable( true );
+        if( event.GetId() == wxID_STOPLOG )
+            event.Enable( false );
+        if( event.GetId() == wxID_SAVELOG )
+            event.Enable( false );
+        if( event.GetId() == wxID_CLEARLOG )
+            event.Enable( false );
+    }
+}
+
+void DrawingView::OnStartLog(wxCommandEvent &WXUNUSED(event))
+{
+    m_log->Show();
+}
+
+void DrawingView::OnStopLog(wxCommandEvent &WXUNUSED(event))
+{
+    m_log->Hide();
+}
+
+void DrawingView::OnSaveLog(wxCommandEvent &WXUNUSED(event))
+{
+}
+
+void DrawingView::OnClearLog(wxCommandEvent &WXUNUSED(event))
+{
+    m_text->Clear();
 }
 
 // ----------------------------------------------------------------------------

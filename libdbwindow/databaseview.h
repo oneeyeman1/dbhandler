@@ -60,6 +60,11 @@ public:
     void OnSetProperties(wxCommandEvent &event);
     void OnCloseLogWindow(wxCloseEvent &event);
     void OnForeignKey(wxCommandEvent &event);
+    void OnLogUpdateUI(wxUpdateUIEvent &event);
+    void OnStartLog(wxCommandEvent &event);
+    void OnStopLog(wxCommandEvent &event);
+    void OnSaveLog(wxCommandEvent &event);
+    void OnClearLog(wxCommandEvent &event);
     DrawingDocument* GetDocument();
 
 private:
