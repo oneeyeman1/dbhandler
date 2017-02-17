@@ -170,6 +170,11 @@ void MainFrame::DatabaseMenu()
     menuObject->Append( wxID_PROPERTIES, _( "Properties..." ), _( "Properties" ) );
     GetMenuBar()->Insert( 1, menuObject, _( "&Object" ) );
     wxMenu *menuDesign = new wxMenu();
+    menuDesign->Append( wxID_STARTLOG, _( "Start Log" ), _( "Start log" ) );
+    menuDesign->Append( wxID_STOPLOG, _( "Stop Log" ), _( "Stop log" ) );
+    menuDesign->Append( wxID_SAVELOG, _( "Save Log As..." ), _( "Save log to disk file" ) );
+    menuDesign->Append( wxID_CLEARLOG, _( "Clear Log" ), _( "Discard content of the log" ) );
+    menuDesign->AppendSeparator();
     GetMenuBar()->Insert( 2, menuDesign, _( "&Design" ) );
 }
 
