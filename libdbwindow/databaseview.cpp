@@ -479,6 +479,9 @@ void DrawingView::OnStopLog(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnSaveLog(wxCommandEvent &WXUNUSED(event))
 {
+    wxFileDialog dlg( m_frame, _( "Save Log As..." ), ::wxGetCwd(), "", _( "SQL script (*.sql)|*.sql" ), wxFD_SAVE|wxFD_OVERWRITE_PROMPT );
+    if( dlg.ShowModal() != wxID_CANCEL )
+        m_text->SaveFile( dlg.GetPath() );
 }
 
 void DrawingView::OnClearLog(wxCommandEvent &WXUNUSED(event))
