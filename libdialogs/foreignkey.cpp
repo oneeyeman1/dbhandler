@@ -253,9 +253,9 @@ void ForeignKeyDialog::GenerateQuery()
     int onUpdate = m_onUpdate->GetSelection();
     if( m_db->GetTableVector().m_type == L"SQLite" )
     {
-        m_command = "BEGIN TRANSACTION;\n\r CREATE TEMPORARY TABLE temp AS SELECT * FROM " + m_table->GetTableName();
-        m_command += ";\n\r DROP TABLE " + m_table->GetTableName();
-        m_command += ";\n\r CREATE TABLE " + m_table->GetTableName();
+        m_command = "CREATE TEMPORARY TABLE temp AS SELECT * FROM " + m_table->GetTableName();
+        m_command += ";\n\rDROP TABLE " + m_table->GetTableName();
+        m_command += ";\n\rCREATE TABLE " + m_table->GetTableName();
         m_command += "(";
         for( std::vector<Field *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
         {
