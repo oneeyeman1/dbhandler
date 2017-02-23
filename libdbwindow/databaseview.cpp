@@ -327,7 +327,8 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
         }
 		else
         {
-            GetDocument()->GetDatabase()->ApplyForeignKey( command.ToStdWstring(), *table, errors );
+            if( result != wxID_CANCEL )
+                GetDocument()->GetDatabase()->ApplyForeignKey( command.ToStdWstring(), *table, errors );
         }
     }
     else
@@ -404,19 +405,18 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     int res = 0;
     if( lib.IsLoaded() )
     {
-        int res;
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == 0 )
             res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly, wxEmptyString, wxEmptyString );
         if( type == 1 )
             res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName );
-/*        if( res != wxID_CANCEL && logOnly )
+        if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );
             m_text->AppendText( "\n\r\n\r" );
             if( !m_log->IsShown() )
                 m_log->Show();
-        }*/
+        }
 /*        if( res != wxID_CANCEL )
         {
             if( type == 0 )
