@@ -92,6 +92,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
         m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
         m_pLabel->SetText( m_table->GetTableName() );
         m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+        m_pLabel->Activate( false );
         SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         // table comment
         m_comment->SetVAlign( wxSFShapeBase::valignTOP );
@@ -102,6 +103,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
         m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
         m_comment->SetText( m_table->GetComment() );
         m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+        m_comment->Activate( false );
         SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
         // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
