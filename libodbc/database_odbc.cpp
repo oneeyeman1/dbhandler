@@ -2491,12 +2491,18 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
 
 int ODBCDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
 {
+    tableName = tableName;
     int result = 0;
     SQLRETURN ret;
     SQLWCHAR *query = new SQLWCHAR[command.length() + 2];
     memset( query, '\0', command.size() + 2 );
     uc_to_str_cpy( query, command );
     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 2, m_hstmt );
+        result = 1;
+    }
     delete query;
     return result;
 }
