@@ -71,15 +71,12 @@ public:
     const DoodleSegments& GetSegments() const { return m_doodleSegments; }
 
     void AddTables(const std::vector<wxString> &selections);
-    std::vector<MyErdTable *> &GetTables();
-    MyErdTable *GetReferencedTable(const wxString &tableName);
     std::vector<std::wstring> &GetTableNames();
 private:
     void DoUpdate();
 
     DoodleSegments m_doodleSegments;
     Database *m_db;
-    std::vector<MyErdTable *> m_tables;
     std::vector<std::wstring> m_tableNames;
     wxDECLARE_DYNAMIC_CLASS(DrawingDocument);
 };

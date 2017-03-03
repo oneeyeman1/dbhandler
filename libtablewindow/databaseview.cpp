@@ -24,15 +24,7 @@
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/cmdproc.h"
-#include "wxsf/ShapeCanvas.h"
-#include "wxsf/RoundRectShape.h"
-#include "wxsf/FlexGridShape.h"
 #include "database.h"
-#include "table.h"
-#include "GridTableShape.h"
-#include "FieldShape.h"
-#include "MyErdTable.h"
-#include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"
 
@@ -50,21 +42,6 @@ typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *, w
 wxIMPLEMENT_DYNAMIC_CLASS(DrawingView, wxView);
 
 wxBEGIN_EVENT_TABLE(DrawingView, wxView)
-    EVT_MENU(wxID_SELECTTABLE, DrawingView::OnViewSelectedTables)
-    EVT_MENU(wxID_OBJECTNEWINDEX, DrawingView::OnNewIndex)
-    EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
-    EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
-    EVT_MENU(wxID_PROPERTIES, DrawingView::OnFieldProperties)
-    EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
-    EVT_MENU(wxID_OBJECTNEWFF, DrawingView::OnForeignKey)
-    EVT_UPDATE_UI(wxID_STARTLOG, DrawingView::OnLogUpdateUI)
-    EVT_UPDATE_UI(wxID_STOPLOG, DrawingView::OnLogUpdateUI)
-    EVT_UPDATE_UI(wxID_SAVELOG, DrawingView::OnLogUpdateUI)
-    EVT_UPDATE_UI(wxID_CLEARLOG, DrawingView::OnLogUpdateUI)
-    EVT_MENU(wxID_STARTLOG, DrawingView::OnStartLog)
-    EVT_MENU(wxID_STOPLOG, DrawingView::OnStopLog)
-    EVT_MENU(wxID_SAVELOG, DrawingView::OnSaveLog)
-    EVT_MENU(wxID_CLEARLOG, DrawingView::OnClearLog)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -90,8 +67,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxRect clientRect = parent->GetClientRect();
     clientRect.height -= height;
     m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), /*wxDefaultPosition*/start, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
-    m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
-    m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
 #ifdef __WXOSX__
     wxRect parentRect = parent->GetRect();
     wxSize parentClientSize = parent->GetClientSize();
@@ -108,9 +83,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_frame->SetToolBar( m_tb );
 #endif
     wxASSERT( m_frame == GetFrame() );
-    m_canvas = new DatabaseCanvas( this );
-    m_frame->Show();
-    m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
     return true;
 }
@@ -140,31 +112,13 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
     std::vector<std::wstring> errors;
     DatabaseTable *table;
     int res;
-    ShapeList shapes;
     bool found = false;
-    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
     wxString tableName, schemaName;
-    MyErdTable *erdTable = NULL;
     int isLogOnly = event.GetInt();
     int type = event.GetExtraLong();
     wxString *command = (wxString *) event.GetClientData();
-    for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
-    {
-        if( type == 0 )
-        {
-            if( (*it)->IsSelected() )
-            {
-                erdTable = (MyErdTable *)(*it);
-                found = true;
-            }
-        }
-    }
     if( isLogOnly )
     {
-        m_text->AppendText( *command );
-        m_text->AppendText( "\n\r\n\r" );
-        if( !m_log->IsShown() )
-            m_log->Show();
     }
     else
     {
@@ -181,10 +135,6 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         {
             if( type == 0 )
             {
-                table = const_cast<DatabaseTable *>( &((MyErdTable *) erdTable)->GetTable() );
-                GetDocument()->GetDatabase()->GetTableProperties( table, errors );
-                erdTable->SetTableComment( table->GetComment() );
-                erdTable->UpdateTable();
             }
         }
     }
@@ -192,7 +142,6 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
 
 void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
 {
-    m_log->Hide();
 }
 
 //std::vector<Table> &DrawingView::GetTablesForView(Database *db)
@@ -214,7 +163,6 @@ void DrawingView::GetTablesForView(Database *db)
         if( res != wxID_CANCEL )
         {
             ((DrawingDocument *) GetDocument())->AddTables( tables );
-            ((DatabaseCanvas *) m_canvas)->DisplayTables( tables );
         }
     }
 //    return tables;
@@ -228,8 +176,6 @@ DrawingDocument* DrawingView::GetDocument()
 void DrawingView::OnUpdate(wxView* sender, wxObject* hint)
 {
     wxView::OnUpdate( sender, hint );
-    if( m_canvas )
-        m_canvas->Refresh();
 }
 
 // Clean up windows used for displaying the view.
@@ -260,13 +206,6 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
     wxString command;
     std::vector<std::wstring> errors;
     DatabaseTable *table = NULL;
-    ShapeList shapes;
-    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
-    for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
-    {
-        if( (*it)->IsSelected() )
-            table = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
-    }
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
@@ -281,10 +220,6 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         result = func( m_frame, table, GetDocument()->GetDatabase(), command );
         if( result != wxID_OK && result != wxID_CANCEL )
         {
-            m_text->AppendText( command );
-            m_text->AppendText( "\n\r\n\r" );
-            if( !m_log->IsShown() )
-                m_log->Show();
         }
         else if( result == wxID_OK )
         {
@@ -302,15 +237,8 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     std::vector<std::wstring> errors;
     int result;
     DatabaseTable *table = NULL;
-    ShapeList shapes;
     wxString command;
     bool logOnly = false;
-    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
-    for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
-    {
-        if( (*it)->IsSelected() )
-            table = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
-    }
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
@@ -325,10 +253,6 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
         result = func( m_frame, table, GetDocument()->GetDatabase(), command, logOnly );
         if( logOnly )
         {
-            m_text->AppendText( command );
-            m_text->AppendText( "\n\r\n\r" );
-            if( !m_log->IsShown() )
-                m_log->Show();
         }
 		else
         {
@@ -357,48 +281,9 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     int type = 0;
     DatabaseTable *table = NULL;
     Field *field = NULL;
-    ShapeList shapes;
     wxString command = "";
     bool logOnly = false;
-    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
     wxString tableName, schemaName;
-    MyErdTable *erdTable = NULL;
-    for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
-    {
-        if( event.GetId() == wxID_PROPERTIES )
-        {
-            if( (*it)->IsSelected() )
-            {
-                erdTable = (MyErdTable *)(*it);
-                table = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
-                type = 0;
-                found = true;
-            }
-        }
-        if( event.GetId() == wxID_FIELDPROPERTIES )
-        {
-            if( (*it)->IsSelected() )
-            {
-                MyErdTable *table = dynamic_cast<MyErdTable *>( *it );
-                if( table )
-                {
-                    erdTable = table;
-                    tableName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetTableName();
-                    schemaName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetSchemaName();
-                    continue;
-                }
-                if( !table )
-                {
-                    field = dynamic_cast<Field *>( ((FieldShape *) *it)->GetField() );
-                    type = 1;
-                    found = true;
-                    (*it)->Select( false );
-                    erdTable->UpdateTable();
-//                    m_canvas->GetDiagramManager().UpdateAll();
-                }
-            }
-        }
-    }
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
@@ -417,10 +302,6 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName );
         if( res != wxID_CANCEL && logOnly )
         {
-            m_text->AppendText( command );
-            m_text->AppendText( "\n\r\n\r" );
-            if( !m_log->IsShown() )
-                m_log->Show();
         }
 /*        if( res != wxID_CANCEL )
         {
@@ -448,50 +329,22 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
 
 void DrawingView::OnLogUpdateUI(wxUpdateUIEvent &event)
 {
-    if( m_log->IsShown() )
-    {
-        if( event.GetId() == wxID_STARTLOG )
-            event.Enable( false );
-        if( event.GetId() == wxID_STOPLOG )
-            event.Enable( true );
-        if( event.GetId() == wxID_SAVELOG )
-            event.Enable( true );
-        if( event.GetId() == wxID_CLEARLOG )
-            event.Enable( true );
-    }
-    else
-    {
-        if( event.GetId() == wxID_STARTLOG )
-            event.Enable( true );
-        if( event.GetId() == wxID_STOPLOG )
-            event.Enable( false );
-        if( event.GetId() == wxID_SAVELOG )
-            event.Enable( false );
-        if( event.GetId() == wxID_CLEARLOG )
-            event.Enable( false );
-    }
 }
 
 void DrawingView::OnStartLog(wxCommandEvent &WXUNUSED(event))
 {
-    m_log->Show();
 }
 
 void DrawingView::OnStopLog(wxCommandEvent &WXUNUSED(event))
 {
-    m_log->Hide();
 }
 
 void DrawingView::OnSaveLog(wxCommandEvent &WXUNUSED(event))
 {
-    wxFileDialog dlg( m_frame, _( "Save Log As..." ), ::wxGetCwd(), "", _( "SQL script (*.sql)|*.sql" ), wxFD_SAVE|wxFD_OVERWRITE_PROMPT );
-    if( dlg.ShowModal() != wxID_CANCEL )
-        m_text->SaveFile( dlg.GetPath() );
 }
 
 void DrawingView::OnClearLog(wxCommandEvent &WXUNUSED(event))
 {
-    m_text->Clear();
 }
 
 // ----------------------------------------------------------------------------

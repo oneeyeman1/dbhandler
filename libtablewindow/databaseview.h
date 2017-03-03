@@ -46,7 +46,7 @@ private:
 class DrawingView : public wxView
 {
 public:
-    DrawingView() : wxView(), m_canvas(NULL) {}
+    DrawingView() : wxView() {}
 //    std::vector<Table> &GetTablesForView(Database *db);
     void GetTablesForView(Database *db);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
@@ -69,9 +69,6 @@ public:
 
 private:
     wxToolBar *m_tb;
-    wxFrame *m_log;
-    wxTextCtrl *m_text;
-    DatabaseCanvas *m_canvas;
     wxDocMDIChildFrame *m_frame;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
