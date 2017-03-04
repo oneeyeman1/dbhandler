@@ -3,6 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "docview", "docview_vc9.vcxproj", "{C7CB6A06-F2AE-5909-894B-558223A98719}"
 	ProjectSection(ProjectDependencies) = postProject
 		{622CA63B-2182-4AF6-92CF-3396D386AF85} = {622CA63B-2182-4AF6-92CF-3396D386AF85}
+		{D333C980-1282-4047-96AC-F7FD649C0512} = {D333C980-1282-4047-96AC-F7FD649C0512}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dbinterface", "..\dbinterface\dbinterface.vcxproj", "{FD87BACC-A171-41D8-9F84-F51E0812D30D}"
@@ -51,6 +52,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "propertypages", "..\libprop
 	ProjectSection(ProjectDependencies) = postProject
 		{EF89C84B-B5ED-496F-A980-5C7071081A19} = {EF89C84B-B5ED-496F-A980-5C7071081A19}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tablewindow", "..\libtablewindow\tablewindow.vcxproj", "{D333C980-1282-4047-96AC-F7FD649C0512}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -220,6 +223,22 @@ Global
 		{22017CA3-FB1B-44E4-AC21-E02576A36937}.Release|Win32.Build.0 = Release|Win32
 		{22017CA3-FB1B-44E4-AC21-E02576A36937}.Release|x64.ActiveCfg = Release|x64
 		{22017CA3-FB1B-44E4-AC21-E02576A36937}.Release|x64.Build.0 = Release|x64
+		{D333C980-1282-4047-96AC-F7FD649C0512}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D333C980-1282-4047-96AC-F7FD649C0512}.Debug|Win32.Build.0 = Debug|Win32
+		{D333C980-1282-4047-96AC-F7FD649C0512}.Debug|x64.ActiveCfg = Debug|x64
+		{D333C980-1282-4047-96AC-F7FD649C0512}.Debug|x64.Build.0 = Debug|x64
+		{D333C980-1282-4047-96AC-F7FD649C0512}.DLL Debug|Win32.ActiveCfg = DLL Debug|Win32
+		{D333C980-1282-4047-96AC-F7FD649C0512}.DLL Debug|Win32.Build.0 = DLL Debug|Win32
+		{D333C980-1282-4047-96AC-F7FD649C0512}.DLL Debug|x64.ActiveCfg = DLL Debug|x64
+		{D333C980-1282-4047-96AC-F7FD649C0512}.DLL Debug|x64.Build.0 = DLL Debug|x64
+		{D333C980-1282-4047-96AC-F7FD649C0512}.DLL Release|Win32.ActiveCfg = DLL Release|Win32
+		{D333C980-1282-4047-96AC-F7FD649C0512}.DLL Release|Win32.Build.0 = DLL Release|Win32
+		{D333C980-1282-4047-96AC-F7FD649C0512}.DLL Release|x64.ActiveCfg = DLL Release|x64
+		{D333C980-1282-4047-96AC-F7FD649C0512}.DLL Release|x64.Build.0 = DLL Release|x64
+		{D333C980-1282-4047-96AC-F7FD649C0512}.Release|Win32.ActiveCfg = Release|Win32
+		{D333C980-1282-4047-96AC-F7FD649C0512}.Release|Win32.Build.0 = Release|Win32
+		{D333C980-1282-4047-96AC-F7FD649C0512}.Release|x64.ActiveCfg = Release|x64
+		{D333C980-1282-4047-96AC-F7FD649C0512}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
