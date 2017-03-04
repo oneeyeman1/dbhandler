@@ -68,9 +68,7 @@ public:
     DrawingDocument* GetDocument();
 
 private:
-#ifdef __WXOSX__
     wxToolBar *m_tb;
-#endif
     wxFrame *m_log;
     wxTextCtrl *m_text;
     DatabaseCanvas *m_canvas;

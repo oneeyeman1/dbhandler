@@ -77,14 +77,13 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxWindowList children = parent->GetChildren();
     bool found = false;
     int height = 0;
-    wxToolBar *tb;
-    for( wxWindowList::iterator it = children.begin(); it != children.end()/* && !found*/; it++ )
+    for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
     {
-        tb = wxDynamicCast( *it, wxToolBar );
-        if( tb /*&& tb->GetName() == "Second Toolbar" */)
+        m_tb = wxDynamicCast( *it, wxToolBar );
+        if( m_tb && m_tb->GetName() == "Second Toolbar" )
         {
             found = true;
-            height = tb->GetSize().GetHeight();
+            height = m_tb->GetSize().GetHeight();
         }
     }
     wxPoint start( 0, height );
@@ -245,6 +244,12 @@ bool DrawingView::OnClose(bool deleteWindow)
     {
         GetFrame()->Destroy();
         SetFrame( NULL );
+    }
+    wxDocManager *manager = GetDocumentManager();
+    if( manager->GetDocumentsVector().size() == 0 )
+    {
+        delete m_tb;
+        m_tb = NULL;
     }
     return true;
 }
