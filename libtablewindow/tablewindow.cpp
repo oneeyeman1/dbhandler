@@ -16,16 +16,9 @@
 #include "wx/docmdi.h"
 #include "wx/docview.h"
 #include "wx/cmdproc.h"
-#include "wxsf/ShapeCanvas.h"
-#include "wxsf/RoundRectShape.h"
-#include "wxsf/FlexGridShape.h"
 #include "database.h"
-#include "table.h"
-#include "GridTableShape.h"
-#include "MyErdTable.h"
-#include "databasecanvas.h"
-#include "databasedoc.h"
-#include "databaseview.h"
+#include "tabledoc.h"
+#include "tableview.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );

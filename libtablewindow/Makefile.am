@@ -10,3 +10,10 @@ libtablewindow_la_SOURCES =  \
 	tableview.cpp \
 	tableview.h \
 	tablewindow.cpp
+
+libtablewindow_la_CXXFLAGS = -I../../dbinterface \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
+	--cxxflags` 
+
+libtablewindow_la_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
+	--libs` 
