@@ -22,6 +22,7 @@ private:
     void DatabaseMenu();
     void OnConfigureODBC(wxCommandEvent &event);
     void OnDatabaseProfile(wxCommandEvent &event);
+    void OnTable(wxCommandEvent &event);
     void OnDatabase(wxCommandEvent &event);
     Database *m_db;
     wxDynamicLibrary *m_lib;
