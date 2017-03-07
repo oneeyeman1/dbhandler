@@ -130,7 +130,8 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 libtablewindow_la_LIBADD =
 am_libtablewindow_la_OBJECTS = libtablewindow_la-tabledoc.lo \
 	libtablewindow_la-tableview.lo \
-	libtablewindow_la-tablewindow.lo
+	libtablewindow_la-tablewindow.lo \
+	libtablewindow_la-tablecanvas.lo
 libtablewindow_la_OBJECTS = $(am_libtablewindow_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -380,13 +381,16 @@ libtablewindow_la_SOURCES = \
 	tabledoc.h \
 	tableview.cpp \
 	tableview.h \
-	tablewindow.cpp
+	tablewindow.cpp \
+	tablecanvas.cpp \
+	tablecanvas.h
 
 libtablewindow_la_CXXFLAGS = -I../../dbinterface \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
-libtablewindow_la_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
+libtablewindow_la_LDFLAGS = -L../dbinterface \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 
 
 all: all-am
@@ -467,6 +471,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtablewindow_la-tablecanvas.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtablewindow_la-tabledoc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtablewindow_la-tableview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtablewindow_la-tablewindow.Plo@am__quote@
@@ -512,6 +517,13 @@ libtablewindow_la-tablewindow.lo: tablewindow.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tablewindow.cpp' object='libtablewindow_la-tablewindow.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libtablewindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libtablewindow_la-tablewindow.lo `test -f 'tablewindow.cpp' || echo '$(srcdir)/'`tablewindow.cpp
+
+libtablewindow_la-tablecanvas.lo: tablecanvas.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libtablewindow_la_CXXFLAGS) $(CXXFLAGS) -MT libtablewindow_la-tablecanvas.lo -MD -MP -MF $(DEPDIR)/libtablewindow_la-tablecanvas.Tpo -c -o libtablewindow_la-tablecanvas.lo `test -f 'tablecanvas.cpp' || echo '$(srcdir)/'`tablecanvas.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libtablewindow_la-tablecanvas.Tpo $(DEPDIR)/libtablewindow_la-tablecanvas.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tablecanvas.cpp' object='libtablewindow_la-tablecanvas.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libtablewindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libtablewindow_la-tablecanvas.lo `test -f 'tablecanvas.cpp' || echo '$(srcdir)/'`tablecanvas.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
