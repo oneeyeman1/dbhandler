@@ -10,6 +10,7 @@ libdbwindow/vc_mswuddll/
 libtablewindow/vc_mswuddll/
 libfieldswindow/vc_mswuddll
 libpropertypages/vc_mswuddll
+libtablewindow/vc_mswuddll
 libsqlite/sqlite3.lib
 dbinterface/Debug/
 dbhandler/*.cpp~
