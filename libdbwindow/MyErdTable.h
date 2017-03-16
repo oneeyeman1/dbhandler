@@ -24,6 +24,7 @@ protected:
     virtual void DrawHover(wxDC &dc);
     virtual void DrawNormal(wxDC &dc);
 private:
+    wxSFGridShape *m_header;
     wxSFTextShape *m_pLabel;
     wxSFTextShape *m_comment;
     GridTableShape* m_pGrid;
