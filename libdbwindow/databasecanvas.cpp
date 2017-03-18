@@ -261,5 +261,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 
 void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
 {
-    wxMessageBox( "Table is dropping!" );
+    MyErdTable *erdTable = dynamic_cast<MyErdTable *>( m_selectedShape );
+    wxString name = const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableName();
+    int answer = wxMessageBox( _( "You are about to delete table " ) + name + _( ". Are you sure?" ), _( "Database" ), wxYES_NO | wxNO_DEFAULT );
 }
