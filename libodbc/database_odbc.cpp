@@ -2506,3 +2506,8 @@ int ODBCDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &ta
     delete query;
     return result;
 }
+
+int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+    return 0;
+}
