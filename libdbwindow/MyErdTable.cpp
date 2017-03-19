@@ -44,22 +44,25 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         m_header->SetBorder( *wxTRANSPARENT_PEN );
         m_header->AcceptChild( wxT( "wxSFTextShape" ) );
         m_header->Activate( false );
+        SF_ADD_COMPONENT( m_header, wxT( "header" ) );
         //table name
         if( m_header->InsertToGrid( 1, 1, m_pLabel ) )
         {
+            m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
             m_pLabel->GetFont().SetPointSize( 8 );
             m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
             m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
+//            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         }
         // table comment
         if( m_header->InsertToGrid( 1, 2, m_comment ) )
         {
+            m_comment->SetVAlign( wxSFShapeBase::valignTOP );
             m_comment->SetHAlign( wxSFShapeBase::halignRIGHT );
             m_comment->GetFont().SetPointSize( 8 );
             m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
             m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-            SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
+//            SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
         }
         // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
@@ -100,32 +103,36 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
     {
         // set table header
         m_header->SetRelativePosition( 0, 1 );
+        m_header->SetVAlign( wxSFShapeBase::valignTOP );
         m_header->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
         m_header->SetDimensions( 1, 2 );
         m_header->SetFill( *wxTRANSPARENT_BRUSH );
         m_header->SetBorder( *wxTRANSPARENT_PEN);
         m_header->AcceptChild( wxT( "wxSFTextShape" ) );
         m_header->Activate( false );
+        SF_ADD_COMPONENT( m_header, wxT( "header" ) );
         //table name
         if( m_header->InsertToGrid( 0, 0, m_pLabel ) )
         {
+            m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
             m_pLabel->GetFont().SetPointSize( 8 );
             m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
             m_pLabel->SetText( m_table->GetTableName() );
             m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
             m_pLabel->Activate( false );
-            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
+//            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         }
         // table comment
         if( m_header->InsertToGrid( 0, 1, m_comment ) )
         {
+            m_comment->SetVAlign( wxSFShapeBase::valignTOP );
             m_comment->SetHAlign( wxSFShapeBase::halignRIGHT );
             m_comment->GetFont().SetPointSize( 8 );
             m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
             m_comment->SetText( m_table->GetComment() );
             m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
             m_comment->Activate( false );
-            SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
+//            SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
         }
         // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
