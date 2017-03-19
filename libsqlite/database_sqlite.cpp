@@ -952,5 +952,17 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &
 
 int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
-    return 0;
+    int res = 0;
+    char *error;
+    std::wstring err;
+    std::wstring query = L"DROP TABLE ";
+    query += tableName;
+    int result = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query ).c_str(), 0, 0, &error );
+    if( result != SQLITE_OK )
+    {
+        res = 1;
+        GetErrorMessage( res, err );
+        errorMsg.push_back( err );
+    }
+    return res;
 }
