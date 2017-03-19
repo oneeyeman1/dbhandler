@@ -2509,5 +2509,18 @@ int ODBCDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &ta
 
 int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
-    return 0;
+    int result = 0;
+    std::wstring query = L"DROP TABLE ";
+    query += tableName;
+    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+    memset( qry, '\0', query.length() + 2 );
+    uc_to_str_cpy( qry, query );
+    SQLRETURN ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 2, m_hstmt );
+        result = 1;
+    }
+    delete qry;
+    return result;
 }
