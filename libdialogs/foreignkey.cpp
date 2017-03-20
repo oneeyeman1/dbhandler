@@ -267,8 +267,8 @@ void ForeignKeyDialog::GenerateQuery()
             m_command += ", ";
         }
         wxString temp1, temp2, temp3;
-        FK_ONUPDATE onUpdate;
-        FK_ONDELETE onDelete;
+        FK_ONUPDATE onUpdate = NO_ACTION_UPDATE;
+        FK_ONDELETE onDelete = NO_ACTION_DELETE;
         std::map<int,std::vector<FKField *> > fk = m_table->GetForeignKeyVector();
         for( std::map<int,std::vector<FKField *> >::iterator it = fk.begin(); it != fk.end(); it++ )
 		{

@@ -16,7 +16,7 @@ GridTableShape::~GridTableShape(void)
 bool GridTableShape::InsertToTableGrid(wxSFShapeBase *shape)
 {
     int col;
-    int row = m_arrCells.GetCount() / m_nCols;
+    int row = (int) m_arrCells.GetCount() / m_nCols;
     if( wxDynamicCast( shape, FieldShape ) )
         col = 1;
     else if( wxDynamicCast( shape, wxSFTextShape ) )

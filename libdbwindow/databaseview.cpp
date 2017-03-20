@@ -146,7 +146,7 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
     wxString tableName, schemaName;
     MyErdTable *erdTable = NULL;
     int isLogOnly = event.GetInt();
-    int type = event.GetExtraLong();
+    long type = event.GetExtraLong();
     wxString *command = (wxString *) event.GetClientData();
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
     {
