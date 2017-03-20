@@ -35,13 +35,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="databasedoc.h" />
-    <ClInclude Include="databaseview.h" />
+    <ClCompile Include="tablecanvas.cpp" />
+    <ClCompile Include="tabledoc.cpp" />
+    <ClCompile Include="tableview.cpp" />
+    <ClCompile Include="tablewindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="databasedoc.cpp" />
-    <ClCompile Include="databaseview.cpp" />
-    <ClCompile Include="dbview.cpp" />
+    <ClInclude Include="tablecanvas.h" />
+    <ClInclude Include="tabledoc.h" />
+    <ClInclude Include="tableview.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>tablewindow</ProjectName>

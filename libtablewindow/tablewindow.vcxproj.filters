@@ -10,22 +10,28 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="databasedoc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="databaseview.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="tablecanvas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tabledoc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tableview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tablewindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="databasedoc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="databaseview.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dbview.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="tablecanvas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tabledoc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tableview.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
