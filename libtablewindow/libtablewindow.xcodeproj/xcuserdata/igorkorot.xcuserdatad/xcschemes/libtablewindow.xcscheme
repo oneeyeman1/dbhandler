@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E38708BD1D2B61D7004EF478"
-               BuildableName = "liblibdbwindow.dylib"
-               BlueprintName = "libdbwindow"
-               ReferencedContainer = "container:libdbwindow.xcodeproj">
+               BlueprintIdentifier = "E33E6F4B1E6A9A6A003A0B92"
+               BuildableName = "liblibtablewindow.dylib"
+               BlueprintName = "libtablewindow"
+               ReferencedContainer = "container:libtablewindow.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

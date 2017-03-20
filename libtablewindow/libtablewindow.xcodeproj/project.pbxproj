@@ -6,8 +6,21 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E33E6F5F1E6A9BAD003A0B92 /* tabledoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F5A1E6A9BAD003A0B92 /* tabledoc.cpp */; };
+		E33E6F601E6A9BAD003A0B92 /* tabledoc.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F5B1E6A9BAD003A0B92 /* tabledoc.h */; };
+		E33E6F611E6A9BAD003A0B92 /* tableview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F5C1E6A9BAD003A0B92 /* tableview.cpp */; };
+		E33E6F621E6A9BAD003A0B92 /* tableview.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F5D1E6A9BAD003A0B92 /* tableview.h */; };
+		E33E6F631E6A9BAD003A0B92 /* tablewindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F5E1E6A9BAD003A0B92 /* tablewindow.cpp */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		E33E6F4C1E6A9A6A003A0B92 /* liblibtablewindow.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibtablewindow.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		E33E6F5A1E6A9BAD003A0B92 /* tabledoc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tabledoc.cpp; sourceTree = "<group>"; };
+		E33E6F5B1E6A9BAD003A0B92 /* tabledoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tabledoc.h; sourceTree = "<group>"; };
+		E33E6F5C1E6A9BAD003A0B92 /* tableview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tableview.cpp; sourceTree = "<group>"; };
+		E33E6F5D1E6A9BAD003A0B92 /* tableview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tableview.h; sourceTree = "<group>"; };
+		E33E6F5E1E6A9BAD003A0B92 /* tablewindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tablewindow.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -24,6 +37,7 @@
 		E33E6F431E6A9A6A003A0B92 = {
 			isa = PBXGroup;
 			children = (
+				E33E6F591E6A9AA7003A0B92 /* libtablewindow */,
 				E33E6F4D1E6A9A6A003A0B92 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -36,6 +50,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		E33E6F591E6A9AA7003A0B92 /* libtablewindow */ = {
+			isa = PBXGroup;
+			children = (
+				E33E6F5A1E6A9BAD003A0B92 /* tabledoc.cpp */,
+				E33E6F5B1E6A9BAD003A0B92 /* tabledoc.h */,
+				E33E6F5C1E6A9BAD003A0B92 /* tableview.cpp */,
+				E33E6F5D1E6A9BAD003A0B92 /* tableview.h */,
+				E33E6F5E1E6A9BAD003A0B92 /* tablewindow.cpp */,
+			);
+			name = libtablewindow;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -43,6 +69,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E33E6F621E6A9BAD003A0B92 /* tableview.h in Headers */,
+				E33E6F601E6A9BAD003A0B92 /* tabledoc.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +125,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E33E6F631E6A9BAD003A0B92 /* tablewindow.cpp in Sources */,
+				E33E6F5F1E6A9BAD003A0B92 /* tabledoc.cpp in Sources */,
+				E33E6F611E6A9BAD003A0B92 /* tableview.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -177,6 +208,21 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"_FILE_OFFSET_BITS=64",
+					WXUSINGDLL,
+					__WXMAC__,
+					__WXOSX__,
+					__WXOSX_COCOA__,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/Users/igorkorot/wxWidgets/buildMac/lib/wx/include/osx_cocoa-unicode-3.1",
+					/Users/igorkorot/wxWidgets/include,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
