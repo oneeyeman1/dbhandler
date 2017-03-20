@@ -25,8 +25,8 @@
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"
 #include "database.h"
-#include "databasedoc.h"
-#include "databaseview.h"
+#include "tabledoc.h"
+#include "tableview.h"
 
 // ----------------------------------------------------------------------------
 // DrawingDocument implementation

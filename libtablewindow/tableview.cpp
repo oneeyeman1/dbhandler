@@ -25,8 +25,8 @@
 #include "wx/dynlib.h"
 #include "wx/cmdproc.h"
 #include "database.h"
-#include "databasedoc.h"
-#include "databaseview.h"
+#include "tabledoc.h"
+#include "tableview.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 

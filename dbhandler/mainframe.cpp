@@ -43,6 +43,7 @@ typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_CONFIGUREODBC, MainFrame::OnConfigureODBC)
     EVT_MENU(wxID_DATABASEWINDOW, MainFrame::OnDatabaseProfile)
+    EVT_MENU(wxID_TABLE, MainFrame::OnTable)
     EVT_MENU(wxID_DATABASE, MainFrame::OnDatabase)
 END_EVENT_TABLE()
 
@@ -101,10 +102,12 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     wxBitmap bitmaps[9];
     bitmaps[0] = wxBitmap( odbc1 );
     bitmaps[1] = wxBitmap( database_profile );
-    bitmaps[2] = wxBitmap( database );
+    bitmaps[2] = wxBitmap( table );
+    bitmaps[3] = wxBitmap( database );
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), bitmaps[0], bitmaps[0], wxITEM_NORMAL, _( "Configure ODBC" ), _( "Configure ODBC data source" ) );
     toolBar->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), bitmaps[1], bitmaps[1], wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-    toolBar->AddTool( wxID_DATABASE, _( "Database" ), bitmaps[2], bitmaps[2], wxITEM_NORMAL, _( "Database" ), _( "Database" ) );
+    toolBar->AddTool( wxID_TABLE, _( "Table" ), bitmaps[2], bitmaps[2], wxITEM_NORMAL, _( "Table" ), _( "Run Table View" ) );
+    toolBar->AddTool( wxID_DATABASE, _( "Database" ), bitmaps[3], bitmaps[3], wxITEM_NORMAL, _( "Database" ), _( "Database" ) );
     toolBar->Realize();
 }
 #endif
@@ -132,6 +135,11 @@ void MainFrame::InitMenuBar(int id)
             m_tb->Realize();
 #endif
             DatabaseMenu();
+            break;
+        case wxID_TABLE:
+#if defined __WXMSW__ || defined __WXGTK__
+            m_tb->ClearTools();
+#endif
             break;
     }
 #if defined __WXMSW__ || defined __WXGTK__
@@ -248,3 +256,29 @@ void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
     Connect();
 }
 
+void MainFrame::OnTable(wxCommandEvent &event)
+{
+    if( !m_db )
+        Connect();
+    if( m_db )
+    {
+        InitMenuBar( event.GetId() );
+        m_lib1 = new wxDynamicLibrary;
+#ifdef __WXMSW__
+        m_lib1->Load( "tablewindow" );
+#elif __WXOSX__
+        m_lib1->Load( "liblibtablewindow.dylib" );
+#else
+        m_lib1->Load( "libtablewindow" );
+#endif
+        if( m_db && m_lib1->IsLoaded() )
+        {
+            DATABASE func = (DATABASE) m_lib1->GetSymbol( "CreateDatabaseWindow" );
+            func( this, m_manager, m_db );
+        }
+        else if( !m_lib1->IsLoaded() )
+            wxMessageBox( "Error loading the library. Please re-install the software and try again." );
+        else
+            wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
+    }
+}

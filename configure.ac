@@ -70,5 +70,6 @@ libdialogs/Makefile
 libdbloader/Makefile
 libdbwindow/Makefile
 dbhandler/Makefile
+libtablewindow/Makefile
 libpropertypages/Makefile
 ])

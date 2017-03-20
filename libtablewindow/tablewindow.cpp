@@ -17,8 +17,8 @@
 #include "wx/docview.h"
 #include "wx/cmdproc.h"
 #include "database.h"
-#include "databasedoc.h"
-#include "databaseview.h"
+#include "tabledoc.h"
+#include "tableview.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
