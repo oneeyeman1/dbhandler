@@ -262,19 +262,30 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 
 void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
 {
+    std::vector<std::wstring> errors;
     MyErdTable *erdTable = dynamic_cast<MyErdTable *>( m_selectedShape );
     DatabaseTable *table = &( const_cast<DatabaseTable &>( erdTable->GetTable() ) );
     wxString name = const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableName();
+    DrawingDocument *doc = (DrawingDocument *) m_view->GetDocument();
+    Database *db = doc->GetDatabase();
     int answer = wxMessageBox( _( "You are about to delete table " ) + name + _( ". Are you sure?" ), _( "Database" ), wxYES_NO | wxNO_DEFAULT );
     if( answer == wxYES )
     {
-        m_pManager.RemoveShape( erdTable );
-        DrawingDocument *doc = (DrawingDocument *) m_view->GetDocument();
-		Database *db = doc->GetDatabase();
-        std::map<std::wstring, std::vector<DatabaseTable *> > tables = db->GetTableVector().m_tables;
-        std::vector<DatabaseTable *> tableVec = tables.at( db->GetTableVector().m_dbName );
-        tableVec.erase( std::remove( tableVec.begin(), tableVec.end(), table ), tableVec.end() );
-        std::vector<std::wstring> names = doc->GetTableNameVector();
-        names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
+        if( !db->DeleteTable( name.ToStdWstring(), errors ) )
+        {
+            m_pManager.RemoveShape( erdTable );
+            std::map<std::wstring, std::vector<DatabaseTable *> > tables = db->GetTableVector().m_tables;
+            std::vector<DatabaseTable *> tableVec = tables.at( db->GetTableVector().m_dbName );
+            tableVec.erase( std::remove( tableVec.begin(), tableVec.end(), table ), tableVec.end() );
+            std::vector<std::wstring> names = doc->GetTableNameVector();
+            names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
+        }
+        else
+        {
+            for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
+            {
+                wxMessageBox( (*it) );
+            }
+        }
     }
 }
