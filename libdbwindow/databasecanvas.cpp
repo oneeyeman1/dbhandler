@@ -29,9 +29,9 @@
 #include "databasecanvas.h"
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
-
-/*BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
-	EVT_MENU(OnViewSelectedTables, DatabaseCanvas::OnViewSelectedTables)
+/*
+BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
+    EVT_MENU(wxID_TABLEDROPTABLE, DatabaseCanvas::OnDropTable)
 END_EVENT_TABLE()
 */
 DatabaseCanvas::DatabaseCanvas(wxView *view, wxWindow *parent) : wxSFShapeCanvas()
@@ -48,6 +48,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, wxWindow *parent) : wxSFShapeCanvas
     m_mode = modeDESIGN;
     SetCanvasColour( *wxWHITE );
 //    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
+    Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_TABLEDROPTABLE );
 }
 
 DatabaseCanvas::~DatabaseCanvas()
@@ -262,10 +263,16 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
 {
     MyErdTable *erdTable = dynamic_cast<MyErdTable *>( m_selectedShape );
+    DatabaseTable *table = &( const_cast<DatabaseTable &>( erdTable->GetTable() ) );
     wxString name = const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableName();
     int answer = wxMessageBox( _( "You are about to delete table " ) + name + _( ". Are you sure?" ), _( "Database" ), wxYES_NO | wxNO_DEFAULT );
     if( answer == wxYES )
     {
-//        this-
+        m_pManager.RemoveShape( erdTable );
+        DrawingDocument *doc = (DrawingDocument *) m_view->GetDocument();
+		Database *db = doc->GetDatabase();
+        std::map<std::wstring, std::vector<DatabaseTable *> > tables = db->GetTableVector().m_tables;
+        std::vector<DatabaseTable *> tableVec = tables.at( db->GetTableVector().m_dbName );
+        tableVec.erase( std::remove( tableVec.begin(), tableVec.end(), table ), tableVec.end() );
     }
 }
