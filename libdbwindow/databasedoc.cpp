@@ -188,6 +188,11 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
     }*/
 }
 
+std::vector<std::wstring> &DrawingDocument::GetTableNameVector()
+{
+    return m_tableNames;
+}
+
 MyErdTable *DrawingDocument::GetReferencedTable(const wxString &tableName)
 {
     bool found = false;

@@ -274,5 +274,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
         std::map<std::wstring, std::vector<DatabaseTable *> > tables = db->GetTableVector().m_tables;
         std::vector<DatabaseTable *> tableVec = tables.at( db->GetTableVector().m_dbName );
         tableVec.erase( std::remove( tableVec.begin(), tableVec.end(), table ), tableVec.end() );
+        std::vector<std::wstring> names = doc->GetTableNameVector();
+        names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
     }
 }

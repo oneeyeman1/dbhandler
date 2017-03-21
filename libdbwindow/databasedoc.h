@@ -72,6 +72,7 @@ public:
 
     void AddTables(const std::vector<wxString> &selections);
     std::vector<MyErdTable *> &GetTables();
+    std::vector<std::wstring> &GetTableNameVector();
     MyErdTable *GetReferencedTable(const wxString &tableName);
     std::vector<std::wstring> &GetTableNames();
 private:
