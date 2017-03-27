@@ -255,7 +255,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
         if( pSpacer )
         {
             pSpacer->SetId( id + 10000 );
-            if( m_pGrid->AppendToGrid( pSpacer ) )
+            if( m_pGrid->InsertToTableGrid( pSpacer ) )
             {
                 SetCommonProps( pSpacer );
             }
