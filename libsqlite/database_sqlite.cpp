@@ -966,3 +966,9 @@ int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::
     }
     return res;
 }
+
+int SQLiteDatabase::SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
+{
+    int res = 0;
+    return res;
+}

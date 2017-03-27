@@ -2524,3 +2524,9 @@ int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::ws
     delete qry;
     return result;
 }
+
+int ODBCDatabase::SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
+{
+    int res = 0;
+    return res;
+}
