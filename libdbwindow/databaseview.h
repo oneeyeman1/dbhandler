@@ -1,47 +1,5 @@
-// The window showing the drawing itself
-class MyCanvas : public wxScrolledWindow
-{
-public:
-    // view may be NULL if we're not associated with one yet, but parent must
-    // be a valid pointer
-    MyCanvas(wxView *view, wxWindow *parent = NULL);
-    virtual ~MyCanvas();
-
-    virtual void OnDraw(wxDC& dc) wxOVERRIDE;
-
-    // in a normal multiple document application a canvas is associated with
-    // one view from the beginning until the end, but to support the single
-    // document mode in which all documents reuse the same MyApp::GetCanvas()
-    // we need to allow switching the canvas from one view to another one
-
-    void SetView(wxView *view)
-    {
-        wxASSERT_MSG( !m_view, "shouldn't be already associated with a view" );
-
-        m_view = view;
-    }
-
-    void ResetView()
-    {
-        wxASSERT_MSG( m_view, "should be associated with a view" );
-
-        m_view = NULL;
-    }
-
-private:
-    void OnMouseEvent(wxMouseEvent& event);
-
-    wxView *m_view;
-
-    // the segment being currently drawn or NULL if none
-    DoodleSegment *m_currentSegment;
-
-    // the last mouse press position
-    wxPoint m_lastMousePos;
-
-    wxDECLARE_EVENT_TABLE();
-};
-
+#ifndef __DATABASEVIEW__H
+#define __DATABASEVIEW__H
 // The view using MyCanvas to show its contents
 class DrawingView : public wxView
 {
@@ -80,3 +38,5 @@ private:
 wxDECLARE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
 
 #define wxID_DATABASEWINDOW 2
+
+#endif
