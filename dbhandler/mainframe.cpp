@@ -120,8 +120,10 @@ void MainFrame::InitMenuBar(int id)
     if( !m_tb )
         m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
 #endif
-    m_menuFile->Delete( wxID_NEW );
-    m_menuFile->Delete( wxID_OPEN );
+    if( m_menuFile->FindItem( wxID_NEW ) )
+        m_menuFile->Delete( wxID_NEW );
+    if( m_menuFile->FindItem( wxID_OPEN ) )
+        m_menuFile->Delete( wxID_OPEN );
     m_menuFile->Insert( 0, wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
     switch( id )
     {
