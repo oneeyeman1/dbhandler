@@ -145,16 +145,28 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
     wxString tableName, schemaName;
     MyErdTable *erdTable = NULL;
+    FieldShape *field = NULL;
     int isLogOnly = event.GetInt();
     long type = event.GetExtraLong();
     wxString *command = (wxString *) event.GetClientData();
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
     {
-        if( type == 0 )
+        if( (*it)->IsSelected() )
         {
-            if( (*it)->IsSelected() )
+            if( type == 0 )
             {
                 erdTable = (MyErdTable *)(*it);
+                found = true;
+            }
+            if( type == 1 )
+            {
+                MyErdTable *temp = (MyErdTable *)(*it);
+                if( temp )
+                {
+                    erdTable = temp;
+                    continue;
+                }
+                field = (FieldShape *)(*it);
                 found = true;
             }
         }
@@ -171,7 +183,7 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         if( type == 0 )
             res = GetDocument()->GetDatabase()->SetTableProperties( command->ToStdWstring(), errors );
         if( type == 1 )
-            GetDocument()->GetDatabase();
+            res = GetDocument()->GetDatabase()->SetFieldProperties( command->ToStdWstring(), errors );
         if( res )
         {
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
