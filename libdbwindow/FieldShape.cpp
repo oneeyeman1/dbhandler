@@ -32,7 +32,6 @@ FieldShape::~FieldShape(void)
 
 void FieldShape::DrawNormal(wxDC &dc)
 {
-    wxSFRectShape::DrawNormal( dc );
     wxRect rect = this->GetBoundingBox();
     wxString line;
     int i = 0;
@@ -46,7 +45,7 @@ void FieldShape::DrawNormal(wxDC &dc)
     {
         m_backColour = wxColour( 210, 225, 245 );
         dc.SetBrush( m_Fill );
-        dc.SetPen( wxPen( wxColour( 210, 225, 245 ) ) );
+        dc.SetPen( m_Border );
         dc.SetBackgroundMode( wxTRANSPARENT );
     }
     dc.DrawRectangle( m_parentRect.x, rect.y, m_parentRect.width, rect.height );
