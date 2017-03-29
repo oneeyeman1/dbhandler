@@ -389,6 +389,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
         }
         if( event.GetId() == wxID_FIELDPROPERTIES )
         {
+            field = ((FieldShape *) event.GetEventObject())->GetField();
             if( (*it)->IsSelected() )
             {
                 MyErdTable *table = dynamic_cast<MyErdTable *>( *it );
@@ -397,16 +398,8 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
                     erdTable = table;
                     tableName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetTableName();
                     schemaName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetSchemaName();
-                    continue;
-                }
-                if( !table )
-                {
-                    field = dynamic_cast<Field *>( ((FieldShape *) *it)->GetField() );
                     type = 1;
                     found = true;
-                    (*it)->Select( false );
-                    erdTable->UpdateTable();
-//                    m_canvas->GetDiagramManager().UpdateAll();
                 }
             }
         }
