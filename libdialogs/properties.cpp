@@ -254,7 +254,7 @@ bool PropertiesDialog::ApplyProperties()
                 m_command += wxString::Format( "%d", m_page2->GetFont().GetPointSize() );
                 m_command += L", ";
                 m_command += wxString::Format( "%d", m_page2->GetFont().GetWeight() );
-				m_command += L", ";
+                m_command += L", ";
                 m_command += m_page2->GetFont().GetStyle() == wxFONTSTYLE_ITALIC ? L"Y" : L"N";
                 m_command += L", ";
                 m_command += m_page2->GetFont().GetUnderlined() ? L"Y" : L"N";
