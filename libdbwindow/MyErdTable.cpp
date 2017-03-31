@@ -79,7 +79,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         m_pGrid->AcceptChild( wxT( "wxSFShapeBase" ) );
         m_pGrid->Activate( true );
         SF_ADD_COMPONENT( m_pGrid, wxT( "main_grid" ) );
-	}
+    }
 }
 
 MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
@@ -149,7 +149,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
         m_pGrid->AcceptChild( wxT( "wxSFShapeBase" ) );
         m_pGrid->Activate( true );
         SF_ADD_COMPONENT( m_pGrid, wxT( "main_grid" ) );
-	}
+    }
 }
 
 MyErdTable::~MyErdTable()
@@ -169,7 +169,7 @@ void MyErdTable::UpdateTable()
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
     for( std::vector<Field *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
-		AddColumn( (*it), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : (*it)->IsForeignKey() ? Constraint::foreignKey : Constraint::noKey );
+        AddColumn( (*it), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : (*it)->IsForeignKey() ? Constraint::foreignKey : Constraint::noKey );
         i += 3;
     }
     m_pGrid->Update();
@@ -324,5 +324,5 @@ GridTableShape *MyErdTable::GetFieldGrid()
 
 std::wstring &MyErdTable::GetTableName()
 {
-	return const_cast<std::wstring &>( m_table->GetTableName() );
+    return const_cast<std::wstring &>( m_table->GetTableName() );
 }
