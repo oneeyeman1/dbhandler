@@ -7,7 +7,7 @@ class WXEXPORT DatabaseCanvas : public wxSFShapeCanvas
 {
 public:
     enum MODE { modeDESIGN, modeTABLE, modeVIEW, modeLine };
-    DatabaseCanvas(wxView *view, wxWindow *parent = NULL);
+    DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent = NULL);
     void DisplayTables(std::vector<wxString> &selections);
     virtual ~DatabaseCanvas();
     virtual void OnLeftDown(wxMouseEvent &event);
