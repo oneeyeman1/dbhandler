@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E33E6F661E8F4D41003A0B92 /* KeyBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F641E8F4D41003A0B92 /* KeyBitmap.cpp */; };
+		E33E6F671E8F4D41003A0B92 /* KeyBitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F651E8F4D41003A0B92 /* KeyBitmap.h */; };
 		E38709A41D43BA9C004EF478 /* liblibshapeframework.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E38709A31D43BA9C004EF478 /* liblibshapeframework.dylib */; };
 		E38709B51D4CF564004EF478 /* column.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38709A51D4CF564004EF478 /* column.cpp */; };
 		E38709B61D4CF564004EF478 /* column.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709A61D4CF564004EF478 /* column.h */; };
@@ -44,6 +46,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E33E6F641E8F4D41003A0B92 /* KeyBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyBitmap.cpp; sourceTree = "<group>"; };
+		E33E6F651E8F4D41003A0B92 /* KeyBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyBitmap.h; sourceTree = "<group>"; };
 		E38708BE1D2B61D7004EF478 /* liblibdbwindow.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdbwindow.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E38709A31D43BA9C004EF478 /* liblibshapeframework.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibshapeframework.dylib; path = ../Build/Products/Debug/liblibshapeframework.dylib; sourceTree = "<group>"; };
 		E38709A51D4CF564004EF478 /* column.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = column.cpp; sourceTree = "<group>"; };
@@ -113,6 +117,8 @@
 		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
+				E33E6F641E8F4D41003A0B92 /* KeyBitmap.cpp */,
+				E33E6F651E8F4D41003A0B92 /* KeyBitmap.h */,
 				E3AC9DCD1DFD16EF0083DD62 /* GridTableShape.cpp */,
 				E3AC9DCE1DFD16EF0083DD62 /* GridTableShape.h */,
 				E3E91D821DDEB73400675CF8 /* FieldShape.cpp */,
@@ -162,6 +168,7 @@
 				E3E91D281D6D467C00675CF8 /* GUIDatabaseTable.h in Headers */,
 				E38709B81D4CF564004EF478 /* constraint.h in Headers */,
 				E38709C21D4CF564004EF478 /* OneArrow.h in Headers */,
+				E33E6F671E8F4D41003A0B92 /* KeyBitmap.h in Headers */,
 				E38709BA1D4CF564004EF478 /* ErdForeignKey.h in Headers */,
 				E38709C41D4CF564004EF478 /* table.h in Headers */,
 				E3E91D391DBF812100675CF8 /* ErdLineShape.h in Headers */,
@@ -233,6 +240,7 @@
 				E3AC9DCF1DFD16EF0083DD62 /* GridTableShape.cpp in Sources */,
 				E3E91D2C1D821A5600675CF8 /* MyErdTable.cpp in Sources */,
 				E38709C31D4CF564004EF478 /* table.cpp in Sources */,
+				E33E6F661E8F4D41003A0B92 /* KeyBitmap.cpp in Sources */,
 				E3E91D841DDEB73400675CF8 /* FieldShape.cpp in Sources */,
 				E3E91D241D6D467C00675CF8 /* dbview.cpp in Sources */,
 				E3E91D221D6D467C00675CF8 /* databaseview.cpp in Sources */,
