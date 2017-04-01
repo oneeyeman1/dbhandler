@@ -226,12 +226,12 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
     if( type != Constraint::noKey )
     {
         // key bitmap
-        wxSFBitmapShape* pBitmap = new wxSFBitmapShape();
+        KeyBitmap* pBitmap = new KeyBitmap();
         if( pBitmap )
         {
             pBitmap->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
             pBitmap->SetId( id + 10000 );
-            pBitmap->Activate( false );
+            pBitmap->Activate( true );
             if( m_pGrid->InsertToTableGrid( pBitmap ) )
             {
                 if( type == Constraint::primaryKey )
@@ -250,11 +250,12 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
     {
         // spacer
         wxSFShapeBase* pSpacer = new wxSFShapeBase();
-        pSpacer->Activate( false );
+        pSpacer->Activate( true );
         pSpacer->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
         if( pSpacer )
         {
             pSpacer->SetId( id + 10000 );
+            pSpacer->Activate( true );
             if( m_pGrid->InsertToTableGrid( pSpacer ) )
             {
                 SetCommonProps( pSpacer );
@@ -285,7 +286,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
     {
         comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
         comment_shape->SetId( id + 10000 + 2 );
-        comment_shape->Activate( false );
+        comment_shape->Activate( true );
         if( m_pGrid->InsertToTableGrid( comment_shape ) )
         {
             SetCommonProps( comment_shape );

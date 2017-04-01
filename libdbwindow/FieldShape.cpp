@@ -26,6 +26,13 @@ FieldShape::FieldShape()
     XS_SERIALIZE( m_backColour, wxT( "m_backColour" ) );*/
 }
 
+FieldShape::FieldShape(const FieldShape &shape)
+{
+    m_field = shape.m_field;
+    m_parentRect = shape.m_parentRect;
+    m_backColour = shape.m_backColour;
+}
+
 FieldShape::~FieldShape(void)
 {
 }

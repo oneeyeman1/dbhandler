@@ -250,15 +250,21 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     int rc = GetPopupMenuSelectionFromUser( mnu, pt );
     if( rc == wxID_NONE && field )
     {
-        field->Select( false );
-        erdTable->GetFieldGrid()->Refresh();
-        erdTable->Refresh();
+//        if( field )
+        {
+            field->Select( false );
+            erdTable->GetFieldGrid()->Refresh();
+            erdTable->Refresh();
+        }
     }
     else
     {
-        field->Select( false );
-        erdTable->GetFieldGrid()->Refresh();
-        erdTable->Refresh();
+        if( field )
+        {
+            field->Select( false );
+            erdTable->GetFieldGrid()->Refresh();
+            erdTable->Refresh();
+        }
         wxCommandEvent evt( wxEVT_MENU, rc );
         evt.SetEventObject( field );
         m_view->ProcessEvent( evt );

@@ -48,6 +48,7 @@
     <ClInclude Include="GUIDatabaseTable.h" />
     <ClInclude Include="IDbAdapter.h" />
     <ClInclude Include="IDbType.h" />
+    <ClInclude Include="KeyBitmap.h" />
     <ClInclude Include="MyErdTable.h" />
     <ClInclude Include="NArrow.h" />
     <ClInclude Include="OneArrow.h" />
@@ -66,6 +67,7 @@
     <ClCompile Include="FieldShape.cpp" />
     <ClCompile Include="GridTableShape.cpp" />
     <ClCompile Include="GUIDatabaseTable.cpp" />
+    <ClCompile Include="KeyBitmap.cpp" />
     <ClCompile Include="MyErdTable.cpp" />
     <ClCompile Include="NArrow.cpp" />
     <ClCompile Include="OneArrow.cpp" />
