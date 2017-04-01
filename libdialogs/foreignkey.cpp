@@ -178,7 +178,7 @@ bool ForeignKeyDialog::Verify()
         wxMessageBox( _( "Please select columns for Foreign key" ) );
         verified = false;
     }
-	else if( m_foreignKey.size() != m_primaryKey.size() )
+    else if( m_foreignKey.size() != m_primaryKey.size() )
     {
         wxMessageBox( _( "Number of columns in Foreign Key must match number of columns in Primary Key" ) );
         verified = false;
@@ -271,7 +271,7 @@ void ForeignKeyDialog::GenerateQuery()
         FK_ONDELETE onDelete = NO_ACTION_DELETE;
         std::map<int,std::vector<FKField *> > fk = m_table->GetForeignKeyVector();
         for( std::map<int,std::vector<FKField *> >::iterator it = fk.begin(); it != fk.end(); it++ )
-		{
+        {
             for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
             {
                 temp1 += (*it1)->GetOriginalFieldName();
@@ -338,7 +338,7 @@ void ForeignKeyDialog::GenerateQuery()
             m_command += (*it);
             if( it == m_foreignKey.end() - 1 )
                 m_command += ")";
-			else
+            else
                 m_command += ", ";
         }
         m_command += " REFERENCES " + pkTable;
@@ -383,7 +383,7 @@ void ForeignKeyDialog::GenerateQuery()
         m_command += "INSERT INTO " + m_table->GetTableName();
         m_command += " SELECT * FROM temp;\r\n\r\nDROP TABLE temp;\r\n\r\n";
     }
-	else
+    else
     {
         m_command = "ALTER TABLE " + m_table->GetTableName();
         m_command += " ADD CONSTRAINT " + keyName;

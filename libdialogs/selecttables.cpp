@@ -33,8 +33,8 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
     set_properties();
     do_layout();
     // end wxGlade
-	m_open->Bind( wxEVT_BUTTON, &SelectTables::OnOpenTables, this );
-	m_showSystem->Bind( wxEVT_CHECKBOX, &SelectTables::OnShowSystemTables, this );
+    m_open->Bind( wxEVT_BUTTON, &SelectTables::OnOpenTables, this );
+    m_showSystem->Bind( wxEVT_CHECKBOX, &SelectTables::OnShowSystemTables, this );
 }
 
 void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames)
@@ -42,7 +42,7 @@ void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames)
     wxArrayInt selections;
     m_tables->GetSelections( selections );
     for( size_t i = 0; i < selections.GetCount(); i++ )
-		tableNames.push_back( m_tables->GetString( selections.Item( i ) ) );
+        tableNames.push_back( m_tables->GetString( selections.Item( i ) ) );
 }
 
 void SelectTables::set_properties()
@@ -109,7 +109,7 @@ void SelectTables::OnSelectingLBItem(wxCommandEvent &event)
 
 void SelectTables::OnOpenTables(wxCommandEvent &event)
 {
-	EndModal( dynamic_cast<wxButton *>( event.GetEventObject() )->GetId() );
+    EndModal( dynamic_cast<wxButton *>( event.GetEventObject() )->GetId() );
 }
 
 // wxGlade: add SelectTables event handlers
@@ -130,10 +130,10 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                 std::wstring tableName = (*it1)->GetTableName();
                 std::wstring schemaName = (*it1)->GetSchemaName();
                 if( std::find( m_names.begin(), m_names.end(), tableName ) == m_names.end() )
-				{
+                {
                     if( type == L"SQLite" )
                     {
-						if( !sysTableIncluded && ( ( tableName.substr( 0, 6 ) != L"sqlite" ) && ( tableName.substr( 0, 3 ) != L"sys" ) ) )
+                        if( !sysTableIncluded && ( ( tableName.substr( 0, 6 ) != L"sqlite" ) && ( tableName.substr( 0, 3 ) != L"sys" ) ) )
                             m_tables->Append( tableName );
                         else if( sysTableIncluded )
                             m_tables->Append( tableName );

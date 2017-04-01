@@ -342,7 +342,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
             if( !m_log->IsShown() )
                 m_log->Show();
         }
-		else
+        else
         {
             if( result != wxID_CANCEL )
                 GetDocument()->GetDatabase()->ApplyForeignKey( command.ToStdWstring(), *table, errors );

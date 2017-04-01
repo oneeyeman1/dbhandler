@@ -178,8 +178,8 @@ void CreateIndex::set_properties()
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
-		m_padIndex->Bind( wxEVT_CHECKBOX, &CreateIndex::OnPadIndex, this );
-		m_fillfactor->Bind( wxEVT_SPINCTRL, &CreateIndex::OnFillFactor, this );
+        m_padIndex->Bind( wxEVT_CHECKBOX, &CreateIndex::OnPadIndex, this );
+        m_fillfactor->Bind( wxEVT_SPINCTRL, &CreateIndex::OnFillFactor, this );
     }
 }
 
