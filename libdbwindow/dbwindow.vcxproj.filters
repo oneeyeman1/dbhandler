@@ -64,6 +64,7 @@
     <ClInclude Include="KeyBitmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FieldComment.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ErdTable.cpp">
@@ -115,6 +116,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="KeyBitmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldComment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

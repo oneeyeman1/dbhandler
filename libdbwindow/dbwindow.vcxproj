@@ -43,6 +43,7 @@
     <ClInclude Include="ErdForeignKey.h" />
     <ClInclude Include="ErdLineShape.h" />
     <ClInclude Include="ErdTable.h" />
+    <ClInclude Include="FieldComment.h" />
     <ClInclude Include="FieldShape.h" />
     <ClInclude Include="GridTableShape.h" />
     <ClInclude Include="GUIDatabaseTable.h" />
@@ -64,6 +65,7 @@
     <ClCompile Include="ErdForeignKey.cpp" />
     <ClCompile Include="ErdLineShape.cpp" />
     <ClCompile Include="ErdTable.cpp" />
+    <ClCompile Include="FieldComment.cpp" />
     <ClCompile Include="FieldShape.cpp" />
     <ClCompile Include="GridTableShape.cpp" />
     <ClCompile Include="GUIDatabaseTable.cpp" />

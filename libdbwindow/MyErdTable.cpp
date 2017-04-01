@@ -8,6 +8,7 @@
 #include "wxsf/DiagramManager.h"
 #include "constraint.h"
 #include "KeyBitmap.h"
+#include "FieldComment.h"
 #include "GridTableShape.h"
 #include "FieldShape.h"
 #include "MyErdTable.h"
@@ -282,7 +283,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
         else
             delete pCol;
     }
-    wxSFTextShape *comment_shape = new wxSFTextShape();
+    FieldComment *comment_shape = new FieldComment();
     if( comment_shape )
     {
         comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
