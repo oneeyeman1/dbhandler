@@ -132,7 +132,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
                             pConstr->SetOnUpdate( Constraint::noAction );
                             break;
                     }
-                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( referencedTableName )->GetId(), new ErdForeignKey( pConstr ), sfDONT_SAVE_STATE );
+                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( referencedTableName )->GetId(), new ErdForeignKey( pConstr, m_view->GetViewType() ), sfDONT_SAVE_STATE );
                 }
             }
         }

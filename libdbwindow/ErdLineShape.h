@@ -6,7 +6,7 @@ class ErdLineShape : public wxSFRoundOrthoLineShape
 public:
     ErdLineShape();
     virtual ~ErdLineShape();
-    ErdLineShape(Constraint *pConstraint);
+    ErdLineShape(Constraint *pConstraint, ViewType type);
     virtual wxRect GetBoundingBox();
     wxRealPoint GetModTrgPoint();
     wxRealPoint GetModSrcPoint();
@@ -21,6 +21,7 @@ protected:
     void GetDirectionalLine(wxRealPoint& src, wxRealPoint& trg);
 private:
     Constraint *m_constraint;
+    wxSFRectShape *m_signConstraint;
     bool m_isEnabled;
 };
 

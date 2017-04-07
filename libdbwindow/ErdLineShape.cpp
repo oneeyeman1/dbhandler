@@ -18,10 +18,11 @@ using namespace wxSFCommonFcn;
 ErdLineShape::ErdLineShape()
 {
     m_constraint = NULL;
+    m_signConstraint = NULL;
     m_isEnabled = true;
 }
 
-ErdLineShape::ErdLineShape(Constraint *pConstraint)
+ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type)
 {
     m_constraint = pConstraint;
     m_isEnabled = true;
