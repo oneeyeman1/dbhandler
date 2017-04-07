@@ -73,6 +73,12 @@ private:
     wxDECLARE_NO_COPY_CLASS(MyApp);
 };
 
+enum ViewType
+{
+    DatabaseView,
+    QueryView
+}
+
 wxDECLARE_APP(MyApp);
 
 #define wxID_CONFIGUREODBC          1

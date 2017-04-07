@@ -1,5 +1,12 @@
 #ifndef __DATABASEVIEW__H
 #define __DATABASEVIEW__H
+
+enum ViewType
+{
+    DatabaseView,
+    QueryView
+};
+
 // The view using MyCanvas to show its contents
 class DrawingView : public wxView
 {
@@ -7,6 +14,7 @@ public:
     DrawingView() : wxView(), m_canvas(NULL) {}
 //    std::vector<Table> &GetTablesForView(Database *db);
     void GetTablesForView(Database *db);
+    void SetViewType(ViewType type);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
@@ -30,6 +38,7 @@ private:
     wxFrame *m_log;
     wxTextCtrl *m_text;
     DatabaseCanvas *m_canvas;
+	ViewType m_type;
     wxDocMDIChildFrame *m_frame;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);

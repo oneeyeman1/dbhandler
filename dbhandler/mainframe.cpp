@@ -37,7 +37,7 @@
 
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
-typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *);
+typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
@@ -245,7 +245,7 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
         if( m_db && m_lib1->IsLoaded() )
         {
             DATABASE func = (DATABASE) m_lib1->GetSymbol( "CreateDatabaseWindow" );
-            func( this, m_manager, m_db );
+            func( this, m_manager, m_db, DatabaseView );
         }
         else if( !m_lib1->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
@@ -271,7 +271,7 @@ void MainFrame::OnQuery(wxCommandEvent &event)
         if( m_db && m_lib1->IsLoaded() )
         {
             DATABASE func = (DATABASE) m_lib1->GetSymbol( "CreateDatabaseWindow" );
-            func( this, m_manager, m_db );
+            func( this, m_manager, m_db, QueryView );
         }
         else if( !m_lib1->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );

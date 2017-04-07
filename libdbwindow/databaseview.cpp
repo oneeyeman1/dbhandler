@@ -505,3 +505,7 @@ void DrawingView::OnClearLog(wxCommandEvent &WXUNUSED(event))
     m_text->Clear();
 }
 
+void DrawingView::SetViewType(ViewType type)
+{
+	m_type = type;
+}
