@@ -45,6 +45,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_DATABASEWINDOW, MainFrame::OnDatabaseProfile)
     EVT_MENU(wxID_TABLE, MainFrame::OnTable)
     EVT_MENU(wxID_DATABASE, MainFrame::OnDatabase)
+    EVT_MENU(wxID_QUERY, MainFrame::OnQuery)
 END_EVENT_TABLE()
 
 MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL, wxID_ANY, "DB Handler" )
@@ -251,6 +252,32 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
         else
             wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
     }
+}
+
+void MainFrame::OnQuery(wxCommandEvent &event)
+{
+    if( !m_db )
+        Connect();
+    if( m_db )
+    {
+        m_lib1 = new wxDynamicLibrary;
+#ifdef __WXMSW__
+        m_lib1->Load("dbwindow");
+#elif __WXOSX__
+        m_lib1->Load("liblibdbwindow.dylib");
+#else
+        m_lib1->Load("libdbwindow");
+#endif
+        if( m_db && m_lib1->IsLoaded() )
+        {
+            DATABASE func = (DATABASE) m_lib1->GetSymbol( "CreateDatabaseWindow" );
+            func( this, m_manager, m_db );
+        }
+        else if( !m_lib1->IsLoaded() )
+            wxMessageBox( "Error loading the library. Please re-install the software and try again." );
+        else
+            wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
+	}
 }
 
 void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
