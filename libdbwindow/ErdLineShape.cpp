@@ -9,6 +9,7 @@
 #include "wxsf/RoundRectShape.h"
 #include "constraint.h"
 #include "GridTableShape.h"
+#include "HeaderGrid.h"
 #include "MyErdTable.h"
 #include "ErdLineShape.h"
 

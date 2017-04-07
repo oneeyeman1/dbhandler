@@ -33,6 +33,7 @@
 #include "column.h"
 #include "constraint.h"
 #include "GridTableShape.h"
+#include "HeaderGrid.h"
 #include "MyErdTable.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"

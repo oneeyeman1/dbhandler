@@ -22,6 +22,7 @@
 #include "database.h"
 #include "table.h"
 #include "GridTableShape.h"
+#include "HeaderGrid.h"
 #include "MyErdTable.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"

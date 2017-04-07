@@ -8,7 +8,7 @@
 #include "wxsf/DiagramManager.h"
 #include "constraint.h"
 #include "KeyBitmap.h"
-#include "FieldComment.h"
+#include "HeaderGrid.h"
 #include "GridTableShape.h"
 #include "FieldShape.h"
 #include "MyErdTable.h"
@@ -30,7 +30,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
     SetBorder( wxPen( wxColour( 70, 125, 170 ), 1, wxPENSTYLE_SOLID ) );
     SetFill( wxBrush( wxColour( 210, 225, 245 ) ) );
     SetRadius( 15 );
-    m_header = new wxSFGridShape();
+    m_header = new HeaderGrid();
     m_pLabel = new wxSFTextShape();
     m_comment = new wxSFTextShape();
     m_pGrid = new GridTableShape();
@@ -48,7 +48,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         m_header->Activate( false );
         SF_ADD_COMPONENT( m_header, wxT( "header" ) );
         //table name
-        if( m_header->InsertToGrid( 1, 1, m_pLabel ) )
+        if( m_header->InsertToGrid( 0, 0, m_pLabel ) )
         {
             m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
             m_pLabel->GetFont().SetPointSize( 8 );
@@ -57,7 +57,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
 //            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         }
         // table comment
-        if( m_header->InsertToGrid( 1, 2, m_comment ) )
+        if( m_header->InsertToGrid( 0, 1, m_comment ) )
         {
             m_comment->SetVAlign( wxSFShapeBase::valignTOP );
             m_comment->SetHAlign( wxSFShapeBase::halignRIGHT );
@@ -95,7 +95,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
     AcceptSrcNeighbour( wxT( "All" ) );
     AddStyle( sfsLOCK_CHILDREN );
     SetRadius(15);
-    m_header = new wxSFGridShape();
+    m_header = new HeaderGrid();
     m_pLabel = new wxSFTextShape();
     m_comment = new wxSFTextShape();
     m_pGrid = new GridTableShape();
@@ -128,7 +128,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
         if( m_header->InsertToGrid( 0, 1, m_comment ) )
         {
             m_comment->SetVAlign( wxSFShapeBase::valignTOP );
-            m_comment->SetHAlign( wxSFShapeBase::halignRIGHT );
+            m_comment->SetHAlign( wxSFShapeBase::halignLEFT );
             m_comment->GetFont().SetPointSize( 8 );
             m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
             m_comment->SetText( m_table->GetComment() );
@@ -283,7 +283,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
         else
             delete pCol;
     }
-    FieldComment *comment_shape = new FieldComment();
+    wxSFTextShape *comment_shape = new wxSFTextShape();
     if( comment_shape )
     {
         comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );

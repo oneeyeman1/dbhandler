@@ -43,10 +43,10 @@
     <ClInclude Include="ErdForeignKey.h" />
     <ClInclude Include="ErdLineShape.h" />
     <ClInclude Include="ErdTable.h" />
-    <ClInclude Include="FieldComment.h" />
     <ClInclude Include="FieldShape.h" />
     <ClInclude Include="GridTableShape.h" />
     <ClInclude Include="GUIDatabaseTable.h" />
+    <ClInclude Include="HeaderGrid.h" />
     <ClInclude Include="IDbAdapter.h" />
     <ClInclude Include="IDbType.h" />
     <ClInclude Include="KeyBitmap.h" />
@@ -65,10 +65,10 @@
     <ClCompile Include="ErdForeignKey.cpp" />
     <ClCompile Include="ErdLineShape.cpp" />
     <ClCompile Include="ErdTable.cpp" />
-    <ClCompile Include="FieldComment.cpp" />
     <ClCompile Include="FieldShape.cpp" />
     <ClCompile Include="GridTableShape.cpp" />
     <ClCompile Include="GUIDatabaseTable.cpp" />
+    <ClCompile Include="HeaderGrid.cpp" />
     <ClCompile Include="KeyBitmap.cpp" />
     <ClCompile Include="MyErdTable.cpp" />
     <ClCompile Include="NArrow.cpp" />
