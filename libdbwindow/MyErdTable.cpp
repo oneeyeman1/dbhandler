@@ -228,7 +228,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
     if( type != Constraint::noKey )
     {
         // key bitmap
-        KeyBitmap* pBitmap = new KeyBitmap();
+        wxSFBitmapShape* pBitmap = new wxSFBitmapShape();
         if( pBitmap )
         {
             pBitmap->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
