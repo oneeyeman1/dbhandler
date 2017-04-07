@@ -509,3 +509,8 @@ void DrawingView::SetViewType(ViewType type)
 {
 	m_type = type;
 }
+
+ViewType DrawingView::GetViewType()
+{
+	return m_type;
+}

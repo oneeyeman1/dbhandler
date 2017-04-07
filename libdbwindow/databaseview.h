@@ -15,6 +15,7 @@ public:
 //    std::vector<Table> &GetTablesForView(Database *db);
     void GetTablesForView(Database *db);
     void SetViewType(ViewType type);
+    ViewType GetViewType();
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
