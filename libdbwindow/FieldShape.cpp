@@ -85,12 +85,3 @@ Field *FieldShape::GetField()
 {
     return m_field;
 }
-
-wxRect FieldShape::GetBoundingBox()
-{
-    wxRect rectParent = dynamic_cast<GridTableShape *>( GetParent() )->GetBoundingBox();
-    wxRect rect = wxSFTextShape::GetBoundingBox();
-    rect.SetX( rectParent.GetX() );
-    rect.SetWidth( rectParent.GetWidth() );
-    return rect;
-}
