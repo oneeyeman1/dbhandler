@@ -25,6 +25,10 @@ ErdLineShape::ErdLineShape()
 ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type)
 {
     m_constraint = pConstraint;
+	if (type == QueryView)
+    {
+		m_signConstrained = new wxSFRectShape;
+    }
     m_isEnabled = true;
 }
 
