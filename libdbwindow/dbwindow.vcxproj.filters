@@ -10,9 +10,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ErdTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="constraint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -61,15 +58,9 @@
     <ClInclude Include="FieldShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="KeyBitmap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="HeaderGrid.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ErdTable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="constraint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -113,9 +104,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GridTableShape.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyBitmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="HeaderGrid.cpp">
