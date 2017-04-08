@@ -77,7 +77,7 @@ enum ViewType
 {
     DatabaseView,
     QueryView
-}
+};
 
 wxDECLARE_APP(MyApp);
 
