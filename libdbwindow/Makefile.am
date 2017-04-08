@@ -37,7 +37,9 @@ libdbwindow_la_SOURCES =  \
 	FieldShape.cpp \
 	FieldShape.h \
 	GridTableShape.cpp \
-	GridTableShape.h
+	GridTableShape.h \
+	FieldComment.cpp \
+	FieldComment.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \
