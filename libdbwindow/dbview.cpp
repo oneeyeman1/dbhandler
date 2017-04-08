@@ -91,8 +91,8 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-	bool found = docManager->FindTemplate( CLASSINFO( DrawingDocument ) );
-    if( !found )
+    wxDocTemplate *docTemplate = docManager->FindTemplate( CLASSINFO( DrawingDocument ) );
+    if( !docTemplate )
         new wxDocTemplate( docManager, "Drawing", "*.drw", "", "drw", "Drawing Doc", "Drawing View", CLASSINFO( DrawingDocument ), CLASSINFO( DrawingView ) );
     docManager->CreateDocument( "*.drw", wxDOC_NEW | wxDOC_SILENT );
     docManager->GetCurrentView()->SetViewType( type );
