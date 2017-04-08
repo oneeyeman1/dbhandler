@@ -84,37 +84,3 @@ private:
     std::vector<std::wstring> m_tableNames;
     wxDECLARE_DYNAMIC_CLASS(DrawingDocument);
 };
-
-// Base class for all operations on DrawingDocument
-/*class DrawingCommand : public wxCommand
-{
-public:
-    DrawingCommand(DrawingDocument *doc, const wxString& name, const DoodleSegment& segment = DoodleSegment())
-        : wxCommand(true, name),
-          m_doc(doc),
-          m_segment(segment)
-    {
-    }
-
-protected:
-    bool DoAdd() { m_doc->AddDoodleSegment(m_segment); return true; }
-    bool DoRemove() { return m_doc->PopLastSegment(&m_segment); }
-
-private:
-    DrawingDocument * const m_doc;
-    DoodleSegment m_segment;
-};
-*/
-// The command for adding a new segment
-/*class DrawingAddSegmentCommand : public DrawingCommand
-{
-public:
-    DrawingAddSegmentCommand(DrawingDocument *doc, const DoodleSegment& segment)
-        : DrawingCommand(doc, "Add new segment", segment)
-    {
-    }
-
-    virtual bool Do() wxOVERRIDE { return DoAdd(); }
-    virtual bool Undo() wxOVERRIDE { return DoRemove(); }
-};
-*/
