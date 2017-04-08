@@ -254,7 +254,7 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
     }
 }
 
-void MainFrame::OnQuery(wxCommandEvent &event)
+void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
 {
     if( !m_db )
         Connect();
