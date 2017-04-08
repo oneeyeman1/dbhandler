@@ -86,7 +86,7 @@ private:
 };
 
 // Base class for all operations on DrawingDocument
-class DrawingCommand : public wxCommand
+/*class DrawingCommand : public wxCommand
 {
 public:
     DrawingCommand(DrawingDocument *doc, const wxString& name, const DoodleSegment& segment = DoodleSegment())
@@ -104,9 +104,9 @@ private:
     DrawingDocument * const m_doc;
     DoodleSegment m_segment;
 };
-
+*/
 // The command for adding a new segment
-class DrawingAddSegmentCommand : public DrawingCommand
+/*class DrawingAddSegmentCommand : public DrawingCommand
 {
 public:
     DrawingAddSegmentCommand(DrawingDocument *doc, const DoodleSegment& segment)
@@ -117,4 +117,4 @@ public:
     virtual bool Do() wxOVERRIDE { return DoAdd(); }
     virtual bool Undo() wxOVERRIDE { return DoRemove(); }
 };
-
+*/
