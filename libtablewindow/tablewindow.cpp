@@ -78,7 +78,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *docManager, Database *db)
+extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *docManager, Database *db, DatabaseTable *table, const wxString &tableName)
 {
     bool found = false;
 #ifdef __WXMSW__
