@@ -123,7 +123,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 
 // Sneakily gets used for default print/preview as well as drawing on the
 // screen.
-void DrawingView::OnDraw(wxDC *dc)
+void DrawingView::OnDraw(wxDC *WXUNUSED(dc))
 {
 }
 
@@ -131,7 +131,7 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
 {
     std::vector<std::wstring> errors;
     DatabaseTable *table;
-    int res;
+    int res = -1;
     ShapeList shapes;
     bool found = false;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );

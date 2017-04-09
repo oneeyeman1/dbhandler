@@ -57,10 +57,8 @@ DatabaseCanvas::~DatabaseCanvas()
 {
 }
 
-void DatabaseCanvas::OnDraw(wxDC& dc)
+void DatabaseCanvas::OnDraw(wxDC &WXUNUSED(dc))
 {
-/*    if( m_view )
-        m_view->OnDraw( &dc );*/
 }
 
 void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
@@ -273,7 +271,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     }
 }
 
-void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
+void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
 {
     std::vector<std::wstring> errors;
     MyErdTable *erdTable = dynamic_cast<MyErdTable *>( m_selectedShape );
