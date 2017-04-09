@@ -39,14 +39,14 @@ typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *, w
 // DrawingView implementation
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(DrawingView, wxView);
+wxIMPLEMENT_DYNAMIC_CLASS(TableView, wxView);
 
-wxBEGIN_EVENT_TABLE(DrawingView, wxView)
+wxBEGIN_EVENT_TABLE(TableView, wxView)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
 // windows for displaying the view.
-bool DrawingView::OnCreate(wxDocument *doc, long flags)
+bool TableView::OnCreate(wxDocument *doc, long flags)
 {
     if( !wxView::OnCreate( doc, flags ) )
         return false;
@@ -83,31 +83,18 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_frame->SetToolBar( m_tb );
 #endif
     wxASSERT( m_frame == GetFrame() );
-    Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
+    Bind( wxEVT_SET_TABLE_PROPERTY, &TableView::OnSetProperties, this );
     return true;
 }
 
 // Sneakily gets used for default print/preview as well as drawing on the
 // screen.
-void DrawingView::OnDraw(wxDC *dc)
+void TableView::OnDraw(wxDC *dc)
 {
     dc->SetPen( *wxBLACK_PEN );
-
-    // simply draw all lines of all segments
-    const DoodleSegments& segments = GetDocument()->GetSegments();
-    for ( DoodleSegments::const_iterator i = segments.begin(); i != segments.end(); ++i )
-    {
-        const DoodleLines& lines = i->GetLines();
-        for ( DoodleLines::const_iterator j = lines.begin(); j != lines.end(); ++j )
-        {
-            const DoodleLine& line = *j;
-
-            dc->DrawLine( line.x1, line.y1, line.x2, line.y2 );
-        }
-    }
 }
 
-void DrawingView::OnSetProperties(wxCommandEvent &event)
+void TableView::OnSetProperties(wxCommandEvent &event)
 {
     std::vector<std::wstring> errors;
     DatabaseTable *table;
@@ -140,12 +127,12 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
     }
 }
 
-void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
+void TableView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
 {
 }
 
 //std::vector<Table> &DrawingView::GetTablesForView(Database *db)
-void DrawingView::GetTablesForView(Database *db)
+void TableView::GetTablesForView(Database *db)
 {
     std::vector<wxString> tables;
     wxDynamicLibrary lib;
@@ -162,24 +149,24 @@ void DrawingView::GetTablesForView(Database *db)
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames() );
         if( res != wxID_CANCEL )
         {
-            ((DrawingDocument *) GetDocument())->AddTables( tables );
+            ((TableDocument *) GetDocument())->AddTables( tables );
         }
     }
 //    return tables;
 }
 
-DrawingDocument* DrawingView::GetDocument()
+TableDocument* TableView::GetDocument()
 {
-    return wxStaticCast( wxView::GetDocument(), DrawingDocument );
+    return wxStaticCast( wxView::GetDocument(), TableDocument );
 }
 
-void DrawingView::OnUpdate(wxView* sender, wxObject* hint)
+void TableView::OnUpdate(wxView* sender, wxObject* hint)
 {
     wxView::OnUpdate( sender, hint );
 }
 
 // Clean up windows used for displaying the view.
-bool DrawingView::OnClose(bool deleteWindow)
+bool TableView::OnClose(bool deleteWindow)
 {
     if( !wxView::OnClose( deleteWindow ) )
         return false;
@@ -200,7 +187,7 @@ bool DrawingView::OnClose(bool deleteWindow)
     return true;
 }
 
-void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
+void TableView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
 {
     int result;
     wxString command;
@@ -223,7 +210,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         }
         else if( result == wxID_OK )
         {
-            dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->CreateIndex( command.ToStdWstring(), errors );
+            dynamic_cast<TableDocument *>( GetDocument() )->GetDatabase()->CreateIndex( command.ToStdWstring(), errors );
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
                 wxMessageBox( (*it) );
         }
@@ -232,7 +219,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         wxMessageBox( _( "Error loading the DLL/so" ) );
 }
 
-void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
+void TableView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
 {
     std::vector<std::wstring> errors;
     int result;
@@ -264,17 +251,17 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
         wxMessageBox( _( "Error loading the DLL/so" ) );
 }
 
-void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
+void TableView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
 {
     GetTablesForView( GetDocument()->GetDatabase() );
 }
 
-void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
+void TableView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
 {
     wxMessageBox( "Field definition" );
 }
 
-void DrawingView::OnFieldProperties(wxCommandEvent &event)
+void TableView::OnFieldProperties(wxCommandEvent &event)
 {
     std::vector<std::wstring> errors;
     bool found = false;
@@ -327,99 +314,22 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     }
 }
 
-void DrawingView::OnLogUpdateUI(wxUpdateUIEvent &event)
+void TableView::OnLogUpdateUI(wxUpdateUIEvent &event)
 {
 }
 
-void DrawingView::OnStartLog(wxCommandEvent &WXUNUSED(event))
+void TableView::OnStartLog(wxCommandEvent &WXUNUSED(event))
 {
 }
 
-void DrawingView::OnStopLog(wxCommandEvent &WXUNUSED(event))
+void TableView::OnStopLog(wxCommandEvent &WXUNUSED(event))
 {
 }
 
-void DrawingView::OnSaveLog(wxCommandEvent &WXUNUSED(event))
+void TableView::OnSaveLog(wxCommandEvent &WXUNUSED(event))
 {
 }
 
-void DrawingView::OnClearLog(wxCommandEvent &WXUNUSED(event))
+void TableView::OnClearLog(wxCommandEvent &WXUNUSED(event))
 {
-}
-
-// ----------------------------------------------------------------------------
-// MyCanvas implementation
-// ----------------------------------------------------------------------------
-
-wxBEGIN_EVENT_TABLE(MyCanvas, wxScrolledWindow)
-    EVT_MOUSE_EVENTS(MyCanvas::OnMouseEvent)
-wxEND_EVENT_TABLE()
-
-// Define a constructor for my canvas
-MyCanvas::MyCanvas(wxView *view, wxWindow *parent) : wxScrolledWindow(parent ? parent : view->GetFrame())
-{
-    m_view = view;
-    m_currentSegment = NULL;
-    m_lastMousePos = wxDefaultPosition;
-
-    SetCursor( wxCursor( wxCURSOR_PENCIL ) );
-
-    // this is completely arbitrary and is done just for illustration purposes
-    SetVirtualSize( 1000, 1000 );
-    SetScrollRate( 20, 20 );
-
-    SetBackgroundColour( *wxWHITE );
-}
-
-MyCanvas::~MyCanvas()
-{
-    delete m_currentSegment;
-}
-
-// Define the repainting behaviour
-void MyCanvas::OnDraw(wxDC& dc)
-{
-    if( m_view )
-        m_view->OnDraw( &dc );
-}
-
-// This implements a tiny doodling program. Drag the mouse using the left
-// button.
-void MyCanvas::OnMouseEvent(wxMouseEvent& event)
-{
-    if( !m_view )
-        return;
-
-    wxClientDC dc( this );
-    PrepareDC( dc );
-
-    dc.SetPen( *wxBLACK_PEN );
-
-    const wxPoint pt( event.GetLogicalPosition( dc ) );
-
-    // is this the end of the current segment?
-    if( m_currentSegment && event.LeftUp() )
-    {
-        if( !m_currentSegment->IsEmpty() )
-        {
-            // We've got a valid segment on mouse left up, so store it.
-            DrawingDocument *const doc = wxStaticCast( m_view->GetDocument(), DrawingDocument );
-            doc->GetCommandProcessor()->Submit( new DrawingAddSegmentCommand( doc, *m_currentSegment ) );
-            doc->Modify( true );
-        }
-        wxDELETE( m_currentSegment );
-    }
-
-    // is this the start of a new segment?
-    if( m_lastMousePos != wxDefaultPosition && event.Dragging() )
-    {
-        if( !m_currentSegment )
-            m_currentSegment = new DoodleSegment;
-
-        m_currentSegment->AddLine( m_lastMousePos, pt );
-
-        dc.DrawLine( m_lastMousePos, pt );
-    }
-
-    m_lastMousePos = pt;
 }

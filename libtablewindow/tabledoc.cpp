@@ -32,13 +32,13 @@
 // DrawingDocument implementation
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(DrawingDocument, wxDocument);
+wxIMPLEMENT_DYNAMIC_CLASS(TableDocument, wxDocument);
 
-DrawingDocument::~DrawingDocument()
+TableDocument::~TableDocument()
 {
 }
 
-DocumentOstream& DrawingDocument::SaveObject(DocumentOstream& ostream)
+DocumentOstream& TableDocument::SaveObject(DocumentOstream& ostream)
 {
 #if wxUSE_STD_IOSTREAM
     DocumentOstream& stream = ostream;
@@ -48,19 +48,10 @@ DocumentOstream& DrawingDocument::SaveObject(DocumentOstream& ostream)
 
     wxDocument::SaveObject( ostream );
 
-    const wxInt32 count = m_doodleSegments.size();
-    stream << count << '\n';
-
-    for( int n = 0; n < count; n++ )
-    {
-        m_doodleSegments[n].SaveObject( ostream );
-        stream << '\n';
-    }
-
     return ostream;
 }
 
-DocumentIstream& DrawingDocument::LoadObject(DocumentIstream& istream)
+DocumentIstream& TableDocument::LoadObject(DocumentIstream& istream)
 {
 #if wxUSE_STD_IOSTREAM
     DocumentIstream& stream = istream;
@@ -70,69 +61,27 @@ DocumentIstream& DrawingDocument::LoadObject(DocumentIstream& istream)
 
     wxDocument::LoadObject( istream );
 
-    wxInt32 count = 0;
-    stream >> count;
-    if( count < 0 )
-    {
-        wxLogWarning( "Drawing document corrupted: invalid segments count." );
-#if wxUSE_STD_IOSTREAM
-        istream.clear( std::ios::badbit );
-#else
-        istream.Reset( wxSTREAM_READ_ERROR );
-#endif
-        return istream;
-    }
-
-    for( int n = 0; n < count; n++ )
-    {
-        DoodleSegment segment;
-        segment.LoadObject( istream );
-        m_doodleSegments.push_back( segment );
-    }
-
     return istream;
 }
 
-void DrawingDocument::DoUpdate()
+void TableDocument::DoUpdate()
 {
     Modify( true );
     UpdateAllViews();
 }
 
-void DrawingDocument::AddDoodleSegment(const DoodleSegment& segment)
-{
-    m_doodleSegments.push_back( segment );
-
-    DoUpdate();
-}
-
-bool DrawingDocument::PopLastSegment(DoodleSegment *segment)
-{
-    if( m_doodleSegments.empty() )
-        return false;
-
-    if( segment )
-        *segment = m_doodleSegments.back();
-
-    m_doodleSegments.pop_back();
-
-    DoUpdate();
-
-    return true;
-}
-
-void DrawingDocument::SetDatabase(Database *db)
+void TableDocument::SetDatabase(Database *db)
 {
     m_db = db;
-    dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db );
+    dynamic_cast<TableView *>( GetFirstView() )->GetTablesForView( db );
 }
 
-Database *DrawingDocument::GetDatabase()
+Database *TableDocument::GetDatabase()
 {
     return m_db;
 }
 
-void DrawingDocument::AddTables(const std::vector<wxString> &selections)
+void TableDocument::AddTables(const std::vector<wxString> &selections)
 {
     bool found = false;
     std::map<std::wstring, std::vector<DatabaseTable *> > tables = m_db->GetTableVector().m_tables;
@@ -151,60 +100,8 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
     }
 }
 
-std::vector<std::wstring> &DrawingDocument::GetTableNames()
+std::vector<std::wstring> &TableDocument::GetTableNames()
 {
     return m_tableNames;
 }
 
-// ----------------------------------------------------------------------------
-// DoodleSegment implementation
-// ----------------------------------------------------------------------------
-
-DocumentOstream& DoodleSegment::SaveObject(DocumentOstream& ostream)
-{
-#if wxUSE_STD_IOSTREAM
-    DocumentOstream& stream = ostream;
-#else
-    wxTextOutputStream stream(ostream);
-#endif
-
-    const wxInt32 count = m_lines.size();
-    stream << count << '\n';
-
-    for ( int n = 0; n < count; n++ )
-    {
-        const DoodleLine& line = m_lines[n];
-        stream
-            << line.x1 << ' '
-            << line.y1 << ' '
-            << line.x2 << ' '
-            << line.y2 << '\n';
-    }
-
-    return ostream;
-}
-
-DocumentIstream& DoodleSegment::LoadObject(DocumentIstream& istream)
-{
-#if wxUSE_STD_IOSTREAM
-    DocumentIstream& stream = istream;
-#else
-    wxTextInputStream stream(istream);
-#endif
-
-    wxInt32 count = 0;
-    stream >> count;
-
-    for ( int n = 0; n < count; n++ )
-    {
-        DoodleLine line;
-        stream
-            >> line.x1
-            >> line.y1
-            >> line.x2
-            >> line.y2;
-        m_lines.push_back(line);
-    }
-
-    return istream;
-}
