@@ -7,7 +7,6 @@
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/DiagramManager.h"
 #include "constraint.h"
-#include "KeyBitmap.h"
 #include "HeaderGrid.h"
 #include "GridTableShape.h"
 #include "FieldShape.h"

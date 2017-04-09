@@ -7,8 +7,6 @@ lib_LTLIBRARIES =  \
 libdbwindow_la_SOURCES =  \
 	ErdForeignKey.cpp \
 	ErdForeignKey.h \
-	ErdTable.cpp \
-	ErdTable.h \
 	IDbAdapter.h \
 	IDbType.h \
 	NArrow.cpp \
@@ -37,9 +35,7 @@ libdbwindow_la_SOURCES =  \
 	FieldShape.cpp \
 	FieldShape.h \
 	GridTableShape.cpp \
-	GridTableShape.h \
-	FieldComment.cpp \
-	FieldComment.h
+	GridTableShape.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \

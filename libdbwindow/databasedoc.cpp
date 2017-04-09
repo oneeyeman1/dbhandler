@@ -24,7 +24,6 @@
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"
-#include "ErdForeignKey.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/TextShape.h"
@@ -38,6 +37,7 @@
 #include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"
+#include "ErdForeignKey.h"
 
 // ----------------------------------------------------------------------------
 // DrawingDocument implementation

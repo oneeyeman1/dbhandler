@@ -24,10 +24,11 @@
 #include "MyErdTable.h"
 #include "wxsf/ShapeCanvas.h"
 #include "FieldShape.h"
-#include "ErdTable.h"
 #include "DiagramManager.h"
 #include "databasedoc.h"
 #include "databasecanvas.h"
+#include "databaseview.h"
+#include "ErdForeignKey.h"
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
 /*
@@ -132,7 +133,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
                             pConstr->SetOnUpdate( Constraint::noAction );
                             break;
                     }
-                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( referencedTableName )->GetId(), new ErdForeignKey( pConstr, m_view->GetViewType() ), sfDONT_SAVE_STATE );
+                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( referencedTableName )->GetId(), new ErdForeignKey( pConstr, ((DrawingView *) m_view)->GetViewType() ), sfDONT_SAVE_STATE );
                 }
             }
         }

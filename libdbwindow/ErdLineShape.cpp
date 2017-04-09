@@ -1,7 +1,9 @@
 #include "wx/wx.h"
 
+#include "wx/docmdi.h"
 #include "database.h"
 #include "wxsf/CommonFcn.h"
+#include "wxsf/RectShape.h"
 #include "wxsf/LineShape.h"
 #include "wxsf/RoundOrthoShape.h"
 #include "wxsf/ShapeCanvas.h"
@@ -11,6 +13,9 @@
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "MyErdTable.h"
+#include "databasecanvas.h"
+#include "databasedoc.h"
+#include "databaseview.h"
 #include "ErdLineShape.h"
 
 using namespace wxSFCommonFcn;
@@ -27,7 +32,7 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type)
     m_constraint = pConstraint;
 	if (type == QueryView)
     {
-		m_signConstrained = new wxSFRectShape;
+		m_signConstraint = new wxSFRectShape;
     }
     m_isEnabled = true;
 }

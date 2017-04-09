@@ -1,3 +1,4 @@
+#include "wxsf/BitmapShape.h"
 #include "wxsf/GridShape.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/ShapeBase.h"
@@ -32,32 +33,41 @@ void GridTableShape::DoChildrenLayout()
         return;
     wxSFShapeBase *pShape;
     int nIndex, nRow, nCol;
-    wxRect currRect, maxRect0 = wxRect( 0, 0, 0, 0 ), maRect1 = wxRect( 0, 0, 0, 0 ), wxRect2 = wxRect( 0, 0, 0, 0 );
+    wxRect currRect, maxRect0 = wxRect( 0, 0, 0, 0 ), maxRect1 = wxRect( 0, 0, 0, 0 ), maxRect2 = wxRect( 0, 0, 0, 0 );
     SerializableList::compatibility_iterator node = GetFirstChildNode();
     while( node )
     {
         pShape = (wxSFShapeBase*) node->GetData();
         currRect = pShape->GetBoundingBox();
-        if( pShape->IsKindOf( wxSFBitmapShape ) || pShape->IsKindOf( ) )
+        wxSFBitmapShape *temp = wxDynamicCast( pShape, wxSFBitmapShape );
+        if( temp )
         {
             if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect0.GetWidth() ) )
                 maxRect0.SetWidth( currRect.GetWidth() );
             if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect0.GetHeight() ) )
                 maxRect0.SetHeight( currRect.GetHeight() );
         }
-        if( pShape->IsKindOf( FieldShape ) )
+        else
         {
-            if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect1.GetWidth() ) )
-                maxRect1.SetWidth( currRect.GetWidth() );
-            if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect1.GetHeight() ) )
-                maxRect1.SetHeight( currRect.GetHeight() );
-        }
-        if( pShape->IsKindOf( wxSFTextShape ) )
-        {
-            if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect2.GetWidth() ) )
-                maxRect2.SetWidth( currRect.GetWidth() );
-            if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect2.GetHeight() ) )
-                maxRect2.SetHeight( currRect.GetHeight() );
+            FieldShape *temp2 = wxDynamicCast( pShape, FieldShape );
+            if( temp2 )
+            {
+                if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect1.GetWidth() ) )
+                    maxRect1.SetWidth( currRect.GetWidth() );
+                if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect1.GetHeight() ) )
+                    maxRect1.SetHeight( currRect.GetHeight() );
+            }
+            else
+            {
+                wxSFTextShape *temp3 = wxDynamicCast( pShape, wxSFTextShape );
+                if( temp3 )
+                {
+                    if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect2.GetWidth() ) )
+                        maxRect2.SetWidth( currRect.GetWidth() );
+                    if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect2.GetHeight() ) )
+                        maxRect2.SetHeight( currRect.GetHeight() );
+                }
+            }
         }
         node = node->GetNext();
     }
@@ -86,3 +96,4 @@ void GridTableShape::DoChildrenLayout()
                     maxRect2.GetWidth(), maxRect2.GetHeight() ) );
 		}
 	}
+}
