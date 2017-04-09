@@ -85,3 +85,12 @@ Field *FieldShape::GetField()
 {
     return m_field;
 }
+
+bool FieldShape::Contains(const wxPoint& pos)
+{
+    bool result = false;
+    wxRect rect = GetBoundingBox();
+	if( pos.y >= rect.GetTop() && pos.y <= rect.GetBottom() )
+        result = true;
+    return result;
+}

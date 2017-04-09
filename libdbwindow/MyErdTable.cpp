@@ -148,7 +148,7 @@ MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
         m_pGrid->AcceptChild( wxT( "wxSFTextShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFBitmapShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFShapeBase" ) );
-        m_pGrid->Activate( true );
+        m_pGrid->Activate( false );
         SF_ADD_COMPONENT( m_pGrid, wxT( "main_grid" ) );
     }
 }
