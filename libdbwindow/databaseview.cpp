@@ -125,20 +125,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 // screen.
 void DrawingView::OnDraw(wxDC *dc)
 {
-    dc->SetPen( *wxBLACK_PEN );
-
-    // simply draw all lines of all segments
-    const DoodleSegments& segments = GetDocument()->GetSegments();
-    for ( DoodleSegments::const_iterator i = segments.begin(); i != segments.end(); ++i )
-    {
-        const DoodleLines& lines = i->GetLines();
-        for ( DoodleLines::const_iterator j = lines.begin(); j != lines.end(); ++j )
-        {
-            const DoodleLine& line = *j;
-
-            dc->DrawLine( line.x1, line.y1, line.x2, line.y2 );
-        }
-    }
 }
 
 void DrawingView::OnSetProperties(wxCommandEvent &event)
