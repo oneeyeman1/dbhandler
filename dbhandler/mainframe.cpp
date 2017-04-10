@@ -228,7 +228,7 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
         Connect();
     if( m_db )
     {
-        InitMenuBar( event.GetId() );
+//        InitMenuBar( event.GetId() );
         m_lib1 = new wxDynamicLibrary;
 #ifdef __WXMSW__
         m_lib1->Load( "dbwindow" );
