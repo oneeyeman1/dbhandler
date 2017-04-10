@@ -91,6 +91,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxRect clientRect = parent->GetClientRect();
     clientRect.height -= height;
     m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), /*wxDefaultPosition*/start, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+#if defined __WXMSW__ || defined __WXGTK__
+    m_frame->Bind( wxEVT_ACTIVATE, & );
+#endif
     m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
     m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
     wxPoint ptCanvas;
