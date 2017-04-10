@@ -89,6 +89,7 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
         new wxDocTemplate( docManager, "Drawing", "*.tbl", "", "tbl", "Table Doc", "Table View", CLASSINFO(TableDocument), CLASSINFO(TableView) );
     docManager->CreateDocument( "*.tbl", wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<TableDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db );
+    new TableCanvas(dynamic_cast<TableView *>( docManager->GetCurrentView() ), pt, table )
 }
 
 /*
