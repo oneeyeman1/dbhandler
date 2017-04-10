@@ -68,13 +68,9 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     help->Append( wxID_ABOUT );
     menubar->Append( help, wxGetStockLabel( wxID_HELP ) );
     SetMenuBar( menubar );
-#if wxUSE_STATUSBAR
     CreateStatusBar();
-#endif // wxUSE_STATUSBAR
-#if wxUSE_TOOLBAR
     CreateToolBar( wxNO_BORDER | wxTB_FLAT | wxTB_HORIZONTAL );
     InitToolBar( GetToolBar() );
-#endif // wxUSE_TOOLBAR
 }
 
 MainFrame::~MainFrame()
@@ -98,7 +94,6 @@ MainFrame::~MainFrame()
     m_lib1 = NULL;
 }
 
-#if wxUSE_TOOLBAR
 void MainFrame::InitToolBar(wxToolBar* toolBar)
 {
     wxBitmap bitmaps[9];
@@ -112,7 +107,6 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     toolBar->AddTool( wxID_DATABASE, _( "Database" ), bitmaps[3], bitmaps[3], wxITEM_NORMAL, _( "Database" ), _( "Database" ) );
     toolBar->Realize();
 }
-#endif
 
 void MainFrame::InitMenuBar(int id)
 {
