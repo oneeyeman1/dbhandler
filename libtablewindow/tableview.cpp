@@ -30,7 +30,7 @@
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 
-typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
+typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *, wxString &, bool &);
@@ -83,7 +83,7 @@ bool TableView::OnCreate(wxDocument *doc, long flags)
     m_frame->SetToolBar( m_tb );
 #endif
     wxASSERT( m_frame == GetFrame() );
-    Bind( wxEVT_SET_TABLE_PROPERTY, &TableView::OnSetProperties, this );
+    m_frame->Show();
     return true;
 }
 
@@ -92,43 +92,6 @@ bool TableView::OnCreate(wxDocument *doc, long flags)
 void TableView::OnDraw(wxDC *dc)
 {
     dc->SetPen( *wxBLACK_PEN );
-}
-
-void TableView::OnSetProperties(wxCommandEvent &event)
-{
-    std::vector<std::wstring> errors;
-    DatabaseTable *table;
-    int res;
-    bool found = false;
-    wxString tableName, schemaName;
-    int isLogOnly = event.GetInt();
-    int type = event.GetExtraLong();
-    wxString *command = (wxString *) event.GetClientData();
-    if( isLogOnly )
-    {
-    }
-    else
-    {
-        if( type == 0 )
-            res = GetDocument()->GetDatabase()->SetTableProperties( command->ToStdWstring(), errors );
-        if( type == 1 )
-            GetDocument()->GetDatabase();
-        if( res )
-        {
-            for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
-                wxMessageBox( (*it) );
-        }
-        else
-        {
-            if( type == 0 )
-            {
-            }
-        }
-    }
-}
-
-void TableView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
-{
 }
 
 //std::vector<Table> &DrawingView::GetTablesForView(Database *db)
@@ -146,7 +109,7 @@ void TableView::GetTablesForView(Database *db)
     if( lib.IsLoaded() )
     {
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        int res = func( m_frame, db, tables, GetDocument()->GetTableNames() );
+        int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), true );
         if( res != wxID_CANCEL )
         {
             ((TableDocument *) GetDocument())->AddTables( tables );
@@ -185,70 +148,6 @@ bool TableView::OnClose(bool deleteWindow)
         m_tb = NULL;
     }
     return true;
-}
-
-void TableView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
-{
-    int result;
-    wxString command;
-    std::vector<std::wstring> errors;
-    DatabaseTable *table = NULL;
-    wxDynamicLibrary lib;
-#ifdef __WXMSW__
-    lib.Load( "dialogs" );
-#elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
-#else
-    lib.Load( "libdialogs" );
-#endif
-    if( lib.IsLoaded() )
-    {
-        CREATEINDEX func = (CREATEINDEX) lib.GetSymbol( "CreateIndexForDatabase" );
-        result = func( m_frame, table, GetDocument()->GetDatabase(), command );
-        if( result != wxID_OK && result != wxID_CANCEL )
-        {
-        }
-        else if( result == wxID_OK )
-        {
-            dynamic_cast<TableDocument *>( GetDocument() )->GetDatabase()->CreateIndex( command.ToStdWstring(), errors );
-            for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
-                wxMessageBox( (*it) );
-        }
-    }
-    else
-        wxMessageBox( _( "Error loading the DLL/so" ) );
-}
-
-void TableView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
-{
-    std::vector<std::wstring> errors;
-    int result;
-    DatabaseTable *table = NULL;
-    wxString command;
-    bool logOnly = false;
-    wxDynamicLibrary lib;
-#ifdef __WXMSW__
-    lib.Load( "dialogs" );
-#elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
-#else
-    lib.Load( "libdialogs" );
-#endif
-    if( lib.IsLoaded() )
-    {
-        CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-        result = func( m_frame, table, GetDocument()->GetDatabase(), command, logOnly );
-        if( logOnly )
-        {
-        }
-		else
-        {
-            if( result != wxID_CANCEL )
-                GetDocument()->GetDatabase()->ApplyForeignKey( command.ToStdWstring(), *table, errors );
-        }
-    }
-    else
-        wxMessageBox( _( "Error loading the DLL/so" ) );
 }
 
 void TableView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
@@ -318,18 +217,7 @@ void TableView::OnLogUpdateUI(wxUpdateUIEvent &event)
 {
 }
 
-void TableView::OnStartLog(wxCommandEvent &WXUNUSED(event))
+wxDocMDIChildFrame *TableView::GetChildFrame()
 {
-}
-
-void TableView::OnStopLog(wxCommandEvent &WXUNUSED(event))
-{
-}
-
-void TableView::OnSaveLog(wxCommandEvent &WXUNUSED(event))
-{
-}
-
-void TableView::OnClearLog(wxCommandEvent &WXUNUSED(event))
-{
+    return m_frame;
 }

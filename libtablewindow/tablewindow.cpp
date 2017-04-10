@@ -15,6 +15,7 @@
 #include <string>
 #include "wx/docmdi.h"
 #include "wx/docview.h"
+#include "wx/dynlib.h"
 #include "wx/cmdproc.h"
 #include "database.h"
 #include "tabledoc.h"
@@ -85,8 +86,8 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
     wxTheApp->SetTopWindow( parent );
 #endif
     if( !found )
-        new wxDocTemplate( docManager, "Drawing", "*.drw", "", "drw", "Drawing Doc", "Drawing View", CLASSINFO(TableDocument), CLASSINFO(TableView) );
-    docManager->CreateDocument( "*.drw", wxDOC_NEW | wxDOC_SILENT );
+        new wxDocTemplate( docManager, "Drawing", "*.tbl", "", "tbl", "Table Doc", "Table View", CLASSINFO(TableDocument), CLASSINFO(TableView) );
+    docManager->CreateDocument( "*.tbl", wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<TableDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db );
 }
 

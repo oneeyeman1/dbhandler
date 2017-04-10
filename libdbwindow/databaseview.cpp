@@ -39,7 +39,7 @@
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 
-typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &);
+typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *, wxString &, bool &);
@@ -214,7 +214,7 @@ void DrawingView::GetTablesForView(Database *db)
     if( lib.IsLoaded() )
     {
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        int res = func( m_frame, db, tables, GetDocument()->GetTableNames() );
+        int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
         if( res != wxID_CANCEL )
         {
             ((DrawingDocument *) GetDocument())->AddTables( tables );

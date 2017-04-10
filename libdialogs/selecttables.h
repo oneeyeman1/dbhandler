@@ -12,29 +12,10 @@
 #ifndef SELECTTABLES_H
 #define SELECTTABLES_H
 
-#include <wx/wx.h>
-#include <wx/image.h>
-#include <wx/intl.h>
-
-#ifndef APP_CATALOG
-#define APP_CATALOG "app"  // replace with the appropriate catalog name
-#endif
-
-
-// begin wxGlade: ::dependencies
-// end wxGlade
-
-// begin wxGlade: ::extracode
-// end wxGlade
-
-
 class SelectTables: public wxDialog
 {
 public:
-    // begin wxGlade: SelectTables::ids
-    // end wxGlade
-
-    SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, bool isTableView, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
     void GetSelectedTableNames(std::vector<wxString> &tableNames);
 private:
     wxBoxSizer* sizer_1;
@@ -50,6 +31,7 @@ protected:
     // begin wxGlade: SelectTables::attributes
     wxListBox* m_tables;
     wxCheckBox* m_showSystem;
+    wxCheckBox *m_readOnly;
     wxButton* m_open;
     wxButton* m_new;
     wxButton* m_cancel;

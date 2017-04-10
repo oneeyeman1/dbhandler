@@ -6,22 +6,15 @@ public:
     TableView() : wxView() {}
 //    std::vector<Table> &GetTablesForView(Database *db);
     void GetTablesForView(Database *db);
+    wxDocMDIChildFrame *GetChildFrame();
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
     virtual bool OnClose(bool deleteWindow = true) wxOVERRIDE;
     void OnViewSelectedTables(wxCommandEvent &event);
-    void OnNewIndex(wxCommandEvent &event);
     void OnFieldDefinition(wxCommandEvent &event);
     void OnFieldProperties(wxCommandEvent &event);
-    void OnSetProperties(wxCommandEvent &event);
-    void OnCloseLogWindow(wxCloseEvent &event);
-    void OnForeignKey(wxCommandEvent &event);
     void OnLogUpdateUI(wxUpdateUIEvent &event);
-    void OnStartLog(wxCommandEvent &event);
-    void OnStopLog(wxCommandEvent &event);
-    void OnSaveLog(wxCommandEvent &event);
-    void OnClearLog(wxCommandEvent &event);
     TableDocument* GetDocument();
 
 private:

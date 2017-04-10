@@ -8,23 +8,35 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
+#ifdef __GNUC__
+#pragma implementation "dialogs.h"
+#endif
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
+
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
+#endif
+
 #include <string>
 #include "database.h"
 #include "selecttables.h"
 
-// begin wxGlade: ::extracode
-// end wxGlade
-
-SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, const wxPoint& pos, const wxSize& size, long style):
+SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, bool isTableView, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     m_db = db;
     m_names = names;
     sizer_1 = NULL;
     // begin wxGlade: SelectTables::SelectTables
+    m_readOnly = NULL;
     m_panel = new wxPanel( this, wxID_ANY );
-    m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
+    m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, isTableView ? wxLB_SINGLE : wxLB_MULTIPLE );
     m_showSystem = new wxCheckBox( m_panel, wxID_ANY, _( "&Show system tables" ) );
+    if( isTableView )
+		m_readOnly = new wxCheckBox( m_panel, wxID_ANY, _( "&Read-Only" ) );
     m_open = new wxButton( m_panel, wxID_ANY, _( "&Open" ) );
     m_new = new wxButton( m_panel, wxID_ANY, _( "&New..." ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "&Cancel" ) );
