@@ -32,7 +32,7 @@ public:
     void OnStopLog(wxCommandEvent &event);
     void OnSaveLog(wxCommandEvent &event);
     void OnClearLog(wxCommandEvent &event);
-    void OnActivate(wxActivateEvent &event);
+    virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
     DrawingDocument* GetDocument();
 
 private:

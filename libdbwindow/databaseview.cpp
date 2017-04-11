@@ -92,7 +92,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxRect clientRect = parent->GetClientRect();
     clientRect.height -= height;
     m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), /*wxDefaultPosition*/start, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
-    m_frame->Bind( wxEVT_ACTIVATE, &DrawingView::OnActivate, this );
     m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
     m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
     wxPoint ptCanvas;
@@ -503,7 +502,7 @@ ViewType DrawingView::GetViewType()
 	return m_type;
 }
 
-void DrawingView::OnActivate(wxActivateEvent &event)
+void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
     if( !m_isCreated )
     {
@@ -512,6 +511,7 @@ void DrawingView::OnActivate(wxActivateEvent &event)
     }
     else
     {
+        wxDocMDIParentFrame *parent = wxStaticCast(wxTheApp->GetTopWindow(), wxDocMDIParentFrame);
 		event.Skip();
     }
 }
