@@ -13,6 +13,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include "wx/grid.h"
 #include "wx/docmdi.h"
 #include "wx/docview.h"
 #include "wx/dynlib.h"
@@ -20,6 +21,7 @@
 #include "database.h"
 #include "tabledoc.h"
 #include "tableview.h"
+#include "tablecanvas.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -89,7 +91,7 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
         new wxDocTemplate( docManager, "Drawing", "*.tbl", "", "tbl", "Table Doc", "Table View", CLASSINFO(TableDocument), CLASSINFO(TableView) );
     docManager->CreateDocument( "*.tbl", wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<TableDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db );
-    new TableCanvas(dynamic_cast<TableView *>( docManager->GetCurrentView() ), pt, table )
+    new TableCanvas(dynamic_cast<TableView *>( docManager->GetCurrentView() ), wxDefaultPosition, table );
 }
 
 /*

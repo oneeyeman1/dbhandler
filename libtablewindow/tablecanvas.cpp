@@ -28,24 +28,25 @@
 #endif
 
 #include "wx/grid.h"
+#include "wx/docmdi.h"
 #include "database.h"
 #include "tablecanvas.h"
 
 TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, DatabaseTable *table, wxWindow *parent) : wxGrid(parent, wxID_ANY)
 {
-    CreateGrid(1, 6);
-    SetColLabelValue( 0, _( "Name" ) );
-    SetColLabelValue( 1, _( "Type" ) )
-    SetColLabelValue( 2, _( "Size" ) );
-    SetColLabelValue( 3, _( "Precision" ) );
-    SetColLabelValue( 4, _( "Name" ) );
-    SetColLabelValue( 5, _( "Default Value" ) )
+    CreateGrid( 1, 6 );
+    SetColLabelValue( 0, _( "Column Name" ) );
+    SetColLabelValue( 1, _( "Data Type" ) );
+    SetColLabelValue( 2, _( "Width" ) );
+    SetColLabelValue( 3, _( "Dec" ) );
+    SetColLabelValue( 4, _( "Null" ) );
+    SetColLabelValue( 5, _( "Default" ) );
     if (!table)
         AppendRows();
     else
     {
         int i = 0;
-        for( std::vector<Field *>::iterator it = table->GetFields().begin(); it < table->GetFields().end(); it++)
+        for( std::vector<Field *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); it++)
         {
             AppendRows();
             SetCellValue( i, 0, (*it)->GetFieldName() );
