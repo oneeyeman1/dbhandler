@@ -32,9 +32,6 @@ public:
     void OnStopLog(wxCommandEvent &event);
     void OnSaveLog(wxCommandEvent &event);
     void OnClearLog(wxCommandEvent &event);
-#if defined __WXMSW__ || defined __WXGTK__
-    void OnActivateFrame(wxActivateEvent &event);
-#endif
     DrawingDocument* GetDocument();
 
 private:

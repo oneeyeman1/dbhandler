@@ -75,7 +75,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
-/*    wxWindowList children = parent->GetChildren();
+    wxWindowList children = parent->GetChildren();
     bool found = false;
     int height = 0;
     for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
@@ -89,10 +89,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     wxPoint start( 0, height );
     wxRect clientRect = parent->GetClientRect();
-    clientRect.height -= height;*/
-    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+    clientRect.height -= height;
+    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), /*wxDefaultPosition*/start, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
 #if defined __WXMSW__ || defined __WXGTK__
-    m_frame->Bind( wxEVT_ACTIVATE, &DrawingView::OnActivateFrame, this );
+    m_frame->Bind( wxEVT_ACTIVATE, & );
 #endif
     m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
     m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
@@ -502,23 +502,4 @@ void DrawingView::SetViewType(ViewType type)
 ViewType DrawingView::GetViewType()
 {
 	return m_type;
-}
-
-void DrawingView::OnActivateFrame(wxActivateEvent &event)
-{
-    wxDocMDIParentFrame *frame = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
-    wxSize frameClientSize = frame->GetClientSize();
-    wxDocMDIChildFrame *child = wxDynamicCast( event.GetEventObject(), wxDocMDIChildFrame);
-    if( !m_tb )
-        m_tb = new wxToolBar( frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
-    m_tb->ClearTools();
-    m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-    m_tb->AddTool( wxID_OBJECTNEWFF, _( "Foreign Key" ), wxBitmap( key_f1 ), wxBitmap( key_f1 ), wxITEM_NORMAL, _( "Create Foreign Key" ), _( "Create Foreign Key" ) );
-    m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
-    m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
-    m_tb->Realize();
-    wxSize tbSize = m_tb->GetSize();
-    m_tb->SetSize( 0, 0, frameClientSize.GetX(), wxDefaultCoord );
-    child->SetSize( 0, tbSize.GetHeight(), wxDefaultCoord, frameClientSize - tbSize.GetHeight() );
-    event.Skip();
 }
