@@ -35,16 +35,108 @@
 
 TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, DatabaseTable *table, wxWindow *parent) : wxGrid(parent, wxID_ANY)
 {
-	wxArrayString fieldTypes;
-    if( db->GetTableVector().m_type == L"SQLite" )
+    wxArrayString fieldTypes;
+    std::wstring type = db->GetTableVector().m_type, subtype = db->GetTableVector().m_subtype;
+    if( type == L"SQLite" )
     {
+        fieldTypes.Add( "blob" );
         fieldTypes.Add( "integer" );
+        fieldTypes.Add( "numeric" );
         fieldTypes.Add( "real" );
         fieldTypes.Add( "text" );
-        fieldTypes.Add( "blob" );
-        fieldTypes.Add( "numeric" );
     }
-    CreateGrid( 1, 6 );
+    else
+    {
+        fieldTypes.Add( "bigint" );
+        fieldTypes.Add( "binary" );
+        fieldTypes.Add( "bit" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+            fieldTypes.Add( "bool" );
+        fieldTypes.Add( "char" );
+        fieldTypes.Add( "cursor" );
+        fieldTypes.Add( "date" );
+        fieldTypes.Add( "datetime" );
+        fieldTypes.Add( "datetime2" );
+        fieldTypes.Add( "datetimeoffset" );
+        fieldTypes.Add( "decimal" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+        {
+            fieldTypes.Add( "double" );
+            fieldTypes.Add( "double precision" );
+        }
+        fieldTypes.Add( "float" );
+        fieldTypes.Add( "hierarchyid" );
+        fieldTypes.Add( "image" );
+        fieldTypes.Add( "int" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+        {
+            fieldTypes.Add("mediumint");
+        }
+        fieldTypes.Add( "money" );
+        fieldTypes.Add( "nchar" );
+        fieldTypes.Add( "ntext" );
+        fieldTypes.Add( "numeric" );
+        fieldTypes.Add( "nvarchar" );
+        fieldTypes.Add( "real" );
+        fieldTypes.Add( "smalldatetime" );
+        fieldTypes.Add( "smallint" );
+        fieldTypes.Add( "smallmoney" );
+        fieldTypes.Add( "sql_variant" );
+        fieldTypes.Add( "table" );
+        fieldTypes.Add( "text" );
+        fieldTypes.Add( "time" );
+        fieldTypes.Add( "timestamp" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+            fieldTypes( "tinyblob" );
+        fieldTypes.Add( "tinyint" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+            fieldTypes( "tinytext" );
+		fieldTypes.Add("uniqueidentifier");
+        fieldTypes.Add( "varbinary" );
+        fieldTypes.Add( "varchar" );
+        fieldTypes.Add( "xml" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+            fieldTypes( "year" );
+    }
+	{
+		fieldTypes.Add("bigint");
+		fieldTypes.Add("bit");
+		fieldTypes.Add("boolean");  // mySQL specific
+		fieldTypes.Add("decimal");
+		fieldTypes.Add("int");
+		fieldTypes.Add("smallint");
+		fieldTypes.Add("tinyint");
+
+
+		fieldTypes.Add("binary");
+		fieldTypes.Add("char");
+		fieldTypes.Add("cursor");
+		fieldTypes.Add("date");
+		fieldTypes.Add("datetime");
+		fieldTypes.Add("datetime2");
+		fieldTypes.Add("datetimeoffset");
+		fieldTypes.Add("float");
+		fieldTypes.Add("hierarchyid");
+		fieldTypes.Add("image");
+		fieldTypes.Add("money");
+		fieldTypes.Add("nchar");
+		fieldTypes.Add("ntext");
+		fieldTypes.Add("numeric");
+		fieldTypes.Add("nvarchar");
+		fieldTypes.Add("real");
+		fieldTypes.Add("smalldatetime");
+		fieldTypes.Add("smallmoney");
+		fieldTypes.Add("sql_variant");
+		fieldTypes.Add("table");
+		fieldTypes.Add("text");
+		fieldTypes.Add("time");
+		fieldTypes.Add("timestamp");
+		fieldTypes.Add("uniqueidentifier");
+		fieldTypes.Add("varbinary");
+		fieldTypes.Add("varchar");
+		fieldTypes.Add("xml");
+	}
+	CreateGrid(1, 6);
     SetColLabelValue( 0, _( "Column Name" ) );
     SetColLabelValue( 1, _( "Data Type" ) );
     SetColLabelValue( 2, _( "Width" ) );
