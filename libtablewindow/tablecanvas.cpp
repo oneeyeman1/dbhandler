@@ -28,12 +28,22 @@
 #endif
 
 #include "wx/grid.h"
+#include "wx/arrstr.h"
 #include "wx/docmdi.h"
 #include "database.h"
 #include "tablecanvas.h"
 
-TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, DatabaseTable *table, wxWindow *parent) : wxGrid(parent, wxID_ANY)
+TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, DatabaseTable *table, wxWindow *parent) : wxGrid(parent, wxID_ANY)
 {
+	wxArrayString fieldTypes;
+    if( db->GetTableVector().m_type == L"SQLite" )
+    {
+        fieldTypes.Add( "integer" );
+        fieldTypes.Add( "real" );
+        fieldTypes.Add( "text" );
+        fieldTypes.Add( "blob" );
+        fieldTypes.Add( "numeric" );
+    }
     CreateGrid( 1, 6 );
     SetColLabelValue( 0, _( "Column Name" ) );
     SetColLabelValue( 1, _( "Data Type" ) );
@@ -41,8 +51,11 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, DatabaseTable *table, 
     SetColLabelValue( 3, _( "Dec" ) );
     SetColLabelValue( 4, _( "Null" ) );
     SetColLabelValue( 5, _( "Default" ) );
-    if (!table)
-        AppendRows();
+    if( !table )
+    {
+		AppendRows();
+        SetCellRenderer( 0, 1, new TypeComboBox( "" ) );
+    }
     else
     {
         int i = 0;
@@ -50,6 +63,8 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, DatabaseTable *table, 
         {
             AppendRows();
             SetCellValue( i, 0, (*it)->GetFieldName() );
+            SetCellRenderer( i, 1, (*it)->GetFieldType() );
+            SetCellEditor( i, 1, wxGridCellChoiceEditor( fieldTypes ) );
             i++;
         }
     }
