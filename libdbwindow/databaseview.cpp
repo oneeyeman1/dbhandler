@@ -13,11 +13,10 @@
     #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#ifdef __WXOSX__
-#include "../dbhandler/res/database_profile.xpm"
-#include "../dbhandler/res/table.xpm"
-#include "../dbhandler/res/properties.xpm"
-#endif
+#include "res/database_profile.xpm"
+#include "res/table.xpm"
+#include "res/properties.xpm"
+#include "res/gui/key-f1.xpm"
 
 #include <string>
 #include "wx/docview.h"
@@ -72,6 +71,7 @@ wxEND_EVENT_TABLE()
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
+    m_tb = NULL;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -90,7 +90,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxPoint start( 0, height );
     wxRect clientRect = parent->GetClientRect();
     clientRect.height -= height;*/
-    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxDefaultSize );
 #if defined __WXMSW__ || defined __WXGTK__
     m_frame->Bind( wxEVT_ACTIVATE, &DrawingView::OnActivateFrame, this );
 #endif
@@ -519,6 +519,6 @@ void DrawingView::OnActivateFrame(wxActivateEvent &event)
     m_tb->Realize();
     wxSize tbSize = m_tb->GetSize();
     m_tb->SetSize( 0, 0, frameClientSize.GetX(), wxDefaultCoord );
-    child->SetSize( 0, tbSize.GetHeight(), wxDefaultCoord, frameClientSize - tbSize.GetHeight() );
+    child->SetSize( 0, tbSize.GetHeight(), wxDefaultCoord, frameClientSize.GetHeight() - tbSize.GetHeight() );
     event.Skip();
 }
