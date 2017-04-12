@@ -32,7 +32,7 @@
 #include "database.h"
 #include "tablecanvas.h"
 
-TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, DatabaseTable *table, wxWindow *parent) : wxGrid(parent, wxID_ANY)
+TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, DatabaseTable *table, wxWindow *parent) : wxGrid(view->GetFrame(), wxID_ANY)
 {
     CreateGrid( 1, 6 );
     SetColLabelValue( 0, _( "Column Name" ) );
@@ -53,4 +53,5 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, DatabaseTable *table, 
             i++;
         }
     }
+    AutoSizeColumns();
 }
