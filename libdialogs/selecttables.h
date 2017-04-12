@@ -21,6 +21,7 @@ private:
     wxBoxSizer* sizer_1;
     Database *m_db;
 	std::vector<std::wstring> m_names;
+    bool m_isTableView;
     // begin wxGlade: SelectTables::methods
     void set_properties();
     void do_layout();
