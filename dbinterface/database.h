@@ -55,7 +55,9 @@ public:
 	void SetHeading(const std::wstring &hding) { heading = hding; }
     const std::wstring &GetFieldName() { return column_name; }
     const std::wstring &GetFieldType() { return column_type; }
+    const std::wstring &GetDefaultValue() { return column_defaultValue; }
     const std::wstring &GetComment() { return comment; }
+    bool IsNullAllowed() { return column_isNull; }
     int GetFieldSize() { return field_size; }
     int GetPrecision() { return decimal_size; }
     bool IsPrimaryKey() { return column_pk; }
