@@ -48,6 +48,8 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
     }
     else
     {
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+            fieldTypes.Add( "JSON" );
         fieldTypes.Add( "bigint" );
         fieldTypes.Add( "binary" );
         fieldTypes.Add( "bit" );
@@ -64,21 +66,45 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
         {
             fieldTypes.Add( "double" );
             fieldTypes.Add( "double precision" );
+            fieldTypes.Add( "enum" );
         }
         fieldTypes.Add( "float" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+        {
+            fieldTypes.Add( "geometry" );
+            fieldTypes.Add( "geometrycollection" );
+        }
         fieldTypes.Add( "hierarchyid" );
         fieldTypes.Add( "image" );
         fieldTypes.Add( "int" );
         if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
         {
+            fieldTypes.Add( "linestring" );
+            fieldTypes.Add( "longblob" );
+            fieldTypes.Add( "longtext" );
+            fieldTypes.Add( "mediumblob" );
             fieldTypes.Add("mediumint");
+            fieldTypes.Add( "mediumtext" );
         }
         fieldTypes.Add( "money" );
+        if( ( type == L"ODBC" && subtype == L"MyODBC" ) || type == L"MyODBC" )
+        {
+            fieldTypes.Add( "multilinestring" );
+            fieldTypes.Add( "multipoint" );
+            fieldTypes.Add( "multipolygon" );
+        }
         fieldTypes.Add( "nchar" );
         fieldTypes.Add( "ntext" );
         fieldTypes.Add( "numeric" );
         fieldTypes.Add( "nvarchar" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+        {
+            fieldTypes.Add( "point" );
+            fieldTypes.Add( "polygon" );
+        }
         fieldTypes.Add( "real" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+            fieldTypes.Add( "set" );
         fieldTypes.Add( "smalldatetime" );
         fieldTypes.Add( "smallint" );
         fieldTypes.Add( "smallmoney" );
