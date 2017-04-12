@@ -185,8 +185,8 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
             SetCellRenderer( i, 1, new FieldTypeRenderer( "" ) );
             SetCellEditor( i, 1, new wxGridCellChoiceEditor( fieldTypes ) );
             SetCellValue( i, 1, (*it)->GetFieldType() );
-            SetCellValue( i, 2, (*it)->GetFieldSize() );
-            SetCellValue( i, 3, (*it)->GetPrecision() );
+            SetCellValue( i, 2, wxString::Format( "%d", (*it)->GetFieldSize() ) );
+            SetCellValue( i, 3, wxString::Format( "%d", (*it)->GetPrecision() ) );
 			SetCellValue( i, 4, (*it)->IsNullAllowed() ? _( "Yes" ) : _( "No" ) );
             SetCellValue( i, 5, (*it)->GetDefaultValue() );
             i++;
