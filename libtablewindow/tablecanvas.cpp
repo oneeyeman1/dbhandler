@@ -137,7 +137,7 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
 		fieldTypes.Add("varchar");
 		fieldTypes.Add("xml");
 	}
-	CreateGrid(1, 6);
+    CreateGrid(1, 6);
     SetColLabelValue( 0, _( "Column Name" ) );
     SetColLabelValue( 1, _( "Data Type" ) );
     SetColLabelValue( 2, _( "Width" ) );
@@ -146,7 +146,7 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
     SetColLabelValue( 5, _( "Default" ) );
     if( !table )
     {
-		AppendRows();
+        AppendRows();
         SetCellRenderer( 0, 1, new FieldTypeRenderer( "" ) );
     }
     else
@@ -156,8 +156,8 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
         {
             AppendRows();
             SetCellValue( i, 0, (*it)->GetFieldName() );
-            SetCellRenderer( i, 1, FieldTypeRenderer( "" ) );
-            SetCellEditor( i, 1, wxGridCellChoiceEditor( fieldTypes ) );
+            SetCellRenderer( i, 1, new FieldTypeRenderer( "" ) );
+            SetCellEditor( i, 1, new wxGridCellChoiceEditor( fieldTypes ) );
             i++;
         }
     }

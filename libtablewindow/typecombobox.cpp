@@ -21,7 +21,7 @@
 
 FieldTypeRenderer::FieldTypeRenderer(wxString type)
 {
-	m_type = type;
+    m_type = type;
 }
 
 void FieldTypeRenderer::Draw(wxGrid &grid, wxGridCellAttr &attr, wxDC &dc, const wxRect &rect, int row, int col, bool isSelected)
@@ -41,5 +41,5 @@ wxSize FieldTypeRenderer::GetBestSize(wxGrid &,wxGridCellAttr &,wxDC &,int,int)
 
 FieldTypeRenderer *FieldTypeRenderer::Clone() const
 {
-    return this;
+    return new FieldTypeRenderer( "" );
 }
