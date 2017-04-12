@@ -72,6 +72,7 @@ wxEND_EVENT_TABLE()
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
+	m_isCreated = false;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -499,4 +500,17 @@ void DrawingView::SetViewType(ViewType type)
 ViewType DrawingView::GetViewType()
 {
 	return m_type;
+}
+
+void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
+{
+    if( !m_isCreated )
+    {
+        m_isCreated = true;
+        return;
+    }
+    else
+    {
+        wxDocMDIParentFrame *parent = wxStaticCast(wxTheApp->GetTopWindow(), wxDocMDIParentFrame);
+    }
 }

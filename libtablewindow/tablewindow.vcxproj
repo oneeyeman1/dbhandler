@@ -39,11 +39,13 @@
     <ClCompile Include="tabledoc.cpp" />
     <ClCompile Include="tableview.cpp" />
     <ClCompile Include="tablewindow.cpp" />
+    <ClCompile Include="typecombobox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tablecanvas.h" />
     <ClInclude Include="tabledoc.h" />
     <ClInclude Include="tableview.h" />
+    <ClInclude Include="typecombobox.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>tablewindow</ProjectName>

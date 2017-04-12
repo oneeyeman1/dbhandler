@@ -28,21 +28,127 @@
 #endif
 
 #include "wx/grid.h"
+#include "wx/arrstr.h"
 #include "wx/docmdi.h"
 #include "database.h"
+#include "typecombobox.h"
 #include "tablecanvas.h"
 
-TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, DatabaseTable *table, wxWindow *parent) : wxGrid(view->GetFrame(), wxID_ANY)
+TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, DatabaseTable *table, wxWindow *parent) : wxGrid(view->GetFrame(), wxID_ANY)
 {
-    CreateGrid( 1, 6 );
+    wxArrayString fieldTypes;
+    std::wstring type = db->GetTableVector().m_type, subtype = db->GetTableVector().m_subtype;
+    if( type == L"SQLite" )
+    {
+        fieldTypes.Add( "blob" );
+        fieldTypes.Add( "integer" );
+        fieldTypes.Add( "numeric" );
+        fieldTypes.Add( "real" );
+        fieldTypes.Add( "text" );
+    }
+    else
+    {
+        fieldTypes.Add( "bigint" );
+        fieldTypes.Add( "binary" );
+        fieldTypes.Add( "bit" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+            fieldTypes.Add( "bool" );
+        fieldTypes.Add( "char" );
+        fieldTypes.Add( "cursor" );
+        fieldTypes.Add( "date" );
+        fieldTypes.Add( "datetime" );
+        fieldTypes.Add( "datetime2" );
+        fieldTypes.Add( "datetimeoffset" );
+        fieldTypes.Add( "decimal" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+        {
+            fieldTypes.Add( "double" );
+            fieldTypes.Add( "double precision" );
+        }
+        fieldTypes.Add( "float" );
+        fieldTypes.Add( "hierarchyid" );
+        fieldTypes.Add( "image" );
+        fieldTypes.Add( "int" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+        {
+            fieldTypes.Add("mediumint");
+        }
+        fieldTypes.Add( "money" );
+        fieldTypes.Add( "nchar" );
+        fieldTypes.Add( "ntext" );
+        fieldTypes.Add( "numeric" );
+        fieldTypes.Add( "nvarchar" );
+        fieldTypes.Add( "real" );
+        fieldTypes.Add( "smalldatetime" );
+        fieldTypes.Add( "smallint" );
+        fieldTypes.Add( "smallmoney" );
+        fieldTypes.Add( "sql_variant" );
+        fieldTypes.Add( "table" );
+        fieldTypes.Add( "text" );
+        fieldTypes.Add( "time" );
+        fieldTypes.Add( "timestamp" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+            fieldTypes.Add( "tinyblob" );
+        fieldTypes.Add( "tinyint" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+            fieldTypes.Add( "tinytext" );
+		fieldTypes.Add("uniqueidentifier");
+        fieldTypes.Add( "varbinary" );
+        fieldTypes.Add( "varchar" );
+        fieldTypes.Add( "xml" );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+            fieldTypes.Add( "year" );
+    }
+	{
+		fieldTypes.Add("bigint");
+		fieldTypes.Add("bit");
+		fieldTypes.Add("boolean");  // mySQL specific
+		fieldTypes.Add("decimal");
+		fieldTypes.Add("int");
+		fieldTypes.Add("smallint");
+		fieldTypes.Add("tinyint");
+
+
+		fieldTypes.Add("binary");
+		fieldTypes.Add("char");
+		fieldTypes.Add("cursor");
+		fieldTypes.Add("date");
+		fieldTypes.Add("datetime");
+		fieldTypes.Add("datetime2");
+		fieldTypes.Add("datetimeoffset");
+		fieldTypes.Add("float");
+		fieldTypes.Add("hierarchyid");
+		fieldTypes.Add("image");
+		fieldTypes.Add("money");
+		fieldTypes.Add("nchar");
+		fieldTypes.Add("ntext");
+		fieldTypes.Add("numeric");
+		fieldTypes.Add("nvarchar");
+		fieldTypes.Add("real");
+		fieldTypes.Add("smalldatetime");
+		fieldTypes.Add("smallmoney");
+		fieldTypes.Add("sql_variant");
+		fieldTypes.Add("table");
+		fieldTypes.Add("text");
+		fieldTypes.Add("time");
+		fieldTypes.Add("timestamp");
+		fieldTypes.Add("uniqueidentifier");
+		fieldTypes.Add("varbinary");
+		fieldTypes.Add("varchar");
+		fieldTypes.Add("xml");
+	}
+	CreateGrid(1, 6);
     SetColLabelValue( 0, _( "Column Name" ) );
     SetColLabelValue( 1, _( "Data Type" ) );
     SetColLabelValue( 2, _( "Width" ) );
     SetColLabelValue( 3, _( "Dec" ) );
     SetColLabelValue( 4, _( "Null" ) );
     SetColLabelValue( 5, _( "Default" ) );
-    if (!table)
-        AppendRows();
+    if( !table )
+    {
+		AppendRows();
+        SetCellRenderer( 0, 1, new FieldTypeRenderer( "" ) );
+    }
     else
     {
         int i = 0;
@@ -50,6 +156,8 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, DatabaseTable *table, 
         {
             AppendRows();
             SetCellValue( i, 0, (*it)->GetFieldName() );
+            SetCellRenderer( i, 1, (*it)->GetFieldType() );
+            SetCellEditor( i, 1, wxGridCellChoiceEditor( fieldTypes ) );
             i++;
         }
     }
