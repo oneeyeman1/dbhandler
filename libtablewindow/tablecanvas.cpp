@@ -156,7 +156,7 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
         {
             AppendRows();
             SetCellValue( i, 0, (*it)->GetFieldName() );
-            SetCellRenderer( i, 1, (*it)->GetFieldType() );
+            SetCellRenderer( i, 1, FieldTypeRenderer( "" ) );
             SetCellEditor( i, 1, wxGridCellChoiceEditor( fieldTypes ) );
             i++;
         }
