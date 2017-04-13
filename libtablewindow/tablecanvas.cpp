@@ -158,8 +158,8 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
             m_grid->SetCellRenderer( i, 1, new FieldTypeRenderer( "" ) );
             m_grid->SetCellEditor( i, 1, new wxGridCellChoiceEditor( fieldTypes ) );
             m_grid->SetCellValue( i, 1, (*it)->GetFieldType() );
-            m_grid->SetCellValue( i, 2, (*it)->GetFieldSize() );
-            m_grid->SetCellValue( i, 3, (*it)->GetPrecision() );
+            m_grid->SetCellValue( i, 2, wxString::Format( "%d", (*it)->GetFieldSize() ) );
+            m_grid->SetCellValue( i, 3, wxString::Format( "%d", (*it)->GetPrecision() ) );
 			m_grid->SetCellValue( i, 4, (*it)->IsNullAllowed() ? _( "Yes" ) : _( "No" ) );
             m_grid->SetCellValue( i, 5, (*it)->GetDefaultValue() );
             i++;
@@ -169,11 +169,11 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
     m_grid->AutoSizeColumns();
     wxBoxSizer *mainSizer = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *controlSizer = new wxBoxSizer( wxVERTICAL );
-    wxStaticBoxSizer *boxSizer = new wxStaticBoxSizer();
-    wxFlexGridSizer *gridSizer = new wxFlexGridSizer();
+    wxStaticBoxSizer *boxSizer = new wxStaticBoxSizer( wxVERTICAL, m_mainPanel );
+    wxFlexGridSizer *gridSizer = new wxFlexGridSizer( 4, 3, 5, 5 );
     controlSizer->Add( m_grid, 0, wxEXPAND, 0 );
-    m_panel->SetSizer( controlSizer );
-    mainSizer->Add( m_panel, 0, wxEXPAND, 0 );
+    m_mainPanel->SetSizer( controlSizer );
+    mainSizer->Add( m_mainPanel, 0, wxEXPAND, 0 );
     SetSizer( mainSizer );
     mainSizer->Fit( this );
     Layout();
