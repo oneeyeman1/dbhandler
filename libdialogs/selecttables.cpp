@@ -30,13 +30,14 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
     m_db = db;
     m_names = names;
     sizer_1 = NULL;
+    m_isTableView = isTableView;
     // begin wxGlade: SelectTables::SelectTables
     m_readOnly = NULL;
     m_panel = new wxPanel( this, wxID_ANY );
     m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, isTableView ? wxLB_SINGLE : wxLB_MULTIPLE );
     m_showSystem = new wxCheckBox( m_panel, wxID_ANY, _( "&Show system tables" ) );
-    if( isTableView )
-		m_readOnly = new wxCheckBox( m_panel, wxID_ANY, _( "&Read-Only" ) );
+    if( m_isTableView )
+        m_readOnly = new wxCheckBox( m_panel, wxID_ANY, _( "&Read-Only" ) );
     m_open = new wxButton( m_panel, wxID_ANY, _( "&Open" ) );
     m_new = new wxButton( m_panel, wxID_ANY, _( "&New..." ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "&Cancel" ) );
@@ -77,11 +78,18 @@ void SelectTables::do_layout()
     wxBoxSizer* sizer_6 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer* sizer_8 = new wxBoxSizer( wxVERTICAL );
     wxBoxSizer* sizer_7 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* sizer_9 = new wxBoxSizer( wxHORIZONTAL );
     sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_7->Add( m_tables, 0, wxEXPAND, 0 );
     sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_7->Add( m_showSystem, 0, wxEXPAND, 0 );
+    sizer_9->Add( m_showSystem, 0, wxEXPAND, 0 );
+    if( m_isTableView )
+    {
+        sizer_9->Add( 40, 40, 0, wxEXPAND, 0 );
+        sizer_9->Add( m_readOnly, 0, wxEXPAND, 0 );
+    }
+    sizer_7->Add( sizer_9, 0, wxEXPAND, 0 );
     sizer_6->Add( sizer_7, 1, 0, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_8->Add( m_open, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
