@@ -23,7 +23,7 @@
 class TableCanvas: public wxWindow
 {
 public:
-    TableCanvas(wxView *view, const wxPoint &pt, Database *db, DatabaseTable *table = NULL, wxWindow *parent = NULL);
+    TableCanvas(wxView *view, const wxPoint &pt, Database *db, DatabaseTable *table = NULL, const wxString &fieldName = wxEmptyString, wxWindow *parent = NULL);
 protected:
 
 private:

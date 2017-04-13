@@ -34,7 +34,7 @@
 #include "typecombobox.h"
 #include "tablecanvas.h"
 
-TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, DatabaseTable *table, wxWindow *parent) : wxWindow(view->GetFrame(), wxID_ANY)
+TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, DatabaseTable *table, const wxString &fieldName, wxWindow *parent) : wxWindow(view->GetFrame(), wxID_ANY)
 {
     m_mainPanel = new wxPanel( this, wxID_ANY );
     m_grid = new wxGrid( m_panel, wxID_ANY );
