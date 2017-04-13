@@ -37,7 +37,13 @@
 TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, DatabaseTable *table, const wxString &fieldName, wxWindow *parent) : wxWindow(view->GetFrame(), wxID_ANY)
 {
     m_mainPanel = new wxPanel( this, wxID_ANY );
-    m_grid = new wxGrid( m_panel, wxID_ANY );
+    m_grid = new wxGrid( m_mainPanel, wxID_ANY );
+    m_label1 = new wxStaticText( m_mainPanel, wxID_ANY, _( "Heading" ) );
+    m_heading = new wxTextCtrl( m_mainPanel, wxID_ANY );
+    m_label2 = new wxStaticText( m_mainPanel, wxID_ANY, _( "Label" ) );
+    m_label = new wxTextCtrl( m_mainPanel, wxID_ANY );
+    m_label3 = new wxStaticText( m_mainPanel, wxID_ANY, _( "Comment" ) );
+    m_comment = new wxTextCtrl( m_mainPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
     wxArrayString fieldTypes;
     long selectedRow = 0;
     std::wstring type = db->GetTableVector().m_type, subtype = db->GetTableVector().m_subtype;
@@ -163,6 +169,8 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
     m_grid->AutoSizeColumns();
     wxBoxSizer *mainSizer = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *controlSizer = new wxBoxSizer( wxVERTICAL );
+    wxStaticBoxSizer *boxSizer = new wxStaticBoxSizer();
+    wxFlexGridSizer *gridSizer = new wxFlexGridSizer();
     controlSizer->Add( m_grid, 0, wxEXPAND, 0 );
     m_panel->SetSizer( controlSizer );
     mainSizer->Add( m_panel, 0, wxEXPAND, 0 );
