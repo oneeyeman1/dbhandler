@@ -39,6 +39,7 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
     m_mainPanel = new wxPanel( this, wxID_ANY );
     m_grid = new wxGrid( m_panel, wxID_ANY );
     wxArrayString fieldTypes;
+    long selectedRow = 0;
     std::wstring type = db->GetTableVector().m_type, subtype = db->GetTableVector().m_subtype;
     if( type == L"SQLite" )
     {
@@ -146,6 +147,8 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
         {
             m_grid->AppendRows();
             m_grid->SetCellValue( i, 0, (*it)->GetFieldName() );
+            if( fieldName != wxEmptyString && fieldName == (*it)->GetFieldName() )
+                selectedRow = i;
             m_grid->SetCellRenderer( i, 1, new FieldTypeRenderer( "" ) );
             m_grid->SetCellEditor( i, 1, new wxGridCellChoiceEditor( fieldTypes ) );
             m_grid->SetCellValue( i, 1, (*it)->GetFieldType() );
@@ -156,6 +159,7 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
             i++;
         }
     }
+    m_grid->SelectRow( selectedRow );
     m_grid->AutoSizeColumns();
     wxBoxSizer *mainSizer = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *controlSizer = new wxBoxSizer( wxVERTICAL );
