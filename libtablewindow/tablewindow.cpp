@@ -83,11 +83,11 @@ IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
 extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *docManager, Database *db, DatabaseTable *table, const wxString &fieldName)
 {
-    bool found = false;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    if( !found )
+    wxDocTemplate *template = docManager->FindTemplate( CLASSINFO(TableDocument ) );
+    if( !docTemplate )
         new wxDocTemplate( docManager, "Drawing", "*.tbl", "", "tbl", "Table Doc", "Table View", CLASSINFO(TableDocument), CLASSINFO(TableView) );
     docManager->CreateDocument( "*.tbl", wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<TableDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db );
