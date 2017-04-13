@@ -43,6 +43,7 @@ typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxSt
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *, wxString &, bool &);
+typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -518,5 +519,31 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
 
 void DrawingView::OnAlterTable(wxCommandEvent &event)
 {
-
+    ShapeList shapes;
+    SjapeList::iterator it;
+    bool found = false;
+    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
+    for( it = shapes.begin(); it != shapes.end() && !found; ++it )
+    {
+        if( (*it)->IsSelected() )
+            found = true;
+    }
+    wxDynamicLib lib1;
+    lib1 = new wxDynamicLibrary;
+#ifdef __WXMSW__
+    lib1->Load( "tablewindow" );
+#elif __WXOSX__
+    lib1->Load( "liblibtablewindow.dylib" );
+#else
+    lib1->Load( "libtablewindow" );
+#endif
+    if( m_db && lib1->IsLoaded() )
+    {
+        TABLE func = (TABLE) lib1->GetSymbol( "CreateDatabaseWindow" );
+        func( this, m_manager, m_db, (*it), wxEmptyString );                 // create with possible alteration table
+    }
+    else if( !lib1->IsLoaded() )
+        wxMessageBox( "Error loading the library. Please re-install the software and try again." );
+    else
+        wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
 }
