@@ -66,6 +66,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_STOPLOG, DrawingView::OnStopLog)
     EVT_MENU(wxID_SAVELOG, DrawingView::OnSaveLog)
     EVT_MENU(wxID_CLEARLOG, DrawingView::OnClearLog)
+    EVT_MENU(wxID_TABLEALTERTABLE, DrawingView::OnAlterTable)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -513,4 +514,9 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
     {
         wxDocMDIParentFrame *parent = wxStaticCast(wxTheApp->GetTopWindow(), wxDocMDIParentFrame);
     }
+}
+
+void DrawingView::OnAlterTable(wxCommandEvent &event)
+{
+
 }
