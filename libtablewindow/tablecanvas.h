@@ -28,6 +28,8 @@ protected:
 
 private:
 	wxGrid *m_grid;
+    wxStaticText *m_label1, *m_label2, *m_label3;
+    wxTextCtrl *m_heading, *m_label, *m_comment;
 	wxPanel *m_mainPanel;
 };
 
