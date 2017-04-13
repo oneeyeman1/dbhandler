@@ -298,7 +298,7 @@ void MainFrame::OnTable(wxCommandEvent &event)
         if( m_db && m_lib1->IsLoaded() )
         {
             TABLE func = (TABLE) m_lib1->GetSymbol( "CreateDatabaseWindow" );
-            func( this, m_manager, m_db, NULL, wxEmptyString );
+            func( this, m_manager, m_db, NULL, wxEmptyString );                 // create with possible alteration table
         }
         else if( !m_lib1->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
