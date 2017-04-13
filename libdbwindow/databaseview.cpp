@@ -68,6 +68,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_SAVELOG, DrawingView::OnSaveLog)
     EVT_MENU(wxID_CLEARLOG, DrawingView::OnClearLog)
     EVT_MENU(wxID_TABLEALTERTABLE, DrawingView::OnAlterTable)
+    EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -520,7 +521,7 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
 void DrawingView::OnAlterTable(wxCommandEvent &event)
 {
     ShapeList shapes;
-    SjapeList::iterator it;
+    ShapeList::iterator it;
     bool found = false;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
     for( it = shapes.begin(); it != shapes.end() && !found; ++it )
@@ -541,6 +542,44 @@ void DrawingView::OnAlterTable(wxCommandEvent &event)
     {
         TABLE func = (TABLE) lib1->GetSymbol( "CreateDatabaseWindow" );
         func( this, m_manager, m_db, (*it), wxEmptyString );                 // create with possible alteration table
+    }
+    else if( !lib1->IsLoaded() )
+        wxMessageBox( "Error loading the library. Please re-install the software and try again." );
+    else
+        wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
+}
+
+void DrawingView::OnFieldDefinition(wxCommandEvent &event)
+{
+    ShapeList shapes;
+    MyErdTable *table;
+    FieldShape *field;
+    ShapeList::iterator it;
+    bool found = false;
+    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
+    for( it = shapes.begin(); it != shapes.end() && !found; ++it )
+    {
+        if( (*it)->IsSelected() )
+        {
+            if( wxDynamicCast( (*it), MyErdTable ) )
+				table = (*it);
+            if( wxDynamicCast( (*it), FieldShape ) )
+                field = (*it);
+        }
+	}
+    wxDynamicLib lib1;
+    lib1 = new wxDynamicLibrary;
+#ifdef __WXMSW__
+    lib1->Load( "tablewindow" );
+#elif __WXOSX__
+    lib1->Load( "liblibtablewindow.dylib" );
+#else
+    lib1->Load( "libtablewindow" );
+#endif
+    if( m_db && lib1->IsLoaded() )
+    {
+        TABLE func = (TABLE) lib1->GetSymbol( "CreateDatabaseWindow" );
+        func( this, m_manager, m_db, table, field->GetFieldName() );                 // display field parameters
     }
     else if( !lib1->IsLoaded() )
         wxMessageBox( "Error loading the library. Please re-install the software and try again." );
