@@ -34,8 +34,10 @@
 #include "typecombobox.h"
 #include "tablecanvas.h"
 
-TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, DatabaseTable *table, wxWindow *parent) : wxGrid(view->GetFrame(), wxID_ANY)
+TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, DatabaseTable *table, wxWindow *parent) : wxWindow(view->GetFrame(), wxID_ANY)
 {
+    m_mainPanel = new wxPanel( this, wxID_ANY );
+    m_grid = new wxGrid( m_panel, wxID_ANY );
     wxArrayString fieldTypes;
     std::wstring type = db->GetTableVector().m_type, subtype = db->GetTableVector().m_subtype;
     if( type == L"SQLite" )
@@ -125,72 +127,42 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
         if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
             fieldTypes.Add( "year" );
     }
-	{
-		fieldTypes.Add("bigint");
-		fieldTypes.Add("bit");
-		fieldTypes.Add("boolean");  // mySQL specific
-		fieldTypes.Add("decimal");
-		fieldTypes.Add("int");
-		fieldTypes.Add("smallint");
-		fieldTypes.Add("tinyint");
-
-
-		fieldTypes.Add("binary");
-		fieldTypes.Add("char");
-		fieldTypes.Add("cursor");
-		fieldTypes.Add("date");
-		fieldTypes.Add("datetime");
-		fieldTypes.Add("datetime2");
-		fieldTypes.Add("datetimeoffset");
-		fieldTypes.Add("float");
-		fieldTypes.Add("hierarchyid");
-		fieldTypes.Add("image");
-		fieldTypes.Add("money");
-		fieldTypes.Add("nchar");
-		fieldTypes.Add("ntext");
-		fieldTypes.Add("numeric");
-		fieldTypes.Add("nvarchar");
-		fieldTypes.Add("real");
-		fieldTypes.Add("smalldatetime");
-		fieldTypes.Add("smallmoney");
-		fieldTypes.Add("sql_variant");
-		fieldTypes.Add("table");
-		fieldTypes.Add("text");
-		fieldTypes.Add("time");
-		fieldTypes.Add("timestamp");
-		fieldTypes.Add("uniqueidentifier");
-		fieldTypes.Add("varbinary");
-		fieldTypes.Add("varchar");
-		fieldTypes.Add("xml");
-	}
-    CreateGrid(1, 6);
-    SetColLabelValue( 0, _( "Column Name" ) );
-    SetColLabelValue( 1, _( "Data Type" ) );
-    SetColLabelValue( 2, _( "Width" ) );
-    SetColLabelValue( 3, _( "Dec" ) );
-    SetColLabelValue( 4, _( "Null" ) );
-    SetColLabelValue( 5, _( "Default" ) );
+    m_grid->CreateGrid(1, 6);
+    m_grid->SetColLabelValue( 0, _( "Column Name" ) );
+    m_grid->SetColLabelValue( 1, _( "Data Type" ) );
+    m_grid->SetColLabelValue( 2, _( "Width" ) );
+    m_grid->SetColLabelValue( 3, _( "Dec" ) );
+    m_grid->SetColLabelValue( 4, _( "Null" ) );
+    m_grid->SetColLabelValue( 5, _( "Default" ) );
     if( !table )
     {
-        AppendRows();
-        SetCellRenderer( 0, 1, new FieldTypeRenderer( "" ) );
+        m_grid->AppendRows();
+        m_grid->SetCellRenderer( 0, 1, new FieldTypeRenderer( "" ) );
     }
     else
     {
         int i = 0;
         for( std::vector<Field *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); it++)
         {
-            AppendRows();
-            SetCellValue( i, 0, (*it)->GetFieldName() );
-            SetCellRenderer( i, 1, new FieldTypeRenderer( "" ) );
-            SetCellEditor( i, 1, new wxGridCellChoiceEditor( fieldTypes ) );
-            SetCellValue( i, 1, (*it)->GetFieldType() );
-            SetCellValue( i, 2, (*it)->GetFieldSize() );
-            SetCellValue( i, 3, (*it)->GetPrecision() );
-			SetCellValue( i, 4, (*it)->IsNullAllowed() ? _( "Yes" ) : _( "No" ) );
-            SetCellValue( i, 5, (*it)->GetDefaultValue() );
+            m_grid->AppendRows();
+            m_grid->SetCellValue( i, 0, (*it)->GetFieldName() );
+            m_grid->SetCellRenderer( i, 1, new FieldTypeRenderer( "" ) );
+            m_grid->SetCellEditor( i, 1, new wxGridCellChoiceEditor( fieldTypes ) );
+            m_grid->SetCellValue( i, 1, (*it)->GetFieldType() );
+            m_grid->SetCellValue( i, 2, (*it)->GetFieldSize() );
+            m_grid->SetCellValue( i, 3, (*it)->GetPrecision() );
+			m_grid->SetCellValue( i, 4, (*it)->IsNullAllowed() ? _( "Yes" ) : _( "No" ) );
+            m_grid->SetCellValue( i, 5, (*it)->GetDefaultValue() );
             i++;
         }
     }
-    AutoSizeColumns();
+    m_grid->AutoSizeColumns();
+    wxBoxSizer *mainSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *controlSizer = new wxBoxSizer( wxVERTICAL );
+    controlSizer->Add( m_grid, 0, wxEXPAND, 0 );
+    m_panel->SetSizer( controlSizer );
+    mainSizer->Add( m_panel, 0, wxEXPAND, 0 );
+    SetSizer( mainSizer );
+    mainSizer->Fit( this );
+    Layout();
 }
