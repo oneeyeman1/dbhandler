@@ -501,14 +501,45 @@ ViewType DrawingView::GetViewType()
 
 void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
+    if( m_isCreated )
+        return;
+    if( activate )
+    {
+        wxDocMDIParentFrame *parent = wxStaticCast(wxTheApp->GetTopWindow(), wxDocMDIParentFrame);
+        wxMenuBar *bar = parent->GetMenuBar();
+        wxMenu *file_menu = bar->GetMenu( 0 );
+        if( file_menu->FindItem( wxID_NEW ) )
+            file_menu->Delete( wxID_NEW );
+        if( file_menu->FindItem( wxID_OPEN ) )
+            file_menu->Delete( wxID_OPEN );
+        file_menu->Insert( 0, wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
+        file_menu->Insert( 2, wxID_CREATEDATABASE, _( "Create Database..." ), _( "Create Database" ) );
+        file_menu->Insert( 3, wxID_DELETEDATABASE, _( "Delete Database..." ), _( "Delete Database" ) );
+        file_menu->InsertSeparator( 4 );
+        wxMenu *menuObject = new wxMenu();
+        menuObject->Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select tables" ) );
+        wxMenu *menuNewObject = new wxMenu();
+        menuNewObject->Append( wxID_OBJECTNEWTABLE, _( "Table..." ), _( "New Table" ) );
+        menuNewObject->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );
+        menuNewObject->Append( wxID_OBJECTNEWVIEW, _( "View" ), _( "New View" ) );
+        menuNewObject->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
+        menuObject->AppendSubMenu( menuNewObject, _( "New" ), _( "New Object" ) );
+        menuObject->Append( wxID_TABLEDROPTABLE, _( "Drop" ), _( "Drop database object" ) );
+        menuObject->AppendSeparator();
+        menuObject->Append( wxID_PROPERTIES, _( "Properties..." ), _( "Properties" ) );
+        bar->Insert( 1, menuObject, _( "&Object" ) );
+        wxMenu *menuDesign = new wxMenu();
+        menuDesign->Append( wxID_STARTLOG, _( "Start Log" ), _( "Start log" ) );
+        menuDesign->Append( wxID_STOPLOG, _( "Stop Log" ), _( "Stop log" ) );
+        menuDesign->Append( wxID_SAVELOG, _( "Save Log As..." ), _( "Save log to disk file" ) );
+        menuDesign->Append( wxID_CLEARLOG, _( "Clear Log" ), _( "Discard content of the log" ) );
+        menuDesign->AppendSeparator();
+        bar->Insert( 2, menuDesign, _( "&Design" ) );
+    }
     if( !m_isCreated )
     {
         m_isCreated = true;
         return;
-    }
-    else
-    {
-        wxDocMDIParentFrame *parent = wxStaticCast(wxTheApp->GetTopWindow(), wxDocMDIParentFrame);
     }
 }
 

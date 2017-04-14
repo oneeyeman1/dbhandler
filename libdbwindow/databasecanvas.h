@@ -40,6 +40,8 @@ private:
 #define wxID_VIEWSHOWINDEXKEYS     33
 #define wxID_VIEWSHOWINTEGRITY     34
 #define wxID_PROPERTIES            50
+#define wxID_CREATEDATABASE       100
+#define wxID_DELETEDATABASE       101
 #define wxID_SELECTTABLE          102
 #define wxID_OBJECTNEWTABLE       103
 #define wxID_OBJECTNEWINDEX       104

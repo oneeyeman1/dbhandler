@@ -116,11 +116,11 @@ void MainFrame::InitMenuBar(int id)
     if( !m_tb )
         m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
 #endif
-    if( m_menuFile->FindItem( wxID_NEW ) )
+/*    if( m_menuFile->FindItem( wxID_NEW ) )
         m_menuFile->Delete( wxID_NEW );
     if( m_menuFile->FindItem( wxID_OPEN ) )
         m_menuFile->Delete( wxID_OPEN );
-    m_menuFile->Insert( 0, wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
+    m_menuFile->Insert( 0, wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );*/
     switch( id )
     {
         case wxID_DATABASE:
@@ -132,7 +132,7 @@ void MainFrame::InitMenuBar(int id)
             m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
             m_tb->Realize();
 #endif
-            DatabaseMenu();
+//            DatabaseMenu();
             break;
         case wxID_TABLE:
 #if defined __WXMSW__ || defined __WXGTK__
