@@ -15,9 +15,11 @@ public:
     void OnFieldDefinition(wxCommandEvent &event);
     void OnFieldProperties(wxCommandEvent &event);
     void OnLogUpdateUI(wxUpdateUIEvent &event);
+    virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
     TableDocument* GetDocument();
 
 private:
+    bool m_isCreated;
     wxToolBar *m_tb;
     wxDocMDIChildFrame *m_frame;
     wxDECLARE_EVENT_TABLE();
