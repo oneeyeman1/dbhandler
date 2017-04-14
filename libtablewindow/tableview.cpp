@@ -113,10 +113,27 @@ void TableView::GetTablesForView(Database *db)
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), true );
         if( res != wxID_CANCEL )
         {
+            bool found = false;
+            Database *db = ((TableDocument *) GetDocument())->GetDatabase();
+            std::map<std::wstring, std::vector<DatabaseTable *> > tables = db->GetTableVector().m_tables;
+            std::vector<DatabaseTable *> tableVec = tables.at( db->GetTableVector().m_dbName );
+            for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end() && !found; it++ )
+            {
+                if( (*it)->GetTableName() == tables.at( 0 ).ToStdWstring() )
+                {
+                    m_table = (*it);
+                    found = true;
+                }
+            }
             ((TableDocument *) GetDocument())->AddTables( tables );
         }
     }
 //    return tables;
+}
+
+DatabaseTable *TableView::GetDatabaseTable()
+{
+    return m_table;
 }
 
 TableDocument* TableView::GetDocument()
