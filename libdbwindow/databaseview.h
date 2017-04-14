@@ -33,7 +33,6 @@ public:
     void OnSaveLog(wxCommandEvent &event);
     void OnClearLog(wxCommandEvent &event);
     void OnAlterTable(wxCommandEvent &event);
-    void OnFieldDefinition(wxCommandEvent &event);
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
     DrawingDocument* GetDocument();
 

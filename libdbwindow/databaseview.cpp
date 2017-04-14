@@ -54,7 +54,6 @@ wxIMPLEMENT_DYNAMIC_CLASS(DrawingView, wxView);
 wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_SELECTTABLE, DrawingView::OnViewSelectedTables)
     EVT_MENU(wxID_OBJECTNEWINDEX, DrawingView::OnNewIndex)
-    EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_PROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
@@ -353,11 +352,6 @@ void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
     GetTablesForView( GetDocument()->GetDatabase() );
 }
 
-void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
-{
-    wxMessageBox( "Field definition" );
-}
-
 void DrawingView::OnFieldProperties(wxCommandEvent &event)
 {
     std::vector<std::wstring> errors;
@@ -520,6 +514,7 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
 
 void DrawingView::OnAlterTable(wxCommandEvent &event)
 {
+    wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     ShapeList shapes;
     ShapeList::iterator it;
     bool found = false;
@@ -529,21 +524,21 @@ void DrawingView::OnAlterTable(wxCommandEvent &event)
         if( (*it)->IsSelected() )
             found = true;
     }
-    wxDynamicLib lib1;
-    lib1 = new wxDynamicLibrary;
+    wxDynamicLibrary lib1;
 #ifdef __WXMSW__
-    lib1->Load( "tablewindow" );
+    lib1.Load( "tablewindow" );
 #elif __WXOSX__
-    lib1->Load( "liblibtablewindow.dylib" );
+    lib1.Load( "liblibtablewindow.dylib" );
 #else
-    lib1->Load( "libtablewindow" );
+    lib1.Load( "libtablewindow" );
 #endif
-    if( m_db && lib1->IsLoaded() )
+    if( lib1.IsLoaded() )
     {
-        TABLE func = (TABLE) lib1->GetSymbol( "CreateDatabaseWindow" );
-        func( this, m_manager, m_db, (*it), wxEmptyString );                 // create with possible alteration table
+        TABLE func = (TABLE) lib1.GetSymbol( "CreateDatabaseWindow" );
+        MyErdTable *erdTable = dynamic_cast<MyErdTable *>( (*it) );
+        func( parent, GetDocumentManager(), dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase(), const_cast<DatabaseTable *>( &( erdTable->GetTable() ) ), wxEmptyString );                 // create with possible alteration table
     }
-    else if( !lib1->IsLoaded() )
+    else if( !lib1.IsLoaded() )
         wxMessageBox( "Error loading the library. Please re-install the software and try again." );
     else
         wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
@@ -551,6 +546,7 @@ void DrawingView::OnAlterTable(wxCommandEvent &event)
 
 void DrawingView::OnFieldDefinition(wxCommandEvent &event)
 {
+    wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     ShapeList shapes;
     MyErdTable *table;
     FieldShape *field;
@@ -562,26 +558,26 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &event)
         if( (*it)->IsSelected() )
         {
             if( wxDynamicCast( (*it), MyErdTable ) )
-				table = (*it);
+				table = wxDynamicCast( (*it), MyErdTable );
             if( wxDynamicCast( (*it), FieldShape ) )
-                field = (*it);
+                field = wxDynamicCast( (*it), FieldShape );
         }
 	}
-    wxDynamicLib lib1;
-    lib1 = new wxDynamicLibrary;
+    wxDynamicLibrary lib1;
 #ifdef __WXMSW__
-    lib1->Load( "tablewindow" );
+    lib1.Load( "tablewindow" );
 #elif __WXOSX__
-    lib1->Load( "liblibtablewindow.dylib" );
+    lib1.Load( "liblibtablewindow.dylib" );
 #else
-    lib1->Load( "libtablewindow" );
+    lib1.Load( "libtablewindow" );
 #endif
-    if( m_db && lib1->IsLoaded() )
+    if( lib1.IsLoaded() )
     {
-        TABLE func = (TABLE) lib1->GetSymbol( "CreateDatabaseWindow" );
-        func( this, m_manager, m_db, table, field->GetFieldName() );                 // display field parameters
+        TABLE func = (TABLE) lib1.GetSymbol( "CreateDatabaseWindow" );
+        MyErdTable *erdTable = dynamic_cast<MyErdTable *>( (*it) );
+        func( parent, GetDocumentManager(), dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase(), const_cast<DatabaseTable *>( &( erdTable->GetTable() ) ), field->GetField()->GetFieldName() );                 // display field parameters
     }
-    else if( !lib1->IsLoaded() )
+    else if( !lib1.IsLoaded() )
         wxMessageBox( "Error loading the library. Please re-install the software and try again." );
     else
         wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
