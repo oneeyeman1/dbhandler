@@ -3,6 +3,7 @@
 #pragma execution_character_set("utf-8")
 #endif
 
+#include <stdio.h>
 #include <map>
 #include <vector>
 #include <string.h>
@@ -58,9 +59,19 @@ int SQLiteDatabase::CreateDatabase(const std::wstring &name, std::vector<std::ws
 {
     int result = 0;
     char *err;
-    int res = Disconnect( errorMsg );
-    if( res == SQLITE_OK )
-        res = Connect(name, errorMsg);
+    result = Disconnect( errorMsg );
+    if( result == SQLITE_OK )
+        result = Connect(name, errorMsg);
+    return result;
+}
+
+int SQLiteDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    if( pimpl->m_dbName == name )
+        result = Disconnect( errorMsg );
+    if( !result )
+        result = remove( name.c_str() );
     return result;
 }
 
