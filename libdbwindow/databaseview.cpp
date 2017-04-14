@@ -501,10 +501,10 @@ ViewType DrawingView::GetViewType()
 
 void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
-    if( m_isCreated )
-        return;
     if( activate )
     {
+        if( m_isCreated )
+            return;
         wxDocMDIParentFrame *parent = wxStaticCast(wxTheApp->GetTopWindow(), wxDocMDIParentFrame);
         wxMenuBar *bar = parent->GetMenuBar();
         wxMenu *file_menu = bar->GetMenu( 0 );
@@ -535,11 +535,11 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         menuDesign->Append( wxID_CLEARLOG, _( "Clear Log" ), _( "Discard content of the log" ) );
         menuDesign->AppendSeparator();
         bar->Insert( 2, menuDesign, _( "&Design" ) );
-    }
-    if( !m_isCreated )
-    {
-        m_isCreated = true;
-        return;
+        if( !m_isCreated )
+        {
+            m_isCreated = true;
+            return;
+        }
     }
 }
 
