@@ -23,6 +23,8 @@ class ODBCDatabase : public Database
 public:
     ODBCDatabase();
     virtual ~ODBCDatabase();
+    virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
+    virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
     virtual int Disconnect(std::vector<std::wstring> &errorMsg);
     void SetWindowHandle(SQLHWND handle);
