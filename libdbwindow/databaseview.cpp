@@ -505,7 +505,15 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
     {
         if( m_isCreated )
             return;
-        wxDocMDIParentFrame *parent = wxStaticCast(wxTheApp->GetTopWindow(), wxDocMDIParentFrame);
+        wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
+        wxWindowList children = parent->GetChildren();
+        bool found = false;
+        for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
+        {
+            m_tb = wxDynamicCast( *it, wxToolBar );
+            if( m_tb && m_tb->GetName() == "Second Toolbar" )
+                found = true;
+        }
         wxMenuBar *bar = parent->GetMenuBar();
         wxMenu *file_menu = bar->GetMenu( 0 );
         if( file_menu->FindItem( wxID_NEW ) )
@@ -535,12 +543,22 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         menuDesign->Append( wxID_CLEARLOG, _( "Clear Log" ), _( "Discard content of the log" ) );
         menuDesign->AppendSeparator();
         bar->Insert( 2, menuDesign, _( "&Design" ) );
+#if defined __WXMSW__ || defined __WXGTK__
+        m_tb->ClearTools();
+        m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
+        m_tb->AddTool( wxID_OBJECTNEWFF, _( "Foreign Key" ), wxBitmap( key_f1 ), wxBitmap( key_f1 ), wxITEM_NORMAL, _( "Create Foreign Key" ), _( "Create Foreign Key" ) );
+        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+        m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
+        m_tb->Realize();
+#endif
         if( !m_isCreated )
         {
             m_isCreated = true;
             return;
         }
     }
+    else
+        m_tb->ClearTools();
 }
 
 void DrawingView::OnAlterTable(wxCommandEvent &event)
