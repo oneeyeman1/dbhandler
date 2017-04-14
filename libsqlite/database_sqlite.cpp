@@ -54,6 +54,16 @@ SQLiteDatabase::~SQLiteDatabase()
     }
 }
 
+int SQLiteDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    char *err;
+    int res = Disconnect( errorMsg );
+    if( res == SQLITE_OK )
+        res = Connect(name, errorMsg);
+    return result;
+}
+
 int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
