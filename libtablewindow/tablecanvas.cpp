@@ -127,7 +127,7 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
         fieldTypes.Add( "tinyint" );
         if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
             fieldTypes.Add( "tinytext" );
-		fieldTypes.Add("uniqueidentifier");
+        fieldTypes.Add("uniqueidentifier");
         fieldTypes.Add( "varbinary" );
         fieldTypes.Add( "varchar" );
         fieldTypes.Add( "xml" );
@@ -160,7 +160,7 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
             m_grid->SetCellValue( i, 1, (*it)->GetFieldType() );
             m_grid->SetCellValue( i, 2, wxString::Format( "%d", (*it)->GetFieldSize() ) );
             m_grid->SetCellValue( i, 3, wxString::Format( "%d", (*it)->GetPrecision() ) );
-			m_grid->SetCellValue( i, 4, (*it)->IsNullAllowed() ? _( "Yes" ) : _( "No" ) );
+            m_grid->SetCellValue( i, 4, (*it)->IsNullAllowed() ? _( "Yes" ) : _( "No" ) );
             m_grid->SetCellValue( i, 5, (*it)->GetDefaultValue() );
             i++;
         }
