@@ -558,7 +558,10 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         }
     }
     else
+    {
         m_tb->ClearTools();
+        m_tb->Hide();
+    }
 }
 
 void DrawingView::OnAlterTable(wxCommandEvent &event)
