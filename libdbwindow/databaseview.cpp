@@ -502,7 +502,7 @@ ViewType DrawingView::GetViewType()
 
 void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
-    if( activate )
+/*    if( activate )
     {
         if( m_isCreated )
             return;
@@ -515,6 +515,7 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
             if( m_tb && m_tb->GetName() == "Second Toolbar" )
                 found = true;
         }
+        m_tb->Show();
         wxMenuBar *bar = parent->GetMenuBar();
         wxMenu *file_menu = bar->GetMenu( 0 );
         if( file_menu->FindItem( wxID_NEW ) )
@@ -544,6 +545,7 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         menuDesign->Append( wxID_CLEARLOG, _( "Clear Log" ), _( "Discard content of the log" ) );
         menuDesign->AppendSeparator();
         bar->Insert( 2, menuDesign, _( "&Design" ) );
+        parent->SetMenuBar( bar );
 #if defined __WXMSW__ || defined __WXGTK__
         m_tb->ClearTools();
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
@@ -562,7 +564,7 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
     {
         m_tb->ClearTools();
         m_tb->Hide();
-    }
+    }*/
 }
 
 void DrawingView::OnAlterTable(wxCommandEvent &event)

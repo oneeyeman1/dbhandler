@@ -71,11 +71,11 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     CreateStatusBar();
     CreateToolBar( wxNO_BORDER | wxTB_FLAT | wxTB_HORIZONTAL );
     InitToolBar( GetToolBar() );
-    wxSize clientSize = GetClientSize();
+/*    wxSize clientSize = GetClientSize();
     m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
     m_tb->Hide();
     clientSize.SetHeight( clientSize.GetHeight() - GetToolBar()->GetSize().GetHeight() );
-    SetClientSize( clientSize );
+    SetClientSize( clientSize );*/
 }
 
 MainFrame::~MainFrame()
@@ -121,23 +121,23 @@ void MainFrame::InitMenuBar(int id)
     if( !m_tb )
         m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
 #endif
-/*    if( m_menuFile->FindItem( wxID_NEW ) )
+    if( m_menuFile->FindItem( wxID_NEW ) )
         m_menuFile->Delete( wxID_NEW );
     if( m_menuFile->FindItem( wxID_OPEN ) )
         m_menuFile->Delete( wxID_OPEN );
-    m_menuFile->Insert( 0, wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );*/
+    m_menuFile->Insert( 0, wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
     switch( id )
     {
         case wxID_DATABASE:
-/*#if defined __WXMSW__ || defined __WXGTK__
+#if defined __WXMSW__ || defined __WXGTK__
             m_tb->ClearTools();
             m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
             m_tb->AddTool( wxID_OBJECTNEWFF, _( "Foreign Key" ), wxBitmap( key_f1 ), wxBitmap( key_f1 ), wxITEM_NORMAL, _( "Create Foreign Key" ), _( "Create Foreign Key" ) );
             m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
             m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
             m_tb->Realize();
-#endif*/
-//            DatabaseMenu();
+#endif
+            DatabaseMenu();
             break;
         case wxID_TABLE:
 #if defined __WXMSW__ || defined __WXGTK__
