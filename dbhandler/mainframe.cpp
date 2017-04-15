@@ -74,7 +74,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     wxSize clientSize = GetClientSize();
     m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
     m_tb->Hide();
-    clientSize.SetHeight( clientSize.GetHeight() - GetToolBar().GetSize().GetHeight() );
+    clientSize.SetHeight( clientSize.GetHeight() - GetToolBar()->GetSize().GetHeight() );
     SetClientSize( clientSize );
 }
 

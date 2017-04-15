@@ -13,11 +13,12 @@
     #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#ifdef __WXOSX__
+//#ifdef __WXOSX__
 #include "../dbhandler/res/database_profile.xpm"
 #include "../dbhandler/res/table.xpm"
 #include "../dbhandler/res/properties.xpm"
-#endif
+#include "res/gui/key-f1.xpm"
+//#endif
 
 #include <string>
 #include "wx/docview.h"

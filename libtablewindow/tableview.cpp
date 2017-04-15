@@ -115,8 +115,8 @@ void TableView::GetTablesForView(Database *db)
         {
             bool found = false;
             Database *db = ((TableDocument *) GetDocument())->GetDatabase();
-            std::map<std::wstring, std::vector<DatabaseTable *> > tables = db->GetTableVector().m_tables;
-            std::vector<DatabaseTable *> tableVec = tables.at( db->GetTableVector().m_dbName );
+            std::map<std::wstring, std::vector<DatabaseTable *> > tbls = db->GetTableVector().m_tables;
+            std::vector<DatabaseTable *> tableVec = tbls.at( db->GetTableVector().m_dbName );
             for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end() && !found; it++ )
             {
                 if( (*it)->GetTableName() == tables.at( 0 ).ToStdWstring() )

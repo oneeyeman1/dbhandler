@@ -71,7 +71,7 @@ int SQLiteDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstr
     if( pimpl->m_dbName == name )
         result = Disconnect( errorMsg );
     if( !result )
-        result = remove( name.c_str() );
+        result = remove( sqlite_pimpl->m_myconv.to_bytes( name.c_str() ).c_str() );
     return result;
 }
 
