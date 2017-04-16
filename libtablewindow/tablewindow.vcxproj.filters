@@ -22,6 +22,9 @@
     <ClCompile Include="tablewindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="typecombobox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tablecanvas.h">
@@ -31,6 +34,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tableview.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="typecombobox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

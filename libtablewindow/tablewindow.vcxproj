@@ -39,11 +39,13 @@
     <ClCompile Include="tabledoc.cpp" />
     <ClCompile Include="tableview.cpp" />
     <ClCompile Include="tablewindow.cpp" />
+    <ClCompile Include="typecombobox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tablecanvas.h" />
     <ClInclude Include="tabledoc.h" />
     <ClInclude Include="tableview.h" />
+    <ClInclude Include="typecombobox.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>tablewindow</ProjectName>
@@ -266,7 +268,7 @@
       <AdditionalIncludeDirectories>.\..\..\lib\vc_dll\mswud;.\..\..\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw31ud_adv.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>..\dbhandler\vc_mswuddll\tablewindow.dll</OutputFile>
       <ImportLibrary>vc_mswuddll\tablewindow.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>

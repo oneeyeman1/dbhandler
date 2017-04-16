@@ -13,10 +13,12 @@
     #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#include "res/database_profile.xpm"
-#include "res/table.xpm"
-#include "res/properties.xpm"
+//#ifdef __WXOSX__
+#include "../dbhandler/res/database_profile.xpm"
+#include "../dbhandler/res/table.xpm"
+#include "../dbhandler/res/properties.xpm"
 #include "res/gui/key-f1.xpm"
+//#endif
 
 #include <string>
 #include "wx/docview.h"
@@ -42,6 +44,7 @@ typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxSt
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *, wxString &, bool &);
+typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -52,7 +55,6 @@ wxIMPLEMENT_DYNAMIC_CLASS(DrawingView, wxView);
 wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_SELECTTABLE, DrawingView::OnViewSelectedTables)
     EVT_MENU(wxID_OBJECTNEWINDEX, DrawingView::OnNewIndex)
-    EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_PROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
@@ -65,17 +67,19 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_STOPLOG, DrawingView::OnStopLog)
     EVT_MENU(wxID_SAVELOG, DrawingView::OnSaveLog)
     EVT_MENU(wxID_CLEARLOG, DrawingView::OnClearLog)
+    EVT_MENU(wxID_TABLEALTERTABLE, DrawingView::OnAlterTable)
+    EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
-    m_tb = NULL;
+	m_isCreated = false;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
-/*    wxWindowList children = parent->GetChildren();
+    wxWindowList children = parent->GetChildren();
     bool found = false;
     int height = 0;
     for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
@@ -89,11 +93,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     wxPoint start( 0, height );
     wxRect clientRect = parent->GetClientRect();
-    clientRect.height -= height;*/
-    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxDefaultSize );
-#if defined __WXMSW__ || defined __WXGTK__
-    m_frame->Bind( wxEVT_ACTIVATE, &DrawingView::OnActivateFrame, this );
-#endif
+    clientRect.height -= height;
+    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), /*wxDefaultPosition*/start, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
     m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
     m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
     wxPoint ptCanvas;
@@ -352,11 +353,6 @@ void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
     GetTablesForView( GetDocument()->GetDatabase() );
 }
 
-void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
-{
-    wxMessageBox( "Field definition" );
-}
-
 void DrawingView::OnFieldProperties(wxCommandEvent &event)
 {
     std::vector<std::wstring> errors;
@@ -504,22 +500,141 @@ ViewType DrawingView::GetViewType()
 	return m_type;
 }
 #if defined __WXMSW__ || defined __WXGTK__
-void DrawingView::OnActivateFrame(wxActivateEvent &event)
+void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
-    wxDocMDIParentFrame *frame = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
-    wxSize frameClientSize = frame->GetClientSize();
-    wxDocMDIChildFrame *child = wxDynamicCast( event.GetEventObject(), wxDocMDIChildFrame);
-    if( !m_tb )
-        m_tb = new wxToolBar( frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
-    m_tb->ClearTools();
-    m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-    m_tb->AddTool( wxID_OBJECTNEWFF, _( "Foreign Key" ), wxBitmap( key_f1 ), wxBitmap( key_f1 ), wxITEM_NORMAL, _( "Create Foreign Key" ), _( "Create Foreign Key" ) );
-    m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
-    m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
-    m_tb->Realize();
-    wxSize tbSize = m_tb->GetSize();
-    m_tb->SetSize( 0, 0, frameClientSize.GetX(), wxDefaultCoord );
-    child->SetSize( 0, tbSize.GetHeight(), wxDefaultCoord, frameClientSize.GetHeight() - tbSize.GetHeight() );
-    event.Skip();
+/*    if( activate )
+    {
+        if( m_isCreated )
+            return;
+        wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
+        wxWindowList children = parent->GetChildren();
+        bool found = false;
+        for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
+        {
+            m_tb = wxDynamicCast( *it, wxToolBar );
+            if( m_tb && m_tb->GetName() == "Second Toolbar" )
+                found = true;
+        }
+        m_tb->Show();
+        wxMenuBar *bar = parent->GetMenuBar();
+        wxMenu *file_menu = bar->GetMenu( 0 );
+        if( file_menu->FindItem( wxID_NEW ) )
+            file_menu->Delete( wxID_NEW );
+        if( file_menu->FindItem( wxID_OPEN ) )
+            file_menu->Delete( wxID_OPEN );
+        file_menu->Insert( 0, wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
+        file_menu->Insert( 2, wxID_CREATEDATABASE, _( "Create Database..." ), _( "Create Database" ) );
+        file_menu->Insert( 3, wxID_DELETEDATABASE, _( "Delete Database..." ), _( "Delete Database" ) );
+        file_menu->InsertSeparator( 4 );
+        wxMenu *menuObject = new wxMenu();
+        menuObject->Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select tables" ) );
+        wxMenu *menuNewObject = new wxMenu();
+        menuNewObject->Append( wxID_OBJECTNEWTABLE, _( "Table..." ), _( "New Table" ) );
+        menuNewObject->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );
+        menuNewObject->Append( wxID_OBJECTNEWVIEW, _( "View" ), _( "New View" ) );
+        menuNewObject->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
+        menuObject->AppendSubMenu( menuNewObject, _( "New" ), _( "New Object" ) );
+        menuObject->Append( wxID_TABLEDROPTABLE, _( "Drop" ), _( "Drop database object" ) );
+        menuObject->AppendSeparator();
+        menuObject->Append( wxID_PROPERTIES, _( "Properties..." ), _( "Properties" ) );
+        bar->Insert( 1, menuObject, _( "&Object" ) );
+        wxMenu *menuDesign = new wxMenu();
+        menuDesign->Append( wxID_STARTLOG, _( "Start Log" ), _( "Start log" ) );
+        menuDesign->Append( wxID_STOPLOG, _( "Stop Log" ), _( "Stop log" ) );
+        menuDesign->Append( wxID_SAVELOG, _( "Save Log As..." ), _( "Save log to disk file" ) );
+        menuDesign->Append( wxID_CLEARLOG, _( "Clear Log" ), _( "Discard content of the log" ) );
+        menuDesign->AppendSeparator();
+        bar->Insert( 2, menuDesign, _( "&Design" ) );
+        parent->SetMenuBar( bar );
+#if defined __WXMSW__ || defined __WXGTK__
+        m_tb->ClearTools();
+        m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
+        m_tb->AddTool( wxID_OBJECTNEWFF, _( "Foreign Key" ), wxBitmap( key_f1 ), wxBitmap( key_f1 ), wxITEM_NORMAL, _( "Create Foreign Key" ), _( "Create Foreign Key" ) );
+        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+        m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
+        m_tb->Realize();
+#endif
+        if( !m_isCreated )
+        {
+            m_isCreated = true;
+            return;
+        }
+    }
+    else
+    {
+        m_tb->ClearTools();
+        m_tb->Hide();
+    }*/
+}
+#endif
+void DrawingView::OnAlterTable(wxCommandEvent &event)
+{
+    wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
+    ShapeList shapes;
+    ShapeList::iterator it;
+    bool found = false;
+    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
+    for( it = shapes.begin(); it != shapes.end() && !found; ++it )
+    {
+        if( (*it)->IsSelected() )
+            found = true;
+    }
+    wxDynamicLibrary lib1;
+#ifdef __WXMSW__
+    lib1.Load( "tablewindow" );
+#elif __WXOSX__
+    lib1.Load( "liblibtablewindow.dylib" );
+#else
+    lib1.Load( "libtablewindow" );
+#endif
+    if( lib1.IsLoaded() )
+    {
+        TABLE func = (TABLE) lib1.GetSymbol( "CreateDatabaseWindow" );
+        MyErdTable *erdTable = dynamic_cast<MyErdTable *>( (*it) );
+        func( parent, GetDocumentManager(), dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase(), const_cast<DatabaseTable *>( &( erdTable->GetTable() ) ), wxEmptyString );                 // create with possible alteration table
+    }
+    else if( !lib1.IsLoaded() )
+        wxMessageBox( "Error loading the library. Please re-install the software and try again." );
+    else
+        wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
+}
+
+void DrawingView::OnFieldDefinition(wxCommandEvent &event)
+{
+    wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
+    ShapeList shapes;
+    MyErdTable *table;
+    FieldShape *field;
+    ShapeList::iterator it;
+    bool found = false;
+    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
+    for( it = shapes.begin(); it != shapes.end() && !found; ++it )
+    {
+        if( (*it)->IsSelected() )
+        {
+            if( wxDynamicCast( (*it), MyErdTable ) )
+				table = wxDynamicCast( (*it), MyErdTable );
+            if( wxDynamicCast( (*it), FieldShape ) )
+                field = wxDynamicCast( (*it), FieldShape );
+        }
+	}
+    wxDynamicLibrary lib1;
+#ifdef __WXMSW__
+    lib1.Load( "tablewindow" );
+#elif __WXOSX__
+    lib1.Load( "liblibtablewindow.dylib" );
+#else
+    lib1.Load( "libtablewindow" );
+#endif
+    if( lib1.IsLoaded() )
+    {
+        TABLE func = (TABLE) lib1.GetSymbol( "CreateDatabaseWindow" );
+        MyErdTable *erdTable = dynamic_cast<MyErdTable *>( (*it) );
+        func( parent, GetDocumentManager(), dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase(), const_cast<DatabaseTable *>( &( erdTable->GetTable() ) ), field->GetField()->GetFieldName() );                 // display field parameters
+    }
+    else if( !lib1.IsLoaded() )
+        wxMessageBox( "Error loading the library. Please re-install the software and try again." );
+    else
+        wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
 }
 #endif

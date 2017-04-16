@@ -20,13 +20,17 @@
 #ifndef _TABLECANVAS_H_
 #define _TABLECANVAS_H_
 
-class TableCanvas: public wxGrid 
+class TableCanvas: public wxWindow
 {
 public:
-    TableCanvas(wxView *view, const wxPoint &pt, DatabaseTable *table = NULL, wxWindow *parent = NULL);
+    TableCanvas(wxView *view, const wxPoint &pt, Database *db, DatabaseTable *table = NULL, const wxString &fieldName = wxEmptyString, wxWindow *parent = NULL);
 protected:
 
 private:
+    wxGrid *m_grid;
+    wxStaticText *m_label1, *m_label2, *m_label3;
+    wxTextCtrl *m_heading, *m_label, *m_comment;
+    wxPanel *m_mainPanel;
 };
 
 #endif // _TABLE_CANVAS_H_

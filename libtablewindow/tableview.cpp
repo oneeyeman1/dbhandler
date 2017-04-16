@@ -48,6 +48,7 @@ wxEND_EVENT_TABLE()
 // windows for displaying the view.
 bool TableView::OnCreate(wxDocument *doc, long flags)
 {
+    m_isCreated = false;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -112,10 +113,27 @@ void TableView::GetTablesForView(Database *db)
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), true );
         if( res != wxID_CANCEL )
         {
+            bool found = false;
+            Database *db = ((TableDocument *) GetDocument())->GetDatabase();
+            std::map<std::wstring, std::vector<DatabaseTable *> > tbls = db->GetTableVector().m_tables;
+            std::vector<DatabaseTable *> tableVec = tbls.at( db->GetTableVector().m_dbName );
+            for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end() && !found; it++ )
+            {
+                if( (*it)->GetTableName() == tables.at( 0 ).ToStdWstring() )
+                {
+                    m_table = (*it);
+                    found = true;
+                }
+            }
             ((TableDocument *) GetDocument())->AddTables( tables );
         }
     }
 //    return tables;
+}
+
+DatabaseTable *TableView::GetDatabaseTable()
+{
+    return m_table;
 }
 
 TableDocument* TableView::GetDocument()
@@ -220,4 +238,36 @@ void TableView::OnLogUpdateUI(wxUpdateUIEvent &event)
 wxDocMDIChildFrame *TableView::GetChildFrame()
 {
     return m_frame;
+}
+
+void TableView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
+{
+    if( activate )
+    {
+        if( m_isCreated )
+            return;
+        wxDocMDIParentFrame *parent = wxDynamicCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
+        wxWindowList children = parent->GetChildren();
+        bool found = false;
+        for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
+        {
+            m_tb = wxDynamicCast( *it, wxToolBar );
+            if( m_tb && m_tb->GetName() == "Second Toolbar" )
+                found = true;
+        }
+        wxMenuBar *bar = parent->GetMenuBar();
+        wxMenu *file_menu = bar->GetMenu( 0 );
+        if( file_menu->FindItem( wxID_NEW ) )
+            file_menu->Delete( wxID_NEW );
+        if( file_menu->FindItem( wxID_OPEN ) )
+            file_menu->Delete( wxID_OPEN );
+        if (!m_isCreated)
+        {
+            m_isCreated = true;
+            return;
+        }
+    }
+    else
+    {
+    }
 }

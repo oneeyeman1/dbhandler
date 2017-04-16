@@ -70,10 +70,11 @@ void TableDocument::DoUpdate()
     UpdateAllViews();
 }
 
-void TableDocument::SetDatabase(Database *db)
+void TableDocument::SetDatabase(Database *db, DatabaseTable *table)
 {
     m_db = db;
-    dynamic_cast<TableView *>( GetFirstView() )->GetTablesForView( db );
+    if( !table )
+        dynamic_cast<TableView *>( GetFirstView() )->GetTablesForView( db );
 }
 
 Database *TableDocument::GetDatabase()

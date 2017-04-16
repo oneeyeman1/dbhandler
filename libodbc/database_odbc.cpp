@@ -369,6 +369,18 @@ int ODBCDatabase::GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<s
     return result;
 }
 
+int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+}
+
+int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+}
+
 int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, bufferSize = 1024;

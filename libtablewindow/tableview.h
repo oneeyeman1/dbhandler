@@ -6,6 +6,7 @@ public:
     TableView() : wxView() {}
 //    std::vector<Table> &GetTablesForView(Database *db);
     void GetTablesForView(Database *db);
+    DatabaseTable *GetDatabaseTable();
     wxDocMDIChildFrame *GetChildFrame();
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
@@ -15,11 +16,14 @@ public:
     void OnFieldDefinition(wxCommandEvent &event);
     void OnFieldProperties(wxCommandEvent &event);
     void OnLogUpdateUI(wxUpdateUIEvent &event);
+    virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
     TableDocument* GetDocument();
 
 private:
+    bool m_isCreated;
     wxToolBar *m_tb;
     wxDocMDIChildFrame *m_frame;
+    DatabaseTable *m_table;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };

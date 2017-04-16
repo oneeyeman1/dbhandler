@@ -32,9 +32,8 @@ public:
     void OnStopLog(wxCommandEvent &event);
     void OnSaveLog(wxCommandEvent &event);
     void OnClearLog(wxCommandEvent &event);
-#if defined __WXMSW__ || defined __WXGTK__
-    void OnActivateFrame(wxActivateEvent &event);
-#endif
+    void OnAlterTable(wxCommandEvent &event);
+    virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
     DrawingDocument* GetDocument();
 
 private:
@@ -42,6 +41,7 @@ private:
     wxFrame *m_log;
     wxTextCtrl *m_text;
     DatabaseCanvas *m_canvas;
+	bool m_isCreated;
 	ViewType m_type;
     wxDocMDIChildFrame *m_frame;
     wxDECLARE_EVENT_TABLE();
