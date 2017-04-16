@@ -499,6 +499,7 @@ ViewType DrawingView::GetViewType()
 {
 	return m_type;
 }
+
 #if defined __WXMSW__ || defined __WXGTK__
 void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
@@ -567,6 +568,7 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
     }*/
 }
 #endif
+
 void DrawingView::OnAlterTable(wxCommandEvent &event)
 {
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -637,4 +639,3 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &event)
     else
         wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
 }
-#endif
