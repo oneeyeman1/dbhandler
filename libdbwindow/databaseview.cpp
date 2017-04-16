@@ -503,7 +503,7 @@ ViewType DrawingView::GetViewType()
 {
 	return m_type;
 }
-
+#if defined __WXMSW__ || defined __WXGTK__
 void DrawingView::OnActivateFrame(wxActivateEvent &event)
 {
     wxDocMDIParentFrame *frame = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -522,3 +522,4 @@ void DrawingView::OnActivateFrame(wxActivateEvent &event)
     child->SetSize( 0, tbSize.GetHeight(), wxDefaultCoord, frameClientSize.GetHeight() - tbSize.GetHeight() );
     event.Skip();
 }
+#endif
