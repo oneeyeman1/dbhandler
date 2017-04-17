@@ -88,13 +88,14 @@ IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
 extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *docManager, Database *db, ViewType type)
 {
+    wxDocTemplate *docTemplate;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    wxDocTemplate *docTemplate = docManager->FindTemplate( CLASSINFO( DrawingDocument ) );
+    docTemplate = docManager->FindTemplate( CLASSINFO( DrawingDocument ) );
     if( !docTemplate )
-        new wxDocTemplate( docManager, "Drawing", "*.drw", "", "drw", "Drawing Doc", "Drawing View", CLASSINFO( DrawingDocument ), CLASSINFO( DrawingView ) );
-    docManager->CreateDocument( "*.drw", wxDOC_NEW | wxDOC_SILENT );
+        docTemplate = new wxDocTemplate( docManager, "Drawing", "*.drw", "", "drw", "Drawing Doc", "Drawing View", CLASSINFO( DrawingDocument ), CLASSINFO( DrawingView ) );
+    docTemplate->CreateDocument( "*.drw", wxDOC_NEW | wxDOC_SILENT );
     ((DrawingView *) docManager->GetCurrentView())->SetViewType( type );
     dynamic_cast<DrawingDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db );
 }
