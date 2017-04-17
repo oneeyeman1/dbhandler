@@ -35,5 +35,6 @@ private:
     Database *m_db;
     std::vector<MyErdTable *> m_tables;
     std::vector<std::wstring> m_tableNames;
+    std::vector<wxString> m_queryFields;
     wxDECLARE_DYNAMIC_CLASS(DrawingDocument);
 };
