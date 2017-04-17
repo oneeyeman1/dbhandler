@@ -117,10 +117,10 @@ void MainFrame::InitMenuBar(int id)
 {
     wxPoint pt;
     wxSize size;
-#if defined __WXMSW__ || defined __WXGTK__
+/*#if defined __WXMSW__ || defined __WXGTK__
     if( !m_tb )
         m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
-#endif
+#endif*/
     if( m_menuFile->FindItem( wxID_NEW ) )
         m_menuFile->Delete( wxID_NEW );
     if( m_menuFile->FindItem( wxID_OPEN ) )
@@ -129,26 +129,26 @@ void MainFrame::InitMenuBar(int id)
     switch( id )
     {
         case wxID_DATABASE:
-#if defined __WXMSW__ || defined __WXGTK__
+/*#if defined __WXMSW__ || defined __WXGTK__
             m_tb->ClearTools();
             m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
             m_tb->AddTool( wxID_OBJECTNEWFF, _( "Foreign Key" ), wxBitmap( key_f1 ), wxBitmap( key_f1 ), wxITEM_NORMAL, _( "Create Foreign Key" ), _( "Create Foreign Key" ) );
             m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
             m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
             m_tb->Realize();
-#endif
+#endif*/
             DatabaseMenu();
             break;
         case wxID_TABLE:
-#if defined __WXMSW__ || defined __WXGTK__
+/*#if defined __WXMSW__ || defined __WXGTK__
             m_tb->ClearTools();
-#endif
+#endif*/
             break;
     }
-#if defined __WXMSW__ || defined __WXGTK__
+/*#if defined __WXMSW__ || defined __WXGTK__
     m_tb->SetSize( 0, 0, GetClientSize().GetX(), wxDefaultCoord );
 //    SetToolBar( m_tb );
-#endif
+#endif*/
 }
 
 void MainFrame::DatabaseMenu()

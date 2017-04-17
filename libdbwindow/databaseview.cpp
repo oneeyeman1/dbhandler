@@ -97,7 +97,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), /*wxDefaultPosition*/start, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
     m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
     m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
-    wxPoint ptCanvas;
+/*    wxPoint ptCanvas;
 #ifdef __WXOSX__
     wxRect parentRect = parent->GetRect();
     wxSize parentClientSize = parent->GetClientSize();
@@ -116,9 +116,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     ptCanvas.y = m_tb->GetSize().GetHeight();
 #else
     ptCanvas = wxDefaultPosition;
-#endif
+#endif*/
     wxASSERT( m_frame == GetFrame() );
-    m_canvas = new DatabaseCanvas( this, ptCanvas );
+    m_canvas = new DatabaseCanvas( this/*, ptCanvas*/ );
     m_frame->Show();
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
@@ -500,7 +500,7 @@ ViewType DrawingView::GetViewType()
 	return m_type;
 }
 
-#if defined __WXMSW__ || defined __WXGTK__
+/*#if defined __WXMSW__ || defined __WXGTK__
 void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
 /*    if( activate )
@@ -565,10 +565,10 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
     {
         m_tb->ClearTools();
         m_tb->Hide();
-    }*/
+    }
 }
 #endif
-
+*/
 void DrawingView::OnAlterTable(wxCommandEvent &event)
 {
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
