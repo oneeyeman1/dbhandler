@@ -45,6 +45,7 @@ private:
     DatabaseCanvas *m_canvas;
 	bool m_isCreated;
 	ViewType m_type;
+    FieldWindow *m_fields;
     wxDocMDIChildFrame *m_frame;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
