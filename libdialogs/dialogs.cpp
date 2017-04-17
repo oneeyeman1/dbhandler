@@ -190,3 +190,11 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, DatabaseTable *table,
     }
     return res;
 }
+
+extern "C" WXEXPORT int ChooseObject(wxWindow *parent)
+{
+    int res;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+}

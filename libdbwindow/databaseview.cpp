@@ -45,6 +45,7 @@ typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *, wxString &, bool &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
+typedef int (*CHOOSEOBJECT)(wxWindow *);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -206,6 +207,7 @@ void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
 //std::vector<Table> &DrawingView::GetTablesForView(Database *db)
 void DrawingView::GetTablesForView(Database *db)
 {
+    int res;
     std::vector<wxString> tables;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -217,6 +219,11 @@ void DrawingView::GetTablesForView(Database *db)
 #endif
     if( lib.IsLoaded() )
     {
+        if( m_type == QueryView )
+        {
+            CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
+            res = func( m_frame );
+        }
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
         if( res != wxID_CANCEL )
