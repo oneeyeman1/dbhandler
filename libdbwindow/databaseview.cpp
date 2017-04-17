@@ -104,7 +104,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxPoint pt;
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
-    m_frame->Move( pt.x, pt.y );
+    m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentRect.GetHeight() );
     m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
     wxBitmap tmp = wxBitmap( database_profile );
     m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
