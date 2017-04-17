@@ -90,7 +90,7 @@ void SelectTables::do_layout()
         sizer_9->Add( m_readOnly, 0, wxEXPAND, 0 );
     }
     sizer_7->Add( sizer_9, 0, wxEXPAND, 0 );
-    sizer_6->Add( sizer_7, 1, 0, 0 );
+    sizer_6->Add( sizer_7, 0, 0, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_8->Add( m_open, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
     sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -100,19 +100,18 @@ void SelectTables::do_layout()
     sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_8->Add( m_help, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
     sizer_8->Add( 30, 30, 0, wxEXPAND, 0 );
-    sizer_6->Add( sizer_8, 1, 0, 0 );
-    sizer_5->Add( sizer_6, 1, 0, 0 );
+    sizer_6->Add( sizer_8, 0, 0, 0 );
+    sizer_5->Add( sizer_6, 0, 0, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_4->Add( sizer_5, 1, 0, 0 );
+    sizer_4->Add( sizer_5, 0, 0, 0 );
     sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
     m_panel->SetSizer( sizer_4 );
-    sizer_1->Add( m_panel, 1, 0, 0 );
+    sizer_1->Add( m_panel, 0, 0, 0 );
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     Layout();
     // end wxGlade
 }
-
 
 BEGIN_EVENT_TABLE(SelectTables, wxDialog)
     // begin wxGlade: SelectTables::event_table
