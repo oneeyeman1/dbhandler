@@ -119,6 +119,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     ptCanvas = wxDefaultPosition;
 #endif*/
     wxASSERT( m_frame == GetFrame() );
+    if( m_type == QueryView )
+        m_fields = new FieldWindow( m_frame 1, wxDefaultPosition, wxDefaultCoord );
     m_canvas = new DatabaseCanvas( this/*, ptCanvas*/ );
     m_frame->Show();
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
