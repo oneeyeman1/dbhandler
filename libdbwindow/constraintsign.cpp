@@ -19,6 +19,7 @@
 #endif
 
 #include "wxsf/RectShape.h"
+#include "wxsf/TextShape.h"
 #include "constraintsign.h"
 
 ConstraintSign::ConstraintSign()
@@ -27,4 +28,14 @@ ConstraintSign::ConstraintSign()
 
 ConstraintSign::~ConstraintSign()
 {
+}
+
+void ConstraintSign::SetSign(const wxString &sign)
+{
+    m_sign->SetLabel( sign );
+}
+
+const wxString &ConstraintSign::GetSign()
+{
+    return m_sign->GetLabel();
 }
