@@ -119,10 +119,10 @@ void MainFrame::InitMenuBar(int id)
 {
     wxPoint pt;
     wxSize size;
-#if defined __WXMSW__ || defined __WXGTK__
+/*#if defined __WXMSW__ || defined __WXGTK__
     if( !m_tb )
         m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
-#endif
+#endif*/
     wxMenuBar *mbar = GetMenuBar();
     for( size_t i = 1; i < mbar->GetMenuCount() - 1; i++ )
         mbar->Remove( i );
@@ -134,7 +134,7 @@ void MainFrame::InitMenuBar(int id)
     switch( id )
     {
         case wxID_DATABASE:
-#if defined __WXMSW__ || defined __WXGTK__
+/*#if defined __WXMSW__ || defined __WXGTK__
             m_tb->ClearTools();
             m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
             m_tb->AddTool( wxID_OBJECTNEWFF, _( "Foreign Key" ), wxBitmap( key_f1 ), wxBitmap( key_f1 ), wxITEM_NORMAL, _( "Create Foreign Key" ), _( "Create Foreign Key" ) );
@@ -142,7 +142,7 @@ void MainFrame::InitMenuBar(int id)
             m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
             m_tb->Realize();
             m_tb->SetSize( wxDefaultCoord, GetToolBar()->GetSize().GetWidth(), wxDefaultCoord, wxDefaultCoord );
-#endif
+#endif*/
             DatabaseMenu();
             break;
         case wxID_TABLE:
@@ -153,15 +153,12 @@ void MainFrame::InitMenuBar(int id)
             edit_menu->Append( wxID_EDITCOPYCOLUMN, _( "&Copy Column" ), _( "Copy Column" ) );
             edit_menu->Append( wxID_EDITPASTECOLUMN, _( "&Paste Column" ), _( "Paste Column" ) );
             mbar->Insert( 1, edit_menu, _( "Edit" ) );
-#if defined __WXMSW__ || defined __WXGTK__
-            m_tb->ClearTools();
-#endif
             break;
     }
-#if defined __WXMSW__ || defined __WXGTK__
+/*#if defined __WXMSW__ || defined __WXGTK__
     m_tb->SetSize( 0, 0, GetClientSize().GetX(), wxDefaultCoord );
-//    SetToolBar( m_tb );
-#endif
+    SetToolBar( m_tb );
+#endif*/
 }
 
 void MainFrame::DatabaseMenu()

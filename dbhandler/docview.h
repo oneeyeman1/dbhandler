@@ -102,5 +102,7 @@ wxDECLARE_APP(MyApp);
 #define wxID_STOPLOG              111
 #define wxID_SAVELOG              112
 #define wxID_CLEARLOG             113
-
+#define wxID_EDITCUTCOLUMN        200
+#define wxID_EDITCOPYCOLUMN       201
+#define wxID_EDITPASTECOLUMN      202
 #endif // _WX_SAMPLES_DOCVIEW_DOCVIEW_H_

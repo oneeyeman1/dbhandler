@@ -45,6 +45,7 @@ typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *, wxString &, bool &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
+typedef int (*CHOOSEOBJECT)(wxWindow *);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -97,14 +98,14 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), /*wxDefaultPosition*/start, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
     m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
     m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
-    wxPoint ptCanvas;
+/*    wxPoint ptCanvas;
 #ifdef __WXOSX__
     wxRect parentRect = parent->GetRect();
     wxSize parentClientSize = parent->GetClientSize();
     wxPoint pt;
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
-    m_frame->Move( pt.x, pt.y );
+    m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentRect.GetHeight() );
     m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
     wxBitmap tmp = wxBitmap( database_profile );
     m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
@@ -116,9 +117,11 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     ptCanvas.y = m_tb->GetSize().GetHeight();
 #else
     ptCanvas = wxDefaultPosition;
-#endif
+#endif*/
     wxASSERT( m_frame == GetFrame() );
-    m_canvas = new DatabaseCanvas( this, ptCanvas );
+    if( m_type == QueryView )
+        m_fields = new FieldWindow( m_frame 1, wxDefaultPosition, wxDefaultCoord );
+    m_canvas = new DatabaseCanvas( this/*, ptCanvas*/ );
     m_frame->Show();
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
@@ -206,6 +209,7 @@ void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
 //std::vector<Table> &DrawingView::GetTablesForView(Database *db)
 void DrawingView::GetTablesForView(Database *db)
 {
+    int res;
     std::vector<wxString> tables;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -217,6 +221,11 @@ void DrawingView::GetTablesForView(Database *db)
 #endif
     if( lib.IsLoaded() )
     {
+        if( m_type == QueryView )
+        {
+            CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
+            res = func( m_frame );
+        }
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
         if( res != wxID_CANCEL )
@@ -500,6 +509,7 @@ ViewType DrawingView::GetViewType()
 	return m_type;
 }
 
+/*#if defined __WXMSW__ || defined __WXGTK__
 void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
 /*    if( activate )
@@ -564,9 +574,10 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
     {
         m_tb->ClearTools();
         m_tb->Hide();
-    }*/
+    }
 }
-
+#endif
+*/
 void DrawingView::OnAlterTable(wxCommandEvent &event)
 {
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );

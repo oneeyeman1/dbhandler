@@ -33,7 +33,9 @@ public:
     void OnSaveLog(wxCommandEvent &event);
     void OnClearLog(wxCommandEvent &event);
     void OnAlterTable(wxCommandEvent &event);
+/*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
+#endif*/
     DrawingDocument* GetDocument();
 
 private:
@@ -43,6 +45,7 @@ private:
     DatabaseCanvas *m_canvas;
 	bool m_isCreated;
 	ViewType m_type;
+    FieldWindow *m_fields;
     wxDocMDIChildFrame *m_frame;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
