@@ -34,6 +34,7 @@
 #include "HeaderGrid.h"
 #include "FieldShape.h"
 #include "MyErdTable.h"
+#include "fieldwindow.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"
@@ -120,8 +121,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 #endif*/
     wxASSERT( m_frame == GetFrame() );
     if( m_type == QueryView )
-        m_fields = new FieldWindow( m_frame 1, wxDefaultPosition, wxDefaultCoord );
-    m_canvas = new DatabaseCanvas( this/*, ptCanvas*/ );
+        m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
+    m_canvas = new DatabaseCanvas( this, wxDefaultPosition/*ptCanvas*/ );
     m_frame->Show();
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );

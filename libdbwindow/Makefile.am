@@ -37,7 +37,9 @@ libdbwindow_la_SOURCES =  \
 	GridTableShape.cpp \
 	GridTableShape.h \
 	HeaderGrid.cpp \
-	HeaderGrid.h
+	HeaderGrid.h \
+	databasetemplate.cpp \
+	databasetemplate.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \
