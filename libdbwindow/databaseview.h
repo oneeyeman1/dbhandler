@@ -47,6 +47,7 @@ private:
 	ViewType m_type;
     FieldWindow *m_fields;
     wxDocMDIChildFrame *m_frame;
+	wxNotebook *m_queryBook;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };

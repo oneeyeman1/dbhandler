@@ -120,9 +120,19 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     ptCanvas = wxDefaultPosition;
 #endif*/
     wxASSERT( m_frame == GetFrame() );
+    wxBoxSizer *sizer = new wxBoxSizer( wxVERTICAL );
     if( m_type == QueryView )
+    {
         m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
+        sizer->Add( m_fields, 0, wxEXPAND, 0 );
+    }
     m_canvas = new DatabaseCanvas( this, wxDefaultPosition/*ptCanvas*/ );
+    sizer->Add( m_canvas, 0, wxEXPAND, 0 );
+    if( m_type == QueryView )
+    {
+        m_queryBook = new wxNotebook( m_frame, wxID_ANY );
+        sizer->Add( m_queryBook, 0, wxEXPAND, 0 );
+    }
     m_frame->Show();
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
