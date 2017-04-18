@@ -197,4 +197,5 @@ extern "C" WXEXPORT int ChooseObject(wxWindow *parent)
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
+    return res;
 }

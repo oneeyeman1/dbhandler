@@ -39,6 +39,7 @@
     <ClInclude Include="constraint.h" />
     <ClInclude Include="databasecanvas.h" />
     <ClInclude Include="databasedoc.h" />
+    <ClInclude Include="databasetemplate.h" />
     <ClInclude Include="databaseview.h" />
     <ClInclude Include="ErdForeignKey.h" />
     <ClInclude Include="ErdLineShape.h" />
@@ -58,6 +59,7 @@
     <ClCompile Include="constraint.cpp" />
     <ClCompile Include="databasecanvas.cpp" />
     <ClCompile Include="databasedoc.cpp" />
+    <ClCompile Include="databasetemplate.cpp" />
     <ClCompile Include="databaseview.cpp" />
     <ClCompile Include="dbview.cpp" />
     <ClCompile Include="ErdForeignKey.cpp" />
