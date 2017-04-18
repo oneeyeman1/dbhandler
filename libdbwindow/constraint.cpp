@@ -31,6 +31,8 @@ XS_IMPLEMENT_CLONABLE_CLASS(Constraint,xsSerializable);
 
 Constraint::Constraint()
 {
+    m_sign = NULL;
+    m_type = type;
     m_type = foreignKey;
     m_onDelete = restrict;
     m_onUpdate = restrict;
@@ -39,6 +41,8 @@ Constraint::Constraint()
 
 Constraint::Constraint(const Constraint& obj):xsSerializable(obj)
 {
+    m_sign = obj.m_sign;
+    m_type = obj.m_type;
     m_name = obj.m_name;
     m_localColumn = obj.m_localColumn;
     m_type = obj.m_type;

@@ -49,8 +49,10 @@ public:
 
     XS_DECLARE_CLONABLE_CLASS(Constraint);
     /*! \brief Default constructors */
-    Constraint();
+    Constraint(ViewType type);
+
     Constraint(const Constraint& obj);
+
     Constraint(const wxString& name, const wxString& localColumn, constraintType type, constraintAction onDelete, constraintAction onUpdate);
     /*! \brief Default destructors */
     virtual ~Constraint();
@@ -147,7 +149,8 @@ protected:
     wxString m_refCol;
     constraintAction m_onDelete;
     constraintAction m_onUpdate;
-
+    ConstraintSign *m_sign;
+    ViewType m_type;
     void InitSerializable();
 };
 

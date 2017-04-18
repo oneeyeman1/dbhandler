@@ -95,7 +95,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
                 wxString referencedTableName = (*it4)->GetReferencedTableName();
                 if( std::find( selections.begin(), selections.end(), referencedTableName ) != selections.end() )
                 {
-                    Constraint* pConstr = new Constraint();
+                    Constraint* pConstr = new Constraint( m_type );
                     pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
                     pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
                     pConstr->SetRefTable( referencedTableName );
