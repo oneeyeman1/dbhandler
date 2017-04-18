@@ -20,6 +20,7 @@
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "MyErdTable.h"
+#include "fieldwindow.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"

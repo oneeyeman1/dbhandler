@@ -23,6 +23,7 @@
 #include "HeaderGrid.h"
 #include "MyErdTable.h"
 #include "wxsf/ShapeCanvas.h"
+#include "fieldwindow.h"
 #include "FieldShape.h"
 #include "DiagramManager.h"
 #include "databasedoc.h"

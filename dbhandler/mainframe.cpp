@@ -74,6 +74,8 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     InitToolBar( GetToolBar() );
 /*    wxSize clientSize = GetClientSize();
     m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
+    m_tb->SetMargins( 4, 4 );
+    m_tb->SetSize( 0, 0, wxDefaultCoord, GetToolBar()->GetSize().GetY() );
     m_tb->Hide();
     clientSize.SetHeight( clientSize.GetHeight() - GetToolBar()->GetSize().GetHeight() );
     SetClientSize( clientSize );*/
@@ -124,6 +126,9 @@ void MainFrame::InitMenuBar(int id)
     if( !m_tb )
         m_tb = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
 #endif*/
+    wxMenuBar *mbar = GetMenuBar();
+    for( size_t i = 1; i < mbar->GetMenuCount() - 1; i++ )
+        mbar->Remove( i );
     if( m_menuFile->FindItem( wxID_NEW ) )
         m_menuFile->Delete( wxID_NEW );
     if( m_menuFile->FindItem( wxID_OPEN ) )
@@ -139,18 +144,29 @@ void MainFrame::InitMenuBar(int id)
             m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
             m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
             m_tb->Realize();
+            m_tb->SetSize( wxDefaultCoord, GetToolBar()->GetSize().GetWidth(), wxDefaultCoord, wxDefaultCoord );
 #endif*/
             DatabaseMenu();
             break;
         case wxID_TABLE:
-/*#if defined __WXMSW__ || defined __WXGTK__
-            m_tb->ClearTools();
-#endif*/
+            wxMenu *edit_menu = new wxMenu;
+            edit_menu->Append( wxID_UNDO, _( "&Undo\tCtrl+Z" ), _( "Undo operation" ) );
+            edit_menu->AppendSeparator();
+            edit_menu->Append( wxID_EDITCUTCOLUMN, _( "Cu&t Column" ), _( "Cut Column" ) );
+            edit_menu->Append( wxID_EDITCOPYCOLUMN, _( "&Copy Column" ), _( "Copy Column" ) );
+            edit_menu->Append( wxID_EDITPASTECOLUMN, _( "&Paste Column" ), _( "Paste Column" ) );
+            edit_menu->Append( wxID_EDITINSERTCOLUMN, _( "Insert Column" ), _( "Insert Column" ) );
+            edit_menu->Append( wxID_EDITDELETECOLUMN, _( "Delete Column" ), _( "Delete Column" ) );
+            edit_menu->AppendSeparator();
+            edit_menu->Append( wxID_EDITTABLEPROPERTY, _( "Table Property" ), _( "Table Property" ) );
+            mbar->Insert( 1, edit_menu, _( "Edit" ) );
+            wxMenu *design_menu = new wxMenu;
+            design_menu->Append( wxID_DESIGNSYNTAX, _( "Syntax" ), _( "Syntax" ) );
             break;
     }
 /*#if defined __WXMSW__ || defined __WXGTK__
     m_tb->SetSize( 0, 0, GetClientSize().GetX(), wxDefaultCoord );
-//    SetToolBar( m_tb );
+    SetToolBar( m_tb );
 #endif*/
 }
 

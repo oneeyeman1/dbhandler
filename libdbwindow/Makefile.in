@@ -136,7 +136,8 @@ am_libdbwindow_la_OBJECTS = libdbwindow_la-ErdForeignKey.lo \
 	libdbwindow_la-databaseview.lo libdbwindow_la-dbview.lo \
 	libdbwindow_la-MyErdTable.lo libdbwindow_la-ErdLineShape.lo \
 	libdbwindow_la-FieldShape.lo libdbwindow_la-GridTableShape.lo \
-	libdbwindow_la-HeaderGrid.lo
+	libdbwindow_la-HeaderGrid.lo \
+	libdbwindow_la-databasetemplate.lo
 libdbwindow_la_OBJECTS = $(am_libdbwindow_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -414,7 +415,9 @@ libdbwindow_la_SOURCES = \
 	GridTableShape.cpp \
 	GridTableShape.h \
 	HeaderGrid.cpp \
-	HeaderGrid.h
+	HeaderGrid.h \
+	databasetemplate.cpp \
+	databasetemplate.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \
@@ -520,6 +523,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-constraint.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-databasecanvas.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-databasedoc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-databasetemplate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-databaseview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-dbview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-table.Plo@am__quote@
@@ -656,6 +660,13 @@ libdbwindow_la-HeaderGrid.lo: HeaderGrid.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='HeaderGrid.cpp' object='libdbwindow_la-HeaderGrid.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-HeaderGrid.lo `test -f 'HeaderGrid.cpp' || echo '$(srcdir)/'`HeaderGrid.cpp
+
+libdbwindow_la-databasetemplate.lo: databasetemplate.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-databasetemplate.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-databasetemplate.Tpo -c -o libdbwindow_la-databasetemplate.lo `test -f 'databasetemplate.cpp' || echo '$(srcdir)/'`databasetemplate.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-databasetemplate.Tpo $(DEPDIR)/libdbwindow_la-databasetemplate.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='databasetemplate.cpp' object='libdbwindow_la-databasetemplate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-databasetemplate.lo `test -f 'databasetemplate.cpp' || echo '$(srcdir)/'`databasetemplate.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

@@ -10,11 +10,31 @@
 #include "wx/wx.h"
 #endif
 
+#include "wx/docview.h"
+#include "wx/docmdi.h"
+#include "wxsf/TextShape.h"
+#include "wxsf/ShapeCanvas.h"
+#include "wxsf/RoundRectShape.h"
+#include "wxsf/FlexGridShape.h"
+#include "constraint.h"
+#include "GridTableShape.h"
+#include "HeaderGrid.h"
+#include "database.h"
+#include "MyErdTable.h"
+#include "fieldwindow.h"
+#include "databasecanvas.h"
+#include "databasedoc.h"
+#include "databaseview.h"
 #include "databasetemplate.h"
+
+DatabaseTemplate::DatabaseTemplate(wxDocManager *manager, const wxString &descr, const wxString &filter, const wxString &dir, const wxString &ext, const wxString &docTypeName, const wxString &viewTypeName, wxClassInfo *docClassInfo, wxClassInfo *viewClassInfo, long flags)
+  : wxDocTemplate(manager, descr, filter, dir, ext, docTypeName, viewTypeName, docClassInfo, viewClassInfo)
+{
+}
 
 DrawingView *DatabaseTemplate::CreateDatabaseView(wxDocument *doc, ViewType type, long flags)
 {
-    wxScopedPtr<DrawingView> view( DoCreateView() );
+    wxScopedPtr<DrawingView> view( (DrawingView *) DoCreateView() );
     if( !view )
         return NULL;
     view->SetViewType( type );
@@ -24,9 +44,9 @@ DrawingView *DatabaseTemplate::CreateDatabaseView(wxDocument *doc, ViewType type
     return view.release();
 }
 
-bool CreateDatabaseDocument(const wxString &path, ViewType type, long flags)
+bool DatabaseTemplate::CreateDatabaseDocument(const wxString &path, ViewType type, long flags)
 {
-    DrawingDocument * const doc = DoCreateDocument();
+    DrawingDocument * const doc = (DrawingDocument *) DoCreateDocument();
     wxTRY
     {
         doc->SetFilename( path );
