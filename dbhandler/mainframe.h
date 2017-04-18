@@ -20,6 +20,7 @@ private:
     void InitToolBar(wxToolBar* toolBar);
     void InitMenuBar(int id);
     void DatabaseMenu();
+    void TableMenu();
     void OnConfigureODBC(wxCommandEvent &event);
     void OnDatabaseProfile(wxCommandEvent &event);
     void OnTable(wxCommandEvent &event);

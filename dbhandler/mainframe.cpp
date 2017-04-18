@@ -149,19 +149,7 @@ void MainFrame::InitMenuBar(int id)
             DatabaseMenu();
             break;
         case wxID_TABLE:
-            wxMenu *edit_menu = new wxMenu;
-            edit_menu->Append( wxID_UNDO, _( "&Undo\tCtrl+Z" ), _( "Undo operation" ) );
-            edit_menu->AppendSeparator();
-            edit_menu->Append( wxID_EDITCUTCOLUMN, _( "Cu&t Column" ), _( "Cut Column" ) );
-            edit_menu->Append( wxID_EDITCOPYCOLUMN, _( "&Copy Column" ), _( "Copy Column" ) );
-            edit_menu->Append( wxID_EDITPASTECOLUMN, _( "&Paste Column" ), _( "Paste Column" ) );
-            edit_menu->Append( wxID_EDITINSERTCOLUMN, _( "Insert Column" ), _( "Insert Column" ) );
-            edit_menu->Append( wxID_EDITDELETECOLUMN, _( "Delete Column" ), _( "Delete Column" ) );
-            edit_menu->AppendSeparator();
-            edit_menu->Append( wxID_EDITTABLEPROPERTY, _( "Table Property" ), _( "Table Property" ) );
-            mbar->Insert( 1, edit_menu, _( "Edit" ) );
-            wxMenu *design_menu = new wxMenu;
-            design_menu->Append( wxID_DESIGNSYNTAX, _( "Syntax" ), _( "Syntax" ) );
+            TableMenu();
             break;
     }
 /*#if defined __WXMSW__ || defined __WXGTK__
@@ -194,6 +182,25 @@ void MainFrame::DatabaseMenu()
     menuDesign->Append( wxID_CLEARLOG, _( "Clear Log" ), _( "Discard content of the log" ) );
     menuDesign->AppendSeparator();
     GetMenuBar()->Insert( 2, menuDesign, _( "&Design" ) );
+}
+
+
+void MainFrame::TableMenu()
+{
+    wxMenu *edit_menu = new wxMenu;
+    edit_menu->Append( wxID_UNDO, _( "&Undo\tCtrl+Z" ), _( "Undo operation" ) );
+    edit_menu->AppendSeparator();
+    edit_menu->Append( wxID_EDITCUTCOLUMN, _( "Cu&t Column" ), _( "Cut Column" ) );
+    edit_menu->Append( wxID_EDITCOPYCOLUMN, _( "&Copy Column" ), _( "Copy Column" ) );
+    edit_menu->Append( wxID_EDITPASTECOLUMN, _( "&Paste Column" ), _( "Paste Column" ) );
+    edit_menu->Append( wxID_EDITINSERTCOLUMN, _( "Insert Column" ), _( "Insert Column" ) );
+    edit_menu->Append( wxID_EDITDELETECOLUMN, _( "Delete Column" ), _( "Delete Column" ) );
+    edit_menu->AppendSeparator();
+    edit_menu->Append( wxID_EDITTABLEPROPERTY, _( "Table Property" ), _( "Table Property" ) );
+    GetMenuBar()->Insert( 1, edit_menu, _( "Edit" ) );
+    wxMenu *design_menu = new wxMenu;
+    design_menu->Append( wxID_DESIGNSYNTAX, _( "Syntax" ), _( "Syntax" ) );
+    GetMenuBar()->Insert( 2, design_menu, _( "Design" ) );
 }
 
 void MainFrame::Connect()
