@@ -34,6 +34,7 @@
 #include "res/table.xpm"
 #include "res/properties.xpm"
 #include "key-f1.xpm"
+#include "query.xpm"
 
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
@@ -102,14 +103,16 @@ MainFrame::~MainFrame()
 void MainFrame::InitToolBar(wxToolBar* toolBar)
 {
     wxBitmap bitmaps[9];
-    bitmaps[0] = wxBitmap( odbc1 );
-    bitmaps[1] = wxBitmap( database_profile );
-    bitmaps[2] = wxBitmap( table );
-    bitmaps[3] = wxBitmap( database );
-    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), bitmaps[0], bitmaps[0], wxITEM_NORMAL, _( "Configure ODBC" ), _( "Configure ODBC data source" ) );
-    toolBar->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), bitmaps[1], bitmaps[1], wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-    toolBar->AddTool( wxID_TABLE, _( "Table" ), bitmaps[2], bitmaps[2], wxITEM_NORMAL, _( "Table" ), _( "Run Table View" ) );
-    toolBar->AddTool( wxID_DATABASE, _( "Database" ), bitmaps[3], bitmaps[3], wxITEM_NORMAL, _( "Database" ), _( "Database" ) );
+    bitmaps[0] = wxBitmap( query );
+    bitmaps[1] = wxBitmap( odbc1 );
+    bitmaps[2] = wxBitmap( database_profile );
+    bitmaps[3] = wxBitmap( table );
+    bitmaps[4] = wxBitmap( database );
+    toolBar->AddTool( wxID_QUERY, _( "Query" ), bitmaps[0], bitmaps[0], wxITEM_NORMAL, _( "Run Query" ), _( "Run Query Wizard" ) );
+    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), bitmaps[1], bitmaps[1], wxITEM_NORMAL, _( "Configure ODBC" ), _( "Configure ODBC data source" ) );
+    toolBar->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), bitmaps[2], bitmaps[2], wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
+    toolBar->AddTool( wxID_TABLE, _( "Table" ), bitmaps[3], bitmaps[3], wxITEM_NORMAL, _( "Table" ), _( "Run Table View" ) );
+    toolBar->AddTool( wxID_DATABASE, _( "Database" ), bitmaps[4], bitmaps[4], wxITEM_NORMAL, _( "Database" ), _( "Database" ) );
     toolBar->Realize();
 }
 
