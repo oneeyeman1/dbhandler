@@ -25,6 +25,8 @@
 
 #include <wx/wx.h>
 #include <wxxmlserializer/XmlSerializer.h>
+#include "wxsf/TextShape.h"
+#include "constraintsign.h"
 #include "constraint.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(Constraint,xsSerializable);
@@ -32,7 +34,17 @@ XS_IMPLEMENT_CLONABLE_CLASS(Constraint,xsSerializable);
 Constraint::Constraint()
 {
     m_sign = NULL;
-    m_type = type;
+    m_viewType = DatabaseView;
+    m_type = foreignKey;
+    m_onDelete = restrict;
+    m_onUpdate = restrict;
+    InitSerializable();
+}
+
+Constraint::Constraint(ViewType type)
+{
+    m_sign = NULL;
+    m_viewType = type;
     m_type = foreignKey;
     m_onDelete = restrict;
     m_onUpdate = restrict;

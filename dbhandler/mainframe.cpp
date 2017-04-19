@@ -34,7 +34,7 @@
 #include "res/table.xpm"
 #include "res/properties.xpm"
 #include "key-f1.xpm"
-#include "query.xpm"
+#include "res/query.xpm"
 
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);

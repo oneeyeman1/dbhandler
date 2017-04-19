@@ -39,7 +39,9 @@ libdbwindow_la_SOURCES =  \
 	HeaderGrid.cpp \
 	HeaderGrid.h \
 	databasetemplate.cpp \
-	databasetemplate.h
+	databasetemplate.h \
+	constraintsign.cpp \
+	constraintsign.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \
