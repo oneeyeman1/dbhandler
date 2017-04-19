@@ -1,6 +1,8 @@
 #include <string>
+#include "wxsf/TextShape.h"
 #include "database.h"
 #include "XmlSerializer.h"
+#include "constraintsign.h"
 #include "GUIDatabaseTable.h"
 
 GUIDatabaseTable::GUIDatabaseTable(DatabaseTable *table) :Table()

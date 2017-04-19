@@ -1,11 +1,13 @@
 #ifndef __DATABASEVIEW__H
 #define __DATABASEVIEW__H
 
+#ifndef CONSTRAINT_H
 enum ViewType
 {
     DatabaseView,
     QueryView
 };
+#endif
 
 // The view using MyCanvas to show its contents
 class DrawingView : public wxView

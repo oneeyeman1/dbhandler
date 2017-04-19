@@ -12,10 +12,12 @@
 
 #include "wx/docview.h"
 #include "wx/docmdi.h"
+#include "wx/notebook.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/FlexGridShape.h"
+#include "constraintsign.h"
 #include "constraint.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"

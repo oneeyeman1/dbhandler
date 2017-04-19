@@ -25,6 +25,8 @@
 
 #include <wx/wx.h>
 #include <wxxmlserializer/XmlSerializer.h>
+#include "wxsf/TextShape.h"
+#include "constraintsign.h"
 #include "constraint.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(Constraint,xsSerializable);
@@ -44,6 +46,17 @@ Constraint::Constraint(ViewType type)
             SF_ADD_COMPONENT( m_grid, wxT( "sign" ) );
         }
     }
+    m_viewType = DatabaseView;
+    m_type = foreignKey;
+    m_onDelete = restrict;
+    m_onUpdate = restrict;
+    InitSerializable();
+}
+
+Constraint::Constraint()
+{
+    m_sign = NULL;
+    m_viewType = type;
     m_type = foreignKey;
     m_onDelete = restrict;
     m_onUpdate = restrict;
@@ -53,7 +66,7 @@ Constraint::Constraint(ViewType type)
 Constraint::Constraint(const Constraint& obj):xsSerializable(obj)
 {
     m_sign = obj.m_sign;
-    m_type = obj.m_type;
+    m_viewType = obj.m_viewType;
     m_name = obj.m_name;
     m_localColumn = obj.m_localColumn;
     m_type = obj.m_type;

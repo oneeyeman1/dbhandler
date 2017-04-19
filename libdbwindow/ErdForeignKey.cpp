@@ -16,14 +16,12 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/GridShape.h"
 #include "database.h"
-#include "constraint.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
+#include "constraintsign.h"
+#include "constraint.h"
 #include "MyErdTable.h"
 #include "fieldwindow.h"
-#include "databasecanvas.h"
-#include "databasedoc.h"
-#include "databaseview.h"
 #include "ErdForeignKey.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(ErdForeignKey,wxSFRoundOrthoLineShape);

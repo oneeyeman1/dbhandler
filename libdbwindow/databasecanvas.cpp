@@ -14,10 +14,12 @@
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"
 #include "wx/dynlib.h"
+#include "wx/notebook.h"
 #include "database.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
+#include "constraintsign.h"
 #include "constraint.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
@@ -95,7 +97,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
                 wxString referencedTableName = (*it4)->GetReferencedTableName();
                 if( std::find( selections.begin(), selections.end(), referencedTableName ) != selections.end() )
                 {
-                    Constraint* pConstr = new Constraint( m_type );
+                    Constraint* pConstr = new Constraint( ((DrawingView *) m_view)->GetViewType() );
                     pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
                     pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
                     pConstr->SetRefTable( referencedTableName );

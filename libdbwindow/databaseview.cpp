@@ -22,6 +22,7 @@
 
 #include <string>
 #include "wx/docview.h"
+#include "wx/notebook.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/cmdproc.h"
@@ -29,6 +30,7 @@
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "constraintsign.h"
 #include "table.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
@@ -124,7 +126,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_type == QueryView )
     {
         m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
-        sizer->Add( m_fields, 0, wxEXPAND, 0 );
+        sizer->Add( m_fields->GetFieldsWindow(), 0, wxEXPAND, 0 );
     }
     m_canvas = new DatabaseCanvas( this, wxDefaultPosition/*ptCanvas*/ );
     sizer->Add( m_canvas, 0, wxEXPAND, 0 );

@@ -1,6 +1,7 @@
 #include "wx/wx.h"
 
 #include "wx/docmdi.h"
+#include "wx/notebook.h"
 #include "database.h"
 #include "wxsf/CommonFcn.h"
 #include "wxsf/RectShape.h"
@@ -9,6 +10,7 @@
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/RoundRectShape.h"
+#include "constraintsign.h"
 #include "constraint.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"

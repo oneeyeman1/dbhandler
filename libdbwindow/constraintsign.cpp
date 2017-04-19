@@ -32,10 +32,10 @@ ConstraintSign::~ConstraintSign()
 
 void ConstraintSign::SetSign(const wxString &sign)
 {
-    m_sign->SetLabel( sign );
+    m_sign->SetText( sign );
 }
 
 const wxString &ConstraintSign::GetSign()
 {
-    return m_sign->GetLabel();
+    return m_sign->GetText();
 }

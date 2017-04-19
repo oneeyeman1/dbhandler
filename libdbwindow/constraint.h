@@ -26,6 +26,14 @@
 #ifndef CONSTRAINT_H
 #define CONSTRAINT_H
 
+#ifndef __DATABASEVIEW__H
+enum ViewType
+{
+    DatabaseView,
+    QueryView
+};
+#endif
+
 /*! \brief Class representing one table constraint. */
 class Constraint : public xsSerializable
 {
@@ -49,6 +57,7 @@ public:
 
     XS_DECLARE_CLONABLE_CLASS(Constraint);
     /*! \brief Default constructors */
+    Constraint();
     Constraint(ViewType type);
 
     Constraint(const Constraint& obj);
@@ -150,7 +159,7 @@ protected:
     constraintAction m_onDelete;
     constraintAction m_onUpdate;
     ConstraintSign *m_sign;
-    ViewType m_type;
+    ViewType m_viewType;
     void InitSerializable();
 };
 
