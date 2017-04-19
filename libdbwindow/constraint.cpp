@@ -29,10 +29,21 @@
 
 XS_IMPLEMENT_CLONABLE_CLASS(Constraint,xsSerializable);
 
-Constraint::Constraint()
+Constraint::Constraint(ViewType type)
 {
     m_sign = NULL;
-    m_type = type;
+    m_viewType = type;
+    if( m_viewType == Query )
+    {
+        m_sign = new ConstraintSign;
+        if (m_sign)
+        {
+            m_sign->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+            m_sign->AcceptChild( wxT( "wxSFTextShape" ) );
+            m_sign->Activate( false );
+            SF_ADD_COMPONENT( m_grid, wxT( "sign" ) );
+        }
+    }
     m_type = foreignKey;
     m_onDelete = restrict;
     m_onUpdate = restrict;
