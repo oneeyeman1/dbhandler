@@ -5,6 +5,7 @@ class GetObjectName; public wxDialog
 {
 public:
     GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId);
+    void OnButtonNew(wxCommandEvent &event);
 protected:
     void set_properties();
     void do_layout();
@@ -14,5 +15,6 @@ private:
     wxTextCtrl *m_painterName, *m_commentsText;
     wxListCtrl *m_objectList;
     wxButton *m_ok, *m_cancel, *m_new, *m_browse, *m_help;
+    int m_id;
 };
 #endif

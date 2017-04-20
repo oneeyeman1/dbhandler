@@ -6,10 +6,12 @@
 #include "wx/wx.h"
 #endif
 
+#include "wx/dir.h"
 #include "getobjectname.h"
 
 GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId) : wxDialog( parent, id, title )
 {
+    m_id = objectId;
     m_panel = new wxPanel( this );
     m_painterNameLabel = new wxStaticText( m_panel, wxID_ANY, "" );
     if( objectId == QUERY )
@@ -28,10 +30,21 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     m_help = new wxButton( m_panel, wxID_HELP, _( "&Help" ) );
     set_properties();
     do_layout();
+    m_new->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonNew, this );
 }
 
 void GetObjectName::set_properties()
 {
+    wxString fileName;
+    wxDir dir( wxGetCwd() );
+    if( m_id == QUERY )
+    {
+        bool res = dir.GetFirst( &fileName, "*.qry" );
+        while( res )
+        {
+            res = dir.GetNext( &fileName );
+        }
+    }
     m_ok->SetDefault();
 }
 
@@ -75,4 +88,9 @@ void GetObjectName::do_layout()
     SetSizer( main );
     main->Fit( this );
     Layout();
+}
+
+void GetObjectName::OnButtonNew(wxCommandEvent &event)
+{
+    EndModal( event.GetEventObject()->GetId() );
 }
