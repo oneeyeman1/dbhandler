@@ -191,11 +191,13 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, DatabaseTable *table,
     return res;
 }
 
-extern "C" WXEXPORT int ChooseObject(wxWindow *parent)
+extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId)
 {
     int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
+    GetObjectName dlg( parent, wxID_ANY, _( "Query" ), objectId );
+    res = dlg.ShowModal();
     return res;
 }

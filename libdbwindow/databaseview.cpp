@@ -238,7 +238,7 @@ void DrawingView::GetTablesForView(Database *db)
         if( m_type == QueryView )
         {
             CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-            res = func( m_frame );
+            res = func( m_frame, 1 );
         }
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
