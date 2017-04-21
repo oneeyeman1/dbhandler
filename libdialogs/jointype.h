@@ -12,29 +12,10 @@
 #ifndef JOINTYPE_H
 #define JOINTYPE_H
 
-#include <wx/wx.h>
-#include <wx/image.h>
-#include <wx/intl.h>
-
-#ifndef APP_CATALOG
-#define APP_CATALOG "app"  // replace with the appropriate catalog name
-#endif
-
-
-// begin wxGlade: ::dependencies
-#include <wx/listctrl.h>
-// end wxGlade
-
-// begin wxGlade: ::extracode
-// end wxGlade
-
-
-class MyDialog: public wxDialog {
+class JointType : public wxDialog
+{
 public:
-    // begin wxGlade: MyDialog::ids
-    // end wxGlade
-
-    MyDialog(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    JointType(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE);
 
 private:
     // begin wxGlade: MyDialog::methods
@@ -53,6 +34,5 @@ protected:
     wxPanel* m_panel;
     // end wxGlade
 }; // wxGlade: end class
-
 
 #endif // JOINTYPE_H

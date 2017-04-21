@@ -9,68 +9,74 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 
+// For compilers that support precompilation, includes "wx/wx.h".
+#include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
+
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
+#include "wx/mdi.h"
+#endif
+
+#include "wx/listctrl.h"
 #include "jointype.h"
 
-// begin wxGlade: ::extracode
-// end wxGlade
-
-
-
-MyDialog::MyDialog(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
+JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style) :
     wxDialog(parent, id, title, pos, size, style)
 {
     // begin wxGlade: MyDialog::MyDialog
-    m_panel = new wxPanel(this, wxID_ANY);
-    m_label = new wxStaticText(m_panel, wxID_ANY, _("Join rows in "));
-    m_OK = new wxButton(m_panel, wxID_OK, _("OK"));
-    m_joinType = new wxListCtrl(m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT);
-    m_Cancel = new wxButton(m_panel, wxID_CANCEL, _("Cancel"));
-    m_delete = new wxButton(m_panel, wxID_ANY, _("Delete"));
-    m_help = new wxButton(m_panel, wxID_HELP, _("Help"));
+    m_panel = new wxPanel( this, wxID_ANY );
+    m_label = new wxStaticText( m_panel, wxID_ANY, _( "Join rows in " ) );
+    m_OK = new wxButton( m_panel, wxID_OK, _( "OK" ) );
+    m_joinType = new wxListCtrl( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+    m_Cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
+    m_delete = new wxButton( m_panel, wxID_ANY, _( "Delete" ) );
+    m_help = new wxButton( m_panel, wxID_HELP, _( "Help" ) );
 
     set_properties();
     do_layout();
     // end wxGlade
 }
 
-
-void MyDialog::set_properties()
+void JointType::set_properties()
 {
     // begin wxGlade: MyDialog::set_properties
-    SetTitle(_("Join"));
+    SetTitle( _( "Join" ) );
     m_OK->SetDefault();
     // end wxGlade
 }
 
-
-void MyDialog::do_layout()
+void JointType::do_layout()
 {
     // begin wxGlade: MyDialog::do_layout
-    wxBoxSizer* sizer_1 = new wxBoxSizer(wxHORIZONTAL);
-    wxBoxSizer* sizer_2 = new wxBoxSizer(wxHORIZONTAL);
-    wxBoxSizer* sizer_3 = new wxBoxSizer(wxVERTICAL);
-    wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer(2, 2, 5, 5);
-    wxBoxSizer* sizer_4 = new wxBoxSizer(wxVERTICAL);
-    sizer_2->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_3->Add(5, 5, 0, wxEXPAND, 0);
-    grid_sizer_1->Add(m_label, 0, wxEXPAND, 0);
-    grid_sizer_1->Add(m_OK, 0, 0, 0);
-    grid_sizer_1->Add(m_joinType, 1, wxEXPAND, 0);
-    sizer_4->Add(m_Cancel, 0, wxEXPAND, 0);
-    sizer_4->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_4->Add(m_delete, 0, wxEXPAND, 0);
-    sizer_4->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_4->Add(m_help, 0, 0, 0);
-    sizer_4->Add(5, 5, 0, wxEXPAND, 0);
-    grid_sizer_1->Add(sizer_4, 1, 0, 0);
-    sizer_3->Add(grid_sizer_1, 1, 0, 0);
-    sizer_3->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_2->Add(sizer_3, 1, 0, 0);
-    sizer_2->Add(5, 5, 0, wxEXPAND, 0);
-    m_panel->SetSizer(sizer_2);
-    sizer_1->Add(m_panel, 1, 0, 0);
-    SetSizer(sizer_1);
-    sizer_1->Fit(this);
+    wxBoxSizer* sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* sizer_2 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* sizer_3 = new wxBoxSizer( wxVERTICAL );
+    wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer( 2, 2, 5, 5 );
+    wxBoxSizer* sizer_4 = new wxBoxSizer( wxVERTICAL );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+    grid_sizer_1->Add( m_label, 0, wxEXPAND, 0 );
+    grid_sizer_1->Add( m_OK, 0, 0, 0 );
+    grid_sizer_1->Add( m_joinType, 1, wxEXPAND, 0 );
+    sizer_4->Add( m_Cancel, 0, wxEXPAND, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_4->Add( m_delete, 0, wxEXPAND, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_4->Add( m_help, 0, 0, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    grid_sizer_1->Add( sizer_4, 1, 0, 0 );
+    sizer_3->Add( grid_sizer_1, 1, 0, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_2->Add( sizer_3, 1, 0, 0 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_panel->SetSizer( sizer_2 );
+    sizer_1->Add( m_panel, 1, 0, 0 );
+    SetSizer( sizer_1 );
+    sizer_1->Fit( this );
     Layout();
     Centre();
     // end wxGlade
