@@ -135,7 +135,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_queryBook = new wxNotebook( m_frame, wxID_ANY );
         sizer->Add( m_queryBook, 0, wxEXPAND, 0 );
     }
-    m_frame->SetSizerAndFit( sizer );
+    m_frame->SetSizer( sizer );
+    m_frame->Layout();
     m_frame->Show();
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
