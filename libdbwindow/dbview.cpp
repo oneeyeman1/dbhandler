@@ -98,7 +98,12 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
 #endif
     docTemplate = (DatabaseTemplate *) docManager->FindTemplate( CLASSINFO( DrawingDocument ) );
     if( !docTemplate )
-        docTemplate = new DatabaseTemplate( docManager, "Drawing", "*.drw", "", "drw", "Drawing Doc", "Drawing View", CLASSINFO( DrawingDocument ), CLASSINFO( DrawingView ) );
+    {
+        if( type == DatabaseView )
+            docTemplate = new DatabaseTemplate( docManager, "Drawing", "*.drw", "", "drw", "Drawing Doc", "Drawing View", CLASSINFO( DrawingDocument ), CLASSINFO( DrawingView ) );
+        else
+            docTemplate = new DatabaseTemplate( docManager, "Drawing", "*.qry", "", "qry", "Drawing Doc", "Drawing View", CLASSINFO( DrawingDocument ), CLASSINFO( DrawingView ) );
+    }
     docTemplate->CreateDatabaseDocument( "*.drw", type, wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<DrawingDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db );
 }
