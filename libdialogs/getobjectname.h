@@ -1,7 +1,7 @@
 #ifndef __GETOBJECTNAME_H__
 #define __GETOBJECTNAME_H__
 
-class GetObjectName; public wxDialog
+class GetObjectName ; public wxDialog
 {
 public:
     GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId);

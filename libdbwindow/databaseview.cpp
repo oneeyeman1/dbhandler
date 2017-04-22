@@ -48,7 +48,7 @@ typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *, wxString &, bool &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
-typedef int (*CHOOSEOBJECT)(wxWindow *);
+typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -129,7 +129,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         sizer->Add( m_fields->GetFieldsWindow(), 0, wxEXPAND, 0 );
     }
     m_canvas = new DatabaseCanvas( this, wxDefaultPosition/*ptCanvas*/ );
-    sizer->Add( m_canvas, 0, wxEXPAND, 0 );
+    sizer->Add( m_canvas, 1, wxEXPAND, 0 );
     if( m_type == QueryView )
     {
         m_queryBook = new wxNotebook( m_frame, wxID_ANY );

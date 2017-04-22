@@ -30,6 +30,7 @@
 #include "createindex.h"
 #include "fontpropertypagebase.h"
 #include "foreignkey.h"
+#include "getobjectname.h"
 #include "properties.h"
 
 #ifdef __WXMSW__
