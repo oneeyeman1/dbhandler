@@ -31,6 +31,7 @@
 #include "fontpropertypagebase.h"
 #include "foreignkey.h"
 #include "getobjectname.h"
+#include "jointype.h"
 #include "properties.h"
 
 #ifdef __WXMSW__
@@ -199,6 +200,17 @@ extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId)
     wxTheApp->SetTopWindow( parent );
 #endif
     GetObjectName dlg( parent, wxID_ANY, _( "Query" ), objectId );
+    res = dlg.ShowModal();
+    return res;
+}
+
+extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField)
+{
+    int res;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    JointType dlg( parent, wxID_ANY, _( "Join" ), origTable, refTable, origField, refField );
     res = dlg.ShowModal();
     return res;
 }

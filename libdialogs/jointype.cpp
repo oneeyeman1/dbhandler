@@ -24,11 +24,13 @@
 #include "wx/listctrl.h"
 #include "jointype.h"
 
-JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &origTable, const wxString &refTable, const wxPoint& pos, const wxSize& size, long style) :
+JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &origTable, const wxString &origField, const wxString &refField, const wxString &refTable, const wxPoint& pos, const wxSize& size, long style) :
     wxDialog(parent, id, title, pos, size, style)
 {
     m_origTable = origTable;
     m_refTable = refTable;
+    m_origField = origField;
+    m_refField = refField;
     // begin wxGlade: MyDialog::MyDialog
     m_panel = new wxPanel( this, wxID_ANY );
     m_label = new wxStaticText( m_panel, wxID_ANY, _( "Join rows in " ) );

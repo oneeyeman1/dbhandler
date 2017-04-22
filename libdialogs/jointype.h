@@ -15,10 +15,10 @@
 class JointType : public wxDialog
 {
 public:
-    JointType(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &origTable, const wxString &refTable, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE);
+    JointType(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE);
 
 private:
-    wxString m_origTable, m_refTable;
+    wxString m_origTable, m_refTable, m_origField, m_refField;
     // begin wxGlade: MyDialog::methods
     void set_properties();
     void do_layout();
