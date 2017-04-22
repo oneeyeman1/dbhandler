@@ -49,25 +49,25 @@ void JointType::set_properties()
     SetTitle( _( "Join" ) );
     m_OK->SetDefault();
     // end wxGlade
-    m_joinType->InsertColumn( 0 );
-    m_joinType->InsertColumn( 1 );
+    m_joinType->InsertColumn( 0, "" );
+    m_joinType->InsertColumn( 1, "" );
     wxString buf;
-    long temp = m_joinType->InserItem( 0, "=" );
-    m_joinType->SetItemData( temp, i );
-    temp = m_joinType->InserItem( 0, "=" );
-    m_joinType->SetItemData( temp, i );
-    temp = m_joinType->InserItem( 0, "=" );
-    m_joinType->SetItemData( temp, i );
-    temp = m_joinType->InserItem( 0, "<" );
-    m_joinType->SetItemData( temp, i );
-    temp = m_joinType->InserItem( 0, ">" );
-    m_joinType->SetItemData( temp, i );
-    temp = m_joinType->InserItem( 0, "<=" );
-    m_joinType->SetItemData( temp, i );
-    temp = m_joinType->InserItem( 0, ">=" );
-    m_joinType->SetItemData( temp, i );
-    temp = m_joinType->InserItem( 0, "<>" );
-    m_joinType->SetItemData( temp, i );
+    long temp = m_joinType->InsertItem( 0, "=" );
+    m_joinType->SetItemData( temp, 0 );
+    temp = m_joinType->InsertItem( 0, "=" );
+    m_joinType->SetItemData( temp, 1 );
+    temp = m_joinType->InsertItem( 0, "=" );
+    m_joinType->SetItemData( temp, 2 );
+    temp = m_joinType->InsertItem( 0, "<" );
+    m_joinType->SetItemData( temp, 3 );
+    temp = m_joinType->InsertItem( 0, ">" );
+    m_joinType->SetItemData( temp, 4 );
+    temp = m_joinType->InsertItem( 0, "<=" );
+    m_joinType->SetItemData( temp, 5 );
+    temp = m_joinType->InsertItem( 0, ">=" );
+    m_joinType->SetItemData( temp, 6 );
+    temp = m_joinType->InsertItem( 0, "<>" );
+    m_joinType->SetItemData( temp, 7 );
 }
 
 void JointType::do_layout()

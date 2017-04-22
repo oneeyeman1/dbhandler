@@ -493,6 +493,7 @@
     <ClCompile Include="dialogs.cpp" />
     <ClCompile Include="foreignkey.cpp" />
     <ClCompile Include="getobjectname.cpp" />
+    <ClCompile Include="jointype.cpp" />
     <ClCompile Include="odbcconfigure.cpp" />
     <ClCompile Include="properties.cpp" />
     <ClCompile Include="selecttables.cpp" />
@@ -502,6 +503,7 @@
     <ClInclude Include="databasetype.h" />
     <ClInclude Include="foreignkey.h" />
     <ClInclude Include="getobjectname.h" />
+    <ClInclude Include="jointype.h" />
     <ClInclude Include="odbcconfigure.h" />
     <ClInclude Include="properties.h" />
     <ClInclude Include="selecttables.h" />
