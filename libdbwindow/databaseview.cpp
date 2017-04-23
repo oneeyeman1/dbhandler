@@ -134,7 +134,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_type == QueryView )
     {
         m_queryBook = new wxNotebook( m_frame, wxID_ANY );
-        m_page6 = SyntaxPropPage( m_queryBook );
+        m_page6 = new SyntaxPropPage( m_queryBook );
         sizer->Add( m_queryBook, 0, wxEXPAND, 0 );
     }
     m_frame->SetSizer( sizer );

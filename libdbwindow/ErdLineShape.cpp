@@ -16,6 +16,7 @@
 #include "HeaderGrid.h"
 #include "fieldwindow.h"
 #include "MyErdTable.h"
+#include "syntaxproppage.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"
