@@ -130,12 +130,13 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         sizer->Add( m_fields->GetFieldsWindow(), 0, wxEXPAND, 0 );
     }
     m_canvas = new DatabaseCanvas( this, wxDefaultPosition/*ptCanvas*/ );
-    sizer->Add( m_canvas, 1, wxEXPAND, 0 );
+    sizer->Add( m_canvas, 2, wxEXPAND, 0 );
     if( m_type == QueryView )
     {
         m_queryBook = new wxNotebook( m_frame, wxID_ANY );
         m_page6 = new SyntaxPropPage( m_queryBook );
-        sizer->Add( m_queryBook, 0, wxEXPAND, 0 );
+        m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
+        sizer->Add( m_queryBook, 1, wxEXPAND, 0 );
     }
     m_frame->SetSizer( sizer );
     m_frame->Layout();
