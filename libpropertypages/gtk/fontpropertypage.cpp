@@ -48,6 +48,10 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
     m_fontPanel = gtk_font_selection_new();
     g_object_ref( m_fontPanel );
     g_signal_connect( m_fontPanel, "realize", G_CALLBACK( set_font ), &font );
+//    wxWindowBase::AddChild( m_fontPanel );
+//    m_dirtyTabOrder = true;
+//    wxTheApp->WakeUpIdle();
+//    wxPizza *pizza = WX_PIZZA( m_fontPanel );
 //    DoAddChild( m_fontPanel );
 //    PostCreation( size );
 }

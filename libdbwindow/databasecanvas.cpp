@@ -28,6 +28,7 @@
 #include "fieldwindow.h"
 #include "FieldShape.h"
 #include "DiagramManager.h"
+#include "wherehavingpage.h"
 #include "syntaxproppage.h"
 #include "databasedoc.h"
 #include "databasecanvas.h"
