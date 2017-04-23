@@ -1,5 +1,5 @@
 #pragma once
-class WhereHavingPage :	public wxPanel
+class WXEXPORT WhereHavingPage :	public wxPanel
 {
 public:
     WhereHavingPage(wxWindow *parent);
