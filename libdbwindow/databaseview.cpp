@@ -38,6 +38,7 @@
 #include "MyErdTable.h"
 #include "fieldwindow.h"
 #include "syntaxproppage.h"
+#include "wherehavingpage.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"
@@ -134,6 +135,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_type == QueryView )
     {
         m_queryBook = new wxNotebook( m_frame, wxID_ANY );
+        m_page2 = new WhereHavingPage( m_queryBook );
+        m_queryBook->AddPage( m_page2, _( "Where" ) );
+        m_page4 = new WhereHavingPage( m_queryBook );
+        m_queryBook->AddPage( m_page4, _( "Having" ) );
         m_page6 = new SyntaxPropPage( m_queryBook );
         m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
         sizer->Add( m_queryBook, 1, wxEXPAND, 0 );

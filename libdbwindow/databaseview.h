@@ -50,6 +50,7 @@ private:
     FieldWindow *m_fields;
     wxDocMDIChildFrame *m_frame;
 	wxNotebook *m_queryBook;
+    WhereHavingPage *m_page2, *m_page4;
     SyntaxPropPage *m_page6;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);

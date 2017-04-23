@@ -40,6 +40,7 @@
     <ClInclude Include="msw\fontpropertypage.h" />
     <ClInclude Include="syntaxproppage.h" />
     <ClInclude Include="tablegeneral.h" />
+    <ClInclude Include="wherehavingpage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fieldheader.cpp" />
@@ -47,6 +48,7 @@
     <ClCompile Include="msw\fontpropertypage.cpp" />
     <ClCompile Include="syntaxproppage.cpp" />
     <ClCompile Include="tablegeneral.cpp" />
+    <ClCompile Include="wherehavingpage.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>propertypages</ProjectName>

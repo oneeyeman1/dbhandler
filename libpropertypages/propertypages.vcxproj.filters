@@ -25,6 +25,7 @@
     <ClInclude Include="syntaxproppage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="wherehavingpage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tablegeneral.cpp">
@@ -40,6 +41,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="syntaxproppage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wherehavingpage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
