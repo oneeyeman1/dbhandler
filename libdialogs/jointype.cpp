@@ -24,11 +24,13 @@
 #include "wx/listctrl.h"
 #include "jointype.h"
 
-JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &origTable, const wxString &refTable, const wxPoint& pos, const wxSize& size, long style) :
+JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &origTable, const wxString &origField, const wxString &refField, const wxString &refTable, const wxPoint& pos, const wxSize& size, long style) :
     wxDialog(parent, id, title, pos, size, style)
 {
     m_origTable = origTable;
     m_refTable = refTable;
+    m_origField = origField;
+    m_refField = refField;
     // begin wxGlade: MyDialog::MyDialog
     m_panel = new wxPanel( this, wxID_ANY );
     m_label = new wxStaticText( m_panel, wxID_ANY, _( "Join rows in " ) );
@@ -54,20 +56,36 @@ void JointType::set_properties()
     wxString buf;
     long temp = m_joinType->InsertItem( 0, "=" );
     m_joinType->SetItemData( temp, 0 );
+    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, "=" );
     m_joinType->SetItemData( temp, 1 );
+    buf.Printf( "%s.%s = %s.%s and rows from %s that have no %s", m_origTable, m_origField, m_refTable, m_refField, m_origTable, m_refTable );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, "=" );
     m_joinType->SetItemData( temp, 2 );
+    buf.Printf( "%s.%s = %s.%s and rows from %s that have no %s", m_origTable, m_origField, m_refTable, m_refField, m_refTable, m_origTable );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, "<" );
     m_joinType->SetItemData( temp, 3 );
+    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, ">" );
     m_joinType->SetItemData( temp, 4 );
+    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, "<=" );
     m_joinType->SetItemData( temp, 5 );
+    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, ">=" );
     m_joinType->SetItemData( temp, 6 );
+    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, "<>" );
     m_joinType->SetItemData( temp, 7 );
+    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    m_joinType->SetItem( temp, 1, buf );
 }
 
 void JointType::do_layout()
