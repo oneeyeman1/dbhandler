@@ -2,6 +2,7 @@
 
 #include "wx/docmdi.h"
 #include "wx/notebook.h"
+#include "wx/grid.h"
 #include "database.h"
 #include "wxsf/CommonFcn.h"
 #include "wxsf/RectShape.h"

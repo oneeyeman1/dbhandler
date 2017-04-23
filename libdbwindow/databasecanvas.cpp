@@ -15,6 +15,7 @@
 #include "wx/cmdproc.h"
 #include "wx/dynlib.h"
 #include "wx/notebook.h"
+#include "wx/grid.h"
 #include "database.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/TextShape.h"

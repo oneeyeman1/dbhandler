@@ -10,12 +10,21 @@
     #include "wx/mdi.h"
 #endif
 
+#include "wx/grid.h"
 #include "wherehavingpage.h"
 
-WhereHavingPage::WhereHavingPage(wxWindow *parent)
+WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
 {
 }
 
 WhereHavingPage::~WhereHavingPage(void)
+{
+}
+
+void WhereHavingPage::set_properties()
+{
+}
+
+void WhereHavingPage::do_layout()
 {
 }

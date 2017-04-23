@@ -13,6 +13,7 @@
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/notebook.h"
+#include "wx/grid.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/RoundRectShape.h"

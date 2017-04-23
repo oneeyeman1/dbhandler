@@ -26,6 +26,7 @@
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/cmdproc.h"
+#include "wx/grid.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/FlexGridShape.h"
