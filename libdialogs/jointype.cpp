@@ -56,20 +56,36 @@ void JointType::set_properties()
     wxString buf;
     long temp = m_joinType->InsertItem( 0, "=" );
     m_joinType->SetItemData( temp, 0 );
+    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, "=" );
     m_joinType->SetItemData( temp, 1 );
+    buf.Printf( "%s.%s = %s.%s and rows from %s that have no %s", m_origTable, m_origField, m_refTable, m_refField, m_origTable, m_refTable );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, "=" );
     m_joinType->SetItemData( temp, 2 );
+    buf.Printf( "%s.%s = %s.%s and rows from %s that have no %s", m_origTable, m_origField, m_refTable, m_refField, m_refTable, m_origTable );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, "<" );
     m_joinType->SetItemData( temp, 3 );
+    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, ">" );
     m_joinType->SetItemData( temp, 4 );
+    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, "<=" );
     m_joinType->SetItemData( temp, 5 );
+    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, ">=" );
     m_joinType->SetItemData( temp, 6 );
+    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 0, "<>" );
     m_joinType->SetItemData( temp, 7 );
+    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    m_joinType->SetItem( temp, 1, buf );
 }
 
 void JointType::do_layout()
