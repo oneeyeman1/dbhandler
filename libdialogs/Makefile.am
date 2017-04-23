@@ -17,7 +17,11 @@ libdialogs_la_SOURCES =  \
 	properties.cpp \
 	properties.h \
 	foreignkey.cpp \
-	foreignkey.h
+	foreignkey.h \
+	getobjectname.cpp \
+	getobjectname.h \
+	jointype.cpp \
+	jointype.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \

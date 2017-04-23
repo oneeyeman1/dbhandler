@@ -7,6 +7,7 @@
 #endif
 
 #include "wx/dir.h"
+#include "wx/listctrl.h"
 #include "getobjectname.h"
 
 GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId) : wxDialog( parent, id, title )
@@ -14,13 +15,13 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     m_id = objectId;
     m_panel = new wxPanel( this );
     m_painterNameLabel = new wxStaticText( m_panel, wxID_ANY, "" );
-    if( objectId == QUERY )
+    if( objectId == 1 )
     {
         SetTitle( _( "Query" ) );
         m_painterNameLabel->SetLabel( _( "Query Name:" ) );
     }
     m_painterName = new wxTextCtrl( m_panel, wxID_ANY, "" );
-    m_objectList = new wxListCtrl( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE | wxLB_ALWAYS_SB );
+    m_objectList = new wxListCtrl( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_SINGLE | wxLB_ALWAYS_SB );
     m_comments = new wxStaticText( m_panel, wxID_ANY, _( "&Comments" ) );
     m_commentsText = new wxTextCtrl( m_panel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
@@ -37,7 +38,7 @@ void GetObjectName::set_properties()
 {
     wxString fileName;
     wxDir dir( wxGetCwd() );
-    if( m_id == QUERY )
+    if( m_id == 1 )
     {
         bool res = dir.GetFirst( &fileName, "*.qry" );
         while( res )
@@ -92,5 +93,5 @@ void GetObjectName::do_layout()
 
 void GetObjectName::OnButtonNew(wxCommandEvent &event)
 {
-    EndModal( event.GetEventObject()->GetId() );
+    EndModal( dynamic_cast<wxButton *>( event.GetEventObject() )->GetId() );
 }
