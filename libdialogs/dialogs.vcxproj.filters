@@ -34,6 +34,9 @@
     <ClCompile Include="getobjectname.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="jointype.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="odbcconfigure.h">
@@ -55,6 +58,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="getobjectname.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="jointype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

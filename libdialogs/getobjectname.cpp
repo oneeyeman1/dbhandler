@@ -54,7 +54,7 @@ void GetObjectName::do_layout()
     wxBoxSizer *main = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer_2 = new wxBoxSizer( wxVERTICAL );
-    FlexGridSizer *sizer_3 = new FlexGridSizer( 2, 3, 0, 0 );
+    wxFlexGridSizer *sizer_3 = new wxFlexGridSizer( 2, 3, 0, 0 );
     wxBoxSizer *sizer_4 = new wxBoxSizer( wxVERTICAL );
     wxBoxSizer *sizer_5 = new wxBoxSizer( wxVERTICAL );
     sizer_1->Add( 20, 20, 0, wxEXPAND, 0 );
@@ -65,7 +65,7 @@ void GetObjectName::do_layout()
     sizer_5->Add( m_objectList, 0, wxEXPAND, 0 );
     sizer_5->Add( 20, 5, 0, wxEXPAND, 0 );
     sizer_5->Add( m_comments, 0, wxEXPAND, 0 );
-    sizer_5->Add( m_commentText, 0, wxEXPAND | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 0 );
+    sizer_5->Add( m_commentsText, 0, wxEXPAND, 0 );
     sizer_5->Add( 20, 10, 0, 0, 0 );
     sizer_3->Add( sizer_5, 0, wxEXPAND, 0 );
     sizer_3->Add( 10, 20, 0, wxEXPAND, 0 );
