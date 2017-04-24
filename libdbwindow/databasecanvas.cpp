@@ -77,7 +77,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
         {
             std::vector<Fields *> fields = (*it)->GetTable()->GetFields();
             m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
-            if( (*it) == tables.back() )
+            if( (*it) == tables.back() && m_view->GetViewType() == DatabaseView )
                 (*it)->Select( true );
             (*it)->UpdateTable();
             for( std::vector<Fields *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
