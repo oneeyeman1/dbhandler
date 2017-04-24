@@ -216,30 +216,42 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             }
         }
         Refresh();
-        if( !fieldSelected )
+        if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == DatabaseView )
         {
-            mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
-            mnu.AppendSeparator();
-            mnu.Append( wxID_TABLEALTERTABLE, _( "Alter Table" ), _( "Alter Table" ), false );
-            mnu.Append( wxID_PROPERTIES, _( "Properties..." ), _( "Table Properties" ), false );
-            mnu.AppendSeparator();
-            wxMenu *newObjectMenu = new wxMenu();
-            newObjectMenu->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );
-            newObjectMenu->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
-            mnu.AppendSubMenu( newObjectMenu, _( "New" ), _( "New" ) );
-            mnu.AppendSeparator();
-            mnu.Append( wxID_TABLEDROPTABLE, _( "Drop Table" ), _( "Drop Table" ), false );
-            mnu.AppendSeparator();
-            mnu.Append( wxID_TABLEEDITDATA, _( "Edit Data" ), _( "Edit Data" ), false );
-            mnu.AppendSeparator();
-            mnu.Append( wxID_TABLEDATATRANSFER, _( "Data Transfer" ), _( "Data Transfer" ), false );
-            mnu.AppendSeparator();
-            mnu.Append( wxID_TABLEPRINTDEFINITION, _( "Print Definition" ), _( "Print Definition" ), false );
+            if( !fieldSelected )
+            {
+                mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
+                mnu.AppendSeparator();
+                mnu.Append( wxID_TABLEALTERTABLE, _( "Alter Table" ), _( "Alter Table" ), false );
+                mnu.Append( wxID_PROPERTIES, _( "Properties..." ), _( "Table Properties" ), false );
+                mnu.AppendSeparator();
+                wxMenu *newObjectMenu = new wxMenu();
+                newObjectMenu->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );
+                newObjectMenu->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
+                mnu.AppendSubMenu( newObjectMenu, _( "New" ), _( "New" ) );
+                mnu.AppendSeparator();
+                mnu.Append( wxID_TABLEDROPTABLE, _( "Drop Table" ), _( "Drop Table" ), false );
+                mnu.AppendSeparator();
+                mnu.Append( wxID_TABLEEDITDATA, _( "Edit Data" ), _( "Edit Data" ), false );
+                mnu.AppendSeparator();
+                mnu.Append( wxID_TABLEDATATRANSFER, _( "Data Transfer" ), _( "Data Transfer" ), false );
+                mnu.AppendSeparator();
+                mnu.Append( wxID_TABLEPRINTDEFINITION, _( "Print Definition" ), _( "Print Definition" ), false );
+            }
+            else
+            {
+                mnu.Append( wxID_FIELDDEFINITION, _( "Definition" ), _( "Edit definition of selected object" ), false );
+                mnu.Append( wxID_FIELDPROPERTIES, _( "Properties..." ), _( "Show properties of selected object" ), false );
+            }
         }
         else
         {
-            mnu.Append( wxID_FIELDDEFINITION, _( "Definition" ), _( "Edit definition of selected object" ), false );
-            mnu.Append( wxID_FIELDPROPERTIES, _( "Properties..." ), _( "Show properties of selected object" ), false );
+            if( !fieldSelected )
+            {
+				mnu.Append( wxID_SELECTALLFIELDS, _( "Select All" ), _( "Select all columns for display" ) );
+				mnu.Append( wxID_DESELECTALLFIELDS, _("Deselect All" ), _( "Deselect all columns for display" ) );
+				mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
+            }
         }
     }
     else

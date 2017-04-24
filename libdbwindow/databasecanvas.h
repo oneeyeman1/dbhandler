@@ -54,5 +54,7 @@ private:
 #define wxID_STOPLOG              111
 #define wxID_SAVELOG              112
 #define wxID_CLEARLOG             113
+#define wxID_SELECTALLFIELDS      114
+#define wxID_DESELECTALLFIELDS    115
 
 #endif
