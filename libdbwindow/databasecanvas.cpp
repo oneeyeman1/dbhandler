@@ -45,6 +45,7 @@ END_EVENT_TABLE()
 DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent) : wxSFShapeCanvas()
 {
     m_view = view;
+    m_showDataTypes = m_showLabels = m_showToolBox = m_showComments = m_showIndexKeys = m_showIntegrity = true;
     startPoint.x = 10;
     startPoint.y = 10;
     m_showComments = m_showIndexKeys = m_showIntegrity = true;
@@ -187,6 +188,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     wxMenu mnu;
     mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_TABLEDROPTABLE );
     m_selectedShape = GetShapeUnderCursor();
+    ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
     if( m_selectedShape )
     {
         ShapeList list;
@@ -216,7 +218,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             }
         }
         Refresh();
-        if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == DatabaseView )
+        if( type == DatabaseView )
         {
             if( !fieldSelected )
             {
@@ -251,6 +253,17 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 				mnu.Append( wxID_SELECTALLFIELDS, _( "Select All" ), _( "Select all columns for display" ) );
 				mnu.Append( wxID_DESELECTALLFIELDS, _("Deselect All" ), _( "Deselect all columns for display" ) );
 				mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
+            }
+            else
+            {
+                mnu.Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select addtional tables for the query" )  );
+                mnu.Append( wxID_ARRANGETABLES, _( "Arrange Tables" ), _( "Arrange Tables" ) );
+                wxMenu *showMenu = new wxMenu();
+                showMenu->AppendCheckItem( wxID_SHOWDATATYPES, _( "Datatypes" ), _( "Datatypes" ) );
+                showMenu->AppendCheckItem( wxID_SHOWLABELS, _( "Labels" ), _( "Labels" ) );
+                showMenu->AppendCheckItem( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Comments" ) );
+                showMenu->AppendCheckItem( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ) );
+                mnu.AppendSubMenu( showMenu, _( "Show" ) );
             }
         }
     }

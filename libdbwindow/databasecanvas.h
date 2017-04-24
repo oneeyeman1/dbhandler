@@ -22,6 +22,7 @@ private:
     wxView *m_view;
     wxSFDiagramManager m_pManager;
     bool m_showComments, m_showIndexKeys, m_showIntegrity;
+    bool m_showDataTypes, m_showLabels, m_showToolBox;
     wxSFShapeBase *m_selectedShape;
     MODE m_mode;
     wxPoint startPoint;
@@ -56,5 +57,10 @@ private:
 #define wxID_CLEARLOG             113
 #define wxID_SELECTALLFIELDS      114
 #define wxID_DESELECTALLFIELDS    115
+#define wxID_ARRANGETABLES        116
+#define wxID_SHOWDATATYPES        117
+#define wxID_SHOWLABELS           118
+#define wxID_SHOWCOMMENTS         119
+#define wxID_SHOWSQLTOOLBOX       120
 
 #endif

@@ -104,6 +104,11 @@ wxDECLARE_APP(MyApp);
 #define wxID_CLEARLOG             113
 #define wxID_SELECTALLFIELDS      114
 #define wxID_DESELECTALLFIELDS    115
+#define wxID_ARRANGETABLES        116
+#define wxID_SHOWDATATYPES        117
+#define wxID_SHOWLABELS           118
+#define wxID_SHOWCOMMENTS         119
+#define wxID_SHOWSQLTOOLBOX       120
 #define wxID_EDITCUTCOLUMN        200
 #define wxID_EDITCOPYCOLUMN       201
 #define wxID_EDITPASTECOLUMN      202
