@@ -10,7 +10,7 @@
     #include "wx/mdi.h"
 #endif
 
-#include <wstring>
+#include <string>
 #include "wx/grid.h"
 #include "wherehavingpage.h"
 
