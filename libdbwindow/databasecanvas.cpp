@@ -217,7 +217,8 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 if( field )
                 {
                     wxRect rect = field->GetBoundingBox();
-                    field->Select( true );
+                    if( type == DatabaseView )
+                        field->Select( true );
                     field->SetParentRect( tableRect );
                     fieldSelected = true;
                 }
