@@ -62,9 +62,13 @@ void WhereHavingPage::set_properties()
     m_grid->SetColLabelValue( 1, _( "Operator" ) );
     m_grid->SetColLabelValue( 2, _( "Value" ) );
     m_grid->SetColLabelValue( 3, _( "Logical" ) );
-/*    m_grid->SetCellEditor( 0, 0, new wxGridCellChoiceEditor() );
-    m_grid->SetCellEditor( 0, 1, new wxGridCellChoiceEditor( 28, m_operatorChoices ) );
-    m_grid->SetCellEditor( 0, 3, new wxGridCellChoiceEditor( 2, m_logicalChoices ) );*/
+    m_grid->AppendRows( 10 );
+	for( int i = 0; i < 9; i++ )
+    {
+        m_grid->SetCellEditor( i, 0, new wxGridCellChoiceEditor() );
+        m_grid->SetCellEditor( i, 1, new wxGridCellChoiceEditor( 28, m_operatorChoices ) );
+        m_grid->SetCellEditor( i, 3, new wxGridCellChoiceEditor( 2, m_logicalChoices ) );
+    }
 }
 
 void WhereHavingPage::do_layout()
