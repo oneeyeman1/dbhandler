@@ -29,6 +29,8 @@ public:
     std::vector<std::wstring> &GetTableNameVector();
     MyErdTable *GetReferencedTable(const wxString &tableName);
     std::vector<std::wstring> &GetTableNames();
+    void AppendFieldToQueryFields(const std::wstring &field);
+    const std::vector<std::wstring> &GetQueryFields();
 private:
     void DoUpdate();
 

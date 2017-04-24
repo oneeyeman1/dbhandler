@@ -174,3 +174,12 @@ std::vector<std::wstring> &DrawingDocument::GetTableNames()
     return m_tableNames;
 }
 
+void DrawingDocument::AppendFieldToQueryFields(const std::wstring &field)
+{
+    m_queryFields.push_back( field );
+}
+
+const std::vector<std::wstring> &DrawingDocument::GetQueryFields()
+{
+    return m_queryFields;
+}
