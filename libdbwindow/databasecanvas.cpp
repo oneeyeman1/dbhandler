@@ -167,7 +167,11 @@ bool DatabaseCanvas::IsTableDisplayed(const std::wstring &name)
 
 void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
 {
+    ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
     wxSFShapeBase* pShape = NULL;
+    ShapeList shapes, list;
+    GetSelectedShapes( shapes );
+    GetShapesAtPoint( event.GetPosition(), list );
     switch( m_mode )
     {
         case modeTABLE:
@@ -183,6 +187,16 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
     {
         if( !event.ControlDown() )
             m_mode = modeDESIGN;
+    }
+    if( type == DatabaseView && list.IsEmpty() )
+    {
+        for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); it++ )
+        {
+            MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
+            if( table )
+                table->Select( true );
+        }
+        Refresh();
     }
 }
 
