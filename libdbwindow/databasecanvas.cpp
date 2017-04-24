@@ -75,10 +75,16 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
     {
         if( !IsTableDisplayed( (*it)->GetTableName() ) )
         {
+            std::vector<Fields *> fields = (*it)->GetTable()->GetFields();
             m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
             if( (*it) == tables.back() )
                 (*it)->Select( true );
             (*it)->UpdateTable();
+            for( std::vector<Fields *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
+            {
+                m_page2->AppendField( (*it)->GetTableName() + "." + (*it1)->GetFieldName() );
+                m_page4->AppendField( (*it)->GetTableName() + "." + (*it1)->GetFieldName() );
+            }
             wxRect rect = (*it)->GetBoundingBox();
             startPoint.x += 200 + rect.GetWidth();
             m_displayedTables.push_back( (*it) );

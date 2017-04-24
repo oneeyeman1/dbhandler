@@ -10,6 +10,7 @@
     #include "wx/mdi.h"
 #endif
 
+#include <wstring>
 #include "wx/grid.h"
 #include "wherehavingpage.h"
 
@@ -76,4 +77,9 @@ void WhereHavingPage::do_layout()
     wxBoxSizer *sizer = new wxBoxSizer( wxVERTICAL );
     sizer->Add( m_grid, 1, wxEXPAND, 0 );
     SetSizer( sizer );
+}
+
+void WhereHavingPage::SetSelectedFields(const std::wstring &field)
+{
+    m_fields.push_back( field );
 }
