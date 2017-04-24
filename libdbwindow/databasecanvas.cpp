@@ -254,29 +254,32 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 				mnu.Append( wxID_DESELECTALLFIELDS, _("Deselect All" ), _( "Deselect all columns for display" ) );
 				mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
             }
-            else
-            {
-                mnu.Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select addtional tables for the query" )  );
-                mnu.Append( wxID_ARRANGETABLES, _( "Arrange Tables" ), _( "Arrange Tables" ) );
-                wxMenu *showMenu = new wxMenu();
-                showMenu->AppendCheckItem( wxID_SHOWDATATYPES, _( "Datatypes" ), _( "Datatypes" ) );
-                showMenu->AppendCheckItem( wxID_SHOWLABELS, _( "Labels" ), _( "Labels" ) );
-                showMenu->AppendCheckItem( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Comments" ) );
-                showMenu->AppendCheckItem( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ) );
-                mnu.AppendSubMenu( showMenu, _( "Show" ) );
-            }
         }
     }
     else
     {
-        mnu.Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select Table" ), false );
-        mnu.Append( wxID_VIEWARRANGETABLES, _( "Arramge Tables..." ), _( "Arrange Tables" ), false );
-        mnu.AppendCheckItem( wxID_VIEWSHOWCOMMENTS, _( "Show Comments" ), _( "Show Comments" ) );
-        mnu.AppendCheckItem( wxID_VIEWSHOWINDEXKEYS, _( "Show Index Keys" ), _( "Show Index Keys" ) );
-        mnu.AppendCheckItem( wxID_VIEWSHOWINTEGRITY, _( "Show Referential Integrity" ), _( "Show Referential Integrity" ) );
-        mnu.Check( wxID_VIEWSHOWCOMMENTS, true );
-        mnu.Check( wxID_VIEWSHOWINDEXKEYS, true );
-        mnu.Check( wxID_VIEWSHOWINTEGRITY, true );
+        if( type == DatabaseView )
+        {
+            mnu.Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select Table" ), false );
+            mnu.Append( wxID_VIEWARRANGETABLES, _( "Arramge Tables..." ), _( "Arrange Tables" ), false );
+            mnu.AppendCheckItem( wxID_VIEWSHOWCOMMENTS, _( "Show Comments" ), _( "Show Comments" ) );
+            mnu.AppendCheckItem( wxID_VIEWSHOWINDEXKEYS, _( "Show Index Keys" ), _( "Show Index Keys" ) );
+            mnu.AppendCheckItem( wxID_VIEWSHOWINTEGRITY, _( "Show Referential Integrity" ), _( "Show Referential Integrity" ) );
+            mnu.Check( wxID_VIEWSHOWCOMMENTS, true );
+            mnu.Check( wxID_VIEWSHOWINDEXKEYS, true );
+            mnu.Check( wxID_VIEWSHOWINTEGRITY, true );
+        }
+        else
+        {
+            mnu.Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select addtional tables for the query" )  );
+            mnu.Append( wxID_ARRANGETABLES, _( "Arrange Tables" ), _( "Arrange Tables" ) );
+            wxMenu *showMenu = new wxMenu();
+            showMenu->AppendCheckItem( wxID_SHOWDATATYPES, _( "Datatypes" ), _( "Datatypes" ) );
+            showMenu->AppendCheckItem( wxID_SHOWLABELS, _( "Labels" ), _( "Labels" ) );
+            showMenu->AppendCheckItem( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Comments" ) );
+            showMenu->AppendCheckItem( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ) );
+            mnu.AppendSubMenu( showMenu, _( "Show" ) );
+        }
     }
     int rc = GetPopupMenuSelectionFromUser( mnu, pt );
     if( rc == wxID_NONE && field )
