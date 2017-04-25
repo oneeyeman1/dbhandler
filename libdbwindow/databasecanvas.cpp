@@ -82,8 +82,8 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
             (*it)->UpdateTable();
             for( std::vector<Field *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
             {
-                dynamic_cast<DrawingView *>( m_view )->GetWherePage()->AppendField( (*it)->GetTableName() + "." + (*it1)->GetFieldName() );
-                dynamic_cast<DrawingView *>( m_view )->GetHavingPage()->AppendField( (*it)->GetTableName() + "." + (*it1)->GetFieldName() );
+                dynamic_cast<DrawingView *>( m_view )->GetWherePage()->AppendField( (*it)->GetTableName() + L"." + (*it1)->GetFieldName() );
+                dynamic_cast<DrawingView *>( m_view )->GetHavingPage()->AppendField( (*it)->GetTableName() + L"." + (*it1)->GetFieldName() );
             }
             wxRect rect = (*it)->GetBoundingBox();
             startPoint.x += 200 + rect.GetWidth();

@@ -10,8 +10,10 @@
     #include "wx/mdi.h"
 #endif
 
+#include <math.h>
 #include <string>
 #include "wx/grid.h"
+#include "wx/headerctrl.h"
 //#include "wx/settings.h"
 #include "wherehavingpage.h"
 
@@ -56,8 +58,8 @@ WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
     Bind( wxEVT_SIZE, &WhereHavingPage::OnSize, this );
     for( int i = 0; i < 9; i++ )
     {
-        dynamic_cast<wxGridCellChoiceEditor *>( m_grid->GetCellEditor( i, 0 ) )->Bind( wxEVT_COMBOBOX_DROPDOWN, &WhereHavingPage::OnColumnDropDown, this );
-        dynamic_cast<wxGridCellChoiceEditor *>( m_grid->GetCellEditor( i, 0 ) )->Bind( wxEVT_COMBOBOX_CLOSEUP, &WhereHavingPage::OnColumnPopup, this );
+        dynamic_cast<wxComboBox *>( m_grid->GetCellEditor( i, 0 )->GetControl() )->Bind( wxEVT_COMBOBOX_DROPDOWN, &WhereHavingPage::OnColumnDropDown, this );
+        dynamic_cast<wxComboBox *>( m_grid->GetCellEditor( i, 0 )->GetControl() )->Bind( wxEVT_COMBOBOX_CLOSEUP, &WhereHavingPage::OnColumnPopup, this );
     }
 }
 
@@ -74,10 +76,7 @@ void WhereHavingPage::set_properties()
     m_grid->SetColLabelValue( 2, _( "Value" ) );
     m_grid->SetColLabelValue( 3, _( "Logical" ) );
     for (int i = 0; i < 4; i++ )
-    {
         m_grid->DisableColResize( i );
-        m_grid->DisableDragColResize( i );
-    }
     m_grid->AppendRows( 10 );
     m_grid->DisableDragColMove();
     m_grid->DisableDragColSize();
