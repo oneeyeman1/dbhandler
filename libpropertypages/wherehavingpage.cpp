@@ -109,8 +109,8 @@ void WhereHavingPage::OnSize(wxSizeEvent &event)
     int col_width = ( grid_width - ( m_operatorSize + m_logicalSize ) ) / 2;
     m_grid->SetColSize( 0, round( col_width ) );
     m_grid->SetColSize( 2, round( col_width ) );
-    int height = m_grid->GetGridColHeader()->GetClientRect().GetHeight() + m_grid->GetRowSize() * 3;
-    m_grid->SetMaxSize( -1, height );
+    int height = m_grid->GetGridColHeader()->GetClientRect().GetHeight() + m_grid->GetRowSize( 0 ) * 3;
+    m_grid->SetMaxSize( wxSize( -1, height ) );
     event.Skip();
 }
 
