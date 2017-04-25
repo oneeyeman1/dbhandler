@@ -18,6 +18,8 @@ public:
     void GetTablesForView(Database *db);
     void SetViewType(ViewType type);
     ViewType GetViewType();
+    WhereHavingPage *GetWherePage();
+    WhereHavingPage *GetHavingPage();
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
@@ -45,11 +47,11 @@ private:
     wxFrame *m_log;
     wxTextCtrl *m_text;
     DatabaseCanvas *m_canvas;
-	bool m_isCreated;
-	ViewType m_type;
+    bool m_isCreated;
+    ViewType m_type;
     FieldWindow *m_fields;
     wxDocMDIChildFrame *m_frame;
-	wxNotebook *m_queryBook;
+    wxNotebook *m_queryBook;
     WhereHavingPage *m_page2, *m_page4;
     SyntaxPropPage *m_page6;
     wxDECLARE_EVENT_TABLE();

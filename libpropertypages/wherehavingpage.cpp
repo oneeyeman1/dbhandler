@@ -12,6 +12,7 @@
 
 #include <string>
 #include "wx/grid.h"
+//#include "wx/settings.h"
 #include "wherehavingpage.h"
 
 WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
@@ -47,8 +48,17 @@ WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
     m_logicalChoices[0] = "And";
     m_logicalChoices[1] = "Or";
     m_grid = new wxGrid( this, wxID_ANY );
+    m_scrollbarWidth = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, m_grid);
     set_properties();
     do_layout();
+    m_operatorSize = m_grid->GetColSize( 1 );
+    m_logicalSize = m_grid->GetColSize( 3 );
+    Bind( wxEVT_SIZE, &WhereHavingPage::OnSize, this );
+    for( int i = 0; i < 9; i++ )
+    {
+        dynamic_cast<wxGridCellChoiceEditor *>( m_grid->GetCellEditor( i, 0 ) )->Bind( wxEVT_COMBOBOX_DROPDOWN, &WhereHavingPage::OnColumnDropDown, this );
+        dynamic_cast<wxGridCellChoiceEditor *>( m_grid->GetCellEditor( i, 0 ) )->Bind( wxEVT_COMBOBOX_CLOSEUP, &WhereHavingPage::OnColumnPopup, this );
+    }
 }
 
 WhereHavingPage::~WhereHavingPage(void)
@@ -63,7 +73,16 @@ void WhereHavingPage::set_properties()
     m_grid->SetColLabelValue( 1, _( "Operator" ) );
     m_grid->SetColLabelValue( 2, _( "Value" ) );
     m_grid->SetColLabelValue( 3, _( "Logical" ) );
+    for (int i = 0; i < 4; i++ )
+    {
+        m_grid->DisableColResize( i );
+        m_grid->DisableDragColResize( i );
+    }
     m_grid->AppendRows( 10 );
+    m_grid->DisableDragColMove();
+    m_grid->DisableDragColSize();
+    m_grid->DisableDragGridSize();
+	m_grid->DisableDragRowSize();
 	for( int i = 0; i < 9; i++ )
     {
         m_grid->SetCellEditor( i, 0, new wxGridCellChoiceEditor() );
@@ -82,4 +101,24 @@ void WhereHavingPage::do_layout()
 void WhereHavingPage::AppendField(const std::wstring &field)
 {
     m_fields.push_back( field );
+}
+
+void WhereHavingPage::OnSize(wxSizeEvent &event)
+{
+    int width = GetClientRect().GetWidth();
+    int grid_width = width - m_scrollbarWidth;
+    int col_width = ( grid_width - ( m_operatorSize + m_logicalSize ) ) / 2;
+    m_grid->SetColSize( 0, round( col_width ) );
+    m_grid->SetColSize( 2, round( col_width ) );
+    int height = m_grid->GetGridColHeader()->GetClientRect().GetHeight() + m_grid->GetRowSize() * 3;
+    m_grid->SetMaxSize( -1, height );
+    event.Skip();
+}
+
+void WhereHavingPage::OnColumnDropDown(wxCommandEvent &event)
+{
+}
+
+void WhereHavingPage::OnColumnPopup(wxCommandEvent &event)
+{
 }
