@@ -79,7 +79,7 @@ void WhereHavingPage::do_layout()
     SetSizer( sizer );
 }
 
-void WhereHavingPage::SetSelectedFields(const std::wstring &field)
+void WhereHavingPage::AppendField(const std::wstring &field)
 {
     m_fields.push_back( field );
 }

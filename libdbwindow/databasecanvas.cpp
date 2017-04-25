@@ -75,12 +75,12 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
     {
         if( !IsTableDisplayed( (*it)->GetTableName() ) )
         {
-            std::vector<Fields *> fields = (*it)->GetTable()->GetFields();
+            std::vector<Field *> fields = const_cast<DatabaseTable &>( (*it)->GetTable() ).GetFields();
             m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
-            if( (*it) == tables.back() && m_view->GetViewType() == DatabaseView )
+            if( (*it) == tables.back() && dynamic_cast<DrawingView *>( m_view )->GetViewType() == DatabaseView )
                 (*it)->Select( true );
             (*it)->UpdateTable();
-            for( std::vector<Fields *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
+            for( std::vector<Field *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
             {
                 m_page2->AppendField( (*it)->GetTableName() + "." + (*it1)->GetFieldName() );
                 m_page4->AppendField( (*it)->GetTableName() + "." + (*it1)->GetFieldName() );
@@ -171,7 +171,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
     wxSFShapeBase* pShape = NULL;
     ShapeList shapes, list;
     GetSelectedShapes( shapes );
-    GetShapesAtPoint( event.GetPosition(), list );
+    GetShapesAtPosition( event.GetPosition(), list );
     switch( m_mode )
     {
         case modeTABLE:
