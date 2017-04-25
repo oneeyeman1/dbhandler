@@ -54,6 +54,11 @@ WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
     m_operatorSize = m_grid->GetColSize( 1 );
     m_logicalSize = m_grid->GetColSize( 3 );
     Bind( wxEVT_SIZE, &WhereHavingPage::OnSize, this );
+    for( int i = 0; i < 9; i++ )
+    {
+        dynamic_cast<wxGridCellChoiceEditor *>( m_grid->GetCellEditor( i, 0 ) )->Bind( wxEVT_COMBOBOX_DROPDOWN, &WhereHavingPage::OnColumnDropDown, this );
+        dynamic_cast<wxGridCellChoiceEditor *>( m_grid->GetCellEditor( i, 0 ) )->Bind( wxEVT_COMBOBOX_CLOSEUP, &WhereHavingPage::OnColumnPopup, this );
+    }
 }
 
 WhereHavingPage::~WhereHavingPage(void)
@@ -108,4 +113,12 @@ void WhereHavingPage::OnSize(wxSizeEvent &event)
     int height = m_grid->GetGridColHeader()->GetClientRect().GetHeight() + m_grid->GetRowSize() * 3;
     m_grid->SetMaxSize( -1, height );
     event.Skip();
+}
+
+void WhereHavingPage::OnColumnDropDown(wxCommandEvent &event)
+{
+}
+
+void WhereHavingPage::OnColumnPopup(wxCommandEvent &event)
+{
 }
