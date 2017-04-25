@@ -75,7 +75,7 @@ void WhereHavingPage::set_properties()
 void WhereHavingPage::do_layout()
 {
     wxBoxSizer *sizer = new wxBoxSizer( wxVERTICAL );
-    sizer->Add( m_grid, 1, wxEXPAND, 0 );
+    sizer->Add( m_grid, 0, wxEXPAND, 0 );
     SetSizer( sizer );
 }
 
