@@ -672,3 +672,13 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &event)
     else
         wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
 }
+
+WhereHavingPage *DrawingView::GetWherePage()
+{
+	return m_page2;
+}
+
+WhereHavingPage *DrawingView::GetHavingPage()
+{
+    return m_page4;
+}
