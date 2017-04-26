@@ -713,6 +713,6 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &event)
     delete m_lib;
 }
 
-void DrawingView::AddFieldToQuery(const FieldShape *fiekld)
+void DrawingView::AddFieldToQuery(const FieldShape *field, bool isAdding)
 {
 }

@@ -225,7 +225,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         if( tbl && !fld )
             tbl->Select( false );
         Refresh();
-        dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( field );
+        dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( field, field->IsSelected() );
 	}
 }
 
