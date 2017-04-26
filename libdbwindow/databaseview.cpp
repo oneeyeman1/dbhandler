@@ -76,6 +76,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_CLEARLOG, DrawingView::OnClearLog)
     EVT_MENU(wxID_TABLEALTERTABLE, DrawingView::OnAlterTable)
     EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
+    EVT_MENU(wxID_CREATEDATABASE, DrawingView::OnCreateDatabase)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -681,4 +682,33 @@ WhereHavingPage *DrawingView::GetWherePage()
 WhereHavingPage *DrawingView::GetHavingPage()
 {
     return m_page4;
+}
+
+void DrawingView::OnCreateDatabase(wxCommandEvent &event)
+{
+    Database *db = NULL *db1 = GetDocument()->GetDatabase();
+    wxDynamicLibrary *lib = new wxDynamicLibrary();
+#ifdef __WXMSW__
+    lib->Load( "dbloader" );
+#elif __WXMAC__
+    lib->Load( "liblibdbloader.dylib" );
+#else
+    lib->Load( "libdbloader" );
+#endif
+    if( m_lib->IsLoaded() )
+    {
+        DBPROFILE func = (DBPROFILE) m_lib->GetSymbol( "ConnectToDb" );
+        wxString name = wxEmptyString;
+        wxString engine = wxGetApp().GetDBEngine();
+        db = func( this, name, engine );
+        if( db )
+        {
+            delete m_db;
+            m_db = NULL;
+            wxGetApp().SetDBEngine( engine );
+            wxGetApp().SetDBName( name );
+        }
+        m_db = db;
+    }
+    delete m_lib;
 }
