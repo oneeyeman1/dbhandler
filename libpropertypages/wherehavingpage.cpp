@@ -56,11 +56,7 @@ WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
     m_operatorSize = m_grid->GetColSize( 1 );
     m_logicalSize = m_grid->GetColSize( 3 );
     Bind( wxEVT_SIZE, &WhereHavingPage::OnSize, this );
-    for( int i = 0; i < 9; i++ )
-    {
-        dynamic_cast<wxComboBox *>( m_grid->GetCellEditor( i, 0 )->GetControl() )->Bind( wxEVT_COMBOBOX_DROPDOWN, &WhereHavingPage::OnColumnDropDown, this );
-        dynamic_cast<wxComboBox *>( m_grid->GetCellEditor( i, 0 )->GetControl() )->Bind( wxEVT_COMBOBOX_CLOSEUP, &WhereHavingPage::OnColumnPopup, this );
-    }
+    m_grid->Bind( wxEVT_GRID_EDITOR_CREATED, &WhereHavingPage::OnColumnName, this );
 }
 
 WhereHavingPage::~WhereHavingPage(void)
@@ -107,17 +103,24 @@ void WhereHavingPage::OnSize(wxSizeEvent &event)
     int width = GetClientRect().GetWidth();
     int grid_width = width - m_scrollbarWidth;
     int col_width = ( grid_width - ( m_operatorSize + m_logicalSize ) ) / 2;
-    m_grid->SetColSize( 0, round( col_width ) );
-    m_grid->SetColSize( 2, round( col_width ) );
-    int height = m_grid->GetGridColHeader()->GetClientRect().GetHeight() + m_grid->GetRowSize( 0 ) * 3;
+    m_grid->SetColSize( 0, col_width );
+    m_grid->SetColSize( 2, col_width );
+    int height = m_grid->GetRowSize( 0 ) * 4;
     m_grid->SetMaxSize( wxSize( -1, height ) );
     event.Skip();
 }
 
 void WhereHavingPage::OnColumnDropDown(wxCommandEvent &event)
 {
+    wxComboBox *editor = wxDynamicCast( event.GetEventObject(), wxComboBox );
+    for( std::vector<std::wstring>::iterator it = m_fields.begin(); it < m_fields.end(); it++ )
+        editor->Append( (*it) );
 }
 
-void WhereHavingPage::OnColumnPopup(wxCommandEvent &event)
+void WhereHavingPage::OnColumnName(wxGridEditorCreatedEvent &event)
 {
+    if( event.GetCol() == 0 )
+    {
+        dynamic_cast<wxComboBox *>( event.GetControl() )->Bind( wxEVT_COMBOBOX_DROPDOWN, &WhereHavingPage::OnColumnDropDown, this );
+    }
 }

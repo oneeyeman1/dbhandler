@@ -6,8 +6,8 @@ public:
     ~WhereHavingPage(void);
     void AppendField(const std::wstring &field);
     void OnSize(wxSizeEvent &event);
+    void OnColumnName(wxGridEditorCreatedEvent &event);
     void OnColumnDropDown(wxCommandEvent &event);
-    void OnColumnPopup(wxCommandEvent &event);
 protected:
     void do_layout();
     void set_properties();
