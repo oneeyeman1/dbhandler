@@ -207,14 +207,26 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         MyErdShape *tbl = NULL;
         for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
         {
-            FieldShape *field = wxDynamicCast( (*it), FieldShape );
-            if (field)
+            MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
+            if( table )
             {
-                fld = field;
-                field->Select( !field->IsSelected() );
+                tbl = table;
+            }
+            else
+            {
+                FieldShape *field = wxDynamicCast( (*it), FieldShape );
+                if( field )
+                {
+                    fld = field;
+                    field->Select( !field->IsSelected() );
+                }
             }
         }
-    }
+        if( tbl && !fld )
+            tbl->Select( false );
+        Refresh();
+        dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( field );
+	}
 }
 
 void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
