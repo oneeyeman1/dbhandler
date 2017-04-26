@@ -201,6 +201,20 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         }
         Refresh();
     }
+    if( type == QueryView )
+    {
+        FieldShape *fld = NULL;
+        MyErdShape *tbl = NULL;
+        for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
+        {
+            FieldShape *field = wxDynamicCast( (*it), FieldShape );
+            if (field)
+            {
+                fld = field;
+                field->Select( !field->IsSelected() );
+            }
+        }
+    }
 }
 
 void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
