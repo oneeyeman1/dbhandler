@@ -101,12 +101,15 @@ void WhereHavingPage::AppendField(const std::wstring &field)
 void WhereHavingPage::OnSize(wxSizeEvent &event)
 {
     int width = GetClientRect().GetWidth();
-    int grid_width = width - m_scrollbarWidth;
-    int col_width = ( grid_width - ( m_operatorSize + m_logicalSize ) ) / 2;
-    m_grid->SetColSize( 0, col_width );
-    m_grid->SetColSize( 2, col_width );
-    int height = m_grid->GetRowSize( 0 ) * 4;
-    m_grid->SetMaxSize( wxSize( -1, height ) );
+    if( width > 0 )
+    {
+        int grid_width = width - m_scrollbarWidth;
+        int col_width = ( grid_width - ( m_operatorSize + m_logicalSize ) ) / 2;
+        m_grid->SetColSize( 0, col_width );
+        m_grid->SetColSize( 2, col_width );
+        int height = m_grid->GetRowSize( 0 ) * 4;
+        m_grid->SetMaxSize( wxSize( -1, height ) );
+    }
     event.Skip();
 }
 

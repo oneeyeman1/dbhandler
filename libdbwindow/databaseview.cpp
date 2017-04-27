@@ -262,6 +262,7 @@ void DrawingView::GetTablesForView(Database *db)
             {
                 m_fields->GetFieldsWindow()->Show( true );
                 m_queryBook->Show( true );
+                m_frame->Layout();
             }
             ((DrawingDocument *) GetDocument())->AddTables( tables );
             ((DatabaseCanvas *) m_canvas)->DisplayTables( tables );
@@ -611,7 +612,7 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
 }
 #endif
 */
-void DrawingView::OnAlterTable(wxCommandEvent &event)
+void DrawingView::OnAlterTable(wxCommandEvent &WXUNUSED(event))
 {
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     ShapeList shapes;
@@ -643,7 +644,7 @@ void DrawingView::OnAlterTable(wxCommandEvent &event)
         wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
 }
 
-void DrawingView::OnFieldDefinition(wxCommandEvent &event)
+void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
 {
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     ShapeList shapes;
@@ -692,7 +693,7 @@ WhereHavingPage *DrawingView::GetHavingPage()
     return m_page4;
 }
 
-void DrawingView::OnCreateDatabase(wxCommandEvent &event)
+void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
 {
     Database *db = NULL, *db1 = GetDocument()->GetDatabase();
     wxDynamicLibrary *lib = new wxDynamicLibrary();
