@@ -132,6 +132,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     {
         m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
         sizer->Add( m_fields->GetFieldsWindow(), 0, wxEXPAND, 0 );
+        m_fields->Show( false );
     }
     m_canvas = new DatabaseCanvas( this, wxDefaultPosition/*ptCanvas*/ );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
@@ -145,6 +146,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_page6 = new SyntaxPropPage( m_queryBook );
         m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
         sizer->Add( m_queryBook, 1, wxEXPAND, 0 );
+        m_queryBook->Show( false );
     }
     m_frame->SetSizer( sizer );
     m_frame->Layout();
@@ -256,6 +258,8 @@ void DrawingView::GetTablesForView(Database *db)
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
         if( res != wxID_CANCEL )
         {
+            m_fields->Show( true );
+            m_queryBook->Show( true );
             ((DrawingDocument *) GetDocument())->AddTables( tables );
             ((DatabaseCanvas *) m_canvas)->DisplayTables( tables );
         }
