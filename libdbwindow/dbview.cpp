@@ -27,6 +27,7 @@
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "MyErdTable.h"
+#include "FieldShape.h"
 #include "fieldwindow.h"
 #include "wherehavingpage.h"
 #include "syntaxproppage.h"

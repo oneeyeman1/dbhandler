@@ -204,7 +204,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
     if( type == QueryView )
     {
         FieldShape *fld = NULL;
-        MyErdShape *tbl = NULL;
+        MyErdTable *tbl = NULL;
         for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
         {
             MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
@@ -225,7 +225,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         if( tbl && !fld )
             tbl->Select( false );
         Refresh();
-        dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( field, field->IsSelected() );
+        dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( fld, fld->IsSelected() );
 	}
 }
 

@@ -52,6 +52,7 @@ typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, vo
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *, wxString &, bool &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
+typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -686,7 +687,7 @@ WhereHavingPage *DrawingView::GetHavingPage()
 
 void DrawingView::OnCreateDatabase(wxCommandEvent &event)
 {
-    Database *db = NULL *db1 = GetDocument()->GetDatabase();
+    Database *db = NULL, *db1 = GetDocument()->GetDatabase();
     wxDynamicLibrary *lib = new wxDynamicLibrary();
 #ifdef __WXMSW__
     lib->Load( "dbloader" );
@@ -695,22 +696,22 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &event)
 #else
     lib->Load( "libdbloader" );
 #endif
-    if( m_lib->IsLoaded() )
+    if( lib->IsLoaded() )
     {
-        DBPROFILE func = (DBPROFILE) m_lib->GetSymbol( "ConnectToDb" );
+        DBPROFILE func = (DBPROFILE) lib->GetSymbol( "ConnectToDb" );
         wxString name = wxEmptyString;
-        wxString engine = wxGetApp().GetDBEngine();
-        db = func( this, name, engine );
+        wxString engine = GetDocument()->GetDatabase()->GetTableVector().m_type;
+        db = func( m_frame->GetParent(), name, engine );
         if( db )
         {
-            delete m_db;
-            m_db = NULL;
-            wxGetApp().SetDBEngine( engine );
-            wxGetApp().SetDBName( name );
+            delete db1;
+            db1 = NULL;
+//            wxGetApp().SetDBEngine( engine );
+//            wxGetApp().SetDBName( name );
         }
-        m_db = db;
+        db1 = db;
     }
-    delete m_lib;
+    delete lib;
 }
 
 void DrawingView::AddFieldToQuery(const FieldShape *field, bool isAdding)
