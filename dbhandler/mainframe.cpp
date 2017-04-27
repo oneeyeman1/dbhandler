@@ -151,6 +151,9 @@ void MainFrame::InitMenuBar(int id)
         case wxID_TABLE:
             TableMenu();
             break;
+        case wxID_QUERY:
+            QueryMenu();
+            break;
     }
 /*#if defined __WXMSW__ || defined __WXGTK__
     m_tb->SetSize( 0, 0, GetClientSize().GetX(), wxDefaultCoord );
@@ -187,25 +190,25 @@ void MainFrame::DatabaseMenu()
 void MainFrame::QueryMenu()
 {
     wxMenu *designMenu = new wxMenu;
-    designMenu->Append( wxID_UNDOALL, _(), _() );
+    designMenu->Append( wxID_UNDOALL, _( "Undo All" ), _( "Undo All" ) );
     designMenu->AppendSeparator();
-    designMenu->AppendCheckItem( wxID_DATASOURCE, _(), _() );
-    designMenu->Append( wxID_PREVIEW, _(), _() );
+    designMenu->AppendCheckItem( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ) );
+    designMenu->Append( wxID_PREVIEW, _( "Preview" ), _( "Preview" ) );
     designMenu->AppendSeparator();
-    designMenu->Append( wxID_SELECTTABLE, _(...), _() );
-    designMenu->Append( wxID_ARRANGETABLES, _(), _() );
-    designMenu->Append( wxID_UNIONS, _(...), _() );
-    designMenu->Append( wxID_RETRIEVEARGS, _(...), _() );
-    designMenu->Append( wxID_CHECKOPTION, _(), _() );
-    designMenu->Append( wxID_DISTINCT, _(), _() );
+    designMenu->Append( wxID_SELECTTABLE, _( "Select Tables..." ), _( "Select additional tables for query" ) );
+    designMenu->Append( wxID_ARRANGETABLES, _( "Arrange Tables" ), _( "Arrange Tables" ) );
+    designMenu->Append( wxID_UNIONS, _( "Unions..." ), _( "Unions" ) );
+    designMenu->Append( wxID_RETRIEVEARGS, _( "Retrieval Arguments..." ), _( "Define Retrieval Arguments" ) );
+    designMenu->Append( wxID_CHECKOPTION, _( "Check Option" ), _( "Check Option" ) );
+    designMenu->Append( wxID_DISTINCT, _( "Distinct" ), _( "Use Distinct in query" ) );
     designMenu->AppendSeparator();
-    designMenu->Append( wxID_CONVERTTOSYNTAX, _(), _() );
+    designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert to Syntax" ), _( "Convert to Syntax" ) );
     designMenu->AppendSeparator();
     wxMenu *showMenu = new wxMenu;
-    designMenu->AppendSubMenu( showMenu, _(), _() );
+    designMenu->AppendSubMenu( showMenu, _( "Show" ), _( "Show" );
     designMenu->AppendSeparator();
-    designMenu->Append( wxID_CUSTOMCOLORS, _(...), _() );
-    designMenu->Append( wxID_OPTIONS, _(...), _() );
+    designMenu->Append( wxID_CUSTOMCOLORS, _( "Custom Colors..." ), _( "Define custom coloring scheme" ) );
+    designMenu->Append( wxID_OPTIONS, _( "Options..." ), _( "Query view options" ) );
     GetMenuBar()->Insert( 2, designMenu, _() );
 }
 
@@ -310,6 +313,7 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
         Connect();
     if( m_db )
     {
+        InitMenuBar( event.GetId() );
         m_lib1 = new wxDynamicLibrary;
 #ifdef __WXMSW__
         m_lib1->Load("dbwindow");
