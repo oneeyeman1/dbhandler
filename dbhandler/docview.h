@@ -116,4 +116,14 @@ wxDECLARE_APP(MyApp);
 #define wxID_EDITDELETECOLUMN     204
 #define wxID_EDITTABLEPROPERTY    205
 #define wxID_DESIGNSYNTAX         206
+#define wxID_UNDOALL              300
+#define wxID_DATASOURCE           301
+#define wxID_PREVIEW              302
+#define wxID_UNIONS               303
+#define wxID_RETRIEVEARGS         304
+#define wxID_CHECKOPTION          305
+#define wxID_DISTINCT             306
+#define wxID_CONVERTTOSYNTAX      307
+#define wxID_CUSTOMCOLORS         308
+#define wxID_OPTIONS              309
 #endif // _WX_SAMPLES_DOCVIEW_DOCVIEW_H_

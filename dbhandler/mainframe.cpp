@@ -184,6 +184,30 @@ void MainFrame::DatabaseMenu()
     GetMenuBar()->Insert( 2, menuDesign, _( "&Design" ) );
 }
 
+void MainFrame::QueryMenu()
+{
+    wxMenu *designMenu = new wxMenu;
+    designMenu->Append( wxID_UNDOALL, _(), _() );
+    designMenu->AppendSeparator();
+    designMenu->AppendCheckItem( wxID_DATASOURCE, _(), _() );
+    designMenu->Append( wxID_PREVIEW, _(), _() );
+    designMenu->AppendSeparator();
+    designMenu->Append( wxID_SELECTTABLE, _(...), _() );
+    designMenu->Append( wxID_ARRANGETABLES, _(), _() );
+    designMenu->Append( wxID_UNIONS, _(...), _() );
+    designMenu->Append( wxID_RETRIEVEARGS, _(...), _() );
+    designMenu->Append( wxID_CHECKOPTION, _(), _() );
+    designMenu->Append( wxID_DISTINCT, _(), _() );
+    designMenu->AppendSeparator();
+    designMenu->Append( wxID_CONVERTTOSYNTAX, _(), _() );
+    designMenu->AppendSeparator();
+    wxMenu *showMenu = new wxMenu;
+    designMenu->AppendSubMenu( showMenu, _(), _() );
+    designMenu->AppendSeparator();
+    designMenu->Append( wxID_CUSTOMCOLORS, _(...), _() );
+    designMenu->Append( wxID_OPTIONS, _(...), _() );
+    GetMenuBar()->Insert( 2, designMenu, _() );
+}
 
 void MainFrame::TableMenu()
 {
