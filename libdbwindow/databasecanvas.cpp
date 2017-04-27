@@ -231,7 +231,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
 
 void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 {
-    FieldShape *field = NULL;
+    FieldShape *erdField = NULL;
     MyErdTable *erdTable = NULL;
     wxPoint pt = event.GetPosition();
     wxMenu mnu;
@@ -256,7 +256,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             }
             else
             {
-                field = wxDynamicCast( (*it), FieldShape );
+                FieldShape *field = wxDynamicCast( (*it), FieldShape );
                 if( field )
                 {
                     wxRect rect = field->GetBoundingBox();
@@ -264,7 +264,21 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                         field->Select( true );
                     field->SetParentRect( tableRect );
                     fieldSelected = true;
+                    erdField = field;
                 }
+            }
+        }
+        if( type == DatabaseView && list.empty() )
+        {
+            MyErdTable *table = wxDynamicCast( m_selectedShape, MyErdTable );
+            if( table )
+            {
+                table->Select( true );
+            }
+            else
+            {
+                MyErdTable *table = wxDynamicCast( m_selectedShape->GetParentShape()->GetParentShape(), MyErdTable );
+                table->Select( true );
             }
         }
         Refresh();
@@ -332,25 +346,25 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         }
     }
     int rc = GetPopupMenuSelectionFromUser( mnu, pt );
-    if( rc == wxID_NONE && field )
+    if( rc == wxID_NONE && erdField )
     {
 //        if( field )
         {
-            field->Select( false );
+            erdField->Select( false );
             erdTable->GetFieldGrid()->Refresh();
             erdTable->Refresh();
         }
     }
     else
     {
-        if( field )
+        if( erdField )
         {
-            field->Select( false );
+            erdField->Select( false );
             erdTable->GetFieldGrid()->Refresh();
             erdTable->Refresh();
         }
         wxCommandEvent evt( wxEVT_MENU, rc );
-        evt.SetEventObject( field );
+        evt.SetEventObject( erdField );
         m_view->ProcessEvent( evt );
     }
 }
