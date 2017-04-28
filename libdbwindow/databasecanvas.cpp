@@ -68,7 +68,7 @@ void DatabaseCanvas::OnDraw(wxDC &WXUNUSED(dc))
 {
 }
 
-void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
+void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &query)
 {
     std::vector<MyErdTable *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
     for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
@@ -100,6 +100,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
             selections.push_back( name );
     }
     Refresh();
+    bool found = false;
     for( std::vector<MyErdTable *>::iterator it2 = tables.begin(); it2 < tables.end(); it2++ )
     {
         std::map<int, std::vector<FKField *> > foreignKeys = const_cast<DatabaseTable &>( (*it2)->GetTable() ).GetForeignKeyVector();
@@ -110,11 +111,17 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections)
                 wxString referencedTableName = (*it4)->GetReferencedTableName();
                 if( std::find( selections.begin(), selections.end(), referencedTableName ) != selections.end() )
                 {
+                    if( !found )
+                    {
+                        query += "\n\rWHERE ";
+                        found = false;
+                    }
                     Constraint* pConstr = new Constraint( ((DrawingView *) m_view)->GetViewType() );
                     pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
                     pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
                     pConstr->SetRefTable( referencedTableName );
                     pConstr->SetType( Constraint::foreignKey );
+                    query += wxString::Format( "%s.%s = %s.%s", (*it2)->GetTableName(), (*it4)->GetOriginalFieldName(), referencedTableName, (*it4)->GetReferencedFieldName() );
                     switch( (*it4)->GetOnUpdateConstraint() )
                     {
                         case RESTRICT_UPDATE:

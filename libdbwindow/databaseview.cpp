@@ -272,13 +272,13 @@ void DrawingView::GetTablesForView(Database *db)
                     if( it != tables.end() - 1 )
                         query += ", ";
                 }
-                m_page6->SetSyntaxText( query );
                 m_fields->GetFieldsWindow()->Show(true);
                 m_queryBook->Show( true );
                 m_frame->Layout();
             }
             ((DrawingDocument *) GetDocument())->AddTables( tables );
-            ((DatabaseCanvas *) m_canvas)->DisplayTables( tables );
+            ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
+            m_page6->SetSyntaxText(query);
         }
     }
 //    return tables;
