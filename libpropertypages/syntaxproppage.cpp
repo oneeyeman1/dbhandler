@@ -34,7 +34,7 @@ void SyntaxPropPage::do_layout()
     SetSizer( sizer1 );
 }
 
-void SyntaxPropPage::SetSyntaxText(const std::wstring &text)
+void SyntaxPropPage::SetSyntaxText(const wxString &text)
 {
     m_syntax->SetLabel( text );
 }

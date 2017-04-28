@@ -4,7 +4,7 @@ class WXEXPORT SyntaxPropPage :	public wxPanel
 public:
     SyntaxPropPage(wxWindow *parent);
     ~SyntaxPropPage(void);
-    void SetSyntaxText(const std::wstring &text);
+    void SetSyntaxText(const wxString &text);
 protected:
     void do_layout();
 private:
