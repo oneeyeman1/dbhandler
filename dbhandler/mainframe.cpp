@@ -205,11 +205,11 @@ void MainFrame::QueryMenu()
     designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert to Syntax" ), _( "Convert to Syntax" ) );
     designMenu->AppendSeparator();
     wxMenu *showMenu = new wxMenu;
-    designMenu->AppendSubMenu( showMenu, _( "Show" ), _( "Show" );
+    designMenu->AppendSubMenu( showMenu, _( "Show" ), _( "Show" ) );
     designMenu->AppendSeparator();
     designMenu->Append( wxID_CUSTOMCOLORS, _( "Custom Colors..." ), _( "Define custom coloring scheme" ) );
     designMenu->Append( wxID_OPTIONS, _( "Options..." ), _( "Query view options" ) );
-    GetMenuBar()->Insert( 2, designMenu, _() );
+    GetMenuBar()->Insert( 2, designMenu, _( "Design" ) );
 }
 
 void MainFrame::TableMenu()
@@ -307,7 +307,7 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
     }
 }
 
-void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
+void MainFrame::OnQuery(wxCommandEvent &event)
 {
     if( !m_db )
         Connect();

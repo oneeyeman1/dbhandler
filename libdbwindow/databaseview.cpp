@@ -132,7 +132,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     {
         m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
         sizer->Add( m_fields->GetFieldsWindow(), 0, wxEXPAND, 0 );
-        m_fields->Show( false );
+        m_fields->GetFieldsWindow()->Show( false );
     }
     m_canvas = new DatabaseCanvas( this, wxDefaultPosition/*ptCanvas*/ );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
@@ -145,7 +145,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_queryBook->AddPage( m_page4, _( "Having" ) );
         m_page6 = new SyntaxPropPage( m_queryBook );
         m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
-        sizer->Add( m_queryBook, 1, wxEXPAND, 0 );
+        sizer->Add( m_queryBook, 0, wxEXPAND, 0 );
         m_queryBook->Show( false );
     }
     m_frame->SetSizer( sizer );
@@ -253,14 +253,22 @@ void DrawingView::GetTablesForView(Database *db)
         {
             CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
             res = func( m_frame, 1 );
+            if( res == wxID_CANCEL )
+            {
+                m_frame->Close();
+                return;
+            }
         }
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
         if( res != wxID_CANCEL )
         {
-            m_fields->Show( true );
-            m_queryBook->Show( true );
-            m_frame->Layout();
+            if( m_type == QueryView )
+            {
+                m_fields->GetFieldsWindow()->Show( true );
+                m_queryBook->Show( true );
+                m_frame->Layout();
+            }
             ((DrawingDocument *) GetDocument())->AddTables( tables );
             ((DatabaseCanvas *) m_canvas)->DisplayTables( tables );
         }
@@ -609,7 +617,7 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
 }
 #endif
 */
-void DrawingView::OnAlterTable(wxCommandEvent &event)
+void DrawingView::OnAlterTable(wxCommandEvent &WXUNUSED(event))
 {
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     ShapeList shapes;
@@ -641,7 +649,7 @@ void DrawingView::OnAlterTable(wxCommandEvent &event)
         wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
 }
 
-void DrawingView::OnFieldDefinition(wxCommandEvent &event)
+void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
 {
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     ShapeList shapes;
@@ -690,7 +698,7 @@ WhereHavingPage *DrawingView::GetHavingPage()
     return m_page4;
 }
 
-void DrawingView::OnCreateDatabase(wxCommandEvent &event)
+void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
 {
     Database *db = NULL, *db1 = GetDocument()->GetDatabase();
     wxDynamicLibrary *lib = new wxDynamicLibrary();
