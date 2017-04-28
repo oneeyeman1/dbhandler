@@ -265,7 +265,15 @@ void DrawingView::GetTablesForView(Database *db)
         {
             if( m_type == QueryView )
             {
-                m_fields->GetFieldsWindow()->Show( true );
+                wxString query = "SELECT <unknown fields>\n\rFROM ";
+                for( std::vector<wxString>::iterator it = tables.begin(); it < tables.end(); it++ )
+                {
+                    query += (*it);
+                    if( it != tables.end() - 1 )
+                        query += ", ";
+                }
+                m_page6->SetSyntaxText( query );
+                m_fields->GetFieldsWindow()->Show(true);
                 m_queryBook->Show( true );
                 m_frame->Layout();
             }
