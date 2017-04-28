@@ -260,6 +260,7 @@ void DrawingView::GetTablesForView(Database *db)
         {
             m_fields->Show( true );
             m_queryBook->Show( true );
+            m_frame->Layout();
             ((DrawingDocument *) GetDocument())->AddTables( tables );
             ((DatabaseCanvas *) m_canvas)->DisplayTables( tables );
         }
