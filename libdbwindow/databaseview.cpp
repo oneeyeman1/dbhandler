@@ -732,7 +732,7 @@ void DrawingView::AddFieldToQuery(const FieldShape *field, bool isAdding)
     if( isAdding )
     {
         m_fields->AddField( field->GetFieldName() );
-        GetDocument()->GetQueryFields().push_back( );
+        GetDocument()->GetQueryFields().push_back( field->GetFieldName() );
     }
     else
     {
