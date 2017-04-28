@@ -4,5 +4,9 @@
 
 #include "stdafx.h"
 
+#ifdef __WXMSW__
+#include <vld.h>
+#endif
+
 // TODO: reference any additional headers you need in STDAFX.H
 // and not in this file

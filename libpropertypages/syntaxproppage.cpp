@@ -10,6 +10,10 @@
     #include "wx/mdi.h"
 #endif
 
+#ifdef __WXMSW__
+#include <vld.h>
+#endif
+
 #include "syntaxproppage.h"
 
 SyntaxPropPage::SyntaxPropPage(wxWindow *parent) : wxPanel( parent )

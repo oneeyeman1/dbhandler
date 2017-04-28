@@ -11,6 +11,10 @@
 #endif
 
 #ifdef __WXMSW__
+#include <vld.h>
+#endif
+
+#ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
 
 BOOL APIENTRY DllMain( HANDLE hModule, DWORD fdwReason, LPVOID lpReserved)

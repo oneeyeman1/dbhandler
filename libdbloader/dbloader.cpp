@@ -14,6 +14,10 @@
 #include "wx/wx.h"
 #endif
 
+#ifdef __WXMSW__
+#include <vld.h>
+#endif
+
 #include <map>
 #include <vector>
 #include <locale>

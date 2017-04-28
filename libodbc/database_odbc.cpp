@@ -4,6 +4,11 @@
 #ifndef WIN32
 #include <sstream>
 #endif
+
+#ifdef __WXMSW__
+#include <vld.h>
+#endif
+
 #include <map>
 #include <set>
 #include <vector>

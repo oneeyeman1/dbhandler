@@ -3,6 +3,10 @@
 #pragma execution_character_set("utf-8")
 #endif
 
+#ifdef __WXMSW__
+#include <vld.h>
+#endif
+
 #include <stdio.h>
 #include <map>
 #include <vector>
