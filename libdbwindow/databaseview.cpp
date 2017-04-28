@@ -275,6 +275,7 @@ void DrawingView::GetTablesForView(Database *db)
                 m_fields->GetFieldsWindow()->Show(true);
                 m_queryBook->Show( true );
                 m_frame->Layout();
+                m_frame - SendSizeEvent();
             }
             ((DrawingDocument *) GetDocument())->AddTables( tables );
             ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
