@@ -100,7 +100,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
             selections.push_back( name );
     }
     Refresh();
-    bool found = false;
+    bool found = false, secondIteration = false;
     for( std::vector<MyErdTable *>::iterator it2 = tables.begin(); it2 < tables.end(); it2++ )
     {
         std::map<int, std::vector<FKField *> > foreignKeys = const_cast<DatabaseTable &>( (*it2)->GetTable() ).GetForeignKeyVector();
@@ -111,16 +111,20 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                 wxString referencedTableName = (*it4)->GetReferencedTableName();
                 if( std::find( selections.begin(), selections.end(), referencedTableName ) != selections.end() )
                 {
+                    if( found )
+                        secondIteration = true;
                     if( !found )
                     {
                         query += "\n\rWHERE ";
-                        found = false;
+                        found = true;
                     }
                     Constraint* pConstr = new Constraint( ((DrawingView *) m_view)->GetViewType() );
                     pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
                     pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
                     pConstr->SetRefTable( referencedTableName );
                     pConstr->SetType( Constraint::foreignKey );
+                    if( secondIteration )
+                        query += " AND ";
                     query += wxString::Format( "%s.%s = %s.%s", (*it2)->GetTableName(), (*it4)->GetOriginalFieldName(), referencedTableName, (*it4)->GetReferencedFieldName() );
                     switch( (*it4)->GetOnUpdateConstraint() )
                     {
@@ -159,6 +163,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
             }
         }
     }
+    query += ";";
     Refresh();
 }
 
