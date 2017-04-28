@@ -145,7 +145,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_queryBook->AddPage( m_page4, _( "Having" ) );
         m_page6 = new SyntaxPropPage( m_queryBook );
         m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
-        sizer->Add( m_queryBook, 1, wxEXPAND, 0 );
+        sizer->Add( m_queryBook, 0, wxEXPAND, 0 );
         m_queryBook->Show( false );
     }
     m_frame->SetSizer( sizer );
@@ -253,6 +253,11 @@ void DrawingView::GetTablesForView(Database *db)
         {
             CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
             res = func( m_frame, 1 );
+            if( res == wxID_CANCEL )
+            {
+                m_frame->Close();
+                return;
+            }
         }
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
