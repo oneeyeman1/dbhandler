@@ -721,4 +721,13 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &event)
 
 void DrawingView::AddFieldToQuery(const FieldShape *field, bool isAdding)
 {
+    if( isAdding )
+    {
+        m_fields->AddField( field->GetFieldName() );
+        GetDocument()->GetQueryFields().push_back( );
+    }
+    else
+    {
+        m_fields->RemoveField();
+    }
 }
