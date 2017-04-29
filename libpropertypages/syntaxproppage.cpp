@@ -10,7 +10,7 @@
     #include "wx/mdi.h"
 #endif
 
-#ifdef __WXMSW__
+#if defined __WXMSW__ && defined __MEMORYLEAKS__
 #include <vld.h>
 #endif
 
@@ -30,7 +30,7 @@ SyntaxPropPage::~SyntaxPropPage(void)
 void SyntaxPropPage::do_layout()
 {
     wxBoxSizer *sizer1 = new wxBoxSizer( wxVERTICAL );
-    sizer1->Add( m_syntax, 0, wxEXPAND, 0 );
+    sizer1->Add( m_syntax, 1, wxEXPAND, 0 );
     SetSizer( sizer1 );
 }
 

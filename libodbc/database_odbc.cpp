@@ -5,7 +5,7 @@
 #include <sstream>
 #endif
 
-#ifdef __WXMSW__
+#if defined __WXMSW__ && defined __MEMORYLEAKS__
 #include <vld.h>
 #endif
 

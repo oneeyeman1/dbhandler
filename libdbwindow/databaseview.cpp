@@ -279,7 +279,8 @@ void DrawingView::GetTablesForView(Database *db)
             }
             ((DrawingDocument *) GetDocument())->AddTables( tables );
             ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
-            m_page6->SetSyntaxText(query);
+            if( m_type == QueryView )
+                m_page6->SetSyntaxText(query);
         }
     }
 //    return tables;
