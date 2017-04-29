@@ -736,15 +736,18 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
     delete lib;
 }
 
-void DrawingView::AddFieldToQuery(const FieldShape *field, bool isAdding)
+void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding)
 {
     if( isAdding )
     {
-        m_fields->AddField( field->GetField()->GetFieldName() );
-        GetDocument()->GetQueryFields().push_back( field->GetFieldName() );
+        Field *fld = const_cast<FieldShape &>( field ).GetField();
+        wxString name = fld->GetFieldName();
+        m_fields->AddField( name );
+        std::vector<std::wstring> queryFields = GetDocument()->GetQueryFields();
+        queryFields.push_back( name.ToStdWstring() );
     }
     else
     {
-        m_fields->RemoveField();
+        m_fields->RemoveField( GetDocument()->GetQueryFields() );
     }
 }

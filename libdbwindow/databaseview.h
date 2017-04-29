@@ -20,7 +20,7 @@ public:
     ViewType GetViewType();
     WhereHavingPage *GetWherePage();
     WhereHavingPage *GetHavingPage();
-    void AddFieldToQuery(const FieldShape *field, bool isAdding);
+    void AddFieldToQuery(const FieldShape &field, bool isAdding);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
