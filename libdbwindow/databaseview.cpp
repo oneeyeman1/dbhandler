@@ -263,9 +263,9 @@ void DrawingView::GetTablesForView(Database *db)
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
         if( res != wxID_CANCEL )
         {
+            wxString query = "SELECT <unknown fields>\n\rFROM ";
             if( m_type == QueryView )
             {
-                wxString query = "SELECT <unknown fields>\n\rFROM ";
                 for( std::vector<wxString>::iterator it = tables.begin(); it < tables.end(); it++ )
                 {
                     query += (*it);
@@ -275,7 +275,7 @@ void DrawingView::GetTablesForView(Database *db)
                 m_fields->GetFieldsWindow()->Show(true);
                 m_queryBook->Show( true );
                 m_frame->Layout();
-                m_frame - SendSizeEvent();
+                m_frame->SendSizeEvent();
             }
             ((DrawingDocument *) GetDocument())->AddTables( tables );
             ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
@@ -740,7 +740,7 @@ void DrawingView::AddFieldToQuery(const FieldShape *field, bool isAdding)
 {
     if( isAdding )
     {
-        m_fields->AddField( field->GetFieldName() );
+        m_fields->AddField( field->GetField()->GetFieldName() );
         GetDocument()->GetQueryFields().push_back( field->GetFieldName() );
     }
     else
