@@ -131,8 +131,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_type == QueryView )
     {
         m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
-        sizer->Add( m_fields->GetFieldsWindow(), 0, wxEXPAND, 0 );
-        m_fields->GetFieldsWindow()->Show( false );
+        sizer->Add( m_fields, 0, wxEXPAND, 0 );
+        m_fields->Show( false );
     }
     m_canvas = new DatabaseCanvas( this, wxDefaultPosition/*ptCanvas*/ );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
@@ -154,6 +154,12 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
     return true;
+}
+
+DrawingView::~DrawingView()
+{
+//    delete m_fields;
+//    m_fields = NULL;
 }
 
 // Sneakily gets used for default print/preview as well as drawing on the
@@ -272,7 +278,7 @@ void DrawingView::GetTablesForView(Database *db)
                     if( it != tables.end() - 1 )
                         query += ", ";
                 }
-                m_fields->GetFieldsWindow()->Show(true);
+                m_fields->Show(true);
                 m_queryBook->Show( true );
                 m_frame->Layout();
                 m_frame->SendSizeEvent();

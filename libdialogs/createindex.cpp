@@ -343,7 +343,7 @@ void CreateIndex::do_layout()
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_13->Add( m_label3, 0, wxEXPAND, 0 );
     sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_13->Add( m_indexColumns->GetFieldsWindow(), 0, wxEXPAND, 0 );
+    sizer_13->Add( m_indexColumns, 0, wxEXPAND, 0 );
     sizer_5->Add( sizer_13, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )

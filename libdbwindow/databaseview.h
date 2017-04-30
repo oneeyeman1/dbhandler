@@ -14,6 +14,7 @@ class DrawingView : public wxView
 {
 public:
     DrawingView() : wxView(), m_canvas(NULL) {}
+    ~DrawingView();
 //    std::vector<Table> &GetTablesForView(Database *db);
     void GetTablesForView(Database *db);
     void SetViewType(ViewType type);
