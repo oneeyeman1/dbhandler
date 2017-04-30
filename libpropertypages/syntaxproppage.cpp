@@ -36,5 +36,5 @@ void SyntaxPropPage::do_layout()
 
 void SyntaxPropPage::SetSyntaxText(const wxString &text)
 {
-    m_syntax->SetLabel( text );
+    m_syntax->SetValue( text );
 }

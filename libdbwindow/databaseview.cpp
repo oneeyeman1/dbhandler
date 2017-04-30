@@ -263,7 +263,7 @@ void DrawingView::GetTablesForView(Database *db)
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
         if( res != wxID_CANCEL )
         {
-            wxString query = "SELECT <unknown fields>\n\rFROM ";
+            wxString query = "SELECT <unknown fields>\nFROM ";
             if( m_type == QueryView )
             {
                 for( std::vector<wxString>::iterator it = tables.begin(); it < tables.end(); it++ )
