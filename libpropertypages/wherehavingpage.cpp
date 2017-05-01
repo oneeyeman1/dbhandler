@@ -127,3 +127,13 @@ void WhereHavingPage::OnColumnName(wxGridEditorCreatedEvent &event)
         dynamic_cast<wxComboBox *>( event.GetControl() )->Bind( wxEVT_COMBOBOX_DROPDOWN, &WhereHavingPage::OnColumnDropDown, this );
     }
 }
+
+wxGrid *WhereHavingPage::GetGrid()
+{
+    return m_grid;
+}
+
+void WhereHavingPage::OnSelection()
+{
+    m_grid->DeselectCell( 0, 0 );
+}

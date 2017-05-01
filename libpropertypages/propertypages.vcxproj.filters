@@ -25,7 +25,9 @@
     <ClInclude Include="syntaxproppage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="wherehavingpage.h" />
+    <ClInclude Include="wherehavingpage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tablegeneral.cpp">
