@@ -147,6 +147,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
         sizer->Add( m_queryBook, 0, wxEXPAND, 0 );
         m_queryBook->Show( false );
+        m_queryBook->Bind( wxEVT_NOTEBOOK_PAGE_CHANGED, &DrawingView::OnSQLNotebookPageChanged, this );
     }
     m_frame->SetSizer( sizer );
     m_frame->Layout();
@@ -158,8 +159,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 
 DrawingView::~DrawingView()
 {
-//    delete m_fields;
-//    m_fields = NULL;
 }
 
 // Sneakily gets used for default print/preview as well as drawing on the
@@ -757,4 +756,13 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding)
     {
         m_fields->RemoveField( GetDocument()->GetQueryFields() );
     }
+}
+
+void DrawingView::OnSQLNotebookPageChanged(wxBookCtrlEvent &event)
+{
+    wxPanel *panel = dynamic_cast<wxPanel *>( m_queryBook->GetPage( event.GetSelection() ) );
+    WhereHavingPage *page = wxDynamicCast( panel, WhereHavingPage );
+    if( page )
+        page->OnSelection();
+    panel->SetFocus();
 }
