@@ -263,6 +263,13 @@ void DrawingView::GetTablesForView(Database *db)
                 m_frame->Close();
                 return;
             }
+            else
+            {
+                m_fields->Show( true );
+                m_queryBook->Show( true );
+                m_frame->Layout();
+                m_frame->GetParent()->SendSizeEvent();
+            }
         }
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
@@ -277,10 +284,6 @@ void DrawingView::GetTablesForView(Database *db)
                     if( it != tables.end() - 1 )
                         query += ", ";
                 }
-                m_fields->Show(true);
-                m_queryBook->Show( true );
-                m_frame->Layout();
-                m_frame->SendSizeEvent();
             }
             ((DrawingDocument *) GetDocument())->AddTables( tables );
             ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
