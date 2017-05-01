@@ -344,9 +344,12 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             mnu.AppendCheckItem( wxID_VIEWSHOWCOMMENTS, _( "Show Comments" ), _( "Show Comments" ) );
             mnu.AppendCheckItem( wxID_VIEWSHOWINDEXKEYS, _( "Show Index Keys" ), _( "Show Index Keys" ) );
             mnu.AppendCheckItem( wxID_VIEWSHOWINTEGRITY, _( "Show Referential Integrity" ), _( "Show Referential Integrity" ) );
-            mnu.Check( wxID_VIEWSHOWCOMMENTS, true );
-            mnu.Check( wxID_VIEWSHOWINDEXKEYS, true );
-            mnu.Check( wxID_VIEWSHOWINTEGRITY, true );
+            if( m_showComments )
+                mnu.Check( wxID_VIEWSHOWCOMMENTS, true );
+            if( m_showIndexKeys )
+                mnu.Check( wxID_VIEWSHOWINDEXKEYS, true );
+            if( m_showIntegrity )
+                mnu.Check( wxID_VIEWSHOWINTEGRITY, true );
         }
         else
         {
@@ -358,7 +361,15 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             showMenu->AppendCheckItem( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Comments" ) );
             showMenu->AppendCheckItem( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ) );
             mnu.AppendSubMenu( showMenu, _( "Show" ) );
-        }
+            if( m_showDataTypes )
+                showMenu->Check( wxID_SHOWDATATYPES, true );
+            if( m_showLabels )
+                showMenu->Check( wxID_SHOWLABELS, true );
+            if( m_showComments )
+                showMenu->Check( wxID_SHOWCOMMENTS, true );
+            if( m_showToolBox )
+                showMenu->Check( wxID_SHOWSQLTOOLBOX, true );
+		}
     }
     int rc = GetPopupMenuSelectionFromUser( mnu, pt );
     if( rc == wxID_NONE && erdField )
