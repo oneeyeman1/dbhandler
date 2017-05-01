@@ -26,7 +26,7 @@
     #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#ifdef __WXMSW__
+#if defined __WXMSW__ && defined __MEMORYLEAKS__
 #include <vld.h>
 #endif
 

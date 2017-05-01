@@ -40,6 +40,10 @@ FieldShape::~FieldShape(void)
 void FieldShape::DrawNormal(wxDC &dc)
 {
     wxRect rect = this->GetBoundingBox();
+    wxSFShapeBase *parentShape = GetParentShape()->GetParentShape();
+    wxRect rectParent = parentShape->GetBoundingBox();
+    m_parentRect.x = rectParent.x;
+    m_parentRect.width = rectParent.width;
     wxString line;
     int i = 0;
     dc.SetTextForeground( m_TextColor );

@@ -24,35 +24,29 @@
 #include "field.h"
 #include "fieldwindow.h"
 
-FieldWindow::FieldWindow(wxWindow *parent, int type, const wxPoint &pos, int width)
+FieldWindow::FieldWindow(wxWindow *parent, int type, const wxPoint &pos, int width) : wxSFShapeCanvas()
 {
-    m_win = new wxSFShapeCanvas();
-    m_win->Create( parent, wxID_ANY, pos == wxDefaultPosition ? wxDefaultPosition : pos, wxSize( width == -1 ? parent->GetSize().GetWidth() : width, 55 ), wxBORDER_SIMPLE | wxHSCROLL | wxALWAYS_SHOW_SB );
+    Create( parent, wxID_ANY, pos == wxDefaultPosition ? wxDefaultPosition : pos, wxSize( width == -1 ? parent->GetSize().GetWidth() : width, 55 ), wxBORDER_SIMPLE | wxHSCROLL | wxALWAYS_SHOW_SB );
     m_startPoint.x = 10;
     m_startPoint.y = 10;
     m_manager.SetRootItem( new xsSerializable() );
-    m_win->SetDiagramManager( &m_manager );
-    m_win->SetVirtualSize( 1000, 30 );
-    m_win->SetScrollRate( 20, 20 );
-    m_win->SetCanvasColour( *wxWHITE );
+    SetDiagramManager( &m_manager );
+    SetVirtualSize( 1000, 30 );
+    SetScrollRate( 20, 20 );
+    SetCanvasColour( *wxWHITE );
 //    m_win->SetStyle( 0 );
-    m_win->Bind( wxEVT_LEFT_DOWN, &FieldWindow::OnLeftDown, this );
+    Bind( wxEVT_LEFT_DOWN, &FieldWindow::OnLeftDown, this );
 }
 
 FieldWindow::~FieldWindow(void)
 {
 }
 
-wxSFShapeCanvas *FieldWindow::GetFieldsWindow()
-{
-    return m_win;
-}
-
 void FieldWindow::AddField(const wxString &fieldName)
 {
     FieldWin *field = new FieldWin( wxRealPoint( m_startPoint.x, m_startPoint.y ), fieldName, m_manager );
     m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
-    m_win->Refresh();
+    Refresh();
     m_startPoint.x += field->GetBoundingBox().GetWidth() + 5;
 }
 
@@ -68,7 +62,7 @@ void FieldWindow::RemoveField(const std::vector<std::wstring> &names)
         m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
         m_startPoint.x += field->GetBoundingBox().GetWidth() + 5;
     }
-    m_win->Refresh();
+    Refresh();
 }
 
 void FieldWindow::Clear()
@@ -76,7 +70,7 @@ void FieldWindow::Clear()
     m_manager.Clear();
     m_startPoint.x = 10;
     m_startPoint.y = 10;
-    m_win->Refresh();
+    Refresh();
 }
 
 void FieldWindow::OnLeftDown(wxMouseEvent &event)

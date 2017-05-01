@@ -3,7 +3,7 @@
 #pragma execution_character_set("utf-8")
 #endif
 
-#ifdef __WXMSW__
+#if defined __WXMSW__ && defined __MEMORYLEAKS__
 #include <vld.h>
 #endif
 

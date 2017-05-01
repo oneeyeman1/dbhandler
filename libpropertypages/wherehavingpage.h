@@ -5,9 +5,11 @@ public:
     WhereHavingPage(wxWindow *parent);
     ~WhereHavingPage(void);
     void AppendField(const std::wstring &field);
+    wxGrid *GetGrid();
     void OnSize(wxSizeEvent &event);
     void OnColumnName(wxGridEditorCreatedEvent &event);
     void OnColumnDropDown(wxCommandEvent &event);
+    void OnSelection();
 protected:
     void do_layout();
     void set_properties();

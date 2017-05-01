@@ -14,13 +14,14 @@ class DrawingView : public wxView
 {
 public:
     DrawingView() : wxView(), m_canvas(NULL) {}
+    ~DrawingView();
 //    std::vector<Table> &GetTablesForView(Database *db);
     void GetTablesForView(Database *db);
     void SetViewType(ViewType type);
     ViewType GetViewType();
     WhereHavingPage *GetWherePage();
     WhereHavingPage *GetHavingPage();
-    void AddFieldToQuery(const FieldShape *field, bool isAdding);
+    void AddFieldToQuery(const FieldShape &field, bool isAdding);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
@@ -39,6 +40,7 @@ public:
     void OnClearLog(wxCommandEvent &event);
     void OnAlterTable(wxCommandEvent &event);
     void OnCreateDatabase(wxCommandEvent &event);
+    void OnSQLNotebookPageChanged(wxBookCtrlEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/

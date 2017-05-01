@@ -131,8 +131,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_type == QueryView )
     {
         m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
-        sizer->Add( m_fields->GetFieldsWindow(), 0, wxEXPAND, 0 );
-        m_fields->GetFieldsWindow()->Show( false );
+        sizer->Add( m_fields, 0, wxEXPAND, 0 );
+        m_fields->Show( false );
     }
     m_canvas = new DatabaseCanvas( this, wxDefaultPosition/*ptCanvas*/ );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
@@ -147,6 +147,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
         sizer->Add( m_queryBook, 0, wxEXPAND, 0 );
         m_queryBook->Show( false );
+        m_queryBook->Bind( wxEVT_NOTEBOOK_PAGE_CHANGED, &DrawingView::OnSQLNotebookPageChanged, this );
     }
     m_frame->SetSizer( sizer );
     m_frame->Layout();
@@ -154,6 +155,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
     return true;
+}
+
+DrawingView::~DrawingView()
+{
 }
 
 // Sneakily gets used for default print/preview as well as drawing on the
@@ -263,23 +268,24 @@ void DrawingView::GetTablesForView(Database *db)
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
         if( res != wxID_CANCEL )
         {
+            wxString query = "SELECT <unknown fields>\nFROM ";
             if( m_type == QueryView )
             {
-                wxString query = "SELECT <unknown fields>\n\rFROM ";
                 for( std::vector<wxString>::iterator it = tables.begin(); it < tables.end(); it++ )
                 {
                     query += (*it);
                     if( it != tables.end() - 1 )
                         query += ", ";
                 }
-                m_fields->GetFieldsWindow()->Show(true);
+                m_fields->Show(true);
                 m_queryBook->Show( true );
                 m_frame->Layout();
-                m_frame - SendSizeEvent();
+                m_frame->SendSizeEvent();
             }
             ((DrawingDocument *) GetDocument())->AddTables( tables );
             ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
-            m_page6->SetSyntaxText(query);
+            if( m_type == QueryView )
+                m_page6->SetSyntaxText(query);
         }
     }
 //    return tables;
@@ -736,15 +742,27 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
     delete lib;
 }
 
-void DrawingView::AddFieldToQuery(const FieldShape *field, bool isAdding)
+void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding)
 {
     if( isAdding )
     {
-        m_fields->AddField( field->GetFieldName() );
-        GetDocument()->GetQueryFields().push_back( field->GetFieldName() );
+        Field *fld = const_cast<FieldShape &>( field ).GetField();
+        wxString name = fld->GetFieldName();
+        m_fields->AddField( name );
+        std::vector<std::wstring> queryFields = GetDocument()->GetQueryFields();
+        queryFields.push_back( name.ToStdWstring() );
     }
     else
     {
-        m_fields->RemoveField();
+        m_fields->RemoveField( GetDocument()->GetQueryFields() );
     }
+}
+
+void DrawingView::OnSQLNotebookPageChanged(wxBookCtrlEvent &event)
+{
+    wxPanel *panel = dynamic_cast<wxPanel *>( m_queryBook->GetPage( event.GetSelection() ) );
+    WhereHavingPage *page = wxDynamicCast( panel, WhereHavingPage );
+    if( page )
+        page->OnSelection();
+    panel->SetFocus();
 }

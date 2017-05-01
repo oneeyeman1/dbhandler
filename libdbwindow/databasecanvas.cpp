@@ -51,7 +51,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent
     m_showComments = m_showIndexKeys = m_showIntegrity = true;
     m_pManager.SetRootItem( new xsSerializable() );
     SetDiagramManager( &m_pManager );
-    Create( view->GetFrame(), wxID_ANY, pt, wxDefaultSize, wxHSCROLL | wxVSCROLL );
+    Create( view->GetFrame(), wxID_ANY, pt, wxDefaultSize, wxHSCROLL | wxVSCROLL | wxALWAYS_SHOW_SB );
     SetVirtualSize( 1000, 1000 );
     SetScrollRate( 20, 20 );
     m_mode = modeDESIGN;
@@ -115,7 +115,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                         secondIteration = true;
                     if( !found )
                     {
-                        query += "\n\rWHERE ";
+                        query += "\nWHERE ";
                         found = true;
                     }
                     Constraint* pConstr = new Constraint( ((DrawingView *) m_view)->GetViewType() );
@@ -234,11 +234,10 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
                 }
             }
         }
-        if( tbl && !fld )
-            tbl->Select( false );
+        tbl->Select( false );
         Refresh();
         if( fld )
-            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( fld, fld->IsSelected() );
+            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() );
 	}
 }
 
