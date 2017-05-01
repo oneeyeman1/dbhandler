@@ -2,14 +2,14 @@
 #define DBMANAGER_SQLITE
 
 #ifdef WIN32
-class __declspec(dllexport) SQLiteDatabase : public Database
+class __declspec(dllexport) PostgresDatabase : public Database
 #else
-class SQLiteDatabase : public Database
+class PostgresDatabase : public Database
 #endif
 {
 public:
-    SQLiteDatabase();
-    virtual ~SQLiteDatabase();
+    PostgresDatabase();
+    virtual ~PostgresDatabase();
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
@@ -24,19 +24,19 @@ public:
     virtual int ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg);
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
 protected:
-    struct SQLiteImpl;
-    SQLiteImpl *sqlite_pimpl;
+//    struct SQLiteImpl;
+//    SQLiteImpl *sqlite_pimpl;
     void GetErrorMessage(int code, std::wstring &errorMsg);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual void SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
 private:
-    sqlite3 *m_db;
+    PGConn *m_db;
 };
-
+/*
 struct SQLiteDatabase::SQLiteImpl
 {
     std::wstring m_catalog;
     std::wstring_convert<std::codecvt_utf8<wchar_t> > m_myconv;
 };
-
+*/
 #endif

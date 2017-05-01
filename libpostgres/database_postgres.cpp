@@ -15,21 +15,21 @@
 #include <locale>
 #include <codecvt>
 #include <algorithm>
-#include "sqlite3.h"
+#include <libpq-fe.h>
 #include "database.h"
-#include "database_sqlite.h"
+#include "database_postgres.h"
 
-SQLiteDatabase::SQLiteDatabase() : Database()
+PostgresDatabase::PostgresDatabase() : Database()
 {
     m_db = NULL;
     pimpl = new Impl;
-    pimpl->m_type = L"SQLite";
+    pimpl->m_type = L"PostgreSQL";
     pimpl->m_subtype = L"";
-    sqlite_pimpl = new SQLiteImpl;
-    sqlite_pimpl->m_catalog = L"";
+//    sqlite_pimpl = new SQLiteImpl;
+//    sqlite_pimpl->m_catalog = L"";
 }
 
-SQLiteDatabase::~SQLiteDatabase()
+PostgresDatabase::~PostgresDatabase()
 {
     if( pimpl )
     {
@@ -59,7 +59,7 @@ SQLiteDatabase::~SQLiteDatabase()
     }
 }
 
-int SQLiteDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     char *err;
@@ -69,7 +69,7 @@ int SQLiteDatabase::CreateDatabase(const std::wstring &name, std::vector<std::ws
     return result;
 }
 
-int SQLiteDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     if( pimpl->m_dbName == name )
@@ -79,7 +79,7 @@ int SQLiteDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstr
     return result;
 }
 
-int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     char *err;
@@ -158,7 +158,7 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
     return result;
 }
 
-int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     const char *query = NULL;
@@ -203,7 +203,7 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-void SQLiteDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
+void PostgresDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
 {
     switch( code )
     {
@@ -294,7 +294,7 @@ void SQLiteDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
     }
 }
 
-int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     std::vector<Field *> fields;
     std::vector<std::wstring> fk_names;
@@ -494,7 +494,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     std::wstring errorMessage;
     int res = SQLITE_OK, result = 0;
@@ -528,7 +528,7 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, std::vector<std::ws
     return result;
 }
 
-void SQLiteDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
+void PostgresDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
     bool found = false;
     std::wstring errorMessage;
@@ -611,7 +611,7 @@ void SQLiteDatabase::SetColumnComment(const std::wstring &tableName, const std::
     }
 }
 
-bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     bool exists = false;
     int res = SQLITE_OK, result = 0;
@@ -656,7 +656,7 @@ bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wst
     return exists;
 }
 
-int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
@@ -746,7 +746,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
     return result;
 }
 
-int SQLiteDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     std::wstring errorMessage;
     sqlite3_stmt *stmt = NULL;
@@ -772,7 +772,7 @@ int SQLiteDatabase::SetTableProperties(const std::wstring &command, std::vector<
     return result;
 }
 
-bool SQLiteDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
+bool PostgresDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
     sqlite3_stmt *stmt = NULL;
@@ -808,7 +808,7 @@ bool SQLiteDatabase::IsTablePropertiesExist(const std::wstring &tableName, const
     return result;
 }
 
-int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt;
     std::wstring errorMessage;
@@ -869,7 +869,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     return result;
 }
 
-int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
@@ -975,7 +975,7 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &
     return result;
 }
 
-int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
     char *error;
@@ -992,7 +992,7 @@ int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::
     return res;
 }
 
-int SQLiteDatabase::SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
     return res;
