@@ -53,6 +53,7 @@ WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
     m_scrollbarWidth = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, m_grid);
     set_properties();
     do_layout();
+    m_grid->ShowScrollbars( wxSHOW_SB_NEVER, wxSHOW_SB_DEFAULT );
     m_operatorSize = m_grid->GetColSize( 1 );
     m_logicalSize = m_grid->GetColSize( 3 );
     Bind( wxEVT_SIZE, &WhereHavingPage::OnSize, this );
@@ -135,5 +136,5 @@ wxGrid *WhereHavingPage::GetGrid()
 
 void WhereHavingPage::OnSelection()
 {
-    m_grid->DeselectCell( 0, 0 );
+    m_grid->SetCellHighlightPenWidth( 0 );
 }
