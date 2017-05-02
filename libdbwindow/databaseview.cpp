@@ -127,7 +127,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     ptCanvas = wxDefaultPosition;
 #endif*/
     wxASSERT( m_frame == GetFrame() );
-    wxBoxSizer *sizer = new wxBoxSizer( wxVERTICAL );
+    sizer = new wxBoxSizer( wxVERTICAL );
     if( m_type == QueryView )
     {
         m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
@@ -150,6 +150,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_queryBook->Bind( wxEVT_NOTEBOOK_PAGE_CHANGED, &DrawingView::OnSQLNotebookPageChanged, this );
     }
     m_frame->SetSizer( sizer );
+    sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
@@ -268,6 +269,7 @@ void DrawingView::GetTablesForView(Database *db)
                 m_fields->Show( true );
                 m_queryBook->Show( true );
                 m_frame->Layout();
+                sizer->Layout();
                 m_frame->GetParent()->SendSizeEvent();
             }
         }

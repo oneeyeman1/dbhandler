@@ -56,6 +56,7 @@ private:
     FieldWindow *m_fields;
     wxDocMDIChildFrame *m_frame;
     wxNotebook *m_queryBook;
+    wxBoxSizer *sizer;
     WhereHavingPage *m_page2, *m_page4;
     SyntaxPropPage *m_page6;
     wxDECLARE_EVENT_TABLE();

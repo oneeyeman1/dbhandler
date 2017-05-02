@@ -1,22 +1,32 @@
-subdir = src/interfaces/libpq/test
-top_builddir = ../../../..
+#-------------------------------------------------------------------------
+#
+# Makefile for src/test
+#
+# Copyright (c) 1994, Regents of the University of California
+#
+# src/test/Makefile
+#
+#-------------------------------------------------------------------------
+
+subdir = src/test
+top_builddir = ../..
 include $(top_builddir)/src/Makefile.global
 
-ifeq ($(PORTNAME), win32)
-LDLIBS += -lws2_32
-endif
+SUBDIRS = perl regress isolation modules recovery
 
-override CPPFLAGS := -I$(libpq_srcdir) $(CPPFLAGS)
-override LDLIBS := $(libpq_pgport) $(LDLIBS)
+# We don't build or execute examples/, locale/, or thread/ by default,
+# but we do want "make clean" etc to recurse into them.  Likewise for ssl/,
+# because the SSL test suite is not secure to run on a multi-user system.
+ALWAYS_SUBDIRS = examples locale thread ssl
 
-PROGS = uri-regress
+# We want to recurse to all subdirs for all standard targets, except that
+# installcheck and install should not recurse into the subdirectory "modules".
 
-all: $(PROGS)
+recurse_alldirs_targets := $(filter-out installcheck install, $(standard_targets))
+installable_dirs := $(filter-out modules, $(SUBDIRS))
 
-installcheck: all
-	SRCDIR='$(top_srcdir)' SUBDIR='$(subdir)' \
-		   $(PERL) $(top_srcdir)/$(subdir)/regress.pl
+$(call recurse,$(recurse_alldirs_targets))
+$(call recurse,installcheck, $(installable_dirs))
+$(call recurse,install, $(installable_dirs))
 
-clean distclean maintainer-clean:
-	rm -f $(PROGS)
-	rm -f regress.out regress.diff
+$(recurse_always)
