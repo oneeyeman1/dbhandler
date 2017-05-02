@@ -24,19 +24,10 @@ public:
     virtual int ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg);
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
 protected:
-//    struct SQLiteImpl;
-//    SQLiteImpl *sqlite_pimpl;
     void GetErrorMessage(int code, std::wstring &errorMsg);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual void SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
 private:
     PGConn *m_db;
 };
-/*
-struct SQLiteDatabase::SQLiteImpl
-{
-    std::wstring m_catalog;
-    std::wstring_convert<std::codecvt_utf8<wchar_t> > m_myconv;
-};
-*/
 #endif
