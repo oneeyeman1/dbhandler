@@ -764,7 +764,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding)
 void DrawingView::OnSQLNotebookPageChanged(wxBookCtrlEvent &event)
 {
     wxPanel *panel = dynamic_cast<wxPanel *>( m_queryBook->GetPage( event.GetSelection() ) );
-    WhereHavingPage *page = wxDynamicCast( panel, WhereHavingPage );
+    WhereHavingPage *page = dynamic_cast<WhereHavingPage *>( panel );
     if( page )
         page->OnSelection();
     panel->SetFocus();
