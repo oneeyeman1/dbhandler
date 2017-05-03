@@ -317,8 +317,18 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 				int length[2] = { strlen( schema_name ), strlen( table_name ) };
 				int formats[2] = { 1, 1 };
                 res1 = PQprepare( m_db, "get_columns", query2.c_str(), 3, NULL );
-
-
+                if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
+                {
+                    result = 1;
+                    char *err = PQerrorMessage( m_db );
+                    errorMsg.push_back( _( "Error executing query: " ) + err );
+                    PQclear( res1 );
+                }
+				else
+				{
+                    PQclear( res1 );
+                    res1 = PQexecPrepared( m_db, "get_columns", 2, values, length, format, 1 );
+				}
                 res = sqlite3_step( stmt );
                 if( res == SQLITE_ROW  )
                 {
