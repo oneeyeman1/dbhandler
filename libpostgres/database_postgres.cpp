@@ -92,62 +92,64 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
     if( PQstatus( db ) != CONNECTION_OK )
     {
         err = PQerrorMessage( m_db );
-        errorMsg.push_back( _( L"Connection to database failed:" + err );
+        errorMsg.push_back( _( "Connection to database failed: " ) + err );
         result = 1;
     }
     else
     {
-        res = PQexec( m_db, "BEGIN" );
+        res = PQexec( m_db, "START TRANSACTION" );
         if( PQresultStatus( res ) != PGRES_COMMAND_OK )
         {
-            err = PQerrorMessage(m_db);
-            errorMsg.push_back( L"Starting transaction failed during connection:" + err );
+            err = PQerrorMessage( m_db );
+            errorMsg.push_back( _( "Starting transaction failed during connection: " ) + err );
             result = 1;
             PQclear( res );
         }
         else
         {
-            res = sqlite3_exec( m_db, query1.c_str(), NULL, NULL, &err );
-            if( res == SQLITE_OK )
+            PQclear( res );
+            res = PQexec( m_db, query1.c_str() );
+            if( PQresultStatus( res ) == PGRES_COMMAND_OK )
             {
-                res = sqlite3_exec( m_db, query2.c_str(), NULL, NULL, &err );
-                if( res == SQLITE_OK )
+                PQclear( res );
+                res = PQexec( m_db, query2.c_str() );
+                if( PQresultStatus( res ) == PGRES_COMMAND_OK )
                 {
-                    res = sqlite3_exec( m_db, query3.c_str(), NULL, NULL, &err );
-                    if( res == SQLITE_OK )
+                    PQclear( res );
+                    res = PQexec( m_db, query3.c_str() );
+                    if( PQresultStatus( res ) == PGRES_COMMAND_OK )
 					{
-                        res = sqlite3_exec( m_db, query4.c_str(), NULL, NULL, &err );
-                        if( res == SQLITE_OK )
+                        PQclear( res );
+                        res = PQexec( m_db, query4.c_str() );
+                        if( PQresultStatus( res ) == PGRES_COMMAND_OK )
                         {
-                            res = sqlite3_exec( m_db, query5.c_str(), NULL, NULL, &err );
-                            if( res == SQLITE_OK )
-                                sqlite3_exec( m_db, "COMMIT", NULL, NULL, &err );
+                            PQclear( res );
+                            res = PQexec( m_db, query5.c_str() );
+                            if( PQresultStatus(res) == PGRES_COMMAND_OK )
+                            {
+                                PQclear( res );
+                                res = PQexec(m_db, "COMMIT");
+                                if( PQresultStatus(res) == PGRES_COMMAND_OK )
+                                    PQClear( res );
+                            }
                         }
                     }
                 }
             }
         }
-        if( res != SQLITE_OK )
+        if( PQresultSTatus( res ) != PGRES_COMMAND_OK )
         {
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-            res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
+            PQclear( res );
+            err = PQerrorMessage( m_db );
+            errorMsg.push_back( _( "Error during database connection: " ) + err );
+            res = PQexec( m_db, "ROLLBACK", NULL, NULL, NULL );
             result = 1;
-            sqlite3_free( err );
         }
         else
         {
-            sqlite_pimpl->m_catalog = selectedDSN;
+            m_catalog = selectedDSN;
             GetTableListFromDb( errorMsg );
-            res = sqlite3_exec( m_db, "PRAGMA foreign_keys = ON", NULL, NULL, NULL );
-            if( res != SQLITE_OK )
-            {
-                result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-            }
-            else
-                pimpl->m_dbName = sqlite_pimpl->m_catalog;
+            m_dbName = m_catalog;
         }
     }
     return result;
@@ -156,20 +158,14 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
 int PostgresDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    const char *query = NULL;
-    std::wstring errorMessage;
-    int res = sqlite3_close( m_db );
-    if( res != SQLITE_OK )
+    PGresult *res = PQfinish( m_db );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        char *err = PQerrorMessage( m_db );
+        errorMsg.push_back( _( "Problem encountered during database disconnect. Please restart the application after fixing the problem. " + err );
         result = 1;
-//  For debugging purposes - helps find non-closed statements
-        sqlite3_stmt *statement = sqlite3_next_stmt( m_db, NULL );
-        if( statement )
-            query = sqlite3_sql( statement );
-//  For debugging purposes - helps find non-closed statements
     }
+    PQclear( res );
     std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
     for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
     {
