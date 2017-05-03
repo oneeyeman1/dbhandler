@@ -571,7 +571,7 @@ ViewType DrawingView::GetViewType()
 /*#if defined __WXMSW__ || defined __WXGTK__
 void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
-/*    if( activate )
+    if( activate )
     {
         if( m_isCreated )
             return;
