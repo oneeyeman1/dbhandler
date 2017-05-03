@@ -15,7 +15,7 @@
 #include <locale>
 #include <codecvt>
 #include <algorithm>
-#include <libpq-fe.h>
+#include "libpq-fe.h"
 #include "database.h"
 #include "database_postgres.h"
 

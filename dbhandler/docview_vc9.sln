@@ -56,6 +56,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "propertypages", "..\libprop
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tablewindow", "..\libtablewindow\tablewindow.vcxproj", "{D333C980-1282-4047-96AC-F7FD649C0512}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "postgres", "..\libpostgres\postgres.vcxproj", "{9DEB8989-110C-4C61-921B-08B1A49D10FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -240,6 +242,22 @@ Global
 		{D333C980-1282-4047-96AC-F7FD649C0512}.Release|Win32.Build.0 = Release|Win32
 		{D333C980-1282-4047-96AC-F7FD649C0512}.Release|x64.ActiveCfg = Release|x64
 		{D333C980-1282-4047-96AC-F7FD649C0512}.Release|x64.Build.0 = Release|x64
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.Debug|Win32.Build.0 = Debug|Win32
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.Debug|x64.ActiveCfg = Debug|x64
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.Debug|x64.Build.0 = Debug|x64
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.DLL Debug|Win32.ActiveCfg = DLL Debug|Win32
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.DLL Debug|Win32.Build.0 = DLL Debug|Win32
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.DLL Debug|x64.ActiveCfg = DLL Debug|x64
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.DLL Debug|x64.Build.0 = DLL Debug|x64
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.DLL Release|Win32.ActiveCfg = DLL Release|Win32
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.DLL Release|Win32.Build.0 = DLL Release|Win32
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.DLL Release|x64.ActiveCfg = DLL Release|x64
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.DLL Release|x64.Build.0 = DLL Release|x64
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.Release|Win32.ActiveCfg = Release|Win32
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.Release|Win32.Build.0 = Release|Win32
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.Release|x64.ActiveCfg = Release|x64
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
