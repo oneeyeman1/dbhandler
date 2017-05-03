@@ -274,7 +274,6 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 FieldShape *field = wxDynamicCast( (*it), FieldShape );
                 if( field )
                 {
-                    wxRect rect = field->GetBoundingBox();
                     if( type == DatabaseView )
                         field->Select( true );
                     field->SetParentRect( tableRect );
