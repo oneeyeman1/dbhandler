@@ -22,8 +22,9 @@
 PostgresDatabase::PostgresDatabase() : Database()
 {
     m_db = NULL;
-    m_type = L"PostgreSQL";
-    m_subtype = L"";
+    pimpl = new Impl;
+    pimpl->m_type = L"PostgreSQL";
+    pimpl->m_subtype = L"";
 }
 
 PostgresDatabase::~PostgresDatabase()
