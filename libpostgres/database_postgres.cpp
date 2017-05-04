@@ -389,9 +389,31 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     char *numeric_scale = PQgetvalue( res2, j, 6 );
                     fieldDefaultValue = PQgetvalue( res2, j, 7 );
                     fieldIsNull = PQgetvalue( res2, j, 8 );
+                    Field *field = new Field();
+                    if( GetFieldProperties() )
+                    {
+                        char *err = PQerrorMessage( m_db );
+                        errorMsg.push_back( _() );
+                        PQclear( res2 );
+                        return 1;
+                    }
+                    field.push_back( field );
                 }
+                PQclear( res2 );
+                DatabaseTable *table = new DatabaseTable();
+                if( GetTableProperties( table, errorMsg ) )
+                {
+                    char *err = PQerrorMessage();
+                    errorMsg.push_back();
+                    return 1;
+                }
+                pimpl->m_tables[].push_back( table );
+                fields.erase( fields.begin(), fields.end() );
+                foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                fk_names.clear();
             }
         }
+        PQclear( res1 );
     }
     return 0;
 }
