@@ -359,6 +359,26 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 fk_names.push_back( m_pimpl->m_myconv.from_bytes( fkField ) );
             }
             PQclear( res1 );
+            res2 = PQprepare( m_db, "get_columns", query2.c_str(), 3, NULL );
+            if( PQresultStatus( res2 ) != PGRES_COMMAND_OK )
+            {
+                char *err = PQerrorMessage( m_db );
+                errorMsg.push_back( _( "Error executing query: " ) + err );
+                PQclear( res2 );
+                return 1;
+            }
+            else
+            {
+                PQclear( res2 );
+                res2 = PQexecPrepared( m_db, "get_columns", 2, values1, length1, formats1, 1 );
+                if( PQresultStatus( res2 ) != PGRES_COMMAND_OK )
+                {
+                    char *err = PQerrorMessage( m_db );
+                    errorMsg.push_back( _( "Error executing query: " ) + err );
+                    PQclear( res2 );
+                    return 1;
+                }
+            }
         }
     }
     return 0;
@@ -366,499 +386,53 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 
 int PostgresDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
-    std::wstring errorMessage;
-    int res = SQLITE_OK, result = 0;
-    sqlite3_stmt *stmt = NULL;
-    if( result == SQLITE_OK )
-    {
-        if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), -1, &stmt, 0 ) ) == SQLITE_OK )
-        {
-            res = sqlite3_step( stmt );
-            if( res != SQLITE_DONE )
-            {
-                result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-            }
-        }
-        else
-        {
-            result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-        }
-        sqlite3_finalize( stmt );
-    }
-    else
-    {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-    }
+    int result = 0;
     return result;
 }
 
 void PostgresDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
-    bool found = false;
-    std::wstring errorMessage;
-    sqlite3_stmt *stmt = NULL;
-    std::wstring query1 = L"SELECT count(*) FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_cnam\" = ?;", query2;
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), (int) query1.length(), &stmt, 0 );
-    if( res == SQLITE_OK )
-    {
-        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-        if( res == SQLITE_OK )
-        {
-            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-            if( res == SQLITE_OK )
-            {
-                res = sqlite3_step( stmt );
-                if( res == SQLITE_ROW )
-                {
-                    found = true;
-                }
-                else if( res != SQLITE_DONE )
-                {
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
-                }
-            }
-            else
-            {
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-            }
-        }
-        else
-        {
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-        }
-    }
-    else
-    {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-    }
-    sqlite3_finalize( stmt );
-    if( found )
-        query2 = L"UPDATE \"sys.abcatcol\" SET \"abc_cmnt\" = ? WHERE \"abc_tnam\" = ? AND \"abc_ownr\" == \"\" AND \"abc_cnam\" = ?;";
-    else
-        query2 = L"INSERT INTO \"sys.abcattbl\"(\"abc_cmnt\", \"abc_tnam\", \"abc_ownr\", \"abc_cnam\" ) VALUES( ?, ?, \"\", ? );";
-    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), (int) query2.length(), &stmt, 0 );
-    if( res == SQLITE_OK )
-    {
-        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-        if( res == SQLITE_OK )
-        {
-            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( comment.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-            if( res == SQLITE_OK )
-            {
-                res = sqlite3_step( stmt );
-                if( res != SQLITE_DONE )
-                {
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
-                }
-            }
-            else
-            {
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-            }
-        }
-        else
-        {
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-        }
-    }
-    else
-    {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-    }
 }
 
 bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     bool exists = false;
-    int res = SQLITE_OK, result = 0;
-    sqlite3_stmt *stmt = NULL;
-    std::wstring errorMessage, dbIndexName;
-    std::string query = "PRAGMA index_list( \"%w\" );";
-    char *z = sqlite3_mprintf( query.c_str(), tableName.c_str() );
-    if( ( res = sqlite3_prepare_v2( m_db, z, -1, &stmt, 0 ) ) == SQLITE_OK )
-    {
-        for( ; ; )
-        {
-            res = sqlite3_step( stmt );
-            if( res == SQLITE_ROW )
-            {
-                dbIndexName = sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt, 2 ) ) );
-                if( dbIndexName == indexName )
-                {
-                    result = 1;
-                    errorMsg.push_back( L"Index already exist." );
-                    exists = true;
-                    break;
-                }
-            }
-            else if( res == SQLITE_DONE )
-                break;
-            else
-            {
-                result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-                break;
-            }
-        }
-    }
-    else
-    {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-    }
-    sqlite3_finalize( stmt );
     return exists;
 }
 
 int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
-    sqlite3_stmt *stmt = NULL;
-    std::wstring errorMessage;
     int result = 0;
-    std::wstring query = L"SELECT * FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ?;";
-    const unsigned char *dataFontName, *headingFontName, *labelFontName;
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
-    if( res == SQLITE_OK )
-    {
-        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( table->GetTableName().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-        if( res == SQLITE_OK )
-        {
-            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( table->GetSchemaName().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-            if( res == SQLITE_OK )
-            {
-                while( true )
-                {
-                    res = sqlite3_step( stmt );
-                    if( res == SQLITE_ROW )
-                    {
-                        table->SetDataFontSize( sqlite3_column_int( stmt, 3 ) );
-                        table->SetDataFontWeight( sqlite3_column_int( stmt, 4 ) );
-                        char *italic = (char *) sqlite3_column_text( stmt, 5 );
-                        if( italic )
-                            table->SetDataFontItalic( italic[0] == 'Y' );
-                        char *underline = (char *) sqlite3_column_text( stmt, 6 );
-                        if( underline )
-                            table->SetDataFontUnderline( underline[0] == 'Y' );
-                        dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 9 );
-                        if( dataFontName )
-                            table->SetDataFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
-                        table->SetHeadingFontSize( sqlite3_column_int( stmt, 10 ) );
-                        table->SetHeadingFontWeight( sqlite3_column_int( stmt, 11 ) );
-                        italic = (char *) sqlite3_column_text( stmt, 12 );
-                        if( italic )
-                            table->SetHeadingFontItalic( italic[0] == 'Y' );
-                        underline = (char *) sqlite3_column_text( stmt, 13 );
-                        if( underline )
-                            table->SetHeadingFontUnderline( underline[0] == 'Y' );
-                        headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 16 );
-                        if( headingFontName )
-                            table->SetHeadingFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
-                        table->SetLabelFontSize( sqlite3_column_int( stmt, 17 ) );
-                        table->SetLabelFontWeight( sqlite3_column_int( stmt, 18 ) );
-                        italic = (char *) sqlite3_column_text( stmt, 19 );
-                        if( italic )
-                            table->SetLabelFontItalic( italic[0] == 'Y' );
-                        underline = (char *) sqlite3_column_text( stmt, 20 );
-                        if( underline )
-                            table->SetLabelFontUnderline( underline[0] == 'Y' );
-                        labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 23 );
-                        if( labelFontName )
-                            table->SetLabelFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
-                        table->SetComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 24 ) ) );
-                    }
-                    else if( res == SQLITE_DONE )
-                        break;
-                    else
-                    {
-                        result = 1;
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
-                    }
-                }
-            }
-            else
-            {
-                result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-            }
-        }
-        else
-        {
-            result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-        }
-    }
-    else
-    {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-    }
-    sqlite3_finalize( stmt );
     return result;
 }
 
 int PostgresDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
-    std::wstring errorMessage;
-    sqlite3_stmt *stmt = NULL;
     int result = 0;
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), (int) command.length(), &stmt, 0 );
-    if( res == SQLITE_OK )
-    {
-        res = sqlite3_step( stmt );
-        if( res != SQLITE_DONE )
-        {
-            result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-        }
-    }
-    else
-    {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-    }
-    sqlite3_finalize( stmt );
     return result;
 }
 
 bool PostgresDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
-    sqlite3_stmt *stmt = NULL;
-    std::wstring errorMessage;
-    std::wstring query = L"SELECT 1 FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = '';";
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
-    if( res == SQLITE_OK )
-    {
-        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-        if( res == SQLITE_OK )
-        {
-            res = sqlite3_step( stmt );
-            if( res == SQLITE_ROW )
-                result = true;
-            else if( res != SQLITE_DONE )
-            {
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-            }
-        }
-        else
-        {
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-        }
-    }
-    else
-    {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-    }
-    sqlite3_finalize( stmt );
     return result;
 }
 
 int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg)
 {
-    sqlite3_stmt *stmt;
-    std::wstring errorMessage;
     int result = 0;
-    std::wstring query = L"SELECT * FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
-    if( res == SQLITE_OK )
-    {
-        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-        if( res == SQLITE_OK )
-        {
-            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-            if( res == SQLITE_OK )
-            {
-                res = sqlite3_bind_text( stmt, 3, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-                if( res == SQLITE_OK )
-                {
-                    res = sqlite3_step( stmt );
-                    if( res == SQLITE_ROW )
-                    {
-                        table->SetComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 17 ) ) );
-                    }
-                    else if( res != SQLITE_DONE )
-                    {
-                        result = 1;
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
-                    }
-                }
-                else
-                {
-                    result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
-                }
-            }
-            else
-            {
-                result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-            }
-        }
-        else
-        {
-            result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-        }
-    }
-    else
-    {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-    }
-    sqlite3_finalize( stmt );
     return result;
 }
 
 int PostgresDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
 {
-    sqlite3_stmt *stmt = NULL;
-    std::wstring errorMessage;
-    char **error;
-    std::vector<std::wstring> references;
-    std::wstring query0 = L"PRAGMA foreign_keys=OFF", query1 = L"PRAGMA foreign_keys=ON";
-    std::wstring query = L"SELECT type, sql FROM sqlite_master WHERE tbl_name = ";
-    query += tableName.GetTableName();
-    query += L" AND type <> 'table'";
     int result = 0;
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length(), &stmt, NULL );
-    if( res != SQLITE_OK )
-    {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-        return result;
-    }
-    while( true )
-    {
-        res = sqlite3_step( stmt );
-        if( res == SQLITE_ROW )
-            references.push_back( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 1 ) ) );
-        else if( res == SQLITE_DONE )
-            break;
-		else
-        {
-            result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-            break;
-        }
-    }
-    sqlite3_finalize( stmt );
-    if( res != SQLITE_DONE )
-        return 1;
-    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query0.c_str() ).c_str(), NULL, NULL, error );
-    if( res != SQLITE_OK )
-    {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-        return result;
-    }
-    std::wstring alterQuery = command.substr( 0, command.find( ';' ) );
-    while( alterQuery != L"" )
-    {
-        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( alterQuery.c_str() ).c_str(), alterQuery.length(), &stmt, NULL );
-        if( res != SQLITE_OK )
-        {
-            result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-            return result;
-        }
-        while( true )
-        {
-            res = sqlite3_step( stmt );
-            if( res == SQLITE_ROW )
-                references.push_back( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 1 ) ) );
-            else if( res == SQLITE_DONE )
-                break;
-		    else
-            {
-                result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-                break;
-            }
-        }
-        sqlite3_finalize( stmt );
-        if( res != SQLITE_DONE )
-            break;
-        alterQuery = alterQuery.substr( 2 );
-        alterQuery = alterQuery.substr( 0, alterQuery.find( ';' ) );
-    }
-    if( res != SQLITE_DONE )
-    {
-        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, error );
-        return 1;
-    }
-    for( std::vector<std::wstring>::iterator it = references.begin(); it < references.end(); it++ )
-    {
-        res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( (*it).c_str() ).c_str(), NULL, NULL, error );
-        if( res != SQLITE_OK )
-            break;
-    }
-    if( res != SQLITE_OK )
-    {
-        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, error );
-        return 1;
-    }
-    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), NULL, NULL, error );
-    if( res != SQLITE_OK )
-    {
-        result = 1;
-        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, error );
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-    }
-	else
-        sqlite3_exec( m_db, "COMMIT", NULL, NULL, error );
     return result;
 }
 
 int PostgresDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
-    char *error;
-    std::wstring err;
-    std::wstring query = L"DROP TABLE ";
-    query += tableName;
-    int result = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query ).c_str(), 0, 0, &error );
-    if( result != SQLITE_OK )
-    {
-        res = 1;
-        GetErrorMessage( res, err );
-        errorMsg.push_back( err );
-    }
     return res;
 }
 
