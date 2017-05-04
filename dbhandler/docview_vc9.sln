@@ -20,6 +20,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "odbc", "..\libodbc\odbc.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dbloader", "..\libdbloader\dbloader.vcxproj", "{DCCD0C7A-A668-4758-9620-D8323E67D1D1}"
 	ProjectSection(ProjectDependencies) = postProject
+		{9DEB8989-110C-4C61-921B-08B1A49D10FB} = {9DEB8989-110C-4C61-921B-08B1A49D10FB}
 		{97DE9390-2665-4A10-A724-A76B8C78DC54} = {97DE9390-2665-4A10-A724-A76B8C78DC54}
 		{FB4DCDE9-41C9-4E4E-B243-62911D690A8E} = {FB4DCDE9-41C9-4E4E-B243-62911D690A8E}
 	EndProjectSection
@@ -57,6 +58,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tablewindow", "..\libtablewindow\tablewindow.vcxproj", "{D333C980-1282-4047-96AC-F7FD649C0512}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "postgres", "..\libpostgres\postgres.vcxproj", "{9DEB8989-110C-4C61-921B-08B1A49D10FB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FD87BACC-A171-41D8-9F84-F51E0812D30D} = {FD87BACC-A171-41D8-9F84-F51E0812D30D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

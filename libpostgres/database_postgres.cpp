@@ -25,44 +25,18 @@ PostgresDatabase::PostgresDatabase() : Database()
     pimpl = new Impl;
     pimpl->m_type = L"PostgreSQL";
     pimpl->m_subtype = L"";
+    m_pimpl = new PostgresImpl;
 }
 
 PostgresDatabase::~PostgresDatabase()
 {
-    if( pimpl )
-    {
-        std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
-        for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
-        {
-            std::vector<Field *> fields = (*it)->GetFields();
-            for( std::vector<Field *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
-            {
-                delete (*it1);
-                (*it1) = NULL;
-            }
-            std::map<int,std::vector<FKField *> > fk_fields = (*it)->GetForeignKeyVector();
-            for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
-            {
-                for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
-                {
-                    delete (*it3);
-                    (*it3) = NULL;
-                }
-            }
-            delete (*it);
-            (*it) = NULL;
-        }
-        delete pimpl;
-        pimpl = NULL;
-    }
 }
 
 int PostgresDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    char *err;
     result = Disconnect( errorMsg );
-    if( result == SQLITE_OK )
+    if( !result )
         result = Connect(name, errorMsg);
     return result;
 }
@@ -70,10 +44,21 @@ int PostgresDatabase::CreateDatabase(const std::wstring &name, std::vector<std::
 int PostgresDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+	PGresult *res;
+    std::wstring query = L"DROP TABLE " + name;
     if( pimpl->m_dbName == name )
         result = Disconnect( errorMsg );
     if( !result )
-        result = remove( sqlite_pimpl->m_myconv.to_bytes( name.c_str() ).c_str() );
+    {
+        res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        {
+			result = 1;
+			char *err = PQerrorMessage( m_db );
+			errorMsg.push_back( _( "Error dropping database: " ) + err );
+        }
+		PQclear( res );
+    }
     return result;
 }
 
@@ -88,7 +73,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
     std::string query4 = "CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
     std::string query5 = "CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));";
     std::wstring errorMessage;
-    m_db = PQconnectdb( selectedDSN.c_str() );
+    m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
     if( PQstatus( m_db ) != CONNECTION_OK )
     {
         err = PQerrorMessage( m_db );
@@ -130,7 +115,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
                                 PQclear( res );
                                 res = PQexec(m_db, "COMMIT");
                                 if( PQresultStatus(res) == PGRES_COMMAND_OK )
-                                    PQClear( res );
+                                    PQclear( res );
                             }
                         }
                     }
@@ -142,14 +127,12 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
             PQclear( res );
             err = PQerrorMessage( m_db );
             errorMsg.push_back( _( "Error during database connection: " ) + err );
-            res = PQexec( m_db, "ROLLBACK", NULL, NULL, NULL );
+            res = PQexec( m_db, "ROLLBACK" );
             result = 1;
         }
         else
         {
-            m_catalog = selectedDSN;
             GetTableListFromDb( errorMsg );
-            m_dbName = m_catalog;
         }
     }
     return result;
@@ -158,39 +141,36 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
 int PostgresDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    PGresult *res = PQfinish( m_db );
-    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    PQfinish( m_db );
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
     {
-        char *err = PQerrorMessage( m_db );
-        errorMsg.push_back( _( "Problem encountered during database disconnect. Please restart the application after fixing the problem. " + err );
-        result = 1;
-    }
-    PQclear( res );
-    std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
-    for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
-    {
-        std::vector<Field *> fields = (*it)->GetFields();
-        for( std::vector<Field *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
+        std::vector<DatabaseTable *> tableVec = (*it).second;
+        for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
+        {
+            std::vector<Field *> fields = (*it1)->GetFields();
+            for( std::vector<Field *>::iterator it2 = fields.begin(); it2 < fields.end(); it2++ )
+            {
+                delete (*it2);
+                (*it2) = NULL;
+            }
+            std::map<int,std::vector<FKField *> > fk_fields = (*it1)->GetForeignKeyVector();
+            for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
+            {
+                for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
+                {
+                    delete (*it3);
+                    (*it3) = NULL;
+                }
+            }
+        }
+        for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
         {
             delete (*it1);
             (*it1) = NULL;
         }
-        std::map<int,std::vector<FKField *> > fk_fields = (*it)->GetForeignKeyVector();
-        for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
-        {
-            for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
-            {
-                delete (*it3);
-                (*it3) = NULL;
-            }
-        }
-        delete (*it);
-        (*it) = NULL;
     }
-    delete pimpl;
-    pimpl = NULL;
-    delete sqlite_pimpl;
-    sqlite_pimpl = NULL;
+    delete m_pimpl;
+    m_pimpl = NULL;
     return result;
 }
 
@@ -311,7 +291,9 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             {
                 char *schema_name = PQgetvalue( res, i, 1 );
                 char *table_name = PQgetvalue( res, i, 2 );
-                const char *values[2];
+                char *values[2];
+                values[0] = new char[strlen( schema_name ) + 1];
+                values[1] = new char[strlen( table_name ) + 1];
                 strcpy( values[0], schema_name );
                 strcpy( values[1], table_name );
 				int length[2] = { strlen( schema_name ), strlen( table_name ) };
@@ -327,7 +309,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 				else
 				{
                     PQclear( res1 );
-                    res1 = PQexecPrepared( m_db, "get_columns", 2, values, length, format, 1 );
+                    res1 = PQexecPrepared( m_db, "get_columns", 2, values, length, formats, 1 );
 				}
                 res = sqlite3_step( stmt );
                 if( res == SQLITE_ROW  )

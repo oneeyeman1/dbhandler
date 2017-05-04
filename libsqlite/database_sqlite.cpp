@@ -65,7 +65,7 @@ int SQLiteDatabase::CreateDatabase(const std::wstring &name, std::vector<std::ws
     char *err;
     result = Disconnect( errorMsg );
     if( result == SQLITE_OK )
-        result = Connect(name, errorMsg);
+        result = Connect( name, errorMsg );
     return result;
 }
 
