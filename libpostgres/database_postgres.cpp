@@ -273,223 +273,70 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
     std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    int result = 0, fieldIsNull, fieldPK, fkReference, autoinc, fkId, numFields;
+    int result = 0, fieldIsNull, fieldPK, fkReference, autoinc, fkId;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
 	std::string query1 = "DECLARE alltables CURSOR SELECT table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW' OR table_type = 'LOCAL TEMPORARY';";
-    std::string query2 = "DECLARE allcolumns CURSOR SELECT * FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2;";
-    std::string query3 = "PRAGMA foreign_key_list(\"%w\")";
+    std::string query2 = "DECLARE allcolumns CURSOR SELECT * FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2 ORDER BY ordinal_position ASC;";
+    std::string query3 = "DECLARE allforeignkeys CURSOR SELECT information_schema.table_constraints.constraint_name, information_schema.table_constraints.schema_name, information_schema.table_constraints.table_name, information_schema.key_column_usage.column_name, information_schema.constraint_column_usage.table_name, information_schema.constraint_column_usage.column_name, information_schema.referential_constraints.update_rule, information_schema.referential_constraints.delete_rule FROM information_schema.table_constraints, information_schema.key_column_usage, information_schema.constraint_column_usage, information_schema.referential_constraints WHERE information_schema.table_constraints.constraint_name = information_schema.key_column_usage.constraint_name AND information_schema.constraint_column_usage.constraint_name = information_schema.table_constraints.constraint_name AND information_schema.referential_constraints.constraint_name = information_schema.table_constraints.constraint_name AND constraint_type = 'FOREIGN KEY' AND information_schema.table_constraints.schema_name = $1 AND information_schema.table_constraints.table_name = $2;";
     res = PQexec( m_db, query1.c_str() );
-    if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
-        PQclear( res );
-        res = PQexec( m_db, "FETCH ALL in alltables" );
-        if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+        char *err = PQerrorMessage( m_db );
+        errorMsg.push_back( _( "Error executing query: " ) + err );
+        PQclear( res1 );
+        return 1;
+    }
+    PQclear( res );
+    res = PQexec( m_db, "FETCH ALL in alltables" );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    {
+        char *err = PQerrorMessage( m_db );
+        errorMsg.push_back( _( "Error executing query: " ) + err );
+        PQclear( res1 );
+        return 1;
+    }
+    for( int i = 0; i < PQntuples( res ); i++ )
+    {
+        char *catalog_name = PQgetvalue( res, i, 0 );
+        char *schema_name = PQgetvalue( res, i, 1 );
+        char *table_name = PQgetvalue( res, i, 2 );
+        char *values[2];
+        values[0] = new char[strlen( schema_name ) + 1];
+        values[1] = new char[strlen( table_name ) + 1];
+        strcpy( values[0], schema_name );
+        strcpy( values[1], table_name );
+        int length[2] = { strlen( schema_name ), strlen( table_name ) };
+        int formats[2] = { 1, 1 };
+        res1 = PQprepare( m_db, "get_columns", query2.c_str(), 3, NULL );
+        if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
         {
-            numFields = PQnfields( res );
-            for( int i = 0; i < PQntuples( res ); i++ )
-            {
-                char *schema_name = PQgetvalue( res, i, 1 );
-                char *table_name = PQgetvalue( res, i, 2 );
-                char *values[2];
-                values[0] = new char[strlen( schema_name ) + 1];
-                values[1] = new char[strlen( table_name ) + 1];
-                strcpy( values[0], schema_name );
-                strcpy( values[1], table_name );
-				int length[2] = { strlen( schema_name ), strlen( table_name ) };
-				int formats[2] = { 1, 1 };
-                res1 = PQprepare( m_db, "get_columns", query2.c_str(), 3, NULL );
-                if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
-                {
-                    result = 1;
-                    char *err = PQerrorMessage( m_db );
-                    errorMsg.push_back( _( "Error executing query: " ) + err );
-                    PQclear( res1 );
-                }
-				else
-				{
-                    PQclear( res1 );
-                    res1 = PQexecPrepared( m_db, "get_columns", 2, values, length, formats, 1 );
-				}
-                res = sqlite3_step( stmt );
-                if( res == SQLITE_ROW  )
-                {
-                    const unsigned char *tableName = sqlite3_column_text( stmt, 0 );
-                    char *y = sqlite3_mprintf( query3.c_str(), tableName );
-                    res2 = sqlite3_prepare( m_db, y, -1, &stmt3, 0 );
-                    if( res2 == SQLITE_OK )
-                    {
-                        for( ; ; )
-                        {
-                            res3 = sqlite3_step( stmt3 );
-                            if( res3 == SQLITE_ROW )
-                            {
-                                fkId = sqlite3_column_int( stmt3, 0 );
-                                fkReference = sqlite3_column_int( stmt3, 1 );
-                                fkTable = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 2 ) );
-                                fkField = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 3 ) );
-                                fkTableField = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 4 ) );
-                                fkUpdateConstraint = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 5 ) );
-                                if( !strcmp( fkUpdateConstraint.c_str(), "NO ACTION" ) )
-                                    update_constraint = NO_ACTION_UPDATE;
-                                if( !strcmp( fkUpdateConstraint.c_str(), "RESTRICT" ) )
-                                    update_constraint = RESTRICT_UPDATE;
-                                if( !strcmp( fkUpdateConstraint.c_str(), "SET NULL" ) )
-                                    update_constraint = SET_NULL_UPDATE;
-                                if( !strcmp( fkUpdateConstraint.c_str(), "SET DEFAULT" ) )
-                                    update_constraint = SET_DEFAULT_UPDATE;
-                                if( !strcmp( fkUpdateConstraint.c_str(), "CASCADE" ) )
-                                    update_constraint = CASCADE_UPDATE;
-                                fkDeleteConstraint = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 6 ) );
-                                if( !strcmp( fkDeleteConstraint.c_str(), "NO ACTION" ) )
-                                    delete_constraint = NO_ACTION_DELETE;
-                                if( !strcmp( fkDeleteConstraint.c_str(), "RESTRICT" ) )
-                                    delete_constraint = RESTRICT_DELETE;
-                                if( !strcmp( fkDeleteConstraint.c_str(), "SET NULL" ) )
-                                    delete_constraint = SET_NULL_DELETE;
-                                if( !strcmp( fkDeleteConstraint.c_str(), "SET DEFAULT" ) )
-                                    delete_constraint = SET_DEFAULT_DELETE;
-                                if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
-                                    delete_constraint = CASCADE_DELETE;
-                                foreign_keys[fkId].push_back( new FKField( fkReference, sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkField ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
-	                            fk_names.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
-                            }
-                            else if( res3 == SQLITE_DONE )
-                                break;
-                            else
-                            {
-                                result = 1;
-                                GetErrorMessage( res, errorMessage );
-                                errorMsg.push_back( errorMessage );
-                                break;
-                            }
-                        }
-                        if( res3 != SQLITE_DONE )
-                            break;
-                    }
-                    else
-                    {
-                        result = 1;
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
-                    }
-                    sqlite3_finalize( stmt3 );
-                    sqlite3_free( y );
-                    if( res3 == SQLITE_DONE )
-                    {
-                        char *z = sqlite3_mprintf( query2.c_str(), tableName );
-                        if( ( res1 = sqlite3_prepare_v2( m_db, z, -1, &stmt2, 0 ) ) == SQLITE_OK )
-                        {
-                            for( ; ; )
-                            {
-                                res1 = sqlite3_step( stmt2 );
-                                if( res1 == SQLITE_ROW )
-                                {
-                                    unsigned char *temp;
-                                    fieldName = reinterpret_cast<const char *>( sqlite3_column_text( stmt2, 1 ) );
-                                    if( ( temp = const_cast<unsigned char *>( sqlite3_column_text( stmt2, 2 ) ) ) == NULL )
-                                        fieldType = "";
-                                    else
-                                        fieldType = reinterpret_cast<char *>( temp );
-                                    fieldIsNull = sqlite3_column_int( stmt2, 3 );
-                                    if( ( temp = const_cast<unsigned char *>( sqlite3_column_text( stmt2, 4 ) ) ) == NULL )
-                                        fieldDefaultValue = "";
-                                    else
-                                        fieldDefaultValue = reinterpret_cast<char *>( temp );
-                                    fieldPK = sqlite3_column_int( stmt2, 5 );
-                                    int res = sqlite3_table_column_metadata( m_db, NULL, (const char *) tableName, fieldName.c_str(), NULL, NULL, NULL, NULL, &autoinc );
-                                    if( res != SQLITE_OK )
-                                    {
-                                        result = 1;
-                                        GetErrorMessage( res, errorMessage );
-                                        errorMsg.push_back( errorMessage );
-                                        break;
-                                    }
-                                    std::wstring fieldComment = L"";
-//                                    GetColumnComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName ), sqlite_pimpl->m_myconv.from_bytes( fieldName ), fieldComment, errorMsg );
-                                    if( errorMsg.empty() )
-                                    {
-                                        Field *field = new Field( sqlite_pimpl->m_myconv.from_bytes( fieldName ), sqlite_pimpl->m_myconv.from_bytes( fieldType ), 0, 0, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK >= 1 ? true : false, std::find( fk_names.begin(), fk_names.end(), sqlite_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
-                                        if( GetFieldProperties( sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName ), L"", sqlite_pimpl->m_myconv.from_bytes( fieldName ), field, errorMsg ) )
-                                        {
-                                            result = 1;
-                                            GetErrorMessage( res, errorMessage );
-                                            errorMsg.push_back( errorMessage );
-                                            sqlite3_finalize( stmt2 );
-                                            break;
-                                        }
-                                        fields.push_back( field );
-                                    }
-                                }
-                                else if( res1 == SQLITE_DONE )
-                                    break;
-                                else
-                                {
-                                    result = 1;
-                                    GetErrorMessage( res, errorMessage );
-                                    errorMsg.push_back( errorMessage );
-                                    break;
-                                }
-                            }
-                            if( res1 != SQLITE_DONE )
-                                break;
-                        }
-                        else
-                        {
-                            result = 1;
-                            GetErrorMessage( res, errorMessage );
-                            errorMsg.push_back( errorMessage );
-                        }
-                        sqlite3_finalize( stmt2 );
-                        sqlite3_free( z );
-                    }
-                    if( res1 == SQLITE_DONE && res3 == SQLITE_DONE )
-                    {
-                        std::wstring comment = L"";
-                        std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName );
-                        DatabaseTable *table = new DatabaseTable( name, L"", fields, foreign_keys );
-                        if( GetTableProperties( table, errorMsg ) )
-                        {
-                            fields.erase( fields.begin(), fields.end() );
-                            foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                            fk_names.clear();
-                            sqlite3_finalize( stmt );
-                            return 1;
-                        }
-                        pimpl->m_tables[sqlite_pimpl->m_catalog].push_back( table );
-                        fields.erase( fields.begin(), fields.end() );
-                        foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                        fk_names.clear();
-                    }
-                }
-                else if( res == SQLITE_DONE )
-                    break;
-                else
-                {
-                    result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
-                    break;
-                }
-            }
+            char *err = PQerrorMessage( m_db );
+            errorMsg.push_back( _( "Error executing query: " ) + err );
+            PQclear( res1 );
+            return 1;
         }
         else
         {
-            result = 1;
-            char *err = ;
-            errorMsg.push_back( _( "FETCH ALL failed: " ) + err );
-            PQclear( res );
+            PQclear( res1 );
+            res1 = PQexecPrepared( m_db, "get_columns", 2, values, length, formats, 1 );
+            if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
+            {
+                char *err = PQerrorMessage( m_db );
+                errorMsg.push_back( _( "Error executing query: " ) + err );
+                PQclear( res1 );
+                return 1;
+            }
+            for( int j = 0; j < PQntuples( res1 ); j++ )
+            {
+				char *column_name = PQgetvalue( res1, j, 3 );
+				char *column_type = PQgetvalue( res1, j, 7 );
+                char *default_value = PQgetvalue( res1, j, 5 );
+                char *isNull = PQgetvalue( res1, j, 6 );
+            }
         }
     }
-    else
-    {
-        result = 1;
-        char *err = PQerrorMessage( m_db );
-        errorMsg.push_back( _( "DECLARE CURSOR failed: " ) + err );
-        PQclear( res );
-    }
-    PQclear( res );
-    return result;
+    return 0;
 }
 
 int PostgresDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg)
