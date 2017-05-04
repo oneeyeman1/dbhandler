@@ -54,7 +54,7 @@ int PostgresDatabase::DropDatabase(const std::wstring &name, std::vector<std::ws
         if( PQresultStatus( res ) != PGRES_COMMAND_OK )
         {
 			result = 1;
-			char *err = PQerrorMessage( m_db );
+			std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
 			errorMsg.push_back( L"Error dropping database: " + err );
         }
 		PQclear( res );
@@ -66,7 +66,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
 {
     int result = 0;
     PGresult *res;
-    char *err;
+    std::wstring err;
     std::string query1 = "CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
     std::string query2 = "CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));";
     std::string query3 = "CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));";
@@ -76,7 +76,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
     m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
     if( PQstatus( m_db ) != CONNECTION_OK )
     {
-        err = PQerrorMessage( m_db );
+        err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( L"Connection to database failed: " + err );
         result = 1;
     }
@@ -85,7 +85,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
         res = PQexec( m_db, "START TRANSACTION" );
         if( PQresultStatus( res ) != PGRES_COMMAND_OK )
         {
-            err = PQerrorMessage( m_db );
+            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( L"Starting transaction failed during connection: " + err );
             result = 1;
             PQclear( res );
@@ -125,7 +125,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
         if( PQresultStatus( res ) != PGRES_COMMAND_OK )
         {
             PQclear( res );
-            err = PQerrorMessage( m_db );
+            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( L"Error during database connection: " + err );
             res = PQexec( m_db, "ROLLBACK" );
             result = 1;
@@ -267,13 +267,13 @@ void PostgresDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
 
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
-    PGresult *res, *res1, *res2, *res3;
+    PGresult *res, *res1, *res2;
     std::vector<Field *> fields;
     std::vector<std::wstring> fk_names;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
     std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    int result = 0, fieldIsNull, fieldPK, fkReference, autoinc, fkId;
+    int result = 0, fieldIsNull, fieldPK, fkReference, fkId;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
 	std::string query1 = "DECLARE alltables CURSOR SELECT table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW' OR table_type = 'LOCAL TEMPORARY';";
@@ -282,8 +282,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     res = PQexec( m_db, query1.c_str() );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
-        char *err = PQerrorMessage( m_db );
-        errorMsg.push_back( "Error executing query: " + err );
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Error executing query: " + err );
         PQclear( res1 );
         return 1;
     }
@@ -291,8 +291,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     res = PQexec( m_db, "FETCH ALL in alltables" );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
-        char *err = PQerrorMessage( m_db );
-        errorMsg.push_back( _( "Error executing query: " ) + err );
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Error executing query: " + err );
         PQclear( res1 );
         return 1;
     }
@@ -311,8 +311,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         res1 = PQprepare( m_db, "get_fkeys", query3.c_str(), 3, NULL );
         if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
         {
-            char *err = PQerrorMessage( m_db );
-            errorMsg.push_back( _( "Error executing query: " ) + err );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error executing query: " + err );
             PQclear( res1 );
             return 1;
         }
@@ -322,8 +322,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             res1 = PQexecPrepared( m_db, "get_fkeys", 2, values1, length1, formats1, 1 );
             if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
             {
-                char *err = PQerrorMessage( m_db );
-                errorMsg.push_back( _( "Error executing query: " ) + err );
+                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( L"Error executing query: " + err );
                 PQclear( res1 );
                 return 1;
             }
@@ -362,8 +362,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             res2 = PQprepare( m_db, "get_columns", query2.c_str(), 3, NULL );
             if( PQresultStatus( res2 ) != PGRES_COMMAND_OK )
             {
-                char *err = PQerrorMessage( m_db );
-                errorMsg.push_back( _( "Error executing query: " ) + err );
+                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( L"Error executing query: " + err );
                 PQclear( res2 );
                 return 1;
             }
@@ -373,8 +373,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 res2 = PQexecPrepared( m_db, "get_columns", 2, values1, length1, formats1, 1 );
                 if( PQresultStatus( res2 ) != PGRES_COMMAND_OK )
                 {
-                    char *err = PQerrorMessage( m_db );
-                    errorMsg.push_back( _( "Error executing query: " ) + err );
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                    errorMsg.push_back( L"Error executing query: " + err );
                     PQclear( res2 );
                     return 1;
                 }
@@ -392,8 +392,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     Field *field = new Field();
                     if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( fieldName ), field, errorMsg ) )
                     {
-                        char *err = PQerrorMessage( m_db );
-                        errorMsg.push_back( _() );
+                        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                        errorMsg.push_back( err );
                         PQclear( res2 );
                         return 1;
                     }
