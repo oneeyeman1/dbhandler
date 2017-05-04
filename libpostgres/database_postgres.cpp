@@ -301,14 +301,14 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         char *catalog_name = PQgetvalue( res, i, 0 );
         char *schema_name = PQgetvalue( res, i, 1 );
         char *table_name = PQgetvalue( res, i, 2 );
-        char *values[2];
-        values[0] = new char[strlen( schema_name ) + 1];
-        values[1] = new char[strlen( table_name ) + 1];
-        strcpy( values[0], schema_name );
-        strcpy( values[1], table_name );
-        int length[2] = { strlen( schema_name ), strlen( table_name ) };
-        int formats[2] = { 1, 1 };
-        res1 = PQprepare( m_db, "get_columns", query2.c_str(), 3, NULL );
+        char *values1[2];
+        values1[0] = new char[strlen( schema_name ) + 1];
+        values1[1] = new char[strlen( table_name ) + 1];
+        strcpy( values1[0], schema_name );
+        strcpy( values1[1], table_name );
+        int length1[2] = { strlen( schema_name ), strlen( table_name ) };
+        int formats1[2] = { 1, 1 };
+        res1 = PQprepare( m_db, "get_fkeys", query3.c_str(), 3, NULL );
         if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
         {
             char *err = PQerrorMessage( m_db );
@@ -319,7 +319,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         else
         {
             PQclear( res1 );
-            res1 = PQexecPrepared( m_db, "get_columns", 2, values, length, formats, 1 );
+            res1 = PQexecPrepared( m_db, "get_fkeys", 2, values1, length1, formats1, 1 );
             if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
             {
                 char *err = PQerrorMessage( m_db );
@@ -327,13 +327,38 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 PQclear( res1 );
                 return 1;
             }
+            int count = 0;
             for( int j = 0; j < PQntuples( res1 ); j++ )
             {
-				char *column_name = PQgetvalue( res1, j, 3 );
-				char *column_type = PQgetvalue( res1, j, 7 );
-                char *default_value = PQgetvalue( res1, j, 5 );
-                char *isNull = PQgetvalue( res1, j, 6 );
+				fkField = PQgetvalue( res1, j, 2 );
+                fkTable = PQgetvalue( res1, j, 3 );
+                fkTableField = PQgetvalue( res1, j, 4 );
+                fkUpdateConstraint = PQgetvalue( res1, j, 5 );
+                fkDeleteConstraint = PQgetvalue( res1, j, 6 );
+                if( !strcmp( fkUpdateConstraint.c_str(), "NO ACTION" ) )
+                    update_constraint = NO_ACTION_UPDATE;
+                if( !strcmp( fkUpdateConstraint.c_str(), "RESTRICT" ) )
+                    update_constraint = RESTRICT_UPDATE;
+                if( !strcmp( fkUpdateConstraint.c_str(), "SET NULL" ) )
+                    update_constraint = SET_NULL_UPDATE;
+                if( !strcmp( fkUpdateConstraint.c_str(), "SET DEFAULT" ) )
+                    update_constraint = SET_DEFAULT_UPDATE;
+                if( !strcmp( fkUpdateConstraint.c_str(), "CASCADE" ) )
+                    update_constraint = CASCADE_UPDATE;
+                if( !strcmp( fkDeleteConstraint.c_str(), "NO ACTION" ) )
+                    delete_constraint = NO_ACTION_DELETE;
+                if( !strcmp( fkDeleteConstraint.c_str(), "RESTRICT" ) )
+                    delete_constraint = RESTRICT_DELETE;
+                if( !strcmp( fkDeleteConstraint.c_str(), "SET NULL" ) )
+                    delete_constraint = SET_NULL_DELETE;
+                if( !strcmp( fkDeleteConstraint.c_str(), "SET DEFAULT" ) )
+                    delete_constraint = SET_DEFAULT_DELETE;
+                if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
+                    delete_constraint = CASCADE_DELETE;
+                foreign_keys[count].push_back( new FKField( fkReference, m_pimpl->m_myconv.from_bytes( fkTable ), m_pimpl->m_myconv.from_bytes( fkField ), m_pimpl->m_myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
+                fk_names.push_back( m_pimpl->m_myconv.from_bytes( fkField ) );
             }
+            PQclear( res1 );
         }
     }
     return 0;
