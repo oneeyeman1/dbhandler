@@ -55,7 +55,7 @@ int PostgresDatabase::DropDatabase(const std::wstring &name, std::vector<std::ws
         {
 			result = 1;
 			char *err = PQerrorMessage( m_db );
-			errorMsg.push_back( _( "Error dropping database: " ) + err );
+			errorMsg.push_back( L"Error dropping database: " + err );
         }
 		PQclear( res );
     }
@@ -77,7 +77,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
     if( PQstatus( m_db ) != CONNECTION_OK )
     {
         err = PQerrorMessage( m_db );
-        errorMsg.push_back( _( "Connection to database failed: " ) + err );
+        errorMsg.push_back( L"Connection to database failed: " + err );
         result = 1;
     }
     else
@@ -86,7 +86,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
         if( PQresultStatus( res ) != PGRES_COMMAND_OK )
         {
             err = PQerrorMessage( m_db );
-            errorMsg.push_back( _( "Starting transaction failed during connection: " ) + err );
+            errorMsg.push_back( L"Starting transaction failed during connection: " + err );
             result = 1;
             PQclear( res );
         }
@@ -126,7 +126,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
         {
             PQclear( res );
             err = PQerrorMessage( m_db );
-            errorMsg.push_back( _( "Error during database connection: " ) + err );
+            errorMsg.push_back( L"Error during database connection: " + err );
             res = PQexec( m_db, "ROLLBACK" );
             result = 1;
         }
@@ -283,7 +283,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         char *err = PQerrorMessage( m_db );
-        errorMsg.push_back( _( "Error executing query: " ) + err );
+        errorMsg.push_back( "Error executing query: " + err );
         PQclear( res1 );
         return 1;
     }
@@ -378,36 +378,36 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     PQclear( res2 );
                     return 1;
                 }
-                for( j = 0; j < PQntuples( res2 ); j++ )
+                for( int j = 0; j < PQntuples( res2 ); j++ )
                 {
                     fieldName = PQgetvalue( res2, j, 0 );
                     fieldType = PQgetvalue( res2, j, 1 );
                     char *char_length = PQgetvalue( res2, j, 2 );
-                    char *char_radix = PQegtvalue( res2, j, 3 );
+                    char *char_radix = PQgetvalue( res2, j, 3 );
                     char *numeric_length = PQgetvalue( res2, j, 4 );
                     char *numeric_radix = PQgetvalue( res2, j, 5 );
                     char *numeric_scale = PQgetvalue( res2, j, 6 );
                     fieldDefaultValue = PQgetvalue( res2, j, 7 );
-                    fieldIsNull = PQgetvalue( res2, j, 8 );
+                    fieldIsNull = !strcmp( PQgetvalue( res2, j, 8 ), "YES" ) ? 1 : 0;
                     Field *field = new Field();
-                    if( GetFieldProperties() )
+                    if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( fieldName ), field, errorMsg ) )
                     {
                         char *err = PQerrorMessage( m_db );
                         errorMsg.push_back( _() );
                         PQclear( res2 );
                         return 1;
                     }
-                    field.push_back( field );
+                    fields.push_back( field );
                 }
                 PQclear( res2 );
-                DatabaseTable *table = new DatabaseTable();
+                DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
                 if( GetTableProperties( table, errorMsg ) )
                 {
-                    char *err = PQerrorMessage();
-                    errorMsg.push_back();
+                    char *err = PQerrorMessage( m_db );
+                    errorMsg.push_back( m_pimpl->m_myconv.from_bytes( err ) );
                     return 1;
                 }
-                pimpl->m_tables[].push_back( table );
+                pimpl->m_tables[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( table );
                 fields.erase( fields.begin(), fields.end() );
                 foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                 fk_names.clear();
