@@ -16,6 +16,7 @@
 #else
 #include <sqlext.h>
 #endif*/
+#include "wx/valnum.h"
 #include "wx/wizard.h"
 #include "wx/filepicker.h"
 #include "wx/dynlib.h"
@@ -31,7 +32,7 @@ DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxStri
     page1 = new DBType( this );
     page2 = new SQLiteConnect( this );
     page3 = new ODBCConnect( this, dsn );
-	page4 = new DatabaseType( this );
+	page4 = new PostgresConnect( this );
     GetPageAreaSizer()->Add( page1 );
     GetPageAreaSizer()->Add( page2 );
     GetPageAreaSizer()->Add( page3 );
@@ -323,27 +324,28 @@ wxCheckBox *ODBCConnect::GetAskForParameters() const
 
 PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
 {
+    wxIntegerValidator<unsigned long> val( &m_value );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Host" ) );
     m_host = new wxTextCtrl( this, wxID_ANY, "localhost" );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Host Address" ) );
     m_hostAddr = new wxTextCtrl( this, wxID_ANY, "127.0.0.1" );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Port" ) );
-    m_port = new wxTextCtrl( this, wxID_ANY, "5432", wxDefaultPosition, wxDefaultSize, 0, wxNumValidator );
+    m_port = new wxTextCtrl( this, wxID_ANY, "5432", wxDefaultPosition, wxDefaultSize, 0, val );
     m_label4 = new wxStaticText( this, wxID_ANY, _( "User ID" ) );
     m_userID = new wxTextCtrl( this, wxID_ANY, "postgres" );
-    m_label5 = wxStaticText( this, wxID_ANY, _( "Password" ) );
+    m_label5 = new wxStaticText( this, wxID_ANY, _( "Password" ) );
     m_password = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
     m_label6 = new wxStaticText( this, wxID_ANY, _( "Database Name" ) );
     m_dbName = new wxTextCtrl( this, wxID_ANY, "" );
-    wxBoxSizer *main = wxBoxSizer( wxHORIZONTAL );
-    wxBoxSizer *sizer1 = wxBoxSizer( wxVERTICAL );
+    wxBoxSizer *main = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *sizer1 = new wxBoxSizer( wxVERTICAL );
     wxFlexGridSizer *sizer2 = new wxFlexGridSizer( 6, 2, 5, 5 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( m_label1, 0, wxEXPAND, 0 );
     sizer2->Add( m_host, 0, wxEXPAND, 0 );
     sizer2->Add( m_label2, 0, wxEXPAND, 0 );
-    sizer2->Add( m_hostAdd, 0, wxEXPAND, 0 );
+    sizer2->Add( m_hostAddr, 0, wxEXPAND, 0 );
     sizer2->Add( m_label3, 0, wxEXPAND, 0 );
     sizer2->Add( m_port, 0, wxEXPAND, 0 );
     sizer2->Add( m_label4, 0, wxEXPAND, 0 );
@@ -355,4 +357,14 @@ PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
     main->Add( sizer1, 0, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizerAndFit( main );
+}
+
+wxWizardPage *PostgresConnect::GetPrev() const
+{
+    return dynamic_cast<DatabaseType *>( GetParent() )->GetFirstPage();
+}
+
+wxWizardPage *PostgresConnect::GetNext() const
+{
+    return NULL;
 }

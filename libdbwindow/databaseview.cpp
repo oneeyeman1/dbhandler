@@ -122,10 +122,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_tb->Realize();
     m_frame->SetToolBar( m_tb );
     ptCanvas.x = -1;
-    ptCanvas.y = m_tb->GetSize().GetHeight();
+    ptCanvas.y = m_tb->GetSize().GetHeight();*/
 #else
     ptCanvas = wxDefaultPosition;
-#endif*/
+#endif
     wxASSERT( m_frame == GetFrame() );
     sizer = new wxBoxSizer( wxVERTICAL );
     if( m_type == QueryView )
