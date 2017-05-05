@@ -78,8 +78,8 @@ void WhereHavingPage::set_properties()
     m_grid->DisableDragColMove();
     m_grid->DisableDragColSize();
     m_grid->DisableDragGridSize();
-	m_grid->DisableDragRowSize();
-	for( int i = 0; i < 9; i++ )
+    m_grid->DisableDragRowSize();
+    for( int i = 0; i < 9; i++ )
     {
         m_grid->SetCellEditor( i, 0, new wxGridCellChoiceEditor() );
         m_grid->SetCellEditor( i, 1, new wxGridCellChoiceEditor( 28, m_operatorChoices ) );
