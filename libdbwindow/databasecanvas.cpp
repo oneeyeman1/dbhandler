@@ -240,7 +240,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         Refresh();
         if( fld )
             dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() );
-	}
+    }
 }
 
 void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
@@ -328,9 +328,9 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         {
             if( !fieldSelected )
             {
-				mnu.Append( wxID_SELECTALLFIELDS, _( "Select All" ), _( "Select all columns for display" ) );
-				mnu.Append( wxID_DESELECTALLFIELDS, _("Deselect All" ), _( "Deselect all columns for display" ) );
-				mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
+                mnu.Append( wxID_SELECTALLFIELDS, _( "Select All" ), _( "Select all columns for display" ) );
+                mnu.Append( wxID_DESELECTALLFIELDS, _("Deselect All" ), _( "Deselect all columns for display" ) );
+                mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
             }
         }
     }

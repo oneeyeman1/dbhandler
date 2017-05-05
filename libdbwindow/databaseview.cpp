@@ -84,7 +84,7 @@ wxEND_EVENT_TABLE()
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
-	m_isCreated = false;
+    m_isCreated = false;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -683,11 +683,11 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
         if( (*it)->IsSelected() )
         {
             if( wxDynamicCast( (*it), MyErdTable ) )
-				table = wxDynamicCast( (*it), MyErdTable );
+                table = wxDynamicCast( (*it), MyErdTable );
             if( wxDynamicCast( (*it), FieldShape ) )
                 field = wxDynamicCast( (*it), FieldShape );
         }
-	}
+    }
     wxDynamicLibrary lib1;
 #ifdef __WXMSW__
     lib1.Load( "tablewindow" );
@@ -710,7 +710,7 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
 
 WhereHavingPage *DrawingView::GetWherePage()
 {
-	return m_page2;
+    return m_page2;
 }
 
 WhereHavingPage *DrawingView::GetHavingPage()

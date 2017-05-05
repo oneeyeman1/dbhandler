@@ -44,7 +44,7 @@ int PostgresDatabase::CreateDatabase(const std::wstring &name, std::vector<std::
 int PostgresDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-	PGresult *res;
+    PGresult *res;
     std::wstring query = L"DROP TABLE " + name;
     if( pimpl->m_dbName == name )
         result = Disconnect( errorMsg );
@@ -53,11 +53,11 @@ int PostgresDatabase::DropDatabase(const std::wstring &name, std::vector<std::ws
         res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
         if( PQresultStatus( res ) != PGRES_COMMAND_OK )
         {
-			result = 1;
-			std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-			errorMsg.push_back( L"Error dropping database: " + err );
+            result = 1;
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error dropping database: " + err );
         }
-		PQclear( res );
+        PQclear( res );
     }
     return result;
 }
@@ -276,7 +276,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     int result = 0, fieldIsNull, fieldPK, fkReference, fkId;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
-	std::string query1 = "DECLARE alltables CURSOR SELECT table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW' OR table_type = 'LOCAL TEMPORARY';";
+    std::string query1 = "DECLARE alltables CURSOR SELECT table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW' OR table_type = 'LOCAL TEMPORARY';";
     std::string query2 = "DECLARE allcolumns CURSOR SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_precision_radix, cols.numeric_scale, cols.column_default, cols.is_nullable, table_cons.constraint_type FROM information_schema.columns AS cols, information_schema.table_constraints AS table_cons WHERE cols.schema_name = table_cons.table_schema AND cols.table_name = table_cons.table_name AND table_schema = $1 AND table_name = $2 ORDER BY ordinal_position ASC;";
     std::string query3 = "DECLARE allforeignkeys CURSOR SELECT information_schema.table_constraints.constraint_name, information_schema.table_constraints.schema_name, information_schema.table_constraints.table_name, information_schema.key_column_usage.column_name, information_schema.constraint_column_usage.table_name, information_schema.constraint_column_usage.column_name, information_schema.referential_constraints.update_rule, information_schema.referential_constraints.delete_rule FROM information_schema.table_constraints, information_schema.key_column_usage, information_schema.constraint_column_usage, information_schema.referential_constraints WHERE information_schema.table_constraints.constraint_name = information_schema.key_column_usage.constraint_name AND information_schema.constraint_column_usage.constraint_name = information_schema.table_constraints.constraint_name AND information_schema.referential_constraints.constraint_name = information_schema.table_constraints.constraint_name AND constraint_type = 'FOREIGN KEY' AND information_schema.table_constraints.schema_name = $1 AND information_schema.table_constraints.table_name = $2;";
     res = PQexec( m_db, query1.c_str() );
@@ -330,7 +330,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             int count = 0;
             for( int j = 0; j < PQntuples( res1 ); j++ )
             {
-				fkField = PQgetvalue( res1, j, 2 );
+                fkField = PQgetvalue( res1, j, 2 );
                 fkTable = PQgetvalue( res1, j, 3 );
                 fkTableField = PQgetvalue( res1, j, 4 );
                 fkUpdateConstraint = PQgetvalue( res1, j, 5 );

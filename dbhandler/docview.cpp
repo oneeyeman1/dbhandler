@@ -104,15 +104,8 @@ bool MyApp::OnInit()
     //// Create a document manager
     wxDocManager *docManager = new wxDocManager;
 
-#if defined( __WXMAC__ )  && wxOSX_USE_CARBON
-    wxFileName::MacRegisterDefaultTypeAndCreator( "drw" , 'WXMB' , 'WXMA' );
-#endif
-
     // Create a template relating text documents to their views
     new wxDocTemplate( docManager, "Text", "*.txt;*.text", "", "txt;text", "Text Doc", "Text View", CLASSINFO( TextEditDocument ), CLASSINFO( TextEditView ) );
-#if defined( __WXMAC__ ) && wxOSX_USE_CARBON
-    wxFileName::MacRegisterDefaultTypeAndCreator( "txt" , 'TEXT' , 'WXMA' );
-#endif
     // Create a template relating image documents to their views
     new wxDocTemplate( docManager, "Image", "*.png;*.jpg", "", "png;jpg", "Image Doc", "Image View", CLASSINFO( ImageDocument ), CLASSINFO( ImageView ) );
     // create the main frame window
@@ -124,17 +117,6 @@ bool MyApp::OnInit()
     frame->SetIcon( wxICON( doc ) );
     frame->Maximize();
     frame->Show();
-/*
-    if( m_filesFromCmdLine.empty() )
-    {
-        docManager->CreateNewDocument();
-    }
-    else // we have files to open on command line
-    {
-        for( size_t i = 0; i != m_filesFromCmdLine.size(); ++i )
-            docManager->CreateDocument( m_filesFromCmdLine[i], wxDOC_SILENT );
-    }
-*/
     return true;
 }
 

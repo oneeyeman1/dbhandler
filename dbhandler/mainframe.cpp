@@ -209,7 +209,7 @@ void MainFrame::QueryMenu()
     designMenu->AppendSeparator();
     designMenu->Append( wxID_CUSTOMCOLORS, _( "Custom Colors..." ), _( "Define custom coloring scheme" ) );
     designMenu->Append( wxID_OPTIONS, _( "Options..." ), _( "Query view options" ) );
-    GetMenuBar()->Insert( 2, designMenu, _( "Design" ) );
+    GetMenuBar()->Insert( 1, designMenu, _( "Design" ) );
 }
 
 void MainFrame::TableMenu()
