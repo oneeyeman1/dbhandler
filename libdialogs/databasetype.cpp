@@ -188,9 +188,9 @@ DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
 {
     wxSizer *main = new wxBoxSizer( wxHORIZONTAL );
     wxSizer *sizer1 = new wxBoxSizer( wxVERTICAL );
-    const wxString choices[] = { "SQLite", "ODBC", "MS SQL Server", "Sybase", "Oracle" };
+    const wxString choices[] = { "SQLite", "ODBC", "MS SQL Server", "mYSQL", "PostgreSQL", "Sybase", "Oracle" };
     wxStaticText *label = new wxStaticText( this, wxID_ANY, _( "Please select the database type" ) );
-    m_types = new wxComboBox( this, wxID_ANY, "SQLite", wxDefaultPosition, wxDefaultSize, 5, choices, wxCB_READONLY );
+    m_types = new wxComboBox( this, wxID_ANY, "SQLite", wxDefaultPosition, wxDefaultSize, 7, choices, wxCB_READONLY );
     wxFont font = label->GetFont();
     font.MakeBold();
     label->SetFont( font );
@@ -352,6 +352,8 @@ PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
     sizer2->Add( m_userID, 0, wxEXPAND, 0 );
     sizer2->Add( m_label5, 0, wxEXPAND, 0 );
     sizer2->Add( m_password, 0, wxEXPAND, 0 );
+    sizer2->Add( m_label6, 0, wxEXPAND, 0 );
+    sizer2->Add( m_dbName, 0, wxEXPAND, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     main->Add( sizer1, 0, wxEXPAND, 0 );
