@@ -31,6 +31,7 @@ DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxStri
     page1 = new DBType( this );
     page2 = new SQLiteConnect( this );
     page3 = new ODBCConnect( this, dsn );
+	page4 = new DatabaseType( this );
     GetPageAreaSizer()->Add( page1 );
     GetPageAreaSizer()->Add( page2 );
     GetPageAreaSizer()->Add( page3 );
@@ -121,6 +122,10 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         m_dbName = lbox->GetString( lbox->GetSelection() );
         wxCheckBox *check = page3->GetAskForParameters();
         m_askForConnectParameter = check->GetValue();
+    }
+    if( m_dbEngine == "PostgreSQL" )
+    {
+        m_dbEngine = "PostgreSQL";
     }
 /*    WXWidget hwnd = 0;
     wxString driver;
@@ -217,6 +222,11 @@ wxWizardPage *DBType::GetNext() const
         dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( "ODBC" );
         return dynamic_cast<DatabaseType *>( GetParent() )->GetODBCPage();
     }
+    else if( type == "PostgreSQL" )
+    {
+        dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( "PostgreSQL" );
+        return dynamic_cast<DatabaseType *>( GetParent() )->GetPostgresPage();
+    }
     else
         return NULL;
 }
@@ -309,4 +319,26 @@ wxListBox *ODBCConnect::GetDSNTypesCtrl() const
 wxCheckBox *ODBCConnect::GetAskForParameters() const
 {
     return const_cast<wxCheckBox *>( m_ask );
+}
+
+PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
+{
+    m_label1 = new wxStaticText( this, wxID_ANY, _( "Host" ) );
+    m_host = new wxTextCtrl( this, wxID_ANY, "localhost" );
+    m_label2 = new wxStaticText( this, wxID_ANY, _( "Host Address" ) );
+    m_hostAddr = new wxTextCtrl( this, wxID_ANY, "127.0.0.1" );
+    wxBoxSizer *main = wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *sizer1 = wxBoxSizer( wxVERTICAL );
+    wxFlexGridSizer *sizer2 = new wxFlexGridSizer( 2, 2, 5, 5 );
+    main->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer2->Add( m_label1, 0, wxEXPAND, 0 );
+    sizer2->Add( m_host, 0, wxEXPAND, 0 );
+    sizer2->Add( m_label2, 0, wxEXPAND, 0 );
+    sizer2->Add( m_hostAdd, 0, wxEXPAND, 0 );
+    sizer1->Add( sizer2, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    main->Add( sizer1, 0, wxEXPAND, 0 );
+    main->Add( 5, 5, 0, wxEXPAND, 0 );
+    SetSizerAndFit( main );
 }

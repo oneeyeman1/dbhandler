@@ -41,13 +41,23 @@ private:
     wxCheckBox *m_ask;
 };
 
+class PostgresConnect : public wxWizardPage
+{
+public:
+    PostgresConnect(wxWizard *parent);
+private:
+    wxStaticText *m_label1, *m_label2;
+    wxTextCtrl *m_host, *m_hostAddr;
+};
+
 class DatabaseType : public wxWizard
 {
 public:
     DatabaseType(wxWindow *parent, const wxString &title, const wxString &name, const wxString &engine, const std::vector<std::wstring> &dsn);
     wxWizardPage *GetFirstPage() const { return page1; }
     SQLiteConnect *GetSQLitePage() { return page2; }
-    ODBCConnect *GetODBCPage() {return page3; }
+    ODBCConnect *GetODBCPage() { return page3; }
+    PostgresConnect *GetPostgresPage() { return page4; };
     void GetDatabaseEngine(wxString &databaseEngine);
     bool GetODBCConnectionParam();
     wxString GetDatabaseName();
@@ -60,6 +70,7 @@ private:
     DBType *page1;
     SQLiteConnect *page2;
     ODBCConnect *page3;
+    PostgresConnect *page4;
     wxWindow *button;
     wxString m_dbName, m_dbEngine;
     bool m_askForConnectParameter;
