@@ -16,4 +16,5 @@ libpostgres_la_CXXFLAGS = -I../../dbinterface \
 libpostgres_la_LDFLAGS = -L../dbinterface \
 	-ldbinterface \
 	`pg_config \
-	--libs` 
+	--libdir` \
+	-lpq 
