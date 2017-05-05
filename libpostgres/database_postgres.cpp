@@ -431,6 +431,7 @@ void PostgresDatabase::SetColumnComment(const std::wstring &tableName, const std
 bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     bool exists = false;
+	std::wstring query = L"SELECT indexname FROM pg_catalog_schema.pg_indexes WHERE schemaname = $1 AND tablename = $2;";
     return exists;
 }
 
