@@ -70,6 +70,7 @@ libdialogs/Makefile
 libdbloader/Makefile
 libdbwindow/Makefile
 dbhandler/Makefile
+libpostgres/Makefile
 libtablewindow/Makefile
 libpropertypages/Makefile
 ])

@@ -2,15 +2,18 @@
 
 
 lib_LTLIBRARIES =  \
-	libpostgres_lib.la
+	libpostgres.la
 
-libpostgres_lib_la_SOURCES =  \
+libpostgres_la_SOURCES =  \
 	database_postgres.cpp \
-	database_postgres.h
+	database_postgres.h \
+	postgres.cpp
 
-libpostgres_lib_la_CXXFLAGS = -I../../dbinterface 
+libpostgres_la_CXXFLAGS = -I../../dbinterface \
+	`pg_config \
+	--includedir` 
 
-libpostgres_lib_la_LDFLAGS = -L../dbinterface \
-	-ldbinterface 
-
-AM_CXXFLAGS = -I../../dbinterface 
+libpostgres_la_LDFLAGS = -L../dbinterface \
+	-ldbinterface \
+	`pg_config \
+	--libs` 
