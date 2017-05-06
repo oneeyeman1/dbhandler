@@ -67,6 +67,13 @@ void DatabaseType::OnButtonUpdateUI(wxUpdateUIEvent &event)
         else
             event.Enable( false );
     }
+	else if( GetCurrentPage() == page4 )
+    {
+        if( dynamic_cast<PostgresConnect *>( page4 )->GetDatabaseName()->IsEmpty() )
+            event.Enable( false );
+        else
+            event.Enable( true );
+    }
 }
 
 void DatabaseType::OnPageChanged(wxWizardEvent &event)
@@ -127,6 +134,12 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
     if( m_dbEngine == "PostgreSQL" )
     {
         m_dbEngine = "PostgreSQL";
+        std::wstring connStr = "host = " + page4->GetHost()->GetValue() + " ";
+        connStr += "hostaddr = " + page4->GetHostAddr()->GetValue() + " ";
+        connStr += "port = " + page4->GetPort()->GetValue() + " ";
+		connStr += "user = " + page4->GetUserID()->GetValue() + " ";
+        connStr += "password = " + page4->GetPassword()->GetValue() + " ";
+		connStr += "dbname = " + page4->GetDBName()->GetValue() + " ";
     }
 /*    WXWidget hwnd = 0;
     wxString driver;
@@ -325,12 +338,14 @@ wxCheckBox *ODBCConnect::GetAskForParameters() const
 PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
 {
     wxIntegerValidator<unsigned long> val( &m_value );
+    val.SetRange( 1, 65535 );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Host" ) );
     m_host = new wxTextCtrl( this, wxID_ANY, "localhost" );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Host Address" ) );
     m_hostAddr = new wxTextCtrl( this, wxID_ANY, "127.0.0.1" );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Port" ) );
-    m_port = new wxTextCtrl( this, wxID_ANY, "5432", wxDefaultPosition, wxDefaultSize, 0, val );
+    m_port = new wxTextCtrl( this, wxID_ANY, wxString::Format( "%ld", 5432 ), wxDefaultPosition, wxDefaultSize, 0/*, val*/ ); //5432
+    m_port->SetValidator( val );
     m_label4 = new wxStaticText( this, wxID_ANY, _( "User ID" ) );
     m_userID = new wxTextCtrl( this, wxID_ANY, "postgres" );
     m_label5 = new wxStaticText( this, wxID_ANY, _( "Password" ) );
@@ -369,4 +384,39 @@ wxWizardPage *PostgresConnect::GetPrev() const
 wxWizardPage *PostgresConnect::GetNext() const
 {
     return NULL;
+}
+
+wxTextCtrl *PostgresConnect::GetDatabaseName()
+{
+    return m_dbName;
+}
+
+wxTextCtrl *PostgresConnect::GetHost() const
+{
+    return m_host;
+}
+
+wxTextCtrl *PostgresConnect::GetHostAddr() const
+{
+    return m_hostAddr;
+}
+
+wxTextCtrl *PostgresConnect::GetPort() const
+{
+    return m_port;
+}
+
+wxTextCtrl *PostgresConnect::GetUserID() const
+{
+    return m_userID;
+}
+
+wxTextCtrl *PostgresConnect::GetPassword() const
+{
+    return m_password;
+}
+
+wxTextCtrl *PostgresConnect::GetDBName() const
+{
+    return m_dbName;
 }
