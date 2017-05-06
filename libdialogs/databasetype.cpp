@@ -69,7 +69,7 @@ void DatabaseType::OnButtonUpdateUI(wxUpdateUIEvent &event)
     }
 	else if( GetCurrentPage() == page4 )
     {
-        if( dynamic_cast<PostgresConnect *>( page4 )->GetDatabaseName()->IsEmpty() )
+        if( dynamic_cast<PostgresConnect *>( page4 )->GetPassword()->IsEmpty() )
             event.Enable( false );
         else
             event.Enable( true );
@@ -358,8 +358,7 @@ PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Host Address" ) );
     m_hostAddr = new wxTextCtrl( this, wxID_ANY, "127.0.0.1" );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Port" ) );
-    m_port = new wxTextCtrl( this, wxID_ANY, wxString::Format( "%ld", 5432 ), wxDefaultPosition, wxDefaultSize, 0/*, val*/ ); //5432
-    m_port->SetValidator( val );
+    m_port = new wxTextCtrl( this, wxID_ANY, "5432", wxDefaultPosition, wxDefaultSize, 0, val );
     m_label4 = new wxStaticText( this, wxID_ANY, _( "User ID" ) );
     m_userID = new wxTextCtrl( this, wxID_ANY, "postgres" );
     m_label5 = new wxStaticText( this, wxID_ANY, _( "Password" ) );
