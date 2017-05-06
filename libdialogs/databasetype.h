@@ -72,6 +72,7 @@ public:
     bool GetODBCConnectionParam();
     wxString GetDatabaseName();
     void SetDbEngine(const wxString &engine);
+    wxString &GetConnectString() const;
 protected:
     void OnPageChanged(wxWizardEvent &event);
     void OnConnect(wxWizardEvent &event);
@@ -82,7 +83,7 @@ private:
     ODBCConnect *page3;
     PostgresConnect *page4;
     wxWindow *button;
-    wxString m_dbName, m_dbEngine;
+    wxString m_dbName, m_dbEngine, m_connStr;
     bool m_askForConnectParameter;
 };
 

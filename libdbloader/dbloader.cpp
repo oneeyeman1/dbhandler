@@ -95,7 +95,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine)
+extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine, wxString &connectStr)
 {
     std::vector<std::wstring> errorMsg, dsn;
     bool ask = false;

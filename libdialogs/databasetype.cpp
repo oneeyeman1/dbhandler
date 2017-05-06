@@ -134,12 +134,20 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
     if( m_dbEngine == "PostgreSQL" )
     {
         m_dbEngine = "PostgreSQL";
-        std::wstring connStr = "host = " + page4->GetHost()->GetValue() + " ";
-        connStr += "hostaddr = " + page4->GetHostAddr()->GetValue() + " ";
-        connStr += "port = " + page4->GetPort()->GetValue() + " ";
-		connStr += "user = " + page4->GetUserID()->GetValue() + " ";
-        connStr += "password = " + page4->GetPassword()->GetValue() + " ";
-		connStr += "dbname = " + page4->GetDBName()->GetValue() + " ";
+        wxString host = page4->GetHost()->GetValue();
+        if( !host.empty() )
+            m_connStr = "host = " + host + " ";
+        wxString hostAddr = page4->GetHostAddr()->GetValue();
+        if( !hostAddr.empty() )
+            m_connStr += "hostaddr = " + hostAddr + " ";
+        wxString port = page4->GetPort()->GetValue();
+        if( !port.empty() )
+            m_connStr += "port = " + port + " ";
+		else
+            m_connStr += "port = " + wxString::Format( "%ld", 5432 ) + " ";
+        m_connStr += "user = " + page4->GetUserID()->GetValue() + " ";
+        m_connStr += "password = " + page4->GetPassword()->GetValue() + " ";
+        m_connStr += "dbname = " + page4->GetDBName()->GetValue() + " ";
     }
 /*    WXWidget hwnd = 0;
     wxString driver;
@@ -195,6 +203,11 @@ bool DatabaseType::GetODBCConnectionParam()
 wxString DatabaseType::GetDatabaseName()
 {
     return m_dbName;
+}
+
+wxString &DatabaseType::GetConnectString() const
+{
+    return const_cast<wxString &>( m_connStr );
 }
 
 DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
