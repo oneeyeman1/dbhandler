@@ -350,6 +350,7 @@ wxCheckBox *ODBCConnect::GetAskForParameters() const
 
 PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
 {
+    m_value = 5432;
     wxIntegerValidator<unsigned long> val( &m_value );
     val.SetRange( 1, 65535 );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Host" ) );
