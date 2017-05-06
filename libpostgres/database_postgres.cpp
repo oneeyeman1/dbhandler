@@ -284,7 +284,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( L"Error executing query: " + err );
-        PQclear( res1 );
+        PQclear( res );
         return 1;
     }
     PQclear( res );
