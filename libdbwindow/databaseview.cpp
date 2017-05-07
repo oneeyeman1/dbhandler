@@ -749,16 +749,28 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding)
 {
+    Field *fld = const_cast<FieldShape &>( field ).GetField();
+    wxString name = fld->GetFieldName();
     if( isAdding )
     {
-        Field *fld = const_cast<FieldShape &>( field ).GetField();
-        wxString name = fld->GetFieldName();
         m_fields->AddField( name );
         std::vector<std::wstring> queryFields = GetDocument()->GetQueryFields();
         queryFields.push_back( name.ToStdWstring() );
+        wxString query = m_page6->GetSyntaxCtrl()->GetValue();
+        if( queryFields.size() == 1 )
+            query.Replace( "<unknown fields>", name + " " );
+        else
+        {
+            wxString temp = query.substr( query.Find( ' ' ) );
+            wxString old = temp.substr( temp.Find( " FROM" ) );
+            query.Replace( old, old + ", " + name + " " );
+        }
+        m_page6->SetSyntaxText( query );
     }
     else
     {
+        std::vector<std::wstring> queryFields = GetDocument()->GetQueryFields();
+        queryFields.erase( std::remove( queryFields.begin(), queryFields.end(), name ), queryFields.end() );
         m_fields->RemoveField( GetDocument()->GetQueryFields() );
     }
 }

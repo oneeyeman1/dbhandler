@@ -115,7 +115,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                         secondIteration = true;
                     if( !found )
                     {
-                        query += "\nWHERE ";
+                        query += "\n WHERE ";
                         found = true;
                     }
                     Constraint* pConstr = new Constraint( ((DrawingView *) m_view)->GetViewType() );
