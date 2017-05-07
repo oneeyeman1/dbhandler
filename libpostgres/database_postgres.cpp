@@ -132,7 +132,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
         }
         else
         {
-            GetTableListFromDb( errorMsg );
+            result = GetTableListFromDb( errorMsg );
         }
     }
     return result;
@@ -283,7 +283,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-        errorMsg.push_back( L"Error executing query: " + err );
+        errorMsg.push_back( err );
         PQclear( res );
         return 1;
     }
