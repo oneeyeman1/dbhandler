@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E3D138F91D05248A00A5A0F7"
-               BuildableName = "liblibsqlite.dylib"
-               BlueprintName = "libsqlite"
-               ReferencedContainer = "container:libsqlite.xcodeproj">
+               BlueprintIdentifier = "E33E6F941EBC26B6003A0B92"
+               BuildableName = "liblibpostgres.dylib"
+               BlueprintName = "libpostgres"
+               ReferencedContainer = "container:libpostgres.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

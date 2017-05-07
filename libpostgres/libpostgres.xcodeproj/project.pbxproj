@@ -7,136 +7,132 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E3D1390D1D05250C00A5A0F7 /* database_sqlite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D139081D05250C00A5A0F7 /* database_sqlite.cpp */; };
-		E3D1390E1D05250C00A5A0F7 /* database_sqlite.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D139091D05250C00A5A0F7 /* database_sqlite.h */; };
-		E3D1390F1D05250C00A5A0F7 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E3D1390A1D05250C00A5A0F7 /* sqlite3.c */; };
-		E3D139101D05250C00A5A0F7 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D1390B1D05250C00A5A0F7 /* sqlite3.h */; };
-		E3D139111D05250C00A5A0F7 /* sqlite3ext.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D1390C1D05250C00A5A0F7 /* sqlite3ext.h */; };
+		E33E6FA61EBC27AE003A0B92 /* database_postgres.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6FA31EBC27AE003A0B92 /* database_postgres.cpp */; };
+		E33E6FA71EBC27AE003A0B92 /* database_postgres.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6FA41EBC27AE003A0B92 /* database_postgres.h */; };
+		E33E6FA81EBC27AE003A0B92 /* postgres.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6FA51EBC27AE003A0B92 /* postgres.cpp */; };
+		E33E6FAE1EBE086C003A0B92 /* libpq.5.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E33E6FAD1EBE086C003A0B92 /* libpq.5.5.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E3D138FA1D05248A00A5A0F7 /* liblibsqlite.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibsqlite.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		E3D139081D05250C00A5A0F7 /* database_sqlite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = database_sqlite.cpp; sourceTree = "<group>"; };
-		E3D139091D05250C00A5A0F7 /* database_sqlite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = database_sqlite.h; sourceTree = "<group>"; };
-		E3D1390A1D05250C00A5A0F7 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
-		E3D1390B1D05250C00A5A0F7 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
-		E3D1390C1D05250C00A5A0F7 /* sqlite3ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3ext.h; sourceTree = "<group>"; };
-		E3D139121D0525EF00A5A0F7 /* libdbinterface.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdbinterface.a; path = ../dbinterface/build/Debug/libdbinterface.a; sourceTree = "<group>"; };
+		E33E6F951EBC26B6003A0B92 /* liblibpostgres.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibpostgres.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		E33E6FA31EBC27AE003A0B92 /* database_postgres.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = database_postgres.cpp; sourceTree = "<group>"; };
+		E33E6FA41EBC27AE003A0B92 /* database_postgres.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = database_postgres.h; sourceTree = "<group>"; };
+		E33E6FA51EBC27AE003A0B92 /* postgres.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = postgres.cpp; sourceTree = "<group>"; };
+		E33E6FA91EBC295A003A0B92 /* libpq.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpq.dylib; path = usr/lib/libpq.dylib; sourceTree = SDKROOT; };
+		E33E6FAD1EBE086C003A0B92 /* libpq.5.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpq.5.5.dylib; path = usr/lib/libpq.5.5.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		E3D138F71D05248A00A5A0F7 /* Frameworks */ = {
+		E33E6F921EBC26B6003A0B92 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E33E6FAE1EBE086C003A0B92 /* libpq.5.5.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		E3D138F11D05248A00A5A0F7 = {
+		E33E6F8C1EBC26B6003A0B92 = {
 			isa = PBXGroup;
 			children = (
-				E3D139121D0525EF00A5A0F7 /* libdbinterface.a */,
-				E3D139071D0524A700A5A0F7 /* libsqlite */,
-				E3D138FB1D05248A00A5A0F7 /* Products */,
+				E33E6FAD1EBE086C003A0B92 /* libpq.5.5.dylib */,
+				E33E6FA91EBC295A003A0B92 /* libpq.dylib */,
+				E33E6FA21EBC271F003A0B92 /* libpostgres */,
+				E33E6F961EBC26B6003A0B92 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		E3D138FB1D05248A00A5A0F7 /* Products */ = {
+		E33E6F961EBC26B6003A0B92 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E3D138FA1D05248A00A5A0F7 /* liblibsqlite.dylib */,
+				E33E6F951EBC26B6003A0B92 /* liblibpostgres.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E3D139071D0524A700A5A0F7 /* libsqlite */ = {
+		E33E6FA21EBC271F003A0B92 /* libpostgres */ = {
 			isa = PBXGroup;
 			children = (
-				E3D139081D05250C00A5A0F7 /* database_sqlite.cpp */,
-				E3D139091D05250C00A5A0F7 /* database_sqlite.h */,
-				E3D1390A1D05250C00A5A0F7 /* sqlite3.c */,
-				E3D1390B1D05250C00A5A0F7 /* sqlite3.h */,
-				E3D1390C1D05250C00A5A0F7 /* sqlite3ext.h */,
+				E33E6FA31EBC27AE003A0B92 /* database_postgres.cpp */,
+				E33E6FA41EBC27AE003A0B92 /* database_postgres.h */,
+				E33E6FA51EBC27AE003A0B92 /* postgres.cpp */,
 			);
-			name = libsqlite;
+			name = libpostgres;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		E3D138F81D05248A00A5A0F7 /* Headers */ = {
+		E33E6F931EBC26B6003A0B92 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3D139101D05250C00A5A0F7 /* sqlite3.h in Headers */,
-				E3D1390E1D05250C00A5A0F7 /* database_sqlite.h in Headers */,
-				E3D139111D05250C00A5A0F7 /* sqlite3ext.h in Headers */,
+				E33E6FA71EBC27AE003A0B92 /* database_postgres.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		E3D138F91D05248A00A5A0F7 /* libsqlite */ = {
+		E33E6F941EBC26B6003A0B92 /* libpostgres */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E3D138FE1D05248A00A5A0F7 /* Build configuration list for PBXNativeTarget "libsqlite" */;
+			buildConfigurationList = E33E6F991EBC26B6003A0B92 /* Build configuration list for PBXNativeTarget "libpostgres" */;
 			buildPhases = (
-				E3D138F61D05248A00A5A0F7 /* Sources */,
-				E3D138F71D05248A00A5A0F7 /* Frameworks */,
-				E3D138F81D05248A00A5A0F7 /* Headers */,
+				E33E6F911EBC26B6003A0B92 /* Sources */,
+				E33E6F921EBC26B6003A0B92 /* Frameworks */,
+				E33E6F931EBC26B6003A0B92 /* Headers */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = libsqlite;
-			productName = libsqlite;
-			productReference = E3D138FA1D05248A00A5A0F7 /* liblibsqlite.dylib */;
+			name = libpostgres;
+			productName = libpostgres;
+			productReference = E33E6F951EBC26B6003A0B92 /* liblibpostgres.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		E3D138F21D05248A00A5A0F7 /* Project object */ = {
+		E33E6F8D1EBC26B6003A0B92 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Igor Korot";
 			};
-			buildConfigurationList = E3D138F51D05248A00A5A0F7 /* Build configuration list for PBXProject "libsqlite" */;
+			buildConfigurationList = E33E6F901EBC26B6003A0B92 /* Build configuration list for PBXProject "libpostgres" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = E3D138F11D05248A00A5A0F7;
-			productRefGroup = E3D138FB1D05248A00A5A0F7 /* Products */;
+			mainGroup = E33E6F8C1EBC26B6003A0B92;
+			productRefGroup = E33E6F961EBC26B6003A0B92 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E3D138F91D05248A00A5A0F7 /* libsqlite */,
+				E33E6F941EBC26B6003A0B92 /* libpostgres */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		E3D138F61D05248A00A5A0F7 /* Sources */ = {
+		E33E6F911EBC26B6003A0B92 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3D1390D1D05250C00A5A0F7 /* database_sqlite.cpp in Sources */,
-				E3D1390F1D05250C00A5A0F7 /* sqlite3.c in Sources */,
+				E33E6FA81EBC27AE003A0B92 /* postgres.cpp in Sources */,
+				E33E6FA61EBC27AE003A0B92 /* database_postgres.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		E3D138FC1D05248A00A5A0F7 /* Debug */ = {
+		E33E6F971EBC26B6003A0B92 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -174,7 +170,7 @@
 			};
 			name = Debug;
 		};
-		E3D138FD1D05248A00A5A0F7 /* Release */ = {
+		E33E6F981EBC26B6003A0B92 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -206,33 +202,25 @@
 			};
 			name = Release;
 		};
-		E3D138FF1D05248A00A5A0F7 /* Debug */ = {
+		E33E6F9A1EBC26B6003A0B92 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				EXECUTABLE_PREFIX = lib;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					../dbinterface,
+					/Library/PostgreSQL/9.1/include/,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/dbinterface/build/Debug,
-				);
+				"OTHER_LDFLAGS[arch=*]" = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		E3D139001D05248A00A5A0F7 /* Release */ = {
+		E33E6F9B1EBC26B6003A0B92 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				EXECUTABLE_PREFIX = lib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/dbinterface/build/Debug,
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -240,25 +228,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E3D138F51D05248A00A5A0F7 /* Build configuration list for PBXProject "libsqlite" */ = {
+		E33E6F901EBC26B6003A0B92 /* Build configuration list for PBXProject "libpostgres" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E3D138FC1D05248A00A5A0F7 /* Debug */,
-				E3D138FD1D05248A00A5A0F7 /* Release */,
+				E33E6F971EBC26B6003A0B92 /* Debug */,
+				E33E6F981EBC26B6003A0B92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E3D138FE1D05248A00A5A0F7 /* Build configuration list for PBXNativeTarget "libsqlite" */ = {
+		E33E6F991EBC26B6003A0B92 /* Build configuration list for PBXNativeTarget "libpostgres" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E3D138FF1D05248A00A5A0F7 /* Debug */,
-				E3D139001D05248A00A5A0F7 /* Release */,
+				E33E6F9A1EBC26B6003A0B92 /* Debug */,
+				E33E6F9B1EBC26B6003A0B92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = E3D138F21D05248A00A5A0F7 /* Project object */;
+	rootObject = E33E6F8D1EBC26B6003A0B92 /* Project object */;
 }

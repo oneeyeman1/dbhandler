@@ -306,7 +306,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         values1[1] = new char[strlen( table_name ) + 1];
         strcpy( values1[0], schema_name );
         strcpy( values1[1], table_name );
-        int length1[2] = { strlen( schema_name ), strlen( table_name ) };
+        size_t length1[2] = { strlen( schema_name ), strlen( table_name ) };
         int formats1[2] = { 1, 1 };
         res1 = PQprepare( m_db, "get_fkeys", query3.c_str(), 3, NULL );
         if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
