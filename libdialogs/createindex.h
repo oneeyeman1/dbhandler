@@ -18,7 +18,7 @@ public:
     // begin wxGlade: CreateIndex::ids
     // end wxGlade
 
-    CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db);
+    CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, const std::wstring &schemaName, Database *db);
     ~CreateIndex();
     std::wstring &GetCommand();
 
@@ -28,6 +28,7 @@ private:
     std::wstring m_command, m_dbType, m_dbSubType;
     DatabaseTable *m_dbTable;
     Database *m_db;
+    std::wstring m_schema;
     unsigned int m_fillFactor;
     // begin wxGlade: CreateIndex::methods
     void set_properties();

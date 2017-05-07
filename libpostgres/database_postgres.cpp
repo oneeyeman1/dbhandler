@@ -138,7 +138,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
     return result;
 }
 
-int PostgresDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::Disconnect(std::vector<std::wstring> &WXUNUSED(errorMsg))
 {
     int result = 0;
     PQfinish( m_db );
@@ -298,7 +298,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         values1[1] = new char[strlen( table_name ) + 1];
         strcpy( values1[0], schema_name );
         strcpy( values1[1], table_name );
-        size_t length1[2] = { strlen( schema_name ), strlen( table_name ) };
+        int length1[2] = { strlen( schema_name ), strlen( table_name ) };
         int formats1[2] = { 1, 1 };
         res1 = PQprepare( m_db, "get_fkeys", query3.c_str(), 3, NULL );
         if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
@@ -413,7 +413,17 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 
 int PostgresDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
+    PGresult *res;
     int result = 0;
+    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
+    ExecStatusType status = PQresultStatus( res ); 
+    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( err );
+        PQclear( res );
+        result = 1;
+    }
     return result;
 }
 
@@ -421,10 +431,26 @@ void PostgresDatabase::SetColumnComment(const std::wstring &tableName, const std
 {
 }
 
-bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
+    PGresult *res;
     bool exists = false;
 	std::wstring query = L"SELECT indexname FROM pg_catalog_schema.pg_indexes WHERE schemaname = $1 AND tablename = $2;";
+    char *values1[2];
+    values1[0] = new char[schemaName.length() + 1];
+    values1[1] = new char[tableName.length() + 1];
+    strcpy( values1[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
+    strcpy( values1[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
+    int length1[2] = { schemaName.length(), tableName.length() };
+    int formats1[2] = { 1, 1 };
+    res = PQprepare( m_db, "get_columns", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Error executing query: " + err );
+        PQclear( res );
+        return 1;
+    }
     return exists;
 }
 

@@ -1694,7 +1694,7 @@ void ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::ws
 {
 }
 
-bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     SQLRETURN ret;
     SQLWCHAR *query = NULL;

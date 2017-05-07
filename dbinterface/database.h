@@ -197,7 +197,7 @@ public:
     virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg) = 0;
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) = 0;
     virtual int CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
-    virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
+    virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg) = 0;
     virtual int SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;

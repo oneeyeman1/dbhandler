@@ -28,9 +28,10 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db):
+CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, const std::wstring &schemaName, Database *db):
     wxDialog(parent, id, title)
 {
+    m_schema = schemaName;
     m_dbTable = table;
     m_db = db;
     m_dbType = m_db->GetTableVector().m_type;
@@ -408,7 +409,7 @@ bool CreateIndex::Verify()
         wxMessageBox( _( "At least one index column is required" ), _( "Database" ) );
         success = false;
     }
-    if( success && m_db->IsIndexExists( m_indexName->GetValue().ToStdWstring(), m_dbTable->GetTableName(), errors ) )
+    if( success && m_db->IsIndexExists( m_indexName->GetValue().ToStdWstring(), m_dbTable->GetTableName(), m_schema, errors ) )
     {
         for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
             wxMessageBox( (*it) );
