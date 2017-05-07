@@ -435,14 +435,19 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
 {
     PGresult *res;
     bool exists = false;
-	std::wstring query = L"SELECT indexname FROM pg_catalog_schema.pg_indexes WHERE schemaname = $1 AND tablename = $2;";
-    char *values1[2];
-    values1[0] = new char[schemaName.length() + 1];
-    values1[1] = new char[tableName.length() + 1];
-    strcpy( values1[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
-    strcpy( values1[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
-    int length1[2] = { schemaName.length(), tableName.length() };
-    int formats1[2] = { 1, 1 };
+    std::wstring query = L"SELECT count(*) FROM pg_indexes WHERE schemaname = $1 AND tablename = $2 AND indexname = $3;";
+    char *values[3];
+    values[0] = new char[schemaName.length() + 1];
+    values[1] = new char[tableName.length() + 1];
+    values[2] = new char[indexName.length() + 1];
+    memset( values[0], '\0', schemaName.length() + 1 );
+    memset( values[1], '\0', tableName.length() + 1 );
+    memset( values[2], '\0', indexName.length() + 1 );
+    strcpy( values[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
+    strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
+    strcpy( values[2], m_pimpl->m_myconv.to_bytes( indexName.c_str() ).c_str() );
+    int length[3] = { schemaName.length(), tableName.length(), indexName.length() };
+    int formats[2] = { 1, 1 };
     res = PQprepare( m_db, "get_columns", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
