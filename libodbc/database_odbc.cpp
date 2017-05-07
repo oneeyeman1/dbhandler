@@ -1700,20 +1700,34 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
     SQLWCHAR *query = NULL;
     bool exists = false;
     std::wstring query1;
-    SQLWCHAR *index_name = NULL, *table_name = NULL;
-    SQLLEN cbIndexName = SQL_NTS, cbTableName = SQL_NTS;
+    SQLWCHAR *index_name = NULL, *table_name = NULL, *schema_name = NULL;
+    SQLLEN cbIndexName = SQL_NTS, cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query1 = L"SELECT count(*) FROM sys.indexes WHERE name = ? AND object_id = OBJECT_ID( ? ) );";
     if( pimpl->m_subtype == L"MySQL" )
-        query1 = L"SELECT count(*) FROM information_schema.statistics WHERE index_name = ? AND table_schema = ?;";
+        query1 = L"SELECT count(*) FROM information_schema.statistics WHERE index_name = ? AND table_name = ? AND schema_name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
-        query1 = L"SELECT count(*) FROM pg_class, pg_namespace WHERE pg_namespace.oid = pg_class.relnamespace AND pg_class.relname = ? AND pg_namespace.nspname = ?;";
+        query1 = L"SELECT count(*) FROM pg_indexes WHERE indexname = $1 AND tablename = $2 AND schemaname = $3;";
     index_name = new SQLWCHAR[indexName.length() + 2];
-    table_name = new SQLWCHAR[tableName.length() + 2];
     memset( index_name, '\0', indexName.length() + 2 );
-    memset( table_name, '\0', tableName.length() + 2 );
     uc_to_str_cpy( index_name, indexName );
-    uc_to_str_cpy( table_name, tableName );
+    if( pimpl->m_subtype == L"MySQL" || pimpl->m_subtype == L"PostgreSQL" )
+    {
+        table_name = new SQLWCHAR[tableName.length() + 2];
+        schema_name = new SQLWCHAR[schemaName.length() + 2];
+        memset( table_name, '\0', tableName.length() + 2 );
+        memset( schema_name, '\0', schemaName.length() + 2 );
+        uc_to_str_cpy( schema_name, schemaName );
+        uc_to_str_cpy( table_name, tableName );
+    }
+	else
+    {
+        table_name = new SQLWCHAR[tableName.length() + schemaName.length() + 2];
+        memset( table_name, '\0', tableName.length() + schemaName.length() + 2 );
+        uc_to_str_cpy( table_name, schemaName );
+        uc_to_str_cpy( table_name, L"." );
+        uc_to_str_cpy( table_name, tableName );
+    }
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
@@ -1726,16 +1740,25 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
             ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
-                ret = SQLPrepare( m_hstmt, query, SQL_NTS );
+                if( pimpl->m_subtype == L"MySQL" || pimpl->m_subtype == L"PostgreSQL" )
+                    ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, schema_name, 0, &cbSchemaName );
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                 {
-                    ret = SQLExecute( m_hstmt );
+                    ret = SQLPrepare( m_hstmt, query, SQL_NTS );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
-                        ret = SQLFetch( m_hstmt );
+                        ret = SQLExecute( m_hstmt );
                         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                         {
-                            exists = true;
+                            ret = SQLFetch( m_hstmt );
+                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                            {
+                                exists = true;
+                            }
+                            else
+                            {
+                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                            }
                         }
                         else
                         {
@@ -1775,6 +1798,8 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
     index_name = NULL;
     delete table_name;
     table_name = NULL;
+    delete schema_name;
+    schema_name = NULL;
     delete query;
     query = NULL;
     return exists;
