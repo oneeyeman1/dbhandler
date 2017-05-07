@@ -298,7 +298,9 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         values1[1] = new char[strlen( table_name ) + 1];
         strcpy( values1[0], schema_name );
         strcpy( values1[1], table_name );
-        int length1[2] = { strlen( schema_name ), strlen( table_name ) };
+        int len1 = strlen( schema_name );
+        int len2 = strlen( table_name );
+        int length1[2] = { len1, len2 };
         int formats1[2] = { 1, 1 };
         res1 = PQprepare( m_db, "get_fkeys", query3.c_str(), 3, NULL );
         if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
@@ -441,7 +443,9 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
     values1[1] = new char[tableName.length() + 1];
     strcpy( values1[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
     strcpy( values1[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
-    int length1[2] = { schemaName.length(), tableName.length() };
+    int len1 = schemaName.length();
+    int len2 = tableName.length();
+    int length1[2] = { len1, len2 };
     int formats1[2] = { 1, 1 };
     res = PQprepare( m_db, "get_columns", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
