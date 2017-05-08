@@ -821,5 +821,6 @@ void DrawingView::OnSelectAllFields(wxCommandEvent &event)
                 AddFieldToQuery( field, true );
             }
         }
+        m_canvas->Refresh();
     }
 }
