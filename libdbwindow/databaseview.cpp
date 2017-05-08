@@ -78,6 +78,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_TABLEALTERTABLE, DrawingView::OnAlterTable)
     EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
     EVT_MENU(wxID_CREATEDATABASE, DrawingView::OnCreateDatabase)
+    EVT_MENU(wxID_SELECTALLFIELDS, DrawingView::OnSelectAllFields)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -802,4 +803,23 @@ void DrawingView::OnSQLNotebookPageChanged(wxBookCtrlEvent &event)
     if( page )
         page->OnSelection();
     panel->SetFocus();
+}
+
+void DrawingView::OnSelectAllFields(wxCommandEvent &event)
+{
+    ShapeList children;
+    MyErdTable *shape = dynamic_cast<MyErdTable *>( event.GetEventObject() );
+    if( shape )
+    {
+        list = shape.GetChilrent();
+        for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
+        {
+            FeildShape *field = dynamic_cast<FieldShape *>( (*it) );
+            if( field )
+            {
+				field->Select( true );
+                AddFieldToQuery( field, true );
+            }
+        }
+    }
 }
