@@ -751,27 +751,47 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding)
 {
     Field *fld = const_cast<FieldShape &>( field ).GetField();
     wxString name = fld->GetFieldName();
+    wxString query = m_page6->GetSyntaxCtrl()->GetValue();
     if( isAdding )
     {
         m_fields->AddField( name );
+        GetDocument()->AddRemoveField( name.ToStdWstring(), true );
         std::vector<std::wstring> queryFields = GetDocument()->GetQueryFields();
-        queryFields.push_back( name.ToStdWstring() );
-        wxString query = m_page6->GetSyntaxCtrl()->GetValue();
+//        queryFields.push_back( name.ToStdWstring() );
         if( queryFields.size() == 1 )
             query.Replace( "<unknown fields>", name + " " );
         else
         {
             wxString temp = query.substr( query.Find( ' ' ) );
-            wxString old = temp.substr( temp.Find( " FROM" ) );
-            query.Replace( old, old + ", " + name + " " );
+            temp = temp.substr( 0, temp.Find( "FROM" ) - 1 );
+            query.Replace( temp, temp + ", " + name + " " );
         }
         m_page6->SetSyntaxText( query );
     }
     else
     {
+        GetDocument()->AddRemoveField( name.ToStdWstring(), false );
         std::vector<std::wstring> queryFields = GetDocument()->GetQueryFields();
-        queryFields.erase( std::remove( queryFields.begin(), queryFields.end(), name ), queryFields.end() );
-        m_fields->RemoveField( GetDocument()->GetQueryFields() );
+        m_fields->RemoveField( queryFields );
+        if( queryFields.size() == 0 )
+        {
+			query.Replace( name, "<unknown fields>" );
+        }
+		else
+		{
+            wxString str = ",";
+            str += " ";
+            str += name;
+            wxString temp = query.substr( 0, query.Find( str ) );
+            wxString temp1 = query.substr( query.Find( name ) + name.length() );
+            if( temp == query )
+            {
+                temp = "SELECT ";
+                temp1 = temp1.substr( 2 );
+            }
+            query = temp + temp1;
+		}
+        m_page6->SetSyntaxText( query );
     }
 }
 

@@ -30,6 +30,7 @@ public:
     MyErdTable *GetReferencedTable(const wxString &tableName);
     std::vector<std::wstring> &GetTableNames();
     void AppendFieldToQueryFields(const std::wstring &field);
+    void AddRemoveField(const std::wstring &fieldName, bool isAdded);
     const std::vector<std::wstring> &GetQueryFields();
 private:
     void DoUpdate();
