@@ -807,19 +807,21 @@ void DrawingView::OnSQLNotebookPageChanged(wxBookCtrlEvent &event)
 
 void DrawingView::OnSelectAllFields(wxCommandEvent &event)
 {
-    ShapeList children;
+    SerializableList children;
     MyErdTable *shape = dynamic_cast<MyErdTable *>( event.GetEventObject() );
     if( shape )
     {
-        shape->GetChildShapes( CLASSINFO( FieldShape ), children );
-        for( ShapeList::iterator it = children.begin(); it != children.end(); ++it )
+        shape->GetChildrenRecursively( CLASSINFO( FieldShape ), children, xsSerializable::searchDFS );
+        SerializableList::compatibility_iterator node = children.GetFirst();
+        while( node )
         {
-            FieldShape *field = dynamic_cast<FieldShape *>( (*it) );
+            FieldShape *field = (FieldShape *) node->GetData();
             if( field )
             {
-				field->Select( true );
+                field->Select( true );
                 AddFieldToQuery( *field, true );
             }
+            node = node->GetNext();
         }
         m_canvas->Refresh();
     }

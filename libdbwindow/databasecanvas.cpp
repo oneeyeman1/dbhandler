@@ -389,7 +389,10 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             erdTable->Refresh();
         }
         wxCommandEvent evt( wxEVT_MENU, rc );
-        evt.SetEventObject( erdField );
+        if( erdField )
+            evt.SetEventObject( erdField );
+		else
+            evt.SetEventObject( erdTable );
         m_view->ProcessEvent( evt );
     }
 }
