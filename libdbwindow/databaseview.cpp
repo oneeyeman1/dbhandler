@@ -79,6 +79,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_FIELDDEFINITION, DrawingView::OnFieldDefinition)
     EVT_MENU(wxID_CREATEDATABASE, DrawingView::OnCreateDatabase)
     EVT_MENU(wxID_SELECTALLFIELDS, DrawingView::OnSelectAllFields)
+    EVT_MENU(wxID_DESELECTALLFIELDS, DrawingView::OnSelectAllFields)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -807,8 +808,14 @@ void DrawingView::OnSQLNotebookPageChanged(wxBookCtrlEvent &event)
 
 void DrawingView::OnSelectAllFields(wxCommandEvent &event)
 {
-    SerializableList children;
+    int id = event.GetId();
     MyErdTable *shape = dynamic_cast<MyErdTable *>( event.GetEventObject() );
+    AddDeleteFields( shape, id == wxID_DESELECTALLFIELDS ? false : true );
+}
+
+void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd)
+{
+    SerializableList children;
     if( shape )
     {
         shape->GetChildrenRecursively( CLASSINFO( FieldShape ), children, xsSerializable::searchDFS );
@@ -818,8 +825,8 @@ void DrawingView::OnSelectAllFields(wxCommandEvent &event)
             FieldShape *field = (FieldShape *) node->GetData();
             if( field )
             {
-                field->Select( true );
-                AddFieldToQuery( *field, true );
+                field->Select( isAdd );
+                AddFieldToQuery( *field, isAdd );
             }
             node = node->GetNext();
         }
