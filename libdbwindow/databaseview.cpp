@@ -811,14 +811,14 @@ void DrawingView::OnSelectAllFields(wxCommandEvent &event)
     MyErdTable *shape = dynamic_cast<MyErdTable *>( event.GetEventObject() );
     if( shape )
     {
-        list = shape.GetChilrent();
-        for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
+        shape->GetChildShapes( CLASSINFO( FieldShape ), children );
+        for( ShapeList::iterator it = children.begin(); it != children.end(); ++it )
         {
-            FeildShape *field = dynamic_cast<FieldShape *>( (*it) );
+            FieldShape *field = dynamic_cast<FieldShape *>( (*it) );
             if( field )
             {
 				field->Select( true );
-                AddFieldToQuery( field, true );
+                AddFieldToQuery( *field, true );
             }
         }
         m_canvas->Refresh();

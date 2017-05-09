@@ -476,8 +476,12 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
                 exists = 1;
         }
 	}
-    delete values[];
-    value = NULL;
+    delete values[0];
+    values[0] = NULL;
+    delete values[1];
+    values[1] = NULL;
+    delete values[2];
+    values[2] = NULL;
     return exists;
 }
 
@@ -497,7 +501,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     int len2 = tableName.length();
     int length[2] = { len1, len2 };
     int formats[2] = { 1, 1 };
-    res = PQprepare( m_db, "index_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
+    PGresult *res = PQprepare( m_db, "index_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -520,7 +524,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
         {
             for( int i = 0; i < PQntuples( res ); i++ )
             {
-                table->SetComments( PQgetValue( res, i, 25 ) );
+                table->SetComment( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 25 ) ) );
             }
         }
 	}
