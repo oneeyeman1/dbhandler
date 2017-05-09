@@ -242,8 +242,7 @@ void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
     m_log->Hide();
 }
 
-//std::vector<Table> &DrawingView::GetTablesForView(Database *db)
-void DrawingView::GetTablesForView(Database *db)
+void DrawingView::GetTablesForView(Database *db, bool init)
 {
     int res;
     std::vector<wxString> tables;
@@ -259,12 +258,15 @@ void DrawingView::GetTablesForView(Database *db)
     {
         if( m_type == QueryView )
         {
-            CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-            res = func( m_frame, 1 );
-            if( res == wxID_CANCEL )
+            if( init )
             {
-                m_frame->Close();
-                return;
+                CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
+                res = func( m_frame, 1 );
+                if( res == wxID_CANCEL )
+                {
+                    m_frame->Close();
+                    return;
+                }
             }
             else
             {
@@ -420,7 +422,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
 {
-    GetTablesForView( GetDocument()->GetDatabase() );
+    GetTablesForView( GetDocument()->GetDatabase(), false );
 }
 
 void DrawingView::OnFieldProperties(wxCommandEvent &event)

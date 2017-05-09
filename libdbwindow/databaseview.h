@@ -16,7 +16,7 @@ public:
     DrawingView() : wxView(), m_canvas(NULL) {}
     ~DrawingView();
 //    std::vector<Table> &GetTablesForView(Database *db);
-    void GetTablesForView(Database *db);
+    void GetTablesForView(Database *db, bool init);
     void SetViewType(ViewType type);
     ViewType GetViewType();
     WhereHavingPage *GetWherePage();

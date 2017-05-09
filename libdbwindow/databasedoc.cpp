@@ -91,7 +91,7 @@ void DrawingDocument::DoUpdate()
 void DrawingDocument::SetDatabase(Database *db)
 {
     m_db = db;
-    dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db );
+    dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db, true );
 }
 
 Database *DrawingDocument::GetDatabase()
