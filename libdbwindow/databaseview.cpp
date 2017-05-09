@@ -818,9 +818,9 @@ void DrawingView::OnSelectAllFields(wxCommandEvent &event)
 void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd)
 {
     SerializableList children;
-    if( shape )
+    if( field )
     {
-        shape->GetChildrenRecursively( CLASSINFO( FieldShape ), children, xsSerializable::searchDFS );
+        field->GetChildrenRecursively( CLASSINFO( FieldShape ), children, xsSerializable::searchDFS );
         SerializableList::compatibility_iterator node = children.GetFirst();
         while( node )
         {

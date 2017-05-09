@@ -21,6 +21,7 @@ public:
     ViewType GetViewType();
     WhereHavingPage *GetWherePage();
     WhereHavingPage *GetHavingPage();
+    void AddFieldToQuery(const FieldShape &field, bool isAdding);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
@@ -47,7 +48,6 @@ public:
     DrawingDocument* GetDocument();
 protected:
     void AddDeleteFields(MyErdTable *table, bool isAdd);
-    void AddFieldToQuery(const FieldShape &field, bool isAdding);
 private:
     wxToolBar *m_tb;
     wxFrame *m_log;
