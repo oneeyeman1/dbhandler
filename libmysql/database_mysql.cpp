@@ -64,7 +64,7 @@ int MySQLDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstri
 
 int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
+    int result = 0, res;
     std::wstring err;
     std::string query1 = "CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
     std::string query2 = "CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));";
@@ -88,13 +88,12 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
     }
     else
     {
-        res = PQexec( m_db, "START TRANSACTION" );
-        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        res = mysql_query( m_db, "START TRANSACTION" );
+        if( !res )
         {
-            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( L"Starting transaction failed during connection: " + err );
             result = 1;
-            PQclear( res );
         }
         else
         {
