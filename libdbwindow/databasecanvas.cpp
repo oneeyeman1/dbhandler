@@ -98,7 +98,14 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
         wxString name = const_cast<DatabaseTable &>( (*it1)->GetTable() ).GetTableName();
         if( std::find( selections.begin(), selections.end(), name ) == selections.end() )
             selections.push_back( name );
+        if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
+		{
+            query += (*it1)->GetTableName();
+            if( it1 != m_displayedTables.end() - 1 )
+                query += ", ";
+        }
     }
+    query += "\n";
     Refresh();
     bool found = false, secondIteration = false;
     for( std::vector<MyErdTable *>::iterator it2 = tables.begin(); it2 < tables.end(); it2++ )
@@ -115,7 +122,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                         secondIteration = true;
                     if( !found )
                     {
-                        query += "\n WHERE ";
+                        query += "WHERE ";
                         found = true;
                     }
                     Constraint* pConstr = new Constraint( ((DrawingView *) m_view)->GetViewType() );

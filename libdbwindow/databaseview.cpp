@@ -245,6 +245,7 @@ void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
 void DrawingView::GetTablesForView(Database *db, bool init)
 {
     int res;
+    wxString query;
     std::vector<wxString> tables;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -267,9 +268,6 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     m_frame->Close();
                     return;
                 }
-            }
-            else
-            {
                 m_fields->Show( true );
                 m_queryBook->Show( true );
                 m_frame->Layout();
@@ -281,15 +279,23 @@ void DrawingView::GetTablesForView(Database *db, bool init)
         int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
         if( res != wxID_CANCEL )
         {
-            wxString query = "SELECT <unknown fields>\nFROM ";
             if( m_type == QueryView )
             {
-                for( std::vector<wxString>::iterator it = tables.begin(); it < tables.end(); it++ )
+                std::vector<std::wstring> queryFields = GetDocument()->GetQueryFields();
+                query = "SELECT ";
+                if( queryFields.size() == 0 )
+                    query += "<unknown fields>\n";
+                else
                 {
-                    query += (*it);
-                    if( it != tables.end() - 1 )
-                        query += ", ";
+                    for( std::vector<std::wstring>::iterator it = queryFields.begin(); it < queryFields.end(); it++ )
+                    {
+                        query += (*it);
+                        if( it != queryFields.end() - 1 )
+                            query += ",";
+                    }
+                    query += "\n";
                 }
+                query += "FROM ";
             }
             ((DrawingDocument *) GetDocument())->AddTables( tables );
             ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
