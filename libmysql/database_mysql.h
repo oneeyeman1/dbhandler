@@ -32,7 +32,7 @@ protected:
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual void SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
 private:
-    PGconn *m_db;
+    MYSQL *m_db;
 };
 
 struct MySQLDatabase::MySQLImpl
