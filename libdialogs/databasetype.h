@@ -58,6 +58,7 @@ private:
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6;
     wxTextCtrl *m_host, *m_hostAddr, *m_port, *m_userID, *m_password, *m_dbName;
     unsigned long m_value;
+    wxString m_engine;
 };
 
 class DatabaseType : public wxWizard

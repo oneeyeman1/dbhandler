@@ -41,10 +41,14 @@ DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxStri
         page1->GetComboBoxTypes()->SetValue( "SQLite" );
         page2->GetFileCtrl()->SetPath( name );
     }
-    if( engine == "ODBC" )
+    else if( engine == "ODBC" )
     {
         page1->GetComboBoxTypes()->SetValue( "ODBC" );
         page3->GetDSNTypesCtrl()->SetStringSelection( name );
+    }
+    else
+    {
+
     }
     Bind( wxEVT_WIZARD_PAGE_CHANGED, &DatabaseType::OnPageChanged, this );
     Bind( wxEVT_WIZARD_FINISHED, &DatabaseType::OnConnect, this );
@@ -249,9 +253,9 @@ wxWizardPage *DBType::GetNext() const
         dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( "ODBC" );
         return dynamic_cast<DatabaseType *>( GetParent() )->GetODBCPage();
     }
-    else if( type == "PostgreSQL" )
+    else
     {
-        dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( "PostgreSQL" );
+        dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( m_types->GetValue() );
         return dynamic_cast<DatabaseType *>( GetParent() )->GetPostgresPage();
     }
     else
@@ -350,15 +354,22 @@ wxCheckBox *ODBCConnect::GetAskForParameters() const
 
 PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
 {
-    m_value = 5432;
+    GetParent()->GetDatabaseEngine( m_engine );
+    if( m_enfine == "Postgres" )
+        m_value = 5432;
+    if( m_engine == "MySQL" )
+        m_value = 3306;
     wxIntegerValidator<unsigned long> val( &m_value );
     val.SetRange( 1, 65535 );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Host" ) );
     m_host = new wxTextCtrl( this, wxID_ANY, "localhost" );
-    m_label2 = new wxStaticText( this, wxID_ANY, _( "Host Address" ) );
-    m_hostAddr = new wxTextCtrl( this, wxID_ANY, "127.0.0.1" );
+    if( m_engine == "Postgres" )
+    {
+        m_label2 = new wxStaticText( this, wxID_ANY, _( "Host Address" ) );
+        m_hostAddr = new wxTextCtrl( this, wxID_ANY, "127.0.0.1" );
+    }
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Port" ) );
-    m_port = new wxTextCtrl( this, wxID_ANY, "5432", wxDefaultPosition, wxDefaultSize, 0, val );
+    m_port = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, val );
     m_label4 = new wxStaticText( this, wxID_ANY, _( "User ID" ) );
     m_userID = new wxTextCtrl( this, wxID_ANY, "postgres" );
     m_label5 = new wxStaticText( this, wxID_ANY, _( "Password" ) );
@@ -372,8 +383,11 @@ PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( m_label1, 0, wxEXPAND, 0 );
     sizer2->Add( m_host, 0, wxEXPAND, 0 );
-    sizer2->Add( m_label2, 0, wxEXPAND, 0 );
-    sizer2->Add( m_hostAddr, 0, wxEXPAND, 0 );
+    if( m_engine == "Postgres" )
+    {
+        sizer2->Add( m_label2, 0, wxEXPAND, 0 );
+        sizer2->Add( m_hostAddr, 0, wxEXPAND, 0 );
+    }
     sizer2->Add( m_label3, 0, wxEXPAND, 0 );
     sizer2->Add( m_port, 0, wxEXPAND, 0 );
     sizer2->Add( m_label4, 0, wxEXPAND, 0 );
