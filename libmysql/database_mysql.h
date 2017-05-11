@@ -14,6 +14,7 @@ public:
     virtual ~MySQLDatabase();
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
+    int mySQLConnect();
     virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
     virtual int Disconnect(std::vector<std::wstring> &WXUNUSED(errorMsg));
     virtual int CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg);
@@ -31,8 +32,11 @@ protected:
     void GetErrorMessage(int code, std::wstring &errorMsg);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual void SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
+    void TokenizeConnectionString(const std::wstring &connectStr);
 private:
     MYSQL *m_db;
+    std::wstring m_host, m_user, m_password, m_db;
+    int m_port;
 };
 
 struct MySQLDatabase::MySQLImpl

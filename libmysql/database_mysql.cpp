@@ -69,7 +69,7 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
     std::string query1 = "CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
     std::string query2 = "CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));";
     std::string query3 = "CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));";
-    std::string query4 = "CREATE TABLE IF NOT EXISTS abcattbl(abt_snam char(129), abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
+    std::string query4 = "CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
     std::string query5 = "CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));";
     std::wstring errorMessage;
     m_db = mysql_init();
@@ -79,7 +79,8 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
         errorMsg.push_back( L"Connection to database failed: " + err );
         result = 1;
     }
-    m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
+    TokenizeConnectionString( selectedDSN );
+    m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( m_host.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_user.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_password.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_db.c_str() ).c_str(), m_port );
     if( !m_db )
     {
         err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -97,42 +98,33 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
         }
         else
         {
-            PQclear( res );
-            res = PQexec( m_db, query1.c_str() );
-            if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+            res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
+            if( !res )
             {
-                PQclear( res );
-                res = PQexec( m_db, query2.c_str() );
-                if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str() );
+                if( !res )
                 {
-                    PQclear( res );
-                    res = PQexec( m_db, query3.c_str() );
-                    if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                    res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str() );
+                    if( !res )
 					{
-                        PQclear( res );
-                        res = PQexec( m_db, query4.c_str() );
-                        if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                        res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str()  );
+                        if( !res )
                         {
-                            PQclear( res );
-                            res = PQexec( m_db, query5.c_str() );
-                            if( PQresultStatus(res) == PGRES_COMMAND_OK )
+                            res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str() );
+                            if( !res )
                             {
-                                PQclear( res );
-                                res = PQexec(m_db, "COMMIT");
-                                if( PQresultStatus(res) == PGRES_COMMAND_OK )
-                                    PQclear( res );
+                                res = mysql_commit( m_db );
                             }
                         }
                     }
                 }
             }
         }
-        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        if( res )
         {
-            PQclear( res );
-            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( L"Error during database connection: " + err );
-            res = PQexec( m_db, "ROLLBACK" );
+            res = mysql_rollback( m_db );
             result = 1;
         }
         else
@@ -570,4 +562,22 @@ int MySQLDatabase::SetFieldProperties(const std::wstring &command, std::vector<s
 {
     int res = 0;
     return res;
+}
+
+void MySQLDatabase::TokenizeConnectionString(const std::wstring &connectStr)
+{
+    std::wstring temp = connectStr.substr( 0, connectStr.find( ' ' ) );
+    std::wstring temp1 = temp.substr( 0, temp.find( '=' ) );
+    std::wstring temp2 = temp.substr( temp.find( '=' ) );
+    if( temp1 == "host" )
+        m_host = temp2;
+    if( temp1 == "user" )
+        m_user = temp2;
+    if( temp1 == "password" )
+        m_password = temp2;
+    if( temp1 == "port" )
+        m_port = std::stoi( temp2 );
+    if( temp1 == "dbname" )
+        m_db = temp2;
+    connectStr = connectStr.substr( connectStr.find( ' ' ) );
 }
