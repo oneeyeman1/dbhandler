@@ -96,7 +96,12 @@ bool FieldShape::Contains(const wxPoint& pos)
     wxSFShapeBase *parent = GetParentShape();
     wxRect rectParent = parent->GetBoundingBox();
     wxRect rect = GetBoundingBox();
-    if( pos.y >= rect.GetTop() && pos.y <= rect.GetBottom() && pos.x >= rectParent.GetLeft() && pos.x <= rectParent.GetRight() )
+    if( pos.y >= rect.GetTop() && pos.y < rect.GetBottom() && pos.x >= rectParent.GetLeft() && pos.x <= rectParent.GetRight() )
         result = true;
     return result;
+}
+
+void FieldShape::DrawSelected(wxDC& dc)
+{
+    DrawNormal( dc );
 }

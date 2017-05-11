@@ -12,6 +12,7 @@ public:
     Field *GetField();
 protected:    
     virtual void DrawNormal(wxDC &dc);
+    virtual void DrawSelected(wxDC& dc);
 private:
     Field *m_field;
     wxRect m_parentRect;
