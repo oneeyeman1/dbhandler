@@ -258,8 +258,6 @@ wxWizardPage *DBType::GetNext() const
         dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( m_types->GetValue() );
         return dynamic_cast<DatabaseType *>( GetParent() )->GetPostgresPage();
     }
-    else
-        return NULL;
 }
 
 wxComboBox *DBType::GetComboBoxTypes() const
@@ -354,8 +352,8 @@ wxCheckBox *ODBCConnect::GetAskForParameters() const
 
 PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
 {
-    GetParent()->GetDatabaseEngine( m_engine );
-    if( m_enfine == "Postgres" )
+    dynamic_cast<DatabaseType *>( GetParent() )->GetDatabaseEngine( m_engine );
+    if( m_engine == "Postgres" )
         m_value = 5432;
     if( m_engine == "MySQL" )
         m_value = 3306;
