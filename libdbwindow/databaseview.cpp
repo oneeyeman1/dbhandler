@@ -272,7 +272,12 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 m_queryBook->Show( true );
                 m_frame->Layout();
                 sizer->Layout();
-                m_frame->GetParent()->SendSizeEvent();
+#ifdef __WXGTK__
+                wxDocMDIParentFrame *parent = wxDynamicCast( m_frame->GetMDIParent(), wxDocMDIParentFrame );
+                wxSize size = parent->GetSize();
+                parent->SetSize( size.GetWidth() - 5, size.GetHeight() - 5 );
+                parent->SetSize( size.GetWidth() + 5, size.GetHeight() + 5 );
+#endif
             }
         }
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
