@@ -265,6 +265,30 @@ void PostgresDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
     }
 }
 
+/*SELECT CAST(current_database() AS sql_identifier) AS table_catalog,
+CAST(nc.nspname AS sql_identifier) AS table_schema,
+CAST(c.relname AS sql_identifier) AS table_name,
+CAST(a.attname AS sql_identifier) AS column_name,
+CAST(
+CASE WHEN t.typtype = 'd' THEN
+CASE WHEN bt.typelem <> 0 AND bt.typlen = -1 THEN 'ARRAY'
+WHEN nbt.nspname = 'pg_catalog' THEN format_type(t.typbasetype, null)
+ELSE 'USER-DEFINED' END
+ELSE
+CASE WHEN t.typelem <> 0 AND t.typlen = -1 THEN 'ARRAY'
+WHEN nt.nspname = 'pg_catalog' THEN format_type(a.atttypid, null)
+ELSE 'USER-DEFINED' END
+END
+AS character_data) AS data_type,
+CAST(_pg_char_max_length(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_number) AS character_maximum_length,
+CAST(_pg_char_octet_length(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_numer) AS character_octet_length,
+CAST(_pg_numeric_precision(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_number) AS numeric_precision,
+CAST(_pg_numeric_precision_radix(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_numer) AS numeric_precision_radix,
+CAST(_pg_numeric_scale(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_number) AS numeric_scale,
+
+FROM pg_class c, pg_namespace nc, pg_attribute a, pg_type t, pg_type bt
+WHERE c.relnamespace = nc.old AND a.attrelid = c.old
+ORDER BY CAST(a.attnum AS cardinal_number) AS ordinal_position ASC;*/
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     PGresult *res, *res1, *res2;
