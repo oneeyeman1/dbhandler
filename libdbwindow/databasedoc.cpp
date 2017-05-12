@@ -111,7 +111,7 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
             if( (*it).ToStdWstring() == (*it1)->GetTableName() )
             {
                 DatabaseTable *dbTable = (*it1);
-                MyErdTable *table = new MyErdTable( dbTable );
+                MyErdTable *table = new MyErdTable( dbTable, dynamic_cast<DrawingView *>( GetFirstView() )->GetViewType() );
                 m_tables.push_back( table );
                 m_tableNames.push_back( table->GetTableName() );
                 found = true;

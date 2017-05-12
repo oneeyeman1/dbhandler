@@ -84,8 +84,9 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
     }
 }
 
-MyErdTable::MyErdTable(DatabaseTable *table) : wxSFRoundRectShape()
+MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape()
 {
+    m_type = type;
     m_table = table;
     std::vector<Field *> fields = m_table->GetFields();
     SetBorder( wxPen( wxColour( 70, 125, 170 ), 1, wxPENSTYLE_SOLID ) );
@@ -328,4 +329,10 @@ GridTableShape *MyErdTable::GetFieldGrid()
 std::wstring &MyErdTable::GetTableName()
 {
     return const_cast<std::wstring &>( m_table->GetTableName() );
+}
+
+void MyErdTable::DrawSelected(wxDC& dc)
+{
+    if( m_type == QueryView )
+        DrawNormal( dc );
 }
