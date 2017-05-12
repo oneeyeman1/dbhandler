@@ -138,7 +138,8 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
 int MySQLDatabase::Disconnect(std::vector<std::wstring> &WXUNUSED(errorMsg))
 {
     int result = 0;
-    PQfinish( m_db );
+    mysql_close( m_db );
+    m_db = NULL;
     for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
     {
         std::vector<DatabaseTable *> tableVec = (*it).second;
@@ -273,11 +274,10 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     int result = 0, fieldIsNull, fieldPK, fkReference, fkId;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
-    std::string query1 = "SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW' OR table_type = 'LOCAL TEMPORARY';";
+    std::string query1 = "SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW';";
     std::string query2 = "SELECT DISTINCT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_precision_radix, cols.numeric_scale, cols.column_default, cols.is_nullable, table_cons.constraint_type FROM information_schema.columns AS cols, information_schema.table_constraints AS table_cons WHERE cols.table_schema = table_cons.table_schema AND cols.table_name = table_cons.table_name AND cols.table_schema = $1 AND cols.table_name = $2 ORDER BY ordinal_position ASC;";
     std::string query3 = "SELECT information_schema.table_constraints.constraint_name, information_schema.table_constraints.constraint_schema, information_schema.table_constraints.table_name, information_schema.key_column_usage.column_name, information_schema.constraint_column_usage.table_name, information_schema.constraint_column_usage.column_name, information_schema.referential_constraints.update_rule, information_schema.referential_constraints.delete_rule FROM information_schema.table_constraints, information_schema.key_column_usage, information_schema.constraint_column_usage, information_schema.referential_constraints WHERE information_schema.table_constraints.constraint_name = information_schema.key_column_usage.constraint_name AND information_schema.constraint_column_usage.constraint_name = information_schema.table_constraints.constraint_name AND information_schema.referential_constraints.constraint_name = information_schema.table_constraints.constraint_name AND constraint_type = 'FOREIGN KEY' AND information_schema.table_constraints.constraint_schema = $1 AND information_schema.table_constraints.table_name = $2;";
-    res = PQexec( m_db, query1.c_str() );
-    ExecStatusType status = PQresultStatus( res ); 
+    res = mysql_query( m_db, query1.c_str() );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
