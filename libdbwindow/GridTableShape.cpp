@@ -97,3 +97,8 @@ void GridTableShape::DoChildrenLayout()
 		}
 	}
 }
+
+void GridTableShape::DrawSelected(wxDC &dc)
+{
+    DrawNormal( dc );
+}
