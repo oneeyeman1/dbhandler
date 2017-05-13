@@ -263,7 +263,8 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     {
         ShapeList list;
         GetShapesAtPosition( pt, list );
-        DeselectAll();
+        if( type == DatabaseView )
+            DeselectAll();
         wxRect tableRect;
         bool fieldSelected = false;
         for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
