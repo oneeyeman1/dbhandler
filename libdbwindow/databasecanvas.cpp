@@ -257,6 +257,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     MyErdTable *erdTable = NULL;
     wxPoint pt = event.GetPosition();
     wxMenu mnu;
+    int allSelected = 0;
     mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_TABLEDROPTABLE );
     m_selectedShape = GetShapeUnderCursor();
     ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
@@ -304,6 +305,24 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 table->Select( true );
             }
         }
+        if( type == QueryView )
+        {
+            int selectedCount = 0;
+            SerializableList tableFields;
+            erdTable->GetChildrenRecursively( CLASSINFO( FieldShape ), tableFields );
+            SerializableList::compatibility_iterator node = tableFields.GetFirst();
+            while( node )
+            {
+                FieldShape *shape = dynamic_cast<FieldShape *>( node->GetData() );
+                if( shape->IsSelected() )
+                    selectedCount++;
+                node = node->GetNext();
+            }
+            if( selectedCount == const_cast<DatabaseTable &>( erdTable->GetTable() ).GetFields().size() )
+                allSelected = 1;
+			else
+                allSelected = -1;
+        }
         Refresh();
         if( type == DatabaseView )
         {
@@ -340,6 +359,10 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 mnu.Append( wxID_SELECTALLFIELDS, _( "Select All" ), _( "Select all columns for display" ) );
                 mnu.Append( wxID_DESELECTALLFIELDS, _("Deselect All" ), _( "Deselect all columns for display" ) );
                 mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
+                if( !allSelected )
+                    mnu.FindItem( wxID_DESELECTALLFIELDS )->Enable( false );
+				else if( allSelected == 1 )
+                    mnu.FindItem( wxID_SELECTALLFIELDS )->Enable( false );
             }
         }
     }
