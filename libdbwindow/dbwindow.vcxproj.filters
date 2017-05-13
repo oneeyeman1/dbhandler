@@ -58,11 +58,13 @@
     <ClInclude Include="FieldShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HeaderGrid.h" />
     <ClInclude Include="databasetemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="constraintsign.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HeaderGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
