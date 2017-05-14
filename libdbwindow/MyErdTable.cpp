@@ -280,7 +280,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
         if( m_pGrid->InsertToTableGrid( pCol ) )
         {
             SetCommonProps( pCol );
-            pCol->GetFont().SetPointSize( 8 );
+            pCol->GetFont().SetPointSize( 12 );
             pCol->SetText( field->GetFieldName() );
             pCol->SetField( field );
         }
@@ -297,7 +297,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
         if( m_pGrid->InsertToTableGrid( comment_shape ) )
         {
             SetCommonProps( comment_shape );
-            comment_shape->GetFont().SetPointSize( 8 );
+            comment_shape->GetFont().SetPointSize( 12 );
             comment_shape->SetText( field->GetComment() );
         }
         else
