@@ -105,3 +105,8 @@ void FieldShape::DrawSelected(wxDC& dc)
 {
     DrawNormal( dc );
 }
+
+void FieldShape::Select(bool state)
+{
+    m_fSelected = state;
+}
