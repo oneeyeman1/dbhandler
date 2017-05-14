@@ -27,6 +27,7 @@ private:
     void OnTable(wxCommandEvent &event);
     void OnDatabase(wxCommandEvent &event);
     void OnQuery(wxCommandEvent &event);
+    void OnSize(wxSizeEvent &event);
     Database *m_db;
     wxDynamicLibrary *m_lib;
     wxDynamicLibrary *m_lib1;

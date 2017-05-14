@@ -48,6 +48,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_TABLE, MainFrame::OnTable)
     EVT_MENU(wxID_DATABASE, MainFrame::OnDatabase)
     EVT_MENU(wxID_QUERY, MainFrame::OnQuery)
+    EVT_SIZE(MainFrame::OnSize)
 END_EVENT_TABLE()
 
 MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL, wxID_ANY, "DB Handler" )
@@ -364,4 +365,9 @@ void MainFrame::OnTable(wxCommandEvent &event)
         else
             wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
     }
+}
+
+void MainFrame::OnSize(wxSizeEvent &event)
+{
+    event.Skip();
 }

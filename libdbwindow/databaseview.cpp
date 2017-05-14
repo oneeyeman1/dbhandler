@@ -157,12 +157,42 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_frame->Show();
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
+#if defined __WXMSW__ || defined __WXGTK__
+    CreateViewToolBar();
+    parent->SendSizeEvent();
+#endif
     return true;
 }
 
 DrawingView::~DrawingView()
 {
 }
+
+#if defined __WXMSW__ || defined __WXGTK__
+void DrawingView::CreateViewToolBar()
+{
+    int offset;
+    long style = wxTB_HORIZONTAL | wxNO_BORDER | wxTB_FLAT;
+    wxMDIParentFrame *parent = m_frame->GetMDIParent();
+    wxSize size = parent->GetClientSize();
+    m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
+    if( m_type == DatabaseView )
+    {
+        m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
+        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+        m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
+    }
+    else
+    {
+    }
+    m_tb->Realize();
+    wxMDIClientWindow *frame = (wxMDIClientWindow *) parent->GetClientWindow();
+    m_tb->SetSize( 0, 0, size.x, wxDefaultCoord );
+    offset = m_tb->GetSize().y;
+    frame->SetSize( 0, offset, size.x, size.y - offset );
+    m_frame->SetSize( 0, -offset -2, size.x, size.y - offset - 2 );
+}
+#endif
 
 // Sneakily gets used for default print/preview as well as drawing on the
 // screen.
@@ -762,10 +792,12 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
     delete lib;
 }
 
-void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding)
+void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName)
 {
     Field *fld = const_cast<FieldShape &>( field ).GetField();
-    wxString name = fld->GetFieldName();
+    wxString name = tableName + "." + fld->GetFieldName();
+    name = "\"" + name;
+    name = name + "\"";
     wxString query = m_page6->GetSyntaxCtrl()->GetValue();
     if( isAdding )
     {
@@ -823,10 +855,10 @@ void DrawingView::OnSelectAllFields(wxCommandEvent &event)
 {
     int id = event.GetId();
     MyErdTable *shape = dynamic_cast<MyErdTable *>( event.GetEventObject() );
-    AddDeleteFields( shape, id == wxID_DESELECTALLFIELDS ? false : true );
+    AddDeleteFields( shape, id == wxID_DESELECTALLFIELDS ? false : true, const_cast<DatabaseTable &>( shape->GetTable() ).GetTableName() );
 }
 
-void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd)
+void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstring &tableName)
 {
     SerializableList children;
     if( field )
@@ -836,10 +868,10 @@ void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd)
         while( node )
         {
             FieldShape *field = (FieldShape *) node->GetData();
-            if( field )
+            if( field && isAdd ? !field->IsSelected() : field->IsSelected() )
             {
                 field->Select( isAdd );
-                AddFieldToQuery( *field, isAdd );
+                AddFieldToQuery( *field, isAdd, tableName );
             }
             node = node->GetNext();
         }
