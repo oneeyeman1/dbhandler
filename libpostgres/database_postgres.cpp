@@ -285,9 +285,14 @@ CAST(_pg_char_octet_length(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardina
 CAST(_pg_numeric_precision(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_number) AS numeric_precision,
 CAST(_pg_numeric_precision_radix(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_numer) AS numeric_precision_radix,
 CAST(_pg_numeric_scale(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_number) AS numeric_scale,
+CAST(CASE WHEN a.attnotnull OR (t.typtype = 'd' AND t.typnotnull) THEN 'NO' ELSE 'YES' END AS yes_or_no) AS isnullable,
+CAST(pg_get_expr(ad.adbin, ad.adrelid) AS character_data) AS column_default
 
-FROM pg_class c, pg_namespace nc, pg_attribute a, pg_type t, pg_type bt
-WHERE c.relnamespace = nc.old AND a.attrelid = c.old
+FROM pg_class c, pg_namespace nc, pg_attribute a, pg_type t, pg_type bt, pg_namespace nbt, pg_namespace nt, pg_attrdef ad
+
+WHERE a.attrelid = ad.adrelid AND a.attnum = ad.adnum AND c.relnamespace = nc.old AND a.attrelid = c.old AND t.typnamespace = nt.old AND a.atttypid = t.old AND bt.typnamespace = nbt.old
+AND t.typtype = 'd' AND t.typbasetype = bt.old
+
 ORDER BY CAST(a.attnum AS cardinal_number) AS ordinal_position ASC;*/
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
