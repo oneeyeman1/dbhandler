@@ -193,7 +193,7 @@ void DrawingView::CreateViewToolBar()
     m_tb->SetSize( 0, 0, size.x, wxDefaultCoord );
     offset = m_tb->GetSize().y;
     frame->SetSize( 0, offset, size.x, size.y - offset );
-    m_frame->SetSize( 0, -offset -2, size.x, size.y - offset - 2 );
+    m_frame->SetSize( 0, offset -2, size.x, size.y - offset - 2 );
 }
 #endif
 

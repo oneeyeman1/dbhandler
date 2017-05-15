@@ -396,7 +396,7 @@ void MainFrame::OnSize(wxSizeEvent &event)
         offset = tb->GetSize().y;
         child->SetSize( 0, offset, size.x, size.y - offset );
         if( frame )
-            frame->SetSize( 0, -offset, size.x, wxDefaultCoord );
+            frame->SetSize( 0, offset, size.x, wxDefaultCoord );
     }
     else if( !tb || tb->GetName() == "PowerBar" )
         event.Skip();
