@@ -140,6 +140,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
         m_pGrid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        m_pGrid->SetCellSpace( 8 );
         m_pGrid->SetDimensions( 1, 3 );
         m_pGrid->SetFill( *wxTRANSPARENT_BRUSH );
         m_pGrid->SetBorder( *wxTRANSPARENT_PEN);

@@ -86,26 +86,26 @@ wxEND_EVENT_TABLE()
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
+    m_tb = NULL;
+    wxToolBar *tb = NULL;
     m_isCreated = false;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
+    wxRect clientRect = parent->GetClientRect();
     wxWindowList children = parent->GetChildren();
     bool found = false;
     int height = 0;
     for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
     {
-        m_tb = wxDynamicCast( *it, wxToolBar );
-        if( m_tb && m_tb->GetName() == "Second Toolbar" )
+        tb = wxDynamicCast( *it, wxToolBar );
+        if( m_tb && m_tb->GetName() == "ViewBar" )
         {
             found = true;
-            height = m_tb->GetSize().GetHeight();
+            m_tb = tb;
         }
     }
-    wxPoint start( 0, height );
-    wxRect clientRect = parent->GetClientRect();
-    clientRect.height -= height;
-    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), /*wxDefaultPosition*/start, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
     m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
     m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
     wxPoint ptCanvas;
@@ -175,7 +175,10 @@ void DrawingView::CreateViewToolBar()
     long style = wxTB_HORIZONTAL | wxNO_BORDER | wxTB_FLAT;
     wxMDIParentFrame *parent = m_frame->GetMDIParent();
     wxSize size = parent->GetClientSize();
-    m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
+    if( !m_tb )
+        m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
+	else
+		m_tb->ClearTools();
     if( m_type == DatabaseView )
     {
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
