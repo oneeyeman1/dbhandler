@@ -616,12 +616,13 @@ ViewType DrawingView::GetViewType()
 	return m_type;
 }
 
-/*#if defined __WXMSW__ || defined __WXGTK__
+/if defined __WXMSW__ || defined __WXGTK__
 void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
     if( activate )
     {
-        if( m_isCreated )
+        CreateViewToolbar();
+/*        if( m_isCreated )
             return;
         wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
         wxWindowList children = parent->GetChildren();
@@ -675,16 +676,21 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         {
             m_isCreated = true;
             return;
-        }
+        }*/
     }
     else
     {
-        m_tb->ClearTools();
-        m_tb->Hide();
+        if( activeView )
+            m_tb->Destroy();
+        else
+        {
+            m_tb->ClearTools();
+            m_tb->Hide();
+        }
     }
 }
 #endif
-*/
+
 void DrawingView::OnAlterTable(wxCommandEvent &WXUNUSED(event))
 {
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -881,7 +887,7 @@ void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstr
         m_canvas->Refresh();
     }
 }
-
+/*
 void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
     if( activate )
@@ -892,3 +898,4 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
     {
     }
 }
+*/
