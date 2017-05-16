@@ -192,8 +192,8 @@ void DrawingView::CreateViewToolBar()
     wxMDIClientWindow *frame = (wxMDIClientWindow *) parent->GetClientWindow();
     m_tb->SetSize( 0, 0, size.x, wxDefaultCoord );
     offset = m_tb->GetSize().y;
-    frame->SetSize( 0, offset, size.x, size.y - offset );
-    m_frame->SetSize( 0, offset -2, size.x, size.y - offset - 2 );
+    frame->SetSize( 0, 0, size.x, size.y - offset );
+    m_frame->SetSize( 0, offset, size.x, size.y - offset - 2 );
 }
 #endif
 
@@ -879,5 +879,16 @@ void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstr
             node = node->GetNext();
         }
         m_canvas->Refresh();
+    }
+}
+
+void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
+{
+    if( activate )
+    {
+        CreateViewToolBar();
+    }
+	else
+    {
     }
 }
