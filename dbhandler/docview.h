@@ -111,6 +111,7 @@ wxDECLARE_APP(MyApp);
 #define wxID_SHOWLABELS           118
 #define wxID_SHOWCOMMENTS         119
 #define wxID_SHOWSQLTOOLBOX       120
+#define wxID_QUERYDESIGN          121
 #define wxID_EDITCUTCOLUMN        200
 #define wxID_EDITCOPYCOLUMN       201
 #define wxID_EDITPASTECOLUMN      202

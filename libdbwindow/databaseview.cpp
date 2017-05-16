@@ -17,6 +17,7 @@
 #include "../dbhandler/res/database_profile.xpm"
 #include "../dbhandler/res/table.xpm"
 #include "../dbhandler/res/properties.xpm"
+#include "../dbhandler/res/sql.xpm"
 #include "res/gui/key-f1.xpm"
 //#endif
 
@@ -187,6 +188,8 @@ void DrawingView::CreateViewToolBar()
     }
     else
     {
+        m_tb->AddCheckTool( wxID_QUERYDESIGN, _( "SQL icon" ), wxBitmap( sql ), wxBitmap( sql ), _( "SQL design" ), _( "SQL design" ) );
+        m_tb->ToggleTool( wxID_QUERYDESIGN, false );
     }
     m_tb->Realize();
     wxMDIClientWindow *frame = (wxMDIClientWindow *) parent->GetClientWindow();
