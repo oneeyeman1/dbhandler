@@ -188,8 +188,8 @@ void DrawingView::CreateViewToolBar()
     }
     else
     {
-        m_tb->AddCheckTool( wxID_QUERYDESIGN, _( "SQL icon" ), wxBitmap( sql ), wxBitmap( sql ), _( "SQL design" ), _( "SQL design" ) );
-        m_tb->ToggleTool( wxID_QUERYDESIGN, false );
+        m_tb->AddCheckTool( wxID_DATASOURCE, _( "SQL icon" ), wxBitmap( sql ), wxBitmap( sql ), _( "SQL design" ), _( "SQL design" ) );
+        m_tb->ToggleTool( wxID_DATASOURCE, false );
     }
     m_tb->Realize();
     wxMDIClientWindow *frame = (wxMDIClientWindow *) parent->GetClientWindow();
