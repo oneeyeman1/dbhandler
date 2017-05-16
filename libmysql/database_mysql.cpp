@@ -265,7 +265,7 @@ void MySQLDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
 
 int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
-    PGresult *res, *res1, *res2;
+    MYSQL_STMT *res, *res1, *res2;
     std::vector<Field *> fields;
     std::vector<std::wstring> fk_names;
     std::map<int,std::vector<FKField *> > foreign_keys;
@@ -280,16 +280,35 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     res = mysql_query( m_db, query1.c_str() );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
-        PQclear( res );
         return 1;
     }
-    for( int i = 0; i < PQntuples( res ); i++ )
+    MYSQL_RES *result = mysql_store_result( m_db );
+    if( !result )
     {
-        char *catalog_name = PQgetvalue( res, i, 0 );
-        char *schema_name = PQgetvalue( res, i, 1 );
-        char *table_name = PQgetvalue( res, i, 2 );
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back();
+        return 1;
+    }
+    while( ( MYSQL_ROW row = mysql_fetch_row( result ) ) )
+    {
+        char *catalog_name = row[0] ? row[0] : "NULL";
+        char *schema_name = row[1] ? row[1] : "NULL";
+        char *table_name = row[2] ? row[2] : "NULL";
+        res = mysql_stmt_init( m_db );
+        if( !res )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            return 1;
+        }
+        if( mysql_stmt_prepare( res, query3.c_str(), query3.length() ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            return 1;
+        }
         char *values1[2];
         values1[0] = new char[strlen( schema_name ) + 1];
         values1[1] = new char[strlen( table_name ) + 1];
