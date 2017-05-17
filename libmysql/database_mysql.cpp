@@ -275,8 +275,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::string query1 = "SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW';";
-    std::string query2 = "SELECT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_scale, column_default, is_nullable, FROM information_schema.columns WHERE table_catalog = ? AND table_schema = ? AND table_name = ?;";
-    std::string query3 = "SELECT * FROM information_schema.key_column_usage WHERE referenced_table_schema = ? AND referenced_table_name = ?;";
+    std::string query2 = "SELECT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_scale, column_default, is_nullable, ordinal_position FROM information_schema.columns cols, information_schema.key_column_usage col_use WHERE cols.table_schema = col_use.table_schema AND cols.table_name = col_use.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ?;";
+    std::string query3 = "SELECT key_column_usage.*, update_rule, delete_rule FROM information_schema.key_column_usage, information_schema.referential_constraints WHERE referenced_table_schema = ? AND referenced_table_name = ?;";
     res = mysql_query( m_db, query1.c_str() );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
@@ -309,68 +309,47 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             errorMsg.push_back( err );
             return 1;
         }
-        char *values1[2];
-        values1[0] = new char[strlen( schema_name ) + 1];
-        values1[1] = new char[strlen( table_name ) + 1];
-        strcpy( values1[0], schema_name );
-        strcpy( values1[1], table_name );
-        int len1 = strlen( schema_name );
-        int len2 = strlen( table_name );
-        int length1[2] = { len1, len2 };
-        int formats1[2] = { 1, 1 };
-        res1 = PQprepare( m_db, "get_fkeys", query3.c_str(), 3, NULL );
-        if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
+        MYSQL_BIND *params[2];
+        unsigned long str_length1, str_length2;
+        char str_data1[strlen( schema_name )], str_data2[strlen( table_name )];
+        memset( params, 0, sizeof( params ) );
+        params[0].buffer_type = MYSQL_TYPE_STRING;
+        params[0].buffer = (char *) str_data1;
+        params[0].buffer_length = strlen( schema_name );
+        params[0].is_null = 0;
+        params[0].length = &str_length1;
+        params[1].buffer_type = MYSQL_TYPE_STRING;
+        params[1].buffer = (char *) str_data2;
+        params[1].buffer_length = strlen( table_name );
+        params[1].is_null = 0;
+        params[1].length = &str_length2;
+        if( mysql_stmt_bind_param( stmt, params ) )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Error executing query: " + err );
-            PQclear( res1 );
+            std::wstring err = m_impl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
             return 1;
         }
-        else
+        str_length1 = strlen( schema_name );
+        str_length2 = strlen( table_name );
+        strncpy( str_data1, schema_name, strlen( schema_name ) );
+        strncpy( str_data2, table_name, strlen( table_name ) );
+        if( mysql_stmt_execute( stmt ) )
         {
-            PQclear( res1 );
-            res1 = PQexecPrepared( m_db, "get_fkeys", 2, values1, length1, formats1, 1 );
-            status = PQresultStatus( res1 ); 
-            if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
-            {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                errorMsg.push_back( L"Error executing query: " + err );
-                PQclear( res1 );
-                return 1;
-            }
-            int count = 0;
-            for( int j = 0; j < PQntuples( res1 ); j++ )
-            {
-                fkField = PQgetvalue( res1, j, 2 );
-                fkTable = PQgetvalue( res1, j, 3 );
-                fkTableField = PQgetvalue( res1, j, 4 );
-                fkUpdateConstraint = PQgetvalue( res1, j, 5 );
-                fkDeleteConstraint = PQgetvalue( res1, j, 6 );
-                if( !strcmp( fkUpdateConstraint.c_str(), "NO ACTION" ) )
-                    update_constraint = NO_ACTION_UPDATE;
-                if( !strcmp( fkUpdateConstraint.c_str(), "RESTRICT" ) )
-                    update_constraint = RESTRICT_UPDATE;
-                if( !strcmp( fkUpdateConstraint.c_str(), "SET NULL" ) )
-                    update_constraint = SET_NULL_UPDATE;
-                if( !strcmp( fkUpdateConstraint.c_str(), "SET DEFAULT" ) )
-                    update_constraint = SET_DEFAULT_UPDATE;
-                if( !strcmp( fkUpdateConstraint.c_str(), "CASCADE" ) )
-                    update_constraint = CASCADE_UPDATE;
-                if( !strcmp( fkDeleteConstraint.c_str(), "NO ACTION" ) )
-                    delete_constraint = NO_ACTION_DELETE;
-                if( !strcmp( fkDeleteConstraint.c_str(), "RESTRICT" ) )
-                    delete_constraint = RESTRICT_DELETE;
-                if( !strcmp( fkDeleteConstraint.c_str(), "SET NULL" ) )
-                    delete_constraint = SET_NULL_DELETE;
-                if( !strcmp( fkDeleteConstraint.c_str(), "SET DEFAULT" ) )
-                    delete_constraint = SET_DEFAULT_DELETE;
-                if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
-                    delete_constraint = CASCADE_DELETE;
-                foreign_keys[count].push_back( new FKField( fkReference, m_pimpl->m_myconv.from_bytes( fkTable ), m_pimpl->m_myconv.from_bytes( fkField ), m_pimpl->m_myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
-                fk_names.push_back( m_pimpl->m_myconv.from_bytes( fkField ) );
-            }
-            PQclear( res1 );
-            res2 = PQprepare( m_db, "get_columns", query2.c_str(), 3, NULL );
+            std::wstring err = m_impl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            return 1;
+        }
+        MYSQL_ROW fk;
+        while( ( fk = mysql_fetch_row( stmt ) ) )
+        {
+        }
+        if( mysql_stmt_close( stmt ) )
+        {
+            std::wstring err = m_impl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            return 1;
+        }
+		res2 = PQprepare( m_db, "get_columns", query2.c_str(), 3, NULL );
             if( PQresultStatus( res2 ) != PGRES_COMMAND_OK )
             {
                 std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
