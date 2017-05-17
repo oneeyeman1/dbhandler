@@ -621,6 +621,8 @@ ViewType DrawingView::GetViewType()
 #if defined __WXMSW__ || defined __WXGTK__
 void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
+    wxDocMDIParentFrame *frame = (wxDocMDIParentFrame *) m_frame->GetMDIParent();
+    wxSize clientSize = frame->GetClientSize();
     if( activate )
         m_isActive = true;
     if( !activate && !m_isActive )
@@ -684,8 +686,12 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
     }
     else
     {*/
-        if( activeView )
+        if( !deactiveView && m_tb )
+        {
             m_tb->Destroy();
+            m_tb = NULL;
+            m_frame->GetParent()->SetSize( 0, 0, clientSize.x, clientSize.y ); 
+        }
         else
         {
             m_tb->ClearTools();
