@@ -87,6 +87,7 @@ wxEND_EVENT_TABLE()
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
+    m_isActive = false;
     m_tb = NULL;
     wxToolBar *tb = NULL;
     m_isCreated = false;
@@ -362,6 +363,7 @@ void DrawingView::OnUpdate(wxView* sender, wxObject* hint)
 // Clean up windows used for displaying the view.
 bool DrawingView::OnClose(bool deleteWindow)
 {
+    m_isActive = false;
     if( !wxView::OnClose( deleteWindow ) )
         return false;
 
@@ -619,13 +621,17 @@ ViewType DrawingView::GetViewType()
 	return m_type;
 }
 
-/if defined __WXMSW__ || defined __WXGTK__
+#if defined __WXMSW__ || defined __WXGTK__
 void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
+    wxDocMDIParentFrame *frame = (wxDocMDIParentFrame *) m_frame->GetMDIParent();
+    wxSize clientSize = frame->GetClientSize();
     if( activate )
+        m_isActive = true;
+    if( !activate && !m_isActive )
     {
-        CreateViewToolbar();
-/*        if( m_isCreated )
+/*        CreateViewToolBar();
+        if( m_isCreated )
             return;
         wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
         wxWindowList children = parent->GetChildren();
@@ -679,12 +685,16 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         {
             m_isCreated = true;
             return;
-        }*/
+        }
     }
     else
-    {
-        if( activeView )
+    {*/
+        if( !deactiveView && m_tb )
+        {
             m_tb->Destroy();
+            m_tb = NULL;
+            m_frame->GetParent()->SetSize( 0, 0, clientSize.x, clientSize.y ); 
+        }
         else
         {
             m_tb->ClearTools();
