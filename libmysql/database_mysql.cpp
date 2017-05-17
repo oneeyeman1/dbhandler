@@ -275,7 +275,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::string query1 = "SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW';";
-    std::string query2 = "SELECT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_scale, column_default, is_nullable, ordinal_position FROM information_schema.columns cols, information_schema.key_column_usage col_use WHERE cols.table_schema = col_use.table_schema AND cols.table_name = col_use.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ?;";
+    std::string query2 = "SELECT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_scale, column_default, is_nullable, ordinal_position, extra FROM information_schema.columns cols, information_schema.key_column_usage col_use WHERE cols.table_schema = col_use.table_schema AND cols.table_name = col_use.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ?;";
     std::string query3 = "SELECT key_column_usage.*, update_rule, delete_rule FROM information_schema.key_column_usage, information_schema.referential_constraints WHERE referenced_table_schema = ? AND referenced_table_name = ?;";
     res = mysql_query( m_db, query1.c_str() );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
@@ -349,47 +349,6 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             errorMsg.push_back( err );
             return 1;
         }
-		res2 = PQprepare( m_db, "get_columns", query2.c_str(), 3, NULL );
-            if( PQresultStatus( res2 ) != PGRES_COMMAND_OK )
-            {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                errorMsg.push_back( L"Error executing query: " + err );
-                PQclear( res2 );
-                return 1;
-            }
-            else
-            {
-                PQclear( res2 );
-                res2 = PQexecPrepared( m_db, "get_columns", 2, values1, length1, formats1, 1 );
-                if( PQresultStatus( res2 ) != PGRES_COMMAND_OK )
-                {
-                    std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                    errorMsg.push_back( L"Error executing query: " + err );
-                    PQclear( res2 );
-                    return 1;
-                }
-                for( int j = 0; j < PQntuples( res2 ); j++ )
-                {
-                    fieldName = PQgetvalue( res2, j, 0 );
-                    fieldType = PQgetvalue( res2, j, 1 );
-                    char *char_length = PQgetvalue( res2, j, 2 );
-                    char *char_radix = PQgetvalue( res2, j, 3 );
-                    char *numeric_length = PQgetvalue( res2, j, 4 );
-                    char *numeric_radix = PQgetvalue( res2, j, 5 );
-                    char *numeric_scale = PQgetvalue( res2, j, 6 );
-                    fieldDefaultValue = PQgetvalue( res2, j, 7 );
-                    fieldIsNull = !strcmp( PQgetvalue( res2, j, 8 ), "YES" ) ? 1 : 0;
-                    Field *field = new Field();
-                    if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( fieldName ), field, errorMsg ) )
-                    {
-                        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                        errorMsg.push_back( err );
-                        PQclear( res2 );
-                        return 1;
-                    }
-                    fields.push_back( field );
-                }
-                PQclear( res2 );
                 DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
                 if( GetTableProperties( table, errorMsg ) )
                 {
@@ -403,7 +362,6 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 fk_names.clear();
             }
         }
-        PQclear( res1 );
     }
     return 0;
 }
