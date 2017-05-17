@@ -51,6 +51,7 @@ protected:
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);
     void CreateViewToolBar();
 private:
+    bool m_isActive;
     wxToolBar *m_tb;
     wxFrame *m_log;
     wxTextCtrl *m_text;
