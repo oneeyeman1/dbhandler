@@ -352,7 +352,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
                 if( GetTableProperties( table, errorMsg ) )
                 {
-                    char *err = PQerrorMessage( m_db );
+                    char *err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
                     errorMsg.push_back( m_pimpl->m_myconv.from_bytes( err ) );
                     return 1;
                 }
@@ -368,15 +368,12 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 
 int MySQLDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
-    PGresult *res;
     int result = 0;
-    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
-    ExecStatusType status = PQresultStatus( res ); 
-    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+    res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
+    if( res )
     {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
-        PQclear( res );
         result = 1;
     }
     return result;
