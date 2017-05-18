@@ -309,7 +309,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             errorMsg.push_back( err );
             return 1;
         }
-        MYSQL_BIND *params[2];
+        MYSQL_BIND params[2];
         unsigned long str_length1, str_length2;
         char str_data1[strlen( schema_name )], str_data2[strlen( table_name )];
         memset( params, 0, sizeof( params ) );
@@ -385,53 +385,96 @@ void MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::w
 
 bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
-    PGresult *res;
+    MYSQL_STMT *res;
     bool exists = false;
-    std::wstring query = L"SELECT count(*) FROM pg_indexes WHERE schemaname = $1 AND tablename = $2 AND indexname = $3;";
-    char *values[3];
-    values[0] = new char[schemaName.length() + 1];
-    values[1] = new char[tableName.length() + 1];
-    values[2] = new char[indexName.length() + 1];
-    memset( values[0], '\0', schemaName.length() + 1 );
-    memset( values[1], '\0', tableName.length() + 1 );
-    memset( values[2], '\0', indexName.length() + 1 );
-    strcpy( values[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
-    strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
-    strcpy( values[2], m_pimpl->m_myconv.to_bytes( indexName.c_str() ).c_str() );
-    int len1 = schemaName.length();
-    int len2 = tableName.length();
-    int len3 = indexName.length();
-    int length[3] = { len1, len2, len3 };
-    int formats[3] = { 1, 1, 1 };
-    res = PQprepare( m_db, "index_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
-    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    std::wstring query = L"SELECT count(*) FROM information_schema.statistics WHERE table_schema = $1 AND table_name = $2 AND index_name = $3;";
+    res = mysql_stmt_init( m_db );
+    if( !res )
     {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-        errorMsg.push_back( L"Error executing query: " + err );
-        PQclear( res );
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
     }
-	else
+    else
     {
-        res = PQexecPrepared( m_db, "index_exist", 3, values, length, formats, 1 );
-        ExecStatusType status = PQresultStatus( res ); 
-        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+        if( mysql_stmt_prepare( res, query ) )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Error executing query: " + err );
-            PQclear( res );
+            std::wstring err = m_pimpl->m_myconv,from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
         }
-		else
+        else
         {
-            if( PQnfields( res ) == 1 )
-                exists = 1;
+            MYSQL_BIND values[3];
+            char *str_data[3];
+            unsigned long *str_length[3];
+            memset( valuies, 0, sizeof( values ) );
+            str_data[0] = new char[schemaName.length()];
+            str_data[1] = new char[tableName.length()];
+            str_data[2] = new char[indexName.length()];
+            str_length[0] = new unsigned long;
+            str_length[1] = new unsigned long;
+            str_length[2] = new unsigned long;
+            values[0].buffer_type = MYSQL_TYPE_STRING;
+            values[1].buffer_type = MYSQL_TYPE_STRING;
+            values[2].buffer_type = MYSQL_TYPE_STRING;
+            values[0].buffer = str_data[0];
+            values[1].buffer = str_data[1];
+            values[2].buffer = str_data[2];
+            values[0].buffer_length = schemaName.length();
+            values[1].buffer_length = tableName.length();
+            values[2].buffer_length = indexName.length();
+            values[0].is_null = 0;
+            values[1].is_null = 0;
+            values[2].is_null = 0;
+            values[0].length = &str_length[0];
+            values[1].length = &str_length[1];
+            values[2].length = &str_length[2];
+            if( mysql_stmt_bind_param( stmt, values ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                errorMsg.push_back( err );
+            }
+            else
+            {
+                strncpy( values[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
+                strncpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
+                strncpy( values[2], m_pimpl->m_myconv.to_bytes( indexName.c_str() ).c_str() );
+                str_length[0] = schemaName.length();
+                str_length[1] = tableName.length();
+                str_length[2] = indexName.length();
+                if( mysql_stmt_execute( stmt ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    errorMsg.push_back( err );
+                }
+                else
+                {
+                    MYSQL_RES *result = mysql_store_result( conn );
+                    if( !result )
+                    {
+                        std::wstring err = m_pimpl->mYmyconv.from_bytes( mysql_error( m_db ) );
+                        errorMsg.push_back( err );
+                    }
+                    else
+                    {
+                        if( mysql_fetch_row( result ) )
+                            exists = 1;
+                    }
+                }
+            }
         }
-	}
-    delete values[0];
-    values[0] = NULL;
-    delete values[1];
-    values[1] = NULL;
-    delete values[2];
-    values[2] = NULL;
+    }
+    delete str_data[0];
+    str_data[0] = NULL;
+    delete str_data[1];
+    str_data[1] = NULL;
+    delete str_data[2];
+    str_data[2] = NULL;
+    delete str_length[0];
+    str_length[0] = NULL;
+    delete str_length[1];
+    str_length[1] = NULL;
+    delete str_length[3];
+    str_length[3] = NULL;
     return exists;
 }
 
