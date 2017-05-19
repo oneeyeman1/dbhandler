@@ -276,7 +276,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::string query1 = "SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW';";
     std::string query2 = "SELECT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_scale, column_default, is_nullable, ordinal_position, extra FROM information_schema.columns cols, information_schema.key_column_usage col_use WHERE cols.table_schema = col_use.table_schema AND cols.table_name = col_use.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ?;";
-    std::string query3 = "SELECT key_column_usage.*, update_rule, delete_rule FROM information_schema.key_column_usage, information_schema.referential_constraints WHERE referenced_table_schema = ? AND referenced_table_name = ?;";
+    std::string query3 = "SELECT kcu.table_catalog, kcu.table_schema, kcu.table_name, kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_schema = ? AND kcu.table_name = ?;";
     res = mysql_query( m_db, query1.c_str() );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
