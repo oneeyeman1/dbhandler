@@ -90,6 +90,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_tb = NULL;
     wxToolBar *tb = NULL;
     m_isCreated = false;
+    m_fields = NULL;
+    m_queryBook = NULL;
+    m_page2 = m_page4 = NULL;
+    m_page6 = NULL;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -160,7 +164,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
 #if defined __WXMSW__ || defined __WXGTK__
     CreateViewToolBar();
-    parent->SendSizeEvent();
 #endif
     return true;
 }
@@ -193,8 +196,8 @@ void DrawingView::CreateViewToolBar()
     wxMDIClientWindow *frame = (wxMDIClientWindow *) parent->GetClientWindow();
     m_tb->SetSize( 0, 0, size.x, wxDefaultCoord );
     offset = m_tb->GetSize().y;
-    frame->SetSize( 0, 0, size.x, size.y - offset );
-    m_frame->SetSize( 0, offset, size.x, size.y - offset - 2 );
+    frame->SetSize( 0, offset, size.x, size.y - offset );
+    m_frame->SetSize( 0, 0, size.x, size.y - offset - 2 );
 }
 #endif
 
@@ -690,7 +693,7 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         {
             m_tb->Destroy();
             m_tb = NULL;
-            m_frame->GetParent()->SetSize( 0, 0, clientSize.x, clientSize.y ); 
+            frame->GetParent()->SetSize( 0, 0, clientSize.x, clientSize.y ); 
         }
         else
         {
