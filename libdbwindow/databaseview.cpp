@@ -363,6 +363,7 @@ void DrawingView::OnUpdate(wxView* sender, wxObject* hint)
 // Clean up windows used for displaying the view.
 bool DrawingView::OnClose(bool deleteWindow)
 {
+    wxDocMDIParentFrame *mainWin = (wxDocMDIParentFrame *) m_frame->GetMDIParent();
     m_isActive = false;
     if( !wxView::OnClose( deleteWindow ) )
         return false;
@@ -375,11 +376,17 @@ bool DrawingView::OnClose(bool deleteWindow)
         SetFrame( NULL );
     }
     wxDocManager *manager = GetDocumentManager();
-    if( manager->GetDocumentsVector().size() == 0 )
+    wxMDIClientWindow *parent = dynamic_cast<wxMDIClientWindow *>( mainWin->GetClientWindow() );
+    wxWindowList children = parent->GetChildren();
+    if( parent->GetChildren().size() == 0 )
     {
         delete m_tb;
         m_tb = NULL;
+        wxSize clientSize = mainWin->GetClientSize();
+        parent->SetSize( 0, 0, clientSize.x, clientSize.y );
     }
+	else
+        m_tb->ClearTools();
     return true;
 }
 
@@ -693,12 +700,16 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         {
             m_tb->Destroy();
             m_tb = NULL;
-            frame->GetParent()->SetSize( 0, 0, clientSize.x, clientSize.y ); 
+            if( frame && frame->GetParent() )
+                frame->GetParent()->SetSize( 0, 0, clientSize.x, clientSize.y ); 
         }
         else
         {
-            m_tb->ClearTools();
-            m_tb->Hide();
+            if( m_tb )
+            {
+                m_tb->ClearTools();
+                m_tb->Hide();
+            }
         }
     }
 }
