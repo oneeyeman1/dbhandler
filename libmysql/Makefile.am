@@ -12,4 +12,7 @@ libmysql_lib_la_CXXFLAGS = -I../../mysql-connector/include \
 	-I../../dbinterface \
 	-DUNICODE 
 
+libmysql_lib_la_LDFLAGS = -L../../mysql-connector/lib \
+	-lmysqlclient 
+
 AM_CXXFLAGS = -I../../mysql-connector 

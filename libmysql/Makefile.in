@@ -136,8 +136,8 @@ am__v_lt_0 = --silent
 am__v_lt_1 = 
 libmysql_lib_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(libmysql_lib_la_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+	$(libmysql_lib_la_CXXFLAGS) $(CXXFLAGS) \
+	$(libmysql_lib_la_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -380,6 +380,9 @@ libmysql_lib_la_SOURCES = \
 libmysql_lib_la_CXXFLAGS = -I../../mysql-connector/include \
 	-I../../dbinterface \
 	-DUNICODE 
+
+libmysql_lib_la_LDFLAGS = -L../../mysql-connector/lib \
+	-lmysqlclient 
 
 AM_CXXFLAGS = -I../../mysql-connector 
 all: all-am
