@@ -89,6 +89,7 @@ public:
     SQLiteConnect *GetSQLitePage() { return page2; }
     ODBCConnect *GetODBCPage() { return page3; }
     PostgresConnect *GetPostgresPage() { return page4; };
+    mySQLConnect *GetmySQLPage() { return page5; };
     void GetDatabaseEngine(wxString &databaseEngine);
     bool GetODBCConnectionParam();
     wxString GetDatabaseName();

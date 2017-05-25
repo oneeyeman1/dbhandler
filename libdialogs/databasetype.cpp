@@ -79,6 +79,13 @@ void DatabaseType::OnButtonUpdateUI(wxUpdateUIEvent &event)
         else
             event.Enable( true );
     }
+    else if( GetCurrentPage() == page5 )
+    {
+        if( dynamic_cast<mySQLConnect *>( page5 )->GetPassword()->IsEmpty() )
+            event.Enable( false );
+        else
+            event.Enable( true );
+    }
 }
 
 void DatabaseType::OnPageChanged(wxWizardEvent &event)
@@ -273,11 +280,17 @@ wxWizardPage *DBType::GetNext() const
         dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( "ODBC" );
         return dynamic_cast<DatabaseType *>( GetParent() )->GetODBCPage();
     }
-    else
+    else if( type == "Postgres" )
     {
         dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( m_types->GetValue() );
         return dynamic_cast<DatabaseType *>( GetParent() )->GetPostgresPage();
     }
+    else if( type == "mySQL " )
+    {
+        dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( m_types->GetValue() );
+        return dynamic_cast<DatabaseType *>( GetParent() )->GetmySQLPage();
+    }
+    return NULL;
 }
 
 wxComboBox *DBType::GetComboBoxTypes() const
