@@ -48,6 +48,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_TABLE, MainFrame::OnTable)
     EVT_MENU(wxID_DATABASE, MainFrame::OnDatabase)
     EVT_MENU(wxID_QUERY, MainFrame::OnQuery)
+    EVT_SIZE(MainFrame::OnSize)
 END_EVENT_TABLE()
 
 MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL, wxID_ANY, "DB Handler" )
@@ -115,6 +116,7 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     toolBar->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), bitmaps[2], bitmaps[2], wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
     toolBar->AddTool( wxID_TABLE, _( "Table" ), bitmaps[3], bitmaps[3], wxITEM_NORMAL, _( "Table" ), _( "Run Table View" ) );
     toolBar->AddTool( wxID_DATABASE, _( "Database" ), bitmaps[4], bitmaps[4], wxITEM_NORMAL, _( "Database" ), _( "Database" ) );
+    toolBar->SetName( "PowerBar" );
     toolBar->Realize();
 }
 
@@ -364,4 +366,38 @@ void MainFrame::OnTable(wxCommandEvent &event)
         else
             wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
     }
+}
+
+void MainFrame::OnSize(wxSizeEvent &event)
+{
+    wxSize size = GetClientSize();
+    int offset = 0;
+    bool foundTb = false;
+    wxMDIClientWindow *child = NULL;
+    wxDocMDIChildFrame *frame = NULL;
+    wxToolBar *tb = NULL;
+    for( wxWindowList::compatibility_iterator it = GetChildren().GetFirst(); it; it = it->GetNext() )
+    {
+        wxWindow *current = it->GetData();
+        if( !foundTb )
+        {
+            tb = dynamic_cast<wxToolBar *>( current );
+            if( tb && tb->GetName() == "ViewBar" )
+                foundTb = true;
+        }
+    }
+    wxView *currentView = wxGetApp().GetDocManager()->GetCurrentView();
+    if( currentView )
+        frame = (wxDocMDIChildFrame *) currentView->GetFrame();
+    if( foundTb )
+    {
+        child = (wxMDIClientWindow *) GetClientWindow();
+        tb->SetSize( 0, 0, size.x, wxDefaultCoord );
+        offset = tb->GetSize().y;
+        child->SetSize( 0, offset, size.x, size.y - offset );
+        if( frame )
+            frame->SetSize( 0, 0, size.x, size.y - offset - 2 );
+    }
+    else if( !tb || tb->GetName() == "PowerBar" )
+        event.Skip();
 }

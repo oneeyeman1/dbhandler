@@ -9,6 +9,7 @@ public:
     virtual bool Contains(const wxPoint& pos);
     void SetParentRect(const wxRect &rect);
     void SetField(Field *field);
+    void Select(bool state);
     Field *GetField();
 protected:    
     virtual void DrawNormal(wxDC &dc);

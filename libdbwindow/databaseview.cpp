@@ -86,26 +86,31 @@ wxEND_EVENT_TABLE()
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
+    m_isActive = false;
+    m_tb = NULL;
+    wxToolBar *tb = NULL;
     m_isCreated = false;
+    m_fields = NULL;
+    m_queryBook = NULL;
+    m_page2 = m_page4 = NULL;
+    m_page6 = NULL;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
+    wxRect clientRect = parent->GetClientRect();
     wxWindowList children = parent->GetChildren();
     bool found = false;
     int height = 0;
     for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
     {
-        m_tb = wxDynamicCast( *it, wxToolBar );
-        if( m_tb && m_tb->GetName() == "Second Toolbar" )
+        tb = wxDynamicCast( *it, wxToolBar );
+        if( m_tb && m_tb->GetName() == "ViewBar" )
         {
             found = true;
-            height = m_tb->GetSize().GetHeight();
+            m_tb = tb;
         }
     }
-    wxPoint start( 0, height );
-    wxRect clientRect = parent->GetClientRect();
-    clientRect.height -= height;
-    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), /*wxDefaultPosition*/start, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
     m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
     m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
     wxPoint ptCanvas;
@@ -157,12 +162,44 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_frame->Show();
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
+#if defined __WXMSW__ || defined __WXGTK__
+    CreateViewToolBar();
+#endif
     return true;
 }
 
 DrawingView::~DrawingView()
 {
 }
+
+#if defined __WXMSW__ || defined __WXGTK__
+void DrawingView::CreateViewToolBar()
+{
+    int offset;
+    long style = wxTB_HORIZONTAL | wxNO_BORDER | wxTB_FLAT;
+    wxMDIParentFrame *parent = m_frame->GetMDIParent();
+    wxSize size = parent->GetClientSize();
+    if( !m_tb )
+        m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
+	else
+		m_tb->ClearTools();
+    if( m_type == DatabaseView )
+    {
+        m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
+        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+        m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
+    }
+    else
+    {
+    }
+    m_tb->Realize();
+    wxMDIClientWindow *frame = (wxMDIClientWindow *) parent->GetClientWindow();
+    m_tb->SetSize( 0, 0, size.x, wxDefaultCoord );
+    offset = m_tb->GetSize().y;
+    frame->SetSize( 0, offset, size.x, size.y - offset );
+    m_frame->SetSize( 0, 0, size.x, size.y - offset - 2 );
+}
+#endif
 
 // Sneakily gets used for default print/preview as well as drawing on the
 // screen.
@@ -326,6 +363,8 @@ void DrawingView::OnUpdate(wxView* sender, wxObject* hint)
 // Clean up windows used for displaying the view.
 bool DrawingView::OnClose(bool deleteWindow)
 {
+    wxDocMDIParentFrame *mainWin = (wxDocMDIParentFrame *) m_frame->GetMDIParent();
+    m_isActive = false;
     if( !wxView::OnClose( deleteWindow ) )
         return false;
 
@@ -337,11 +376,17 @@ bool DrawingView::OnClose(bool deleteWindow)
         SetFrame( NULL );
     }
     wxDocManager *manager = GetDocumentManager();
-    if( manager->GetDocumentsVector().size() == 0 )
+    wxMDIClientWindow *parent = dynamic_cast<wxMDIClientWindow *>( mainWin->GetClientWindow() );
+    wxWindowList children = parent->GetChildren();
+    if( parent->GetChildren().size() == 0 )
     {
         delete m_tb;
         m_tb = NULL;
+        wxSize clientSize = mainWin->GetClientSize();
+        parent->SetSize( 0, 0, clientSize.x, clientSize.y );
     }
+	else
+        m_tb->ClearTools();
     return true;
 }
 
@@ -583,11 +628,16 @@ ViewType DrawingView::GetViewType()
 	return m_type;
 }
 
-/*#if defined __WXMSW__ || defined __WXGTK__
+#if defined __WXMSW__ || defined __WXGTK__
 void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
+    wxDocMDIParentFrame *frame = (wxDocMDIParentFrame *) m_frame->GetMDIParent();
+    wxSize clientSize = frame->GetClientSize();
     if( activate )
+        m_isActive = true;
+    if( !activate && !m_isActive )
     {
+/*        CreateViewToolBar();
         if( m_isCreated )
             return;
         wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -645,13 +695,26 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         }
     }
     else
-    {
-        m_tb->ClearTools();
-        m_tb->Hide();
+    {*/
+        if( !deactiveView && m_tb )
+        {
+            m_tb->Destroy();
+            m_tb = NULL;
+            if( frame && frame->GetParent() )
+                frame->GetParent()->SetSize( 0, 0, clientSize.x, clientSize.y ); 
+        }
+        else
+        {
+            if( m_tb )
+            {
+                m_tb->ClearTools();
+                m_tb->Hide();
+            }
+        }
     }
 }
 #endif
-*/
+
 void DrawingView::OnAlterTable(wxCommandEvent &WXUNUSED(event))
 {
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -762,10 +825,12 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
     delete lib;
 }
 
-void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding)
+void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName)
 {
     Field *fld = const_cast<FieldShape &>( field ).GetField();
-    wxString name = fld->GetFieldName();
+    wxString name = tableName + "." + fld->GetFieldName();
+    name = "\"" + name;
+    name = name + "\"";
     wxString query = m_page6->GetSyntaxCtrl()->GetValue();
     if( isAdding )
     {
@@ -823,10 +888,10 @@ void DrawingView::OnSelectAllFields(wxCommandEvent &event)
 {
     int id = event.GetId();
     MyErdTable *shape = dynamic_cast<MyErdTable *>( event.GetEventObject() );
-    AddDeleteFields( shape, id == wxID_DESELECTALLFIELDS ? false : true );
+    AddDeleteFields( shape, id == wxID_DESELECTALLFIELDS ? false : true, const_cast<DatabaseTable &>( shape->GetTable() ).GetTableName() );
 }
 
-void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd)
+void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstring &tableName)
 {
     SerializableList children;
     if( field )
@@ -836,13 +901,25 @@ void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd)
         while( node )
         {
             FieldShape *field = (FieldShape *) node->GetData();
-            if( field )
+            if( field && isAdd ? !field->IsSelected() : field->IsSelected() )
             {
                 field->Select( isAdd );
-                AddFieldToQuery( *field, isAdd );
+                AddFieldToQuery( *field, isAdd, tableName );
             }
             node = node->GetNext();
         }
         m_canvas->Refresh();
     }
 }
+/*
+void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
+{
+    if( activate )
+    {
+        CreateViewToolBar();
+    }
+	else
+    {
+    }
+}
+*/

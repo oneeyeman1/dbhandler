@@ -102,15 +102,15 @@ bool MyApp::OnInit()
     SetAppDisplayName( "DB Handler" );
 
     //// Create a document manager
-    wxDocManager *docManager = new wxDocManager;
+    m_docManager = new wxDocManager;
 
     // Create a template relating text documents to their views
-    new wxDocTemplate( docManager, "Text", "*.txt;*.text", "", "txt;text", "Text Doc", "Text View", CLASSINFO( TextEditDocument ), CLASSINFO( TextEditView ) );
+    new wxDocTemplate( m_docManager, "Text", "*.txt;*.text", "", "txt;text", "Text Doc", "Text View", CLASSINFO( TextEditDocument ), CLASSINFO( TextEditView ) );
     // Create a template relating image documents to their views
-    new wxDocTemplate( docManager, "Image", "*.png;*.jpg", "", "png;jpg", "Image Doc", "Image View", CLASSINFO( ImageDocument ), CLASSINFO( ImageView ) );
+    new wxDocTemplate( m_docManager, "Image", "*.png;*.jpg", "", "png;jpg", "Image Doc", "Image View", CLASSINFO( ImageDocument ), CLASSINFO( ImageView ) );
     // create the main frame window
     MainFrame *frame;
-    frame = new MainFrame( docManager );
+    frame = new MainFrame( m_docManager );
 
 //    CreateMenuBarForFrame( frame, menuFile, m_menuEdit );
 
@@ -223,3 +223,8 @@ void MyApp::CreateMainToolbar()
 {
 }
 #endif
+
+wxDocManager *MyApp::GetDocManager()
+{
+    return m_docManager;
+}

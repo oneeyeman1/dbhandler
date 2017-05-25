@@ -28,6 +28,7 @@ public:
     wxString GetDBEngine();
     void SetDBEngine(const wxString &engine);
     void SetDBName(const wxString &name);
+    wxDocManager *GetDocManager();
 #ifdef __WXMAC__
     virtual void MacNewFile() wxOVERRIDE;
 #endif // __WXMAC__
@@ -66,6 +67,7 @@ private:
     wxVector<wxString> m_filesFromCmdLine;
 
     // only used if m_mode == Mode_Single
+    wxDocManager *m_docManager;
     MyCanvas *m_canvas;
     wxMenu *m_menuEdit;
     wxString m_dbName, m_dbEngine;

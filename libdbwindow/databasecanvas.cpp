@@ -223,7 +223,11 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
     if( type == QueryView )
     {
         for( ShapeList::iterator it1 = shapes.begin(); it1 != shapes.end(); it1++ )
-            (*it1)->Select( true );
+        {
+            FieldShape *shape = wxDynamicCast( (*it1), FieldShape );
+            if( shape )
+                shape->Select( true );
+        }
 		FieldShape *fld = NULL;
         MyErdTable *tbl = NULL;
         for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
@@ -247,7 +251,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
             tbl->Select( false );
         Refresh();
         if( fld )
-            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() );
+            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), const_cast<DatabaseTable &>( tbl->GetTable() ).GetTableName() );
     }
 }
 
