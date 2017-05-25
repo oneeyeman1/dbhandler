@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = libpostgres
+subdir = libmysql
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -127,18 +127,17 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libpostgres_la_LIBADD =
-am_libpostgres_la_OBJECTS = libpostgres_la-database_postgres.lo \
-	libpostgres_la-postgres.lo
-libpostgres_la_OBJECTS = $(am_libpostgres_la_OBJECTS)
+libmysql_lib_la_LIBADD =
+am_libmysql_lib_la_OBJECTS = libmysql_lib_la-database_mysql.lo
+libmysql_lib_la_OBJECTS = $(am_libmysql_lib_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-libpostgres_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+libmysql_lib_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(libpostgres_la_CXXFLAGS) $(CXXFLAGS) \
-	$(libpostgres_la_LDFLAGS) $(LDFLAGS) -o $@
+	$(libmysql_lib_la_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -191,8 +190,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libpostgres_la_SOURCES)
-DIST_SOURCES = $(libpostgres_la_SOURCES)
+SOURCES = $(libmysql_lib_la_SOURCES)
+DIST_SOURCES = $(libmysql_lib_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -372,23 +371,17 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = \
-	libpostgres.la
+	libmysql_lib.la
 
-libpostgres_la_SOURCES = \
-	database_postgres.cpp \
-	database_postgres.h \
-	postgres.cpp
+libmysql_lib_la_SOURCES = \
+	database_mysql.cpp \
+	database_mysql.h
 
-libpostgres_la_CXXFLAGS = -I../../dbinterface \
-	`pg_config \
-	--includedir` 
+libmysql_lib_la_CXXFLAGS = -I../../mysql-connector/include \
+	-I../../dbinterface \
+	-DUNICODE 
 
-libpostgres_la_LDFLAGS = -L../dbinterface \
-	-ldbinterface \
-	`pg_config \
-	--libdir` \
-	-lpq 
-
+AM_CXXFLAGS = -I../../mysql-connector 
 all: all-am
 
 .SUFFIXES:
@@ -402,9 +395,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libpostgres/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libmysql/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu libpostgres/Makefile
+	  $(AUTOMAKE) --gnu libmysql/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -458,8 +451,8 @@ clean-libLTLIBRARIES:
 	  rm -f $${locs}; \
 	}
 
-libpostgres.la: $(libpostgres_la_OBJECTS) $(libpostgres_la_DEPENDENCIES) $(EXTRA_libpostgres_la_DEPENDENCIES) 
-	$(AM_V_CXXLD)$(libpostgres_la_LINK) -rpath $(libdir) $(libpostgres_la_OBJECTS) $(libpostgres_la_LIBADD) $(LIBS)
+libmysql_lib.la: $(libmysql_lib_la_OBJECTS) $(libmysql_lib_la_DEPENDENCIES) $(EXTRA_libmysql_lib_la_DEPENDENCIES) 
+	$(AM_V_CXXLD)$(libmysql_lib_la_LINK) -rpath $(libdir) $(libmysql_lib_la_OBJECTS) $(libmysql_lib_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -467,8 +460,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpostgres_la-database_postgres.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpostgres_la-postgres.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmysql_lib_la-database_mysql.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -491,19 +483,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
-libpostgres_la-database_postgres.lo: database_postgres.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpostgres_la_CXXFLAGS) $(CXXFLAGS) -MT libpostgres_la-database_postgres.lo -MD -MP -MF $(DEPDIR)/libpostgres_la-database_postgres.Tpo -c -o libpostgres_la-database_postgres.lo `test -f 'database_postgres.cpp' || echo '$(srcdir)/'`database_postgres.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpostgres_la-database_postgres.Tpo $(DEPDIR)/libpostgres_la-database_postgres.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='database_postgres.cpp' object='libpostgres_la-database_postgres.lo' libtool=yes @AMDEPBACKSLASH@
+libmysql_lib_la-database_mysql.lo: database_mysql.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmysql_lib_la_CXXFLAGS) $(CXXFLAGS) -MT libmysql_lib_la-database_mysql.lo -MD -MP -MF $(DEPDIR)/libmysql_lib_la-database_mysql.Tpo -c -o libmysql_lib_la-database_mysql.lo `test -f 'database_mysql.cpp' || echo '$(srcdir)/'`database_mysql.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmysql_lib_la-database_mysql.Tpo $(DEPDIR)/libmysql_lib_la-database_mysql.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='database_mysql.cpp' object='libmysql_lib_la-database_mysql.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpostgres_la_CXXFLAGS) $(CXXFLAGS) -c -o libpostgres_la-database_postgres.lo `test -f 'database_postgres.cpp' || echo '$(srcdir)/'`database_postgres.cpp
-
-libpostgres_la-postgres.lo: postgres.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpostgres_la_CXXFLAGS) $(CXXFLAGS) -MT libpostgres_la-postgres.lo -MD -MP -MF $(DEPDIR)/libpostgres_la-postgres.Tpo -c -o libpostgres_la-postgres.lo `test -f 'postgres.cpp' || echo '$(srcdir)/'`postgres.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpostgres_la-postgres.Tpo $(DEPDIR)/libpostgres_la-postgres.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='postgres.cpp' object='libpostgres_la-postgres.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpostgres_la_CXXFLAGS) $(CXXFLAGS) -c -o libpostgres_la-postgres.lo `test -f 'postgres.cpp' || echo '$(srcdir)/'`postgres.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmysql_lib_la_CXXFLAGS) $(CXXFLAGS) -c -o libmysql_lib_la-database_mysql.lo `test -f 'database_mysql.cpp' || echo '$(srcdir)/'`database_mysql.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

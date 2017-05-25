@@ -2,19 +2,14 @@
 
 
 lib_LTLIBRARIES =  \
-	libpostgres.la
+	libmysql_lib.la
 
-libpostgres_la_SOURCES =  \
-	database_postgres.cpp \
-	database_postgres.h \
-	postgres.cpp
+libmysql_lib_la_SOURCES =  \
+	database_mysql.cpp \
+	database_mysql.h
 
-libpostgres_la_CXXFLAGS = -I../../dbinterface \
-	`pg_config \
-	--includedir` 
+libmysql_lib_la_CXXFLAGS = -I../../mysql-connector/include \
+	-I../../dbinterface \
+	-DUNICODE 
 
-libpostgres_la_LDFLAGS = -L../dbinterface \
-	-ldbinterface \
-	`pg_config \
-	--libdir` \
-	-lpq 
+AM_CXXFLAGS = -I../../mysql-connector 
