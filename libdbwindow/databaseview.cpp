@@ -121,15 +121,15 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
     m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentRect.GetHeight() );
-/*    m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
+    m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
     wxBitmap tmp = wxBitmap( database_profile );
     m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
     m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
     m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
     m_tb->Realize();
-    m_frame->SetToolBar( m_tb );
+    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
     ptCanvas.x = -1;
-    ptCanvas.y = m_tb->GetSize().GetHeight();*/
+    ptCanvas.y = m_tb->GetSize().GetHeight();
 #else
     ptCanvas = wxDefaultPosition;
 #endif
@@ -141,7 +141,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         sizer->Add( m_fields, 0, wxEXPAND, 0 );
         m_fields->Show( false );
     }
-    m_canvas = new DatabaseCanvas( this, wxDefaultPosition/*ptCanvas*/ );
+    m_canvas = new DatabaseCanvas( this, /*wxDefaultPosition*/ptCanvas );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
     if( m_type == QueryView )
     {

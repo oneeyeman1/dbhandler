@@ -26,7 +26,9 @@ public:
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
     virtual bool OnClose(bool deleteWindow = true) wxOVERRIDE;
+#if defined __WXMSW__ || defined __WXGTK
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
+#endif
     void OnViewSelectedTables(wxCommandEvent &event);
     void OnNewIndex(wxCommandEvent &event);
     void OnFieldDefinition(wxCommandEvent &event);
