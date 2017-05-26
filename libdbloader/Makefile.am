@@ -20,9 +20,14 @@ libdbloader_la_CXXFLAGS = -I/usr/include \
 libdbloader_la_LDFLAGS = -L../libsqlite \
 	-L../libodbc \
 	-L../libpostgres \
-	 \
+	-L../libmysql \
+	-L../../mysql-connector/lib \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` \
 	-lsqlite_lib \
 	-lodbc_lib \
-	-lpostgres 
+	-lpostgres \
+	-lmysqlclient \
+	-lmysql_lib
+	 
+	 
