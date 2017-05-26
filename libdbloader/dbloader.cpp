@@ -140,7 +140,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             {
 				pdb = new PostgresDatabase();
             }
-            if( engine == "MySQL" )
+            if( engine == "mySQL" )
                 pdb = new MySQLDatabase();
             wxBeginBusyCursor();
             result = pdb->Connect( name.ToStdWstring(), errorMsg );

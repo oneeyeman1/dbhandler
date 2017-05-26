@@ -163,7 +163,7 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         m_connStr += "password = " + page4->GetPassword()->GetValue() + " ";
         m_connStr += "dbname = " + page4->GetDBName()->GetValue() + " ";
     }
-    if( m_dbEngine == "MySQL" )
+    if( m_dbEngine == "mySQL" )
     {
         m_dbEngine = "MySQL";
         wxString host = page4->GetHost()->GetValue();
