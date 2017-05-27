@@ -496,6 +496,7 @@
     <ClCompile Include="jointype.cpp" />
     <ClCompile Include="odbcconfigure.cpp" />
     <ClCompile Include="properties.cpp" />
+    <ClCompile Include="retrievalarguments.cpp" />
     <ClCompile Include="selecttables.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -506,6 +507,7 @@
     <ClInclude Include="jointype.h" />
     <ClInclude Include="odbcconfigure.h" />
     <ClInclude Include="properties.h" />
+    <ClInclude Include="retrievalarguments.h" />
     <ClInclude Include="selecttables.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
