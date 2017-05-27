@@ -27,9 +27,10 @@
 
 #include "retrievalarguments.h"
 
-RetrievalArguments::RetrievalArguments(void)
+RetrievalArguments::RetrievalArguments(wxWindow *parent) : wxDialog( parent, wxID_ANY, _( "" ) )
 {
     m_panel = new wxPanel( this );
+    m_arguments = new wxScrolled<wxWindow>( this );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
     m_help = new wxButton( m_panel, wxID_HELP, _( "Help" ) );
@@ -47,4 +48,22 @@ void RetrievalArguments::set_properties()
 
 void RetrievalArguments::do_layout()
 {
+}
+
+ColumnLabels::ColumnLabels(wxScrolled<wxWindow> *parent ) : wxWindow( parent, wxID_ANY )
+{
+    m_parent = parent;
+    Bind( wxEVT_PAINT, &ColumnLabels::OnPaint, this );
+}
+
+void ColumnLabels::OnPaint(wxPaintEvent &event)
+{
+    wxPaintDC dc( this );
+    int scrollunits, origin;
+    m_parent->GetViewStart( &origin, 0 );
+    m_parent->GetScrollPixelsPerUnit( &scrollunits, 0 );
+    dc.SetDeviceOrigin( -origin * scrollunits, 0 );
+    dc.DrawText( _( "Column1" ), 5, 5 );
+    dc.DrawText( _( "Column2" ), 105, 5 );
+    dc.DrawText( _( "Column3" ), 205, 5 );
 }
