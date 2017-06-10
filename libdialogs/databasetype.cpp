@@ -166,20 +166,17 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
     if( m_dbEngine == "mySQL" )
     {
         m_dbEngine = "MySQL";
-        wxString host = page4->GetHost()->GetValue();
+        wxString host = page5->GetHost()->GetValue();
         if( !host.empty() )
-            m_connStr = "host = " + host + " ";
-        wxString hostAddr = page4->GetHostAddr()->GetValue();
-        if( !hostAddr.empty() )
-            m_connStr += "hostaddr = " + hostAddr + " ";
-        wxString port = page4->GetPort()->GetValue();
+            m_connStr = "host=" + host + " ";
+        wxString port = page5->GetPort()->GetValue();
         if( !port.empty() )
-            m_connStr += "port = " + port + " ";
+            m_connStr += "port=" + port + " ";
 		else
-            m_connStr += "port = " + wxString::Format( "%ld", 3306 ) + " ";
-        m_connStr += "user = " + page4->GetUserID()->GetValue() + " ";
-        m_connStr += "password = " + page4->GetPassword()->GetValue() + " ";
-        m_connStr += "dbname = " + page4->GetDBName()->GetValue() + " ";
+            m_connStr += "port=" + wxString::Format( "%d", 3306 ) + " ";
+        m_connStr += "user=" + page5->GetUserID()->GetValue() + " ";
+        m_connStr += "password=" + page5->GetPassword()->GetValue() + " ";
+        m_connStr += "dbname=" + page5->GetDBName()->GetValue() + " ";
         
     }
 /*    WXWidget hwnd = 0;
@@ -528,11 +525,6 @@ wxTextCtrl *mySQLConnect::GetDatabaseName()
 wxTextCtrl *mySQLConnect::GetHost() const
 {
     return m_host;
-}
-
-wxTextCtrl *mySQLConnect::GetHostAddr() const
-{
-    return m_hostAddr;
 }
 
 wxTextCtrl *mySQLConnect::GetPort() const
