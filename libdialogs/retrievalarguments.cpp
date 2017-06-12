@@ -66,4 +66,5 @@ void ColumnLabels::OnPaint(wxPaintEvent &event)
     dc.DrawText( _( "Column1" ), 5, 5 );
     dc.DrawText( _( "Column2" ), 105, 5 );
     dc.DrawText( _( "Column3" ), 205, 5 );
+    dc.DrawText( _( "Column4" ), 305, 5 );
 }
