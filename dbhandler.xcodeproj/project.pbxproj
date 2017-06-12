@@ -102,6 +102,13 @@
 			remoteGlobalIDString = E3D139661D0D110A00A5A0F7;
 			remoteInfo = libdbloader;
 		};
+		E3D859671EEA09030093FB1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3D8595E1EEA09030093FB1C /* libmysql.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3D859571EEA09030093FB1C;
+			remoteInfo = libmysql;
+		};
 		E3E91D6F1DCC2E8A00675CF8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */;
@@ -147,6 +154,7 @@
 		E3D139241D0C42FF00A5A0F7 /* libodbc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libodbc.xcodeproj; path = libodbc/libodbc.xcodeproj; sourceTree = "<group>"; };
 		E3D139431D0D0CD100A5A0F7 /* libdialogs.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdialogs.xcodeproj; path = libdialogs/libdialogs.xcodeproj; sourceTree = "<group>"; };
 		E3D1396D1D0D110A00A5A0F7 /* libdbloader.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdbloader.xcodeproj; path = libdbloader/libdbloader.xcodeproj; sourceTree = "<group>"; };
+		E3D8595E1EEA09030093FB1C /* libmysql.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libmysql.xcodeproj; path = libmysql/libmysql.xcodeproj; sourceTree = "<group>"; };
 		E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libfieldswindow.xcodeproj; path = libfieldswindow/libfieldswindow.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -216,6 +224,7 @@
 		E3D05D311CA4AB1D002CB677 = {
 			isa = PBXGroup;
 			children = (
+				E3D8595E1EEA09030093FB1C /* libmysql.xcodeproj */,
 				E33E6F9C1EBC26B6003A0B92 /* libpostgres.xcodeproj */,
 				E33E6F531E6A9A6A003A0B92 /* libtablewindow.xcodeproj */,
 				E39501BF1DF3B99C0046E51B /* libpropertypages.xcodeproj */,
@@ -351,6 +360,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		E3D8595F1EEA09030093FB1C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3D859681EEA09030093FB1C /* liblibmysql.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		E3E91D6C1DCC2E8900675CF8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -442,6 +459,10 @@
 				{
 					ProductGroup = E3E91D6C1DCC2E8900675CF8 /* Products */;
 					ProjectRef = E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */;
+				},
+				{
+					ProductGroup = E3D8595F1EEA09030093FB1C /* Products */;
+					ProjectRef = E3D8595E1EEA09030093FB1C /* libmysql.xcodeproj */;
 				},
 				{
 					ProductGroup = E3D139251D0C42FF00A5A0F7 /* Products */;
@@ -545,6 +566,13 @@
 			fileType = "compiled.mach-o.dylib";
 			path = liblibdbloader.dylib;
 			remoteRef = E3D139711D0D110A00A5A0F7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E3D859681EEA09030093FB1C /* liblibmysql.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibmysql.dylib;
+			remoteRef = E3D859671EEA09030093FB1C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		E3E91D701DCC2E8A00675CF8 /* liblibfieldswindow.dylib */ = {

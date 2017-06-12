@@ -67,18 +67,29 @@ public:
     mySQLConnect(wxWizard *parent);
     virtual wxWizardPage *GetPrev() const;
     virtual wxWizardPage *GetNext() const;
+    void OnAdvanced(wxCommandEvent &event);
     wxTextCtrl *GetDatabaseName();
     wxTextCtrl *GetHost() const;
-    wxTextCtrl *GetHostAddr() const;
     wxTextCtrl *GetPort() const;
     wxTextCtrl *GetUserID() const;
     wxTextCtrl *GetPassword() const;
     wxTextCtrl *GetDBName() const;
 private:
-    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6;
-    wxTextCtrl *m_host, *m_hostAddr, *m_port, *m_userID, *m_password, *m_dbName;
+    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7;
+    wxTextCtrl *m_host, *m_port, *m_userID, *m_password, *m_dbName, *m_socket;
+    wxButton *m_advanced;
+    int m_flags;
     unsigned long m_value;
     wxString m_engine;
+};
+
+class mySQLAdvanced : public wxDialog
+{
+public:
+    mySQLAdvanced(wxWindow *parent, int flags);
+private:
+    wxPanel *m_panel;
+    wxCheckBox *m_expPass, *m_clientCompress, *m_foundRows, *m_ignoreSigPipe, *m_ignoreSpace, *m_interactive;
 };
 
 class DatabaseType : public wxWizard

@@ -163,23 +163,20 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         m_connStr += "password = " + page4->GetPassword()->GetValue() + " ";
         m_connStr += "dbname = " + page4->GetDBName()->GetValue() + " ";
     }
-    if( m_dbEngine == "MySQL" )
+    if( m_dbEngine == "mySQL" )
     {
         m_dbEngine = "MySQL";
-        wxString host = page4->GetHost()->GetValue();
+        wxString host = page5->GetHost()->GetValue();
         if( !host.empty() )
-            m_connStr = "host = " + host + " ";
-        wxString hostAddr = page4->GetHostAddr()->GetValue();
-        if( !hostAddr.empty() )
-            m_connStr += "hostaddr = " + hostAddr + " ";
-        wxString port = page4->GetPort()->GetValue();
+            m_connStr = "host=" + host + " ";
+        wxString port = page5->GetPort()->GetValue();
         if( !port.empty() )
-            m_connStr += "port = " + port + " ";
+            m_connStr += "port=" + port + " ";
 		else
-            m_connStr += "port = " + wxString::Format( "%ld", 3306 ) + " ";
-        m_connStr += "user = " + page4->GetUserID()->GetValue() + " ";
-        m_connStr += "password = " + page4->GetPassword()->GetValue() + " ";
-        m_connStr += "dbname = " + page4->GetDBName()->GetValue() + " ";
+            m_connStr += "port=" + wxString::Format( "%d", 3306 ) + " ";
+        m_connStr += "user=" + page5->GetUserID()->GetValue() + " ";
+        m_connStr += "password=" + page5->GetPassword()->GetValue() + " ";
+        m_connStr += "dbname=" + page5->GetDBName()->GetValue() + " ";
         
     }
 /*    WXWidget hwnd = 0;
@@ -488,6 +485,9 @@ mySQLConnect::mySQLConnect(wxWizard *parent) : wxWizardPage( parent )
     m_password = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
     m_label6 = new wxStaticText( this, wxID_ANY, _( "Database Name" ) );
     m_dbName = new wxTextCtrl( this, wxID_ANY, "" );
+    m_label7 = new wxStaticText( this, wxID_ANY, _( "Unix Socket" ) );
+    m_socket = new wxTextCtrl( this, wxID_ANY, "" );
+    m_advanced = new wxButton( this, wxID_ANY, _( "Advaned Option" ) );
     wxBoxSizer *main = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer1 = new wxBoxSizer( wxVERTICAL );
     wxFlexGridSizer *sizer2 = new wxFlexGridSizer( 6, 2, 5, 5 );
@@ -503,11 +503,16 @@ mySQLConnect::mySQLConnect(wxWizard *parent) : wxWizardPage( parent )
     sizer2->Add( m_password, 0, wxEXPAND, 0 );
     sizer2->Add( m_label6, 0, wxEXPAND, 0 );
     sizer2->Add( m_dbName, 0, wxEXPAND, 0 );
+    sizer2->Add( m_label7, 0, wxEXPAND, 0 );
+    sizer2->Add( m_socket, 0, wxEXPAND, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer1->Add( m_advanced, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     main->Add( sizer1, 0, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizerAndFit( main );
+    m_advanced->Bind( wxEVT_BUTTON, &mySQLConnect::OnAdvanced, this );
 }
 
 wxWizardPage *mySQLConnect::GetPrev() const
@@ -530,11 +535,6 @@ wxTextCtrl *mySQLConnect::GetHost() const
     return m_host;
 }
 
-wxTextCtrl *mySQLConnect::GetHostAddr() const
-{
-    return m_hostAddr;
-}
-
 wxTextCtrl *mySQLConnect::GetPort() const
 {
     return m_port;
@@ -553,4 +553,26 @@ wxTextCtrl *mySQLConnect::GetPassword() const
 wxTextCtrl *mySQLConnect::GetDBName() const
 {
     return m_dbName;
+}
+
+void mySQLConnect::OnAdvanced(wxCommandEvent &event)
+{
+    mySQLAdvanced dlg( NULL, m_flags );
+    dlg.ShowModal();
+}
+
+mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wxID_ANY, _( "mySQL Advanced Options" ) ) 
+{
+    m_panel = new wxPanel( this );
+    m_expPass = new wxCheckBox( m_panel, wxID_ANY, _( "Handle Expired Password" ) );
+    m_clientCompress = new wxCheckBox( m_panel, wxID_ANY, _( "Client Compress" ) );
+    m_foundRows = new wxCheckBox( m_panel, wxID_ANY, _( "Found Rows" ) );
+    m_ignoreSigPipe = new wxCheckBox( m_panel, wxID_ANY, _( "Ignore SIGPIPE" ) );
+    m_ignoreSpace = new wxCheckBox( m_panel, wxID_ANY, _( "Ignore Space" ) );
+    m_interactive = new wxCheckBox( m_panel, wxID_ANY, _( "Interactive" ) );
+    wxBoxSizer *sizer = new wxBoxSizer( wxHORIZONTAL );
+    sizer->Add( m_panel, 0, wxEXPAND, 0 );
+    SetSizer( sizer );
+    sizer->Fit( this );
+    Layout();
 }

@@ -88,7 +88,7 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
     else
     {
         res = mysql_query( m_db, "START TRANSACTION" );
-        if( !res )
+        if( res )
         {
             err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( L"Starting transaction failed during connection: " + err );
@@ -97,19 +97,19 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
         else
         {
             res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
-            if( !res )
+            if( res )
             {
                 res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str() );
-                if( !res )
+                if( res )
                 {
                     res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str() );
-                    if( !res )
+                    if( res )
 					{
                         res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str()  );
-                        if( !res )
+                        if( res )
                         {
                             res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str() );
-                            if( !res )
+                            if( res )
                             {
                                 res = mysql_commit( m_db );
                             }
@@ -354,6 +354,12 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             return 1;
         }
     }
+    if( !row )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        return 1;
+    }
 /*    DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
                 if( GetTableProperties( table, errorMsg ) )
                 {
@@ -591,19 +597,23 @@ int MySQLDatabase::SetFieldProperties(const std::wstring &command, std::vector<s
     return res;
 }
 
-void MySQLDatabase::TokenizeConnectionString(const std::wstring &connectStr)
+void MySQLDatabase::TokenizeConnectionString(std::wstring &connectStr)
 {
-    std::wstring temp = connectStr.substr( 0, connectStr.find( ' ' ) );
-    std::wstring temp1 = temp.substr( 0, temp.find( '=' ) );
-    std::wstring temp2 = temp.substr( temp.find( '=' ) );
-    if( temp1 == L"host" )
-        m_host = temp2;
-    if( temp1 == L"user" )
-        m_user = temp2;
-    if( temp1 == L"password" )
-        m_password = temp2;
-    if( temp1 == L"port" )
-        m_port = std::stoi( temp2 );
-    if( temp1 == L"dbname" )
-        m_dbName = temp2;
+    while( !connectStr.empty() )
+    {
+        std::wstring temp = connectStr.substr( 0, connectStr.find( ' ' ) );
+        std::wstring temp1 = temp.substr( 0, temp.find( '=' ) );
+        std::wstring temp2 = temp.substr( temp.find( '=' ) + 1 );
+        if( temp1 == L"host" )
+            m_host = temp2;
+        else if( temp1 == L"user" )
+            m_user = temp2;
+        else if( temp1 == L"password" )
+            m_password = temp2;
+        else if( temp1 == L"port" )
+            m_port = std::stoi( temp2 );
+        else if( temp1 == L"dbname" )
+            m_dbName = temp2;
+        connectStr = connectStr.substr( connectStr.find( ' ' ) + 1 );
+    }
 }
