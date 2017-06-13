@@ -270,6 +270,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
     std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
+    char *str_data1, *str_data2;
     int result = 0, fieldIsNull, fieldPK, fkReference, fkId;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
@@ -311,7 +312,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         MYSQL_BIND params[2];
         unsigned long str_length1, str_length2;
-        char str_data1[strlen( schema_name )], str_data2[strlen( table_name )];
+        str_data1 = new char[strlen( schema_name )], str_data2 = new char[strlen( table_name )];
         memset( params, 0, sizeof( params ) );
         params[0].buffer_type = MYSQL_TYPE_STRING;
         params[0].buffer = (char *) str_data1;
@@ -371,6 +372,10 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 fields.erase( fields.begin(), fields.end() );
                 foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                 fk_names.clear();*/
+    delete str_data1;
+    str_data1 = NULL;
+    delete str_data2;
+    str_data2 = NULL;
     return 0;
 }
 
@@ -490,6 +495,7 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
 {
     MYSQL_STMT *stmt;
     int result = 0;
+    char *str_data1, *str_data2;
     std::wstring query = L"SELECT * FROM abcattbl WHERE abt_snam = ? AND abt_tnam = ?;";
     std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName();
     stmt = mysql_stmt_init( m_db );
@@ -508,7 +514,7 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
     }
     MYSQL_BIND params[2];
     unsigned long str_length1, str_length2;
-    char str_data1[schemaName.length()], str_data2[tableName.length()];
+    str_data1 = new char[schemaName.length()], str_data2 = new char[tableName.length()];
     memset( params, 0, sizeof( params ) );
     params[0].buffer_type = MYSQL_TYPE_STRING;
     params[0].buffer = (char *) str_data1;
@@ -558,6 +564,10 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
         errorMsg.push_back( err );
         return 1;
     }
+    delete str_data1;
+    delete str_data2;
+    str_data1 = NULL;
+    str_data2 = NULL;
     return result;
 }
 
