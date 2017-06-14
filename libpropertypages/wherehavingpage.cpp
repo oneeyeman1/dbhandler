@@ -142,5 +142,14 @@ void WhereHavingPage::OnSelection()
 
 void WhereHavingPage::OnCellRightClick(wxGridEvent &event)
 {
-
+    int col = event.GetCol();
+    if( col == 3 )
+    {
+        wxMenu contextMenu;
+        contextMenu.Append( _( "" ), _( "" ) );
+        contextMenu.Append( _( "" ), _( "" ) );
+        contextMenu.Append( _( "" ), _( "" ) );
+        contextMenu.Append( _( "" ), _( "" ) );
+        contextMenu.PopupMenu();
+    }
 }
