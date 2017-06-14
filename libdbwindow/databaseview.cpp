@@ -181,8 +181,8 @@ void DrawingView::CreateViewToolBar()
     wxSize size = parent->GetClientSize();
     if( !m_tb )
         m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
-	else
-		m_tb->ClearTools();
+    else
+        m_tb->ClearTools();
     if( m_type == DatabaseView )
     {
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
@@ -385,7 +385,7 @@ bool DrawingView::OnClose(bool deleteWindow)
         wxSize clientSize = mainWin->GetClientSize();
         parent->SetSize( 0, 0, clientSize.x, clientSize.y );
     }
-	else
+    else
         m_tb->ClearTools();
     return true;
 }
@@ -620,12 +620,12 @@ void DrawingView::OnClearLog(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::SetViewType(ViewType type)
 {
-	m_type = type;
+    m_type = type;
 }
 
 ViewType DrawingView::GetViewType()
 {
-	return m_type;
+    return m_type;
 }
 
 #if defined __WXMSW__ || defined __WXGTK__
@@ -855,10 +855,10 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
         m_fields->RemoveField( queryFields );
         if( queryFields.size() == 0 )
         {
-			query.Replace( name, "<unknown fields>" );
+            query.Replace( name, "<unknown fields>" );
         }
-		else
-		{
+        else
+        {
             wxString str = ",";
             str += " ";
             str += name;
@@ -870,7 +870,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
                 temp1 = temp1.substr( 2 );
             }
             query = temp + temp1;
-		}
+        }
         m_page6->SetSyntaxText( query );
     }
 }

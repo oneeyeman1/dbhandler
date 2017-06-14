@@ -58,6 +58,7 @@ WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
     m_logicalSize = m_grid->GetColSize( 3 );
     Bind( wxEVT_SIZE, &WhereHavingPage::OnSize, this );
     m_grid->Bind( wxEVT_GRID_EDITOR_CREATED, &WhereHavingPage::OnColumnName, this );
+    m_grid->Bind( wxEVT_GRID_CELL_RIGHT_CLICK, &WhereHavingPage::OnCellRightClick, this );
 }
 
 WhereHavingPage::~WhereHavingPage(void)
@@ -137,4 +138,18 @@ wxGrid *WhereHavingPage::GetGrid()
 void WhereHavingPage::OnSelection()
 {
     m_grid->SetCellHighlightPenWidth( 0 );
+}
+
+void WhereHavingPage::OnCellRightClick(wxGridEvent &event)
+{
+    int col = event.GetCol();
+    if( col == 3 )
+    {
+        wxMenu contextMenu;
+        contextMenu.Append( _( "" ), _( "" ) );
+        contextMenu.Append( _( "" ), _( "" ) );
+        contextMenu.Append( _( "" ), _( "" ) );
+        contextMenu.Append( _( "" ), _( "" ) );
+        contextMenu.PopupMenu();
+    }
 }

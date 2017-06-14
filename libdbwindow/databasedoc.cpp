@@ -189,6 +189,6 @@ void DrawingDocument::AddRemoveField(const std::wstring &fieldName, bool isAdded
 {
     if( isAdded )
         m_queryFields.push_back( fieldName );
-	else
+    else
         m_queryFields.erase( std::remove( m_queryFields.begin(), m_queryFields.end(), fieldName ), m_queryFields.end() );
 }

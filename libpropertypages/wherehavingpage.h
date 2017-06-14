@@ -9,6 +9,7 @@ public:
     void OnSize(wxSizeEvent &event);
     void OnColumnName(wxGridEditorCreatedEvent &event);
     void OnColumnDropDown(wxCommandEvent &event);
+    void OnCellRightClick(wxGridEvent &event);
     void OnSelection();
 protected:
     void do_layout();

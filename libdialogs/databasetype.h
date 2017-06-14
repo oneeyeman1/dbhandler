@@ -47,6 +47,7 @@ public:
     PostgresConnect(wxWizard *parent);
     virtual wxWizardPage *GetPrev() const;
     virtual wxWizardPage *GetNext() const;
+    void OnAdvanced(wxCommandEvent &event);
     wxTextCtrl *GetDatabaseName();
     wxTextCtrl *GetHost() const;
     wxTextCtrl *GetHostAddr() const;
@@ -57,8 +58,17 @@ public:
 private:
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6;
     wxTextCtrl *m_host, *m_hostAddr, *m_port, *m_userID, *m_password, *m_dbName;
+    wxButton *m_advanced;
     unsigned long m_value;
     wxString m_engine;
+};
+
+class PostgresAdvanced : public wxDialog
+{
+public:
+    PostgresAdvanced(wxWindow *parent);
+private:
+    wxPanel *m_panel;
 };
 
 class mySQLConnect : public wxWizardPage
