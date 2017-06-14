@@ -20,6 +20,7 @@
 #include "wx/wizard.h"
 #include "wx/filepicker.h"
 #include "wx/dynlib.h"
+#include "wx/statline.h"
 #include "database.h"
 #include "databasetype.h"
 
@@ -471,6 +472,7 @@ wxTextCtrl *PostgresConnect::GetDBName() const
 
 mySQLConnect::mySQLConnect(wxWizard *parent) : wxWizardPage( parent )
 {
+    m_flags = 0;
     dynamic_cast<DatabaseType *>( GetParent() )->GetDatabaseEngine( m_engine );
     m_value = 3306;
     wxIntegerValidator<unsigned long> val( &m_value );
@@ -555,10 +557,19 @@ wxTextCtrl *mySQLConnect::GetDBName() const
     return m_dbName;
 }
 
-void mySQLConnect::OnAdvanced(wxCommandEvent &event)
+void mySQLConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
 {
     mySQLAdvanced dlg( NULL, m_flags );
-    dlg.ShowModal();
+    dlg.Centre();
+    if( dlg.ShowModal() == wxID_OK )
+    {
+        if( dlg.m_expPass->IsChecked() )
+            m_flags |= 1;
+        if( dlg.m_clientCompress->IsChecked() )
+            m_flags |= 2;
+        if( dlg.m_foundRows->IsChecked() )
+            m_flags |= 4;
+    }
 }
 
 mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wxID_ANY, _( "mySQL Advanced Options" ) ) 
@@ -570,7 +581,82 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
     m_ignoreSigPipe = new wxCheckBox( m_panel, wxID_ANY, _( "Ignore SIGPIPE" ) );
     m_ignoreSpace = new wxCheckBox( m_panel, wxID_ANY, _( "Ignore Space" ) );
     m_interactive = new wxCheckBox( m_panel, wxID_ANY, _( "Interactive" ) );
+    m_localFiles = new wxCheckBox( m_panel, wxID_ANY, _( "Local Files" ) );
+    m_multiResults = new wxCheckBox( m_panel, wxID_ANY, _("Multi Results" ) );
+    m_multiStat = new wxCheckBox( m_panel, wxID_ANY, _( "Multi Statements" ) );
+    m_noSchema = new wxCheckBox( m_panel, wxID_ANY, _( "No Schema" ) );
+    m_odbc = new wxCheckBox( m_panel, wxID_ANY, _( "ODBC" ) );
+    m_ssl = new wxCheckBox( m_panel, wxID_ANY, _( "SSL" ) );
+    m_remember = new wxCheckBox( m_panel, wxID_ANY, _( "Remember Options" ) );
+    m_label1 = new wxStaticText( m_panel, wxID_ANY, _( "Default Authentication Plugin:" ) );
+    m_defaultAuth = new wxTextCtrl( m_panel, wxID_ANY );
+    m_clearText = new wxCheckBox( m_panel, wxID_ANY, _( "Clear Text Plugin" ) );
+    m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "Init Command:" ) );
+    m_initCommand = new wxTextCtrl( m_panel, wxID_ANY );
+    m_label3 = new wxStaticText( m_panel, wxID_ANY, _( "Opt Bind" ) );
+    m_optBind = new wxTextCtrl( m_panel, wxID_ANY );
+    m_handleExpiredPass = new wxCheckBox( m_panel, wxID_ANY, _( "Can Handle Expired Password" ) );
+    m_optCompress = new wxCheckBox( m_panel, wxID_ANY, _( "Opt Compress" ) );
+    if( flags & 1 )
+        m_expPass->SetValue( true );
+    if( flags & 2 )
+        m_clientCompress->SetValue( true );
     wxBoxSizer *sizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *sizer1 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *sizer2 = new wxBoxSizer( wxVERTICAL );
+    wxStdDialogButtonSizer *sizer3 = new wxStdDialogButtonSizer();
+    sizer3->AddButton( new wxButton( m_panel, wxID_OK, _( "OK" ) ) );
+    sizer3->AddButton( new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) ) );
+    sizer3->AddButton( new wxButton( m_panel, wxID_HELP, _( "Help" ) ) );
+    sizer3->Realize();
+    wxFlexGridSizer *sizer4 = new wxFlexGridSizer( 5, 3, 5, 5 );
+    wxFlexGridSizer *sizer5 = new wxFlexGridSizer( 5, 3, 5, 5 );
+    wxBoxSizer *sizer6 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *sizer7 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *sizer8 = new wxBoxSizer( wxHORIZONTAL );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer4->Add( m_expPass, 0, wxEXPAND, 0 );
+    sizer4->Add( m_clientCompress, 0, wxEXPAND, 0 );
+    sizer4->Add( m_foundRows, 0, wxEXPAND, 0 );
+    sizer4->Add( m_ignoreSigPipe, 0, wxEXPAND, 0 );
+    sizer4->Add( m_ignoreSpace, 0, wxEXPAND, 0 );
+    sizer4->Add( m_interactive, 0, wxEXPAND, 0 );
+    sizer4->Add( m_localFiles, 0, wxEXPAND, 0 );
+    sizer4->Add( m_multiResults, 0, wxEXPAND, 0 );
+    sizer4->Add( m_multiStat, 0, wxEXPAND, 0 );
+    sizer4->Add( m_noSchema, 0, wxEXPAND, 0 );
+    sizer4->Add( m_odbc, 0, wxEXPAND, 0 );
+    sizer4->Add( m_ssl, 0, wxEXPAND, 0 );
+    sizer4->Add( m_remember, 0, wxEXPAND, 0 );
+    sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer2->Add( sizer4, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer2->Add( new wxStaticLine( m_panel ), 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer6->Add( m_label1, 0, wxEXPAND, 0 );
+    sizer6->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer6->Add( m_defaultAuth, 0, wxEXPAND, 0 );
+    sizer5->Add( sizer6, 0, wxEXPAND, 0 );
+    sizer5->Add( m_clearText, 0, wxEXPAND, 0 );
+    sizer7->Add( m_label2, 0, wxEXPAND, 0 );
+    sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer7->Add( m_initCommand, 0, wxEXPAND, 0 );
+    sizer5->Add( sizer7, 0, wxEXPAND, 0 );
+	sizer8->Add( m_label3, 0, wxEXPAND, 0 );
+    sizer8->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer8->Add( m_optBind, 0, wxEXPAND, 0 );
+    sizer5->Add( sizer8, 0, wxEXPAND, 0 );
+    sizer5->Add( m_handleExpiredPass, 0, wxEXPAND, 0 );
+    sizer5->Add( m_optCompress, 0, wxEXPAND, 0 );
+    sizer2->Add( sizer5, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer2->Add( sizer3, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer1->Add( sizer2, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_panel->SetSizer( sizer1 );
     sizer->Add( m_panel, 0, wxEXPAND, 0 );
     SetSizer( sizer );
     sizer->Fit( this );

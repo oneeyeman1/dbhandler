@@ -87,9 +87,10 @@ class mySQLAdvanced : public wxDialog
 {
 public:
     mySQLAdvanced(wxWindow *parent, int flags);
-private:
     wxPanel *m_panel;
-    wxCheckBox *m_expPass, *m_clientCompress, *m_foundRows, *m_ignoreSigPipe, *m_ignoreSpace, *m_interactive;
+    wxStaticText *m_label1, *m_label2, *m_label3;
+    wxCheckBox *m_expPass, *m_clientCompress, *m_foundRows, *m_ignoreSigPipe, *m_ignoreSpace, *m_interactive, *m_localFiles, *m_multiResults, *m_multiStat, *m_noSchema, *m_odbc, *m_ssl, *m_remember, *m_clearText, *m_handleExpiredPass, *m_optCompress;
+    wxTextCtrl *m_defaultAuth, *m_initCommand, *m_optBind;
 };
 
 class DatabaseType : public wxWizard
