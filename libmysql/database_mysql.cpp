@@ -61,8 +61,8 @@ int MySQLDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstri
 {
     int result = 0, res;
     std::wstring query = L"DROP TABLE " + name;
-    if( pimpl->m_dbName == name )
-        result = Disconnect( errorMsg );
+    std::wstring query1 = L"SET FOREIGN_KEY_CHECKS = 0";
+    result = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( !result )
     {
         res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
@@ -72,6 +72,11 @@ int MySQLDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstri
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
         }
+    }
+    else
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
     }
     return result;
 }
