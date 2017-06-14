@@ -400,6 +400,7 @@ PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
     m_password = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
     m_label6 = new wxStaticText( this, wxID_ANY, _( "Database Name" ) );
     m_dbName = new wxTextCtrl( this, wxID_ANY, "" );
+    m_advanced = new wxButton( this, wxID_ANY, _( "Advanced Options" ) );
     wxBoxSizer *main = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer1 = new wxBoxSizer( wxVERTICAL );
     wxFlexGridSizer *sizer2 = new wxFlexGridSizer( 6, 2, 5, 5 );
@@ -419,9 +420,12 @@ PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
     sizer2->Add( m_dbName, 0, wxEXPAND, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer1->Add( m_advanced, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     main->Add( sizer1, 0, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizerAndFit( main );
+    m_advanced->Bind( wxEVT_BUTTON, &PostgresConnect::OnAdvanced, this );
 }
 
 wxWizardPage *PostgresConnect::GetPrev() const
@@ -467,6 +471,18 @@ wxTextCtrl *PostgresConnect::GetPassword() const
 wxTextCtrl *PostgresConnect::GetDBName() const
 {
     return m_dbName;
+}
+
+void PostgresConnect::OnAdvanced(wxCommandEvent &event)
+{
+    PostgresAdvanced dlg( NULL );
+    dlg.Centre();
+    dlg.ShowModal();
+}
+
+PostgresAdvanced::PostgresAdvanced(wxWindow *parent) : wxDialog( parent, wxID_ANY, _( "Postgres Advanced Options" ) )
+{
+    m_panel = new wxPanel( this );
 }
 
 mySQLConnect::mySQLConnect(wxWizard *parent) : wxWizardPage( parent )
