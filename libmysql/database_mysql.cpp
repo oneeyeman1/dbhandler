@@ -94,7 +94,7 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
         result = 1;
     }
     TokenizeConnectionString( selectedDSN );
-    m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( m_host.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_user.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_password.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_dbName.c_str() ).c_str(), m_port, NULL, 0 );
+    m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( m_pimpl->m_host.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_user.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_password.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_dbName.c_str() ).c_str(), m_port, NULL, 0 );
     if( !m_db )
     {
         err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -631,15 +631,15 @@ void MySQLDatabase::TokenizeConnectionString(std::wstring &connectStr)
         std::wstring temp1 = temp.substr( 0, temp.find( '=' ) );
         std::wstring temp2 = temp.substr( temp.find( '=' ) + 1 );
         if( temp1 == L"host" )
-            m_host = temp2;
+            m_pimpl->m_host = temp2;
         else if( temp1 == L"user" )
-            m_user = temp2;
+            m_pimpl->m_user = temp2;
         else if( temp1 == L"password" )
-            m_password = temp2;
+            m_pimpl->m_password = temp2;
         else if( temp1 == L"port" )
             m_port = std::stoi( temp2 );
         else if( temp1 == L"dbname" )
-            m_dbName = temp2;
+            m_pimpl->m_dbName = temp2;
         connectStr = connectStr.substr( connectStr.find( ' ' ) + 1 );
     }
 }
