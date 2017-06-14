@@ -99,7 +99,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
         if( std::find( selections.begin(), selections.end(), name ) == selections.end() )
             selections.push_back( name );
         if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
-		{
+        {
             query += (*it1)->GetTableName();
             if( it1 != m_displayedTables.end() - 1 )
                 query += ", ";
@@ -324,7 +324,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             }
             if( selectedCount == const_cast<DatabaseTable &>( erdTable->GetTable() ).GetFields().size() )
                 allSelected = 1;
-			else
+            else
                 allSelected = -1;
         }
         Refresh();
@@ -365,7 +365,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
                 if( !allSelected )
                     mnu.FindItem( wxID_DESELECTALLFIELDS )->Enable( false );
-				else if( allSelected == 1 )
+                else if( allSelected == 1 )
                     mnu.FindItem( wxID_SELECTALLFIELDS )->Enable( false );
             }
         }
@@ -404,7 +404,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 showMenu->Check( wxID_SHOWCOMMENTS, true );
             if( m_showToolBox )
                 showMenu->Check( wxID_SHOWSQLTOOLBOX, true );
-		}
+        }
     }
     int rc = GetPopupMenuSelectionFromUser( mnu, pt );
     if( rc == wxID_NONE && erdField )
@@ -427,7 +427,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         wxCommandEvent evt( wxEVT_MENU, rc );
         if( erdField )
             evt.SetEventObject( erdField );
-		else
+        else
             evt.SetEventObject( erdTable );
         m_view->ProcessEvent( evt );
     }
