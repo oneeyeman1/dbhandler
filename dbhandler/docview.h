@@ -111,6 +111,12 @@ wxDECLARE_APP(MyApp);
 #define wxID_SHOWLABELS           118
 #define wxID_SHOWCOMMENTS         119
 #define wxID_SHOWSQLTOOLBOX       120
+#define WHEREPAGECOLUMNS          194
+#define WHEREPAGEFUNCTIONS        195
+#define WHEREPAGEARGUMENTS        196
+#define WHEREPAGEVALUE            197
+#define WHEREPAGESELECT           198
+#define WHEREPAGECLEAR            199
 #define wxID_EDITCUTCOLUMN        200
 #define wxID_EDITCOPYCOLUMN       201
 #define wxID_EDITPASTECOLUMN      202
