@@ -17,7 +17,6 @@
 #include "../dbhandler/res/database_profile.xpm"
 #include "../dbhandler/res/table.xpm"
 #include "../dbhandler/res/properties.xpm"
-#include "../dbhandler/res/sql.xpm"
 #include "res/gui/key-f1.xpm"
 //#endif
 
@@ -91,6 +90,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_tb = NULL;
     wxToolBar *tb = NULL;
     m_isCreated = false;
+    m_fields = NULL;
+    m_queryBook = NULL;
+    m_page2 = m_page4 = NULL;
+    m_page6 = NULL;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -118,15 +121,15 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
     m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentRect.GetHeight() );
-/*    m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
+    m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
     wxBitmap tmp = wxBitmap( database_profile );
     m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
     m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
     m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
     m_tb->Realize();
-    m_frame->SetToolBar( m_tb );
+    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
     ptCanvas.x = -1;
-    ptCanvas.y = m_tb->GetSize().GetHeight();*/
+    ptCanvas.y = m_tb->GetSize().GetHeight();
 #else
     ptCanvas = wxDefaultPosition;
 #endif
@@ -138,7 +141,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         sizer->Add( m_fields, 0, wxEXPAND, 0 );
         m_fields->Show( false );
     }
-    m_canvas = new DatabaseCanvas( this, wxDefaultPosition/*ptCanvas*/ );
+    m_canvas = new DatabaseCanvas( this, /*wxDefaultPosition*/ptCanvas );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
     if( m_type == QueryView )
     {
@@ -161,7 +164,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
 #if defined __WXMSW__ || defined __WXGTK__
     CreateViewToolBar();
-    parent->SendSizeEvent();
 #endif
     return true;
 }
@@ -189,15 +191,13 @@ void DrawingView::CreateViewToolBar()
     }
     else
     {
-        m_tb->AddCheckTool( wxID_DATASOURCE, _( "SQL icon" ), wxBitmap( sql ), wxBitmap( sql ), _( "SQL design" ), _( "SQL design" ) );
-        m_tb->ToggleTool( wxID_DATASOURCE, false );
     }
     m_tb->Realize();
     wxMDIClientWindow *frame = (wxMDIClientWindow *) parent->GetClientWindow();
     m_tb->SetSize( 0, 0, size.x, wxDefaultCoord );
     offset = m_tb->GetSize().y;
-    frame->SetSize( 0, 0, size.x, size.y - offset );
-    m_frame->SetSize( 0, offset, size.x, size.y - offset - 2 );
+    frame->SetSize( 0, offset, size.x, size.y - offset );
+    m_frame->SetSize( 0, 0, size.x, size.y - offset - 2 );
 }
 #endif
 
@@ -363,6 +363,7 @@ void DrawingView::OnUpdate(wxView* sender, wxObject* hint)
 // Clean up windows used for displaying the view.
 bool DrawingView::OnClose(bool deleteWindow)
 {
+    wxDocMDIParentFrame *mainWin = (wxDocMDIParentFrame *) m_frame->GetMDIParent();
     m_isActive = false;
     if( !wxView::OnClose( deleteWindow ) )
         return false;
@@ -375,11 +376,17 @@ bool DrawingView::OnClose(bool deleteWindow)
         SetFrame( NULL );
     }
     wxDocManager *manager = GetDocumentManager();
-    if( manager->GetDocumentsVector().size() == 0 )
+    wxMDIClientWindow *parent = dynamic_cast<wxMDIClientWindow *>( mainWin->GetClientWindow() );
+    wxWindowList children = parent->GetChildren();
+    if( parent->GetChildren().size() == 0 )
     {
         delete m_tb;
         m_tb = NULL;
+        wxSize clientSize = mainWin->GetClientSize();
+        parent->SetSize( 0, 0, clientSize.x, clientSize.y );
     }
+	else
+        m_tb->ClearTools();
     return true;
 }
 
@@ -693,12 +700,16 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         {
             m_tb->Destroy();
             m_tb = NULL;
-            m_frame->GetParent()->SetSize( 0, 0, clientSize.x, clientSize.y ); 
+            if( frame && frame->GetParent() )
+                frame->GetParent()->SetSize( 0, 0, clientSize.x, clientSize.y ); 
         }
         else
         {
-            m_tb->ClearTools();
-            m_tb->Hide();
+            if( m_tb )
+            {
+                m_tb->ClearTools();
+                m_tb->Hide();
+            }
         }
     }
 }

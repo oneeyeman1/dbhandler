@@ -32,10 +32,10 @@ protected:
     void GetErrorMessage(int code, std::wstring &errorMsg);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual void SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
-    void TokenizeConnectionString(const std::wstring &connectStr);
+    void TokenizeConnectionString(std::wstring &connectStr);
 private:
     MYSQL *m_db;
-    std::wstring m_host, m_user, m_password, m_db;
+    std::wstring m_host, m_user, m_password, m_dbName;
     int m_port;
 };
 

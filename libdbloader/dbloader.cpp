@@ -30,10 +30,12 @@
 #include "wx/dynlib.h"
 #include "sqlite3.h"
 #include "libpq-fe.h"
+#include "mysql.h"
 #include "database.h"
 #include "database_sqlite.h"
 #include "database_odbc.h"
 #include "database_postgres.h"
+#include "database_mysql.h"
 
 typedef int (*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, bool, const std::vector<std::wstring> &);
 
@@ -138,6 +140,8 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             {
 				pdb = new PostgresDatabase();
             }
+            if( engine == "mySQL" )
+                pdb = new MySQLDatabase();
             wxBeginBusyCursor();
             result = pdb->Connect( name.ToStdWstring(), errorMsg );
             wxEndBusyCursor();

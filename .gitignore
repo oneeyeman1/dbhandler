@@ -13,6 +13,7 @@ libpropertypages/vc_mswuddll
 libtablewindow/vc_mswuddll
 libsqlite/sqlite3.lib
 libpostgres/vc_mswuddll
+libmysql/vc_mswuddll
 dbinterface/Debug/
 dbhandler/*.cpp~
 libdbloader/*.cpp~

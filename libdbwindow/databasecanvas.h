@@ -62,5 +62,6 @@ private:
 #define wxID_SHOWLABELS           118
 #define wxID_SHOWCOMMENTS         119
 #define wxID_SHOWSQLTOOLBOX       120
+#define wxID_DATASOURCE           301
 
 #endif
