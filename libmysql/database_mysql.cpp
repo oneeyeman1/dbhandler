@@ -38,7 +38,7 @@ int MySQLDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wst
     result = Disconnect( errorMsg );
     if( !result )
     {
-        result = mysql_query( m_db, m_pimpl->m_myconv.from_bytes( name.c_str() ).c_str() );
+        result = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( name.c_str() ).c_str() );
         if( result )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -61,8 +61,8 @@ int MySQLDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstri
 {
     int result = 0, res;
     std::wstring query = L"DROP DATABASE " + name;
-    if( pimpl->m_dbName == name )
-        result = Disconnect( errorMsg );
+    std::wstring query1 = L"SET FOREIGN_KEY_CHECKS = 0";
+    result = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( !result )
     {
         res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
@@ -72,6 +72,11 @@ int MySQLDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstri
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
         }
+    }
+    else
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
     }
     return result;
 }
@@ -94,7 +99,7 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
         result = 1;
     }
     TokenizeConnectionString( selectedDSN );
-    m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( m_host.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_user.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_password.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_dbName.c_str() ).c_str(), m_port, NULL, 0 );
+    m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( m_pimpl->m_host.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_user.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_password.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_dbName.c_str() ).c_str(), m_port, m_pimpl->m_myconv.to_bytes( m_pimpl->m_socket.c_str() ).c_str(), m_flags );
     if( !m_db )
     {
         err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -631,15 +636,47 @@ void MySQLDatabase::TokenizeConnectionString(std::wstring &connectStr)
         std::wstring temp1 = temp.substr( 0, temp.find( '=' ) );
         std::wstring temp2 = temp.substr( temp.find( '=' ) + 1 );
         if( temp1 == L"host" )
-            m_host = temp2;
+            m_pimpl->m_host = temp2;
         else if( temp1 == L"user" )
-            m_user = temp2;
+            m_pimpl->m_user = temp2;
         else if( temp1 == L"password" )
-            m_password = temp2;
+            m_pimpl->m_password = temp2;
         else if( temp1 == L"port" )
             m_port = std::stoi( temp2 );
         else if( temp1 == L"dbname" )
-            m_dbName = temp2;
+            m_pimpl->m_dbName = temp2;
+		else if( temp1 == L"socket" )
+            m_pimpl->m_socket = temp2;
+		else if( temp1 == L"flags" )
+        {
+            int flags = std::stoi( temp2 );
+            if( flags & 1 )
+                m_flags |= CLIENT_CAN_HANDLE_EXPIRED_PASSWORDS;
+            if( flags & 2 )
+                m_flags |= CLIENT_COMPRESS;
+            if( flags & 4 )
+                m_flags |= CLIENT_FOUND_ROWS;
+            if( flags & 8 )
+                m_flags |= CLIENT_IGNORE_SIGPIPE;
+            if( flags & 16 )
+                m_flags |= CLIENT_IGNORE_SPACE;
+            if( flags & 32 )
+                m_flags |= CLIENT_INTERACTIVE;
+            if( flags & 64 )
+                m_flags |= CLIENT_LOCAL_FILES;
+            if( flags & 128 )
+                m_flags |= CLIENT_MULTI_RESULTS;
+            if( flags & 256 )
+                m_flags |= CLIENT_MULTI_STATEMENTS;
+            if( flags & 512 )
+                m_flags |= CLIENT_NO_SCHEMA;
+            if( flags & 1024 )
+                m_flags |= CLIENT_ODBC;
+            if( flags & 2048 )
+                m_flags |= CLIENT_SSL;
+            if( flags & 4096 )
+                m_flags |= CLIENT_REMEMBER_OPTIONS;
+        }
         connectStr = connectStr.substr( connectStr.find( ' ' ) + 1 );
     }
 }
