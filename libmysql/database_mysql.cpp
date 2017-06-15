@@ -60,7 +60,7 @@ int MySQLDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wst
 int MySQLDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res;
-    std::wstring query = L"DROP TABLE " + name;
+    std::wstring query = L"DROP DATABASE " + name;
     if( pimpl->m_dbName == name )
         result = Disconnect( errorMsg );
     if( !result )
