@@ -86,13 +86,14 @@ public:
     wxTextCtrl *GetDBName() const;
     wxTextCtrl *GetSocket() const;
     int GetFlags();
+    wxString GetOptions() const;
 private:
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7;
     wxTextCtrl *m_host, *m_port, *m_userID, *m_password, *m_dbName, *m_socket;
     wxButton *m_advanced;
     int m_flags;
     unsigned long m_value;
-    wxString m_engine;
+    wxString m_engine, m_options;
 };
 
 class mySQLAdvanced : public wxDialog
