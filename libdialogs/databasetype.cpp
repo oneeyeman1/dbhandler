@@ -650,6 +650,12 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
     m_optBind = new wxTextCtrl( m_panel, wxID_ANY );
     m_handleExpiredPass = new wxCheckBox( m_panel, wxID_ANY, _( "Can Handle Expired Password" ) );
     m_optCompress = new wxCheckBox( m_panel, wxID_ANY, _( "Opt Compress" ) );
+    m_label4 = new wxStaticText( m_panel, wxID_ANY, _( "Delete Connection Attribute:" ) );
+    m_connectAttrDelete = new wxTextCtrl( m_panel, wxID_ANY );
+    wxIntegerValidator<unsigned long> val;
+    m_label5 = new wxStaticText( m_panel, wxID_ANY, _( "Connection Timeout:" ) );
+    m_connectTimeout = new wxTextCtrl( m_panel, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, 0, &val );
+    m_guessConnect = new wxCheckBox( m_panel, wxID_ANY, _( "Guess Connection" ) );
     if( flags & 1 )
         m_expPass->SetValue( true );
     if( flags & 2 )
@@ -689,6 +695,8 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
     wxBoxSizer *sizer6 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer7 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer8 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *sizer9 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *sizer10 = new wxBoxSizer( wxHORIZONTAL );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer4->Add( m_expPass, 0, wxEXPAND, 0 );
@@ -725,6 +733,15 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
     sizer5->Add( sizer8, 0, wxEXPAND, 0 );
     sizer5->Add( m_handleExpiredPass, 0, wxEXPAND, 0 );
     sizer5->Add( m_optCompress, 0, wxEXPAND, 0 );
+    sizer9->Add( m_label4, 0, wxEXPAND, 0 );
+    sizer9->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer9->Add( m_connectAttrDelete, 0, wxEXPAND, 0 );
+    sizer5->Add( sizer9, 0, wxEXPAND, 0 );
+    sizer10->Add( m_label5, 0, wxEXPAND, 0 );
+	sizer10->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer10->Add( m_connectTimeout, 0, wxEXPAND, 0 );
+    sizer5->Add( sizer10, 0, wxEXPAND, 0 );
+    sizer5->Add( m_guessConnect, 0, wxEXPAND, 0 );
     sizer2->Add( sizer5, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( sizer3, 0, wxEXPAND, 0 );

@@ -100,9 +100,9 @@ class mySQLAdvanced : public wxDialog
 public:
     mySQLAdvanced(wxWindow *parent, int flags);
     wxPanel *m_panel;
-    wxStaticText *m_label1, *m_label2, *m_label3;
-    wxCheckBox *m_expPass, *m_clientCompress, *m_foundRows, *m_ignoreSigPipe, *m_ignoreSpace, *m_interactive, *m_localFiles, *m_multiResults, *m_multiStat, *m_noSchema, *m_odbc, *m_ssl, *m_remember, *m_clearText, *m_handleExpiredPass, *m_optCompress;
-    wxTextCtrl *m_defaultAuth, *m_initCommand, *m_optBind;
+    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5;
+    wxCheckBox *m_expPass, *m_clientCompress, *m_foundRows, *m_ignoreSigPipe, *m_ignoreSpace, *m_interactive, *m_localFiles, *m_multiResults, *m_multiStat, *m_noSchema, *m_odbc, *m_ssl, *m_remember, *m_clearText, *m_handleExpiredPass, *m_optCompress, *m_guessConnect;
+    wxTextCtrl *m_defaultAuth, *m_initCommand, *m_optBind, *m_connectAttrDelete, *m_connectTimeout;
 };
 
 class DatabaseType : public wxWizard
