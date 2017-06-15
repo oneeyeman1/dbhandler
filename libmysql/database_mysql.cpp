@@ -99,7 +99,7 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
         result = 1;
     }
     TokenizeConnectionString( selectedDSN );
-    m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( m_pimpl->m_host.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_user.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_password.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_dbName.c_str() ).c_str(), m_port, NULL, 0 );
+    m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( m_pimpl->m_host.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_user.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_password.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_dbName.c_str() ).c_str(), m_port, m_pimpl->m_myconv.to_bytes( m_pimpl->m_socket.c_str() ).c_str(), m_flags );
     if( !m_db )
     {
         err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -645,6 +645,38 @@ void MySQLDatabase::TokenizeConnectionString(std::wstring &connectStr)
             m_port = std::stoi( temp2 );
         else if( temp1 == L"dbname" )
             m_pimpl->m_dbName = temp2;
+		else if( temp1 == L"socket" )
+            m_pimpl->m_socket = temp2;
+		else if( temp1 == L"flags" )
+        {
+            int flags = std::stoi( temp2 );
+            if( flags & 1 )
+                m_flags |= CLIENT_CAN_HANDLE_EXPIRED_PASSWORDS;
+            if( flags & 2 )
+                m_flags |= CLIENT_COMPRESS;
+            if( flags & 4 )
+                m_flags |= CLIENT_FOUND_ROWS;
+            if( flags & 8 )
+                m_flags |= CLIENT_IGNORE_SIGPIPE;
+            if( flags & 16 )
+                m_flags |= CLIENT_IGNORE_SPACE;
+            if( flags & 32 )
+                m_flags |= CLIENT_INTERACTIVE;
+            if( flags & 64 )
+                m_flags |= CLIENT_LOCAL_FILES;
+            if( flags & 128 )
+                m_flags |= CLIENT_MULTI_RESULTS;
+            if( flags & 256 )
+                m_flags |= CLIENT_MULTI_STATEMENTS;
+            if( flags & 512 )
+                m_flags |= CLIENT_NO_SCHEMA;
+            if( flags & 1024 )
+                m_flags |= CLIENT_ODBC;
+            if( flags & 2048 )
+                m_flags |= CLIENT_SSL;
+            if( flags & 4096 )
+                m_flags |= CLIENT_REMEMBER_OPTIONS;
+        }
         connectStr = connectStr.substr( connectStr.find( ' ' ) + 1 );
     }
 }

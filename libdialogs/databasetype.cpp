@@ -170,6 +170,8 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         wxString host = page5->GetHost()->GetValue();
         if( !host.empty() )
             m_connStr = "host=" + host + " ";
+		else
+            m_connStr = "host=localhost ";
         wxString port = page5->GetPort()->GetValue();
         if( !port.empty() )
             m_connStr += "port=" + port + " ";
@@ -178,7 +180,12 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         m_connStr += "user=" + page5->GetUserID()->GetValue() + " ";
         m_connStr += "password=" + page5->GetPassword()->GetValue() + " ";
         m_connStr += "dbname=" + page5->GetDBName()->GetValue() + " ";
-        
+        wxString socket = page5->GetSocket()->GetValue();
+        if( !socket.IsEmpty() )
+            m_connStr += "socket=" + socket + " ";
+        int flags = page5->GetFlags();
+        if( flags )
+            m_connStr += "flags=" + wxString::Format( "%d", flags ) + " ";
     }
 /*    WXWidget hwnd = 0;
     wxString driver;
@@ -474,7 +481,7 @@ wxTextCtrl *PostgresConnect::GetDBName() const
     return m_dbName;
 }
 
-void PostgresConnect::OnAdvanced(wxCommandEvent &event)
+void PostgresConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
 {
     PostgresAdvanced dlg( NULL );
     dlg.Centre();
@@ -573,6 +580,16 @@ wxTextCtrl *mySQLConnect::GetDBName() const
     return m_dbName;
 }
 
+wxTextCtrl *mySQLConnect::GetSocket() const
+{
+    return m_socket;
+}
+
+int mySQLConnect::GetFlags()
+{
+    return m_flags;
+}
+
 void mySQLConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
 {
     mySQLAdvanced dlg( NULL, m_flags );
@@ -585,6 +602,26 @@ void mySQLConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
             m_flags |= 2;
         if( dlg.m_foundRows->IsChecked() )
             m_flags |= 4;
+        if( dlg.m_ignoreSigPipe->IsChecked() )
+            m_flags |= 8;
+        if( dlg.m_ignoreSpace->IsChecked() )
+            m_flags |= 16;
+        if( dlg.m_interactive->IsChecked() )
+            m_flags |= 32;
+        if( dlg.m_localFiles->IsChecked() )
+            m_flags |= 64;
+        if( dlg.m_multiResults->IsChecked() )
+            m_flags |= 128;
+        if( dlg.m_multiStat->IsChecked() )
+            m_flags |= 256;
+        if( dlg.m_noSchema->IsChecked() )
+            m_flags |= 512;
+        if( dlg.m_odbc->IsChecked() )
+            m_flags |= 1024;
+        if( dlg.m_ssl->IsChecked() )
+            m_flags |= 2048;
+        if( dlg.m_remember->IsChecked() )
+            m_flags |= 4096;
     }
 }
 
@@ -617,6 +654,28 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
         m_expPass->SetValue( true );
     if( flags & 2 )
         m_clientCompress->SetValue( true );
+    if( flags & 4 )
+        m_foundRows->SetValue( true );
+    if( flags & 8 )
+        m_ignoreSigPipe->SetValue( true );
+    if( flags & 16 )
+        m_ignoreSpace->SetValue( true );
+    if( flags & 32 )
+        m_interactive->SetValue( true );
+    if( flags & 64 )
+        m_localFiles->SetValue( true );
+    if( flags & 128 )
+        m_multiResults->SetValue( true );
+    if( flags & 256 )
+        m_multiStat->SetValue( true );
+    if( flags & 512 )
+        m_noSchema->SetValue( true );
+    if( flags & 1024 )
+        m_odbc->SetValue( true );
+    if( flags & 2048 )
+        m_ssl->SetValue( true );
+    if( flags & 4096 )
+        m_remember->SetValue( true );
     wxBoxSizer *sizer = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer1 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer2 = new wxBoxSizer( wxVERTICAL );
