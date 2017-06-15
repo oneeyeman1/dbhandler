@@ -188,7 +188,7 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
             m_connStr += "flags=" + wxString::Format( "%d", flags ) + " ";
         wxString options = page5->GetOptions();
         if( !options.IsEmpty() )
-            m_connStr + options;
+            m_connStr += options;
     }
 /*    WXWidget hwnd = 0;
     wxString driver;
@@ -635,7 +635,11 @@ void mySQLConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
             m_options += "MYSQL_DEFAULT_AUTH=" + defaultAuth + " ";
         bool cleartextPlugin = dlg.m_clearText->IsChecked();
         if( cleartextPlugin )
-            m_options += "MYSQL_ENABLE_CLEARTEXT_PLUGIN=1" + " ";
+        {
+            wxString temp = "MYSQL_ENABLE_CLEARTEXT_PLUGIN=1";
+            temp += " ";
+            m_options += temp;
+        }
         wxString initCommand = dlg.m_initCommand->GetValue();
         if( !initCommand.IsEmpty() )
             m_options += "MYSQL_INIT_COMMAND=" + initCommand + " ";
@@ -644,10 +648,18 @@ void mySQLConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
             m_options += "MYSQL_OPT_BIND=" + optionBind + " ";
         bool handleExpiredPass = dlg.m_handleExpiredPass->IsChecked();
         if( handleExpiredPass )
-            m_options += "MYSQL_OPT_CAN_HANDLE_EXPIRED_PASSWORD=1" + " ";
+        {
+            wxString temp = "MYSQL_OPT_CAN_HANDLE_EXPIRED_PASSWORD=1";
+            temp += " ";
+            m_options += temp;
+        }
         bool compress = dlg.m_optCompress->IsChecked();
         if( compress )
-            m_options += "MYSQL_OPT_COMPRESS=0" + " ";
+        {
+            wxString temp = "MYSQL_OPT_COMPRESS=0";
+            temp += " ";
+            m_options +=  temp;
+        }
         wxString attrDelete = dlg.m_connectAttrDelete->GetValue();
         if( !attrDelete.IsEmpty() )
             m_options += "MYSQL_OPT_CONNECT_ATTR_DELETE=" + attrDelete + " ";
@@ -683,7 +695,7 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
     m_connectAttrDelete = new wxTextCtrl( m_panel, wxID_ANY );
     wxIntegerValidator<unsigned long> val;
     m_label5 = new wxStaticText( m_panel, wxID_ANY, _( "Connection Timeout:" ) );
-    m_connectTimeout = new wxTextCtrl( m_panel, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, 0, &val );
+    m_connectTimeout = new wxTextCtrl( m_panel, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, 0, val );
     m_guessConnect = new wxCheckBox( m_panel, wxID_ANY, _( "Guess Connection" ) );
     if( flags & 1 )
         m_expPass->SetValue( true );
