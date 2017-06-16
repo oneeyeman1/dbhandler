@@ -701,6 +701,8 @@ int MySQLDatabase::TokenizeConnectionString(std::wstring &connectStr, std::vecto
                 option = MYSQL_OPT_CAN_HANDLE_EXPIRED_PASSWORDS;
             if( temp1 == L"MYSQL_OPT_COMPRESS" )
                 option = MYSQL_OPT_COMPRESS;
+            if( temp1 == L"MYSQL_OPT_CONNECT_ATTR_DELETE" )
+                option = MYSQL_OPT_CONNECT_ATTR_DELETE;
             int res = mysql_options( m_db, option, m_pimpl->m_myconv.to_bytes( temp2.c_str() ).c_str() );
             if( res )
             {
