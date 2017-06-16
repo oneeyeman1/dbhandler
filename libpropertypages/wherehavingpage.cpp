@@ -17,6 +17,8 @@
 //#include "wx/settings.h"
 #include "wherehavingpage.h"
 
+typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int);
+
 WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
 {
     m_operatorChoices[0] = "=";
@@ -59,6 +61,8 @@ WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
     Bind( wxEVT_SIZE, &WhereHavingPage::OnSize, this );
     m_grid->Bind( wxEVT_GRID_EDITOR_CREATED, &WhereHavingPage::OnColumnName, this );
     m_grid->Bind( wxEVT_GRID_CELL_RIGHT_CLICK, &WhereHavingPage::OnCellRightClick, this );
+    Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGECOLUMNS);
+    Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGEFUNCTIONS);
 }
 
 WhereHavingPage::~WhereHavingPage(void)
@@ -156,4 +160,9 @@ void WhereHavingPage::OnCellRightClick(wxGridEvent &event)
         contextMenu.Append( WHEREPAGECLEAR, _( "Clear" ) );
         PopupMenu( &contextMenu );
     }
+}
+
+void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
+{
+    wxMessageBox( "Hello!!" );
 }

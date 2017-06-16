@@ -37,6 +37,7 @@
 #include "getobjectname.h"
 #include "jointype.h"
 #include "properties.h"
+#include "addcolumnsdialog.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -217,6 +218,14 @@ extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTab
     wxTheApp->SetTopWindow( parent );
 #endif
     JointType dlg( parent, wxID_ANY, _( "Join" ), origTable, refTable, origField, refField );
+    res = dlg.ShowModal();
+    return res;
+}
+
+extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type)
+{
+    int res;
+    AddColumnsDialog dlg( parent, type );
     res = dlg.ShowModal();
     return res;
 }
