@@ -55,9 +55,11 @@ public:
     wxTextCtrl *GetUserID() const;
     wxTextCtrl *GetPassword() const;
     wxTextCtrl *GetDBName() const;
+    wxSpinCtrl *GetTimeout() const;
 private:
-    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6;
+    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7;
     wxTextCtrl *m_host, *m_hostAddr, *m_port, *m_userID, *m_password, *m_dbName;
+    wxSpinCtrl *m_timeout;
     wxButton *m_advanced;
     unsigned long m_value;
     wxString m_engine;
@@ -67,7 +69,9 @@ class PostgresAdvanced : public wxDialog
 {
 public:
     PostgresAdvanced(wxWindow *parent);
+    wxComboBox *m_encoding;
 private:
+    wxStaticText *m_label1;
     wxPanel *m_panel;
 };
 

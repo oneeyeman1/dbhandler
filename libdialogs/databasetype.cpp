@@ -163,6 +163,7 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         m_connStr += "user = " + page4->GetUserID()->GetValue() + " ";
         m_connStr += "password = " + page4->GetPassword()->GetValue() + " ";
         m_connStr += "dbname = " + page4->GetDBName()->GetValue() + " ";
+        m_connStr += "connect_timeout = " + wxString::Format( "%d", page4->GetTimeout()->GetValue() ) + " ";
     }
     if( m_dbEngine == "mySQL" )
     {
@@ -411,10 +412,12 @@ PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
     m_password = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
     m_label6 = new wxStaticText( this, wxID_ANY, _( "Database Name" ) );
     m_dbName = new wxTextCtrl( this, wxID_ANY, "" );
+    m_label7 = new wxStaticText( this, wxID_ANY, _( "Connection Timeout" ) );
+    m_timeout = new wxSpinCtrl( this, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP, 0, 300 );
     m_advanced = new wxButton( this, wxID_ANY, _( "Advanced Options" ) );
     wxBoxSizer *main = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer1 = new wxBoxSizer( wxVERTICAL );
-    wxFlexGridSizer *sizer2 = new wxFlexGridSizer( 6, 2, 5, 5 );
+    wxFlexGridSizer *sizer2 = new wxFlexGridSizer( 7, 2, 5, 5 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( m_label1, 0, wxEXPAND, 0 );
@@ -429,6 +432,8 @@ PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
     sizer2->Add( m_password, 0, wxEXPAND, 0 );
     sizer2->Add( m_label6, 0, wxEXPAND, 0 );
     sizer2->Add( m_dbName, 0, wxEXPAND, 0 );
+    sizer2->Add( m_label7, 0, wxEXPAND, 0 );
+    sizer2->Add( m_timeout, 0, wxEXPAND, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( m_advanced, 0, wxEXPAND, 0 );
@@ -484,6 +489,11 @@ wxTextCtrl *PostgresConnect::GetDBName() const
     return m_dbName;
 }
 
+wxSpinCtrl *PostgresConnect::GetTimeout() const
+{
+    return m_timeout;
+}
+
 void PostgresConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
 {
     PostgresAdvanced dlg( NULL );
@@ -494,6 +504,8 @@ void PostgresConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
 PostgresAdvanced::PostgresAdvanced(wxWindow *parent) : wxDialog( parent, wxID_ANY, _( "Postgres Advanced Options" ) )
 {
     m_panel = new wxPanel( this );
+    m_label1 = new wxStaticText( m_panel, wxID_ANY, _( "Client Encoding" ) );
+    m_encoding = new wxComboBox( m_panel, wxID_ANY );
 }
 
 mySQLConnect::mySQLConnect(wxWizard *parent) : wxWizardPage( parent )
