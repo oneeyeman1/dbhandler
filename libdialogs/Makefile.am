@@ -21,7 +21,9 @@ libdialogs_la_SOURCES =  \
 	getobjectname.cpp \
 	getobjectname.h \
 	jointype.cpp \
-	jointype.h
+	jointype.h \
+	addcolumnsdialog.cpp \
+	addcolumnsdialog.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
