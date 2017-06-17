@@ -55,9 +55,11 @@ public:
     wxTextCtrl *GetUserID() const;
     wxTextCtrl *GetPassword() const;
     wxTextCtrl *GetDBName() const;
+    wxSpinCtrl *GetTimeout() const;
 private:
-    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6;
+    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7;
     wxTextCtrl *m_host, *m_hostAddr, *m_port, *m_userID, *m_password, *m_dbName;
+    wxSpinCtrl *m_timeout;
     wxButton *m_advanced;
     unsigned long m_value;
     wxString m_engine;
@@ -67,7 +69,9 @@ class PostgresAdvanced : public wxDialog
 {
 public:
     PostgresAdvanced(wxWindow *parent);
+    wxComboBox *m_encoding;
 private:
+    wxStaticText *m_label1;
     wxPanel *m_panel;
 };
 
@@ -84,13 +88,16 @@ public:
     wxTextCtrl *GetUserID() const;
     wxTextCtrl *GetPassword() const;
     wxTextCtrl *GetDBName() const;
+    wxTextCtrl *GetSocket() const;
+    int GetFlags();
+    wxString GetOptions() const;
 private:
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7;
     wxTextCtrl *m_host, *m_port, *m_userID, *m_password, *m_dbName, *m_socket;
     wxButton *m_advanced;
     int m_flags;
     unsigned long m_value;
-    wxString m_engine;
+    wxString m_engine, m_options;
 };
 
 class mySQLAdvanced : public wxDialog
@@ -98,9 +105,9 @@ class mySQLAdvanced : public wxDialog
 public:
     mySQLAdvanced(wxWindow *parent, int flags);
     wxPanel *m_panel;
-    wxStaticText *m_label1, *m_label2, *m_label3;
-    wxCheckBox *m_expPass, *m_clientCompress, *m_foundRows, *m_ignoreSigPipe, *m_ignoreSpace, *m_interactive, *m_localFiles, *m_multiResults, *m_multiStat, *m_noSchema, *m_odbc, *m_ssl, *m_remember, *m_clearText, *m_handleExpiredPass, *m_optCompress;
-    wxTextCtrl *m_defaultAuth, *m_initCommand, *m_optBind;
+    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5;
+    wxCheckBox *m_expPass, *m_clientCompress, *m_foundRows, *m_ignoreSigPipe, *m_ignoreSpace, *m_interactive, *m_localFiles, *m_multiResults, *m_multiStat, *m_noSchema, *m_odbc, *m_ssl, *m_remember, *m_clearText, *m_handleExpiredPass, *m_optCompress, *m_guessConnect;
+    wxTextCtrl *m_defaultAuth, *m_initCommand, *m_optBind, *m_connectAttrDelete, *m_connectTimeout;
 };
 
 class DatabaseType : public wxWizard

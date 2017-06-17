@@ -10,6 +10,7 @@ public:
     void OnColumnName(wxGridEditorCreatedEvent &event);
     void OnColumnDropDown(wxCommandEvent &event);
     void OnCellRightClick(wxGridEvent &event);
+    void OnMenuSelection(wxCommandEvent &event);
     void OnSelection();
 protected:
     void do_layout();
@@ -21,3 +22,9 @@ private:
     std::vector<std::wstring> m_fields;
 };
 
+#define WHEREPAGECOLUMNS          194
+#define WHEREPAGEFUNCTIONS        195
+#define WHEREPAGEARGUMENTS        196
+#define WHEREPAGEVALUE            197
+#define WHEREPAGESELECT           198
+#define WHEREPAGECLEAR            199

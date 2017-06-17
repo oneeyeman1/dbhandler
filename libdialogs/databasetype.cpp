@@ -163,6 +163,7 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         m_connStr += "user = " + page4->GetUserID()->GetValue() + " ";
         m_connStr += "password = " + page4->GetPassword()->GetValue() + " ";
         m_connStr += "dbname = " + page4->GetDBName()->GetValue() + " ";
+        m_connStr += "connect_timeout = " + wxString::Format( "%d", page4->GetTimeout()->GetValue() ) + " ";
     }
     if( m_dbEngine == "mySQL" )
     {
@@ -170,6 +171,8 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         wxString host = page5->GetHost()->GetValue();
         if( !host.empty() )
             m_connStr = "host=" + host + " ";
+		else
+            m_connStr = "host=localhost ";
         wxString port = page5->GetPort()->GetValue();
         if( !port.empty() )
             m_connStr += "port=" + port + " ";
@@ -178,7 +181,15 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         m_connStr += "user=" + page5->GetUserID()->GetValue() + " ";
         m_connStr += "password=" + page5->GetPassword()->GetValue() + " ";
         m_connStr += "dbname=" + page5->GetDBName()->GetValue() + " ";
-        
+        wxString socket = page5->GetSocket()->GetValue();
+        if( !socket.IsEmpty() )
+            m_connStr += "socket=" + socket + " ";
+        int flags = page5->GetFlags();
+        if( flags )
+            m_connStr += "flags=" + wxString::Format( "%d", flags ) + " ";
+        wxString options = page5->GetOptions();
+        if( !options.IsEmpty() )
+            m_connStr += options;
     }
 /*    WXWidget hwnd = 0;
     wxString driver;
@@ -401,10 +412,12 @@ PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
     m_password = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
     m_label6 = new wxStaticText( this, wxID_ANY, _( "Database Name" ) );
     m_dbName = new wxTextCtrl( this, wxID_ANY, "" );
+    m_label7 = new wxStaticText( this, wxID_ANY, _( "Connection Timeout" ) );
+    m_timeout = new wxSpinCtrl( this, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP, 0, 300 );
     m_advanced = new wxButton( this, wxID_ANY, _( "Advanced Options" ) );
     wxBoxSizer *main = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer1 = new wxBoxSizer( wxVERTICAL );
-    wxFlexGridSizer *sizer2 = new wxFlexGridSizer( 6, 2, 5, 5 );
+    wxFlexGridSizer *sizer2 = new wxFlexGridSizer( 7, 2, 5, 5 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( m_label1, 0, wxEXPAND, 0 );
@@ -419,6 +432,8 @@ PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
     sizer2->Add( m_password, 0, wxEXPAND, 0 );
     sizer2->Add( m_label6, 0, wxEXPAND, 0 );
     sizer2->Add( m_dbName, 0, wxEXPAND, 0 );
+    sizer2->Add( m_label7, 0, wxEXPAND, 0 );
+    sizer2->Add( m_timeout, 0, wxEXPAND, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( m_advanced, 0, wxEXPAND, 0 );
@@ -474,7 +489,12 @@ wxTextCtrl *PostgresConnect::GetDBName() const
     return m_dbName;
 }
 
-void PostgresConnect::OnAdvanced(wxCommandEvent &event)
+wxSpinCtrl *PostgresConnect::GetTimeout() const
+{
+    return m_timeout;
+}
+
+void PostgresConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
 {
     PostgresAdvanced dlg( NULL );
     dlg.Centre();
@@ -484,6 +504,8 @@ void PostgresConnect::OnAdvanced(wxCommandEvent &event)
 PostgresAdvanced::PostgresAdvanced(wxWindow *parent) : wxDialog( parent, wxID_ANY, _( "Postgres Advanced Options" ) )
 {
     m_panel = new wxPanel( this );
+    m_label1 = new wxStaticText( m_panel, wxID_ANY, _( "Client Encoding" ) );
+    m_encoding = new wxComboBox( m_panel, wxID_ANY );
 }
 
 mySQLConnect::mySQLConnect(wxWizard *parent) : wxWizardPage( parent )
@@ -573,6 +595,21 @@ wxTextCtrl *mySQLConnect::GetDBName() const
     return m_dbName;
 }
 
+wxTextCtrl *mySQLConnect::GetSocket() const
+{
+    return m_socket;
+}
+
+int mySQLConnect::GetFlags()
+{
+    return m_flags;
+}
+
+wxString mySQLConnect::GetOptions() const
+{
+    return m_options;
+}
+
 void mySQLConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
 {
     mySQLAdvanced dlg( NULL, m_flags );
@@ -585,6 +622,59 @@ void mySQLConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
             m_flags |= 2;
         if( dlg.m_foundRows->IsChecked() )
             m_flags |= 4;
+        if( dlg.m_ignoreSigPipe->IsChecked() )
+            m_flags |= 8;
+        if( dlg.m_ignoreSpace->IsChecked() )
+            m_flags |= 16;
+        if( dlg.m_interactive->IsChecked() )
+            m_flags |= 32;
+        if( dlg.m_localFiles->IsChecked() )
+            m_flags |= 64;
+        if( dlg.m_multiResults->IsChecked() )
+            m_flags |= 128;
+        if( dlg.m_multiStat->IsChecked() )
+            m_flags |= 256;
+        if( dlg.m_noSchema->IsChecked() )
+            m_flags |= 512;
+        if( dlg.m_odbc->IsChecked() )
+            m_flags |= 1024;
+        if( dlg.m_ssl->IsChecked() )
+            m_flags |= 2048;
+        if( dlg.m_remember->IsChecked() )
+            m_flags |= 4096;
+        wxString defaultAuth = dlg.m_defaultAuth->GetValue();
+        if( !defaultAuth.IsEmpty() )
+            m_options += "MYSQL_DEFAULT_AUTH=" + defaultAuth + " ";
+        bool cleartextPlugin = dlg.m_clearText->IsChecked();
+        if( cleartextPlugin )
+        {
+            wxString temp = "MYSQL_ENABLE_CLEARTEXT_PLUGIN=1";
+            temp += " ";
+            m_options += temp;
+        }
+        wxString initCommand = dlg.m_initCommand->GetValue();
+        if( !initCommand.IsEmpty() )
+            m_options += "MYSQL_INIT_COMMAND=" + initCommand + " ";
+        wxString optionBind = dlg.m_optBind->GetValue();
+        if( !optionBind.IsEmpty() )
+            m_options += "MYSQL_OPT_BIND=" + optionBind + " ";
+        bool handleExpiredPass = dlg.m_handleExpiredPass->IsChecked();
+        if( handleExpiredPass )
+        {
+            wxString temp = "MYSQL_OPT_CAN_HANDLE_EXPIRED_PASSWORD=1";
+            temp += " ";
+            m_options += temp;
+        }
+        bool compress = dlg.m_optCompress->IsChecked();
+        if( compress )
+        {
+            wxString temp = "MYSQL_OPT_COMPRESS=0";
+            temp += " ";
+            m_options +=  temp;
+        }
+        wxString attrDelete = dlg.m_connectAttrDelete->GetValue();
+        if( !attrDelete.IsEmpty() )
+            m_options += "MYSQL_OPT_CONNECT_ATTR_DELETE=" + attrDelete + " ";
     }
 }
 
@@ -613,10 +703,38 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
     m_optBind = new wxTextCtrl( m_panel, wxID_ANY );
     m_handleExpiredPass = new wxCheckBox( m_panel, wxID_ANY, _( "Can Handle Expired Password" ) );
     m_optCompress = new wxCheckBox( m_panel, wxID_ANY, _( "Opt Compress" ) );
+    m_label4 = new wxStaticText( m_panel, wxID_ANY, _( "Delete Connection Attribute:" ) );
+    m_connectAttrDelete = new wxTextCtrl( m_panel, wxID_ANY );
+    wxIntegerValidator<unsigned long> val;
+    m_label5 = new wxStaticText( m_panel, wxID_ANY, _( "Connection Timeout:" ) );
+    m_connectTimeout = new wxTextCtrl( m_panel, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, 0, val );
+    m_guessConnect = new wxCheckBox( m_panel, wxID_ANY, _( "Guess Connection" ) );
     if( flags & 1 )
         m_expPass->SetValue( true );
     if( flags & 2 )
         m_clientCompress->SetValue( true );
+    if( flags & 4 )
+        m_foundRows->SetValue( true );
+    if( flags & 8 )
+        m_ignoreSigPipe->SetValue( true );
+    if( flags & 16 )
+        m_ignoreSpace->SetValue( true );
+    if( flags & 32 )
+        m_interactive->SetValue( true );
+    if( flags & 64 )
+        m_localFiles->SetValue( true );
+    if( flags & 128 )
+        m_multiResults->SetValue( true );
+    if( flags & 256 )
+        m_multiStat->SetValue( true );
+    if( flags & 512 )
+        m_noSchema->SetValue( true );
+    if( flags & 1024 )
+        m_odbc->SetValue( true );
+    if( flags & 2048 )
+        m_ssl->SetValue( true );
+    if( flags & 4096 )
+        m_remember->SetValue( true );
     wxBoxSizer *sizer = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer1 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer2 = new wxBoxSizer( wxVERTICAL );
@@ -630,6 +748,8 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
     wxBoxSizer *sizer6 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer7 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer8 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *sizer9 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *sizer10 = new wxBoxSizer( wxHORIZONTAL );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer4->Add( m_expPass, 0, wxEXPAND, 0 );
@@ -666,6 +786,15 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
     sizer5->Add( sizer8, 0, wxEXPAND, 0 );
     sizer5->Add( m_handleExpiredPass, 0, wxEXPAND, 0 );
     sizer5->Add( m_optCompress, 0, wxEXPAND, 0 );
+    sizer9->Add( m_label4, 0, wxEXPAND, 0 );
+    sizer9->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer9->Add( m_connectAttrDelete, 0, wxEXPAND, 0 );
+    sizer5->Add( sizer9, 0, wxEXPAND, 0 );
+    sizer10->Add( m_label5, 0, wxEXPAND, 0 );
+	sizer10->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer10->Add( m_connectTimeout, 0, wxEXPAND, 0 );
+    sizer5->Add( sizer10, 0, wxEXPAND, 0 );
+    sizer5->Add( m_guessConnect, 0, wxEXPAND, 0 );
     sizer2->Add( sizer5, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( sizer3, 0, wxEXPAND, 0 );

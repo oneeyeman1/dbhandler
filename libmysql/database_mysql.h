@@ -32,15 +32,15 @@ protected:
     void GetErrorMessage(int code, std::wstring &errorMsg);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual void SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
-    void TokenizeConnectionString(std::wstring &connectStr);
+    int TokenizeConnectionString(std::wstring &connectStr, std::vector<std::wstring> &errorMsg);
 private:
     MYSQL *m_db;
-    int m_port;
+    int m_port, m_flags;
 };
 
 struct MySQLDatabase::MySQLImpl
 {
     std::wstring_convert<std::codecvt_utf8<wchar_t> > m_myconv;
-    std::wstring m_host, m_user, m_password, m_dbName;
+    std::wstring m_host, m_user, m_password, m_dbName, m_socket;
 };
 #endif
