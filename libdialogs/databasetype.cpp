@@ -17,6 +17,7 @@
 #include <sqlext.h>
 #endif*/
 #include "wx/valnum.h"
+#include "wx/spinctrl.h"
 #include "wx/wizard.h"
 #include "wx/filepicker.h"
 #include "wx/dynlib.h"
