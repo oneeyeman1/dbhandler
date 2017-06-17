@@ -106,7 +106,7 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
             errorMsg.push_back( L"Connection to database failed: " + err );
             result = 1;
         }
-        m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( m_pimpl->m_host.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_user.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_password.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_dbName.c_str() ).c_str(), m_port, m_pimpl->m_myconv.to_bytes( m_pimpl->m_socket.c_str() ).c_str(), m_flags );
+        m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( m_pimpl->m_host.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_user.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_password.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_dbName.c_str() ).c_str(), m_port, m_pimpl->m_socket == L"" ? NULL : m_pimpl->m_myconv.to_bytes( m_pimpl->m_socket.c_str() ).c_str(), m_flags );
         if( !m_db )
         {
             err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -125,19 +125,19 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
             else
             {
                 res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
-                if( res )
+                if( !res )
                 {
                     res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str() );
-                    if( res )
+                    if( !res )
                     {
                         res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str() );
-                        if( res )
+                        if( !res )
                         {
                             res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str()  );
-                            if( res )
+                            if( !res )
                             {
                                 res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str() );
-                                if( res )
+                                if( !res )
                                 {
                                     res = mysql_commit( m_db );
                                 }
@@ -197,97 +197,6 @@ int MySQLDatabase::Disconnect(std::vector<std::wstring> &WXUNUSED(errorMsg))
     delete m_pimpl;
     m_pimpl = NULL;
     return result;
-}
-
-void MySQLDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
-{
-    switch( code )
-    {
-    case 1:
-        errorMsg = L"SQL error";
-        break;
-    case 2:
-        errorMsg = L"Internal logic error";
-        break;
-    case 3:
-        errorMsg = L"Access permission denied";
-        break;
-    case 4:
-        errorMsg = L"Callback routine requested an abort";
-        break;
-    case 5:
-        errorMsg = L"The database is locked";
-        break;
-    case 6:
-        errorMsg = L"The table is locked";
-        break;
-    case 7:
-        errorMsg = L"No more memory";
-        break;
-    case 8:
-        errorMsg = L"Database is read-only. No write permited";
-        break;
-    case 9:
-        errorMsg = L"Operation terminated.";
-        break;
-    case 10:
-        errorMsg = L"Disk I/O error occured";
-        break;
-    case 11:
-        errorMsg = L"The database is malformed";
-        break;
-    case 12:
-        errorMsg = L"Unknown opcode in sqlite3_file_control";
-        break;
-    case 13:
-        errorMsg = L"Insertion failed because the database is full";
-        break;
-    case 14:
-        errorMsg = L"Unable to open the database";
-        break;
-    case 15:
-        errorMsg = L"Database lock protocol error";
-        break;
-    case 16:
-        errorMsg = L"Database is empty";
-        break;
-    case 17:
-        errorMsg = L"The database schema changed";
-        break;
-    case 18:
-        errorMsg = L"String or BLOB exceeds size limit";
-        break;
-    case 19:
-        errorMsg = L"Abort due to constraint violation";
-        break;
-    case 20:
-        errorMsg = L"Data type mismatch";
-        break;
-    case 21:
-        errorMsg = L"Library used incorrectly";
-        break;
-    case 22:
-        errorMsg = L"Feature is not supported by OS host";
-        break;
-    case 23:
-        errorMsg = L"Authorization denied";
-        break;
-    case 24:
-        errorMsg = L"Auxiliary database format error";
-        break;
-    case 25:
-        errorMsg = L"Bind parameter out of range";
-        break;
-    case 26:
-        errorMsg = L"Not SQLite database";
-        break;
-    case 27:
-        errorMsg = L"Notification from the log function";
-        break;
-    case 28:
-        errorMsg = L"Warning from the log function";
-        break;
-    }
 }
 
 int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
@@ -383,21 +292,51 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             errorMsg.push_back( err );
             return 1;
         }
+        res2 = mysql_stmt_init( m_db );
+        if( !res2 )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            return 1;
+        }
+        if( mysql_stmt_prepare( res2, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), query2.length() ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            return 1;
+        }
+        if( mysql_stmt_bind_param( res2, params ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            return 1;
+        }
+        if( mysql_stmt_execute( res2 ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            return 1;
+        }
+        MYSQL_ROW table_def;
+        queryResult = mysql_store_result( m_db );
+        if( queryResult )
+        {
+            while( ( table_def = mysql_fetch_row( queryResult ) ) )
+            {
+            }
+        }
+        if( mysql_stmt_close( res2 ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            return 1;
+        }
+        delete str_data1;
+        str_data1 = NULL;
+        delete str_data2;
+        str_data2 = NULL;
     }
     if( !row )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    res2 = mysql_stmt_init( m_db );
-    if( !res2 )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    if( mysql_stmt_prepare( res2, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), query2.length() ) )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );

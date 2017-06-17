@@ -29,7 +29,6 @@ public:
 protected:
     struct MySQLImpl;
     MySQLImpl *m_pimpl;
-    void GetErrorMessage(int code, std::wstring &errorMsg);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual void SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
     int TokenizeConnectionString(std::wstring &connectStr, std::vector<std::wstring> &errorMsg);
