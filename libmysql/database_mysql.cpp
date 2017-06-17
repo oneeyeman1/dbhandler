@@ -377,6 +377,19 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         errorMsg.push_back( err );
         return 1;
     }
+    res2 = mysql_stmt_init( m_db );
+    if( !res2 )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        return 1;
+    }
+    if( mysql_stmt_prepare( res2, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), query2.length() ) )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        return 1;
+    }
 /*    DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
                 if( GetTableProperties( table, errorMsg ) )
                 {
