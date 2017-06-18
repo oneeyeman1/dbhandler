@@ -235,7 +235,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         char *catalog_name = row[0] ? row[0] : NULL;
         char *schema_name = row[1] ? row[1] : NULL;
         char *table_name = row[2] ? row[2] : NULL;
-        res1 = mysql_stmt_init( m_db );
+/*        res1 = mysql_stmt_init( m_db );
         if( !res1 )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -247,11 +247,15 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
             return 1;
-        }
+        }*/
         MYSQL_BIND params[2];
         unsigned long str_length1, str_length2;
         str_data1 = new char[strlen( schema_name )], str_data2 = new char[strlen( table_name )];
         memset( params, 0, sizeof( params ) );
+        str_length1 = strlen( schema_name );
+        str_length2 = strlen( table_name );
+        strncpy( str_data1, schema_name, strlen( schema_name ) );
+        strncpy( str_data2, table_name, strlen( table_name ) );
         params[0].buffer_type = MYSQL_TYPE_STRING;
         params[0].buffer = (char *) str_data1;
         params[0].buffer_length = strlen( schema_name );
@@ -262,17 +266,13 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         params[1].buffer_length = strlen( table_name );
         params[1].is_null = 0;
         params[1].length = &str_length2;
-        if( mysql_stmt_bind_param( res1, params ) )
+/*        if( mysql_stmt_bind_param( res1, params ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
             return 1;
-        }
-        str_length1 = strlen( schema_name );
-        str_length2 = strlen( table_name );
-        strncpy( str_data1, schema_name, strlen( schema_name ) );
-        strncpy( str_data2, table_name, strlen( table_name ) );
-        if( mysql_stmt_execute( res1 ) )
+        }*/
+/*        if( mysql_stmt_execute( res1 ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
@@ -291,7 +291,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
             return 1;
-        }
+        }*/
         res2 = mysql_stmt_init( m_db );
         if( !res2 )
         {
@@ -318,11 +318,13 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             return 1;
         }
         MYSQL_ROW table_def;
-        queryResult = mysql_store_result( m_db );
-        if( queryResult )
+        MYSQL_RES *queryResult1 = mysql_store_result( m_db );
+        if( queryResult1 )
         {
-            while( ( table_def = mysql_fetch_row( queryResult ) ) )
+            while( ( table_def = mysql_fetch_row( queryResult1 ) ) )
             {
+                std::wstring fieldName = m_pimpl->m_myconv.from_bytes( table_def[0] );
+                std::wstring fieldType = m_pimpl->m_myconv.from_bytes( table_def[1] );
             }
         }
         if( mysql_stmt_close( res2 ) )
