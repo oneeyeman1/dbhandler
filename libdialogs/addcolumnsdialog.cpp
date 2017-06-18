@@ -5,6 +5,10 @@
     #pragma hdrstop
 #endif
 
+#ifndef WX_PRECOMP
+    #include "wx/wx.h"
+#endif
+
 #include "addcolumnsdialog.h"
 
 AddColumnsDialog::AddColumnsDialog(wxWindow *parent, int type) : wxDialog( parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 )
