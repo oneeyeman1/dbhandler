@@ -208,7 +208,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
     std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    char *str_data1, *str_data2;
+    char *str_data1, *str_data2, *name, *type;
     int result = 0, fieldIsNull, fieldPK, fkReference, fkId;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
@@ -340,16 +340,22 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             errorMsg.push_back( err );
             return 1;
         }
-        while( !mysql_stmt_fetch_row( queryResult2 ) )
+        while( !mysql_stmt_fetch( res2 ) )
         {
-            std::wstring fieldName = m_pimpl->m_myconv.from_bytes( table_def[0] );
-            std::wstring fieldType = m_pimpl->m_myconv.from_bytes( table_def[1] );
-        }
-        else
-        {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-            errorMsg.push_back( err );
-            return 1;
+            if( real_length1[0] > 0 )
+            {
+                name = new char[real_length1[0]];
+                results1[0].buffer = name;
+                results1[0].buffer_length = real_length1[0];
+                mysql_stmt_fetch_column( res2, results1, 0, 0 );
+            }
+            if( real_length1[1] > 0 )
+            {
+                type = new char[real_length1[1]];
+                results1[1].buffer = type;
+                results1[1].buffer_length = real_length1[1];
+                mysql_stmt_fetch_column( res2, results1, 1, 0 );
+            }
         }
         if( mysql_stmt_close( res2 ) )
         {
