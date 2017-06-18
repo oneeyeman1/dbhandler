@@ -317,15 +317,39 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             errorMsg.push_back( err );
             return 1;
         }
-        MYSQL_ROW table_def;
-        MYSQL_RES *queryResult1 = mysql_store_result( m_db );
-        if( queryResult1 )
+        MYSQL_BIND results1[10];
+        long unsigned int real_length1[10];
+        for( int i = 0; i < 9; i++ )
         {
-            while( ( table_def = mysql_fetch_row( queryResult1 ) ) )
-            {
-                std::wstring fieldName = m_pimpl->m_myconv.from_bytes( table_def[0] );
-                std::wstring fieldType = m_pimpl->m_myconv.from_bytes( table_def[1] );
-            }
+            real_length1[i] = 0;
+            results1[i].buffer = 0;
+            results1[i].buffer_length = 0;
+            results1[i].length = &real_length1[i];
+        }
+        results1[0].buffer_type = results1[1].buffer_type = results1[6].buffer_type = results1[7].buffer_type = MYSQL_TYPE_STRING;
+        results1[2].buffer_type = results1[3].buffer_type = results1[4].buffer_type = results1[5].buffer_type = results1[8].buffer_type = results1[9].buffer_type = MYSQL_TYPE_LONG;
+        if( mysql_stmt_bind_result( res2, results1 ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            return 1;
+        }
+        if( mysql_stmt_store_result( res2 ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            return 1;
+        }
+        while( !mysql_stmt_fetch_row( queryResult2 ) )
+        {
+            std::wstring fieldName = m_pimpl->m_myconv.from_bytes( table_def[0] );
+            std::wstring fieldType = m_pimpl->m_myconv.from_bytes( table_def[1] );
+        }
+        else
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            return 1;
         }
         if( mysql_stmt_close( res2 ) )
         {
