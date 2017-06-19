@@ -2,7 +2,7 @@
 class AddColumnsDialog : public wxDialog
 {
 public:
-    AddColumnsDialog(wxWindow *parent, int type);
+    AddColumnsDialog(wxWindow *parent, int type, const std::vector<std::wstring> &fields);
     ~AddColumnsDialog(void);
     void OnPasteUpdateUI(wxUpdateUIEvent &event);
 protected:
@@ -13,5 +13,6 @@ private:
     wxButton *m_paste, *m_cancel;
     wxPanel *m_panel;
     int m_type;
+    std::vector<std::wstring> m_fields;
 };
 

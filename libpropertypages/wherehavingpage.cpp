@@ -18,7 +18,7 @@
 //#include "wx/settings.h"
 #include "wherehavingpage.h"
 
-typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int);
+typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring> &);
 
 WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
 {
@@ -165,6 +165,18 @@ void WhereHavingPage::OnCellRightClick(wxGridEvent &event)
 
 void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
 {
+    int id = event.GetId();
+    int type;
+    std::vector<std::wstring> fields;
+    if( id == WHEREPAGECOLUMNS )
+    {
+        type = 1;
+        fields = m_fields;
+    }
+    else
+    {
+        type = 2;	
+    }
     wxDynamicLibrary *lib;
     lib = new wxDynamicLibrary();
 #ifdef __WXMSW__
@@ -177,7 +189,7 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
     if( lib->IsLoaded() )
     {
         ADDCOLUMNSDIALOG func = (ADDCOLUMNSDIALOG) lib->GetSymbol( "AddColumnToQuery" );
-        func( GetParent()->GetParent(), event.GetId() == WHEREPAGECOLUMNS ? 1 : 2 );
+        func( GetParent()->GetParent(), type, fields );
     }
     delete lib;
     lib = NULL;
