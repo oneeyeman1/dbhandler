@@ -203,6 +203,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     int res;
     MYSQL_STMT *res1, *res2;
+    MYSQL_RES *prepare_meta_result;
     std::vector<Field *> fields;
     std::vector<std::wstring> fk_names;
     std::map<int,std::vector<FKField *> > foreign_keys;
@@ -272,6 +273,12 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             errorMsg.push_back( err );
             return 1;
         }
+        if( !prepare_meta_result = mysql_stmt_result_metadata( res1 ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
+            errorMsg.push_back( err );
+            return 1;
+        }
         if( mysql_stmt_execute( res1 ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
@@ -324,6 +331,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         {
         	
         }
+        mysql_free_result( prepare_meta_result );
         if( mysql_stmt_close( res1 ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -333,19 +341,25 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         res2 = mysql_stmt_init( m_db );
         if( !res2 )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
             errorMsg.push_back( err );
             return 1;
         }
         if( mysql_stmt_prepare( res2, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), query2.length() ) )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
             errorMsg.push_back( err );
             return 1;
         }
         if( mysql_stmt_bind_param( res2, params ) )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            return 1;
+        }
+        if( !prepare_meta_result = mysql_stmt_result_metadata( res2 ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
             errorMsg.push_back( err );
             return 1;
         }
@@ -395,6 +409,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 mysql_stmt_fetch_column( res2, results1, 1, 0 );
             }
         }
+        mysql_free_result( prepare_meta_result );
         if( mysql_stmt_close( res2 ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
