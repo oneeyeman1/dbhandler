@@ -13,6 +13,7 @@
 
 AddColumnsDialog::AddColumnsDialog(wxWindow *parent, int type) : wxDialog( parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 )
 {
+    m_type = type;
     // begin wxGlade: MyDialog::MyDialog
     m_panel = new wxPanel( this, wxID_ANY );
     m_fields = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
@@ -21,6 +22,7 @@ AddColumnsDialog::AddColumnsDialog(wxWindow *parent, int type) : wxDialog( paren
     set_properties();
     do_layout();
     // end wxGlade
+    m_paste->Bind( wxEVT_UPDATE_UI, &AddColumnsDialog::OnPasteUpdateUI, this );
 }
 
 AddColumnsDialog::~AddColumnsDialog(void)
@@ -31,6 +33,46 @@ void AddColumnsDialog::set_properties()
 {
     m_paste->Enable( false );
     m_paste->SetDefault();
+    if( m_type == 2 )
+    {
+        m_fields->Append( "abs()" );
+        m_fields->Append( "avg()" );
+        m_fields->Append( "count()" );
+        m_fields->Append( "date()" );
+        m_fields->Append( "dateformat()" );
+        m_fields->Append( "datetime()" );
+        m_fields->Append( "day()" );
+        m_fields->Append( "days()" );
+        m_fields->Append( "dow()" );
+        m_fields->Append( "hour()" );
+        m_fields->Append( "hours()" );
+        m_fields->Append( "ifnull()" );
+        m_fields->Append( "isnull()" );
+        m_fields->Append( "length()" );
+        m_fields->Append( "list()" );
+        m_fields->Append( "max()" );
+        m_fields->Append( "min()" );
+        m_fields->Append( "minute()" );
+        m_fields->Append( "minutes()" );
+        m_fields->Append( "mod()" );
+        m_fields->Append( "month()" );
+        m_fields->Append( "months()" );
+        m_fields->Append( "now(*)" );
+        m_fields->Append( "number(*)" );
+        m_fields->Append( "remainder()" );
+        m_fields->Append( "second()" );
+        m_fields->Append( "seconds()" );
+        m_fields->Append( "similar()" );
+        m_fields->Append( "soundex()" );
+        m_fields->Append( "string()" );
+        m_fields->Append( "substr()" );
+        m_fields->Append( "sum()" );
+        m_fields->Append( "today(*)" );
+        m_fields->Append( "weeks()" );
+        m_fields->Append( "year()" );
+        m_fields->Append( "years()" );
+        m_fields->Append( "ymd()" );
+    }
 }
 
 void AddColumnsDialog::do_layout()
@@ -59,4 +101,12 @@ void AddColumnsDialog::do_layout()
     sizer->Fit( this );
     Layout();
     // end wxGlade
+}
+
+void AddColumnsDialog::OnPasteUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_fields->GetSelection() )
+        event.Enable( true );
+	else
+        event.Enable( false );
 }

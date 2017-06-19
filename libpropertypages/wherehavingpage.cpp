@@ -12,6 +12,7 @@
 
 #include <math.h>
 #include <string>
+#include "wx/dynlib.h"
 #include "wx/grid.h"
 #include "wx/headerctrl.h"
 //#include "wx/settings.h"
@@ -164,5 +165,20 @@ void WhereHavingPage::OnCellRightClick(wxGridEvent &event)
 
 void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
 {
-    wxMessageBox( "Hello!!" );
+    wxDynamicLibrary *lib;
+    lib = new wxDynamicLibrary();
+#ifdef __WXMSW__
+    lib->Load( "dialogs" );
+#elif __WXMAC__
+    lib->Load( "liblibdialog.dylib" );
+#else
+    lib->Load( "libdialogs" );
+#endif
+    if( lib->IsLoaded() )
+    {
+        ADDCOLUMNSDIALOG func = (ADDCOLUMNSDIALOG) lib->GetSymbol( "AddColumnToQuery" );
+        func( GetParent()->GetParent(), event.GetId() == WHEREPAGECOLUMNS ? 1 : 2 );
+    }
+    delete lib;
+    lib = NULL;
 }
