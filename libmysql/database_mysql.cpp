@@ -214,7 +214,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::wstring query1 = L"SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW';";
     std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.ordinal_position, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_schema = ? AND cols.table_name = ?;";
-    std::wstring query3 = L"SELECT kcu.table_catalog, kcu.table_schema, kcu.table_name, kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_schema = ? AND kcu.table_name = ?;";
+    std::wstring query3 = L"SELECT kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_schema = ? AND kcu.table_name = ?;";
     res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( res )
     {
@@ -238,13 +238,13 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         res1 = mysql_stmt_init( m_db );
         if( !res1 )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
             errorMsg.push_back( err );
             return 1;
         }
         if( mysql_stmt_prepare( res1, m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), query3.length() ) )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
             errorMsg.push_back( err );
             return 1;
         }
@@ -268,42 +268,68 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         params[1].length = &str_length2;
         if( mysql_stmt_bind_param( res1, params ) )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
             errorMsg.push_back( err );
             return 1;
         }
         if( mysql_stmt_execute( res1 ) )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
             errorMsg.push_back( err );
             return 1;
         }
-        MYSQL_BIND results[10];
-        long unsigned int real_length[10];
+        MYSQL_BIND results[7];
+        my_bool is_null[7];
+        unsigned long length[7];
         memset( results, 0, sizeof( results ) );
-        for( int i = 0; i < 9; i++ )
+        results[0].buffer_type = results[2].buffer_type = results[3].buffer_type = results[4].buffer_type = results[5].buffer_type = results[6].buffer_type = MYSQL_TYPE_STRING;
+        results[1].buffer_type = MYSQL_TYPE_LONG;
+
+        results[1].buffer = (char *) &fkId;
+        results[1].is_null = &is_null[1];
+        results[1].length = &length[1];
+
+        results[2].buffer = (char *) fkField.c_str();
+        results[2].buffer_length = ;
+        results[2].is_null = &is_null[0];
+        results[2].length = &length[0];
+
+        results[3].buffer = (char *) fkField.c_str();
+        results[3].buffer_length = ;
+        results[3].is_null = &is_null[3];
+        results[3].length = &length[3];
+
+        results[4].buffer = (char *) fkField.c_str();
+        results[4].buffer_length = ;
+        results[4].is_null = &is_null[4];
+        results[4].length = &length[4];
+
+        results[5].buffer = (char *) fkField.c_str();
+        results[5].buffer_length = ;
+        results[5].is_null = &is_null[5];
+        results[5].length = &length[5];
+
+        results[6].buffer = (char *) fkField.c_str();
+        results[6].buffer_length = ;
+        results[6].is_null = &is_null[6];
+        results[6].length = &length[6];
+
+        if( mysql_stmt_bind_results( res1, results ) )
         {
-            real_length[i] = 0;
-            results[i].buffer = 0;
-            results[i].buffer_length = 0;
-            results[i].length = &real_length[i];
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
+            errorMsg.push_back( err );
+            return 1;
         }
-        results[0].buffer_type = results[1].buffer_type = results[6].buffer_type = results[7].buffer_type = MYSQL_TYPE_STRING;
-        results[2].buffer_type = results[3].buffer_type = results[4].buffer_type = results[5].buffer_type = results[8].buffer_type = results[9].buffer_type = MYSQL_TYPE_LONG;
-/*        MYSQL_ROW fk;
-        MYSQL_RES *queryResult = mysql_store_result( m_db );
-        if( queryResult )
+        while( !mysql_stmt_fetch( res1 ) )
         {
-            while( ( fk = mysql_fetch_row( queryResult ) ) )
-            {
-            }
+        	
         }
         if( mysql_stmt_close( res1 ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
             return 1;
-        }*/
+        }
         res2 = mysql_stmt_init( m_db );
         if( !res2 )
         {
