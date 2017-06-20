@@ -9,12 +9,14 @@
     #include "wx/wx.h"
 #endif
 
+#include <vector>
+#include <string>
 #include "addcolumnsdialog.h"
 
 AddColumnsDialog::AddColumnsDialog(wxWindow *parent, int type, const std::vector<std::wstring> &fields) : wxDialog( parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 )
 {
     m_type = type;
-    m_fields = fields;
+    m_allFields = fields;
     // begin wxGlade: MyDialog::MyDialog
     m_panel = new wxPanel( this, wxID_ANY );
     m_fields = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
@@ -76,7 +78,7 @@ void AddColumnsDialog::set_properties()
     }
     else
     {
-        for( std::vector<std::wstring>::iterator it = m_fields.begin(); it < m_fields.end(); it++ )
+        for( std::vector<std::wstring>::iterator it = m_allFields.begin(); it < m_allFields.end(); it++ )
         {
             m_fields->Append( (*it) );
         }

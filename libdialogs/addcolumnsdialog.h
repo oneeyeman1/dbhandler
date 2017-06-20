@@ -13,6 +13,6 @@ private:
     wxButton *m_paste, *m_cancel;
     wxPanel *m_panel;
     int m_type;
-    std::vector<std::wstring> m_fields;
+    std::vector<std::wstring> m_allFields;
 };
 
