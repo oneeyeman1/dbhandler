@@ -41,6 +41,7 @@ int MySQLDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wst
         result = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( name.c_str() ).c_str() );
         if( result )
         {
+            result = 1;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
         }
@@ -49,11 +50,14 @@ int MySQLDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wst
             result = mysql_select_db( m_db, "" );
             if( result )
             {
+                result = 1;
                 std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
                 errorMsg.push_back( err );
             }
         }
     }
+    else
+        result = 1;
     return result;
 }
 
