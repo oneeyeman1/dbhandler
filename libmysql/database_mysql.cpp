@@ -75,6 +75,7 @@ int MySQLDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstri
     }
     else
     {
+        result = 1;
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
     }
