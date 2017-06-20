@@ -216,7 +216,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> fk_names;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
-    std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkFld, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
+    std::string fieldName, fieldType, fieldDefaultValue, fkSchema, fkTable, fkFld, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
     char *str_data1, *str_data2, *name, *type;
     int result = 0, fieldIsNull, fieldPK, fkReference, fkId;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
@@ -348,7 +348,28 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         while( !mysql_stmt_fetch( res1 ) )
         {
-        	
+            fkFld = m_pimpl->m_myconv.from_bytes( fkField );
+            fkSchema = m_pimpl->m_myconv.from_bytes( refTableSchema );
+            fkTable = m_pimpl->m_myconv.from_bytes( refTableName );
+            fkTableField = m_pimpl->m_myconv.from_bytes( refTableField );
+            if( !strcmp( updateCon, "CASCADE" ) )
+                update_constraint = CASCADE_UPDATE;
+            if( !strcmp( updateCon, "SET NULL" ) )
+                update_constraint = SET_NULL_UPDATE;
+            if( !strcmp( updateCon, "SET DEFAULT" ) )
+                update_constraint = SET_DEFAULT_UPDATE;
+            if( !strcmp( updateCon, "RESTRICT" ) )
+                update_constraint = RESTRICT_UPDATE;
+            if( !strcmp( deleteCon, "CASCADE" ) )
+                delete_constraint = CASCADE_DELETE;
+            if( !strcmp( deleteCon, "SET NULL" ) )
+                delete_constraint = SET_NULL_DELETE;
+            if( !strcmp( deleteCon, "SET DEFAULT" ) )
+                delete_constraint = SET_DEFAULT_DELETE;
+            if( !strcmp( deleteCon, "RESTRICT" ) )
+                delete_constraint = RESTRICT_DELETE;
+            foreign_keys[].push_back( new FKField( , fkTable, fkFld, fkTableField, fkSchema, update_constraint, delete_constraint ) );
+            fk_names.push_back( fkFld );
         }
         mysql_free_result( prepare_meta_result );
         if( mysql_stmt_close( res1 ) )
