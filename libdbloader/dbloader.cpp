@@ -138,7 +138,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             }
             if( engine == "PostgreSQL" )
             {
-				pdb = new PostgresDatabase();
+                pdb = new PostgresDatabase();
             }
             if( engine == "mySQL" )
                 pdb = new MySQLDatabase();
