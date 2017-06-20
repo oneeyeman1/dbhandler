@@ -204,6 +204,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     int res;
     MYSQL_STMT *res1, *res2;
     char fkField[64], refTableSchema[64], refTableName[64], refTableField[64], updateCon[64], deleteCon[64];
+    char colName[64];
+    int ordinal;
     MYSQL_RES *prepare_meta_result;
     std::vector<Field *> fields;
     std::vector<std::wstring> fk_names;
@@ -382,16 +384,21 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             return 1;
         }
         MYSQL_BIND results1[10];
-        long unsigned int real_length1[10];
-        for( int i = 0; i < 9; i++ )
-        {
-            real_length1[i] = 0;
-            results1[i].buffer = 0;
-            results1[i].buffer_length = 0;
-            results1[i].length = &real_length1[i];
-        }
+        my_bool is_null1[10];
+        long unsigned int length1[10];
         results1[0].buffer_type = results1[1].buffer_type = results1[6].buffer_type = results1[7].buffer_type = MYSQL_TYPE_STRING;
         results1[2].buffer_type = results1[3].buffer_type = results1[4].buffer_type = results1[5].buffer_type = results1[8].buffer_type = results1[9].buffer_type = MYSQL_TYPE_LONG;
+        
+        length1[0] = 64;
+        results1[0].buffer = colName;
+        results1[0].buffer_length = length1[0];
+        results1[0].is_null = &is_null1[0];
+        results1[0].length = &length1[0];
+
+        results[1].buffer = (char *) &ordinal;
+        results[1].is_null = &is_null1[1];
+        results[1].length = &length1[1];
+
         if( mysql_stmt_bind_result( res2, results1 ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -406,20 +413,6 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         while( !mysql_stmt_fetch( res2 ) )
         {
-            if( real_length1[0] > 0 )
-            {
-                name = new char[real_length1[0]];
-                results1[0].buffer = name;
-                results1[0].buffer_length = real_length1[0];
-                mysql_stmt_fetch_column( res2, results1, 0, 0 );
-            }
-            if( real_length1[1] > 0 )
-            {
-                type = new char[real_length1[1]];
-                results1[1].buffer = type;
-                results1[1].buffer_length = real_length1[1];
-                mysql_stmt_fetch_column( res2, results1, 1, 0 );
-            }
         }
         mysql_free_result( prepare_meta_result );
         if( mysql_stmt_close( res2 ) )
