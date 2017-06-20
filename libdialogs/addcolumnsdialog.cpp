@@ -117,6 +117,6 @@ void AddColumnsDialog::OnPasteUpdateUI(wxUpdateUIEvent &event)
 {
     if( m_fields->GetSelection() )
         event.Enable( true );
-	else
+    else
         event.Enable( false );
 }

@@ -34,7 +34,7 @@ DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxStri
     page1 = new DBType( this );
     page2 = new SQLiteConnect( this );
     page3 = new ODBCConnect( this, dsn );
-	page4 = new PostgresConnect( this );
+    page4 = new PostgresConnect( this );
     page5 = new mySQLConnect( this );
     GetPageAreaSizer()->Add( page1 );
     GetPageAreaSizer()->Add( page2 );
@@ -76,7 +76,7 @@ void DatabaseType::OnButtonUpdateUI(wxUpdateUIEvent &event)
         else
             event.Enable( false );
     }
-	else if( GetCurrentPage() == page4 )
+    else if( GetCurrentPage() == page4 )
     {
         if( dynamic_cast<PostgresConnect *>( page4 )->GetPassword()->IsEmpty() )
             event.Enable( false );
@@ -159,7 +159,7 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         wxString port = page4->GetPort()->GetValue();
         if( !port.empty() )
             m_connStr += "port = " + port + " ";
-		else
+        else
             m_connStr += "port = " + wxString::Format( "%ld", 5432 ) + " ";
         m_connStr += "user = " + page4->GetUserID()->GetValue() + " ";
         m_connStr += "password = " + page4->GetPassword()->GetValue() + " ";
@@ -172,12 +172,12 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         wxString host = page5->GetHost()->GetValue();
         if( !host.empty() )
             m_connStr = "host=" + host + " ";
-		else
+        else
             m_connStr = "host=localhost ";
         wxString port = page5->GetPort()->GetValue();
         if( !port.empty() )
             m_connStr += "port=" + port + " ";
-		else
+        else
             m_connStr += "port=" + wxString::Format( "%d", 3306 ) + " ";
         m_connStr += "user=" + page5->GetUserID()->GetValue() + " ";
         m_connStr += "password=" + page5->GetPassword()->GetValue() + " ";
@@ -781,7 +781,7 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
     sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer7->Add( m_initCommand, 0, wxEXPAND, 0 );
     sizer5->Add( sizer7, 0, wxEXPAND, 0 );
-	sizer8->Add( m_label3, 0, wxEXPAND, 0 );
+    sizer8->Add( m_label3, 0, wxEXPAND, 0 );
     sizer8->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer8->Add( m_optBind, 0, wxEXPAND, 0 );
     sizer5->Add( sizer8, 0, wxEXPAND, 0 );
@@ -792,7 +792,7 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
     sizer9->Add( m_connectAttrDelete, 0, wxEXPAND, 0 );
     sizer5->Add( sizer9, 0, wxEXPAND, 0 );
     sizer10->Add( m_label5, 0, wxEXPAND, 0 );
-	sizer10->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer10->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer10->Add( m_connectTimeout, 0, wxEXPAND, 0 );
     sizer5->Add( sizer10, 0, wxEXPAND, 0 );
     sizer5->Add( m_guessConnect, 0, wxEXPAND, 0 );

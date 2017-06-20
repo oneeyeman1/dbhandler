@@ -822,7 +822,7 @@ int MySQLDatabase::TokenizeConnectionString(std::wstring &connectStr, std::vecto
             m_pimpl->m_dbName = temp2;
 		else if( temp1 == L"socket" )
             m_pimpl->m_socket = temp2;
-		else if( temp1 == L"flags" )
+        else if( temp1 == L"flags" )
         {
             int flags = std::stoi( temp2 );
             if( flags & 1 )
@@ -852,7 +852,7 @@ int MySQLDatabase::TokenizeConnectionString(std::wstring &connectStr, std::vecto
             if( flags & 4096 )
                 m_flags |= CLIENT_REMEMBER_OPTIONS;
         }
-		else
+        else
         {
             mysql_option option;
             if( temp1 == L"MYSQL_DEFAULT_AUTH" )
