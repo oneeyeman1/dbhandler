@@ -208,21 +208,21 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     int res;
     MYSQL_STMT *res1, *res2;
+    char *str_data1, *str_data2;
     char fkField[64], refTableSchema[64], refTableName[64], refTableField[64], updateCon[64], deleteCon[64];
-    char colName[64], colType[64], defValue[64];
-    int ordinal;
+    char colName[64], colType[64], defValue[64], nullable[3], autoInc[30];
     MYSQL_RES *prepare_meta_result;
     std::vector<Field *> fields;
     std::vector<std::wstring> fk_names;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
-    std::string fieldName, fieldType, fieldDefaultValue, fkSchema, fkTable, fkFld, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    char *str_data1, *str_data2, *name, *type;
-    int result = 0, fieldIsNull, fieldPK, fkReference, fkId, charLen, charOctet, numLen, numPrec, numOctet;
+    std::wstring fieldName, fieldType, fieldDefaultValue, fkSchema, fkTable, fkFld, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
+    int fkId, charLen, charOctet, numLen, numPrec, numOctet;
+    bool is_nullable, autoincrement;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::wstring query1 = L"SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW';";
-    std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.ordinal_position, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_schema = ? AND cols.table_name = ?;";
+    std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.extra, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_schema = ? AND cols.table_name = ?;";
     std::wstring query3 = L"SELECT kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_schema = ? AND kcu.table_name = ?;";
     res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( res )
@@ -384,7 +384,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 delete_constraint = SET_DEFAULT_DELETE;
             if( !strcmp( deleteCon, "RESTRICT" ) )
                 delete_constraint = RESTRICT_DELETE;
-            foreign_keys[].push_back( new FKField( , fkTable, fkFld, fkTableField, fkSchema, update_constraint, delete_constraint ) );
+//            foreign_keys[].push_back( new FKField( , fkTable, fkFld, fkTableField, fkSchema, update_constraint, delete_constraint ) );
             fk_names.push_back( fkFld );
         }
         mysql_free_result( prepare_meta_result );
@@ -445,15 +445,15 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( m_db ) );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
             errorMsg.push_back( err );
             return 1;
         }
-        MYSQL_BIND results1[10];
-        my_bool is_null1[10];
-        long unsigned int length1[10];
-        results1[0].buffer_type = results1[1].buffer_type = results1[6].buffer_type = results1[7].buffer_type = MYSQL_TYPE_STRING;
-        results1[2].buffer_type = results1[3].buffer_type = results1[4].buffer_type = results1[5].buffer_type = results1[8].buffer_type = results1[9].buffer_type = MYSQL_TYPE_LONG;
+        MYSQL_BIND results1[11];
+        my_bool is_null1[11];
+        long unsigned int length1[11];
+        results1[0].buffer_type = results1[1].buffer_type = results1[7].buffer_type = results1[8].buffer_type = results1[9].buffer_type = results1[10].buffer_type = MYSQL_TYPE_STRING;
+        results1[2].buffer_type = results1[3].buffer_type = results1[4].buffer_type = results1[5].buffer_type = results1[6].buffer_type = MYSQL_TYPE_LONG;
         
         length1[0] = 64;
         results1[0].buffer = colName;
@@ -493,13 +493,25 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         results1[7].is_null = &is_null1[7];
         results1[7].length = &length1[7];
 
+        length1[8] = 3;
+        results1[8].buffer = nullable;
+        results1[8].buffer_length = length1[8];
+        results1[8].is_null = &is_null1[8];
+        results1[8].length = &length1[8];
+
+        length1[9] = 30;
+        results1[9].buffer = autoInc;
+        results1[9].buffer_length = length1[9];
+        results1[9].is_null = &is_null1[9];
+        results1[9].length = &length1[9];
+
         if( mysql_stmt_bind_result( res2, results1 ) )
         {
             delete str_data1;
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( m_db ) );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
             errorMsg.push_back( err );
             return 1;
         }
@@ -509,7 +521,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( m_db ) );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
             errorMsg.push_back( err );
             return 1;
         }
@@ -521,8 +533,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             if( !is_null1[7] )
                 fieldDefaultValue = m_pimpl->m_myconv.from_bytes( defValue );
             else
-                fieldDefaultValue = "";
-            if( !isNull1[3] )
+                fieldDefaultValue = L"";
+            if( !is_null1[3] )
             {
                 fieldSize = charLen;
                 fieldPrec = 0;
@@ -532,7 +544,15 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 fieldSize = numLen;
                 fieldPrec = numPrec;
             }
-            Field *field = new Field( fieldName, fieldType, fieldSize, fieldPrec, fieldDefaultValue, );
+            if( !strcmp( nullable, "YES" ) )
+                is_nullable = true;
+            else
+                is_nullable = false;
+            if( !strcmp( autoInc, "autoincrement" ) )
+                autoincrement = true;
+            else
+                autoincrement = false;
+//            Field *field = new Field( fieldName, fieldType, fieldSize, fieldPrec, fieldDefaultValue, );
         }
         mysql_free_result( prepare_meta_result );
         if( mysql_stmt_close( res2 ) )
