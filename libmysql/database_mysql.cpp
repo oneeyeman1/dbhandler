@@ -217,8 +217,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
     std::wstring fieldName, fieldType, fieldDefaultValue, fkSchema, fkTable, fkFld, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    int fkId, charLen, charOctet, numLen, numPrec, numOctet;
-    bool is_nullable, autoincrement;
+    int fkId, charLen, charOctet, numLen, numPrec, numOctet, pk;
+    bool is_nullable, autoincrement, is_pk;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::wstring query1 = L"SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW';";
@@ -452,58 +452,71 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         MYSQL_BIND results1[11];
         my_bool is_null1[11];
         long unsigned int length1[11];
-        results1[0].buffer_type = results1[1].buffer_type = results1[7].buffer_type = results1[8].buffer_type = results1[9].buffer_type = results1[10].buffer_type = MYSQL_TYPE_STRING;
-        results1[2].buffer_type = results1[3].buffer_type = results1[4].buffer_type = results1[5].buffer_type = results1[6].buffer_type = MYSQL_TYPE_LONG;
         
         length1[0] = 64;
         results1[0].buffer = colName;
+        results1[0].buffer_type = MYSQL_TYPE_STRING;
         results1[0].buffer_length = length1[0];
         results1[0].is_null = &is_null1[0];
         results1[0].length = &length1[0];
 
         length1[1] = 64;
         results1[1].buffer = colType;
+        results1[1].buffer_type = MYSQL_TYPE_STRING;
         results1[1].buffer_length = length1[1];
         results1[1].is_null = &is_null1[1];
         results1[1].length = &length1[1];
 
         results1[2].buffer = (char *) &charLen;
+        results1[2].buffer_type = MYSQL_TYPE_LONG;
         results1[2].is_null = &is_null1[2];
         results1[2].length = &length1[2];
 
         results1[3].buffer = (char *) &charOctet;
+        results1[3].buffer_type = MYSQL_TYPE_LONG;
         results1[3].is_null = &is_null1[3];
         results1[3].length = &length1[3];
 
         results1[4].buffer = (char *) &numLen;
+        results1[4].buffer_type = MYSQL_TYPE_LONG;
         results1[4].is_null = &is_null1[4];
         results1[4].length = &length1[4];
 
         results1[5].buffer = (char *) &numPrec;
+        results1[5].buffer_type = MYSQL_TYPE_LONG;
         results1[5].is_null = &is_null1[5];
         results1[5].length = &length1[5];
 
         results1[6].buffer = (char *) &numOctet;
+        results1[6].buffer_type = MYSQL_TYPE_LONG;
         results1[6].is_null = &is_null1[6];
         results1[6].length = &length1[6];
 
         length1[7] = 64;
         results1[7].buffer = defValue;
+        results1[7].buffer_type = MYSQL_TYPE_STRING;
         results1[7].buffer_length = length1[7];
         results1[7].is_null = &is_null1[7];
         results1[7].length = &length1[7];
 
         length1[8] = 3;
         results1[8].buffer = nullable;
+        results1[8].buffer_type = MYSQL_TYPE_STRING;
         results1[8].buffer_length = length1[8];
         results1[8].is_null = &is_null1[8];
         results1[8].length = &length1[8];
 
         length1[9] = 30;
         results1[9].buffer = autoInc;
+        results1[9].buffer_type = MYSQL_TYPE_STRING;
         results1[9].buffer_length = length1[9];
         results1[9].is_null = &is_null1[9];
         results1[9].length = &length1[9];
+
+        results1[10].buffer = (char *) &pk;
+        results1[10].buffer_type = MYSQL_TYPE_LONG;
+        results1[10].is_null = &is_null1[10];
+        results1[10].length = &length1[10];
 
         if( mysql_stmt_bind_result( res2, results1 ) )
         {
