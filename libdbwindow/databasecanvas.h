@@ -13,6 +13,7 @@ public:
     virtual void OnLeftDown(wxMouseEvent &event);
     virtual void OnRightDown(wxMouseEvent &event);
     void OnDropTable(wxCommandEvent &event);
+    void OnShowSQLBox(wxCommandEvent &event);
     inline wxSFDiagramManager &GetDiagramManager() { return m_pManager; }
     virtual void OnDraw(wxDC& dc) wxOVERRIDE;
 protected:

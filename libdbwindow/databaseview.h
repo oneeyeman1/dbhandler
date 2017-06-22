@@ -22,6 +22,7 @@ public:
     WhereHavingPage *GetWherePage();
     WhereHavingPage *GetHavingPage();
     void AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName);
+    void HideShowSQLBox(bool show);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;

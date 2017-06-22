@@ -923,3 +923,9 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
     }
 }
 */
+
+void DrawingView::HideShowSQLBox(bool show)
+{
+    m_queryBook->Show( show );
+    m_frame->Layout();
+}

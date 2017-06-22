@@ -58,6 +58,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent
     SetCanvasColour( *wxWHITE );
 //    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_TABLEDROPTABLE );
+    Bind( wxEVT_MENU, &DatabaseCanvas::OnShowSQLBox, this, wxID_SHOWSQLTOOLBOX );
 }
 
 DatabaseCanvas::~DatabaseCanvas()
@@ -461,4 +462,10 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
             }
         }
     }
+}
+
+void DatabaseCanvas::OnShowSQLBox(wxCommandEvent &event)
+{
+    m_showToolBox = !m_showToolBox;
+    m_view->HideShowSQLBox( m_showToolBox );
 }
