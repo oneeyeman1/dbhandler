@@ -467,5 +467,5 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
 void DatabaseCanvas::OnShowSQLBox(wxCommandEvent &event)
 {
     m_showToolBox = !m_showToolBox;
-    m_view->HideShowSQLBox( m_showToolBox );
+    ((DrawingView *) m_view)->HideShowSQLBox( m_showToolBox );
 }
