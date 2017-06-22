@@ -120,3 +120,8 @@ void AddColumnsDialog::OnPasteUpdateUI(wxUpdateUIEvent &event)
     else
         event.Enable( false );
 }
+
+const wxString &AddColumnsDialog::GetSelectedString()
+{
+    return m_fields->GetString( m_fields->GetSelection() );
+}

@@ -18,7 +18,7 @@
 //#include "wx/settings.h"
 #include "wherehavingpage.h"
 
-typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring> &);
+typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring> &, wxString &);
 
 WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
 {
@@ -147,15 +147,16 @@ void WhereHavingPage::OnSelection()
 
 void WhereHavingPage::OnCellRightClick(wxGridEvent &event)
 {
-    int col = event.GetCol();
-    if( col == 0 || col == 2 )
+    m_col = event.GetCol();
+    m_row = event.GetRow();
+    if( m_col == 0 || m_col == 2 )
     {
         wxMenu contextMenu;
         contextMenu.Append( WHEREPAGECOLUMNS, _( "Columns..." ) );
         contextMenu.Append( WHEREPAGEFUNCTIONS, _( "Functions..." ) );
         contextMenu.Append( WHEREPAGEARGUMENTS, _( "Arguments..." ) );
         contextMenu.Append( WHEREPAGEVALUE, _( "Value..." ) );
-        if( col == 2 )
+        if( m_col == 2 )
             contextMenu.Append( WHEREPAGESELECT, _( "Select..." ) );
         contextMenu.AppendSeparator();
         contextMenu.Append( WHEREPAGECLEAR, _( "Clear" ) );
@@ -188,8 +189,11 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
 #endif
     if( lib->IsLoaded() )
     {
+        wxString selection;
         ADDCOLUMNSDIALOG func = (ADDCOLUMNSDIALOG) lib->GetSymbol( "AddColumnToQuery" );
-        func( GetParent()->GetParent(), type, fields );
+        func( GetParent()->GetParent(), type, fields, selection );
+        if( selection != wxEmptyString )
+            m_grid->SetCellValue( m_row, m_col, selection );
     }
     delete lib;
     lib = NULL;

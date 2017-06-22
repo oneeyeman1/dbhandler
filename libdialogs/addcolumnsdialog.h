@@ -4,6 +4,7 @@ class AddColumnsDialog : public wxDialog
 public:
     AddColumnsDialog(wxWindow *parent, int type, const std::vector<std::wstring> &fields);
     ~AddColumnsDialog(void);
+    const wxString &GetSelectedString();
     void OnPasteUpdateUI(wxUpdateUIEvent &event);
 protected:
     void set_properties();

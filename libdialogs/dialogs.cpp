@@ -222,10 +222,14 @@ extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTab
     return res;
 }
 
-extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type, const std::vector<std::wstring> &fields)
+extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type, const std::vector<std::wstring> &fields, wxString &selection)
 {
     int res;
     AddColumnsDialog dlg( parent, type, fields );
     res = dlg.ShowModal();
+    if( res == wxID_OK )
+        selection = dlg.GetSelectedString();
+	else
+        selection = wxEmptyString;
     return res;
 }
