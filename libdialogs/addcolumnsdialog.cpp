@@ -20,7 +20,7 @@ AddColumnsDialog::AddColumnsDialog(wxWindow *parent, int type, const std::vector
     // begin wxGlade: MyDialog::MyDialog
     m_panel = new wxPanel( this, wxID_ANY );
     m_fields = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
-    m_paste = new wxButton( m_panel, wxID_ANY, _( "Paste" ) );
+    m_paste = new wxButton( m_panel, wxID_OK, _( "Paste" ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
     set_properties();
     do_layout();
@@ -115,13 +115,13 @@ void AddColumnsDialog::do_layout()
 
 void AddColumnsDialog::OnPasteUpdateUI(wxUpdateUIEvent &event)
 {
-    if( m_fields->GetSelection() )
+    if( m_fields->GetSelection() != wxNOT_FOUND )
         event.Enable( true );
     else
         event.Enable( false );
 }
 
-const wxString &AddColumnsDialog::GetSelectedString()
+wxListBox *AddColumnsDialog::GetFieldsControl() const
 {
-    return m_fields->GetString( m_fields->GetSelection() );
+    return m_fields;
 }

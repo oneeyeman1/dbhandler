@@ -228,7 +228,10 @@ extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type, const std::
     AddColumnsDialog dlg( parent, type, fields );
     res = dlg.ShowModal();
     if( res == wxID_OK )
-        selection = dlg.GetSelectedString();
+    {
+        wxListBox *fields = dlg.GetFieldsControl();
+        selection = fields->GetString( fields->GetSelection() );
+    }
 	else
         selection = wxEmptyString;
     return res;
