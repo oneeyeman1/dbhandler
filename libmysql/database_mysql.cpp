@@ -449,9 +449,9 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             errorMsg.push_back( err );
             return 1;
         }
-        MYSQL_BIND results1[11];
-        my_bool is_null1[11];
-        long unsigned int length1[11];
+        MYSQL_BIND results1[10];
+        my_bool is_null1[10];
+        long unsigned int length1[10];
         
         length1[0] = 64;
         results1[0].buffer = colName;
@@ -487,36 +487,31 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         results1[5].is_null = &is_null1[5];
         results1[5].length = &length1[5];
 
-        results1[6].buffer = (char *) &numOctet;
-        results1[6].buffer_type = MYSQL_TYPE_LONG;
+        length1[6] = 64;
+        results1[6].buffer = defValue;
+        results1[6].buffer_type = MYSQL_TYPE_STRING;
+        results1[6].buffer_length = length1[6];
         results1[6].is_null = &is_null1[6];
         results1[6].length = &length1[6];
 
-        length1[7] = 64;
-        results1[7].buffer = defValue;
+        length1[7] = 3;
+        results1[7].buffer = nullable;
         results1[7].buffer_type = MYSQL_TYPE_STRING;
         results1[7].buffer_length = length1[7];
         results1[7].is_null = &is_null1[7];
         results1[7].length = &length1[7];
 
-        length1[8] = 3;
-        results1[8].buffer = nullable;
+        length1[8] = 30;
+        results1[8].buffer = autoInc;
         results1[8].buffer_type = MYSQL_TYPE_STRING;
         results1[8].buffer_length = length1[8];
         results1[8].is_null = &is_null1[8];
         results1[8].length = &length1[8];
 
-        length1[9] = 30;
-        results1[9].buffer = autoInc;
-        results1[9].buffer_type = MYSQL_TYPE_STRING;
-        results1[9].buffer_length = length1[9];
+        results1[9].buffer = (char *) &pk;
+        results1[9].buffer_type = MYSQL_TYPE_LONG;
         results1[9].is_null = &is_null1[9];
         results1[9].length = &length1[9];
-
-        results1[10].buffer = (char *) &pk;
-        results1[10].buffer_type = MYSQL_TYPE_LONG;
-        results1[10].is_null = &is_null1[10];
-        results1[10].length = &length1[10];
 
         if( mysql_stmt_bind_result( res2, results1 ) )
         {
