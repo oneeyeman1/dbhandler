@@ -430,7 +430,10 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             evt.SetEventObject( erdField );
         else
             evt.SetEventObject( erdTable );
-        m_view->ProcessEvent( evt );
+        if( rc == wxID_SHOWSQLTOOLBOX )
+            GetEventHandler()->ProcessEvent( evt );
+        else
+            m_view->ProcessEvent( evt );
     }
 }
 
