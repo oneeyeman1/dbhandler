@@ -309,6 +309,56 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
     }
     else
     {
+        // label
+        FieldShape *pCol = new FieldShape();
+        if( pCol )
+        {
+            pCol->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+            pCol->SetId( id + 10000 );
+            pCol->Activate( true );
+            pCol->RemoveStyle( sfsSHOW_HANDLES );
+            if( m_pGrid->InsertToTableGrid( pCol ) )
+            {
+                SetCommonProps( pCol );
+                pCol->GetFont().SetPointSize( 8 );
+                pCol->SetText( field->GetFieldName() );
+                pCol->SetField( field );
+            }
+            else
+                delete pCol;
+        }
+        wxSFTextShape *type_shape = new wxSFTextShape();
+        if( type_shape )
+        {
+            type_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+            type_shape->SetId( id + 10000 + 1 );
+            type_shape->Activate( true );
+            type_shape->RemoveStyle( sfsSHOW_HANDLES );
+            if( m_pGrid->InsertToTableGrid( type_shape ) )
+            {
+                SetCommonProps( type_shape );
+                type_shape->GetFont().SetPointSize( 8 );
+                type_shape->SetText( field->GetComment() );
+            }
+            else
+                delete type_shape;
+        }
+        wxSFTextShape *comment_shape = new wxSFTextShape();
+        if( comment_shape )
+        {
+            comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+            comment_shape->SetId( id + 10000 + 2 );
+            comment_shape->Activate( true );
+            comment_shape->RemoveStyle( sfsSHOW_HANDLES );
+            if( m_pGrid->InsertToTableGrid( comment_shape ) )
+            {
+                SetCommonProps( comment_shape );
+                comment_shape->GetFont().SetPointSize( 8 );
+                comment_shape->SetText( field->GetComment() );
+            }
+            else
+                delete comment_shape;
+        }
     }
 }
 
