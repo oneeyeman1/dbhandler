@@ -227,82 +227,88 @@ void MyErdTable::DrawNormal(wxDC &dc)
 
 void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type)
 {
-    if( type != Constraint::noKey )
+    if( m_type == DatabaseView )
     {
-        // key bitmap
-        wxSFBitmapShape* pBitmap = new wxSFBitmapShape();
-        if( pBitmap )
+        if( type != Constraint::noKey )
         {
-            pBitmap->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-            pBitmap->SetId( id + 10000 );
-            pBitmap->Activate( true );
-            pBitmap->RemoveStyle( sfsSHOW_HANDLES );
-            if( m_pGrid->InsertToTableGrid( pBitmap ) )
+            // key bitmap
+            wxSFBitmapShape* pBitmap = new wxSFBitmapShape();
+            if( pBitmap )
             {
-                if( type == Constraint::primaryKey )
+                pBitmap->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+                pBitmap->SetId( id + 10000 );
+                pBitmap->Activate( true );
+                pBitmap->RemoveStyle( sfsSHOW_HANDLES );
+                if( m_pGrid->InsertToTableGrid( pBitmap ) )
                 {
-                    pBitmap->CreateFromXPM( key_p_xpm );
+                    if( type == Constraint::primaryKey )
+                    {
+                        pBitmap->CreateFromXPM( key_p_xpm );
+                    }
+                    else
+                        pBitmap->CreateFromXPM( key_f_xpm );
+                    SetCommonProps( pBitmap );
                 }
                 else
-                    pBitmap->CreateFromXPM( key_f_xpm );
-                SetCommonProps( pBitmap );
+                    delete pBitmap;
+            }
+        }
+        else
+        {
+            // spacer
+            wxSFShapeBase* pSpacer = new wxSFShapeBase();
+            pSpacer->Activate( true );
+            pSpacer->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+            if( pSpacer )
+            {
+                pSpacer->SetId( id + 10000 );
+                pSpacer->Activate( true );
+                pSpacer->RemoveStyle( sfsSHOW_HANDLES );
+                if( m_pGrid->InsertToTableGrid( pSpacer ) )
+                {
+                    SetCommonProps( pSpacer );
+                }
+                else
+                    delete pSpacer;
+            }
+        }
+        // label
+        FieldShape *pCol = new FieldShape();
+        if( pCol )
+        {
+            pCol->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+            pCol->SetId( id + 10000 + 1 );
+            pCol->Activate( true );
+            pCol->RemoveStyle( sfsSHOW_HANDLES );
+            if( m_pGrid->InsertToTableGrid( pCol ) )
+            {
+                SetCommonProps( pCol );
+                pCol->GetFont().SetPointSize( 8 );
+                pCol->SetText( field->GetFieldName() );
+                pCol->SetField( field );
             }
             else
-                delete pBitmap;
+                delete pCol;
+        }
+        wxSFTextShape *comment_shape = new wxSFTextShape();
+        if( comment_shape )
+        {
+            comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+            comment_shape->SetId( id + 10000 + 2 );
+            comment_shape->Activate( true );
+            comment_shape->RemoveStyle( sfsSHOW_HANDLES );
+            if( m_pGrid->InsertToTableGrid( comment_shape ) )
+            {
+                SetCommonProps( comment_shape );
+                comment_shape->GetFont().SetPointSize( 8 );
+                comment_shape->SetText( field->GetComment() );
+            }
+            else
+                delete comment_shape;
         }
     }
     else
     {
-        // spacer
-        wxSFShapeBase* pSpacer = new wxSFShapeBase();
-        pSpacer->Activate( true );
-        pSpacer->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-        if( pSpacer )
-        {
-            pSpacer->SetId( id + 10000 );
-            pSpacer->Activate( true );
-            pSpacer->RemoveStyle( sfsSHOW_HANDLES );
-            if( m_pGrid->InsertToTableGrid( pSpacer ) )
-            {
-                SetCommonProps( pSpacer );
-            }
-            else
-                delete pSpacer;
-        }
-    }
-    // label
-    FieldShape *pCol = new FieldShape();
-    if( pCol )
-    {
-        pCol->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-        pCol->SetId( id + 10000 + 1 );
-        pCol->Activate( true );
-        pCol->RemoveStyle( sfsSHOW_HANDLES );
-        if( m_pGrid->InsertToTableGrid( pCol ) )
-        {
-            SetCommonProps( pCol );
-            pCol->GetFont().SetPointSize( 8 );
-            pCol->SetText( field->GetFieldName() );
-            pCol->SetField( field );
-        }
-        else
-            delete pCol;
-    }
-    wxSFTextShape *comment_shape = new wxSFTextShape();
-    if( comment_shape )
-    {
-        comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-        comment_shape->SetId( id + 10000 + 2 );
-        comment_shape->Activate( true );
-        comment_shape->RemoveStyle( sfsSHOW_HANDLES );
-        if( m_pGrid->InsertToTableGrid( comment_shape ) )
-        {
-            SetCommonProps( comment_shape );
-            comment_shape->GetFont().SetPointSize( 8 );
-            comment_shape->SetText( field->GetComment() );
-        }
-        else
-            delete comment_shape;
     }
 }
 
