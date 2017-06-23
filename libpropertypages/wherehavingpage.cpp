@@ -87,7 +87,7 @@ void WhereHavingPage::set_properties()
     m_grid->DisableDragRowSize();
     for( int i = 0; i < 9; i++ )
     {
-        m_grid->SetCellEditor( i, 0, new wxGridCellChoiceEditor() );
+        m_grid->SetCellEditor( i, 0, new wxGridCellChoiceEditor( 0, NULL, true ) );
         m_grid->SetCellEditor( i, 1, new wxGridCellChoiceEditor( 28, m_operatorChoices ) );
         m_grid->SetCellEditor( i, 3, new wxGridCellChoiceEditor( 2, m_logicalChoices ) );
     }
@@ -193,7 +193,13 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
         ADDCOLUMNSDIALOG func = (ADDCOLUMNSDIALOG) lib->GetSymbol( "AddColumnToQuery" );
         func( GetParent()->GetParent(), type, fields, selection );
         if( selection != wxEmptyString )
+        {
             m_grid->SetCellValue( m_row, m_col, selection );
+            m_grid->SetGridCursor( m_row, m_col );
+            m_grid->EnableCellEditControl( true );
+            m_grid->ShowCellEditControl();
+//            wxGridCellEditor *editor = m_grid->GetCellEditor( m_row, m_col );
+        }
     }
     delete lib;
     lib = NULL;
