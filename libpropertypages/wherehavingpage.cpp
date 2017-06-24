@@ -198,7 +198,11 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
             m_grid->SetGridCursor( m_row, m_col );
             m_grid->EnableCellEditControl( true );
             m_grid->ShowCellEditControl();
-//            wxGridCellEditor *editor = m_grid->GetCellEditor( m_row, m_col );
+            if( m_col )
+            {
+                wxComboBox *combo = dynamic_cast<wxComboBox *>( m_grid->GetCellEditor( m_row, m_col )->GetControl() );
+                combo->SetSelection( selection.size() - 1, selection.size() - 1 );
+            }
         }
     }
     delete lib;
