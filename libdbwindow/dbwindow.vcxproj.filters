@@ -67,6 +67,7 @@
     <ClInclude Include="HeaderGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="commentfieldshape.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="constraint.cpp">
@@ -121,6 +122,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="constraintsign.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commentfieldshape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

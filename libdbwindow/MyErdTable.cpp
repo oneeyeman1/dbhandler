@@ -11,6 +11,7 @@
 #include "HeaderGrid.h"
 #include "GridTableShape.h"
 #include "FieldShape.h"
+#include "commentfieldshape.h"
 #include "MyErdTable.h"
 #include "res/gui/key-p.xpm"
 #include "res/gui/key-f.xpm"
@@ -290,7 +291,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
             else
                 delete pCol;
         }
-        wxSFTextShape *comment_shape = new wxSFTextShape();
+        CommentFieldShape *comment_shape = new CommentFieldShape( field );
         if( comment_shape )
         {
             comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
