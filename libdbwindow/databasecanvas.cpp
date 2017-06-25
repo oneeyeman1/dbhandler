@@ -34,6 +34,7 @@
 #include "databasedoc.h"
 #include "databasecanvas.h"
 #include "databaseview.h"
+#include "commentfieldshape.h"
 #include "ErdForeignKey.h"
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
@@ -59,6 +60,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent
 //    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_TABLEDROPTABLE );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnShowSQLBox, this, wxID_SHOWSQLTOOLBOX );
+    Bind( wxEVT_MENU, &DatabaseCanvas::OnShowComments, this, wxID_VIEWSHOWCOMMENTS );
 }
 
 DatabaseCanvas::~DatabaseCanvas()
@@ -394,7 +396,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             wxMenu *showMenu = new wxMenu();
             showMenu->AppendCheckItem( wxID_SHOWDATATYPES, _( "Datatypes" ), _( "Datatypes" ) );
             showMenu->AppendCheckItem( wxID_SHOWLABELS, _( "Labels" ), _( "Labels" ) );
-            showMenu->AppendCheckItem( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Comments" ) );
+            showMenu->AppendCheckItem( wxID_VIEWSHOWCOMMENTS, _( "Comments" ), _( "Comments" ) );
             showMenu->AppendCheckItem( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ) );
             mnu.AppendSubMenu( showMenu, _( "Show" ) );
             if( m_showDataTypes )
@@ -402,7 +404,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             if( m_showLabels )
                 showMenu->Check( wxID_SHOWLABELS, true );
             if( m_showComments )
-                showMenu->Check( wxID_SHOWCOMMENTS, true );
+                showMenu->Check( wxID_VIEWSHOWCOMMENTS, true );
             if( m_showToolBox )
                 showMenu->Check( wxID_SHOWSQLTOOLBOX, true );
         }
@@ -430,7 +432,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             evt.SetEventObject( erdField );
         else
             evt.SetEventObject( erdTable );
-        if( rc == wxID_SHOWSQLTOOLBOX )
+        if( rc == wxID_SHOWSQLTOOLBOX || rc == wxID_VIEWSHOWCOMMENTS )
             GetEventHandler()->ProcessEvent( evt );
         else
             m_view->ProcessEvent( evt );
@@ -471,4 +473,24 @@ void DatabaseCanvas::OnShowSQLBox(wxCommandEvent &event)
 {
     m_showToolBox = !m_showToolBox;
     ((DrawingView *) m_view)->HideShowSQLBox( m_showToolBox );
+}
+
+void DatabaseCanvas::OnShowComments(wxCommandEvent &event)
+{
+    ShapeList list;
+    m_showComments = !m_showComments;
+    m_pManager.GetShapes( CLASSINFO( CommentFieldShape ), list );
+    for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
+    {
+        CommentFieldShape *shape = wxDynamicCast( (*it), CommentFieldShape );
+        if( m_showComments )
+        {
+            shape->SetText( const_cast<Field *>( shape->GetFieldForComment() )->GetComment() );
+        }
+        else
+        {
+            shape->SetText( wxEmptyString );
+        }
+    }
+    Refresh();
 }
