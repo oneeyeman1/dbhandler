@@ -495,4 +495,19 @@ void DatabaseCanvas::OnShowComments(wxCommandEvent &event)
         }
     }
     Refresh();
+    list.clear();
+    m_pManager.GetShapes( CLASSINFO( CommentTableShape ), list );
+    for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
+    {
+        CommentTableShape *shape = wxDynamicCast( (*it), CommentTableShape );
+        if( m_showComments )
+        {
+            shape->SetText( const_cast<DatabaseTable *>( shape->GetDatabaseTable() )->GetComment() );
+        }
+        else
+        {
+            shape->SetText( wxEmptyString );
+        }
+    }
+    Refresh();
 }
