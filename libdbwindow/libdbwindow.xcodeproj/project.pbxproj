@@ -30,6 +30,8 @@
 		E38709C21D4CF564004EF478 /* OneArrow.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709B21D4CF564004EF478 /* OneArrow.h */; };
 		E38709C31D4CF564004EF478 /* table.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38709B31D4CF564004EF478 /* table.cpp */; };
 		E38709C41D4CF564004EF478 /* table.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709B41D4CF564004EF478 /* table.h */; };
+		E39573E11EFF385500FA817A /* commentfieldshape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39573DF1EFF385500FA817A /* commentfieldshape.cpp */; };
+		E39573E21EFF385500FA817A /* commentfieldshape.h in Headers */ = {isa = PBXBuildFile; fileRef = E39573E01EFF385500FA817A /* commentfieldshape.h */; };
 		E3AC9DCF1DFD16EF0083DD62 /* GridTableShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3AC9DCD1DFD16EF0083DD62 /* GridTableShape.cpp */; };
 		E3AC9DD01DFD16EF0083DD62 /* GridTableShape.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AC9DCE1DFD16EF0083DD62 /* GridTableShape.h */; };
 		E3E91D1E1D6D467C00675CF8 /* databasecanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D131D6D467C00675CF8 /* databasecanvas.cpp */; };
@@ -74,6 +76,8 @@
 		E38709B21D4CF564004EF478 /* OneArrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OneArrow.h; sourceTree = "<group>"; };
 		E38709B31D4CF564004EF478 /* table.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = table.cpp; sourceTree = "<group>"; };
 		E38709B41D4CF564004EF478 /* table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = table.h; sourceTree = "<group>"; };
+		E39573DF1EFF385500FA817A /* commentfieldshape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = commentfieldshape.cpp; sourceTree = "<group>"; };
+		E39573E01EFF385500FA817A /* commentfieldshape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commentfieldshape.h; sourceTree = "<group>"; };
 		E3AC9DCD1DFD16EF0083DD62 /* GridTableShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GridTableShape.cpp; sourceTree = "<group>"; };
 		E3AC9DCE1DFD16EF0083DD62 /* GridTableShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridTableShape.h; sourceTree = "<group>"; };
 		E3E91D131D6D467C00675CF8 /* databasecanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasecanvas.cpp; sourceTree = "<group>"; };
@@ -129,6 +133,8 @@
 		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
+				E39573DF1EFF385500FA817A /* commentfieldshape.cpp */,
+				E39573E01EFF385500FA817A /* commentfieldshape.h */,
 				E33E6F741EAD303C003A0B92 /* constraintsign.cpp */,
 				E33E6F751EAD303C003A0B92 /* constraintsign.h */,
 				E33E6F701EA5CAA6003A0B92 /* databasetemplate.cpp */,
@@ -182,6 +188,7 @@
 				E3E91D281D6D467C00675CF8 /* GUIDatabaseTable.h in Headers */,
 				E33E6F731EA5CAA6003A0B92 /* databasetemplate.h in Headers */,
 				E38709B81D4CF564004EF478 /* constraint.h in Headers */,
+				E39573E21EFF385500FA817A /* commentfieldshape.h in Headers */,
 				E38709C21D4CF564004EF478 /* OneArrow.h in Headers */,
 				E38709BA1D4CF564004EF478 /* ErdForeignKey.h in Headers */,
 				E38709C41D4CF564004EF478 /* table.h in Headers */,
@@ -250,6 +257,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E39573E11EFF385500FA817A /* commentfieldshape.cpp in Sources */,
 				E38709BF1D4CF564004EF478 /* NArrow.cpp in Sources */,
 				E3AC9DCF1DFD16EF0083DD62 /* GridTableShape.cpp in Sources */,
 				E3E91D2C1D821A5600675CF8 /* MyErdTable.cpp in Sources */,
