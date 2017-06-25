@@ -2,7 +2,7 @@
 class CommentFieldShape : public wxSFTextShape
 {
 public:
-    XS_DECLARE_CLONABLE_CLASS(FieldShape);
+    XS_DECLARE_CLONABLE_CLASS(CommentFieldShape);
     CommentFieldShape();
     CommentFieldShape(Field *field);
     CommentFieldShape(CommentFieldShape &shape);

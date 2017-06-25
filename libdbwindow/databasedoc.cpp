@@ -36,6 +36,7 @@
 #include "constraint.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
+#include "commenttableshape.h"
 #include "MyErdTable.h"
 #include "FieldShape.h"
 #include "fieldwindow.h"

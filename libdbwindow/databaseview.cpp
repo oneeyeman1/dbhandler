@@ -36,6 +36,7 @@
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "FieldShape.h"
+#include "commenttableshape.h"
 #include "MyErdTable.h"
 #include "fieldwindow.h"
 #include "syntaxproppage.h"

@@ -20,6 +20,7 @@
 #include "HeaderGrid.h"
 #include "constraintsign.h"
 #include "constraint.h"
+#include "commenttableshape.h"
 #include "MyErdTable.h"
 #include "fieldwindow.h"
 #include "ErdForeignKey.h"

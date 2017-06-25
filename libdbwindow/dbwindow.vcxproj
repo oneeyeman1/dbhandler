@@ -37,6 +37,7 @@
   <ItemGroup>
     <ClInclude Include="column.h" />
     <ClInclude Include="commentfieldshape.h" />
+    <ClInclude Include="commenttableshape.h" />
     <ClInclude Include="constraint.h" />
     <ClInclude Include="constraintsign.h" />
     <ClInclude Include="databasecanvas.h" />
@@ -59,6 +60,7 @@
   <ItemGroup>
     <ClCompile Include="column.cpp" />
     <ClCompile Include="commentfieldshape.cpp" />
+    <ClCompile Include="commenttableshape.cpp" />
     <ClCompile Include="constraint.cpp" />
     <ClCompile Include="constraintsign.cpp" />
     <ClCompile Include="databasecanvas.cpp" />

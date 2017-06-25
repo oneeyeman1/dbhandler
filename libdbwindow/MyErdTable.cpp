@@ -12,6 +12,7 @@
 #include "GridTableShape.h"
 #include "FieldShape.h"
 #include "commentfieldshape.h"
+#include "commenttableshape.h"
 #include "MyErdTable.h"
 #include "res/gui/key-p.xpm"
 #include "res/gui/key-f.xpm"
@@ -33,7 +34,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
     SetRadius( 15 );
     m_header = new HeaderGrid();
     m_pLabel = new wxSFTextShape();
-    m_comment = new wxSFTextShape();
+    m_comment = new CommentTableShape();
     m_pGrid = new GridTableShape();
     m_pLabel->SetId( 1000 );
     m_comment->SetId( 1001 );
@@ -99,7 +100,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
     SetRadius(15);
     m_header = new HeaderGrid();
     m_pLabel = new wxSFTextShape();
-    m_comment = new wxSFTextShape();
+    m_comment = new CommentTableShape();
     m_pGrid = new GridTableShape();
     m_pLabel->SetId( 1000 );
     m_comment->SetId( 1001 );
@@ -291,7 +292,8 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
             else
                 delete pCol;
         }
-        CommentFieldShape *comment_shape = new CommentFieldShape();
+        wxSFTextShape *comment_shape = new wxSFTextShape();
+//        CommentFieldShape *comment_shape = new CommentFieldShape();
         if( comment_shape )
         {
             comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
@@ -301,7 +303,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
             if( m_pGrid->InsertToTableGrid( comment_shape ) )
             {
                 SetCommonProps( comment_shape );
-                comment_shape->SetField( field );
+//                comment_shape->SetField( field );
                 comment_shape->GetFont().SetPointSize( 8 );
                 comment_shape->SetText( field->GetComment() );
             }

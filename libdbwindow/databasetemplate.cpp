@@ -23,6 +23,7 @@
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "database.h"
+#include "commenttableshape.h"
 #include "MyErdTable.h"
 #include "FieldShape.h"
 #include "fieldwindow.h"

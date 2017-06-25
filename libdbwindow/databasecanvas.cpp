@@ -20,12 +20,13 @@
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
+#include "wxsf/ShapeCanvas.h"
 #include "constraintsign.h"
 #include "constraint.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
+#include "commenttableshape.h"
 #include "MyErdTable.h"
-#include "wxsf/ShapeCanvas.h"
 #include "fieldwindow.h"
 #include "FieldShape.h"
 #include "DiagramManager.h"
@@ -35,6 +36,7 @@
 #include "databasecanvas.h"
 #include "databaseview.h"
 #include "commentfieldshape.h"
+#include "commenttableshape.h"
 #include "ErdForeignKey.h"
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);

@@ -1,6 +1,6 @@
 #include <string>
 #include "database.h"
-#include "wxsf/textshape.h"
+#include "wxsf/TextShape.h"
 #include "commentfieldshape.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(CommentFieldShape, wxSFTextShape);
