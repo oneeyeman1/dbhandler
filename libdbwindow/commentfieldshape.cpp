@@ -1,3 +1,4 @@
+#include <string>
 #include "database.h"
 #include "wxsf/textshape.h"
 #include "commentfieldshape.h"
