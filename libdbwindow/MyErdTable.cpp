@@ -291,7 +291,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
             else
                 delete pCol;
         }
-        CommentFieldShape *comment_shape = new CommentFieldShape( field );
+        CommentFieldShape *comment_shape = new CommentFieldShape();
         if( comment_shape )
         {
             comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
@@ -301,6 +301,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
             if( m_pGrid->InsertToTableGrid( comment_shape ) )
             {
                 SetCommonProps( comment_shape );
+                comment_shape->SetField( field );
                 comment_shape->GetFont().SetPointSize( 8 );
                 comment_shape->SetText( field->GetComment() );
             }
