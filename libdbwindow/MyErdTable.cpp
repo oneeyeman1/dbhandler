@@ -100,7 +100,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
     SetRadius(15);
     m_header = new HeaderGrid();
     m_pLabel = new wxSFTextShape();
-    m_comment = new CommentTableShape();
+    m_comment = new CommentTableShape( table );
     m_pGrid = new GridTableShape();
     m_pLabel->SetId( 1000 );
     m_comment->SetId( 1001 );
@@ -114,6 +114,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         m_header->SetFill( *wxTRANSPARENT_BRUSH );
         m_header->SetBorder( *wxTRANSPARENT_PEN);
         m_header->AcceptChild( wxT( "wxSFTextShape" ) );
+        m_header->AcceptChild( wxT( "CommentTableShape" ) );
         m_header->Activate( false );
         SF_ADD_COMPONENT( m_header, wxT( "header" ) );
         //table name
@@ -153,6 +154,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         m_pGrid->AcceptChild( wxT( "wxSFTextShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFBitmapShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFShapeBase" ) );
+        m_pGrid->AcceptChild( wxT( "CommentFieldShape" ) );
         m_pGrid->Activate( false );
         SF_ADD_COMPONENT( m_pGrid, wxT( "main_grid" ) );
     }
