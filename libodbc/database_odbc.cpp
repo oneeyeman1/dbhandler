@@ -377,12 +377,78 @@ int ODBCDatabase::GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<s
 int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    SQLWCHAR *query;
+    RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        query = new SQLWCHAR[name.length() + 2];
+        memset( query, '\0', name.length() + 2 );
+        uc_to_str_cpy( query, name );
+        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+        delete query;
+        query = NULL;
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2 );
+            result = 1;
+        }
+        else
+        {
+            if( m_hstmt )
+            {
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 2 );
+                    result = 1;
+                }
+            }
+        }
+    }
+	else
+    {
+        GetErrorMessage( errorMsg, 2 );
+        result = 1;
+    }
     return result;
 }
 
 int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    SQLWCHAR *query;
+    RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        query = new SQLWCHAR[name.length() + 2];
+        memset( query, '\0', name.length() + 2 );
+        uc_to_str_cpy( query, name );
+        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+        delete query;
+        query = NULL;
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2 );
+            result = 1;
+        }
+        else
+        {
+            if( m_hstmt )
+            {
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 2 );
+                    result = 1;
+                }
+            }
+        }
+    }
+	else
+    {
+        GetErrorMessage( errorMsg, 2 );
+        result = 1;
+    }
     return result;
 }
 
