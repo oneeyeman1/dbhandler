@@ -30,7 +30,7 @@ protected:
     struct MySQLImpl;
     MySQLImpl *m_pimpl;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
-    virtual void SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
+    virtual int SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
     int TokenizeConnectionString(std::wstring &connectStr, std::vector<std::wstring> &errorMsg);
 private:
     MYSQL *m_db;

@@ -52,7 +52,7 @@ protected:
     int GetErrorMessage(std::vector<std::wstring> &errorMsg, int type, SQLHSTMT stmt = 0);
     int GetDSNErrorMessage(std::vector<std::wstring> &errorMsg);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
-    virtual void SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
+    virtual int SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
     virtual bool IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg);
 private:
     SQLHENV m_env;

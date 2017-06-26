@@ -530,8 +530,9 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, std::vector<std::ws
     return result;
 }
 
-void SQLiteDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
+    int result = 0;
     bool found = false;
     std::wstring errorMessage;
     sqlite3_stmt *stmt = NULL;
@@ -554,24 +555,28 @@ void SQLiteDatabase::SetColumnComment(const std::wstring &tableName, const std::
                 {
                     GetErrorMessage( res, errorMessage );
                     errorMsg.push_back( errorMessage );
+                    result = 1;
                 }
             }
             else
             {
                 GetErrorMessage( res, errorMessage );
                 errorMsg.push_back( errorMessage );
+                result = 1;
             }
         }
         else
         {
             GetErrorMessage( res, errorMessage );
             errorMsg.push_back( errorMessage );
+            result = 1;
         }
     }
     else
     {
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
+        result = 1;
     }
     sqlite3_finalize( stmt );
     if( found )
@@ -592,25 +597,30 @@ void SQLiteDatabase::SetColumnComment(const std::wstring &tableName, const std::
                 {
                     GetErrorMessage( res, errorMessage );
                     errorMsg.push_back( errorMessage );
+                    result = 1;
                 }
             }
             else
             {
                 GetErrorMessage( res, errorMessage );
                 errorMsg.push_back( errorMessage );
+                result = 1;
             }
         }
         else
         {
             GetErrorMessage( res, errorMessage );
             errorMsg.push_back( errorMessage );
+            result = 1;
         }
     }
     else
     {
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
+        result = 1;
     }
+    return result;
 }
 
 bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &WXUNUSED(schemaName), const std::wstring &tableName, std::vector<std::wstring> &errorMsg)

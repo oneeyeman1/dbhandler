@@ -615,8 +615,10 @@ int MySQLDatabase::CreateIndex(const std::wstring &command, std::vector<std::wst
     return result;
 }
 
-void MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
+    int result = 0;
+    return result;
 }
 
 bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
