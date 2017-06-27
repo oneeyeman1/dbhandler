@@ -1917,7 +1917,16 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
         }
         if( !result )
         {
-            ret = SQExecDirect( m_hstmt, L"BEGIN TRANSACTION", SQL_NTS );
+            ret = SQExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+        }
+        else
+        {
+            ret = SQExecDirect( m_hstmt, L"ROLLBACK", SQL_NTS );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
