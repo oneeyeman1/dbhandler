@@ -1758,7 +1758,78 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstr
 
 int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
+    SQLWCHAR *table_name = NULL, *schema_name = NULL, *query = NULL;
+    SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;    SQLWCHAR *query = NULL;
     int result = 0;
+    std::wstring query1 = L"SELECT count(*) FROM abcatcol WHERE abc_tnam = ? AND abc_cnam = ?;";
+    if( found )
+        query2 = L"UPDATE \"sys.abcatcol\" SET \"abc_cmnt\" = ? WHERE \"abc_tnam\" = ? AND \"abc_ownr\" == \"\" AND \"abc_cnam\" = ?;";
+    else
+        query2 = L"INSERT INTO \"sys.abcattbl\"(\"abc_cmnt\", \"abc_tnam\", \"abc_ownr\", \"abc_cnam\" ) VALUES( ?, ?, \"\", ? );";
+    RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        query = new SQLWCHAR[query1.length() + 2];
+        table_name = new SQLWCHAR[tableName.length() + 2];
+        schema_name = new SQLWCHAR[schemaName.length() + 2];
+        memset( query, '\0', query1.size() + 2 );
+        memset( table_name, '\0', tableName.length() + 2 );
+        memset( schema_name, '\0', schemaName.length() + 2 );
+        uc_to_str_cpy( query, query1 );
+        uc_to_str_cpy( schema_name, schemaName );
+        uc_to_str_cpy( table_name, tableName );
+        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, indexName.length(), 0, index_name, 0, &cbIndexName );
+        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+        {
+            ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+            {
+                ret = SQLPrepare( m_hstmt, query, SQL_NTS );
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                {
+                    ret = SQLExecute( m_hstmt );
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    {
+                        ret = SQLFetch( m_hstmt );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            exists = true;
+                        }
+                        else if( ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                        }
+                    }
+                    else
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
+                    }
+                }
+                else
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+            }
+            else
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+        }
+        else
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+    }
+    else
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+        result = 1;
+    }
     return result;
 }
 
@@ -1823,7 +1894,7 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
                             {
                                 exists = true;
                             }
-                            else
+                            else if( ret != SQL_NO_DATA )
                             {
                                 GetErrorMessage( errorMsg, 1, m_hstmt );
                             }
