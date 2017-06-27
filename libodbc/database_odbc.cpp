@@ -1830,6 +1830,19 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
         GetErrorMessage( errorMsg, 1, m_hstmt );
         result = 1;
     }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+        return 1;
+    }
+    if( !result )
+    {
+        if( found )
+            query2 = L"UPDATE abcatcol SET abc_cmnt = ? WHERE abc_tnam = ? AND abc_ownr == ? AND abc_cnam = ?;";
+        else
+            query2 = L"INSERT INTO abcattbl(abc_cmnt, abc_tnam, abc_ownr, abc_cnam ) VALUES( ?, ?, ?, ? );";
+    }
     return result;
 }
 
