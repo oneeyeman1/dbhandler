@@ -189,7 +189,7 @@ protected:
     struct Impl;
     Impl *pimpl;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
-    virtual int SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &user, const std::wstring &comment, std::vector<std::wstring> &errorMsg) = 0;
 public:
     virtual ~Database() = 0;
     Impl &GetTableVector() { return *pimpl; };

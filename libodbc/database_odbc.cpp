@@ -1756,43 +1756,61 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstr
     return result;
 }
 
-int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &user, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
     bool found = false;
-    SQLWCHAR *table_name = NULL, *field_name = NULL, *query = NULL;
-    SQLLEN cbTableName = SQL_NTS, cbFieldName = SQL_NTS;
+    SQLWCHAR *table_name = NULL, *field_name = NULL, *owner_name = NULL, *query = NULL;
+    SQLLEN cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbOwnerName = SQL_NTS;
     int result = 0;
-    std::wstring query1 = L"SELECT count(*) FROM abcatcol WHERE abc_tnam = ? AND abc_cnam = ?;";
+    std::wstring query1 = L"SELECT count(*) FROM abcatcol WHERE abc_tnam = ? AND abc_cnam = ? AND abc_ownr = ?;";
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
+        ret = SQExecDirect( m_hstmt, L"BEGIN TRANSACTION", SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            return 1;
+        }
         query = new SQLWCHAR[query1.length() + 2];
         table_name = new SQLWCHAR[tableName.length() + 2];
         field_name = new SQLWCHAR[fieldName.length() + 2];
+        owner_name = new SQLWCHAR[user.length() + 2]
         memset( query, '\0', query1.size() + 2 );
         memset( table_name, '\0', tableName.length() + 2 );
         memset( field_name, '\0', fieldName.length() + 2 );
+        memset( owner_name, '\0', user.length() + 2 );
         uc_to_str_cpy( query, query1 );
         uc_to_str_cpy( field_name, fieldName );
         uc_to_str_cpy( table_name, tableName );
+        uc_to_str_cpy( owner_name, user );
         ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
         {
             ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
-                ret = SQLPrepare( m_hstmt, query, SQL_NTS );
+                ret = SQLBindParameter( m_hstmt, 3, SQL+PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, user.length(), 0, owner_name, 0, &cbOwnerName );
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                 {
-                    ret = SQLExecute( m_hstmt );
+                    ret = SQLPrepare( m_hstmt, query, SQL_NTS );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
-                        ret = SQLFetch( m_hstmt );
+                        ret = SQLExecute( m_hstmt );
                         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                         {
-                            found = true;
+                            ret = SQLFetch( m_hstmt );
+                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                            {
+                                found = true;
+                            }
+                            else if( ret != SQL_NO_DATA )
+                            {
+                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                result = 1;
+                            }
                         }
-                        else if( ret != SQL_NO_DATA )
+                        else
                         {
                             GetErrorMessage( errorMsg, 1, m_hstmt );
                             result = 1;
@@ -1833,12 +1851,92 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
         GetErrorMessage( errorMsg, 1, m_hstmt );
         return 1;
     }
+    else
+        m_hstmt = 0;
+    delete query;
+    query = NULL;
     if( !result )
     {
         if( found )
             query2 = L"UPDATE abcatcol SET abc_cmnt = ? WHERE abc_tnam = ? AND abc_ownr == ? AND abc_cnam = ?;";
         else
             query2 = L"INSERT INTO abcattbl(abc_cmnt, abc_tnam, abc_ownr, abc_cnam ) VALUES( ?, ?, ?, ? );";
+        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+        {
+            query = new SQLWCHAR[query2.length() + 2];
+            memset( query, '\0', query2.size() + 2 );
+            uc_to_str_cpy( query, query2 );
+            ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+            {
+                ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                {
+                    ret = SQLBindParameter( m_hstmt, 3, SQL+PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, user.length(), 0, owner_name, 0, &cbOwnerName );
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    {
+                        ret = SQLPrepare( m_hstmt, query, SQL_NTS );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            ret = SQLExecute( m_hstmt );
+                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                result = 1;
+                            }
+                        }
+                        else
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                        }
+                    }
+                    else
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
+                    }
+                }
+                else
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+            }
+            else
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+        }
+        else
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+        if( !result )
+        {
+            ret = SQExecDirect( m_hstmt, L"BEGIN TRANSACTION", SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+        }
+        if( m_hstmt )
+        {
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+            else
+                m_hstmt = 0;
+        }
+        delete query;
+        query = NULL;
     }
     return result;
 }
