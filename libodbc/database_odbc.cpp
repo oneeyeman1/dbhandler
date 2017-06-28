@@ -2479,16 +2479,18 @@ int ODBCDatabase::SetTableProperties(const std::wstring &command, std::vector<st
     return result;
 }
 
-bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
+bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
     SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
-    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tableName.length() + 2], *schema_name = new SQLWCHAR[schemaName.length() + 2];
-    memset( schema_name, '\0', schemaName.length() + 2 );
-    memset( table_name, '\0', tableName.length() + 2 );
-    uc_to_str_cpy( schema_name, schemaName );
-    uc_to_str_cpy( table_name, tableName );
+    std::wstring tname = schemaName + L".";
+    tname += tableName;
+    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tname.length() + 2], *owner_name = new SQLWCHAR[ownerName.length() + 2];
+    memset( owner_name, '\0', ownerName.length() + 2 );
+    memset( table_name, '\0', tname.length() + 2 );
+    uc_to_str_cpy( owner_name, ownerName );
+    uc_to_str_cpy( table_name, tname );
     memset( qry, '\0', query.size() + 2 );
     uc_to_str_cpy( qry, query );
     SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
@@ -2516,7 +2518,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
     }
     else
     {
-        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, schema_name, 0, &cbSchemaName );
+        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name, 0, &cbSchemaName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );

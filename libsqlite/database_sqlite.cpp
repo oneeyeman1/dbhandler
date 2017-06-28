@@ -784,7 +784,7 @@ int SQLiteDatabase::SetTableProperties(const std::wstring &command, std::vector<
     return result;
 }
 
-bool SQLiteDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
+bool SQLiteDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
     sqlite3_stmt *stmt = NULL;

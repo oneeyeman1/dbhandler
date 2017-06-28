@@ -486,9 +486,46 @@ int PostgresDatabase::SetTableProperties(const std::wstring &command, std::vecto
     return result;
 }
 
-bool PostgresDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
+bool PostgresDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
+    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
+    std::wstring tname = schemaName + L".";
+    tname += tableName;
+    char *values[2];
+    values[1] = new char[tname.length() + 1];
+    values[2] = new char[ownerName.length() + 1];
+    memset( values[0], '\0', tname.length() + 1 );
+    memset( values[1], '\0', ownerName.length() + 1 );
+    strcpy( values[0], m_pimpl->m_myconv.to_bytes( tname.c_str() ).c_str() );
+    strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
+    int len1 = tname.length();
+    int len2 = ownerName.length();
+    int length[2] = { len1, len2 };
+    int formats[2] = { 1, 1 };
+    res = PQprepare( m_db, "table_properties_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Error executing query: " + err );
+        PQclear( res );
+    }
+	else
+    {
+        res = PQexecPrepared( m_db, "table_properties_exist", 2, values, length, formats, 1 );
+        ExecStatusType status = PQresultStatus( res ); 
+        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error executing query: " + err );
+            PQclear( res );
+        }
+		else
+        {
+            if( PQnfields( res ) == 1 )
+                result = true;
+        }
+	}
     return result;
 }
 
