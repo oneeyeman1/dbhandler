@@ -2501,8 +2501,8 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return false;
     }
     ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
@@ -2513,8 +2513,8 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
     }
     else
     {
@@ -2526,8 +2526,8 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
             qry = NULL;
             delete table_name;
             table_name = NULL;
-            delete schema_name;
-            schema_name = NULL;
+            delete owner_name;
+            owner_name = NULL;
         }
         else
         {
@@ -2539,8 +2539,8 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
                 qry = NULL;
                 delete table_name;
                 table_name = NULL;
-                delete schema_name;
-                schema_name = NULL;
+                delete owner_name;
+                owner_name = NULL;
             }
             else
             {
@@ -2554,8 +2554,8 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
                     qry = NULL;
                     delete table_name;
                     table_name = NULL;
-                    delete schema_name;
-                    schema_name = NULL;
+                    delete owner_name;
+                    owner_name = NULL;
                 }
             }
         }
@@ -2564,8 +2564,8 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
     qry = NULL;
     delete table_name;
     table_name = NULL;
-    delete schema_name;
-    schema_name = NULL;
+    delete owner_name;
+    owner_name = NULL;
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
