@@ -474,6 +474,15 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
 int PostgresDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    PGresult *res;
+    res = PQexec( m_db, command.c_str() );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    {
+        PQclear( res );
+        err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
     return result;
 }
 
