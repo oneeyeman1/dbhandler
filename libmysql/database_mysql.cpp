@@ -802,7 +802,7 @@ int MySQLDatabase::SetTableProperties(const std::wstring &command, std::vector<s
     return result;
 }
 
-bool MySQLDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
+bool MySQLDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
     return result;
