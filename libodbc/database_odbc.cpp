@@ -1762,11 +1762,11 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
     SQLWCHAR *table_name = NULL, *field_name = NULL, *owner_name = NULL, *query = NULL;
     SQLLEN cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbOwnerName = SQL_NTS;
     int result = 0;
-    std::wstring query1 = L"SELECT count(*) FROM abcatcol WHERE abc_tnam = ? AND abc_cnam = ? AND abc_ownr = ?;";
+    std::wstring query1 = L"SELECT count(*) FROM abcatcol WHERE abc_tnam = ? AND abc_cnam = ? AND abc_ownr = ?;", query2;
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        ret = SQExecDirect( m_hstmt, L"BEGIN TRANSACTION", SQL_NTS );
+        ret = SQLExecDirect( m_hstmt, L"BEGIN TRANSACTION", SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -1775,7 +1775,7 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
         query = new SQLWCHAR[query1.length() + 2];
         table_name = new SQLWCHAR[tableName.length() + 2];
         field_name = new SQLWCHAR[fieldName.length() + 2];
-        owner_name = new SQLWCHAR[user.length() + 2]
+        owner_name = new SQLWCHAR[user.length() + 2];
         memset( query, '\0', query1.size() + 2 );
         memset( table_name, '\0', tableName.length() + 2 );
         memset( field_name, '\0', fieldName.length() + 2 );
@@ -1790,7 +1790,7 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
             ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
-                ret = SQLBindParameter( m_hstmt, 3, SQL+PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, user.length(), 0, owner_name, 0, &cbOwnerName );
+                ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, user.length(), 0, owner_name, 0, &cbOwnerName );
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                 {
                     ret = SQLPrepare( m_hstmt, query, SQL_NTS );
@@ -1873,7 +1873,7 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
                 ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                 {
-                    ret = SQLBindParameter( m_hstmt, 3, SQL+PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, user.length(), 0, owner_name, 0, &cbOwnerName );
+                    ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, user.length(), 0, owner_name, 0, &cbOwnerName );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
                         ret = SQLPrepare( m_hstmt, query, SQL_NTS );
@@ -1917,7 +1917,7 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
         }
         if( !result )
         {
-            ret = SQExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
+            ret = SQLExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -1926,7 +1926,7 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
         }
         else
         {
-            ret = SQExecDirect( m_hstmt, L"ROLLBACK", SQL_NTS );
+            ret = SQLExecDirect( m_hstmt, L"ROLLBACK", SQL_NTS );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
