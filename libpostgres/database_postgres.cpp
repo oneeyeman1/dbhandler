@@ -538,16 +538,54 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
 
 int PostgresDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
 {
+    bool exist = false;
     int result = 0;
     std::wstring err;
-    PGresult *res;
-    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
+    std::wstring query1 = L"SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = $1 AND table_schema = $2 AND table_name = $2";
+    char *values[3];
+    values[1] = new char[tableName.GetSchemaName().length() + 1];
+    values[2] = new char[tableName.GetTableName().length() + 1];
+    memset( values[1], '\0', tableName.GetSchemaName().length() + 1 );
+    memset( values[2], '\0', tableName.GetTableName().length() + 1 );
+    strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.GetSchemaName().c_str() ).c_str() );
+    strcpy( values[2], m_pimpl->m_myconv.to_bytes( tableName.GetTableName().c_str() ).c_str() );
+    int len1 = tableName.GetSchemaName().length();
+    int len2 = tableName.GetTableName().length();
+    int length[2] = { len1, len2 };
+    int formats[2] = { 1, 1 };
+    res = PQexec( m_db, "START TRANSACTION" );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         PQclear( res );
         err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-        errorMsg.push_back( err );
+        errorMsg.push_back( L"Starting transaction failed during connection: " + err );
         result = 1;
+    }
+    else
+    {
+        PGresult *res = PQprepare( m_db, "foreign_key_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL );
+        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error executing query: " + err );
+            PQclear( res );
+        }
+        res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
+        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        {
+            PQclear( res );
+            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+        res = PQexec( m_db, "COMMIT" );
+        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        {
+            PQclear( res );
+            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+            result = 1;
+        }
     }
     return result;
 }
