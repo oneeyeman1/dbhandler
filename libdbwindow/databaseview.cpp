@@ -115,6 +115,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
     m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
     wxPoint ptCanvas;
+    sizer = new wxBoxSizer( wxVERTICAL );
 #ifdef __WXOSX__
     wxRect parentRect = parent->GetRect();
     wxSize parentClientSize = parent->GetClientSize();
@@ -131,11 +132,11 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
     ptCanvas.x = -1;
     ptCanvas.y = m_tb->GetSize().GetHeight();
+    sizer->Add( m_tb, 0, wxEXPAND, 0 );
 #else
     ptCanvas = wxDefaultPosition;
 #endif
     wxASSERT( m_frame == GetFrame() );
-    sizer = new wxBoxSizer( wxVERTICAL );
     if( m_type == QueryView )
     {
         m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
