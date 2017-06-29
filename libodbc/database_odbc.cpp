@@ -2796,7 +2796,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     return result;
 }
 
-int ODBCDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
 {
     tableName = tableName;
     int result = 0;

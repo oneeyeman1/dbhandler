@@ -881,7 +881,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     return result;
 }
 
-int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;

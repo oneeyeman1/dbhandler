@@ -814,7 +814,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
     return result;
 }
 
-int MySQLDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     return result;
