@@ -471,13 +471,13 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void DatabaseCanvas::OnShowSQLBox(wxCommandEvent &event)
+void DatabaseCanvas::OnShowSQLBox(wxCommandEvent &WXUNUSED(event))
 {
     m_showToolBox = !m_showToolBox;
     ((DrawingView *) m_view)->HideShowSQLBox( m_showToolBox );
 }
 
-void DatabaseCanvas::OnShowComments(wxCommandEvent &event)
+void DatabaseCanvas::OnShowComments(wxCommandEvent &WXUNUSED(event))
 {
     ShapeList list;
     m_showComments = !m_showComments;
