@@ -630,7 +630,7 @@ int PostgresDatabase::ApplyForeignKey(const std::wstring &command, const std::ws
 
 int PostgresDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
-    int res = 0;
+    int result = 0;
     std::wstring query = L"DROP TABLE ";
     query += tableName;
     query += L" CASCADE;";
@@ -642,7 +642,7 @@ int PostgresDatabase::DeleteTable(const std::wstring &tableName, std::vector<std
         result = 1;
     }
     PQclear( res );
-    return res;
+    return result;
 }
 
 int PostgresDatabase::SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
