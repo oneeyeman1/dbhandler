@@ -557,7 +557,7 @@ int PostgresDatabase::ApplyForeignKey(const std::wstring &command, const std::ws
     int len2 = tableName.GetTableName().length();
     int length[3] = { len0, len1, len2 };
     int formats[3] = { 1, 1, 1 };
-    res = PQexec( m_db, "START TRANSACTION" );
+    PGresult *res = PQexec( m_db, "START TRANSACTION" );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         PQclear( res );
@@ -567,7 +567,7 @@ int PostgresDatabase::ApplyForeignKey(const std::wstring &command, const std::ws
     }
     else
     {
-        res = PQprepare( m_db, "foreign_key_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL );
+        res = PQprepare( m_db, "foreign_key_exist", m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), 2, NULL );
         if( PQresultStatus( res ) != PGRES_COMMAND_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
