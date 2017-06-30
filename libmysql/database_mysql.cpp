@@ -306,7 +306,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             return 1;
         }
         MYSQL_BIND results[7];
-        my_bool is_null[7];
+        my_bool is_null[7], error[7];
         unsigned long length[7];
         memset( results, 0, sizeof( results ) );
         results[0].buffer_type = results[2].buffer_type = results[3].buffer_type = results[4].buffer_type = results[5].buffer_type = results[6].buffer_type = MYSQL_TYPE_STRING;
@@ -314,6 +314,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 
         results[1].buffer = (char *) &fkId;
         results[1].is_null = &is_null[1];
+        results[1].error = &error[1];
         results[1].length = &length[1];
 
         length[0] = 64;
@@ -321,36 +322,42 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         results[0].buffer_length = length[0];
         results[0].is_null = &is_null[0];
         results[0].length = &length[0];
+        results[0].error = &error[1];
 
         length[2] = 64;
         results[2].buffer = refTableSchema;
         results[2].buffer_length = length[2];
         results[2].is_null = &is_null[2];
         results[2].length = &length[2];
+        results[2].error = &error[2];
 
         length[3] = 64;
         results[3].buffer = refTableName;
         results[3].buffer_length = length[3];
         results[3].is_null = &is_null[3];
         results[3].length = &length[3];
+        results[3].error = &error[3];
 
         length[4] = 64;
         results[4].buffer = refTableField;
         results[4].buffer_length = length[4];
         results[4].is_null = &is_null[4];
         results[4].length = &length[4];
+        results[4].error = &error[4];
 
         length[5] = 64;
         results[5].buffer = updateCon;
         results[5].buffer_length = length[5];
         results[5].is_null = &is_null[5];
         results[5].length = &length[5];
+        results[5].error = &error[5];
 
         length[6] = 64;
         results[6].buffer = deleteCon;
         results[6].buffer_length = length[6];
         results[6].is_null = &is_null[6];
         results[6].length = &length[6];
+        results[6].error = &error[6];
 
         if( mysql_stmt_bind_result( res1, results ) )
         {
@@ -450,7 +457,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             return 1;
         }
         MYSQL_BIND results1[10];
-        my_bool is_null1[10];
+        my_bool is_null1[10], error1[10];
         long unsigned int length1[10];
         
         length1[0] = 64;
@@ -459,6 +466,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         results1[0].buffer_length = length1[0];
         results1[0].is_null = &is_null1[0];
         results1[0].length = &length1[0];
+        results1[0].error = &error1[0];
 
         length1[1] = 64;
         results1[1].buffer = colType;
@@ -466,26 +474,31 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         results1[1].buffer_length = length1[1];
         results1[1].is_null = &is_null1[1];
         results1[1].length = &length1[1];
+        results1[1].error = &error1[1];
 
         results1[2].buffer = (char *) &charLen;
         results1[2].buffer_type = MYSQL_TYPE_LONG;
         results1[2].is_null = &is_null1[2];
         results1[2].length = &length1[2];
+        results1[2].error = &error1[2];
 
         results1[3].buffer = (char *) &charOctet;
         results1[3].buffer_type = MYSQL_TYPE_LONG;
         results1[3].is_null = &is_null1[3];
         results1[3].length = &length1[3];
+        results1[3].error = &error1[3];
 
         results1[4].buffer = (char *) &numLen;
         results1[4].buffer_type = MYSQL_TYPE_LONG;
         results1[4].is_null = &is_null1[4];
         results1[4].length = &length1[4];
+        results1[4].error = &error1[4];
 
         results1[5].buffer = (char *) &numPrec;
         results1[5].buffer_type = MYSQL_TYPE_LONG;
         results1[5].is_null = &is_null1[5];
         results1[5].length = &length1[5];
+        results1[5].error = &error1[5];
 
         length1[6] = 64;
         results1[6].buffer = defValue;
@@ -493,6 +506,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         results1[6].buffer_length = length1[6];
         results1[6].is_null = &is_null1[6];
         results1[6].length = &length1[6];
+        results1[6].error = &error[6];
 
         length1[7] = 3;
         results1[7].buffer = nullable;
@@ -500,6 +514,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         results1[7].buffer_length = length1[7];
         results1[7].is_null = &is_null1[7];
         results1[7].length = &length1[7];
+        results1[7].error = &error[7];
 
         length1[8] = 30;
         results1[8].buffer = autoInc;
@@ -507,11 +522,13 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         results1[8].buffer_length = length1[8];
         results1[8].is_null = &is_null1[8];
         results1[8].length = &length1[8];
+        results1[8].error = &error1[8];
 
         results1[9].buffer = (char *) &pk;
         results1[9].buffer_type = MYSQL_TYPE_LONG;
         results1[9].is_null = &is_null1[9];
         results1[9].length = &length1[9];
+        results1[9].error = &error1[9];
 
         if( mysql_stmt_bind_result( res2, results1 ) )
         {
