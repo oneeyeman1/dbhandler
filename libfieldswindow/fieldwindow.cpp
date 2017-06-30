@@ -73,6 +73,6 @@ void FieldWindow::Clear()
     Refresh();
 }
 
-void FieldWindow::OnLeftDown(wxMouseEvent &event)
+void FieldWindow::OnLeftDown(wxMouseEvent &WXUNUSED(event))
 {
 }

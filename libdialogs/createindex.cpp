@@ -437,7 +437,7 @@ void CreateIndex::OnFieldsDeselection(wxListEvent &event)
     m_indexColumns->RemoveField( m_fields );
 }
 
-void CreateIndex::OnOkShowLog(wxCommandEvent &event)
+void CreateIndex::OnOkShowLog(wxCommandEvent &WXUNUSED(event))
 {
     std::vector<std::wstring> errorMsg;
     if( Verify() )
@@ -713,7 +713,7 @@ void CreateIndex::OnDescending(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void CreateIndex::OnAlgorythmLockDefault(wxCommandEvent &event)
+void CreateIndex::OnAlgorythmLockDefault(wxCommandEvent &WXUNUSED(event))
 {
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
@@ -727,7 +727,7 @@ void CreateIndex::OnAlgorythmLockDefault(wxCommandEvent &event)
     }
 }
 
-void CreateIndex::OnAlgorythm(wxCommandEvent &event)
+void CreateIndex::OnAlgorythm(wxCommandEvent &WXUNUSED(event))
 {
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
@@ -741,7 +741,7 @@ void CreateIndex::OnAlgorythm(wxCommandEvent &event)
     }
 }
 
-void CreateIndex::OnLock(wxCommandEvent &event)
+void CreateIndex::OnLock(wxCommandEvent &WXUNUSED(event))
 {
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
@@ -767,7 +767,7 @@ void CreateIndex::OnPadIndex(wxCommandEvent &event)
     }
 }
 
-void CreateIndex::OnFillFactor(wxCommandEvent &event)
+void CreateIndex::OnFillFactor(wxCommandEvent &WXUNUSED(event))
 {
     if( m_fillfactor->GetValue() == 0 )
         m_padIndex->SetValue( false );
