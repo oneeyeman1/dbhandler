@@ -631,6 +631,17 @@ int PostgresDatabase::ApplyForeignKey(const std::wstring &command, const std::ws
 int PostgresDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
+    std::wstring query = L"DROP TABLE ";
+    query += tableName;
+    query += L" CASCADE;";
+    PGresult res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    {
+        err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+        result = 1;
+    }
+    PQclear( res );
     return res;
 }
 
