@@ -140,6 +140,11 @@ wxString MyApp::GetDBEngine()
     return m_dbEngine;
 }
 
+wxString MyApp::GetConnectString()
+{
+    return m_connectString;
+}
+
 void MyApp::SetDBEngine(const wxString &engine)
 {
     m_dbEngine = engine;
@@ -148,6 +153,11 @@ void MyApp::SetDBEngine(const wxString &engine)
 void MyApp::SetDBName(const wxString &name)
 {
     m_dbName = name;
+}
+
+void MyApp::SetConnectString(const wxString &connString)
+{
+    m_connectString = connString;
 }
 
 void MyApp::AppendDocumentFileCommands(wxMenu *menu, bool supportsPrinting)
