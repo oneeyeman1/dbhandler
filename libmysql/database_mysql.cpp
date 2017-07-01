@@ -555,7 +555,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         {
             fieldName = m_pimpl->m_myconv.from_bytes( colName );
             fieldType = m_pimpl->m_myconv.from_bytes( colType );
-            if( !is_null1[7] )
+            if( !is_null1[6] )
                 fieldDefaultValue = m_pimpl->m_myconv.from_bytes( defValue );
             else
                 fieldDefaultValue = L"";
