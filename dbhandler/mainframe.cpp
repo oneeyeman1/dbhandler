@@ -37,7 +37,7 @@
 #include "res/query.xpm"
 
 typedef void (*ODBCSETUP)(wxWindow *);
-typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &);
+typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &);
 typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
@@ -252,7 +252,8 @@ void MainFrame::Connect()
         wxString name = wxGetApp().GetDBName();
         wxString engine = wxGetApp().GetDBEngine();
         wxString connectStr = wxGetApp().GetConnectString();
-        db = func( this, name, engine, connectStr );
+        wxString connectedUser = wxGetApp().GetConnectedUser();
+        db = func( this, name, engine, connectStr, connectedUser );
         if( db )
         {
             delete m_db;
@@ -260,6 +261,7 @@ void MainFrame::Connect()
             wxGetApp().SetDBEngine( engine );
             wxGetApp().SetDBName( name );
             wxGetApp().SetConnectString( connectStr );
+            wxGetApp().SetConnectedUser( connectedUser );
         }
         m_db = db;
     }

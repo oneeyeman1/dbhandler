@@ -95,6 +95,7 @@ bool MyApp::OnInit()
 
     // Fill in the application information fields before creating wxConfig.
     wxConfigBase *config = wxConfigBase::Get( "DBManager" );
+    config->SetPath( "CurrentDB" );
     m_dbName = config->Read( "Database Name", "" );
     m_dbEngine = config->Read( "Database Engine", "" );
     SetVendorName( "wxWidgets" );
@@ -145,6 +146,11 @@ wxString MyApp::GetConnectString()
     return m_connectString;
 }
 
+wxString MyApp::GetConnectedUser()
+{
+    return m_connectedUser;
+}
+
 void MyApp::SetDBEngine(const wxString &engine)
 {
     m_dbEngine = engine;
@@ -158,6 +164,11 @@ void MyApp::SetDBName(const wxString &name)
 void MyApp::SetConnectString(const wxString &connString)
 {
     m_connectString = connString;
+}
+
+void MyApp::SetConnectedUser(const wxString &user)
+{
+    m_connectedUser = user;
 }
 
 void MyApp::AppendDocumentFileCommands(wxMenu *menu, bool supportsPrinting)

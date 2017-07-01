@@ -27,9 +27,11 @@ public:
     wxString GetDBName();
     wxString GetDBEngine();
     wxString GetConnectString();
+    wxString GetConnectedUser();
     void SetDBEngine(const wxString &engine);
     void SetDBName(const wxString &name);
     void SetConnectString(const wxString &connString);
+    void SetConnectedUser(const wxString &user);
     wxDocManager *GetDocManager();
 #ifdef __WXMAC__
     virtual void MacNewFile() wxOVERRIDE;
@@ -72,7 +74,7 @@ private:
     wxDocManager *m_docManager;
     MyCanvas *m_canvas;
     wxMenu *m_menuEdit;
-    wxString m_dbName, m_dbEngine, m_connectString;
+    wxString m_dbName, m_dbEngine, m_connectString, m_connectedUser;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(MyApp);
 };
