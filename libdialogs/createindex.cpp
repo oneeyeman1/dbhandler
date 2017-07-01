@@ -437,7 +437,7 @@ void CreateIndex::OnFieldsDeselection(wxListEvent &event)
     m_indexColumns->RemoveField( m_fields );
 }
 
-void CreateIndex::OnOkShowLog(wxCommandEvent &WXUNUSED(event))
+void CreateIndex::OnOkShowLog(wxCommandEvent &event)
 {
     std::vector<std::wstring> errorMsg;
     if( Verify() )
