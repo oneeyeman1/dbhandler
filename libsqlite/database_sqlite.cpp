@@ -25,6 +25,7 @@ SQLiteDatabase::SQLiteDatabase() : Database()
     pimpl = new Impl;
     pimpl->m_type = L"SQLite";
     pimpl->m_subtype = L"";
+    pimpl->m_connectedUser = L"";
     sqlite_pimpl = new SQLiteImpl;
     sqlite_pimpl->m_catalog = L"";
 }
