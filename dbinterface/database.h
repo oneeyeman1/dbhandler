@@ -206,12 +206,13 @@ public:
     virtual bool IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
+	const std::wstring &GetConnectedUser() { return pimpl->m_connectedUser; };
 };
 
 struct Database::Impl
 {
     std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
-    std::wstring m_dbName, m_type, m_subtype;
+    std::wstring m_dbName, m_type, m_subtype, m_connectedUser;
 };
 
 inline Database::~Database()
