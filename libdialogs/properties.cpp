@@ -144,12 +144,12 @@ void PropertiesDialog::do_layout()
     // end wxGlade
 }
 
-void PropertiesDialog::OnApply(wxCommandEvent &event)
+void PropertiesDialog::OnApply(wxCommandEvent &WXUNUSED(event))
 {
     ApplyProperties();
 }
 
-void PropertiesDialog::OnOk(wxCommandEvent &event)
+void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 {
 //    if( !m_isApplied && ( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() ) )
     ApplyProperties();

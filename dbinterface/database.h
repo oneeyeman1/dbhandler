@@ -189,7 +189,6 @@ protected:
     struct Impl;
     Impl *pimpl;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
-    virtual int SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &user, const std::wstring &comment, std::vector<std::wstring> &errorMsg) = 0;
 public:
     virtual ~Database() = 0;
     Impl &GetTableVector() { return *pimpl; };
@@ -204,14 +203,17 @@ public:
     virtual int SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
     virtual int SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
     virtual bool IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &user, const std::wstring &comment, std::vector<std::wstring> &errorMsg) = 0;
 };
 
 struct Database::Impl
 {
     std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
-    std::wstring m_dbName, m_type, m_subtype;
+    std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
+	const std::wstring &GetConnectedUser() { return m_connectedUser; };
+	void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
 };
 
 inline Database::~Database()

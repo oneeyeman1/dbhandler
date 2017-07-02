@@ -25,6 +25,7 @@ SQLiteDatabase::SQLiteDatabase() : Database()
     pimpl = new Impl;
     pimpl->m_type = L"SQLite";
     pimpl->m_subtype = L"";
+    pimpl->m_connectedUser = L"";
     sqlite_pimpl = new SQLiteImpl;
     sqlite_pimpl->m_catalog = L"";
 }
@@ -881,7 +882,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     return result;
 }
 
-int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;

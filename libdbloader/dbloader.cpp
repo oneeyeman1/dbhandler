@@ -37,7 +37,7 @@
 #include "database_postgres.h"
 #include "database_mysql.h"
 
-typedef int (*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, bool, const std::vector<std::wstring> &);
+typedef int (*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, bool, const std::vector<std::wstring> &);
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -97,7 +97,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine, wxString &connectStr)
+extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine, wxString &connectStr, wxString &connectedUser)
 {
     std::vector<std::wstring> errorMsg, dsn;
     bool ask = false;
@@ -124,7 +124,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             }
         }
         DBPROFILE func = (DBPROFILE) lib.GetSymbol( "DatabaseProfile" );
-        int result = func( parent, _( "Select Database Profile" ), name, engine, ask, dsn );
+        int result = func( parent, _( "Select Database Profile" ), name, engine, connectedUser, ask, dsn );
         if( result != wxID_CANCEL )
         {
             if( engine == "SQLite" )

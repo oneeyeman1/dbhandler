@@ -253,6 +253,16 @@ wxString &DatabaseType::GetConnectString() const
     return const_cast<wxString &>( m_connStr );
 }
 
+wxTextCtrl *DatabaseType::GetUserControl() const
+{
+    if( m_dbEngine == "SQLite" )
+        return NULL;
+    if( m_dbEngine == "PostgreSQL" )
+        return page4->GetUserID();
+    if( m_dbEngine == "mySQL" )
+        return page5->GetUserID();
+}
+
 DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
 {
     wxSizer *main = new wxBoxSizer( wxHORIZONTAL );

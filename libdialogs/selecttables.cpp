@@ -192,7 +192,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
     Layout();
 }
 
-void SelectTables::OnShowSystemTables(wxCommandEvent &event)
+void SelectTables::OnShowSystemTables(wxCommandEvent &WXUNUSED(event))
 {
     if( m_showSystem->IsChecked() )
         FillTableList( true );

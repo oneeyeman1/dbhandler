@@ -493,6 +493,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                     }
                     else
                     {
+                        str_to_uc_cpy( pimpl->m_connectString, m_connectString );
                         ret = SQLGetInfo( m_hdbc, SQL_DBMS_NAME, dbType, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
@@ -741,7 +742,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     SQLWCHAR *catalogName = NULL, *schemaName = NULL, *tableName = NULL;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0;
     SQLHDBC hdbc_col = 0, hdbc_pk = 0, hdbc_colattr = 0, hdbc_fk = 0;
-    SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1], dbName[1024];
+    SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1], dbName[1024], userName[1024];
     SQLWCHAR szFkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szPkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkSchema[SQL_MAX_COLUMN_NAME_LEN + 1], szFkTableSchema[SQL_MAX_SCHEMA_NAME_LEN + 1], szFkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szFkCatalog[SQL_MAX_CATALOG_NAME_LEN + 1];
     SQLSMALLINT updateRule, deleteRule, keySequence;
     SQLWCHAR **columnNames = NULL;
@@ -1705,6 +1706,18 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_to_uc_cpy( pimpl->m_dbName, dbName );
         }
         bufferSize = 1024;
+        ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2 );
+            result = 1;
+            fields.clear();
+            pk_fields.clear();
+        }
+        else
+        {
+            str_to_uc_cpy( pimpl->m_connectedUser, dbName );
+        }
     }
     for( int i = 0; i < 5; i++ )
     {
@@ -1759,31 +1772,41 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstr
 int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &user, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
     bool found = false;
-    SQLWCHAR *table_name = NULL, *field_name = NULL, *owner_name = NULL, *query = NULL;
-    SQLLEN cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbOwnerName = SQL_NTS;
+    SQLWCHAR *table_name = NULL, *field_name = NULL, *owner_name = NULL, *value = NULL, *query = NULL;
+    SQLLEN cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbOwnerName = SQL_NTS, cbValue = SQL_NTS;
     int result = 0;
+    std::wstring temp;
     std::wstring query1 = L"SELECT count(*) FROM abcatcol WHERE abc_tnam = ? AND abc_cnam = ? AND abc_ownr = ?;", query2;
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        ret = SQLExecDirect( m_hstmt, L"BEGIN TRANSACTION", SQL_NTS );
+        temp = L"BEGIN TRANSACTION";
+        query = new SQLWCHAR[temp.length() + 2];
+        memset( query, '\0', temp.length() + 2 );
+        uc_to_str_cpy( query, temp );
+        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
             return 1;
         }
+        delete query;
+        query = NULL;
         query = new SQLWCHAR[query1.length() + 2];
         table_name = new SQLWCHAR[tableName.length() + 2];
         field_name = new SQLWCHAR[fieldName.length() + 2];
         owner_name = new SQLWCHAR[user.length() + 2];
+        value = new SQLWCHAR[comment.length() + 2];
         memset( query, '\0', query1.size() + 2 );
         memset( table_name, '\0', tableName.length() + 2 );
         memset( field_name, '\0', fieldName.length() + 2 );
         memset( owner_name, '\0', user.length() + 2 );
+        memset( value, '\0', comment.length() + 2 );
         uc_to_str_cpy( query, query1 );
         uc_to_str_cpy( field_name, fieldName );
         uc_to_str_cpy( table_name, tableName );
         uc_to_str_cpy( owner_name, user );
+        uc_to_str_cpy( value, comment );
         ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
         {
@@ -1867,20 +1890,29 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
             query = new SQLWCHAR[query2.length() + 2];
             memset( query, '\0', query2.size() + 2 );
             uc_to_str_cpy( query, query2 );
-            ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
+            ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, comment.length(), 0, value, 0, &cbValue );
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
-                ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
+                ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                 {
-                    ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, user.length(), 0, owner_name, 0, &cbOwnerName );
+                    ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
-                        ret = SQLPrepare( m_hstmt, query, SQL_NTS );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, user.length(), 0, owner_name, 0, &cbOwnerName );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                         {
-                            ret = SQLExecute( m_hstmt );
-                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                            ret = SQLPrepare( m_hstmt, query, SQL_NTS );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                ret = SQLExecute( m_hstmt );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                                    result = 1;
+                                }
+                            }
+                            else
                             {
                                 GetErrorMessage( errorMsg, 1, m_hstmt );
                                 result = 1;
@@ -1910,42 +1942,39 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
                 result = 1;
             }
         }
+        delete query;
+        query = NULL;
+        if( !result )
+        {
+            temp = L"COMMIT";
+        }
         else
+        {
+            temp = L"ROLLBACK";
+        }
+        query = new SQLWCHAR[temp.length() + 2];
+        memset( query, '\0', temp.length() + 2 );
+        uc_to_str_cpy( query, temp );
+        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
             result = 1;
         }
-        if( !result )
-        {
-            ret = SQLExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 1, m_hstmt );
-                result = 1;
-            }
-        }
         else
         {
-            ret = SQLExecDirect( m_hstmt, L"ROLLBACK", SQL_NTS );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            if( m_hstmt )
             {
-                GetErrorMessage( errorMsg, 1, m_hstmt );
-                result = 1;
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                else
+                    m_hstmt = 0;
             }
         }
-        if( m_hstmt )
-        {
-            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 1, m_hstmt );
-                result = 1;
-            }
-            else
-                m_hstmt = 0;
-        }
-        delete query;
-        query = NULL;
     }
     return result;
 }
@@ -2789,7 +2818,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     return result;
 }
 
-int ODBCDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
 {
     tableName = tableName;
     int result = 0;

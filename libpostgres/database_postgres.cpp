@@ -536,26 +536,113 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     return result;
 }
 
-int PostgresDatabase::ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
 {
+    bool exist = false;
     int result = 0;
     std::wstring err;
-    PGresult *res;
-    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
+    std::wstring query1 = L"SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = $1 AND table_schema = $2 AND table_name = $2";
+    char *values[3];
+    values[0] = new char[keyName.length() + 1];
+    values[1] = new char[tableName.GetSchemaName().length() + 1];
+    values[2] = new char[tableName.GetTableName().length() + 1];
+    memset( values[0], '\0', keyName.length() + 1 );
+    memset( values[1], '\0', tableName.GetSchemaName().length() + 1 );
+    memset( values[2], '\0', tableName.GetTableName().length() + 1 );
+    strcpy( values[0], m_pimpl->m_myconv.to_bytes( keyName.c_str() ).c_str() );
+    strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.GetSchemaName().c_str() ).c_str() );
+    strcpy( values[2], m_pimpl->m_myconv.to_bytes( tableName.GetTableName().c_str() ).c_str() );
+    int len0 = keyName.length();
+    int len1 = tableName.GetSchemaName().length();
+    int len2 = tableName.GetTableName().length();
+    int length[3] = { len0, len1, len2 };
+    int formats[3] = { 1, 1, 1 };
+    PGresult *res = PQexec( m_db, "START TRANSACTION" );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         PQclear( res );
         err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-        errorMsg.push_back( err );
+        errorMsg.push_back( L"Starting transaction failed during connection: " + err );
         result = 1;
+    }
+    else
+    {
+        res = PQprepare( m_db, "foreign_key_exist", m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), 2, NULL );
+        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error executing query: " + err );
+            PQclear( res );
+        }
+        else
+        {
+            res = PQexecPrepared( m_db, "foreign_key_exist", 2, values, length, formats, 1 );
+            ExecStatusType status = PQresultStatus( res );
+            if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( L"Error executing query: " + err );
+                PQclear( res );
+                result = 1;
+            }
+            else if( status == PGRES_TUPLES_OK )
+            {
+                exist = true;
+                PQclear( res );
+            }
+        }
+        if( !exist )
+        {
+            res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
+            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+            {
+                PQclear( res );
+                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            res = PQexec( m_db, "COMMIT" );
+            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+            {
+                PQclear( res );
+                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+                result = 1;
+            }
+        }
+        else
+        {
+            res = PQexec( m_db, "ROLLBACK" );
+            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+            {
+                PQclear( res );
+                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+                result = 1;
+            }
+        }
     }
     return result;
 }
 
 int PostgresDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
-    int res = 0;
-    return res;
+    int result = 0;
+    std::wstring query = L"DROP TABLE ";
+    query += tableName;
+    query += L" CASCADE;";
+    PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+        result = 1;
+    }
+    PQclear( res );
+    return result;
 }
 
 int PostgresDatabase::SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)

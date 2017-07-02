@@ -1,7 +1,7 @@
 #ifndef DBMANAGER_MYSQL
 #define DBMANAGER_MYSQL
 
-#define WXUNUSED(var)
+#define UNUSED(var)
 
 #ifdef WIN32
 class __declspec(dllexport) MySQLDatabase : public Database
@@ -16,7 +16,7 @@ public:
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     int mySQLConnect();
     virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
-    virtual int Disconnect(std::vector<std::wstring> &WXUNUSED(errorMsg));
+    virtual int Disconnect(std::vector<std::wstring> &errorMsg);
     virtual int CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
@@ -24,13 +24,13 @@ public:
     virtual int SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual bool IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, std::vector<std::wstring> &errorMsg);
-    virtual int ApplyForeignKey(const std::wstring &command, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg);
+    virtual int ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg);
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
+    virtual int SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &user, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
 protected:
     struct MySQLImpl;
     MySQLImpl *m_pimpl;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
-    virtual int SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &user, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
     int TokenizeConnectionString(std::wstring &connectStr, std::vector<std::wstring> &errorMsg);
 private:
     MYSQL *m_db;

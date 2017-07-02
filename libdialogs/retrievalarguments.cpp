@@ -56,7 +56,7 @@ ColumnLabels::ColumnLabels(wxScrolled<wxWindow> *parent ) : wxWindow( parent, wx
     Bind( wxEVT_PAINT, &ColumnLabels::OnPaint, this );
 }
 
-void ColumnLabels::OnPaint(wxPaintEvent &event)
+void ColumnLabels::OnPaint(wxPaintEvent &WXUNUSED(event))
 {
     wxPaintDC dc( this );
     int scrollunits, origin;
