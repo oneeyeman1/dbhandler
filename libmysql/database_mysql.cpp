@@ -1008,6 +1008,58 @@ int MySQLDatabase::SetTableProperties(const std::wstring &command, std::vector<s
 bool MySQLDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
+    char *str_data1, *str_data2;
+    MYSQL_STMT *stmt;
+    std::wstring tname = schemaName + L".";
+    tname += tableName;
+    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
+    stmt = mysql_stmt_init( m_db );
+    if( !stmt )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        return 1;
+    }
+    if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        return 1;
+    }
+    MYSQL_BIND params[2];
+    unsigned long str_length1, str_length2;
+    str_data1 = new char[tname.length()], str_data2 = new char[pimpl->m_connectedUser.length()];
+    memset( params, 0, sizeof( params ) );
+    params[0].buffer_type = MYSQL_TYPE_STRING;
+    params[0].buffer = (char *) str_data1;
+    params[0].buffer_length = tname.length();
+    params[0].is_null = 0;
+    params[0].length = &str_length1;
+    params[1].buffer_type = MYSQL_TYPE_STRING;
+    params[1].buffer = (char *) str_data2;
+    params[1].buffer_length = pimpl->m_connectedUser.length();
+    params[1].is_null = 0;
+    params[1].length = &str_length2;
+    if( mysql_stmt_bind_param( stmt, params ) )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        return 1;
+    }
+    if( mysql_stmt_execute( stmt ) )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        return 1;
+    }
+    if( !( mysql_store_result( m_db ) ) )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        return 1;
+    }
+    if( mysql_stmt_num_rows( stmt ) == 1 )
+        result = true;
     return result;
 }
 
