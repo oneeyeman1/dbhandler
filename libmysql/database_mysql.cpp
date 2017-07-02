@@ -167,7 +167,7 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
     return result;
 }
 
-int MySQLDatabase::Disconnect(std::vector<std::wstring> &WXUNUSED(errorMsg))
+int MySQLDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 {
     int result = 0;
     mysql_close( m_db );
@@ -640,7 +640,7 @@ int MySQLDatabase::CreateIndex(const std::wstring &command, std::vector<std::wst
     return result;
 }
 
-int MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &user, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &UNUSED(user), const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
     char *str_data1, *str_data2, *str_data3, *str_data4;
     MYSQL_RES *prepare_meta_result;
@@ -758,27 +758,27 @@ int MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::ws
     unsigned long str_length4 = fieldName.length();
     strncpy( str_data1, m_pimpl->m_myconv.to_bytes( comment.c_str() ).c_str(), comment.length() );
     strncpy( str_data2, m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), tableName.length() );
-    params[0].buffer_type = MYSQL_TYPE_STRING;
-    params[0].buffer = (char *) str_data1;
-    params[0].buffer_length = comment.length();
-    params[0].is_null = 0;
-    params[0].length = &str_length1;
-    params[1].buffer_type = MYSQL_TYPE_STRING;
-    params[1].buffer = (char *) str_data2;
-    params[1].buffer_length = tableName.length();
-    params[1].is_null = 0;
-    params[1].length = &str_length2;
-    params[3].buffer_type = MYSQL_TYPE_STRING;
-    params[3].buffer = (char *) str_data3;
-    params[3].buffer_length = pimpl->m_connectedUser.length();
-    params[3].is_null = 0;
-    params[3].length = &str_length3;
-    params[4].buffer_type = MYSQL_TYPE_STRING;
-    params[4].buffer = (char *) str_data4;
-    params[4].buffer_length = fieldName.length();
-    params[4].is_null = 0;
-    params[4].length = &str_length4;
-    if( mysql_stmt_bind_param( res2, params ) )
+    params1[0].buffer_type = MYSQL_TYPE_STRING;
+    params1[0].buffer = (char *) str_data1;
+    params1[0].buffer_length = comment.length();
+    params1[0].is_null = 0;
+    params1[0].length = &str_length1;
+    params1[1].buffer_type = MYSQL_TYPE_STRING;
+    params1[1].buffer = (char *) str_data2;
+    params1[1].buffer_length = tableName.length();
+    params1[1].is_null = 0;
+    params1[1].length = &str_length2;
+    params1[3].buffer_type = MYSQL_TYPE_STRING;
+    params1[3].buffer = (char *) str_data3;
+    params1[3].buffer_length = pimpl->m_connectedUser.length();
+    params1[3].is_null = 0;
+    params1[3].length = &str_length3;
+    params1[4].buffer_type = MYSQL_TYPE_STRING;
+    params1[4].buffer = (char *) str_data4;
+    params1[4].buffer_length = fieldName.length();
+    params1[4].is_null = 0;
+    params1[4].length = &str_length4;
+    if( mysql_stmt_bind_param( res2, params1 ) )
     {
         delete str_data1;
         str_data1 = NULL;
@@ -995,6 +995,13 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
 int MySQLDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    int res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
+    if( res )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        return 1;
+    }
     return result;
 }
 
