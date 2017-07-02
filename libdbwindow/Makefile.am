@@ -41,7 +41,9 @@ libdbwindow_la_SOURCES =  \
 	databasetemplate.cpp \
 	databasetemplate.h \
 	constraintsign.cpp \
-	constraintsign.h
+	constraintsign.h \
+	commentfieldshape.cpp \
+	commentfieldshape.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \

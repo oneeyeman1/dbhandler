@@ -1775,16 +1775,23 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
     SQLWCHAR *table_name = NULL, *field_name = NULL, *owner_name = NULL, *value = NULL, *query = NULL;
     SQLLEN cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbOwnerName = SQL_NTS, cbValue = SQL_NTS;
     int result = 0;
+    std::wstring temp;
     std::wstring query1 = L"SELECT count(*) FROM abcatcol WHERE abc_tnam = ? AND abc_cnam = ? AND abc_ownr = ?;", query2;
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        ret = SQLExecDirect( m_hstmt, L"BEGIN TRANSACTION", SQL_NTS );
+        temp = L"BEGIN TRANSACTION";
+        query = new SQLWCHAR[temp.length() + 2];
+        memset( query, '\0', temp.length() + 2 );
+        uc_to_str_cpy( query, temp );
+        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
             return 1;
         }
+        delete query;
+        query = NULL;
         query = new SQLWCHAR[query1.length() + 2];
         table_name = new SQLWCHAR[tableName.length() + 2];
         field_name = new SQLWCHAR[fieldName.length() + 2];
@@ -1935,37 +1942,39 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
                 result = 1;
             }
         }
+        delete query;
+        query = NULL;
         if( !result )
         {
-            ret = SQLExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 1, m_hstmt );
-                result = 1;
-            }
+            temp = L"COMMIT";
         }
         else
         {
-            ret = SQLExecDirect( m_hstmt, L"ROLLBACK", SQL_NTS );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 1, m_hstmt );
-                result = 1;
-            }
+            temp = L"ROLLBACK";
         }
-        if( m_hstmt )
+        query = new SQLWCHAR[temp.length() + 2];
+        memset( query, '\0', temp.length() + 2 );
+        uc_to_str_cpy( query, temp );
+        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
-            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 1, m_hstmt );
-                result = 1;
-            }
-            else
-                m_hstmt = 0;
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
         }
-        delete query;
-        query = NULL;
+        else
+        {
+            if( m_hstmt )
+            {
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                else
+                    m_hstmt = 0;
+            }
+        }
     }
     return result;
 }
