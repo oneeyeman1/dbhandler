@@ -208,7 +208,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     int res;
     MYSQL_STMT *res1, *res2;
-    char *str_data1, *str_data2, *str_data3;
+    char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
     char fkField[64], refTableSchema[64], refTableName[64], refTableField[64], updateCon[64], deleteCon[64];
     char colName[64], colType[64], defValue[64], nullable[3], autoInc[30];
     MYSQL_RES *prepare_meta_result;
@@ -239,7 +239,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         return 1;
     }
     MYSQL_ROW row;
-    while( row = mysql_fetch_row( results ) )
+    while( ( row = mysql_fetch_row( results ) ) != NULL )
     {
         char *catalog_name = row[0] ? row[0] : NULL;
         char *schema_name = row[1] ? row[1] : NULL;
@@ -292,7 +292,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             errorMsg.push_back( err );
             return 1;
         }
-        if( !( prepare_meta_result = mysql_stmt_result_metadata( res1 ) ) )
+        if( ( prepare_meta_result = mysql_stmt_result_metadata( res1 ) ) != NULL )
         {
             delete str_data1;
             str_data1 = NULL;
@@ -443,7 +443,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             errorMsg.push_back( err );
             return 1;
         }
-        if( !( prepare_meta_result = mysql_stmt_result_metadata( res2 ) ) )
+        if( ( prepare_meta_result = mysql_stmt_result_metadata( res2 ) ) != NULL )
         {
             delete str_data1;
             str_data1 = NULL;
@@ -687,7 +687,7 @@ int MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::ws
         errorMsg.push_back( err );
         return 1;
     }
-    if( !( prepare_meta_result = mysql_stmt_result_metadata( res1 ) ) )
+    if( ( prepare_meta_result = mysql_stmt_result_metadata( res1 ) ) != NULL )
     {
         delete str_data1;
         str_data1 = NULL;
@@ -1005,7 +1005,7 @@ int MySQLDatabase::SetTableProperties(const std::wstring &command, std::vector<s
     return result;
 }
 
-bool MySQLDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, std::vector<std::wstring> &errorMsg)
+bool MySQLDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &UNUSED(ownerName), std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
     char *str_data1, *str_data2;
@@ -1084,6 +1084,12 @@ int MySQLDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::w
 int MySQLDatabase::SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
+    if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() ) )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        res = 1;
+    }
     return res;
 }
 
@@ -1154,13 +1160,16 @@ int MySQLDatabase::TokenizeConnectionString(std::wstring &connectStr, std::vecto
                 option = MYSQL_OPT_COMPRESS;
             if( temp1 == L"MYSQL_OPT_CONNECT_ATTR_DELETE" )
                 option = MYSQL_OPT_CONNECT_ATTR_DELETE;
-            int res = mysql_options( m_db, option, m_pimpl->m_myconv.to_bytes( temp2.c_str() ).c_str() );
-            if( res )
+            if( option >= MYSQL_OPT_CONNECT_TIMEOUT && option <= MYSQL_OPT_SSL_MODE )
             {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                errorMsg.push_back( err );
-                result = 1;
-                break;
+                int res = mysql_options( m_db, option, m_pimpl->m_myconv.to_bytes( temp2.c_str() ).c_str() );
+                if( res )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    errorMsg.push_back( err );
+                    result = 1;
+                    break;
+                }
             }
         }
         connectStr = connectStr.substr( connectStr.find( ' ' ) + 1 );
