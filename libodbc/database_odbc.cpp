@@ -493,6 +493,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                     }
                     else
                     {
+                        str_to_uc_cpy( pimpl->m_connectString, m_connectString );
                         ret = SQLGetInfo( m_hdbc, SQL_DBMS_NAME, dbType, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
@@ -741,7 +742,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     SQLWCHAR *catalogName = NULL, *schemaName = NULL, *tableName = NULL;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0;
     SQLHDBC hdbc_col = 0, hdbc_pk = 0, hdbc_colattr = 0, hdbc_fk = 0;
-    SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1], dbName[1024];
+    SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1], dbName[1024], userName[1024];
     SQLWCHAR szFkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szPkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkSchema[SQL_MAX_COLUMN_NAME_LEN + 1], szFkTableSchema[SQL_MAX_SCHEMA_NAME_LEN + 1], szFkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szFkCatalog[SQL_MAX_CATALOG_NAME_LEN + 1];
     SQLSMALLINT updateRule, deleteRule, keySequence;
     SQLWCHAR **columnNames = NULL;
@@ -1705,6 +1706,18 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_to_uc_cpy( pimpl->m_dbName, dbName );
         }
         bufferSize = 1024;
+        ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2 );
+            result = 1;
+            fields.clear();
+            pk_fields.clear();
+        }
+        else
+        {
+            str_to_uc_cpy( pimpl->m_connectedUser, dbName );
+        }
     }
     for( int i = 0; i < 5; i++ )
     {

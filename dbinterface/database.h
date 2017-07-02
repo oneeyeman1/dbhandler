@@ -211,7 +211,7 @@ public:
 struct Database::Impl
 {
     std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
-    std::wstring m_dbName, m_type, m_subtype, m_connectedUser;
+    std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
 	const std::wstring &GetConnectedUser() { return m_connectedUser; };
 	void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
 };

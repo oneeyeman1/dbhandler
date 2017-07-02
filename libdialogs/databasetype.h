@@ -124,6 +124,7 @@ public:
     wxString GetDatabaseName();
     void SetDbEngine(const wxString &engine);
     wxString &GetConnectString() const;
+    wxTextCtrl *GetUserControl() const;
 protected:
     void OnPageChanged(wxWizardEvent &event);
     void OnConnect(wxWizardEvent &event);
