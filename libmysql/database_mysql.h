@@ -16,7 +16,7 @@ public:
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     int mySQLConnect();
     virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
-    virtual int Disconnect(std::vector<std::wstring> &WXUNUSED(errorMsg));
+    virtual int Disconnect(std::vector<std::wstring> &errorMsg);
     virtual int CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
