@@ -1089,78 +1089,108 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( L"Starting transaction failed during connection: " + err );
-        return 1;
+        result = 1;
     }
-    MYSQL_STMT *stmt = mysql_stmt_init( m_db );
-    if( !stmt )
+    else
     {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    MYSQL_BIND params[3];
-    unsigned long str_length1, str_length2, str_length3;
-    str_data1 = new char[keyName.length()], str_data2 = new char[tableName.GetSchemaName().length()], str_data3 = new char[tableName.GetTableName().length()];
-    memset( params, 0, sizeof( params ) );
-    params[0].buffer_type = MYSQL_TYPE_STRING;
-    params[0].buffer = (char *) str_data1;
-    params[0].buffer_length = keyName.length();
-    params[0].is_null = 0;
-    params[0].length = &str_length1;
-    params[1].buffer_type = MYSQL_TYPE_STRING;
-    params[1].buffer = (char *) str_data2;
-    params[1].buffer_length = tableName.GetSchemaName().length();
-    params[1].is_null = 0;
-    params[1].length = &str_length2;
-    params[3].buffer_type = MYSQL_TYPE_STRING;
-    params[3].buffer = (char *) str_data3;
-    params[3].buffer_length = tableName.GetTableName().length();
-    params[3].is_null = 0;
-    params[3].length = &str_length1;
-    if( mysql_stmt_bind_param( stmt, params ) )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    if( mysql_stmt_execute( stmt ) )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    if( !( mysql_store_result( m_db ) ) )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    if( mysql_stmt_num_rows( stmt ) == 0 )
-    {
-        if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() ) )
+        MYSQL_STMT *stmt = mysql_stmt_init( m_db );
+        if( !stmt )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
             result = 1;
         }
-    }
-    if( mysql_query( m_db, "COMMIT" ) )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( L"Starting transaction failed during connection: " + err );
-        return 1;
-    }
-    if( mysql_stmt_close( stmt ) )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( err );
-        return 1;
+		else
+        {
+            if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+            else
+            {
+                MYSQL_BIND params[3];
+                unsigned long str_length1, str_length2, str_length3;
+                str_data1 = new char[keyName.length()], str_data2 = new char[tableName.GetSchemaName().length()], str_data3 = new char[tableName.GetTableName().length()];
+                memset( params, 0, sizeof( params ) );
+                params[0].buffer_type = MYSQL_TYPE_STRING;
+                params[0].buffer = (char *) str_data1;
+                params[0].buffer_length = keyName.length();
+                params[0].is_null = 0;
+                params[0].length = &str_length1;
+                params[1].buffer_type = MYSQL_TYPE_STRING;
+                params[1].buffer = (char *) str_data2;
+                params[1].buffer_length = tableName.GetSchemaName().length();
+                params[1].is_null = 0;
+                params[1].length = &str_length2;
+                params[3].buffer_type = MYSQL_TYPE_STRING;
+                params[3].buffer = (char *) str_data3;
+                params[3].buffer_length = tableName.GetTableName().length();
+                params[3].is_null = 0;
+                params[3].length = &str_length1;
+                if( mysql_stmt_bind_param( stmt, params ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    errorMsg.push_back( err );
+                    result = 1;
+                }
+				else
+                {
+                    if( mysql_stmt_execute( stmt ) )
+                    {
+                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                        errorMsg.push_back( err );
+                        result = 1;
+                    }
+                    else
+                    {
+                        if( !( mysql_store_result( m_db ) ) )
+                        {
+                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                            errorMsg.push_back( err );
+                            result = 1;
+                        }
+                        else
+                        {
+                            if( mysql_stmt_num_rows( stmt ) == 0 )
+                            {
+                                if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() ) )
+                                {
+                                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                                    errorMsg.push_back( err );
+                                    result = 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if( mysql_stmt_close( stmt ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+        }
+        if( result == 0 )
+        {
+            if( mysql_query( m_db, "COMMIT" ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+                return 1;
+            }
+        }
+		else
+        {
+            if( mysql_query( m_db, "ROLLBACK" ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+                return 1;
+            }
+        }
     }
     return result;
 }
