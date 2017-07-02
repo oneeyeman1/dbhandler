@@ -761,6 +761,8 @@ int MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::ws
     unsigned long str_length4 = fieldName.length();
     strncpy( str_data1, m_pimpl->m_myconv.to_bytes( comment.c_str() ).c_str(), comment.length() );
     strncpy( str_data2, m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), tableName.length() );
+    strncpy( str_data3, m_pimpl->m_myconv.to_bytes( pimpl->m_connectedUser.c_str() ).c_str(), pimpl->m_connectedUser.length() );
+    strncpy( str_data4, m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), fieldName.length() );
     params1[0].buffer_type = MYSQL_TYPE_STRING;
     params1[0].buffer = (char *) str_data1;
     params1[0].buffer_length = comment.length();
@@ -906,12 +908,10 @@ bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstr
     str_data[1] = NULL;
     delete str_data[2];
     str_data[2] = NULL;
-    delete str_length[0];
-    str_length[0] = NULL;
-    delete str_length[1];
-    str_length[1] = NULL;
-    delete str_length[3];
-    str_length[3] = NULL;
+    delete str_data[3];
+    str_data[3] = NULL;
+    delete str_data[4];
+    str_data[4] = NULL;
     return exists;
 }
 
@@ -978,8 +978,10 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
     }
     if( queryResult )
     {
-        while( ( tableProp = mysql_fetch_row( queryResult ) ) )
+        tableProp = mysql_fetch_row( queryResult );
+        while( tableProp )
         {
+            tableProp = mysql_fetch_row( queryResult );
         }
     }
     else
