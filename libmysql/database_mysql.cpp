@@ -292,7 +292,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             errorMsg.push_back( err );
             return 1;
         }
-        if( ( prepare_meta_result = mysql_stmt_result_metadata( res1 ) ) != NULL )
+        prepare_meta_result = mysql_stmt_result_metadata( res1 );
+        if( !prepare_meta_result )
         {
             delete str_data1;
             str_data1 = NULL;
@@ -443,7 +444,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             errorMsg.push_back( err );
             return 1;
         }
-        if( ( prepare_meta_result = mysql_stmt_result_metadata( res2 ) ) != NULL )
+        prepare_meta_result = mysql_stmt_result_metadata( res2 );
+        if( !prepare_meta_result )
         {
             delete str_data1;
             str_data1 = NULL;
@@ -687,7 +689,8 @@ int MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::ws
         errorMsg.push_back( err );
         return 1;
     }
-    if( ( prepare_meta_result = mysql_stmt_result_metadata( res1 ) ) != NULL )
+    prepare_meta_result = mysql_stmt_result_metadata( res1 );
+    if( !prepare_meta_result )
     {
         delete str_data1;
         str_data1 = NULL;
