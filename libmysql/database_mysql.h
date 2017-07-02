@@ -1,7 +1,7 @@
 #ifndef DBMANAGER_MYSQL
 #define DBMANAGER_MYSQL
 
-#define WXUNUSED(var)
+#define UNUSED(var)
 
 #ifdef WIN32
 class __declspec(dllexport) MySQLDatabase : public Database
