@@ -208,7 +208,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     int res;
     MYSQL_STMT *res1, *res2;
-    char *str_data1, *str_data2;
+    char *str_data1, *str_data2, *str_data3;
     char fkField[64], refTableSchema[64], refTableName[64], refTableField[64], updateCon[64], deleteCon[64];
     char colName[64], colType[64], defValue[64], nullable[3], autoInc[30];
     MYSQL_RES *prepare_meta_result;
@@ -222,8 +222,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::wstring query1 = L"SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW';";
-    std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.extra, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_schema = ? AND cols.table_name = ?;";
-    std::wstring query3 = L"SELECT kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_schema = ? AND kcu.table_name = ?;";
+    std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.extra, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ?;";
+    std::wstring query3 = L"SELECT kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_catalog = ? AND kcu.table_schema = ? AND kcu.table_name = ?;";
     res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( res )
     {
@@ -257,24 +257,31 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             errorMsg.push_back( err );
             return 1;
         }
-        MYSQL_BIND params[2];
-        unsigned long str_length1, str_length2;
-        str_data1 = new char[strlen( schema_name )], str_data2 = new char[strlen( table_name )];
+        MYSQL_BIND params[3];
+        unsigned long str_length1, str_length2, str_length3;
+        str_data1 = new char[strlen( catalog_name )], str_data2 = new char[strlen( schema_name )], str_data3 = new char[strlen( table_name )];
         memset( params, 0, sizeof( params ) );
-        str_length1 = strlen( schema_name );
-        str_length2 = strlen( table_name );
-        strncpy( str_data1, schema_name, strlen( schema_name ) );
-        strncpy( str_data2, table_name, strlen( table_name ) );
+        str_length1 = strlen( catalog_name );
+        str_length2 = strlen( schema_name );
+        str_length3 = strlen( table_name );
+        strncpy( str_data1, catalog_name, strlen( catalog_name ) );
+        strncpy( str_data2, schema_name, strlen( schema_name ) );
+        strncpy( str_data3, table_name, strlen( table_name ) );
         params[0].buffer_type = MYSQL_TYPE_STRING;
         params[0].buffer = (char *) str_data1;
-        params[0].buffer_length = strlen( schema_name );
+        params[0].buffer_length = strlen( catalog_name );
         params[0].is_null = 0;
         params[0].length = &str_length1;
-        params[1].buffer_type = MYSQL_TYPE_STRING;
+		params[1].buffer_type = MYSQL_TYPE_STRING;
         params[1].buffer = (char *) str_data2;
-        params[1].buffer_length = strlen( table_name );
+        params[1].buffer_length = strlen( schema_name );
         params[1].is_null = 0;
         params[1].length = &str_length2;
+        params[2].buffer_type = MYSQL_TYPE_STRING;
+        params[2].buffer = (char *) str_data3;
+        params[2].buffer_length = strlen( table_name );
+        params[2].is_null = 0;
+        params[2].length = &str_length3;
         if( mysql_stmt_bind_param( res1, params ) )
         {
             delete str_data1;
@@ -577,6 +584,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 autoincrement = true;
             else
                 autoincrement = false;
+            is_pk = pk == 1 ? true : false;
 //            Field *field = new Field( fieldName, fieldType, fieldSize, fieldPrec, fieldDefaultValue, );
         }
         mysql_free_result( prepare_meta_result );
