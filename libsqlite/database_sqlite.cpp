@@ -997,9 +997,9 @@ int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::
     int result = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query ).c_str(), 0, 0, &error );
     if( result != SQLITE_OK )
     {
-        res = 1;
-        GetErrorMessage( res, err );
+        GetErrorMessage( result, err );
         errorMsg.push_back( err );
+        res = 1;
     }
     return res;
 }
@@ -1012,9 +1012,9 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &command, std::vector<
     int result = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( command ).c_str(), 0, 0, &error );
     if( result != SQLITE_OK )
     {
-        res = 1;
         GetErrorMessage( result, err );
         errorMsg.push_back( err );
+        res = 1;
     }
     return res;
 }
