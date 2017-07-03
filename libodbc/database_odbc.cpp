@@ -1769,7 +1769,7 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstr
     return result;
 }
 
-int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &user, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
     bool found = false;
     SQLWCHAR *table_name = NULL, *field_name = NULL, *owner_name = NULL, *value = NULL, *query = NULL;

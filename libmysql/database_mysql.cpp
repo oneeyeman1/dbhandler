@@ -642,7 +642,7 @@ int MySQLDatabase::CreateIndex(const std::wstring &command, std::vector<std::wst
     return result;
 }
 
-int MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &UNUSED(user), const std::wstring &comment, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
     char *str_data1, *str_data2, *str_data3, *str_data4;
     MYSQL_RES *prepare_meta_result;

@@ -367,7 +367,7 @@ int PostgresDatabase::CreateIndex(const std::wstring &command, std::vector<std::
     return result;
 }
 
-int PostgresDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &user, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     return result;
