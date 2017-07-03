@@ -1795,17 +1795,17 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
         query = new SQLWCHAR[query1.length() + 2];
         table_name = new SQLWCHAR[tableName.length() + 2];
         field_name = new SQLWCHAR[fieldName.length() + 2];
-        owner_name = new SQLWCHAR[user.length() + 2];
+        owner_name = new SQLWCHAR[pimpl->m_connectedUser.length() + 2];
         value = new SQLWCHAR[comment.length() + 2];
         memset( query, '\0', query1.size() + 2 );
         memset( table_name, '\0', tableName.length() + 2 );
         memset( field_name, '\0', fieldName.length() + 2 );
-        memset( owner_name, '\0', user.length() + 2 );
+        memset( owner_name, '\0', pimpl->m_connectedUser.length() + 2 );
         memset( value, '\0', comment.length() + 2 );
         uc_to_str_cpy( query, query1 );
         uc_to_str_cpy( field_name, fieldName );
         uc_to_str_cpy( table_name, tableName );
-        uc_to_str_cpy( owner_name, user );
+        uc_to_str_cpy( owner_name, pimpl->m_connectedUser );
         uc_to_str_cpy( value, comment );
         ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
@@ -1813,7 +1813,7 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
             ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
-                ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, user.length(), 0, owner_name, 0, &cbOwnerName );
+                ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, pimpl->m_connectedUser.length(), 0, owner_name, 0, &cbOwnerName );
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                 {
                     ret = SQLPrepare( m_hstmt, query, SQL_NTS );
@@ -1899,7 +1899,7 @@ int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wst
                     ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
-                        ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, user.length(), 0, owner_name, 0, &cbOwnerName );
+                        ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, pimpl->m_connectedUser.length(), 0, owner_name, 0, &cbOwnerName );
                         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                         {
                             ret = SQLPrepare( m_hstmt, query, SQL_NTS );
@@ -2515,10 +2515,10 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
     std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
     std::wstring tname = schemaName + L".";
     tname += tableName;
-    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tname.length() + 2], *owner_name = new SQLWCHAR[ownerName.length() + 2];
-    memset( owner_name, '\0', ownerName.length() + 2 );
+    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tname.length() + 2], *owner_name = new SQLWCHAR[pimpl->m_connectedUser.length() + 2];
+    memset( owner_name, '\0', pimpl->m_connectedUser.length() + 2 );
     memset( table_name, '\0', tname.length() + 2 );
-    uc_to_str_cpy( owner_name, ownerName );
+    uc_to_str_cpy( owner_name, pimpl->m_connectedUser );
     uc_to_str_cpy( table_name, tname );
     memset( qry, '\0', query.size() + 2 );
     uc_to_str_cpy( qry, query );
@@ -2547,7 +2547,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
     }
     else
     {
-        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name, 0, &cbSchemaName );
+        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, pimpl->m_connectedUser.length(), 0, owner_name, 0, &cbSchemaName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );

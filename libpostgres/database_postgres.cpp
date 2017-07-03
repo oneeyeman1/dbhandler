@@ -495,13 +495,13 @@ bool PostgresDatabase::IsTablePropertiesExist(const std::wstring &tableName, con
     tname += tableName;
     char *values[2];
     values[1] = new char[tname.length() + 1];
-    values[2] = new char[ownerName.length() + 1];
+    values[2] = new char[pimpl->m_connectedUser.length() + 1];
     memset( values[0], '\0', tname.length() + 1 );
-    memset( values[1], '\0', ownerName.length() + 1 );
+    memset( values[1], '\0', pimpl->m_connectedUser.length() + 1 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( tname.c_str() ).c_str() );
-    strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
+    strcpy( values[1], m_pimpl->m_myconv.to_bytes( pimpl->m_connectedUser.c_str() ).c_str() );
     int len1 = tname.length();
-    int len2 = ownerName.length();
+    int len2 = pimpl->m_connectedUser.length();
     int length[2] = { len1, len2 };
     int formats[2] = { 1, 1 };
     PGresult *res = PQprepare( m_db, "table_properties_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL );
