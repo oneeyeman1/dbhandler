@@ -103,7 +103,7 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
         errorMsg.push_back( L"Connection to database failed: " + err );
         result = 1;
     }
-	else
+    else
     {
         if( TokenizeConnectionString( selectedDSN, errorMsg ) )
         {
@@ -662,7 +662,7 @@ int MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::ws
         return 1;
     }
     MYSQL_BIND params[2];
-    unsigned long str_length1, str_length2;
+    unsigned long str_length1, str_length2, str_length3, str_length4;
     str_data1 = new char[tableName.length()], str_data2 = new char[fieldName.length()];
     memset( params, 0, sizeof( params ) );
     str_length1 = tableName.length();
@@ -757,8 +757,8 @@ int MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::ws
     memset( params, 0, sizeof( params ) );
     str_length1 = comment.length();
     str_length2 = tableName.length();
-    unsigned long str_length3 = pimpl->m_connectedUser.length();
-    unsigned long str_length4 = fieldName.length();
+    str_length3 = pimpl->m_connectedUser.length();
+    str_length4 = fieldName.length();
     strncpy( str_data1, m_pimpl->m_myconv.to_bytes( comment.c_str() ).c_str(), comment.length() );
     strncpy( str_data2, m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), tableName.length() );
     strncpy( str_data3, m_pimpl->m_myconv.to_bytes( pimpl->m_connectedUser.c_str() ).c_str(), pimpl->m_connectedUser.length() );
@@ -1076,7 +1076,82 @@ bool MySQLDatabase::IsTablePropertiesExist(const std::wstring &tableName, const 
 
 int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg)
 {
+    char *str_data1, *str_data2, *str_data3;
     int result = 0;
+    std::wstring tname = schemaName + L".";
+    tname += tableName;
+    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
+    MYSQL_STMT *stmt = mysql_stmt_init( m_db );
+    if( !stmt )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
+    else
+    {
+        if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+        else
+        {
+            MYSQL_BIND params[3];
+            unsigned long str_length1, str_length2, str_length3;
+            str_data1 = new char[tname.length()], str_data2 = new char[pimpl->m_connectedUser.length()], str_data3 = new char[fieldName.length()];
+            memset( params, 0, sizeof( params ) );
+            params[0].buffer_type = MYSQL_TYPE_STRING;
+            params[0].buffer = (char *) str_data1;
+            params[0].buffer_length = tname.length();
+            params[0].is_null = 0;
+            params[0].length = &str_length1;
+            params[1].buffer_type = MYSQL_TYPE_STRING;
+            params[1].buffer = (char *) str_data2;
+            params[1].buffer_length = pimpl->m_connectedUser.length();
+            params[1].is_null = 0;
+            params[1].length = &str_length2;
+            params[2].buffer_type = MYSQL_TYPE_STRING;
+            params[2].buffer = (char *) str_data3;
+            params[2].buffer_length = fieldName.length();
+            params[2].is_null = 0;
+            params[2].length = &str_length3;
+            if( mysql_stmt_bind_param( stmt, params ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                errorMsg.push_back( err );
+                return 1;
+            }
+            else
+            {
+                if( mysql_stmt_execute( stmt ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    errorMsg.push_back( err );
+                    result = 1;
+                }
+                else
+                {
+                    if( !( mysql_store_result( m_db ) ) )
+                    {
+                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                        errorMsg.push_back( err );
+                        result = 1;
+                    }
+                    else
+                    {
+                    }
+                }
+            }
+        }
+        if( mysql_stmt_close( stmt ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
     return result;
 }
 
@@ -1100,7 +1175,7 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
             errorMsg.push_back( err );
             result = 1;
         }
-		else
+        else
         {
             if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
             {
@@ -1135,7 +1210,7 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
                     errorMsg.push_back( err );
                     result = 1;
                 }
-				else
+                else
                 {
                     if( mysql_stmt_execute( stmt ) )
                     {
@@ -1182,7 +1257,7 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
                 return 1;
             }
         }
-		else
+        else
         {
             if( mysql_query( m_db, "ROLLBACK" ) )
             {
@@ -1231,7 +1306,7 @@ int MySQLDatabase::TokenizeConnectionString(std::wstring &connectStr, std::vecto
             m_port = std::stoi( temp2 );
         else if( temp1 == L"dbname" )
             m_pimpl->m_dbName = temp2;
-		else if( temp1 == L"socket" )
+        else if( temp1 == L"socket" )
             m_pimpl->m_socket = temp2;
         else if( temp1 == L"flags" )
         {
