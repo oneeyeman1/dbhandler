@@ -36,7 +36,7 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, void *table, int ty
     m_owner = new wxTextCtrl( this, wxID_ANY );
     m_tableName = new wxTextCtrl( this, wxID_ANY );
     m_comment = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_PROCESS_ENTER | wxTE_NO_VSCROLL );
-    m_comment->SetMaxLength( /*215*/5 );
+    m_comment->SetMaxLength( 215 );
     m_log = new wxCheckBox( this, wxID_ANY, _( "Log Only" ) );
     set_properties();
     do_layout();
