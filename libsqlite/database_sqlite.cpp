@@ -63,7 +63,6 @@ SQLiteDatabase::~SQLiteDatabase()
 int SQLiteDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    char *err;
     result = Disconnect( errorMsg );
     if( result == SQLITE_OK )
         result = Connect( name, errorMsg );
@@ -531,7 +530,7 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, std::vector<std::ws
     return result;
 }
 
-int SQLiteDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &user, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &UNUSED(user), const std::wstring &comment, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     bool found = false;
@@ -785,7 +784,7 @@ int SQLiteDatabase::SetTableProperties(const std::wstring &command, std::vector<
     return result;
 }
 
-bool SQLiteDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, std::vector<std::wstring> &errorMsg)
+bool SQLiteDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &UNUSED(schemaName), const std::wstring &UNUSED(ownerName), std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
     sqlite3_stmt *stmt = NULL;
@@ -1008,5 +1007,14 @@ int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::
 int SQLiteDatabase::SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
+    char *error;
+    std::wstring err;
+    int result = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( command ).c_str(), 0, 0, &error );
+    if( result != SQLITE_OK )
+    {
+        res = 1;
+        GetErrorMessage( result, err );
+        errorMsg.push_back( err );
+    }
     return res;
 }
