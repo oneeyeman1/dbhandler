@@ -1,8 +1,6 @@
 #ifndef DBMANAGER_POSTGRES
 #define DBMANAGER_POSTGRES
 
-#define WXUNUSED(var)
-
 #ifdef WIN32
 class __declspec(dllexport) PostgresDatabase : public Database
 #else
@@ -15,7 +13,7 @@ public:
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
-    virtual int Disconnect(std::vector<std::wstring> &WXUNUSED(errorMsg));
+    virtual int Disconnect(std::vector<std::wstring> &UNUSED(errorMsg));
     virtual int CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg);

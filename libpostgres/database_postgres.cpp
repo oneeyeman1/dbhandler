@@ -138,7 +138,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
     return result;
 }
 
-int PostgresDatabase::Disconnect(std::vector<std::wstring> &WXUNUSED(errorMsg))
+int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 {
     int result = 0;
     PQfinish( m_db );

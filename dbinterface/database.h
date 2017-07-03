@@ -4,6 +4,8 @@
 #ifndef DBMANAGER_DATABASE
 #define DBMANAGER_DATABASE
 
+#define UNUSED(str)
+
 enum FK_ONUPDATE
 {
     NO_ACTION_UPDATE,
