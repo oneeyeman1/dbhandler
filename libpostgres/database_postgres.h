@@ -20,7 +20,7 @@ public:
     virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg);
     virtual int SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg);
-    virtual bool IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, std::vector<std::wstring> &errorMsg);
+    virtual bool IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg);
     virtual int ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg);
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &user, const std::wstring &comment, std::vector<std::wstring> &errorMsg);

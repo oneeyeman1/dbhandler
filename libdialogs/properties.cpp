@@ -165,7 +165,7 @@ bool PropertiesDialog::ApplyProperties()
         if( !m_isApplied && ( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() ) )
         {
             DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
-            if( m_db->IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), m_db->GetTableVector().m_connectedUser, errors ) && errors.size() == 0 )
+            if( m_db->IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), errors ) && errors.size() == 0 )
                 exist = true;
             else
                 exist = false;

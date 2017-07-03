@@ -487,7 +487,7 @@ int PostgresDatabase::SetTableProperties(const std::wstring &command, std::vecto
     return result;
 }
 
-bool PostgresDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, std::vector<std::wstring> &errorMsg)
+bool PostgresDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
     std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";

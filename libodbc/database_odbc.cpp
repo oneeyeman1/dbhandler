@@ -2508,7 +2508,7 @@ int ODBCDatabase::SetTableProperties(const std::wstring &command, std::vector<st
     return result;
 }
 
-bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, std::vector<std::wstring> &errorMsg)
+bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
     SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
