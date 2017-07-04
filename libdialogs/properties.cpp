@@ -151,8 +151,13 @@ void PropertiesDialog::OnApply(wxCommandEvent &WXUNUSED(event))
 
 void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 {
-//    if( !m_isApplied && ( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() ) )
-    ApplyProperties();
+    if( !m_isApplied )
+    {
+        if( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() )
+        {
+            ApplyProperties();
+        }
+    }
     EndModal( wxID_OK );
 }
 
