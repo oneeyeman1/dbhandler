@@ -270,7 +270,8 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
                 table = const_cast<DatabaseTable *>( &((MyErdTable *) erdTable)->GetTable() );
                 GetDocument()->GetDatabase()->GetTableProperties( table, errors );
                 erdTable->SetTableComment( table->GetComment() );
-                erdTable->UpdateTable();
+                erdTable->Update();
+                erdTable->Refresh();
             }
         }
     }
