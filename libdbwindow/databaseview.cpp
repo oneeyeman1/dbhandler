@@ -50,7 +50,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
-typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, Database *, wxString &, bool &);
+typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, Database *, wxString &, bool &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
@@ -441,7 +441,8 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     int result;
     DatabaseTable *table = NULL;
     ShapeList shapes;
-    wxString command;
+    wxString command, kName;
+    std::wstring keyName;
     bool logOnly = false;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
@@ -460,7 +461,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-        result = func( m_frame, table, GetDocument()->GetDatabase(), command, logOnly );
+        result = func( m_frame, kName, table, GetDocument()->GetDatabase(), command, logOnly );
         if( logOnly )
         {
             m_text->AppendText( command );
@@ -471,7 +472,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
         else
         {
             if( result != wxID_CANCEL )
-                GetDocument()->GetDatabase()->ApplyForeignKey( command.ToStdWstring(), *table, errors );
+                GetDocument()->GetDatabase()->ApplyForeignKey( command.ToStdWstring(), kName.ToStdWstring(), *table, errors );
         }
     }
     else

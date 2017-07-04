@@ -442,3 +442,8 @@ bool ForeignKeyDialog::IsLogOnlyI()
 {
     return m_isLogOnly;
 }
+
+wxTextCtrl *ForeignKeyDialog::GetKeyNameCtrl() const
+{
+    return m_foreignKeyName;
+}

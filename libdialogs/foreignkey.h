@@ -28,6 +28,7 @@ public:
     ~ForeignKeyDialog();
     const wxString &GetCommand();
     bool IsLogOnlyI();
+    wxTextCtrl *GetKeyNameCtrl() const;
     void OnApplyCommand(wxCommandEvent &event);
     void OnFieldSelection(wxListEvent &event);
     void OnFieldsDeselection(wxListEvent &event);
