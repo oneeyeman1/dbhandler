@@ -27,7 +27,8 @@ public:
     CFontPropertyPage(wxWindow* parent, wxFont *font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
     ~CFontPropertyPage();
 private:
-     GtkWidget *m_fontPanel;
+    wxNativeWindow *m_holder;
+    GtkWidget *m_fontPanel;
 };
 
 #endif // FONTPROPERTYPAGE_H

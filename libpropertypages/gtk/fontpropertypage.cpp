@@ -45,9 +45,11 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
  : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
 {
     m_font = font;
-    m_fontPanel = gtk_font_selection_new();
-    g_object_ref( m_fontPanel );
-    g_signal_connect( m_fontPanel, "realize", G_CALLBACK( set_font ), &font );
+    m_fontPanel = gtk_font_chooser_widget_new();
+    m_holder = new wxNativeWindow( this, wxID_ANY, m_fontPanel );
+    g_object_unref( m_fontPanel );
+    gtk_font_chooser_set_font_desc( m_fontPanel, m_font.GetNativeFontInfo().description );
+//    g_signal_connect( m_fontPanel, "realize", G_CALLBACK( set_font ), &font );
 //    wxWindowBase::AddChild( m_fontPanel );
 //    m_dirtyTabOrder = true;
 //    wxTheApp->WakeUpIdle();
