@@ -31,7 +31,7 @@
 #include "wx/fontutil.h"
 #include "fontpropertypagebase.h"
 #include "wx/gtk/private.h"
-
+/*
 static void set_font(GtkWidget *widget, wxFont *font)
 {
    gchar buf[1024];
@@ -40,15 +40,23 @@ static void set_font(GtkWidget *widget, wxFont *font)
    g_snprintf( buf, sizeof( buf ), "%s", font_string.c_str() );
    gtk_font_selection_set_font_name( GTK_FONT_SELECTION( widget ), buf );  
 }
-
+*/
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, const wxPoint& pos, const wxSize& size, long style)
  : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
 {
     m_font = font;
+#if GTK_CHECK_VERSION(3, 2, 0 )
     m_fontPanel = gtk_font_chooser_widget_new();
+#else
+    m_fontPanel = gtk_font_selection_new();
+#endif
     m_holder = new wxNativeWindow( this, wxID_ANY, m_fontPanel );
     g_object_unref( m_fontPanel );
+#if GTK_CHECK_VERSION(3, 2, 0 )
     gtk_font_chooser_set_font_desc( m_fontPanel, m_font.GetNativeFontInfo().description );
+#else
+    gtk_font_selection_set_font_name( m_fontPanel, );
+#endif
 //    g_signal_connect( m_fontPanel, "realize", G_CALLBACK( set_font ), &font );
 //    wxWindowBase::AddChild( m_fontPanel );
 //    m_dirtyTabOrder = true;
