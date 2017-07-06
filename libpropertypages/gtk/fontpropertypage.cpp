@@ -48,8 +48,8 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
     gtk_font_chooser_set_font_desc( m_fontPanel, m_font.GetNativeFontInfo().description );
     gtk_font_chooser_set_preview_text( m_fontPanel, "AaBbYyZz" );
 #else
-    gtk_font_selection_set_font_name( m_fontPanel, m_font.ToString().c_str() );
-    gtk_font_selection_setpreview_text( m_fontPanel, "AaBbYyZz" );
+    gtk_font_selection_set_font_name( (GtkFontSelection *) m_fontPanel, m_font->GetNativeFontInfo()->ToString().c_str() );
+    gtk_font_selection_set_preview_text( (GtkFontSelection *) m_fontPanel, "AaBbYyZz" );
 #endif
 }
 
