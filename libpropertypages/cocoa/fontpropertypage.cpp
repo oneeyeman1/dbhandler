@@ -34,6 +34,7 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
 {
     m_font = font;
     NSFontPanel *const panel = [NSFontPanel shared];
+    [panel setPanelFont: m_font.GetNativeFontInfo isMultiple: false];
 }
 
 CFontPropertyPage::~CFontPropertyPage()
