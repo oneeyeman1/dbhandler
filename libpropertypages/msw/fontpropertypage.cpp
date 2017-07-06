@@ -515,13 +515,29 @@ void CFontPropertyPage::set_properties()
 
 void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
 {
-    m_dirty = true;
+    if( !m_dirty )
+        m_dirty = true;
     if( event.GetEventObject() == itemChoice7 )
         FillSizeList();
-    int curSel = itemChoice10->GetSelection();
-    m_nCurrentStyle = (unsigned long) itemChoice10->GetClientData( curSel );
-    m_nActualStyle = m_nCurrentStyle;
-    UpdateSampleFont();
+    if( event.GetEventObject() == itemChoice7 )
+        m_font.SetFaceName( itemChoice7->GetValue() );
+    if( event.GetEventObject() == itemChoice10 )
+    {
+        wxString style = itemChoice10->GetValue();
+        if( style == "Bold" || style == "Bold Italic" )
+            m_font.MakeBold();
+        if( style == "Italic" || style == "Bold Italic" )
+            m_font.MakeItalic();
+        if( style == "Regular" )
+        {
+            m_font.SetStyle( wxFONTSTYLE_NORMAL );
+            m_font.SetWeight( wxFONTWEIGHT_NORMAL );
+        }
+    }
+    if( event.GetEventObject() == itemChoice19 )
+        m_font.SetPointSize( wxAtoi( itemChoice19->GetValue() ) );
+    itemWindow24->SetFont( m_font );
+//    UpdateSampleFont();
 }
 
 void CFontPropertyPage::FillSizeList()
@@ -701,4 +717,9 @@ void CFontPropertyPage::SetFont(const std::wstring &name, int size, bool italic,
         if( strikethrough )
             itemCheckBox2->SetValue( true );
     }
+}
+
+wxFont &CFontPropertyPage::GetFont()
+{
+    return m_font;
 }
