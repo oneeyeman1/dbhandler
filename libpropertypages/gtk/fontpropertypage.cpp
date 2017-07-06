@@ -29,6 +29,7 @@
 #include <gtk/gtk.h>
 #include "wx/font.h"
 #include "wx/fontutil.h"
+#include "wx/nativewin.h"
 #include "fontpropertypagebase.h"
 #include "wx/gtk/private.h"
 /*
@@ -55,7 +56,7 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
 #if GTK_CHECK_VERSION(3, 2, 0 )
     gtk_font_chooser_set_font_desc( m_fontPanel, m_font.GetNativeFontInfo().description );
 #else
-    gtk_font_selection_set_font_name( m_fontPanel, );
+//    gtk_font_selection_set_font_name( m_fontPanel, );
 #endif
 //    g_signal_connect( m_fontPanel, "realize", G_CALLBACK( set_font ), &font );
 //    wxWindowBase::AddChild( m_fontPanel );

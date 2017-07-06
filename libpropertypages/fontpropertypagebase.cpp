@@ -30,6 +30,9 @@
 #ifdef __WXMSW__
 #include "wx/bmpcbox.h"
 #endif
+#ifdef __WXGTK__
+#include "wx/nativewin.h"
+#endif
 #include "fontpropertypagebase.h"
 
 CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, wxFont *font, int id, const wxPoint& pos, const wxSize& size, long style)

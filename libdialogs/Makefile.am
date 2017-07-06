@@ -29,6 +29,9 @@ libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
 	-I../../libshapeframework \
 	-I../../libpropertypages \
+	`pkg-config \
+	--cflags \
+	gtk+-2.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
