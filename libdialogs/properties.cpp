@@ -174,6 +174,9 @@ bool PropertiesDialog::ApplyProperties()
                 exist = true;
             else
                 exist = false;
+            wxString newComment = m_page1->GetCommentCtrl()->GetValue();
+            if( newComment != table->GetComment() )
+                table->SetComment( newComment.ToStdWstring() );
             bool fontChanged = m_page2->IsDirty() && m_page3->IsDirty() && m_page4->IsDirty();
             if( !fontChanged && m_page1->IsModified() )
             {
