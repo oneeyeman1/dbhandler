@@ -30,7 +30,7 @@
 #ifdef __WXMSW__
 #include "wx/bmpcbox.h"
 #endif
-#ifdef __WXGTK__
+#if defined __WXGTK__ || defined __WXOSX_COCOA__
 #include "wx/nativewin.h"
 #endif
 #include "fontpropertypagebase.h"

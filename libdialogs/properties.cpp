@@ -27,6 +27,9 @@
 #include "gtk/gtk.h"
 #include "wx/nativewin.h"
 #endif
+#ifdef __WXOSX_COCOA__
+#include "wx/nativewin.h"
+#endif
 #include "database.h"
 #include "tablegeneral.h"
 #include "fontpropertypagebase.h"
