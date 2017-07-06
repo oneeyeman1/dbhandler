@@ -26,6 +26,8 @@ class WXEXPORT CFontPropertyPage: public CFontPropertyPageBase
 public:
     CFontPropertyPage(wxWindow* parent, wxFont *font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
     ~CFontPropertyPage();
+private:
+    wxNativeWindow *m_holder;
 };
 
 #endif // FONTPROPERTYPAGE_H

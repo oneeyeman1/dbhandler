@@ -33,6 +33,7 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
  : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
 {
     m_font = font;
+    NSFontPanel *const panel = [NSFontPanel shared];
 }
 
 CFontPropertyPage::~CFontPropertyPage()
