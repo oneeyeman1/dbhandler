@@ -23,6 +23,13 @@
 #include "wx/notebook.h"
 #include "wx/spinctrl.h"
 #include "wx/bmpcbox.h"
+#ifdef __WXGTK__
+#include "gtk/gtk.h"
+#include "wx/nativewin.h"
+#endif
+#ifdef __WXOSX_COCOA__
+#include "wx/nativewin.h"
+#endif
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
 #include "fontpropertypagebase.h"

@@ -404,21 +404,6 @@ void CFontPropertyPage::do_layout()
     wxBoxSizer *sizer_6 = new wxBoxSizer( wxVERTICAL );
     wxBoxSizer *sizer_7 = new wxBoxSizer( wxVERTICAL );
     wxFlexGridSizer *sizer_8 = new wxFlexGridSizer( 2, 2, 5, 5 );
-/*    sizer_3->Add( itemStaticText6, wxGBPosition( 0, 0 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 5, 20, wxGBPosition( 0, 1 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( itemStaticText9, wxGBPosition( 0, 2 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 5, 20, wxGBPosition( 0, 3 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( itemStaticText18, wxGBPosition( 0, 4 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( itemChoice7, wxGBPosition( 1, 0 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 5, 20, wxGBPosition( 1, 1 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( itemChoice10, wxGBPosition( 1, 2 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 5, 20, wxGBPosition( 1, 3 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( itemChoice19, wxGBPosition( 1,4 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 20, 5, wxGBPosition( 2, 0 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 5, 20, wxGBPosition( 2, 1 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 20, 5, wxGBPosition( 2, 2 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 5, 20, wxGBPosition( 2, 3 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 20, 5, wxGBPosition( 2, 4 ), wxDefaultSpan, wxEXPAND );*/
     sizer_3->Add( itemStaticText6, 0, wxEXPAND, 0 );
     sizer_3->Add( itemStaticText9, 0, wxEXPAND, 0 );
     sizer_3->Add( itemStaticText18, 0, wxEXPAND, 0 );
@@ -442,31 +427,6 @@ void CFontPropertyPage::do_layout()
     sizer_7->Add( itemChoice17, 0, wxEXPAND, 0 );
     sizer_8->Add( sizer_7, 0, wxEXPAND, 0 );
     sizer2->Add( sizer_8, 0, wxEXPAND, 0 );
-/*    sizer_3->Add( sizer_4, wxGBPosition( 3, 0 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 5, 20, wxGBPosition( 3, 1 ), wxDefaultSpan, wxEXPAND );
-    sizer_5->Add( itemWindow24, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 0 );
-    sizer_3->Add( sizer_5, wxGBPosition( 3, 2 ), wxGBSpan( 1, 3 ), wxEXPAND );
-    sizer_3->Add( 20, 5, wxGBPosition( 4, 0 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 5, 20, wxGBPosition( 4, 1 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 20, 5, wxGBPosition( 4, 2 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 5, 20, wxGBPosition( 4, 3 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 20, 5, wxGBPosition( 4, 4 ), wxDefaultSpan, wxEXPAND );
-    sizer_6->Add( itemStaticText15, 0, wxEXPAND, 0 );
-    sizer_6->Add( 20, 5, 0, wxEXPAND, 0 );
-    sizer_6->Add( itemChoice16, 0, wxEXPAND, 0 );
-    sizer_3->Add( sizer_6, wxGBPosition( 5, 0 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 5, 5, wxGBPosition( 5, 1 ), wxDefaultSpan, wxEXPAND );
-    sizer_7->Add( itemStaticText23, 0, wxEXPAND, 0 );
-    sizer_7->Add( 20, 5, 0, wxEXPAND, 0 );
-    sizer_7->Add( itemChoice17, 0, wxEXPAND, 0 );
-    sizer_3->Add( sizer_7, wxGBPosition( 5, 2 ), wxGBSpan( 1, 3 ), wxEXPAND );
-    sizer_3->Add( 20, 5, wxGBPosition( 6, 0 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 5, 5, wxGBPosition( 6, 1 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 20, 5, wxGBPosition( 6, 2 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 5, 5, wxGBPosition( 6, 3 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( 20, 5, wxGBPosition( 6, 4 ), wxDefaultSpan, wxEXPAND );
-    sizer_3->Add( itemStaticText30, wxGBPosition( 7, 0 ), wxGBSpan( 1, 5 ), wxEXPAND | wxALIGN_CENTER_HORIZONTAL, 0 );*/
-//    sizer2->Add( sizer_3, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND|wxGROW|wxALL, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
@@ -515,13 +475,29 @@ void CFontPropertyPage::set_properties()
 
 void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
 {
-    m_dirty = true;
+    if( !m_dirty )
+        m_dirty = true;
     if( event.GetEventObject() == itemChoice7 )
         FillSizeList();
-    int curSel = itemChoice10->GetSelection();
-    m_nCurrentStyle = (unsigned long) itemChoice10->GetClientData( curSel );
-    m_nActualStyle = m_nCurrentStyle;
-    UpdateSampleFont();
+    if( event.GetEventObject() == itemChoice7 )
+        m_font.SetFaceName( itemChoice7->GetValue() );
+    if( event.GetEventObject() == itemChoice10 )
+    {
+        wxString style = itemChoice10->GetValue();
+        if( style == "Bold" || style == "Bold Italic" )
+            m_font.MakeBold();
+        if( style == "Italic" || style == "Bold Italic" )
+            m_font.MakeItalic();
+        if( style == "Regular" )
+        {
+            m_font.SetStyle( wxFONTSTYLE_NORMAL );
+            m_font.SetWeight( wxFONTWEIGHT_NORMAL );
+        }
+    }
+    if( event.GetEventObject() == itemChoice19 )
+        m_font.SetPointSize( wxAtoi( itemChoice19->GetValue() ) );
+    itemWindow24->SetFont( m_font );
+//    UpdateSampleFont();
 }
 
 void CFontPropertyPage::FillSizeList()
@@ -701,4 +677,9 @@ void CFontPropertyPage::SetFont(const std::wstring &name, int size, bool italic,
         if( strikethrough )
             itemCheckBox2->SetValue( true );
     }
+}
+
+wxFont &CFontPropertyPage::GetFont()
+{
+    return m_font;
 }

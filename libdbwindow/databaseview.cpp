@@ -18,6 +18,7 @@
 #include "../dbhandler/res/table.xpm"
 #include "../dbhandler/res/properties.xpm"
 #include "res/gui/key-f1.xpm"
+#include "../dbhandler/res/quit.xpm"
 //#endif
 
 #include <string>
@@ -124,10 +125,16 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     pt.y = parentRect.height - parentClientSize.GetHeight();
     m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentRect.GetHeight() - parent->GetToolBar()->GetSize().GetHeight() );
     m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
-    wxBitmap tmp = wxBitmap( database_profile );
-    m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-    m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
-    m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
+    if( m_type == DatabaseView )
+    {
+        m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
+        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+        m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
+        m_tn->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close Database View" ), _( "Close Database View" ) );
+    }
+    else
+    {
+    }
     m_tb->Realize();
     m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
     ptCanvas.x = -1;
@@ -190,6 +197,7 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
+        m_tn->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close Database View" ), _( "Close Database View" ) );
     }
     else
     {
@@ -550,27 +558,6 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             if( !m_log->IsShown() )
                 m_log->Show();
         }
-/*        if( res != wxID_CANCEL )
-        {
-            if( type == 0 )
-                res = GetDocument()->GetDatabase()->SetTableProperties( command.ToStdWstring(), errors );
-            if( type == 1 )
-                GetDocument()->GetDatabase();
-            if( res )
-            {
-                for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
-                    wxMessageBox( (*it) );
-            }
-            else
-            {
-                if( type == 0 )
-                {
-                    GetDocument()->GetDatabase()->GetTableProperties( table, errors );
-                    erdTable->SetTableComment( table->GetComment() );
-                    erdTable->UpdateTable();
-                }
-            }
-        }*/
     }
 }
 
@@ -641,65 +628,6 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         m_isActive = true;
     if( !activate && !m_isActive )
     {
-/*        CreateViewToolBar();
-        if( m_isCreated )
-            return;
-        wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
-        wxWindowList children = parent->GetChildren();
-        bool found = false;
-        for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
-        {
-            m_tb = wxDynamicCast( *it, wxToolBar );
-            if( m_tb && m_tb->GetName() == "Second Toolbar" )
-                found = true;
-        }
-        m_tb->Show();
-        wxMenuBar *bar = parent->GetMenuBar();
-        wxMenu *file_menu = bar->GetMenu( 0 );
-        if( file_menu->FindItem( wxID_NEW ) )
-            file_menu->Delete( wxID_NEW );
-        if( file_menu->FindItem( wxID_OPEN ) )
-            file_menu->Delete( wxID_OPEN );
-        file_menu->Insert( 0, wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
-        file_menu->Insert( 2, wxID_CREATEDATABASE, _( "Create Database..." ), _( "Create Database" ) );
-        file_menu->Insert( 3, wxID_DELETEDATABASE, _( "Delete Database..." ), _( "Delete Database" ) );
-        file_menu->InsertSeparator( 4 );
-        wxMenu *menuObject = new wxMenu();
-        menuObject->Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select tables" ) );
-        wxMenu *menuNewObject = new wxMenu();
-        menuNewObject->Append( wxID_OBJECTNEWTABLE, _( "Table..." ), _( "New Table" ) );
-        menuNewObject->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );
-        menuNewObject->Append( wxID_OBJECTNEWVIEW, _( "View" ), _( "New View" ) );
-        menuNewObject->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
-        menuObject->AppendSubMenu( menuNewObject, _( "New" ), _( "New Object" ) );
-        menuObject->Append( wxID_TABLEDROPTABLE, _( "Drop" ), _( "Drop database object" ) );
-        menuObject->AppendSeparator();
-        menuObject->Append( wxID_PROPERTIES, _( "Properties..." ), _( "Properties" ) );
-        bar->Insert( 1, menuObject, _( "&Object" ) );
-        wxMenu *menuDesign = new wxMenu();
-        menuDesign->Append( wxID_STARTLOG, _( "Start Log" ), _( "Start log" ) );
-        menuDesign->Append( wxID_STOPLOG, _( "Stop Log" ), _( "Stop log" ) );
-        menuDesign->Append( wxID_SAVELOG, _( "Save Log As..." ), _( "Save log to disk file" ) );
-        menuDesign->Append( wxID_CLEARLOG, _( "Clear Log" ), _( "Discard content of the log" ) );
-        menuDesign->AppendSeparator();
-        bar->Insert( 2, menuDesign, _( "&Design" ) );
-        parent->SetMenuBar( bar );
-#if defined __WXMSW__ || defined __WXGTK__
-        m_tb->ClearTools();
-        m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-        m_tb->AddTool( wxID_OBJECTNEWFF, _( "Foreign Key" ), wxBitmap( key_f1 ), wxBitmap( key_f1 ), wxITEM_NORMAL, _( "Create Foreign Key" ), _( "Create Foreign Key" ) );
-        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
-        m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
-        m_tb->Realize();
-#endif
-        if( !m_isCreated )
-        {
-            m_isCreated = true;
-            return;
-        }
-    }
-    else
-    {*/
         if( !deactiveView && m_tb )
         {
             m_tb->Destroy();
@@ -915,18 +843,6 @@ void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstr
         m_canvas->Refresh();
     }
 }
-/*
-void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
-{
-    if( activate )
-    {
-        CreateViewToolBar();
-    }
-	else
-    {
-    }
-}
-*/
 
 void DrawingView::HideShowSQLBox(bool show)
 {
