@@ -261,6 +261,7 @@ wxTextCtrl *DatabaseType::GetUserControl() const
         return page4->GetUserID();
     if( m_dbEngine == "mySQL" )
         return page5->GetUserID();
+    return NULL;
 }
 
 DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
