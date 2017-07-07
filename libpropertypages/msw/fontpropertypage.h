@@ -37,7 +37,7 @@ public:
     }
 //    void SetForegroundColor(wxString name) { m_font.SetTextDescription( name ); };
 //    void SetBackgroundColor(wxString name) { m_font.SetBackgroundDescription( name ); };
-    void SetFont(wxFont font) { m_font = font; };
+    void SetFont(wxFont *font) { m_font = font; };
     DECLARE_EVENT_TABLE()
 private:
     wxFont *m_font;
@@ -125,7 +125,7 @@ public:
     CFontPropertyPage(wxWindow* parent, wxFont *font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
     ~CFontPropertyPage();
     void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough);
-    virtual wxFont &GetFont();
+    virtual wxFont *GetFont();
     void GetData(void *data);
     void FillFacenameList();
     void FillSizeList();

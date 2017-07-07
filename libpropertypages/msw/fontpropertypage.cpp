@@ -30,6 +30,7 @@
 //#include "res/opentype.xpm"
 #include "wx/msw/private.h"
 #include "wx/msw/dcclient.h"
+#include "wx/fontenum.h"
 #include "wx/gbsizer.h"
 #include "wx/imaglist.h"
 #include "wx/font.h"
@@ -480,22 +481,22 @@ void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
     if( event.GetEventObject() == itemChoice7 )
         FillSizeList();
     if( event.GetEventObject() == itemChoice7 )
-        m_font.SetFaceName( itemChoice7->GetValue() );
+        m_font->SetFaceName( itemChoice7->GetValue() );
     if( event.GetEventObject() == itemChoice10 )
     {
         wxString style = itemChoice10->GetValue();
         if( style == "Bold" || style == "Bold Italic" )
-            m_font.MakeBold();
+            m_font->MakeBold();
         if( style == "Italic" || style == "Bold Italic" )
-            m_font.MakeItalic();
+            m_font->MakeItalic();
         if( style == "Regular" )
         {
-            m_font.SetStyle( wxFONTSTYLE_NORMAL );
-            m_font.SetWeight( wxFONTWEIGHT_NORMAL );
+            m_font->SetStyle( wxFONTSTYLE_NORMAL );
+            m_font->SetWeight( wxFONTWEIGHT_NORMAL );
         }
     }
     if( event.GetEventObject() == itemChoice19 )
-        m_font.SetPointSize( wxAtoi( itemChoice19->GetValue() ) );
+        m_font->SetPointSize( wxAtoi( itemChoice19->GetValue() ) );
     itemWindow24->SetFont( m_font );
 //    UpdateSampleFont();
 }
@@ -679,7 +680,7 @@ void CFontPropertyPage::SetFont(const std::wstring &name, int size, bool italic,
     }
 }
 
-wxFont &CFontPropertyPage::GetFont()
+wxFont *CFontPropertyPage::GetFont()
 {
     return m_font;
 }
