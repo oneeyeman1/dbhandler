@@ -23,6 +23,7 @@
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
 #include "wx/docmdi.h"
+#include "wx/fontenum.h"
 #ifdef __WXGTK__
 #include "gtk/gtk.h"
 #include "wx/nativewin.h"
@@ -242,19 +243,19 @@ bool PropertiesDialog::ApplyProperties()
                         m_command += L"abcattbl ";
                     m_command += L"SET ";
                     m_command += L"\"abd_fhgt\" = ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont().GetPointSize() );
+                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetPointSize() );
                     m_command += L", \"abd_fwgt\" = ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont().GetWeight() );
+                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetWeight() );
                     m_command += L", \"abd_fitl\" = ";
-                    m_command += m_page2->GetFont().GetStyle() == wxFONTSTYLE_ITALIC ? L"Y" : L"N";
+                    m_command += m_page2->GetFont()->GetStyle() == wxFONTSTYLE_ITALIC ? L"Y" : L"N";
                     m_command += L", \"abd_funl\" = ";
-                    m_command += m_page2->GetFont().GetUnderlined() ? L"Y" : L"N";
+                    m_command += m_page2->GetFont()->GetUnderlined() ? L"Y" : L"N";
                     m_command += L", \"abd_fchr\" = ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont().GetEncoding() );
+                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetEncoding() );
                     m_command += L", \"abd_fptc\" = ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont().GetPointSize() );
+                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetPointSize() );
                     m_command += L", \"abd_ffce\" = ";
-                    m_command += m_page2->GetFont().GetFaceName();
+                    m_command += m_page2->GetFont()->GetFaceName();
                 }
                 else
                 {
@@ -268,19 +269,19 @@ bool PropertiesDialog::ApplyProperties()
                     m_command += L", ";
                     m_command += table->GetSchemaName();
                     m_command += L", ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont().GetPointSize() );
+                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetPointSize() );
                     m_command += L", ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont().GetWeight() );
+                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetWeight() );
                     m_command += L", ";
-                    m_command += m_page2->GetFont().GetStyle() == wxFONTSTYLE_ITALIC ? L"Y" : L"N";
+                    m_command += m_page2->GetFont()->GetStyle() == wxFONTSTYLE_ITALIC ? L"Y" : L"N";
                     m_command += L", ";
-                    m_command += m_page2->GetFont().GetUnderlined() ? L"Y" : L"N";
+                    m_command += m_page2->GetFont()->GetUnderlined() ? L"Y" : L"N";
                     m_command += L", ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont().GetEncoding() );
+                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetEncoding() );
                     m_command += L", ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont().GetPointSize() );
+                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetPointSize() );
                     m_command += L", ";
-                    m_command += m_page2->GetFont().GetFaceName();
+                    m_command += m_page2->GetFont()->GetFaceName();
                     m_command += L");";
                 }
             }
