@@ -32,7 +32,8 @@
 #endif
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
-#include "fontpropertypagebase.h"
+#include "wx/fontenum.h"
+//#include "fontpropertypagebase.h"
 #include "databasetype.h"
 #include "tablegeneral.h"
 #include "odbcconfigure.h"

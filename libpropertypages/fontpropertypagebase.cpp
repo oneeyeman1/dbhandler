@@ -29,6 +29,7 @@
 #include "wx/font.h"
 #ifdef __WXMSW__
 #include "wx/bmpcbox.h"
+#include "wx/fontenum.h"
 #endif
 #if defined __WXGTK__ || defined __WXOSX_COCOA__
 #include "wx/nativewin.h"
@@ -51,9 +52,9 @@ void CFontPropertyPageBase::SetFont(const std::wstring &name, int size, bool ita
 {
 }
 
-wxFont &CFontPropertyPageBase::GetFont()
+wxFont *CFontPropertyPageBase::GetFont()
 {
-    return *m_font;
+    return m_font;
 }
 
 bool CFontPropertyPageBase::IsDirty()
