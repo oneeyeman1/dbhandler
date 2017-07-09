@@ -13,7 +13,7 @@
 		E33E6F7F1EAD3067003A0B92 /* wherehavingpage.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F7B1EAD3067003A0B92 /* wherehavingpage.h */; };
 		E39501D01DF3C2300046E51B /* tablegeneral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39501CE1DF3C2300046E51B /* tablegeneral.cpp */; };
 		E39501D11DF3C2300046E51B /* tablegeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E39501CF1DF3C2300046E51B /* tablegeneral.h */; };
-		E3AC9DD71E176AB80083DD62 /* fontpropertypage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3AC9DD51E176AB80083DD62 /* fontpropertypage.cpp */; };
+		E39573F81F0FAADD00FA817A /* fontpropertypage.mm in Sources */ = {isa = PBXBuildFile; fileRef = E39573F71F0FAADD00FA817A /* fontpropertypage.mm */; };
 		E3AC9DD81E176AB80083DD62 /* fontpropertypage.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AC9DD61E176AB80083DD62 /* fontpropertypage.h */; };
 		E3AC9DDB1E176C640083DD62 /* fontpropertypagebase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3AC9DD91E176C640083DD62 /* fontpropertypagebase.cpp */; };
 		E3AC9DDC1E176C640083DD62 /* fontpropertypagebase.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AC9DDA1E176C640083DD62 /* fontpropertypagebase.h */; };
@@ -27,7 +27,7 @@
 		E39501B81DF3B99C0046E51B /* liblibpropertypages.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibpropertypages.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E39501CE1DF3C2300046E51B /* tablegeneral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tablegeneral.cpp; sourceTree = "<group>"; };
 		E39501CF1DF3C2300046E51B /* tablegeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tablegeneral.h; sourceTree = "<group>"; };
-		E3AC9DD51E176AB80083DD62 /* fontpropertypage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fontpropertypage.cpp; path = cocoa/fontpropertypage.cpp; sourceTree = "<group>"; };
+		E39573F71F0FAADD00FA817A /* fontpropertypage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = fontpropertypage.mm; path = cocoa/fontpropertypage.mm; sourceTree = "<group>"; };
 		E3AC9DD61E176AB80083DD62 /* fontpropertypage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fontpropertypage.h; path = cocoa/fontpropertypage.h; sourceTree = "<group>"; };
 		E3AC9DD91E176C640083DD62 /* fontpropertypagebase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fontpropertypagebase.cpp; sourceTree = "<group>"; };
 		E3AC9DDA1E176C640083DD62 /* fontpropertypagebase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontpropertypagebase.h; sourceTree = "<group>"; };
@@ -63,13 +63,13 @@
 		E39501CD1DF3BA080046E51B /* libpropertypages */ = {
 			isa = PBXGroup;
 			children = (
+				E39573F71F0FAADD00FA817A /* fontpropertypage.mm */,
 				E33E6F781EAD3067003A0B92 /* syntaxproppage.cpp */,
 				E33E6F791EAD3067003A0B92 /* syntaxproppage.h */,
 				E33E6F7A1EAD3067003A0B92 /* wherehavingpage.cpp */,
 				E33E6F7B1EAD3067003A0B92 /* wherehavingpage.h */,
 				E3AC9DD91E176C640083DD62 /* fontpropertypagebase.cpp */,
 				E3AC9DDA1E176C640083DD62 /* fontpropertypagebase.h */,
-				E3AC9DD51E176AB80083DD62 /* fontpropertypage.cpp */,
 				E3AC9DD61E176AB80083DD62 /* fontpropertypage.h */,
 				E39501CE1DF3C2300046E51B /* tablegeneral.cpp */,
 				E39501CF1DF3C2300046E51B /* tablegeneral.h */,
@@ -146,7 +146,7 @@
 				E33E6F7C1EAD3067003A0B92 /* syntaxproppage.cpp in Sources */,
 				E3AC9DDB1E176C640083DD62 /* fontpropertypagebase.cpp in Sources */,
 				E33E6F7E1EAD3067003A0B92 /* wherehavingpage.cpp in Sources */,
-				E3AC9DD71E176AB80083DD62 /* fontpropertypage.cpp in Sources */,
+				E39573F81F0FAADD00FA817A /* fontpropertypage.mm in Sources */,
 				E39501D01DF3C2300046E51B /* tablegeneral.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
