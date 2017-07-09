@@ -55,4 +55,5 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
 
 CFontPropertyPage::~CFontPropertyPage()
 {
+    m_holder->Disown();
 }
