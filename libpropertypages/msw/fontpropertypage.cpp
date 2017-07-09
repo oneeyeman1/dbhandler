@@ -48,6 +48,7 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
     wxRect size = GetRect();
 //    wxFont font = m_font.GetFont();
     dc.SetPen( *wxWHITE_PEN );
+    dc.SetBrush( *wxWHITE_BRUSH );
 //    dc.SetBrush( m_font.GetBackgroundColour() );
     dc.DrawRectangle( 0, 0, size.x, size.y );
 //    if( !font.Ok() )
@@ -56,6 +57,7 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
     {
         dc.SetFont( *m_font );
 //        dc.SetTextForeground( m_font.GetTextColour() );
+        dc.SetTextForeground( *wxBLACK );
         wxSize sizeString = dc.GetTextExtent( m_text );
         // Calculate vertical centre
         if( sizeString.x >= size.GetRight() - size.GetLeft() || sizeString.x <= 0 )
@@ -143,6 +145,9 @@ wxSize CFontNamesComboBox::DoGetBestSize() const
     if( hBitmap > cy )
         cy = hBitmap;
     int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
+    if( hItem > cy )
+        hItem = cy;
+    int ret = SendMessage( GetHwnd(), CB_SETITEMHEIGHT, (WPARAM) -1, hItem );
     hChoice = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem - 6;
     wxSize best( wChoice, hChoice );
     CacheBestSize( best );
