@@ -37,7 +37,7 @@ public:
     }
 //    void SetForegroundColor(wxString name) { m_font.SetTextDescription( name ); };
 //    void SetBackgroundColor(wxString name) { m_font.SetBackgroundDescription( name ); };
-    void SetFont(wxFont *font) { m_font = font; };
+    void SetFont(wxFont *font) { m_font = font; Refresh(); };
     DECLARE_EVENT_TABLE()
 private:
     wxFont *m_font;

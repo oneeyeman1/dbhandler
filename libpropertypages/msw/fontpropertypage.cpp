@@ -60,7 +60,7 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
         dc.SetTextForeground( *wxBLACK );
         wxSize sizeString = dc.GetTextExtent( m_text );
         // Calculate vertical centre
-        if( sizeString.x >= size.GetRight() - size.GetLeft() || sizeString.x <= 0 )
+        if( sizeString.x >= /*size.GetRight() - size.GetLeft()*/size.GetWidth() || sizeString.x <= 0 )
             sizeString.x = size.GetLeft();
         else
         {
@@ -147,7 +147,7 @@ wxSize CFontNamesComboBox::DoGetBestSize() const
     int hItem = SendMessage( GetHwnd(), CB_GETITEMHEIGHT, (WPARAM) -1, 0 );
     if( hItem > cy )
         hItem = cy;
-    int ret = SendMessage( GetHwnd(), CB_SETITEMHEIGHT, (WPARAM) -1, hItem );
+    SendMessage( GetHwnd(), CB_SETITEMHEIGHT, (WPARAM) -1, hItem );
     hChoice = ( EDIT_HEIGHT_FROM_CHAR_HEIGHT( cy ) * 6 ) + hItem - 6;
     wxSize best( wChoice, hChoice );
     CacheBestSize( best );
@@ -386,6 +386,7 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
     do_layout();
     set_properties();
     m_dirty = false;
+    itemWindow24->SetFont( m_font );
     itemChoice7->Bind( wxEVT_COMBOBOX, &CFontPropertyPage::OnChangeFont, this );
     itemChoice10->Bind( wxEVT_COMBOBOX, &CFontPropertyPage::OnChangeFont, this );
     itemChoice19->Bind( wxEVT_COMBOBOX, &CFontPropertyPage::OnChangeFont, this );
