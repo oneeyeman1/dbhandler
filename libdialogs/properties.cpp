@@ -179,57 +179,30 @@ bool PropertiesDialog::ApplyProperties()
         {
             DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
             wxString newComment = m_page1->GetCommentCtrl()->GetValue();
+            wxFont *dataFont = m_page2->GetFont();
+            wxFont *headingFont = m_page3->GetFont();
+            wxFont *labelFont = m_page4->GetFont();
             if( newComment != table->GetComment() )
                 table->SetComment( newComment.ToStdWstring() );
             m_tableProperties.m_comment = newComment;
-            bool fontChanged = m_page2->IsDirty() && m_page3->IsDirty() && m_page4->IsDirty();
-            if( !fontChanged && m_page1->IsModified() )
-            {
-                m_tableProperties.m_dataFontName = 
-                if( exist )
-                {
-                    m_command = L"UPDATE ";
-                    if( m_dbType == L"SQLite" )
-                        m_command += L"\"sys.abcattbl\" ";
-                    else
-                        m_command += L"\"abcattbl\" ";
-                    m_command += L"SET ";
-                    m_command += L"\"abt_cmnt\" ";
-                    m_command += L"= '";
-                    m_command += m_page1->GetCommentCtrl()->GetValue().ToStdWstring();
-                    m_command += L"' WHERE ";
-                    m_command += L"\"abt_tnam\" = '";
-                    m_command += table->GetTableName();
-                    m_command += L"' AND ";
-                    m_command += L"\"abt_ownr\" = ";
-                    if( m_dbType == L"SQLite" )
-                        m_command += L"'';";
-                    else
-                        m_command += L"'" + table->GetSchemaName() + L"'";
-                }
-                else
-                {
-                    m_command = L"INSERT INTO ";
-                    if( m_dbType == L"SQLite" )
-                        m_command += L"\"sys.abcattbl\"(\"abt_tnam\", \"abt_ownr\", \"abt_cmnt\") ";
-                    else
-                        m_command += L"\"abcattbl\"(\"abt_tnam\", \"abt_ownr\", \"abt_cmnt\") ";
-                    m_command += L"VALUES('";
-                    m_command += table->GetTableName();
-                    if( m_dbType == L"SQLite" )
-                        m_command += L"', '', ";
-                    else
-                    {
-                        m_command += L"', '";
-                        m_command += table->GetSchemaName();
-                        m_command += L"', ";
-                    }
-                    m_command += L"'";
-                    m_command += m_page1->GetCommentCtrl()->GetValue().ToStdWstring();
-                    m_command += L"'";
-                    m_command += L");";
-                }
-            }
+            m_tableProperties.m_dataFontName = dataFont->GetFaceName();
+            m_tableProperties.m_headingFontName = headingFont->GetFaceName();
+            m_tableProperties.m_labelFontName = labelFont->GetFaceName();
+            m_tableProperties.m_dataFontSize = dataFont->GetPointSize();
+            m_tableProperties.m_headingFontSize = headingFont->GetPointSize();
+            m_tableProperties.m_labelFontSize = labelFont->GetPointSize();
+            m_tableProperties.m_isDataFontUnderlined = dataFont->GetUnderlined() ? true : false;
+            m_tableProperties.m_isHeadingFontUnderlined = headingFont->GetUnderlined() ? true : false;
+            m_tableProperties.m_isLabelFontUnderlined = labelFont->GetUnderlined() ? true : false;
+            m_tableProperties.m_isDataFontStriken = dataFont->GetStrikethrough() ? true : false;
+            m_tableProperties.m_isHeadingFontStriken = headingFont->GetStrikethrough() ? true : false;
+            m_tableProperties.m_isLabelFontStrioken = labelFont->GetStrikethrough() ? true : false;
+            m_tableProperties.m_isDataFontBold = dataFont->GetWeight() ? true : false;
+            m_tableProperties.m_isHeadingFontBold = headingFont->GetWeight() ? true : false;
+            m_tableProperties.m_isLabelFontBold = labelFont->GetWeight() ? true : false;
+            m_tableProperties.m_isDataFontItalic = dataFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+            m_tableProperties.m_isHeadingFontItalic = headingFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+            m_tableProperties.m_isLabelFontItalic = labelFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
             else
             {
                 if( exist )
@@ -292,7 +265,7 @@ bool PropertiesDialog::ApplyProperties()
     wxCommandEvent event( wxEVT_SET_TABLE_PROPERTY );
     event.SetInt( IsLogOnly() );
     event.SetExtraLong( m_type );
-    event.SetClientData( &m_command );
+    event.SetClientData( &m_tableProperties );
     dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
     m_isApplied = true;
     return true;

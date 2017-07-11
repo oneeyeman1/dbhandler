@@ -1004,6 +1004,10 @@ int MySQLDatabase::SetTableProperties(const std::wstring &command, std::vector<s
         exist = true;
     else
          exist = false;
+    if( exist )
+        query = L"UPDATE abcattbl SET abt_tnam = ?, abt_ownr = ?,  abd_fhgt = ?, abd_fwgt = ?";
+    else
+        query = L"INSERT INTO abcattbl VALUES( ?, ?, ?, ? );";
     int res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
     if( res )
     {

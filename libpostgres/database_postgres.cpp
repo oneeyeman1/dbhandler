@@ -480,6 +480,10 @@ int PostgresDatabase::SetTableProperties(const std::wstring &command, std::vecto
         exist = true;
     else
          exist = false;
+    if( exist )
+        query = L"UPDATE abcattbl SET abt_tnam = $1, abt_ownr = $2,  abd_fhgt = $3, abd_fwgt = $4";
+    else
+        query = L"INSERT INTO abcattbl VALUES( $1, $2, $3, $4 );";
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {

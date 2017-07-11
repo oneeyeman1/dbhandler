@@ -2475,13 +2475,18 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
 int ODBCDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    std::wstring query;
     if( IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), errors ) && errors.size() == 0 )
         exist = true;
     else
          exist = false;
-    SQLWCHAR *query = new SQLWCHAR[command.length() + 2];
-    memset( query, '\0', command.length() + 2 );
-    uc_to_str_cpy( query, command );
+    if( exist )
+        query = L"UPDATE abcattbl SET abt_tnam = ?, abt_ownr = ?,  abd_fhgt = ?, abd_fwgt = ?";
+    else
+        query = L"INSERT INTO abcattbl VALUES( ?, ?, ?, ?);";
+    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+    memset( qry, '\0', query.length() + 2 );
+    uc_to_str_cpy( qry, query );
     SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
