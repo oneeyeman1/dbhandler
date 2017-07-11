@@ -1000,6 +1000,10 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
 int MySQLDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    if( IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), errors ) && errors.size() == 0 )
+        exist = true;
+    else
+         exist = false;
     int res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
     if( res )
     {

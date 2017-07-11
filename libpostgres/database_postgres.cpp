@@ -476,6 +476,10 @@ int PostgresDatabase::SetTableProperties(const std::wstring &command, std::vecto
     int result = 0;
     std::wstring err;
     PGresult *res;
+    if( IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), errors ) && errors.size() == 0 )
+        exist = true;
+    else
+         exist = false;
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {

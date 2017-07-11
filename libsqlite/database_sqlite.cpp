@@ -763,6 +763,10 @@ int SQLiteDatabase::SetTableProperties(const std::wstring &command, std::vector<
     std::wstring errorMessage;
     sqlite3_stmt *stmt = NULL;
     int result = 0;
+    if( IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), errors ) && errors.size() == 0 )
+        exist = true;
+    else
+         exist = false;
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), (int) command.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {

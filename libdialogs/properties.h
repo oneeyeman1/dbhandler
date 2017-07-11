@@ -12,12 +12,21 @@
 #ifndef PROPERTIES_H
 #define PROPERTIES_H
 
+struct TableProperties
+{
+    wxString m_comment, m_dataFontName, m_headingFontName, m_labelFontName;
+    int m_dataFontSize, m_headingFontSize, m_labelFontSize;
+    bool m_isDataFontUnderlined, m_isDataFontStriken, m_isHeadingFontUnderlined, m_isHeadingFontStriken, m_isLabelFontUnderlined, m_isLabelFontStrioken;
+    bool m_isDataFontBold, m_isDataFontItalic, m_isHeadingFontBold, m_isHeadingFontItalic, m_isLabelFontBold, m_isLabelFontItalic;
+};
+
 class PropertiesDialog: public wxDialog
 {
 public:
     PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
     const std::wstring &GetCommand();
     bool IsLogOnly();
+    void GetTableProperties();
 
 private:
     TableGeneralProperty *m_page1;
@@ -27,6 +36,7 @@ private:
     void *m_object;
     std::wstring m_dbType, m_command;
     bool m_isApplied;
+    TableProperties m_tableProperties;
     // begin wxGlade: PropertiesDialog::methods
     void set_properties();
     void do_layout();

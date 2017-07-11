@@ -2475,6 +2475,10 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
 int ODBCDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    if( IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), errors ) && errors.size() == 0 )
+        exist = true;
+    else
+         exist = false;
     SQLWCHAR *query = new SQLWCHAR[command.length() + 2];
     memset( query, '\0', command.length() + 2 );
     uc_to_str_cpy( query, command );
