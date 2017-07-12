@@ -27,7 +27,7 @@ enum FK_ONDELETE
 struct TableProperties
 {
     std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName;
-    int m_dataFontSize, m_headingFontSize, m_labelFontSize;
+    int m_dataFontSize, m_dataFontEncoding, m_headingFontSize, m_headingFontEncoding, m_labelFontSize, m_labelFontEncoding;
     bool m_isDataFontUnderlined, m_isDataFontStriken, m_isHeadingFontUnderlined, m_isHeadingFontStriken, m_isLabelFontUnderlined, m_isLabelFontStrioken;
     bool m_isDataFontBold, m_isDataFontItalic, m_isHeadingFontBold, m_isHeadingFontItalic, m_isLabelFontBold, m_isLabelFontItalic;
 };
@@ -177,12 +177,14 @@ public:
     bool GetLabelFontStrikethrough() { return m_labelFontStrikethrough; }
     const std::vector<Field *> &GetFields() { return table_fields; }
     std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
+    int GetTableId() { return m_objectId; }
+    void SetTableId(int id) { m_objectId = id; }
 private:
     std::wstring table_name, schema_name, comment;
     std::vector<Field *> table_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring m_dataFontName, m_labelFontName, m_headingFontName;
-    int m_dataFontWeight, m_labelFontWeight, m_headingFontWeight;
+    int m_dataFontWeight, m_labelFontWeight, m_headingFontWeight, m_objectId;
     bool m_dataFontItalic, m_labelFontItalic, m_headingFontItalic;
     int m_dataFontSize, m_labelFontSize, m_headingFontSize;
     bool m_dataFontUnderline, m_labelFontUnderline, m_headingFontUnderline;
