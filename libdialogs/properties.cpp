@@ -203,56 +203,9 @@ bool PropertiesDialog::ApplyProperties()
             m_tableProperties.m_isDataFontItalic = dataFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
             m_tableProperties.m_isHeadingFontItalic = headingFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
             m_tableProperties.m_isLabelFontItalic = labelFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-                if( exist )
-                {
-                    m_command = L"UPDATE ";
-                    if( m_dbType == L"SQLite" )
-                        m_command += L"\"sys.abcattbl\" ";
-                    else
-                        m_command += L"abcattbl ";
-                    m_command += L"SET ";
-                    m_command += L"\"abd_fhgt\" = ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetPointSize() );
-                    m_command += L", \"abd_fwgt\" = ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetWeight() );
-                    m_command += L", \"abd_fitl\" = ";
-                    m_command += m_page2->GetFont()->GetStyle() == wxFONTSTYLE_ITALIC ? L"Y" : L"N";
-                    m_command += L", \"abd_funl\" = ";
-                    m_command += m_page2->GetFont()->GetUnderlined() ? L"Y" : L"N";
-                    m_command += L", \"abd_fchr\" = ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetEncoding() );
-                    m_command += L", \"abd_fptc\" = ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetPointSize() );
-                    m_command += L", \"abd_ffce\" = ";
-                    m_command += m_page2->GetFont()->GetFaceName();
-                }
-                else
-                {
-                    m_command = L"INSERT INTO ";
-                    if( m_dbType == L"SQLite" )
-                        m_command += L"\"sys.abcattbl\"(\"abt_tnam\", \"abt_ownr\", \"abd_fhgt\", \"abd_fwgt\", \"abd_fitl\", \"abd_funl\", \"abd_fchr\", \"abd_fptc\", \"abd_ffce\", \"abt_cmnt\") ";
-                    else
-                        m_command += L"abcattbl(abt_tnam, abt_ownr, abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, abd_ffce, abt_cmnt) ";
-                    m_command += L"\r\\n\tVALUES(";
-                    m_command += table->GetTableName();
-                    m_command += L", ";
-                    m_command += table->GetSchemaName();
-                    m_command += L", ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetPointSize() );
-                    m_command += L", ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetWeight() );
-                    m_command += L", ";
-                    m_command += m_page2->GetFont()->GetStyle() == wxFONTSTYLE_ITALIC ? L"Y" : L"N";
-                    m_command += L", ";
-                    m_command += m_page2->GetFont()->GetUnderlined() ? L"Y" : L"N";
-                    m_command += L", ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetEncoding() );
-                    m_command += L", ";
-                    m_command += wxString::Format( "%d", m_page2->GetFont()->GetPointSize() );
-                    m_command += L", ";
-                    m_command += m_page2->GetFont()->GetFaceName();
-                    m_command += L");";
-                }
+            m_tableProperties.m_dataFontEncoding = dataFont->GetEncoding();
+            m_tableProperties.m_headingFontEncoding = headingFont->GetEncoding();
+            m_tableProperties.m_labelFontEncoding = labelFont->GetEncoding(();
         }
     }
     if( m_type == 1 )
