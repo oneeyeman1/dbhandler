@@ -220,23 +220,25 @@ void DrawingView::OnDraw(wxDC *WXUNUSED(dc))
 void DrawingView::OnSetProperties(wxCommandEvent &event)
 {
     std::vector<std::wstring> errors;
+    TableProperties *properties = NULL;
     DatabaseTable *table;
     int res = -1;
     ShapeList shapes;
     bool found = false;
+    wxString command;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
     wxString tableName, schemaName;
     MyErdTable *erdTable = NULL;
     FieldShape *field = NULL;
     int isLogOnly = event.GetInt();
     long type = event.GetExtraLong();
-    wxString *command = (wxString *) event.GetClientData();
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
     {
         if( (*it)->IsSelected() )
         {
             if( type == 0 )
             {
+                TableProperties *properties = (TableProperties *) event.GetClientData();
                 erdTable = (MyErdTable *)(*it);
                 found = true;
             }
@@ -253,23 +255,23 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
             }
         }
     }
-    if( isLogOnly )
+    if( type == 0 )
+        res = GetDocument()->GetDatabase()->SetTableProperties( erdTable->GetTable()->GetTableName().ToStdWstring(), *properties, isLogOnly, command.ToStdWstring(), errors );
+    if( type == 1 )
+        res = GetDocument()->GetDatabase()->SetFieldProperties( command->ToStdWstring(), errors );
+    if( res )
     {
-        m_text->AppendText( *command );
-        m_text->AppendText( "\n\r\n\r" );
-        if( !m_log->IsShown() )
-            m_log->Show();
+        for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
+            wxMessageBox( (*it) );
     }
     else
     {
-        if( type == 0 )
-            res = GetDocument()->GetDatabase()->SetTableProperties( command->ToStdWstring(), errors );
-        if( type == 1 )
-            res = GetDocument()->GetDatabase()->SetFieldProperties( command->ToStdWstring(), errors );
-        if( res )
+        if( isLogOnly )
         {
-            for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
-                wxMessageBox( (*it) );
+            m_text->AppendText( *command );
+            m_text->AppendText( "\n\r\n\r" );
+            if( !m_log->IsShown() )
+                m_log->Show();
         }
         else
         {

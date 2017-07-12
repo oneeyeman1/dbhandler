@@ -2472,7 +2472,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     return 0;
 }
 
-int ODBCDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::SetTableProperties(const std::wstring &table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query;

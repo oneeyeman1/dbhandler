@@ -12,14 +12,6 @@
 #ifndef PROPERTIES_H
 #define PROPERTIES_H
 
-struct TableProperties
-{
-    wxString m_comment, m_dataFontName, m_headingFontName, m_labelFontName;
-    int m_dataFontSize, m_headingFontSize, m_labelFontSize;
-    bool m_isDataFontUnderlined, m_isDataFontStriken, m_isHeadingFontUnderlined, m_isHeadingFontStriken, m_isLabelFontUnderlined, m_isLabelFontStrioken;
-    bool m_isDataFontBold, m_isDataFontItalic, m_isHeadingFontBold, m_isHeadingFontItalic, m_isLabelFontBold, m_isLabelFontItalic;
-};
-
 class PropertiesDialog: public wxDialog
 {
 public:

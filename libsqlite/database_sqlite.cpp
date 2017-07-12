@@ -758,7 +758,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
     return result;
 }
 
-int SQLiteDatabase::SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::SetTableProperties(const std::wstring &table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     std::wstring errorMessage;
     std::wstring query;
