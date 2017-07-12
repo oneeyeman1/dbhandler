@@ -454,6 +454,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         std::wstring comment = L"";
                         std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName );
                         DatabaseTable *table = new DatabaseTable( name, L"", fields, foreign_keys );
+                        table->SetTableId( 0 );
                         if( GetTableProperties( table, errorMsg ) )
                         {
                             fields.erase( fields.begin(), fields.end() );
@@ -761,36 +762,172 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
 int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     std::wstring errorMessage;
-    std::wstring query;
+//    std::wstring query;
     bool exist;
     sqlite3_stmt *stmt = NULL;
     int result = 0;
-    if( IsTablePropertiesExist( const_cast<DatabaseTable *>( table )->GetTableName(), const_cast<DatabaseTable *>( table )->GetSchemaName(), errorMsg ) && errorMsg.size() == 0 )
-        exist = true;
-    else
-        exist = false;
-    if( exist )
-        query = L"UPDATE \"sys.abcattbl\" SET \"abt_tnam\" = ?, \"abt_ownr\" = ?,  \"abd_fhgt\" = ?, \"abd_fwgt\" = ?";
-    else
-        query = L"INSERT INTO \"sys.abcattbl\" VALUES( ?, ?, ?, ? );";
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) command.length(), &stmt, 0 );
-    if( res == SQLITE_OK )
+    int res = sqlite3_exec( m_db, "BEGIN TRANSACTION", NULL, NULL, &err );
+    if( res != SQLITE_OK )
     {
-        res = sqlite3_step( stmt );
-        if( res != SQLITE_DONE )
-        {
-            result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-        }
-    }
-    else
-    {
-        result = 1;
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
+        result = 1;
     }
-    sqlite3_finalize( stmt );
+    else
+    {
+CREATE TABLE IF NOT EXISTS abcattbl(\"abt_cmnt\" char(254), PRIMARY KEY( \"abt_tnam\", \"abt_ownr\" ));
+        std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
+        std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
+        if( IsTablePropertiesExist( tableName, schemaName, errorMsg ) && errorMsg.size() == 0 )
+            exist = true;
+        else
+            exist = false;
+        if( exist )
+        {
+            command = L"UPDATE \"sys.abcattbl\" SET \"abt_tnam\" = ";
+            command += tableName;
+            command += L", \"abt_tid\" = ";
+            command << table->GetTableId();
+            command += L", \"abt_ownr\" = ";
+            command += pimpl->m_connectedUser;
+            command += L",  \"abd_fhgt\" = ";
+            command << properties.m_dataFontSize;
+            command += L", \"abd_fwgt\" = ";
+            command << properties.m_isDataFontBold
+            command += L", \"abd_fitl\" = ";
+            command << properties.m_isDataFontItalic ? L"Y" : L"N";
+            command += L", \"abd_funl\" = ";
+            command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
+            command += L", \"abd_fchr\" = ";
+            command << properties.m_dataFontEncoding;
+            command += L", \"abd_fptc\" = ";
+            command << properties.m_dataFontSize;
+            command += L", \"abd_ffce\" = ";
+            command += properties.m_dataFontName;
+            command += L",  \"abh_fhgt\" = ";
+            command << properties.m_headingFontSize;
+            command += L", \"abd_fwgt\" = ";
+            command << properties.m_isHeadingFontBold
+            command += L", \"abh_fitl\" = ";
+            command << properties.m_isHeadingFontItalic ? L"Y" : L"N";
+            command += L", \"abh_funl\" = ";
+            command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
+            command += L", \"abh_fchr\" = ";
+            command << properties.m_headingFontEncoding;
+            command += L", \"abh_fptc\" = ";
+            command << properties.m_headingFontSize;
+            command += L", \"abh_ffce\" = ";
+            command += properties.m_headingFontName;
+            command += L",  \"abl_fhgt\" = ";
+            command << properties.m_labelFontSize;
+            command += L", \"abl_fwgt\" = ";
+            command << properties.m_isLabelFontBold
+            command += L", \"abl_fitl\" = ";
+            command << properties.m_isLabelFontItalic ? L"Y" : L"N";
+            command += L", \"abl_funl\" = ";
+            command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
+            command += L", \"abl_fchr\" = ";
+            command << properties.m_labelFontEncoding;
+            command += L", \"abl_fptc\" = ";
+            command << properties.m_labelFontSize;
+            command += L", \"abl_ffce\" = ";
+            command += properties.m_labelFontName;
+            command += L", \"abt_cmnt\" = ";
+            command += table->GetComment();
+            command += L" WHERE \"abt_tnam\" = ";
+            command += tableName;
+            command += L" AND \"abt_tid\" = ";
+            command << table->GetTableId();
+            command += L" AND \"abt_ownr\" = ";
+            command += pimpl->m_connectedUser;
+        }
+        else
+        {
+            command = L"INSERT INTO \"sys.abcattbl\" VALUES( ";
+            command += tableName;
+            command += L", ";
+            command += table->GetTableId()
+            command += L", ";
+            command += pimpl->m_connectedUser;
+            command += L", ";
+            command << properties.m_dataFontSize;
+            command += L", ";
+            command << properties.m_isDataFontBold
+            command += L", ";
+            command << properties.m_isDataFontItalic ? L"Y" : L"N";
+            command += L", ";
+            command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
+            command += L", ";
+            command << properties.m_dataFontEncoding;
+            command += L", ";
+            command << properties.m_dataFontSize;
+            command += L", ";
+            command += properties.m_dataFontName;
+            command += L", ";
+            command << properties.m_headingFontSize;
+            command += L", ";
+            command << properties.m_isHeadingFontBold
+            command += L", ";
+            command << properties.m_isHeadingFontItalic ? L"Y" : L"N";
+            command += L", ";
+            command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
+            command += L", ";
+            command << properties.m_headingFontEncoding;
+            command += L", ";
+            command << properties.m_headingFontSize;
+            command += L", ";
+            command += properties.m_headingFontName;
+            command += L", ";
+            command << properties.m_labelFontSize;
+            command += L", ";
+            command << properties.m_isLabelFontBold
+            command += L", ";
+            command << properties.m_isLabelFontItalic ? L"Y" : L"N";
+            command += L", ";
+            command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
+            command += L", ";
+            command << properties.m_labelFontEncoding;
+            command += L", ";
+            command << properties.m_labelFontSize;
+            command += L", ";
+            command += properties.m_labelFontName;
+            command += L", ";
+            command += table->GetComment();
+            command += L" )";
+        }
+        if( !isLog )
+        {
+            res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), (int) command.length(), &stmt, 0 );
+            if( res == SQLITE_OK )
+            {
+                res = sqlite3_step( stmt );
+                if( res != SQLITE_DONE )
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                }
+            }
+            else
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+            sqlite3_finalize( stmt );
+        }
+    }
+    if( result == 0 )
+		query = L"COMMIT;";
+    else
+        query = L"ROLLBACK;";
+    int res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), NULL, NULL, &err );
+    if( res != SQLITE_OK )
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+        result = 1;
+    }
     return result;
 }
 
