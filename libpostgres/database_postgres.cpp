@@ -471,12 +471,14 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     return result;
 }
 
-int PostgresDatabase::SetTableProperties(const std::wstring &table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring err;
+    bool exist;
+    std::wstring query;
     PGresult *res;
-    if( IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), errors ) && errors.size() == 0 )
+    if( IsTablePropertiesExist( const_cast<DatabaseTable *>( table )->GetTableName(), const_cast<DatabaseTable *>( table )->GetSchemaName(), errorMsg ) && errorMsg.size() == 0 )
         exist = true;
     else
          exist = false;

@@ -1000,7 +1000,9 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
 int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    if( IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), errors ) && errors.size() == 0 )
+    bool exist;
+    std::wstring query;
+    if( IsTablePropertiesExist( const_cast<DatabaseTable *>( table )->GetTableName(), const_cast<DatabaseTable *>( table )->GetSchemaName(), errorMsg ) && errorMsg.size() == 0 )
         exist = true;
     else
          exist = false;

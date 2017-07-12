@@ -427,7 +427,7 @@ void CFontPropertyPage::do_layout()
     sizer_8->Add( sizer_4, 0, wxEXPAND, 0 );
     sizer_5->Add( itemWindow24, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 0 );
     sizer_8->Add( sizer_5, 0, wxEXPAND, 0 );
-    sizer_2->Add( sizer_8, 0, wxEXPAND, 0 );
+    sizer2->Add( sizer_8, 0, wxEXPAND, 0 );
     sizer_6->Add( itemStaticText15, 0, wxEXPAND, 0 );
     sizer_6->Add( 20, 5, 0, wxEXPAND, 0 );
     sizer_6->Add( itemChoice16, 0, wxEXPAND, 0 );

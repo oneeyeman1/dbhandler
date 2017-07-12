@@ -203,8 +203,6 @@ bool PropertiesDialog::ApplyProperties()
             m_tableProperties.m_isDataFontItalic = dataFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
             m_tableProperties.m_isHeadingFontItalic = headingFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
             m_tableProperties.m_isLabelFontItalic = labelFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-            else
-            {
                 if( exist )
                 {
                     m_command = L"UPDATE ";
@@ -255,7 +253,6 @@ bool PropertiesDialog::ApplyProperties()
                     m_command += m_page2->GetFont()->GetFaceName();
                     m_command += L");";
                 }
-            }
         }
     }
     if( m_type == 1 )

@@ -2472,11 +2472,12 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     return 0;
 }
 
-int ODBCDatabase::SetTableProperties(const std::wstring &table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    bool exist;
     std::wstring query;
-    if( IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), errors ) && errors.size() == 0 )
+    if( IsTablePropertiesExist( const_cast<DatabaseTable *>( table )->GetTableName(), const_cast<DatabaseTable *>( table )->GetSchemaName(), errorMsg ) && errorMsg.size() == 0 )
         exist = true;
     else
          exist = false;
@@ -2491,23 +2492,23 @@ int ODBCDatabase::SetTableProperties(const std::wstring &table, const TablePrope
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
-        delete query;
-        query = NULL;
+        delete qry;
+        qry = NULL;
         result = 1;
     }
     else
     {
-        SQLRETURN ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+        SQLRETURN ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
-            delete query;
-            query = NULL;
+            delete qry;
+            qry = NULL;
             result = 1;
         }
     }
-    delete query;
-    query = NULL;
+    delete qry;
+    qry = NULL;
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {

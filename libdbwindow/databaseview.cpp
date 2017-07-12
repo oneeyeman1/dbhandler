@@ -256,9 +256,9 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         }
     }
     if( type == 0 )
-        res = GetDocument()->GetDatabase()->SetTableProperties( erdTable->GetTable()->GetTableName().ToStdWstring(), *properties, isLogOnly, command.ToStdWstring(), errors );
-    if( type == 1 )
-        res = GetDocument()->GetDatabase()->SetFieldProperties( command->ToStdWstring(), errors );
+        res = GetDocument()->GetDatabase()->SetTableProperties( &erdTable->GetTable(), *properties, isLogOnly, const_cast<std::wstring &>( command.ToStdWstring() ), errors );
+//    if( type == 1 )
+//        res = GetDocument()->GetDatabase()->SetFieldProperties( command->ToStdWstring(), errors );
     if( res )
     {
         for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
@@ -268,7 +268,7 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
     {
         if( isLogOnly )
         {
-            m_text->AppendText( *command );
+            m_text->AppendText( command );
             m_text->AppendText( "\n\r\n\r" );
             if( !m_log->IsShown() )
                 m_log->Show();
