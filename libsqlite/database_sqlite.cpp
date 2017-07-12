@@ -762,7 +762,6 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
 int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     std::wstring errorMessage;
-//    std::wstring query;
     bool exist;
     sqlite3_stmt *stmt = NULL;
     int result = 0;
@@ -775,7 +774,6 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
     }
     else
     {
-CREATE TABLE IF NOT EXISTS abcattbl(\"abt_cmnt\" char(254), PRIMARY KEY( \"abt_tnam\", \"abt_ownr\" ));
         std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
         std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
         if( IsTablePropertiesExist( tableName, schemaName, errorMsg ) && errorMsg.size() == 0 )
