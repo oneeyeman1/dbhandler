@@ -54,6 +54,7 @@ protected:
     int GetDSNErrorMessage(std::vector<std::wstring> &errorMsg);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual bool IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg);
+    virtual int GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
 private:
     SQLHENV m_env;
     SQLHDBC m_hdbc;

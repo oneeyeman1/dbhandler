@@ -32,6 +32,7 @@ protected:
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual bool IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg);
     int TokenizeConnectionString(std::wstring &connectStr, std::vector<std::wstring> &errorMsg);
+    virtual int GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
 private:
     MYSQL *m_db;
     int m_port, m_flags;

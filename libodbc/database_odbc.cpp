@@ -2869,3 +2869,9 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &command, std::vector<st
     int res = 0;
     return res;
 }
+
+int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+}

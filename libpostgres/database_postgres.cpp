@@ -660,3 +660,39 @@ int PostgresDatabase::SetFieldProperties(const std::wstring &command, std::vecto
     int res = 0;
     return res;
 }
+
+int PostgresDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT oid FROM pg_class WHERE relname = $1";
+    int size = table->GetTableName().length() + 1;
+    char *value = new char[size];
+    memset( value, '\0', size );
+    strcpy( value, m_pimpl->m_myconv.to_bytes( table->GetTableName().c_str() ).c_str() );
+    int len = table->GetTableName().length() + 1;
+    PGresult *res = PQPrepare( m_db, "table_id", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 1, NULL );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Error executing query: " + err );
+        PQclear( res );
+        result = 1;
+    }
+    else
+    {
+        res = PQexecPrepared( m_db, "table_id", 1, values, length, NULL, 1 );
+        ExecStatusType status = PQresultStatus( res );
+        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error executing query: " + err );
+            PQclear( res );
+            result = 1;
+        }
+        else
+            table->SetTableId( PQgetvalue( res, 0, 0 ) );
+    }
+    delete value;
+    value = NULL;
+    return result;
+}
