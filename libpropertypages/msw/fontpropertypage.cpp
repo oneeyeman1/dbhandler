@@ -396,6 +396,8 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
 
 CFontPropertyPage::~CFontPropertyPage()
 {
+    delete m_font;
+    m_font = NULL;
 }
 
 void CFontPropertyPage::do_layout()
