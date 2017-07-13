@@ -205,7 +205,7 @@ bool PropertiesDialog::ApplyProperties()
             m_tableProperties.m_isLabelFontItalic = labelFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
             m_tableProperties.m_dataFontEncoding = dataFont->GetEncoding();
             m_tableProperties.m_headingFontEncoding = headingFont->GetEncoding();
-            m_tableProperties.m_labelFontEncoding = labelFont->GetEncoding(();
+            m_tableProperties.m_labelFontEncoding = labelFont->GetEncoding();
         }
     }
     if( m_type == 1 )

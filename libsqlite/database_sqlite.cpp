@@ -14,6 +14,7 @@
 #include <string>
 #include <locale>
 #include <codecvt>
+#include <sstream>
 #include <algorithm>
 #include "sqlite3.h"
 #include "database.h"
@@ -761,11 +762,12 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
 
 int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
-    std::wstring errorMessage;
+    std::wstring errorMessage, query;
+    std::wostringstream istr;
     bool exist;
     sqlite3_stmt *stmt = NULL;
     int result = 0;
-    int res = sqlite3_exec( m_db, "BEGIN TRANSACTION", NULL, NULL, &err );
+    int res = sqlite3_exec( m_db, "BEGIN TRANSACTION", NULL, NULL, 0 );
     if( res != SQLITE_OK )
     {
         GetErrorMessage( res, errorMessage );
@@ -776,6 +778,8 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
     {
         std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
         std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
+        std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
+        int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
         if( IsTablePropertiesExist( tableName, schemaName, errorMsg ) && errorMsg.size() == 0 )
             exist = true;
         else
@@ -785,57 +789,99 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
             command = L"UPDATE \"sys.abcattbl\" SET \"abt_tnam\" = ";
             command += tableName;
             command += L", \"abt_tid\" = ";
-            command << table->GetTableId();
+            istr << tableId;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", \"abt_ownr\" = ";
             command += pimpl->m_connectedUser;
             command += L",  \"abd_fhgt\" = ";
-            command << properties.m_dataFontSize;
+            istr << properties.m_dataFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", \"abd_fwgt\" = ";
-            command << properties.m_isDataFontBold
+            istr << properties.m_isDataFontBold;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", \"abd_fitl\" = ";
-            command << properties.m_isDataFontItalic ? L"Y" : L"N";
+            command += properties.m_isDataFontItalic ? L"Y" : L"N";
             command += L", \"abd_funl\" = ";
             command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
             command += L", \"abd_fchr\" = ";
-            command << properties.m_dataFontEncoding;
+            istr << properties.m_dataFontEncoding;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", \"abd_fptc\" = ";
-            command << properties.m_dataFontSize;
+            istr << properties.m_dataFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", \"abd_ffce\" = ";
             command += properties.m_dataFontName;
             command += L",  \"abh_fhgt\" = ";
-            command << properties.m_headingFontSize;
+            istr << properties.m_headingFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", \"abd_fwgt\" = ";
-            command << properties.m_isHeadingFontBold
+            istr << properties.m_isHeadingFontBold;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", \"abh_fitl\" = ";
-            command << properties.m_isHeadingFontItalic ? L"Y" : L"N";
+            command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
             command += L", \"abh_funl\" = ";
             command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
             command += L", \"abh_fchr\" = ";
-            command << properties.m_headingFontEncoding;
+            istr << properties.m_headingFontEncoding;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", \"abh_fptc\" = ";
-            command << properties.m_headingFontSize;
+            istr << properties.m_headingFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", \"abh_ffce\" = ";
             command += properties.m_headingFontName;
             command += L",  \"abl_fhgt\" = ";
-            command << properties.m_labelFontSize;
+            istr << properties.m_labelFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", \"abl_fwgt\" = ";
-            command << properties.m_isLabelFontBold
+            istr << properties.m_isLabelFontBold;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", \"abl_fitl\" = ";
-            command << properties.m_isLabelFontItalic ? L"Y" : L"N";
+            command += properties.m_isLabelFontItalic ? L"Y" : L"N";
             command += L", \"abl_funl\" = ";
             command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
             command += L", \"abl_fchr\" = ";
-            command << properties.m_labelFontEncoding;
+            istr << properties.m_labelFontEncoding;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", \"abl_fptc\" = ";
-            command << properties.m_labelFontSize;
+            istr << properties.m_labelFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", \"abl_ffce\" = ";
             command += properties.m_labelFontName;
             command += L", \"abt_cmnt\" = ";
-            command += table->GetComment();
+            command += comment;
             command += L" WHERE \"abt_tnam\" = ";
             command += tableName;
             command += L" AND \"abt_tid\" = ";
-            command << table->GetTableId();
+            istr << tableId;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L" AND \"abt_ownr\" = ";
             command += pimpl->m_connectedUser;
         }
@@ -844,53 +890,92 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
             command = L"INSERT INTO \"sys.abcattbl\" VALUES( ";
             command += tableName;
             command += L", ";
-            command += table->GetTableId()
+            istr << tableId;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", ";
             command += pimpl->m_connectedUser;
             command += L", ";
-            command << properties.m_dataFontSize;
+            istr << properties.m_dataFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", ";
-            command << properties.m_isDataFontBold
+            istr << properties.m_isDataFontBold;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", ";
-            command << properties.m_isDataFontItalic ? L"Y" : L"N";
+            command += properties.m_isDataFontItalic ? L"Y" : L"N";
             command += L", ";
             command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
             command += L", ";
-            command << properties.m_dataFontEncoding;
+            istr << properties.m_dataFontEncoding;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", ";
-            command << properties.m_dataFontSize;
+            istr << properties.m_dataFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", ";
             command += properties.m_dataFontName;
             command += L", ";
-            command << properties.m_headingFontSize;
+            istr << properties.m_headingFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", ";
-            command << properties.m_isHeadingFontBold
+            istr << properties.m_isHeadingFontBold;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", ";
-            command << properties.m_isHeadingFontItalic ? L"Y" : L"N";
+            command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
             command += L", ";
             command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
             command += L", ";
-            command << properties.m_headingFontEncoding;
+            istr << properties.m_headingFontEncoding;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", ";
-            command << properties.m_headingFontSize;
+            istr << properties.m_headingFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", ";
             command += properties.m_headingFontName;
             command += L", ";
-            command << properties.m_labelFontSize;
+            istr << properties.m_labelFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", ";
-            command << properties.m_isLabelFontBold
+            istr << properties.m_isLabelFontBold;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", ";
-            command << properties.m_isLabelFontItalic ? L"Y" : L"N";
+            command += properties.m_isLabelFontItalic ? L"Y" : L"N";
             command += L", ";
             command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
             command += L", ";
-            command << properties.m_labelFontEncoding;
+            istr << properties.m_labelFontEncoding;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", ";
-            command << properties.m_labelFontSize;
+            istr << properties.m_labelFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
             command += L", ";
             command += properties.m_labelFontName;
             command += L", ";
-            command += table->GetComment();
+            command += comment;
             command += L" )";
         }
         if( !isLog )
@@ -919,7 +1004,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
 		query = L"COMMIT;";
     else
         query = L"ROLLBACK;";
-    int res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), NULL, NULL, &err );
+    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), NULL, NULL, 0 );
     if( res != SQLITE_OK )
     {
         GetErrorMessage( res, errorMessage );
