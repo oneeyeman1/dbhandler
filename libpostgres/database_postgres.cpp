@@ -476,17 +476,233 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
     int result = 0;
     std::wstring err;
     bool exist;
-    std::wstring query;
+    std::wstring query = L"BEGIN TRANSACTION";
     PGresult *res;
-    if( IsTablePropertiesExist( const_cast<DatabaseTable *>( table )->GetTableName(), const_cast<DatabaseTable *>( table )->GetSchemaName(), errorMsg ) && errorMsg.size() == 0 )
-        exist = true;
+    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    {
+        PQclear( res );
+        err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
     else
-         exist = false;
-    if( exist )
-        query = L"UPDATE abcattbl SET abt_tnam = $1, abt_ownr = $2,  abd_fhgt = $3, abd_fwgt = $4";
+    {
+        if( IsTablePropertiesExist( const_cast<DatabaseTable *>( table )->GetTableName(), const_cast<DatabaseTable *>( table )->GetSchemaName(), errorMsg ) && errorMsg.size() == 0 )
+            exist = true;
+        else
+            exist = false;
+        if( exist )
+        {
+            command = L"UPDATE \"sys.abcattbl\" SET \"abt_tnam\" = ";
+            command += tableName;
+            command += L", \"abt_tid\" = ";
+            istr << tableId;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", \"abt_ownr\" = ";
+            command += pimpl->m_connectedUser;
+            command += L",  \"abd_fhgt\" = ";
+            istr << properties.m_dataFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", \"abd_fwgt\" = ";
+            istr << properties.m_isDataFontBold;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", \"abd_fitl\" = ";
+            command += properties.m_isDataFontItalic ? L"Y" : L"N";
+            command += L", \"abd_funl\" = ";
+            command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
+            command += L", \"abd_fchr\" = ";
+            istr << properties.m_dataFontEncoding;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", \"abd_fptc\" = ";
+            istr << properties.m_dataFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", \"abd_ffce\" = ";
+            command += properties.m_dataFontName;
+            command += L",  \"abh_fhgt\" = ";
+            istr << properties.m_headingFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", \"abd_fwgt\" = ";
+            istr << properties.m_isHeadingFontBold;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", \"abh_fitl\" = ";
+            command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
+            command += L", \"abh_funl\" = ";
+            command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
+            command += L", \"abh_fchr\" = ";
+            istr << properties.m_headingFontEncoding;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", \"abh_fptc\" = ";
+            istr << properties.m_headingFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", \"abh_ffce\" = ";
+            command += properties.m_headingFontName;
+            command += L",  \"abl_fhgt\" = ";
+            istr << properties.m_labelFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", \"abl_fwgt\" = ";
+            istr << properties.m_isLabelFontBold;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", \"abl_fitl\" = ";
+            command += properties.m_isLabelFontItalic ? L"Y" : L"N";
+            command += L", \"abl_funl\" = ";
+            command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
+            command += L", \"abl_fchr\" = ";
+            istr << properties.m_labelFontEncoding;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", \"abl_fptc\" = ";
+            istr << properties.m_labelFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", \"abl_ffce\" = ";
+            command += properties.m_labelFontName;
+            command += L", \"abt_cmnt\" = ";
+            command += comment;
+            command += L" WHERE \"abt_tnam\" = ";
+            command += tableName;
+            command += L" AND \"abt_tid\" = ";
+            istr << tableId;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L" AND \"abt_ownr\" = ";
+            command += pimpl->m_connectedUser;
+        }
+        else
+        {
+            command = L"INSERT INTO \"sys.abcattbl\" VALUES( ";
+            command += tableName;
+            command += L", ";
+            istr << tableId;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", ";
+            command += pimpl->m_connectedUser;
+            command += L", ";
+            istr << properties.m_dataFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", ";
+            istr << properties.m_isDataFontBold;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", ";
+            command += properties.m_isDataFontItalic ? L"Y" : L"N";
+            command += L", ";
+            command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
+            command += L", ";
+            istr << properties.m_dataFontEncoding;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", ";
+            istr << properties.m_dataFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", ";
+            command += properties.m_dataFontName;
+            command += L", ";
+            istr << properties.m_headingFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", ";
+            istr << properties.m_isHeadingFontBold;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", ";
+            command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
+            command += L", ";
+            command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
+            command += L", ";
+            istr << properties.m_headingFontEncoding;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", ";
+            istr << properties.m_headingFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", ";
+            command += properties.m_headingFontName;
+            command += L", ";
+            istr << properties.m_labelFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", ";
+            istr << properties.m_isLabelFontBold;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", ";
+            command += properties.m_isLabelFontItalic ? L"Y" : L"N";
+            command += L", ";
+            command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
+            command += L", ";
+            istr << properties.m_labelFontEncoding;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", ";
+            istr << properties.m_labelFontSize;
+            command += istr.str();
+            istr.clear();
+            istr.str( L"" );
+            command += L", ";
+            command += properties.m_labelFontName;
+            command += L", ";
+            command += comment;
+            command += L" )";
+        }
+        if( !isLog )
+        {
+            res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
+            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+            {
+                PQclear( res );
+                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+        }
+    }
+    if( result == 1 )
+        query = L"ROLLBACK";
     else
-        query = L"INSERT INTO abcattbl VALUES( $1, $2, $3, $4 );";
-    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
+        query = L"ROLLBACK";
+    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         PQclear( res );
