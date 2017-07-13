@@ -15,6 +15,7 @@
 #include <locale>
 #include <codecvt>
 #include <algorithm>
+#include <sstream>
 #include "libpq-fe.h"
 #include "database.h"
 #include "database_postgres.h"
@@ -476,6 +477,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
     int result = 0;
     std::wstring err;
     bool exist;
+    std::wostringstream istr;
     std::wstring query = L"BEGIN TRANSACTION";
     PGresult *res;
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );

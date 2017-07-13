@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <sstream>
 #ifdef _IODBCUNIX_FRAMEWORK
 #include "iODBC/sql.h"
 #include "iODBC/sqlext.h"
@@ -2476,6 +2477,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
 {
     int result = 0;
     bool exist;
+    std::wostringstream istr;
     std::wstring query = L"BEGIN TRANSACTION";
     SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
     memset( qry, '\0', query.length() + 2 );
