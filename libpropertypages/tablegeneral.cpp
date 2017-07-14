@@ -63,7 +63,7 @@ void TableGeneralProperty::set_properties()
     if( m_type == 0 )
     {
         m_owner->Enable( false );
-        m_owner->SetValue( static_cast<DatabaseTable *>( m_table )->GetSchemaName() );
+        m_owner->SetValue( static_cast<DatabaseTable *>( m_table )->GetTableOwner() );
         m_tableName->Enable( false );
         m_tableName->SetValue( static_cast<DatabaseTable *>( m_table )->GetTableName() );
         m_comment->SetValue( static_cast<DatabaseTable *>( m_table )->GetComment() );
