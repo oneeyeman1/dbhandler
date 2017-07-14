@@ -773,7 +773,7 @@ bool PostgresDatabase::IsTablePropertiesExist(const std::wstring &tableName, con
         errorMsg.push_back( L"Error executing query: " + err );
         PQclear( res );
     }
-	else
+    else
     {
         res = PQexecPrepared( m_db, "table_properties_exist", 2, values, length, formats, 1 );
         ExecStatusType status = PQresultStatus( res ); 
@@ -783,12 +783,12 @@ bool PostgresDatabase::IsTablePropertiesExist(const std::wstring &tableName, con
             errorMsg.push_back( L"Error executing query: " + err );
             PQclear( res );
         }
-		else
+        else
         {
             if( PQnfields( res ) == 1 )
                 result = true;
         }
-	}
+    }
     return result;
 }
 
