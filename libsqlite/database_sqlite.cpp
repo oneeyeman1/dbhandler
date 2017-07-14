@@ -1252,6 +1252,6 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &command, std::vector<
 int SQLiteDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    table->SetTableId( 0 );
+    const_cast<DatabaseTable *>( table )->SetTableId( 0 );
     return result;
 }

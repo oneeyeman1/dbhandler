@@ -1013,6 +1013,10 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
     }
     else
     {
+        std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
+        std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
+        std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
+        int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
         if( IsTablePropertiesExist( const_cast<DatabaseTable *>( table )->GetTableName(), const_cast<DatabaseTable *>( table )->GetSchemaName(), errorMsg ) && errorMsg.size() == 0 )
             exist = true;
         else

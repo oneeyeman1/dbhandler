@@ -490,6 +490,10 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
     }
     else
     {
+        std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
+        std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
+        std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
+        int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
         if( IsTablePropertiesExist( const_cast<DatabaseTable *>( table )->GetTableName(), const_cast<DatabaseTable *>( table )->GetSchemaName(), errorMsg ) && errorMsg.size() == 0 )
             exist = true;
         else
@@ -882,13 +886,15 @@ int PostgresDatabase::SetFieldProperties(const std::wstring &command, std::vecto
 int PostgresDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    char *value[1];
+    int len[1];
     std::wstring query = L"SELECT oid FROM pg_class WHERE relname = $1";
-    int size = table->GetTableName().length() + 1;
-    char *value = new char[size];
-    memset( value, '\0', size );
-    strcpy( value, m_pimpl->m_myconv.to_bytes( table->GetTableName().c_str() ).c_str() );
-    int len = table->GetTableName().length() + 1;
-    PGresult *res = PQPrepare( m_db, "table_id", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 1, NULL );
+    int size = const_cast<DatabaseTable *>( table )->GetTableName().length() + 1;
+    value[0] = new char[size];
+    memset( value[0], '\0', size );
+    strcpy( value[0], m_pimpl->m_myconv.to_bytes( const_cast<DatabaseTable *>( table )->GetTableName().c_str() ).c_str() );
+    len[1] = const_cast<DatabaseTable *>( table )->GetTableName().length() + 1;
+    PGresult *res = PQprepare( m_db, "table_id", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 1, NULL );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -898,7 +904,7 @@ int PostgresDatabase::GetTableId(const DatabaseTable *table, std::vector<std::ws
     }
     else
     {
-        res = PQexecPrepared( m_db, "table_id", 1, values, length, NULL, 1 );
+        res = PQexecPrepared( m_db, "table_id", 1, value, len, NULL, 1 );
         ExecStatusType status = PQresultStatus( res );
         if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
@@ -908,9 +914,9 @@ int PostgresDatabase::GetTableId(const DatabaseTable *table, std::vector<std::ws
             result = 1;
         }
         else
-            table->SetTableId( PQgetvalue( res, 0, 0 ) );
+            const_cast<DatabaseTable *>( table )->SetTableId( (int) PQgetvalue( res, 0, 0 ) );
     }
-    delete value;
-    value = NULL;
+    delete value[0];
+    value[0] = NULL;
     return result;
 }
