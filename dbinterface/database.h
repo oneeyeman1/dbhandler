@@ -112,6 +112,7 @@ class DatabaseTable
 public:
     DatabaseTable(const std::wstring &tableName, const std::wstring &schemaName, const std::vector<Field *> &tableFields, const std::map<int,std::vector<FKField *> > &foreignKeys)
     {
+        owner = L"";
         comment = L"";
         table_name = tableName;
         schema_name = schemaName;
@@ -180,7 +181,7 @@ public:
     int GetTableId() { return m_objectId; }
     void SetTableId(int id) { m_objectId = id; }
 private:
-    std::wstring table_name, schema_name, comment;
+    std::wstring table_name, schema_name, comment, owner;
     std::vector<Field *> table_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring m_dataFontName, m_labelFontName, m_headingFontName;
