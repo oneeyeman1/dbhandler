@@ -1002,7 +1002,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
         }
     }
     if( result == 0 )
-		query = L"COMMIT;";
+        query = L"COMMIT;";
     else
         query = L"ROLLBACK;";
     res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), NULL, NULL, 0 );
