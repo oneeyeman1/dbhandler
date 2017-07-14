@@ -1138,7 +1138,7 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstr
             references.push_back( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 1 ) ) );
         else if( res == SQLITE_DONE )
             break;
-		else
+        else
         {
             result = 1;
             GetErrorMessage( res, errorMessage );
@@ -1175,7 +1175,7 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstr
                 references.push_back( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 1 ) ) );
             else if( res == SQLITE_DONE )
                 break;
-		    else
+            else
             {
                 result = 1;
                 GetErrorMessage( res, errorMessage );
@@ -1213,7 +1213,7 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstr
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
     }
-	else
+    else
         sqlite3_exec( m_db, "COMMIT", NULL, NULL, error );
     return result;
 }
