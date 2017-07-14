@@ -977,7 +977,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
             command += properties.m_labelFontName;
             command += L"\', \'";
             command += comment;
-            command += L"\' )";
+            command += L"\' );";
         }
         if( !isLog )
         {
