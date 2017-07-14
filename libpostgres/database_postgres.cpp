@@ -135,6 +135,16 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
         {
             result = GetTableListFromDb( errorMsg );
         }
+        res = PQexec( m_db, "SELECT current_user" );
+        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        {
+            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+            result = 1;
+            PQclear( res );
+        }
+        else
+            pimpl->m_connectedUser = PQgetvalue( res, 0, 0 );
     }
     return result;
 }
