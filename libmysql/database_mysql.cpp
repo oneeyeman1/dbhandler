@@ -164,6 +164,19 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
                 result = GetTableListFromDb( errorMsg );
             }
         }
+        res = mysql_query( m_db, "SELECT USER()" );
+        MYSQL_RES *results = mysql_store_result( m_db );
+        if( !results )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+        MYSQL_ROW row;
+        while( ( row = mysql_fetch_row( results ) ) != NULL )
+        {
+            pimpl->m_connectedUser = row[0];
+        }
     }
     return result;
 }
