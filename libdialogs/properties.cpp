@@ -172,10 +172,11 @@ void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 bool PropertiesDialog::ApplyProperties()
 {
     bool exist;
+    bool isModified = ( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() );
     std::vector<std::wstring> errors;
     if( m_type == 0 )
     {
-        if( !m_isApplied && ( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() ) )
+        if( !m_isApplied && isModified )
         {
             DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
             wxString newComment = m_page1->GetCommentCtrl()->GetValue();
@@ -183,7 +184,10 @@ bool PropertiesDialog::ApplyProperties()
             wxFont *headingFont = m_page3->GetFont();
             wxFont *labelFont = m_page4->GetFont();
             if( newComment != table->GetComment() )
+            {
                 table->SetComment( newComment.ToStdWstring() );
+                m_tableProperties.m_comment = newComment.ToStdWstring();
+            }
             m_tableProperties.m_comment = newComment;
             m_tableProperties.m_dataFontName = dataFont->GetFaceName();
             m_tableProperties.m_headingFontName = headingFont->GetFaceName();
@@ -211,12 +215,14 @@ bool PropertiesDialog::ApplyProperties()
     if( m_type == 1 )
     {
     }
-//\"abh_fhgt\" smallint, \"abh_fwgt\" smallint, \"abh_fitl\" char(1), \"abh_funl\" char(1), \"abh_fchr\" smallint, \"abh_fptc\" smallint, \"abh_ffce\" char(18), \"abl_fhgt\" smallint, \"abl_fwgt\" smallint, \"abl_fitl\" char(1), \"abl_funl\" char(1), \"abl_fchr\" smallint, \"abl_fptc\" smallint, \"abl_ffce\" char(18), \"abt_cmnt\" char(254)
-    wxCommandEvent event( wxEVT_SET_TABLE_PROPERTY );
-    event.SetInt( IsLogOnly() );
-    event.SetExtraLong( m_type );
-    event.SetClientData( &m_tableProperties );
-    dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
+    if( isModified )
+    {
+        wxCommandEvent event( wxEVT_SET_TABLE_PROPERTY );
+        event.SetInt( IsLogOnly() );
+        event.SetExtraLong( m_type );
+        event.SetClientData( &m_tableProperties );
+        dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
+	}
     m_isApplied = true;
     return true;
 }

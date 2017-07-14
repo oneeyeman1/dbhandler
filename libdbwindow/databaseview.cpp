@@ -238,7 +238,7 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         {
             if( type == 0 )
             {
-                TableProperties *properties = (TableProperties *) event.GetClientData();
+                properties = (TableProperties *) event.GetClientData();
                 erdTable = (MyErdTable *)(*it);
                 found = true;
             }
