@@ -144,7 +144,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
             PQclear( res );
         }
         else
-            pimpl->m_connectedUser = PQgetvalue( res, 0, 0 );
+            pimpl->m_connectedUser = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, 0, 0 ) );
     }
     return result;
 }
@@ -944,7 +944,10 @@ int PostgresDatabase::GetTableId(const DatabaseTable *table, std::vector<std::ws
             result = 1;
         }
         else
-            const_cast<DatabaseTable *>( table )->SetTableId( (int) PQgetvalue( res, 0, 0 ) );
+        {
+            int *value = (int *) PQgetvalue( res, 0, 0 );
+            const_cast<DatabaseTable *>( table )->SetTableId( *value );
+        }
     }
     delete value[0];
     value[0] = NULL;
