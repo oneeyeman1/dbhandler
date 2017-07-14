@@ -500,16 +500,16 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             exist = false;
         if( exist )
         {
-            command = L"UPDATE \"sys.abcattbl\" SET \"abt_tnam\" = ";
+            command = L"UPDATE \"abcattbl\" SET \"abt_tnam\" = \'";
             command += tableName;
-            command += L", \"abt_tid\" = ";
+            command += L"\', \"abt_tid\" = ";
             istr << tableId;
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", \"abt_ownr\" = ";
+            command += L", \"abt_ownr\" = \'";
             command += pimpl->m_connectedUser;
-            command += L",  \"abd_fhgt\" = ";
+            command += L"\',  \"abd_fhgt\" = ";
             istr << properties.m_dataFontSize;
             command += istr.str();
             istr.clear();
@@ -519,11 +519,11 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", \"abd_fitl\" = ";
+            command += L", \"abd_fitl\" = \'";
             command += properties.m_isDataFontItalic ? L"Y" : L"N";
-            command += L", \"abd_funl\" = ";
+            command += L"\', \"abd_funl\" = \'";
             command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
-            command += L", \"abd_fchr\" = ";
+            command += L"\', \"abd_fchr\" = ";
             istr << properties.m_dataFontEncoding;
             command += istr.str();
             istr.clear();
@@ -533,9 +533,9 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", \"abd_ffce\" = ";
+            command += L", \"abd_ffce\" = \'";
             command += properties.m_dataFontName;
-            command += L",  \"abh_fhgt\" = ";
+            command += L"\',  \"abh_fhgt\" = ";
             istr << properties.m_headingFontSize;
             command += istr.str();
             istr.clear();
@@ -545,11 +545,11 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", \"abh_fitl\" = ";
+            command += L", \"abh_fitl\" = \'";
             command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
-            command += L", \"abh_funl\" = ";
+            command += L"\', \"abh_funl\" = \'";
             command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
-            command += L", \"abh_fchr\" = ";
+            command += L"\', \"abh_fchr\" = ";
             istr << properties.m_headingFontEncoding;
             command += istr.str();
             istr.clear();
@@ -559,9 +559,9 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", \"abh_ffce\" = ";
+            command += L", \"abh_ffce\" = \'";
             command += properties.m_headingFontName;
-            command += L",  \"abl_fhgt\" = ";
+            command += L"\',  \"abl_fhgt\" = ";
             istr << properties.m_labelFontSize;
             command += istr.str();
             istr.clear();
@@ -571,11 +571,11 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", \"abl_fitl\" = ";
+            command += L", \"abl_fitl\" = \'";
             command += properties.m_isLabelFontItalic ? L"Y" : L"N";
-            command += L", \"abl_funl\" = ";
+            command += L"\', \"abl_funl\" = \'";
             command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
-            command += L", \"abl_fchr\" = ";
+            command += L"\', \"abl_fchr\" = ";
             istr << properties.m_labelFontEncoding;
             command += istr.str();
             istr.clear();
@@ -585,32 +585,33 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", \"abl_ffce\" = ";
+            command += L", \"abl_ffce\" = \'";
             command += properties.m_labelFontName;
-            command += L", \"abt_cmnt\" = ";
+            command += L"\', \"abt_cmnt\" = \'";
             command += comment;
-            command += L" WHERE \"abt_tnam\" = ";
+            command += L"\' WHERE \"abt_tnam\" = \'";
             command += tableName;
-            command += L" AND \"abt_tid\" = ";
+            command += L"\' AND \"abt_tid\" = ";
             istr << tableId;
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L" AND \"abt_ownr\" = ";
+            command += L" AND \"abt_ownr\" = \'";
             command += pimpl->m_connectedUser;
+            command += L"\';";
         }
         else
         {
-            command = L"INSERT INTO \"sys.abcattbl\" VALUES( ";
+            command = L"INSERT INTO \"sys.abcattbl\" VALUES( \'";
             command += tableName;
-            command += L", ";
+            command += L"\', ";
             istr << tableId;
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", ";
+            command += L", \'";
             command += pimpl->m_connectedUser;
-            command += L", ";
+            command += L"\', ";
             istr << properties.m_dataFontSize;
             command += istr.str();
             istr.clear();
@@ -620,11 +621,11 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", ";
+            command += L", \'";
             command += properties.m_isDataFontItalic ? L"Y" : L"N";
-            command += L", ";
+            command += L"\', \'";
             command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
-            command += L", ";
+            command += L"\', ";
             istr << properties.m_dataFontEncoding;
             command += istr.str();
             istr.clear();
@@ -634,9 +635,9 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", ";
+            command += L", \'";
             command += properties.m_dataFontName;
-            command += L", ";
+            command += L"\', ";
             istr << properties.m_headingFontSize;
             command += istr.str();
             istr.clear();
@@ -646,11 +647,11 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", ";
+            command += L", \'";
             command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
-            command += L", ";
+            command += L"\', \'";
             command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
-            command += L", ";
+            command += L"\', ";
             istr << properties.m_headingFontEncoding;
             command += istr.str();
             istr.clear();
@@ -660,9 +661,9 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", ";
+            command += L", \'";
             command += properties.m_headingFontName;
-            command += L", ";
+            command += L"\', ";
             istr << properties.m_labelFontSize;
             command += istr.str();
             istr.clear();
@@ -672,11 +673,11 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", ";
+            command += L", \'";
             command += properties.m_isLabelFontItalic ? L"Y" : L"N";
-            command += L", ";
+            command += L"\', \'";
             command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
-            command += L", ";
+            command += L"\', ";
             istr << properties.m_labelFontEncoding;
             command += istr.str();
             istr.clear();
@@ -686,11 +687,11 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             command += istr.str();
             istr.clear();
             istr.str( L"" );
-            command += L", ";
+            command += L", \'";
             command += properties.m_labelFontName;
-            command += L", ";
+            command += L"\', \'";
             command += comment;
-            command += L" )";
+            command += L"\' );";
         }
         if( !isLog )
         {
