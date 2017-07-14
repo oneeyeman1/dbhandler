@@ -183,10 +183,9 @@ bool PropertiesDialog::ApplyProperties()
             wxFont *dataFont = m_page2->GetFont();
             wxFont *headingFont = m_page3->GetFont();
             wxFont *labelFont = m_page4->GetFont();
-            if( newComment != table->GetComment() )
+            if( newComment != table->GetComment() && !IsLogOnly() )
             {
                 table->SetComment( newComment.ToStdWstring() );
-                m_tableProperties.m_comment = newComment.ToStdWstring();
             }
             m_tableProperties.m_comment = newComment;
             m_tableProperties.m_dataFontName = dataFont->GetFaceName();
