@@ -178,8 +178,10 @@ public:
     bool GetLabelFontStrikethrough() { return m_labelFontStrikethrough; }
     const std::vector<Field *> &GetFields() { return table_fields; }
     std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
-    int GetTableId() { return m_objectId; }
+    const int GetTableId() { return m_objectId; }
     void SetTableId(int id) { m_objectId = id; }
+    const std::wstring &GetTableOwner() { return owner; }
+    void SetTableOwner(const std::wstring &owner) { this->owner = owner; }
 private:
     std::wstring table_name, schema_name, comment, owner;
     std::vector<Field *> table_fields;
