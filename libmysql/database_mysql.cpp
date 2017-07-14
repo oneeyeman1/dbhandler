@@ -175,7 +175,7 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
         MYSQL_ROW row;
         while( ( row = mysql_fetch_row( results ) ) != NULL )
         {
-            pimpl->m_connectedUser = row[0];
+            pimpl->m_connectedUser = m_pimpl->m_myconv.from_bytes( row[0] );
         }
     }
     return result;
