@@ -1654,6 +1654,17 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 if( pimpl->m_subtype == L"Microsoft SQL Server" && schema_name == L"sys" )
                     table_name = schema_name + L"." + table_name;
                 DatabaseTable *table = new DatabaseTable( table_name, schema_name, fields, foreign_keys );
+                if( SetTableOwner( table, errorMsg ) )
+                {
+                    fields.erase( fields.begin(), fields.end() );
+                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                    fields.clear();
+                    foreign_keys.clear();
+                    autoinc_fields.clear();
+                    pk_fields.clear();
+                    fk_fieldNames.clear();
+                    return 1;
+                }
                 if( GetTableProperties( table, errorMsg ) )
                 {
                     fields.erase( fields.begin(), fields.end() );
@@ -2482,255 +2493,274 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
     memset( qry, '\0', query.length() + 2 );
     uc_to_str_cpy( qry, query );
-    SQLRETURN ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    RETCODE rets = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( rets == SQL_SUCCESS || rets == SQL_SUCCESS_WITH_INFO )
     {
-        GetErrorMessage( errorMsg, 1, m_hstmt );
-        delete qry;
-        qry = NULL;
-        result = 1;
-    }
-    else
-    {
-        std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
-        std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
-        std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
-        int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
-        delete qry;
-        qry = NULL;
-        if( IsTablePropertiesExist( const_cast<DatabaseTable *>( table )->GetTableName(), const_cast<DatabaseTable *>( table )->GetSchemaName(), errorMsg ) && errorMsg.size() == 0 )
-            exist = true;
-        else
-            exist = false;
-        if( exist )
+        SQLRETURN ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
-            command = L"UPDATE \"abcattbl\" SET \"abt_tnam\" = \'";
-            command += tableName;
-            command += L"\', \"abt_tid\" = ";
-            istr << tableId;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \"abt_ownr\" = \'";
-            command += pimpl->m_connectedUser;
-            command += L"\',  \"abd_fhgt\" = ";
-            istr << properties.m_dataFontSize;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \"abd_fwgt\" = ";
-            istr << properties.m_isDataFontBold;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \"abd_fitl\" = \'";
-            command += properties.m_isDataFontItalic ? L"Y" : L"N";
-            command += L"\', \"abd_funl\" = \'";
-            command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
-            command += L"\', \"abd_fchr\" = ";
-            istr << properties.m_dataFontEncoding;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \"abd_fptc\" = ";
-            istr << properties.m_dataFontSize;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \"abd_ffce\" = \'";
-            command += properties.m_dataFontName;
-            command += L"\',  \"abh_fhgt\" = ";
-            istr << properties.m_headingFontSize;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \"abd_fwgt\" = ";
-            istr << properties.m_isHeadingFontBold;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \"abh_fitl\" = \'";
-            command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
-            command += L"\', \"abh_funl\" = \'";
-            command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
-            command += L"\', \"abh_fchr\" = ";
-            istr << properties.m_headingFontEncoding;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \"abh_fptc\" = ";
-            istr << properties.m_headingFontSize;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \"abh_ffce\" = \'";
-            command += properties.m_headingFontName;
-            command += L"\',  \"abl_fhgt\" = ";
-            istr << properties.m_labelFontSize;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \"abl_fwgt\" = ";
-            istr << properties.m_isLabelFontBold;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \"abl_fitl\" = \'";
-            command += properties.m_isLabelFontItalic ? L"Y" : L"N";
-            command += L"\', \"abl_funl\" = \'";
-            command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
-            command += L"\', \"abl_fchr\" = ";
-            istr << properties.m_labelFontEncoding;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \"abl_fptc\" = ";
-            istr << properties.m_labelFontSize;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \"abl_ffce\" = \'";
-            command += properties.m_labelFontName;
-            command += L"\', \"abt_cmnt\" = \'";
-            command += comment;
-            command += L"\' WHERE \"abt_tnam\" = \'";
-            command += tableName;
-            command += L"\' AND \"abt_tid\" = ";
-            istr << tableId;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L" AND \"abt_ownr\" = \'";
-            command += pimpl->m_connectedUser;
-            command += L"\';";
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
         }
         else
         {
-            command = L"INSERT INTO \"sys.abcattbl\" VALUES( \'";
-            command += tableName;
-            command += L"\', ";
-            istr << tableId;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \'";
-            command += pimpl->m_connectedUser;
-            command += L"\', ";
-            istr << properties.m_dataFontSize;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", ";
-            istr << properties.m_isDataFontBold;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \'";
-            command += properties.m_isDataFontItalic ? L"Y" : L"N";
-            command += L"\', \'";
-            command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
-            command += L"\', ";
-            istr << properties.m_dataFontEncoding;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", ";
-            istr << properties.m_dataFontSize;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \'";
-            command += properties.m_dataFontName;
-            command += L"\', ";
-            istr << properties.m_headingFontSize;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", ";
-            istr << properties.m_isHeadingFontBold;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \'";
-            command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
-            command += L"\', \'";
-            command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
-            command += L"\', ";
-            istr << properties.m_headingFontEncoding;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", ";
-            istr << properties.m_headingFontSize;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \'";
-            command += properties.m_headingFontName;
-            command += L"\', ";
-            istr << properties.m_labelFontSize;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", ";
-            istr << properties.m_isLabelFontBold;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \'";
-            command += properties.m_isLabelFontItalic ? L"Y" : L"N";
-            command += L"\', \'";
-            command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
-            command += L"\', ";
-            istr << properties.m_labelFontEncoding;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", ";
-            istr << properties.m_labelFontSize;
-            command += istr.str();
-            istr.clear();
-            istr.str( L"" );
-            command += L", \'";
-            command += properties.m_labelFontName;
-            command += L"\', \'";
-            command += comment;
-            command += L"\' );";
-        }
-        if( !isLog )
-        {
-            qry = new SQLWCHAR[command.length() + 2];
-            memset( qry, '\0', command.length() + 2 );
-            uc_to_str_cpy( qry, command );
-            ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            rets = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+            if( rets != SQL_SUCCESS && rets != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+			else
+            {
+                std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
+                std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
+                std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
+                std::wstring tableOwner = const_cast<DatabaseTable *>( table )->GetTableOwner();
+                int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
                 delete qry;
                 qry = NULL;
-                result = 1;
-            }
-            else
-            {
-                ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                if( IsTablePropertiesExist( const_cast<DatabaseTable *>( table )->GetTableName(), const_cast<DatabaseTable *>( table )->GetSchemaName(), errorMsg ) && errorMsg.size() == 0 )
+                    exist = true;
+                else
+                    exist = false;
+                if( exist )
                 {
-                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    command = L"UPDATE \"abcattbl\" SET \"abt_tnam\" = \'";
+                    command += tableName;
+                    command += L"\', \"abt_tid\" = ";
+                    istr << tableId;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \"abt_ownr\" = \'";
+                    command += tableOwner;
+                    command += L"\',  \"abd_fhgt\" = ";
+                    istr << properties.m_dataFontSize;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \"abd_fwgt\" = ";
+                    istr << properties.m_isDataFontBold;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \"abd_fitl\" = \'";
+                    command += properties.m_isDataFontItalic ? L"Y" : L"N";
+                    command += L"\', \"abd_funl\" = \'";
+                    command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
+                    command += L"\', \"abd_fchr\" = ";
+                    istr << properties.m_dataFontEncoding;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \"abd_fptc\" = ";
+                    istr << properties.m_dataFontSize;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \"abd_ffce\" = \'";
+                    command += properties.m_dataFontName;
+                    command += L"\',  \"abh_fhgt\" = ";
+                    istr << properties.m_headingFontSize;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \"abd_fwgt\" = ";
+                    istr << properties.m_isHeadingFontBold;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \"abh_fitl\" = \'";
+                    command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
+                    command += L"\', \"abh_funl\" = \'";
+                    command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
+                    command += L"\', \"abh_fchr\" = ";
+                    istr << properties.m_headingFontEncoding;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \"abh_fptc\" = ";
+                    istr << properties.m_headingFontSize;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \"abh_ffce\" = \'";
+                    command += properties.m_headingFontName;
+                    command += L"\',  \"abl_fhgt\" = ";
+                    istr << properties.m_labelFontSize;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \"abl_fwgt\" = ";
+                    istr << properties.m_isLabelFontBold;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \"abl_fitl\" = \'";
+                    command += properties.m_isLabelFontItalic ? L"Y" : L"N";
+                    command += L"\', \"abl_funl\" = \'";
+                    command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
+                    command += L"\', \"abl_fchr\" = ";
+                    istr << properties.m_labelFontEncoding;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \"abl_fptc\" = ";
+                    istr << properties.m_labelFontSize;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \"abl_ffce\" = \'";
+                    command += properties.m_labelFontName;
+                    command += L"\', \"abt_cmnt\" = \'";
+                    command += comment;
+                    command += L"\' WHERE \"abt_tnam\" = \'";
+                    command += tableName;
+                    command += L"\' AND \"abt_tid\" = ";
+                    istr << tableId;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L" AND \"abt_ownr\" = \'";
+                    command += pimpl->m_connectedUser;
+                    command += L"\';";
+                }
+                else
+                {
+                    command = L"INSERT INTO \"sys.abcattbl\" VALUES( \'";
+                    command += tableName;
+                    command += L"\', ";
+                    istr << tableId;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \'";
+                    command += tableOwner;
+                    command += L"\', ";
+                    istr << properties.m_dataFontSize;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", ";
+                    istr << properties.m_isDataFontBold;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \'";
+                    command += properties.m_isDataFontItalic ? L"Y" : L"N";
+                    command += L"\', \'";
+                    command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
+                    command += L"\', ";
+                    istr << properties.m_dataFontEncoding;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", ";
+                    istr << properties.m_dataFontSize;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \'";
+                    command += properties.m_dataFontName;
+                    command += L"\', ";
+                    istr << properties.m_headingFontSize;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", ";
+                    istr << properties.m_isHeadingFontBold;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \'";
+                    command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
+                    command += L"\', \'";
+                    command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
+                    command += L"\', ";
+                    istr << properties.m_headingFontEncoding;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", ";
+                    istr << properties.m_headingFontSize;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \'";
+                    command += properties.m_headingFontName;
+                    command += L"\', ";
+                    istr << properties.m_labelFontSize;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", ";
+                    istr << properties.m_isLabelFontBold;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \'";
+                    command += properties.m_isLabelFontItalic ? L"Y" : L"N";
+                    command += L"\', \'";
+                    command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
+                    command += L"\', ";
+                    istr << properties.m_labelFontEncoding;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", ";
+                    istr << properties.m_labelFontSize;
+                    command += istr.str();
+                    istr.clear();
+                    istr.str( L"" );
+                    command += L", \'";
+                    command += properties.m_labelFontName;
+                    command += L"\', \'";
+                    command += comment;
+                    command += L"\' );";
+                }
+                if( !isLog )
+                {
+                    qry = new SQLWCHAR[command.length() + 2];
+                    memset( qry, '\0', command.length() + 2 );
+                    uc_to_str_cpy( qry, command );
+                    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        delete qry;
+                        qry = NULL;
+                        result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            delete qry;
+                            qry = NULL;
+                            result = 1;
+                        }
+                    }
                     delete qry;
                     qry = NULL;
-                    result = 1;
+                    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
+                    }
                 }
-            }
-            delete qry;
-            qry = NULL;
-            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 1, m_hstmt );
-                result = 1;
             }
         }
     }
+	else
+    {
+        GetErrorMessage( errorMsg, 2 );
+        result = 1;
+    }
+    delete qry;
+    qry = NULL;
     return result;
 }
 
@@ -3096,3 +3126,109 @@ int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstrin
         query = L"SELECT oid FROM pg_class WHERE relname = ?";
     return result;
 }
+
+int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+{
+    SQLHSTMT stmt;
+    SQLHDBC hdbc;
+    SQLLEN cbTableName = SQL_NTS;
+    SQLINTEGER cbName;
+    SQLWCHAR owner[1024];
+    SQLWCHAR *table_name = NULL, *qry;
+    int result = 0;
+    std::wstring query, name = table->GetTableName();
+    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        query = L"SELECT su.name FROM sysobjects so, sysusers su WHERE so.uid = su.uid AND so.name = ?";
+    if( pimpl->m_subtype == L"PostgreSQL" )
+        query = L"SELECT oid FROM pg_class WHERE relname = ?";
+    SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
+    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 0 );
+        result = 1;
+    }
+    else
+    {
+        SQLSMALLINT OutConnStrLen;
+        retcode = SQLDriverConnect( hdbc, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2, hdbc );
+            result = 1;
+        }
+		else
+        {
+            retcode = SQLAllocHandle( SQL_HANDLE_STMT, hdbc, &stmt );
+            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 2, hdbc );
+                result = 1;
+            }
+	        else
+            {
+                table_name = new SQLWCHAR[name.length() + 2];
+                qry = new SQLWCHAR[query.length() + 2];
+                memset( qry, '\0', query.size() + 2 );
+                memset( table_name, '\0', name.length() + 2 );
+                uc_to_str_cpy( qry, query );
+                uc_to_str_cpy( table_name, name );
+                retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, name.length(), 0, table_name, 0, &cbTableName );
+                if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                {
+                    retcode = SQLPrepare( stmt, qry, SQL_NTS );
+                    if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                    {
+                        retcode = SQLExecute( stmt );
+                        if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                        {
+                            retcode = SQLFetch( stmt );
+                            if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                            {
+                                retcode = SQLGetData( stmt, 1, SQL_C_WCHAR, owner, 1024, &cbName );
+                                if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                                {
+                                    std::wstring tableOwner;
+                                    str_to_uc_cpy( tableOwner, owner );
+                                    table->SetTableOwner( tableOwner );
+                                }
+                                else
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt );
+                                    result = 1;
+                                }
+                            }
+                            else if( retcode != SQL_NO_DATA )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt );
+                                result = 1;
+                            }
+                        }
+                        else
+                        {
+                            GetErrorMessage( errorMsg, 1, stmt );
+                            result = 1;
+                        }
+                    }
+                    else
+                    {
+                        GetErrorMessage( errorMsg, 1, stmt );
+                        result = 1;
+                    }
+                }
+                else
+                {
+                    GetErrorMessage( errorMsg, 1, stmt );
+                    result = 1;
+                }
+                delete table_name;
+                table_name = NULL;
+                delete qry;
+                qry = NULL;
+            }
+        }
+    }
+    SQLFreeHandle( SQL_HANDLE_STMT, stmt );
+    stmt = 0;
+    return result;
+}
+
