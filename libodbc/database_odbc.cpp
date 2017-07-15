@@ -3148,7 +3148,7 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
     SQLHSTMT stmt;
     SQLHDBC hdbc;
     SQLLEN cbTableName = SQL_NTS;
-    SQLINTEGER cbName;
+    SQLLEN cbName;
     SQLWCHAR owner[1024];
     SQLWCHAR *table_name = NULL, *qry;
     int result = 0;
@@ -3156,7 +3156,7 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT su.name FROM sysobjects so, sysusers su WHERE so.uid = su.uid AND so.name = ?";
     if( pimpl->m_subtype == L"PostgreSQL" )
-        query = L"SELECT oid FROM pg_class WHERE relname = ?";
+        query = L"SELECT u.usename FROM pg_class c, pg_user u WHERE u.usesysid = c.relowner AND relname = ?";
     SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
     if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
     {
