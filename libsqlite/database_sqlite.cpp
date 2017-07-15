@@ -779,6 +779,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
         std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
         std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
         std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
+        std::wstring tableOwner = const_cast<DatabaseTable *>( table )->GetTableOwner();
         int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
         if( IsTablePropertiesExist( tableName, schemaName, errorMsg ) && errorMsg.size() == 0 )
             exist = true;
@@ -794,7 +795,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
             istr.clear();
             istr.str( L"" );
             command += L", \"abt_ownr\" = \'";
-            command += pimpl->m_connectedUser;
+            command += tableOwner;
             command += L"\',  \"abd_fhgt\" = ";
             istr << properties.m_dataFontSize;
             command += istr.str();
@@ -896,7 +897,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
             istr.clear();
             istr.str( L"" );
             command += L", \'";
-            command += pimpl->m_connectedUser;
+            command += tableOwner;
             command += L"\', ";
             istr << properties.m_dataFontSize;
             command += istr.str();
