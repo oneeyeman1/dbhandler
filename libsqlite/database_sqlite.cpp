@@ -877,7 +877,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
             command += comment;
             command += L"\' WHERE \"abt_tnam\" = \'";
             command += tableName;
-            command += L"'\ AND \"abt_tid\" = ";
+            command += L"\' AND \"abt_tid\" = ";
             istr << tableId;
             command += istr.str();
             istr.clear();
@@ -949,7 +949,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
             istr.str( L"" );
             command += L", \'";
             command += properties.m_headingFontName;
-            command += L"'\, ";
+            command += L"\', ";
             istr << properties.m_labelFontSize;
             command += istr.str();
             istr.clear();

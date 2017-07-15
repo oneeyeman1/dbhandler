@@ -2591,7 +2591,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
             istr.str( L"" );
             command += L", \"abl_ffce\" = \'";
             command += properties.m_labelFontName;
-            command += L"'\, \"abt_cmnt\" = \'";
+            command += L"\', \"abt_cmnt\" = \'";
             command += comment;
             command += L"\' WHERE \"abt_tnam\" = \'";
             command += tableName;
