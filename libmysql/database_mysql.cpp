@@ -1030,7 +1030,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
         std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
         std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
         int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
-        if( IsTablePropertiesExist( const_cast<DatabaseTable *>( table )->GetTableName(), const_cast<DatabaseTable *>( table )->GetSchemaName(), errorMsg ) && errorMsg.size() == 0 )
+        if( IsTablePropertiesExist( table, errorMsg ) && errorMsg.size() == 0 )
             exist = true;
         else
             exist = false;
@@ -1254,13 +1254,13 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
     return result;
 }
 
-bool MySQLDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
+bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
     char *str_data1, *str_data2;
     MYSQL_STMT *stmt;
-    std::wstring tname = schemaName + L".";
-    tname += tableName;
+    std::wstring tname = const_cast<DatabaseTable *>( table )->GetSchemaName() + L".";
+    tname += const_cast<DatabaseTable *>( table )->GetTableName();
     std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
     stmt = mysql_stmt_init( m_db );
     if( !stmt )

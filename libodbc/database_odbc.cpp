@@ -2519,7 +2519,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
                 delete qry;
                 qry = NULL;
-                if( IsTablePropertiesExist( const_cast<DatabaseTable *>( table )->GetTableName(), const_cast<DatabaseTable *>( table )->GetSchemaName(), errorMsg ) && errorMsg.size() == 0 )
+                if( IsTablePropertiesExist( table, errorMsg ) && errorMsg.size() == 0 )
                     exist = true;
                 else
                     exist = false;
@@ -2764,17 +2764,19 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     return result;
 }
 
-bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
+bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
-    SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
-    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
-    std::wstring tname = schemaName + L".";
-    tname += tableName;
-    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tname.length() + 2], *owner_name = new SQLWCHAR[pimpl->m_connectedUser.length() + 2];
-    memset( owner_name, '\0', pimpl->m_connectedUser.length() + 2 );
+    SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS, cbTableId = 0;
+    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ? AND \"abt_tid\" = ?;";
+    std::wstring tname = const_cast<DatabaseTable *>( table )->GetSchemaName() + L".";
+    tname += const_cast<DatabaseTable *>( table )->GetTableName();
+    std::wstring ownerName = const_cast<DatabaseTable *>( table )->GetTableOwner();
+    int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
+    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tname.length() + 2], *owner_name = new SQLWCHAR[ownerName.length() + 2];
+    memset( owner_name, '\0', ownerName.length() + 2 );
     memset( table_name, '\0', tname.length() + 2 );
-    uc_to_str_cpy( owner_name, pimpl->m_connectedUser );
+    uc_to_str_cpy( owner_name, ownerName );
     uc_to_str_cpy( table_name, tname );
     memset( qry, '\0', query.size() + 2 );
     uc_to_str_cpy( qry, query );
@@ -2790,7 +2792,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
         owner_name = NULL;
         return false;
     }
-    ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
+    ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tname.length(), 0, table_name, 0, &cbTableName );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -2803,7 +2805,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
     }
     else
     {
-        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, pimpl->m_connectedUser.length(), 0, owner_name, 0, &cbSchemaName );
+        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name, 0, &cbSchemaName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -2816,7 +2818,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
         }
         else
         {
-            ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+            ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_INTEGER, 0, 0, &tableId, 0, &cbTableId );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -2827,12 +2829,10 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
                 delete owner_name;
                 owner_name = NULL;
             }
-            else
+			else
             {
-                ret = SQLExecute( m_hstmt );
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    result = true;
-                else if( ret != SQL_NO_DATA )
+                ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, 1, m_hstmt );
                     delete qry;
@@ -2841,6 +2841,22 @@ bool ODBCDatabase::IsTablePropertiesExist(const std::wstring &tableName, const s
                     table_name = NULL;
                     delete owner_name;
                     owner_name = NULL;
+                }
+                else
+                {
+                    ret = SQLExecute( m_hstmt );
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        result = true;
+                    else if( ret != SQL_NO_DATA )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        delete qry;
+                        qry = NULL;
+                        delete table_name;
+                        table_name = NULL;
+                        delete owner_name;
+                        owner_name = NULL;
+                    }
                 }
             }
         }

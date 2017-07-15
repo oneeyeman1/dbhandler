@@ -523,7 +523,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
         std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
         std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
         int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
-        if( IsTablePropertiesExist( const_cast<DatabaseTable *>( table )->GetTableName(), const_cast<DatabaseTable *>( table )->GetSchemaName(), errorMsg ) && errorMsg.size() == 0 )
+        if( IsTablePropertiesExist( table, errorMsg ) && errorMsg.size() == 0 )
             exist = true;
         else
             exist = false;
@@ -749,23 +749,27 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
     return result;
 }
 
-bool PostgresDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg)
+bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
-    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
-    std::wstring tname = schemaName + L".";
-    tname += tableName;
-    char *values[2];
-    values[1] = new char[tname.length() + 1];
-    values[2] = new char[pimpl->m_connectedUser.length() + 1];
+    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2 AND \"abt_tid\" = $3;";
+    std::wstring tname = const_cast<DatabaseTable *>( table )->GetSchemaName() + L".";
+    tname += const_cast<DatabaseTable *>( table )->GetTableName();
+    std::wstring owner = const_cast<DatabaseTable *>( table )->GetTableOwner();
+    int tableId = htonl( const_cast<DatabaseTable *>( table )->GetTableId() );
+    char *values[3];
+    values[0] = new char[tname.length() + 1];
+    values[1] = new char[owner.length() + 1];
     memset( values[0], '\0', tname.length() + 1 );
-    memset( values[1], '\0', pimpl->m_connectedUser.length() + 1 );
+    memset( values[1], '\0', owner.length() + 1 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( tname.c_str() ).c_str() );
-    strcpy( values[1], m_pimpl->m_myconv.to_bytes( pimpl->m_connectedUser.c_str() ).c_str() );
+    strcpy( values[1], m_pimpl->m_myconv.to_bytes( owner.c_str() ).c_str() );
+    values[2] = (char *) &tableId;
     int len1 = tname.length();
-    int len2 = pimpl->m_connectedUser.length();
-    int length[2] = { len1, len2 };
-    int formats[2] = { 1, 1 };
+    int len2 = owner.length();
+    int len3 = sizeof( tableId );
+    int length[3] = { len1, len2, len3 };
+    int formats[3] = { 1, 1, 1 };
     PGresult *res = PQprepare( m_db, "table_properties_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {

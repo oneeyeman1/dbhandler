@@ -781,7 +781,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
         std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
         std::wstring tableOwner = const_cast<DatabaseTable *>( table )->GetTableOwner();
         int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
-        if( IsTablePropertiesExist( tableName, schemaName, errorMsg ) && errorMsg.size() == 0 )
+        if( IsTablePropertiesExist( table, errorMsg ) && errorMsg.size() == 0 )
             exist = true;
         else
             exist = false;
@@ -1016,22 +1016,42 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
     return result;
 }
 
-bool SQLiteDatabase::IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &UNUSED(schemaName), std::vector<std::wstring> &errorMsg)
+bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
-    std::wstring query = L"SELECT 1 FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = '';";
+    std::wstring name = const_cast<DatabaseTable *>( table )->GetTableName();
+    std::wstring owner = const_cast<DatabaseTable *>( table )->GetTableOwner();
+    std::wstring query = L"SELECT 1 FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ? AND \"abt_tid\" = ?;";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
-        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( name.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
         if( res == SQLITE_OK )
         {
-            res = sqlite3_step( stmt );
-            if( res == SQLITE_ROW )
-                result = true;
-            else if( res != SQLITE_DONE )
+            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( owner.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+            if( res == SQLITE_OK )
+            {
+                res = sqlite3_bind_int( stmt, 3, const_cast<DatabaseTable *>( table )->GetTableId() );
+                if( res == SQLITE_OK )
+                {
+                    res = sqlite3_step( stmt );
+                    if( res == SQLITE_ROW )
+                        result = true;
+                    else if( res != SQLITE_DONE )
+                    {
+                        GetErrorMessage( res, errorMessage );
+                        errorMsg.push_back( errorMessage );
+                    }
+                }
+				else
+                {
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                }
+			}
+            else
             {
                 GetErrorMessage( res, errorMessage );
                 errorMsg.push_back( errorMessage );
