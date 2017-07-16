@@ -15,6 +15,9 @@
 #include <locale>
 #include <codecvt>
 #include <algorithm>
+#ifdef __WXGTK__
+#include <arpa/inet.h>
+#endif
 #include <sstream>
 #include "libpq-fe.h"
 #include "database.h"
