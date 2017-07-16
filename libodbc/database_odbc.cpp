@@ -1665,6 +1665,17 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     fk_fieldNames.clear();
                     return 1;
                 }
+                if( GetTableId( table, errorMsg ) )
+                {
+                    fields.erase( fields.begin(), fields.end() );
+                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                    fields.clear();
+                    foreign_keys.clear();
+                    autoinc_fields.clear();
+                    pk_fields.clear();
+                    fk_fieldNames.clear();
+                    return 1;
+                }
                 if( GetTableProperties( table, errorMsg ) )
                 {
                     fields.erase( fields.begin(), fields.end() );
@@ -3150,12 +3161,101 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &command, std::vector<st
 
 int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
+    SQLHSTMT stmt;
+    SQLHDBC hdbc;
+    SQLLEN cbName, cbTableName = SQL_NTS;
+    long id;
     int result = 0;
     std::wstring query;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT OBJECT_ID(?);";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT oid FROM pg_class WHERE relname = ?";
+    std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
+    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+    SQLWCHAR *tname = new SQLWCHAR[tableName.length() + 2];
+    memset( qry, '\0', query.length() + 2 );
+    memset( tname, '\0', tableName.length() + 2 );
+    uc_to_str_cpy( qry, query );
+    uc_to_str_cpy( tname, tableName );
+    SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
+    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 0 );
+        result = 1;
+    }
+    else
+    {
+        SQLSMALLINT OutConnStrLen;
+        retcode = SQLDriverConnect( hdbc, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2, hdbc );
+            result = 1;
+        }
+        else
+        {
+            retcode = SQLAllocHandle( SQL_HANDLE_STMT, hdbc, &stmt );
+            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 2, hdbc );
+                result = 1;
+            }
+	        else
+            {
+                retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, tname, 0, &cbTableName );
+                if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 2, hdbc );
+                    result = 1;
+                }
+                else
+                {
+                    retcode = SQLPrepare( stmt, qry, SQL_NTS );
+                    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 2, hdbc );
+                        result = 1;
+                    }
+                    else
+                    {
+                        retcode = SQLExecute( stmt );
+                        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 2, hdbc );
+                            result = 1;
+                        }
+                        else
+                        {
+                            retcode = SQLFetch( stmt );
+                            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt );
+                                result = 1;
+                            }
+                            else
+                            {
+                                retcode = SQLGetData( stmt, 1, SQL_C_SLONG, &id, 0, &cbName );
+                                if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                                {
+                                    const_cast<DatabaseTable *>( table )->SetTableId( id );
+                                }
+                                else
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt );
+                                    result = 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    delete qry;
+    qry = NULL;
+    delete tname;
+    tname = NULL;
     return result;
 }
 
@@ -3188,7 +3288,7 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
             GetErrorMessage( errorMsg, 2, hdbc );
             result = 1;
         }
-		else
+        else
         {
             retcode = SQLAllocHandle( SQL_HANDLE_STMT, hdbc, &stmt );
             if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
