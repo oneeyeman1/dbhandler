@@ -3148,7 +3148,7 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
     SQLHSTMT stmt;
     SQLHDBC hdbc;
     SQLLEN cbTableName = SQL_NTS;
-    SQLINTEGER cbName;
+    SQLLEN cbName;
     SQLWCHAR owner[1024];
     SQLWCHAR *table_name = NULL, *qry;
     int result = 0;
