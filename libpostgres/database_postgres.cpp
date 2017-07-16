@@ -635,7 +635,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             }
             else
             {
-                command = L"INSERT INTO \"sys.abcattbl\" VALUES( \'";
+                command = L"INSERT INTO \"abcattbl\" VALUES( \'";
                 command += tableName;
                 command += L"\', ";
                 istr << tableId;

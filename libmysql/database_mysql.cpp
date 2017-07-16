@@ -1037,7 +1037,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
         {
             if( exist )
             {
-                command = L"UPDATE \"sys.abcattbl\" SET \"abt_tnam\" = \'";
+                command = L"UPDATE \"abcattbl\" SET \"abt_tnam\" = \'";
                 command += tableName;
                 command += L"\', \"abt_tid\" = ";
                 istr << tableId;
@@ -1139,7 +1139,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
             }
             else
             {
-                command = L"INSERT INTO \"sys.abcattbl\" VALUES( \'";
+                command = L"INSERT INTO \"abcattbl\" VALUES( \'";
                 command += tableName;
                 command += L"\', ";
                 istr << tableId;
