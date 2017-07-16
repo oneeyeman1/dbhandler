@@ -2846,7 +2846,21 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
                 {
                     ret = SQLExecute( m_hstmt );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                        result = true;
+                    {
+                        ret = SQLFetch( m_hstmt );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                            result = true;
+                        else if( ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            delete qry;
+                            qry = NULL;
+                            delete table_name;
+                            table_name = NULL;
+                            delete owner_name;
+                            owner_name = NULL;
+                        }
+                    }
                     else if( ret != SQL_NO_DATA )
                     {
                         GetErrorMessage( errorMsg, 1, m_hstmt );
