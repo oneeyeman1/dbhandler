@@ -2122,18 +2122,19 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], labelFontUnderline[2], dataFontName[20], headingFontName[20], labelFontName[20];
     SQLWCHAR comments[225];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = 0, cbDataFontUnderline = 0, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
-    SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontName = 0, cbComment;
+    SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbOwnerName = SQL_NTS, cbId, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontName = 0, cbComment;
     SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontName = 0;
-    std::wstring query = L"SELECT * FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
-    std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName();
-    int tableNameLen = tableName.length(), schemaNameLen = schemaName.length();
-    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tableNameLen + 2], *schema_name = new SQLWCHAR[schemaNameLen + 2];
-    memset( schema_name, '\0', schemaNameLen + 2 );
+    std::wstring query = L"SELECT * FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ? AND abt_tid = ?;";
+    std::wstring tableName = table->GetTableName(), ownerName = table->GetTableOwner();
+    int tableNameLen = tableName.length(), ownerNameLen = ownerName.length();
+    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tableNameLen + 2], *owner_name = new SQLWCHAR[ownerNameLen + 2];
+    memset( owner_name, '\0', ownerNameLen + 2 );
     memset( table_name, '\0', tableNameLen + 2 );
-    uc_to_str_cpy( schema_name, schemaName );
+    uc_to_str_cpy( owner_name, ownerName );
     uc_to_str_cpy( table_name, tableName );
     memset( qry, '\0', query.size() + 2 );
     uc_to_str_cpy( qry, query );
+    int tableId = table->GetTableId();
     SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_tableProp );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -2142,8 +2143,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLDriverConnect( hdbc_tableProp, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
@@ -2154,8 +2155,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc_tableProp, &stmt_tableProp );
@@ -2166,8 +2167,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindParameter( stmt_tableProp, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
@@ -2178,11 +2179,11 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
-    ret = SQLBindParameter( stmt_tableProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, schema_name, 0, &cbSchemaName );
+    ret = SQLBindParameter( stmt_tableProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name, 0, &cbOwnerName );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2190,8 +2191,20 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
+        return 1;
+    }
+    ret = SQLBindParameter( stmt_tableProp, 3, SQL_PARAM_INPUT, SQL_C_SLONG, SQL_INTEGER, 0, 0, &tableId, 0, &cbId );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLPrepare( stmt_tableProp, qry, SQL_NTS );
@@ -2202,8 +2215,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLExecute( stmt_tableProp );
@@ -2214,8 +2227,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 4, SQL_C_SSHORT, &dataFontSize, 0, &cbDataFontSize );
@@ -2226,8 +2239,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 5, SQL_C_SSHORT, &dataFontWeight, 0, &cbDataFontWeight );
@@ -2238,8 +2251,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 6, SQL_C_WCHAR, &dataFontItalic, 3, &cbDataFontItalic );
@@ -2250,8 +2263,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 7, SQL_C_WCHAR, &dataFontUnderline, 3, &cbDataFontUnderline );
@@ -2262,8 +2275,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 10, SQL_C_WCHAR, &dataFontName, 22, &cbDataFontName );
@@ -2274,8 +2287,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 11, SQL_C_SSHORT, &headingFontSize, 0, &cbHeadingFontSize );
@@ -2286,8 +2299,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 12, SQL_C_SSHORT, &headingFontWeight, 0, &cbHeadingFontWeight );
@@ -2298,8 +2311,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 13, SQL_C_SSHORT, &headingFontItalic, 3, &cbHeadingFontItalic );
@@ -2310,8 +2323,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 14, SQL_C_SSHORT, &headingFontUnderline, 3, &cbHeadingFontUnderline );
@@ -2322,8 +2335,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 17, SQL_C_WCHAR, &headingFontName, 22, &cbHeadingFontName );
@@ -2334,8 +2347,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 18, SQL_C_SSHORT, &labelFontSize, 0, &cbLabelFontSize );
@@ -2346,8 +2359,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 19, SQL_C_SSHORT, &labelFontWeight, 0, &cbLabelFontWeight );
@@ -2358,8 +2371,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 20, SQL_C_SSHORT, &labelFontItalic, 3, &cbLabelFontItalic );
@@ -2370,8 +2383,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 21, SQL_C_SSHORT, &labelFontUnderline, 3, &cbLabelFontUnderline );
@@ -2382,8 +2395,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 24, SQL_C_WCHAR, &labelFontName, 22, &cbLabelFontName );
@@ -2394,8 +2407,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLBindCol( stmt_tableProp, 25, SQL_C_WCHAR, &comments, 225, &cbComment );
@@ -2406,8 +2419,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLFetch( stmt_tableProp );
@@ -2446,8 +2459,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
@@ -2458,8 +2471,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLDisconnect( hdbc_tableProp );
@@ -2470,8 +2483,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
@@ -2482,16 +2495,16 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         qry = NULL;
         delete table_name;
         table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
         return 1;
     }
     delete qry;
     qry = NULL;
     delete table_name;
     table_name = NULL;
-    delete schema_name;
-    schema_name = NULL;
+    delete owner_name;
+    owner_name = NULL;
     return 0;
 }
 
@@ -2774,6 +2787,28 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     }
     delete qry;
     qry = NULL;
+    if( result == 1 )
+        query = L"ROLLBACK";
+	else
+        query = L"COMMIT";
+    qry = new SQLWCHAR[query.length() + 2];
+    memset( qry, '\0', query.length() + 2 );
+    uc_to_str_cpy( qry, query );
+    rets = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( rets != SQL_SUCCESS && rets != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+        result = 1;
+    }
+	else
+    {
+        SQLRETURN ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+    }
     return result;
 }
 
