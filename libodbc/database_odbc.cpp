@@ -2846,7 +2846,21 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
                 {
                     ret = SQLExecute( m_hstmt );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                        result = true;
+                    {
+                        ret = SQLFetch( m_hstmt );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                            result = true;
+                        else if( ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            delete qry;
+                            qry = NULL;
+                            delete table_name;
+                            table_name = NULL;
+                            delete owner_name;
+                            owner_name = NULL;
+                        }
+                    }
                     else if( ret != SQL_NO_DATA )
                     {
                         GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3156,7 +3170,7 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT su.name FROM sysobjects so, sysusers su WHERE so.uid = su.uid AND so.name = ?";
     if( pimpl->m_subtype == L"PostgreSQL" )
-        query = L"SELECT oid FROM pg_class WHERE relname = ?";
+        query = L"SELECT u.usename FROM pg_class c, pg_user u WHERE u.usesysid = c.relowner AND relname = ?";
     SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
     if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
     {
