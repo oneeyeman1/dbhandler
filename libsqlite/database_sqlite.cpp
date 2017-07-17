@@ -89,6 +89,8 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
     std::string query3 = "CREATE TABLE IF NOT EXISTS \"sys.abcatfmt\"(\"abf_name\" char(30) NOT NULL, \"abf_frmt\" char(254), \"abf_type\" smallint, \"abf_cntr\" integer, PRIMARY KEY( \"abf_name\" ));";
     std::string query4 = "CREATE TABLE IF NOT EXISTS \"sys.abcattbl\"(\"abt_tnam\" char(129) NOT NULL, \"abt_tid\" integer, \"abt_ownr\" char(129) NOT NULL, \"abd_fhgt\" smallint, \"abd_fwgt\" smallint, \"abd_fitl\" char(1), \"abd_funl\" char(1), \"abd_fchr\" smallint, \"abd_fptc\" smallint, \"abd_ffce\" char(18), \"abh_fhgt\" smallint, \"abh_fwgt\" smallint, \"abh_fitl\" char(1), \"abh_funl\" char(1), \"abh_fchr\" smallint, \"abh_fptc\" smallint, \"abh_ffce\" char(18), \"abl_fhgt\" smallint, \"abl_fwgt\" smallint, \"abl_fitl\" char(1), \"abl_funl\" char(1), \"abl_fchr\" smallint, \"abl_fptc\" smallint, \"abl_ffce\" char(18), \"abt_cmnt\" char(254), PRIMARY KEY( \"abt_tnam\", \"abt_ownr\" ));";
     std::string query5 = "CREATE TABLE IF NOT EXISTS \"sys.abcatvld\"(\"abv_name\" char(30) NOT NULL, \"abv_vald\" char(254), \"abv_type\" smallint, \"abv_cntr\" integer, \"abv_msg\" char(254), PRIMARY KEY( \"abv_name\" ));";
+    std::string query6 = "CREATE INDEX \"abcattbl_tnam_ownr\" ON \sys.abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
+    std::string query7 = "CREATE INDEX \"abcatcol_tnam_ownr_cnam\"(\"abc_tnam\" ASC, \"abc_ownr ASC, abc_cnam ASC);"
     std::wstring errorMessage;
     if( !pimpl )
         pimpl = new Impl;
@@ -127,7 +129,11 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
                         {
                             res = sqlite3_exec( m_db, query5.c_str(), NULL, NULL, &err );
                             if( res == SQLITE_OK )
-                                sqlite3_exec( m_db, "COMMIT", NULL, NULL, &err );
+                                res = sqlite3_exec( m_db, query6.c_str(), NULL, NULL, &err );
+                                if( res == SQLITE_OK )
+                                    res = sqlite3_exec( m_db, query7.c_str(), NULL, NULL, &err );
+                                    if( res == SQLITE_OK )
+                                        sqlite3_exec( m_db, "COMMIT", NULL, NULL, &err );
                         }
                     }
                 }
@@ -675,7 +681,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
     int result = 0;
-    std::wstring query = L"SELECT * FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ? AND \"abt_tid\" = ?;";
+    std::wstring query = L"SELECT * FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ?;";
     const unsigned char *dataFontName, *headingFontName, *labelFontName;
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
@@ -686,59 +692,55 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
             res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( pimpl->m_connectedUser.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
             if( res == SQLITE_OK )
             {
-                res = sqlite3_bind_int( stmt, 3, table->GetTableId() );
-                if( res == SQLITE_OK )
+                while( true )
                 {
-                    while( true )
+                    res = sqlite3_step( stmt );
+                    if( res == SQLITE_ROW )
                     {
-                        res = sqlite3_step( stmt );
-                        if( res == SQLITE_ROW )
-                        {
-                            table->SetDataFontSize( sqlite3_column_int( stmt, 3 ) );
-                            table->SetDataFontWeight( sqlite3_column_int( stmt, 4 ) );
-                            char *italic = (char *) sqlite3_column_text( stmt, 5 );
-                            if( italic )
-                                table->SetDataFontItalic( italic[0] == 'Y' );
-                            char *underline = (char *) sqlite3_column_text( stmt, 6 );
-                            if( underline )
-                                table->SetDataFontUnderline( underline[0] == 'Y' );
-                            dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 9 );
-                            if( dataFontName )
-                                table->SetDataFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
-                            table->SetHeadingFontSize( sqlite3_column_int( stmt, 10 ) );
-                            table->SetHeadingFontWeight( sqlite3_column_int( stmt, 11 ) );
-                            italic = (char *) sqlite3_column_text( stmt, 12 );
-                            if( italic )
-                                table->SetHeadingFontItalic( italic[0] == 'Y' );
-                            underline = (char *) sqlite3_column_text( stmt, 13 );
-                            if( underline )
-                                table->SetHeadingFontUnderline( underline[0] == 'Y' );
-                            headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 16 );
-                            if( headingFontName )
-                                table->SetHeadingFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
-                            table->SetLabelFontSize( sqlite3_column_int( stmt, 17 ) );
-                            table->SetLabelFontWeight( sqlite3_column_int( stmt, 18 ) );
-                            italic = (char *) sqlite3_column_text( stmt, 19 );
-                            if( italic )
-                                table->SetLabelFontItalic( italic[0] == 'Y' );
-                            underline = (char *) sqlite3_column_text( stmt, 20 );
-                            if( underline )
-                                table->SetLabelFontUnderline( underline[0] == 'Y' );
-                            labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 23 );
-                            if( labelFontName )
-                                table->SetLabelFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
-                            table->SetComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 24 ) ) );
-                        }
-                        else if( res == SQLITE_DONE )
-                            break;
-                        else
-                        {
-                            result = 1;
-                            GetErrorMessage( res, errorMessage );
-                            errorMsg.push_back( errorMessage );
-                        }
+                        table->SetDataFontSize( sqlite3_column_int( stmt, 3 ) );
+                        table->SetDataFontWeight( sqlite3_column_int( stmt, 4 ) );
+                        char *italic = (char *) sqlite3_column_text( stmt, 5 );
+                        if( italic )
+                            table->SetDataFontItalic( italic[0] == 'Y' );
+                        char *underline = (char *) sqlite3_column_text( stmt, 6 );
+                        if( underline )
+                            table->SetDataFontUnderline( underline[0] == 'Y' );
+                        dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 9 );
+                        if( dataFontName )
+                            table->SetDataFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
+                        table->SetHeadingFontSize( sqlite3_column_int( stmt, 10 ) );
+                        table->SetHeadingFontWeight( sqlite3_column_int( stmt, 11 ) );
+                        italic = (char *) sqlite3_column_text( stmt, 12 );
+                        if( italic )
+                            table->SetHeadingFontItalic( italic[0] == 'Y' );
+                        underline = (char *) sqlite3_column_text( stmt, 13 );
+                        if( underline )
+                            table->SetHeadingFontUnderline( underline[0] == 'Y' );
+                        headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 16 );
+                        if( headingFontName )
+                            table->SetHeadingFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
+                        table->SetLabelFontSize( sqlite3_column_int( stmt, 17 ) );
+                        table->SetLabelFontWeight( sqlite3_column_int( stmt, 18 ) );
+                        italic = (char *) sqlite3_column_text( stmt, 19 );
+                        if( italic )
+                            table->SetLabelFontItalic( italic[0] == 'Y' );
+                        underline = (char *) sqlite3_column_text( stmt, 20 );
+                        if( underline )
+                            table->SetLabelFontUnderline( underline[0] == 'Y' );
+                        labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 23 );
+                        if( labelFontName )
+                            table->SetLabelFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
+                        table->SetComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 24 ) ) );
                     }
-				}
+                    else if( res == SQLITE_DONE )
+                        break;
+                    else
+                    {
+                        result = 1;
+                        GetErrorMessage( res, errorMessage );
+                        errorMsg.push_back( errorMessage );
+                    }
+ 				}
                 else
                 {
                     result = 1;
