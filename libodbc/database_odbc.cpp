@@ -2124,7 +2124,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = 0, cbDataFontUnderline = 0, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbOwnerName = SQL_NTS, cbId, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontName = 0, cbComment;
     SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontName = 0;
-    std::wstring query = L"SELECT * FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ? AND abt_tid = ?;";
+    std::wstring query = L"SELECT * FROM abcattbl WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ? AND \"abt_tid\" = ?;";
     std::wstring tableName = table->GetTableName(), ownerName = table->GetTableOwner();
     int tableNameLen = tableName.length(), ownerNameLen = ownerName.length();
     SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tableNameLen + 2], *owner_name = new SQLWCHAR[ownerNameLen + 2];
@@ -3291,6 +3291,36 @@ int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstrin
     qry = NULL;
     delete tname;
     tname = NULL;
+    if( stmt )
+    {
+        retcode = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
+        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, stmt );
+            result = 1;
+        }
+        else
+        {
+            stmt = 0;
+            retcode = SQLDisconnect( hdbc );
+            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 2, hdbc );
+                result = 1;
+            }
+            else
+            {
+                retcode = SQLFreeHandle( SQL_HANDLE_DBC, hdbc );
+                if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 2, hdbc );
+                    result = 1;
+                }
+                else
+                    hdbc = 0;
+            }
+        }
+    }
     return result;
 }
 
