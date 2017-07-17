@@ -461,7 +461,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
     SQLSMALLINT OutConnStrLen;
     SQLRETURN ret;
     SQLUSMALLINT options;
-    std::wstring query1, query2, query3, query4, query5;
+    std::wstring query1, query2, query3, query4, query5, query6, query7;
     if( !pimpl )
         pimpl = new Impl;
     m_connectString = new SQLWCHAR[sizeof(SQLWCHAR) * 1024];
