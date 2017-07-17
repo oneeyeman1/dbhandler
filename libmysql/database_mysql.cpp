@@ -150,7 +150,7 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
                                     res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query6.c_str() ).c_str() );
                                     if( !res )
                                     {
-                                        res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query7.c_str() ).c_str() )
+                                        res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query7.c_str() ).c_str() );
                                         if( !res )
                                             res = mysql_commit( m_db );
                                     }
