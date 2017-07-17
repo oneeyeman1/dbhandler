@@ -604,7 +604,25 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                                     query = NULL;
                                                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                                     {
-                                                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+                                                        query = new SQLWCHAR[query6.length() + 2];
+                                                        memset( query, '\0', query6.size() + 2 );
+                                                        uc_to_str_cpy( query, query6 );
+                                                        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                                        delete query;
+                                                        query = NULL;
+                                                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                                        {
+                                                            query = new SQLWCHAR[query7.length() + 2];
+                                                            memset( query, '\0', query7.size() + 2 );
+                                                            uc_to_str_cpy( query, query7 );
+                                                            ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                                            delete query;
+                                                            query = NULL;
+                                                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                                            {
+                                                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
