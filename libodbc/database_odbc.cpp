@@ -408,7 +408,7 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstr
             }
         }
     }
-	else
+    else
     {
         GetErrorMessage( errorMsg, 2 );
         result = 1;
@@ -449,7 +449,7 @@ int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstrin
             }
         }
     }
-	else
+    else
     {
         GetErrorMessage( errorMsg, 2 );
         result = 1;
@@ -2072,7 +2072,7 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
         uc_to_str_cpy( schema_name, schemaName );
         uc_to_str_cpy( table_name, tableName );
     }
-	else
+    else
     {
         table_name = new SQLWCHAR[tableName.length() + schemaName.length() + 2];
         memset( table_name, '\0', tableName.length() + schemaName.length() + 2 );
@@ -2568,7 +2568,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 GetErrorMessage( errorMsg, 1, m_hstmt );
                 result = 1;
             }
-			else
+            else
             {
                 std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
                 std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
@@ -2808,7 +2808,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
             }
         }
     }
-	else
+    else
     {
         GetErrorMessage( errorMsg, 2 );
         result = 1;
@@ -2904,7 +2904,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
                 delete owner_name;
                 owner_name = NULL;
             }
-			else
+            else
             {
                 ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3249,7 +3249,7 @@ int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::ws
         }
         else
             m_hstmt = 0;
-	}
+    }
     return result;
 }
 
@@ -3301,7 +3301,7 @@ int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstrin
                 GetErrorMessage( errorMsg, 2, hdbc );
                 result = 1;
             }
-	        else
+            else
             {
                 retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, tname, 0, &cbTableName );
                 if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
@@ -3426,7 +3426,7 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
                 GetErrorMessage( errorMsg, 2, hdbc );
                 result = 1;
             }
-	        else
+            else
             {
                 table_name = new SQLWCHAR[name.length() + 2];
                 qry = new SQLWCHAR[query.length() + 2];
@@ -3464,7 +3464,7 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
                                 GetErrorMessage( errorMsg, 1, stmt );
                                 result = 1;
                             }
-							else
+                            else
                                 table->SetTableOwner( table->GetSchemaName() );
                         }
                         else
