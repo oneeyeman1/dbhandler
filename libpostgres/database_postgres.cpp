@@ -259,8 +259,10 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                  "table_cons.constraint_type, "
                                  "c.relowner "
                                  "FROM pg_attribute a, pg_type t, pg_type bt, pg_namespace nbt, pg_namespace nt, pg_attrdef ad, pg_class c"
-                                 "WHERE cols.table_schema = table_cons.table_schema AND cols.table_name = table_cons.table_name AND"
-                                 "cols.table_schema = $1 AND cols.table_name = $2 ORDER BY ordinal_position ASC;";
+                                 "WHERE a.attrelid = c.oid cols.table_schema = table_cons.table_schema AND cols.table_name = table_cons.table_name AND"
+                                 "cols.table_schema = $1 AND c.relname = $2 ORDER BY ordinal_position ASC;";
+    std::string query2 = "SELECT CAST(nc.nspname AS sql_identifier), CAST(c.relname AS sql_identifier), CAST(a.attname AS sql_identifier) FROM pg_attribute a, pg_class c, pg_namespace nc"
+                         "WHERE a.attrelid = c.oid AND c.relnamespace = nc.oid AND nc.nspname = $1 AND c.relname = $2"
     std::string query3 = "SELECT information_schema.table_constraints.constraint_name, information_schema.table_constraints.constraint_schema, information_schema.table_constraints.table_name, information_schema.key_column_usage.column_name, information_schema.constraint_column_usage.table_name, information_schema.constraint_column_usage.column_name, information_schema.referential_constraints.update_rule, information_schema.referential_constraints.delete_rule FROM information_schema.table_constraints, information_schema.key_column_usage, information_schema.constraint_column_usage, information_schema.referential_constraints WHERE information_schema.table_constraints.constraint_name = information_schema.key_column_usage.constraint_name AND information_schema.constraint_column_usage.constraint_name = information_schema.table_constraints.constraint_name AND information_schema.referential_constraints.constraint_name = information_schema.table_constraints.constraint_name AND constraint_type = 'FOREIGN KEY' AND information_schema.table_constraints.constraint_schema = $1 AND information_schema.table_constraints.table_name = $2;";
     res = PQexec( m_db, query1.c_str() );
     ExecStatusType status = PQresultStatus( res ); 
