@@ -3185,7 +3185,7 @@ int ODBCDatabase::ApplyForeignKey(const std::wstring &command, const std::wstrin
     tableName = tableName;
     int result = 0;
     SQLRETURN ret;
-    ret = SQLAllocHandle( SQL_HANDLE_HSTMT, m_hdbc, &m_hstmt );
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 2, m_hstmt );
@@ -3222,7 +3222,7 @@ int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::ws
     std::wstring query = L"DROP TABLE ";
     query += tableName;
     SQLRETURN ret;
-    ret = SQLAllocHandle( SQL_HANDLE_HSTMT, m_hdbc, &m_hstmt );
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 2, m_hstmt );
@@ -3240,7 +3240,7 @@ int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::ws
             result = 1;
         }
         delete qry;
-        query = NULL;
+        qry = NULL;
         ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -3508,7 +3508,7 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
         }
         else
         {
-            retcode = SQLFreeHandle( SQL_HANDLE_HDBC, hdbc );
+            retcode = SQLFreeHandle( SQL_HANDLE_DBC, hdbc );
             if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, stmt );
