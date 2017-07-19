@@ -55,6 +55,7 @@ protected:
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     virtual int GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     int SetTableOwner(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
+    void SetFullType(Field *field);
 private:
     SQLHENV m_env;
     SQLHDBC m_hdbc;

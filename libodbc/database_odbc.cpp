@@ -3312,3 +3312,35 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
     return result;
 }
 
+void ODBCDatabase::SetFullType(Field *field)
+{
+    std::wostringstream ss;
+    std::wstring fieldType = field->GetFieldType();
+    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    {
+        if( fieldType == L"bigint" || fieldType == L"bit" || fieldType == L"int" || fieldType == L"smallint" || fieldType == L"tinyint" || fieldType == L"date" || fieldType == L"datetime" || fieldType == L"smalldatetime" || fieldType == L"text" || fieldType == L"image" || fieldType == L"ntext" )
+            field->SetFullType( fieldType );
+        if( fieldType == L"decimal" || fieldType == L"numeric" )
+        {
+            std::wstring type = fieldType + L"(";
+            ss << field->GetFieldSize();
+            type += ss.str();
+            ss.clear();
+            ss.str( L"" );
+            type += L",";
+            ss << field->GetFieldPrecision();
+            type += ss.str();
+            type += L")";
+            field->SetFullType( type );
+        }
+        if( fieldType == L"float" || fieldType == L"real" || fieldType == L"datetime2" || fieldType == L"datetimeoffset" || fieldType == L"time" || fieldType == L"char" || fieldType == L"varchar" || fieldType == L"binary" || fieldType == L"varbinary" )
+        {
+            std::wstring type = fieldType + L"(";
+            ss << field->GetFieldSize();
+            type += ss.str();
+            ss.clear();
+            ss.str( L"" );
+            type += L")";
+        }
+    }
+}
