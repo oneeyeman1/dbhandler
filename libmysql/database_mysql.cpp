@@ -617,6 +617,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 errorMsg.push_back( err );
                 break;
             }
+            field->SetFullType();
         }
         mysql_free_result( prepare_meta_result );
         if( mysql_stmt_close( res2 ) )
