@@ -609,7 +609,14 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             else
                 autoincrement = false;
             is_pk = pk == 1 ? true : false;
-//            Field *field = new Field( fieldName, fieldType, fieldSize, fieldPrec, fieldDefaultValue, );
+            Field *field = new Field( fieldName, fieldType, fieldSize, fieldPrec, fieldDefaultValue, is_nullable, autoincrement, is_pk, std::find( fk_names.begin(), fk_names.end(), sqlite_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
+            if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( (const char *) tableName ), L"", field, errorMsg ) )
+            {
+                result = 1;
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                errorMsg.push_back( err );
+                break;
+            }
         }
         mysql_free_result( prepare_meta_result );
         if( mysql_stmt_close( res2 ) )
@@ -1328,12 +1335,13 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
     return result;
 }
 
-int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, Field *table, std::vector<std::wstring> &errorMsg)
 {
     char *str_data1, *str_data2, *str_data3;
     int result = 0;
     std::wstring tname = schemaName + L".";
     tname += tableName;
+    std::wstring fieldName = field->GetFieldName();
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     MYSQL_STMT *stmt = mysql_stmt_init( m_db );
     if( !stmt )

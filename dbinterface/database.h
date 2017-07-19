@@ -217,7 +217,7 @@ public:
     virtual int CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, Field *table, std::vector<std::wstring> &errorMsg) = 0;
     virtual int SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
     virtual int SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
     virtual int ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg) = 0;

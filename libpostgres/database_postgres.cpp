@@ -370,7 +370,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     fieldDefaultValue = PQgetvalue( res2, j, 7 );
                     fieldIsNull = !strcmp( PQgetvalue( res2, j, 8 ), "YES" ) ? 1 : 0;
                     Field *field = new Field();
-                    if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( fieldName ), field, errorMsg ) )
+                    if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), field, errorMsg ) )
                     {
                         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                         errorMsg.push_back( err );
@@ -815,7 +815,7 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     return result;
 }
 
-int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, Field *table, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     return result;

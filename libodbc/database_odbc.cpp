@@ -1617,7 +1617,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             str_to_uc_cpy( fieldType, szTypeName );
                             str_to_uc_cpy( defaultValue, szColumnDefault );
                             Field *field = new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
-                            if( GetFieldProperties( table_name, schema_name, fieldName, field, errorMsg ) )
+                            if( GetFieldProperties( table_name, schema_name, field, errorMsg ) )
                             {
                                 GetErrorMessage( errorMsg, 2 );
                                 result = 1;
@@ -2965,7 +2965,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
     return result;
 }
 
-int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     SQLHDBC hdbc_fieldProp;
     SQLHSTMT stmt_fieldProp;
@@ -2975,6 +2975,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLWCHAR *table_name = NULL, *schema_name = NULL, *field_name = NULL, *qry = NULL;
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbDataFontItalic;
     SQLSMALLINT OutConnStrLen;
+    std::wstring = field->GetFieldName();
     if( pimpl->m_subtype == L"MySQL" )
         query = L"SELECT * FROM abcatcol WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     else
