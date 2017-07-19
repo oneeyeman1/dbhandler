@@ -414,12 +414,6 @@ int PostgresDatabase::CreateIndex(const std::wstring &command, std::vector<std::
     return result;
 }
 
-int PostgresDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
-{
-    int result = 0;
-    return result;
-}
-
 bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     PGresult *res;
