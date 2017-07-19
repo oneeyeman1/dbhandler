@@ -430,7 +430,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             sqlite3_finalize( stmt2 );
                                             break;
                                         }
-                                        field->SetFullType( type );
+                                        SetFullType( field, type );
                                         fields.push_back( field );
                                     }
                                 }
@@ -1191,4 +1191,9 @@ int SQLiteDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstr
     int result = 0;
     const_cast<DatabaseTable *>( table )->SetTableId( 0 );
     return result;
+}
+
+void SetFullType(Field *field, const std::wstring &type)
+{
+    field->SetFullType( type );
 }
