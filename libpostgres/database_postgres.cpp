@@ -238,7 +238,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> fk_names;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
-    std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
+    std::wstring fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
     int result = 0, fieldIsNull, fieldPK, fkReference, fkId;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
@@ -291,33 +291,33 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             int count = 0;
             for( int j = 0; j < PQntuples( res1 ); j++ )
             {
-                fkField = PQgetvalue( res1, j, 2 );
-                fkTable = PQgetvalue( res1, j, 3 );
-                fkTableField = PQgetvalue( res1, j, 4 );
-                fkUpdateConstraint = PQgetvalue( res1, j, 5 );
-                fkDeleteConstraint = PQgetvalue( res1, j, 6 );
-                if( !strcmp( fkUpdateConstraint.c_str(), "NO ACTION" ) )
+                fkField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 2 ) );
+                fkTable = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 3 ) );
+                fkTableField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 4 ) );
+                fkUpdateConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 5 ) );
+                fkDeleteConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 6 ) );
+                if( fkUpdateConstraint == L"NO ACTION" )
                     update_constraint = NO_ACTION_UPDATE;
-                if( !strcmp( fkUpdateConstraint.c_str(), "RESTRICT" ) )
+                if( fkUpdateConstraint == L"RESTRICT" )
                     update_constraint = RESTRICT_UPDATE;
-                if( !strcmp( fkUpdateConstraint.c_str(), "SET NULL" ) )
+                if( fkUpdateConstraint == L"SET NULL" )
                     update_constraint = SET_NULL_UPDATE;
-                if( !strcmp( fkUpdateConstraint.c_str(), "SET DEFAULT" ) )
+                if( fkUpdateConstraint == L"SET DEFAULT" )
                     update_constraint = SET_DEFAULT_UPDATE;
-                if( !strcmp( fkUpdateConstraint.c_str(), "CASCADE" ) )
+                if( fkUpdateConstraint == L"CASCADE" )
                     update_constraint = CASCADE_UPDATE;
-                if( !strcmp( fkDeleteConstraint.c_str(), "NO ACTION" ) )
+                if( fkDeleteConstraint == L"NO ACTION" )
                     delete_constraint = NO_ACTION_DELETE;
-                if( !strcmp( fkDeleteConstraint.c_str(), "RESTRICT" ) )
+                if( fkDeleteConstraint == L"RESTRICT" )
                     delete_constraint = RESTRICT_DELETE;
-                if( !strcmp( fkDeleteConstraint.c_str(), "SET NULL" ) )
+                if( fkDeleteConstraint == L"SET NULL" )
                     delete_constraint = SET_NULL_DELETE;
-                if( !strcmp( fkDeleteConstraint.c_str(), "SET DEFAULT" ) )
+                if( fkDeleteConstraint == L"SET DEFAULT" )
                     delete_constraint = SET_DEFAULT_DELETE;
-                if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
+                if( fkDeleteConstraint == L"CASCADE" )
                     delete_constraint = CASCADE_DELETE;
-                foreign_keys[count].push_back( new FKField( fkReference, m_pimpl->m_myconv.from_bytes( fkTable ), m_pimpl->m_myconv.from_bytes( fkField ), m_pimpl->m_myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
-                fk_names.push_back( m_pimpl->m_myconv.from_bytes( fkField ) );
+                foreign_keys[count].push_back( new FKField( fkReference, fkTable, fkField, fkTableField, L"", update_constraint, delete_constraint ) );
+                fk_names.push_back( fkField );
             }
             PQclear( res1 );
             res2 = PQprepare( m_db, "get_columns", query2.c_str(), 3, NULL );
@@ -343,14 +343,14 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 {
                     int size, precision;
                     bool autoinc = false;
-                    fieldName = PQgetvalue( res2, j, 0 );
-                    fieldType = PQgetvalue( res2, j, 1 );
+                    fieldName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 0 ) );
+                    fieldType = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 1 ) );
                     char *char_length = PQgetvalue( res2, j, 2 );
                     char *char_radix = PQgetvalue( res2, j, 3 );
                     char *numeric_length = PQgetvalue( res2, j, 4 );
                     char *numeric_radix = PQgetvalue( res2, j, 5 );
                     char *numeric_scale = PQgetvalue( res2, j, 6 );
-                    fieldDefaultValue = PQgetvalue( res2, j, 8 );
+                    fieldDefaultValue = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 8 ) );
                     fieldIsNull = !strcmp( PQgetvalue( res2, j, 7 ), "YES" ) ? 1 : 0;
                     fieldPK = !strcmp( PQgetvalue( res, j, 9 ), "YES" ) ? 1 : 0;
                     if( *char_length == '0' )
@@ -363,10 +363,9 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         size = atoi( char_length );
                         precision = 0;
                     }
-                    std::wstring type = m_pimpl->m_myconv.from_bytes( fieldType );
-                    if( type == L"serial" || type == L"bigserial" )
+                    if( fieldType == L"serial" || fieldType == L"bigserial" )
                         autoinc = true;
-                    Field *field = new Field( m_pimpl->m_myconv.from_bytes( table_name ), type, size, precision, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), m_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
+                    Field *field = new Field( fieldName, fieldType, size, precision, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
                     if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), field, errorMsg ) )
                     {
                         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
