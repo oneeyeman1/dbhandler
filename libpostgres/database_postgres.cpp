@@ -340,6 +340,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 for( int j = 0; j < PQntuples( res2 ); j++ )
                 {
+                    int size, precision;
+                    bool autoinc = false;
                     fieldName = PQgetvalue( res2, j, 0 );
                     fieldType = PQgetvalue( res2, j, 1 );
                     char *char_length = PQgetvalue( res2, j, 2 );
@@ -347,9 +349,23 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     char *numeric_length = PQgetvalue( res2, j, 4 );
                     char *numeric_radix = PQgetvalue( res2, j, 5 );
                     char *numeric_scale = PQgetvalue( res2, j, 6 );
-                    fieldDefaultValue = PQgetvalue( res2, j, 7 );
-                    fieldIsNull = !strcmp( PQgetvalue( res2, j, 8 ), "YES" ) ? 1 : 0;
-                    Field *field = new Field();
+                    fieldDefaultValue = PQgetvalue( res2, j, 8 );
+                    fieldIsNull = !strcmp( PQgetvalue( res2, j, 7 ), "YES" ) ? 1 : 0;
+                    fieldPK = !strcmp( PQgetvalue( res, j, 9 ), "YES" ) ? 1 : 0;
+                    if( char_length == '0' )
+                    {
+                        size = atoi( numeric_length );
+                        precision = atoi( numeric_scale );
+                    }
+                    else
+                    {
+                        size = atoi( char_length );
+                        precision = 0;
+                    }
+                    std::wstring type = m_pimpl->m_myconv.from_bytes( fieldType );
+                    if( type == L"serial" || type == L"bigserial" )
+                        autoinc = true;
+                    Field *field = new Field( m_pimpl->m_myconv.from_bytes( table_name ), type, size, precision, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), m_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
                     if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), field, errorMsg ) )
                     {
                         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
