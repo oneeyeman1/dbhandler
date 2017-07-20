@@ -31,6 +31,32 @@ MySQLDatabase::MySQLDatabase() : Database()
 
 MySQLDatabase::~MySQLDatabase()
 {
+    if( pimpl )
+    {
+        std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
+        for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
+        {
+            std::vector<Field *> fields = (*it)->GetFields();
+            for( std::vector<Field *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
+            {
+                delete (*it1);
+                (*it1) = NULL;
+            }
+            std::map<int,std::vector<FKField *> > fk_fields = (*it)->GetForeignKeyVector();
+            for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
+            {
+                for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
+                {
+                    delete (*it3);
+                    (*it3) = NULL;
+                }
+            }
+            delete (*it);
+            (*it) = NULL;
+        }
+        delete pimpl;
+        pimpl = NULL;
+    }
 }
 
 int MySQLDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
@@ -310,6 +336,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
+            delete str_data3;
+            str_data3 = NULL;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
             errorMsg.push_back( err );
             return 1;
@@ -321,6 +349,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
+            delete str_data3;
+            str_data3 = NULL;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
             errorMsg.push_back( err );
             return 1;
@@ -331,6 +361,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
+            delete str_data3;
+            str_data3 = NULL;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
             errorMsg.push_back( err );
             return 1;
@@ -395,6 +427,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
+            delete str_data3;
+            str_data3 = NULL;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
             errorMsg.push_back( err );
             return 1;
@@ -431,6 +465,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
+            delete str_data3;
+            str_data3 = NULL;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
             return 1;
@@ -442,6 +478,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
+            delete str_data3;
+            str_data3 = NULL;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
             errorMsg.push_back( err );
             return 1;
@@ -452,6 +490,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
+            delete str_data3;
+            str_data3 = NULL;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
             errorMsg.push_back( err );
             return 1;
@@ -462,6 +502,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
+            delete str_data3;
+            str_data3 = NULL;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
             errorMsg.push_back( err );
             return 1;
@@ -473,6 +515,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
+            delete str_data3;
+            str_data3 = NULL;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
             errorMsg.push_back( err );
             return 1;
@@ -483,6 +527,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
+            delete str_data3;
+            str_data3 = NULL;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
             errorMsg.push_back( err );
             return 1;
@@ -567,6 +613,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
+            delete str_data3;
+            str_data3 = NULL;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
             errorMsg.push_back( err );
             return 1;
@@ -577,6 +625,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
+            delete str_data3;
+            str_data3 = NULL;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
             errorMsg.push_back( err );
             return 1;
@@ -612,6 +662,12 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             Field *field = new Field( fieldName, fieldType, fieldSize, fieldPrec, fieldDefaultValue, is_nullable, autoincrement, is_pk, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
             if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( (const char *) table_name ), L"", field, errorMsg ) )
             {
+                delete str_data1;
+                str_data1 = NULL;
+                delete str_data2;
+                str_data2 = NULL;
+                delete str_data3;
+                str_data3 = NULL;
                 std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
                 errorMsg.push_back( err );
                 return 1;
@@ -626,6 +682,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             str_data1 = NULL;
             delete str_data2;
             str_data2 = NULL;
+            delete str_data3;
+            str_data3 = NULL;
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
             return 1;
@@ -634,9 +692,17 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         str_data1 = NULL;
         delete str_data2;
         str_data2 = NULL;
+        delete str_data3;
+        str_data3 = NULL;
     }
     if( !row )
     {
+        delete str_data1;
+        str_data1 = NULL;
+        delete str_data2;
+        str_data2 = NULL;
+        delete str_data3;
+        str_data3 = NULL;
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
         return 1;
@@ -656,6 +722,8 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     str_data1 = NULL;
     delete str_data2;
     str_data2 = NULL;
+    delete str_data3;
+    str_data3 = NULL;
     return 0;
 }
 
@@ -758,10 +826,12 @@ bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstr
     str_data[1] = NULL;
     delete str_data[2];
     str_data[2] = NULL;
-    delete str_data[3];
-    str_data[3] = NULL;
-    delete str_data[4];
-    str_data[4] = NULL;
+    delete str_length[0];
+    str_length[0] = NULL;
+    delete str_length[1];
+    str_length[1] = NULL;
+    delete str_length[2];
+    str_length[2] = NULL;
     return exists;
 }
 
@@ -814,6 +884,10 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
     res = mysql_stmt_execute( stmt );
     if( res )
     {
+        delete str_data1;
+        str_data1 = NULL;
+        delete str_data2;
+        str_data2 = NULL;
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
         return 1;
@@ -822,6 +896,10 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
     MYSQL_RES *queryResult = mysql_store_result( m_db );
     if( !queryResult )
     {
+        delete str_data1;
+        str_data1 = NULL;
+        delete str_data2;
+        str_data2 = NULL;
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
         return 1;
@@ -836,6 +914,10 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
     }
     else
     {
+        delete str_data1;
+        str_data1 = NULL;
+        delete str_data2;
+        str_data2 = NULL;
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
         return 1;
@@ -1129,18 +1211,30 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
     params[1].length = &str_length2;
     if( mysql_stmt_bind_param( stmt, params ) )
     {
+        delete str_data1;
+        str_data1 = NULL;
+        delete str_data2;
+        str_data2 = NULL;
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
         return 1;
     }
     if( mysql_stmt_execute( stmt ) )
     {
+        delete str_data1;
+        str_data1 = NULL;
+        delete str_data2;
+        str_data2 = NULL;
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
         return 1;
     }
     if( !( mysql_store_result( m_db ) ) )
     {
+        delete str_data1;
+        str_data1 = NULL;
+        delete str_data2;
+        str_data2 = NULL;
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
         return 1;
@@ -1149,10 +1243,18 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
         result = true;
     if( mysql_stmt_close( stmt ) )
     {
+        delete str_data1;
+        str_data1 = NULL;
+        delete str_data2;
+        str_data2 = NULL;
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
         return 1;
     }
+    delete str_data1;
+    str_data1 = NULL;
+    delete str_data2;
+    str_data2 = NULL;
     return result;
 }
 
@@ -1204,7 +1306,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
             {
                 std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
                 errorMsg.push_back( err );
-                return 1;
+                result = 1;
             }
             else
             {
@@ -1235,6 +1337,10 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
             result = 1;
         }
     }
+    delete str_data1;
+    str_data1 = NULL;
+    delete str_data2;
+    str_data2 = NULL;
     return result;
 }
 
@@ -1350,6 +1456,12 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
             }
         }
     }
+    delete str_data1;
+    str_data1 = NULL;
+    delete str_data2;
+    str_data2 = NULL;
+    delete str_data3;
+    str_data3 = NULL;
     return result;
 }
 
