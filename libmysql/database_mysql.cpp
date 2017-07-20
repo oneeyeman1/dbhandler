@@ -609,7 +609,15 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             else
                 autoincrement = false;
             is_pk = pk == 1 ? true : false;
-//            Field *field = new Field( fieldName, fieldType, fieldSize, fieldPrec, fieldDefaultValue, );
+            Field *field = new Field( fieldName, fieldType, fieldSize, fieldPrec, fieldDefaultValue, is_nullable, autoincrement, is_pk, std::find( fk_names.begin(), fk_names.end(), sqlite_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
+            if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( (const char *) tableName ), L"", field, errorMsg ) )
+            {
+                result = 1;
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                errorMsg.push_back( err );
+                break;
+            }
+            field->SetFullType();
         }
         mysql_free_result( prepare_meta_result );
         if( mysql_stmt_close( res2 ) )
@@ -661,186 +669,6 @@ int MySQLDatabase::CreateIndex(const std::wstring &command, std::vector<std::wst
         errorMsg.push_back( err );
         result = 1;
     }
-    return result;
-}
-
-int MySQLDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
-{
-    char *str_data1, *str_data2, *str_data3, *str_data4;
-    MYSQL_RES *prepare_meta_result;
-    int result = 0;
-    std::wstring query1 = L"SELECT 1 FROM abcatcol WHERE abc_tnam = ? AND abc_cnam = ?;", query2;
-    MYSQL_STMT *res1 = mysql_stmt_init( m_db );
-    if( !res1 )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    if( mysql_stmt_prepare( res1, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), query1.length() ) )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    MYSQL_BIND params[2];
-    unsigned long str_length1, str_length2, str_length3, str_length4;
-    str_data1 = new char[tableName.length()], str_data2 = new char[fieldName.length()];
-    memset( params, 0, sizeof( params ) );
-    str_length1 = tableName.length();
-    str_length2 = fieldName.length();
-    strncpy( str_data1, m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), tableName.length() );
-    strncpy( str_data2, m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), fieldName.length() );
-    params[0].buffer_type = MYSQL_TYPE_STRING;
-    params[0].buffer = (char *) str_data1;
-    params[0].buffer_length = tableName.length();
-    params[0].is_null = 0;
-    params[0].length = &str_length1;
-    params[1].buffer_type = MYSQL_TYPE_STRING;
-    params[1].buffer = (char *) str_data2;
-    params[1].buffer_length = fieldName.length();
-    params[1].is_null = 0;
-    params[1].length = &str_length2;
-    if( mysql_stmt_bind_param( res1, params ) )
-    {
-        delete str_data1;
-        str_data1 = NULL;
-        delete str_data2;
-        str_data2 = NULL;
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    prepare_meta_result = mysql_stmt_result_metadata( res1 );
-    if( !prepare_meta_result )
-    {
-        delete str_data1;
-        str_data1 = NULL;
-        delete str_data2;
-        str_data2 = NULL;
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    if( mysql_stmt_execute( res1 ) )
-    {
-        delete str_data1;
-        str_data1 = NULL;
-        delete str_data2;
-        str_data2 = NULL;
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    if( mysql_stmt_store_result( res1 ) )
-    {
-        delete str_data1;
-        str_data1 = NULL;
-        delete str_data2;
-        str_data2 = NULL;
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    if( mysql_stmt_num_rows( res1 ) == 1 )
-        query2 = L"UPDATE abcatcol SET abc_cmnt = ? WHERE abc_tnam = ? AND abc_ownr == ? AND abc_cnam = ?;";
-    else
-        query2 = L"INSERT INTO abcattbl(abc_cmnt, abc_tnam, abc_ownr, abc_cnam ) VALUES( ?, ?, ?, ? );";
-    mysql_free_result( prepare_meta_result );
-    if( mysql_stmt_close( res1 ) )
-    {
-        delete str_data1;
-        str_data1 = NULL;
-        delete str_data2;
-        str_data2 = NULL;
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    delete str_data1;
-    str_data1 = NULL;
-    delete str_data2;
-    str_data2 = NULL;
-    MYSQL_STMT *res2 = mysql_stmt_init( m_db );
-    if( !res2 )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    if( mysql_stmt_prepare( res2, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), query2.length() ) )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    MYSQL_BIND params1[4];
-    str_data1 = new char[comment.length()], str_data2 = new char[tableName.length()], str_data3 = new char[pimpl->m_connectedUser.length()], str_data4 = new char[fieldName.length()];
-    memset( params, 0, sizeof( params ) );
-    str_length1 = comment.length();
-    str_length2 = tableName.length();
-    str_length3 = pimpl->m_connectedUser.length();
-    str_length4 = fieldName.length();
-    strncpy( str_data1, m_pimpl->m_myconv.to_bytes( comment.c_str() ).c_str(), comment.length() );
-    strncpy( str_data2, m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), tableName.length() );
-    strncpy( str_data3, m_pimpl->m_myconv.to_bytes( pimpl->m_connectedUser.c_str() ).c_str(), pimpl->m_connectedUser.length() );
-    strncpy( str_data4, m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), fieldName.length() );
-    params1[0].buffer_type = MYSQL_TYPE_STRING;
-    params1[0].buffer = (char *) str_data1;
-    params1[0].buffer_length = comment.length();
-    params1[0].is_null = 0;
-    params1[0].length = &str_length1;
-    params1[1].buffer_type = MYSQL_TYPE_STRING;
-    params1[1].buffer = (char *) str_data2;
-    params1[1].buffer_length = tableName.length();
-    params1[1].is_null = 0;
-    params1[1].length = &str_length2;
-    params1[3].buffer_type = MYSQL_TYPE_STRING;
-    params1[3].buffer = (char *) str_data3;
-    params1[3].buffer_length = pimpl->m_connectedUser.length();
-    params1[3].is_null = 0;
-    params1[3].length = &str_length3;
-    params1[4].buffer_type = MYSQL_TYPE_STRING;
-    params1[4].buffer = (char *) str_data4;
-    params1[4].buffer_length = fieldName.length();
-    params1[4].is_null = 0;
-    params1[4].length = &str_length4;
-    if( mysql_stmt_bind_param( res2, params1 ) )
-    {
-        delete str_data1;
-        str_data1 = NULL;
-        delete str_data2;
-        str_data2 = NULL;
-        delete str_data3;
-        str_data3 = NULL;
-        delete str_data4;
-        str_data4 = NULL;
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    if( mysql_stmt_execute( res2 ) )
-    {
-        delete str_data1;
-        str_data1 = NULL;
-        delete str_data2;
-        str_data2 = NULL;
-        delete str_data3;
-        str_data3 = NULL;
-        delete str_data4;
-        str_data4 = NULL;
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-        errorMsg.push_back( err );
-        return 1;
-    }
-    delete str_data1;
-    str_data1 = NULL;
-    delete str_data2;
-    str_data2 = NULL;
-    delete str_data3;
-    str_data3 = NULL;
-    delete str_data4;
-    str_data4 = NULL;
     return result;
 }
 
@@ -1328,12 +1156,13 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
     return result;
 }
 
-int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, Field *table, std::vector<std::wstring> &errorMsg)
 {
     char *str_data1, *str_data2, *str_data3;
     int result = 0;
     std::wstring tname = schemaName + L".";
     tname += tableName;
+    std::wstring fieldName = field->GetFieldName();
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     MYSQL_STMT *stmt = mysql_stmt_init( m_db );
     if( !stmt )

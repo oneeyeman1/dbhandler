@@ -1617,7 +1617,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             str_to_uc_cpy( fieldType, szTypeName );
                             str_to_uc_cpy( defaultValue, szColumnDefault );
                             Field *field = new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
-                            if( GetFieldProperties( table_name, schema_name, fieldName, field, errorMsg ) )
+                            if( GetFieldProperties( table_name, schema_name, field, errorMsg ) )
                             {
                                 GetErrorMessage( errorMsg, 2 );
                                 result = 1;
@@ -1833,216 +1833,6 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstr
         m_hstmt = 0;
     delete query;
     query = NULL;
-    return result;
-}
-
-int ODBCDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
-{
-    bool found = false;
-    SQLWCHAR *table_name = NULL, *field_name = NULL, *owner_name = NULL, *value = NULL, *query = NULL;
-    SQLLEN cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbOwnerName = SQL_NTS, cbValue = SQL_NTS;
-    int result = 0;
-    std::wstring temp;
-    std::wstring query1 = L"SELECT count(*) FROM abcatcol WHERE abc_tnam = ? AND abc_cnam = ? AND abc_ownr = ?;", query2;
-    RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-    {
-        temp = L"BEGIN TRANSACTION";
-        query = new SQLWCHAR[temp.length() + 2];
-        memset( query, '\0', temp.length() + 2 );
-        uc_to_str_cpy( query, temp );
-        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 1, m_hstmt );
-            return 1;
-        }
-        delete query;
-        query = NULL;
-        query = new SQLWCHAR[query1.length() + 2];
-        table_name = new SQLWCHAR[tableName.length() + 2];
-        field_name = new SQLWCHAR[fieldName.length() + 2];
-        owner_name = new SQLWCHAR[pimpl->m_connectedUser.length() + 2];
-        value = new SQLWCHAR[comment.length() + 2];
-        memset( query, '\0', query1.size() + 2 );
-        memset( table_name, '\0', tableName.length() + 2 );
-        memset( field_name, '\0', fieldName.length() + 2 );
-        memset( owner_name, '\0', pimpl->m_connectedUser.length() + 2 );
-        memset( value, '\0', comment.length() + 2 );
-        uc_to_str_cpy( query, query1 );
-        uc_to_str_cpy( field_name, fieldName );
-        uc_to_str_cpy( table_name, tableName );
-        uc_to_str_cpy( owner_name, pimpl->m_connectedUser );
-        uc_to_str_cpy( value, comment );
-        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
-        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-        {
-            ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
-            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-            {
-                ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, pimpl->m_connectedUser.length(), 0, owner_name, 0, &cbOwnerName );
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                {
-                    ret = SQLPrepare( m_hstmt, query, SQL_NTS );
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        ret = SQLExecute( m_hstmt );
-                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                        {
-                            ret = SQLFetch( m_hstmt );
-                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                            {
-                                found = true;
-                            }
-                            else if( ret != SQL_NO_DATA )
-                            {
-                                GetErrorMessage( errorMsg, 1, m_hstmt );
-                                result = 1;
-                            }
-                        }
-                        else
-                        {
-                            GetErrorMessage( errorMsg, 1, m_hstmt );
-                            result = 1;
-                        }
-                    }
-                    else
-                    {
-                        GetErrorMessage( errorMsg, 1, m_hstmt );
-                        result = 1;
-                    }
-                }
-                else
-                {
-                    GetErrorMessage( errorMsg, 1, m_hstmt );
-                    result = 1;
-                }
-            }
-            else
-            {
-                GetErrorMessage( errorMsg, 1, m_hstmt );
-                result = 1;
-            }
-        }
-        else
-        {
-            GetErrorMessage( errorMsg, 1, m_hstmt );
-            result = 1;
-        }
-    }
-    else
-    {
-        GetErrorMessage( errorMsg, 1, m_hstmt );
-        result = 1;
-    }
-    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, m_hstmt );
-        return 1;
-    }
-    else
-        m_hstmt = 0;
-    delete query;
-    query = NULL;
-    if( !result )
-    {
-        if( found )
-            query2 = L"UPDATE abcatcol SET abc_cmnt = ? WHERE abc_tnam = ? AND abc_ownr == ? AND abc_cnam = ?;";
-        else
-            query2 = L"INSERT INTO abcattbl(abc_cmnt, abc_tnam, abc_ownr, abc_cnam ) VALUES( ?, ?, ?, ? );";
-        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-        {
-            query = new SQLWCHAR[query2.length() + 2];
-            memset( query, '\0', query2.size() + 2 );
-            uc_to_str_cpy( query, query2 );
-            ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, comment.length(), 0, value, 0, &cbValue );
-            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-            {
-                ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                {
-                    ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, pimpl->m_connectedUser.length(), 0, owner_name, 0, &cbOwnerName );
-                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                        {
-                            ret = SQLPrepare( m_hstmt, query, SQL_NTS );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                ret = SQLExecute( m_hstmt );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, 1, m_hstmt );
-                                    result = 1;
-                                }
-                            }
-                            else
-                            {
-                                GetErrorMessage( errorMsg, 1, m_hstmt );
-                                result = 1;
-                            }
-                        }
-                        else
-                        {
-                            GetErrorMessage( errorMsg, 1, m_hstmt );
-                            result = 1;
-                        }
-                    }
-                    else
-                    {
-                        GetErrorMessage( errorMsg, 1, m_hstmt );
-                        result = 1;
-                    }
-                }
-                else
-                {
-                    GetErrorMessage( errorMsg, 1, m_hstmt );
-                    result = 1;
-                }
-            }
-            else
-            {
-                GetErrorMessage( errorMsg, 1, m_hstmt );
-                result = 1;
-            }
-        }
-        delete query;
-        query = NULL;
-        if( !result )
-        {
-            temp = L"COMMIT";
-        }
-        else
-        {
-            temp = L"ROLLBACK";
-        }
-        query = new SQLWCHAR[temp.length() + 2];
-        memset( query, '\0', temp.length() + 2 );
-        uc_to_str_cpy( query, temp );
-        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 1, m_hstmt );
-            result = 1;
-        }
-        else
-        {
-            if( m_hstmt )
-            {
-                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1, m_hstmt );
-                    result = 1;
-                }
-                else
-                    m_hstmt = 0;
-            }
-        }
-    }
     return result;
 }
 
@@ -2965,7 +2755,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
     return result;
 }
 
-int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     SQLHDBC hdbc_fieldProp;
     SQLHSTMT stmt_fieldProp;
@@ -2975,6 +2765,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLWCHAR *table_name = NULL, *schema_name = NULL, *field_name = NULL, *qry = NULL;
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbDataFontItalic;
     SQLSMALLINT OutConnStrLen;
+    std::wstring = field->GetFieldName();
     if( pimpl->m_subtype == L"MySQL" )
         query = L"SELECT * FROM abcatcol WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     else
@@ -3521,3 +3312,35 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
     return result;
 }
 
+void ODBCDatabase::SetFullType(Field *field)
+{
+    std::wostringstream ss;
+    std::wstring fieldType = field->GetFieldType();
+    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    {
+        if( fieldType == L"bigint" || fieldType == L"bit" || fieldType == L"int" || fieldType == L"smallint" || fieldType == L"tinyint" || fieldType == L"date" || fieldType == L"datetime" || fieldType == L"smalldatetime" || fieldType == L"text" || fieldType == L"image" || fieldType == L"ntext" )
+            field->SetFullType( fieldType );
+        if( fieldType == L"decimal" || fieldType == L"numeric" )
+        {
+            std::wstring type = fieldType + L"(";
+            ss << field->GetFieldSize();
+            type += ss.str();
+            ss.clear();
+            ss.str( L"" );
+            type += L",";
+            ss << field->GetFieldPrecision();
+            type += ss.str();
+            type += L")";
+            field->SetFullType( type );
+        }
+        if( fieldType == L"float" || fieldType == L"real" || fieldType == L"datetime2" || fieldType == L"datetimeoffset" || fieldType == L"time" || fieldType == L"char" || fieldType == L"varchar" || fieldType == L"binary" || fieldType == L"varbinary" )
+        {
+            std::wstring type = fieldType + L"(";
+            ss << field->GetFieldSize();
+            type += ss.str();
+            ss.clear();
+            ss.str( L"" );
+            type += L")";
+        }
+    }
+}

@@ -422,7 +422,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     {
                                         std::wstring type = sqlite_pimpl->m_myconv.from_bytes( fieldType );
                                         Field *field = new Field( sqlite_pimpl->m_myconv.from_bytes( fieldName ), type, 0, 0, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK >= 1 ? true : false, std::find( fk_names.begin(), fk_names.end(), sqlite_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
-                                        if( GetFieldProperties( sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName ), L"", sqlite_pimpl->m_myconv.from_bytes( fieldName ), field, errorMsg ) )
+                                        if( GetFieldProperties( sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName ), L"", field, errorMsg ) )
                                         {
                                             result = 1;
                                             GetErrorMessage( res, errorMessage );
@@ -430,7 +430,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             sqlite3_finalize( stmt2 );
                                             break;
                                         }
-                                        field->SetFullType( type );
+                                        SetFullType( field, type );
                                         fields.push_back( field );
                                     }
                                 }
@@ -534,99 +534,6 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, std::vector<std::ws
         result = 1;
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
-    }
-    return result;
-}
-
-int SQLiteDatabase::SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg)
-{
-    int result = 0;
-    bool found = false;
-    std::wstring errorMessage;
-    sqlite3_stmt *stmt = NULL;
-    std::wstring query1 = L"SELECT count(*) FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_cnam\" = ?;", query2;
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), (int) query1.length(), &stmt, 0 );
-    if( res == SQLITE_OK )
-    {
-        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-        if( res == SQLITE_OK )
-        {
-            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-            if( res == SQLITE_OK )
-            {
-                res = sqlite3_step( stmt );
-                if( res == SQLITE_ROW )
-                {
-                    found = true;
-                }
-                else if( res != SQLITE_DONE )
-                {
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
-                    result = 1;
-                }
-            }
-            else
-            {
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-                result = 1;
-            }
-        }
-        else
-        {
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-            result = 1;
-        }
-    }
-    else
-    {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-        result = 1;
-    }
-    sqlite3_finalize( stmt );
-    if( found )
-        query2 = L"UPDATE \"sys.abcatcol\" SET \"abc_cmnt\" = ? WHERE \"abc_tnam\" = ? AND \"abc_ownr\" == \"\" AND \"abc_cnam\" = ?;";
-    else
-        query2 = L"INSERT INTO \"sys.abcattbl\"(\"abc_cmnt\", \"abc_tnam\", \"abc_ownr\", \"abc_cnam\" ) VALUES( ?, ?, \"\", ? );";
-    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), (int) query2.length(), &stmt, 0 );
-    if( res == SQLITE_OK )
-    {
-        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-        if( res == SQLITE_OK )
-        {
-            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( comment.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-            if( res == SQLITE_OK )
-            {
-                res = sqlite3_step( stmt );
-                if( res != SQLITE_DONE )
-                {
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
-                    result = 1;
-                }
-            }
-            else
-            {
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-                result = 1;
-            }
-        }
-        else
-        {
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-            result = 1;
-        }
-    }
-    else
-    {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-        result = 1;
     }
     return result;
 }
@@ -1080,7 +987,7 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
     return result;
 }
 
-int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, Field *table, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt;
     std::wstring errorMessage;
@@ -1095,7 +1002,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
             res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
             if( res == SQLITE_OK )
             {
-                res = sqlite3_bind_text( stmt, 3, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+                res = sqlite3_bind_text( stmt, 3, sqlite_pimpl->m_myconv.to_bytes( table->GetFieldName().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
                 if( res == SQLITE_OK )
                 {
                     res = sqlite3_step( stmt );
@@ -1284,4 +1191,9 @@ int SQLiteDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstr
     int result = 0;
     const_cast<DatabaseTable *>( table )->SetTableId( 0 );
     return result;
+}
+
+void SetFullType(Field *field, const std::wstring &type)
+{
+    field->SetFullType( type );
 }
