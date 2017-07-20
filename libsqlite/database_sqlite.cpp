@@ -1193,7 +1193,7 @@ int SQLiteDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstr
     return result;
 }
 
-void SetFullType(Field *field, const std::wstring &type)
+void SQLiteDatabase::SetFullType(Field *field, const std::wstring &type)
 {
     field->SetFullType( type );
 }

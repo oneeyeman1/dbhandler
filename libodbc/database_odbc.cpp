@@ -2765,7 +2765,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLWCHAR *table_name = NULL, *schema_name = NULL, *field_name = NULL, *qry = NULL;
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbDataFontItalic;
     SQLSMALLINT OutConnStrLen;
-    std::wstring = field->GetFieldName();
+    std::wstring fieldName = field->GetFieldName();
     if( pimpl->m_subtype == L"MySQL" )
         query = L"SELECT * FROM abcatcol WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     else
@@ -3328,7 +3328,7 @@ void ODBCDatabase::SetFullType(Field *field)
             ss.clear();
             ss.str( L"" );
             type += L",";
-            ss << field->GetFieldPrecision();
+            ss << field->GetPrecision();
             type += ss.str();
             type += L")";
             field->SetFullType( type );
