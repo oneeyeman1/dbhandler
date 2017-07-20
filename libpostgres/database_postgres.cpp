@@ -438,7 +438,7 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
         errorMsg.push_back( L"Error executing query: " + err );
         PQclear( res );
     }
-	else
+    else
     {
         res = PQexecPrepared( m_db, "index_exist", 3, values, length, formats, 1 );
         ExecStatusType status = PQresultStatus( res ); 
@@ -448,12 +448,12 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
             errorMsg.push_back( L"Error executing query: " + err );
             PQclear( res );
         }
-		else
+        else
         {
             if( PQnfields( res ) == 1 )
                 exists = 1;
         }
-	}
+    }
     delete values[0];
     values[0] = NULL;
     delete values[1];
@@ -505,7 +505,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
                 table->SetComment( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 25 ) ) );
             }
         }
-	}
+    }
     return result;
 }
 
