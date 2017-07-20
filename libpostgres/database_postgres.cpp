@@ -353,7 +353,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     fieldDefaultValue = PQgetvalue( res2, j, 8 );
                     fieldIsNull = !strcmp( PQgetvalue( res2, j, 7 ), "YES" ) ? 1 : 0;
                     fieldPK = !strcmp( PQgetvalue( res, j, 9 ), "YES" ) ? 1 : 0;
-                    if( char_length == '0' )
+                    if( *char_length == '0' )
                     {
                         size = atoi( numeric_length );
                         precision = atoi( numeric_scale );
