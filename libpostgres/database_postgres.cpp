@@ -153,7 +153,8 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
         if( PQresultStatus( res ) != PGRES_COMMAND_OK )
         {
             err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+            errorMsg.push_back( err );
+            errorMsg.push_back( L"Problem during connection. Please fix the problem and restart the application" );
             result = 1;
             PQclear( res );
         }
