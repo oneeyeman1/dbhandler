@@ -242,27 +242,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::string query1 = "SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW' OR table_type = 'LOCAL TEMPORARY';";
-//    std::string query2 = "SELECT DISTINCT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_precision_radix, cols.numeric_scale, cols.column_default, cols.is_nullable, table_cons.constraint_type FROM information_schema.columns AS cols, information_schema.table_constraints AS table_cons WHERE cols.table_schema = table_cons.table_schema AND cols.table_name = table_cons.table_name AND cols.table_schema = $1 AND cols.table_name = $2 ORDER BY ordinal_position ASC;";
-    std::string query2 = "SELECT CAST(a.attname AS sql_identifier), "
-                                 "CAST(CASE WHEN t.typtype = \'d\' THEN CASE WHEN bt.typelem <> 0 AND bt.typlen = -1 THEN \'ARRAY\' "
-                                 "WHEN nbt.nspname = \'pg_catalog\' THEN format_type(t.typbasetype, null) ELSE \'USER-DEFINED\' END"
-                                 "ELSE CASE WHEN t.typelem <> 0 AND t.typlen = -1 THEN \'ARRAY\'"
-                                 "WHEN nt.nspname = \'pg_catalog\' THEN format_type(a.atttypid, null) ELSE \'USER-DEFINED\' END END"
-                                 "AS character_data), "
-                                 "CAST(_pg_char_max_length(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_number), "
-                                 "CAST(_pg_char_octet_length(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_numer), "
-                                 "CAST(_pg_numeric_precision(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_number), "
-                                 "CAST(_pg_numeric_precision_radix(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_numer), "
-                                 "CAST(_pg_numeric_scale(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_number), "
-                                 "CAST(pg_get_expr(ad.adbin, ad.adrelid) AS character_data), "
-                                 "CAST(CASE WHEN a.attnotnull OR (t.typtype = 'd' AND t.typnotnull) THEN 'NO' ELSE 'YES' END AS yes_or_no), "
-                                 "table_cons.constraint_type, "
-                                 "c.relowner "
-                                 "FROM pg_attribute a, pg_type t, pg_type bt, pg_namespace nbt, pg_namespace nt, pg_attrdef ad, pg_class c"
-                                 "WHERE a.attrelid = c.oid cols.table_schema = table_cons.table_schema AND cols.table_name = table_cons.table_name AND"
-                                 "cols.table_schema = $1 AND c.relname = $2 ORDER BY ordinal_position ASC;";
-    std::string query2 = "SELECT CAST(nc.nspname AS sql_identifier), CAST(c.relname AS sql_identifier), CAST(a.attname AS sql_identifier) FROM pg_attribute a, pg_class c, pg_namespace nc"
-                         "WHERE a.attrelid = c.oid AND c.relnamespace = nc.oid AND nc.nspname = $1 AND c.relname = $2"
+    std::string query2 = "SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = 'leagues') THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = 'public' AND col.table_name = 'leagues' ORDER BY ordinal_position;";
     std::string query3 = "SELECT information_schema.table_constraints.constraint_name, information_schema.table_constraints.constraint_schema, information_schema.table_constraints.table_name, information_schema.key_column_usage.column_name, information_schema.constraint_column_usage.table_name, information_schema.constraint_column_usage.column_name, information_schema.referential_constraints.update_rule, information_schema.referential_constraints.delete_rule FROM information_schema.table_constraints, information_schema.key_column_usage, information_schema.constraint_column_usage, information_schema.referential_constraints WHERE information_schema.table_constraints.constraint_name = information_schema.key_column_usage.constraint_name AND information_schema.constraint_column_usage.constraint_name = information_schema.table_constraints.constraint_name AND information_schema.referential_constraints.constraint_name = information_schema.table_constraints.constraint_name AND constraint_type = 'FOREIGN KEY' AND information_schema.table_constraints.constraint_schema = $1 AND information_schema.table_constraints.table_name = $2;";
     res = PQexec( m_db, query1.c_str() );
     ExecStatusType status = PQresultStatus( res ); 
