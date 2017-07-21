@@ -32,6 +32,7 @@ protected:
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     virtual int GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
+    virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
 private:
     sqlite3 *m_db;
 };

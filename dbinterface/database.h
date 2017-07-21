@@ -207,6 +207,7 @@ protected:
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) = 0;
 public:
     virtual ~Database() = 0;
     Impl &GetTableVector() { return *pimpl; };
@@ -228,6 +229,8 @@ struct Database::Impl
 {
     std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
     std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
+    std::wstring m_serverVersion;
+    int m_versionMajor, m_versionMinor, m_versionRevision;
 	const std::wstring &GetConnectedUser() { return m_connectedUser; };
 	void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
 };

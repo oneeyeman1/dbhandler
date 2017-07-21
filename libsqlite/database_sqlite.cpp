@@ -1197,3 +1197,13 @@ void SQLiteDatabase::SetFullType(Field *field, const std::wstring &type)
 {
     field->SetFullType( type );
 }
+
+int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
+{
+    pimpl->m_serverVersion = L"392";
+    pimpl->m_versionMajor = 3;
+    pimpl->m_versionMinor = 9;
+    pimpl->m_versionRevision = 2;
+    return 0;
+}
+

@@ -56,6 +56,7 @@ protected:
     virtual int GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     int SetTableOwner(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     void SetFullType(Field *field);
+    virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
 private:
     SQLHENV m_env;
     SQLHDBC m_hdbc;

@@ -3344,3 +3344,24 @@ void ODBCDatabase::SetFullType(Field *field)
         }
     }
 }
+
+int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
+{
+    std::wstring query;
+    SQLWCHAR *qry;
+    if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
+    {
+        query = L"SELECT SERVERPROPERTY('productversion') AS version, SERVERPROPERTY('ProductMajorVersion') AS major, SERVERPROPERTY('ProductMinorVersion') AS minor;";
+    }
+    if( pimpl->m_subtype == L"MySQL" || pimpl->m_subtype == L"PostgreSQL" )
+    {
+    }
+    if( pimpl->m_subtype == L"Sybase" )
+    {
+    }
+    if( pimpl->m_subtype == L"Oracle" )
+    {
+    }
+    delete qry;
+    qry = NULL;
+}
