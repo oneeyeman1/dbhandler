@@ -40,6 +40,6 @@ private:
 struct MySQLDatabase::MySQLImpl
 {
     std::wstring_convert<std::codecvt_utf8<wchar_t> > m_myconv;
-    std::wstring m_host, m_user, m_password, m_dbName, m_socket;
+    std::wstring m_host, m_user, m_password, m_dbName, m_socket, m_catalog;
 };
 #endif
