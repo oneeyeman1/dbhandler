@@ -33,7 +33,7 @@ MySQLDatabase::~MySQLDatabase()
 {
     if( pimpl )
     {
-        std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
+        std::vector<DatabaseTable *> tableVec = pimpl->m_tables[pimpl->m_catalog];
         for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
         {
             std::vector<Field *> fields = (*it)->GetFields();
