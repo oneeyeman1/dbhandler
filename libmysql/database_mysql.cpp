@@ -1467,7 +1467,15 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
 
 int MySQLDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
+    std::wstring query = L"DROP TABLE ";
+    query += tableName;
     int res = 0;
+    if( mysql_query( m_db, m_pimpl->m_mycomv,to_bytes( query.c_str() ).c_str() ) )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        res = 1;
+    }
     return res;
 }
 
