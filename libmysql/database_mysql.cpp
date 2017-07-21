@@ -1352,7 +1352,8 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
     if( mysql_query( m_db, "START TRANSACTION" ) )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+        errorMsg.push_back( err );
+        errorMsg.push_back( L"Starting transaction failed for applying foreign key" );
         result = 1;
     }
     else
@@ -1442,7 +1443,8 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
             if( mysql_query( m_db, "COMMIT" ) )
             {
                 std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+                errorMsg.push_back( L"Applying foreign key failed." );
+                errorMsg.push_back( err );
                 return 1;
             }
         }
@@ -1451,7 +1453,7 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
             if( mysql_query( m_db, "ROLLBACK" ) )
             {
                 std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+                errorMsg.push_back( err );
                 return 1;
             }
         }
