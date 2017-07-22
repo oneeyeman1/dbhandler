@@ -1389,11 +1389,11 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
                 params[1].buffer_length = tableName.GetSchemaName().length();
                 params[1].is_null = 0;
                 params[1].length = &str_length2;
-                params[3].buffer_type = MYSQL_TYPE_STRING;
-                params[3].buffer = (char *) str_data3;
-                params[3].buffer_length = tableName.GetTableName().length();
-                params[3].is_null = 0;
-                params[3].length = &str_length1;
+                params[2].buffer_type = MYSQL_TYPE_STRING;
+                params[2].buffer = (char *) str_data3;
+                params[2].buffer_length = tableName.GetTableName().length();
+                params[2].is_null = 0;
+                params[2].length = &str_length3;
                 if( mysql_stmt_bind_param( stmt, params ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
