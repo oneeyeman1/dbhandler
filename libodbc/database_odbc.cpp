@@ -3347,13 +3347,20 @@ void ODBCDatabase::SetFullType(Field *field)
 
 int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
 {
+    int result = 0;
     std::wstring query;
-    SQLWCHAR *qry;
+    long versionMajor, versionMinor;
+    SQLINTEGER *cbVersion;
+    SQLWCHAR *qry = NULL, version[1024];
     if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
-        query = L"SELECT SERVERPROPERTY('productversion') AS version, SERVERPROPERTY('ProductMajorVersion') AS major, SERVERPROPERTY('ProductMinorVersion') AS minor;";
+        query = L"SELECT SERVERPROPERTY('productversion') AS version, COALESCE(SERVERPROPERTY('ProductMajorVersion'), PARSENAME(CAST(SERVERPROPERTY('productversion') AS varchar(20)), 4)) AS major, COALESCE(SERVERPROPERTY('ProductMinorVersion'), PARSENAME(CAST(SERVERPROPERTY('productversion') AS varchar(20)), 3)) AS minor;";
     }
-    if( pimpl->m_subtype == L"MySQL" || pimpl->m_subtype == L"PostgreSQL" )
+    if( pimpl->m_subtype == L"MySQL" )
+    {
+        query = L"SELECT version(), LEFT( version(), LOCATE( '.', version() ) - 1 ) AS major, LEFT( SUBSTR( version(), LOCATE( '.', version() ) + 1 ), LOCATE( '.', SUBSTR( version(), LOCATE( '.', version() ) + 1 ) ) - 1 ) AS minor;";
+    }
+    if( pimpl->m_subtype == L"PostgreSQL" )
     {
     }
     if( pimpl->m_subtype == L"Sybase" )
@@ -3362,6 +3369,64 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     if( pimpl->m_subtype == L"Oracle" )
     {
     }
+    SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 2, m_hdbc );
+        result = 1;
+    }
+    else
+    {
+        qry = new SQLWCHAR[query.length() + 2];
+        memset( qry, '\0', query.length() + 2 );
+        uc_to_str_cpy( qry, query );
+        retcode = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+		else
+        {
+            retcode = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &version, SQL_NTS, &version );
+            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+            else
+            {
+				retcode = SQLBindCol( m_hstmt, 2, SQL_C_SLONG, &versionMajor, 0, 0 );
+                if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+				else
+                {
+                    retcode = SQLBindCol( m_hstmt, 3, SQL_C_SLONG, &versionMinor, 0, 0 );
+                    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
+                    }
+					else
+                    {
+                        retcode = SQLFetch( m_hstmt );
+                        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                        }
+						else
+                        {
+                        }
+                    }
+                }
+            }
+        }
+    }
     delete qry;
     qry = NULL;
+    return result;
 }
