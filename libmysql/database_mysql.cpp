@@ -1584,3 +1584,11 @@ int MySQLDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstri
     int result = 0;
     return result;
 }
+
+int MySQLDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg))
+{
+    unsigned long version;
+    int result = 0;
+    version = mysql_get_server_version( m_db );
+    return result;
+}

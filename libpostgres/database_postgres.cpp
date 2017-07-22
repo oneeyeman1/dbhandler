@@ -966,3 +966,15 @@ int PostgresDatabase::GetTableId(const DatabaseTable *table, std::vector<std::ws
     value[0] = NULL;
     return result;
 }
+
+int PostgresDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    int versionInt = PQserverVersion( m_db );
+    if( !versionInt )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Error executing query: " + err );
+        result = 1;
+    }
+}
