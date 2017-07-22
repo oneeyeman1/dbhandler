@@ -977,4 +977,5 @@ int PostgresDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         errorMsg.push_back( L"Error executing query: " + err );
         result = 1;
     }
+    return result;
 }
