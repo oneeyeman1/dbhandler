@@ -1472,7 +1472,7 @@ int MySQLDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::w
     std::wstring query = L"DROP TABLE ";
     query += tableName;
     int res = 0;
-    if( mysql_query( m_db, m_pimpl->m_mycomv,to_bytes( query.c_str() ).c_str() ) )
+    if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() ) )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
