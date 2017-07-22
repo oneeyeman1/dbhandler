@@ -1352,7 +1352,8 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
     if( mysql_query( m_db, "START TRANSACTION" ) )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+        errorMsg.push_back( err );
+        errorMsg.push_back( L"Starting transaction failed for applying foreign key" );
         result = 1;
     }
     else
@@ -1442,7 +1443,8 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
             if( mysql_query( m_db, "COMMIT" ) )
             {
                 std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+                errorMsg.push_back( L"Applying foreign key failed." );
+                errorMsg.push_back( err );
                 return 1;
             }
         }
@@ -1451,7 +1453,7 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
             if( mysql_query( m_db, "ROLLBACK" ) )
             {
                 std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+                errorMsg.push_back( err );
                 return 1;
             }
         }
@@ -1467,7 +1469,15 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
 
 int MySQLDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
+    std::wstring query = L"DROP TABLE ";
+    query += tableName;
     int res = 0;
+    if( mysql_query( m_db, m_pimpl->m_mycomv,to_bytes( query.c_str() ).c_str() ) )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        res = 1;
+    }
     return res;
 }
 
@@ -1569,6 +1579,8 @@ int MySQLDatabase::TokenizeConnectionString(std::wstring &connectStr, std::vecto
 
 int MySQLDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
+    table = table;
+    errorMsg = errorMsg;
     int result = 0;
     return result;
 }
