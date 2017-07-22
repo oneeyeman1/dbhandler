@@ -3350,7 +3350,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     int result = 0;
     std::wstring query;
     long versionMajor, versionMinor;
-    SQLINTEGER *cbVersion;
+    SQLINTEGER cbVersion;
     SQLWCHAR *qry = NULL, version[1024];
     if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
@@ -3388,7 +3388,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         }
 		else
         {
-            retcode = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &version, SQL_NTS, &version );
+            retcode = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &version, SQL_NTS, &cbVersion );
             if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
