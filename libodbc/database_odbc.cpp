@@ -499,20 +499,22 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                     else
                     {
                         str_to_uc_cpy( pimpl->m_connectString, m_connectString );
-                        if( GetServerVersion( errorMsg ) )
+                        ret = SQLGetInfo( m_hdbc, SQL_DBMS_NAME, dbType, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
+                            GetErrorMessage( errorMsg, 2 );
+                            result = 1;
                         }
                         else
                         {
-                            ret = SQLGetInfo( m_hdbc, SQL_DBMS_NAME, dbType, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            str_to_uc_cpy( pimpl->m_subtype, dbType );
+                            if( GetServerVersion( errorMsg ) )
                             {
-                                GetErrorMessage( errorMsg, 2 );
+                                errorMsg.push_back( L"" );
                                 result = 1;
                             }
                             else
                             {
-                                str_to_uc_cpy( pimpl->m_subtype, dbType );
                                 ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
@@ -1963,7 +1965,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     unsigned short dataFontSize, dataFontWeight, headingFontSize, headingFontWeight, labelFontSize, labelFontWeight;
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], labelFontUnderline[2], dataFontName[20], headingFontName[20], labelFontName[20];
     SQLWCHAR comments[225];
-    SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = 0, cbDataFontUnderline = 0, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
+    SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = SQL_NTS, cbDataFontUnderline = SQL_NTS, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontName = 0, cbComment;
     SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontName = 0;
     std::wstring query = L"SELECT * FROM abcattbl WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ?;";
@@ -2085,7 +2087,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         owner_name = NULL;
         return 1;
     }
-    ret = SQLBindCol( stmt_tableProp, 6, SQL_C_WCHAR, &dataFontItalic, 3, &cbDataFontItalic );
+    ret = SQLBindCol( stmt_tableProp, 6, SQL_C_BIT, &dataFontItalic, 2, &cbDataFontItalic );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2097,7 +2099,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         owner_name = NULL;
         return 1;
     }
-    ret = SQLBindCol( stmt_tableProp, 7, SQL_C_WCHAR, &dataFontUnderline, 3, &cbDataFontUnderline );
+    ret = SQLBindCol( stmt_tableProp, 7, SQL_C_BIT, &dataFontUnderline, 2, &cbDataFontUnderline );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -3356,7 +3358,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     int result = 0;
     std::wstring query;
     long versionMajor, versionMinor;
-    SQLLEN cbVersion;
+    SQLLEN cbVersion = SQL_NTS;
     SQLWCHAR *qry = NULL, version[1024];
     if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
@@ -3395,7 +3397,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         }
 		else
         {
-            retcode = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &version, SQL_NTS, &cbVersion );
+            retcode = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &version, 1024, &cbVersion );
             if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3427,6 +3429,9 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                         }
 						else
                         {
+                            pimpl->m_serverVersion = version;
+                            pimpl->m_versionMajor = versionMajor;
+                            pimpl->m_versionMinor = versionMinor;
                         }
                     }
                 }
