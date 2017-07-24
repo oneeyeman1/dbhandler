@@ -494,16 +494,21 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( L"Error executing query: " + err );
-            PQclear( res );
             result = 1;
         }
         else
         {
             for( int i = 0; i < PQntuples( res ); i++ )
             {
+                table->SetDataFontSize( atoi( PQgetvalue( res, i, 4 ) ) );
+                table->SetDataFontWeight( atoi( PQgetvalue( res, i, 5 ) ) );
+                table->SetDataFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 6 ) ) == L"Y" ? true : false );
+                table->SetDataFontUnderlined( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 7 ) ) == L"Y" ? true : false );
+                table->SetDataFontCharacterSet( atoi( PQgetvalue( res, i, 8 ) ) );
                 table->SetComment( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 25 ) ) );
             }
         }
+        PQclear( res );
     }
     return result;
 }

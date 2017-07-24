@@ -2636,7 +2636,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     qry = NULL;
     if( result == 1 )
         query = L"ROLLBACK";
-	else
+    else
         query = L"COMMIT";
     qry = new SQLWCHAR[query.length() + 2];
     memset( qry, '\0', query.length() + 2 );
@@ -2796,7 +2796,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLSMALLINT OutConnStrLen;
     std::wstring fieldName = field->GetFieldName();
     if( pimpl->m_subtype == L"MySQL" )
-        query = L"SELECT * FROM abcatcol WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
+        query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     else
         query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     table_name = new SQLWCHAR[tableName.length() + 2];
@@ -3416,7 +3416,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
             GetErrorMessage( errorMsg, 1, m_hstmt );
             result = 1;
         }
-		else
+        else
         {
             retcode = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &version, 1024, &cbVersion );
             if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
@@ -3432,7 +3432,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                     GetErrorMessage( errorMsg, 1, m_hstmt );
                     result = 1;
                 }
-				else
+                else
                 {
                     retcode = SQLBindCol( m_hstmt, 3, SQL_C_SLONG, &versionMinor, 0, 0 );
                     if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
@@ -3440,7 +3440,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                         GetErrorMessage( errorMsg, 1, m_hstmt );
                         result = 1;
                     }
-					else
+                    else
                     {
                         retcode = SQLFetch( m_hstmt );
                         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
@@ -3448,7 +3448,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                             GetErrorMessage( errorMsg, 1, m_hstmt );
                             result = 1;
                         }
-						else
+                        else
                         {
                             pimpl->m_serverVersion = version;
                             pimpl->m_versionMajor = versionMajor;
@@ -3485,36 +3485,72 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
     uc_to_str_cpy( qry3, query3 );
     uc_to_str_cpy( qry4, query4 );
     RETCODE ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
-    if( ret == SQL_NO_DATA )
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        ret = SQLExecDirect( m_hstmt, qry3, SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 1, m_hstmt );
-            result = 1;
-        }
-    }
-    else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, m_hstmt );
-        result = 1;
-    }
-    if( !result )
-    {
-        RETCODE ret = SQLExecDirect( m_hstmt, qry2, SQL_NTS );
+        ret = SQLFetch( m_hstmt );
         if( ret == SQL_NO_DATA )
         {
-            ret = SQLExecDirect( m_hstmt, qry4, SQL_NTS );
+            ret = SQLFreeStmt( m_hstmt, SQL_CLOSE );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
                 result = 1;
+            }
+            else
+            {
+                ret = SQLExecDirect( m_hstmt, qry3, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
             }
         }
         else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
             result = 1;
+        }
+    }
+    else
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+        result = 1;
+    }
+    if( !result )
+    {
+        ret = SQLFreeStmt( m_hstmt, SQL_CLOSE );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+        else
+        {
+            RETCODE ret = SQLExecDirect( m_hstmt, qry2, SQL_NTS );
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+            {
+                ret = SQLFetch( m_hstmt );
+                if( ret == SQL_NO_DATA )
+                {
+                    ret = SQLExecDirect( m_hstmt, qry4, SQL_NTS );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
+                    }
+                }
+                else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+            }
+            else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
         }
     }
     delete qry1;
