@@ -3490,11 +3490,20 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
         ret = SQLFetch( m_hstmt );
         if( ret == SQL_NO_DATA )
         {
-            ret = SQLExecDirect( m_hstmt, qry3, SQL_NTS );
+            ret = SQLFreeStmt( m_hstmt, SQL_CLOSE );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
                 result = 1;
+            }
+            else
+            {
+                ret = SQLExecDirect( m_hstmt, qry3, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
             }
         }
         else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3510,14 +3519,28 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
     }
     if( !result )
     {
-        RETCODE ret = SQLExecDirect( m_hstmt, qry2, SQL_NTS );
-        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+        ret = SQLFreeStmt( m_hstmt, SQL_CLOSE );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
-            ret = SQLFetch( m_hstmt );
-            if( ret == SQL_NO_DATA )
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+        else
+        {
+            RETCODE ret = SQLExecDirect( m_hstmt, qry2, SQL_NTS );
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
-                ret = SQLExecDirect( m_hstmt, qry4, SQL_NTS );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                ret = SQLFetch( m_hstmt );
+                if( ret == SQL_NO_DATA )
+                {
+                    ret = SQLExecDirect( m_hstmt, qry4, SQL_NTS );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
+                    }
+                }
+                else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, 1, m_hstmt );
                     result = 1;
@@ -3528,11 +3551,6 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
                 GetErrorMessage( errorMsg, 1, m_hstmt );
                 result = 1;
             }
-        }
-        else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 1, m_hstmt );
-            result = 1;
         }
     }
     delete qry1;
