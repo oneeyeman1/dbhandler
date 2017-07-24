@@ -623,25 +623,38 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                                         query = NULL;
                                                         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                                         {
-                                                            query = new SQLWCHAR[query6.length() + 2];
-                                                            memset( query, '\0', query6.size() + 2 );
-                                                            uc_to_str_cpy( query, query6 );
-                                                            ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                            delete query;
-                                                            query = NULL;
-                                                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                                            if( ( pimpl->m_subtype == L"PostgreSQL" && pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 5 ) || pimpl->m_subtype != L"PostgreSQL" )
                                                             {
-                                                                query = new SQLWCHAR[query7.length() + 2];
-                                                                memset( query, '\0', query7.size() + 2 );
-                                                                uc_to_str_cpy( query, query7 );
+                                                                query = new SQLWCHAR[query6.length() + 2];
+                                                                memset( query, '\0', query6.size() + 2 );
+                                                                uc_to_str_cpy( query, query6 );
                                                                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                                 delete query;
                                                                 query = NULL;
                                                                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                                                                 {
-                                                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+                                                                    query = new SQLWCHAR[query7.length() + 2];
+                                                                    memset( query, '\0', query7.size() + 2 );
+                                                                    uc_to_str_cpy( query, query7 );
+                                                                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                                                    delete query;
+                                                                    query = NULL;
+                                                                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                                                    {
+                                                                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+                                                                    }
                                                                 }
                                                             }
+                                                            else
+                                                            {
+                                                                if( CreateIndexesOnPostgreConnection( errorMsg ) )
+                                                                {
+                                                                    errorMsg.push_back( L"" );
+                                                                    result = 1;
+                                                                }
+                                                                else
+                                                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+															}
                                                         }
                                                     }
                                                 }
@@ -3448,5 +3461,69 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     }
     delete qry;
     qry = NULL;
+    return result;
+}
+
+int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    SQLWCHAR *qry1 = NULL, *qry2 = NULL, *qry3 = NULL, *qry4 = NULL;
+    std::wstring query1 = L"SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcattbl_tnam_ownr\' AND n.nspname = \'public\';";
+    std::wstring query3 = L"CREATE INDEX  \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
+    std::wstring query2 = L"SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatcol_tnam_ownr_cnam\' AND n.nspname = \'public\'";
+    std::wstring query4 = L"CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
+    qry1 = new SQLWCHAR[query1.length() + 2];
+    qry2 = new SQLWCHAR[query2.length() + 2];
+    qry3 = new SQLWCHAR[query3.length() + 2];
+    qry4 = new SQLWCHAR[query4.length() + 2];
+    memset( qry1, '\0', query1.length() + 2 );
+    memset( qry2, '\0', query2.length() + 2 );
+    memset( qry3, '\0', query3.length() + 2 );
+    memset( qry4, '\0', query4.length() + 2 );
+    uc_to_str_cpy( qry1, query1 );
+    uc_to_str_cpy( qry2, query2 );
+    uc_to_str_cpy( qry3, query3 );
+    uc_to_str_cpy( qry4, query4 );
+    RETCODE ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
+    if( ret == SQL_NO_DATA )
+    {
+        ret = SQLExecDirect( m_hstmt, qry3, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+    }
+    else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+        result = 1;
+    }
+    if( !result )
+    {
+        RETCODE ret = SQLExecDirect( m_hstmt, qry2, SQL_NTS );
+        if( ret == SQL_NO_DATA )
+        {
+            ret = SQLExecDirect( m_hstmt, qry4, SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+        }
+        else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+    }
+    delete qry1;
+    qry1 = NULL;
+    delete qry2;
+    qry2 = NULL;
+    delete qry3;
+    qry3 = NULL;
+    delete qry4;
+    qry4 = NULL;
     return result;
 }
