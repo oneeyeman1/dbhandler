@@ -3485,16 +3485,25 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
     uc_to_str_cpy( qry3, query3 );
     uc_to_str_cpy( qry4, query4 );
     RETCODE ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
-    if( ret == SQL_NO_DATA )
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        ret = SQLExecDirect( m_hstmt, qry3, SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        ret = SQLFetch( m_hstmt );
+        if( ret == SQL_NO_DATA )
+        {
+            ret = SQLExecDirect( m_hstmt, qry3, SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+        }
+        else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
             result = 1;
         }
     }
-    else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    else
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
         result = 1;
@@ -3502,10 +3511,19 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
     if( !result )
     {
         RETCODE ret = SQLExecDirect( m_hstmt, qry2, SQL_NTS );
-        if( ret == SQL_NO_DATA )
+        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
         {
-            ret = SQLExecDirect( m_hstmt, qry4, SQL_NTS );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            ret = SQLFetch( m_hstmt );
+            if( ret == SQL_NO_DATA )
+            {
+                ret = SQLExecDirect( m_hstmt, qry4, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+            }
+            else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
                 result = 1;
