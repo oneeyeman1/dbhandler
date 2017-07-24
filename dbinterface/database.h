@@ -138,7 +138,7 @@ public:
         m_labelFontStrikethrough = false;
         m_dataFontCharacterSet = -1;
         m_headingFontCharacterSet = -1;
-        m_labelFontCharacterSet = -1;
+        m_labelFontCharacterSer = -1;
     }
     const std::wstring &GetTableName() { return table_name; }
     const std::wstring &GetSchemaName() { return schema_name; }
@@ -182,10 +182,10 @@ public:
     bool GetLabelFontStrikethrough() { return m_labelFontStrikethrough; }
     int GetDataFontCharacterSet() { return m_dataFontCharacterSet; }
     int GetHeadingFontCharacterSet() { return m_headingFontCharacterSet; }
-    int GetLabelFontCharacterSet() { return m_labelFontCharacterSet; }
+    int GetLabelFontCharacterSet() { return m_labelFontCharacterSer; }
     void SetDataFontCharacterSet(int charSet) { m_dataFontCharacterSet = charSet; }
     void SetHeadingFontCharacterSet(int charSet) { m_headingFontCharacterSet = charSet; }
-    void SetLabelFontCharacterSet(int charSet) { m_labelFontCharacterSet = charSet; }
+    void SetLabelFontCharacterSet(int charSet) { m_labelFontCharacterSer = charSet; }
     const std::vector<Field *> &GetFields() { return table_fields; }
     std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
     const int GetTableId() { return m_objectId; }
