@@ -3533,11 +3533,20 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
                 ret = SQLFetch( m_hstmt );
                 if( ret == SQL_NO_DATA )
                 {
-                    ret = SQLExecDirect( m_hstmt, qry4, SQL_NTS );
+                    ret = SQLFreeStmt( m_hstmt, SQL_CLOSE );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 1, m_hstmt );
                         result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLExecDirect( m_hstmt, qry4, SQL_NTS );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                        }
                     }
                 }
                 else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
