@@ -505,6 +505,19 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
                 table->SetDataFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 6 ) ) == L"Y" ? true : false );
                 table->SetDataFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 7 ) ) == L"Y" ? true : false );
                 table->SetDataFontCharacterSet( atoi( PQgetvalue( res, i, 8 ) ) );
+                table->SetDataFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 10 ) ) );
+                table->SetHeadingFontSize( atoi( PQgetvalue( res, i, 11 ) ) );
+                table->SetDataFontWeight( atoi( PQgetvalue( res, i, 12 ) ) );
+                table->SetHeadingFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 13 ) ) == L"Y" ? true : false );
+                table->SetHeadingFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 14 ) ) == L"Y" ? true : false );
+                table->SetHeadingFontCharacterSet( atoi( PQgetvalue( res, i, 15 ) ) );
+                table->SetHeadingFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 17 ) ) );
+                table->SetLabelFontSize( atoi( PQgetvalue( res, i, 18 ) ) );
+                table->SetLabelFontWeight( atoi( PQgetvalue( res, i, 19 ) ) );
+                table->SetLabelFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 20 ) ) == L"Y" ? true : false );
+                table->SetLabelFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 21 ) ) == L"Y" ? true : false );
+                table->SetLabelFontCharacterSet( atoi( PQgetvalue( res, i, 22 ) ) );
+                table->SetLabelFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 24 ) ) );
                 table->SetComment( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 25 ) ) );
             }
         }
