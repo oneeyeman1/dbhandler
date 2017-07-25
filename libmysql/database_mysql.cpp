@@ -1577,10 +1577,8 @@ int MySQLDatabase::TokenizeConnectionString(std::wstring &connectStr, std::vecto
     return result;
 }
 
-int MySQLDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetTableId(const DatabaseTable *UNUSED(table), std::vector<std::wstring> &UNUSED(errorMsg))
 {
-    table = table;
-    errorMsg = errorMsg;
     int result = 0;
     return result;
 }
