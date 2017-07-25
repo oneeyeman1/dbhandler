@@ -1874,11 +1874,11 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
     SQLWCHAR *index_name = NULL, *table_name = NULL, *schema_name = NULL;
     SQLLEN cbIndexName = SQL_NTS, cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
-        query1 = L"SELECT count(*) FROM sys.indexes WHERE name = ? AND object_id = OBJECT_ID( ? ) );";
+        query1 = L"SELECT 1 FROM sys.indexes WHERE name = ? AND object_id = OBJECT_ID( ? ) );";
     if( pimpl->m_subtype == L"MySQL" )
-        query1 = L"SELECT count(*) FROM information_schema.statistics WHERE index_name = ? AND table_name = ? AND schema_name = ?;";
+        query1 = L"SELECT 1 FROM information_schema.statistics WHERE index_name = ? AND table_name = ? AND schema_name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
-        query1 = L"SELECT count(*) FROM pg_indexes WHERE indexname = $1 AND tablename = $2 AND schemaname = $3;";
+        query1 = L"SELECT 1 FROM pg_indexes WHERE indexname = $1 AND tablename = $2 AND schemaname = $3;";
     index_name = new SQLWCHAR[indexName.length() + 2];
     memset( index_name, '\0', indexName.length() + 2 );
     uc_to_str_cpy( index_name, indexName );
