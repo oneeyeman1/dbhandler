@@ -941,7 +941,7 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
     std::wstring errorMessage;
     std::wstring name = const_cast<DatabaseTable *>( table )->GetTableName();
     std::wstring owner = const_cast<DatabaseTable *>( table )->GetTableOwner();
-    std::wstring query = L"SELECT 1 FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ? AND \"abt_tid\" = ?;";
+    std::wstring query = L"SELECT 1 FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ?;";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
@@ -951,24 +951,20 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
             res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( owner.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
             if( res == SQLITE_OK )
             {
-                res = sqlite3_bind_int( stmt, 3, const_cast<DatabaseTable *>( table )->GetTableId() );
-                if( res == SQLITE_OK )
-                {
-                    res = sqlite3_step( stmt );
-                    if( res == SQLITE_ROW )
-                        result = true;
-                    else if( res != SQLITE_DONE )
-                    {
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
-                    }
-                }
-				else
+                res = sqlite3_step( stmt );
+                if( res == SQLITE_ROW )
+                    result = true;
+                else if( res != SQLITE_DONE )
                 {
                     GetErrorMessage( res, errorMessage );
                     errorMsg.push_back( errorMessage );
                 }
-			}
+            }
+            else
+            {
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
             else
             {
                 GetErrorMessage( res, errorMessage );

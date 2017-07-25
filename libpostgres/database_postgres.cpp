@@ -779,12 +779,12 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
 bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
-    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2 AND \"abt_tid\" = $3;";
+    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
     std::wstring tname = const_cast<DatabaseTable *>( table )->GetSchemaName() + L".";
     tname += const_cast<DatabaseTable *>( table )->GetTableName();
     std::wstring owner = const_cast<DatabaseTable *>( table )->GetTableOwner();
     int tableId = htonl( const_cast<DatabaseTable *>( table )->GetTableId() );
-    char *values[3];
+    char *values[2];
     values[0] = new char[tname.length() + 1];
     values[1] = new char[owner.length() + 1];
     memset( values[0], '\0', tname.length() + 1 );
@@ -794,9 +794,8 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     values[2] = (char *) &tableId;
     int len1 = tname.length();
     int len2 = owner.length();
-    int len3 = sizeof( tableId );
-    int length[3] = { len1, len2, len3 };
-    int formats[3] = { 1, 1, 1 };
+    int length[2] = { len1, len2 };
+    int formats[2] = { 1, 1 };
     PGresult *res = PQprepare( m_db, "table_properties_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {

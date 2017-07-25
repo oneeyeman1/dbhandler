@@ -2703,7 +2703,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
 {
     bool result = false;
     SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS, cbTableId = 0;
-    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ? AND \"abt_tid\" = ?;";
+    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
     std::wstring tname = const_cast<DatabaseTable *>( table )->GetSchemaName() + L".";
     tname += const_cast<DatabaseTable *>( table )->GetTableName();
     std::wstring ownerName = const_cast<DatabaseTable *>( table )->GetTableOwner();
@@ -2753,7 +2753,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
         }
         else
         {
-            ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_INTEGER, 0, 0, &tableId, 0, &cbTableId );
+            ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -2766,36 +2766,12 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
             }
             else
             {
-                ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                ret = SQLExecute( m_hstmt );
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, 1, m_hstmt );
-                    delete qry;
-                    qry = NULL;
-                    delete table_name;
-                    table_name = NULL;
-                    delete owner_name;
-                    owner_name = NULL;
-                }
-                else
-                {
-                    ret = SQLExecute( m_hstmt );
+                    ret = SQLFetch( m_hstmt );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        ret = SQLFetch( m_hstmt );
-                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                            result = true;
-                        else if( ret != SQL_NO_DATA )
-                        {
-                            GetErrorMessage( errorMsg, 1, m_hstmt );
-                            delete qry;
-                            qry = NULL;
-                            delete table_name;
-                            table_name = NULL;
-                            delete owner_name;
-                            owner_name = NULL;
-                        }
-                    }
+                        result = true;
                     else if( ret != SQL_NO_DATA )
                     {
                         GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -2806,6 +2782,16 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
                         delete owner_name;
                         owner_name = NULL;
                     }
+                }
+                else if( ret != SQL_NO_DATA )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    delete qry;
+                    qry = NULL;
+                    delete table_name;
+                    table_name = NULL;
+                    delete owner_name;
+                    owner_name = NULL;
                 }
             }
         }
