@@ -538,7 +538,7 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, std::vector<std::ws
     return result;
 }
 
-bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &WXUNUSED(schemaName), const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &UNUSED(schemaName), const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     bool exists = false;
     int res = SQLITE_OK, result = 0;
