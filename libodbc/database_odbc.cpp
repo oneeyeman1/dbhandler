@@ -2512,7 +2512,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.clear();
                         istr.str( L"" );
                         command += L", \"abd_fptc\" = ";
-                        istr << properties.m_dataFontSize;
+                        istr << properties.m_dataFontPixelSize;
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );
@@ -2538,7 +2538,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.clear();
                         istr.str( L"" );
                         command += L", \"abh_fptc\" = ";
-                        istr << properties.m_headingFontSize;
+                        istr << properties.m_headingFontPixelSize;
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );
@@ -2564,7 +2564,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.clear();
                         istr.str( L"" );
                         command += L", \"abl_fptc\" = ";
-                        istr << properties.m_labelFontSize;
+                        istr << properties.m_labelFontPixelSize;
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );
@@ -2614,7 +2614,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.clear();
                         istr.str( L"" );
                         command += L", ";
-                        istr << properties.m_dataFontSize;
+                        istr << properties.m_dataFontPixelSize;
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );
@@ -2640,7 +2640,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.clear();
                         istr.str( L"" );
                         command += L", ";
-                        istr << properties.m_headingFontSize;
+                        istr << properties.m_headingFontPixelSize;
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );
@@ -2666,7 +2666,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.clear();
                         istr.str( L"" );
                         command += L", ";
-                        istr << properties.m_labelFontSize;
+                        istr << properties.m_labelFontPixelSize;
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );

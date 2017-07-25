@@ -209,6 +209,9 @@ bool PropertiesDialog::ApplyProperties()
             m_tableProperties.m_dataFontEncoding = dataFont->GetEncoding();
             m_tableProperties.m_headingFontEncoding = headingFont->GetEncoding();
             m_tableProperties.m_labelFontEncoding = labelFont->GetEncoding();
+            m_tableProperties.m_dataFontPixelSize = dataFont->GetPixelSize();
+            m_tableProperties.m_headingFontPixelSize = headingFont->GetPixelSize();
+            m_tableProperties.m_labelFontPixelSize = labelFont->GetPixelSize();
         }
     }
     if( m_type == 1 )

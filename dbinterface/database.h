@@ -28,6 +28,7 @@ struct TableProperties
 {
     std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName;
     int m_dataFontSize, m_dataFontEncoding, m_headingFontSize, m_headingFontEncoding, m_labelFontSize, m_labelFontEncoding;
+    int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;
     bool m_isDataFontUnderlined, m_isDataFontStriken, m_isHeadingFontUnderlined, m_isHeadingFontStriken, m_isLabelFontUnderlined, m_isLabelFontStrioken;
     bool m_isDataFontBold, m_isDataFontItalic, m_isHeadingFontBold, m_isHeadingFontItalic, m_isLabelFontBold, m_isLabelFontItalic;
 };
