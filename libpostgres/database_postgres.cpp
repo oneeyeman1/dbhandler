@@ -316,7 +316,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     delete_constraint = SET_DEFAULT_DELETE;
                 if( fkDeleteConstraint == L"CASCADE" )
                     delete_constraint = CASCADE_DELETE;
-                foreign_keys[count].push_back( new FKField( fkReference, fkTable, fkField, fkTableField, L"", update_constraint, delete_constraint ) );
+                foreign_keys[count++].push_back( new FKField( fkReference, fkTable, fkField, fkTableField, L"", update_constraint, delete_constraint ) );
                 fk_names.push_back( fkField );
             }
             PQclear( res1 );
@@ -414,7 +414,7 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
 {
     PGresult *res;
     bool exists = false;
-    std::wstring query = L"SELECT count(*) FROM pg_indexes WHERE schemaname = $1 AND tablename = $2 AND indexname = $3;";
+    std::wstring query = L"SELECT 1 FROM pg_indexes WHERE schemaname = $1 AND tablename = $2 AND indexname = $3;";
     char *values[3];
     values[0] = new char[schemaName.length() + 1];
     values[1] = new char[tableName.length() + 1];
