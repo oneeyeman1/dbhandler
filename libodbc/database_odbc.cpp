@@ -3450,7 +3450,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                         }
                         else
                         {
-                            pimpl->m_serverVersion = version;
+                            str_to_uc_cpy( pimpl->m_serverVersion, version );
                             pimpl->m_versionMajor = versionMajor;
                             pimpl->m_versionMinor = versionMinor;
                         }
