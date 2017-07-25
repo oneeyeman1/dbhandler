@@ -746,7 +746,7 @@ bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstr
     bool exists = false;
     char *str_data[3];
     unsigned long *str_length[3];
-    std::wstring query = L"SELECT count(*) FROM information_schema.statistics WHERE table_schema = $1 AND table_name = $2 AND index_name = $3;";
+    std::wstring query = L"SELECT 1 FROM information_schema.statistics WHERE table_schema = ? AND table_name = ? AND index_name = ?;";
     res = mysql_stmt_init( m_db );
     if( !res )
     {
@@ -785,6 +785,12 @@ bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstr
             values[0].length = str_length[0];
             values[1].length = str_length[1];
             values[2].length = str_length[2];
+            strncpy( str_data[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str(), schemaName.length() );
+            strncpy( str_data[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), tableName.length() );
+            strncpy( str_data[2], m_pimpl->m_myconv.to_bytes( indexName.c_str() ).c_str(), indexName.length() );
+            *str_length[0] = schemaName.length();
+            *str_length[1] = tableName.length();
+            *str_length[2] = indexName.length();
             if( mysql_stmt_bind_param( res, values ) )
             {
                 std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -792,12 +798,6 @@ bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstr
             }
             else
             {
-                strncpy( str_data[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str(), schemaName.length() );
-                strncpy( str_data[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), tableName.length() );
-                strncpy( str_data[2], m_pimpl->m_myconv.to_bytes( indexName.c_str() ).c_str(), indexName.length() );
-                *str_length[0] = schemaName.length();
-                *str_length[1] = tableName.length();
-                *str_length[2] = indexName.length();
                 if( mysql_stmt_execute( res ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -984,7 +984,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abd_fptc\" = ";
-                istr << properties.m_dataFontSize;
+                istr << properties.m_dataFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -1010,7 +1010,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abh_fptc\" = ";
-                istr << properties.m_headingFontSize;
+                istr << properties.m_headingFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -1036,7 +1036,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abl_fptc\" = ";
-                istr << properties.m_labelFontSize;
+                istr << properties.m_labelFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -1086,7 +1086,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_dataFontSize;
+                istr << properties.m_dataFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -1112,7 +1112,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_headingFontSize;
+                istr << properties.m_headingFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -1138,7 +1138,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_labelFontSize;
+                istr << properties.m_labelFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -1577,10 +1577,8 @@ int MySQLDatabase::TokenizeConnectionString(std::wstring &connectStr, std::vecto
     return result;
 }
 
-int MySQLDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetTableId(const DatabaseTable *UNUSED(table), std::vector<std::wstring> &UNUSED(errorMsg))
 {
-    table = table;
-    errorMsg = errorMsg;
     int result = 0;
     return result;
 }
@@ -1590,5 +1588,7 @@ int MySQLDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg))
     unsigned long version;
     int result = 0;
     version = mysql_get_server_version( m_db );
+    pimpl->m_versionMajor = version / 10000;
+    pimpl->m_versionRevision = ( version - pimpl->m_versionMajor ) / 100;
     return result;
 }

@@ -1874,11 +1874,11 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
     SQLWCHAR *index_name = NULL, *table_name = NULL, *schema_name = NULL;
     SQLLEN cbIndexName = SQL_NTS, cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
-        query1 = L"SELECT count(*) FROM sys.indexes WHERE name = ? AND object_id = OBJECT_ID( ? ) );";
+        query1 = L"SELECT 1 FROM sys.indexes WHERE name = ? AND object_id = OBJECT_ID( ? ) );";
     if( pimpl->m_subtype == L"MySQL" )
-        query1 = L"SELECT count(*) FROM information_schema.statistics WHERE index_name = ? AND table_name = ? AND schema_name = ?;";
+        query1 = L"SELECT 1 FROM information_schema.statistics WHERE index_name = ? AND table_name = ? AND schema_name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
-        query1 = L"SELECT count(*) FROM pg_indexes WHERE indexname = $1 AND tablename = $2 AND schemaname = $3;";
+        query1 = L"SELECT 1 FROM pg_indexes WHERE indexname = $1 AND tablename = $2 AND schemaname = $3;";
     index_name = new SQLWCHAR[indexName.length() + 2];
     memset( index_name, '\0', indexName.length() + 2 );
     uc_to_str_cpy( index_name, indexName );
@@ -1984,11 +1984,13 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLHDBC hdbc_tableProp;
     SQLHSTMT stmt_tableProp;
     unsigned short dataFontSize, dataFontWeight, headingFontSize, headingFontWeight, labelFontSize, labelFontWeight;
+    unsigned short dataFontCharacterSet, headingFontCharacterSet, labelFontCharacterSet, dataFontPixelSize, headingFontPixelSize, labelFontPixelSize;
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], labelFontUnderline[2], dataFontName[20], headingFontName[20], labelFontName[20];
     SQLWCHAR comments[225];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = SQL_NTS, cbDataFontUnderline = SQL_NTS, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontName = 0, cbComment;
     SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontName = 0;
+    SQLLEN cbDataFontCharacterSet = 0, cbHeadingFontCharacterSet = 0, cbLabelFontCharacterSet = 0, cbDataFontPixelSize = 0, cbHeadingFontPixelSize = 0, cbLabelFontPixelSize = 0;
     std::wstring query = L"SELECT * FROM abcattbl WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ?;";
     std::wstring tableName = table->GetTableName(), ownerName = table->GetTableOwner();
     int tableNameLen = tableName.length(), ownerNameLen = ownerName.length();
@@ -2132,6 +2134,30 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         owner_name = NULL;
         return 1;
     }
+    ret = SQLBindCol( stmt_tableProp, 8, SQL_C_SSHORT, &dataFontCharacterSet, 0, &cbDataFontCharacterSet );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 9, SQL_C_SSHORT, &dataFontPixelSize, 0, &cbDataFontPixelSize );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
+        return 1;
+    }
     ret = SQLBindCol( stmt_tableProp, 10, SQL_C_WCHAR, &dataFontName, 22, &cbDataFontName );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -2168,7 +2194,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         owner_name = NULL;
         return 1;
     }
-    ret = SQLBindCol( stmt_tableProp, 13, SQL_C_CHAR, &headingFontItalic, 3, &cbHeadingFontItalic );
+    ret = SQLBindCol( stmt_tableProp, 13, SQL_C_CHAR, &headingFontItalic, 2, &cbHeadingFontItalic );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2180,7 +2206,31 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         owner_name = NULL;
         return 1;
     }
-    ret = SQLBindCol( stmt_tableProp, 14, SQL_C_CHAR, &headingFontUnderline, 3, &cbHeadingFontUnderline );
+    ret = SQLBindCol( stmt_tableProp, 14, SQL_C_CHAR, &headingFontUnderline, 2, &cbHeadingFontUnderline );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 15, SQL_C_SSHORT, &headingFontCharacterSet, 0, &cbHeadingFontCharacterSet );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 16, SQL_C_SSHORT, &headingFontPixelSize, 0, &cbHeadingFontPixelSize );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2252,6 +2302,30 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         owner_name = NULL;
         return 1;
     }
+    ret = SQLBindCol( stmt_tableProp, 22, SQL_C_SSHORT, &labelFontCharacterSet, 0, &cbLabelFontCharacterSet );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
+        return 1;
+    }
+    ret = SQLBindCol( stmt_tableProp, 23, SQL_C_SSHORT, &labelFontPixelSize, 0, &cbLabelFontPixelSize );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
+        return 1;
+    }
     ret = SQLBindCol( stmt_tableProp, 24, SQL_C_WCHAR, &labelFontName, 22, &cbLabelFontName );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -2284,6 +2358,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         table->SetDataFontWeight( dataFontWeight );
         table->SetDataFontItalic( dataFontItalic[0] == 'Y' );
         table->SetDataFontUnderline( dataFontUnderline[0] == 'Y' );
+        table->SetDataFontCharacterSet( dataFontCharacterSet );
+        table->SetDataFontPixelSize( dataFontPixelSize );
         str_to_uc_cpy( name, dataFontName );
         table->SetDataFontName( name );
         name = L"";
@@ -2291,6 +2367,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         table->SetHeadingFontWeight( headingFontWeight );
         table->SetHeadingFontItalic( headingFontItalic[0] == 'Y' );
         table->SetHeadingFontUnderline( headingFontUnderline[0] == 'Y' );
+        table->SetHeadingFontCharacterSet( headingFontCharacterSet );
+        table->SetHeadingFontPixelSize( headingFontPixelSize );
         str_to_uc_cpy( name, headingFontName );
         table->SetHeadingFontName( name );
         name = L"";
@@ -2298,6 +2376,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         table->SetLabelFontWeight( labelFontWeight );
         table->SetLabelFontItalic( labelFontItalic[0] == 'Y' );
         table->SetLabelFontUnderline( labelFontUnderline[0] == 'Y' );
+        table->SetLabelFontCharacterSet( labelFontCharacterSet );
+        table->SetLabelFontPixelSize( labelFontPixelSize );
         str_to_uc_cpy( name, labelFontName );
         table->SetLabelFontName( name );
         name = L"";
@@ -2432,7 +2512,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.clear();
                         istr.str( L"" );
                         command += L", \"abd_fptc\" = ";
-                        istr << properties.m_dataFontSize;
+                        istr << properties.m_dataFontPixelSize;
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );
@@ -2458,7 +2538,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.clear();
                         istr.str( L"" );
                         command += L", \"abh_fptc\" = ";
-                        istr << properties.m_headingFontSize;
+                        istr << properties.m_headingFontPixelSize;
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );
@@ -2484,7 +2564,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.clear();
                         istr.str( L"" );
                         command += L", \"abl_fptc\" = ";
-                        istr << properties.m_labelFontSize;
+                        istr << properties.m_labelFontPixelSize;
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );
@@ -2534,7 +2614,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.clear();
                         istr.str( L"" );
                         command += L", ";
-                        istr << properties.m_dataFontSize;
+                        istr << properties.m_dataFontPixelSize;
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );
@@ -2560,7 +2640,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.clear();
                         istr.str( L"" );
                         command += L", ";
-                        istr << properties.m_headingFontSize;
+                        istr << properties.m_headingFontPixelSize;
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );
@@ -2586,7 +2666,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.clear();
                         istr.str( L"" );
                         command += L", ";
-                        istr << properties.m_labelFontSize;
+                        istr << properties.m_labelFontPixelSize;
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );
@@ -2662,7 +2742,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
 {
     bool result = false;
     SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS, cbTableId = 0;
-    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ? AND \"abt_tid\" = ?;";
+    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
     std::wstring tname = const_cast<DatabaseTable *>( table )->GetSchemaName() + L".";
     tname += const_cast<DatabaseTable *>( table )->GetTableName();
     std::wstring ownerName = const_cast<DatabaseTable *>( table )->GetTableOwner();
@@ -2712,7 +2792,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
         }
         else
         {
-            ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_INTEGER, 0, 0, &tableId, 0, &cbTableId );
+            ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -2725,36 +2805,12 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
             }
             else
             {
-                ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                ret = SQLExecute( m_hstmt );
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, 1, m_hstmt );
-                    delete qry;
-                    qry = NULL;
-                    delete table_name;
-                    table_name = NULL;
-                    delete owner_name;
-                    owner_name = NULL;
-                }
-                else
-                {
-                    ret = SQLExecute( m_hstmt );
+                    ret = SQLFetch( m_hstmt );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        ret = SQLFetch( m_hstmt );
-                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                            result = true;
-                        else if( ret != SQL_NO_DATA )
-                        {
-                            GetErrorMessage( errorMsg, 1, m_hstmt );
-                            delete qry;
-                            qry = NULL;
-                            delete table_name;
-                            table_name = NULL;
-                            delete owner_name;
-                            owner_name = NULL;
-                        }
-                    }
+                        result = true;
                     else if( ret != SQL_NO_DATA )
                     {
                         GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -2765,6 +2821,16 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
                         delete owner_name;
                         owner_name = NULL;
                     }
+                }
+                else if( ret != SQL_NO_DATA )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    delete qry;
+                    qry = NULL;
+                    delete table_name;
+                    table_name = NULL;
+                    delete owner_name;
+                    owner_name = NULL;
                 }
             }
         }
@@ -3450,7 +3516,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                         }
                         else
                         {
-                            pimpl->m_serverVersion = version;
+                            str_to_uc_cpy( pimpl->m_serverVersion, version );
                             pimpl->m_versionMajor = versionMajor;
                             pimpl->m_versionMinor = versionMinor;
                         }

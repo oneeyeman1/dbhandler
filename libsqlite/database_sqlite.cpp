@@ -538,7 +538,7 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, std::vector<std::ws
     return result;
 }
 
-bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &WXUNUSED(schemaName), const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &UNUSED(schemaName), const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     bool exists = false;
     int res = SQLITE_OK, result = 0;
@@ -612,6 +612,8 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         char *underline = (char *) sqlite3_column_text( stmt, 6 );
                         if( underline )
                             table->SetDataFontUnderline( underline[0] == 'Y' );
+                        table->SetDataFontCharacterSet( sqlite3_column_int( stmt, 7 ) );
+                        table->SetDataFontPixelSize( sqlite3_column_int( stmt, 8 ) );
                         dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 9 );
                         if( dataFontName )
                             table->SetDataFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
@@ -623,6 +625,8 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         underline = (char *) sqlite3_column_text( stmt, 13 );
                         if( underline )
                             table->SetHeadingFontUnderline( underline[0] == 'Y' );
+                        table->SetHeadingFontCharacterSet( sqlite3_column_int( stmt, 14 ) );
+                        table->SetHeadingFontPixelSize( sqlite3_column_int( stmt, 15 ) );
                         headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 16 );
                         if( headingFontName )
                             table->SetHeadingFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
@@ -634,6 +638,8 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         underline = (char *) sqlite3_column_text( stmt, 20 );
                         if( underline )
                             table->SetLabelFontUnderline( underline[0] == 'Y' );
+                        table->SetLabelFontCharacterSet( sqlite3_column_int( stmt, 21 ) );
+                        table->SetLabelFontPixelSize( sqlite3_column_int( stmt, 22 ) );
                         labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 23 );
                         if( labelFontName )
                             table->SetLabelFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
@@ -730,7 +736,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abd_fptc\" = ";
-                istr << properties.m_dataFontSize;
+                istr << properties.m_dataFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -756,7 +762,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abh_fptc\" = ";
-                istr << properties.m_headingFontSize;
+                istr << properties.m_headingFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -782,7 +788,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abl_fptc\" = ";
-                istr << properties.m_labelFontSize;
+                istr << properties.m_labelFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -832,7 +838,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_dataFontSize;
+                istr << properties.m_dataFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -858,7 +864,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_headingFontSize;
+                istr << properties.m_headingFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -884,7 +890,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_labelFontSize;
+                istr << properties.m_labelFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -938,7 +944,7 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
     std::wstring errorMessage;
     std::wstring name = const_cast<DatabaseTable *>( table )->GetTableName();
     std::wstring owner = const_cast<DatabaseTable *>( table )->GetTableOwner();
-    std::wstring query = L"SELECT 1 FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ? AND \"abt_tid\" = ?;";
+    std::wstring query = L"SELECT 1 FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ?;";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
@@ -948,24 +954,15 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
             res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( owner.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
             if( res == SQLITE_OK )
             {
-                res = sqlite3_bind_int( stmt, 3, const_cast<DatabaseTable *>( table )->GetTableId() );
-                if( res == SQLITE_OK )
-                {
-                    res = sqlite3_step( stmt );
-                    if( res == SQLITE_ROW )
-                        result = true;
-                    else if( res != SQLITE_DONE )
-                    {
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
-                    }
-                }
-				else
+                res = sqlite3_step( stmt );
+                if( res == SQLITE_ROW )
+                    result = true;
+                else if( res != SQLITE_DONE )
                 {
                     GetErrorMessage( res, errorMessage );
                     errorMsg.push_back( errorMessage );
                 }
-			}
+            }
             else
             {
                 GetErrorMessage( res, errorMessage );

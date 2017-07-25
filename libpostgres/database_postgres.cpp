@@ -316,7 +316,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     delete_constraint = SET_DEFAULT_DELETE;
                 if( fkDeleteConstraint == L"CASCADE" )
                     delete_constraint = CASCADE_DELETE;
-                foreign_keys[count].push_back( new FKField( fkReference, fkTable, fkField, fkTableField, L"", update_constraint, delete_constraint ) );
+                foreign_keys[count++].push_back( new FKField( fkReference, fkTable, fkField, fkTableField, L"", update_constraint, delete_constraint ) );
                 fk_names.push_back( fkField );
             }
             PQclear( res1 );
@@ -414,7 +414,7 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
 {
     PGresult *res;
     bool exists = false;
-    std::wstring query = L"SELECT count(*) FROM pg_indexes WHERE schemaname = $1 AND tablename = $2 AND indexname = $3;";
+    std::wstring query = L"SELECT 1 FROM pg_indexes WHERE schemaname = $1 AND tablename = $2 AND indexname = $3;";
     char *values[3];
     values[0] = new char[schemaName.length() + 1];
     values[1] = new char[tableName.length() + 1];
@@ -505,6 +505,22 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
                 table->SetDataFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 6 ) ) == L"Y" ? true : false );
                 table->SetDataFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 7 ) ) == L"Y" ? true : false );
                 table->SetDataFontCharacterSet( atoi( PQgetvalue( res, i, 8 ) ) );
+                table->SetDataFontPixelSize( atoi( PQgetvalue( res, i, 9 ) ) );
+                table->SetDataFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 10 ) ) );
+                table->SetHeadingFontSize( atoi( PQgetvalue( res, i, 11 ) ) );
+                table->SetDataFontWeight( atoi( PQgetvalue( res, i, 12 ) ) );
+                table->SetHeadingFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 13 ) ) == L"Y" ? true : false );
+                table->SetHeadingFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 14 ) ) == L"Y" ? true : false );
+                table->SetHeadingFontCharacterSet( atoi( PQgetvalue( res, i, 15 ) ) );
+                table->SetHeadingFontPixelSize( atoi( PQgetvalue( res, i, 16 ) ) );
+                table->SetHeadingFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 17 ) ) );
+                table->SetLabelFontSize( atoi( PQgetvalue( res, i, 18 ) ) );
+                table->SetLabelFontWeight( atoi( PQgetvalue( res, i, 19 ) ) );
+                table->SetLabelFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 20 ) ) == L"Y" ? true : false );
+                table->SetLabelFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 21 ) ) == L"Y" ? true : false );
+                table->SetLabelFontCharacterSet( atoi( PQgetvalue( res, i, 22 ) ) );
+                table->SetLabelFontPixelSize( atoi( PQgetvalue( res, i, 23 ) ) );
+                table->SetLabelFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 24 ) ) );
                 table->SetComment( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 25 ) ) );
             }
         }
@@ -571,7 +587,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abd_fptc\" = ";
-                istr << properties.m_dataFontSize;
+                istr << properties.m_dataFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -597,7 +613,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abh_fptc\" = ";
-                istr << properties.m_headingFontSize;
+                istr << properties.m_headingFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -623,7 +639,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abl_fptc\" = ";
-                istr << properties.m_labelFontSize;
+                istr << properties.m_labelFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -673,7 +689,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_dataFontSize;
+                istr << properties.m_dataFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -699,7 +715,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_headingFontSize;
+                istr << properties.m_headingFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -725,7 +741,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_labelFontSize;
+                istr << properties.m_labelFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -766,12 +782,12 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
 bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
-    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2 AND \"abt_tid\" = $3;";
+    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
     std::wstring tname = const_cast<DatabaseTable *>( table )->GetSchemaName() + L".";
     tname += const_cast<DatabaseTable *>( table )->GetTableName();
     std::wstring owner = const_cast<DatabaseTable *>( table )->GetTableOwner();
     int tableId = htonl( const_cast<DatabaseTable *>( table )->GetTableId() );
-    char *values[3];
+    char *values[2];
     values[0] = new char[tname.length() + 1];
     values[1] = new char[owner.length() + 1];
     memset( values[0], '\0', tname.length() + 1 );
@@ -781,9 +797,8 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     values[2] = (char *) &tableId;
     int len1 = tname.length();
     int len2 = owner.length();
-    int len3 = sizeof( tableId );
-    int length[3] = { len1, len2, len3 };
-    int formats[3] = { 1, 1, 1 };
+    int length[2] = { len1, len2 };
+    int formats[2] = { 1, 1 };
     PGresult *res = PQprepare( m_db, "table_properties_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {

@@ -28,6 +28,7 @@ struct TableProperties
 {
     std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName;
     int m_dataFontSize, m_dataFontEncoding, m_headingFontSize, m_headingFontEncoding, m_labelFontSize, m_labelFontEncoding;
+    int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;
     bool m_isDataFontUnderlined, m_isDataFontStriken, m_isHeadingFontUnderlined, m_isHeadingFontStriken, m_isLabelFontUnderlined, m_isLabelFontStrioken;
     bool m_isDataFontBold, m_isDataFontItalic, m_isHeadingFontBold, m_isHeadingFontItalic, m_isLabelFontBold, m_isLabelFontItalic;
 };
@@ -186,6 +187,12 @@ public:
     void SetDataFontCharacterSet(int charSet) { m_dataFontCharacterSet = charSet; }
     void SetHeadingFontCharacterSet(int charSet) { m_headingFontCharacterSet = charSet; }
     void SetLabelFontCharacterSet(int charSet) { m_labelFontCharacterSer = charSet; }
+    int GetDataFontPixelSize() { return m_dataFontPixelSize; }
+    int GetHeadingFontPixelSize() { return m_headingFontPixelSize; }
+    int GetLabelFontPixelSize() { return m_labelFontPixelSize; }
+    void SetDataFontPixelSize(int size) { m_dataFontPixelSize = size; }
+    void SetHeadingFontPixelSize(int size) { m_headingFontPixelSize = size; }
+    void SetLabelFontPixelSize(int size) { m_labelFontPixelSize = size; }
     const std::vector<Field *> &GetFields() { return table_fields; }
     std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
     const int GetTableId() { return m_objectId; }
@@ -200,6 +207,7 @@ private:
     int m_dataFontWeight, m_labelFontWeight, m_headingFontWeight, m_objectId;
     bool m_dataFontItalic, m_labelFontItalic, m_headingFontItalic;
     int m_dataFontSize, m_labelFontSize, m_headingFontSize, m_dataFontCharacterSet, m_labelFontCharacterSer, m_headingFontCharacterSet;
+    int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;
     bool m_dataFontUnderline, m_labelFontUnderline, m_headingFontUnderline;
     bool m_dataFontStrikethrough, m_labelFontStrikethrough, m_headingFontStrikethrough;
 };
