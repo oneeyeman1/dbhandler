@@ -188,7 +188,7 @@ public:
     void SetHeadingFontCharacterSet(int charSet) { m_headingFontCharacterSet = charSet; }
     void SetLabelFontCharacterSet(int charSet) { m_labelFontCharacterSer = charSet; }
     int GetDataFontPixelSize() { return m_dataFontPixelSize; }
-    int GetHeadingFontPixelSize() { return m_dataHeadingFontPixelSize; }
+    int GetHeadingFontPixelSize() { return m_headingFontPixelSize; }
     int GetLabelFontPixelSize() { return m_labelFontPixelSize; }
     void SetDataFontPixelSize(int size) { m_dataFontPixelSize = size; }
     void SetHeadingFontPixelSize(int size) { m_headingFontPixelSize = size; }

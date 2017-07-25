@@ -968,11 +968,6 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
                 GetErrorMessage( res, errorMessage );
                 errorMsg.push_back( errorMessage );
             }
-            else
-            {
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-            }
         }
         else
         {
