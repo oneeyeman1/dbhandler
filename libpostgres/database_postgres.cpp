@@ -400,7 +400,8 @@ int PostgresDatabase::CreateIndex(const std::wstring &command, const std::wstrin
     std::wstring query;
     int result = 0;
     res = PQexec( m_db, "BEGIN TRANSACTION" );
-    if( PQresultStatus( res ) != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+    ExecStatusType status = PQresultStatus( res );
+    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( err );
@@ -409,10 +410,13 @@ int PostgresDatabase::CreateIndex(const std::wstring &command, const std::wstrin
     }
     else
     {
-        bool exists = IsIndexExists( index_name, schemaName, tableName );
+        bool exists = IsIndexExists( index_name, schemaName, tableName, errorMsg );
         if( exists )
         {
-            errorMsg.push_back( L"Index " + index_name + " already exists." );
+            std::wstring temp = L"Index ";
+            temp += index_name;
+            temp += L" already exists.";
+            errorMsg.push_back( temp );
             result = 1;
         }
         else if( !errorMsg.empty() )

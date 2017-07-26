@@ -509,13 +509,16 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring 
     std::wstring errorMessage, query;
     int res = SQLITE_OK, result = 0;
     sqlite3_stmt *stmt = NULL;
-    res = sqlite3_exec( m_db, "BEGIN TRANSACTION" );
+    res = sqlite3_exec( m_db, "BEGIN TRANSACTION", NULL, NULL, 0 );
     if( res == SQLITE_OK )
     {
-        bool exists = IsIndexExists( index_name, schema_name, table_name, errorMsg );
+        bool exists = IsIndexExists( index_name, schemaName, tableName, errorMsg );
         if( exists )
         {
-            errorMsg.push_back( L"Index " + index_name + " already exists." );
+            std::wstring temp = L"Index ";
+            temp += index_name;
+            temp += L" already exists.";
+            errorMsg.push_back( temp );
             result = 1;
         }
         else if( !errorMsg.empty() )
@@ -543,7 +546,7 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring 
                 query = L"ROLLBACK";
             else
                 query = L"COMMIT";
-            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), NULL, NULL, 0 );
             if( res != SQLITE_OK )
             {
                 result = 1;

@@ -170,7 +170,7 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     if( res != wxID_CANCEL )
     {
         command = dlg.GetCommand();
-        indexName = dlg.GetIndexNameCtrl();
+        indexName = dlg.GetIndexNameCtrl()->GetValue();
     }
     return res;
 }

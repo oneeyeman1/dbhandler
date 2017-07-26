@@ -1843,7 +1843,7 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
         ret = SQLExecDirect( m_hstmt, L"BEGIN TRANSACTION", SQL_NTS );
         if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO )
         {
-            errorMsg.push_back( L"Index " + index_name + " already exists." );
+            GetErrorMessage( errorMsg, 1, m_hstmt );
             result = 1;
         }
         else
@@ -1852,7 +1852,10 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
             bool exists = IsIndexExists( index_name, schemaName, tableName, errorMsg );
             if( exists )
             {
-                errorMsg.push_back( L"Index " + index_name + " already exists." );
+                std::wstring temp = L"Index ";
+                temp += index_name;
+                temp += L" already exists.";
+                errorMsg.push_back( temp );
                 result = 1;
             }
             else if( !errorMsg.empty() )
