@@ -1840,26 +1840,52 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
+        ret = SQLExecDirect( m_hstmt, L"BEGIN TRANSACTION", SQL_NTS );
+        if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO )
+        {
+            errorMsg.push_back( L"Index " + index_name + " already exists." );
+            result = 1;
+        }
+        else
+        {
+            memset( query, '\0', command.length() + 2 );
+            bool exists = IsIndexExists( index_name, schemaName, tableName, errorMsg );
+            if( exists )
+            {
+                errorMsg.push_back( L"Index " + index_name + " already exists." );
+                result = 1;
+            }
+            else if( !errorMsg.empty() )
+                result = 1;
+            else
+            {
+                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+            }
+        }
+        if( result == 1 )
+            uc_to_str_cpy( query, L"ROLLBACK" );
+        else
+            uc_to_str_cpy( query, L"COMMIT" );
         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
             result = 1;
         }
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+        else
+            m_hstmt = 0;
     }
-    else
-    {
-        GetErrorMessage( errorMsg, 1, m_hstmt );
-        result = 1;
-    }
-    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, m_hstmt );
-        result = 1;
-    }
-    else
-        m_hstmt = 0;
     delete query;
     query = NULL;
     return result;

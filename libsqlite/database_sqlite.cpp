@@ -518,6 +518,8 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring 
             errorMsg.push_back( L"Index " + index_name + " already exists." );
             result = 1;
         }
+        else if( !errorMsg.empty() )
+            result = 1;
         else
         {
             if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), -1, &stmt, 0 ) ) == SQLITE_OK )
