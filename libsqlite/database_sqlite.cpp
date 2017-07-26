@@ -504,30 +504,51 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
-    std::wstring errorMessage;
+    std::wstring errorMessage, query;
     int res = SQLITE_OK, result = 0;
     sqlite3_stmt *stmt = NULL;
-    if( result == SQLITE_OK )
+    res = sqlite3_exec( m_db, "BEGIN TRANSACTION" );
+    if( res == SQLITE_OK )
     {
-        if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), -1, &stmt, 0 ) ) == SQLITE_OK )
+        bool exists = IsIndexExists( index_name, schema_name, table_name, errorMsg );
+        if( exists )
         {
-            res = sqlite3_step( stmt );
-            if( res != SQLITE_DONE )
+            errorMsg.push_back( L"Index " + index_name + " already exists." );
+            result = 1;
+        }
+        else
+        {
+            if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), -1, &stmt, 0 ) ) == SQLITE_OK )
+            {
+                res = sqlite3_step( stmt );
+                if( res != SQLITE_DONE )
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                }
+            }
+            else
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+            sqlite3_finalize( stmt );
+            if( result == 1 )
+                query = L"ROLLBACK";
+            else
+                query = L"COMMIT";
+            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+            if( res != SQLITE_OK )
             {
                 result = 1;
                 GetErrorMessage( res, errorMessage );
                 errorMsg.push_back( errorMessage );
             }
         }
-        else
-        {
-            result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-        }
-        sqlite3_finalize( stmt );
     }
     else
     {

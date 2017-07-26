@@ -727,7 +727,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return 0;
 }
 
-int MySQLDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     int res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
