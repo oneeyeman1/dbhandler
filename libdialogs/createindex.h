@@ -21,6 +21,7 @@ public:
     CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, const std::wstring &schemaName, Database *db);
     ~CreateIndex();
     std::wstring &GetCommand();
+    const wxTextCtrl *GetIndexNameCtrl();
 
 private:
     std::vector<int> m_selectedItems;

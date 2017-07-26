@@ -504,7 +504,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, std::vector<std::wstring> &errorMsg)
 {
     std::wstring errorMessage;
     int res = SQLITE_OK, result = 0;

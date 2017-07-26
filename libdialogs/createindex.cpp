@@ -774,3 +774,8 @@ void CreateIndex::OnFillFactor(wxCommandEvent &WXUNUSED(event))
     else
         m_padIndex->SetValue( true );
 }
+
+const wxTextCtrl *CreateIndex::GetIndexNameCtrl()
+{
+    return m_indexName;
+}

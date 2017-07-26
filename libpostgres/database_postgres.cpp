@@ -394,7 +394,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return 0;
 }
 
-int PostgresDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, std::vector<std::wstring> &errorMsg)
 {
     PGresult *res;
     int result = 0;

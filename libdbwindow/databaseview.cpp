@@ -49,7 +49,7 @@
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool);
-typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &);
+typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, Database *, wxString &, bool &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
@@ -406,7 +406,7 @@ bool DrawingView::OnClose(bool deleteWindow)
 void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
 {
     int result;
-    wxString command;
+    wxString command, indexName;
     std::vector<std::wstring> errors;
     DatabaseTable *table = NULL;
     ShapeList shapes;
@@ -427,7 +427,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         CREATEINDEX func = (CREATEINDEX) lib.GetSymbol( "CreateIndexForDatabase" );
-        result = func( m_frame, table, GetDocument()->GetDatabase(), command );
+        result = func( m_frame, table, GetDocument()->GetDatabase(), command, indexName );
         if( result != wxID_OK && result != wxID_CANCEL )
         {
             m_text->AppendText( command );
@@ -437,7 +437,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         }
         else if( result == wxID_OK )
         {
-            dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->CreateIndex( command.ToStdWstring(), errors );
+            dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->CreateIndex( command.ToStdWstring(), indexName.ToStdWstring(), errors );
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
                 wxMessageBox( (*it) );
         }

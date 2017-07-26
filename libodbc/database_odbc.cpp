@@ -1829,7 +1829,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int ODBCDatabase::CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, std::vector<std::wstring> &errorMsg)
 {
     SQLRETURN ret;
     int result = 0;
