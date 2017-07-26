@@ -2368,7 +2368,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         table->SetHeadingFontItalic( headingFontItalic[0] == 'Y' );
         table->SetHeadingFontUnderline( headingFontUnderline[0] == 'Y' );
         table->SetHeadingFontCharacterSet( headingFontCharacterSet );
-        table->SetHeadingPixelSize( headingFontPixelSize );
+        table->SetHeadingFontPixelSize( headingFontPixelSize );
         str_to_uc_cpy( name, headingFontName );
         table->SetHeadingFontName( name );
         name = L"";

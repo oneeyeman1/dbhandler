@@ -187,7 +187,7 @@ bool PropertiesDialog::ApplyProperties()
             {
                 table->SetComment( newComment.ToStdWstring() );
             }
-            m_tableProperties.m_comment = newComment;
+            m_tableProperties.m_comment = newComment.Trim();
             m_tableProperties.m_dataFontName = dataFont->GetFaceName();
             m_tableProperties.m_headingFontName = headingFont->GetFaceName();
             m_tableProperties.m_labelFontName = labelFont->GetFaceName();
@@ -209,9 +209,9 @@ bool PropertiesDialog::ApplyProperties()
             m_tableProperties.m_dataFontEncoding = dataFont->GetEncoding();
             m_tableProperties.m_headingFontEncoding = headingFont->GetEncoding();
             m_tableProperties.m_labelFontEncoding = labelFont->GetEncoding();
-            m_tableProperties.m_dataFontPixelSize = dataFont->GetPixelSize();
-            m_tableProperties.m_headingFontPixelSize = headingFont->GetPixelSize();
-            m_tableProperties.m_labelFontPixelSize = labelFont->GetPixelSize();
+            m_tableProperties.m_dataFontPixelSize = dataFont->GetPixelSize().GetWidth();
+            m_tableProperties.m_headingFontPixelSize = headingFont->GetPixelSize().GetWidth();
+            m_tableProperties.m_labelFontPixelSize = labelFont->GetPixelSize().GetWidth();
         }
     }
     if( m_type == 1 )
