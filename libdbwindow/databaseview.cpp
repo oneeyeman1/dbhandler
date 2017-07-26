@@ -437,7 +437,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         }
         else if( result == wxID_OK )
         {
-            dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->CreateIndex( command.ToStdWstring(), indexName.ToStdWstring(), errors );
+            dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->CreateIndex( command.ToStdWstring(), indexName.ToStdWstring(), table->GetSchemaName().ToStdWstring(), table->GetTableName().ToStdWstring(), errors );
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
                 wxMessageBox( (*it) );
         }
