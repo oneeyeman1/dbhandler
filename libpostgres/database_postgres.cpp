@@ -397,15 +397,49 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 int PostgresDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     PGresult *res;
+    std::wstring query;
     int result = 0;
-    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
-    ExecStatusType status = PQresultStatus( res ); 
-    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+    res = PQexec( m_db, "BEGIN TRANSACTION" );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( err );
         PQclear( res );
         result = 1;
+    }
+    else
+    {
+        bool exists = IsIndexExists( index_name, schemaName, tableName );
+        if( exists )
+        {
+            errorMsg.push_back( L"Index " + index_name + " already exists." );
+            result = 1;
+        }
+        else if( !errorMsg.empty() )
+            result = 1;
+        else
+        {
+            res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
+            if( PQresultStatus( res ) != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( err );
+                PQclear( res );
+                result = 1;
+            }
+        }
+        if( result == 1 )
+            query = L"ROLLBACK";
+        else
+            query = L"COMMIT";
+        res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+        if( PQresultStatus( res ) != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( err );
+            PQclear( res );
+            result = 1;
+        }
     }
     return result;
 }
