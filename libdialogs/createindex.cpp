@@ -409,14 +409,6 @@ bool CreateIndex::Verify()
         wxMessageBox( _( "At least one index column is required" ), _( "Database" ) );
         success = false;
     }
-    if( success && m_db->IsIndexExists( m_indexName->GetValue().ToStdWstring(), m_dbTable->GetTableName(), m_schema, errors ) )
-    {
-        for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
-            wxMessageBox( (*it) );
-        if( errors.empty() )
-            wxMessageBox( _( "At least one index column is required" ), _( "Database" ) );
-        success = false;
-    }
     return success;
 }
 
