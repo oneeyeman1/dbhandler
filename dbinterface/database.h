@@ -199,6 +199,8 @@ public:
     void SetTableId(int id) { m_objectId = id; }
     const std::wstring &GetTableOwner() { return owner; }
     void SetTableOwner(const std::wstring &owner) { this->owner = owner; }
+    void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
+    const std::vector<std::wstring> &GetIndexNames() { return m_indexes; }
 private:
     std::wstring table_name, schema_name, comment, owner;
     std::vector<Field *> table_fields;
@@ -210,6 +212,7 @@ private:
     int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;
     bool m_dataFontUnderline, m_labelFontUnderline, m_headingFontUnderline;
     bool m_dataFontStrikethrough, m_labelFontStrikethrough, m_headingFontStrikethrough;
+    std::vector<std::wstring> m_indexes;
 };
 
 #ifdef WIN32
