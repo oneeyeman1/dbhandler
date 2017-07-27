@@ -29,6 +29,7 @@ protected:
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
+    int CreateIndexesOnPostgreConnection(std::vector<std::wstring> &errorMsg);
 private:
     PGconn *m_db;
 };

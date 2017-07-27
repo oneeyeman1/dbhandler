@@ -88,47 +88,70 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
     }
     else
     {
-        res = PQexec( m_db, "START TRANSACTION" );
-        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        result = GetServerVersion( errorMsg );
+        if( result )
         {
-            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Starting transaction failed during connection: " + err );
-            result = 1;
-            PQclear( res );
+            PQfinish( m_db );
+            errorMsg.push_back( L"Problem during connection. Please fix and restart the application" );
         }
-        else
+		else
         {
-            PQclear( res );
-            res = PQexec( m_db, query1.c_str() );
-            if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+            res = PQexec( m_db, "START TRANSACTION" );
+            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+            {
+                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+                result = 1;
+                PQclear( res );
+            }
+            else
             {
                 PQclear( res );
-                res = PQexec( m_db, query2.c_str() );
+                res = PQexec( m_db, query1.c_str() );
                 if( PQresultStatus( res ) == PGRES_COMMAND_OK )
                 {
                     PQclear( res );
-                    res = PQexec( m_db, query3.c_str() );
+                    res = PQexec( m_db, query2.c_str() );
                     if( PQresultStatus( res ) == PGRES_COMMAND_OK )
-					{
+                    {
                         PQclear( res );
-                        res = PQexec( m_db, query4.c_str() );
+                        res = PQexec( m_db, query3.c_str() );
                         if( PQresultStatus( res ) == PGRES_COMMAND_OK )
-                        {
+					    {
                             PQclear( res );
-                            res = PQexec( m_db, query5.c_str() );
+                            res = PQexec( m_db, query4.c_str() );
                             if( PQresultStatus( res ) == PGRES_COMMAND_OK )
                             {
                                 PQclear( res );
-                                res = PQexec( m_db, query6.c_str() );
+                                res = PQexec( m_db, query5.c_str() );
                                 if( PQresultStatus( res ) == PGRES_COMMAND_OK )
                                 {
                                     PQclear( res );
-                                    res = PQexec( m_db, query7.c_str() );
-                                    if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                                    if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 5 )
                                     {
-                                        res = PQexec( m_db, "COMMIT" );
+                                        res = PQexec( m_db, query6.c_str() );
                                         if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                                        {
                                             PQclear( res );
+                                            res = PQexec( m_db, query7.c_str() );
+                                            if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                                            {
+                                                res = PQexec( m_db, "COMMIT" );
+                                                if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                                                    PQclear( res );
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if( CreateIndexesOnPostgreConnection( errorMsg ) )
+                                        {
+                                            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                                            errorMsg.push_back( err );
+                                            result = 1;
+                                        }
+                                        else
+                                            res = PQexec( m_db, "COMMIT" );
                                     }
                                 }
                             }
@@ -136,30 +159,30 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
                     }
                 }
             }
+            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+            {
+                PQclear( res );
+                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( L"Error during database connection: " + err );
+                res = PQexec( m_db, "ROLLBACK" );
+                result = 1;
+            }
+            else
+            {
+                result = GetTableListFromDb( errorMsg );
+            }
+            res = PQexec( m_db, "SELECT current_user" );
+            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+            {
+                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( err );
+                errorMsg.push_back( L"Problem during connection. Please fix the problem and restart the application" );
+                result = 1;
+                PQclear( res );
+            }
+            else
+                pimpl->m_connectedUser = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, 0, 0 ) );
         }
-        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
-        {
-            PQclear( res );
-            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Error during database connection: " + err );
-            res = PQexec( m_db, "ROLLBACK" );
-            result = 1;
-        }
-        else
-        {
-            result = GetTableListFromDb( errorMsg );
-        }
-        res = PQexec( m_db, "SELECT current_user" );
-        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
-        {
-            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( err );
-            errorMsg.push_back( L"Problem during connection. Please fix the problem and restart the application" );
-            result = 1;
-            PQclear( res );
-        }
-        else
-            pimpl->m_connectedUser = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, 0, 0 ) );
     }
     return result;
 }
@@ -1035,5 +1058,20 @@ int PostgresDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         errorMsg.push_back( L"Error executing query: " + err );
         result = 1;
     }
+    else
+    {
+        pimpl->m_versionMajor = versionInt / 10000;
+        pimpl->m_versionMinor = ( versionInt - pimpl->m_versionMajor ) / 100;
+    }
+    return result;
+}
+
+int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query1 = L"SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcattbl_tnam_ownr\' AND n.nspname = \'public\';";
+    std::wstring query3 = L"CREATE INDEX  \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
+    std::wstring query2 = L"SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatcol_tnam_ownr_cnam\' AND n.nspname = \'public\'";
+    std::wstring query4 = L"CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
     return result;
 }
