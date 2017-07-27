@@ -60,10 +60,10 @@ public:
         label = columnName;
         heading = columnName;
     }
-	const std::wstring &GetLabel() { return label; }
-	const std::wstring &GetHeading() { return heading; }
-	void SetLabel(const std::wstring &lbl) { label = lbl; }
-	void SetHeading(const std::wstring &hding) { heading = hding; }
+    const std::wstring &GetLabel() { return label; }
+    const std::wstring &GetHeading() { return heading; }
+    void SetLabel(const std::wstring &lbl) { label = lbl; }
+    void SetHeading(const std::wstring &hding) { heading = hding; }
     const std::wstring &GetFieldName() { return column_name; }
     const std::wstring &GetFieldType() { return column_type; }
     const std::wstring &GetDefaultValue() { return column_defaultValue; }
@@ -251,8 +251,8 @@ struct Database::Impl
     std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
     std::wstring m_serverVersion;
     int m_versionMajor, m_versionMinor, m_versionRevision;
-	const std::wstring &GetConnectedUser() { return m_connectedUser; };
-	void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
+    const std::wstring &GetConnectedUser() { return m_connectedUser; };
+    void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
 };
 
 inline Database::~Database()
