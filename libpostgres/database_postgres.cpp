@@ -1069,9 +1069,57 @@ int PostgresDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
 int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    PGresult *res;
     std::wstring query1 = L"SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcattbl_tnam_ownr\' AND n.nspname = \'public\';";
     std::wstring query3 = L"CREATE INDEX  \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
     std::wstring query2 = L"SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatcol_tnam_ownr_cnam\' AND n.nspname = \'public\'";
     std::wstring query4 = L"CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
+    res = PQexec( m_db, m_pimpl->m_myconv.from_bytes( query1.c_str() ).c_str() );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    {
+        result = 1;
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( err );
+    }
+    PQclear( res );
+    if( !result )
+    {
+        if( PQntuples( res ) == 0 )
+        {
+            res = PQexec( m_db, m_pimpl->m_myconv.from_bytes( query3.c_str() ).c_str() );
+            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+            {
+                result = 1;
+                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( err );
+            }
+            PQclear( res );
+            if( !result )
+            {
+                res = PQexec( m_db, m_pimpl->m_myconv.from_bytes( query2.c_str() ).c_str() );
+                if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+                {
+                    result = 1;
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                    errorMsg.push_back( err );
+                }
+                PQclear( res );
+                if( !result )
+                {
+                    if( PQntuples( res ) == 0 )
+                    {
+                        res = PQexec( m_db, m_pimpl->m_myconv.from_bytes( query4.c_str() ).c_str() );
+                        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+                        {
+                            result = 1;
+                            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                            errorMsg.push_back( err );
+                        }
+                        PQclear( res );
+                    }
+                }
+            }
+        }
+    }
     return result;
 }
