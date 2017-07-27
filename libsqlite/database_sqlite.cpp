@@ -123,17 +123,21 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
                 {
                     res = sqlite3_exec( m_db, query3.c_str(), NULL, NULL, &err );
                     if( res == SQLITE_OK )
-					{
+                    {
                         res = sqlite3_exec( m_db, query4.c_str(), NULL, NULL, &err );
                         if( res == SQLITE_OK )
                         {
                             res = sqlite3_exec( m_db, query5.c_str(), NULL, NULL, &err );
                             if( res == SQLITE_OK )
+                            {
                                 res = sqlite3_exec( m_db, query6.c_str(), NULL, NULL, &err );
                                 if( res == SQLITE_OK )
+                                {
                                     res = sqlite3_exec( m_db, query7.c_str(), NULL, NULL, &err );
                                     if( res == SQLITE_OK )
                                         sqlite3_exec( m_db, "COMMIT", NULL, NULL, &err );
+                                }
+                            }
                         }
                     }
                 }
@@ -364,7 +368,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
                                     delete_constraint = CASCADE_DELETE;
                                 foreign_keys[fkId].push_back( new FKField( fkReference, sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkField ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
-	                            fk_names.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
+                                fk_names.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
                             }
                             else if( res3 == SQLITE_DONE )
                                 break;
@@ -713,7 +717,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         GetErrorMessage( res, errorMessage );
                         errorMsg.push_back( errorMessage );
                     }
- 				}
+                }
             }
             else
             {
