@@ -140,76 +140,82 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
             errorMsg.push_back( L"Connection to database failed: " + err );
             result = 1;
         }
-        m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( m_pimpl->m_host.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_user.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_password.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_dbName.c_str() ).c_str(), m_port, m_pimpl->m_socket == L"" ? NULL : m_pimpl->m_myconv.to_bytes( m_pimpl->m_socket.c_str() ).c_str(), m_flags );
-        if( !m_db )
-        {
-            err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-            errorMsg.push_back( L"Connection to database failed: " + err );
-            result = 1;
-        }
         else
         {
-            res = mysql_query( m_db, "START TRANSACTION" );
-            if( res )
+            m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( m_pimpl->m_host.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_user.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_password.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_dbName.c_str() ).c_str(), m_port, m_pimpl->m_socket == L"" ? NULL : m_pimpl->m_myconv.to_bytes( m_pimpl->m_socket.c_str() ).c_str(), m_flags );
+            if( !m_db )
             {
                 err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+                errorMsg.push_back( L"Connection to database failed: " + err );
                 result = 1;
             }
             else
             {
-                res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
-                if( !res )
+                res = mysql_query( m_db, "START TRANSACTION" );
+                if( res )
                 {
-                    res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str() );
+                    err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+                    result = 1;
+                }
+                else
+                {
+                    res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
                     if( !res )
                     {
-                        res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str() );
+                        res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str() );
                         if( !res )
                         {
-                            res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str()  );
+                            res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str() );
                             if( !res )
                             {
-                                res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str() );
+                                res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str()  );
                                 if( !res )
                                 {
-                                    res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query6.c_str() ).c_str() );
+                                    res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str() );
                                     if( !res )
                                     {
-                                        res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query7.c_str() ).c_str() );
+                                        res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query6.c_str() ).c_str() );
                                         if( !res )
-                                            res = mysql_commit( m_db );
+                                        {
+                                            res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query7.c_str() ).c_str() );
+                                            if( !res )
+                                                res = mysql_commit( m_db );
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+                if( res )
+                {
+                    err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    errorMsg.push_back( L"Error during database connection: " + err );
+                    res = mysql_rollback( m_db );
+                    result = 1;
+                }
+                else
+                {
+                    result = GetTableListFromDb( errorMsg );
+                }
             }
-            if( res )
+            res = mysql_query( m_db, "SELECT USER()" );
+            MYSQL_RES *results = mysql_store_result( m_db );
+            if( !results )
             {
-                err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                errorMsg.push_back( L"Error during database connection: " + err );
-                res = mysql_rollback( m_db );
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                errorMsg.push_back( err );
                 result = 1;
             }
             else
             {
-                result = GetTableListFromDb( errorMsg );
+                MYSQL_ROW row;
+                while( ( row = mysql_fetch_row( results ) ) != NULL )
+                {
+                    pimpl->m_connectedUser = m_pimpl->m_myconv.from_bytes( row[0] );
+                }
             }
-        }
-        res = mysql_query( m_db, "SELECT USER()" );
-        MYSQL_RES *results = mysql_store_result( m_db );
-        if( !results )
-        {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-            errorMsg.push_back( err );
-            result = 1;
-        }
-        MYSQL_ROW row;
-        while( ( row = mysql_fetch_row( results ) ) != NULL )
-        {
-            pimpl->m_connectedUser = m_pimpl->m_myconv.from_bytes( row[0] );
         }
     }
     return result;

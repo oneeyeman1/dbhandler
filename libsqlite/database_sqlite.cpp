@@ -123,17 +123,21 @@ int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> 
                 {
                     res = sqlite3_exec( m_db, query3.c_str(), NULL, NULL, &err );
                     if( res == SQLITE_OK )
-					{
+                    {
                         res = sqlite3_exec( m_db, query4.c_str(), NULL, NULL, &err );
                         if( res == SQLITE_OK )
                         {
                             res = sqlite3_exec( m_db, query5.c_str(), NULL, NULL, &err );
                             if( res == SQLITE_OK )
+                            {
                                 res = sqlite3_exec( m_db, query6.c_str(), NULL, NULL, &err );
                                 if( res == SQLITE_OK )
+                                {
                                     res = sqlite3_exec( m_db, query7.c_str(), NULL, NULL, &err );
                                     if( res == SQLITE_OK )
                                         sqlite3_exec( m_db, "COMMIT", NULL, NULL, &err );
+                                }
+                            }
                         }
                     }
                 }
@@ -304,17 +308,18 @@ void SQLiteDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
 int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     std::vector<Field *> fields;
-    std::vector<std::wstring> fk_names;
+    std::vector<std::wstring> fk_names, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
-    sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL;
+    sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL, *stmt4 = NULL;
     std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    int result = 0, res = SQLITE_OK, res1 = SQLITE_OK, res2 = SQLITE_OK, res3 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc, fkId;
+    int result = 0, res = SQLITE_OK, res1 = SQLITE_OK, res2 = SQLITE_OK, res3 = SQLITE_OK, res4 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc, fkId;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = ?";
     std::string query2 = "PRAGMA table_info(\"%w\");";
     std::string query3 = "PRAGMA foreign_key_list(\"%w\")";
+    std::string query4 = "PRAGMA index_list( \"%w\" );";
     if( ( res = sqlite3_prepare_v2( m_db, query1.c_str(), (int) query1.length(), &stmt, 0 ) ) == SQLITE_OK )
     {
         res = sqlite3_bind_text( stmt, 1, "table", -1, SQLITE_STATIC );
@@ -363,7 +368,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
                                     delete_constraint = CASCADE_DELETE;
                                 foreign_keys[fkId].push_back( new FKField( fkReference, sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkField ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
-	                            fk_names.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
+                                fk_names.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
                             }
                             else if( res3 == SQLITE_DONE )
                                 break;
@@ -458,22 +463,55 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( res1 == SQLITE_DONE && res3 == SQLITE_DONE )
                     {
-                        std::wstring comment = L"";
-                        std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName );
-                        DatabaseTable *table = new DatabaseTable( name, L"", fields, foreign_keys );
-                        table->SetTableId( 0 );
-                        if( GetTableProperties( table, errorMsg ) )
+                        char *u = sqlite3_mprintf( query4.c_str(), tableName );
+                        if( ( res4 = sqlite3_prepare_v2( m_db, u, -1, &stmt4, 0 ) ) == SQLITE_OK )
                         {
+                            for( ; ; )
+                            {
+                                res4 = sqlite3_step( stmt4 );
+                                if( res4 == SQLITE_ROW )
+                                    indexes.push_back( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt4, 2 ) ) ) );
+                                else if( res4 == SQLITE_DONE )
+                                    break;
+                                else
+                                {
+                                    result = 1;
+                                    GetErrorMessage( res, errorMessage );
+                                    errorMsg.push_back( errorMessage );
+                                    break;
+                                }
+                            }
+                            if( res1 != SQLITE_DONE )
+                                break;
+                        }
+                        else
+                        {
+                            result = 1;
+                            GetErrorMessage( res, errorMessage );
+                            errorMsg.push_back( errorMessage );
+                        }
+                        sqlite3_finalize( stmt4 );
+                        sqlite3_free( u );
+                        if( res4 == SQLITE_DONE )
+                        {
+                            std::wstring comment = L"";
+                            std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName );
+                            DatabaseTable *table = new DatabaseTable( name, L"", fields, foreign_keys );
+                            table->SetTableId( 0 );
+                            if( GetTableProperties( table, errorMsg ) )
+                            {
+                                fields.erase( fields.begin(), fields.end() );
+                                foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                                fk_names.clear();
+                                sqlite3_finalize( stmt );
+                                return 1;
+                            }
+                            table->SetIndexNames( indexes );
+                            pimpl->m_tables[sqlite_pimpl->m_catalog].push_back( table );
                             fields.erase( fields.begin(), fields.end() );
                             foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                             fk_names.clear();
-                            sqlite3_finalize( stmt );
-                            return 1;
                         }
-                        pimpl->m_tables[sqlite_pimpl->m_catalog].push_back( table );
-                        fields.erase( fields.begin(), fields.end() );
-                        foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                        fk_names.clear();
                     }
                 }
                 else if( res == SQLITE_DONE )
@@ -679,7 +717,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         GetErrorMessage( res, errorMessage );
                         errorMsg.push_back( errorMessage );
                     }
- 				}
+                }
             }
             else
             {

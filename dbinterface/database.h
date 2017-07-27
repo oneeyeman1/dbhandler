@@ -60,10 +60,10 @@ public:
         label = columnName;
         heading = columnName;
     }
-	const std::wstring &GetLabel() { return label; }
-	const std::wstring &GetHeading() { return heading; }
-	void SetLabel(const std::wstring &lbl) { label = lbl; }
-	void SetHeading(const std::wstring &hding) { heading = hding; }
+    const std::wstring &GetLabel() { return label; }
+    const std::wstring &GetHeading() { return heading; }
+    void SetLabel(const std::wstring &lbl) { label = lbl; }
+    void SetHeading(const std::wstring &hding) { heading = hding; }
     const std::wstring &GetFieldName() { return column_name; }
     const std::wstring &GetFieldType() { return column_type; }
     const std::wstring &GetDefaultValue() { return column_defaultValue; }
@@ -199,6 +199,8 @@ public:
     void SetTableId(int id) { m_objectId = id; }
     const std::wstring &GetTableOwner() { return owner; }
     void SetTableOwner(const std::wstring &owner) { this->owner = owner; }
+    void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
+    const std::vector<std::wstring> &GetIndexNames() { return m_indexes; }
 private:
     std::wstring table_name, schema_name, comment, owner;
     std::vector<Field *> table_fields;
@@ -210,6 +212,7 @@ private:
     int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;
     bool m_dataFontUnderline, m_labelFontUnderline, m_headingFontUnderline;
     bool m_dataFontStrikethrough, m_labelFontStrikethrough, m_headingFontStrikethrough;
+    std::vector<std::wstring> m_indexes;
 };
 
 #ifdef WIN32
@@ -248,8 +251,8 @@ struct Database::Impl
     std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
     std::wstring m_serverVersion;
     int m_versionMajor, m_versionMinor, m_versionRevision;
-	const std::wstring &GetConnectedUser() { return m_connectedUser; };
-	void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
+    const std::wstring &GetConnectedUser() { return m_connectedUser; };
+    void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
 };
 
 inline Database::~Database()
