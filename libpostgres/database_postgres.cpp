@@ -256,8 +256,7 @@ ORDER BY CAST(a.attnum AS cardinal_number) AS ordinal_position ASC;
 Table owner is pg_class.relowner*/
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
-    PGresult *res, *res1, *res2, *res3;
+    PGresult *res, *res1, *res2, *res3, *res4;
     std::vector<Field *> fields;
     std::vector<std::wstring> fk_names, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
@@ -1128,7 +1127,7 @@ int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring>
     std::wstring query3 = L"CREATE INDEX  \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
     std::wstring query2 = L"SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatcol_tnam_ownr_cnam\' AND n.nspname = \'public\'";
     std::wstring query4 = L"CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
-    res = PQexec( m_db, m_pimpl->m_myconv.from_bytes( query1.c_str() ).c_str() );
+    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         result = 1;
@@ -1140,7 +1139,7 @@ int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring>
     {
         if( PQntuples( res ) == 0 )
         {
-            res = PQexec( m_db, m_pimpl->m_myconv.from_bytes( query3.c_str() ).c_str() );
+            res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str() );
             if( PQresultStatus( res ) != PGRES_COMMAND_OK )
             {
                 result = 1;
@@ -1150,7 +1149,7 @@ int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring>
             }
             if( !result )
             {
-                res = PQexec( m_db, m_pimpl->m_myconv.from_bytes( query2.c_str() ).c_str() );
+                res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str() );
                 if( PQresultStatus( res ) != PGRES_COMMAND_OK )
                 {
                     result = 1;
@@ -1162,7 +1161,7 @@ int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring>
                 {
                     if( PQntuples( res ) == 0 )
                     {
-                        res = PQexec( m_db, m_pimpl->m_myconv.from_bytes( query4.c_str() ).c_str() );
+                        res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str() );
                         if( PQresultStatus( res ) != PGRES_COMMAND_OK )
                         {
                             result = 1;
