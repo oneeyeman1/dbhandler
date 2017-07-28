@@ -1833,14 +1833,15 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
 {
     SQLRETURN ret;
     int result = 0;
+    std::wstring temp = L"BEGIN TRANSACTION";
     SQLWCHAR *query = NULL;
-    query = new SQLWCHAR[command.length() + 2];
-    memset( query, '\0', command.length() + 2 );
-    uc_to_str_cpy( query, command );
+    query = new SQLWCHAR[temp.length() + 2];
+    memset( query, '\0', temp.length() + 2 );
+    uc_to_str_cpy( query, temp );
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        ret = SQLExecDirect( m_hstmt, L"BEGIN TRANSACTION", SQL_NTS );
+        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
         if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -1848,7 +1849,11 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
         }
         else
         {
+            delete query;
+            query = NULL;
+            query = new SQLWCHAR[command.length() + 2];
             memset( query, '\0', command.length() + 2 );
+            uc_to_str_cpy( query, command );
             bool exists = IsIndexExists( index_name, schemaName, tableName, errorMsg );
             if( exists )
             {
