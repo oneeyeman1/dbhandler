@@ -254,6 +254,9 @@ AND t.typtype = 'd' AND t.typbasetype = bt.old
 ORDER BY CAST(a.attnum AS cardinal_number) AS ordinal_position ASC;
 
 Table owner is pg_class.relowner*/
+/*
+SELECT con.conname, nc.nspname,,,,,,, con.confupdtype, con.confdeltype FROM pg_constraint con, pg_class cl, pg_namespace nc WHERE nc.oid = con.connamespace AND con.conrelid = cl.oid AND cl.relname = $1 AND c.contype = 'f';
+*/
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     PGresult *res, *res1, *res2, *res3, *res4;
