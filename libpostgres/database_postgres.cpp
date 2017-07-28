@@ -256,8 +256,7 @@ ORDER BY CAST(a.attnum AS cardinal_number) AS ordinal_position ASC;
 Table owner is pg_class.relowner*/
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
-    PGresult *res, *res1, *res2, *res3;
+    PGresult *res, *res1, *res2, *res3, *res4;
     std::vector<Field *> fields;
     std::vector<std::wstring> fk_names, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
@@ -268,7 +267,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::wstring query1 = L"SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' OR table_type = 'VIEW' OR table_type = 'LOCAL TEMPORARY';";
     std::wstring query2 = L"SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = 'leagues') THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = 'public' AND col.table_name = 'leagues' ORDER BY ordinal_position;";
-    std::wstring query3 = L"SELECT information_schema.table_constraints.constraint_name, information_schema.table_constraints.constraint_schema, information_schema.table_constraints.table_name, information_schema.key_column_usage.column_name, information_schema.constraint_column_usage.table_name, information_schema.constraint_column_usage.column_name, information_schema.referential_constraints.update_rule, information_schema.referential_constraints.delete_rule FROM information_schema.table_constraints, information_schema.key_column_usage, information_schema.constraint_column_usage, information_schema.referential_constraints WHERE information_schema.table_constraints.constraint_name = information_schema.key_column_usage.constraint_name AND information_schema.constraint_column_usage.constraint_name = information_schema.table_constraints.constraint_name AND information_schema.referential_constraints.constraint_name = information_schema.table_constraints.constraint_name AND constraint_type = 'FOREIGN KEY' AND information_schema.table_constraints.constraint_schema = $1 AND information_schema.table_constraints.table_name = $2;";
+    std::wstring query3 = L"SELECT tc.constraint_name, tc.constraint_schema, tc.table_name, kcu.column_name, ccu.table_name, ccu.column_name, rc.update_rule, rc.delete_rule FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu, information_schema.constraint_column_usage ccu, information_schema.referential_constraints rc WHERE tc.constraint_name = kcu.constraint_name AND ccu.constraint_name = tc.constraint_name AND rc.constraint_name = tc.constraint_name AND constraint_type = 'FOREIGN KEY' AND tc.constraint_schema = $1 AND tc.table_name = $2;";
     std::wstring query4 = L"SELECT indexname FROM pg_indexes WHERE schemaname = $1 AND tablename = $2;";
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     ExecStatusType status = PQresultStatus( res ); 
@@ -580,7 +579,7 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
 int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring query = L"SELECT * FROM abcattbl WHERE abt_snam = $1 AND abt_tnam = $2;";
+    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_snam = $1 AND abt_tnam = $2;";
     std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName();
     char *values[2];
     values[0] = new char[schemaName.length() + 1];
@@ -1128,7 +1127,7 @@ int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring>
     std::wstring query3 = L"CREATE INDEX  \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
     std::wstring query2 = L"SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatcol_tnam_ownr_cnam\' AND n.nspname = \'public\'";
     std::wstring query4 = L"CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
-    res = PQexec( m_db, m_pimpl->m_myconv.from_bytes( query1.c_str() ).c_str() );
+    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         result = 1;
@@ -1140,7 +1139,7 @@ int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring>
     {
         if( PQntuples( res ) == 0 )
         {
-            res = PQexec( m_db, m_pimpl->m_myconv.from_bytes( query3.c_str() ).c_str() );
+            res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str() );
             if( PQresultStatus( res ) != PGRES_COMMAND_OK )
             {
                 result = 1;
@@ -1150,7 +1149,7 @@ int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring>
             }
             if( !result )
             {
-                res = PQexec( m_db, m_pimpl->m_myconv.from_bytes( query2.c_str() ).c_str() );
+                res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str() );
                 if( PQresultStatus( res ) != PGRES_COMMAND_OK )
                 {
                     result = 1;
@@ -1162,7 +1161,7 @@ int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring>
                 {
                     if( PQntuples( res ) == 0 )
                     {
-                        res = PQexec( m_db, m_pimpl->m_myconv.from_bytes( query4.c_str() ).c_str() );
+                        res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str() );
                         if( PQresultStatus( res ) != PGRES_COMMAND_OK )
                         {
                             result = 1;

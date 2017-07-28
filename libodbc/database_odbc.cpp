@@ -1833,14 +1833,15 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
 {
     SQLRETURN ret;
     int result = 0;
+    std::wstring temp = L"BEGIN TRANSACTION";
     SQLWCHAR *query = NULL;
-    query = new SQLWCHAR[command.length() + 2];
-    memset( query, '\0', command.length() + 2 );
-    uc_to_str_cpy( query, command );
+    query = new SQLWCHAR[temp.length() + 2];
+    memset( query, '\0', temp.length() + 2 );
+    uc_to_str_cpy( query, temp );
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        ret = SQLExecDirect( m_hstmt, L"BEGIN TRANSACTION", SQL_NTS );
+        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
         if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -1848,7 +1849,11 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
         }
         else
         {
+            delete query;
+            query = NULL;
+            query = new SQLWCHAR[command.length() + 2];
             memset( query, '\0', command.length() + 2 );
+            uc_to_str_cpy( query, command );
             bool exists = IsIndexExists( index_name, schemaName, tableName, errorMsg );
             if( exists )
             {
@@ -2020,7 +2025,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontName = 0, cbComment;
     SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontName = 0;
     SQLLEN cbDataFontCharacterSet = 0, cbHeadingFontCharacterSet = 0, cbLabelFontCharacterSet = 0, cbDataFontPixelSize = 0, cbHeadingFontPixelSize = 0, cbLabelFontPixelSize = 0;
-    std::wstring query = L"SELECT * FROM abcattbl WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ?;";
+    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ?;";
     std::wstring tableName = table->GetTableName(), ownerName = table->GetTableOwner();
     int tableNameLen = tableName.length(), ownerNameLen = ownerName.length();
     SQLLEN cbOwnerName = ownerNameLen == 0 ? SQL_NULL_DATA : SQL_NTS;
