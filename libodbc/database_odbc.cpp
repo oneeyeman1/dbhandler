@@ -654,7 +654,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                                                 }
                                                                 else
                                                                     ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
-															}
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -1115,7 +1115,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 }
                                 else
                                 {
-									ret = SQLExecute( stmt_ind );
+                                    ret = SQLExecute( stmt_ind );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
                                         GetErrorMessage( errorMsg, 1, stmt_ind );
