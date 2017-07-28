@@ -846,7 +846,7 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
     MYSQL_STMT *stmt;
     int result = 0;
     char *str_data1, *str_data2;
-    std::wstring query = L"SELECT * FROM abcattbl WHERE abt_snam = ? AND abt_tnam = ?;";
+    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_snam = ? AND abt_tnam = ?;";
     std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName();
     stmt = mysql_stmt_init( m_db );
     if( !stmt )

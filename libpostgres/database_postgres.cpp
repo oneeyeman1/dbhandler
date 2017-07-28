@@ -579,7 +579,7 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
 int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring query = L"SELECT * FROM abcattbl WHERE abt_snam = $1 AND abt_tnam = $2;";
+    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_snam = $1 AND abt_tnam = $2;";
     std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName();
     char *values[2];
     values[0] = new char[schemaName.length() + 1];
