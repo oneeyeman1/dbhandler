@@ -225,7 +225,7 @@ bool ODBCDatabase::RemoveDsn(const std::wstring &driver, const std::wstring &dsn
     uc_to_str_cpy( temp1, driver );
     uc_to_str_cpy( temp2, L"DSN=" );
     uc_to_str_cpy( temp2, dsn );
-    BOOL ret= SQLConfigDataSource( NULL, ODBC_CONFIG_DSN, temp1, temp2 );
+    BOOL ret= SQLConfigDataSource( NULL, ODBC_REMOVE_DSN, temp1, temp2 );
     if( !ret )
     {
         GetDSNErrorMessage( errorMsg );
