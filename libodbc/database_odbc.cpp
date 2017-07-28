@@ -811,7 +811,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::vector<std::wstring> autoinc_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
-    SQLWCHAR *catalogName = NULL, *schemaName = NULL, *tableName = NULL, szSchemaName = NULL, szTableName = NULL;
+    SQLWCHAR *catalogName = NULL, *schemaName = NULL, *tableName = NULL, *szSchemaName = NULL, *szTableName = NULL;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0, stmt_ind = 0;
     SQLHDBC hdbc_col = 0, hdbc_pk = 0, hdbc_colattr = 0, hdbc_fk = 0, hdbc_ind = 0;
     SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1], dbName[1024], userName[1024];
@@ -843,7 +843,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
         ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
     }
-    ret = SQLTables( m_hstmt, SQL_ALL_CATALOGS, SQL_NTS, SQL_ALL_SCHEMAS, SQL_NTS, NULL, 0, SQL_ALL_TABLE_TYPES, SQL_NTS );
+    ret = SQLTables( m_hstmt, (SQLWCHAR *) SQL_ALL_CATALOGS, SQL_NTS, (SQLWCHAR *) SQL_ALL_SCHEMAS, SQL_NTS, NULL, 0, (SQLWCHAR *) SQL_ALL_TABLE_TYPES, SQL_NTS );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1 );
@@ -1059,7 +1059,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     else
                     {
                         qry = new SQLWCHAR[query4.length() + 2];
-                        memset( qry, '\0', query4.lemgth() + 2 );
+                        memset( qry, '\0', query4.length() + 2 );
                         uc_to_str_cpy( qry, query4 );
                         ret = SQLPrepare( stmt_ind, qry, SQL_NTS );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -1080,12 +1080,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             int size1 = GetSQLStringSize( tableName );
                             int size2 = GetSQLStringSize( schemaName );
                             szTableName = new SQLWCHAR[size1 + 2];
-                            szSchemaName = new SQLWCHAR[size2 + 2]
-                            memset( szTableName, 0, size1 + 2 );
+                            szSchemaName = new SQLWCHAR[size2 + 2];
+                            memset( szTableName, '\0', size1 + 2 );
                             memset( szSchemaName, '\0', size2 + 2);
                             uc_to_str_cpy( szTableName, tableName );
                             uc_to_str_cpy( szSchemaName, schemaName );
-                            ret = SQLBindParameter( stmt_ind, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, szSchemaName, 0, &cbSchemaName );
+                            ret = SQLBindParameter( stmt_ind, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, /*schemaName.length()*/SQL_NTS, 0, szSchemaName, 0, &cbSchemaName );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, stmt_ind );
@@ -1100,7 +1100,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             }
                             else
                             {
-                                ret = SQLBindParameter( stmt_ind, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, szTableName, 0, &cbTableName );
+                                ret = SQLBindParameter( stmt_ind, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, /*tableName.length()*/SQL_NTS, 0, szTableName, 0, &cbTableName );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt_ind );
