@@ -1079,13 +1079,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS;
                             int size1 = GetSQLStringSize( tableName );
                             int size2 = GetSQLStringSize( schemaName );
-                            szTableName = new SQLWCHAR[size1 + 2];
-                            szSchemaName = new SQLWCHAR[size2 + 2];
-                            memset( szTableName, '\0', size1 + 2 );
-                            memset( szSchemaName, '\0', size2 + 2);
-                            uc_to_str_cpy( szTableName, tableName );
-                            uc_to_str_cpy( szSchemaName, schemaName );
-                            ret = SQLBindParameter( stmt_ind, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, /*schemaName.length()*/SQL_NTS, 0, szSchemaName, 0, &cbSchemaName );
+                            ret = SQLBindParameter( stmt_ind, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, /*schemaName.length()*/SQL_NTS, 0, schemaName, 0, &cbSchemaName );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, stmt_ind );
@@ -1100,7 +1094,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             }
                             else
                             {
-                                ret = SQLBindParameter( stmt_ind, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, /*tableName.length()*/SQL_NTS, 0, szTableName, 0, &cbTableName );
+                                ret = SQLBindParameter( stmt_ind, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, /*tableName.length()*/SQL_NTS, 0, tableName, 0, &cbTableName );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt_ind );
