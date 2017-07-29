@@ -3610,7 +3610,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     SQLWCHAR *qry = NULL, version[1024];
     if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
-        query = L"SELECT SERVERPROPERTY('productversion') AS version, COALESCE(SERVERPROPERTY('ProductMajorVersion'), PARSENAME(CAST(SERVERPROPERTY('productversion') AS varchar(20)), 4)) AS major, COALESCE(SERVERPROPERTY('ProductMinorVersion'), PARSENAME(CAST(SERVERPROPERTY('productversion') AS varchar(20)), 3)) AS minor;";
+        query = L"SELECT SERVERPROPERTY('productversion') AS version, SERVERPROPERTY('productversion') AS version, COALESCE(SERVERPROPERTY('ProductMajorVersion'), PARSENAME(CAST(SERVERPROPERTY('productversion') AS varchar(20)), 4)) AS major, COALESCE(SERVERPROPERTY('ProductMinorVersion'), PARSENAME(CAST(SERVERPROPERTY('productversion') AS varchar(20)), 3)) AS minor;";
     }
     if( pimpl->m_subtype == L"MySQL" )
     {
@@ -3645,7 +3645,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         }
         else
         {
-            retcode = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &version, 1024, &cbVersion );
+            retcode = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, &version, 1024, &cbVersion );
             if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3653,7 +3653,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
             }
             else
             {
-				retcode = SQLBindCol( m_hstmt, 2, SQL_C_SLONG, &versionMajor, 0, 0 );
+				retcode = SQLBindCol( m_hstmt, 3, SQL_C_SLONG, &versionMajor, 0, 0 );
                 if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3661,7 +3661,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                 }
                 else
                 {
-                    retcode = SQLBindCol( m_hstmt, 3, SQL_C_SLONG, &versionMinor, 0, 0 );
+                    retcode = SQLBindCol( m_hstmt, 4, SQL_C_SLONG, &versionMinor, 0, 0 );
                     if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 1, m_hstmt );
