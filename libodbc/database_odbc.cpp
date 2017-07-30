@@ -1076,8 +1076,10 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         else
                         {
+                            SQLSMALLINT   NumParams, i, DataType, DecimalDigits, Nullable;
                             SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS;
-                            ret = SQLBindParameter( stmt_ind, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, /*schemaName.length()*/SQL_NTS, 0, schemaName, 0, &cbSchemaName );
+                            SQLUINTEGER   ParamSize;
+                            ret = SQLDescribeParam( stmt_ind, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, stmt_ind );
@@ -1090,9 +1092,9 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 hdbc_colattr = 0;
                                 break;
                             }
-                            else
-                            {
-                                ret = SQLBindParameter( stmt_ind, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, /*tableName.length()*/SQL_NTS, 0, tableName, 0, &cbTableName );
+							else
+							{
+                                ret = SQLBindParameter( stmt_ind, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, schemaName, 0, &cbSchemaName );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt_ind );
@@ -1107,7 +1109,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 }
                                 else
                                 {
-                                    ret = SQLExecute( stmt_ind );
+                                    ret = SQLDescribeParam( stmt_ind, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
                                         GetErrorMessage( errorMsg, 1, stmt_ind );
@@ -1122,9 +1124,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     }
                                     else
                                     {
-                                        SQLWCHAR name[SQL_MAX_COLUMN_NAME_LEN];
-                                        SQLLEN cbIndexName;
-                                        ret = SQLBindCol( stmt_ind, 1, SQL_C_WCHAR, &name, SQL_MAX_COLUMN_NAME_LEN, &cbIndexName );
+                                        ret = SQLBindParameter( stmt_ind, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, tableName, 0, &cbTableName );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 1, stmt_ind );
@@ -1139,16 +1139,50 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         }
                                         else
                                         {
-                                            for( ret = SQLFetch( stmt_ind ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_ind ) )
+                                            ret = SQLExecute( stmt_ind );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
-                                                std::wstring temp;
-                                                str_to_uc_cpy( temp, name );
-                                                indexes.push_back( temp );
+                                                GetErrorMessage( errorMsg, 1, stmt_ind );
+                                                result = 1;
+                                                fields.clear();
+                                                pk_fields.clear();
+                                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
+                                                SQLDisconnect( hdbc_ind );
+                                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
+                                                hdbc_colattr = 0;
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                SQLWCHAR name[SQL_MAX_COLUMN_NAME_LEN];
+                                                SQLLEN cbIndexName;
+                                                ret = SQLBindCol( stmt_ind, 1, SQL_C_WCHAR, &name, SQL_MAX_COLUMN_NAME_LEN, &cbIndexName );
+                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                {
+                                                    GetErrorMessage( errorMsg, 1, stmt_ind );
+                                                    result = 1;
+                                                    fields.clear();
+                                                    pk_fields.clear();
+                                                    SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
+                                                    SQLDisconnect( hdbc_ind );
+                                                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
+                                                    hdbc_colattr = 0;
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    for( ret = SQLFetch( stmt_ind ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_ind ) )
+                                                    {
+                                                        std::wstring temp;
+                                                        str_to_uc_cpy( temp, name );
+                                                        indexes.push_back( temp );
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
+							}
                         }
                     }
                 }
