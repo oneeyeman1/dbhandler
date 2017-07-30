@@ -3371,7 +3371,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &command, std::vector<st
 
 int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
-    SQLHSTMT stmt;
+    SQLHSTMT stmt = 0;
     SQLHDBC hdbc;
     SQLLEN cbName, cbTableName = SQL_NTS;
     long id;
@@ -3501,7 +3501,7 @@ int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstrin
 
 int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
-    SQLHSTMT stmt;
+    SQLHSTMT stmt = 0;
     SQLHDBC hdbc;
     SQLLEN cbTableName = SQL_NTS;
     SQLLEN cbName;
