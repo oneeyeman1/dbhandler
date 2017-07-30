@@ -1116,8 +1116,9 @@ int PostgresDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     }
     else
     {
+        pimpl->m_serverVersion = m_pimpl->m_myconv.from_bytes( PQparameterStatus( m_db, "server_version" ) );
         pimpl->m_versionMajor = versionInt / 10000;
-        pimpl->m_versionMinor = ( versionInt - pimpl->m_versionMajor ) / 100;
+        pimpl->m_versionMinor = ( versionInt - pimpl->m_versionMajor * 10000 ) / 100;
     }
     return result;
 }
@@ -1131,7 +1132,7 @@ int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring>
     std::wstring query2 = L"SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatcol_tnam_ownr_cnam\' AND n.nspname = \'public\'";
     std::wstring query4 = L"CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
-    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    if( PQresultStatus( res ) != PGRES_TUPLES_OK )
     {
         result = 1;
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -1153,7 +1154,7 @@ int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring>
             if( !result )
             {
                 res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str() );
-                if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+                if( PQresultStatus( res ) != PGRES_TUPLES_OK )
                 {
                     result = 1;
                     std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
