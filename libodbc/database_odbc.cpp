@@ -809,7 +809,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<Field *> fields;
     std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkTable, fkName;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
-    std::vector<std::wstring> autoinc_fields;
+    std::vector<std::wstring> autoinc_fields, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
     SQLWCHAR *catalogName = NULL, *schemaName = NULL, *tableName = NULL, *szSchemaName = NULL, *szTableName = NULL;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0, stmt_ind = 0;
@@ -843,7 +843,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
         ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
     }
-    ret = SQLTables( m_hstmt, (SQLWCHAR *) SQL_ALL_CATALOGS, SQL_NTS, (SQLWCHAR *) SQL_ALL_SCHEMAS, SQL_NTS, NULL, 0, (SQLWCHAR *) SQL_ALL_TABLE_TYPES, SQL_NTS );
+    ret = SQLTables( m_hstmt, NULL, 0, NULL, 0, NULL, 0, NULL, 0 );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1 );
@@ -926,7 +926,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         else if( ret != SQL_NULL_DATA )
                         {
                             SQLSMALLINT lenUsed;
-                            int bufferSize = 1024;
+                            SQLSMALLINT bufSize = 1024;
                             ret = SQLNumResultCols( stmt_colattr, &numCols );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
@@ -945,7 +945,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             {
                                 autoincrement = 0;
                                 columnNames[i] = new SQLWCHAR[sizeof( SQLWCHAR ) * SQL_MAX_COLUMN_NAME_LEN + 1];
-                                ret = SQLColAttribute( stmt_colattr, (SQLUSMALLINT) i + 1, SQL_DESC_LABEL, columnNames[i], bufferSize, &lenUsed, NULL );
+                                ret = SQLColAttribute( stmt_colattr, (SQLUSMALLINT) i + 1, SQL_DESC_LABEL, columnNames[i], bufSize, &lenUsed, NULL );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt_colattr );
@@ -1077,8 +1077,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         else
                         {
                             SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS;
-                            int size1 = GetSQLStringSize( tableName );
-                            int size2 = GetSQLStringSize( schemaName );
                             ret = SQLBindParameter( stmt_ind, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, /*schemaName.length()*/SQL_NTS, 0, schemaName, 0, &cbSchemaName );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
@@ -1125,6 +1123,29 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     else
                                     {
                                         SQLWCHAR name[SQL_MAX_COLUMN_NAME_LEN];
+                                        SQLLEN cbIndexName;
+                                        ret = SQLBindCol( stmt_ind, 1, SQL_C_WCHAR, &name, SQL_MAX_COLUMN_NAME_LEN, &cbIndexName );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, stmt_ind );
+                                            result = 1;
+                                            fields.clear();
+                                            pk_fields.clear();
+                                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
+                                            SQLDisconnect( hdbc_ind );
+                                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
+                                            hdbc_colattr = 0;
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            for( ret = SQLFetch( stmt_ind ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_ind ) )
+                                            {
+                                                std::wstring temp;
+                                                str_to_uc_cpy( temp, name );
+                                                indexes.push_back( temp );
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -1877,6 +1898,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     fk_fieldNames.clear();
                     return 1;
                 }
+                table->SetIndexNames( indexes );
                 pimpl->m_tables[catalog_name].push_back( table );
                 fields.erase( fields.begin(), fields.end() );
                 foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
