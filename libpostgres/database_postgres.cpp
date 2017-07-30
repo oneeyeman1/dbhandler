@@ -678,6 +678,8 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             if( exist )
             {
                 command = L"UPDATE \"abcattbl\" SET \"abt_tnam\" = \'";
+                command += schemaName;
+                command += L".";
                 command += tableName;
                 command += L"\', \"abt_tid\" = ";
                 istr << tableId;
@@ -767,6 +769,8 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 command += L"\', \"abt_cmnt\" = \'";
                 command += comment;
                 command += L"\' WHERE \"abt_tnam\" = \'";
+                command += schemaName;
+                command += L".";
                 command += tableName;
                 command += L"\' AND \"abt_tid\" = ";
                 istr << tableId;
@@ -780,6 +784,8 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
             else
             {
                 command = L"INSERT INTO \"abcattbl\" VALUES( \'";
+                command += schemaName;
+                command += L".";
                 command += tableName;
                 command += L"\', ";
                 istr << tableId;
