@@ -468,9 +468,10 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
             }
         }
-        PQclear( res );
+        if( !result )
+            PQclear( res );
     }
-    return 0;
+    return result;
 }
 
 int PostgresDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
