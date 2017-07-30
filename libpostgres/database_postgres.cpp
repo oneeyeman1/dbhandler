@@ -582,17 +582,19 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
 int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_snam = $1 AND abt_tnam = $2;";
-    std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName();
+    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
+    std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName(), ownerName = table->GetTableOwner();
+    std::wstring t = schemaName + L".";
+    t += tableName;
     char *values[2];
-    values[0] = new char[schemaName.length() + 1];
-    values[1] = new char[tableName.length() + 1];
-    memset( values[0], '\0', schemaName.length() + 1 );
-    memset( values[1], '\0', tableName.length() + 1 );
-    strcpy( values[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
-    strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
-    int len1 = schemaName.length();
-    int len2 = tableName.length();
+    values[0] = new char[t.length()];
+    values[1] = new char[ownerName.length() + 1];
+    memset( values[0], '\0', t.length() + 1 );
+    memset( values[1], '\0', ownerName.length() + 1 );
+    strcpy( values[0], m_pimpl->m_myconv.to_bytes( t.c_str() ).c_str() );
+    strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
+    int len1 = t.length();
+    int len2 = ownerName.length();
     int length[2] = { len1, len2 };
     int formats[2] = { 1, 1 };
     PGresult *res = PQprepare( m_db, "index_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
