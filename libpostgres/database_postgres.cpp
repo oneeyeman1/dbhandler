@@ -468,7 +468,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
             }
         }
-        PQclear( res1 );
+        PQclear( res );
     }
     return 0;
 }
