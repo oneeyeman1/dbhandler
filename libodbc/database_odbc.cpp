@@ -1078,7 +1078,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         {
                             SQLSMALLINT   NumParams, i, DataType, DecimalDigits, Nullable;
                             SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS;
-                            SQLUINTEGER   ParamSize;
+                            SQLULEN   ParamSize;
                             ret = SQLDescribeParam( stmt_ind, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
