@@ -365,7 +365,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 {
                     PQclear( res2 );
                     res2 = PQexecPrepared( m_db, "get_columns", 2, values1, length1, formats1, 1 );
-                    if( PQresultStatus( res2 ) != PGRES_COMMAND_OK )
+                    if( PQresultStatus( res2 ) != PGRES_COMMAND_OK && PQresultStatus( res2 ) != PGRES_TUPLES_OK )
                     {
                         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                         errorMsg.push_back( L"Error executing query: " + err );
@@ -389,7 +389,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             char *numeric_scale = PQgetvalue( res2, j, 6 );
                             fieldDefaultValue = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 8 ) );
                             fieldIsNull = !strcmp( PQgetvalue( res2, j, 7 ), "YES" ) ? 1 : 0;
-                            fieldPK = !strcmp( PQgetvalue( res, j, 9 ), "YES" ) ? 1 : 0;
+                            fieldPK = !strcmp( PQgetvalue( res2, j, 9 ), "YES" ) ? 1 : 0;
                             if( *char_length == '0' )
                             {
                                 size = atoi( numeric_length );
