@@ -2209,14 +2209,16 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontName = 0;
     SQLLEN cbDataFontCharacterSet = 0, cbHeadingFontCharacterSet = 0, cbLabelFontCharacterSet = 0, cbDataFontPixelSize = 0, cbHeadingFontPixelSize = 0, cbLabelFontPixelSize = 0;
     std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ?;";
-    std::wstring tableName = table->GetTableName(), ownerName = table->GetTableOwner();
-    int tableNameLen = tableName.length(), ownerNameLen = ownerName.length();
+    std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName(), ownerName = table->GetTableOwner();
+    std::wstring t = schemaName + L".";
+    t += tableName;
+    int tableNameLen = t.length(), ownerNameLen = ownerName.length();
     SQLLEN cbOwnerName = ownerNameLen == 0 ? SQL_NULL_DATA : SQL_NTS;
     SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tableNameLen + 2], *owner_name = new SQLWCHAR[ownerNameLen + 2];
     memset( owner_name, '\0', ownerNameLen + 2 );
     memset( table_name, '\0', tableNameLen + 2 );
     uc_to_str_cpy( owner_name, ownerName );
-    uc_to_str_cpy( table_name, tableName );
+    uc_to_str_cpy( table_name, t );
     memset( qry, '\0', query.size() + 2 );
     uc_to_str_cpy( qry, query );
     SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_tableProp );
@@ -2701,6 +2703,8 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                     if( exist )
                     {
                         command = L"UPDATE \"abcattbl\" SET \"abt_tnam\" = \'";
+                        command += schemaName;
+                        command += L".";
                         command += tableName;
                         command += L"\', \"abt_tid\" = ";
                         istr << tableId;
@@ -2790,6 +2794,8 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         command += L"\', \"abt_cmnt\" = \'";
                         command += comment;
                         command += L"\' WHERE \"abt_tnam\" = \'";
+                        command += schemaName;
+                        command += L".";
                         command += tableName;
                         command += L"\' AND \"abt_tid\" = ";
                         istr << tableId;
@@ -2803,6 +2809,8 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                     else
                     {
                         command = L"INSERT INTO \"abcattbl\" VALUES( \'";
+                        command += schemaName;
+                        command += L".";
                         command += tableName;
                         command += L"\', ";
                         istr << tableId;
