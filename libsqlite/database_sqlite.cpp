@@ -653,7 +653,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
             res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( pimpl->m_connectedUser.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
             if( res == SQLITE_OK )
             {
-                while( true )
+                for( ; ; )
                 {
                     res = sqlite3_step( stmt );
                     if( res == SQLITE_ROW )
@@ -1118,7 +1118,7 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstr
         errorMsg.push_back( errorMessage );
         return result;
     }
-    while( true )
+    for( ; ; )
     {
         res = sqlite3_step( stmt );
         if( res == SQLITE_ROW )
@@ -1155,7 +1155,7 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstr
             errorMsg.push_back( errorMessage );
             return result;
         }
-        while( true )
+        for( ; ; )
         {
             res = sqlite3_step( stmt );
             if( res == SQLITE_ROW )
