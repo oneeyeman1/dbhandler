@@ -484,10 +484,17 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
             {
                 if( !GetDriverForDSN( dsn, driver, errorMsg ) )
                 {
+                    SQLWCHAR *temp = new SQLWCHAR[11];
+                    memset( temp, '\0', 13 );
+                    uc_to_str_cpy( temp, L"PostgreSQL " );
                     uc_to_str_cpy( connectStrIn, L"DSN=" );
                     uc_to_str_cpy( connectStrIn, selectedDSN.c_str() );
                     uc_to_str_cpy( connectStrIn, L";Driver=" );
                     copy_uc_to_uc( connectStrIn, driver );
+                    if( equal( temp, driver ) )
+                        uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1" );
+                    delete temp;
+                    temp = NULL;
                     SQLSetConnectAttr( m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0 );
                     options = m_ask ? SQL_DRIVER_COMPLETE_REQUIRED : SQL_DRIVER_COMPLETE;
                     ret = SQLDriverConnect( m_hdbc, m_handle, connectStrIn, SQL_NTS, m_connectString, 1024, &OutConnStrLen, options );
