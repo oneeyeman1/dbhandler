@@ -653,7 +653,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
             res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( pimpl->m_connectedUser.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
             if( res == SQLITE_OK )
             {
-                while( true )
+                for( ; ; )
                 {
                     res = sqlite3_step( stmt );
                     if( res == SQLITE_ROW )
@@ -1099,11 +1099,11 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     return result;
 }
 
-int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstring &UNUSED(keyName), DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
-    char **error;
+    char *error;
     std::vector<std::wstring> references;
     std::wstring query0 = L"PRAGMA foreign_keys=OFF", query1 = L"PRAGMA foreign_keys=ON";
     std::wstring query = L"SELECT type, sql FROM sqlite_master WHERE tbl_name = ";
@@ -1118,7 +1118,7 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstr
         errorMsg.push_back( errorMessage );
         return result;
     }
-    while( true )
+    for( ; ; )
     {
         res = sqlite3_step( stmt );
         if( res == SQLITE_ROW )
@@ -1136,7 +1136,7 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstr
     sqlite3_finalize( stmt );
     if( res != SQLITE_DONE )
         return 1;
-    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query0.c_str() ).c_str(), NULL, NULL, error );
+    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query0.c_str() ).c_str(), NULL, NULL, &error );
     if( res != SQLITE_OK )
     {
         result = 1;
@@ -1155,7 +1155,7 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstr
             errorMsg.push_back( errorMessage );
             return result;
         }
-        while( true )
+        for( ; ; )
         {
             res = sqlite3_step( stmt );
             if( res == SQLITE_ROW )
@@ -1178,30 +1178,30 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstr
     }
     if( res != SQLITE_DONE )
     {
-        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, error );
+        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, &error );
         return 1;
     }
     for( std::vector<std::wstring>::iterator it = references.begin(); it < references.end(); it++ )
     {
-        res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( (*it).c_str() ).c_str(), NULL, NULL, error );
+        res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( (*it).c_str() ).c_str(), NULL, NULL, &error );
         if( res != SQLITE_OK )
             break;
     }
     if( res != SQLITE_OK )
     {
-        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, error );
+        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, &error );
         return 1;
     }
-    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), NULL, NULL, error );
+    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), NULL, NULL, &error );
     if( res != SQLITE_OK )
     {
         result = 1;
-        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, error );
+        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, &error );
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
     }
     else
-        sqlite3_exec( m_db, "COMMIT", NULL, NULL, error );
+        sqlite3_exec( m_db, "COMMIT", NULL, NULL, &error );
     return result;
 }
 
@@ -1237,7 +1237,7 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &command, std::vector<
     return res;
 }
 
-int SQLiteDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &UNUSED(errorMsg))
 {
     int result = 0;
     const_cast<DatabaseTable *>( table )->SetTableId( 0 );
@@ -1249,7 +1249,7 @@ void SQLiteDatabase::SetFullType(Field *field, const std::wstring &type)
     field->SetFullType( type );
 }
 
-int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg))
 {
     pimpl->m_serverVersion = L"392";
     pimpl->m_versionMajor = 3;

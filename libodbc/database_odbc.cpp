@@ -1083,7 +1083,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         else
                         {
-                            SQLSMALLINT   NumParams, i, DataType, DecimalDigits, Nullable;
+                            SQLSMALLINT DataType, DecimalDigits, Nullable;
                             SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS;
                             SQLULEN   ParamSize;
                             ret = SQLDescribeParam( stmt_ind, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
@@ -2212,7 +2212,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], labelFontUnderline[2], dataFontName[20], headingFontName[20], labelFontName[20];
     SQLWCHAR comments[225];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = SQL_NTS, cbDataFontUnderline = SQL_NTS, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
-    SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontName = 0, cbComment;
+    SQLLEN cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontName = 0, cbComment;
     SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontName = 0;
     SQLLEN cbDataFontCharacterSet = 0, cbHeadingFontCharacterSet = 0, cbLabelFontCharacterSet = 0, cbDataFontPixelSize = 0, cbHeadingFontPixelSize = 0, cbLabelFontPixelSize = 0;
     std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ?;";
@@ -2973,12 +2973,11 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
 bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
-    SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS, cbTableId = 0;
+    SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
     std::wstring tname = const_cast<DatabaseTable *>( table )->GetSchemaName() + L".";
     tname += const_cast<DatabaseTable *>( table )->GetTableName();
     std::wstring ownerName = const_cast<DatabaseTable *>( table )->GetTableOwner();
-    int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
     SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tname.length() + 2], *owner_name = new SQLWCHAR[ownerName.length() + 2];
     memset( owner_name, '\0', ownerName.length() + 2 );
     memset( table_name, '\0', tname.length() + 2 );
@@ -3379,7 +3378,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &command, std::vector<st
 
 int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
-    SQLHSTMT stmt;
+    SQLHSTMT stmt = 0;
     SQLHDBC hdbc;
     SQLLEN cbName, cbTableName = SQL_NTS;
     long id;
@@ -3509,7 +3508,7 @@ int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstrin
 
 int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
-    SQLHSTMT stmt;
+    SQLHSTMT stmt = 0;
     SQLHDBC hdbc;
     SQLLEN cbTableName = SQL_NTS;
     SQLLEN cbName;
