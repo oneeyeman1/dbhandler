@@ -598,7 +598,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     int len2 = ownerName.length();
     int length[2] = { len1, len2 };
     int formats[2] = { 1, 1 };
-    PGresult *res = PQprepare( m_db, "index_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
+    PGresult *res = PQprepare( m_db, "get_table_prop", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -608,7 +608,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     }
     else
     {
-        res = PQexecPrepared( m_db, "index_exist", 2, values, length, formats, 1 );
+        res = PQexecPrepared( m_db, "get_table_prop", 2, values, length, formats, 1 );
         ExecStatusType status = PQresultStatus( res );
         if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
