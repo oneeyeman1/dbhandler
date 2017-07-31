@@ -979,6 +979,34 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 }
                                 if( result )
                                     break;
+                                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                    result = 1;
+                                    SQLDisconnect( hdbc_colattr );
+                                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                    stmt_colattr = 0;
+                                    hdbc_colattr = 0;
+                                    break;
+                                }
+                                stmt_colattr = 0;
+                                ret = SQLDisconnect( hdc_colattr );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                    result = 1;
+                                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                    break;
+                                }
+                                ret = SQLFreeHandle( SQL_HANDLE_HDBC, hdbc_colattr );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                    result = 1;
+                                    break;
+                                }
+                                hdbc_colattr = 0;
                             }
                         }
                     }
