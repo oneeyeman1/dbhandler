@@ -17,8 +17,13 @@ dbhandler_SOURCES =  \
 	viewbase.h
 
 dbhandler_CXXFLAGS = -I../../dbinterface \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--cxxflags` 
+	-I../../libdbwindow/res/gui \
+	-I/home/igor/wxWidgets/buildGTK/lib/wx/include/gtk2-unicode-3.1 \
+	-I/home/igor/wxWidgets/include \
+	-D_FILE_OFFSET_BITS=64 \
+	-DWXUSINGDLL \
+	-D__WXGTK__ \
+	-pthread 
 
 dbhandler_LDFLAGS = -Wl,-rpath \
 	-Wl,/home/igor/dbhandler/Debug/libdialogs \

@@ -26,8 +26,13 @@ public:
     virtual bool OnCmdLineParsed(wxCmdLineParser& parser) wxOVERRIDE;
     wxString GetDBName();
     wxString GetDBEngine();
+    wxString GetConnectString();
+    wxString GetConnectedUser();
     void SetDBEngine(const wxString &engine);
     void SetDBName(const wxString &name);
+    void SetConnectString(const wxString &connString);
+    void SetConnectedUser(const wxString &user);
+    wxDocManager *GetDocManager();
 #ifdef __WXMAC__
     virtual void MacNewFile() wxOVERRIDE;
 #endif // __WXMAC__
@@ -66,18 +71,28 @@ private:
     wxVector<wxString> m_filesFromCmdLine;
 
     // only used if m_mode == Mode_Single
+    wxDocManager *m_docManager;
     MyCanvas *m_canvas;
     wxMenu *m_menuEdit;
-    wxString m_dbName, m_dbEngine;
+    wxString m_dbName, m_dbEngine, m_connectString, m_connectedUser;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(MyApp);
+};
+
+enum ViewType
+{
+    DatabaseView,
+    QueryView
 };
 
 wxDECLARE_APP(MyApp);
 
 #define wxID_CONFIGUREODBC          1
 #define wxID_DATABASEWINDOW         2
-#define wxID_DATABASE               3
+#define wxID_TABLE                  3
+#define wxID_DATABASE               4
+#define wxID_QUERY                  5
+#define wxID_TABLEDROPTABLE        24
 #define wxID_PROPERTIES            50
 #define wxID_CREATEDATABASE       100
 #define wxID_DELETEDATABASE       101
@@ -88,5 +103,39 @@ wxDECLARE_APP(MyApp);
 #define wxID_OBJECTNEWFF          106
 #define wxID_FIELDDEFINITION      107
 #define wxID_FIELDPROPERTIES      108
-
+#define wxID_OBJECTNEWPK          109
+#define wxID_STARTLOG             110
+#define wxID_STOPLOG              111
+#define wxID_SAVELOG              112
+#define wxID_CLEARLOG             113
+#define wxID_SELECTALLFIELDS      114
+#define wxID_DESELECTALLFIELDS    115
+#define wxID_ARRANGETABLES        116
+#define wxID_SHOWDATATYPES        117
+#define wxID_SHOWLABELS           118
+#define wxID_SHOWCOMMENTS         119
+#define wxID_SHOWSQLTOOLBOX       120
+#define WHEREPAGECOLUMNS          194
+#define WHEREPAGEFUNCTIONS        195
+#define WHEREPAGEARGUMENTS        196
+#define WHEREPAGEVALUE            197
+#define WHEREPAGESELECT           198
+#define WHEREPAGECLEAR            199
+#define wxID_EDITCUTCOLUMN        200
+#define wxID_EDITCOPYCOLUMN       201
+#define wxID_EDITPASTECOLUMN      202
+#define wxID_EDITINSERTCOLUMN     203
+#define wxID_EDITDELETECOLUMN     204
+#define wxID_EDITTABLEPROPERTY    205
+#define wxID_DESIGNSYNTAX         206
+#define wxID_UNDOALL              300
+#define wxID_DATASOURCE           301
+#define wxID_PREVIEW              302
+#define wxID_UNIONS               303
+#define wxID_RETRIEVEARGS         304
+#define wxID_CHECKOPTION          305
+#define wxID_DISTINCT             306
+#define wxID_CONVERTTOSYNTAX      307
+#define wxID_CUSTOMCOLORS         308
+#define wxID_OPTIONS              309
 #endif // _WX_SAMPLES_DOCVIEW_DOCVIEW_H_

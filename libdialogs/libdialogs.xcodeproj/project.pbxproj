@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E33E6F381E46EE1C003A0B92 /* foreignkey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F361E46EE1C003A0B92 /* foreignkey.cpp */; };
+		E33E6F391E46EE1C003A0B92 /* foreignkey.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F371E46EE1C003A0B92 /* foreignkey.h */; };
+		E33E6F841EAD310A003A0B92 /* getobjectname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F801EAD310A003A0B92 /* getobjectname.cpp */; };
+		E33E6F851EAD310A003A0B92 /* getobjectname.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F811EAD310A003A0B92 /* getobjectname.h */; };
+		E33E6F861EAD310A003A0B92 /* jointype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F821EAD310A003A0B92 /* jointype.cpp */; };
+		E33E6F871EAD310A003A0B92 /* jointype.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F831EAD310A003A0B92 /* jointype.h */; };
 		E39501D31DF3C4730046E51B /* liblibpropertypages.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E39501D21DF3C4730046E51B /* liblibpropertypages.dylib */; };
 		E3D139511D0D0D7100A5A0F7 /* databasetype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D1394A1D0D0D7100A5A0F7 /* databasetype.cpp */; };
 		E3D139521D0D0D7100A5A0F7 /* databasetype.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D1394B1D0D0D7100A5A0F7 /* databasetype.h */; };
@@ -16,6 +22,8 @@
 		E3D139561D0D0D7100A5A0F7 /* selecttables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D1394F1D0D0D7100A5A0F7 /* selecttables.cpp */; };
 		E3D139571D0D0D7100A5A0F7 /* selecttables.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D139501D0D0D7100A5A0F7 /* selecttables.h */; };
 		E3D1397B1D0D144A00A5A0F7 /* liblibdbloader.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D1397A1D0D144A00A5A0F7 /* liblibdbloader.dylib */; };
+		E3E62CC91EF71830005BBB37 /* addcolumnsdialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E62CC71EF71830005BBB37 /* addcolumnsdialog.cpp */; };
+		E3E62CCA1EF71830005BBB37 /* addcolumnsdialog.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E62CC81EF71830005BBB37 /* addcolumnsdialog.h */; };
 		E3E91D3C1DC678C900675CF8 /* createindex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D3A1DC678C900675CF8 /* createindex.cpp */; };
 		E3E91D3D1DC678C900675CF8 /* createindex.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D3B1DC678C900675CF8 /* createindex.h */; };
 		E3E91D791DCC333900675CF8 /* liblibfieldswindow.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3E91D781DCC333900675CF8 /* liblibfieldswindow.dylib */; };
@@ -24,6 +32,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E33E6F361E46EE1C003A0B92 /* foreignkey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = foreignkey.cpp; sourceTree = "<group>"; };
+		E33E6F371E46EE1C003A0B92 /* foreignkey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = foreignkey.h; sourceTree = "<group>"; };
+		E33E6F801EAD310A003A0B92 /* getobjectname.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = getobjectname.cpp; sourceTree = "<group>"; };
+		E33E6F811EAD310A003A0B92 /* getobjectname.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = getobjectname.h; sourceTree = "<group>"; };
+		E33E6F821EAD310A003A0B92 /* jointype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jointype.cpp; sourceTree = "<group>"; };
+		E33E6F831EAD310A003A0B92 /* jointype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jointype.h; sourceTree = "<group>"; };
 		E39501D21DF3C4730046E51B /* liblibpropertypages.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibpropertypages.dylib; path = ../libpropertypages/build/Debug/liblibpropertypages.dylib; sourceTree = "<group>"; };
 		E3D1393C1D0D0CD100A5A0F7 /* liblibdialogs.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdialogs.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D1394A1D0D0D7100A5A0F7 /* databasetype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasetype.cpp; sourceTree = "<group>"; };
@@ -36,6 +50,8 @@
 		E3D139581D0D100B00A5A0F7 /* liblibodbc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibodbc.dylib; path = ../Build/Products/Debug/liblibodbc.dylib; sourceTree = "<group>"; };
 		E3D139591D0D100B00A5A0F7 /* liblibsqlite.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibsqlite.dylib; path = ../Build/Products/Debug/liblibsqlite.dylib; sourceTree = "<group>"; };
 		E3D1397A1D0D144A00A5A0F7 /* liblibdbloader.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibdbloader.dylib; path = ../Build/Products/Debug/liblibdbloader.dylib; sourceTree = "<group>"; };
+		E3E62CC71EF71830005BBB37 /* addcolumnsdialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = addcolumnsdialog.cpp; sourceTree = "<group>"; };
+		E3E62CC81EF71830005BBB37 /* addcolumnsdialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = addcolumnsdialog.h; sourceTree = "<group>"; };
 		E3E91D3A1DC678C900675CF8 /* createindex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = createindex.cpp; sourceTree = "<group>"; };
 		E3E91D3B1DC678C900675CF8 /* createindex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = createindex.h; sourceTree = "<group>"; };
 		E3E91D781DCC333900675CF8 /* liblibfieldswindow.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibfieldswindow.dylib; path = ../libfieldswindow/build/Debug/liblibfieldswindow.dylib; sourceTree = "<group>"; };
@@ -81,6 +97,14 @@
 		E3D139491D0D0CDE00A5A0F7 /* libdialogs */ = {
 			isa = PBXGroup;
 			children = (
+				E3E62CC71EF71830005BBB37 /* addcolumnsdialog.cpp */,
+				E3E62CC81EF71830005BBB37 /* addcolumnsdialog.h */,
+				E33E6F801EAD310A003A0B92 /* getobjectname.cpp */,
+				E33E6F811EAD310A003A0B92 /* getobjectname.h */,
+				E33E6F821EAD310A003A0B92 /* jointype.cpp */,
+				E33E6F831EAD310A003A0B92 /* jointype.h */,
+				E33E6F361E46EE1C003A0B92 /* foreignkey.cpp */,
+				E33E6F371E46EE1C003A0B92 /* foreignkey.h */,
 				E3E91D861DEE520B00675CF8 /* properties.cpp */,
 				E3E91D871DEE520B00675CF8 /* properties.h */,
 				E3E91D3A1DC678C900675CF8 /* createindex.cpp */,
@@ -104,8 +128,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3D139521D0D0D7100A5A0F7 /* databasetype.h in Headers */,
+				E3E62CCA1EF71830005BBB37 /* addcolumnsdialog.h in Headers */,
 				E3D139571D0D0D7100A5A0F7 /* selecttables.h in Headers */,
+				E33E6F871EAD310A003A0B92 /* jointype.h in Headers */,
+				E33E6F851EAD310A003A0B92 /* getobjectname.h in Headers */,
 				E3D139551D0D0D7100A5A0F7 /* odbcconfigure.h in Headers */,
+				E33E6F391E46EE1C003A0B92 /* foreignkey.h in Headers */,
 				E3E91D3D1DC678C900675CF8 /* createindex.h in Headers */,
 				E3E91D891DEE520B00675CF8 /* properties.h in Headers */,
 			);
@@ -163,11 +191,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3D139561D0D0D7100A5A0F7 /* selecttables.cpp in Sources */,
+				E33E6F381E46EE1C003A0B92 /* foreignkey.cpp in Sources */,
+				E33E6F841EAD310A003A0B92 /* getobjectname.cpp in Sources */,
+				E3E62CC91EF71830005BBB37 /* addcolumnsdialog.cpp in Sources */,
 				E3D139541D0D0D7100A5A0F7 /* odbcconfigure.cpp in Sources */,
 				E3E91D3C1DC678C900675CF8 /* createindex.cpp in Sources */,
 				E3D139511D0D0D7100A5A0F7 /* databasetype.cpp in Sources */,
 				E3E91D881DEE520B00675CF8 /* properties.cpp in Sources */,
 				E3D139531D0D0D7100A5A0F7 /* dialogs.cpp in Sources */,
+				E33E6F861EAD310A003A0B92 /* jointype.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,20 +10,27 @@ class SQLiteDatabase : public Database
 public:
     SQLiteDatabase();
     virtual ~SQLiteDatabase();
+    virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
+    virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
     virtual int Disconnect(std::vector<std::wstring> &errorMsg);
-    virtual int CreateIndex(const std::wstring &command, std::vector<std::wstring> &errorMsg);
-	virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
+    virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
-    virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg);
-    virtual int SetTableProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg);
-    virtual bool IsTablePropertiesExist(const std::wstring &tableName, const std::wstring &schemaName, std::vector<std::wstring> &errorMsg);
+    virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, Field *table, std::vector<std::wstring> &errorMsg);
+    virtual int SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
+    virtual int SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg);
+    virtual int ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg);
+    virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
 protected:
     struct SQLiteImpl;
     SQLiteImpl *sqlite_pimpl;
     void GetErrorMessage(int code, std::wstring &errorMsg);
+    void SetFullType(Field *field, const std::wstring &type);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
-    virtual void SetColumnComment(const std::wstring &tableName, const std::wstring &fieldName, const std::wstring &comment, std::vector<std::wstring> &errorMsg);
+    virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
+    virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
+    virtual int GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
+    virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
 private:
     sqlite3 *m_db;
 };

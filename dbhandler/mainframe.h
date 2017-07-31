@@ -20,9 +20,14 @@ private:
     void InitToolBar(wxToolBar* toolBar);
     void InitMenuBar(int id);
     void DatabaseMenu();
+    void QueryMenu();
+    void TableMenu();
     void OnConfigureODBC(wxCommandEvent &event);
     void OnDatabaseProfile(wxCommandEvent &event);
+    void OnTable(wxCommandEvent &event);
     void OnDatabase(wxCommandEvent &event);
+    void OnQuery(wxCommandEvent &event);
+    void OnSize(wxSizeEvent &event);
     Database *m_db;
     wxDynamicLibrary *m_lib;
     wxDynamicLibrary *m_lib1;

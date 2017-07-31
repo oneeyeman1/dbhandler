@@ -10,6 +10,10 @@
 #include "wx/wx.h"
 #endif
 
+#if defined __WXMSW__ && defined __MEMORYLEAKS__
+#include <vld.h>
+#endif
+
 #include <map>
 #include <vector>
 #include "wx/wizard.h"
@@ -19,9 +23,17 @@
 #include "wx/notebook.h"
 #include "wx/spinctrl.h"
 #include "wx/bmpcbox.h"
+#ifdef __WXGTK__
+#include "gtk/gtk.h"
+#include "wx/nativewin.h"
+#endif
+#ifdef __WXOSX_COCOA__
+#include "wx/nativewin.h"
+#endif
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
-#include "fontpropertypagebase.h"
+#include "wx/fontenum.h"
+//#include "fontpropertypagebase.h"
 #include "databasetype.h"
 #include "tablegeneral.h"
 #include "odbcconfigure.h"
@@ -29,7 +41,11 @@
 #include "fieldwindow.h"
 #include "createindex.h"
 #include "fontpropertypagebase.h"
+#include "foreignkey.h"
+#include "getobjectname.h"
+#include "jointype.h"
 #include "properties.h"
+#include "addcolumnsdialog.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -98,7 +114,7 @@ extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
     dlg.ShowModal();
 }
 
-extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title, wxString &name, wxString &dbEngine, bool ask, const std::vector<std::wstring> &dsn)
+extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title, wxString &name, wxString &dbEngine, wxString &connectedUser, bool ask, const std::vector<std::wstring> &dsn)
 {
     int res;
 #ifdef __WXMSW__
@@ -108,9 +124,18 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
     bool result = dlg.RunWizard( dlg.GetFirstPage() );
     if( result )
     {
+        wxTextCtrl *userId = dlg.GetUserControl();
+        if( userId )
+        {
+            connectedUser = userId->GetValue();
+        }
+        else
+            connectedUser = "";
         dlg.GetDatabaseEngine( dbEngine );
         name = dlg.GetDatabaseName();
         ask = dlg.GetODBCConnectionParam();
+        if( name.empty() )
+            name = dlg.GetConnectString();
         res = wxID_OK;
     }
 	else
@@ -118,30 +143,35 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
     return res;
 }
 
-extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std::vector<wxString> &tableNames, std::vector<std::wstring> &names)
+extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std::vector<wxString> &tableNames, std::vector<std::wstring> &names, bool isTableView)
 {
     int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    SelectTables dlg( parent, wxID_ANY, "", db, names );
+    SelectTables dlg( parent, wxID_ANY, "", db, names, isTableView );
+    if( isTableView )
+        dlg.Center();
 	res = dlg.ShowModal();
     if( res != wxID_CANCEL )
         dlg.GetSelectedTableNames( tableNames );
     return res;
 }
 
-extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *table, Database *db, wxString &command)
+extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *table, Database *db, wxString &command, wxString &indexName)
 {
     int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    CreateIndex dlg( parent, wxID_ANY, "", table, db );
+    CreateIndex dlg( parent, wxID_ANY, "", table, table->GetSchemaName(), db );
     dlg.Center();
     res = dlg.ShowModal();
     if( res != wxID_CANCEL )
+    {
         command = dlg.GetCommand();
+        indexName = dlg.GetIndexNameCtrl()->GetValue();
+    }
     return res;
 }
 
@@ -168,5 +198,60 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, i
         command = dlg.GetCommand();
         logOnly = dlg.IsLogOnly();
     }
+    return res;
+}
+
+extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, DatabaseTable *table, Database *db, wxString &command, bool &logOnly)
+{
+    int res;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    ForeignKeyDialog dlg( parent, wxID_ANY, _( "" ), table, db );
+    dlg.Center();
+    res = dlg.ShowModal();
+    if( res != wxID_CANCEL )
+    {
+        command = dlg.GetCommand();
+        logOnly = dlg.IsLogOnlyI();
+        keyName = dlg.GetKeyNameCtrl()->GetValue();
+    }
+    return res;
+}
+
+extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId)
+{
+    int res;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    GetObjectName dlg( parent, wxID_ANY, _( "Query" ), objectId );
+    res = dlg.ShowModal();
+    return res;
+}
+
+extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField)
+{
+    int res;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    JointType dlg( parent, wxID_ANY, _( "Join" ), origTable, refTable, origField, refField );
+    res = dlg.ShowModal();
+    return res;
+}
+
+extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type, const std::vector<std::wstring> &fields, wxString &selection)
+{
+    int res;
+    AddColumnsDialog dlg( parent, type, fields );
+    res = dlg.ShowModal();
+    if( res == wxID_OK )
+    {
+        wxListBox *fields = dlg.GetFieldsControl();
+        selection = fields->GetString( fields->GetSelection() );
+    }
+	else
+        selection = wxEmptyString;
     return res;
 }

@@ -1,28 +1,28 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2014 Eran Ifrah
-// file name            : ErdForeignKey.cpp
-//
-// -------------------------------------------------------------------------
-// A
-//              _____           _      _     _ _
-//             /  __ \         | |    | |   (_) |
-//             | /  \/ ___   __| | ___| |    _| |_ ___
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
-//              \____/\___/ \__,_|\___\_____/_|\__\___|
-//
-//                                                  F i l e
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
+// For compilers that support precompilation, includes "wx/wx.h".
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
+
+#ifndef WX_PRECOMP
+    #include "wx/wx.h"
+#endif
+
+#include "wx/docview.h"
+#include "wx/docmdi.h"
+#include "wxsf/ShapeCanvas.h"
+#include "wxsf/RoundRectShape.h"
+#include "wxsf/TextShape.h"
+#include "wxsf/GridShape.h"
+#include "database.h"
+#include "GridTableShape.h"
+#include "HeaderGrid.h"
+#include "constraintsign.h"
+#include "constraint.h"
+#include "commenttableshape.h"
+#include "MyErdTable.h"
+#include "fieldwindow.h"
 #include "ErdForeignKey.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(ErdForeignKey,wxSFRoundOrthoLineShape);
@@ -34,7 +34,7 @@ ErdForeignKey::ErdForeignKey():ErdLineShape()
     EnableSerialization( false );
 }
 
-ErdForeignKey::ErdForeignKey(Constraint* pConstraint):ErdLineShape( pConstraint )
+ErdForeignKey::ErdForeignKey(Constraint* pConstraint, ViewType type):ErdLineShape( pConstraint, type )
 {
     m_pConstraint = pConstraint;
     wxSFTextShape* pLabel = new wxSFTextShape();

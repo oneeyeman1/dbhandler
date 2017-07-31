@@ -6,7 +6,7 @@ class MyErdTable : public wxSFRoundRectShape
 public:
     XS_DECLARE_CLONABLE_CLASS(MyErdTable);
     MyErdTable();
-    MyErdTable(DatabaseTable *table);
+    MyErdTable(DatabaseTable *table, ViewType type);
     virtual ~MyErdTable();
     void UpdateTable();
     void SetTableComment(const wxString &comment);
@@ -23,9 +23,12 @@ protected:
 //    virtual void DrawHighlighted(wxDC &dc);
     virtual void DrawHover(wxDC &dc);
     virtual void DrawNormal(wxDC &dc);
+    virtual void DrawSelected(wxDC& dc);
 private:
+    ViewType m_type;
+    HeaderGrid *m_header;
     wxSFTextShape *m_pLabel;
-    wxSFTextShape *m_comment;
+    CommentTableShape *m_comment;
     GridTableShape* m_pGrid;
     DatabaseTable *m_table;
 };

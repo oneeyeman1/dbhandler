@@ -7,16 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E33E6FAC1EBC2984003A0B92 /* liblibpostgres.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E33E6FAB1EBC2984003A0B92 /* liblibpostgres.dylib */; };
 		E3D139751D0D11B400A5A0F7 /* dbloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D139741D0D11B400A5A0F7 /* dbloader.cpp */; };
 		E3D139781D0D141400A5A0F7 /* liblibodbc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D139761D0D141400A5A0F7 /* liblibodbc.dylib */; };
 		E3D139791D0D141400A5A0F7 /* liblibsqlite.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D139771D0D141400A5A0F7 /* liblibsqlite.dylib */; };
+		E3D859751EEA09F70093FB1C /* liblibmysql.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D859741EEA09F70093FB1C /* liblibmysql.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E33E6FAB1EBC2984003A0B92 /* liblibpostgres.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibpostgres.dylib; path = ../libpostgres/build/Debug/liblibpostgres.dylib; sourceTree = "<group>"; };
 		E3D139661D0D110A00A5A0F7 /* liblibdbloader.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdbloader.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D139741D0D11B400A5A0F7 /* dbloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbloader.cpp; sourceTree = "<group>"; };
 		E3D139761D0D141400A5A0F7 /* liblibodbc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibodbc.dylib; path = ../Build/Products/Debug/liblibodbc.dylib; sourceTree = "<group>"; };
 		E3D139771D0D141400A5A0F7 /* liblibsqlite.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibsqlite.dylib; path = ../Build/Products/Debug/liblibsqlite.dylib; sourceTree = "<group>"; };
+		E3D859741EEA09F70093FB1C /* liblibmysql.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibmysql.dylib; path = ../libmysql/build/Debug/liblibmysql.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -24,6 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3D859751EEA09F70093FB1C /* liblibmysql.dylib in Frameworks */,
+				E33E6FAC1EBC2984003A0B92 /* liblibpostgres.dylib in Frameworks */,
 				E3D139781D0D141400A5A0F7 /* liblibodbc.dylib in Frameworks */,
 				E3D139791D0D141400A5A0F7 /* liblibsqlite.dylib in Frameworks */,
 			);
@@ -35,6 +41,8 @@
 		E3D1395D1D0D110A00A5A0F7 = {
 			isa = PBXGroup;
 			children = (
+				E3D859741EEA09F70093FB1C /* liblibmysql.dylib */,
+				E33E6FAB1EBC2984003A0B92 /* liblibpostgres.dylib */,
 				E3D139761D0D141400A5A0F7 /* liblibodbc.dylib */,
 				E3D139771D0D141400A5A0F7 /* liblibsqlite.dylib */,
 				E3D139731D0D112F00A5A0F7 /* libdbloader */,
@@ -218,11 +226,16 @@
 					../dbinterface,
 					../libsqlite,
 					../libodbc,
+					../libpostgres,
+					"../mysql-connector/include",
+					../libmysql,
 				);
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
+					/Users/igorkorot/dbhandler/dbhandler/libpostgres/build/Debug,
+					/Users/igorkorot/dbhandler/dbhandler/libmysql/build/Debug,
 				);
 				OTHER_LDFLAGS = (
 					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
@@ -260,6 +273,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
+					/Users/igorkorot/dbhandler/dbhandler/libpostgres/build/Debug,
+					/Users/igorkorot/dbhandler/dbhandler/libmysql/build/Debug,
 				);
 				OTHER_LDFLAGS = (
 					"-L/Users/igorkorot/wxWidgets/buildC11/lib",

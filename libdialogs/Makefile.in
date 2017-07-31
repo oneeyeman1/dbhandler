@@ -131,7 +131,9 @@ libdialogs_la_LIBADD =
 am_libdialogs_la_OBJECTS = libdialogs_la-databasetype.lo \
 	libdialogs_la-dialogs.lo libdialogs_la-odbcconfigure.lo \
 	libdialogs_la-selecttables.lo libdialogs_la-createindex.lo \
-	libdialogs_la-properties.lo
+	libdialogs_la-properties.lo libdialogs_la-foreignkey.lo \
+	libdialogs_la-getobjectname.lo libdialogs_la-jointype.lo \
+	libdialogs_la-addcolumnsdialog.lo
 libdialogs_la_OBJECTS = $(am_libdialogs_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -387,12 +389,23 @@ libdialogs_la_SOURCES = \
 	createindex.cpp \
 	createindex.h \
 	properties.cpp \
-	properties.h
+	properties.h \
+	foreignkey.cpp \
+	foreignkey.h \
+	getobjectname.cpp \
+	getobjectname.h \
+	jointype.cpp \
+	jointype.h \
+	addcolumnsdialog.cpp \
+	addcolumnsdialog.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
 	-I../../libshapeframework \
 	-I../../libpropertypages \
+	`pkg-config \
+	--cflags \
+	gtk+-2.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
@@ -490,9 +503,13 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-addcolumnsdialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-createindex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-databasetype.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-dialogs.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-foreignkey.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-getobjectname.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-jointype.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-odbcconfigure.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-properties.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-selecttables.Plo@am__quote@
@@ -559,6 +576,34 @@ libdialogs_la-properties.lo: properties.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='properties.cpp' object='libdialogs_la-properties.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-properties.lo `test -f 'properties.cpp' || echo '$(srcdir)/'`properties.cpp
+
+libdialogs_la-foreignkey.lo: foreignkey.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-foreignkey.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-foreignkey.Tpo -c -o libdialogs_la-foreignkey.lo `test -f 'foreignkey.cpp' || echo '$(srcdir)/'`foreignkey.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-foreignkey.Tpo $(DEPDIR)/libdialogs_la-foreignkey.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='foreignkey.cpp' object='libdialogs_la-foreignkey.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-foreignkey.lo `test -f 'foreignkey.cpp' || echo '$(srcdir)/'`foreignkey.cpp
+
+libdialogs_la-getobjectname.lo: getobjectname.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-getobjectname.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-getobjectname.Tpo -c -o libdialogs_la-getobjectname.lo `test -f 'getobjectname.cpp' || echo '$(srcdir)/'`getobjectname.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-getobjectname.Tpo $(DEPDIR)/libdialogs_la-getobjectname.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='getobjectname.cpp' object='libdialogs_la-getobjectname.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-getobjectname.lo `test -f 'getobjectname.cpp' || echo '$(srcdir)/'`getobjectname.cpp
+
+libdialogs_la-jointype.lo: jointype.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-jointype.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-jointype.Tpo -c -o libdialogs_la-jointype.lo `test -f 'jointype.cpp' || echo '$(srcdir)/'`jointype.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-jointype.Tpo $(DEPDIR)/libdialogs_la-jointype.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='jointype.cpp' object='libdialogs_la-jointype.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-jointype.lo `test -f 'jointype.cpp' || echo '$(srcdir)/'`jointype.cpp
+
+libdialogs_la-addcolumnsdialog.lo: addcolumnsdialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-addcolumnsdialog.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-addcolumnsdialog.Tpo -c -o libdialogs_la-addcolumnsdialog.lo `test -f 'addcolumnsdialog.cpp' || echo '$(srcdir)/'`addcolumnsdialog.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-addcolumnsdialog.Tpo $(DEPDIR)/libdialogs_la-addcolumnsdialog.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='addcolumnsdialog.cpp' object='libdialogs_la-addcolumnsdialog.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-addcolumnsdialog.lo `test -f 'addcolumnsdialog.cpp' || echo '$(srcdir)/'`addcolumnsdialog.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

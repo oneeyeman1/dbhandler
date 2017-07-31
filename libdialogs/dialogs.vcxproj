@@ -239,7 +239,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\dbinterface;..\libfieldswindow;..\libshapeframework;..\libpropertypages;c:\wxWidgets\lib\vc_dll\mswud;c:\wxWidgets\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\VLD\include;..\dbinterface;..\libfieldswindow;..\libshapeframework;..\libpropertypages;c:\wxWidgets\lib\vc_dll\mswud;c:\wxWidgets\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_USRDLL;DLL_EXPORTS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;MY_DLL_BUILDING;;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -266,7 +266,7 @@
       <OutputFile>..\dbhandler\vc_mswuddll\dialogs.dll</OutputFile>
       <ImportLibrary>vc_mswuddll\dialogs.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\dbhandler\Debug;..\libfieldswindow\vc_mswuddll;..\libshapeframework\vc_mswuddll;..\libpropertypages\vc_mswuddll;c:\wxWidgets\lib\vc_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Igor\OneDrive\Documents\VLD\lib\Win32;..\dbhandler\Debug;..\libfieldswindow\vc_mswuddll;..\libshapeframework\vc_mswuddll;..\libpropertypages\vc_mswuddll;c:\wxWidgets\lib\vc_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll\dialogs.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
@@ -488,18 +488,28 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="addcolumnsdialog.cpp" />
     <ClCompile Include="createindex.cpp" />
     <ClCompile Include="databasetype.cpp" />
     <ClCompile Include="dialogs.cpp" />
+    <ClCompile Include="foreignkey.cpp" />
+    <ClCompile Include="getobjectname.cpp" />
+    <ClCompile Include="jointype.cpp" />
     <ClCompile Include="odbcconfigure.cpp" />
     <ClCompile Include="properties.cpp" />
+    <ClCompile Include="retrievalarguments.cpp" />
     <ClCompile Include="selecttables.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="addcolumnsdialog.h" />
     <ClInclude Include="createindex.h" />
     <ClInclude Include="databasetype.h" />
+    <ClInclude Include="foreignkey.h" />
+    <ClInclude Include="getobjectname.h" />
+    <ClInclude Include="jointype.h" />
     <ClInclude Include="odbcconfigure.h" />
     <ClInclude Include="properties.h" />
+    <ClInclude Include="retrievalarguments.h" />
     <ClInclude Include="selecttables.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -10,7 +10,11 @@ libpropertypages_la_SOURCES =  \
 	fontpropertypagebase.cpp \
 	fontpropertypagebase.h \
 	gtk/fontpropertypage.cpp \
-	gtk/fontpropertypage.h
+	gtk/fontpropertypage.h \
+	syntaxproppage.cpp \
+	syntaxproppage.h \
+	wherehavingpage.cpp \
+	wherehavingpage.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	`pkg-config \

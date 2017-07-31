@@ -36,16 +36,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="column.h" />
+    <ClInclude Include="commentfieldshape.h" />
+    <ClInclude Include="commenttableshape.h" />
     <ClInclude Include="constraint.h" />
+    <ClInclude Include="constraintsign.h" />
     <ClInclude Include="databasecanvas.h" />
     <ClInclude Include="databasedoc.h" />
+    <ClInclude Include="databasetemplate.h" />
     <ClInclude Include="databaseview.h" />
     <ClInclude Include="ErdForeignKey.h" />
     <ClInclude Include="ErdLineShape.h" />
-    <ClInclude Include="ErdTable.h" />
     <ClInclude Include="FieldShape.h" />
     <ClInclude Include="GridTableShape.h" />
     <ClInclude Include="GUIDatabaseTable.h" />
+    <ClInclude Include="HeaderGrid.h" />
     <ClInclude Include="IDbAdapter.h" />
     <ClInclude Include="IDbType.h" />
     <ClInclude Include="MyErdTable.h" />
@@ -55,17 +59,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="column.cpp" />
+    <ClCompile Include="commentfieldshape.cpp" />
+    <ClCompile Include="commenttableshape.cpp" />
     <ClCompile Include="constraint.cpp" />
+    <ClCompile Include="constraintsign.cpp" />
     <ClCompile Include="databasecanvas.cpp" />
     <ClCompile Include="databasedoc.cpp" />
+    <ClCompile Include="databasetemplate.cpp" />
     <ClCompile Include="databaseview.cpp" />
     <ClCompile Include="dbview.cpp" />
     <ClCompile Include="ErdForeignKey.cpp" />
     <ClCompile Include="ErdLineShape.cpp" />
-    <ClCompile Include="ErdTable.cpp" />
     <ClCompile Include="FieldShape.cpp" />
     <ClCompile Include="GridTableShape.cpp" />
     <ClCompile Include="GUIDatabaseTable.cpp" />
+    <ClCompile Include="HeaderGrid.cpp" />
     <ClCompile Include="MyErdTable.cpp" />
     <ClCompile Include="NArrow.cpp" />
     <ClCompile Include="OneArrow.cpp" />
@@ -73,7 +81,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>dbwindow</ProjectName>
-    <ProjectGuid>{622CA63B-2182-4AF6-92CF-3396D386AF85}</ProjectGuid>
+    <ProjectGuid>{43FB2FA3-ADA4-498B-9B95-7A80056DA7BD}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">
@@ -271,7 +279,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libshapeframework;..\dbinterface;c:\wxWidgets\lib\vc_dll\mswud;c:\wxWidgets\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\VLD\include;..\libshapeframework;..\dbinterface;..\libfieldswindow;..\libpropertypages;c:\wxWidgets\lib\vc_dll\mswud;c:\wxWidgets\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_USRDLL;DLL_EXPORTS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;MY_DLL_BUILDING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -292,11 +300,11 @@
       <AdditionalIncludeDirectories>.\..\..\lib\vc_dll\mswud;.\..\..\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>shapeframework.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fieldswindow.lib;propertypages.lib;shapeframework.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>..\dbhandler\vc_mswuddll\dbwindow.dll</OutputFile>
       <ImportLibrary>vc_mswuddll\dbwindow.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\libshapeframework\vc_mswuddll;c:\wxWidgets\lib\vc_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Igor\OneDrive\Documents\VLD\lib\Win32;..\libpropertypages\vc_mswuddll;..\libshapeframework\vc_mswuddll;..\libfieldswindow\vc_mswuddll;c:\wxWidgets\lib\vc_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll\dbwindowl.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>

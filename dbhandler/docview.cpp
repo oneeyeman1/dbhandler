@@ -25,11 +25,11 @@
 #if !wxUSE_DOC_VIEW_ARCHITECTURE
     #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
-/*
-#ifdef __WXMSW__
+
+#if defined __WXMSW__ && defined __MEMORYLEAKS__
 #include <vld.h>
 #endif
-*/
+
 #include <vector>
 #include <map>
 #include "wx/docview.h"
@@ -95,6 +95,7 @@ bool MyApp::OnInit()
 
     // Fill in the application information fields before creating wxConfig.
     wxConfigBase *config = wxConfigBase::Get( "DBManager" );
+    config->SetPath( "CurrentDB" );
     m_dbName = config->Read( "Database Name", "" );
     m_dbEngine = config->Read( "Database Engine", "" );
     SetVendorName( "wxWidgets" );
@@ -102,39 +103,21 @@ bool MyApp::OnInit()
     SetAppDisplayName( "DB Handler" );
 
     //// Create a document manager
-    wxDocManager *docManager = new wxDocManager;
-
-#if defined( __WXMAC__ )  && wxOSX_USE_CARBON
-    wxFileName::MacRegisterDefaultTypeAndCreator( "drw" , 'WXMB' , 'WXMA' );
-#endif
+    m_docManager = new wxDocManager;
 
     // Create a template relating text documents to their views
-    new wxDocTemplate( docManager, "Text", "*.txt;*.text", "", "txt;text", "Text Doc", "Text View", CLASSINFO( TextEditDocument ), CLASSINFO( TextEditView ) );
-#if defined( __WXMAC__ ) && wxOSX_USE_CARBON
-    wxFileName::MacRegisterDefaultTypeAndCreator( "txt" , 'TEXT' , 'WXMA' );
-#endif
+    new wxDocTemplate( m_docManager, "Text", "*.txt;*.text", "", "txt;text", "Text Doc", "Text View", CLASSINFO( TextEditDocument ), CLASSINFO( TextEditView ) );
     // Create a template relating image documents to their views
-    new wxDocTemplate( docManager, "Image", "*.png;*.jpg", "", "png;jpg", "Image Doc", "Image View", CLASSINFO( ImageDocument ), CLASSINFO( ImageView ) );
+    new wxDocTemplate( m_docManager, "Image", "*.png;*.jpg", "", "png;jpg", "Image Doc", "Image View", CLASSINFO( ImageDocument ), CLASSINFO( ImageView ) );
     // create the main frame window
     MainFrame *frame;
-    frame = new MainFrame( docManager );
+    frame = new MainFrame( m_docManager );
 
 //    CreateMenuBarForFrame( frame, menuFile, m_menuEdit );
 
     frame->SetIcon( wxICON( doc ) );
     frame->Maximize();
     frame->Show();
-/*
-    if( m_filesFromCmdLine.empty() )
-    {
-        docManager->CreateNewDocument();
-    }
-    else // we have files to open on command line
-    {
-        for( size_t i = 0; i != m_filesFromCmdLine.size(); ++i )
-            docManager->CreateDocument( m_filesFromCmdLine[i], wxDOC_SILENT );
-    }
-*/
     return true;
 }
 
@@ -158,6 +141,16 @@ wxString MyApp::GetDBEngine()
     return m_dbEngine;
 }
 
+wxString MyApp::GetConnectString()
+{
+    return m_connectString;
+}
+
+wxString MyApp::GetConnectedUser()
+{
+    return m_connectedUser;
+}
+
 void MyApp::SetDBEngine(const wxString &engine)
 {
     m_dbEngine = engine;
@@ -166,6 +159,16 @@ void MyApp::SetDBEngine(const wxString &engine)
 void MyApp::SetDBName(const wxString &name)
 {
     m_dbName = name;
+}
+
+void MyApp::SetConnectString(const wxString &connString)
+{
+    m_connectString = connString;
+}
+
+void MyApp::SetConnectedUser(const wxString &user)
+{
+    m_connectedUser = user;
 }
 
 void MyApp::AppendDocumentFileCommands(wxMenu *menu, bool supportsPrinting)
@@ -241,3 +244,8 @@ void MyApp::CreateMainToolbar()
 {
 }
 #endif
+
+wxDocManager *MyApp::GetDocManager()
+{
+    return m_docManager;
+}

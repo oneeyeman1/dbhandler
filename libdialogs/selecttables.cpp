@@ -8,23 +8,36 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
+#ifdef __GNUC__
+#pragma implementation "dialogs.h"
+#endif
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
+
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
+#endif
+
 #include <string>
 #include "database.h"
 #include "selecttables.h"
 
-// begin wxGlade: ::extracode
-// end wxGlade
-
-SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, const wxPoint& pos, const wxSize& size, long style):
+SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, bool isTableView, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     m_db = db;
     m_names = names;
     sizer_1 = NULL;
+    m_isTableView = isTableView;
     // begin wxGlade: SelectTables::SelectTables
+    m_readOnly = NULL;
     m_panel = new wxPanel( this, wxID_ANY );
-    m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
+    m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, isTableView ? wxLB_SINGLE : wxLB_MULTIPLE );
     m_showSystem = new wxCheckBox( m_panel, wxID_ANY, _( "&Show system tables" ) );
+    if( m_isTableView )
+        m_readOnly = new wxCheckBox( m_panel, wxID_ANY, _( "&Read-Only" ) );
     m_open = new wxButton( m_panel, wxID_ANY, _( "&Open" ) );
     m_new = new wxButton( m_panel, wxID_ANY, _( "&New..." ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "&Cancel" ) );
@@ -33,8 +46,8 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
     set_properties();
     do_layout();
     // end wxGlade
-	m_open->Bind( wxEVT_BUTTON, &SelectTables::OnOpenTables, this );
-	m_showSystem->Bind( wxEVT_CHECKBOX, &SelectTables::OnShowSystemTables, this );
+    m_open->Bind( wxEVT_BUTTON, &SelectTables::OnOpenTables, this );
+    m_showSystem->Bind( wxEVT_CHECKBOX, &SelectTables::OnShowSystemTables, this );
 }
 
 void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames)
@@ -42,7 +55,7 @@ void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames)
     wxArrayInt selections;
     m_tables->GetSelections( selections );
     for( size_t i = 0; i < selections.GetCount(); i++ )
-		tableNames.push_back( m_tables->GetString( selections.Item( i ) ) );
+        tableNames.push_back( m_tables->GetString( selections.Item( i ) ) );
 }
 
 void SelectTables::set_properties()
@@ -65,12 +78,19 @@ void SelectTables::do_layout()
     wxBoxSizer* sizer_6 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer* sizer_8 = new wxBoxSizer( wxVERTICAL );
     wxBoxSizer* sizer_7 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* sizer_9 = new wxBoxSizer( wxHORIZONTAL );
     sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_7->Add( m_tables, 0, wxEXPAND, 0 );
     sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_7->Add( m_showSystem, 0, wxEXPAND, 0 );
-    sizer_6->Add( sizer_7, 1, 0, 0 );
+    sizer_9->Add( m_showSystem, 0, wxEXPAND, 0 );
+    if( m_isTableView )
+    {
+        sizer_9->Add( 40, 40, 0, wxEXPAND, 0 );
+        sizer_9->Add( m_readOnly, 0, wxEXPAND, 0 );
+    }
+    sizer_7->Add( sizer_9, 0, wxEXPAND, 0 );
+    sizer_6->Add( sizer_7, 0, 0, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_8->Add( m_open, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
     sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -80,19 +100,18 @@ void SelectTables::do_layout()
     sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_8->Add( m_help, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
     sizer_8->Add( 30, 30, 0, wxEXPAND, 0 );
-    sizer_6->Add( sizer_8, 1, 0, 0 );
-    sizer_5->Add( sizer_6, 1, 0, 0 );
+    sizer_6->Add( sizer_8, 0, 0, 0 );
+    sizer_5->Add( sizer_6, 0, 0, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_4->Add( sizer_5, 1, 0, 0 );
+    sizer_4->Add( sizer_5, 0, 0, 0 );
     sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
     m_panel->SetSizer( sizer_4 );
-    sizer_1->Add( m_panel, 1, 0, 0 );
+    sizer_1->Add( m_panel, 0, 0, 0 );
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     Layout();
     // end wxGlade
 }
-
 
 BEGIN_EVENT_TABLE(SelectTables, wxDialog)
     // begin wxGlade: SelectTables::event_table
@@ -109,7 +128,7 @@ void SelectTables::OnSelectingLBItem(wxCommandEvent &event)
 
 void SelectTables::OnOpenTables(wxCommandEvent &event)
 {
-	EndModal( dynamic_cast<wxButton *>( event.GetEventObject() )->GetId() );
+    EndModal( dynamic_cast<wxButton *>( event.GetEventObject() )->GetId() );
 }
 
 // wxGlade: add SelectTables event handlers
@@ -130,10 +149,10 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                 std::wstring tableName = (*it1)->GetTableName();
                 std::wstring schemaName = (*it1)->GetSchemaName();
                 if( std::find( m_names.begin(), m_names.end(), tableName ) == m_names.end() )
-				{
+                {
                     if( type == L"SQLite" )
                     {
-						if( !sysTableIncluded && ( ( tableName.substr( 0, 6 ) != L"sqlite" ) && ( tableName.substr( 0, 3 ) != L"sys" ) ) )
+                        if( !sysTableIncluded && ( ( tableName.substr( 0, 6 ) != L"sqlite" ) && ( tableName.substr( 0, 3 ) != L"sys" ) ) )
                             m_tables->Append( tableName );
                         else if( sysTableIncluded )
                             m_tables->Append( tableName );
@@ -173,7 +192,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
     Layout();
 }
 
-void SelectTables::OnShowSystemTables(wxCommandEvent &event)
+void SelectTables::OnShowSystemTables(wxCommandEvent &WXUNUSED(event))
 {
     if( m_showSystem->IsChecked() )
         FillTableList( true );

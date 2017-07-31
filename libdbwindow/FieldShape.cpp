@@ -1,5 +1,7 @@
 #include "wxsf/TextShape.h"
+#include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "GridTableShape.h"
 #include "FieldShape.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(FieldShape,wxSFTextShape);
@@ -24,14 +26,24 @@ FieldShape::FieldShape()
     XS_SERIALIZE( m_backColour, wxT( "m_backColour" ) );*/
 }
 
+FieldShape::FieldShape(const FieldShape &shape)
+{
+    m_field = shape.m_field;
+    m_parentRect = shape.m_parentRect;
+    m_backColour = shape.m_backColour;
+}
+
 FieldShape::~FieldShape(void)
 {
 }
 
 void FieldShape::DrawNormal(wxDC &dc)
 {
-    wxSFRectShape::DrawNormal(dc);
     wxRect rect = this->GetBoundingBox();
+    wxSFShapeBase *parentShape = GetParentShape()->GetParentShape();
+    wxRect rectParent = parentShape->GetBoundingBox();
+    m_parentRect.x = rectParent.x;
+    m_parentRect.width = rectParent.width;
     wxString line;
     int i = 0;
     dc.SetTextForeground( m_TextColor );
@@ -44,7 +56,8 @@ void FieldShape::DrawNormal(wxDC &dc)
     {
         m_backColour = wxColour( 210, 225, 245 );
         dc.SetBrush( m_Fill );
-        dc.SetBackgroundMode(wxTRANSPARENT);
+        dc.SetPen( m_Border );
+        dc.SetBackgroundMode( wxTRANSPARENT );
     }
     dc.DrawRectangle( m_parentRect.x, rect.y, m_parentRect.width, rect.height );
     dc.SetFont( m_Font );
@@ -57,6 +70,7 @@ void FieldShape::DrawNormal(wxDC &dc)
         dc.DrawText( line, (int)pos.x, (int)pos.y + i * 12 );
         i++;
     }
+    dc.SetPen( wxNullPen );
     dc.SetFont( wxNullFont );
     dc.SetBrush( wxNullBrush );
 }
@@ -74,4 +88,25 @@ void FieldShape::SetField(Field *field)
 Field *FieldShape::GetField()
 {
     return m_field;
+}
+
+bool FieldShape::Contains(const wxPoint& pos)
+{
+    bool result = false;
+    wxSFShapeBase *parent = GetParentShape();
+    wxRect rectParent = parent->GetBoundingBox();
+    wxRect rect = GetBoundingBox();
+    if( pos.y >= rect.GetTop() && pos.y < rect.GetBottom() && pos.x >= rectParent.GetLeft() && pos.x <= rectParent.GetRight() )
+        result = true;
+    return result;
+}
+
+void FieldShape::DrawSelected(wxDC& dc)
+{
+    DrawNormal( dc );
+}
+
+void FieldShape::Select(bool state)
+{
+    m_fSelected = state;
 }

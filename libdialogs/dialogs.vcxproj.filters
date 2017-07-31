@@ -28,6 +28,21 @@
     <ClCompile Include="properties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="foreignkey.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="getobjectname.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jointype.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="retrievalarguments.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="addcolumnsdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="odbcconfigure.h">
@@ -43,6 +58,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="properties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="foreignkey.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="getobjectname.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="jointype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="retrievalarguments.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="addcolumnsdialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

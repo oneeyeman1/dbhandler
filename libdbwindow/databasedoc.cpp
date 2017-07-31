@@ -24,19 +24,28 @@
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"
-#include "ErdForeignKey.h"
+#include "wx/notebook.h"
+#include "wx/grid.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
 #include "column.h"
+#include "constraintsign.h"
 #include "constraint.h"
 #include "GridTableShape.h"
+#include "HeaderGrid.h"
+#include "commenttableshape.h"
 #include "MyErdTable.h"
+#include "FieldShape.h"
+#include "fieldwindow.h"
+#include "wherehavingpage.h"
+#include "syntaxproppage.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
 #include "databaseview.h"
+#include "ErdForeignKey.h"
 
 // ----------------------------------------------------------------------------
 // DrawingDocument implementation
@@ -58,15 +67,6 @@ DocumentOstream& DrawingDocument::SaveObject(DocumentOstream& ostream)
 
     wxDocument::SaveObject( ostream );
 
-    const wxInt32 count = m_doodleSegments.size();
-    stream << count << '\n';
-
-    for( int n = 0; n < count; n++ )
-    {
-        m_doodleSegments[n].SaveObject( ostream );
-        stream << '\n';
-    }
-
     return ostream;
 }
 
@@ -80,26 +80,6 @@ DocumentIstream& DrawingDocument::LoadObject(DocumentIstream& istream)
 
     wxDocument::LoadObject( istream );
 
-    wxInt32 count = 0;
-    stream >> count;
-    if( count < 0 )
-    {
-        wxLogWarning( "Drawing document corrupted: invalid segments count." );
-#if wxUSE_STD_IOSTREAM
-        istream.clear( std::ios::badbit );
-#else
-        istream.Reset( wxSTREAM_READ_ERROR );
-#endif
-        return istream;
-    }
-
-    for( int n = 0; n < count; n++ )
-    {
-        DoodleSegment segment;
-        segment.LoadObject( istream );
-        m_doodleSegments.push_back( segment );
-    }
-
     return istream;
 }
 
@@ -109,32 +89,10 @@ void DrawingDocument::DoUpdate()
     UpdateAllViews();
 }
 
-void DrawingDocument::AddDoodleSegment(const DoodleSegment& segment)
-{
-    m_doodleSegments.push_back( segment );
-
-    DoUpdate();
-}
-
-bool DrawingDocument::PopLastSegment(DoodleSegment *segment)
-{
-    if( m_doodleSegments.empty() )
-        return false;
-
-    if( segment )
-        *segment = m_doodleSegments.back();
-
-    m_doodleSegments.pop_back();
-
-    DoUpdate();
-
-    return true;
-}
-
 void DrawingDocument::SetDatabase(Database *db)
 {
     m_db = db;
-    dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db );
+    dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db, true );
 }
 
 Database *DrawingDocument::GetDatabase()
@@ -154,7 +112,7 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
             if( (*it).ToStdWstring() == (*it1)->GetTableName() )
             {
                 DatabaseTable *dbTable = (*it1);
-                MyErdTable *table = new MyErdTable( dbTable );
+                MyErdTable *table = new MyErdTable( dbTable, dynamic_cast<DrawingView *>( GetFirstView() )->GetViewType() );
                 m_tables.push_back( table );
                 m_tableNames.push_back( table->GetTableName() );
                 found = true;
@@ -188,6 +146,11 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
     }*/
 }
 
+std::vector<std::wstring> &DrawingDocument::GetTableNameVector()
+{
+    return m_tableNames;
+}
+
 MyErdTable *DrawingDocument::GetReferencedTable(const wxString &tableName)
 {
     bool found = false;
@@ -213,55 +176,20 @@ std::vector<std::wstring> &DrawingDocument::GetTableNames()
     return m_tableNames;
 }
 
-// ----------------------------------------------------------------------------
-// DoodleSegment implementation
-// ----------------------------------------------------------------------------
-
-DocumentOstream& DoodleSegment::SaveObject(DocumentOstream& ostream)
+void DrawingDocument::AppendFieldToQueryFields(const std::wstring &field)
 {
-#if wxUSE_STD_IOSTREAM
-    DocumentOstream& stream = ostream;
-#else
-    wxTextOutputStream stream(ostream);
-#endif
-
-    const wxInt32 count = m_lines.size();
-    stream << count << '\n';
-
-    for ( int n = 0; n < count; n++ )
-    {
-        const DoodleLine& line = m_lines[n];
-        stream
-            << line.x1 << ' '
-            << line.y1 << ' '
-            << line.x2 << ' '
-            << line.y2 << '\n';
-    }
-
-    return ostream;
+    m_queryFields.push_back( field );
 }
 
-DocumentIstream& DoodleSegment::LoadObject(DocumentIstream& istream)
+const std::vector<std::wstring> &DrawingDocument::GetQueryFields()
 {
-#if wxUSE_STD_IOSTREAM
-    DocumentIstream& stream = istream;
-#else
-    wxTextInputStream stream(istream);
-#endif
+    return m_queryFields;
+}
 
-    wxInt32 count = 0;
-    stream >> count;
-
-    for ( int n = 0; n < count; n++ )
-    {
-        DoodleLine line;
-        stream
-            >> line.x1
-            >> line.y1
-            >> line.x2
-            >> line.y2;
-        m_lines.push_back(line);
-    }
-
-    return istream;
+void DrawingDocument::AddRemoveField(const std::wstring &fieldName, bool isAdded)
+{
+    if( isAdded )
+        m_queryFields.push_back( fieldName );
+    else
+        m_queryFields.erase( std::remove( m_queryFields.begin(), m_queryFields.end(), fieldName ), m_queryFields.end() );
 }

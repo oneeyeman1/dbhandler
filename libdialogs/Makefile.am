@@ -15,12 +15,23 @@ libdialogs_la_SOURCES =  \
 	createindex.cpp \
 	createindex.h \
 	properties.cpp \
-	properties.h
+	properties.h \
+	foreignkey.cpp \
+	foreignkey.h \
+	getobjectname.cpp \
+	getobjectname.h \
+	jointype.cpp \
+	jointype.h \
+	addcolumnsdialog.cpp \
+	addcolumnsdialog.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
 	-I../../libshapeframework \
 	-I../../libpropertypages \
+	`pkg-config \
+	--cflags \
+	gtk+-2.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 

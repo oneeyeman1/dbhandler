@@ -22,15 +22,27 @@
 
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
+#include "wx/docmdi.h"
+#include "wx/fontenum.h"
+#ifdef __WXGTK__
+#include "gtk/gtk.h"
+#include "wx/nativewin.h"
+#endif
+#ifdef __WXOSX_COCOA__
+#include "wx/nativewin.h"
+#endif
 #include "database.h"
 #include "tablegeneral.h"
 #include "fontpropertypagebase.h"
 #include "properties.h"
 
+const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
+
 PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     std::vector<std::wstring> errors;
+    m_isApplied = false;
     m_type = type;
     m_db = db;
     m_dbType = m_db->GetTableVector().m_type;
@@ -85,7 +97,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         wxString tableName = title.substr( 0, title.find( '.' ) );
         wxString fieldName = title.substr( title.find( '.' ) + 1 );
         Field *field = static_cast<Field *>( m_object );
-        res = db->GetFieldProperties( tableName.ToStdWstring(), schemaName.ToStdWstring(), field->GetFieldName(), field, errors );
+        res = db->GetFieldProperties( tableName.ToStdWstring(), schemaName.ToStdWstring(), field, errors );
         if( !res )
         {
             m_page1 = new TableGeneralProperty( m_properties, field, type );
@@ -140,130 +152,80 @@ void PropertiesDialog::do_layout()
     // end wxGlade
 }
 
-void PropertiesDialog::OnApply(wxCommandEvent &event)
+void PropertiesDialog::OnApply(wxCommandEvent &WXUNUSED(event))
 {
     ApplyProperties();
 }
 
-void PropertiesDialog::OnOk(wxCommandEvent &event)
+void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 {
-    ApplyProperties();
+    if( !m_isApplied )
+    {
+        if( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() )
+        {
+            ApplyProperties();
+        }
+    }
     EndModal( wxID_OK );
 }
 
 bool PropertiesDialog::ApplyProperties()
 {
     bool exist;
+    bool isModified = ( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() );
     std::vector<std::wstring> errors;
     if( m_type == 0 )
     {
-        DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
-        if( m_db->IsTablePropertiesExist( table->GetTableName(), table->GetSchemaName(), errors ) && errors.size() == 0 )
-            exist = true;
-        else
-            exist = false;
-        bool fontChanged = m_page2->IsDirty() && m_page3->IsDirty() && m_page4->IsDirty();
-        if( !fontChanged && m_page1->IsModified() )
+        if( !m_isApplied && isModified )
         {
-            if( exist )
+            DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
+            wxString newComment = m_page1->GetCommentCtrl()->GetValue();
+            wxFont *dataFont = m_page2->GetFont();
+            wxFont *headingFont = m_page3->GetFont();
+            wxFont *labelFont = m_page4->GetFont();
+            if( newComment != table->GetComment() && !IsLogOnly() )
             {
-                m_command = L"UPDATE ";
-                if( m_dbType == L"SQLite" )
-                    m_command += L"\"sys.abcattbl\" ";
-                else
-                    m_command += L"\"abcattbl\" ";
-                m_command += L"SET ";
-                m_command += L"\"abt_cmnt\" ";
-                m_command += L"= '";
-                m_command += m_page1->GetCommentCtrl()->GetValue().ToStdWstring();
-                m_command += L"' WHERE ";
-                m_command += L"\"abt_tnam\" = '";
-                m_command += table->GetTableName();
-                m_command += L"' AND ";
-                m_command += L"\"abt_ownr\" = ";
-                if( m_dbType == L"SQLite" )
-                    m_command += L"'';";
-                else
-                    m_command += L"'" + table->GetSchemaName() + L"'";
+                table->SetComment( newComment.ToStdWstring() );
             }
-            else
-            {
-                m_command = L"INSERT INTO ";
-                if( m_dbType == L"SQLite" )
-                    m_command += L"\"sys.abcattbl\"(\"abt_tnam\", \"abt_ownr\", \"abt_cmnt\") ";
-                else
-                    m_command += L"\"abcattbl\"(\"abt_tnam\", \"abt_ownr\", \"abt_cmnt\") ";
-                m_command += L"VALUES('";
-                m_command += table->GetTableName();
-                if( m_dbType == L"SQLite" )
-                    m_command += L"', '', ";
-                else
-                {
-                    m_command += L"', '";
-                    m_command += table->GetSchemaName();
-                    m_command += L"', ";
-                }
-                m_command += L"'";
-                m_command += m_page1->GetCommentCtrl()->GetValue().ToStdWstring();
-                m_command += L"'";
-                m_command += L");";
-            }
-        }
-        else
-        {
-            if( exist )
-            {
-                m_command = L"UPDATE ";
-                if( m_dbType == L"SQLite" )
-                    m_command += L"\"sys.abcattbl\" ";
-                else
-                    m_command += L"abcattbl ";
-                m_command += L"SET ";
-                m_command += L"\"abd_fhgt\" = ";
-                m_command += wxString::Format( "%d", m_page2->GetFont().GetPointSize() );
-                m_command += L", \"abd_fwgt\" = ";
-                m_command += wxString::Format( "%d", m_page2->GetFont().GetWeight() );
-                m_command += L", \"abd_fitl\" = ";
-                m_command += m_page2->GetFont().GetStyle() == wxFONTSTYLE_ITALIC ? L"Y" : L"N";
-                m_command += L", \"abd_funl\" = ";
-                m_command += m_page2->GetFont().GetUnderlined() ? L"Y" : L"N";
-                m_command += L", \"abd_fchr\" = ";
-                m_command += wxString::Format( "%d", m_page2->GetFont().GetEncoding() );
-                m_command += L", \"abd_fptc\" = ";
-                m_command += wxString::Format( "%d", m_page2->GetFont().GetPointSize() );
-                m_command += L", \"abd_ffce\" = ";
-                m_command += m_page2->GetFont().GetFaceName();
-            }
-            else
-            {
-                m_command = L"INSERT INTO ";
-                if( m_dbType == L"SQLite" )
-                    m_command += L"\"sys.abcattbl\"(\"abt_tnam\", \"abt_ownr\", \"abd_fhgt\", \"abd_fwgt\", \"abd_fitl\", \"abd_funl\", \"abd_fchr\", \"abd_fptc\", \"abd_ffce\", \"abt_cmnt\") ";
-                else
-                    m_command += L"abcattbl(abt_tnam, abt_ownr, abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, abd_ffce, abt_cmnt) ";
-                m_command += L"\r\\n\tVALUES(";
-                m_command += table->GetTableName();
-                m_command += L", ";
-                m_command += table->GetSchemaName();
-                m_command += L", ";
-                m_command += wxString::Format( "%d", m_page2->GetFont().GetPointSize() );
-                m_command += L", ";
-                m_command += wxString::Format( "%d", m_page2->GetFont().GetWeight() );
-				m_command += L", ";
-                m_command += m_page2->GetFont().GetStyle() == wxFONTSTYLE_ITALIC ? L"Y" : L"N";
-                m_command += L", ";
-                m_command += m_page2->GetFont().GetUnderlined() ? L"Y" : L"N";
-                m_command += L", ";
-                m_command += wxString::Format( "%d", m_page2->GetFont().GetEncoding() );
-                m_command += L", ";
-                m_command += wxString::Format( "%d", m_page2->GetFont().GetPointSize() );
-                m_command += L", ";
-                m_command += m_page2->GetFont().GetFaceName();
-                m_command += L");";
-            }
+            m_tableProperties.m_comment = newComment.Trim();
+            m_tableProperties.m_dataFontName = dataFont->GetFaceName();
+            m_tableProperties.m_headingFontName = headingFont->GetFaceName();
+            m_tableProperties.m_labelFontName = labelFont->GetFaceName();
+            m_tableProperties.m_dataFontSize = dataFont->GetPointSize();
+            m_tableProperties.m_headingFontSize = headingFont->GetPointSize();
+            m_tableProperties.m_labelFontSize = labelFont->GetPointSize();
+            m_tableProperties.m_isDataFontUnderlined = dataFont->GetUnderlined() ? true : false;
+            m_tableProperties.m_isHeadingFontUnderlined = headingFont->GetUnderlined() ? true : false;
+            m_tableProperties.m_isLabelFontUnderlined = labelFont->GetUnderlined() ? true : false;
+            m_tableProperties.m_isDataFontStriken = dataFont->GetStrikethrough() ? true : false;
+            m_tableProperties.m_isHeadingFontStriken = headingFont->GetStrikethrough() ? true : false;
+            m_tableProperties.m_isLabelFontStrioken = labelFont->GetStrikethrough() ? true : false;
+            m_tableProperties.m_isDataFontBold = dataFont->GetWeight() ? true : false;
+            m_tableProperties.m_isHeadingFontBold = headingFont->GetWeight() ? true : false;
+            m_tableProperties.m_isLabelFontBold = labelFont->GetWeight() ? true : false;
+            m_tableProperties.m_isDataFontItalic = dataFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+            m_tableProperties.m_isHeadingFontItalic = headingFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+            m_tableProperties.m_isLabelFontItalic = labelFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+            m_tableProperties.m_dataFontEncoding = dataFont->GetEncoding();
+            m_tableProperties.m_headingFontEncoding = headingFont->GetEncoding();
+            m_tableProperties.m_labelFontEncoding = labelFont->GetEncoding();
+            m_tableProperties.m_dataFontPixelSize = dataFont->GetPixelSize().GetWidth();
+            m_tableProperties.m_headingFontPixelSize = headingFont->GetPixelSize().GetWidth();
+            m_tableProperties.m_labelFontPixelSize = labelFont->GetPixelSize().GetWidth();
         }
     }
-//\"abh_fhgt\" smallint, \"abh_fwgt\" smallint, \"abh_fitl\" char(1), \"abh_funl\" char(1), \"abh_fchr\" smallint, \"abh_fptc\" smallint, \"abh_ffce\" char(18), \"abl_fhgt\" smallint, \"abl_fwgt\" smallint, \"abl_fitl\" char(1), \"abl_funl\" char(1), \"abl_fchr\" smallint, \"abl_fptc\" smallint, \"abl_ffce\" char(18), \"abt_cmnt\" char(254)
+    if( m_type == 1 )
+    {
+    }
+    if( isModified )
+    {
+        wxCommandEvent event( wxEVT_SET_TABLE_PROPERTY );
+        event.SetInt( IsLogOnly() );
+        event.SetExtraLong( m_type );
+        event.SetClientData( &m_tableProperties );
+        dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
+	}
+    m_isApplied = true;
     return true;
 }
 

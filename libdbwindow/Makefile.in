@@ -129,14 +129,18 @@ am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libdbwindow_la_LIBADD =
 am_libdbwindow_la_OBJECTS = libdbwindow_la-ErdForeignKey.lo \
-	libdbwindow_la-ErdTable.lo libdbwindow_la-NArrow.lo \
-	libdbwindow_la-OneArrow.lo libdbwindow_la-column.lo \
-	libdbwindow_la-constraint.lo libdbwindow_la-table.lo \
-	libdbwindow_la-GUIDatabaseTable.lo \
+	libdbwindow_la-NArrow.lo libdbwindow_la-OneArrow.lo \
+	libdbwindow_la-column.lo libdbwindow_la-constraint.lo \
+	libdbwindow_la-table.lo libdbwindow_la-GUIDatabaseTable.lo \
 	libdbwindow_la-databasecanvas.lo libdbwindow_la-databasedoc.lo \
 	libdbwindow_la-databaseview.lo libdbwindow_la-dbview.lo \
 	libdbwindow_la-MyErdTable.lo libdbwindow_la-ErdLineShape.lo \
-	libdbwindow_la-FieldShape.lo libdbwindow_la-GridTableShape.lo
+	libdbwindow_la-FieldShape.lo libdbwindow_la-GridTableShape.lo \
+	libdbwindow_la-HeaderGrid.lo \
+	libdbwindow_la-databasetemplate.lo \
+	libdbwindow_la-constraintsign.lo \
+	libdbwindow_la-commentfieldshape.lo \
+	libdbwindow_la-commenttableshape.lo
 libdbwindow_la_OBJECTS = $(am_libdbwindow_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -384,8 +388,6 @@ lib_LTLIBRARIES = \
 libdbwindow_la_SOURCES = \
 	ErdForeignKey.cpp \
 	ErdForeignKey.h \
-	ErdTable.cpp \
-	ErdTable.h \
 	IDbAdapter.h \
 	IDbType.h \
 	NArrow.cpp \
@@ -414,14 +416,28 @@ libdbwindow_la_SOURCES = \
 	FieldShape.cpp \
 	FieldShape.h \
 	GridTableShape.cpp \
-	GridTableShape.h
+	GridTableShape.h \
+	HeaderGrid.cpp \
+	HeaderGrid.h \
+	databasetemplate.cpp \
+	databasetemplate.h \
+	constraintsign.cpp \
+	constraintsign.h \
+	commentfieldshape.h \
+	commentfieldshape.cpp \
+	commenttableshape.cpp \
+	commenttableshape.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
+	-I../../libfieldswindow \
 	-I../../dbinterface \
+	-I../../libpropertypages \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
-libdbwindow_la_LDFLAGS = -L../libshapeframework \
+libdbwindow_la_LDFLAGS = -L../libpropertypages \
+	-lpropertypages \
+	-L../libshapeframework \
 	-L../libfieldswindow \
 	-lfieldswindow \
 	-lshapeframework \
@@ -508,17 +524,21 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-ErdForeignKey.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-ErdLineShape.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-ErdTable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-FieldShape.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-GUIDatabaseTable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-GridTableShape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-HeaderGrid.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-MyErdTable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-NArrow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-OneArrow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-column.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-commentfieldshape.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-commenttableshape.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-constraint.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-constraintsign.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-databasecanvas.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-databasedoc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-databasetemplate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-databaseview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-dbview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-table.Plo@am__quote@
@@ -550,13 +570,6 @@ libdbwindow_la-ErdForeignKey.lo: ErdForeignKey.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ErdForeignKey.cpp' object='libdbwindow_la-ErdForeignKey.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-ErdForeignKey.lo `test -f 'ErdForeignKey.cpp' || echo '$(srcdir)/'`ErdForeignKey.cpp
-
-libdbwindow_la-ErdTable.lo: ErdTable.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-ErdTable.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-ErdTable.Tpo -c -o libdbwindow_la-ErdTable.lo `test -f 'ErdTable.cpp' || echo '$(srcdir)/'`ErdTable.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-ErdTable.Tpo $(DEPDIR)/libdbwindow_la-ErdTable.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ErdTable.cpp' object='libdbwindow_la-ErdTable.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-ErdTable.lo `test -f 'ErdTable.cpp' || echo '$(srcdir)/'`ErdTable.cpp
 
 libdbwindow_la-NArrow.lo: NArrow.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-NArrow.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-NArrow.Tpo -c -o libdbwindow_la-NArrow.lo `test -f 'NArrow.cpp' || echo '$(srcdir)/'`NArrow.cpp
@@ -655,6 +668,41 @@ libdbwindow_la-GridTableShape.lo: GridTableShape.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='GridTableShape.cpp' object='libdbwindow_la-GridTableShape.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-GridTableShape.lo `test -f 'GridTableShape.cpp' || echo '$(srcdir)/'`GridTableShape.cpp
+
+libdbwindow_la-HeaderGrid.lo: HeaderGrid.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-HeaderGrid.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-HeaderGrid.Tpo -c -o libdbwindow_la-HeaderGrid.lo `test -f 'HeaderGrid.cpp' || echo '$(srcdir)/'`HeaderGrid.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-HeaderGrid.Tpo $(DEPDIR)/libdbwindow_la-HeaderGrid.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='HeaderGrid.cpp' object='libdbwindow_la-HeaderGrid.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-HeaderGrid.lo `test -f 'HeaderGrid.cpp' || echo '$(srcdir)/'`HeaderGrid.cpp
+
+libdbwindow_la-databasetemplate.lo: databasetemplate.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-databasetemplate.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-databasetemplate.Tpo -c -o libdbwindow_la-databasetemplate.lo `test -f 'databasetemplate.cpp' || echo '$(srcdir)/'`databasetemplate.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-databasetemplate.Tpo $(DEPDIR)/libdbwindow_la-databasetemplate.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='databasetemplate.cpp' object='libdbwindow_la-databasetemplate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-databasetemplate.lo `test -f 'databasetemplate.cpp' || echo '$(srcdir)/'`databasetemplate.cpp
+
+libdbwindow_la-constraintsign.lo: constraintsign.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-constraintsign.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-constraintsign.Tpo -c -o libdbwindow_la-constraintsign.lo `test -f 'constraintsign.cpp' || echo '$(srcdir)/'`constraintsign.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-constraintsign.Tpo $(DEPDIR)/libdbwindow_la-constraintsign.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='constraintsign.cpp' object='libdbwindow_la-constraintsign.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-constraintsign.lo `test -f 'constraintsign.cpp' || echo '$(srcdir)/'`constraintsign.cpp
+
+libdbwindow_la-commentfieldshape.lo: commentfieldshape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-commentfieldshape.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-commentfieldshape.Tpo -c -o libdbwindow_la-commentfieldshape.lo `test -f 'commentfieldshape.cpp' || echo '$(srcdir)/'`commentfieldshape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-commentfieldshape.Tpo $(DEPDIR)/libdbwindow_la-commentfieldshape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='commentfieldshape.cpp' object='libdbwindow_la-commentfieldshape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-commentfieldshape.lo `test -f 'commentfieldshape.cpp' || echo '$(srcdir)/'`commentfieldshape.cpp
+
+libdbwindow_la-commenttableshape.lo: commenttableshape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-commenttableshape.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-commenttableshape.Tpo -c -o libdbwindow_la-commenttableshape.lo `test -f 'commenttableshape.cpp' || echo '$(srcdir)/'`commenttableshape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-commenttableshape.Tpo $(DEPDIR)/libdbwindow_la-commenttableshape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='commenttableshape.cpp' object='libdbwindow_la-commenttableshape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-commenttableshape.lo `test -f 'commenttableshape.cpp' || echo '$(srcdir)/'`commenttableshape.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

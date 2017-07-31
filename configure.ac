@@ -70,5 +70,8 @@ libdialogs/Makefile
 libdbloader/Makefile
 libdbwindow/Makefile
 dbhandler/Makefile
+libmysql/Makefile
+libpostgres/Makefile
+libtablewindow/Makefile
 libpropertypages/Makefile
 ])

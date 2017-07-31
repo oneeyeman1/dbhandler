@@ -10,9 +10,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ErdTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="constraint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -61,11 +58,23 @@
     <ClInclude Include="FieldShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="databasetemplate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="constraintsign.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HeaderGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commenttableshape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commentfieldshape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ErdTable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="constraint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -109,6 +118,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GridTableShape.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HeaderGrid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="databasetemplate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="constraintsign.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commentfieldshape.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commenttableshape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

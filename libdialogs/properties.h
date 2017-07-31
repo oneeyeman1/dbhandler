@@ -18,6 +18,7 @@ public:
     PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
     const std::wstring &GetCommand();
     bool IsLogOnly();
+    void GetTableProperties();
 
 private:
     TableGeneralProperty *m_page1;
@@ -26,6 +27,8 @@ private:
     Database *m_db;
     void *m_object;
     std::wstring m_dbType, m_command;
+    bool m_isApplied;
+    TableProperties m_tableProperties;
     // begin wxGlade: PropertiesDialog::methods
     void set_properties();
     void do_layout();
@@ -39,5 +42,7 @@ protected:
     wxNotebook* m_properties;
     // end wxGlade
 }; // wxGlade: end class
+
+wxDECLARE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
 
 #endif // PROPERTIES_H

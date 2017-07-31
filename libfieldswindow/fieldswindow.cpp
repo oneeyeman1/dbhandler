@@ -10,6 +10,10 @@
 #include "wx/wx.h"
 #endif
 
+#if defined __WXMSW__ && defined __MEMORYLEAKS__
+#include <vld.h>
+#endif
+
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
 

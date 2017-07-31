@@ -28,9 +28,10 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db):
+CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, const std::wstring &schemaName, Database *db):
     wxDialog(parent, id, title)
 {
+    m_schema = schemaName;
     m_dbTable = table;
     m_db = db;
     m_dbType = m_db->GetTableVector().m_type;
@@ -178,8 +179,8 @@ void CreateIndex::set_properties()
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
-		m_padIndex->Bind( wxEVT_CHECKBOX, &CreateIndex::OnPadIndex, this );
-		m_fillfactor->Bind( wxEVT_SPINCTRL, &CreateIndex::OnFillFactor, this );
+        m_padIndex->Bind( wxEVT_CHECKBOX, &CreateIndex::OnPadIndex, this );
+        m_fillfactor->Bind( wxEVT_SPINCTRL, &CreateIndex::OnFillFactor, this );
     }
 }
 
@@ -343,7 +344,7 @@ void CreateIndex::do_layout()
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_13->Add( m_label3, 0, wxEXPAND, 0 );
     sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_13->Add( m_indexColumns->GetFieldsWindow(), 0, wxEXPAND, 0 );
+    sizer_13->Add( m_indexColumns, 0, wxEXPAND, 0 );
     sizer_5->Add( sizer_13, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
@@ -406,14 +407,6 @@ bool CreateIndex::Verify()
     if( success && m_fields.empty() )
     {
         wxMessageBox( _( "At least one index column is required" ), _( "Database" ) );
-        success = false;
-    }
-    if( success && m_db->IsIndexExists( m_indexName->GetValue().ToStdWstring(), m_dbTable->GetTableName(), errors ) )
-    {
-        for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
-            wxMessageBox( (*it) );
-        if( errors.empty() )
-            wxMessageBox( _( "At least one index column is required" ), _( "Database" ) );
         success = false;
     }
     return success;
@@ -712,7 +705,7 @@ void CreateIndex::OnDescending(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void CreateIndex::OnAlgorythmLockDefault(wxCommandEvent &event)
+void CreateIndex::OnAlgorythmLockDefault(wxCommandEvent &WXUNUSED(event))
 {
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
@@ -726,7 +719,7 @@ void CreateIndex::OnAlgorythmLockDefault(wxCommandEvent &event)
     }
 }
 
-void CreateIndex::OnAlgorythm(wxCommandEvent &event)
+void CreateIndex::OnAlgorythm(wxCommandEvent &WXUNUSED(event))
 {
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
@@ -740,7 +733,7 @@ void CreateIndex::OnAlgorythm(wxCommandEvent &event)
     }
 }
 
-void CreateIndex::OnLock(wxCommandEvent &event)
+void CreateIndex::OnLock(wxCommandEvent &WXUNUSED(event))
 {
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
@@ -766,10 +759,15 @@ void CreateIndex::OnPadIndex(wxCommandEvent &event)
     }
 }
 
-void CreateIndex::OnFillFactor(wxCommandEvent &event)
+void CreateIndex::OnFillFactor(wxCommandEvent &WXUNUSED(event))
 {
     if( m_fillfactor->GetValue() == 0 )
         m_padIndex->SetValue( false );
     else
         m_padIndex->SetValue( true );
+}
+
+const wxTextCtrl *CreateIndex::GetIndexNameCtrl()
+{
+    return m_indexName;
 }

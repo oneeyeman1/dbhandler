@@ -15,6 +15,10 @@
 #define new DEBUG_NEW
 #endif
 
+#if defined __WXMSW__ && defined __MEMORYLEAKS__
+#include <vld.h>
+#endif
+
 #include "wxsf/ShapeBase.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/TextShape.h"

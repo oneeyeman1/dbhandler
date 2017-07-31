@@ -7,8 +7,6 @@ lib_LTLIBRARIES =  \
 libdbwindow_la_SOURCES =  \
 	ErdForeignKey.cpp \
 	ErdForeignKey.h \
-	ErdTable.cpp \
-	ErdTable.h \
 	IDbAdapter.h \
 	IDbType.h \
 	NArrow.cpp \
@@ -37,14 +35,28 @@ libdbwindow_la_SOURCES =  \
 	FieldShape.cpp \
 	FieldShape.h \
 	GridTableShape.cpp \
-	GridTableShape.h
+	GridTableShape.h \
+	HeaderGrid.cpp \
+	HeaderGrid.h \
+	databasetemplate.cpp \
+	databasetemplate.h \
+	constraintsign.cpp \
+	constraintsign.h \
+	commentfieldshape.h \
+	commentfieldshape.cpp \
+	commenttableshape.cpp \
+	commenttableshape.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
+	-I../../libfieldswindow \
 	-I../../dbinterface \
+	-I../../libpropertypages \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
-libdbwindow_la_LDFLAGS = -L../libshapeframework \
+libdbwindow_la_LDFLAGS = -L../libpropertypages \
+	-lpropertypages \
+	-L../libshapeframework \
 	-L../libfieldswindow \
 	-lfieldswindow \
 	-lshapeframework \

@@ -48,7 +48,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>sqlite</ProjectName>
-    <ProjectGuid>{43FB2FA3-ADA4-498B-9B95-7A80056DA7BD}</ProjectGuid>
+    <ProjectGuid>{97DE9390-2665-4A10-A724-A76B8C78DC54}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">
@@ -246,7 +246,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\dbinterface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\VLD\include;..\dbinterface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_USRDLL;DLL_EXPORTS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;MY_DLL_BUILDING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -274,7 +274,7 @@
       <OutputFile>..\dbhandler\vc_mswuddll\sqlite.dll</OutputFile>
       <ImportLibrary>vc_mswuddll\sqlite_dll.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\dbhandler\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Igor\OneDrive\Documents\VLD\lib\Win32;..\dbhandler\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll\sqlite_dll.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>

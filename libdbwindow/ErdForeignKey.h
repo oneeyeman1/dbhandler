@@ -45,7 +45,7 @@ public:
     XS_DECLARE_CLONABLE_CLASS(ErdForeignKey);	
     ErdForeignKey();
     ErdForeignKey(const ErdForeignKey& obj);
-    ErdForeignKey(Constraint* pConstraint);
+    ErdForeignKey(Constraint* pConstraint, ViewType type);
     virtual ~ErdForeignKey();
     virtual void CreateHandles();
 

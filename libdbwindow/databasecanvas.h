@@ -7,12 +7,14 @@ class WXEXPORT DatabaseCanvas : public wxSFShapeCanvas
 {
 public:
     enum MODE { modeDESIGN, modeTABLE, modeVIEW, modeLine };
-    DatabaseCanvas(wxView *view, wxWindow *parent = NULL);
-    void DisplayTables(std::vector<wxString> &selections);
+    DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent = NULL);
+    void DisplayTables(std::vector<wxString> &selections, wxString &query);
     virtual ~DatabaseCanvas();
     virtual void OnLeftDown(wxMouseEvent &event);
     virtual void OnRightDown(wxMouseEvent &event);
     void OnDropTable(wxCommandEvent &event);
+    void OnShowSQLBox(wxCommandEvent &event);
+    void OnShowComments(wxCommandEvent &event);
     inline wxSFDiagramManager &GetDiagramManager() { return m_pManager; }
     virtual void OnDraw(wxDC& dc) wxOVERRIDE;
 protected:
@@ -22,6 +24,7 @@ private:
     wxView *m_view;
     wxSFDiagramManager m_pManager;
     bool m_showComments, m_showIndexKeys, m_showIntegrity;
+    bool m_showDataTypes, m_showLabels, m_showToolBox;
     wxSFShapeBase *m_selectedShape;
     MODE m_mode;
     wxPoint startPoint;
@@ -40,6 +43,8 @@ private:
 #define wxID_VIEWSHOWINDEXKEYS     33
 #define wxID_VIEWSHOWINTEGRITY     34
 #define wxID_PROPERTIES            50
+#define wxID_CREATEDATABASE       100
+#define wxID_DELETEDATABASE       101
 #define wxID_SELECTTABLE          102
 #define wxID_OBJECTNEWTABLE       103
 #define wxID_OBJECTNEWINDEX       104
@@ -47,5 +52,24 @@ private:
 #define wxID_OBJECTNEWFF          106
 #define wxID_FIELDDEFINITION      107
 #define wxID_FIELDPROPERTIES      108
+#define wxID_OBJECTNEWPK          109
+#define wxID_STARTLOG             110
+#define wxID_STOPLOG              111
+#define wxID_SAVELOG              112
+#define wxID_CLEARLOG             113
+#define wxID_SELECTALLFIELDS      114
+#define wxID_DESELECTALLFIELDS    115
+#define wxID_ARRANGETABLES        116
+#define wxID_SHOWDATATYPES        117
+#define wxID_SHOWLABELS           118
+#define wxID_SHOWCOMMENTS         119
+#define wxID_SHOWSQLTOOLBOX       120
+#define WHEREPAGECOLUMNS          194
+#define WHEREPAGEFUNCTIONS        195
+#define WHEREPAGEARGUMENTS        196
+#define WHEREPAGEVALUE            197
+#define WHEREPAGESELECT           198
+#define WHEREPAGECLEAR            199
+#define wxID_DATASOURCE           301
 
 #endif
