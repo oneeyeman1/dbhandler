@@ -991,7 +991,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     break;
                                 }
                                 stmt_colattr = 0;
-                                ret = SQLDisconnect( hdc_colattr );
+                                ret = SQLDisconnect( hdbc_colattr );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt_colattr );
