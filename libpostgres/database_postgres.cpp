@@ -966,6 +966,30 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
 int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, Field *table, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    std::wstring query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = $1 AND \"abc_ownr\" = $2 AND \"abc_cnam\" = $3;";
+    std::wstring tname = schemaName + L".";
+    tname += tableName;
+    char *values[3];
+    values[0] = new char[tname.length() + 1];
+    values[1] = new char[owner.length() + 1];
+    values[2] = new char[field->GetFieldName() + 1];
+    memset( values[0], '\0', tname.length() + 1 );
+    memset( values[1], '\0', owner.length() + 1 );
+    strcpy( values[0], m_pimpl->m_myconv.to_bytes( tname.c_str() ).c_str() );
+    strcpy( values[1], m_pimpl->m_myconv.to_bytes( owner.c_str() ).c_str() );
+    values[2] = (char *) &tableId;
+    int len1 = tname.length();
+    int len2 = owner.length();
+    int length[2] = { len1, len2 };
+    int formats[2] = { 1, 1 };
+    PGresult *res = PQprepare( m_db, "get_field_properties", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Error executing query: " + err );
+        PQclear( res );
+        result = 1;
+    }
     return result;
 }
 
