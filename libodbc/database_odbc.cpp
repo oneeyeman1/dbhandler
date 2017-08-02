@@ -2171,19 +2171,43 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         owner_name = NULL;
         return 1;
     }
-    ret = SQLBindParameter( stmt_tableProp, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
+    SQLSMALLINT DataType, DecimalDigits, Nullable;
+    SQLLEN cbSchemaName = SQL_NTS;
+    SQLULEN ParamSize;
+    ret = SQLDescribeParam( stmt_tableProp, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
+        SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
+        SQLDisconnect( hdbc_tableProp );
+        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
+        hdbc_tableProp = 0;
+        stmt_tableProp = 0;
         return 1;
     }
-    ret = SQLBindParameter( stmt_tableProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerNameLen, 0, owner_name, 0, &cbOwnerName );
+    ret = SQLBindParameter( stmt_tableProp, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, table_name, 0, &cbTableName );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
+        SQLDisconnect( hdbc_tableProp );
+        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
+        hdbc_tableProp = 0;
+        stmt_tableProp = 0;
+        return 1;
+    }
+    ret = SQLDescribeParam( stmt_tableProp, 2, &DataType, &ParamSize, &DecimalDigits, &Nullable);
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
+        SQLDisconnect( hdbc_tableProp );
+        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
+        hdbc_tableProp = 0;
+        stmt_tableProp = 0;
+        return 1;
+    }
+    ret = SQLBindParameter( stmt_tableProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, owner_name, 0, &cbOwnerName );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, stmt_tableProp );
