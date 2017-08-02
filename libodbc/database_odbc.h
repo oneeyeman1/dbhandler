@@ -58,6 +58,7 @@ protected:
     void SetFullType(Field *field);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
     int CreateIndexesOnPostgreConnection(std::vector<std::wstring> &errorMsg);
+    int GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg);
 private:
     SQLHENV m_env;
     SQLHDBC m_hdbc;

@@ -3553,6 +3553,134 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
     return result;
 }
 
+int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg);
+{
+    SQLHSTMT stmt = 0;
+    SQLHDBC hdbc = 0;
+    int result = 0;
+    SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
+    SQLLEN cbName;
+    SQLWCHAR owner[1024];
+    SQLWCHAR *table_name = NULL, *schema_name = NULL, *qry = NULL;
+    std::wstring query, name = table->GetTableName();
+    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        query = L"SELECT su.name FROM sysobjects so, sysusers su, sys.schemas s WHERE so.uid = su.uid AND s.schema_id = so.object_id AND s.name = ? AND so.name = ?";
+    if( pimpl->m_subtype == L"PostgreSQL" )
+        query = L"SELECT u.usename FROM pg_class c, pg_user u WHERE u.usesysid = c.relowner AND relname = ?";
+    SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
+    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 0 );
+        result = 1;
+    }
+    else
+    {
+        SQLSMALLINT OutConnStrLen;
+        retcode = SQLDriverConnect( hdbc, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2, hdbc );
+            result = 1;
+        }
+        else
+        {
+            retcode = SQLAllocHandle( SQL_HANDLE_STMT, hdbc, &stmt );
+            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 2, hdbc );
+                result = 1;
+            }
+            else
+            {
+                table_name = new SQLWCHAR[tableName.length() + 2];
+                schema_name = new SQLWCHAR[schemaName.length() + 2];
+                qry = new SQLWCHAR[query.length() + 2];
+                memset( qry, '\0', query.size() + 2 );
+                memset( table_name, '\0', tableName.length() + 2 );
+                memset( schema_name, '\0', schemaName.length() + 2 );
+                uc_to_str_cpy( qry, query );
+                uc_to_str_cpy( table_name, tableName );
+                uc_to_str_cpy( table_name, tableName );
+                retcode = SQLPrepare( stmt, qry, SQL_NTS );
+                if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                {
+                    retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, schema_name, 0, &cbSchemaName );
+                    if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                    {
+                        retcode = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
+                        if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                        {
+                            retcode = SQLExecute( stmt );
+                            if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                            {
+                                retcode = SQLFetch( stmt );
+                                if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                                {
+                                }
+                                else if( retcode != SQL_NO_DATA )
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt );
+                                    result = 1;
+                                }
+                            }
+                            else if( retcode != SQL_NO_DATA )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt );
+                                result = 1;
+                            }
+                        }
+                        else if( retcode != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, 1, stmt );
+                            result = 1;
+                        }
+                    }
+                    else if( retcode != SQL_NO_DATA )
+                    {
+                        GetErrorMessage( errorMsg, 1, stmt );
+                        result = 1;
+                    }
+                }
+                else if( retcode != SQL_NO_DATA )
+                {
+                    GetErrorMessage( errorMsg, 1, stmt );
+                    result = 1;
+                }
+            }
+        }
+    }
+    if( stmt )
+    {
+        retcode = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
+        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, stmt );
+            result = 1;
+        }
+        else
+        {
+            stmt = 0;
+            retcode = SQLDisconnect( hdbc );
+            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, stmt );
+                result = 1;
+            }
+            else
+            {
+                retcode = SQLFreeHandle( SQL_HANDLE_DBC, hdbc );
+                if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, stmt );
+                    result = 1;
+                }
+                else
+                    hdbc = 0;
+        }
+    }
+    return result;
+}
+
 void ODBCDatabase::SetFullType(Field *field)
 {
     std::wostringstream ss;
