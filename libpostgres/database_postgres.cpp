@@ -864,7 +864,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
     if( result == 1 )
         query = L"ROLLBACK";
     else
-        query = L"ROLLBACK";
+        query = L"COMMIT";
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
