@@ -1281,7 +1281,7 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
 
 int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, Field *field, std::vector<std::wstring> &errorMsg)
 {
-    char *str_data1, *str_data2, *str_data3;
+    char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
     int result = 0;
     std::wstring tname = schemaName + L".";
     tname += tableName;
@@ -1362,13 +1362,15 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
     str_data1 = NULL;
     delete str_data2;
     str_data2 = NULL;
+    delete str_data3;
+    str_data3 = NULL;
     return result;
 }
 
 int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    char *str_data1, *str_data2, *str_data3;
+    char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
     std::wstring query = L"SELECT 1 FROM information_schema.key_column_usage kcu WHERE constraint_name = ? AND table_schema = ? AND table_name = ?";
     if( mysql_query( m_db, "START TRANSACTION" ) )
     {

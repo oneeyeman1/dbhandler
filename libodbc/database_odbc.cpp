@@ -3553,16 +3553,15 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
     return result;
 }
 
-int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg);
+int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg)
 {
     SQLHSTMT stmt = 0;
     SQLHDBC hdbc = 0;
     int result = 0;
     SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     SQLLEN cbName;
-    SQLWCHAR owner[1024];
     SQLWCHAR *table_name = NULL, *schema_name = NULL, *qry = NULL;
-    std::wstring query, name = table->GetTableName();
+    std::wstring query;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT su.name FROM sysobjects so, sysusers su, sys.schemas s WHERE so.uid = su.uid AND s.schema_id = so.object_id AND s.name = ? AND so.name = ?";
     if( pimpl->m_subtype == L"PostgreSQL" )
@@ -3676,6 +3675,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                 }
                 else
                     hdbc = 0;
+            }
         }
     }
     return result;

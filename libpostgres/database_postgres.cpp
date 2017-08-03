@@ -971,17 +971,19 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     tname += tableName;
     char *values[3];
     values[0] = new char[tname.length() + 1];
-    values[1] = new char[owner.length() + 1];
-    values[2] = new char[field->GetFieldName() + 1];
+    values[1] = new char[ownerName.length() + 1];
+    values[2] = new char[table->GetFieldName().length() + 1];
     memset( values[0], '\0', tname.length() + 1 );
-    memset( values[1], '\0', owner.length() + 1 );
+    memset( values[1], '\0', ownerName.length() + 1 );
+    memset( values[2], '\0', table->GetFieldName().length() + 1 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( tname.c_str() ).c_str() );
-    strcpy( values[1], m_pimpl->m_myconv.to_bytes( owner.c_str() ).c_str() );
-    values[2] = (char *) &tableId;
+    strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
+    strcpy( values[2], m_pimpl->m_myconv.to_bytes( table->GetFieldName().c_str() ).c_str() );
     int len1 = tname.length();
-    int len2 = owner.length();
-    int length[2] = { len1, len2 };
-    int formats[2] = { 1, 1 };
+    int len2 = ownerName.length();
+    int len3 = table->GetFieldName().length();
+    int length[3] = { len1, len2, len3 };
+    int formats[3] = { 1, 1, 1 };
     PGresult *res = PQprepare( m_db, "get_field_properties", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
