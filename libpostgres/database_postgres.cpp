@@ -18,6 +18,9 @@
 #ifdef __WXGTK__
 #include <arpa/inet.h>
 #endif
+#ifdef WIN32
+#include "Winsock2.h"
+#endif
 #include <sstream>
 #include "libpq-fe.h"
 #include "database.h"
@@ -580,7 +583,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     int len2 = ownerName.length();
     int length[2] = { len1, len2 };
     int formats[2] = { 1, 1 };
-    res = PQexecPrepared( m_db, "get_table_prop", 2, values, length, formats, 1 );
+    PGresult *res = PQexecPrepared( m_db, "get_table_prop", 2, values, length, formats, 1 );
     ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
@@ -896,7 +899,7 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     int len2 = owner.length();
     int length[2] = { len1, len2 };
     int formats[2] = { 1, 1 };
-    res = PQexecPrepared( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, length, formats, 1 );
+    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, length, formats, 1 );
     ExecStatusType status = PQresultStatus( res ); 
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
@@ -933,7 +936,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     int len3 = table->GetFieldName().length();
     int length[3] = { len1, len2, len3 };
     int formats[3] = { 1, 1, 1 };
-    PGresult *res = PQexecPrepared( m_db, "", 3, values, length, formats, 1 )
+    PGresult *res = PQexecPrepared( m_db, "", 3, values, length, formats, 1 );
     ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
@@ -985,7 +988,7 @@ int PostgresDatabase::ApplyForeignKey(const std::wstring &command, const std::ws
     }
     else
     {
-        res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), 3, values, length, formats, 1 );
+        res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), 3, NULL, values, length, formats, 1 );
         ExecStatusType status = PQresultStatus( res );
         if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
@@ -1013,8 +1016,7 @@ int PostgresDatabase::ApplyForeignKey(const std::wstring &command, const std::ws
         else
         {
             PQclear( res );
-            err = m_pimpl->m_myconv.from_bytes( L"Foreign key specified already exist!" );
-            errorMsg.push_back( err );
+            errorMsg.push_back( L"Foreign key specified already exist!" );
             result = 1;
         }
         if( !result )
@@ -1078,7 +1080,7 @@ int PostgresDatabase::GetTableId(const DatabaseTable *table, std::vector<std::ws
     strcpy( value[0], m_pimpl->m_myconv.to_bytes( const_cast<DatabaseTable *>( table )->GetTableName().c_str() ).c_str() );
     len[1] = const_cast<DatabaseTable *>( table )->GetTableName().length() + 1;
     formats[1] = 1;
-    res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 1, NULL, value, len, formats, 1 );
+    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 1, NULL, value, len, formats, 1 );
     ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
@@ -1088,7 +1090,7 @@ int PostgresDatabase::GetTableId(const DatabaseTable *table, std::vector<std::ws
     }
     else if( status == PGRES_TUPLES_OK )
     {
-        int *value = ntoh( *(int *) PQgetvalue( res, 0, 0 ) );
+        int *value = ntohl( *(int *) PQgetvalue( res, 0, 0 ) );
         const_cast<DatabaseTable *>( table )->SetTableId( *value );
     }
     PQclear( res );
