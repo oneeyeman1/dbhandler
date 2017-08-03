@@ -542,28 +542,17 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
     int len3 = indexName.length();
     int length[3] = { len1, len2, len3 };
     int formats[3] = { 1, 1, 1 };
-    res = PQprepare( m_db, "index_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
-    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL, values, length, formats, 1 );
+    ExecStatusType status = PQresultStatus( res ); 
+    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( L"Error executing query: " + err );
         PQclear( res );
     }
-    else
+    else if( status == PGRES_TUPLES_OK )
     {
-        res = PQexecPrepared( m_db, "index_exist", 3, values, length, formats, 1 );
-        ExecStatusType status = PQresultStatus( res ); 
-        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
-        {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Error executing query: " + err );
-            PQclear( res );
-        }
-        else
-        {
-            if( PQnfields( res ) == 1 )
-                exists = 1;
-        }
+        exists = 1;
     }
     delete values[0];
     values[0] = NULL;
