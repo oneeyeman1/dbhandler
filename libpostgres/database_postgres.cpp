@@ -170,18 +170,13 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
             else
             {
                 result = GetTableListFromDb( errorMsg );
+                if( result )
+                {
+                    errorMsg.push_back( L"Problem during connection. Please fix the problem and restart the application" );
+                    result = 1;
+                    PQclear( res );
+                }
             }
-            res = PQexec( m_db, "SELECT current_user" );
-            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
-            {
-                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                errorMsg.push_back( err );
-                errorMsg.push_back( L"Problem during connection. Please fix the problem and restart the application" );
-                result = 1;
-                PQclear( res );
-            }
-            else
-                pimpl->m_connectedUser = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, 0, 0 ) );
         }
     }
     return result;
@@ -259,7 +254,7 @@ SELECT con.conname, nc.nspname,,,,,,, con.confupdtype, con.confdeltype FROM pg_c
 */
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
-    PGresult *res, *res1, *res2, *res4;
+    PGresult *res, *res1, *res2, *res3, *res4;
     std::vector<Field *> fields;
     std::vector<std::wstring> fk_names, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
@@ -272,6 +267,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring query2 = L"SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = 'leagues') THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = $1 AND col.table_name = $2 ORDER BY ordinal_position;";
     std::wstring query3 = L"select x.ordinal_position AS pos, x.position_in_unique_constraint AS field_pos, c.constraint_name AS name, x.table_schema as schema, x.table_name AS table, x.column_name AS column, y.table_schema as ref_schema, y.table_name as ref_table, y.column_name as ref_column, c.update_rule, c.delete_rule from information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y where x.constraint_name = c.constraint_name and y.ordinal_position = x.position_in_unique_constraint and y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 order by c.constraint_name, x.ordinal_position;";
     std::wstring query4 = L"SELECT indexname FROM pg_indexes WHERE schemaname = $1 AND tablename = $2;";
+    std::wstring query5 = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
+    std::wstring query6 = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = $1 AND \"abc_ownr\" = $2 AND \"abc_cnam\" = $3;";
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     ExecStatusType status = PQresultStatus( res ); 
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
@@ -316,158 +313,180 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 else
                 {
-                    for( int i = 0; i < PQntuples( res ); i++ )
+                    PGresult *res3 = PQprepare( m_db, "get_table_prop", m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str(), 3, NULL );
+                    if( PQresultStatus( res3 ) != PGRES_COMMAND_OK )
                     {
-                        char *catalog_name = PQgetvalue( res, i, 0 );
-                        char *schema_name = PQgetvalue( res, i, 1 );
-                        char *table_name = PQgetvalue( res, i, 2 );
-                        char *values1[2];
-                        values1[0] = new char[strlen( schema_name ) + 1];
-                        values1[1] = new char[strlen( table_name ) + 1];
-                        strcpy( values1[0], schema_name );
-                        strcpy( values1[1], table_name );
-                        int len1 = strlen( schema_name );
-                        int len2 = strlen( table_name );
-                        int length1[2] = { len1, len2 };
-                        int formats1[2] = { 1, 1 };
-                        res1 = PQexecPrepared( m_db, "get_fkeys", 2, values1, length1, formats1, 1 );
-                        status = PQresultStatus( res1 ); 
-                        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+                        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                        errorMsg.push_back( L"Error executing query: " + err );
+                        PQclear( res3 );
+                        result = 1;
+                    }
+                    else
+                    {
+                        PGresult *res = PQprepare( m_db, "get_field_properties", m_pimpl->m_myconv.to_bytes( query6.c_str() ).c_str(), 3, NULL );
+                        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
                         {
                             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                             errorMsg.push_back( L"Error executing query: " + err );
-                            PQclear( res1 );
-                            fields.erase( fields.begin(), fields.end() );
-                            foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                            PQclear( res );
                             result = 1;
-                            break;
                         }
-                        else if( status == PGRES_TUPLES_OK )
+                        else
                         {
-                            int count = 0;
-                            for( int j = 0; j < PQntuples( res1 ); j++ )
+                            for( int i = 0; i < PQntuples( res ); i++ )
                             {
-                                fkField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 2 ) );
-                                fkTable = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 3 ) );
-                                fkTableField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 4 ) );
-                                fkUpdateConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 5 ) );
-                                fkDeleteConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 6 ) );
-                                if( fkUpdateConstraint == L"NO ACTION" )
-                                    update_constraint = NO_ACTION_UPDATE;
-                                if( fkUpdateConstraint == L"RESTRICT" )
-                                    update_constraint = RESTRICT_UPDATE;
-                                if( fkUpdateConstraint == L"SET NULL" )
-                                    update_constraint = SET_NULL_UPDATE;
-                                if( fkUpdateConstraint == L"SET DEFAULT" )
-                                    update_constraint = SET_DEFAULT_UPDATE;
-                                if( fkUpdateConstraint == L"CASCADE" )
-                                    update_constraint = CASCADE_UPDATE;
-                                if( fkDeleteConstraint == L"NO ACTION" )
-                                    delete_constraint = NO_ACTION_DELETE;
-                                if( fkDeleteConstraint == L"RESTRICT" )
-                                    delete_constraint = RESTRICT_DELETE;
-                                if( fkDeleteConstraint == L"SET NULL" )
-                                    delete_constraint = SET_NULL_DELETE;
-                                if( fkDeleteConstraint == L"SET DEFAULT" )
-                                    delete_constraint = SET_DEFAULT_DELETE;
-                                if( fkDeleteConstraint == L"CASCADE" )
-                                    delete_constraint = CASCADE_DELETE;
-                                foreign_keys[count++].push_back( new FKField( fkReference, fkTable, fkField, fkTableField, L"", update_constraint, delete_constraint ) );
-                                fk_names.push_back( fkField );
-                            }
-                            PQclear( res1 );
-                            res2 = PQexecPrepared( m_db, "get_columns", 2, values1, length1, formats1, 1 );
-                            status = PQresultStatus( res2 );
-                            if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
-                            {
-                                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                                errorMsg.push_back( L"Error executing query: " + err );
-                                PQclear( res2 );
-                                fields.erase( fields.begin(), fields.end() );
-                                foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                                result = 1;
-                                break;
-                            }
-                            else if( status == PGRES_TUPLES_OK )
-                            {
-                                for( int j = 0; j < PQntuples( res2 ); j++ )
+                                char *catalog_name = PQgetvalue( res, i, 0 );
+                                char *schema_name = PQgetvalue( res, i, 1 );
+                                char *table_name = PQgetvalue( res, i, 2 );
+                                char *values1[2];
+                                values1[0] = new char[strlen( schema_name ) + 1];
+                                values1[1] = new char[strlen( table_name ) + 1];
+                                strcpy( values1[0], schema_name );
+                                strcpy( values1[1], table_name );
+                                int len1 = strlen( schema_name );
+                                int len2 = strlen( table_name );
+                                int length1[2] = { len1, len2 };
+                                int formats1[2] = { 1, 1 };
+                                res1 = PQexecPrepared( m_db, "get_fkeys", 2, values1, length1, formats1, 1 );
+                                status = PQresultStatus( res1 ); 
+                                if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
                                 {
-                                    int size, precision;
-                                    bool autoinc = false;
-                                    fieldName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 0 ) );
-                                    fieldType = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 1 ) );
-                                    char *char_length = PQgetvalue( res2, j, 2 );
-                                    char *char_radix = PQgetvalue( res2, j, 3 );
-                                    char *numeric_length = PQgetvalue( res2, j, 4 );
-                                    char *numeric_radix = PQgetvalue( res2, j, 5 );
-                                    char *numeric_scale = PQgetvalue( res2, j, 6 );
-                                    fieldDefaultValue = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 8 ) );
-                                    fieldIsNull = !strcmp( PQgetvalue( res2, j, 7 ), "YES" ) ? 1 : 0;
-                                    fieldPK = !strcmp( PQgetvalue( res2, j, 9 ), "YES" ) ? 1 : 0;
-                                    if( *char_length == '0' )
+                                    std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                                    errorMsg.push_back( L"Error executing query: " + err );
+                                    PQclear( res1 );
+                                    fields.erase( fields.begin(), fields.end() );
+                                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                                    result = 1;
+                                    break;
+                                }
+                                else if( status == PGRES_TUPLES_OK )
+                                {
+                                    int count = 0;
+                                    for( int j = 0; j < PQntuples( res1 ); j++ )
                                     {
-                                        size = atoi( numeric_length );
-                                        precision = atoi( numeric_scale );
+                                        fkField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 2 ) );
+                                        fkTable = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 3 ) );
+                                        fkTableField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 4 ) );
+                                        fkUpdateConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 5 ) );
+                                        fkDeleteConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 6 ) );
+                                        if( fkUpdateConstraint == L"NO ACTION" )
+                                            update_constraint = NO_ACTION_UPDATE;
+                                        if( fkUpdateConstraint == L"RESTRICT" )
+                                            update_constraint = RESTRICT_UPDATE;
+                                        if( fkUpdateConstraint == L"SET NULL" )
+                                            update_constraint = SET_NULL_UPDATE;
+                                        if( fkUpdateConstraint == L"SET DEFAULT" )
+                                            update_constraint = SET_DEFAULT_UPDATE;
+                                        if( fkUpdateConstraint == L"CASCADE" )
+                                            update_constraint = CASCADE_UPDATE;
+                                        if( fkDeleteConstraint == L"NO ACTION" )
+                                            delete_constraint = NO_ACTION_DELETE;
+                                        if( fkDeleteConstraint == L"RESTRICT" )
+                                            delete_constraint = RESTRICT_DELETE;
+                                        if( fkDeleteConstraint == L"SET NULL" )
+                                            delete_constraint = SET_NULL_DELETE;
+                                        if( fkDeleteConstraint == L"SET DEFAULT" )
+                                            delete_constraint = SET_DEFAULT_DELETE;
+                                        if( fkDeleteConstraint == L"CASCADE" )
+                                            delete_constraint = CASCADE_DELETE;
+                                        foreign_keys[count++].push_back( new FKField( fkReference, fkTable, fkField, fkTableField, L"", update_constraint, delete_constraint ) );
+                                        fk_names.push_back( fkField );
                                     }
-                                    else
-                                    {
-                                        size = atoi( char_length );
-                                        precision = 0;
-                                    }
-                                    if( fieldType == L"serial" || fieldType == L"bigserial" )
-                                        autoinc = true;
-                                    Field *field = new Field( fieldName, fieldType, size, precision, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
-                                    if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( schema_name ), field, errorMsg ) )
+                                    PQclear( res1 );
+                                    res2 = PQexecPrepared( m_db, "get_columns", 2, values1, length1, formats1, 1 );
+                                    status = PQresultStatus( res2 );
+                                    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
                                     {
                                         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                                        errorMsg.push_back( err );
+                                        errorMsg.push_back( L"Error executing query: " + err );
                                         PQclear( res2 );
                                         fields.erase( fields.begin(), fields.end() );
                                         foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                                         result = 1;
                                         break;
                                     }
-                                    fields.push_back( field );
-                                }
-                                PQclear( res2 );
-                                if( result )
-                                    break;
-                                else
-                                {
-                                    DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
-                                    if( GetTableProperties( table, errorMsg ) )
+                                    else if( status == PGRES_TUPLES_OK )
                                     {
-                                        char *err = PQerrorMessage( m_db );
-                                        errorMsg.push_back( m_pimpl->m_myconv.from_bytes( err ) );
-                                        fields.erase( fields.begin(), fields.end() );
-                                        foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                                        result = 1;
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        res4 = PQexecPrepared( m_db, "get_indexes", 2, values1, length1, formats1, 1 );
-                                        ExecStatusType status = PQresultStatus( res4 );
-                                        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+                                        for( int j = 0; j < PQntuples( res2 ); j++ )
                                         {
-                                            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                                            errorMsg.push_back( L"Error executing query: " + err );
-                                            PQclear( res4 );
-                                            fields.erase( fields.begin(), fields.end() );
-                                            foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                                            result = 1;
-                                            break;
+                                            int size, precision;
+                                            bool autoinc = false;
+                                            fieldName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 0 ) );
+                                            fieldType = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 1 ) );
+                                            char *char_length = PQgetvalue( res2, j, 2 );
+                                            char *char_radix = PQgetvalue( res2, j, 3 );
+                                            char *numeric_length = PQgetvalue( res2, j, 4 );
+                                            char *numeric_radix = PQgetvalue( res2, j, 5 );
+                                            char *numeric_scale = PQgetvalue( res2, j, 6 );
+                                            fieldDefaultValue = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 8 ) );
+                                            fieldIsNull = !strcmp( PQgetvalue( res2, j, 7 ), "YES" ) ? 1 : 0;
+                                            fieldPK = !strcmp( PQgetvalue( res2, j, 9 ), "YES" ) ? 1 : 0;
+                                            if( *char_length == '0' )
+                                            {
+                                                size = atoi( numeric_length );
+                                                precision = atoi( numeric_scale );
+                                            }
+                                            else
+                                            {
+                                                size = atoi( char_length );
+                                                precision = 0;
+                                            }
+                                            if( fieldType == L"serial" || fieldType == L"bigserial" )
+                                                autoinc = true;
+                                            Field *field = new Field( fieldName, fieldType, size, precision, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
+                                            if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( schema_name ), field, errorMsg ) )
+                                            {
+                                                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                                                errorMsg.push_back( err );
+                                                PQclear( res2 );
+                                                fields.erase( fields.begin(), fields.end() );
+                                                foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                                                result = 1;
+                                                break;
+                                            }
+                                            fields.push_back( field );
                                         }
+                                        PQclear( res2 );
+                                        if( result )
+                                            break;
                                         else
                                         {
-                                            for( int j = 0; j < PQntuples( res2 ); j++ )
-                                                indexes.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 1 ) ) );
-                                            table->SetIndexNames( indexes );
-                                            pimpl->m_tables[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( table );
-                                            fields.erase( fields.begin(), fields.end() );
-                                            foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                                            fk_names.clear();
-                                            PQclear( res4 );
+                                            DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
+                                            if( GetTableProperties( table, errorMsg ) )
+                                            {
+                                                char *err = PQerrorMessage( m_db );
+                                                errorMsg.push_back( m_pimpl->m_myconv.from_bytes( err ) );
+                                                fields.erase( fields.begin(), fields.end() );
+                                                foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                                                result = 1;
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                res4 = PQexecPrepared( m_db, "get_indexes", 2, values1, length1, formats1, 1 );
+                                                ExecStatusType status = PQresultStatus( res4 );
+                                                if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+                                                {
+                                                    std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                                                    errorMsg.push_back( L"Error executing query: " + err );
+                                                    PQclear( res4 );
+                                                    fields.erase( fields.begin(), fields.end() );
+                                                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                                                    result = 1;
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    for( int j = 0; j < PQntuples( res2 ); j++ )
+                                                        indexes.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 1 ) ) );
+                                                    table->SetIndexNames( indexes );
+                                                    pimpl->m_tables[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( table );
+                                                    fields.erase( fields.begin(), fields.end() );
+                                                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                                                    fk_names.clear();
+                                                    PQclear( res4 );
+												}
+                                            }
                                         }
                                     }
                                 }
@@ -592,7 +611,6 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
 int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
     std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName(), ownerName = table->GetTableOwner();
     std::wstring t = schemaName + L".";
     t += tableName;
@@ -607,54 +625,43 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     int len2 = ownerName.length();
     int length[2] = { len1, len2 };
     int formats[2] = { 1, 1 };
-    PGresult *res = PQprepare( m_db, "get_table_prop", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
-    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    res = PQexecPrepared( m_db, "get_table_prop", 2, values, length, formats, 1 );
+    ExecStatusType status = PQresultStatus( res );
+    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( L"Error executing query: " + err );
-        PQclear( res );
         result = 1;
     }
-    else
+    else if( status == PGRES_TUPLES_OK )
     {
-        res = PQexecPrepared( m_db, "get_table_prop", 2, values, length, formats, 1 );
-        ExecStatusType status = PQresultStatus( res );
-        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+        for( int i = 0; i < PQntuples( res ); i++ )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Error executing query: " + err );
-            result = 1;
+            table->SetDataFontSize( atoi( PQgetvalue( res, i, 4 ) ) );
+            table->SetDataFontWeight( atoi( PQgetvalue( res, i, 5 ) ) );
+            table->SetDataFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 6 ) ) == L"Y" ? true : false );
+            table->SetDataFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 7 ) ) == L"Y" ? true : false );
+            table->SetDataFontCharacterSet( atoi( PQgetvalue( res, i, 8 ) ) );
+            table->SetDataFontPixelSize( atoi( PQgetvalue( res, i, 9 ) ) );
+            table->SetDataFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 10 ) ) );
+            table->SetHeadingFontSize( atoi( PQgetvalue( res, i, 11 ) ) );
+            table->SetDataFontWeight( atoi( PQgetvalue( res, i, 12 ) ) );
+            table->SetHeadingFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 13 ) ) == L"Y" ? true : false );
+            table->SetHeadingFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 14 ) ) == L"Y" ? true : false );
+            table->SetHeadingFontCharacterSet( atoi( PQgetvalue( res, i, 15 ) ) );
+            table->SetHeadingFontPixelSize( atoi( PQgetvalue( res, i, 16 ) ) );
+            table->SetHeadingFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 17 ) ) );
+            table->SetLabelFontSize( atoi( PQgetvalue( res, i, 18 ) ) );
+            table->SetLabelFontWeight( atoi( PQgetvalue( res, i, 19 ) ) );
+            table->SetLabelFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 20 ) ) == L"Y" ? true : false );
+            table->SetLabelFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 21 ) ) == L"Y" ? true : false );
+            table->SetLabelFontCharacterSet( atoi( PQgetvalue( res, i, 22 ) ) );
+            table->SetLabelFontPixelSize( atoi( PQgetvalue( res, i, 23 ) ) );
+            table->SetLabelFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 24 ) ) );
+            table->SetComment( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 25 ) ) );
         }
-        else
-        {
-            for( int i = 0; i < PQntuples( res ); i++ )
-            {
-                table->SetDataFontSize( atoi( PQgetvalue( res, i, 4 ) ) );
-                table->SetDataFontWeight( atoi( PQgetvalue( res, i, 5 ) ) );
-                table->SetDataFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 6 ) ) == L"Y" ? true : false );
-                table->SetDataFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 7 ) ) == L"Y" ? true : false );
-                table->SetDataFontCharacterSet( atoi( PQgetvalue( res, i, 8 ) ) );
-                table->SetDataFontPixelSize( atoi( PQgetvalue( res, i, 9 ) ) );
-                table->SetDataFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 10 ) ) );
-                table->SetHeadingFontSize( atoi( PQgetvalue( res, i, 11 ) ) );
-                table->SetDataFontWeight( atoi( PQgetvalue( res, i, 12 ) ) );
-                table->SetHeadingFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 13 ) ) == L"Y" ? true : false );
-                table->SetHeadingFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 14 ) ) == L"Y" ? true : false );
-                table->SetHeadingFontCharacterSet( atoi( PQgetvalue( res, i, 15 ) ) );
-                table->SetHeadingFontPixelSize( atoi( PQgetvalue( res, i, 16 ) ) );
-                table->SetHeadingFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 17 ) ) );
-                table->SetLabelFontSize( atoi( PQgetvalue( res, i, 18 ) ) );
-                table->SetLabelFontWeight( atoi( PQgetvalue( res, i, 19 ) ) );
-                table->SetLabelFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 20 ) ) == L"Y" ? true : false );
-                table->SetLabelFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 21 ) ) == L"Y" ? true : false );
-                table->SetLabelFontCharacterSet( atoi( PQgetvalue( res, i, 22 ) ) );
-                table->SetLabelFontPixelSize( atoi( PQgetvalue( res, i, 23 ) ) );
-                table->SetLabelFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 24 ) ) );
-                table->SetComment( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 25 ) ) );
-            }
-        }
-        PQclear( res );
     }
+    PQclear( res );
     return result;
 }
 
@@ -963,7 +970,6 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
 int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, Field *table, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = $1 AND \"abc_ownr\" = $2 AND \"abc_cnam\" = $3;";
     std::wstring tname = schemaName + L".";
     tname += tableName;
     char *values[3];
@@ -981,14 +987,6 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     int len3 = table->GetFieldName().length();
     int length[3] = { len1, len2, len3 };
     int formats[3] = { 1, 1, 1 };
-    PGresult *res = PQprepare( m_db, "get_field_properties", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL );
-    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-        errorMsg.push_back( L"Error executing query: " + err );
-        PQclear( res );
-        result = 1;
-    }
     return result;
 }
 
