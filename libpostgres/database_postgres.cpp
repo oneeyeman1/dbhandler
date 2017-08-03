@@ -218,40 +218,6 @@ int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
     return result;
 }
 
-/*SELECT CAST(current_database() AS sql_identifier) AS table_catalog,
-CAST(nc.nspname AS sql_identifier) AS table_schema,
-CAST(c.relname AS sql_identifier) AS table_name,
-CAST(a.attname AS sql_identifier) AS column_name,
-CAST(
-CASE WHEN t.typtype = 'd' THEN
-CASE WHEN bt.typelem <> 0 AND bt.typlen = -1 THEN 'ARRAY'
-WHEN nbt.nspname = 'pg_catalog' THEN format_type(t.typbasetype, null)
-ELSE 'USER-DEFINED' END
-ELSE
-CASE WHEN t.typelem <> 0 AND t.typlen = -1 THEN 'ARRAY'
-WHEN nt.nspname = 'pg_catalog' THEN format_type(a.atttypid, null)
-ELSE 'USER-DEFINED' END
-END
-AS character_data) AS data_type,
-CAST(_pg_char_max_length(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_number) AS character_maximum_length,
-CAST(_pg_char_octet_length(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_numer) AS character_octet_length,
-CAST(_pg_numeric_precision(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_number) AS numeric_precision,
-CAST(_pg_numeric_precision_radix(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_numer) AS numeric_precision_radix,
-CAST(_pg_numeric_scale(_pg_truetypid(a, t), _pg_truetypmod(a, t)) AS cardinal_number) AS numeric_scale,
-CAST(CASE WHEN a.attnotnull OR (t.typtype = 'd' AND t.typnotnull) THEN 'NO' ELSE 'YES' END AS yes_or_no) AS isnullable,
-CAST(pg_get_expr(ad.adbin, ad.adrelid) AS character_data) AS column_default
-
-FROM pg_class c, pg_namespace nc, pg_attribute a, pg_type t, pg_type bt, pg_namespace nbt, pg_namespace nt, pg_attrdef ad
-
-WHERE a.attrelid = ad.adrelid AND a.attnum = ad.adnum AND c.relnamespace = nc.old AND a.attrelid = c.old AND t.typnamespace = nt.old AND a.atttypid = t.old AND bt.typnamespace = nbt.old
-AND t.typtype = 'd' AND t.typbasetype = bt.old
-
-ORDER BY CAST(a.attnum AS cardinal_number) AS ordinal_position ASC;
-
-Table owner is pg_class.relowner*/
-/*
-SELECT con.conname, nc.nspname,,,,,,, con.confupdtype, con.confdeltype FROM pg_constraint con, pg_class cl, pg_namespace nc WHERE nc.oid = con.connamespace AND con.conrelid = cl.oid AND cl.relname = $1 AND c.contype = 'f';
-*/
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     PGresult *res, *res1, *res2, *res3, *res4;
