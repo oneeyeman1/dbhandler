@@ -49,7 +49,7 @@ int PostgresDatabase::DropDatabase(const std::wstring &name, std::vector<std::ws
 {
     int result = 0;
     PGresult *res;
-    std::wstring query = L"DROP TABLE " + name;
+    std::wstring query = L"DROP DATABASE " + name;
     if( pimpl->m_dbName == name )
         result = Disconnect( errorMsg );
     if( !result )
@@ -902,6 +902,7 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( L"Error executing query: " + err );
+        result = 1;
     }
     else if( status == PGRES_TUPLES_OK )
     {
@@ -917,6 +918,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     std::wstring tname = schemaName + L".";
     tname += tableName;
     char *values[3];
+    values[0] = NULL, values[1] = NULL, values[2] = NULL;
     values[0] = new char[tname.length() + 1];
     values[1] = new char[ownerName.length() + 1];
     values[2] = new char[table->GetFieldName().length() + 1];
@@ -931,6 +933,24 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     int len3 = table->GetFieldName().length();
     int length[3] = { len1, len2, len3 };
     int formats[3] = { 1, 1, 1 };
+    PGresult *res = PQexecPrepared( m_db, "", 3, values, length, formats, 1 )
+    ExecStatusType status = PQresultStatus( res );
+    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Error executing query: " + err );
+        result = 1;
+    }
+    else
+    {
+
+    }
+    delete values[0];
+    values[0] = NULL;
+    delete values[1];
+    values[1] = NULL;
+    delete values[2];
+    values[2] = NULL;
     return result;
 }
 
@@ -965,30 +985,20 @@ int PostgresDatabase::ApplyForeignKey(const std::wstring &command, const std::ws
     }
     else
     {
-        res = PQprepare( m_db, "foreign_key_exist", m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), 2, NULL );
-        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), 3, values, length, formats, 1 );
+        ExecStatusType status = PQresultStatus( res );
+        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( L"Error executing query: " + err );
             PQclear( res );
+            result = 1;
         }
-        else
+        else if( status == PGRES_TUPLES_OK )
         {
-            res = PQexecPrepared( m_db, "foreign_key_exist", 2, values, length, formats, 1 );
-            ExecStatusType status = PQresultStatus( res );
-            if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
-            {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                errorMsg.push_back( L"Error executing query: " + err );
-                PQclear( res );
-                result = 1;
-            }
-            else if( status == PGRES_TUPLES_OK )
-            {
-                exist = true;
-                PQclear( res );
-            }
+            exist = true;
         }
+        PQclear( res );
         if( !exist )
         {
             res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
@@ -999,6 +1009,13 @@ int PostgresDatabase::ApplyForeignKey(const std::wstring &command, const std::ws
                 errorMsg.push_back( err );
                 result = 1;
             }
+        }
+        else
+        {
+            PQclear( res );
+            err = m_pimpl->m_myconv.from_bytes( L"Foreign key specified already exist!" );
+            errorMsg.push_back( err );
+            result = 1;
         }
         if( !result )
         {
@@ -1053,38 +1070,28 @@ int PostgresDatabase::GetTableId(const DatabaseTable *table, std::vector<std::ws
 {
     int result = 0;
     char *value[1];
-    int len[1];
+    int len[1], formats[1];
     std::wstring query = L"SELECT oid FROM pg_class WHERE relname = $1";
     int size = const_cast<DatabaseTable *>( table )->GetTableName().length() + 1;
     value[0] = new char[size];
     memset( value[0], '\0', size );
     strcpy( value[0], m_pimpl->m_myconv.to_bytes( const_cast<DatabaseTable *>( table )->GetTableName().c_str() ).c_str() );
     len[1] = const_cast<DatabaseTable *>( table )->GetTableName().length() + 1;
-    PGresult *res = PQprepare( m_db, "table_id", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 1, NULL );
-    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    formats[1] = 1;
+    res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 1, NULL, value, len, formats, 1 );
+    ExecStatusType status = PQresultStatus( res );
+    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( L"Error executing query: " + err );
-        PQclear( res );
         result = 1;
     }
-    else
+    else if( status == PGRES_TUPLES_OK )
     {
-        res = PQexecPrepared( m_db, "table_id", 1, value, len, NULL, 1 );
-        ExecStatusType status = PQresultStatus( res );
-        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
-        {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Error executing query: " + err );
-            PQclear( res );
-            result = 1;
-        }
-        else
-        {
-            int *value = (int *) PQgetvalue( res, 0, 0 );
-            const_cast<DatabaseTable *>( table )->SetTableId( *value );
-        }
+        int *value = ntoh( *(int *) PQgetvalue( res, 0, 0 ) );
+        const_cast<DatabaseTable *>( table )->SetTableId( *value );
     }
+    PQclear( res );
     delete value[0];
     value[0] = NULL;
     return result;
