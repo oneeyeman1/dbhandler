@@ -896,29 +896,18 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     int len2 = owner.length();
     int length[2] = { len1, len2 };
     int formats[2] = { 1, 1 };
-    PGresult *res = PQprepare( m_db, "table_properties_exist", m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL );
-    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    res = PQexecPrepared( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, length, formats, 1 );
+    ExecStatusType status = PQresultStatus( res ); 
+    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( L"Error executing query: " + err );
-        PQclear( res );
     }
-    else
+    else if( status == PGRES_TUPLES_OK )
     {
-        res = PQexecPrepared( m_db, "table_properties_exist", 2, values, length, formats, 1 );
-        ExecStatusType status = PQresultStatus( res ); 
-        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
-        {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Error executing query: " + err );
-            PQclear( res );
-        }
-        else
-        {
-            if( PQnfields( res ) == 1 )
-                result = true;
-        }
+        result = true;
     }
+    PQclear( res );
     return result;
 }
 
