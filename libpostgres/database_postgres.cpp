@@ -504,18 +504,18 @@ int PostgresDatabase::CreateIndex(const std::wstring &command, const std::wstrin
                 PQclear( res );
                 result = 1;
             }
-        }
-        if( result == 1 )
-            query = L"ROLLBACK";
-        else
-            query = L"COMMIT";
-        res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
-        if( PQresultStatus( res ) != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
-        {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( err );
-            PQclear( res );
-            result = 1;
+            if( result == 1 )
+                query = L"ROLLBACK";
+            else
+                query = L"COMMIT";
+            res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+            if( PQresultStatus( res ) != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( err );
+                PQclear( res );
+                result = 1;
+            }
         }
     }
     return result;
