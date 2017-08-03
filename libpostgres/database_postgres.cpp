@@ -298,7 +298,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             int length1[2] = { len1, len2 };
             int formats1[2] = { 1, 1 };
             res1 = PQprepare( m_db, "get_fkeys", m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), 2, NULL );
-            if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
+            ExecStatusType status = PQresultStatus( res1 );
+            if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
             {
                 std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                 errorMsg.push_back( err );
@@ -452,11 +453,12 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     else
                                     {
                                         res4 = PQexecPrepared( m_db, "get_indexes", 2, values1, length1, formats1, 1 );
-                                        if( PQresultStatus( res4 ) != PGRES_COMMAND_OK )
+                                        ExecStatusType status = PQresultStatus( res4 );
+                                        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
                                         {
                                             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                                             errorMsg.push_back( L"Error executing query: " + err );
-                                            PQclear( res2 );
+                                            PQclear( res4 );
                                             fields.erase( fields.begin(), fields.end() );
                                             foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                                             result = 1;
