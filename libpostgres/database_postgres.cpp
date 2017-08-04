@@ -220,7 +220,7 @@ int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
-    PGresult *res, *res1, *res2, *res3, *res4;
+    PGresult *res, *res1, *res2, *res3, *res4, *res5;
     std::vector<Field *> fields;
     std::vector<std::wstring> fk_names, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
@@ -279,7 +279,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 else
                 {
-                    PGresult *res3 = PQprepare( m_db, "get_table_prop", m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str(), 3, NULL );
+                    res3 = PQprepare( m_db, "get_table_prop", m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str(), 3, NULL );
                     if( PQresultStatus( res3 ) != PGRES_COMMAND_OK )
                     {
                         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -289,8 +289,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     else
                     {
-                        PGresult *res = PQprepare( m_db, "get_field_properties", m_pimpl->m_myconv.to_bytes( query6.c_str() ).c_str(), 3, NULL );
-                        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+                        res5 = PQprepare( m_db, "get_field_properties", m_pimpl->m_myconv.to_bytes( query6.c_str() ).c_str(), 3, NULL );
+                        if( PQresultStatus( res5 ) != PGRES_COMMAND_OK )
                         {
                             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                             errorMsg.push_back( L"Error executing query: " + err );
@@ -933,7 +933,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     int len3 = table->GetFieldName().length();
     int length[3] = { len1, len2, len3 };
     int formats[3] = { 1, 1, 1 };
-    PGresult *res = PQexecPrepared( m_db, "", 3, values, length, formats, 1 );
+    PGresult *res = PQexecPrepared( m_db, "get_field_properties", 3, values, length, formats, 1 );
     ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
