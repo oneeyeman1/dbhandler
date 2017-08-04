@@ -3421,138 +3421,6 @@ int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstrin
     return result;
 }
 
-int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
-{
-    SQLHSTMT stmt = 0;
-    SQLHDBC hdbc;
-    SQLLEN cbTableName = SQL_NTS;
-    SQLLEN cbName;
-    SQLWCHAR owner[1024];
-    SQLWCHAR *table_name = NULL, *qry;
-    int result = 0;
-    std::wstring query, name = table->GetTableName();
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
-        query = L"SELECT su.name FROM sysobjects so, sysusers su WHERE so.uid = su.uid AND so.name = ?";
-    if( pimpl->m_subtype == L"PostgreSQL" )
-        query = L"SELECT u.usename FROM pg_class c, pg_user u WHERE u.usesysid = c.relowner AND relname = ?";
-    SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
-    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 0 );
-        result = 1;
-    }
-    else
-    {
-        SQLSMALLINT OutConnStrLen;
-        retcode = SQLDriverConnect( hdbc, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
-        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 2, hdbc );
-            result = 1;
-        }
-        else
-        {
-            retcode = SQLAllocHandle( SQL_HANDLE_STMT, hdbc, &stmt );
-            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 2, hdbc );
-                result = 1;
-            }
-            else
-            {
-                table_name = new SQLWCHAR[name.length() + 2];
-                qry = new SQLWCHAR[query.length() + 2];
-                memset( qry, '\0', query.size() + 2 );
-                memset( table_name, '\0', name.length() + 2 );
-                uc_to_str_cpy( qry, query );
-                uc_to_str_cpy( table_name, name );
-                retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, name.length(), 0, table_name, 0, &cbTableName );
-                if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
-                {
-                    retcode = SQLPrepare( stmt, qry, SQL_NTS );
-                    if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
-                    {
-                        retcode = SQLExecute( stmt );
-                        if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
-                        {
-                            retcode = SQLFetch( stmt );
-                            if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
-                            {
-                                retcode = SQLGetData( stmt, 1, SQL_C_WCHAR, owner, 1024, &cbName );
-                                if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
-                                {
-                                    std::wstring tableOwner;
-                                    str_to_uc_cpy( tableOwner, owner );
-                                    table->SetTableOwner( tableOwner );
-                                }
-                                else
-                                {
-                                    GetErrorMessage( errorMsg, 1, stmt );
-                                    result = 1;
-                                }
-                            }
-                            else if( retcode != SQL_NO_DATA )
-                            {
-                                GetErrorMessage( errorMsg, 1, stmt );
-                                result = 1;
-                            }
-                            else
-                                table->SetTableOwner( table->GetSchemaName() );
-                        }
-                        else
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt );
-                            result = 1;
-                        }
-                    }
-                    else
-                    {
-                        GetErrorMessage( errorMsg, 1, stmt );
-                        result = 1;
-                    }
-                }
-                else
-                {
-                    GetErrorMessage( errorMsg, 1, stmt );
-                    result = 1;
-                }
-                delete table_name;
-                table_name = NULL;
-                delete qry;
-                qry = NULL;
-            }
-        }
-    }
-    retcode = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
-    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt );
-        result = 1;
-    }
-    else
-    {
-        stmt = 0;
-        retcode = SQLDisconnect( hdbc );
-        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 1, stmt );
-            result = 1;
-        }
-        else
-        {
-            retcode = SQLFreeHandle( SQL_HANDLE_DBC, hdbc );
-            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 1, stmt );
-                result = 1;
-            }
-            else
-                hdbc = 0;
-        }
-    }
-    return result;
-}
-
 int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg)
 {
     SQLHSTMT stmt = 0;
@@ -3612,9 +3480,22 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                             retcode = SQLExecute( stmt );
                             if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                             {
-                                retcode = SQLFetch( stmt );
-                                if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                                SQLSMALLINT nameBufLength, dataTypePtr, decimalDigitsPtr, isNullable;
+                                SQLULEN columnSizePtr;
+                                SQLLEN cbTableOwner;
+                                retcode = SQLDescribeCol( stmt, 1, NULL, 0, &nameBufLength, &dataTypePtr, &columnSizePtr, &decimalDigitsPtr, &isNullable );
+                                if( retcode == SQL_SUCCESS && retcode == SQL_SUCCESS_WITH_INFO )
                                 {
+                                    retcode = SQLBindCol( stmt, 1, dataTypePtr, &m_currentTableOwner, columnSizePtr, &cbTableOwner );
+                                    if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        retcode = SQLFetch( stmt );
+                                        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO && retcode != SQL_NO_DATA )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, stmt );
+                                            result = 1;
+                                        }
+                                    }
                                 }
                                 else if( retcode != SQL_NO_DATA )
                                 {
