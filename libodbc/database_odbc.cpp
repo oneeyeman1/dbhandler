@@ -814,7 +814,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring query4;
     int result = 0, bufferSize = 1024;
     std::vector<Field *> fields;
-    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkTable, fkName;
+    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkTable, fkName, schema, table;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::vector<std::wstring> autoinc_fields, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
@@ -874,6 +874,9 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
                 if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
                     tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
+                str_to_uc_cpy( schema, schema_name );
+                str_to_uc_cpy( table, table_name );
+                GetTableOwner( schema, table );
                 ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_colattr );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
@@ -1740,7 +1743,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 str_to_uc_cpy( fieldType, szTypeName );
                                 str_to_uc_cpy( defaultValue, szColumnDefault );
                                 Field *field = new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
-                                if( GetFieldProperties( table_name, schema_name, schema_name, field, errorMsg ) )
+                                if( GetFieldProperties( table_name, schema_name, m_currentTableOwner, field, errorMsg ) )
                                 {
                                     GetErrorMessage( errorMsg, 2 );
                                     result = 1;
@@ -1807,17 +1810,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     if( pimpl->m_subtype == L"Microsoft SQL Server" && schema_name == L"sys" )
                         table_name = schema_name + L"." + table_name;
                     DatabaseTable *table = new DatabaseTable( table_name, schema_name, fields, foreign_keys );
-                    if( SetTableOwner( table, errorMsg ) )
-                    {
-                        fields.erase( fields.begin(), fields.end() );
-                        foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                        fields.clear();
-                        foreign_keys.clear();
-                        autoinc_fields.clear();
-                        pk_fields.clear();
-                        fk_fieldNames.clear();
-                        break;
-                    }
+                    table->SetTableOwner( m_currentTableOwner );
                     if( GetTableId( table, errorMsg ) )
                     {
                         break;
@@ -3428,7 +3421,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
     int result = 0;
     SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     SQLLEN cbName;
-    SQLWCHAR *table_name = NULL, *schema_name = NULL, *qry = NULL;
+    SQLWCHAR *table_name = NULL, *schema_name = NULL, *qry = NULL *owner = NULL;
     std::wstring query;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT su.name FROM sysobjects so, sysusers su, sys.schemas s WHERE so.uid = su.uid AND s.schema_id = so.object_id AND s.name = ? AND so.name = ?";
@@ -3486,7 +3479,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                                 retcode = SQLDescribeCol( stmt, 1, NULL, 0, &nameBufLength, &dataTypePtr, &columnSizePtr, &decimalDigitsPtr, &isNullable );
                                 if( retcode == SQL_SUCCESS && retcode == SQL_SUCCESS_WITH_INFO )
                                 {
-                                    retcode = SQLBindCol( stmt, 1, dataTypePtr, &m_currentTableOwner, columnSizePtr, &cbTableOwner );
+                                    retcode = SQLBindCol( stmt, 1, dataTypePtr, &owner, columnSizePtr, &cbTableOwner );
                                     if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                                     {
                                         retcode = SQLFetch( stmt );
@@ -3495,6 +3488,8 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                                             GetErrorMessage( errorMsg, 1, stmt );
                                             result = 1;
                                         }
+                                        if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                                            str_to_uc_cpy( m_currentTableOwner, owner );
                                     }
                                 }
                                 else if( retcode != SQL_NO_DATA )
