@@ -18,9 +18,6 @@
 #ifdef __WXGTK__
 #include <arpa/inet.h>
 #endif
-#ifdef WIN32
-#include "Winsock2.h"
-#endif
 #include <sstream>
 #include "libpq-fe.h"
 #include "database.h"
@@ -1090,8 +1087,8 @@ int PostgresDatabase::GetTableId(const DatabaseTable *table, std::vector<std::ws
     }
     else if( status == PGRES_TUPLES_OK )
     {
-        int *value = ntohl( *(int *) PQgetvalue( res, 0, 0 ) );
-        const_cast<DatabaseTable *>( table )->SetTableId( *value );
+        int value = ntohl( *(int *) PQgetvalue( res, 0, 0 ) );
+        const_cast<DatabaseTable *>( table )->SetTableId( value );
     }
     PQclear( res );
     delete value[0];
