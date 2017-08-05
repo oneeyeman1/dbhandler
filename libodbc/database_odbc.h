@@ -42,6 +42,8 @@ public:
     virtual int ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg);
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
 protected:
+    struct ODBCImpl;
+    ODBCImpl *odbc_pimpl;
     int GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<std::wstring> &errorMsg);
     int GetSQLStringSize(SQLWCHAR *str);
     void str_to_uc_cpy(std::wstring &dest, const SQLWCHAR *src);
@@ -54,7 +56,7 @@ protected:
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schema_name, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
-    int GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName/*DatabaseTable *table*/, std::vector<std::wstring> &errorMsg);
+    int GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     void SetFullType(Field *field);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
     int CreateIndexesOnPostgreConnection(std::vector<std::wstring> &errorMsg);
@@ -67,6 +69,10 @@ private:
     SQLUSMALLINT m_statementsNumber;
     bool m_oneStatement;
     SQLWCHAR *m_connectString;
+};
+
+struct ODBCDatabase::ODBCImpl
+{
     std::wstring m_currentTableOwner;
 };
 

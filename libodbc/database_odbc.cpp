@@ -37,6 +37,7 @@ ODBCDatabase::ODBCDatabase() : Database()
     pimpl->m_type = L"ODBC";
     m_oneStatement = false;
     m_connectString = NULL;
+    odbc_pimpl = new ODBCImpl;
 }
 
 ODBCDatabase::~ODBCDatabase()
@@ -874,9 +875,11 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
                 if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
                     tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
-                str_to_uc_cpy( schema, schema_name );
-                str_to_uc_cpy( table, table_name );
-                GetTableOwner( schema, table );
+                schema = L"";
+                table = L"";
+                str_to_uc_cpy( schema, schemaName );
+                str_to_uc_cpy( table, tableName );
+                GetTableOwner( schema, table, errorMsg );
                 ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_colattr );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
@@ -1743,7 +1746,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 str_to_uc_cpy( fieldType, szTypeName );
                                 str_to_uc_cpy( defaultValue, szColumnDefault );
                                 Field *field = new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
-                                if( GetFieldProperties( table_name, schema_name, m_currentTableOwner, field, errorMsg ) )
+                                if( GetFieldProperties( table_name, schema_name, odbc_pimpl->m_currentTableOwner, field, errorMsg ) )
                                 {
                                     GetErrorMessage( errorMsg, 2 );
                                     result = 1;
@@ -1810,7 +1813,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     if( pimpl->m_subtype == L"Microsoft SQL Server" && schema_name == L"sys" )
                         table_name = schema_name + L"." + table_name;
                     DatabaseTable *table = new DatabaseTable( table_name, schema_name, fields, foreign_keys );
-                    table->SetTableOwner( m_currentTableOwner );
+                    table->SetTableOwner( odbc_pimpl->m_currentTableOwner );
                     if( GetTableId( table, errorMsg ) )
                     {
                         break;
@@ -3414,17 +3417,18 @@ int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstrin
     return result;
 }
 
-int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     SQLHSTMT stmt = 0;
     SQLHDBC hdbc = 0;
     int result = 0;
     SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     SQLLEN cbName;
-    SQLWCHAR *table_name = NULL, *schema_name = NULL, *qry = NULL *owner = NULL;
+    SQLWCHAR *table_name = NULL, *schema_name = NULL, *qry = NULL;
+    SQLWCHAR owner[256];
     std::wstring query;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
-        query = L"SELECT su.name FROM sysobjects so, sysusers su, sys.schemas s WHERE so.uid = su.uid AND s.schema_id = so.object_id AND s.name = ? AND so.name = ?";
+        query = L"SELECT su.name FROM sysobjects so, sysusers su, sys.tables t, sys.schemas s WHERE so.uid = su.uid AND t.object_id = so.id AND t.schema_id = s.schema_id AND s.name = ? AND so.name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT u.usename FROM pg_class c, pg_user u WHERE u.usesysid = c.relowner AND relname = ?";
     SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
@@ -3460,7 +3464,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                 memset( schema_name, '\0', schemaName.length() + 2 );
                 uc_to_str_cpy( qry, query );
                 uc_to_str_cpy( table_name, tableName );
-                uc_to_str_cpy( table_name, tableName );
+                uc_to_str_cpy( schema_name, schemaName );
                 retcode = SQLPrepare( stmt, qry, SQL_NTS );
                 if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                 {
@@ -3477,7 +3481,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                                 SQLULEN columnSizePtr;
                                 SQLLEN cbTableOwner;
                                 retcode = SQLDescribeCol( stmt, 1, NULL, 0, &nameBufLength, &dataTypePtr, &columnSizePtr, &decimalDigitsPtr, &isNullable );
-                                if( retcode == SQL_SUCCESS && retcode == SQL_SUCCESS_WITH_INFO )
+                                if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                                 {
                                     retcode = SQLBindCol( stmt, 1, dataTypePtr, &owner, columnSizePtr, &cbTableOwner );
                                     if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
@@ -3489,7 +3493,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                                             result = 1;
                                         }
                                         if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
-                                            str_to_uc_cpy( m_currentTableOwner, owner );
+                                            str_to_uc_cpy( odbc_pimpl->m_currentTableOwner, owner );
                                     }
                                 }
                                 else if( retcode != SQL_NO_DATA )
@@ -3554,6 +3558,12 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
             }
         }
     }
+    delete qry;
+    qry = NULL;
+    delete table_name;
+    table_name = NULL;
+    delete schema_name;
+    schema_name = NULL;
     return result;
 }
 
