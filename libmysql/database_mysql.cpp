@@ -31,7 +31,7 @@ MySQLDatabase::MySQLDatabase() : Database()
 
 MySQLDatabase::~MySQLDatabase()
 {
-    if( pimpl )
+    if( pimpl && m_pimpl )
     {
         std::vector<DatabaseTable *> tableVec = pimpl->m_tables[m_pimpl->m_catalog];
         for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
@@ -54,9 +54,11 @@ MySQLDatabase::~MySQLDatabase()
             delete (*it);
             (*it) = NULL;
         }
-        delete pimpl;
-        pimpl = NULL;
     }
+    delete pimpl;
+    pimpl = NULL;
+    delete m_pimpl;
+    m_pimpl = NULL;
 }
 
 int MySQLDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
@@ -122,14 +124,15 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
     std::wstring query3 = L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));";
     std::wstring query4 = L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
     std::wstring query5 = L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));";
-    std::wstring query6 = L"IF NOT EXISTS (SELECT * FROM information_schema.statistics WHERE \"index_name\"='abcattbl_tnam_ownr' AND \"table_name\"='abcattbl') CREATE INDEX \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
-    std::wstring query7 = L"IF NOT EXISTS (SELECT * FROM information_schema.statistics WHERE \"index_name\"='abcatcol_tnam_ownr_cnam' AND \"table_name\"='abcatcol') CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcattbl\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
+    std::wstring query6 = L"IF NOT EXISTS (SELECT * FROM information_schema.statistics WHERE \"index_name\"='abcattbl_tnam_ownr' AND \"table_name\"='abcattbl') CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC);";
+    std::wstring query7 = L"IF NOT EXISTS (SELECT * FROM information_schema.statistics WHERE \"index_name\"='abcatcol_tnam_ownr_cnam' AND \"table_name\"='abcatcol') CREATE INDEX abcatcol_tnam_ownr_cnam ON abcattbl(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);";
     std::wstring errorMessage;
     m_db = mysql_init( m_db );
     if( !m_db )
     {
         err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( L"Connection to database failed: " + err );
+        errorMsg.push_back( err );
+        errorMsg.push_back( L"Connection to database failed!" );
         result = 1;
     }
     else
@@ -137,7 +140,8 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
         if( TokenizeConnectionString( selectedDSN, errorMsg ) )
         {
             err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-            errorMsg.push_back( L"Connection to database failed: " + err );
+            errorMsg.push_back( err );
+            errorMsg.push_back( L"Connection to database failed!" );
             result = 1;
         }
         else
@@ -146,7 +150,8 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
             if( !m_db )
             {
                 err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                errorMsg.push_back( L"Connection to database failed: " + err );
+                errorMsg.push_back( err );
+                errorMsg.push_back( L"Connection to database failed!" );
                 result = 1;
             }
             else
@@ -155,7 +160,8 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
                 if( res )
                 {
                     err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                    errorMsg.push_back( L"Starting transaction failed during connection: " + err );
+                    errorMsg.push_back( err );
+                    errorMsg.push_back( L"Connection to database failed!" );
                     result = 1;
                 }
                 else
@@ -191,7 +197,8 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
                 if( res )
                 {
                     err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                    errorMsg.push_back( L"Error during database connection: " + err );
+                    errorMsg.push_back( err );
+                    errorMsg.push_back( L"Connection to database failed!" );
                     res = mysql_rollback( m_db );
                     result = 1;
                 }
