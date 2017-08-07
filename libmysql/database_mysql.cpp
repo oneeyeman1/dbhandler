@@ -273,7 +273,7 @@ int MySQLDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
     return result;
 }
 
-int MySQLDatabase::PrepareDatabaseInfoQueries(MYSQL_STMT *res1, MYSQL_STMT *res2, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::PrepareDatabaseInfoQueries(MYSQL_STMT *res1, MYSQL_STMT *res2, MYSQL_STMT *res3, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.extra, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ?;";
@@ -311,6 +311,25 @@ int MySQLDatabase::PrepareDatabaseInfoQueries(MYSQL_STMT *res1, MYSQL_STMT *res2
                     errorMsg.push_back( err );
                     result = 1;
                 }
+                else
+                {
+                    res3 = mysql_stmt_init( m_db );
+                    if( !res3 )
+                    {
+                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
+                        errorMsg.push_back( err );
+                        result = 1;
+                    }
+                    else
+                    {
+                        if( mysql_stmt_prepare( res3, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str(), query2.length() ) )
+                        {
+                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
+                            errorMsg.push_back( err );
+                            result = 1;
+                        }
+                    }
+				}
             }
         }
     }
@@ -320,7 +339,7 @@ int MySQLDatabase::PrepareDatabaseInfoQueries(MYSQL_STMT *res1, MYSQL_STMT *res2
 int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     int res, result = 0;
-    MYSQL_STMT *res1, *res2;
+    MYSQL_STMT *res1, *res2, *res3;
     char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
     char fkField[64], refTableSchema[64], refTableName[64], refTableField[64], updateCon[64], deleteCon[64];
     char colName[64], colType[64], defValue[64], nullable[3], autoInc[30];
@@ -353,7 +372,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         else
         {
-            if( PrepareDatabaseInfoQueries( res1, res2, errorMsg ) )
+            if( PrepareDatabaseInfoQueries( res1, res2, res3, errorMsg ) )
             {
                 errorMsg.push_back( L"Error during database connection. Please restart the application" );
                 result = 1;
@@ -627,7 +646,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                         }
                                                         else
                                                         {
-                                                            int fieldSize, fieldPrec;
+                                                            int fieldSize = 0, fieldPrec = 0;
                                                             while( !mysql_stmt_fetch( res2 ) )
                                                             {
                                                                 fieldName = m_pimpl->m_myconv.from_bytes( colName );
@@ -663,7 +682,25 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                     result = 1;
                                                                     break;
                                                                 }
-//                                                                            field->SetFullType();
+                                                                std::wstring type = fieldType;
+                                                                if( fieldSize > 0 )
+                                                                {
+                                                                    std::wostringstream ss;
+                                                                    ss << fieldSize;
+                                                                    type += L"("
+                                                                    type += ss.str();
+                                                                }
+                                                                if( fieldPrec > 0 )
+                                                                {
+                                                                    std::wostringstream ss;
+                                                                    ss << fieldPrec;
+                                                                    type += L",";
+                                                                    type += ss.str();
+                                                                    type += L")";
+                                                                }
+                                                                else
+                                                                    type += L")";
+                                                                field->SetFullType( type );
                                                             }
                                                             if( result )
                                                                 break;
@@ -679,6 +716,15 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                 else
                                                                 {
 /*    DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
+                                        if( mysql_stmt_bind_param( res3, params ) )
+                                        {
+                                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                                            errorMsg.push_back( err );
+                                            result = 1;
+                                        }
+                                        else
+                                        {
+                                        }
                 if( GetTableProperties( table, errorMsg ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
