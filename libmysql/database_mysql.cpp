@@ -124,8 +124,8 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
     std::wstring query3 = L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));";
     std::wstring query4 = L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
     std::wstring query5 = L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));";
-    std::wstring query6 = L"IF NOT EXISTS (SELECT * FROM information_schema.statistics WHERE \"index_name\"='abcattbl_tnam_ownr' AND \"table_name\"='abcattbl') CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC);";
-    std::wstring query7 = L"IF NOT EXISTS (SELECT * FROM information_schema.statistics WHERE \"index_name\"='abcatcol_tnam_ownr_cnam' AND \"table_name\"='abcatcol') CREATE INDEX abcatcol_tnam_ownr_cnam ON abcattbl(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);";
+    std::wstring query6 = L"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC);";
+    std::wstring query7 = L"IF NOT EXISTS (SELECT * FROM information_schema.statistics WHERE index_name ='abcatcol_tnam_ownr_cnam' AND table_name ='abcatcol') CREATE INDEX abcatcol_tnam_ownr_cnam ON abcattbl(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);";
     std::wstring errorMessage;
     m_db = mysql_init( m_db );
     if( !m_db )
@@ -181,12 +181,16 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
                                     res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str() );
                                     if( !res )
                                     {
-                                        res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query6.c_str() ).c_str() );
-                                        if( !res )
+                                        bool index_exist = IsSystemIndexExists( L"abcattbl_tnam_ownr", L"abcattbl", errorMsg );
+                                        if( !index_exist )
                                         {
-                                            res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query7.c_str() ).c_str() );
+                                            res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query6.c_str() ).c_str() );
                                             if( !res )
-                                                res = mysql_commit( m_db );
+                                            {
+                                                res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query7.c_str() ).c_str() );
+                                                if( !res )
+                                                    res = mysql_commit( m_db );
+                                            }
                                         }
                                     }
                                 }
@@ -194,7 +198,7 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
                         }
                     }
                 }
-                if( res )
+                if( res || !errorMsg.empty() )
                 {
                     err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
                     errorMsg.push_back( err );
@@ -717,6 +721,76 @@ int MySQLDatabase::CreateIndex(const std::wstring &command, const std::wstring &
         result = 1;
     }
     return result;
+}
+
+bool MySQLDatabase::IsSystemIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+    MYSQL_STMT *res;
+    bool exists = false;
+    char *str_data[3];
+    unsigned long *str_length[3];
+    std::wstring query = L"SELECT 1 FROM information_schema.statistics WHERE table_name = ? AND index_name = ?;";
+    res = mysql_stmt_init( m_db );
+    if( !res )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+        errorMsg.push_back( err );
+    }
+    else
+    {
+        if( mysql_stmt_prepare( res, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+            errorMsg.push_back( err );
+        }
+        else
+        {
+            MYSQL_BIND values[2];
+            memset( values, 0, sizeof( values ) );
+            str_data[0] = new char[tableName.length()];
+            str_data[1] = new char[indexName.length()];
+            str_length[0] = new unsigned long;
+            str_length[1] = new unsigned long;
+            values[0].buffer_type = MYSQL_TYPE_STRING;
+            values[1].buffer_type = MYSQL_TYPE_STRING;
+            values[0].buffer = str_data[0];
+            values[1].buffer = str_data[1];
+            values[0].buffer_length = tableName.length();
+            values[1].buffer_length = indexName.length();
+            values[0].is_null = 0;
+            values[1].is_null = 0;
+            values[0].length = str_length[0];
+            values[1].length = str_length[1];
+            strncpy( str_data[0], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), tableName.length() );
+            strncpy( str_data[1], m_pimpl->m_myconv.to_bytes( indexName.c_str() ).c_str(), indexName.length() );
+            *str_length[0] = tableName.length();
+            *str_length[1] = indexName.length();
+            if( mysql_stmt_bind_param( res, values ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+                errorMsg.push_back( err );
+            }
+            else
+            {
+                if( mysql_stmt_execute( res ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+                    errorMsg.push_back( err );
+                }
+                else
+                {
+                    if( mysql_stmt_fetch( res ) != MYSQL_NO_DATA )
+                        exists = 1;
+                }
+            }
+        }
+        if( mysql_stmt_close( res ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+        }
+    }
+    return exists;
 }
 
 bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
