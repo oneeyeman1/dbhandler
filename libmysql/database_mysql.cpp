@@ -526,8 +526,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 //                                        foreign_keys[].push_back( new FKField( , fkTable, fkFld, fkTableField, fkSchema, update_constraint, delete_constraint ) );
                                         fk_names.push_back( fkFld );
                                     }
-                                    mysql_free_result( prepare_meta_result );
-                                    if( mysql_stmt_free_results( res1 ) )
+                                    if( mysql_stmt_free_result( res1 ) )
                                     {
                                         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
                                         errorMsg.push_back( err );
@@ -697,7 +696,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                 {
                                                                     std::wostringstream ss;
                                                                     ss << fieldSize;
-                                                                    type += L"("
+                                                                    type += L"(";
                                                                     type += ss.str();
                                                                 }
                                                                 if( fieldPrec > 0 )
@@ -717,7 +716,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                             else
                                                             {
                                                                 mysql_free_result( prepare_meta_result );
-                                                                if( mysql_stmt_free_results( res2 ) )
+                                                                if( mysql_stmt_free_result( res2 ) )
                                                                 {
                                                                     std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
                                                                     errorMsg.push_back( err );
@@ -778,7 +777,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                     while( !mysql_stmt_fetch( res3 ) )
                                                                                         indexes.push_back( m_pimpl->m_myconv.from_bytes( indexName ) );
                                                                                     table->SetIndexNames( indexes );
-                                                                                    mysql_stmt_free_results( res3 );
+                                                                                    mysql_stmt_free_result( res3 );
                                                                                     if( GetTableProperties( table, errorMsg ) )
                                                                                     {
                                                                                         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -817,7 +816,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     delete str_data3;
     str_data3 = NULL;
     if( result )
-        Disconnect();
+        Disconnect( errorMsg );
     return result;
 }
 
@@ -969,7 +968,7 @@ bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstr
                 }
                 else
                 {
-                    if( mysql_fetch_row( result ) != MYSQL_NO_DATA )
+                    if( mysql_stmt_fetch( res ) != MYSQL_NO_DATA )
                         exists = 1;
                     }
                 }
