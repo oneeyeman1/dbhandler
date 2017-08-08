@@ -1211,7 +1211,28 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                         {
                             while( !mysql_stmt_fetch( stmt ) )
                             {
-//                                tableProp = mysql_fetch_row( queryResult );
+                                table->SetDataFontSize( datafontheight );
+                                table->SetDataFontWeight( datafontweight );
+                                table->SetDataFontItalic( datafontitalic );
+                                table->SetDataFontUnderline( datafontunderline );
+                                table->SetDataFontCharacterSet( datafontset );
+                                table->SetDataFontPointSize( datafontptc );
+                                table->SetDataFontName( m_pimpl->m_myconv.from_bytes( datafontname ) );
+                                table->SetHeadingFontSize( headingfontheight );
+                                table->SetHeadingFontWeight( headingfontweight );
+                                table->SetHeadingFontItalic( headingfontitalic );
+                                table->SetHeadingFontUnderline( headingfontunderline );
+                                table->SetHeadingFontCharacterSet( headingfontset );
+                                table->SetHeadingFontPointSize( headingfontptc );
+                                table->SetHeadingFontName( m_pimpl->m_myconv.from_bytes( headingfontname ) );
+                                table->SetLabelFontSize( labelfontheight );
+                                table->SetLabelFontWeight( labelfontweight );
+                                table->SetLabelFontItalic( labelfontitalic );
+                                table->SetLabelFontUnderline( labelfontunderline );
+                                table->SetLabelFontCharacterSet( labelfontset );
+                                table->SetLabelFontPointSize( labelfontptc );
+                                table->SetLabelFontName( m_pimpl->m_myconv.from_bytes( labelfontname ) );
+                                table->SetComment( comments );
                             }
                         }
                     }
