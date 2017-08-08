@@ -339,7 +339,7 @@ int MySQLDatabase::PrepareDatabaseInfoQueries(MYSQL_STMT *res1, MYSQL_STMT *res2
 int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     int res, result = 0;
-    MYSQL_STMT *res1, *res2, *res3;
+    MYSQL_STMT *res1 = NULL, *res2 = NULL, *res3 = NULL;
     char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
     char fkField[64], refTableSchema[64], refTableName[64], refTableField[64], updateCon[64], deleteCon[64];
     char colName[64], colType[64], defValue[64], nullable[3], autoInc[30], indexName[64];
@@ -970,7 +970,6 @@ bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstr
                 {
                     if( mysql_stmt_fetch( res ) != MYSQL_NO_DATA )
                         exists = 1;
-                    }
                 }
             }
         }
@@ -999,8 +998,10 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
 {
     MYSQL_STMT *stmt;
     int result = 0;
-    char *str_data1, *str_data2, table[129], owner[129], datafontname[18];
-    int tableId, datafontheight;
+    char *str_data1 = NULL, *str_data2 = NULL, tName[129], owner[129], datafontname[18], headingfontname[18], labelfontname[18], comments[254];
+    int tableId;
+    short int datafontheight, datafontweight, datafontset, datafontptc, headingforntheight, headingfontweight, headingfontset, headingfontptc, labelfontheight, labelfontwweight, labelfontset, labelfontptc;
+    char datafontitalic = 'N', datafontunderline = 'N', headingfontitalic = 'N', headingfontunderline = 'N', labelfontitalic = 'N', labelfontunderline = 'N';
     std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_snam = ? AND abt_tnam = ?;";
     std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName();
     stmt = mysql_stmt_init( m_db );
@@ -1062,7 +1063,7 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                     unsigned long length[25];
                     memset( results, 0, sizeof( results ) );
                     results[0].buffer_type = MYSQL_TYPE_STRING;
-                    results[0].buffer = (char *)table;
+                    results[0].buffer = (char *)tName;
                     results[0].buffer_length = 129;
                     results[0].is_null = &is_null[0];
                     results[0].length = &length[0];
@@ -1078,7 +1079,127 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                     results[2].is_null = &is_null[2];
                     results[2].length = &length[2];
                     results[2].error = &error[2];
-                    if( mysql_stmt_bind_result() )
+                    results[3].buffer_type = MYSQL_TYPE_SHORT;
+                    results[3].buffer = (char *) &datafontheight;
+                    results[3].is_null = &is_null[3];
+                    results[3].length = &length[3];
+                    results[3].error = &error[3];
+                    results[4].buffer_type = MYSQL_TYPE_SHORT;
+                    results[4].buffer = (char *) &datafontweight;
+                    results[4].is_null = &is_null[4];
+                    results[4].length = &length[4];
+                    results[4].error = &error[4];
+                    results[5].buffer_type = MYSQL_TYPE_STRING;
+                    results[5].buffer = (char *)datafontitalic;
+                    results[5].buffer_length = 1;
+                    results[5].is_null = &is_null[5];
+                    results[5].length = &length[5];
+                    results[5].error = &error[5];
+                    results[6].buffer_type = MYSQL_TYPE_STRING;
+                    results[6].buffer = (char *)datafontunderline;
+                    results[6].buffer_length = 1;
+                    results[6].is_null = &is_null[6];
+                    results[6].length = &length[6];
+                    results[6].error = &error[6];
+                    results[7].buffer_type = MYSQL_TYPE_SHORT;
+                    results[7].buffer = (char *) &datafontset;
+                    results[7].is_null = &is_null[7];
+                    results[7].length = &length[7];
+                    results[7].error = &error[7];
+                    results[8].buffer_type = MYSQL_TYPE_SHORT;
+                    results[8].buffer = (char *) &datafontptc;
+                    results[8].is_null = &is_null[8];
+                    results[8].length = &length[8];
+                    results[8].error = &error[8];
+                    results[9].buffer_type = MYSQL_TYPE_STRING;
+                    results[9].buffer = (char *)datafontname;
+                    results[9].buffer_length = 18;
+                    results[9].is_null = &is_null[9];
+                    results[9].length = &length[9];
+                    results[9].error = &error[9];
+                    results[10].buffer_type = MYSQL_TYPE_SHORT;
+                    results[10].buffer = (char *) &headingforntheight;
+                    results[10].is_null = &is_null[10];
+                    results[10].length = &length[10];
+                    results[10].error = &error[10];
+                    results[11].buffer_type = MYSQL_TYPE_SHORT;
+                    results[11].buffer = (char *) &headingfontweight;
+                    results[11].is_null = &is_null[11];
+                    results[11].length = &length[11];
+                    results[11].error = &error[11];
+                    results[12].buffer_type = MYSQL_TYPE_STRING;
+                    results[12].buffer = (char *)headingfontitalic;
+                    results[12].buffer_length = 1;
+                    results[12].is_null = &is_null[12];
+                    results[12].length = &length[12];
+                    results[12].error = &error[12];
+                    results[13].buffer_type = MYSQL_TYPE_STRING;
+                    results[13].buffer = (char *)headingfontunderline;
+                    results[13].buffer_length = 1;
+                    results[13].is_null = &is_null[13];
+                    results[13].length = &length[13];
+                    results[13].error = &error[13];
+                    results[14].buffer_type = MYSQL_TYPE_SHORT;
+                    results[14].buffer = (char *) &headingfontset;
+                    results[14].is_null = &is_null[14];
+                    results[14].length = &length[14];
+                    results[14].error = &error[14];
+                    results[15].buffer_type = MYSQL_TYPE_SHORT;
+                    results[15].buffer = (char *) &headingfontptc;
+                    results[15].is_null = &is_null[15];
+                    results[15].length = &length[15];
+                    results[15].error = &error[15];
+                    results[16].buffer_type = MYSQL_TYPE_STRING;
+                    results[16].buffer = (char *)headingfontname;
+                    results[16].buffer_length = 18;
+                    results[16].is_null = &is_null[16];
+                    results[16].length = &length[16];
+                    results[16].error = &error[16];
+                    results[17].buffer_type = MYSQL_TYPE_SHORT;
+                    results[17].buffer = (char *) &labelfontheight;
+                    results[17].is_null = &is_null[17];
+                    results[17].length = &length[17];
+                    results[17].error = &error[17];
+                    results[18].buffer_type = MYSQL_TYPE_SHORT;
+                    results[18].buffer = (char *) &labelfontwweight;
+                    results[18].is_null = &is_null[18];
+                    results[18].length = &length[18];
+                    results[18].error = &error[18];
+                    results[19].buffer_type = MYSQL_TYPE_STRING;
+                    results[19].buffer = (char *)labelfontitalic;
+                    results[19].buffer_length = 1;
+                    results[19].is_null = &is_null[19];
+                    results[19].length = &length[19];
+                    results[19].error = &error[19];
+                    results[20].buffer_type = MYSQL_TYPE_STRING;
+                    results[20].buffer = (char *)labelfontunderline;
+                    results[20].buffer_length = 1;
+                    results[20].is_null = &is_null[20];
+                    results[20].length = &length[20];
+                    results[20].error = &error[20];
+                    results[21].buffer_type = MYSQL_TYPE_SHORT;
+                    results[21].buffer = (char *) &labelfontset;
+                    results[21].is_null = &is_null[21];
+                    results[21].length = &length[21];
+                    results[21].error = &error[21];
+                    results[22].buffer_type = MYSQL_TYPE_SHORT;
+                    results[22].buffer = (char *) &labelfontptc;
+                    results[22].is_null = &is_null[22];
+                    results[22].length = &length[22];
+                    results[22].error = &error[22];
+                    results[23].buffer_type = MYSQL_TYPE_STRING;
+                    results[23].buffer = (char *)labelfontname;
+                    results[23].buffer_length = 18;
+                    results[23].is_null = &is_null[23];
+                    results[23].length = &length[23];
+                    results[23].error = &error[23];
+                    results[24].buffer_type = MYSQL_TYPE_STRING;
+                    results[24].buffer = (char *)comments;
+                    results[24].buffer_length = 254;
+                    results[24].is_null = &is_null[24];
+                    results[24].length = &length[24];
+                    results[24].error = &error[24];
+                    if( mysql_stmt_bind_result( stmt, results ) )
                     {
                         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
                         errorMsg.push_back( err );
@@ -1096,7 +1217,7 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                         {
                             while( !mysql_stmt_fetch( stmt ) )
                             {
-                                tableProp = mysql_fetch_row( queryResult );
+//                                tableProp = mysql_fetch_row( queryResult );
                             }
                         }
                     }

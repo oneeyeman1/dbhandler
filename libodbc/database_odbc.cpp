@@ -3431,6 +3431,8 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
         query = L"SELECT su.name FROM sysobjects so, sysusers su, sys.tables t, sys.schemas s WHERE so.uid = su.uid AND t.object_id = so.id AND t.schema_id = s.schema_id AND s.name = ? AND so.name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT u.usename FROM pg_class c, pg_user u WHERE u.usesysid = c.relowner AND relname = ?";
+    if( pimpl->m_subtype == L"MySQL" )
+        return result;
     SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
     if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
     {
