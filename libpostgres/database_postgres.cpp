@@ -928,9 +928,9 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( tname.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
     strcpy( values[2], m_pimpl->m_myconv.to_bytes( table->GetFieldName().c_str() ).c_str() );
-    int len1 = tname.length();
-    int len2 = ownerName.length();
-    int len3 = table->GetFieldName().length();
+    int len1 = /*tname.length()*/strlen( values[0] );
+    int len2 = /*ownerName.length()*/strlen( values[1] );
+    int len3 = /*table->GetFieldName().length()*/ strlen( values[2] );
     int length[3] = { len1, len2, len3 };
     int formats[3] = { 1, 1, 1 };
     PGresult *res = PQexecPrepared( m_db, "get_field_properties", 3, values, length, formats, 1 );
