@@ -658,8 +658,13 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                         fieldSize = numLen;
                                                                                         fieldPrec = numPrec;
                                                                                     }
-                                                                                    if( !strcmp( nullable, "YES" ) )
-                                                                                        is_nullable = true;
+                                                                                    if( !is_null1[7] )
+                                                                                    {
+                                                                                        if( !strcmp( nullable, "YES" ) )
+                                                                                            is_nullable = true;
+                                                                                        else
+                                                                                            is_nullable = false;
+                                                                                    }
                                                                                     else
                                                                                         is_nullable = false;
                                                                                     if( !strcmp( autoInc, "autoincrement" ) )
