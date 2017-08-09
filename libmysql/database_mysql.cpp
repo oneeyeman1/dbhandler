@@ -126,6 +126,7 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
     std::wstring query5 = L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));";
     std::wstring query6 = L"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC);";
     std::wstring query7 = L"CREATE INDEX abcatcol_tnam_ownr_cnam ON abcattbl(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);";
+    std::wstring query8 = L"SELECT USER()";
     std::wstring errorMessage;
     m_db = mysql_init( m_db );
     if( !m_db )
@@ -215,7 +216,7 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
                     result = GetTableListFromDb( errorMsg );
                 }
             }
-            res = mysql_query( m_db, "SELECT USER()" );
+            res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query8.c_str() ).c_str() );
             MYSQL_RES *results = mysql_store_result( m_db );
             if( !results )
             {
@@ -992,7 +993,7 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
     int result = 0;
     char *str_data1 = NULL, *str_data2 = NULL, tName[129], owner[129], datafontname[18], headingfontname[18], labelfontname[18], comments[254];
     int tableId;
-    short int datafontheight, datafontweight, datafontset, datafontptc, headingforntheight, headingfontweight, headingfontset, headingfontptc, labelfontheight, labelfontwweight, labelfontset, labelfontptc;
+    short int datafontheight, datafontweight, datafontset, datafontptc, headingfontheight, headingfontweight, headingfontset, headingfontptc, labelfontheight, labelfontweight, labelfontset, labelfontptc;
     char datafontitalic = 'N', datafontunderline = 'N', headingfontitalic = 'N', headingfontunderline = 'N', labelfontitalic = 'N', labelfontunderline = 'N';
     std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_snam = ? AND abt_tnam = ?;";
     std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName();
@@ -1082,13 +1083,13 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                     results[4].length = &length[4];
                     results[4].error = &error[4];
                     results[5].buffer_type = MYSQL_TYPE_STRING;
-                    results[5].buffer = (char *)datafontitalic;
+                    results[5].buffer = (char *)&datafontitalic;
                     results[5].buffer_length = 1;
                     results[5].is_null = &is_null[5];
                     results[5].length = &length[5];
                     results[5].error = &error[5];
                     results[6].buffer_type = MYSQL_TYPE_STRING;
-                    results[6].buffer = (char *)datafontunderline;
+                    results[6].buffer = (char *)&datafontunderline;
                     results[6].buffer_length = 1;
                     results[6].is_null = &is_null[6];
                     results[6].length = &length[6];
@@ -1110,7 +1111,7 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                     results[9].length = &length[9];
                     results[9].error = &error[9];
                     results[10].buffer_type = MYSQL_TYPE_SHORT;
-                    results[10].buffer = (char *) &headingforntheight;
+                    results[10].buffer = (char *) &headingfontheight;
                     results[10].is_null = &is_null[10];
                     results[10].length = &length[10];
                     results[10].error = &error[10];
@@ -1120,13 +1121,13 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                     results[11].length = &length[11];
                     results[11].error = &error[11];
                     results[12].buffer_type = MYSQL_TYPE_STRING;
-                    results[12].buffer = (char *)headingfontitalic;
+                    results[12].buffer = (char *)&headingfontitalic;
                     results[12].buffer_length = 1;
                     results[12].is_null = &is_null[12];
                     results[12].length = &length[12];
                     results[12].error = &error[12];
                     results[13].buffer_type = MYSQL_TYPE_STRING;
-                    results[13].buffer = (char *)headingfontunderline;
+                    results[13].buffer = (char *)&headingfontunderline;
                     results[13].buffer_length = 1;
                     results[13].is_null = &is_null[13];
                     results[13].length = &length[13];
@@ -1153,18 +1154,18 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                     results[17].length = &length[17];
                     results[17].error = &error[17];
                     results[18].buffer_type = MYSQL_TYPE_SHORT;
-                    results[18].buffer = (char *) &labelfontwweight;
+                    results[18].buffer = (char *) &labelfontweight;
                     results[18].is_null = &is_null[18];
                     results[18].length = &length[18];
                     results[18].error = &error[18];
                     results[19].buffer_type = MYSQL_TYPE_STRING;
-                    results[19].buffer = (char *)labelfontitalic;
+                    results[19].buffer = (char *)&labelfontitalic;
                     results[19].buffer_length = 1;
                     results[19].is_null = &is_null[19];
                     results[19].length = &length[19];
                     results[19].error = &error[19];
                     results[20].buffer_type = MYSQL_TYPE_STRING;
-                    results[20].buffer = (char *)labelfontunderline;
+                    results[20].buffer = (char *)&labelfontunderline;
                     results[20].buffer_length = 1;
                     results[20].is_null = &is_null[20];
                     results[20].length = &length[20];
@@ -1214,23 +1215,23 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                                 table->SetDataFontItalic( datafontitalic );
                                 table->SetDataFontUnderline( datafontunderline );
                                 table->SetDataFontCharacterSet( datafontset );
-                                table->SetDataFontPointSize( datafontptc );
+                                table->SetDataFontPixelSize( datafontptc );
                                 table->SetDataFontName( m_pimpl->m_myconv.from_bytes( datafontname ) );
                                 table->SetHeadingFontSize( headingfontheight );
                                 table->SetHeadingFontWeight( headingfontweight );
                                 table->SetHeadingFontItalic( headingfontitalic );
                                 table->SetHeadingFontUnderline( headingfontunderline );
                                 table->SetHeadingFontCharacterSet( headingfontset );
-                                table->SetHeadingFontPointSize( headingfontptc );
+                                table->SetHeadingFontPixelSize( headingfontptc );
                                 table->SetHeadingFontName( m_pimpl->m_myconv.from_bytes( headingfontname ) );
                                 table->SetLabelFontSize( labelfontheight );
                                 table->SetLabelFontWeight( labelfontweight );
                                 table->SetLabelFontItalic( labelfontitalic );
                                 table->SetLabelFontUnderline( labelfontunderline );
                                 table->SetLabelFontCharacterSet( labelfontset );
-                                table->SetLabelFontPointSize( labelfontptc );
+                                table->SetLabelFontPixelSize( labelfontptc );
                                 table->SetLabelFontName( m_pimpl->m_myconv.from_bytes( labelfontname ) );
-                                table->SetComment( comments );
+                                table->SetComment( m_pimpl->m_myconv.from_bytes( comments ) );
                             }
                         }
                     }
@@ -1603,20 +1604,26 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
         {
             MYSQL_BIND params[3];
             unsigned long str_length1, str_length2, str_length3;
-            str_data1 = new char[tname.length()], str_data2 = new char[pimpl->m_connectedUser.length()], str_data3 = new char[fieldName.length()];
+            str_data1 = new char[tname.length()], str_data2 = new char[ownerName.length()], str_data3 = new char[fieldName.length()];
+            memset( str_data1, '\0', tname.length() );
+            memset( str_data2, '\0', ownerName.length() );
+            memset( str_data3, '\0', fieldName.length() );
             memset( params, 0, sizeof( params ) );
+//            strncpy( str_data1, tname.c_str(), strlen( tname.c_str() ) );
+//            strncpy( str_data2, ownerName.c_str(), strlen( ownerName.c_str() ) );
+//            strncpy( str_data3, fieldName.c_str(), strlen( fieldName.c_str() ) );
             params[0].buffer_type = MYSQL_TYPE_STRING;
-            params[0].buffer = (char *) str_data1;
+            params[0].buffer = (char *) m_pimpl->m_myconv.to_bytes( tname.c_str() ).c_str();
             params[0].buffer_length = tname.length();
             params[0].is_null = 0;
             params[0].length = &str_length1;
             params[1].buffer_type = MYSQL_TYPE_STRING;
-            params[1].buffer = (char *) str_data2;
+            params[1].buffer = (char *) m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str();
             params[1].buffer_length = pimpl->m_connectedUser.length();
             params[1].is_null = 0;
             params[1].length = &str_length2;
             params[2].buffer_type = MYSQL_TYPE_STRING;
-            params[2].buffer = (char *) str_data3;
+            params[2].buffer = (char *) m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
             params[2].buffer_length = fieldName.length();
             params[2].is_null = 0;
             params[2].length = &str_length3;
