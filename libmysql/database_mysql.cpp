@@ -216,20 +216,23 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
                     result = GetTableListFromDb( errorMsg );
                 }
             }
-            res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query8.c_str() ).c_str() );
-            MYSQL_RES *results = mysql_store_result( m_db );
-            if( !results )
+            if( !result )
             {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                errorMsg.push_back( err );
-                result = 1;
-            }
-            else
-            {
-                MYSQL_ROW row;
-                while( ( row = mysql_fetch_row( results ) ) != NULL )
+                res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query8.c_str() ).c_str() );
+                MYSQL_RES *results = mysql_store_result( m_db );
+                if( !results )
                 {
-                    pimpl->m_connectedUser = m_pimpl->m_myconv.from_bytes( row[0] );
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    errorMsg.push_back( err );
+                    result = 1;
+                }
+                else
+                {
+                    MYSQL_ROW row;
+                    while( ( row = mysql_fetch_row( results ) ) != NULL )
+                    {
+                        pimpl->m_connectedUser = m_pimpl->m_myconv.from_bytes( row[0] );
+                    }
                 }
             }
         }
