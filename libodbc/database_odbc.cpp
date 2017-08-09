@@ -3686,6 +3686,13 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                 }
             }
         }
+        retcode = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+        m_hstmt = 0;
     }
     delete qry;
     qry = NULL;

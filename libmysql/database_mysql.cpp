@@ -992,7 +992,7 @@ bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstr
 
 int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
-    MYSQL_STMT *stmt;
+    MYSQL_STMT *stmt = NULL;
     int result = 0;
     char *str_data1 = NULL, *str_data2 = NULL, tName[129], owner[129], datafontname[18], headingfontname[18], labelfontname[18], comments[254];
     int tableId;
@@ -1507,7 +1507,7 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
 {
     bool result = false;
     char *str_data1 = NULL, *str_data2 = NULL;
-    MYSQL_STMT *stmt;
+    MYSQL_STMT *stmt = NULL;
     std::wstring tname = const_cast<DatabaseTable *>( table )->GetSchemaName() + L".";
     tname += const_cast<DatabaseTable *>( table )->GetTableName();
     std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
@@ -1563,14 +1563,17 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
                     {
                         if( mysql_stmt_num_rows( stmt ) == 1 )
                             result = true;
-                        if( mysql_stmt_close( stmt ) )
-                        {
-                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                            errorMsg.push_back( err );
-                        }
                     }
                 }
             }
+        }
+    }
+    if( stmt )
+    {
+        if( mysql_stmt_close( stmt ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
         }
     }
     delete str_data1;
@@ -1658,11 +1661,14 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                 }
             }
         }
-        if( mysql_stmt_close( stmt ) )
+        if( stmt )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-            errorMsg.push_back( err );
-            result = 1;
+            if( mysql_stmt_close( stmt ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
         }
     }
     delete str_data1;
@@ -1678,6 +1684,7 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
 {
     int result = 0;
     char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
+    MYSQL_STMT *stmt = NULL;
     std::wstring query = L"SELECT 1 FROM information_schema.key_column_usage kcu WHERE constraint_name = ? AND table_schema = ? AND table_name = ?";
     if( mysql_query( m_db, "START TRANSACTION" ) )
     {
@@ -1688,7 +1695,7 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
     }
     else
     {
-        MYSQL_STMT *stmt = mysql_stmt_init( m_db );
+        stmt = mysql_stmt_init( m_db );
         if( !stmt )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -1761,12 +1768,6 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
                     }
                 }
             }
-            if( mysql_stmt_close( stmt ) )
-            {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                errorMsg.push_back( err );
-                result = 1;
-            }
         }
         if( result == 0 )
         {
@@ -1786,6 +1787,15 @@ int MySQLDatabase::ApplyForeignKey(const std::wstring &command, const std::wstri
                 errorMsg.push_back( err );
                 return 1;
             }
+        }
+    }
+    if( stmt )
+    {
+        if( mysql_stmt_close( stmt ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
         }
     }
     delete str_data1;
