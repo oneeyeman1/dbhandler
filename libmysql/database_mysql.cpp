@@ -359,7 +359,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             }
                             else
                             {
-                                if( mysql_stmt_prepare( res3, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str(), query2.length() ) )
+                                if( mysql_stmt_prepare( res3, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str(), query4.length() ) )
                                 {
                                     std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
                                     errorMsg.push_back( err );
