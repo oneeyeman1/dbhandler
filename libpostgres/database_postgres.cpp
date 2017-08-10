@@ -443,8 +443,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                 }
                                                 else
                                                 {
-                                                    for( int j = 0; j < PQntuples( res2 ); j++ )
-                                                        indexes.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 1 ) ) );
+                                                    for( int j = 0; j < PQntuples( res4 ); j++ )
+                                                        indexes.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res4, j, 0 ) ) );
                                                     table->SetIndexNames( indexes );
                                                     pimpl->m_tables[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( table );
                                                     fields.erase( fields.begin(), fields.end() );
