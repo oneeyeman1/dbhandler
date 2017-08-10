@@ -489,6 +489,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                     }
                                                     else
                                                     {
+                                                        int foreign_key_row = mysql_stmt_fetch( res1 );
                                                         while( !mysql_stmt_fetch( res1 ) )
                                                         {
                                                             fkFld = m_pimpl->m_myconv.from_bytes( fkField );
@@ -644,6 +645,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                             else
                                                                             {
                                                                                 int fieldSize = 0, fieldPrec = 0;
+                                                                                int field_row = mysql_stmt_fetch( res2 );
                                                                                 while( !mysql_stmt_fetch( res2 ) )
                                                                                 {
                                                                                     fieldName = m_pimpl->m_myconv.from_bytes( colName );
@@ -767,6 +769,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                                     }
                                                                                                     else
                                                                                                     {
+                                                                                                        int indexes_row = mysql_stmt_fetch( res3 );
                                                                                                         while( !mysql_stmt_fetch( res3 ) )
                                                                                                             indexes.push_back( m_pimpl->m_myconv.from_bytes( indexName ) );
                                                                                                         table->SetIndexNames( indexes );
