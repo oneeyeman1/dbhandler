@@ -576,8 +576,8 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     memset( values[1], '\0', ownerName.length() + 1 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( t.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
-    int len1 = t.length();
-    int len2 = ownerName.length();
+    int len1 = /*t.length()*/strlen( values[0] );
+    int len2 = /*ownerName.length()*/strlen( values[1] );
     int length[2] = { len1, len2 };
     int formats[2] = { 1, 1 };
     PGresult *res = PQexecPrepared( m_db, "get_table_prop", 2, values, length, formats, 1 );
