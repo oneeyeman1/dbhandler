@@ -743,6 +743,17 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     RETCODE ret;
+    if( m_hstmt != 0 )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        if( ret != SQL_SUCCESS )
+        {
+            GetErrorMessage( errorMsg, 2 );
+            result = 1;
+        }
+        else
+            m_hstmt = 0;
+    }
     ret = SQLDisconnect( m_hdbc );
     if( ret != SQL_SUCCESS )
     {
@@ -3431,8 +3442,13 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
         query = L"SELECT su.name FROM sysobjects so, sysusers su, sys.tables t, sys.schemas s WHERE so.uid = su.uid AND t.object_id = so.id AND t.schema_id = s.schema_id AND s.name = ? AND so.name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT u.usename FROM pg_class c, pg_user u WHERE u.usesysid = c.relowner AND relname = ?";
+    if( pimpl->m_subtype = L"Sybase" )
+        query = L"SELECT su.name FROM sysobject so, sysusers su WHERE su.uid = so.uid AND so.name = ?";
     if( pimpl->m_subtype == L"MySQL" )
+    {
+        odbc_pimpl->m_currentTableOwner = L"";
         return result;
+    }
     SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
     if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
     {
