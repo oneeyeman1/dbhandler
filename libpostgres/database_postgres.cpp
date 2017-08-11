@@ -196,7 +196,7 @@ int PostgresDatabase::ServerConnect(const std::wstring &selectedDSN, std::vector
     else
     {
         res = PQExec( m_db, query.c_str() );
-        ExecStatusType status = PQresultStatus( m_db )'
+        ExecStatusType status = PQresultStatus( m_db );
         if( status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK )
         {
             err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
