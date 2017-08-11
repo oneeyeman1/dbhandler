@@ -3442,7 +3442,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
         query = L"SELECT su.name FROM sysobjects so, sysusers su, sys.tables t, sys.schemas s WHERE so.uid = su.uid AND t.object_id = so.id AND t.schema_id = s.schema_id AND s.name = ? AND so.name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT u.usename FROM pg_class c, pg_user u WHERE u.usesysid = c.relowner AND relname = ?";
-    if( pimpl->m_subtype = L"Sybase" )
+    if( pimpl->m_subtype == L"Sybase" )
         query = L"SELECT su.name FROM sysobject so, sysusers su WHERE su.uid = so.uid AND so.name = ?";
     if( pimpl->m_subtype == L"MySQL" )
     {
