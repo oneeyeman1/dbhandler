@@ -242,6 +242,7 @@ int MySQLDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wst
 
 int MySQLDatabase::ServerConnect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
 {
+    std::wstring query = L"SELECT schema_name FROM information_schema.schemata";
     m_db = mysql_init( m_db );
     if( !m_db )
     {
@@ -271,6 +272,29 @@ int MySQLDatabase::ServerConnect(const std::wstring &selectedDSN, std::vector<st
             }
             else
             {
+                int res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+                if( res )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    errorMsg.push_back( err );
+                    result = 1;
+                }
+                else
+                {
+                    MYSQL_RES *results = mysql_store_result( m_db );
+                    if( !results )
+                    {
+                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                        errorMsg.push_back( err );
+                        result = 1;
+                    }
+                    else
+                    {
+                        MYSQL_ROW row;
+                        while( ( row = mysql_fetch_row( results ) ) != NULL )
+                            dbList.push_back( m_pimpl->m_myconv.from_bytes( row[0] ) );
+                    }
+                }
             }
         }
     }
