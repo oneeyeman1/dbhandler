@@ -1596,8 +1596,8 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
     std::wstring tname = schemaName + L".";
     tname += tableName;
     std::wstring fieldName = field->GetFieldName();
-//    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
-    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = \'abcß\' AND abc_ownr = \'\' AND abc_cnam = \'id\';";
+    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?";
+//    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = \'abcß\' AND abc_ownr = \'\' AND abc_cnam = \'id\'";
     MYSQL_STMT *stmt = mysql_stmt_init( m_db );
     if( !stmt )
     {
@@ -1605,9 +1605,13 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
         errorMsg.push_back( err );
         result = 1;
     }
-    else
+    else 
     {
-        int a = mysql_query( m_db, u8""SELECT * FROM abcatcol WHERE abc_tnam = \'abcß\' AND abc_ownr = \'\' AND abc_cnam = \'id\'" );
+//        int a = mysql_query( m_db, u8"SELECT * FROM abcatcol WHERE abc_tnam = \'abcß\' AND abc_ownr = \'\' AND abc_cnam = \'id\'" );
+/*
+        const char *qry = m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str();
+        if( mysql_stmt_prepare( stmt, qry, strlen( qry ) ) )
+*/
         if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -1616,16 +1620,16 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
         }
         else
         {
-/*            MYSQL_BIND params[3];
+            MYSQL_BIND params[3];
             unsigned long str_length1, str_length2, str_length3;
             str_data1 = new char[tname.length()], str_data2 = new char[ownerName.length()], str_data3 = new char[fieldName.length()];
             memset( str_data1, '\0', tname.length() );
             memset( str_data2, '\0', ownerName.length() );
             memset( str_data3, '\0', fieldName.length() );
             memset( params, 0, sizeof( params ) );
-//            strncpy( str_data1, tname.c_str(), strlen( tname.c_str() ) );
-//            strncpy( str_data2, ownerName.c_str(), strlen( ownerName.c_str() ) );
-//            strncpy( str_data3, fieldName.c_str(), strlen( fieldName.c_str() ) );
+            strncpy( str_data1, tname.c_str(), strlen( tname.c_str() ) );
+            strncpy( str_data2, ownerName.c_str(), strlen( ownerName.c_str() ) );
+            strncpy( str_data3, fieldName.c_str(), strlen( fieldName.c_str() ) );
             params[0].buffer_type = MYSQL_TYPE_STRING;
             params[0].buffer = (char *) m_pimpl->m_myconv.to_bytes( tname.c_str() ).c_str();
             params[0].buffer_length = tname.length();
@@ -1648,7 +1652,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                 result = 1;
             }
             else
-  */          {
+            {
                 if( mysql_stmt_execute( stmt ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
