@@ -842,6 +842,11 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                                             result = 1;
                                                                                                             break;
                                                                                                         }
+                                                                                                        if( GetTableId( table, errorMsg ) )
+                                                                                                        {
+                                                                                                            result = 1;
+                                                                                                            break;
+                                                                                                        }
                                                                                                         pimpl->m_tables[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( table );
                                                                                                         fields.clear();
                                                                                                         foreign_keys.clear();
