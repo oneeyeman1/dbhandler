@@ -184,6 +184,8 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
 
 int PostgresDatabase::ServerConnect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
 {
+    PGresult *res;
+    std::wstring query = L"SELECT datname FROM pg_database";
     m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
     if( PQstatus( m_db ) != CONNECTION_OK )
     {
@@ -193,6 +195,21 @@ int PostgresDatabase::ServerConnect(const std::wstring &selectedDSN, std::vector
     }
     else
     {
+        res = PQExec( m_db, query.c_str() );
+        ExecStatusType status = PQresultStatus( m_db )'
+        if( status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK )
+        {
+            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Connection to database failed: " + err );
+            result = 1;
+        }
+        else if( status == PGRES_TUPLES_OK )
+        {
+            for( int i = 0; i < PQntuples( res ); i++ )
+            {
+                dbList.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
+            }
+        }
     }
 }
 
