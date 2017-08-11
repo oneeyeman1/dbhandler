@@ -232,8 +232,8 @@ protected:
 public:
     virtual ~Database() = 0;
     Impl &GetTableVector() { return *pimpl; };
-    virtual int ServerConnect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int ServerConnect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg) = 0;
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) = 0;

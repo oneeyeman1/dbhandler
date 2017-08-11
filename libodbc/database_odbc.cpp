@@ -458,7 +458,7 @@ int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstrin
     return result;
 }
 
-int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, bufferSize = 1024;
     std::vector<SQLWCHAR *> errorMessage;
@@ -739,7 +739,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
     return result;
 }
 
-int ODBCDatabase::ServerConnect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::ServerConnect(const std::wstring &UNUSED(selectedDSN), std::vector<std::wstring> &UNUSED(dbList), std::vector<std::wstring> &errorMsg)
 {
     return 0;
 }

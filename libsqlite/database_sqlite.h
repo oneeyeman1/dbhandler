@@ -10,8 +10,8 @@ class SQLiteDatabase : public Database
 public:
     SQLiteDatabase();
     virtual ~SQLiteDatabase();
-    virtual int ServerConnect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
-    virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
+    virtual int ServerConnect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
+    virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg);
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int Disconnect(std::vector<std::wstring> &errorMsg);

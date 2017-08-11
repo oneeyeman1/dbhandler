@@ -66,7 +66,7 @@ int PostgresDatabase::DropDatabase(const std::wstring &name, std::vector<std::ws
     return result;
 }
 
-int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     PGresult *res;
@@ -182,7 +182,7 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
     return result;
 }
 
-int PostgresDatabase::ServerConnect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::ServerConnect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
 {
     m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
     if( PQstatus( m_db ) != CONNECTION_OK )
