@@ -182,6 +182,20 @@ int PostgresDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring
     return result;
 }
 
+int PostgresDatabase::ServerConnect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
+{
+    m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
+    if( PQstatus( m_db ) != CONNECTION_OK )
+    {
+        err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Connection to database failed: " + err );
+        result = 1;
+    }
+    else
+    {
+    }
+}
+
 int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 {
     int result = 0;

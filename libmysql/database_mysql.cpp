@@ -240,6 +240,42 @@ int MySQLDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &
     return result;
 }
 
+int MySQLDatabase::ServerConnect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
+{
+    m_db = mysql_init( m_db );
+    if( !m_db )
+    {
+        err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        errorMsg.push_back( L"Connection to database failed!" );
+        result = 1;
+    }
+    else
+    {
+        if( TokenizeConnectionString( selectedDSN, errorMsg ) )
+        {
+            err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            errorMsg.push_back( L"Connection to database failed!" );
+            result = 1;
+        }
+        else
+        {
+            m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( m_pimpl->m_host.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_user.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_password.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_dbName.c_str() ).c_str(), m_port, m_pimpl->m_socket == L"" ? NULL : m_pimpl->m_myconv.to_bytes( m_pimpl->m_socket.c_str() ).c_str(), m_flags );
+            if( !m_db )
+            {
+                err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                errorMsg.push_back( err );
+                errorMsg.push_back( L"Connection to database failed!" );
+                result = 1;
+            }
+            else
+            {
+            }
+        }
+    }
+}
+
 int MySQLDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 {
     int result = 0;

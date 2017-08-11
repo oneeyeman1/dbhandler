@@ -80,6 +80,11 @@ int SQLiteDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstr
     return result;
 }
 
+int SQLiteDatabase::ServerConnect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
+{
+    return 0;
+}
+
 int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;

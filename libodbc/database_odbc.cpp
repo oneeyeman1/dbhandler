@@ -739,6 +739,11 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
     return result;
 }
 
+int ODBCDatabase::ServerConnect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
+{
+    return 0;
+}
+
 int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
