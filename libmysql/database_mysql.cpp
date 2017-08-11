@@ -1594,7 +1594,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
     tname += tableName;
     std::wstring fieldName = field->GetFieldName();
 //    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
-    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = 'abcﬂ' AND abc_ownr = '' AND abc_cnam = 'id';";
+    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = 'abc\xc3\x9f' AND abc_ownr = '' AND abc_cnam = 'id';";
     MYSQL_STMT *stmt = mysql_stmt_init( m_db );
     if( !stmt )
     {
