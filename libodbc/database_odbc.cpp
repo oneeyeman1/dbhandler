@@ -3303,7 +3303,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &command, std::vector<st
     return res;
 }
 
-int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     SQLHSTMT stmt = 0;
     SQLHDBC hdbc;
@@ -3382,7 +3382,7 @@ int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstrin
                                 retcode = SQLGetData( stmt, 1, SQL_C_SLONG, &id, 0, &cbName );
                                 if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                                 {
-                                    const_cast<DatabaseTable *>( table )->SetTableId( id );
+                                    table->SetTableId( id );
                                 }
                                 else
                                 {

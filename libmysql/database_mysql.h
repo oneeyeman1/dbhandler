@@ -30,8 +30,8 @@ protected:
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     bool IsSystemIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
-    int TokenizeConnectionString(std::wstring &connectStr, std::vector<std::wstring> &errorMsg);
-    virtual int GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
+    int TokenizeConnectionString(const std::wstring &connectStr, std::vector<std::wstring> &errorMsg);
+    virtual int GetTableId(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
 private:
     MYSQL *m_db;

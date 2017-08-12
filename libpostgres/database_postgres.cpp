@@ -185,6 +185,8 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
 int PostgresDatabase::ServerConnect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
 {
     PGresult *res;
+    std::wstring err;
+    int result = 0;
     std::wstring query = L"SELECT datname FROM pg_database";
     m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
     if( PQstatus( m_db ) != CONNECTION_OK )
@@ -195,8 +197,8 @@ int PostgresDatabase::ServerConnect(const std::wstring &selectedDSN, std::vector
     }
     else
     {
-        res = PQExec( m_db, query.c_str() );
-        ExecStatusType status = PQresultStatus( m_db );
+        res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+        ExecStatusType status = PQresultStatus( res );
         if( status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK )
         {
             err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -211,6 +213,7 @@ int PostgresDatabase::ServerConnect(const std::wstring &selectedDSN, std::vector
             }
         }
     }
+    return result;
 }
 
 int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
@@ -1096,7 +1099,7 @@ int PostgresDatabase::SetFieldProperties(const std::wstring &command, std::vecto
     return res;
 }
 
-int PostgresDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     char *value[1];
@@ -1119,7 +1122,7 @@ int PostgresDatabase::GetTableId(const DatabaseTable *table, std::vector<std::ws
     else if( status == PGRES_TUPLES_OK )
     {
         int value = ntohl( *(int *) PQgetvalue( res, 0, 0 ) );
-        const_cast<DatabaseTable *>( table )->SetTableId( value );
+        table->SetTableId( value );
     }
     PQclear( res );
     delete value[0];
