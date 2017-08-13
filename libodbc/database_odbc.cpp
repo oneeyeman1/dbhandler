@@ -37,6 +37,7 @@ ODBCDatabase::ODBCDatabase() : Database()
     pimpl->m_type = L"ODBC";
     m_oneStatement = false;
     m_connectString = NULL;
+    odbc_pimpl = new ODBCImpl;
 }
 
 ODBCDatabase::~ODBCDatabase()
@@ -457,7 +458,7 @@ int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstrin
     return result;
 }
 
-int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, bufferSize = 1024;
     std::vector<SQLWCHAR *> errorMessage;
@@ -484,14 +485,21 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
             {
                 if( !GetDriverForDSN( dsn, driver, errorMsg ) )
                 {
+                    SQLWCHAR *temp = new SQLWCHAR[13];
+                    memset( temp, '\0', 13 );
+                    uc_to_str_cpy( temp, L"PostgreSQL " );
                     uc_to_str_cpy( connectStrIn, L"DSN=" );
                     uc_to_str_cpy( connectStrIn, selectedDSN.c_str() );
                     uc_to_str_cpy( connectStrIn, L";Driver=" );
                     copy_uc_to_uc( connectStrIn, driver );
+                    if( equal( temp, driver ) )
+                        uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1" );
+                    delete temp;
+                    temp = NULL;
                     SQLSetConnectAttr( m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0 );
                     options = m_ask ? SQL_DRIVER_COMPLETE_REQUIRED : SQL_DRIVER_COMPLETE;
                     ret = SQLDriverConnect( m_hdbc, m_handle, connectStrIn, SQL_NTS, m_connectString, 1024, &OutConnStrLen, options );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                     {
                         GetErrorMessage( errorMsg, 2 );
                         result = 1;
@@ -529,7 +537,7 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
                                         query1 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE \"abcatcol\"(abc_tnam varchar(129) NOT NULL, abc_tid integer, abc_ownr varchar(129) NOT NULL, abc_cnam varchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn varchar(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt varchar(254), abc_edit varchar(31), abc_tag varchar(254) PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
                                         query2 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatedt' AND xtype='U') CREATE TABLE \"abcatedt\"(abe_name varchar(30) NOT NULL, abe_edit varchar(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work varchar(32) PRIMARY KEY( abe_name, abe_seqn ));";
                                         query3 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatfmt' AND xtype='U') CREATE TABLE \"abcatfmt\"(abf_name varchar(30) NOT NULL, abf_frmt varchar(254), abf_type smallint, abf_cntr integer PRIMARY KEY( abf_name ));";
-                                        query4 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE \"abcattbl\"(abt_tnam varchar(129) NOT NULL, abt_tid integer, abt_ownr varchar(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce varchar(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce varchar(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce varchar(18), abt_cmnt varchar(254) PRIMARY KEY( abt_tnam, abt_ownr ));";
+                                        query4 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE \"abcattbl\"(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254) PRIMARY KEY( abt_tnam, abt_ownr ));";
                                         query5 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatvld' AND xtype='U') CREATE TABLE \"abcatvld\"(abv_name varchar(30) NOT NULL, abv_vald varchar(254), abv_type smallint, abv_cntr integer, abv_msg varchar(254) PRIMARY KEY( abv_name ));";
                                         query6 = L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='abcattbl_tnam_ownr' AND object_id = OBJECT_ID('abcattbl')) CREATE INDEX \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
                                         query7 = L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='abcatcol_tnam_ownr_cnam' AND object_id = OBJECT_ID('abcatcol')) CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
@@ -731,10 +739,26 @@ int ODBCDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &e
     return result;
 }
 
+int ODBCDatabase::ServerConnect(const std::wstring &UNUSED(selectedDSN), std::vector<std::wstring> &UNUSED(dbList), std::vector<std::wstring> &errorMsg)
+{
+    return 0;
+}
+
 int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     RETCODE ret;
+    if( m_hstmt != 0 )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        if( ret != SQL_SUCCESS )
+        {
+            GetErrorMessage( errorMsg, 2 );
+            result = 1;
+        }
+        else
+            m_hstmt = 0;
+    }
     ret = SQLDisconnect( m_hdbc );
     if( ret != SQL_SUCCESS )
     {
@@ -807,7 +831,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring query4;
     int result = 0, bufferSize = 1024;
     std::vector<Field *> fields;
-    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkTable, fkName;
+    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkTable, fkName, schema, table;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::vector<std::wstring> autoinc_fields, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
@@ -842,432 +866,397 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         catalog[i].BufferLength = ( bufferSize + 1 );
         catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
         ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
-    }
-    ret = SQLTables( m_hstmt, NULL, 0, NULL, 0, NULL, 0, NULL, 0 );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1 );
-        result = 1;
-    }
-    else
-    {
-        for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
-            if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
-                catalogName = (SQLWCHAR *) catalog[0].TargetValuePtr;
-            if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
-                schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
-            if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
-                tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
-            ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_colattr );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            GetErrorMessage( errorMsg, 1 );
+            result = 1;
+            break;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLTables( m_hstmt, NULL, 0, NULL, 0, NULL, 0, NULL, 0 );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1 );
+            result = 1;
+        }
+        else
+        {
+            for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
             {
-                GetErrorMessage( errorMsg, 0 );
-                result = 1;
-                fields.clear();
-                pk_fields.clear();
-                break;
-            }
-            else
-            {
-                SQLSMALLINT OutConnStrLen;
-                ret = SQLDriverConnect( hdbc_colattr, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+                if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
+                    catalogName = (SQLWCHAR *) catalog[0].TargetValuePtr;
+                if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
+                    schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
+                if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
+                    tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
+                schema = L"";
+                table = L"";
+                str_to_uc_cpy( schema, schemaName );
+                str_to_uc_cpy( table, tableName );
+                GetTableOwner( schema, table, errorMsg );
+                ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_colattr );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, 2, hdbc_colattr );
+                    GetErrorMessage( errorMsg, 0 );
                     result = 1;
-                    fields.clear();
-                    pk_fields.clear();
-                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                    hdbc_colattr = 0;
                     break;
                 }
                 else
                 {
-                    ret = SQLAllocHandle(  SQL_HANDLE_STMT, hdbc_colattr, &stmt_colattr );
+                    SQLSMALLINT OutConnStrLen;
+                    ret = SQLDriverConnect( hdbc_colattr, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 2, hdbc_colattr );
                         result = 1;
-                        fields.clear();
-                        pk_fields.clear();
-                        SQLDisconnect( hdbc_colattr );
                         SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
                         hdbc_colattr = 0;
                         break;
                     }
                     else
                     {
-                        int size = GetSQLStringSize( tableName );
-                        size += GetSQLStringSize( schemaName );
-                        SQLWCHAR *szTableName = new SQLWCHAR[size + 16];
-                        memset( szTableName, 0, size + 16 );
-                        uc_to_str_cpy( szTableName, L"SELECT * FROM " );
-                        if( *schemaName != 0 )
-                        {
-                            copy_uc_to_uc( szTableName, schemaName );
-                            uc_to_str_cpy( szTableName, L"." );
-                        }
-                        copy_uc_to_uc( szTableName, tableName );
-                        ret = SQLExecDirect( stmt_colattr, szTableName, SQL_NTS );
-                        delete szTableName;
-                        szTableName = NULL;
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NULL_DATA )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_colattr );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLDisconnect( hdbc_colattr );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                            hdbc_colattr = 0;
-                            break;
-                        }
-                        else if( ret != SQL_NULL_DATA )
-                        {
-                            SQLSMALLINT lenUsed;
-                            SQLSMALLINT bufSize = 1024;
-                            ret = SQLNumResultCols( stmt_colattr, &numCols );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, 1, stmt_colattr );
-                                result = 1;
-                                fields.clear();
-                                pk_fields.clear();
-                                SQLDisconnect( hdbc_colattr );
-                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                                hdbc_colattr = 0;
-                                break;
-                            }
-                            columnNames = new SQLWCHAR *[numCols];
-                            SQLLEN autoincrement;
-                            for( int i = 0; i < numCols; i++ )
-                            {
-                                autoincrement = 0;
-                                columnNames[i] = new SQLWCHAR[sizeof( SQLWCHAR ) * SQL_MAX_COLUMN_NAME_LEN + 1];
-                                ret = SQLColAttribute( stmt_colattr, (SQLUSMALLINT) i + 1, SQL_DESC_LABEL, columnNames[i], bufSize, &lenUsed, NULL );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, 1, stmt_colattr );
-                                    result = 1;
-                                    fields.clear();
-                                    pk_fields.clear();
-                                    SQLDisconnect( hdbc_colattr );
-                                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                                    hdbc_colattr = 0;
-                                    break;
-                                }
-                                ret = SQLColAttribute( stmt_colattr, (SQLUSMALLINT) i + 1, SQL_DESC_AUTO_UNIQUE_VALUE, NULL, 0, NULL, &autoincrement );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, 1, stmt_colattr );
-                                    result = 1;
-                                    fields.clear();
-                                    pk_fields.clear();
-                                    autoinc_fields.clear();
-                                    SQLDisconnect( hdbc_colattr );
-                                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                                    hdbc_colattr = 0;
-                                    break;
-                                }
-                                if( autoincrement == SQL_TRUE )
-                                {
-                                    std::wstring autoincFieldName;
-                                    str_to_uc_cpy( autoincFieldName, columnNames[i] );
-                                    autoinc_fields.push_back( autoincFieldName );
-                                }
-                            }
-                        }
-                        ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_colattr );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            autoinc_fields.clear();
-                            SQLDisconnect( hdbc_colattr );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                            stmt_colattr = 0;
-                            hdbc_colattr = 0;
-                            break;
-                        }
-                        stmt_colattr = 0;
-                        ret = SQLDisconnect( hdbc_colattr );
+                        ret = SQLAllocHandle(  SQL_HANDLE_STMT, hdbc_colattr, &stmt_colattr );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, 2, hdbc_colattr );
                             result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            autoinc_fields.clear();
+                            SQLDisconnect( hdbc_colattr );
                             SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                            hdbc_colattr = 0;
-                            break;
-                        }
-                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 2, hdbc_colattr );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            autoinc_fields.clear();
-                            hdbc_colattr = 0;
-                            break;
-                        }
-                    }
-                }
-            }
-            ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_ind );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 0 );
-                result = 1;
-                fields.clear();
-                pk_fields.clear();
-                break;
-            }
-            else
-            {
-                SQLSMALLINT OutConnStrLen;
-                ret = SQLDriverConnect( hdbc_ind, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 2, hdbc_ind );
-                    result = 1;
-                    fields.clear();
-                    pk_fields.clear();
-                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                    hdbc_colattr = 0;
-                    break;
-                }
-                else
-                {
-                    ret = SQLAllocHandle(  SQL_HANDLE_STMT, hdbc_ind, &stmt_ind );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, 2, hdbc_ind );
-                        result = 1;
-                        fields.clear();
-                        pk_fields.clear();
-                        SQLDisconnect( hdbc_colattr );
-                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                        hdbc_colattr = 0;
-                        break;
-                    }
-                    else
-                    {
-                        qry = new SQLWCHAR[query4.length() + 2];
-                        memset( qry, '\0', query4.length() + 2 );
-                        uc_to_str_cpy( qry, query4 );
-                        ret = SQLPrepare( stmt_ind, qry, SQL_NTS );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_ind );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
-                            SQLDisconnect( hdbc_ind );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
                             hdbc_colattr = 0;
                             break;
                         }
                         else
                         {
-                            SQLSMALLINT DataType, DecimalDigits, Nullable;
-                            SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS;
-                            SQLULEN   ParamSize;
-                            ret = SQLDescribeParam( stmt_ind, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
+                            int size = GetSQLStringSize( tableName );
+                            size += GetSQLStringSize( schemaName );
+                            SQLWCHAR *szTableName = new SQLWCHAR[size + 16];
+                            memset( szTableName, 0, size + 16 );
+                            uc_to_str_cpy( szTableName, L"SELECT * FROM " );
+                            if( *schemaName != 0 )
+                            {
+                                copy_uc_to_uc( szTableName, schemaName );
+                                uc_to_str_cpy( szTableName, L"." );
+                            }
+                            copy_uc_to_uc( szTableName, tableName );
+                            ret = SQLExecDirect( stmt_colattr, szTableName, SQL_NTS );
+                            delete szTableName;
+                            szTableName = NULL;
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NULL_DATA )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                result = 1;
+                                SQLDisconnect( hdbc_colattr );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                hdbc_colattr = 0;
+                                break;
+                            }
+                            else if( ret != SQL_NULL_DATA )
+                            {
+                                SQLSMALLINT lenUsed;
+                                SQLSMALLINT bufSize = 1024;
+                                ret = SQLNumResultCols( stmt_colattr, &numCols );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                    result = 1;
+                                    SQLDisconnect( hdbc_colattr );
+                                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                    hdbc_colattr = 0;
+                                    break;
+                                }
+                                columnNames = new SQLWCHAR * [numCols];
+                                SQLLEN autoincrement;
+                                for( int i = 0; i < numCols; i++ )
+                                {
+                                    autoincrement = 0;
+                                    columnNames[i] = new SQLWCHAR[sizeof( SQLWCHAR ) * SQL_MAX_COLUMN_NAME_LEN + 1];
+                                    ret = SQLColAttribute( stmt_colattr, (SQLUSMALLINT) i + 1, SQL_DESC_LABEL, columnNames[i], bufSize, &lenUsed, NULL );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                        result = 1;
+                                        SQLDisconnect( hdbc_colattr );
+                                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                        hdbc_colattr = 0;
+                                        break;
+                                    }
+                                    ret = SQLColAttribute( stmt_colattr, (SQLUSMALLINT) i + 1, SQL_DESC_AUTO_UNIQUE_VALUE, NULL, 0, NULL, &autoincrement );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                        result = 1;
+                                        SQLDisconnect( hdbc_colattr );
+                                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                        hdbc_colattr = 0;
+                                        break;
+                                    }
+                                    if( autoincrement == SQL_TRUE )
+                                    {
+                                        std::wstring autoincFieldName;
+                                        str_to_uc_cpy( autoincFieldName, columnNames[i] );
+                                        autoinc_fields.push_back( autoincFieldName );
+                                    }
+                                }
+                                if( result )
+                                    break;
+                                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                    result = 1;
+                                    SQLDisconnect( hdbc_colattr );
+                                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                    stmt_colattr = 0;
+                                    hdbc_colattr = 0;
+                                    break;
+                                }
+                                stmt_colattr = 0;
+                                ret = SQLDisconnect( hdbc_colattr );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                    result = 1;
+                                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                    break;
+                                }
+                                ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                    result = 1;
+                                    break;
+                                }
+                                hdbc_colattr = 0;
+                            }
+                        }
+                    }
+                }
+                ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_ind );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 0 );
+                    result = 1;
+                    break;
+                }
+                else
+                {
+                    SQLSMALLINT OutConnStrLen;
+                    ret = SQLDriverConnect( hdbc_ind, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 2, hdbc_ind );
+                        result = 1;
+                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
+                        hdbc_ind = 0;
+                        break;
+                    }
+                    else
+                    {
+                        ret = SQLAllocHandle(  SQL_HANDLE_STMT, hdbc_ind, &stmt_ind );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 2, hdbc_ind );
+                            result = 1;
+                            SQLDisconnect( hdbc_ind );
+                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
+                            hdbc_ind = 0;
+                            break;
+                        }
+                        else
+                        {
+                            qry = new SQLWCHAR[query4.length() + 2];
+                            memset( qry, '\0', query4.length() + 2 );
+                            uc_to_str_cpy( qry, query4 );
+                            ret = SQLPrepare( stmt_ind, qry, SQL_NTS );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, stmt_ind );
                                 result = 1;
-                                fields.clear();
-                                pk_fields.clear();
                                 SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
                                 SQLDisconnect( hdbc_ind );
                                 SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
-                                hdbc_colattr = 0;
+                                hdbc_ind = 0;
+                                stmt_ind = 0;
                                 break;
                             }
-							else
-							{
-                                ret = SQLBindParameter( stmt_ind, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, schemaName, 0, &cbSchemaName );
+                            else
+                            {
+                                SQLSMALLINT DataType, DecimalDigits, Nullable;
+                                SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS;
+                                SQLULEN ParamSize;
+                                ret = SQLDescribeParam( stmt_ind, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt_ind );
                                     result = 1;
-                                    fields.clear();
-                                    pk_fields.clear();
                                     SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
                                     SQLDisconnect( hdbc_ind );
                                     SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
-                                    hdbc_colattr = 0;
+                                    hdbc_ind = 0;
+                                    stmt_ind = 0;
                                     break;
                                 }
                                 else
                                 {
-                                    ret = SQLDescribeParam( stmt_ind, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
+                                    ret = SQLBindParameter( stmt_ind, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, schemaName, 0, &cbSchemaName );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
                                         GetErrorMessage( errorMsg, 1, stmt_ind );
                                         result = 1;
-                                        fields.clear();
-                                        pk_fields.clear();
                                         SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
                                         SQLDisconnect( hdbc_ind );
                                         SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
-                                        hdbc_colattr = 0;
+                                        hdbc_ind = 0;
+                                        stmt_ind = 0;
                                         break;
                                     }
                                     else
                                     {
-                                        ret = SQLBindParameter( stmt_ind, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, tableName, 0, &cbTableName );
+                                        ret = SQLDescribeParam( stmt_ind, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 1, stmt_ind );
                                             result = 1;
-                                            fields.clear();
-                                            pk_fields.clear();
                                             SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
                                             SQLDisconnect( hdbc_ind );
                                             SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
-                                            hdbc_colattr = 0;
+                                            hdbc_ind = 0;
+                                            stmt_ind = 0;
                                             break;
                                         }
                                         else
                                         {
-                                            ret = SQLExecute( stmt_ind );
+                                            ret = SQLBindParameter( stmt_ind, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, tableName, 0, &cbTableName );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_ind );
                                                 result = 1;
-                                                fields.clear();
-                                                pk_fields.clear();
                                                 SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
                                                 SQLDisconnect( hdbc_ind );
                                                 SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
-                                                hdbc_colattr = 0;
+                                                hdbc_ind = 0;
+                                                stmt_ind = 0;
                                                 break;
                                             }
                                             else
                                             {
-                                                SQLWCHAR name[SQL_MAX_COLUMN_NAME_LEN];
-                                                SQLLEN cbIndexName;
-                                                ret = SQLBindCol( stmt_ind, 1, SQL_C_WCHAR, &name, SQL_MAX_COLUMN_NAME_LEN, &cbIndexName );
+                                                ret = SQLExecute( stmt_ind );
                                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                 {
                                                     GetErrorMessage( errorMsg, 1, stmt_ind );
                                                     result = 1;
-                                                    fields.clear();
-                                                    pk_fields.clear();
                                                     SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
                                                     SQLDisconnect( hdbc_ind );
                                                     SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
-                                                    hdbc_colattr = 0;
+                                                    hdbc_ind = 0;
+                                                    stmt_ind = 0;
                                                     break;
                                                 }
                                                 else
                                                 {
-                                                    for( ret = SQLFetch( stmt_ind ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_ind ) )
+                                                    SQLWCHAR name[SQL_MAX_COLUMN_NAME_LEN];
+                                                    SQLLEN cbIndexName;
+                                                    ret = SQLBindCol( stmt_ind, 1, SQL_C_WCHAR, &name, SQL_MAX_COLUMN_NAME_LEN, &cbIndexName );
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                     {
-                                                        std::wstring temp;
-                                                        str_to_uc_cpy( temp, name );
-                                                        indexes.push_back( temp );
+                                                        GetErrorMessage( errorMsg, 1, stmt_ind );
+                                                        result = 1;
+                                                        SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
+                                                        SQLDisconnect( hdbc_ind );
+                                                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
+                                                        hdbc_ind = 0;
+                                                        stmt_ind = 0;
+                                                        break;
+                                                    }
+                                                    else
+                                                    {
+                                                        for( ret = SQLFetch( stmt_ind ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_ind ) )
+                                                        {
+                                                            std::wstring temp;
+                                                            str_to_uc_cpy( temp, name );
+                                                            indexes.push_back( temp );
+                                                        }
+                                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                                                            break;
+                                                        ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
+                                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                        {
+                                                            GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                                            result = 1;
+                                                            SQLDisconnect( hdbc_ind );
+                                                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
+                                                            stmt_ind = 0;
+                                                            hdbc_ind = 0;
+                                                            break;
+                                                        }
+                                                        stmt_ind = 0;
+                                                        ret = SQLDisconnect( hdbc_ind );
+                                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                        {
+                                                            GetErrorMessage( errorMsg, 2, hdbc_colattr );
+                                                            result = 1;
+                                                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
+                                                            hdbc_ind = 0;
+                                                            break;
+                                                        }
+                                                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
+                                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                        {
+                                                            GetErrorMessage( errorMsg, 2, hdbc_ind );
+                                                            result = 1;
+                                                            hdbc_ind = 0;
+                                                            break;
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
                                     }
                                 }
-							}
+                            }
                         }
                     }
                 }
-            }
-            ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_pk );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 0 );
-                result = 1;
-                fields.clear();
-                pk_fields.clear();
-                break;
-            }
-            else
-            {
-                SQLSMALLINT OutConnStrLen;
-                ret = SQLDriverConnect( hdbc_pk, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+                ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_pk );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, 2 );
+                    GetErrorMessage( errorMsg, 0 );
                     result = 1;
-                    fields.clear();
-                    pk_fields.clear();
-                    ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_pk );
-                    hdbc_pk = 0;
                     break;
                 }
                 else
                 {
-                    ret = SQLAllocHandle(  SQL_HANDLE_STMT, hdbc_pk, &stmt_pk );
+                    SQLSMALLINT OutConnStrLen;
+                    ret = SQLDriverConnect( hdbc_pk, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 2 );
                         result = 1;
-                        fields.clear();
-                        pk_fields.clear();
-                        SQLDisconnect( hdbc_pk );
-                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_pk );
+                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_pk );
                         hdbc_pk = 0;
                         break;
                     }
                     else
                     {
-                        ret = SQLBindCol( stmt_pk, 4, SQL_C_WCHAR, pkName, SQL_MAX_COLUMN_NAME_LEN + 1, &pkLength );
+                        ret = SQLAllocHandle(  SQL_HANDLE_STMT, hdbc_pk, &stmt_pk );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, 1 );
+                            GetErrorMessage( errorMsg, 2 );
                             result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_pk );
                             SQLDisconnect( hdbc_pk );
                             SQLFreeHandle( SQL_HANDLE_DBC, hdbc_pk );
-                            stmt_pk = 0;
-                            hdbc_pk = 0;
-                            break;
-                        }
-                        ret = SQLPrimaryKeys( stmt_pk, catalogName, SQL_NTS, schemaName, SQL_NTS, tableName, SQL_NTS );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_pk );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_pk );
-                            SQLDisconnect( hdbc_pk );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_pk );
-                            stmt_pk = 0;
                             hdbc_pk = 0;
                             break;
                         }
                         else
                         {
-                            for( ret = SQLFetch( stmt_pk ); ( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_pk ) )
-                            {
-                                std::wstring pkFieldName;
-                                str_to_uc_cpy( pkFieldName, pkName );
-                                pk_fields.push_back( pkFieldName );
-                            }
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                            ret = SQLBindCol( stmt_pk, 4, SQL_C_WCHAR, pkName, SQL_MAX_COLUMN_NAME_LEN + 1, &pkLength );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1 );
                                 result = 1;
-                                pk_fields.clear();
-                                fields.clear();
                                 SQLFreeHandle( SQL_HANDLE_STMT, stmt_pk );
                                 SQLDisconnect( hdbc_pk );
                                 SQLFreeHandle( SQL_HANDLE_DBC, hdbc_pk );
@@ -1275,13 +1264,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 hdbc_pk = 0;
                                 break;
                             }
-                            ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_pk );
+                            ret = SQLPrimaryKeys( stmt_pk, catalogName, SQL_NTS, schemaName, SQL_NTS, tableName, SQL_NTS );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, stmt_pk );
                                 result = 1;
-                                fields.clear();
-                                pk_fields.clear();
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_pk );
                                 SQLDisconnect( hdbc_pk );
                                 SQLFreeHandle( SQL_HANDLE_DBC, hdbc_pk );
                                 stmt_pk = 0;
@@ -1290,702 +1278,630 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             }
                             else
                             {
-                                stmt_pk = 0;
-                                ret = SQLDisconnect( hdbc_pk );
+                                for( ret = SQLFetch( stmt_pk ); ( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_pk ) )
+                                {
+                                    std::wstring pkFieldName;
+                                    str_to_uc_cpy( pkFieldName, pkName );
+                                    pk_fields.push_back( pkFieldName );
+                                }
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                                {
+                                    GetErrorMessage( errorMsg, 1 );
+                                    result = 1;
+                                    SQLFreeHandle( SQL_HANDLE_STMT, stmt_pk );
+                                    SQLDisconnect( hdbc_pk );
+                                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_pk );
+                                    stmt_pk = 0;
+                                    hdbc_pk = 0;
+                                    break;
+                                }
+                                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_pk );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
-                                    GetErrorMessage( errorMsg, 2, hdbc_pk );
+                                    GetErrorMessage( errorMsg, 1, stmt_pk );
                                     result = 1;
-                                    fields.clear();
-                                    pk_fields.clear();
+                                    SQLDisconnect( hdbc_pk );
                                     SQLFreeHandle( SQL_HANDLE_DBC, hdbc_pk );
+                                    stmt_pk = 0;
                                     hdbc_pk = 0;
                                     break;
                                 }
                                 else
                                 {
-                                    ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_pk );
+                                    stmt_pk = 0;
+                                    ret = SQLDisconnect( hdbc_pk );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
                                         GetErrorMessage( errorMsg, 2, hdbc_pk );
                                         result = 1;
-                                        fields.clear();
-                                        pk_fields.clear();
+                                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_pk );
+                                        hdbc_pk = 0;
                                         break;
                                     }
                                     else
-                                        hdbc_pk = 0;
+                                    {
+                                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_pk );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 2, hdbc_pk );
+                                            result = 1;
+                                            break;
+                                        }
+                                        else
+                                            hdbc_pk = 0;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-            ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_fk );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 0 );
-                result = 1;
-                fields.clear();
-                pk_fields.clear();
-                break;
-            }
-            else
-            {
-                SQLSMALLINT OutConnStrLen;
-                ret = SQLDriverConnect( hdbc_fk, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+                ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_fk );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, 2, hdbc_fk );
+                    GetErrorMessage( errorMsg, 0 );
                     result = 1;
-                    fields.clear();
-                    pk_fields.clear();
                     break;
                 }
                 else
                 {
-                    ret = SQLAllocHandle(  SQL_HANDLE_STMT, hdbc_fk, &stmt_fk );
+                    SQLSMALLINT OutConnStrLen;
+                    ret = SQLDriverConnect( hdbc_fk, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 2, hdbc_fk );
                         result = 1;
-                        fields.clear();
-                        pk_fields.clear();
                         break;
                     }
                     else
                     {
-                        ret = SQLBindCol( stmt_fk, 2, SQL_C_WCHAR, szPkSchema, SQL_MAX_COLUMN_NAME_LEN + 1, &cbPkCol );
+                        ret = SQLAllocHandle(  SQL_HANDLE_STMT, hdbc_fk, &stmt_fk );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, 1, stmt_fk );
+                            GetErrorMessage( errorMsg, 2, hdbc_fk );
                             result = 1;
-                            fields.clear();
-                            pk_fields.clear();
                             break;
-                        }
-                        ret = SQLBindCol( stmt_fk, 3, SQL_C_WCHAR, szPkTable, SQL_MAX_COLUMN_NAME_LEN + 1, &cbPkCol );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_fk );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_fk, 4, SQL_C_WCHAR, szPkCol, SQL_MAX_COLUMN_NAME_LEN + 1, &cbPkCol );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_fk );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_fk, 5, SQL_C_WCHAR, szFkCatalog, SQL_MAX_CATALOG_NAME_LEN + 1, &cbFkCatalog );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_fk );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_fk, 6, SQL_C_WCHAR, szFkTableSchema, SQL_MAX_TABLE_NAME_LEN + 1, &cbFkSchemaName );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_fk );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_fk, 7, SQL_C_WCHAR, szFkTable, SQL_MAX_TABLE_NAME_LEN + 1, &cbFkTable );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_fk );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_fk, 8, SQL_C_WCHAR, szFkCol, SQL_MAX_COLUMN_NAME_LEN + 1, &cbFkCol );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_fk );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_fk, 9, SQL_C_SSHORT, &keySequence, SQL_MAX_TABLE_NAME_LEN + 1, &cbKeySequence );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_fk );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_fk, 10, SQL_C_SSHORT, &updateRule, SQL_MAX_COLUMN_NAME_LEN + 1, &cbUpdateRule );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_fk );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_fk, 11, SQL_C_SSHORT, &deleteRule, SQL_MAX_COLUMN_NAME_LEN + 1, &cbDeleteRule );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_fk );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            break;
-                        }
-                        ret = SQLForeignKeys( stmt_fk, NULL, 0, NULL, 0, NULL, 0, catalogName, SQL_NTS, schemaName, SQL_NTS, tableName, SQL_NTS );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_fk );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            break;
-                        }
-                        for( ret = SQLFetch( stmt_fk ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_fk ) )
-                        {
-                            FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
-                            FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
-                            str_to_uc_cpy( primaryKey, szPkCol );
-                            str_to_uc_cpy( fkSchema, szPkSchema );
-                            str_to_uc_cpy( fkTable, szPkTable );
-                            str_to_uc_cpy( fkName, szFkCol );
-                            switch( updateRule )
-                            {
-                                case SQL_NO_ACTION:
-                                    update_constraint = NO_ACTION_UPDATE;
-                                    break;
-                                case SQL_SET_NULL:
-                                    update_constraint = SET_NULL_UPDATE;
-                                    break;
-                                case SQL_SET_DEFAULT:
-                                    update_constraint = SET_DEFAULT_UPDATE;
-                                    break;
-                                case SQL_CASCADE:
-                                    update_constraint = CASCADE_UPDATE;
-                                    break;
-                            }
-                            switch( deleteRule )
-                            {
-                                case SQL_NO_ACTION:
-                                    delete_constraint = NO_ACTION_DELETE;
-                                    break;
-                                case SQL_SET_NULL:
-                                    delete_constraint = SET_NULL_DELETE;
-                                    break;
-                                case SQL_SET_DEFAULT:
-                                    delete_constraint = SET_DEFAULT_DELETE;
-                                    break;
-                                case SQL_CASCADE:
-                                    delete_constraint = CASCADE_DELETE;
-                                    break;
-                            }
-                            foreign_keys[keySequence].push_back( new FKField( keySequence, fkTable, primaryKey, fkName, fkSchema, update_constraint, delete_constraint ) );
-                            fk_fieldNames.push_back( primaryKey );
-                            primaryKey = L"";
-                            fkSchema = L"";
-                            fkTable = L"";
-                            fkName = L"";
-                        }
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_fk );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            foreign_keys.clear();
                         }
                         else
                         {
-                            ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fk );
+                            ret = SQLBindCol( stmt_fk, 2, SQL_C_WCHAR, szPkSchema, SQL_MAX_COLUMN_NAME_LEN + 1, &cbPkCol );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
-                                GetErrorMessage( errorMsg, 2, hdbc_fk );
+                                GetErrorMessage( errorMsg, 1, stmt_fk );
                                 result = 1;
-                                fields.clear();
-                                pk_fields.clear();
-                                foreign_keys.clear();
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_fk, 3, SQL_C_WCHAR, szPkTable, SQL_MAX_COLUMN_NAME_LEN + 1, &cbPkCol );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_fk );
+                                result = 1;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_fk, 4, SQL_C_WCHAR, szPkCol, SQL_MAX_COLUMN_NAME_LEN + 1, &cbPkCol );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_fk );
+                                result = 1;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_fk, 5, SQL_C_WCHAR, szFkCatalog, SQL_MAX_CATALOG_NAME_LEN + 1, &cbFkCatalog );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_fk );
+                                result = 1;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_fk, 6, SQL_C_WCHAR, szFkTableSchema, SQL_MAX_TABLE_NAME_LEN + 1, &cbFkSchemaName );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_fk );
+                                result = 1;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_fk, 7, SQL_C_WCHAR, szFkTable, SQL_MAX_TABLE_NAME_LEN + 1, &cbFkTable );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_fk );
+                                result = 1;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_fk, 8, SQL_C_WCHAR, szFkCol, SQL_MAX_COLUMN_NAME_LEN + 1, &cbFkCol );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_fk );
+                                result = 1;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_fk, 9, SQL_C_SSHORT, &keySequence, SQL_MAX_TABLE_NAME_LEN + 1, &cbKeySequence );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_fk );
+                                result = 1;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_fk, 10, SQL_C_SSHORT, &updateRule, SQL_MAX_COLUMN_NAME_LEN + 1, &cbUpdateRule );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_fk );
+                                result = 1;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_fk, 11, SQL_C_SSHORT, &deleteRule, SQL_MAX_COLUMN_NAME_LEN + 1, &cbDeleteRule );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_fk );
+                                result = 1;
+                                break;
+                            }
+                            ret = SQLForeignKeys( stmt_fk, NULL, 0, NULL, 0, NULL, 0, catalogName, SQL_NTS, schemaName, SQL_NTS, tableName, SQL_NTS );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_fk );
+                                result = 1;
+                                break;
+                            }
+                            for( ret = SQLFetch( stmt_fk ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_fk ) )
+                            {
+                                FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
+                                FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
+                                str_to_uc_cpy( primaryKey, szPkCol );
+                                str_to_uc_cpy( fkSchema, szPkSchema );
+                                str_to_uc_cpy( fkTable, szPkTable );
+                                str_to_uc_cpy( fkName, szFkCol );
+                                switch( updateRule )
+                                {
+                                    case SQL_NO_ACTION:
+                                        update_constraint = NO_ACTION_UPDATE;
+                                        break;
+                                    case SQL_SET_NULL:
+                                        update_constraint = SET_NULL_UPDATE;
+                                        break;
+                                    case SQL_SET_DEFAULT:
+                                        update_constraint = SET_DEFAULT_UPDATE;
+                                        break;
+                                    case SQL_CASCADE:
+                                        update_constraint = CASCADE_UPDATE;
+                                        break;
+                                }
+                                switch( deleteRule )
+                                {
+                                    case SQL_NO_ACTION:
+                                        delete_constraint = NO_ACTION_DELETE;
+                                        break;
+                                    case SQL_SET_NULL:
+                                        delete_constraint = SET_NULL_DELETE;
+                                        break;
+                                    case SQL_SET_DEFAULT:
+                                        delete_constraint = SET_DEFAULT_DELETE;
+                                        break;
+                                    case SQL_CASCADE:
+                                        delete_constraint = CASCADE_DELETE;
+                                        break;
+                                }
+                                foreign_keys[keySequence].push_back( new FKField( keySequence, fkTable, primaryKey, fkName, fkSchema, update_constraint, delete_constraint ) );
+                                fk_fieldNames.push_back( primaryKey );
+                                primaryKey = L"";
+                                fkSchema = L"";
+                                fkTable = L"";
+                                fkName = L"";
+                            }
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_fk );
+                                result = 1;
+                                break;
                             }
                             else
                             {
-                                stmt_fk = 0;
-                                ret = SQLDisconnect( hdbc_fk );
+                                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fk );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 2, hdbc_fk );
                                     result = 1;
-                                    fields.clear();
-                                    pk_fields.clear();
-                                    foreign_keys.clear();
+                                    break;
                                 }
                                 else
                                 {
-                                    ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_fk );
+                                    stmt_fk = 0;
+                                    ret = SQLDisconnect( hdbc_fk );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
                                         GetErrorMessage( errorMsg, 2, hdbc_fk );
                                         result = 1;
-                                        fields.clear();
-                                        pk_fields.clear();
-                                        foreign_keys.clear();
+                                        break;
                                     }
                                     else
-                                        hdbc_fk = 0;
+                                    {
+                                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_fk );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 2, hdbc_fk );
+                                            result = 1;
+                                            break;
+                                        }
+                                        else
+                                            hdbc_fk = 0;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-            ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_col );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 0 );
-                result = 1;
-                fields.clear();
-                pk_fields.clear();
-                break;
-            }
-            else
-            {
-                SQLSMALLINT OutConnStrLen;
-                ret = SQLDriverConnect( hdbc_col, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+                ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_col );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, 2, hdbc_col );
+                    GetErrorMessage( errorMsg, 0 );
                     result = 1;
-                    fields.clear();
-                    pk_fields.clear();
-                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                    hdbc_col = 0;
                     break;
                 }
                 else
                 {
-                    ret = SQLAllocHandle(  SQL_HANDLE_STMT, hdbc_col, &stmt_col );
+                    SQLSMALLINT OutConnStrLen;
+                    ret = SQLDriverConnect( hdbc_col, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 2, hdbc_col );
                         result = 1;
-                        fields.clear();
-                        pk_fields.clear();
-                        SQLDisconnect( hdbc_col );
                         SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
                         hdbc_col = 0;
                         break;
                     }
                     else
                     {
-                        ret = SQLColumns( stmt_col, catalogName, SQL_NTS, schemaName, SQL_NTS, tableName, SQL_NTS, NULL, 0);
+                        ret = SQLAllocHandle(  SQL_HANDLE_STMT, hdbc_col, &stmt_col );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
+                            GetErrorMessage( errorMsg, 2, hdbc_col );
                             result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
                             SQLDisconnect( hdbc_col );
                             SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
                             hdbc_col = 0;
                             break;
                         }
-                        ret = SQLBindCol( stmt_col, 4, SQL_C_WCHAR, szColumnName, 256, &cbColumnName );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        else
                         {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 5, SQL_C_SSHORT, &DataType, 0, &cbDataType );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 6, SQL_C_WCHAR, szTypeName, 256, &cbTypeName );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 7, SQL_C_SLONG, &ColumnSize, 0, &cbColumnSize );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 8, SQL_C_SLONG, &BufferLength, 0, &cbBufferLength );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 9, SQL_C_SSHORT, &DecimalDigits, 0, &cbDecimalDigits );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 10, SQL_C_SSHORT, &NumPrecRadix, 0, &cbNumPrecRadix );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 11, SQL_C_SSHORT, &Nullable, 0, &cbNullable );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 12, SQL_C_WCHAR, szRemarks, 256, &cbRemarks );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 13, SQL_C_WCHAR, szColumnDefault, 256, &cbColumnDefault );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 14, SQL_C_SSHORT, &SQLDataType, 0, &cbSQLDataType );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 15, SQL_C_SSHORT, &DatetimeSubtypeCode, 0, &cbDatetimeSubtypeCode );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 16, SQL_C_SLONG, &CharOctetLength, 0, &cbCharOctetLength );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 17, SQL_C_SLONG, &OrdinalPosition, 0, &cbOrdinalPosition );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        ret = SQLBindCol( stmt_col, 18, SQL_C_WCHAR, szIsNullable, 256, &cbIsNullable );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_col );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                            stmt_col = 0;
-                            SQLDisconnect( hdbc_col );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                            hdbc_col = 0;
-                            break;
-                        }
-                        int i = 0;
-                        for( ret = SQLFetch( stmt_col ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_col ) )
-                        {
-                            std::wstring schema_name, table_name;
-                            str_to_uc_cpy( schema_name, schemaName );
-                            str_to_uc_cpy( table_name, tableName );
-                            str_to_uc_cpy( fieldName, szColumnName );
-                            str_to_uc_cpy( fieldType, szTypeName );
-                            str_to_uc_cpy( defaultValue, szColumnDefault );
-                            Field *field = new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
-                            if( GetFieldProperties( table_name, schema_name, field, errorMsg ) )
+                            ret = SQLColumns( stmt_col, catalogName, SQL_NTS, schemaName, SQL_NTS, tableName, SQL_NTS, NULL, 0);
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 4, SQL_C_WCHAR, szColumnName, 256, &cbColumnName );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 5, SQL_C_SSHORT, &DataType, 0, &cbDataType );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 6, SQL_C_WCHAR, szTypeName, 256, &cbTypeName );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 7, SQL_C_SLONG, &ColumnSize, 0, &cbColumnSize );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 8, SQL_C_SLONG, &BufferLength, 0, &cbBufferLength );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 9, SQL_C_SSHORT, &DecimalDigits, 0, &cbDecimalDigits );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 10, SQL_C_SSHORT, &NumPrecRadix, 0, &cbNumPrecRadix );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 11, SQL_C_SSHORT, &Nullable, 0, &cbNullable );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 12, SQL_C_WCHAR, szRemarks, 256, &cbRemarks );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 13, SQL_C_WCHAR, szColumnDefault, 256, &cbColumnDefault );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 14, SQL_C_SSHORT, &SQLDataType, 0, &cbSQLDataType );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 15, SQL_C_SSHORT, &DatetimeSubtypeCode, 0, &cbDatetimeSubtypeCode );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 16, SQL_C_SLONG, &CharOctetLength, 0, &cbCharOctetLength );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 17, SQL_C_SLONG, &OrdinalPosition, 0, &cbOrdinalPosition );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            ret = SQLBindCol( stmt_col, 18, SQL_C_WCHAR, szIsNullable, 256, &cbIsNullable );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_col );
+                                result = 1;
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                stmt_col = 0;
+                                SQLDisconnect( hdbc_col );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                hdbc_col = 0;
+                                break;
+                            }
+                            int i = 0;
+                            for( ret = SQLFetch( stmt_col ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_col ) )
+                            {
+                                std::wstring schema_name, table_name;
+                                str_to_uc_cpy( schema_name, schemaName );
+                                str_to_uc_cpy( table_name, tableName );
+                                str_to_uc_cpy( fieldName, szColumnName );
+                                str_to_uc_cpy( fieldType, szTypeName );
+                                str_to_uc_cpy( defaultValue, szColumnDefault );
+                                Field *field = new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
+                                if( GetFieldProperties( table_name, schema_name, odbc_pimpl->m_currentTableOwner, field, errorMsg ) )
+                                {
+                                    GetErrorMessage( errorMsg, 2 );
+                                    result = 1;
+                                    break;
+                                }
+                                fields.push_back( field );
+                                fieldName = L"";
+                                fieldType = L"";
+                                defaultValue = L"";
+                                i++;
+                            }
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                             {
                                 GetErrorMessage( errorMsg, 2 );
                                 result = 1;
-                                fields.clear();
-                                pk_fields.clear();
                                 break;
                             }
-                            fields.push_back( field );
-                            fieldName = L"";
-                            fieldType = L"";
-                            defaultValue = L"";
-                            i++;
-                        }
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                        {
-                            GetErrorMessage( errorMsg, 2 );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            break;
                         }
                     }
                 }
-            }
-            if( columnNames )
-            {
-                for( int i = 0; i < numCols; i++ )
-                    delete columnNames[i];
-                delete columnNames;
-                columnNames = NULL;
-            }
-            ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 1, stmt_col );
-                result = 1;
-                fields.clear();
-                pk_fields.clear();
-                break;
-            }
-            else
-            {
-                stmt_col = 0;
-                ret = SQLDisconnect( hdbc_col );
+                if( columnNames )
+                {
+                    for( int i = 0; i < numCols; i++ )
+                        delete columnNames[i];
+                    delete columnNames;
+                    columnNames = NULL;
+                }
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, 2, hdbc_col );
+                    GetErrorMessage( errorMsg, 1, stmt_col );
                     result = 1;
-                    fields.clear();
-                    pk_fields.clear();
                     break;
                 }
                 else
                 {
-                    ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                    if( ret != SQL_SUCCESS )
+                    stmt_col = 0;
+                    ret = SQLDisconnect( hdbc_col );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 2, hdbc_col );
                         result = 1;
-                        fields.clear();
-                        pk_fields.clear();
                         break;
                     }
                     else
-                        hdbc_col = 0;
+                    {
+                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                        if( ret != SQL_SUCCESS )
+                        {
+                            GetErrorMessage( errorMsg, 2, hdbc_col );
+                            result = 1;
+                            break;
+                        }
+                        else
+                            hdbc_col = 0;
+                    }
+                }
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
+                {
+                    std::wstring catalog_name, schema_name, table_name;
+                    str_to_uc_cpy( catalog_name, catalogName );
+                    str_to_uc_cpy( schema_name, schemaName );
+                    str_to_uc_cpy( table_name, tableName );
+                    if( pimpl->m_subtype == L"Microsoft SQL Server" && schema_name == L"sys" )
+                        table_name = schema_name + L"." + table_name;
+                    DatabaseTable *table = new DatabaseTable( table_name, schema_name, fields, foreign_keys );
+                    table->SetTableOwner( odbc_pimpl->m_currentTableOwner );
+                    if( GetTableId( table, errorMsg ) )
+                    {
+                        break;
+                    }
+                    if( GetTableProperties( table, errorMsg ) )
+                    {
+                        break;
+                    }
+                    table->SetIndexNames( indexes );
+                    pimpl->m_tables[catalog_name].push_back( table );
+                    fields.erase( fields.begin(), fields.end() );
+                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                    fields.clear();
+                    foreign_keys.clear();
+                    autoinc_fields.clear();
+                    pk_fields.clear();
+                    fk_fieldNames.clear();
+                    indexes.clear();
+                }
+                else
+                {
+                    GetErrorMessage( errorMsg, 1, stmt_fk );
+                    result = 1;
+                    break;
                 }
             }
-            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
-                std::wstring catalog_name, schema_name, table_name;
-                str_to_uc_cpy( catalog_name, catalogName );
-                str_to_uc_cpy( schema_name, schemaName );
-                str_to_uc_cpy( table_name, tableName );
-                if( pimpl->m_subtype == L"Microsoft SQL Server" && schema_name == L"sys" )
-                    table_name = schema_name + L"." + table_name;
-                DatabaseTable *table = new DatabaseTable( table_name, schema_name, fields, foreign_keys );
-                if( SetTableOwner( table, errorMsg ) )
+                if( columnNames )
                 {
-                    fields.erase( fields.begin(), fields.end() );
-                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                    fields.clear();
-                    foreign_keys.clear();
-                    autoinc_fields.clear();
-                    pk_fields.clear();
-                    fk_fieldNames.clear();
-                    return 1;
+                    for( int i = 0; i < numCols; i++ )
+                    {
+                        delete columnNames[i];
+                        columnNames[i] = NULL;
+                    }
+                    delete columnNames;
+                    columnNames = NULL;
                 }
-                if( GetTableId( table, errorMsg ) )
-                {
-                    fields.erase( fields.begin(), fields.end() );
-                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                    fields.clear();
-                    foreign_keys.clear();
-                    autoinc_fields.clear();
-                    pk_fields.clear();
-                    fk_fieldNames.clear();
-                    return 1;
-                }
-                if( GetTableProperties( table, errorMsg ) )
-                {
-                    fields.erase( fields.begin(), fields.end() );
-                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                    fields.clear();
-                    foreign_keys.clear();
-                    autoinc_fields.clear();
-                    pk_fields.clear();
-                    fk_fieldNames.clear();
-                    return 1;
-                }
-                table->SetIndexNames( indexes );
-                pimpl->m_tables[catalog_name].push_back( table );
                 fields.erase( fields.begin(), fields.end() );
                 foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                 fields.clear();
-                foreign_keys.clear();
+                pk_fields.clear();
                 autoinc_fields.clear();
                 pk_fields.clear();
                 fk_fieldNames.clear();
+                indexes.clear();
             }
             else
             {
-                GetErrorMessage( errorMsg, 1, stmt_fk );
-                result = 1;
-                fields.clear();
-                pk_fields.clear();
-                break;
+                bufferSize = 1024;
+                ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 2 );
+                    result = 1;
+                }
+                else
+                {
+                    str_to_uc_cpy( pimpl->m_dbName, dbName );
+                    bufferSize = 1024;
+                    ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 2 );
+                        result = 1;
+                    }
+                    else
+                    {
+                        str_to_uc_cpy( pimpl->m_connectedUser, dbName );
+                    }
+                }
             }
-        }
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-        {
-            if( errorMsg.empty() )
-            {
-                GetErrorMessage( errorMsg, 1 );
-                result = 1;
-                fields.clear();
-                pk_fields.clear();
-            }
-        }
-        bufferSize = 1024;
-        ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 2 );
-            result = 1;
-            fields.clear();
-            pk_fields.clear();
-        }
-        else
-        {
-            str_to_uc_cpy( pimpl->m_dbName, dbName );
-        }
-        bufferSize = 1024;
-        ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 2 );
-            result = 1;
-            fields.clear();
-            pk_fields.clear();
-        }
-        else
-        {
-            str_to_uc_cpy( pimpl->m_connectedUser, dbName );
         }
     }
     for( int i = 0; i < 5; i++ )
@@ -2004,8 +1920,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     {
         GetErrorMessage( errorMsg, 2 );
         result = 1;
-        fields.clear();
-        pk_fields.clear();
     }
     else
         m_hstmt = 0;
@@ -2208,7 +2122,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLLEN cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontName = 0, cbComment;
     SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontName = 0;
     SQLLEN cbDataFontCharacterSet = 0, cbHeadingFontCharacterSet = 0, cbLabelFontCharacterSet = 0, cbDataFontPixelSize = 0, cbHeadingFontPixelSize = 0, cbLabelFontPixelSize = 0;
-    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ?;";
+    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE rtrim(\"abt_tnam\") = ? AND rtrim(\"abt_ownr\") = ?;";
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName(), ownerName = table->GetTableOwner();
     std::wstring t = schemaName + L".";
     t += tableName;
@@ -2257,31 +2171,55 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         owner_name = NULL;
         return 1;
     }
-    ret = SQLBindParameter( stmt_tableProp, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindParameter( stmt_tableProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerNameLen, 0, owner_name, 0, &cbOwnerName );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
     ret = SQLPrepare( stmt_tableProp, qry, SQL_NTS );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        delete qry;
+        qry = NULL;
+        delete table_name;
+        table_name = NULL;
+        delete owner_name;
+        owner_name = NULL;
+        return 1;
+    }
+    SQLSMALLINT DataType, DecimalDigits, Nullable;
+    SQLLEN cbSchemaName = SQL_NTS;
+    SQLULEN ParamSize;
+    ret = SQLDescribeParam( stmt_tableProp, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
+        SQLDisconnect( hdbc_tableProp );
+        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
+        hdbc_tableProp = 0;
+        stmt_tableProp = 0;
+        return 1;
+    }
+    ret = SQLBindParameter( stmt_tableProp, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, table_name, 0, &cbTableName );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
+        SQLDisconnect( hdbc_tableProp );
+        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
+        hdbc_tableProp = 0;
+        stmt_tableProp = 0;
+        return 1;
+    }
+    ret = SQLDescribeParam( stmt_tableProp, 2, &DataType, &ParamSize, &DecimalDigits, &Nullable);
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+        SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
+        SQLDisconnect( hdbc_tableProp );
+        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
+        hdbc_tableProp = 0;
+        stmt_tableProp = 0;
+        return 1;
+    }
+    ret = SQLBindParameter( stmt_tableProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, owner_name, 0, &cbOwnerName );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -3074,21 +3012,17 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
     return result;
 }
 
-int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, Field *field, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     SQLHDBC hdbc_fieldProp;
     SQLHSTMT stmt_fieldProp;
-    std::wstring query;
     int result = 0;
     SQLWCHAR *commentField;
     SQLWCHAR *table_name = NULL, *schema_name = NULL, *field_name = NULL, *qry = NULL;
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbDataFontItalic;
     SQLSMALLINT OutConnStrLen;
     std::wstring fieldName = field->GetFieldName();
-    if( pimpl->m_subtype == L"MySQL" )
-        query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
-    else
-        query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
+    std::wstring query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     table_name = new SQLWCHAR[tableName.length() + 2];
     schema_name = new SQLWCHAR[schemaName.length() + 2];
     field_name = new SQLWCHAR[fieldName.length() + 2];
@@ -3369,7 +3303,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &command, std::vector<st
     return res;
 }
 
-int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     SQLHSTMT stmt = 0;
     SQLHDBC hdbc;
@@ -3448,7 +3382,7 @@ int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstrin
                                 retcode = SQLGetData( stmt, 1, SQL_C_SLONG, &id, 0, &cbName );
                                 if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                                 {
-                                    const_cast<DatabaseTable *>( table )->SetTableId( id );
+                                    table->SetTableId( id );
                                 }
                                 else
                                 {
@@ -3499,20 +3433,27 @@ int ODBCDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstrin
     return result;
 }
 
-int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     SQLHSTMT stmt = 0;
-    SQLHDBC hdbc;
-    SQLLEN cbTableName = SQL_NTS;
-    SQLLEN cbName;
-    SQLWCHAR owner[1024];
-    SQLWCHAR *table_name = NULL, *qry;
+    SQLHDBC hdbc = 0;
     int result = 0;
-    std::wstring query, name = table->GetTableName();
+    SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
+    SQLLEN cbName;
+    SQLWCHAR *table_name = NULL, *schema_name = NULL, *qry = NULL;
+    SQLWCHAR owner[256];
+    std::wstring query;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
-        query = L"SELECT su.name FROM sysobjects so, sysusers su WHERE so.uid = su.uid AND so.name = ?";
+        query = L"SELECT su.name FROM sysobjects so, sysusers su, sys.tables t, sys.schemas s WHERE so.uid = su.uid AND t.object_id = so.id AND t.schema_id = s.schema_id AND s.name = ? AND so.name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT u.usename FROM pg_class c, pg_user u WHERE u.usesysid = c.relowner AND relname = ?";
+    if( pimpl->m_subtype == L"Sybase" )
+        query = L"SELECT su.name FROM sysobject so, sysusers su WHERE su.uid = so.uid AND so.name = ?";
+    if( pimpl->m_subtype == L"MySQL" )
+    {
+        odbc_pimpl->m_currentTableOwner = L"";
+        return result;
+    }
     SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
     if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
     {
@@ -3538,32 +3479,47 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
             }
             else
             {
-                table_name = new SQLWCHAR[name.length() + 2];
+                table_name = new SQLWCHAR[tableName.length() + 2];
+                schema_name = new SQLWCHAR[schemaName.length() + 2];
                 qry = new SQLWCHAR[query.length() + 2];
                 memset( qry, '\0', query.size() + 2 );
-                memset( table_name, '\0', name.length() + 2 );
+                memset( table_name, '\0', tableName.length() + 2 );
+                memset( schema_name, '\0', schemaName.length() + 2 );
                 uc_to_str_cpy( qry, query );
-                uc_to_str_cpy( table_name, name );
-                retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, name.length(), 0, table_name, 0, &cbTableName );
+                uc_to_str_cpy( table_name, tableName );
+                uc_to_str_cpy( schema_name, schemaName );
+                retcode = SQLPrepare( stmt, qry, SQL_NTS );
                 if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                 {
-                    retcode = SQLPrepare( stmt, qry, SQL_NTS );
+                    retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, schema_name, 0, &cbSchemaName );
                     if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                     {
-                        retcode = SQLExecute( stmt );
+                        retcode = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
                         if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                         {
-                            retcode = SQLFetch( stmt );
+                            retcode = SQLExecute( stmt );
                             if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                             {
-                                retcode = SQLGetData( stmt, 1, SQL_C_WCHAR, owner, 1024, &cbName );
+                                SQLSMALLINT nameBufLength, dataTypePtr, decimalDigitsPtr, isNullable;
+                                SQLULEN columnSizePtr;
+                                SQLLEN cbTableOwner;
+                                retcode = SQLDescribeCol( stmt, 1, NULL, 0, &nameBufLength, &dataTypePtr, &columnSizePtr, &decimalDigitsPtr, &isNullable );
                                 if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                                 {
-                                    std::wstring tableOwner;
-                                    str_to_uc_cpy( tableOwner, owner );
-                                    table->SetTableOwner( tableOwner );
+                                    retcode = SQLBindCol( stmt, 1, dataTypePtr, &owner, columnSizePtr, &cbTableOwner );
+                                    if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        retcode = SQLFetch( stmt );
+                                        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO && retcode != SQL_NO_DATA )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, stmt );
+                                            result = 1;
+                                        }
+                                        if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                                            str_to_uc_cpy( odbc_pimpl->m_currentTableOwner, owner );
+                                    }
                                 }
-                                else
+                                else if( retcode != SQL_NO_DATA )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt );
                                     result = 1;
@@ -3574,43 +3530,30 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
                                 GetErrorMessage( errorMsg, 1, stmt );
                                 result = 1;
                             }
-                            else
-                                table->SetTableOwner( table->GetSchemaName() );
                         }
-                        else
+                        else if( retcode != SQL_NO_DATA )
                         {
                             GetErrorMessage( errorMsg, 1, stmt );
                             result = 1;
                         }
                     }
-                    else
+                    else if( retcode != SQL_NO_DATA )
                     {
                         GetErrorMessage( errorMsg, 1, stmt );
                         result = 1;
                     }
                 }
-                else
+                else if( retcode != SQL_NO_DATA )
                 {
                     GetErrorMessage( errorMsg, 1, stmt );
                     result = 1;
                 }
-                delete table_name;
-                table_name = NULL;
-                delete qry;
-                qry = NULL;
             }
         }
     }
-    retcode = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
-    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+    if( stmt )
     {
-        GetErrorMessage( errorMsg, 1, stmt );
-        result = 1;
-    }
-    else
-    {
-        stmt = 0;
-        retcode = SQLDisconnect( hdbc );
+        retcode = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, stmt );
@@ -3618,16 +3561,32 @@ int ODBCDatabase::SetTableOwner(DatabaseTable *table, std::vector<std::wstring> 
         }
         else
         {
-            retcode = SQLFreeHandle( SQL_HANDLE_DBC, hdbc );
+            stmt = 0;
+            retcode = SQLDisconnect( hdbc );
             if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, stmt );
                 result = 1;
             }
             else
-                hdbc = 0;
+            {
+                retcode = SQLFreeHandle( SQL_HANDLE_DBC, hdbc );
+                if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, stmt );
+                    result = 1;
+                }
+                else
+                    hdbc = 0;
+            }
         }
     }
+    delete qry;
+    qry = NULL;
+    delete table_name;
+    table_name = NULL;
+    delete schema_name;
+    schema_name = NULL;
     return result;
 }
 
@@ -3748,6 +3707,13 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                 }
             }
         }
+        retcode = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+        m_hstmt = 0;
     }
     delete qry;
     qry = NULL;

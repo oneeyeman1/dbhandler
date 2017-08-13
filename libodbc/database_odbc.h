@@ -23,9 +23,10 @@ class ODBCDatabase : public Database
 public:
     ODBCDatabase();
     virtual ~ODBCDatabase();
+    virtual int ServerConnect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
+    virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg);
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
-    virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
     virtual int Disconnect(std::vector<std::wstring> &errorMsg);
     void SetWindowHandle(SQLHWND handle);
     void AskForConnectionParameter(bool ask);
@@ -36,12 +37,14 @@ public:
     bool GetDSNList(std::vector<std::wstring> &dsn, std::vector<std::wstring> &errorMsg);
     virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
-    virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, Field *table, std::vector<std::wstring> &errorMsg);
+    virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, Field *table, std::vector<std::wstring> &errorMsg);
     virtual int SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg);
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
 protected:
+    struct ODBCImpl;
+    ODBCImpl *odbc_pimpl;
     int GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<std::wstring> &errorMsg);
     int GetSQLStringSize(SQLWCHAR *str);
     void str_to_uc_cpy(std::wstring &dest, const SQLWCHAR *src);
@@ -53,8 +56,8 @@ protected:
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schema_name, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
-    virtual int GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
-    int SetTableOwner(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
+    virtual int GetTableId(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
+    int GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     void SetFullType(Field *field);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
     int CreateIndexesOnPostgreConnection(std::vector<std::wstring> &errorMsg);
@@ -67,6 +70,11 @@ private:
     SQLUSMALLINT m_statementsNumber;
     bool m_oneStatement;
     SQLWCHAR *m_connectString;
+};
+
+struct ODBCDatabase::ODBCImpl
+{
+    std::wstring m_currentTableOwner;
 };
 
 #endif

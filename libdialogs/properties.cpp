@@ -97,7 +97,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         wxString tableName = title.substr( 0, title.find( '.' ) );
         wxString fieldName = title.substr( title.find( '.' ) + 1 );
         Field *field = static_cast<Field *>( m_object );
-        res = db->GetFieldProperties( tableName.ToStdWstring(), schemaName.ToStdWstring(), field, errors );
+/*        res = db->GetFieldProperties( tableName.ToStdWstring(), schemaName.ToStdWstring(), field, errors );
         if( !res )
         {
             m_page1 = new TableGeneralProperty( m_properties, field, type );
@@ -107,7 +107,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         {
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
                 wxMessageBox( (*it) );
-        }
+        }*/
     }
     if( !res )
     {

@@ -10,14 +10,15 @@ class MySQLDatabase : public Database
 public:
     MySQLDatabase();
     virtual ~MySQLDatabase();
+    virtual int ServerConnect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
+    virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg);
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     int mySQLConnect();
-    virtual int Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg);
     virtual int Disconnect(std::vector<std::wstring> &errorMsg);
     virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
-    virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, Field *table, std::vector<std::wstring> &errorMsg);
+    virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, Field *table, std::vector<std::wstring> &errorMsg);
     virtual int SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg);
@@ -28,8 +29,9 @@ protected:
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
-    int TokenizeConnectionString(std::wstring &connectStr, std::vector<std::wstring> &errorMsg);
-    virtual int GetTableId(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
+    bool IsSystemIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
+    int TokenizeConnectionString(const std::wstring &connectStr, std::vector<std::wstring> &errorMsg);
+    virtual int GetTableId(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
 private:
     MYSQL *m_db;

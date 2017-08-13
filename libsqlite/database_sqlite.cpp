@@ -80,7 +80,12 @@ int SQLiteDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstr
     return result;
 }
 
-int SQLiteDatabase::Connect(std::wstring selectedDSN, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::ServerConnect(const std::wstring &UNUSED(selectedDSN), std::vector<std::wstring> &UNUSED(dbList), std::vector<std::wstring> &errorMsg)
+{
+    return 0;
+}
+
+int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     char *err;
@@ -424,7 +429,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 {
                                     std::wstring type = sqlite_pimpl->m_myconv.from_bytes( fieldType );
                                     Field *field = new Field( sqlite_pimpl->m_myconv.from_bytes( fieldName ), type, 0, 0, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK >= 1 ? true : false, std::find( fk_names.begin(), fk_names.end(), sqlite_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
-                                    if( GetFieldProperties( sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName ), L"", field, errorMsg ) )
+                                    if( GetFieldProperties( sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName ), L"", L"", field, errorMsg ) )
                                     {
                                         result = 1;
                                         GetErrorMessage( res, errorMessage );
@@ -1038,7 +1043,7 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
     return result;
 }
 
-int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, Field *table, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, Field *table, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt;
     std::wstring errorMessage;
@@ -1237,10 +1242,10 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &command, std::vector<
     return res;
 }
 
-int SQLiteDatabase::GetTableId(const DatabaseTable *table, std::vector<std::wstring> &UNUSED(errorMsg))
+int SQLiteDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &UNUSED(errorMsg))
 {
     int result = 0;
-    const_cast<DatabaseTable *>( table )->SetTableId( 0 );
+    table->SetTableId( 0 );
     return result;
 }
 

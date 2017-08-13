@@ -175,11 +175,15 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                     {
                         if( tableName.substr( 0, 5 ) == L"abcat" && !sysTableIncluded )
                             continue;
+                        if( schemaName == L"information_schema" && !sysTableIncluded )
+                            continue;
                         m_tables->Append( tableName );
                     }
                     else if( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" )
                     {
                         if( tableName.substr( 0, 5 ) == L"abcat" && !sysTableIncluded )
+                            continue;
+                        if( ( schemaName == L"information_schema" || schemaName == L"pg_catalog" ) && !sysTableIncluded )
                             continue;
                         m_tables->Append( tableName );
                     }
