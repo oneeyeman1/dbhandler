@@ -178,14 +178,14 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
                 }
             }
         }
+        pimpl->m_dbName = pimpl->m_tables.begin()->first;
+        pimpl->m_connectString = selectedDSN;
+        std::wstring temp = selectedDSN.substr( selectedDSN.find( L"user" ) );
+        temp = temp.substr( temp.find( '=' ) );
+        std::wstring user = temp.substr( temp.find( '=' ) + 2 );
+        user = user.substr( 0, user.find( ' ' ) );
+        pimpl->m_connectedUser = user;
     }
-    pimpl->m_dbName = pimpl->m_tables.begin()->first;
-    pimpl->m_connectString = selectedDSN;
-    std::wstring temp = selectedDSN.substr( selectedDSN.find( L"user" ) );
-    temp = temp.substr( temp.find( '=' ) );
-    std::wstring user = temp.substr( temp.find( '=' ) + 2 );
-    user = user.substr( 0, user.find( ' ' ) );
-    pimpl->m_connectedUser = user;
     return result;
 }
 
