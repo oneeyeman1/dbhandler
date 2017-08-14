@@ -1756,18 +1756,16 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             for( ret = SQLFetch( stmt_col ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_col ) )
                             {
                                 std::wstring schema_name, table_name;
-                                str_to_uc_cpy( schema_name, schemaName );
-                                str_to_uc_cpy( table_name, tableName );
                                 str_to_uc_cpy( fieldName, szColumnName );
                                 str_to_uc_cpy( fieldType, szTypeName );
                                 str_to_uc_cpy( defaultValue, szColumnDefault );
                                 Field *field = new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
-                                if( GetFieldProperties( table_name, schema_name, odbc_pimpl->m_currentTableOwner, field, errorMsg ) )
+/*                                if( GetFieldProperties( tableName, schemaName, odbc_pimpl->m_currentTableOwner, field, errorMsg ) )
                                 {
                                     GetErrorMessage( errorMsg, 2 );
                                     result = 1;
                                     break;
-                                }
+                                }*/
                                 fields.push_back( field );
                                 fieldName = L"";
                                 fieldType = L"";
@@ -2184,7 +2182,6 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         return 1;
     }
     SQLSMALLINT DataType, DecimalDigits, Nullable;
-    SQLLEN cbSchemaName = SQL_NTS;
     SQLULEN ParamSize;
     ret = SQLDescribeParam( stmt_tableProp, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3012,213 +3009,161 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
     return result;
 }
 
-int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, Field *field, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     SQLHDBC hdbc_fieldProp;
     SQLHSTMT stmt_fieldProp;
     int result = 0;
     SQLWCHAR *commentField;
-    SQLWCHAR *table_name = NULL, *schema_name = NULL, *field_name = NULL, *qry = NULL;
+    SQLWCHAR *field_name = NULL, *qry = NULL;
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbDataFontItalic;
     SQLSMALLINT OutConnStrLen;
     std::wstring fieldName = field->GetFieldName();
     std::wstring query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
-    table_name = new SQLWCHAR[tableName.length() + 2];
-    schema_name = new SQLWCHAR[schemaName.length() + 2];
     field_name = new SQLWCHAR[fieldName.length() + 2];
     qry = new SQLWCHAR[query.length() + 2];
-    memset( table_name, '\0', tableName.length() + 2 );
-    memset( schema_name, '\0', schemaName.length() + 2 );
     memset( field_name, '\0', fieldName.length() + 2 );
     memset( qry, '\0', query.length() + 2 );
-    uc_to_str_cpy( table_name, tableName );
-    uc_to_str_cpy( schema_name, schemaName );
     uc_to_str_cpy( field_name, fieldName );
     uc_to_str_cpy( qry, query );
     SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_fieldProp );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 0, m_env );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
-        delete field_name;
-        field_name = NULL;
-        return 1;
+        result = 1;
     }
-    ret = SQLDriverConnect( hdbc_fieldProp, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    else
     {
-        GetErrorMessage( errorMsg, 2, m_env );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
-        delete field_name;
-        field_name = NULL;
-        return 1;
+        ret = SQLDriverConnect( hdbc_fieldProp, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2, m_env );
+            result = 1;
+        }
+		else
+        {
+            ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc_fieldProp, &stmt_fieldProp );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 2, m_hdbc );
+                result = 1;
+            }
+			else
+            {
+                SQLSMALLINT dataType, decimalDigits, nullable;
+                SQLUINTEGER paramSize;
+                ret = SQLDescribeParam( stmt_fieldProp, 1, &dataType, &paramSize, &decimalDigits, &nullable );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                    result = 1;
+                }
+                else
+                {
+                    ret = SQLBindParameter( stmt_fieldProp, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, &tableName, 0, &cbTableName );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                        result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLDescribeParam( stmt_fieldProp, 2, &dataType, &paramSize, &decimalDigits, &nullable );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                            result = 1;
+                        }
+						else
+                        {
+                            ret = SQLBindParameter( stmt_fieldProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, &ownerName, 0, &cbSchemaName );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                result = 1;
+                            }
+                            else
+                            {
+                                ret = SQLBindParameter( stmt_fieldProp, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                    result = 1;
+                                }
+                                else
+                                {
+                                    ret = SQLPrepare( stmt_fieldProp, qry, SQL_NTS );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                        result = 1;
+                                    }
+                                    else
+                                    {
+                                        ret = SQLExecute( stmt_fieldProp );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                            result = 1;
+                                        }
+                                        else
+                                        {
+                                            ret = SQLBindCol( stmt_fieldProp, 18, SQL_C_WCHAR, &commentField, 3, &cbDataFontItalic );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                                result = 1;
+                                            }
+                                            else
+                                            {
+                                                ret = SQLFetch( stmt_fieldProp );
+                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                                                {
+                                                    GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                                    result = 1;
+                                                }
+                                                else if( ret != SQL_NO_DATA )
+                                                {
+                                                    std::wstring comment;
+                                                    str_to_uc_cpy( comment, commentField );
+                                                    field->SetComment( comment );
+                                                }
+                                                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fieldProp );
+                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                {
+                                                    GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                                    result = 1;
+                                                }
+                                                else
+                                                    stmt_fieldProp = 0;
+                                                ret = SQLDisconnect( hdbc_fieldProp );
+                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                {
+                                                    GetErrorMessage( errorMsg, 1, hdbc_fieldProp );
+                                                    return 1;
+                                                }
+                                                else
+                                                {
+                                                    ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_fieldProp );
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                    {
+                                                        GetErrorMessage( errorMsg, 1, hdbc_fieldProp );
+                                                        return 1;
+                                                    }
+                                                    else
+                                                        hdbc_fieldProp = 0;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-    ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc_fieldProp, &stmt_fieldProp );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 2, m_hdbc );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
-        delete field_name;
-        field_name = NULL;
-        return 1;
-    }
-    ret = SQLBindParameter( stmt_fieldProp, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
-        delete field_name;
-        field_name = NULL;
-        return 1;
-    }
-    ret = SQLBindParameter( stmt_fieldProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, schema_name, 0, &cbSchemaName );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
-        delete field_name;
-        field_name = NULL;
-        return 1;
-    }
-    ret = SQLBindParameter( stmt_fieldProp, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
-        delete field_name;
-        field_name = NULL;
-        return 1;
-    }
-    ret = SQLPrepare( stmt_fieldProp, qry, SQL_NTS );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
-        delete field_name;
-        field_name = NULL;
-        return 1;
-    }
-    ret = SQLExecute( stmt_fieldProp );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
-        delete field_name;
-        field_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_fieldProp, 18, SQL_C_WCHAR, &commentField, 3, &cbDataFontItalic );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
-        delete field_name;
-        field_name = NULL;
-        return 1;
-    }
-    ret = SQLFetch( stmt_fieldProp );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
-        delete field_name;
-        field_name = NULL;
-        return 1;
-    }
-    else if( ret != SQL_NO_DATA )
-    {
-        std::wstring comment;
-        str_to_uc_cpy( comment, commentField );
-        field->SetComment( comment );
-    }
-    ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fieldProp );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
-        return 1;
-    }
-    ret = SQLDisconnect( hdbc_fieldProp );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, hdbc_fieldProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
-        return 1;
-    }
-    ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_fieldProp );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, hdbc_fieldProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete schema_name;
-        schema_name = NULL;
-        return 1;
-    }
-    delete table_name;
-    delete schema_name;
     delete field_name;
     delete qry;
     return result;
