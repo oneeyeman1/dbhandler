@@ -270,7 +270,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     int result = 0, fieldIsNull, fieldPK, fkReference, fkId;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
-    std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS table, u.usename AS owner FROM information_schema.tables t, pg_catalog.pg_class c, pg_catalog.pg_user u WHERE t.table_name = c.relname AND c.relowner = usesysid AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
+    std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS table, u.usename AS owner, c.oid AS table_id FROM information_schema.tables t, pg_catalog.pg_class c, pg_catalog.pg_user u WHERE t.table_name = c.relname AND c.relowner = usesysid AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
     std::wstring query2 = L"SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = 'leagues') THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = $1 AND col.table_name = $2 ORDER BY ordinal_position;";
     std::wstring query3 = L"select x.ordinal_position AS pos, x.position_in_unique_constraint AS field_pos, c.constraint_name AS name, x.table_schema as schema, x.table_name AS table, x.column_name AS column, y.table_schema as ref_schema, y.table_name as ref_table, y.column_name as ref_column, c.update_rule, c.delete_rule from information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y where x.constraint_name = c.constraint_name and y.ordinal_position = x.position_in_unique_constraint and y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 order by c.constraint_name, x.ordinal_position;";
     std::wstring query4 = L"SELECT indexname FROM pg_indexes WHERE schemaname = $1 AND tablename = $2;";
@@ -346,6 +346,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 char *schema_name = PQgetvalue( res, i, 1 );
                                 char *table_name = PQgetvalue( res, i, 2 );
                                 char *table_owner = PQgetvalue( res, i, 3 );
+                                int table_id = (int *) PQgetvalue( res, i, 4 );
                                 char *values1[2];
                                 values1[0] = new char[strlen( schema_name ) + 1];
                                 values1[1] = new char[strlen( table_name ) + 1];
@@ -1113,37 +1114,6 @@ int PostgresDatabase::SetFieldProperties(const std::wstring &command, std::vecto
 {
     int res = 0;
     return res;
-}
-
-int PostgresDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
-{
-    int result = 0;
-    char *value[1];
-    int len[1], formats[1];
-    std::wstring query = L"SELECT oid FROM pg_class WHERE relname = $1";
-    int size = const_cast<DatabaseTable *>( table )->GetTableName().length() + 1;
-    value[0] = new char[size];
-    memset( value[0], '\0', size );
-    strcpy( value[0], m_pimpl->m_myconv.to_bytes( const_cast<DatabaseTable *>( table )->GetTableName().c_str() ).c_str() );
-    len[1] = const_cast<DatabaseTable *>( table )->GetTableName().length() + 1;
-    formats[1] = 1;
-    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 1, NULL, value, len, formats, 1 );
-    ExecStatusType status = PQresultStatus( res );
-    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-        errorMsg.push_back( L"Error executing query: " + err );
-        result = 1;
-    }
-    else if( status == PGRES_TUPLES_OK )
-    {
-        int value = ntohl( *(int *) PQgetvalue( res, 0, 0 ) );
-        table->SetTableId( value );
-    }
-    PQclear( res );
-    delete value[0];
-    value[0] = NULL;
-    return result;
 }
 
 int PostgresDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)

@@ -1242,13 +1242,6 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &command, std::vector<
     return res;
 }
 
-int SQLiteDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &UNUSED(errorMsg))
-{
-    int result = 0;
-    table->SetTableId( 0 );
-    return result;
-}
-
 void SQLiteDatabase::SetFullType(Field *field, const std::wstring &type)
 {
     field->SetFullType( type );
