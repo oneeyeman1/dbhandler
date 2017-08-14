@@ -2917,79 +2917,45 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return false;
-    }
-    ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tname.length(), 0, table_name, 0, &cbTableName );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, m_hstmt );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
     }
     else
     {
-        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name, 0, &cbSchemaName );
+        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tname.length(), 0, table_name, 0, &cbTableName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
-            delete qry;
-            qry = NULL;
-            delete table_name;
-            table_name = NULL;
-            delete owner_name;
-            owner_name = NULL;
         }
         else
         {
-            ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+            ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name, 0, &cbSchemaName );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
-                delete qry;
-                qry = NULL;
-                delete table_name;
-                table_name = NULL;
-                delete owner_name;
-                owner_name = NULL;
             }
             else
             {
-                ret = SQLExecute( m_hstmt );
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    ret = SQLFetch( m_hstmt );
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                }
+                else
+                {
+                    ret = SQLExecute( m_hstmt );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                        result = true;
+                    {
+                        ret = SQLFetch( m_hstmt );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                            result = true;
+                        else if( ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                        }
+                    }
                     else if( ret != SQL_NO_DATA )
                     {
                         GetErrorMessage( errorMsg, 1, m_hstmt );
-                        delete qry;
-                        qry = NULL;
-                        delete table_name;
-                        table_name = NULL;
-                        delete owner_name;
-                        owner_name = NULL;
                     }
-                }
-                else if( ret != SQL_NO_DATA )
-                {
-                    GetErrorMessage( errorMsg, 1, m_hstmt );
-                    delete qry;
-                    qry = NULL;
-                    delete table_name;
-                    table_name = NULL;
-                    delete owner_name;
-                    owner_name = NULL;
                 }
             }
         }
