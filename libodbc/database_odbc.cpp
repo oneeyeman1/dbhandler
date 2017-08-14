@@ -2845,8 +2845,6 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, 1, m_hstmt );
-                            delete qry;
-                            qry = NULL;
                             result = 1;
                         }
                         else
@@ -2855,8 +2853,6 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, m_hstmt );
-                                delete qry;
-                                qry = NULL;
                                 result = 1;
                             }
                         }
