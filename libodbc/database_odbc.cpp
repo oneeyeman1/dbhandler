@@ -3040,7 +3040,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
             GetErrorMessage( errorMsg, 2, m_env );
             result = 1;
         }
-		else
+        else
         {
             ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc_fieldProp, &stmt_fieldProp );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3048,7 +3048,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
                 GetErrorMessage( errorMsg, 2, m_hdbc );
                 result = 1;
             }
-			else
+            else
             {
                 SQLSMALLINT dataType, decimalDigits, nullable;
                 SQLUINTEGER paramSize;
@@ -3074,7 +3074,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
                             GetErrorMessage( errorMsg, 1, stmt_fieldProp );
                             result = 1;
                         }
-						else
+                        else
                         {
                             ret = SQLBindParameter( stmt_fieldProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, &ownerName, 0, &cbSchemaName );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
