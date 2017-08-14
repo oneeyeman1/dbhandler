@@ -2875,22 +2875,19 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
     return result;
 }
 
-int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, Field *field, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, const SQLWCHAR *fieldName, std::vector<std::wstring> &errorMsg)
 {
     SQLHDBC hdbc_fieldProp;
     SQLHSTMT stmt_fieldProp;
     int result = 0;
     SQLWCHAR *commentField;
-    SQLWCHAR *field_name = NULL, *qry = NULL;
+    SQLWCHAR *qry = NULL;
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbDataFontItalic;
     SQLSMALLINT OutConnStrLen;
-    std::wstring fieldName = field->GetFieldName();
     std::wstring query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     field_name = new SQLWCHAR[fieldName.length() + 2];
     qry = new SQLWCHAR[query.length() + 2];
-    memset( field_name, '\0', fieldName.length() + 2 );
     memset( qry, '\0', query.length() + 2 );
-    uc_to_str_cpy( field_name, fieldName );
     uc_to_str_cpy( qry, query );
     SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_fieldProp );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -2950,7 +2947,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
                             }
                             else
                             {
-                                ret = SQLBindParameter( stmt_fieldProp, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
+                                ret = SQLDescribeParam( stmt_fieldProp, 1, &dataType, &paramSize, &decimalDigits, &nullable );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt_fieldProp );
@@ -2958,7 +2955,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
                                 }
                                 else
                                 {
-                                    ret = SQLPrepare( stmt_fieldProp, qry, SQL_NTS );
+                                    ret = SQLBindParameter( stmt_fieldProp, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDifits, fieldName, 0, &cbFieldName );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
                                         GetErrorMessage( errorMsg, 1, stmt_fieldProp );
@@ -2966,7 +2963,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
                                     }
                                     else
                                     {
-                                        ret = SQLExecute( stmt_fieldProp );
+                                        ret = SQLPrepare( stmt_fieldProp, qry, SQL_NTS );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 1, stmt_fieldProp );
@@ -2974,7 +2971,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
                                         }
                                         else
                                         {
-                                            ret = SQLBindCol( stmt_fieldProp, 18, SQL_C_WCHAR, &commentField, 3, &cbDataFontItalic );
+                                            ret = SQLExecute( stmt_fieldProp );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_fieldProp );
@@ -2982,42 +2979,51 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
                                             }
                                             else
                                             {
-                                                ret = SQLFetch( stmt_fieldProp );
-                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                                                {
-                                                    GetErrorMessage( errorMsg, 1, stmt_fieldProp );
-                                                    result = 1;
-                                                }
-                                                else if( ret != SQL_NO_DATA )
-                                                {
-                                                    std::wstring comment;
-                                                    str_to_uc_cpy( comment, commentField );
-                                                    field->SetComment( comment );
-                                                }
-                                                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fieldProp );
+                                                ret = SQLBindCol( stmt_fieldProp, 18, SQL_C_WCHAR, &commentField, 3, &cbDataFontItalic );
                                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                 {
                                                     GetErrorMessage( errorMsg, 1, stmt_fieldProp );
                                                     result = 1;
                                                 }
                                                 else
-                                                    stmt_fieldProp = 0;
-                                                ret = SQLDisconnect( hdbc_fieldProp );
-                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                 {
-                                                    GetErrorMessage( errorMsg, 1, hdbc_fieldProp );
-                                                    return 1;
-                                                }
-                                                else
-                                                {
-                                                    ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_fieldProp );
+                                                    ret = SQLFetch( stmt_fieldProp );
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                                                    {
+                                                        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                                        result = 1;
+                                                    }
+                                                    else if( ret != SQL_NO_DATA )
+                                                    {
+                                                        std::wstring comment;
+                                                        str_to_uc_cpy( comment, commentField );
+                                                        field->SetComment( comment );
+                                                    }
+                                                    ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fieldProp );
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                    {
+                                                        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                                        result = 1;
+                                                    }
+                                                    else
+                                                        stmt_fieldProp = 0;
+                                                    ret = SQLDisconnect( hdbc_fieldProp );
                                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                     {
                                                         GetErrorMessage( errorMsg, 1, hdbc_fieldProp );
-                                                        return 1;
+                                                        result = 1;
                                                     }
                                                     else
-                                                        hdbc_fieldProp = 0;
+                                                    {
+                                                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_fieldProp );
+                                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                        {
+                                                            GetErrorMessage( errorMsg, 1, hdbc_fieldProp );
+                                                            result = 1;
+                                                        }
+                                                        else
+                                                            hdbc_fieldProp = 0;
+                                                    }
                                                 }
                                             }
                                         }
@@ -3030,7 +3036,6 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
             }
         }
     }
-    delete field_name;
     delete qry;
     return result;
 }

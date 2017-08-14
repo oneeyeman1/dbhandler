@@ -61,7 +61,7 @@ protected:
     void SetFullType(Field *field);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
     int CreateIndexesOnPostgreConnection(std::vector<std::wstring> &errorMsg);
-    int GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, Field *field, std::vector<std::wstring> &errorMsg);
+    int GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, const SQLWCHAR *fieldName, std::vector<std::wstring> &errorMsg);
 private:
     SQLHENV m_env;
     SQLHDBC m_hdbc;

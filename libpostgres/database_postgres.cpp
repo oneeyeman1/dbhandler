@@ -442,7 +442,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             if( fieldType == L"serial" || fieldType == L"bigserial" )
                                                 autoinc = true;
                                             Field *field = new Field( fieldName, fieldType, size, precision, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
-                                            if( GetFieldProperties( table_name, schema_name, table_owner, field, errorMsg ) )
+                                            if( GetFieldProperties( table_name, schema_name, table_owner, fieldName, errorMsg ) )
                                             {
                                                 std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                                                 errorMsg.push_back( err );
@@ -954,7 +954,7 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     return result;
 }
 
-int PostgresDatabase::GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, Field *table, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, const char *fieldName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     int len = strlen( tableName ) + strlen( schemaName ) + 2;
@@ -970,10 +970,10 @@ int PostgresDatabase::GetFieldProperties(const char *tableName, const char *sche
     values[2] = new char[table->GetFieldName().length() + 1];
     memset( values[0], '\0', strlen( tname ) + 1 );
     memset( values[1], '\0', strlen( ownerName ) + 1 );
-    memset( values[2], '\0', table->GetFieldName().length() + 1 );
+    memset( values[2], '\0', strlen( fieldName ) + 1 );
     strcpy( values[0], tname );
     strcpy( values[1], ownerName );
-    strcpy( values[2], m_pimpl->m_myconv.to_bytes( table->GetFieldName().c_str() ).c_str() );
+    strcpy( values[2], fieldName );
     int len1 = strlen( values[0] );
     int len2 = strlen( values[1] );
     int len3 = strlen( values[2] );

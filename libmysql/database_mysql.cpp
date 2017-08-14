@@ -1657,7 +1657,7 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
     return result;
 }
 
-int MySQLDatabase::GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, Field *field, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, const char *fieldName, std::vector<std::wstring> &errorMsg)
 {
     char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
     int result = 0;
@@ -1667,7 +1667,6 @@ int MySQLDatabase::GetFieldProperties(const char *tableName, const char *schemaN
     strcpy( tname, schemaName );
     strcat( tname, "." );
     strcat( tname, tableName );
-    std::wstring fieldName = field->GetFieldName();
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?";
 //    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = \'abcß\' AND abc_ownr = \'\' AND abc_cnam = \'id\'";
     MYSQL_STMT *stmt = mysql_stmt_init( m_db );
@@ -1699,7 +1698,7 @@ int MySQLDatabase::GetFieldProperties(const char *tableName, const char *schemaN
             memset( str_data2, '\0', ownerName.length() );
             memset( str_data3, '\0', fieldName.length() );
             memset( params, 0, sizeof( params ) );*/
-            const char *str_data3 = m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
+//            const char *str_data3 = m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
 //            strncpy( str_data1, tname.c_str(), strlen( tname.c_str() ) );
 //            strncpy( str_data2, ownerName.c_str(), strlen( ownerName.c_str() ) );
 //            strncpy( str_data3, fieldName.c_str(), strlen( fieldName.c_str() ) );
@@ -1714,8 +1713,8 @@ int MySQLDatabase::GetFieldProperties(const char *tableName, const char *schemaN
             params[1].is_null = 0;
             params[1].length = &str_length2;
             params[2].buffer_type = MYSQL_TYPE_STRING;
-            params[2].buffer = (char *) m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
-            params[2].buffer_length = fieldName.length();
+            params[2].buffer = (char *) fieldName;
+            params[2].buffer_length = strlen( fieldName );
             params[2].is_null = 0;
             params[2].length = &str_length3;
             if( mysql_stmt_bind_param( stmt, params ) )
