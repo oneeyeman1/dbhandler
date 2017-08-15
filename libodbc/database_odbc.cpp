@@ -759,15 +759,15 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
         else
             m_hstmt = 0;
     }
-    ret = SQLDisconnect( m_hdbc );
-    if( ret != SQL_SUCCESS )
+    if( m_hdbc != 0 )
     {
-        GetErrorMessage( errorMsg, 2 );
-        result = 1;
-    }
-    else
-    {
-        if( m_hdbc != 0 )
+        ret = SQLDisconnect( m_hdbc );
+        if( ret != SQL_SUCCESS )
+        {
+            GetErrorMessage( errorMsg, 2 );
+            result = 1;
+        }
+        else
         {
             ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
             if( ret != SQL_SUCCESS )
@@ -776,20 +776,18 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
                 result = 1;
             }
             else
-            {
                 m_hdbc = 0;
-                if( m_env != 0 )
-                {
-                    ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
-                    if( ret != SQL_SUCCESS )
-                    {
-                        GetErrorMessage( errorMsg, 0 );
-                        result = 1;
-                    }
-                    else
-                        m_env = 0;
-                }
+        }
+        if( m_env != 0 )
+        {
+            ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
+            if( ret != SQL_SUCCESS )
+            {
+                GetErrorMessage( errorMsg, 0 );
+                result = 1;
             }
+            else
+                m_env = 0;
         }
     }
     for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
