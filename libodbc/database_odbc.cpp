@@ -3051,7 +3051,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
 			else
             {
                 SQLSMALLINT dataType, decimalDigits, nullable;
-                SQLUINTEGER paramSize;
+                SQLULEN paramSize;
                 ret = SQLDescribeParam( stmt_fieldProp, 1, &dataType, &paramSize, &decimalDigits, &nullable );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
