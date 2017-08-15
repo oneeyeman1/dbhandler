@@ -2109,9 +2109,11 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
 
 int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
+    int result = 0;
     SQLSMALLINT OutConnStrLen;
-    SQLHDBC hdbc_tableProp;
-    SQLHSTMT stmt_tableProp;
+    SQLHDBC hdbc_tableProp = 0;
+    SQLHSTMT stmt_tableProp = 0;
+    SQLWCHAR *qry = NULL, *table_name = NULL, *owner_name = NULL;
     unsigned short dataFontSize, dataFontWeight, headingFontSize, headingFontWeight, labelFontSize, labelFontWeight;
     unsigned short dataFontCharacterSet, headingFontCharacterSet, labelFontCharacterSet, dataFontPixelSize, headingFontPixelSize, labelFontPixelSize;
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], labelFontUnderline[2], dataFontName[20], headingFontName[20], labelFontName[20];
@@ -2126,7 +2128,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     t += tableName;
     int tableNameLen = t.length(), ownerNameLen = ownerName.length();
     SQLLEN cbOwnerName = ownerNameLen == 0 ? SQL_NULL_DATA : SQL_NTS;
-    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tableNameLen + 2], *owner_name = new SQLWCHAR[ownerNameLen + 2];
+    qry = new SQLWCHAR[query.length() + 2], table_name = new SQLWCHAR[tableNameLen + 2], owner_name = new SQLWCHAR[ownerNameLen + 2];
     memset( owner_name, '\0', ownerNameLen + 2 );
     memset( table_name, '\0', tableNameLen + 2 );
     uc_to_str_cpy( owner_name, ownerName );
@@ -2137,454 +2139,357 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 0, m_env );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
+        result = 1;
     }
-    ret = SQLDriverConnect( hdbc_tableProp, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    else
     {
-        GetErrorMessage( errorMsg, 2, m_env );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc_tableProp, &stmt_tableProp );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 2, m_hdbc );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLPrepare( stmt_tableProp, qry, SQL_NTS );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    SQLSMALLINT DataType, DecimalDigits, Nullable;
-    SQLULEN ParamSize;
-    ret = SQLDescribeParam( stmt_tableProp, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
-        SQLDisconnect( hdbc_tableProp );
-        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
-        hdbc_tableProp = 0;
-        stmt_tableProp = 0;
-        return 1;
-    }
-    ret = SQLBindParameter( stmt_tableProp, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, table_name, 0, &cbTableName );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
-        SQLDisconnect( hdbc_tableProp );
-        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
-        hdbc_tableProp = 0;
-        stmt_tableProp = 0;
-        return 1;
-    }
-    ret = SQLDescribeParam( stmt_tableProp, 2, &DataType, &ParamSize, &DecimalDigits, &Nullable);
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
-        SQLDisconnect( hdbc_tableProp );
-        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
-        hdbc_tableProp = 0;
-        stmt_tableProp = 0;
-        return 1;
-    }
-    ret = SQLBindParameter( stmt_tableProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, owner_name, 0, &cbOwnerName );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLExecute( stmt_tableProp );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 4, SQL_C_SSHORT, &dataFontSize, 0, &cbDataFontSize );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 5, SQL_C_SSHORT, &dataFontWeight, 0, &cbDataFontWeight );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 6, SQL_C_CHAR, &dataFontItalic, 2, &cbDataFontItalic );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 7, SQL_C_CHAR, &dataFontUnderline, 2, &cbDataFontUnderline );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 8, SQL_C_SSHORT, &dataFontCharacterSet, 0, &cbDataFontCharacterSet );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 9, SQL_C_SSHORT, &dataFontPixelSize, 0, &cbDataFontPixelSize );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 10, SQL_C_WCHAR, &dataFontName, 22, &cbDataFontName );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 11, SQL_C_SSHORT, &headingFontSize, 0, &cbHeadingFontSize );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 12, SQL_C_SSHORT, &headingFontWeight, 0, &cbHeadingFontWeight );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 13, SQL_C_CHAR, &headingFontItalic, 2, &cbHeadingFontItalic );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 14, SQL_C_CHAR, &headingFontUnderline, 2, &cbHeadingFontUnderline );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 15, SQL_C_SSHORT, &headingFontCharacterSet, 0, &cbHeadingFontCharacterSet );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 16, SQL_C_SSHORT, &headingFontPixelSize, 0, &cbHeadingFontPixelSize );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 17, SQL_C_WCHAR, &headingFontName, 22, &cbHeadingFontName );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 18, SQL_C_SSHORT, &labelFontSize, 0, &cbLabelFontSize );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 19, SQL_C_SSHORT, &labelFontWeight, 0, &cbLabelFontWeight );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 20, SQL_C_CHAR, &labelFontItalic, 3, &cbLabelFontItalic );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 21, SQL_C_CHAR, &labelFontUnderline, 3, &cbLabelFontUnderline );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 22, SQL_C_SSHORT, &labelFontCharacterSet, 0, &cbLabelFontCharacterSet );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 23, SQL_C_SSHORT, &labelFontPixelSize, 0, &cbLabelFontPixelSize );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 24, SQL_C_WCHAR, &labelFontName, 22, &cbLabelFontName );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLBindCol( stmt_tableProp, 25, SQL_C_WCHAR, &comments, 225, &cbComment );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLFetch( stmt_tableProp );
-    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-    {
-        std::wstring name;
-        table->SetDataFontSize( dataFontSize );
-        table->SetDataFontWeight( dataFontWeight );
-        table->SetDataFontItalic( dataFontItalic[0] == 'Y' );
-        table->SetDataFontUnderline( dataFontUnderline[0] == 'Y' );
-        table->SetDataFontCharacterSet( dataFontCharacterSet );
-        table->SetDataFontPixelSize( dataFontPixelSize );
-        str_to_uc_cpy( name, dataFontName );
-        table->SetDataFontName( name );
-        name = L"";
-        table->SetHeadingFontSize( headingFontSize );
-        table->SetHeadingFontWeight( headingFontWeight );
-        table->SetHeadingFontItalic( headingFontItalic[0] == 'Y' );
-        table->SetHeadingFontUnderline( headingFontUnderline[0] == 'Y' );
-        table->SetHeadingFontCharacterSet( headingFontCharacterSet );
-        table->SetHeadingFontPixelSize( headingFontPixelSize );
-        str_to_uc_cpy( name, headingFontName );
-        table->SetHeadingFontName( name );
-        name = L"";
-        table->SetLabelFontSize( labelFontSize );
-        table->SetLabelFontWeight( labelFontWeight );
-        table->SetLabelFontItalic( labelFontItalic[0] == 'Y' );
-        table->SetLabelFontUnderline( labelFontUnderline[0] == 'Y' );
-        table->SetLabelFontCharacterSet( labelFontCharacterSet );
-        table->SetLabelFontPixelSize( labelFontPixelSize );
-        str_to_uc_cpy( name, labelFontName );
-        table->SetLabelFontName( name );
-        name = L"";
-        str_to_uc_cpy( name, comments );
-        table->SetComment( name );
-        name = L"";
-    }
-    else if( ret != SQL_NO_DATA )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLDisconnect( hdbc_tableProp );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
-    }
-    ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, stmt_tableProp );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return 1;
+        ret = SQLDriverConnect( hdbc_tableProp, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2, m_env );
+            result = 1;
+        }
+        else
+        {
+            ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc_tableProp, &stmt_tableProp );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 2, m_hdbc );
+                result = 1;
+            }
+            else
+            {
+                ret = SQLPrepare( stmt_tableProp, qry, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                    result = 1;
+                }
+                else
+                {
+                    SQLSMALLINT DataType, DecimalDigits, Nullable;
+                    SQLULEN ParamSize;
+                    ret = SQLDescribeParam( stmt_tableProp, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                        SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
+                        SQLDisconnect( hdbc_tableProp );
+                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
+                        hdbc_tableProp = 0;
+                        stmt_tableProp = 0;
+                        result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLBindParameter( stmt_tableProp, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, table_name, 0, &cbTableName );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
+                            SQLDisconnect( hdbc_tableProp );
+                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
+                            hdbc_tableProp = 0;
+                            stmt_tableProp = 0;
+                            result = 1;
+                        }
+                        else
+                        {
+                            ret = SQLDescribeParam( stmt_tableProp, 2, &DataType, &ParamSize, &DecimalDigits, &Nullable);
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
+                                SQLDisconnect( hdbc_tableProp );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
+                                hdbc_tableProp = 0;
+                                stmt_tableProp = 0;
+                                result = 1;
+                            }
+                            else
+                            {
+                                ret = SQLBindParameter( stmt_tableProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, owner_name, 0, &cbOwnerName );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                    result = 1;
+                                }
+                                else
+                                {
+                                    ret = SQLExecute( stmt_tableProp );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                        result = 1;
+                                    }
+                                    else
+                                    {
+                                        ret = SQLBindCol( stmt_tableProp, 4, SQL_C_SSHORT, &dataFontSize, 0, &cbDataFontSize );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                            result = 1;
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 5, SQL_C_SSHORT, &dataFontWeight, 0, &cbDataFontWeight );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 6, SQL_C_CHAR, &dataFontItalic, 2, &cbDataFontItalic );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 7, SQL_C_CHAR, &dataFontUnderline, 2, &cbDataFontUnderline );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 8, SQL_C_SSHORT, &dataFontCharacterSet, 0, &cbDataFontCharacterSet );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 9, SQL_C_SSHORT, &dataFontPixelSize, 0, &cbDataFontPixelSize );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 10, SQL_C_WCHAR, &dataFontName, 22, &cbDataFontName );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 11, SQL_C_SSHORT, &headingFontSize, 0, &cbHeadingFontSize );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 12, SQL_C_SSHORT, &headingFontWeight, 0, &cbHeadingFontWeight );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                return 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 13, SQL_C_CHAR, &headingFontItalic, 2, &cbHeadingFontItalic );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 14, SQL_C_CHAR, &headingFontUnderline, 2, &cbHeadingFontUnderline );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 15, SQL_C_SSHORT, &headingFontCharacterSet, 0, &cbHeadingFontCharacterSet );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 16, SQL_C_SSHORT, &headingFontPixelSize, 0, &cbHeadingFontPixelSize );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 17, SQL_C_WCHAR, &headingFontName, 22, &cbHeadingFontName );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 18, SQL_C_SSHORT, &labelFontSize, 0, &cbLabelFontSize );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 19, SQL_C_SSHORT, &labelFontWeight, 0, &cbLabelFontWeight );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 20, SQL_C_CHAR, &labelFontItalic, 3, &cbLabelFontItalic );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 21, SQL_C_CHAR, &labelFontUnderline, 3, &cbLabelFontUnderline );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 22, SQL_C_SSHORT, &labelFontCharacterSet, 0, &cbLabelFontCharacterSet );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 23, SQL_C_SSHORT, &labelFontPixelSize, 0, &cbLabelFontPixelSize );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 24, SQL_C_WCHAR, &labelFontName, 22, &cbLabelFontName );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 25, SQL_C_WCHAR, &comments, 225, &cbComment );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLFetch( stmt_tableProp );
+                                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                std::wstring name;
+                                                table->SetDataFontSize( dataFontSize );
+                                                table->SetDataFontWeight( dataFontWeight );
+                                                table->SetDataFontItalic( dataFontItalic[0] == 'Y' );
+                                                table->SetDataFontUnderline( dataFontUnderline[0] == 'Y' );
+                                                table->SetDataFontCharacterSet( dataFontCharacterSet );
+                                                table->SetDataFontPixelSize( dataFontPixelSize );
+                                                str_to_uc_cpy( name, dataFontName );
+                                                table->SetDataFontName( name );
+                                                name = L"";
+                                                table->SetHeadingFontSize( headingFontSize );
+                                                table->SetHeadingFontWeight( headingFontWeight );
+                                                table->SetHeadingFontItalic( headingFontItalic[0] == 'Y' );
+                                                table->SetHeadingFontUnderline( headingFontUnderline[0] == 'Y' );
+                                                table->SetHeadingFontCharacterSet( headingFontCharacterSet );
+                                                table->SetHeadingFontPixelSize( headingFontPixelSize );
+                                                str_to_uc_cpy( name, headingFontName );
+                                                table->SetHeadingFontName( name );
+                                                name = L"";
+                                                table->SetLabelFontSize( labelFontSize );
+                                                table->SetLabelFontWeight( labelFontWeight );
+                                                table->SetLabelFontItalic( labelFontItalic[0] == 'Y' );
+                                                table->SetLabelFontUnderline( labelFontUnderline[0] == 'Y' );
+                                                table->SetLabelFontCharacterSet( labelFontCharacterSet );
+                                                table->SetLabelFontPixelSize( labelFontPixelSize );
+                                                str_to_uc_cpy( name, labelFontName );
+                                                table->SetLabelFontName( name );
+                                                name = L"";
+                                                str_to_uc_cpy( name, comments );
+                                                table->SetComment( name );
+                                                name = L"";
+                                            }
+                                            else if( ret != SQL_NO_DATA )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                            ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_tableProp );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                            else
+                                                stmt_tableProp = 0;
+                                            ret = SQLDisconnect( hdbc_tableProp );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                            ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_tableProp );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     delete qry;
     qry = NULL;
@@ -2845,8 +2750,6 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, 1, m_hstmt );
-                            delete qry;
-                            qry = NULL;
                             result = 1;
                         }
                         else
@@ -2855,8 +2758,6 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, m_hstmt );
-                                delete qry;
-                                qry = NULL;
                                 result = 1;
                             }
                         }
@@ -2917,79 +2818,45 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
-        return false;
-    }
-    ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tname.length(), 0, table_name, 0, &cbTableName );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1, m_hstmt );
-        delete qry;
-        qry = NULL;
-        delete table_name;
-        table_name = NULL;
-        delete owner_name;
-        owner_name = NULL;
     }
     else
     {
-        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name, 0, &cbSchemaName );
+        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tname.length(), 0, table_name, 0, &cbTableName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
-            delete qry;
-            qry = NULL;
-            delete table_name;
-            table_name = NULL;
-            delete owner_name;
-            owner_name = NULL;
         }
         else
         {
-            ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+            ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name, 0, &cbSchemaName );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
-                delete qry;
-                qry = NULL;
-                delete table_name;
-                table_name = NULL;
-                delete owner_name;
-                owner_name = NULL;
             }
             else
             {
-                ret = SQLExecute( m_hstmt );
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    ret = SQLFetch( m_hstmt );
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                }
+                else
+                {
+                    ret = SQLExecute( m_hstmt );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                        result = true;
+                    {
+                        ret = SQLFetch( m_hstmt );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                            result = true;
+                        else if( ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                        }
+                    }
                     else if( ret != SQL_NO_DATA )
                     {
                         GetErrorMessage( errorMsg, 1, m_hstmt );
-                        delete qry;
-                        qry = NULL;
-                        delete table_name;
-                        table_name = NULL;
-                        delete owner_name;
-                        owner_name = NULL;
                     }
-                }
-                else if( ret != SQL_NO_DATA )
-                {
-                    GetErrorMessage( errorMsg, 1, m_hstmt );
-                    delete qry;
-                    qry = NULL;
-                    delete table_name;
-                    table_name = NULL;
-                    delete owner_name;
-                    owner_name = NULL;
                 }
             }
         }
@@ -3040,7 +2907,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
             GetErrorMessage( errorMsg, 2, m_env );
             result = 1;
         }
-		else
+        else
         {
             ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc_fieldProp, &stmt_fieldProp );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3048,7 +2915,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
                 GetErrorMessage( errorMsg, 2, m_hdbc );
                 result = 1;
             }
-			else
+            else
             {
                 SQLSMALLINT dataType, decimalDigits, nullable;
                 SQLULEN paramSize;
@@ -3074,7 +2941,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
                             GetErrorMessage( errorMsg, 1, stmt_fieldProp );
                             result = 1;
                         }
-						else
+                        else
                         {
                             ret = SQLBindParameter( stmt_fieldProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, &ownerName, 0, &cbSchemaName );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
