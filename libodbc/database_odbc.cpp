@@ -518,7 +518,6 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                             str_to_uc_cpy( pimpl->m_subtype, dbType );
                             if( GetServerVersion( errorMsg ) )
                             {
-                                errorMsg.push_back( L"" );
                                 result = 1;
                             }
                             else
@@ -532,6 +531,79 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                 }
                                 else
                                 {
+                                    if( ServerConnect() )
+                                    {
+                                        result = 1;
+                                    }
+                                    else
+                                    {
+                                        if( CreateSystemObjectsAndGetDatabaseInfo( errorMwsg ) )
+                                        {
+                                            GetErrorMessage( errorMsg, 2 );
+                                            result = 1;
+                                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                        }
+                                    }
+                                }
+                                if( m_hstmt )
+                                {
+                                    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 2 );
+                                        result = 1;
+                                    }
+                                    else
+                                        m_hstmt = 0;
+                                }
+                                if( !result )
+                                {
+                                    ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) TRUE, 0 );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 2 );
+                                        result = 1;
+                                    }
+                                    result = GetTableListFromDb( errorMsg );
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    GetErrorMessage( errorMsg, 2 );
+                    result = 1;
+                }
+            }
+        }
+        else
+        {
+            GetErrorMessage( errorMsg, 0 );
+            result = 1;
+        }
+    }
+    else
+    {
+        GetErrorMessage( errorMsg, 0 );
+        result = 1;
+    }
+    if( result )
+    {
+        for( std::vector<SQLWCHAR *>::iterator it = errorMessage.begin(); it != errorMessage.end(); it++ )
+        {
+            std::wstring strMsg;
+            str_to_uc_cpy( strMsg, (*it) );
+            errorMsg.push_back( strMsg );
+        }
+    }
+    delete query;
+    query = NULL;
+    return result;
+}
+
+int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg)
+{
                                     if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
                                     {
                                         query1 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE \"abcatcol\"(abc_tnam varchar(129) NOT NULL, abc_tid integer, abc_ownr varchar(129) NOT NULL, abc_cnam varchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn varchar(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt varchar(254), abc_edit varchar(31), abc_tag varchar(254) PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
@@ -675,72 +747,17 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                             result = 1;
                                         }
                                     }
-                                    else
-                                    {
-                                        GetErrorMessage( errorMsg, 2 );
-                                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                        result = 1;
-                                    }
-                                }
-                                if( m_hstmt )
-                                {
-                                    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, 2 );
-                                        result = 1;
-                                    }
-                                    else
-                                        m_hstmt = 0;
-                                }
-                                if( !result )
-                                {
-                                    ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) TRUE, 0 );
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, 2 );
-                                        result = 1;
-                                    }
-                                    result = GetTableListFromDb( errorMsg );
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    GetErrorMessage( errorMsg, 2 );
-                    result = 1;
-                }
-            }
-        }
-        else
-        {
-            GetErrorMessage( errorMsg, 0 );
-            result = 1;
-        }
-    }
-    else
-    {
-        GetErrorMessage( errorMsg, 0 );
-        result = 1;
-    }
-    if( result )
-    {
-        for( std::vector<SQLWCHAR *>::iterator it = errorMessage.begin(); it != errorMessage.end(); it++ )
-        {
-            std::wstring strMsg;
-            str_to_uc_cpy( strMsg, (*it) );
-            errorMsg.push_back( strMsg );
-        }
-    }
-    delete query;
-    query = NULL;
-    return result;
 }
 
 int ODBCDatabase::ServerConnect(const std::wstring &UNUSED(selectedDSN), std::vector<std::wstring> &UNUSED(dbList), std::vector<std::wstring> &errorMsg)
 {
+    std::wstring query;
+    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        query = L"SELECT name AS Database FROM master.dbo.sysdatabases;";
+    if( pimpl->m_subtype == L"MySQL"  )
+        query = L"SELECT schema_name AS Database FROM information_schema.schemata;";
+    if( pimpl->m_subtype == L"PostgreSQL" )
+        query = L"SELECT datname AS Database FROM pg_database;";
     return 0;
 }
 
