@@ -357,7 +357,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     bool is_nullable, autoincrement, is_pk;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
-    std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS name, "" AS owner, FROM information_schema.tables t WHERE t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW';";
+    std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS name, \"\" AS owner, FROM information_schema.tables t WHERE t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW';";
     std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.extra, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ?;";
     std::wstring query3 = L"SELECT kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_catalog = ? AND kcu.table_schema = ? AND kcu.table_name = ?;";
     std::wstring query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_catalog = ? AND table_schema = ? AND table_name = ?;";
@@ -745,7 +745,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                         autoincrement = false;
                                                                                     is_pk = pk == 1 ? true : false;
                                                                                     Field *field = new Field( fieldName, fieldType, fieldSize, fieldPrec, fieldDefaultValue, is_nullable, autoincrement, is_pk, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
-                                                                                    if( GetFieldProperties( (const char *) table_name, "", "", field, errorMsg ) )
+                                                                                    if( GetFieldProperties( (const char *) table_name, "", "", (const char *) colName, errorMsg ) )
                                                                                     {
                                                                                         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
                                                                                         errorMsg.push_back( err );
