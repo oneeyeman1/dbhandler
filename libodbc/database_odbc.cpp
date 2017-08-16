@@ -2308,7 +2308,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
-                                                return 1;
+                                                result = 1;
                                             }
                                         }
                                         if( !result )
