@@ -458,7 +458,7 @@ int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstrin
     return result;
 }
 
-int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, bufferSize = 1024;
     std::vector<SQLWCHAR *> errorMessage;
@@ -531,7 +531,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                 }
                                 else
                                 {
-                                    if( ServerConnect() )
+                                    if( ServerConnect( dbList, errorMsg ) )
                                     {
                                         result = 1;
                                     }
@@ -749,7 +749,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                                     }
 }
 
-int ODBCDatabase::ServerConnect(const std::wstring &UNUSED(selectedDSN), std::vector<std::wstring> &UNUSED(dbList), std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::ServerConnect(std::vector<std::wstring> &UNUSED(dbList), std::vector<std::wstring> &errorMsg)
 {
     std::wstring query;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )

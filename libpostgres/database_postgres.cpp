@@ -66,7 +66,7 @@ int PostgresDatabase::DropDatabase(const std::wstring &name, std::vector<std::ws
     return result;
 }
 
-int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     PGresult *res;
@@ -189,7 +189,7 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
     return result;
 }
 
-int PostgresDatabase::ServerConnect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
 {
     PGresult *res;
     std::wstring err;

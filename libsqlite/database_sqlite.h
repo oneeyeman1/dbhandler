@@ -10,7 +10,7 @@ class SQLiteDatabase : public Database
 public:
     SQLiteDatabase();
     virtual ~SQLiteDatabase();
-    virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg);
+    virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int Disconnect(std::vector<std::wstring> &errorMsg);
@@ -30,7 +30,7 @@ protected:
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
-    virtual int ServerConnect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
+    virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
 private:
     sqlite3 *m_db;
 };

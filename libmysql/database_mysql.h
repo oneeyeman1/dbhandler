@@ -10,8 +10,7 @@ class MySQLDatabase : public Database
 public:
     MySQLDatabase();
     virtual ~MySQLDatabase();
-    virtual int ServerConnect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
-    virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg);
+    virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     int mySQLConnect();
@@ -32,6 +31,7 @@ protected:
     bool IsSystemIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     int TokenizeConnectionString(const std::wstring &connectStr, std::vector<std::wstring> &errorMsg);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
+    virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
 private:
     MYSQL *m_db;
     int m_port, m_flags;

@@ -23,7 +23,7 @@ class ODBCDatabase : public Database
 public:
     ODBCDatabase();
     virtual ~ODBCDatabase();
-    virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg);
+    virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg);
     virtual int Disconnect(std::vector<std::wstring> &errorMsg);
@@ -62,7 +62,7 @@ protected:
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
     int CreateIndexesOnPostgreConnection(std::vector<std::wstring> &errorMsg);
     int GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, const SQLWCHAR *fieldName, std::vector<std::wstring> &errorMsg);
-    virtual int ServerConnect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
+    virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
 private:
     SQLHENV m_env;
     SQLHDBC m_hdbc;

@@ -115,7 +115,7 @@ int MySQLDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstri
     return result;
 }
 
-int MySQLDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res;
     std::wstring err;
@@ -240,7 +240,7 @@ int MySQLDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wst
     return result;
 }
 
-int MySQLDatabase::ServerConnect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
 {
     std::wstring err;
     int result = 0;
