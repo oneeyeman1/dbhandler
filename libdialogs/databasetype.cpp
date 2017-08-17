@@ -163,7 +163,9 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
             m_connStr += "port = " + wxString::Format( "%ld", 5432 ) + " ";
         m_connStr += "user = " + page4->GetUserID()->GetValue() + " ";
         m_connStr += "password = " + page4->GetPassword()->GetValue() + " ";
-        m_connStr += "dbname = " + page4->GetDBName()->GetValue() + " ";
+        wxString dbName = page4->GetDBName()->GetValue();
+        if( !dbName.empty() )
+            m_connStr += "dbname = " + dbName + " ";
         m_connStr += "connect_timeout = " + wxString::Format( "%d", page4->GetTimeout()->GetValue() ) + " ";
     }
     if( m_dbEngine == "mySQL" )
@@ -181,7 +183,9 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
             m_connStr += "port=" + wxString::Format( "%d", 3306 ) + " ";
         m_connStr += "user=" + page5->GetUserID()->GetValue() + " ";
         m_connStr += "password=" + page5->GetPassword()->GetValue() + " ";
-        m_connStr += "dbname=" + page5->GetDBName()->GetValue() + " ";
+        wxString dbName = page5->GetDBName()->GetValue();
+        if( !dbName.empty() )
+            m_connStr += "dbname=" + dbName + " ";
         wxString socket = page5->GetSocket()->GetValue();
         if( !socket.IsEmpty() )
             m_connStr += "socket=" + socket + " ";

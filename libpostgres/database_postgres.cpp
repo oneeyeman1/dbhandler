@@ -72,14 +72,9 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
     int result = 0;
     PGresult *res;
     std::wstring err;
-    std::string query1 = "CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
-    std::string query2 = "CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));";
-    std::string query3 = "CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));";
-    std::string query4 = "CREATE TABLE IF NOT EXISTS abcattbl(abt_snam char(129), abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
-    std::string query5 = "CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));";
-    std::string query6 = "CREATE INDEX IF NOT EXISTS \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
-    std::string query7 = "CREATE INDEX IF NOT EXISTS \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
-    std::wstring errorMessage;
+    std::size_t found = selectedDSN.find( L"" );
+    if( found != std::wstring::npos )
+        connectToDatabase = true;
     m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
     if( PQstatus( m_db ) != CONNECTION_OK )
     {
@@ -97,95 +92,25 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
         }
         else
         {
-            res = PQexec( m_db, "START TRANSACTION" );
-            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+            if( !connectToDatabase )
             {
-                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
-                result = 1;
-                PQclear( res );
-            }
-            else
-            {
-                PQclear( res );
-                res = PQexec( m_db, query1.c_str() );
-                if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                if( ServerConnect( dbList, errorMsg ) )
                 {
-                    PQclear( res );
-                    res = PQexec( m_db, query2.c_str() );
-                    if( PQresultStatus( res ) == PGRES_COMMAND_OK )
-                    {
-                        PQclear( res );
-                        res = PQexec( m_db, query3.c_str() );
-                        if( PQresultStatus( res ) == PGRES_COMMAND_OK )
-					    {
-                            PQclear( res );
-                            res = PQexec( m_db, query4.c_str() );
-                            if( PQresultStatus( res ) == PGRES_COMMAND_OK )
-                            {
-                                PQclear( res );
-                                res = PQexec( m_db, query5.c_str() );
-                                if( PQresultStatus( res ) == PGRES_COMMAND_OK )
-                                {
-                                    PQclear( res );
-                                    if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 5 )
-                                    {
-                                        res = PQexec( m_db, query6.c_str() );
-                                        if( PQresultStatus( res ) == PGRES_COMMAND_OK )
-                                        {
-                                            PQclear( res );
-                                            res = PQexec( m_db, query7.c_str() );
-                                            if( PQresultStatus( res ) == PGRES_COMMAND_OK )
-                                            {
-                                                res = PQexec( m_db, "COMMIT" );
-                                                if( PQresultStatus( res ) == PGRES_COMMAND_OK )
-                                                    PQclear( res );
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if( CreateIndexesOnPostgreConnection( errorMsg ) )
-                                        {
-                                            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                                            errorMsg.push_back( err );
-                                            result = 1;
-                                        }
-                                        else
-                                            res = PQexec( m_db, "COMMIT" );
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    PQfinish( m_db );
+                    errorMsg.push_back( L"Problem during connection. Please fix and restart the application" );
+                    result = 1;
                 }
             }
-            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
-            {
-                PQclear( res );
-                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                errorMsg.push_back( L"Error during database connection: " + err );
-                res = PQexec( m_db, "ROLLBACK" );
-                result = 1;
-            }
             else
             {
-                result = GetTableListFromDb( errorMsg );
-                if( result )
+                if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
                 {
-                    errorMsg.push_back( L"Problem during connection. Please fix the problem and restart the application" );
+                    PQfinish( m_db );
+                    errorMsg.push_back( L"Problem during connection. Please fix and restart the application" );
                     result = 1;
-                    PQclear( res );
                 }
             }
         }
-        pimpl->m_dbName = pimpl->m_tables.begin()->first;
-        pimpl->m_connectString = selectedDSN;
-        std::wstring temp = selectedDSN.substr( selectedDSN.find( L"user" ) );
-        temp = temp.substr( temp.find( '=' ) );
-        std::wstring user = temp.substr( temp.find( '=' ) + 2 );
-        user = user.substr( 0, user.find( ' ' ) );
-        pimpl->m_connectedUser = user;
     }
     return result;
 }
@@ -196,34 +121,132 @@ int PostgresDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vect
     std::wstring err;
     int result = 0;
     std::wstring query = L"SELECT datname FROM pg_database";
-    m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
-    if( PQstatus( m_db ) != CONNECTION_OK )
+    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    ExecStatusType status = PQresultStatus( res );
+    if( status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK )
     {
         err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( L"Connection to database failed: " + err );
         result = 1;
     }
-    else
+    else if( status == PGRES_TUPLES_OK )
     {
-        res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
-        ExecStatusType status = PQresultStatus( res );
-        if( status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK )
+        for( int i = 0; i < PQntuples( res ); i++ )
         {
-            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Connection to database failed: " + err );
-            result = 1;
-        }
-        else if( status == PGRES_TUPLES_OK )
-        {
-            for( int i = 0; i < PQntuples( res ); i++ )
-            {
-                dbList.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
-            }
+            dbList.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
         }
     }
     return result;
 }
 
+int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg);
+{
+    int result = 0;
+    PGresult *res;
+    std::string query1 = "CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
+    std::string query2 = "CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));";
+    std::string query3 = "CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));";
+    std::string query4 = "CREATE TABLE IF NOT EXISTS abcattbl(abt_snam char(129), abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
+    std::string query5 = "CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));";
+    std::string query6 = "CREATE INDEX IF NOT EXISTS \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
+    std::string query7 = "CREATE INDEX IF NOT EXISTS \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
+    std::wstring err;
+    res = PQexec( m_db, "START TRANSACTION" );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    {
+        err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+        PQclear( res );
+    }
+    else
+    {
+        PQclear( res );
+        res = PQexec( m_db, query1.c_str() );
+        if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+        {
+            PQclear( res );
+            res = PQexec( m_db, query2.c_str() );
+            if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+            {
+                PQclear( res );
+                res = PQexec( m_db, query3.c_str() );
+                if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                {
+                    PQclear( res );
+                    res = PQexec( m_db, query4.c_str() );
+                    if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                    {
+                        PQclear( res );
+                        res = PQexec( m_db, query5.c_str() );
+                        if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                        {
+                            PQclear( res );
+                            if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 5 )
+                            {
+                                res = PQexec( m_db, query6.c_str() );
+                                if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                                {
+                                    PQclear( res );
+                                    res = PQexec( m_db, query7.c_str() );
+                                    if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                                    {
+                                        res = PQexec( m_db, "COMMIT" );
+                                        if( PQresultStatus( res ) == PGRES_COMMAND_OK )
+                                            PQclear( res );
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if( CreateIndexesOnPostgreConnection( errorMsg ) )
+                                {
+                                    err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                                    errorMsg.push_back( err );
+                                    result = 1;
+                                }
+                                else
+                                    res = PQexec( m_db, "COMMIT" );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    {
+        PQclear( res );
+        err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( err );
+        res = PQexec( m_db, "ROLLBACK" );
+        result = 1;
+    }
+    else
+    {
+        result = GetTableListFromDb( errorMsg );
+        if( result )
+        {
+            errorMsg.push_back( L"Problem during connection. Please fix the problem and restart the application" );
+            result = 1;
+            PQclear( res );
+        }
+    }
+    if( result )
+        Disconnect();
+    else
+    {
+        pimpl->m_dbName = pimpl->m_tables.begin()->first;
+        pimpl->m_connectString = selectedDSN;
+        std::wstring temp = selectedDSN.substr( selectedDSN.find( L"user" ) );
+        temp = temp.substr( temp.find( '=' ) );
+        std::wstring user = temp.substr( temp.find( '=' ) + 2 );
+        user = user.substr( 0, user.find( ' ' ) );
+        pimpl->m_connectedUser = user;
+    }
+    return reult;
+}
+	
 int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 {
     int result = 0;
