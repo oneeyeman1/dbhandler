@@ -497,52 +497,71 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                         uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1" );
                     delete temp;
                     temp = NULL;
-                    SQLSetConnectAttr( m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0 );
-                    options = m_ask ? SQL_DRIVER_COMPLETE_REQUIRED : SQL_DRIVER_COMPLETE;
-                    ret = SQLDriverConnect( m_hdbc, m_handle, connectStrIn, SQL_NTS, m_connectString, 1024, &OutConnStrLen, options );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                    ret = SQLSetConnectAttr( m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0 );
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
-                        GetErrorMessage( errorMsg, 2 );
-                        result = 1;
-                    }
-                    else
-                    {
-                        str_to_uc_cpy( pimpl->m_connectString, m_connectString );
-                        ret = SQLGetInfo( m_hdbc, SQL_DBMS_NAME, dbType, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        options = m_ask ? SQL_DRIVER_COMPLETE_REQUIRED : SQL_DRIVER_COMPLETE;
+                        ret = SQLDriverConnect( m_hdbc, m_handle, connectStrIn, SQL_NTS, m_connectString, 1024, &OutConnStrLen, options );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                         {
                             GetErrorMessage( errorMsg, 2 );
                             result = 1;
                         }
                         else
                         {
-                            str_to_uc_cpy( pimpl->m_subtype, dbType );
-                            if( GetServerVersion( errorMsg ) )
+                            str_to_uc_cpy( pimpl->m_connectString, m_connectString );
+                            ret = SQLGetInfo( m_hdbc, SQL_DBMS_NAME, dbType, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
+                                GetErrorMessage( errorMsg, 2 );
                                 result = 1;
                             }
                             else
                             {
-                                ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
+                                str_to_uc_cpy( pimpl->m_subtype, dbType );
+                                bufferSize = 1024;
+                                ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 2 );
                                     result = 1;
-                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                                 }
                                 else
                                 {
-                                    if( ServerConnect( dbList, errorMsg ) )
+                                    str_to_uc_cpy( pimpl->m_dbName, dbName );
+                                    if( !pimpl->m_dbName.empty() )
+                                        connectToDatabase = true;
+                                    if( GetServerVersion( errorMsg ) )
                                     {
                                         result = 1;
                                     }
                                     else
                                     {
-                                        if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
+                                        ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 2 );
                                             result = 1;
                                             ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                        }
+                                        else
+                                        {
+                                            if( !connectToDatabase )
+                                            {
+                                                if( ServerConnect( dbList, errorMsg ) )
+                                                {
+                                                    result = 1;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
+                                                {
+                                                    GetErrorMessage( errorMsg, 2 );
+                                                    result = 1;
+                                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -1881,7 +1900,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 else
                 {
                     bufferSize = 1024;
-                    ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
+                    ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 2 );
@@ -1889,18 +1908,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     else
                     {
-                        str_to_uc_cpy( pimpl->m_dbName, dbName );
-                        bufferSize = 1024;
-                        ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 2 );
-                            result = 1;
-                        }
-                        else
-                        {
-                            str_to_uc_cpy( pimpl->m_connectedUser, dbName );
-                        }
+                        str_to_uc_cpy( pimpl->m_connectedUser, dbName );
                     }
                 }
             }
