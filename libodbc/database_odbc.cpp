@@ -557,7 +557,6 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                             {
                                                 if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
                                                 {
-                                                    GetErrorMessage( errorMsg, 2 );
                                                     result = 1;
                                                     ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                                                 }
@@ -986,7 +985,11 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     table = L"";
                     str_to_uc_cpy( schema, schemaName );
                     str_to_uc_cpy( table, tableName );
-                    GetTableOwner( schema, table, errorMsg );
+                    if( GetTableOwner( schema, table, errorMsg ) )
+                    {
+                        result = 1;
+                        break;
+                    }
                     ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_colattr );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
