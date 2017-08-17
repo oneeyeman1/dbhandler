@@ -224,6 +224,7 @@ class Database
 protected:
     struct Impl;
     Impl *pimpl;
+    bool connectToDatabase;
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;

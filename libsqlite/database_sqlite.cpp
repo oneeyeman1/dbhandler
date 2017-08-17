@@ -29,6 +29,7 @@ SQLiteDatabase::SQLiteDatabase() : Database()
     pimpl->m_connectedUser = L"";
     sqlite_pimpl = new SQLiteImpl;
     sqlite_pimpl->m_catalog = L"";
+    connectToDatabase = false;
 }
 
 SQLiteDatabase::~SQLiteDatabase()

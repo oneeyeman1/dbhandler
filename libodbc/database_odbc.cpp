@@ -38,6 +38,7 @@ ODBCDatabase::ODBCDatabase() : Database()
     m_oneStatement = false;
     m_connectString = NULL;
     odbc_pimpl = new ODBCImpl;
+    connectToDatabase = false;
 }
 
 ODBCDatabase::~ODBCDatabase()

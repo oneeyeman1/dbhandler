@@ -30,6 +30,7 @@ PostgresDatabase::PostgresDatabase() : Database()
     pimpl->m_type = L"PostgreSQL";
     pimpl->m_subtype = L"";
     m_pimpl = new PostgresImpl;
+    connectToDatabase = false;
 }
 
 PostgresDatabase::~PostgresDatabase()

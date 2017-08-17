@@ -29,7 +29,6 @@ public:
     virtual int Disconnect(std::vector<std::wstring> &errorMsg);
     void SetWindowHandle(SQLHWND handle);
     void AskForConnectionParameter(bool ask);
-    int CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg);
     bool GetDriverList(std::map<std::wstring, std::vector<std::wstring> > &driversDSN, std::vector<std::wstring> &errMsg);
     bool AddDsn(SQLHWND hwnd, const std::wstring &driver, std::vector<std::wstring> &errorMsg);
     bool EditDsn(SQLHWND hwnd, const std::wstring &driver, const std::wstring &dsn, std::vector<std::wstring> &errorMsg);
@@ -63,6 +62,7 @@ protected:
     int CreateIndexesOnPostgreConnection(std::vector<std::wstring> &errorMsg);
     int GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, const SQLWCHAR *fieldName, Field *field, std::vector<std::wstring> &errorMsg);
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
+    int CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg);
 private:
     SQLHENV m_env;
     SQLHDBC m_hdbc;
