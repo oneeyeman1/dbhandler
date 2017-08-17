@@ -1762,12 +1762,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     str_to_uc_cpy( fieldType, szTypeName );
                                     str_to_uc_cpy( defaultValue, szColumnDefault );
                                     Field *field = new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
-/*                                if( GetFieldProperties( tableName, schemaName, odbc_pimpl->m_currentTableOwner, field, errorMsg ) )
+                                if( GetFieldProperties( tableName, schemaName, odbc_pimpl->m_currentTableOwner, szColumnName, field, errorMsg ) )
                                 {
                                     GetErrorMessage( errorMsg, 2 );
                                     result = 1;
                                     break;
-                                }*/
+                                }
                                     fields.push_back( field );
                                     fieldName = L"";
                                     fieldType = L"";
@@ -2906,7 +2906,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
     return result;
 }
 
-int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, const SQLWCHAR *fieldName, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, const SQLWCHAR *fieldName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     SQLHDBC hdbc_fieldProp;
     SQLHSTMT stmt_fieldProp;

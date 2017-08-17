@@ -747,7 +747,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                         autoincrement = false;
                                                                                     is_pk = pk == 1 ? true : false;
                                                                                     Field *field = new Field( fieldName, fieldType, fieldSize, fieldPrec, fieldDefaultValue, is_nullable, autoincrement, is_pk, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
-                                                                                    if( GetFieldProperties( (const char *) table_name, "", "", (const char *) colName, errorMsg ) )
+                                                                                    if( GetFieldProperties( (const char *) table_name, "", "", (const char *) colName, field, errorMsg ) )
                                                                                     {
                                                                                         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
                                                                                         errorMsg.push_back( err );
@@ -1655,7 +1655,7 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
     return result;
 }
 
-int MySQLDatabase::GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, const char *fieldName, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, const char *fieldName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
     int result = 0;
