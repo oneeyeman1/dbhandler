@@ -32,6 +32,7 @@ protected:
     int TokenizeConnectionString(const std::wstring &connectStr, std::vector<std::wstring> &errorMsg);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
+    int CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg);
 private:
     MYSQL *m_db;
     int m_port, m_flags;
