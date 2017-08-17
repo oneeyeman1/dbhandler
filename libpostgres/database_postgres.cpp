@@ -70,9 +70,8 @@ int PostgresDatabase::DropDatabase(const std::wstring &name, std::vector<std::ws
 int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    PGresult *res;
     std::wstring err;
-    std::size_t found = selectedDSN.find( L"" );
+    std::size_t found = selectedDSN.find( L"dbName" );
     if( found != std::wstring::npos )
         connectToDatabase = true;
     m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
