@@ -147,7 +147,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             if( engine == "mySQL" )
                 pdb = new MySQLDatabase();
             wxBeginBusyCursor();
-            result = pdb->Connect( name.ToStdWstring(), errorMsg );
+            result = pdb->Connect( name.ToStdWstring(), dsn, errorMsg );
             wxEndBusyCursor();
             if( result )
             {
