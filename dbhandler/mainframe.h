@@ -30,7 +30,6 @@ private:
     void OnSize(wxSizeEvent &event);
     Database *m_db;
     wxDynamicLibrary *m_lib;
-    wxDynamicLibrary *m_lib1;
     wxMenu *m_menuFile;
     wxDocManager *m_manager;
 #if defined __WXMSW__ || defined __WXGTK__

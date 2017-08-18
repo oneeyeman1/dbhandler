@@ -58,7 +58,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
 #if defined __WXMSW__ || defined __WXGTK__
     m_tb = NULL;
 #endif
-    m_lib = m_lib1 = NULL;
+    m_lib = NULL;
     m_manager = manager;
     m_menuFile = new wxMenu;
     m_menuFile->Append( wxID_NEW );
@@ -93,8 +93,6 @@ MainFrame::~MainFrame()
     m_db = NULL;
     delete m_lib;
     m_lib = NULL;
-    delete m_lib1;
-    m_lib1 = NULL;
 }
 
 void MainFrame::InitToolBar(wxToolBar* toolBar)
@@ -272,20 +270,20 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
     if( m_db )
     {
         InitMenuBar( event.GetId() );
-        m_lib1 = new wxDynamicLibrary;
+        m_lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-        m_lib1->Load( "dbwindow" );
+        m_lib->Load( "dbwindow" );
 #elif __WXOSX__
-        m_lib1->Load( "liblibdbwindow.dylib" );
+        m_lib->Load( "liblibdbwindow.dylib" );
 #else
-        m_lib1->Load( "libdbwindow" );
+        m_lib->Load( "libdbwindow" );
 #endif
-        if( m_db && m_lib1->IsLoaded() )
+        if( m_db && m_lib->IsLoaded() )
         {
-            DATABASE func = (DATABASE) m_lib1->GetSymbol( "CreateDatabaseWindow" );
+            DATABASE func = (DATABASE) m_lib->GetSymbol( "CreateDatabaseWindow" );
             func( this, m_manager, m_db, DatabaseView );
         }
-        else if( !m_lib1->IsLoaded() )
+        else if( !m_lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
         else
             wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
@@ -299,20 +297,20 @@ void MainFrame::OnQuery(wxCommandEvent &event)
     if( m_db )
     {
         InitMenuBar( event.GetId() );
-        m_lib1 = new wxDynamicLibrary;
+        m_lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-        m_lib1->Load("dbwindow");
+        m_lib->Load("dbwindow");
 #elif __WXOSX__
-        m_lib1->Load("liblibdbwindow.dylib");
+        m_lib->Load("liblibdbwindow.dylib");
 #else
-        m_lib1->Load("libdbwindow");
+        m_lib->Load("libdbwindow");
 #endif
-        if( m_db && m_lib1->IsLoaded() )
+        if( m_db && m_lib->IsLoaded() )
         {
-            DATABASE func = (DATABASE) m_lib1->GetSymbol( "CreateDatabaseWindow" );
+            DATABASE func = (DATABASE) m_lib->GetSymbol( "CreateDatabaseWindow" );
             func( this, m_manager, m_db, QueryView );
         }
-        else if( !m_lib1->IsLoaded() )
+        else if( !m_lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
         else
             wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
@@ -331,20 +329,20 @@ void MainFrame::OnTable(wxCommandEvent &event)
     if( m_db )
     {
         InitMenuBar( event.GetId() );
-        m_lib1 = new wxDynamicLibrary;
+        m_lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-        m_lib1->Load( "tablewindow" );
+        m_lib->Load( "tablewindow" );
 #elif __WXOSX__
-        m_lib1->Load( "liblibtablewindow.dylib" );
+        m_lib->Load( "liblibtablewindow.dylib" );
 #else
-        m_lib1->Load( "libtablewindow" );
+        m_lib->Load( "libtablewindow" );
 #endif
-        if( m_db && m_lib1->IsLoaded() )
+        if( m_db && m_lib->IsLoaded() )
         {
-            TABLE func = (TABLE) m_lib1->GetSymbol( "CreateDatabaseWindow" );
+            TABLE func = (TABLE) m_lib->GetSymbol( "CreateDatabaseWindow" );
             func( this, m_manager, m_db, NULL, wxEmptyString );                 // create with possible alteration table
         }
-        else if( !m_lib1->IsLoaded() )
+        else if( !m_lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
         else
             wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
