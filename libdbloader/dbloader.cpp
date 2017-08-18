@@ -100,6 +100,7 @@ IMPLEMENT_APP_NO_MAIN(MyDllApp);
 extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine, wxString &connectStr, wxString &connectedUser)
 {
     std::vector<std::wstring> errorMsg, dsn;
+    int result = wxID_OK;
     bool ask = false;
     Database *pdb = NULL;
     wxDynamicLibrary lib;
@@ -123,8 +124,11 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
                 wxMessageBox( (*it) );
             }
         }
-        DBPROFILE func = (DBPROFILE) lib.GetSymbol( "DatabaseProfile" );
-        int result = func( parent, _( "Select Database Profile" ), name, engine, connectedUser, ask, dsn );
+        if( connectStr == "" )
+        {
+            DBPROFILE func = (DBPROFILE) lib.GetSymbol( "DatabaseProfile" );
+            int result = func( parent, _( "Select Database Profile" ), name, engine, connectedUser, ask, dsn );
+        }
         if( result != wxID_CANCEL )
         {
             if( engine == "SQLite" )
@@ -143,7 +147,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             if( engine == "mySQL" )
                 pdb = new MySQLDatabase();
             wxBeginBusyCursor();
-            result = pdb->Connect( name.ToStdWstring(), errorMsg );
+            result = pdb->Connect( name.ToStdWstring(), dsn, errorMsg );
             wxEndBusyCursor();
             if( result )
             {

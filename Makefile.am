@@ -19,12 +19,8 @@ INTLTOOL_FILES = intltool-extract.in \
 EXTRA_DIST = \
 	$(INTLTOOL_FILES)
 
-AM_CXXFLAGS = -I/home/igor/wxWidgets/buildGTK2/lib/wx/include/gtk2-unicode-3.1 \
-	-I/home/igor/wxWidgets/include \
-	-D_FILE_OFFSET_BITS=64 \
-	-DWXUSINGDLL \
-	-D__WXGTK__ \
-	-pthread 
+AM_CXXFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
+	--cxxflags` 
 
 DISTCLEANFILES = intltool-extract \
 	intltool-merge \
