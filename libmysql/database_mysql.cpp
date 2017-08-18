@@ -973,6 +973,14 @@ bool MySQLDatabase::IsSystemIndexExists(const std::wstring &indexName, const std
             errorMsg.push_back( err );
         }
     }
+    delete str_data[0];
+    str_data[0] = NULL;
+    delete str_data[1];
+    str_data[1] = NULL;
+    delete str_length[0];
+    str_length[0] = NULL;
+    delete str_length[1];
+    str_length[1] = NULL;
     return exists;
 }
 
