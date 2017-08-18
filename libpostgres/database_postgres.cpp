@@ -84,7 +84,7 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
         pimpl->m_subtype = L"";
     }
     if( !m_pimpl )
-        new m_pimpl;
+        m_pimpl = new PostgresImpl;
     m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
     if( PQstatus( m_db ) != CONNECTION_OK )
     {
@@ -297,6 +297,7 @@ int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     PGresult *res, *res1, *res2, *res3, *res4, *res5;
+    char *values1[2];
     std::vector<Field *> fields;
     std::vector<std::wstring> fk_names, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
@@ -384,7 +385,6 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 char *table_owner = PQgetvalue( res, i, 3 );
                                 char *tableId = PQgetvalue( res, i, 4 );
                                 table_id = strtol( tableId, NULL, 10 );
-                                char *values1[2];
                                 values1[0] = new char[strlen( schema_name ) + 1];
                                 values1[1] = new char[strlen( table_name ) + 1];
                                 strcpy( values1[0], schema_name );
@@ -548,7 +548,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     delete values1[0];
     values1[0] = NULL;
     delete values1[1];
-    valies1[1];
+    values1[1] = NULL;
     return result;
 }
 

@@ -3207,7 +3207,7 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
         tname = new SQLWCHAR[tableName.length() + 2];
         sname = new SQLWCHAR[schemaName.length() + 2];
         memset( tname, '\0', tableName.length() + 2 );
-        memset( sname, '\0', schemaName().length() + 2);
+        memset( sname, '\0', schemaName.length() + 2);
         uc_to_str_cpy( sname, schemaName );
         uc_to_str_cpy( tname, tableName );
     }
