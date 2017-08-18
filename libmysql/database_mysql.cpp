@@ -28,6 +28,7 @@ MySQLDatabase::MySQLDatabase() : Database()
     pimpl->m_subtype = L"";
     m_pimpl = new MySQLImpl;
     connectToDatabase = false;
+    m_flags = 0;
 }
 
 MySQLDatabase::~MySQLDatabase()
@@ -164,8 +165,6 @@ int MySQLDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wst
                 {
                     if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
                     {
-                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                        errorMsg.push_back( err );
                         result = 1;
                     }
                 }
