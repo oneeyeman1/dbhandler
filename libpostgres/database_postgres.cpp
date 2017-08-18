@@ -377,11 +377,13 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         {
                             for( int i = 0; i < PQntuples( res ); i++ )
                             {
+                                long table_id;
                                 char *catalog_name = PQgetvalue( res, i, 0 );
                                 char *schema_name = PQgetvalue( res, i, 1 );
                                 char *table_name = PQgetvalue( res, i, 2 );
                                 char *table_owner = PQgetvalue( res, i, 3 );
-                                int table_id = (int) PQgetvalue( res, i, 4 );
+                                char *tableId = PQgetvalue( res, i, 4 );
+                                table_id = strtol( tableId, NULL, 10 );
                                 char *values1[2];
                                 values1[0] = new char[strlen( schema_name ) + 1];
                                 values1[1] = new char[strlen( table_name ) + 1];
