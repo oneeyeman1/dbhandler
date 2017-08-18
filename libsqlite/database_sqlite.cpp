@@ -22,13 +22,9 @@
 
 SQLiteDatabase::SQLiteDatabase() : Database()
 {
+    pimpl = NULL;
+    sqlite_pimpl = NULL;
     m_db = NULL;
-    pimpl = new Impl;
-    pimpl->m_type = L"SQLite";
-    pimpl->m_subtype = L"";
-    pimpl->m_connectedUser = L"";
-    sqlite_pimpl = new SQLiteImpl;
-    sqlite_pimpl->m_catalog = L"";
     connectToDatabase = false;
 }
 
@@ -57,9 +53,11 @@ SQLiteDatabase::~SQLiteDatabase()
             delete (*it);
             (*it) = NULL;
         }
-        delete pimpl;
-        pimpl = NULL;
     }
+    delete pimpl;
+    pimpl = NULL;
+    delete sqlite_pimpl;
+    sqlite_pimpl = NULL;
 }
 
 int SQLiteDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
@@ -100,9 +98,17 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     std::string query7 = "CREATE INDEX IF NOT EXISTS \"abcatcol_tnam_ownr_cnam\" ON \"sys.abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
     std::wstring errorMessage;
     if( !pimpl )
+    {
         pimpl = new Impl;
+        pimpl->m_type = L"SQLite";
+        pimpl->m_subtype = L"";
+        pimpl->m_connectedUser = L"";
+    }
     if( !sqlite_pimpl )
+    {
         sqlite_pimpl = new SQLiteImpl;
+        sqlite_pimpl->m_catalog = L"";
+    }
     int res = sqlite3_open( sqlite_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str(), &m_db );
     if( res != SQLITE_OK )
     {

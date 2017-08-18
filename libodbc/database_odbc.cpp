@@ -33,11 +33,10 @@ ODBCDatabase::ODBCDatabase() : Database()
     m_env = 0;
     m_hdbc = 0;
     m_hstmt = 0;
-    pimpl = new Impl;
-    pimpl->m_type = L"ODBC";
+    pimpl = NULL;
+    odbc_pimpl = NULL;
     m_oneStatement = false;
     m_connectString = NULL;
-    odbc_pimpl = new ODBCImpl;
     connectToDatabase = false;
 }
 
@@ -47,6 +46,10 @@ ODBCDatabase::~ODBCDatabase()
     std::vector<std::wstring> errorMsg;
     delete m_connectString;
     m_connectString = 0;
+    delete pimpl;
+    pimpl = NULL;
+    delete odbc_pimpl;
+    odbc_pimpl = NULL;
     if( m_hdbc != 0 )
     {
         ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
@@ -380,7 +383,7 @@ int ODBCDatabase::GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<s
 int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    SQLWCHAR *query;
+    SQLWCHAR *query = NULL;
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
@@ -388,8 +391,6 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstr
         memset( query, '\0', name.length() + 2 );
         uc_to_str_cpy( query, name );
         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        delete query;
-        query = NULL;
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 2 );
@@ -415,13 +416,15 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstr
         GetErrorMessage( errorMsg, 2 );
         result = 1;
     }
+    delete query;
+    query = NULL;
     return result;
 }
 
 int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    SQLWCHAR *query;
+    SQLWCHAR *query = NULL;
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
@@ -429,8 +432,6 @@ int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstrin
         memset( query, '\0', name.length() + 2 );
         uc_to_str_cpy( query, name );
         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        delete query;
-        query = NULL;
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 2 );
@@ -456,6 +457,8 @@ int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstrin
         GetErrorMessage( errorMsg, 2 );
         result = 1;
     }
+    delete query;
+    query = NULL;
     return result;
 }
 
@@ -469,7 +472,12 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     SQLUSMALLINT options;
     std::wstring query1, query2, query3, query4, query5, query6, query7;
     if( !pimpl )
+    {
         pimpl = new Impl;
+        pimpl->m_type = L"ODBC";
+    }
+    if( !odbc_pimpl )
+        odbc_pimpl = new ODBCImpl;
     m_connectString = new SQLWCHAR[sizeof(SQLWCHAR) * 1024];
     memset( dsn, 0, sizeof( dsn ) );
     memset( connectStrIn, 0, sizeof( connectStrIn ) );
@@ -604,7 +612,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
 {
     int result = 0;
     std::wstring query1, query2, query3, query4, query5, query6, query7;
-    SQLWCHAR *query;
+    SQLWCHAR *query = NULL;
     if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
         query1 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE \"abcatcol\"(abc_tnam varchar(129) NOT NULL, abc_tid integer, abc_ownr varchar(129) NOT NULL, abc_cnam varchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn varchar(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt varchar(254), abc_edit varchar(31), abc_tag varchar(254) PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
@@ -2838,6 +2846,8 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     }
     else
         m_hstmt = 0;
+    delete qry;
+    qry = NULL;
     return result;
 }
 
@@ -3079,6 +3089,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
         }
     }
     delete qry;
+    qry = NULL;
     return result;
 }
 
@@ -3087,6 +3098,7 @@ int ODBCDatabase::ApplyForeignKey(const std::wstring &command, const std::wstrin
     tableName = tableName;
     int result = 0;
     SQLRETURN ret;
+    SQLWCHAR *query = NULL;
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -3095,7 +3107,7 @@ int ODBCDatabase::ApplyForeignKey(const std::wstring &command, const std::wstrin
     }
     else
     {
-        SQLWCHAR *query = new SQLWCHAR[command.length() + 2];
+        query = new SQLWCHAR[command.length() + 2];
         memset( query, '\0', command.size() + 2 );
         uc_to_str_cpy( query, command );
         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
@@ -3104,8 +3116,6 @@ int ODBCDatabase::ApplyForeignKey(const std::wstring &command, const std::wstrin
             GetErrorMessage( errorMsg, 2, m_hstmt );
             result = 1;
         }
-        delete query;
-        query = NULL;
         ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -3115,12 +3125,15 @@ int ODBCDatabase::ApplyForeignKey(const std::wstring &command, const std::wstrin
         else
             m_hstmt = 0;
     }
+    delete query;
+    query = NULL;
     return result;
 }
 
 int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    SQLWCHAR *qry = NULL;
     std::wstring query = L"DROP TABLE ";
     query += tableName;
     SQLRETURN ret;
@@ -3132,7 +3145,7 @@ int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::ws
     }
     else
     {
-        SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+        qry = new SQLWCHAR[query.length() + 2];
         memset( qry, '\0', query.length() + 2 );
         uc_to_str_cpy( qry, query );
         ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
@@ -3141,8 +3154,6 @@ int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::ws
             GetErrorMessage( errorMsg, 2, m_hstmt );
             result = 1;
         }
-        delete qry;
-        qry = NULL;
         ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -3152,6 +3163,8 @@ int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::ws
         else
             m_hstmt = 0;
     }
+    delete qry;
+    qry = NULL;
     return result;
 }
 
@@ -3169,13 +3182,16 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
     long id;
     int result = 0;
     std::wstring query;
+    SQLWCHAR *qry = NULL, *tname = NULL;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT OBJECT_ID(?);";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT oid FROM pg_class WHERE relname = ?";
+    if( pimpl->m_subtype == L"MySQL" )
+        query = L"";
     std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
-    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
-    SQLWCHAR *tname = new SQLWCHAR[tableName.length() + 2];
+    qry = new SQLWCHAR[query.length() + 2];
+    tname = new SQLWCHAR[tableName.length() + 2];
     memset( qry, '\0', query.length() + 2 );
     memset( tname, '\0', tableName.length() + 2 );
     uc_to_str_cpy( qry, query );

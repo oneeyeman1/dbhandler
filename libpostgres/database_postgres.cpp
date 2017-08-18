@@ -26,15 +26,17 @@
 PostgresDatabase::PostgresDatabase() : Database()
 {
     m_db = NULL;
-    pimpl = new Impl;
-    pimpl->m_type = L"PostgreSQL";
-    pimpl->m_subtype = L"";
-    m_pimpl = new PostgresImpl;
+    pimpl = NULL;
+    m_pimpl = NULL;
     connectToDatabase = false;
 }
 
 PostgresDatabase::~PostgresDatabase()
 {
+    delete pimpl;
+    pimpl = NULL;
+    delete m_pimpl;
+    m_pimpl = NULL;
 }
 
 int PostgresDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
@@ -75,6 +77,14 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
     std::size_t found = selectedDSN.find( L"dbName" );
     if( found != std::wstring::npos )
         connectToDatabase = true;
+    if( !pimpl )
+    {
+        pimpl = new Impl;
+        pimpl->m_type = L"PostgreSQL";
+        pimpl->m_subtype = L"";
+    }
+    if( !m_pimpl )
+        new m_pimpl;
     m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
     if( PQstatus( m_db ) != CONNECTION_OK )
     {
@@ -142,6 +152,7 @@ int PostgresDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vect
             dbList.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
         }
     }
+    PQclear( res );
     return result;
 }
 
@@ -532,6 +543,10 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         PQclear( res );
     }
+    delete values1[0];
+    values1[0] = NULL;
+    delete values1[1];
+    valies1[1];
     return result;
 }
 
@@ -685,6 +700,10 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
         }
     }
     PQclear( res );
+    delete values[0];
+    values[0] = NULL;
+    delete values[1];
+    values[1] = NULL;
     return result;
 }
 
@@ -977,6 +996,10 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
         result = true;
     }
     PQclear( res );
+    delete values[0];
+    values[0] = NULL;
+    delete values[1];
+    values[1] = NULL;
     return result;
 }
 
@@ -1115,6 +1138,12 @@ int PostgresDatabase::ApplyForeignKey(const std::wstring &command, const std::ws
             }
         }
     }
+    delete values[0];
+    values[0] = NULL;
+    delete values[1];
+    values[1] = NULL;
+    delete values[2];
+    values[2];
     return result;
 }
 
