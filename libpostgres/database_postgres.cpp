@@ -40,9 +40,10 @@ PostgresDatabase::~PostgresDatabase()
 int PostgresDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    std::vector<std::wstring> dbList;
     result = Disconnect( errorMsg );
     if( !result )
-        result = Connect(name, errorMsg);
+        result = Connect( name, dbList, errorMsg );
     return result;
 }
 
@@ -91,6 +92,12 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
         }
         else
         {
+            pimpl->m_connectString = selectedDSN;
+            std::wstring temp = selectedDSN.substr( selectedDSN.find( L"user" ) );
+            temp = temp.substr( temp.find( '=' ) );
+            std::wstring user = temp.substr( temp.find( '=' ) + 2 );
+            user = user.substr( 0, user.find( ' ' ) );
+            pimpl->m_connectedUser = user;
             if( !connectToDatabase )
             {
                 if( ServerConnect( dbList, errorMsg ) )
@@ -138,7 +145,7 @@ int PostgresDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vect
     return result;
 }
 
-int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg);
+int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     PGresult *res;
@@ -232,18 +239,12 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
         }
     }
     if( result )
-        Disconnect();
+        Disconnect( errorMsg );
     else
     {
         pimpl->m_dbName = pimpl->m_tables.begin()->first;
-        pimpl->m_connectString = selectedDSN;
-        std::wstring temp = selectedDSN.substr( selectedDSN.find( L"user" ) );
-        temp = temp.substr( temp.find( '=' ) );
-        std::wstring user = temp.substr( temp.find( '=' ) + 2 );
-        user = user.substr( 0, user.find( ' ' ) );
-        pimpl->m_connectedUser = user;
     }
-    return reult;
+    return result;
 }
 	
 int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
@@ -369,7 +370,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 char *schema_name = PQgetvalue( res, i, 1 );
                                 char *table_name = PQgetvalue( res, i, 2 );
                                 char *table_owner = PQgetvalue( res, i, 3 );
-                                int table_id = (int *) PQgetvalue( res, i, 4 );
+                                int table_id = (int) PQgetvalue( res, i, 4 );
                                 char *values1[2];
                                 values1[0] = new char[strlen( schema_name ) + 1];
                                 values1[1] = new char[strlen( table_name ) + 1];
@@ -443,7 +444,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         {
                                             int size, precision;
                                             bool autoinc = false;
-                                            fieldName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 0 ) );
+                                            const char *field_name = PQgetvalue( res2, j, 0 );
+                                            fieldName = m_pimpl->m_myconv.from_bytes( field_name );
                                             fieldType = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 1 ) );
                                             char *char_length = PQgetvalue( res2, j, 2 );
                                             char *char_radix = PQgetvalue( res2, j, 3 );
@@ -466,7 +468,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             if( fieldType == L"serial" || fieldType == L"bigserial" )
                                                 autoinc = true;
                                             Field *field = new Field( fieldName, fieldType, size, precision, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
-                                            if( GetFieldProperties( table_name, schema_name, table_owner, fieldName, field, errorMsg ) )
+                                            if( GetFieldProperties( table_name, schema_name, table_owner, field_name, field, errorMsg ) )
                                             {
                                                 std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                                                 errorMsg.push_back( err );
@@ -991,7 +993,7 @@ int PostgresDatabase::GetFieldProperties(const char *tableName, const char *sche
     values[0] = NULL, values[1] = NULL, values[2] = NULL;
     values[0] = new char[strlen( tname ) + 1];
     values[1] = new char[strlen( ownerName ) + 1];
-    values[2] = new char[table->GetFieldName().length() + 1];
+    values[2] = new char[strlen( fieldName ) + 1];
     memset( values[0], '\0', strlen( tname ) + 1 );
     memset( values[1], '\0', strlen( ownerName ) + 1 );
     memset( values[2], '\0', strlen( fieldName ) + 1 );

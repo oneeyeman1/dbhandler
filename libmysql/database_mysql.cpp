@@ -175,9 +175,10 @@ int MySQLDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wst
     return result;
 }
 
-int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg);
+int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res;
+    std::wstring err;
     std::wstring query1 = L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
     std::wstring query2 = L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));";
     std::wstring query3 = L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));";
@@ -289,7 +290,8 @@ int MySQLDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<
     }
     else
     {
-        if( !mysql_store_result( m_db ) )
+        MYSQL_RES *res;
+        if( !( res = mysql_store_result( m_db ) ) )
         {
             err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
@@ -298,7 +300,7 @@ int MySQLDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<
         else
         {
             MYSQL_ROW row;
-            while( ( row = mysql_fetch_row( results ) ) != NULL )
+            while( ( row = mysql_fetch_row( res ) ) != NULL )
             {
                 dbList.push_back( m_pimpl->m_myconv.from_bytes( row[0] ) );
             }

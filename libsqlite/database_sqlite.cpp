@@ -65,9 +65,10 @@ SQLiteDatabase::~SQLiteDatabase()
 int SQLiteDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    std::vector<std::wstring> dbList;
     result = Disconnect( errorMsg );
     if( result == SQLITE_OK )
-        result = Connect( name, errorMsg );
+        result = Connect( name, dbList, errorMsg );
     return result;
 }
 
@@ -430,7 +431,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 {
                                     std::wstring type = sqlite_pimpl->m_myconv.from_bytes( fieldType );
                                     Field *field = new Field( sqlite_pimpl->m_myconv.from_bytes( fieldName ), type, 0, 0, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK >= 1 ? true : false, std::find( fk_names.begin(), fk_names.end(), sqlite_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
-                                    if( GetFieldProperties( (const char *) tableName, "", "", fieldName, field, errorMsg ) )
+                                    if( GetFieldProperties( (const char *) tableName, "", "", fieldName.c_str(), field, errorMsg ) )
                                     {
                                         result = 1;
                                         GetErrorMessage( res, errorMessage );

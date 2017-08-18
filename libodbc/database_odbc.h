@@ -36,7 +36,7 @@ public:
     bool GetDSNList(std::vector<std::wstring> &dsn, std::vector<std::wstring> &errorMsg);
     virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
-	virtual int GetFieldProperties(const char *UNUSED(tableName), const char *UNUSED(schemaName), const char *UNUSED(ownerName), Field *UNUSED(table), std::vector<std::wstring> &UNUSED(errorMsg)) { return 0; }
+	virtual int GetFieldProperties(const char *UNUSED(tableName), const char *UNUSED(schemaName), const char *UNUSED(ownerName), const char *UNUSED(fieldName), Field *UNUSED(table), std::vector<std::wstring> &UNUSED(errorMsg)) { return 0; }
     virtual int SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg);
