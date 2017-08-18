@@ -3178,24 +3178,41 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
 {
     SQLHSTMT stmt = 0;
     SQLHDBC hdbc;
-    SQLLEN cbName, cbTableName = SQL_NTS;
+    SQLLEN cbName, cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     long id;
     int result = 0;
     std::wstring query;
-    SQLWCHAR *qry = NULL, *tname = NULL;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    SQLWCHAR *qry = NULL, *tname = NULL, *sname = NULL;;
+    if( pimpl->m_subtype == L"Microsoft SQL Server" || pimpl->m_subtype == L"Sybase" )
         query = L"SELECT OBJECT_ID(?);";
     if( pimpl->m_subtype == L"PostgreSQL" )
-        query = L"SELECT oid FROM pg_class WHERE relname = ?";
+        query = L"SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?;";
     if( pimpl->m_subtype == L"MySQL" )
-        query = L"";
+        query = L"SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?;";
+    if( pimpl->m_subtype == L"Oracle" )
+        query = L"SELECT object_id FROM all_objects WHERE object_name = ? AND subobject_name = ?";
     std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
+    std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
     qry = new SQLWCHAR[query.length() + 2];
-    tname = new SQLWCHAR[tableName.length() + 2];
+    if( pimpl->m_subtype == L"Microsoft SQL Server" || pimpl->m_subtype == L"Sybase" )
+    {
+        tname = new SQLWCHAR[tableName.length() + schemaName.length() + 3];
+        memset( tname, '\0', tableName.length() + schemaName.length() + 3 );
+        uc_to_str_cpy( tname, schemaName );
+        uc_to_str_cpy( tname, L"." );
+        uc_to_str_cpy( tname, tableName );
+    }
+    else
+    {
+        tname = new SQLWCHAR[tableName.length() + 2];
+        sname = new SQLWCHAR[schemaName.length() + 2];
+        memset( tname, '\0', tableName.length() + 2 );
+        memset( sname, '\0', schemaName().length() + 2);
+        uc_to_str_cpy( sname, schemaName );
+        uc_to_str_cpy( tname, tableName );
+    }
     memset( qry, '\0', query.length() + 2 );
-    memset( tname, '\0', tableName.length() + 2 );
     uc_to_str_cpy( qry, query );
-    uc_to_str_cpy( tname, tableName );
     SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
     if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
     {
@@ -3229,15 +3246,18 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
                 }
                 else
                 {
-                    retcode = SQLPrepare( stmt, qry, SQL_NTS );
-                    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                    if( pimpl->m_subtype != L"Microsoft SQL Server" && pimpl->m_subtype != L"Sybase" )
                     {
-                        GetErrorMessage( errorMsg, 2, hdbc );
-                        result = 1;
+                        retcode = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, sname, 0, &cbSchemaName );
+                        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 2, hdbc );
+                            result = 1;
+                        }
                     }
-                    else
+                    if( !result )
                     {
-                        retcode = SQLExecute( stmt );
+                        retcode = SQLPrepare( stmt, qry, SQL_NTS );
                         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, 2, hdbc );
@@ -3245,23 +3265,32 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
                         }
                         else
                         {
-                            retcode = SQLFetch( stmt );
+                            retcode = SQLExecute( stmt );
                             if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                             {
-                                GetErrorMessage( errorMsg, 1, stmt );
+                                GetErrorMessage( errorMsg, 2, hdbc );
                                 result = 1;
                             }
                             else
                             {
-                                retcode = SQLGetData( stmt, 1, SQL_C_SLONG, &id, 0, &cbName );
-                                if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
-                                {
-                                    table->SetTableId( id );
-                                }
-                                else
+                                retcode = SQLFetch( stmt );
+                                if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt );
                                     result = 1;
+                                }
+                                else
+                                {
+                                    retcode = SQLGetData( stmt, 1, SQL_C_SLONG, &id, 0, &cbName );
+                                    if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        table->SetTableId( id );
+                                    }
+                                    else
+                                    {
+                                        GetErrorMessage( errorMsg, 1, stmt );
+                                        result = 1;
+                                    }
                                 }
                             }
                         }
@@ -3274,6 +3303,8 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
     qry = NULL;
     delete tname;
     tname = NULL;
+    delete sname;
+    sname = NULL;
     if( stmt )
     {
         retcode = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
