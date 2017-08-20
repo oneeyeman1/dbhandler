@@ -442,7 +442,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         char *catalog_name = row[0] ? row[0] : NULL;
                                         char *schema_name = row[1] ? row[1] : NULL;
                                         char *table_name = row[2] ? row[2] : NULL;
-                                        int table_id = row[3] ? strtol( row[3], &end, 10 ) : 0;
+                                        int table_id = row[4] ? strtol( row[4], &end, 10 ) : 0;
                                         MYSQL_BIND params[3];
                                         unsigned long str_length1, str_length2, str_length3;
                                         str_data1 = new char[strlen( catalog_name )], str_data2 = new char[strlen( schema_name )], str_data3 = new char[strlen( table_name )];
@@ -793,7 +793,9 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
+                                                                                        std::wstring tableName = m_pimpl->m_myconv.from_bytes( (const char *) table_name );
+                                                                                        std::wstring schemaName = m_pimpl->m_myconv.from_bytes( (const char *) schema_name );
+                                                                                        DatabaseTable *table = new DatabaseTable( tableName, schemaName, fields, foreign_keys );
                                                                                         table->SetTableId( table_id );
                                                                                         if( mysql_stmt_bind_param( res3, params ) )
                                                                                         {
