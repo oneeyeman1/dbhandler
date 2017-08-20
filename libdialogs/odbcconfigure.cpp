@@ -43,12 +43,13 @@ typedef int (*DELETEDSN)(Database *, const wxString &, const wxString &);
 CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):wxDialog(parent, id, title, pos, size, wxDEFAULT_DIALOG_STYLE)
 {
     m_db = NULL;
+	m_lib = new wxDynamicLibrary();
 #ifdef __WXMSW__
-    m_lib = new wxDynamicLibrary( "dbloader" );
+    m_lib->Load( "dbloader" );
 #elif __WXOSX__
-    m_lib = new wxDynamicLibrary( "liblibdbloader.dylib" );
+    m_lib->Load( "liblibdbloader.dylib" );
 #else
-    m_lib = new wxDynamicLibrary( "libdbloader" );
+    m_lib->Load( "libdbloader" );
 #endif
     style = style;
     panel_1 = new wxPanel( this, -1 );
