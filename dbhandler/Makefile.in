@@ -366,17 +366,10 @@ dbhandler_CXXFLAGS = -I../../dbinterface \
 	-D__WXGTK__ \
 	-pthread 
 
-dbhandler_LDFLAGS = -L/home/igor/wxWidgets/buildGTK/lib \
-	-pthread \
-	-Wl,-rpath,/home/igor/wxWidgets/buildGTK/lib \
-	-lwx_gtk2u_xrc-3.1 \
-	-lwx_gtk2u_html-3.1 \
-	-lwx_gtk2u_qa-3.1 \
-	-lwx_gtk2u_adv-3.1 \
-	-lwx_gtk2u_core-3.1 \
-	-lwx_baseu_xml-3.1 \
-	-lwx_baseu_net-3.1 \
-	-lwx_baseu-3.1 
+dbhandler_LDFLAGS = -Wl,-rpath \
+	-Wl,/home/igor/dbhandler/Debug/libdialogs \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
+	--libs` 
 
 all: all-am
 
