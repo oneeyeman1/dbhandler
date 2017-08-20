@@ -74,7 +74,7 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
 {
     int result = 0;
     std::wstring err;
-    std::size_t found = selectedDSN.find( L"dbName" );
+    std::size_t found = selectedDSN.find( L"dbname" );
     if( found != std::wstring::npos )
         connectToDatabase = true;
     if( !pimpl )
@@ -108,6 +108,12 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
             std::wstring user = temp.substr( temp.find( '=' ) + 2 );
             user = user.substr( 0, user.find( ' ' ) );
             pimpl->m_connectedUser = user;
+            if( connectToDatabase )
+            {
+               temp = selectedDSN.substr( selectedDSN.find( L"dbname = " ) );
+               temp = temp.substr( temp.find( '=' ) + 2 );
+               std::wstring dbname = temp.substr( 0, temp.find( ' ' ) );
+            }
             if( !connectToDatabase )
             {
                 if( ServerConnect( dbList, errorMsg ) )
