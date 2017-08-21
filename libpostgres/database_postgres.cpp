@@ -74,7 +74,7 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
 {
     int result = 0;
     std::wstring err;
-    std::size_t found = selectedDSN.find( L"dbName" );
+    std::size_t found = selectedDSN.find( L"dbname" );
     if( found != std::wstring::npos )
         connectToDatabase = true;
     if( !pimpl )
@@ -108,6 +108,13 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
             std::wstring user = temp.substr( temp.find( '=' ) + 2 );
             user = user.substr( 0, user.find( ' ' ) );
             pimpl->m_connectedUser = user;
+            if( connectToDatabase )
+            {
+               temp = selectedDSN.substr( selectedDSN.find( L"dbname = " ) );
+               temp = temp.substr( temp.find( '=' ) + 2 );
+               std::wstring dbname = temp.substr( 0, temp.find( ' ' ) );
+               pimpl->m_dbName = dbname;
+            }
             if( !connectToDatabase )
             {
                 if( ServerConnect( dbList, errorMsg ) )
@@ -499,6 +506,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         else
                                         {
                                             DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
+                                            table->SetTableOwner( m_pimpl->m_myconv.from_bytes( table_owner ) );
                                             if( GetTableProperties( table, errorMsg ) )
                                             {
                                                 char *err = PQerrorMessage( m_db );
