@@ -113,6 +113,7 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
                temp = selectedDSN.substr( selectedDSN.find( L"dbname = " ) );
                temp = temp.substr( temp.find( '=' ) + 2 );
                std::wstring dbname = temp.substr( 0, temp.find( ' ' ) );
+               pimpl->m_dbName = dbname;
             }
             if( !connectToDatabase )
             {
@@ -505,6 +506,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         else
                                         {
                                             DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
+                                            table->SetTableOwner( m_pimpl->m_myconv.from_bytes( table_owner ) );
                                             if( GetTableProperties( table, errorMsg ) )
                                             {
                                                 char *err = PQerrorMessage( m_db );
