@@ -18306,12 +18306,9 @@ do
     "libdbloader/Makefile") CONFIG_FILES="$CONFIG_FILES libdbloader/Makefile" ;;
     "libdbwindow/Makefile") CONFIG_FILES="$CONFIG_FILES libdbwindow/Makefile" ;;
     "dbhandler/Makefile") CONFIG_FILES="$CONFIG_FILES dbhandler/Makefile" ;;
-<<<<<<< HEAD
-=======
     "libmysql/Makefile") CONFIG_FILES="$CONFIG_FILES libmysql/Makefile" ;;
     "libpostgres/Makefile") CONFIG_FILES="$CONFIG_FILES libpostgres/Makefile" ;;
     "libtablewindow/Makefile") CONFIG_FILES="$CONFIG_FILES libtablewindow/Makefile" ;;
->>>>>>> 4d068f69162bd133dba357f2445878c447f6607f
     "libpropertypages/Makefile") CONFIG_FILES="$CONFIG_FILES libpropertypages/Makefile" ;;
     "po/stamp-it") CONFIG_COMMANDS="$CONFIG_COMMANDS po/stamp-it" ;;
 
