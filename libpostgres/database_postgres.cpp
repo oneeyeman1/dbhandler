@@ -108,13 +108,6 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
             std::wstring user = temp.substr( temp.find( '=' ) + 2 );
             user = user.substr( 0, user.find( ' ' ) );
             pimpl->m_connectedUser = user;
-            if( connectToDatabase )
-            {
-               temp = selectedDSN.substr( selectedDSN.find( L"dbname = " ) );
-               temp = temp.substr( temp.find( '=' ) + 2 );
-               std::wstring dbname = temp.substr( 0, temp.find( ' ' ) );
-               pimpl->m_dbName = dbname;
-            }
             if( !connectToDatabase )
             {
                 if( ServerConnect( dbList, errorMsg ) )
@@ -126,6 +119,10 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
             }
             else
             {
+                temp = selectedDSN.substr( selectedDSN.find( L"dbname = " ) );
+                temp = temp.substr( temp.find( '=' ) + 2 );
+                std::wstring dbname = temp.substr( 0, temp.find( ' ' ) );
+                pimpl->m_dbName = dbname;
                 if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
                 {
                     PQfinish( m_db );
@@ -378,7 +375,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         {
                             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                             errorMsg.push_back( L"Error executing query: " + err );
-                            PQclear( res );
+                            PQclear( res5 );
                             result = 1;
                         }
                         else
