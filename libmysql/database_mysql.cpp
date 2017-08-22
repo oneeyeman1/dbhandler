@@ -443,9 +443,9 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         MYSQL_BIND params[3];
                                         unsigned long str_length1, str_length2, str_length3;
                                         str_data1 = new char[strlen( catalog_name )], str_data2 = new char[strlen( schema_name )], str_data3 = new char[strlen( table_name )];
-			                            memset( str_data1, '\0', strlen( catalog_name ) );
-			                            memset( str_data2, '\0', strlen( schema_name ) );
-			                            memset( str_data3, '\0', strlen( table_name ) );
+                                        memset( str_data1, '\0', strlen( catalog_name ) );
+                                        memset( str_data2, '\0', strlen( schema_name ) );
+                                        memset( str_data3, '\0', strlen( table_name ) );
                                         memset( params, 0, sizeof( params ) );
                                         str_length1 = strlen( catalog_name );
                                         str_length2 = strlen( schema_name );
@@ -877,7 +877,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             }
                         }
                     }
-				}
+                }
             }
         }
     }
