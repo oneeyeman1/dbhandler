@@ -414,11 +414,15 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     int count = 0;
                                     for( int j = 0; j < PQntuples( res1 ); j++ )
                                     {
+                                        char *key_id = PQgetvalue( res1, j, 0 );
+                                        char *fk_reference = PQgetvalue( res1, j, 1 );
                                         fkField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 2 ) );
                                         fkTable = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 3 ) );
                                         fkTableField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 4 ) );
                                         fkUpdateConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 5 ) );
                                         fkDeleteConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 6 ) );
+                                        fkId = atoi( key_id );
+                                        fkReference = atoi( fk_reference );
                                         if( fkUpdateConstraint == L"NO ACTION" )
                                             update_constraint = NO_ACTION_UPDATE;
                                         if( fkUpdateConstraint == L"RESTRICT" )
