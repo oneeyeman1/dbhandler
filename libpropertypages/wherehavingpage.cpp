@@ -20,8 +20,10 @@
 
 typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring> &, wxString &);
 
-WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
+WhereHavingPage::WhereHavingPage(wxWindow *parent, const wxString &type, const wxString &subtype) : wxPanel( parent )
 {
+    m_type = type;
+    m_subtype = subtype;
     m_operatorChoices[0] = "=";
     m_operatorChoices[1] = "<";
     m_operatorChoices[2] = ">";
