@@ -233,8 +233,6 @@ protected:
 public:
     virtual ~Database() = 0;
     Impl &GetTableVector() { return *pimpl; };
-    const std::wstring &GetDatabaseType() const { return pimpl->m_type; };
-    const std::wstring &GetDatabaseSubtype() const { return pimpl->m_subtype; };
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
@@ -256,6 +254,8 @@ struct Database::Impl
     int m_versionMajor, m_versionMinor, m_versionRevision;
     const std::wstring &GetConnectedUser() { return m_connectedUser; };
     void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
+    const std::wstring &GetDatabaseType() const { return m_type; };
+    const std::wstring &GetDatabaseSubtype() const { return m_subtype; };
 };
 
 inline Database::~Database()
