@@ -155,9 +155,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_type == QueryView )
     {
         m_queryBook = new wxNotebook( m_frame, wxID_ANY );
-        m_page2 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetDatabaseType(), GetDocument()->GetDatabase()->GetDatabaseSubtype() );
+        m_page2 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
         m_queryBook->AddPage( m_page2, _( "Where" ) );
-        m_page4 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetDatabaseType(), GetDocument()->GetDatabase()->GetDatabaseSubtype() );
+        m_page4 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
         m_queryBook->AddPage( m_page4, _( "Having" ) );
         m_page6 = new SyntaxPropPage( m_queryBook );
         m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
