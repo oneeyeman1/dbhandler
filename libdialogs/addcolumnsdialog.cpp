@@ -255,7 +255,7 @@ void AddColumnsDialog::set_properties()
             m_fields->Append( "stddev" );
             m_fields->Append( "stddev_pop" );
             m_fields->Append( "stddev_samp" );
-            m_fields->Appebnd( "string_agg" );
+            m_fields->Append( "string_agg" );
             m_fields->Append( "string_to_array" );
             m_fields->Append( "strip" );
             m_fields->Append( "strpos" );

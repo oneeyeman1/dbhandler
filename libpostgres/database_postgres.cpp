@@ -423,25 +423,25 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         fkDeleteConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 6 ) );
                                         fkId = atoi( key_id );
                                         fkReference = atoi( fk_reference );
-                                        if( fkUpdateConstraint == L"NO ACTION" )
+                                        if( fkUpdateConstraint == L"a" )
                                             update_constraint = NO_ACTION_UPDATE;
-                                        if( fkUpdateConstraint == L"RESTRICT" )
+                                        if( fkUpdateConstraint == L"r" )
                                             update_constraint = RESTRICT_UPDATE;
-                                        if( fkUpdateConstraint == L"SET NULL" )
+                                        if( fkUpdateConstraint == L"n" )
                                             update_constraint = SET_NULL_UPDATE;
-                                        if( fkUpdateConstraint == L"SET DEFAULT" )
+                                        if( fkUpdateConstraint == L"d" )
                                             update_constraint = SET_DEFAULT_UPDATE;
-                                        if( fkUpdateConstraint == L"CASCADE" )
+                                        if( fkUpdateConstraint == L"c" )
                                             update_constraint = CASCADE_UPDATE;
-                                        if( fkDeleteConstraint == L"NO ACTION" )
+                                        if( fkDeleteConstraint == L"a" )
                                             delete_constraint = NO_ACTION_DELETE;
-                                        if( fkDeleteConstraint == L"RESTRICT" )
+                                        if( fkDeleteConstraint == L"r" )
                                             delete_constraint = RESTRICT_DELETE;
-                                        if( fkDeleteConstraint == L"SET NULL" )
+                                        if( fkDeleteConstraint == L"n" )
                                             delete_constraint = SET_NULL_DELETE;
-                                        if( fkDeleteConstraint == L"SET DEFAULT" )
+                                        if( fkDeleteConstraint == L"d" )
                                             delete_constraint = SET_DEFAULT_DELETE;
-                                        if( fkDeleteConstraint == L"CASCADE" )
+                                        if( fkDeleteConstraint == L"c" )
                                             delete_constraint = CASCADE_DELETE;
                                         foreign_keys[count++].push_back( new FKField( fkReference, fkTable, fkField, fkTableField, L"", update_constraint, delete_constraint ) );
                                         fk_names.push_back( fkField );
