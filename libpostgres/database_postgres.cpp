@@ -672,7 +672,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     memset( values[1], '\0', len2 * 2 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( t.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
-    int length[2] = { strlen( values[0] ), strlen( values[1] ) };
+    int length[2] = { static_cast<int>( strlen( values[0] ) ), static_cast<int>( strlen( values[1] ) ) };
     int formats[2] = { 1, 1 };
     PGresult *res = PQexecPrepared( m_db, "get_table_prop", 2, values, length, formats, 1 );
     ExecStatusType status = PQresultStatus( res );
