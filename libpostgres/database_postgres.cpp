@@ -393,8 +393,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 values1[1] = new char[strlen( table_name ) + 1];
                                 strcpy( values1[0], schema_name );
                                 strcpy( values1[1], table_name );
-                                int len1 = strlen( schema_name );
-                                int len2 = strlen( table_name );
+                                int len1 = (int) strlen( schema_name );
+                                int len2 = (int) strlen( table_name );
                                 int length1[2] = { len1, len2 };
                                 int formats1[2] = { 1, 1 };
                                 res1 = PQexecPrepared( m_db, "get_fkeys", 2, values1, length1, formats1, 1 );
@@ -631,9 +631,9 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
     strcpy( values[2], m_pimpl->m_myconv.to_bytes( indexName.c_str() ).c_str() );
-    int len1 = schemaName.length();
-    int len2 = tableName.length();
-    int len3 = indexName.length();
+    int len1 = (int) schemaName.length();
+    int len2 = (int) tableName.length();
+    int len3 = (int) indexName.length();
     int length[3] = { len1, len2, len3 };
     int formats[3] = { 1, 1, 1 };
     res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL, values, length, formats, 1 );
@@ -739,7 +739,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
         std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
         std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
         std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
-        int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
+        unsigned long tableId = const_cast<DatabaseTable *>( table )->GetTableId();
         exist = IsTablePropertiesExist( table, errorMsg );
         if( errorMsg.size() != 0 )
             result = 1;
@@ -990,8 +990,8 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( tname.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( owner.c_str() ).c_str() );
     values[2] = (char *) &tableId;
-    int len1 = tname.length();
-    int len2 = owner.length();
+    int len1 = (int) tname.length();
+    int len2 = (int) owner.length();
     int length[2] = { len1, len2 };
     int formats[2] = { 1, 1 };
     PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, length, formats, 1 );
@@ -1017,7 +1017,7 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
 int PostgresDatabase::GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, const char *fieldName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    int len = strlen( tableName ) + strlen( schemaName ) + 2;
+    int len = (int) strlen( tableName ) + (int) strlen( schemaName ) + 2;
     char *tname = new char[len];
     memset( tname, '\0', len );
     strcpy( tname, schemaName );
@@ -1034,9 +1034,9 @@ int PostgresDatabase::GetFieldProperties(const char *tableName, const char *sche
     strcpy( values[0], tname );
     strcpy( values[1], ownerName );
     strcpy( values[2], fieldName );
-    int len1 = strlen( values[0] );
-    int len2 = strlen( values[1] );
-    int len3 = strlen( values[2] );
+    int len1 = (int) strlen( values[0] );
+    int len2 = (int) strlen( values[1] );
+    int len3 = (int) strlen( values[2] );
     int length[3] = { len1, len2, len3 };
     int formats[3] = { 1, 1, 1 };
     PGresult *res = PQexecPrepared( m_db, "get_field_properties", 3, values, length, formats, 1 );
@@ -1080,9 +1080,9 @@ int PostgresDatabase::ApplyForeignKey(const std::wstring &command, const std::ws
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( keyName.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.GetSchemaName().c_str() ).c_str() );
     strcpy( values[2], m_pimpl->m_myconv.to_bytes( tableName.GetTableName().c_str() ).c_str() );
-    int len0 = keyName.length();
-    int len1 = tableName.GetSchemaName().length();
-    int len2 = tableName.GetTableName().length();
+    int len0 = (int) keyName.length();
+    int len1 = (int) tableName.GetSchemaName().length();
+    int len2 = (int) tableName.GetTableName().length();
     int length[3] = { len0, len1, len2 };
     int formats[3] = { 1, 1, 1 };
     PGresult *res = PQexec( m_db, "START TRANSACTION" );
