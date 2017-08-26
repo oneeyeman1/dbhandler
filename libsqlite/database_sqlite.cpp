@@ -1123,7 +1123,7 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstr
     query += tableName.GetTableName();
     query += L" AND type <> 'table'";
     int result = 0;
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length(), &stmt, NULL );
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, NULL );
     if( res != SQLITE_OK )
     {
         result = 1;
@@ -1160,7 +1160,7 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstr
     std::wstring alterQuery = command.substr( 0, command.find( ';' ) );
     while( alterQuery != L"" )
     {
-        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( alterQuery.c_str() ).c_str(), alterQuery.length(), &stmt, NULL );
+        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( alterQuery.c_str() ).c_str(), (int) alterQuery.length(), &stmt, NULL );
         if( res != SQLITE_OK )
         {
             result = 1;
