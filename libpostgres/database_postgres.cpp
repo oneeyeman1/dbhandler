@@ -306,13 +306,13 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> fk_names, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
-    std::wstring fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
+    std::wstring fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkName, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
     int result = 0, fieldIsNull, fieldPK, fkReference, fkId;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS table, u.usename AS owner, c.oid AS table_id FROM information_schema.tables t, pg_catalog.pg_class c, pg_catalog.pg_user u WHERE t.table_name = c.relname AND c.relowner = usesysid AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
     std::wstring query2 = L"SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = 'leagues') THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = $1 AND col.table_name = $2 ORDER BY ordinal_position;";
-    std::wstring query3 = L"SELECT (SELECT con.oid FROM pg_constraint con WHERE con.conname = c.constraint_name) AS id, x.ordinal_position AS pos, x.position_in_unique_constraint AS field_pos, c.constraint_name AS name, x.table_schema as schema, x.table_name AS table, x.column_name AS column, y.table_schema as ref_schema, y.table_name as ref_table, y.column_name as ref_column, c.update_rule, c.delete_rule FROM information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y WHERE x.constraint_name = c.constraint_name AND y.ordinal_position = x.position_in_unique_constraint AND y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 ORDER BY c.constraint_name, x.ordinal_position;";
+    std::wstring query3 = L"SELECT (SELECT con.oid FROM pg_constraint con WHERE con.conname = c.constraint_name) AS id, x.ordinal_position AS pos, c.constraint_name AS name, x.table_schema as schema, x.table_name AS table, x.column_name AS column, y.table_schema as ref_schema, y.table_name as ref_table, y.column_name as ref_column, c.update_rule, c.delete_rule FROM information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y WHERE x.constraint_name = c.constraint_name AND y.ordinal_position = x.position_in_unique_constraint AND y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 ORDER BY c.constraint_name, x.ordinal_position;";
     std::wstring query4 = L"SELECT indexname FROM pg_indexes WHERE schemaname = $1 AND tablename = $2;";
     std::wstring query5 = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
     std::wstring query6 = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = $1 AND \"abc_ownr\" = $2 AND \"abc_cnam\" = $3;";
@@ -416,6 +416,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     {
                                         char *key_id = PQgetvalue( res1, j, 0 );
                                         char *fk_reference = PQgetvalue( res1, j, 1 );
+                                        fkName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 2 ) );
                                         fkField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 2 ) );
                                         fkTable = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 3 ) );
                                         fkTableField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 4 ) );
@@ -443,7 +444,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             delete_constraint = SET_DEFAULT_DELETE;
                                         if( fkDeleteConstraint == L"c" )
                                             delete_constraint = CASCADE_DELETE;
-                                        foreign_keys[count++].push_back( new FKField( fkReference, fkTable, fkField, fkTableField, L"", update_constraint, delete_constraint ) );
+                                        foreign_keys[fkId].push_back( new FKField( fkReference, fkName, fkTable, fkField, fkTableField, L"", update_constraint, delete_constraint ) );
                                         fk_names.push_back( fkField );
                                     }
                                     PQclear( res1 );
