@@ -195,8 +195,8 @@ public:
     void SetLabelFontPixelSize(int size) { m_labelFontPixelSize = size; }
     const std::vector<Field *> &GetFields() { return table_fields; }
     std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
-    const int GetTableId() { return m_objectId; }
-    void SetTableId(int id) { m_objectId = id; }
+    const unsigned long GetTableId() { return m_objectId; }
+    void SetTableId(unsigned long id) { m_objectId = id; }
     const std::wstring &GetTableOwner() { return owner; }
     void SetTableOwner(const std::wstring &owner) { this->owner = owner; }
     void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
@@ -206,7 +206,8 @@ private:
     std::vector<Field *> table_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring m_dataFontName, m_labelFontName, m_headingFontName;
-    int m_dataFontWeight, m_labelFontWeight, m_headingFontWeight, m_objectId;
+    int m_dataFontWeight, m_labelFontWeight, m_headingFontWeight;
+    unsigned long m_objectId;
     bool m_dataFontItalic, m_labelFontItalic, m_headingFontItalic;
     int m_dataFontSize, m_labelFontSize, m_headingFontSize, m_dataFontCharacterSet, m_labelFontCharacterSer, m_headingFontCharacterSet;
     int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;

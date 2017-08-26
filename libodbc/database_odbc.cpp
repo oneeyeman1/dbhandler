@@ -2164,7 +2164,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLHDBC hdbc_tableProp = 0;
     SQLHSTMT stmt_tableProp = 0;
     SQLWCHAR *qry = NULL, *table_name = NULL, *owner_name = NULL;
-    unsigned short dataFontSize, dataFontWeight, headingFontSize, headingFontWeight, labelFontSize, labelFontWeight;
+    unsigned short dataFontSize, dataFontWeight = 0, headingFontSize, headingFontWeight, labelFontSize, labelFontWeight;
     unsigned short dataFontCharacterSet, headingFontCharacterSet, labelFontCharacterSet, dataFontPixelSize, headingFontPixelSize, labelFontPixelSize;
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], labelFontUnderline[2], dataFontName[20], headingFontName[20], labelFontName[20];
     SQLWCHAR comments[225];
@@ -2176,7 +2176,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName(), ownerName = table->GetTableOwner();
     std::wstring t = schemaName + L".";
     t += tableName;
-    int tableNameLen = t.length(), ownerNameLen = ownerName.length();
+    int tableNameLen = (int) t.length(), ownerNameLen = (int) ownerName.length();
     SQLLEN cbOwnerName = ownerNameLen == 0 ? SQL_NULL_DATA : SQL_NTS;
     qry = new SQLWCHAR[query.length() + 2], table_name = new SQLWCHAR[tableNameLen + 2], owner_name = new SQLWCHAR[ownerNameLen + 2];
     memset( owner_name, '\0', ownerNameLen + 2 );
@@ -2582,7 +2582,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
                 std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
                 std::wstring tableOwner = const_cast<DatabaseTable *>( table )->GetTableOwner();
-                int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
+                unsigned long tableId = const_cast<DatabaseTable *>( table )->GetTableId();
                 delete qry;
                 qry = NULL;
                 exist = IsTablePropertiesExist( table, errorMsg );
@@ -3344,7 +3344,6 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
     SQLHDBC hdbc = 0;
     int result = 0;
     SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
-    SQLLEN cbName;
     SQLWCHAR *table_name = NULL, *schema_name = NULL, *qry = NULL;
     SQLWCHAR owner[256];
     std::wstring query;
@@ -3605,8 +3604,8 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                         else
                         {
                             str_to_uc_cpy( pimpl->m_serverVersion, version );
-                            pimpl->m_versionMajor = versionMajor;
-                            pimpl->m_versionMinor = versionMinor;
+                            pimpl->m_versionMajor = (int) versionMajor;
+                            pimpl->m_versionMinor = (int) versionMinor;
                         }
                     }
                 }
