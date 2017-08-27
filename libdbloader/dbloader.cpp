@@ -127,7 +127,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
         if( connectStr == "" )
         {
             DBPROFILE func = (DBPROFILE) lib.GetSymbol( "DatabaseProfile" );
-            int result = func( parent, _( "Select Database Profile" ), name, engine, connectedUser, ask, dsn );
+            result = func( parent, _( "Select Database Profile" ), name, engine, connectedUser, ask, dsn );
         }
         if( result != wxID_CANCEL )
         {
