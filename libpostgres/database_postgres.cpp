@@ -306,7 +306,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> fk_names, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
-    std::wstring fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkName, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
+    std::wstring fieldName, fieldType, fieldDefaultValue, origSchema, origTable, origField, refSchema, refTable, refField, fkName, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
     int result = 0, fieldIsNull, fieldPK, fkReference, fkId;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
@@ -417,35 +417,39 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         char *key_id = PQgetvalue( res1, j, 0 );
                                         char *fk_reference = PQgetvalue( res1, j, 1 );
                                         fkName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 2 ) );
-                                        fkField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 2 ) );
-                                        fkTable = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 3 ) );
-                                        fkTableField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 4 ) );
-                                        fkUpdateConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 5 ) );
-                                        fkDeleteConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 6 ) );
+                                        origSchema = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 3 ) );
+                                        origTable = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 4 ) );
+                                        origField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 5 ) );
+                                        refSchema = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 6 ) );
+                                        refTable = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 7 ) );
+                                        refField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 8 ) );
+                                        fkUpdateConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 9 ) );
+                                        fkDeleteConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 10 ) );
                                         fkId = atoi( key_id );
                                         fkReference = atoi( fk_reference );
-                                        if( fkUpdateConstraint == L"a" )
+                                        if( fkUpdateConstraint == L"NO ACTION" )
                                             update_constraint = NO_ACTION_UPDATE;
-                                        if( fkUpdateConstraint == L"r" )
+                                        if( fkUpdateConstraint == L"RESTRICT" )
                                             update_constraint = RESTRICT_UPDATE;
-                                        if( fkUpdateConstraint == L"n" )
+                                        if( fkUpdateConstraint == L"SET NULL" )
                                             update_constraint = SET_NULL_UPDATE;
-                                        if( fkUpdateConstraint == L"d" )
+                                        if( fkUpdateConstraint == L"SET DEFAULT" )
                                             update_constraint = SET_DEFAULT_UPDATE;
-                                        if( fkUpdateConstraint == L"c" )
+                                        if( fkUpdateConstraint == L"CASCADE" )
                                             update_constraint = CASCADE_UPDATE;
-                                        if( fkDeleteConstraint == L"a" )
+                                        if( fkDeleteConstraint == L"NO ACTION" )
                                             delete_constraint = NO_ACTION_DELETE;
-                                        if( fkDeleteConstraint == L"r" )
+                                        if( fkDeleteConstraint == L"RESTRICT" )
                                             delete_constraint = RESTRICT_DELETE;
-                                        if( fkDeleteConstraint == L"n" )
+                                        if( fkDeleteConstraint == L"SET NULL" )
                                             delete_constraint = SET_NULL_DELETE;
-                                        if( fkDeleteConstraint == L"d" )
+                                        if( fkDeleteConstraint == L"SET DEFAULT" )
                                             delete_constraint = SET_DEFAULT_DELETE;
-                                        if( fkDeleteConstraint == L"c" )
+                                        if( fkDeleteConstraint == L"CASCADE" )
                                             delete_constraint = CASCADE_DELETE;
-                                        foreign_keys[fkId].push_back( new FKField( fkReference, fkName, fkTable, fkField, fkTableField, L"", update_constraint, delete_constraint ) );
-                                        fk_names.push_back( fkField );
+                                                                                     //id,       name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
+                                        foreign_keys[fkId].push_back( new FKField( fkReference, fkName, origSchema, origTable, origField, refSchema, refTable, refField, update_constraint, delete_constraint ) );
+                                        fk_names.push_back( origField );
                                     }
                                     PQclear( res1 );
                                     res2 = PQexecPrepared( m_db, "get_columns", 2, values1, length1, formats1, 1 );

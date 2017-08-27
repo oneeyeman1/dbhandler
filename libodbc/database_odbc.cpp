@@ -877,7 +877,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring query4;
     int result = 0, bufferSize = 1024;
     std::vector<Field *> fields;
-    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, fkName, schema, table;
+    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::vector<std::wstring> autoinc_fields, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
@@ -1488,10 +1488,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         fkName = L"";
 									else
                                         str_to_uc_cpy( fkName, szFkName );
-                                    str_to_uc_cpy( primaryKey, szPkCol );
-                                    str_to_uc_cpy( fkSchema, szPkSchema );
-                                    str_to_uc_cpy( fkTable, szPkTable );
-                                    str_to_uc_cpy( fkName, szFkCol );
+                                    str_to_uc_cpy( origSchema, schemaName );
+                                    str_to_uc_cpy( origTable, tableName );
+                                    str_to_uc_cpy( origCol, szPkCol );
+                                    str_to_uc_cpy( refSchema, szPkSchema );
+                                    str_to_uc_cpy( refTable, szPkTable );
+                                    str_to_uc_cpy( refCol, szFkCol );
                                     switch( updateRule )
                                     {
                                         case SQL_NO_ACTION:
@@ -1522,7 +1524,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             delete_constraint = CASCADE_DELETE;
                                             break;
                                     }
-                                    foreign_keys[keySequence].push_back( new FKField( keySequence, fkName, fkTable, primaryKey, fkName, fkSchema, update_constraint, delete_constraint ) );
+                                                                                     //id,         name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
+                                    foreign_keys[keySequence].push_back( new FKField( keySequence, fkName, origSchema,   origTable,   origCol,     refSchema,  refTable,  refCol,    update_constraint, delete_constraint ) );
                                     fk_fieldNames.push_back( primaryKey );
                                     primaryKey = L"";
                                     fkSchema = L"";
