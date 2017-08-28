@@ -996,6 +996,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     if( GetTableOwner( schema, table, errorMsg ) )
                     {
                         result = 1;
+                        ret = SQL_ERROR;
                         break;
                     }
                     ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_colattr );
@@ -3359,7 +3360,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
     int result = 0;
     SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     SQLWCHAR *table_name = NULL, *schema_name = NULL, *qry = NULL;
-    SQLWCHAR owner[256];
+    SQLWCHAR *owner = NULL;
     std::wstring query;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT su.name FROM sysobjects so, sysusers su, sys.tables t, sys.schemas s WHERE so.uid = su.uid AND t.object_id = so.id AND t.schema_id = s.schema_id AND s.name = ? AND so.name = ?;";
@@ -3424,6 +3425,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                                 retcode = SQLDescribeCol( stmt, 1, NULL, 0, &nameBufLength, &dataTypePtr, &columnSizePtr, &decimalDigitsPtr, &isNullable );
                                 if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                                 {
+                                    owner = new SQLWCHAR[columnSizePtr + 1];
                                     retcode = SQLBindCol( stmt, 1, dataTypePtr, &owner, columnSizePtr, &cbTableOwner );
                                     if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                                     {
@@ -3505,6 +3507,8 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
     table_name = NULL;
     delete schema_name;
     schema_name = NULL;
+    delete owner;
+    owner = NULL;
     return result;
 }
 
