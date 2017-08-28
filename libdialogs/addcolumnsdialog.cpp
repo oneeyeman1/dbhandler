@@ -659,7 +659,7 @@ void AddColumnsDialog::set_properties()
             m_fields->Append( "st_startpoint" );
             m_fields->Append( "st_symdifference" );
             m_fields->Append( "st_touches" );
-            m_fields0>Append( "st_union" );
+            m_fields->Append( "st_union" );
             m_fields->Append( "st_validate" );
             m_fields->Append( "st_within" );
             m_fields->Append( "st_x" );
@@ -740,7 +740,7 @@ void AddColumnsDialog::set_properties()
             m_fields->Append( "like" );
             m_fields->Append( "likelihood" );
             m_fields->Append( "likely" );
-            m_fields-Append( "load_extension" );
+            m_fields->Append( "load_extension" );
             m_fields->Append( "lower" );
             m_fields->Append( "ltrim" );
             m_fields->Append( "max()" );
@@ -756,7 +756,7 @@ void AddColumnsDialog::set_properties()
             m_fields->Append( "soundex()" );
             m_fields->Append( "sqlite_compileoption_get" );
             m_fields->Append( "sqlite_compileoption_used" );
-            m_fields->Append();
+            m_fields->Append( "" );
             m_fields->Append( "avg()" );
             m_fields->Append( "count()" );
             m_fields->Append( "date()" );
