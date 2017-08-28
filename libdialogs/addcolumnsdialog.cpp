@@ -725,6 +725,70 @@ void AddColumnsDialog::set_properties()
             m_fields->Append( "year" );
             m_fields->Append( "yearwekk" );
         }
+        if( m_dbType == "SQLite" )
+        {
+            m_fields->Append( "abs()" );
+            m_fields->Append( "changes" );
+            m_fields->Append( "char" );
+            m_fields->Append( "coalesce" );
+            m_fields->Append( "glob" );
+            m_fields->Append( "hex" );
+            m_fields->Append( "ifnull()" );
+            m_fields->Append( "instr" );
+            m_fields->Append( "last_insert_rowid" );
+            m_fields->Append( "length()" );
+            m_fields->Append( "like" );
+            m_fields->Append( "likelihood" );
+            m_fields->Append( "likely" );
+            m_fields-Append( "load_extension" );
+            m_fields->Append( "lower" );
+            m_fields->Append( "ltrim" );
+            m_fields->Append( "max()" );
+            m_fields->Append( "min()" );
+            m_fields->Append( "nullif" );
+            m_fields->Append( "printf" );
+            m_fields->Append( "quote" );
+            m_fields->Append( "random" );
+            m_fields->Append( "randomblob" );
+            m_fields->Append( "replace" );
+            m_fields->Append( "round" );
+            m_fields->Append( "rtrim" );
+            m_fields->Append( "soundex()" );
+            m_fields->Append( "sqlite_compileoption_get" );
+            m_fields->Append( "sqlite_compileoption_used" );
+            m_fields->Append();
+            m_fields->Append( "avg()" );
+            m_fields->Append( "count()" );
+            m_fields->Append( "date()" );
+            m_fields->Append( "dateformat()" );
+            m_fields->Append( "datetime()" );
+            m_fields->Append( "day()" );
+            m_fields->Append( "days()" );
+            m_fields->Append( "dow()" );
+            m_fields->Append( "hour()" );
+            m_fields->Append( "hours()" );
+            m_fields->Append( "isnull()" );
+            m_fields->Append( "list()" );
+            m_fields->Append( "minute()" );
+            m_fields->Append( "minutes()" );
+            m_fields->Append( "mod()" );
+            m_fields->Append( "month()" );
+            m_fields->Append( "months()" );
+            m_fields->Append( "now(*)" );
+            m_fields->Append( "number(*)" );
+            m_fields->Append( "remainder()" );
+            m_fields->Append( "second()" );
+            m_fields->Append( "seconds()" );
+            m_fields->Append( "similar()" );
+            m_fields->Append( "string()" );
+            m_fields->Append( "substr()" );
+            m_fields->Append( "sum()" );
+            m_fields->Append( "today(*)" );
+            m_fields->Append( "weeks()" );
+            m_fields->Append( "year()" );
+            m_fields->Append( "years()" );
+            m_fields->Append( "ymd()" );
+        }
     }
     else
     {
