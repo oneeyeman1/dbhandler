@@ -340,7 +340,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             res = sqlite3_step( stmt );
             if( res == SQLITE_ROW  )
             {
-                const unsigned char *tableName = sqlite3_column_text( stmt, 0 );
+                const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
                 char *y = sqlite3_mprintf( query3.c_str(), tableName );
                 res2 = sqlite3_prepare( m_db, y, -1, &stmt3, 0 );
                 if( res2 == SQLITE_OK )
@@ -377,7 +377,8 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 delete_constraint = SET_DEFAULT_DELETE;
                             if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
                                 delete_constraint = CASCADE_DELETE;
-                            foreign_keys[fkId].push_back( new FKField( fkReference, sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkField ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), L"", update_constraint, delete_constraint ) );
+                                                                      //id, name, orig_schema,         table_name,                                  original_field,                      ref_schema,           ref_table,                              referenced_field,                          update_constraint, delete_constraint
+                            foreign_keys[fkId].push_back( new FKField( fkReference, L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), sqlite_pimpl->m_myconv.from_bytes( fkField ), L"", sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), update_constraint, delete_constraint ) );
                             fk_names.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
                         }
                         else if( res3 == SQLITE_DONE )
@@ -1123,7 +1124,7 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstr
     query += tableName.GetTableName();
     query += L" AND type <> 'table'";
     int result = 0;
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length(), &stmt, NULL );
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, NULL );
     if( res != SQLITE_OK )
     {
         result = 1;
@@ -1160,7 +1161,7 @@ int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstr
     std::wstring alterQuery = command.substr( 0, command.find( ';' ) );
     while( alterQuery != L"" )
     {
-        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( alterQuery.c_str() ).c_str(), alterQuery.length(), &stmt, NULL );
+        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( alterQuery.c_str() ).c_str(), (int) alterQuery.length(), &stmt, NULL );
         if( res != SQLITE_OK )
         {
             result = 1;

@@ -361,7 +361,7 @@ void AddColumnsDialog::set_properties()
             m_fields->Append( "char" );
             m_fields->Append( "char_length" );
             m_fields->Append( "character_length" );
-            m_fields-<Append( "charset" );
+            m_fields->Append( "charset" );
             m_fields->Append( "coalesce" );
             m_fields->Append( "coercibility" );
             m_fields->Append( "collation" );
@@ -525,7 +525,7 @@ void AddColumnsDialog::set_properties()
             m_fields->Append( "mbrwithin" );
             m_fields->Append( "md5" );
             m_fields->Append( "microsecond" );
-            m_fields->Append)( "mid" );
+            m_fields->Append( "mid" );
             m_fields->Append( "min" );
             m_fields->Append( "minute" );
             m_fields->Append( "mlinefromtext" );

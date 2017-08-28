@@ -85,17 +85,21 @@ private:
 class FKField
 {
 public:
-    FKField(int id, const std::wstring &table_name, const std::wstring &original_field, const std::wstring &referenced_field, const std::wstring &schema, FK_ONUPDATE update_constraint, FK_ONDELETE delete_constraint)
+    FKField(int id, const std::wstring &name, const std::wstring &orig_schema, const std::wstring &table_name, const std::wstring &original_field, const std::wstring &ref_schema, const std::wstring &ref_table, const std::wstring &referenced_field, FK_ONUPDATE update_constraint, FK_ONDELETE delete_constraint)
     {
-        fkId = id;
-        schemaName = schema;
-        tableName = table_name;
-        originalField = original_field;
-        referencedField = referenced_field;
-        updateConstraint = update_constraint;
-        deleteConstraint = delete_constraint;
+        this->fkId = id;
+        this->fkName = name;
+        this->origSchema = orig_schema;
+        this->tableName = table_name;
+        this->originalField = original_field;
+        this->refSchema = ref_schema;
+        this->refTable = ref_table;
+        this->referencedField = referenced_field;
+        this->updateConstraint = update_constraint;
+        this->deleteConstraint = delete_constraint;
     }
-    const int GetForeignKeyId() { return fkId; } 
+    const int GetForeignKeyId() { return fkId; }
+	const std::wstring &GetFKName() { return fkName; }
     const std::wstring &GetReferencedTableName() { return tableName; }
     const std::wstring &GetOriginalFieldName() { return originalField; }
     const std::wstring &GetReferencedFieldName() { return referencedField; }
@@ -103,7 +107,7 @@ public:
     const FK_ONDELETE GetOnDeleteConstraint() { return deleteConstraint; }
 private:
     int fkId;
-    std::wstring schemaName, tableName, originalField, referencedField;
+    std::wstring tableName, originalField, referencedField, refTable, origSchema, refSchema, fkName;
     FK_ONUPDATE updateConstraint;
     FK_ONDELETE deleteConstraint;
 };
@@ -195,8 +199,8 @@ public:
     void SetLabelFontPixelSize(int size) { m_labelFontPixelSize = size; }
     const std::vector<Field *> &GetFields() { return table_fields; }
     std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
-    const int GetTableId() { return m_objectId; }
-    void SetTableId(int id) { m_objectId = id; }
+    const unsigned long GetTableId() { return m_objectId; }
+    void SetTableId(unsigned long id) { m_objectId = id; }
     const std::wstring &GetTableOwner() { return owner; }
     void SetTableOwner(const std::wstring &owner) { this->owner = owner; }
     void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
@@ -206,7 +210,8 @@ private:
     std::vector<Field *> table_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring m_dataFontName, m_labelFontName, m_headingFontName;
-    int m_dataFontWeight, m_labelFontWeight, m_headingFontWeight, m_objectId;
+    int m_dataFontWeight, m_labelFontWeight, m_headingFontWeight;
+    unsigned long m_objectId;
     bool m_dataFontItalic, m_labelFontItalic, m_headingFontItalic;
     int m_dataFontSize, m_labelFontSize, m_headingFontSize, m_dataFontCharacterSet, m_labelFontCharacterSer, m_headingFontCharacterSet;
     int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;

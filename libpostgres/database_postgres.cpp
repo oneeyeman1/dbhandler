@@ -306,13 +306,13 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> fk_names, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
-    std::wstring fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
+    std::wstring fieldName, fieldType, fieldDefaultValue, origSchema, origTable, origField, refSchema, refTable, refField, fkName, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
     int result = 0, fieldIsNull, fieldPK, fkReference, fkId;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS table, u.usename AS owner, c.oid AS table_id FROM information_schema.tables t, pg_catalog.pg_class c, pg_catalog.pg_user u WHERE t.table_name = c.relname AND c.relowner = usesysid AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
     std::wstring query2 = L"SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = 'leagues') THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = $1 AND col.table_name = $2 ORDER BY ordinal_position;";
-    std::wstring query3 = L"select x.ordinal_position AS pos, x.position_in_unique_constraint AS field_pos, c.constraint_name AS name, x.table_schema as schema, x.table_name AS table, x.column_name AS column, y.table_schema as ref_schema, y.table_name as ref_table, y.column_name as ref_column, c.update_rule, c.delete_rule from information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y where x.constraint_name = c.constraint_name and y.ordinal_position = x.position_in_unique_constraint and y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 order by c.constraint_name, x.ordinal_position;";
+    std::wstring query3 = L"SELECT (SELECT con.oid FROM pg_constraint con WHERE con.conname = c.constraint_name) AS id, x.ordinal_position AS pos, c.constraint_name AS name, x.table_schema as schema, x.table_name AS table, x.column_name AS column, y.table_schema as ref_schema, y.table_name as ref_table, y.column_name as ref_column, c.update_rule, c.delete_rule FROM information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y WHERE x.constraint_name = c.constraint_name AND y.ordinal_position = x.position_in_unique_constraint AND y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 ORDER BY c.constraint_name, x.ordinal_position;";
     std::wstring query4 = L"SELECT indexname FROM pg_indexes WHERE schemaname = $1 AND tablename = $2;";
     std::wstring query5 = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
     std::wstring query6 = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = $1 AND \"abc_ownr\" = $2 AND \"abc_cnam\" = $3;";
@@ -393,8 +393,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 values1[1] = new char[strlen( table_name ) + 1];
                                 strcpy( values1[0], schema_name );
                                 strcpy( values1[1], table_name );
-                                int len1 = strlen( schema_name );
-                                int len2 = strlen( table_name );
+                                int len1 = (int) strlen( schema_name );
+                                int len2 = (int) strlen( table_name );
                                 int length1[2] = { len1, len2 };
                                 int formats1[2] = { 1, 1 };
                                 res1 = PQexecPrepared( m_db, "get_fkeys", 2, values1, length1, formats1, 1 );
@@ -416,35 +416,40 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     {
                                         char *key_id = PQgetvalue( res1, j, 0 );
                                         char *fk_reference = PQgetvalue( res1, j, 1 );
-                                        fkField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 2 ) );
-                                        fkTable = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 3 ) );
-                                        fkTableField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 4 ) );
-                                        fkUpdateConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 5 ) );
-                                        fkDeleteConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 6 ) );
+                                        fkName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 2 ) );
+                                        origSchema = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 3 ) );
+                                        origTable = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 4 ) );
+                                        origField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 5 ) );
+                                        refSchema = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 6 ) );
+                                        refTable = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 7 ) );
+                                        refField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 8 ) );
+                                        fkUpdateConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 9 ) );
+                                        fkDeleteConstraint = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 10 ) );
                                         fkId = atoi( key_id );
                                         fkReference = atoi( fk_reference );
-                                        if( fkUpdateConstraint == L"a" )
+                                        if( fkUpdateConstraint == L"NO ACTION" )
                                             update_constraint = NO_ACTION_UPDATE;
-                                        if( fkUpdateConstraint == L"r" )
+                                        if( fkUpdateConstraint == L"RESTRICT" )
                                             update_constraint = RESTRICT_UPDATE;
-                                        if( fkUpdateConstraint == L"n" )
+                                        if( fkUpdateConstraint == L"SET NULL" )
                                             update_constraint = SET_NULL_UPDATE;
-                                        if( fkUpdateConstraint == L"d" )
+                                        if( fkUpdateConstraint == L"SET DEFAULT" )
                                             update_constraint = SET_DEFAULT_UPDATE;
-                                        if( fkUpdateConstraint == L"c" )
+                                        if( fkUpdateConstraint == L"CASCADE" )
                                             update_constraint = CASCADE_UPDATE;
-                                        if( fkDeleteConstraint == L"a" )
+                                        if( fkDeleteConstraint == L"NO ACTION" )
                                             delete_constraint = NO_ACTION_DELETE;
-                                        if( fkDeleteConstraint == L"r" )
+                                        if( fkDeleteConstraint == L"RESTRICT" )
                                             delete_constraint = RESTRICT_DELETE;
-                                        if( fkDeleteConstraint == L"n" )
+                                        if( fkDeleteConstraint == L"SET NULL" )
                                             delete_constraint = SET_NULL_DELETE;
-                                        if( fkDeleteConstraint == L"d" )
+                                        if( fkDeleteConstraint == L"SET DEFAULT" )
                                             delete_constraint = SET_DEFAULT_DELETE;
-                                        if( fkDeleteConstraint == L"c" )
+                                        if( fkDeleteConstraint == L"CASCADE" )
                                             delete_constraint = CASCADE_DELETE;
-                                        foreign_keys[count++].push_back( new FKField( fkReference, fkTable, fkField, fkTableField, L"", update_constraint, delete_constraint ) );
-                                        fk_names.push_back( fkField );
+                                                                                     //id,       name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
+                                        foreign_keys[fkId].push_back( new FKField( fkReference, fkName, origSchema, origTable, origField, refSchema, refTable, refField, update_constraint, delete_constraint ) );
+                                        fk_names.push_back( origField );
                                     }
                                     PQclear( res1 );
                                     res2 = PQexecPrepared( m_db, "get_columns", 2, values1, length1, formats1, 1 );
@@ -631,9 +636,9 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
     strcpy( values[2], m_pimpl->m_myconv.to_bytes( indexName.c_str() ).c_str() );
-    int len1 = schemaName.length();
-    int len2 = tableName.length();
-    int len3 = indexName.length();
+    int len1 = (int) schemaName.length();
+    int len2 = (int) tableName.length();
+    int len3 = (int) indexName.length();
     int length[3] = { len1, len2, len3 };
     int formats[3] = { 1, 1, 1 };
     res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL, values, length, formats, 1 );
@@ -664,8 +669,8 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     std::wstring t = schemaName + L".";
     t += tableName;
     char *values[2];
-    int len1 = wcslen( t.c_str() ) + 1;
-    int len2 = wcslen( ownerName.c_str() ) + 1;
+    int len1 = t.length() + 1;
+    int len2 = ownerName.length() + 1;
     values[0] = new char[len1 * 2];
     values[1] = new char[len2 * 2];
     memset( values[0], '\0', len1 * 2 );
@@ -739,7 +744,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
         std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
         std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
         std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
-        int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
+        unsigned long tableId = const_cast<DatabaseTable *>( table )->GetTableId();
         exist = IsTablePropertiesExist( table, errorMsg );
         if( errorMsg.size() != 0 )
             result = 1;
@@ -983,15 +988,15 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     std::wstring owner = const_cast<DatabaseTable *>( table )->GetTableOwner();
     int tableId = htonl( const_cast<DatabaseTable *>( table )->GetTableId() );
     char *values[2];
-    values[0] = new char[tname.length() + 1];
-    values[1] = new char[owner.length() + 1];
+    values[0] = new char[(tname.length() + 1) * 2];
+    values[1] = new char[(owner.length() + 1) * 2];
     memset( values[0], '\0', tname.length() + 1 );
     memset( values[1], '\0', owner.length() + 1 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( tname.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( owner.c_str() ).c_str() );
     values[2] = (char *) &tableId;
-    int len1 = tname.length();
-    int len2 = owner.length();
+    int len1 = strlen( values[0] );
+    int len2 = strlen( values[1] );
     int length[2] = { len1, len2 };
     int formats[2] = { 1, 1 };
     PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, length, formats, 1 );
@@ -1017,7 +1022,7 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
 int PostgresDatabase::GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, const char *fieldName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    int len = strlen( tableName ) + strlen( schemaName ) + 2;
+    int len = (int) strlen( tableName ) + (int) strlen( schemaName ) + 2;
     char *tname = new char[len];
     memset( tname, '\0', len );
     strcpy( tname, schemaName );
@@ -1034,9 +1039,9 @@ int PostgresDatabase::GetFieldProperties(const char *tableName, const char *sche
     strcpy( values[0], tname );
     strcpy( values[1], ownerName );
     strcpy( values[2], fieldName );
-    int len1 = strlen( values[0] );
-    int len2 = strlen( values[1] );
-    int len3 = strlen( values[2] );
+    int len1 = (int) strlen( values[0] );
+    int len2 = (int) strlen( values[1] );
+    int len3 = (int) strlen( values[2] );
     int length[3] = { len1, len2, len3 };
     int formats[3] = { 1, 1, 1 };
     PGresult *res = PQexecPrepared( m_db, "get_field_properties", 3, values, length, formats, 1 );
@@ -1071,18 +1076,18 @@ int PostgresDatabase::ApplyForeignKey(const std::wstring &command, const std::ws
     std::wstring err;
     std::wstring query1 = L"SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = $1 AND table_schema = $2 AND table_name = $2";
     char *values[3];
-    values[0] = new char[keyName.length() + 1];
-    values[1] = new char[tableName.GetSchemaName().length() + 1];
-    values[2] = new char[tableName.GetTableName().length() + 1];
+    values[0] = new char[(keyName.length() + 1) * 2];
+    values[1] = new char[(tableName.GetSchemaName().length() + 1) * 2];
+    values[2] = new char[(tableName.GetTableName().length() + 1) * 2];
     memset( values[0], '\0', keyName.length() + 1 );
     memset( values[1], '\0', tableName.GetSchemaName().length() + 1 );
     memset( values[2], '\0', tableName.GetTableName().length() + 1 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( keyName.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.GetSchemaName().c_str() ).c_str() );
     strcpy( values[2], m_pimpl->m_myconv.to_bytes( tableName.GetTableName().c_str() ).c_str() );
-    int len0 = keyName.length();
-    int len1 = tableName.GetSchemaName().length();
-    int len2 = tableName.GetTableName().length();
+    int len0 = strlen( values[0] );
+    int len1 = strlen( values[1] );
+    int len2 = strlen( values[2] );
     int length[3] = { len0, len1, len2 };
     int formats[3] = { 1, 1, 1 };
     PGresult *res = PQexec( m_db, "START TRANSACTION" );

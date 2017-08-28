@@ -877,7 +877,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring query4;
     int result = 0, bufferSize = 1024;
     std::vector<Field *> fields;
-    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkTable, fkName, schema, table;
+    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::vector<std::wstring> autoinc_fields, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
@@ -885,10 +885,10 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0, stmt_ind = 0;
     SQLHDBC hdbc_col = 0, hdbc_pk = 0, hdbc_colattr = 0, hdbc_fk = 0, hdbc_ind = 0;
     SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1], userName[1024];
-    SQLWCHAR szFkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szPkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkSchema[SQL_MAX_COLUMN_NAME_LEN + 1], szFkTableSchema[SQL_MAX_SCHEMA_NAME_LEN + 1], szFkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szFkCatalog[SQL_MAX_CATALOG_NAME_LEN + 1];
+    SQLWCHAR szFkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szPkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkSchema[SQL_MAX_COLUMN_NAME_LEN + 1], szFkTableSchema[SQL_MAX_SCHEMA_NAME_LEN + 1], szFkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szFkName[SQL_MAX_COLUMN_NAME_LEN + 1], szFkCatalog[SQL_MAX_CATALOG_NAME_LEN + 1];
     SQLSMALLINT updateRule, deleteRule, keySequence;
     SQLWCHAR **columnNames = NULL;
-    SQLLEN cbPkCol, cbFkTable, cbFkCol, cbFkSchemaName, cbUpdateRule, cbDeleteRule, cbKeySequence, cbFkCatalog;
+    SQLLEN cbPkCol, cbFkTable, cbFkCol, cbFkName, cbFkSchemaName, cbUpdateRule, cbDeleteRule, cbKeySequence, cbFkCatalog;
     SQLLEN cbColumnName, cbDataType, cbTypeName, cbColumnSize, cbBufferLength, cbDecimalDigits, cbNumPrecRadix, pkLength;
     SQLLEN cbNullable, cbRemarks, cbColumnDefault, cbSQLDataType, cbDatetimeSubtypeCode, cbCharOctetLength, cbOrdinalPosition, cbIsNullable;
     SQLSMALLINT DataType, DecimalDigits, NumPrecRadix, Nullable, SQLDataType, DatetimeSubtypeCode, numCols = 0;
@@ -1466,6 +1466,13 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     result = 1;
                                     break;
                                 }
+                                ret = SQLBindCol( stmt_fk, 12, SQL_C_WCHAR, szFkName, SQL_MAX_COLUMN_NAME_LEN + 1, &cbFkName );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 1, stmt_fk );
+                                    result = 1;
+                                    break;
+                                }
                                 ret = SQLForeignKeys( stmt_fk, NULL, 0, NULL, 0, NULL, 0, catalogName, SQL_NTS, schemaName, SQL_NTS, tableName, SQL_NTS );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
@@ -1477,10 +1484,16 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 {
                                     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
                                     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
-                                    str_to_uc_cpy( primaryKey, szPkCol );
-                                    str_to_uc_cpy( fkSchema, szPkSchema );
-                                    str_to_uc_cpy( fkTable, szPkTable );
-                                    str_to_uc_cpy( fkName, szFkCol );
+                                    if( szFkName[0] = '\0' )
+                                        fkName = L"";
+									else
+                                        str_to_uc_cpy( fkName, szFkName );
+                                    str_to_uc_cpy( origSchema, schemaName );
+                                    str_to_uc_cpy( origTable, tableName );
+                                    str_to_uc_cpy( origCol, szPkCol );
+                                    str_to_uc_cpy( refSchema, szPkSchema );
+                                    str_to_uc_cpy( refTable, szPkTable );
+                                    str_to_uc_cpy( refCol, szFkCol );
                                     switch( updateRule )
                                     {
                                         case SQL_NO_ACTION:
@@ -1511,7 +1524,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             delete_constraint = CASCADE_DELETE;
                                             break;
                                     }
-                                    foreign_keys[keySequence].push_back( new FKField( keySequence, fkTable, primaryKey, fkName, fkSchema, update_constraint, delete_constraint ) );
+                                                                                     //id,         name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
+                                    foreign_keys[keySequence].push_back( new FKField( keySequence, fkName, origSchema,   origTable,   origCol,     refSchema,  refTable,  refCol,    update_constraint, delete_constraint ) );
                                     fk_fieldNames.push_back( primaryKey );
                                     primaryKey = L"";
                                     fkSchema = L"";
@@ -2164,7 +2178,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLHDBC hdbc_tableProp = 0;
     SQLHSTMT stmt_tableProp = 0;
     SQLWCHAR *qry = NULL, *table_name = NULL, *owner_name = NULL;
-    unsigned short dataFontSize, dataFontWeight, headingFontSize, headingFontWeight, labelFontSize, labelFontWeight;
+    unsigned short dataFontSize, dataFontWeight = 0, headingFontSize, headingFontWeight, labelFontSize, labelFontWeight;
     unsigned short dataFontCharacterSet, headingFontCharacterSet, labelFontCharacterSet, dataFontPixelSize, headingFontPixelSize, labelFontPixelSize;
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], labelFontUnderline[2], dataFontName[20], headingFontName[20], labelFontName[20];
     SQLWCHAR comments[225];
@@ -2176,7 +2190,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName(), ownerName = table->GetTableOwner();
     std::wstring t = schemaName + L".";
     t += tableName;
-    int tableNameLen = t.length(), ownerNameLen = ownerName.length();
+    int tableNameLen = (int) t.length(), ownerNameLen = (int) ownerName.length();
     SQLLEN cbOwnerName = ownerNameLen == 0 ? SQL_NULL_DATA : SQL_NTS;
     qry = new SQLWCHAR[query.length() + 2], table_name = new SQLWCHAR[tableNameLen + 2], owner_name = new SQLWCHAR[ownerNameLen + 2];
     memset( owner_name, '\0', ownerNameLen + 2 );
@@ -2582,7 +2596,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
                 std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
                 std::wstring tableOwner = const_cast<DatabaseTable *>( table )->GetTableOwner();
-                int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
+                unsigned long tableId = const_cast<DatabaseTable *>( table )->GetTableId();
                 delete qry;
                 qry = NULL;
                 exist = IsTablePropertiesExist( table, errorMsg );
@@ -3344,7 +3358,6 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
     SQLHDBC hdbc = 0;
     int result = 0;
     SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
-    SQLLEN cbName;
     SQLWCHAR *table_name = NULL, *schema_name = NULL, *qry = NULL;
     SQLWCHAR owner[256];
     std::wstring query;
@@ -3605,8 +3618,8 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                         else
                         {
                             str_to_uc_cpy( pimpl->m_serverVersion, version );
-                            pimpl->m_versionMajor = versionMajor;
-                            pimpl->m_versionMinor = versionMinor;
+                            pimpl->m_versionMajor = (int) versionMajor;
+                            pimpl->m_versionMinor = (int) versionMinor;
                         }
                     }
                 }
