@@ -6,8 +6,9 @@
 #include "FieldShape.h"
 #include "GridTableShape.h"
 
-GridTableShape::GridTableShape(void) : wxSFGridShape()
+GridTableShape::GridTableShape(ViewType type) : wxSFGridShape()
 {
+    m_type = type;
 }
 
 GridTableShape::~GridTableShape(void)
@@ -18,12 +19,24 @@ bool GridTableShape::InsertToTableGrid(wxSFShapeBase *shape)
 {
     int col;
     int row = (int) m_arrCells.GetCount() / m_nCols;
-    if( wxDynamicCast( shape, FieldShape ) )
-        col = 1;
-    else if( wxDynamicCast( shape, wxSFTextShape ) )
-        col = 2;
+    if( m_type == DatabaseView )
+    {
+        if( wxDynamicCast( shape, FieldShape ) )
+            col = 1;
+        else if( wxDynamicCast( shape, wxSFTextShape ) )
+            col = 2;
+        else
+            col = 0;
+    }
     else
-        col = 0;
+    {
+        if( wxDynamicCast( shape, CommentFieldShape ) )
+            col = 2;
+        if( wxDynamicCast( shape, FieldShape ) )
+            col = 0;
+		else
+            col = 1;
+    }
     return InsertToGrid( row, col, shape );
 }
 
@@ -39,37 +52,73 @@ void GridTableShape::DoChildrenLayout()
     {
         pShape = (wxSFShapeBase*) node->GetData();
         currRect = pShape->GetBoundingBox();
-        wxSFBitmapShape *temp = wxDynamicCast( pShape, wxSFBitmapShape );
-        if( temp )
+        if( m_type == DatabaseView )
         {
-            if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect0.GetWidth() ) )
-                maxRect0.SetWidth( currRect.GetWidth() );
-            if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect0.GetHeight() ) )
-                maxRect0.SetHeight( currRect.GetHeight() );
-        }
-        else
-        {
-            FieldShape *temp2 = wxDynamicCast( pShape, FieldShape );
-            if( temp2 )
+            wxSFBitmapShape *temp = wxDynamicCast( pShape, wxSFBitmapShape );
+            if( temp )
             {
-                if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect1.GetWidth() ) )
-                    maxRect1.SetWidth( currRect.GetWidth() );
-                if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect1.GetHeight() ) )
-                    maxRect1.SetHeight( currRect.GetHeight() );
+                if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect0.GetWidth() ) )
+                    maxRect0.SetWidth( currRect.GetWidth() );
+                if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect0.GetHeight() ) )
+                    maxRect0.SetHeight( currRect.GetHeight() );
             }
             else
             {
-                wxSFTextShape *temp3 = wxDynamicCast( pShape, wxSFTextShape );
-                if( temp3 )
+                FieldShape *temp2 = wxDynamicCast( pShape, FieldShape );
+                if( temp2 )
                 {
-                    if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect2.GetWidth() ) )
-                        maxRect2.SetWidth( currRect.GetWidth() );
-                    if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect2.GetHeight() ) )
-                        maxRect2.SetHeight( currRect.GetHeight() );
+                    if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect1.GetWidth() ) )
+                        maxRect1.SetWidth( currRect.GetWidth() );
+                    if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect1.GetHeight() ) )
+                        maxRect1.SetHeight( currRect.GetHeight() );
+                }
+                else
+                {
+                    CommentFieldShape *temp3 = wxDynamicCast( pShape, CommentFieldShape );
+                    if( temp3 )
+                    {
+                        if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect2.GetWidth() ) )
+                            maxRect2.SetWidth( currRect.GetWidth() );
+                        if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect2.GetHeight() ) )
+                            maxRect2.SetHeight( currRect.GetHeight() );
+                    }
+                }
+            }
+            node = node->GetNext();
+        }
+        else
+        {
+            FieldShape *temp = wxDynamicCast( pShape, FieldShape );
+            if( temp )
+            {
+                if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect0.GetWidth() ) )
+                    maxRect0.SetWidth( currRect.GetWidth() );
+                if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect0.GetHeight() ) )
+                    maxRect0.SetHeight( currRect.GetHeight() );
+            }
+            else
+            {
+                wxSFTextShape *temp2 = wxDynamicCast( pShape, wxSFTextShape );
+                if( temp2 )
+                {
+                    if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect1.GetWidth() ) )
+                        maxRect1.SetWidth( currRect.GetWidth() );
+                    if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect1.GetHeight() ) )
+                        maxRect1.SetHeight( currRect.GetHeight() );
+                }
+                else
+                {
+                    CommentFieldShape *temp3 = wxDynamicCast( pShape, CommentFieldShape );
+                    if( temp3 )
+                    {
+                        if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect2.GetWidth() ) )
+                            maxRect2.SetWidth( currRect.GetWidth() );
+                        if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect2.GetHeight() ) )
+                            maxRect2.SetHeight( currRect.GetHeight() );
+                    }
                 }
             }
         }
-        node = node->GetNext();
     }
     nIndex = nCol = 0;
     nRow = -1;
