@@ -348,7 +348,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
             else
                 delete type_shape;
         }
-        wxSFTextShape *comment_shape = new wxSFTextShape();
+        CommentFieldShape *comment_shape = new CommentFieldShape();
         if( comment_shape )
         {
             comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
