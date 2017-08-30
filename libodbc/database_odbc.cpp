@@ -877,6 +877,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring query4;
     int result = 0, bufferSize = 1024;
     std::vector<Field *> fields;
+    std::wstring owner;
     std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::vector<std::wstring> autoinc_fields, indexes;
@@ -993,7 +994,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     table = L"";
                     str_to_uc_cpy( schema, schemaName );
                     str_to_uc_cpy( table, tableName );
-                    if( GetTableOwner( schema, table, errorMsg ) )
+                    if( GetTableOwner( schema, table, owner, errorMsg ) )
                     {
                         result = 1;
                         ret = SQL_ERROR;
@@ -1875,7 +1876,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         if( pimpl->m_subtype == L"Microsoft SQL Server" && schema_name == L"sys" )
                             table_name = schema_name + L"." + table_name;
                         DatabaseTable *table = new DatabaseTable( table_name, schema_name, fields, foreign_keys );
-                        table->SetTableOwner( odbc_pimpl->m_currentTableOwner );
+                        table->SetTableOwner( owner );
                         if( GetTableId( table, errorMsg ) )
                         {
                             break;
@@ -3266,7 +3267,7 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
                         retcode = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, sname, 0, &cbSchemaName );
                         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, 2, hdbc );
+                            GetErrorMessage( errorMsg, 1, stmt );
                             result = 1;
                         }
                     }
@@ -3275,7 +3276,7 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
                         retcode = SQLPrepare( stmt, qry, SQL_NTS );
                         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, 2, hdbc );
+                            GetErrorMessage( errorMsg, 1, stmt );
                             result = 1;
                         }
                         else
@@ -3283,7 +3284,7 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
                             retcode = SQLExecute( stmt );
                             if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                             {
-                                GetErrorMessage( errorMsg, 2, hdbc );
+                                GetErrorMessage( errorMsg, 1, stmt );
                                 result = 1;
                             }
                             else
@@ -3353,7 +3354,7 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
     return result;
 }
 
-int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::wstring &tableOwner, std::vector<std::wstring> &errorMsg)
 {
     SQLHSTMT stmt = 0;
     SQLHDBC hdbc = 0;
@@ -3363,7 +3364,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
     SQLWCHAR *owner = NULL;
     std::wstring query;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
-        query = L"SELECT su.name FROM sysobjects so, sysusers su, sys.tables t, sys.schemas s WHERE so.uid = su.uid AND t.object_id = so.id AND t.schema_id = s.schema_id AND s.name = ? AND so.name = ?;";
+        query = L"SELECT cast(su.name AS nvarchar(128)) FROM sysobjects so, sysusers su, sys.tables t, sys.schemas s WHERE so.uid = su.uid AND t.object_id = so.id AND t.schema_id = s.schema_id AND s.name = ? AND so.name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT u.usename FROM pg_class c, pg_user u WHERE u.usesysid = c.relowner AND relname = ?";
     if( pimpl->m_subtype == L"Sybase" )
@@ -3436,7 +3437,20 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                                             result = 1;
                                         }
                                         if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
-                                            str_to_uc_cpy( odbc_pimpl->m_currentTableOwner, owner );
+                                            str_to_uc_cpy( tableOwner, owner );
+                                    }
+									else
+                                    {
+                                        if( pimpl->m_subtype == L"Microsoft SQL Server" )
+                                        {
+                                            tableOwner = L"dbo";
+                                            result = 0;
+                                        }
+										else
+                                        {
+                                            GetErrorMessage( errorMsg, 1, stmt );
+                                            result = 1;
+                                        }
                                     }
                                 }
                                 else if( retcode != SQL_NO_DATA )
