@@ -788,7 +788,7 @@ void AddColumnsDialog::set_properties()
             m_fields->Append( "atan2" );
             m_fields->Append( "avg" );
             m_fields->Append( "bfile" );
-            m_fields->Append( "biginttohex" )
+            m_fields->Append( "biginttohex" );
             m_fields->Append( "bit_length" );
             m_fields->Append( "byte_length" );
             m_fields->Append( "byte_length64" );
@@ -1138,7 +1138,7 @@ void AddColumnsDialog::set_properties()
             m_fields->Append( "argn" );
             m_fields->Append( "avg" );
             m_fields->Append( "bfile" );
-            m_fields->Append( "biginttohex" )
+            m_fields->Append( "biginttohex" );
             m_fields->Append( "bit_length" );
             m_fields->Append( "byte_length" );
             m_fields->Append( "byte_length64" );

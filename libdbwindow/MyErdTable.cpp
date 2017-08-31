@@ -35,7 +35,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
     m_header = new HeaderGrid();
     m_pLabel = new wxSFTextShape();
     m_comment = new CommentTableShape();
-    m_pGrid = new GridTableShape();
+    m_pGrid = new GridTableShape( DatabaseView );
     m_pLabel->SetId( 1000 );
     m_comment->SetId( 1001 );
     if( m_header && m_pLabel && m_comment && m_pGrid )
@@ -101,7 +101,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
     m_header = new HeaderGrid();
     m_pLabel = new wxSFTextShape();
     m_comment = new CommentTableShape( table );
-    m_pGrid = new GridTableShape();
+    m_pGrid = new GridTableShape( type );
     m_pLabel->SetId( 1000 );
     m_comment->SetId( 1001 );
     if( m_header && m_pLabel && m_comment && m_pGrid )

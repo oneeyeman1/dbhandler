@@ -4,6 +4,7 @@
 #include "wxsf/ShapeBase.h"
 #include "database.h"
 #include "FieldShape.h"
+#include "commentfieldshape.h"
 #include "GridTableShape.h"
 
 GridTableShape::GridTableShape(ViewType type) : wxSFGridShape()
