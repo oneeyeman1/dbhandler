@@ -270,14 +270,17 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
     if( m_db )
     {
         InitMenuBar( event.GetId() );
-        m_lib = new wxDynamicLibrary;
+        if( !m_lib )
+        {
+            m_lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-        m_lib->Load( "dbwindow" );
+            m_lib->Load( "dbwindow" );
 #elif __WXOSX__
-        m_lib->Load( "liblibdbwindow.dylib" );
+            m_lib->Load( "liblibdbwindow.dylib" );
 #else
-        m_lib->Load( "libdbwindow" );
+            m_lib->Load( "libdbwindow" );
 #endif
+        }
         if( m_db && m_lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) m_lib->GetSymbol( "CreateDatabaseWindow" );
@@ -297,14 +300,17 @@ void MainFrame::OnQuery(wxCommandEvent &event)
     if( m_db )
     {
         InitMenuBar( event.GetId() );
-        m_lib = new wxDynamicLibrary;
+        if( !m_lib )
+        {
+            m_lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-        m_lib->Load("dbwindow");
+            m_lib->Load("dbwindow");
 #elif __WXOSX__
-        m_lib->Load("liblibdbwindow.dylib");
+            m_lib->Load("liblibdbwindow.dylib");
 #else
-        m_lib->Load("libdbwindow");
+            m_lib->Load("libdbwindow");
 #endif
+        }
         if( m_db && m_lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) m_lib->GetSymbol( "CreateDatabaseWindow" );
@@ -329,14 +335,17 @@ void MainFrame::OnTable(wxCommandEvent &event)
     if( m_db )
     {
         InitMenuBar( event.GetId() );
-        m_lib = new wxDynamicLibrary;
+        if( !m_lib )
+        {
+            m_lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-        m_lib->Load( "tablewindow" );
+            m_lib->Load( "tablewindow" );
 #elif __WXOSX__
-        m_lib->Load( "liblibtablewindow.dylib" );
+            m_lib->Load( "liblibtablewindow.dylib" );
 #else
-        m_lib->Load( "libtablewindow" );
+            m_lib->Load( "libtablewindow" );
 #endif
+        }
         if( m_db && m_lib->IsLoaded() )
         {
             TABLE func = (TABLE) m_lib->GetSymbol( "CreateDatabaseWindow" );
