@@ -91,6 +91,12 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         m_properties->AddPage( m_page3, _( "Heading Font" ) );
         m_properties->AddPage( m_page4, _( "Label Font" ) );
         m_page1->GetCommentCtrl()->SetFocus();
+        delete data_font;
+        data_font = NULL;
+        delete heading_font;
+        heading_font = NULL;
+        delete label_font;
+        label_font = NULL;
     }
     if( type == 1 )
     {
