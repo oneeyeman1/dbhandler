@@ -3254,7 +3254,7 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
             }
             else
             {
-                retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, tname, 0, &cbTableName );
+                retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length() + schemaName.length() + 3, 0, tname, 0, &cbTableName );
                 if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, 2, hdbc );
