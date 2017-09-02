@@ -399,6 +399,6 @@ std::wstring &MyErdTable::GetTableName()
 
 void MyErdTable::DrawSelected(wxDC& dc)
 {
-    if( m_type == QueryView )
-        DrawNormal( dc );
+    if( m_type == DatabaseView )
+        wxSFRoundRectShape::DrawSelected( dc );
 }
