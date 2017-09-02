@@ -35,6 +35,7 @@ private:
 #if defined __WXMSW__ || defined __WXGTK__
     wxToolBar *m_tb;
 #endif
+    std::map<wxString, wxDynamicLibrary *> m_painters;
     wxDECLARE_EVENT_TABLE();
 };
 
