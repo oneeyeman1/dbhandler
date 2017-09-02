@@ -110,8 +110,9 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                 query += ", ";
         }
     }
-    query += "\n";
-    Refresh();
+    if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
+        query += "\n";
+//    Refresh();
     bool found = false, secondIteration = false;
     for( std::vector<MyErdTable *>::iterator it2 = tables.begin(); it2 < tables.end(); it2++ )
     {
@@ -135,9 +136,12 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                     pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
                     pConstr->SetRefTable( referencedTableName );
                     pConstr->SetType( Constraint::foreignKey );
-                    if( secondIteration )
-                        query += " AND ";
-                    query += wxString::Format( "%s.%s = %s.%s", (*it2)->GetTableName(), (*it4)->GetOriginalFieldName(), referencedTableName, (*it4)->GetReferencedFieldName() );
+                    if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
+                    {
+                        if( secondIteration )
+                            query += " AND ";
+                        query += wxString::Format( "%s.%s = %s.%s", (*it2)->GetTableName(), (*it4)->GetOriginalFieldName(), referencedTableName, (*it4)->GetReferencedFieldName() );
+                    }
                     switch( (*it4)->GetOnUpdateConstraint() )
                     {
                         case RESTRICT_UPDATE:
