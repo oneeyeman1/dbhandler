@@ -286,17 +286,19 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
 #else
             lib->Load( "libdbwindow" );
 #endif
-            if( m_db && lib->IsLoaded() )
-            {
-                DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
-                func( this, m_manager, m_db, DatabaseView );
-                m_painters["Database"] = lib;
-            }
-            else if( !lib->IsLoaded() )
-                wxMessageBox( "Error loading the library. Please re-install the software and try again." );
-            else
-                wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
+            m_painters["Database"] = lib;
         }
+        else
+            lib = m_painters["Database"];
+        if( m_db && lib->IsLoaded() )
+        {
+            DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
+            func( this, m_manager, m_db, DatabaseView );
+        }
+        else if( !lib->IsLoaded() )
+            wxMessageBox( "Error loading the library. Please re-install the software and try again." );
+        else
+            wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
     }
 }
 
@@ -318,17 +320,19 @@ void MainFrame::OnQuery(wxCommandEvent &event)
 #else
             lib->Load("libdbwindow");
 #endif
-            if( m_db && lib->IsLoaded() )
-            {
-                DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
-                func( this, m_manager, m_db, QueryView );
-                m_painters["Query"] = lib;
-            }
-            else if( !lib->IsLoaded() )
-                wxMessageBox( "Error loading the library. Please re-install the software and try again." );
-            else
-                wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
+            m_painters["Query"] = lib;
         }
+        else
+            lib = m_painters["Query"];
+        if( m_db && lib->IsLoaded() )
+        {
+            DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
+            func( this, m_manager, m_db, QueryView );
+        }
+        else if( !lib->IsLoaded() )
+            wxMessageBox( "Error loading the library. Please re-install the software and try again." );
+        else
+            wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
 	}
 }
 
