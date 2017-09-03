@@ -19,6 +19,7 @@
 #include "../dbhandler/res/properties.xpm"
 #include "res/gui/key-f1.xpm"
 #include "../dbhandler/res/quit.xpm"
+#include "res/gui/toolbox.xpm"
 //#endif
 
 #include <string>
@@ -134,6 +135,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     else
     {
+        m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
+        m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
+        m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
     }
     m_tb->Realize();
     m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
@@ -197,10 +201,13 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
-        m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close Database View" ), _( "Close Database View" ) );
+        m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Database View" ) );
     }
     else
     {
+        m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
+        m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
+        m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
     }
     m_tb->Realize();
     wxMDIClientWindow *frame = (wxMDIClientWindow *) parent->GetClientWindow();
