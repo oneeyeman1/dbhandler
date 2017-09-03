@@ -100,7 +100,7 @@ public:
     }
     const int GetForeignKeyId() { return fkId; }
 	const std::wstring &GetFKName() { return fkName; }
-    const std::wstring &GetReferencedTableName() { return tableName; }
+    const std::wstring &GetReferencedTableName() { return refTable; }
     const std::wstring &GetOriginalFieldName() { return originalField; }
     const std::wstring &GetReferencedFieldName() { return referencedField; }
     const FK_ONUPDATE GetOnUpdateConstraint() { return updateConstraint; }
