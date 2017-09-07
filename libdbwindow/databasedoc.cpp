@@ -89,10 +89,11 @@ void DrawingDocument::DoUpdate()
     UpdateAllViews();
 }
 
-void DrawingDocument::SetDatabase(Database *db)
+void DrawingDocument::SetDatabase(Database *db, bool isInit)
 {
     m_db = db;
-    dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db, true );
+    if( !isInit )
+        dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db, true );
 }
 
 Database *DrawingDocument::GetDatabase()

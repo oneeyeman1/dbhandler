@@ -21,7 +21,7 @@ public:
     DocumentOstream& SaveObject(DocumentOstream& stream) wxOVERRIDE;
     DocumentIstream& LoadObject(DocumentIstream& stream) wxOVERRIDE;
 
-    void SetDatabase(Database *db);
+    void SetDatabase(Database *db, bool isInit);
     Database *GetDatabase();
 
     void AddTables(const std::vector<wxString> &selections);
