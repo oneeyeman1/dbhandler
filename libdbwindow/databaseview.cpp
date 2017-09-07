@@ -20,6 +20,9 @@
 #include "res/gui/key-f1.xpm"
 #include "../dbhandler/res/quit.xpm"
 #include "res/gui/toolbox.xpm"
+#include "../dbhandler/res/new.xpm"
+#include "../dbhandler/res/opn.xpm"
+#include "../dbhandler/res/save.xpm"
 //#endif
 
 #include <string>
@@ -135,6 +138,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     else
     {
+        m_tb->AddTool( wxID_NEW, _( "New" ), wxBitmap( new_xpm ), wxBitmap( new_xpm ), wxITEM_NORMA, _( "New" ), _( "New Query" ) );
+        m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMA, _( "Open" ), _( "Open Query" ) );
+        m_tb->AddTool( wxID_SAVE, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMA, _( "Save" ), _( "Save Query" ) );
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
