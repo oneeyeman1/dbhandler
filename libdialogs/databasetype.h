@@ -34,6 +34,7 @@ public:
     void AppendDSNsToList(const std::vector<std::string> &dsns);
     wxListBox *GetDSNTypesCtrl() const;
     wxCheckBox *GetAskForParameters() const;
+    void OnSelectionDClick(wxCommandEvent &event);
 protected:
      void GetDSNList();
 private:

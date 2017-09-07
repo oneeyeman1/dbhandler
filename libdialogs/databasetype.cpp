@@ -380,6 +380,7 @@ ODBCConnect::ODBCConnect(wxWizard *parent, const std::vector<std::wstring> &dsn)
         m_types->Append( (*it) );
     }
     SetSizerAndFit( main );
+    m_types->Bind( wxEVT_LISTBOX_DCLICK, &ODBCConnect::OnSelectionDClick, this );
 }
 
 wxWizardPage *ODBCConnect::GetPrev() const
@@ -390,6 +391,11 @@ wxWizardPage *ODBCConnect::GetPrev() const
 wxWizardPage *ODBCConnect::GetNext() const
 {
     return NULL;
+}
+
+void ODBCConnect::OnSelectionDClick(wxCommandEvent &event)
+{
+    GetParent()->EndModal( wxID_FORWARD );
 }
 /*
 void ODBCConnect::AppendDSNsToList(const std::vector<std::string> &dsns)
