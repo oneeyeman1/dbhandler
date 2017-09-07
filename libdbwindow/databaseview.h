@@ -46,6 +46,7 @@ public:
     void OnCreateDatabase(wxCommandEvent &event);
     void OnSelectAllFields(wxCommandEvent &event);
     void OnSQLNotebookPageChanged(wxBookCtrlEvent &event);
+    void OnDistinct(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/

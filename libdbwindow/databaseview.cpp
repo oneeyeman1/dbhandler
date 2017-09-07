@@ -86,6 +86,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_CREATEDATABASE, DrawingView::OnCreateDatabase)
     EVT_MENU(wxID_SELECTALLFIELDS, DrawingView::OnSelectAllFields)
     EVT_MENU(wxID_DESELECTALLFIELDS, DrawingView::OnSelectAllFields)
+    EVT_MENU(wxID_DISTINCT, DrawingView::OnDistinct)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -866,4 +867,20 @@ void DrawingView::HideShowSQLBox(bool show)
 {
     m_queryBook->Show( show );
     m_frame->Layout();
+}
+
+void DrawingView::OnDistinct(wxCommandEvent &event)
+{
+    wxString qry;
+    wxString query = m_page6->GetSyntaxCtrl()->GetValue();
+    wxTextCtrl queryText = m_page6->GetSyntaxCtrl();
+    if( dynamic_cast<wxMenu *>( event.GetEventObject() )->IsChecked() )
+    {
+        query.Replace( "SELECT ", "SELECT DISTINCT " );
+    }
+    else
+    {
+        query.Replace( "SELECT DISTINCT ", "SELECT " );
+    }
+    queryText->SetValue( query );
 }

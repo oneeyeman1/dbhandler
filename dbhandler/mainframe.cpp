@@ -184,7 +184,7 @@ void MainFrame::QueryMenu()
     designMenu->Append( wxID_UNIONS, _( "Unions..." ), _( "Unions" ) );
     designMenu->Append( wxID_RETRIEVEARGS, _( "Retrieval Arguments..." ), _( "Define Retrieval Arguments" ) );
     designMenu->Append( wxID_CHECKOPTION, _( "Check Option" ), _( "Check Option" ) );
-    designMenu->Append( wxID_DISTINCT, _( "Distinct" ), _( "Use Distinct in query" ) );
+    designMenu->AppendCheckItem( wxID_DISTINCT, _( "Distinct" ), _( "Use Distinct in query" ) );
     designMenu->AppendSeparator();
     designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert to Syntax" ), _( "Convert to Syntax" ) );
     designMenu->AppendSeparator();
