@@ -33,7 +33,7 @@ bool GridTableShape::InsertToTableGrid(wxSFShapeBase *shape)
     {
         if( wxDynamicCast( shape, CommentFieldShape ) )
             col = 2;
-        if( wxDynamicCast( shape, FieldShape ) )
+        else if( wxDynamicCast( shape, FieldShape ) )
             col = 0;
 		else
             col = 1;
