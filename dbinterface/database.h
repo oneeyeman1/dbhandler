@@ -76,6 +76,7 @@ public:
     bool IsAutoIncrement() { return autoIncrement; }
     void SetComment(const std::wstring &comment) { this->comment = comment; }
     void SetFullType(const std::wstring type) { full_type = type; }
+    const std::wstring &GetFullType() { return full_type; }
 private:
     std::wstring column_name, column_type, column_defaultValue, comment, label, heading, full_type;
     bool autoIncrement, column_isNull, column_pk, column_fk;
