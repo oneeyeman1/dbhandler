@@ -119,6 +119,7 @@ void GridTableShape::DoChildrenLayout()
                     }
                 }
             }
+            node = node->GetNext();
         }
     }
     nIndex = nCol = 0;
