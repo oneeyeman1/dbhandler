@@ -395,7 +395,7 @@ wxWizardPage *ODBCConnect::GetNext() const
 
 void ODBCConnect::OnSelectionDClick(wxCommandEvent &event)
 {
-    GetParent()->EndModal( wxID_FORWARD );
+    dynamic_cast<DatabaseType *>( GetParent() )->EndModal( wxID_FORWARD );
 }
 /*
 void ODBCConnect::AppendDSNsToList(const std::vector<std::string> &dsns)
