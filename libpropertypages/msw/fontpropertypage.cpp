@@ -53,9 +53,9 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
     dc.DrawRectangle( 0, 0, size.x, size.y );
 //    if( !font.Ok() )
 //        font = GetFont();
-    if( m_font->Ok() )
+    if( m_font.Ok() )
     {
-        dc.SetFont( *m_font );
+        dc.SetFont( m_font );
 //        dc.SetTextForeground( m_font.GetTextColour() );
         dc.SetTextForeground( *wxBLACK );
         wxSize sizeString = dc.GetTextExtent( m_text );
@@ -334,7 +334,7 @@ wxBitmapComboBox( parent, id, selection, pos, size, n, choices, style )
     }
 }
 
-CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, const wxPoint& pos, const wxSize& size, long style)
+CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont &font, int id, const wxPoint& pos, const wxSize& size, long style)
  : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
 {
     m_bUnderline = false;
@@ -342,18 +342,18 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
     text = "AaBbYyZz";
     style = style;
     m_font = font;
-    if( m_font->IsOk() )
+    if( m_font.IsOk() )
     {
-        m_fontSize.Format( "%d", m_font->GetPointSize() );
-        if( m_font->GetStyle() == wxFONTSTYLE_ITALIC && m_font->GetWeight() == wxFONTWEIGHT_BOLD )
+        m_fontSize.Format( "%d", m_font.GetPointSize() );
+        if( m_font.GetStyle() == wxFONTSTYLE_ITALIC && m_font.GetWeight() == wxFONTWEIGHT_BOLD )
             m_nCurrentStyle = NTM_ITALIC | NTM_BOLD;
-        else if( m_font->GetStyle() == wxFONTSTYLE_ITALIC )
+        else if( m_font.GetStyle() == wxFONTSTYLE_ITALIC )
             m_nCurrentStyle = NTM_ITALIC;
-        else if( m_font->GetWeight() == wxFONTWEIGHT_BOLD )
+        else if( m_font.GetWeight() == wxFONTWEIGHT_BOLD )
             m_nCurrentStyle = NTM_BOLD;
         else
             m_nCurrentStyle = NTM_REGULAR;
-        if( m_font->GetUnderlined() )
+        if( m_font.GetUnderlined() )
             m_bUnderline = true;
         else
             m_bUnderline = false;
@@ -381,7 +381,7 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
     itemStaticText23 = new wxStaticText( this, wxID_STATIC, _T("&Background:"), wxDefaultPosition, wxDefaultSize, 0 );
     itemChoice17 = new CColorComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize );
     itemWindow24 = new wxFontPreviewer( this, font, text );
-    itemWindow24->SetMinSize( wxSize( 130, 32 ) );
+//    itemWindow24->SetMinSize( wxSize( 130, 32 ) );
     itemStaticText30 = new wxStaticText( this, wxID_STATIC, _T( "" ), wxDefaultPosition, wxDefaultSize, 0 );
     do_layout();
     set_properties();
@@ -396,8 +396,6 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
 
 CFontPropertyPage::~CFontPropertyPage()
 {
-    delete m_font;
-    m_font = NULL;
 }
 
 void CFontPropertyPage::do_layout()
@@ -408,6 +406,8 @@ void CFontPropertyPage::do_layout()
     sizer2->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
 //    wxGridBagSizer *sizer_3 = new wxGridBagSizer();
     wxFlexGridSizer *sizer_3 = new wxFlexGridSizer( 2, 3, 5, 5 );
+    sizer_3->SetFlexibleDirection( wxVERTICAL );
+    sizer_3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_NONE );
     wxStaticBoxSizer *sizer_4 = new wxStaticBoxSizer( itemStaticBox1, wxVERTICAL );
     wxStaticBoxSizer *sizer_5 = new wxStaticBoxSizer( itemStaticBox2, wxVERTICAL );
     wxBoxSizer *sizer_6 = new wxBoxSizer( wxVERTICAL );
@@ -421,7 +421,7 @@ void CFontPropertyPage::do_layout()
     sizer_3->Add( itemChoice7, 0, wxEXPAND, 0 );
     sizer_3->Add( itemChoice10, 0, wxEXPAND, 0 );
     sizer_3->Add( itemChoice19, 0, wxEXPAND, 0 );
-    sizer2->Add( sizer_3, 0, wxEXPAND, 0 );
+    sizer2->Add( sizer_3, 1, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
     sizer_4->Add( itemCheckBox1, 0, wxEXPAND, 0 );
     sizer_4->Add( 20, 5, 0, wxEXPAND, 0 );
@@ -434,6 +434,7 @@ void CFontPropertyPage::do_layout()
     sizer_6->Add( 20, 5, 0, wxEXPAND, 0 );
     sizer_6->Add( itemChoice16, 0, wxEXPAND, 0 );
     sizer_9->Add( sizer_6, 0, wxEXPAND, 0 );
+    sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_7->Add( itemStaticText23, 0, wxEXPAND, 0 );
     sizer_7->Add( 20, 5, 0, wxEXPAND, 0 );
     sizer_7->Add( itemChoice17, 0, wxEXPAND, 0 );
@@ -454,9 +455,9 @@ void CFontPropertyPage::set_properties()
     itemChoice10->AppendString( "Italic" );
     itemChoice10->AppendString( "Bold" );
     itemChoice10->AppendString( "Bold Italic" );
-    if( m_font->IsOk() )
+    if( m_font.IsOk() )
     {
-        int sel = itemChoice7->FindString( m_font->GetFaceName() );
+        int sel = itemChoice7->FindString( m_font.GetFaceName() );
         if( sel != wxNOT_FOUND )
         {
             itemChoice7->SetSelection( sel );
@@ -467,13 +468,13 @@ void CFontPropertyPage::set_properties()
     itemChoice17->SetValue( m_backgroundStr );
     if( m_bUnderline )
         itemCheckBox2->Enable( true );
-    if( m_font->IsOk() )
+    if( m_font.IsOk() )
     {
-        if( m_font->GetStyle() == wxFONTSTYLE_ITALIC && m_font->GetWeight() == wxFONTWEIGHT_BOLD )
+        if( m_font.GetStyle() == wxFONTSTYLE_ITALIC && m_font.GetWeight() == wxFONTWEIGHT_BOLD )
             itemChoice10->SetSelection( itemChoice10->FindString( "Bold Italic" ) );
-        else if( m_font->GetStyle() == wxFONTSTYLE_ITALIC )
+        else if( m_font.GetStyle() == wxFONTSTYLE_ITALIC )
             itemChoice10->SetSelection( itemChoice10->FindString( "Italic" ) );
-        else if( m_font->GetWeight() == wxFONTWEIGHT_BOLD )
+        else if( m_font.GetWeight() == wxFONTWEIGHT_BOLD )
             itemChoice10->SetSelection( itemChoice10->FindString( "Bold" ) );
         else
             itemChoice10->SetSelection( itemChoice10->FindString( "Regular" ) );
@@ -492,24 +493,25 @@ void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
     if( event.GetEventObject() == itemChoice7 )
         FillSizeList();
     if( event.GetEventObject() == itemChoice7 )
-        m_font->SetFaceName( itemChoice7->GetValue() );
+        m_font.SetFaceName( itemChoice7->GetValue() );
     if( event.GetEventObject() == itemChoice10 )
     {
         wxString style = itemChoice10->GetValue();
         if( style == "Bold" || style == "Bold Italic" )
-            m_font->MakeBold();
+            m_font.MakeBold();
         if( style == "Italic" || style == "Bold Italic" )
-            m_font->MakeItalic();
+            m_font.MakeItalic();
         if( style == "Regular" )
         {
-            m_font->SetStyle( wxFONTSTYLE_NORMAL );
-            m_font->SetWeight( wxFONTWEIGHT_NORMAL );
+            m_font.SetStyle( wxFONTSTYLE_NORMAL );
+            m_font.SetWeight( wxFONTWEIGHT_NORMAL );
         }
     }
     if( event.GetEventObject() == itemChoice19 )
-        m_font->SetPointSize( wxAtoi( itemChoice19->GetValue() ) );
+        m_font.SetPointSize( wxAtoi( itemChoice19->GetValue() ) );
     itemWindow24->SetFont( m_font );
 //    UpdateSampleFont();
+    GetParent()->FindWindowById( wxID_APPLY )->Enable();
 }
 
 void CFontPropertyPage::FillSizeList()
@@ -663,7 +665,7 @@ void CFontPropertyPage::GetData(void *WXUNUSED(data))
 
 void CFontPropertyPage::SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough)
 {
-    m_fontName = name;
+/*    m_fontName = name;
     if( name == L"" )
     {
         m_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
@@ -688,10 +690,10 @@ void CFontPropertyPage::SetFont(const std::wstring &name, int size, bool italic,
             itemCheckBox1->SetValue( true );
         if( strikethrough )
             itemCheckBox2->SetValue( true );
-    }
+    }*/
 }
 
-wxFont *CFontPropertyPage::GetFont()
+wxFont &CFontPropertyPage::GetFont()
 {
     return m_font;
 }
