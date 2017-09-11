@@ -36,7 +36,7 @@
 #endif
 #include "fontpropertypagebase.h"
 
-CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, wxFont *font, int id, const wxPoint& pos, const wxSize& size, long style)
+CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, wxFont &font, int id, const wxPoint& pos, const wxSize& size, long style)
  : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL)
 {
     m_dirty = false;
@@ -44,15 +44,13 @@ CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, wxFont *font, int
 
 CFontPropertyPageBase::~CFontPropertyPageBase()
 {
-    delete m_font;
-    m_font = NULL;
 }
 
 void CFontPropertyPageBase::SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough)
 {
 }
 
-wxFont *CFontPropertyPageBase::GetFont()
+wxFont &CFontPropertyPageBase::GetFont()
 {
     return m_font;
 }
