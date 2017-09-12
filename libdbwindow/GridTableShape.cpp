@@ -148,23 +148,3 @@ void GridTableShape::DoChildrenLayout()
 		}
 	}
 }
-
-/*void GridTableShape::DrawSelected(wxDC &dc)
-{
-    m_header->SetFill( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-    DrawNormal( dc );
-}
-*/
-/*void GridTableShape::DrawNormal(wxDC &dc)
-{
-    if( this->m_fSelected )
-    {
-        m_colour = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
-    }
-    else
-    {
-        m_colour = wxColour();
-    }
-    dc.SetBrush( m_colour );
-}
-*/

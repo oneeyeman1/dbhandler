@@ -33,7 +33,7 @@
 #include "fontpropertypagebase.h"
 #include "wx/gtk/private.h"
 
-CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, const wxPoint& pos, const wxSize& size, long style)
+CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, const wxPoint& pos, const wxSize& size, long style)
  : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
 {
     m_font = font;
@@ -45,10 +45,10 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
     g_object_ref_sink( m_fontPanel );
     m_holder = new wxNativeWindow( this, wxID_ANY, m_fontPanel );
 #if GTK_CHECK_VERSION(3, 2, 0 )
-    gtk_font_chooser_set_font_desc( (GtkFontChooser *) m_fontPanel, m_font->GetNativeFontInfo()->description );
+    gtk_font_chooser_set_font_desc( (GtkFontChooser *) m_fontPanel, m_font.GetNativeFontInfo()->description );
     gtk_font_chooser_set_preview_text( (GtkFontChooser *) m_fontPanel, "AaBbYyZz" );
 #else
-    gtk_font_selection_set_font_name( (GtkFontSelection *) m_fontPanel, m_font->GetNativeFontInfo()->ToString().c_str() );
+    gtk_font_selection_set_font_name( (GtkFontSelection *) m_fontPanel, m_font.GetNativeFontInfo()->ToString().c_str() );
     gtk_font_selection_set_preview_text( (GtkFontSelection *) m_fontPanel, "AaBbYyZz" );
 #endif
 }
