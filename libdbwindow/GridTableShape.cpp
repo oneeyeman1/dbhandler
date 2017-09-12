@@ -155,7 +155,7 @@ void GridTableShape::DoChildrenLayout()
     DrawNormal( dc );
 }
 */
-void GridTableShape::DrawNormal(wxDC &dc)
+/*void GridTableShape::DrawNormal(wxDC &dc)
 {
     if( this->m_fSelected )
     {
@@ -167,3 +167,4 @@ void GridTableShape::DrawNormal(wxDC &dc)
     }
     dc.SetBrush( m_colour );
 }
+*/
