@@ -867,6 +867,7 @@ void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstr
 void DrawingView::HideShowSQLBox(bool show)
 {
     m_queryBook->Show( show );
+    m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, show );
     m_frame->Layout();
 }
 
