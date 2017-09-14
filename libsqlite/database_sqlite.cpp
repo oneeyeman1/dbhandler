@@ -664,7 +664,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
         res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( table->GetTableName().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
         if( res == SQLITE_OK )
         {
-            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( pimpl->m_connectedUser.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( table->GetTableOwner().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
             if( res == SQLITE_OK )
             {
                 for( ; ; )
