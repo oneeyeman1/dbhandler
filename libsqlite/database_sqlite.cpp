@@ -697,7 +697,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         table->SetHeadingFontPixelSize( sqlite3_column_int( stmt, 15 ) );
                         headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 16 );
                         if( headingFontName )
-                            table->SetHeadingFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
+                            table->SetHeadingFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) headingFontName ) );
                         table->SetLabelFontSize( sqlite3_column_int( stmt, 17 ) );
                         table->SetLabelFontWeight( sqlite3_column_int( stmt, 18 ) );
                         italic = (char *) sqlite3_column_text( stmt, 19 );
@@ -710,7 +710,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         table->SetLabelFontPixelSize( sqlite3_column_int( stmt, 22 ) );
                         labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 23 );
                         if( labelFontName )
-                            table->SetLabelFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
+                            table->SetLabelFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) labelFontName ) );
                         table->SetComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 24 ) ) );
                     }
                     else if( res == SQLITE_DONE )
