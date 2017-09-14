@@ -673,8 +673,8 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                     if( res == SQLITE_ROW )
                     {
                         table->SetDataFontSize( sqlite3_column_int( stmt, 3 ) );
-                        char *weight = sqlite3_column_int( stmt, 4 );
-                        table->SetDataFontWeight( weight == 'N' ? 0 : 1 );
+                        char *weight = (char *) sqlite3_column_text( stmt, 4 );
+                        table->SetDataFontWeight( weight[0] == 'N' ? 0 : 1 );
                         char *italic = (char *) sqlite3_column_text( stmt, 5 );
                         if( italic )
                             table->SetDataFontItalic( italic[0] == 'Y' );
@@ -687,8 +687,8 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         if( dataFontName )
                             table->SetDataFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
                         table->SetHeadingFontSize( sqlite3_column_int( stmt, 10 ) );
-                        weight = sqlite3_column_int( stmt, 11 );
-                        table->SetHeadingFontWeight( weight == 'N' ? 0 : 1 );
+                        weight = (char *) sqlite3_column_text( stmt, 11 );
+                        table->SetHeadingFontWeight( weight[0] == 'N' ? 0 : 1 );
                         italic = (char *) sqlite3_column_text( stmt, 12 );
                         if( italic )
                             table->SetHeadingFontItalic( italic[0] == 'Y' );
@@ -701,8 +701,8 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         if( headingFontName )
                             table->SetHeadingFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) headingFontName ) );
                         table->SetLabelFontSize( sqlite3_column_int( stmt, 17 ) );
-                        weight = sqlite3_column_int( stmt, 18 );
-                        table->SetLabelFontWeight( weight == 'N' ? 0 : 1 );
+                        weight = (char *) sqlite3_column_text( stmt, 18 );
+                        table->SetLabelFontWeight( weight[0] == 'N' ? 0 : 1 );
                         italic = (char *) sqlite3_column_text( stmt, 19 );
                         if( italic )
                             table->SetLabelFontItalic( italic[0] == 'Y' );
