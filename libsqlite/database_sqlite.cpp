@@ -872,7 +872,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.clear();
                 istr.str( L"" );
                 command += L" AND \"abt_ownr\" = \'";
-                command += pimpl->m_connectedUser;
+                command += tableOwner;
                 command += L"\';";
             }
             else
