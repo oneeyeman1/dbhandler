@@ -3580,6 +3580,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     }
     if( pimpl->m_subtype == L"Sybase" )
     {
+        query = L"SELECT @@version AS version, @@version_as_int / 1000 AS major;";
     }
     if( pimpl->m_subtype == L"Oracle" )
     {
