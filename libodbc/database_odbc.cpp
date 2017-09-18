@@ -878,7 +878,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     int result = 0, bufferSize = 1024;
     std::vector<Field *> fields;
     std::wstring owner;
-    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol;
+    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol, cat;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::vector<std::wstring> autoinc_fields, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
@@ -990,10 +990,17 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
                     if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
                         tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
+                    cat = L"";
                     schema = L"";
                     table = L"";
+                    str_to_uc_cpy( cat, catalogName );
                     str_to_uc_cpy( schema, schemaName );
                     str_to_uc_cpy( table, tableName );
+                    if( schema == L"" && cat != L"" )
+                    {
+                        schema = cat;
+                        copy_uc_to_uc( schemaName, catalogName );
+                    }
                     if( GetTableOwner( schema, table, owner, errorMsg ) )
                     {
                         result = 1;
@@ -3290,12 +3297,12 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
                             else
                             {
                                 retcode = SQLFetch( stmt );
-                                if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                                if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO && retcode != SQL_NO_DATA )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt );
                                     result = 1;
                                 }
-                                else
+                                else if( retcode != SQL_NO_DATA )
                                 {
                                     retcode = SQLGetData( stmt, 1, SQL_C_SLONG, &id, 0, &cbName );
                                     if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
