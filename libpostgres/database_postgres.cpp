@@ -1007,7 +1007,7 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
         errorMsg.push_back( L"Error executing query: " + err );
         result = 1;
     }
-    else if( status == PGRES_TUPLES_OK )
+    else if( status == PGRES_TUPLES_OK && PQntuples( res ) > 0 )
     {
         result = true;
     }
