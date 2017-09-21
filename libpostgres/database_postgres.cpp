@@ -669,8 +669,8 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     std::wstring t = schemaName + L".";
     t += tableName;
     char *values[2];
-    int len1 = t.length() + 1;
-    int len2 = ownerName.length() + 1;
+    unsigned long len1 = t.length() + 1;
+    unsigned long len2 = ownerName.length() + 1;
     values[0] = new char[len1 * 2];
     values[1] = new char[len2 * 2];
     memset( values[0], '\0', len1 * 2 );
