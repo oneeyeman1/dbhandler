@@ -691,28 +691,28 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     {
         for( int i = 0; i < PQntuples( res ); i++ )
         {
-            table->SetDataFontSize( atoi( PQgetvalue( res, i, 4 ) ) );
-            table->SetDataFontWeight( atoi( PQgetvalue( res, i, 5 ) ) );
-            table->SetDataFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 6 ) ) == L"Y" ? true : false );
-            table->SetDataFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 7 ) ) == L"Y" ? true : false );
-            table->SetDataFontCharacterSet( atoi( PQgetvalue( res, i, 8 ) ) );
-            table->SetDataFontPixelSize( atoi( PQgetvalue( res, i, 9 ) ) );
-            table->SetDataFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 10 ) ) );
-            table->SetHeadingFontSize( atoi( PQgetvalue( res, i, 11 ) ) );
-            table->SetDataFontWeight( atoi( PQgetvalue( res, i, 12 ) ) );
-            table->SetHeadingFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 13 ) ) == L"Y" ? true : false );
-            table->SetHeadingFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 14 ) ) == L"Y" ? true : false );
-            table->SetHeadingFontCharacterSet( atoi( PQgetvalue( res, i, 15 ) ) );
-            table->SetHeadingFontPixelSize( atoi( PQgetvalue( res, i, 16 ) ) );
-            table->SetHeadingFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 17 ) ) );
-            table->SetLabelFontSize( atoi( PQgetvalue( res, i, 18 ) ) );
-            table->SetLabelFontWeight( atoi( PQgetvalue( res, i, 19 ) ) );
-            table->SetLabelFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 20 ) ) == L"Y" ? true : false );
-            table->SetLabelFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 21 ) ) == L"Y" ? true : false );
-            table->SetLabelFontCharacterSet( atoi( PQgetvalue( res, i, 22 ) ) );
-            table->SetLabelFontPixelSize( atoi( PQgetvalue( res, i, 23 ) ) );
-            table->SetLabelFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 24 ) ) );
-            table->SetComment( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 25 ) ) );
+            table->SetDataFontSize( atoi( PQgetvalue( res, i, 3 ) ) );
+            table->SetDataFontWeight( atoi( PQgetvalue( res, i, 4 ) ) );
+            table->SetDataFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 5 ) ) == L"Y" ? true : false );
+            table->SetDataFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 6 ) ) == L"Y" ? true : false );
+            table->SetDataFontCharacterSet( atoi( PQgetvalue( res, i, 7 ) ) );
+            table->SetDataFontPixelSize( atoi( PQgetvalue( res, i, 8 ) ) );
+            table->SetDataFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 9 ) ) );
+            table->SetHeadingFontSize( atoi( PQgetvalue( res, i, 10 ) ) );
+            table->SetDataFontWeight( atoi( PQgetvalue( res, i, 11 ) ) );
+            table->SetHeadingFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 12 ) ) == L"Y" ? true : false );
+            table->SetHeadingFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 13 ) ) == L"Y" ? true : false );
+            table->SetHeadingFontCharacterSet( atoi( PQgetvalue( res, i, 14 ) ) );
+            table->SetHeadingFontPixelSize( atoi( PQgetvalue( res, i, 15 ) ) );
+            table->SetHeadingFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 16 ) ) );
+            table->SetLabelFontSize( atoi( PQgetvalue( res, i, 17 ) ) );
+            table->SetLabelFontWeight( atoi( PQgetvalue( res, i, 18 ) ) );
+            table->SetLabelFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 19 ) ) == L"Y" ? true : false );
+            table->SetLabelFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 20 ) ) == L"Y" ? true : false );
+            table->SetLabelFontCharacterSet( atoi( PQgetvalue( res, i, 21 ) ) );
+            table->SetLabelFontPixelSize( atoi( PQgetvalue( res, i, 22 ) ) );
+            table->SetLabelFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 23 ) ) );
+            table->SetComment( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 24 ) ) );
         }
     }
     PQclear( res );
@@ -1007,7 +1007,7 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
         errorMsg.push_back( L"Error executing query: " + err );
         result = 1;
     }
-    else if( status == PGRES_TUPLES_OK )
+    else if( status == PGRES_TUPLES_OK && PQntuples( res ) > 0 )
     {
         result = true;
     }
