@@ -33,6 +33,14 @@
 #include "fontpropertypagebase.h"
 #include "wx/gtk/private.h"
 
+#if GTK_CHECK_VERSION(3, 2, 0)
+#else
+static void font_name_change(GtkTreeView *view, CFontPropertyPage *page)
+{
+    GetParent()->FindWindowById( wxID_APPLY )->Enable();
+}
+#endif
+
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, const wxPoint& pos, const wxSize& size, long style)
  : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
 {
@@ -50,6 +58,9 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, cons
 #else
     gtk_font_selection_set_font_name( (GtkFontSelection *) m_fontPanel, m_font.GetNativeFontInfo()->ToString().c_str() );
     gtk_font_selection_set_preview_text( (GtkFontSelection *) m_fontPanel, "AaBbYyZz" );
+    GtkWidget *names = gtk_font_selection_get_family_list( m_fontPanel );
+    GtkWidget *sizes = gtk_font_selection_get_size_entry( m_fontPanel );
+    g_signal_connect( names, "cursor-changed", G_CALLBACK(), this );
 #endif
 }
 
