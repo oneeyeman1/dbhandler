@@ -164,35 +164,52 @@ bool PropertiesDialog::ApplyProperties()
             wxFont dataFont = m_page2->GetFont();
             wxFont headingFont = m_page3->GetFont();
             wxFont labelFont = m_page4->GetFont();
-            if( newComment != table->GetComment() && !IsLogOnly() )
-            {
-                table->SetComment( newComment.ToStdWstring() );
-            }
             m_tableProperties.m_comment = newComment.Trim();
-            m_tableProperties.m_dataFontName = dataFont.GetFaceName();
-            m_tableProperties.m_headingFontName = headingFont.GetFaceName();
-            m_tableProperties.m_labelFontName = labelFont.GetFaceName();
-            m_tableProperties.m_dataFontSize = dataFont.GetPointSize();
-            m_tableProperties.m_headingFontSize = headingFont.GetPointSize();
-            m_tableProperties.m_labelFontSize = labelFont.GetPointSize();
-            m_tableProperties.m_isDataFontUnderlined = dataFont.GetUnderlined() ? true : false;
-            m_tableProperties.m_isHeadingFontUnderlined = headingFont.GetUnderlined() ? true : false;
-            m_tableProperties.m_isLabelFontUnderlined = labelFont.GetUnderlined() ? true : false;
-            m_tableProperties.m_isDataFontStriken = dataFont.GetStrikethrough() ? true : false;
-            m_tableProperties.m_isHeadingFontStriken = headingFont.GetStrikethrough() ? true : false;
-            m_tableProperties.m_isLabelFontStrioken = labelFont.GetStrikethrough() ? true : false;
-            m_tableProperties.m_isDataFontBold = dataFont.GetWeight() ? true : false;
-            m_tableProperties.m_isHeadingFontBold = headingFont.GetWeight() ? true : false;
-            m_tableProperties.m_isLabelFontBold = labelFont.GetWeight() ? true : false;
-            m_tableProperties.m_isDataFontItalic = dataFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-            m_tableProperties.m_isHeadingFontItalic = headingFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-            m_tableProperties.m_isLabelFontItalic = labelFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-            m_tableProperties.m_dataFontEncoding = dataFont.GetEncoding();
-            m_tableProperties.m_headingFontEncoding = headingFont.GetEncoding();
-            m_tableProperties.m_labelFontEncoding = labelFont.GetEncoding();
-            m_tableProperties.m_dataFontPixelSize = dataFont.GetPixelSize().GetWidth();
-            m_tableProperties.m_headingFontPixelSize = headingFont.GetPixelSize().GetWidth();
-            m_tableProperties.m_labelFontPixelSize = labelFont.GetPixelSize().GetWidth();
+            if( m_page2->IsDirty() )
+            {
+                m_tableProperties.m_dataFontName = dataFont.GetFaceName();
+            }
+            else
+            {
+                m_tableProperties.m_dataFontName = dataFont.GetFaceName();
+                m_tableProperties.m_dataFontSize = dataFont.GetPointSize();
+                m_tableProperties.m_isDataFontUnderlined = dataFont.GetUnderlined() ? true : false;
+                m_tableProperties.m_isDataFontStriken = dataFont.GetStrikethrough() ? true : false;
+                m_tableProperties.m_isDataFontBold = dataFont.GetWeight() ? true : false;
+                m_tableProperties.m_isDataFontItalic = dataFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+                m_tableProperties.m_dataFontEncoding = dataFont.GetEncoding();
+                m_tableProperties.m_dataFontPixelSize = dataFont.GetPixelSize().GetWidth();
+            }
+            if( m_page3->IsDirty() )
+            {
+                m_tableProperties.m_headingFontName = headingFont.GetFaceName();
+            }
+            else
+            {
+                m_tableProperties.m_headingFontName = headingFont.GetFaceName();
+                m_tableProperties.m_headingFontSize = headingFont.GetPointSize();
+                m_tableProperties.m_isHeadingFontUnderlined = headingFont.GetUnderlined() ? true : false;
+                m_tableProperties.m_isHeadingFontStriken = headingFont.GetStrikethrough() ? true : false;
+                m_tableProperties.m_isHeadingFontBold = headingFont.GetWeight() ? true : false;
+                m_tableProperties.m_isHeadingFontItalic = headingFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+                m_tableProperties.m_headingFontEncoding = headingFont.GetEncoding();
+                m_tableProperties.m_headingFontPixelSize = headingFont.GetPixelSize().GetWidth();
+            }
+            if( m_page4->IsDirty() )
+            {
+                m_tableProperties.m_labelFontName = labelFont.GetFaceName();
+            }
+            else
+            {
+                m_tableProperties.m_labelFontName = labelFont.GetFaceName();
+                m_tableProperties.m_labelFontSize = labelFont.GetPointSize();
+                m_tableProperties.m_isLabelFontUnderlined = labelFont.GetUnderlined() ? true : false;
+                m_tableProperties.m_isLabelFontStrioken = labelFont.GetStrikethrough() ? true : false;
+                m_tableProperties.m_isLabelFontBold = labelFont.GetWeight() ? true : false;
+                m_tableProperties.m_isLabelFontItalic = labelFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+                m_tableProperties.m_labelFontEncoding = labelFont.GetEncoding();
+                m_tableProperties.m_labelFontPixelSize = labelFont.GetPixelSize().GetWidth();
+            }
         }
     }
     if( m_type == 1 )
