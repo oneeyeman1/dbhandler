@@ -60,7 +60,7 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, cons
     gtk_font_selection_set_preview_text( (GtkFontSelection *) m_fontPanel, "AaBbYyZz" );
     GtkWidget *names = gtk_font_selection_get_family_list( m_fontPanel );
     GtkWidget *sizes = gtk_font_selection_get_size_entry( m_fontPanel );
-    g_signal_connect( names, "cursor-changed", G_CALLBACK(), this );
+    g_signal_connect( names, "cursor-changed", G_CALLBACK( font_name_change ), this );
 #endif
 }
 
