@@ -167,7 +167,9 @@ bool PropertiesDialog::ApplyProperties()
             m_tableProperties.m_comment = newComment.Trim();
             if( m_page2->IsDirty() )
             {
-                m_tableProperties.m_dataFontName = dataFont.GetFaceName();
+                m_tableProperties.m_dataFontName = m_page2->GetFaceName();
+                m_tableProperties.m_dataFontSize = m_page2->GetPointSize();
+                m_tableProperties.m_isDataFontBold = m_page2->GetWeight() == wxFONTWEIGHT_BOLD ? true : false;
             }
             else
             {
@@ -182,7 +184,9 @@ bool PropertiesDialog::ApplyProperties()
             }
             if( m_page3->IsDirty() )
             {
-                m_tableProperties.m_headingFontName = headingFont.GetFaceName();
+                m_tableProperties.m_headingFontName = m_page3->GetFaceName();
+                m_tableProperties.m_headingFontSize = m_page3->GetPointSize();
+                m_tableProperties.m_isHeadingFontBold = m_page3->GetWeight() == wxFONTWEIGHT_BOLD ? true : false;
             }
             else
             {
@@ -197,7 +201,9 @@ bool PropertiesDialog::ApplyProperties()
             }
             if( m_page4->IsDirty() )
             {
-                m_tableProperties.m_labelFontName = labelFont.GetFaceName();
+                m_tableProperties.m_labelFontName = m_page4->GetFaceName();
+                m_tableProperties.m_labelFontSize = m_page4->GetPointSize();
+                m_tableProperties.m_isLabelFontBold = m_page4->GetWeight() == wxFONTWEIGHT_BOLD? true : false;
             }
             else
             {

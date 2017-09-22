@@ -59,3 +59,18 @@ bool CFontPropertyPageBase::IsDirty()
 {
     return m_dirty;
 }
+
+wxString &CFontPropertyPageBase::GetFaceName() const
+{
+    return const_cast<wxString &>( m_faceName );
+}
+
+wxFontWeight &CFontPropertyPageBase::GetWeight() const
+{
+    return const_cast<wxFontWeight &>( m_weight );
+}
+
+int CFontPropertyPageBase::GetPointSize() const
+{
+    return m_ptSize;
+}

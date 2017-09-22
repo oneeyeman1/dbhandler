@@ -491,14 +491,18 @@ void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
     if( !m_dirty )
         m_dirty = true;
     if( event.GetEventObject() == itemChoice7 )
+    {
+        m_faceName = itemChoice7->GetValue();
         FillSizeList();
-    if( event.GetEventObject() == itemChoice7 )
-        m_font.SetFaceName( itemChoice7->GetValue() );
+    }
     if( event.GetEventObject() == itemChoice10 )
     {
         wxString style = itemChoice10->GetValue();
         if( style == "Bold" || style == "Bold Italic" )
+        {
+            m_weight = wxFONTWEIGHT_BOLD;
             m_font.MakeBold();
+        }
         if( style == "Italic" || style == "Bold Italic" )
             m_font.MakeItalic();
         if( style == "Regular" )
@@ -508,7 +512,10 @@ void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
         }
     }
     if( event.GetEventObject() == itemChoice19 )
+    {
+        m_ptSize = wxAtoi( itemChoice19->GetValue() );
         m_font.SetPointSize( wxAtoi( itemChoice19->GetValue() ) );
+    }
     itemWindow24->SetFont( m_font );
 //    UpdateSampleFont();
     GetParent()->FindWindowById( wxID_APPLY )->Enable();
