@@ -32,12 +32,16 @@ public:
     wxString &GetFaceName() const;
     wxFontWeight &GetWeight() const;
     int GetPointSize() const;
+    bool GetUnderline() const;
+    bool GetStrikethrough() const;
+    wxFontStyle GetStyle() const;
 protected:
     wxString m_faceName;
     int m_ptSize;
     wxFontWeight m_weight;
+    wxFontStyle m_style;
     wxFont m_font;
-    bool m_dirty;
+    bool m_dirty, m_underline, m_striken;
 };
 
 #if defined( __WXMSW__ )

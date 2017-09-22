@@ -74,3 +74,18 @@ int CFontPropertyPageBase::GetPointSize() const
 {
     return m_ptSize;
 }
+
+bool CFontPropertyPageBase::GetUnderline() const
+{
+    return m_underline;
+}
+
+bool CFontPropertyPageBase::GetStrikethrough() const
+{
+    return m_striken;
+}
+
+wxFontStyle CFontPropertyPageBase::GetStyle() const
+{
+    return m_style;
+}

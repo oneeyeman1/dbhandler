@@ -169,7 +169,10 @@ bool PropertiesDialog::ApplyProperties()
             {
                 m_tableProperties.m_dataFontName = m_page2->GetFaceName();
                 m_tableProperties.m_dataFontSize = m_page2->GetPointSize();
+                m_tableProperties.m_isDataFontUnderlined = m_page2->GetUnderlined() ? true : false;
+                m_tableProperties.m_isDataFontStriken = m_page2->GetStrikethrough() ? true : false;
                 m_tableProperties.m_isDataFontBold = m_page2->GetWeight() == wxFONTWEIGHT_BOLD ? true : false;
+                m_tableProperties.m_isDataFontItalic = m_page2->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
             }
             else
             {
@@ -186,7 +189,10 @@ bool PropertiesDialog::ApplyProperties()
             {
                 m_tableProperties.m_headingFontName = m_page3->GetFaceName();
                 m_tableProperties.m_headingFontSize = m_page3->GetPointSize();
+                m_tableProperties.m_isHeadingFontUnderlined = m_page3->GetUnderlined() ? true : false;
+                m_tableProperties.m_isHeadingFontStriken = m_page3->GetStrikethrough() ? true : false;
                 m_tableProperties.m_isHeadingFontBold = m_page3->GetWeight() == wxFONTWEIGHT_BOLD ? true : false;
+                m_tableProperties.m_isHeadingFontItalic = m_page3->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
             }
             else
             {
@@ -203,7 +209,10 @@ bool PropertiesDialog::ApplyProperties()
             {
                 m_tableProperties.m_labelFontName = m_page4->GetFaceName();
                 m_tableProperties.m_labelFontSize = m_page4->GetPointSize();
+                m_tableProperties.m_isLabelFontUnderlined = m_page4->GetUnderlined() ? true : false;
+                m_tableProperties.m_isLabelFontStrioken = m_page4->GetStrikethrough() ? true : false;
                 m_tableProperties.m_isLabelFontBold = m_page4->GetWeight() == wxFONTWEIGHT_BOLD? true : false;
+                m_tableProperties.m_isLabelFontItalic = m_page4->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
             }
             else
             {

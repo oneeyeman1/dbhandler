@@ -504,9 +504,14 @@ void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
             m_font.MakeBold();
         }
         if( style == "Italic" || style == "Bold Italic" )
+        {
+            m_style = wxFONTSTYLE_ITALIC;
             m_font.MakeItalic();
+        }
         if( style == "Regular" )
         {
+            m_weight = wxFONTWEIGHT_NORMAL;
+            m_style = wxFONTSTYLE_NORMAL;
             m_font.SetStyle( wxFONTSTYLE_NORMAL );
             m_font.SetWeight( wxFONTWEIGHT_NORMAL );
         }
@@ -515,6 +520,16 @@ void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
     {
         m_ptSize = wxAtoi( itemChoice19->GetValue() );
         m_font.SetPointSize( wxAtoi( itemChoice19->GetValue() ) );
+    }
+    if( event.GetEventObject() == itemCheckBox1 )
+    {
+        m_striken = itemCheckBox1->GetValue();
+        m_font.SetStrikethrough( itemCheckBox1->GetValue() );
+    }
+    if( event.GetEventObject() == itemCheckBox2 )
+    {
+        m_underline = itemCheckBox2->GetValue();
+        m_font.SetUnderline( itemCheckBox2->GetValue() );
     }
     itemWindow24->SetFont( m_font );
 //    UpdateSampleFont();
