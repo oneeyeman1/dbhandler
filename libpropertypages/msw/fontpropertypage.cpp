@@ -529,7 +529,7 @@ void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
     if( event.GetEventObject() == itemCheckBox2 )
     {
         m_underline = itemCheckBox2->GetValue();
-        m_font.SetUnderline( itemCheckBox2->GetValue() );
+        m_font.SetUnderlined( itemCheckBox2->GetValue() );
     }
     itemWindow24->SetFont( m_font );
 //    UpdateSampleFont();
