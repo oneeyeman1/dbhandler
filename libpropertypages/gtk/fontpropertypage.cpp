@@ -37,7 +37,7 @@
 #else
 static void font_name_change(GtkTreeView *view, CFontPropertyPage *page)
 {
-    GetParent()->FindWindowById( wxID_APPLY )->Enable();
+    page->GetParent()->FindWindowById( wxID_APPLY )->Enable();
 }
 #endif
 
@@ -58,8 +58,8 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, cons
 #else
     gtk_font_selection_set_font_name( (GtkFontSelection *) m_fontPanel, m_font.GetNativeFontInfo()->ToString().c_str() );
     gtk_font_selection_set_preview_text( (GtkFontSelection *) m_fontPanel, "AaBbYyZz" );
-    GtkWidget *names = gtk_font_selection_get_family_list( m_fontPanel );
-    GtkWidget *sizes = gtk_font_selection_get_size_entry( m_fontPanel );
+    GtkWidget *names = gtk_font_selection_get_family_list( (GtkFontSelection *) m_fontPanel );
+    GtkWidget *sizes = gtk_font_selection_get_size_entry( (GtkFontSelection *) m_fontPanel );
     g_signal_connect( names, "cursor-changed", G_CALLBACK( font_name_change ), this );
 #endif
 }
