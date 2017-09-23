@@ -59,3 +59,33 @@ bool CFontPropertyPageBase::IsDirty()
 {
     return m_dirty;
 }
+
+wxString &CFontPropertyPageBase::GetFaceName() const
+{
+    return const_cast<wxString &>( m_faceName );
+}
+
+wxFontWeight &CFontPropertyPageBase::GetWeight() const
+{
+    return const_cast<wxFontWeight &>( m_weight );
+}
+
+int CFontPropertyPageBase::GetPointSize() const
+{
+    return m_ptSize;
+}
+
+bool CFontPropertyPageBase::GetUnderline() const
+{
+    return m_underline;
+}
+
+bool CFontPropertyPageBase::GetStrikethrough() const
+{
+    return m_striken;
+}
+
+wxFontStyle CFontPropertyPageBase::GetStyle() const
+{
+    return m_style;
+}

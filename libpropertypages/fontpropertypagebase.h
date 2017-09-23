@@ -29,9 +29,19 @@ public:
     bool IsDirty();
     virtual void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough);
     virtual wxFont &GetFont();
+    wxString &GetFaceName() const;
+    wxFontWeight &GetWeight() const;
+    int GetPointSize() const;
+    bool GetUnderline() const;
+    bool GetStrikethrough() const;
+    wxFontStyle GetStyle() const;
 protected:
+    wxString m_faceName;
+    int m_ptSize;
+    wxFontWeight m_weight;
+    wxFontStyle m_style;
     wxFont m_font;
-    bool m_dirty;
+    bool m_dirty, m_underline, m_striken;
 };
 
 #if defined( __WXMSW__ )

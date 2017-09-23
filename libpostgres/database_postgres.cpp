@@ -411,7 +411,6 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 }
                                 else if( status == PGRES_TUPLES_OK )
                                 {
-                                    int count = 0;
                                     for( int j = 0; j < PQntuples( res1 ); j++ )
                                     {
                                         char *key_id = PQgetvalue( res1, j, 0 );
@@ -474,9 +473,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             fieldName = m_pimpl->m_myconv.from_bytes( field_name );
                                             fieldType = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 1 ) );
                                             char *char_length = PQgetvalue( res2, j, 2 );
-                                            char *char_radix = PQgetvalue( res2, j, 3 );
                                             char *numeric_length = PQgetvalue( res2, j, 4 );
-                                            char *numeric_radix = PQgetvalue( res2, j, 5 );
                                             char *numeric_scale = PQgetvalue( res2, j, 6 );
                                             fieldDefaultValue = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 8 ) );
                                             fieldIsNull = !strcmp( PQgetvalue( res2, j, 7 ), "YES" ) ? 1 : 0;
@@ -669,8 +666,8 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     std::wstring t = schemaName + L".";
     t += tableName;
     char *values[2];
-    int len1 = t.length() + 1;
-    int len2 = ownerName.length() + 1;
+    unsigned long len1 = t.length() + 1;
+    unsigned long len2 = ownerName.length() + 1;
     values[0] = new char[len1 * 2];
     values[1] = new char[len2 * 2];
     memset( values[0], '\0', len1 * 2 );
@@ -986,7 +983,6 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     std::wstring tname = const_cast<DatabaseTable *>( table )->GetSchemaName() + L".";
     tname += const_cast<DatabaseTable *>( table )->GetTableName();
     std::wstring owner = const_cast<DatabaseTable *>( table )->GetTableOwner();
-    int tableId = htonl( const_cast<DatabaseTable *>( table )->GetTableId() );
     char *values[2];
     values[0] = new char[(tname.length() + 1) * 2];
     values[1] = new char[(owner.length() + 1) * 2];
@@ -994,7 +990,6 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     memset( values[1], '\0', owner.length() + 1 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( tname.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( owner.c_str() ).c_str() );
-    values[2] = (char *) &tableId;
     int len1 = strlen( values[0] );
     int len2 = strlen( values[1] );
     int length[2] = { len1, len2 };
