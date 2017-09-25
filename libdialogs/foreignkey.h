@@ -29,6 +29,7 @@ public:
     const wxString &GetCommand();
     bool IsLogOnlyI();
     wxTextCtrl *GetKeyNameCtrl() const;
+    const DatabaseTable *GetRefTable();
     void OnApplyCommand(wxCommandEvent &event);
     void OnFieldSelection(wxListEvent &event);
     void OnFieldsDeselection(wxListEvent &event);
@@ -44,7 +45,7 @@ private:
     void set_properties();
     void do_layout();
     Database *m_db;
-    DatabaseTable *m_table;
+    DatabaseTable *m_table, *m_refTable;
     // end wxGlade
 
 protected:

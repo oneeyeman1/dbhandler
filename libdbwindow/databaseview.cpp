@@ -55,7 +55,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
-typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, Database *, wxString &, bool &);
+typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, DatabaseTable *, Database *, wxString &, bool &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
@@ -468,7 +468,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
 {
     std::vector<std::wstring> errors;
     int result;
-    DatabaseTable *table = NULL;
+    DatabaseTable *table = NULL, *refTable = NULL;
     ShapeList shapes;
     wxString command, kName;
     std::wstring keyName;
@@ -490,7 +490,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-        result = func( m_frame, kName, table, GetDocument()->GetDatabase(), command, logOnly );
+        result = func( m_frame, kName, table, refTable, GetDocument()->GetDatabase(), command, logOnly );
         if( logOnly )
         {
             m_text->AppendText( command );

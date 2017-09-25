@@ -190,6 +190,15 @@ void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
 {
     if( Verify() )
     {
+        std::map<std::wstring, std::vector<DatabaseTable *> > tables = m_db->GetTableVector().m_tables;
+        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = tables.begin(); it != tables.end(); it++ )
+        {
+            for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+            {
+                if( (*it1)->GetTableName() == m_primaryKeyTable->GetValue().ToStdWstring() )
+                    m_refTable = (*it1);
+            }
+        }
         if( event.GetEventObject() == m_logOnly )
             m_isLogOnly = true;
         GenerateQuery();
@@ -253,7 +262,7 @@ void ForeignKeyDialog::GenerateQuery()
     int onUpdate = m_onUpdate->GetSelection();
     if( m_db->GetTableVector().m_type == L"SQLite" )
     {
-        m_command = "CREATE TEMPORARY TABLE temp AS SELECT * FROM " + m_table->GetTableName();
+        m_command = "CREATE TEMPORARY TABLE __temporary_table__ AS SELECT * FROM " + m_table->GetTableName();
         m_command += ";\n\rDROP TABLE " + m_table->GetTableName();
         m_command += ";\n\rCREATE TABLE " + m_table->GetTableName();
         m_command += "(";
@@ -446,4 +455,9 @@ bool ForeignKeyDialog::IsLogOnlyI()
 wxTextCtrl *ForeignKeyDialog::GetKeyNameCtrl() const
 {
     return m_foreignKeyName;
+}
+
+const DatabaseTable *ForeignKeyDialog::GetRefTable()
+{
+    return m_refTable;
 }
