@@ -67,17 +67,21 @@ static void font_name_change(GtkTreeView *view, CFontPropertyPage *page)
     }
 }
 
-static void font_size_change(GtkTreeView *view, CFontPropertyPage *page)
+static void find_widgets(GtkWidget *view, gint count)
 {
     wxButton *btn = (wxButton *) page->GetParent()->GetParent()->FindWindow( wxID_APPLY );
     if( btn )
     {
-        GtkTreeIter iter;
-        GValue value = G_VALUE_INIT;
-        GList *selRows = NULL;
-        btn->Enable();
-        GtkTreeSelection *sel = gtk_tree_view_get_selection( view );
-        GtkTreeModel *model = gtk_tree_view_get_model( view );
+        if( GTK_IS_TREE_VIEW( view ) )
+        {
+            g_signal_connect( view, "", G_CALLBACK( font_name_change ), this );
+        }
+/*            GtkTreeIter iter;
+            GValue value = G_VALUE_INIT;
+            GList *selRows = NULL;
+            btn->Enable();
+            GtkTreeSelection *sel = gtk_tree_view_get_selection( view );
+            GtkTreeModel *model = gtk_tree_view_get_model( view );
         selRows = gtk_tree_selection_get_selected_rows( sel, &model );
         if( selRows )
         {
@@ -93,7 +97,7 @@ static void font_size_change(GtkTreeView *view, CFontPropertyPage *page)
         const char *str = g_value_get_string( &value );
         wxString temp = wxGTK_CONV_BACK( g_value_get_string( &value ) );
         page->SetFaceName( temp );
-        g_list_free_full( selRows, (GDestroyNotify) gtk_tree_path_free );
+        g_list_free_full( selRows, (GDestroyNotify) gtk_tree_path_free );*/
     }
 }
 #endif
@@ -112,13 +116,14 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, cons
 #if GTK_CHECK_VERSION(3, 2, 0 )
     gtk_font_chooser_set_font_desc( (GtkFontChooser *) m_fontPanel, m_font.GetNativeFontInfo()->description );
     gtk_font_chooser_set_preview_text( (GtkFontChooser *) m_fontPanel, "AaBbYyZz" );
+    g_signal_connect( m_fontPanel, "notify::font", G_CALLBACK( font_name_change ), this );
 #else
     gtk_font_selection_set_font_name( (GtkFontSelection *) m_fontPanel, m_font.GetNativeFontInfo()->ToString().c_str() );
     gtk_font_selection_set_preview_text( (GtkFontSelection *) m_fontPanel, "AaBbYyZz" );
     GtkWidget *names = gtk_font_selection_get_family_list( (GtkFontSelection *) m_fontPanel );
     GtkWidget *sizes = gtk_font_selection_get_size_entry( (GtkFontSelection *) m_fontPanel );
-    g_signal_connect( names, "cursor-changed", G_CALLBACK( font_name_change ), this );
-    g_signal_connect( sizes, "cursor-changed", G_CALLBACK( font_name_change ), this );
+    gint count = 0;
+    gtk_container_forall( GTK_CONTAINER( m_fontPanel ), (GtkCallback) find_widgets, &count );
 #endif
 }
 
