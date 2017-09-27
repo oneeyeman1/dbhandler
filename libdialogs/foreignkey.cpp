@@ -190,15 +190,6 @@ void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
 {
     if( Verify() )
     {
-        std::map<std::wstring, std::vector<DatabaseTable *> > tables = m_db->GetTableVector().m_tables;
-        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = tables.begin(); it != tables.end(); it++ )
-        {
-            for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
-            {
-                if( (*it1)->GetTableName() == m_primaryKeyTable->GetValue().ToStdWstring() )
-                    m_refTable = (*it1);
-            }
-        }
         if( event.GetEventObject() == m_logOnly )
             m_isLogOnly = true;
         GenerateQuery();
@@ -457,7 +448,7 @@ wxTextCtrl *ForeignKeyDialog::GetKeyNameCtrl() const
     return m_foreignKeyName;
 }
 
-const DatabaseTable *ForeignKeyDialog::GetRefTable()
+const std::vector<FKField *> &ForeignKeyDialog::GetForeignKeyVector()
 {
-    return m_refTable;
+    return m_fkfield;
 }

@@ -201,7 +201,7 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, i
     return res;
 }
 
-extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, DatabaseTable *table, DatabaseTable *refTable, Database *db, wxString &command, bool &logOnly)
+extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, DatabaseTable *table, std::vector<FKField *> &fkfield, Database *db, wxString &command, bool &logOnly)
 {
     int res;
 #ifdef __WXMSW__
@@ -215,7 +215,7 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
         command = dlg.GetCommand();
         logOnly = dlg.IsLogOnlyI();
         keyName = dlg.GetKeyNameCtrl()->GetValue();
-        refTable = const_cast<DatabaseTable *>( dlg.GetRefTable() );
+        fkfield = dlg.GetForeignKeyVector();
     }
     return res;
 }
