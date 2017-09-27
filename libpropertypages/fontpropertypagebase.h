@@ -30,6 +30,7 @@ public:
     virtual void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough);
     virtual wxFont &GetFont();
     wxString &GetFaceName() const;
+    void SetFaceName(const wxString &name);
     wxFontWeight &GetWeight() const;
     int GetPointSize() const;
     bool GetUnderline() const;

@@ -27,8 +27,10 @@
 #endif
 
 #include <gtk/gtk.h>
+#include <glib-object.h>
 #include "wx/font.h"
 #include "wx/fontutil.h"
+#include "wx/button.h"
 #include "wx/nativewin.h"
 #include "fontpropertypagebase.h"
 #include "wx/gtk/private.h"
@@ -37,7 +39,62 @@
 #else
 static void font_name_change(GtkTreeView *view, CFontPropertyPage *page)
 {
-    GetParent()->FindWindowById( wxID_APPLY )->Enable();
+    wxButton *btn = (wxButton *) page->GetParent()->GetParent()->FindWindow( wxID_APPLY );
+    if( btn )
+    {
+        GtkTreeIter iter;
+        GValue value = G_VALUE_INIT;
+        GList *selRows = NULL;
+        btn->Enable();
+        GtkTreeSelection *sel = gtk_tree_view_get_selection( view );
+        GtkTreeModel *model = gtk_tree_view_get_model( view );
+        selRows = gtk_tree_selection_get_selected_rows( sel, &model );
+        if( selRows )
+        {
+            gchar *string1 = gtk_tree_path_to_string( (GtkTreePath *) selRows[0].data );
+            g_free( string1 );
+            if( gtk_tree_model_get_iter( model, &iter, (GtkTreePath *) selRows[0].data ) )
+            {
+                gtk_tree_model_get_value( model, &iter, 0, &value );
+                gchar *string2 = g_strdup_value_contents( &value );
+                g_free( string2 );
+            }
+        }
+        const char *str = g_value_get_string( &value );
+        wxString temp = wxGTK_CONV_BACK( g_value_get_string( &value ) );
+        page->SetFaceName( temp );
+        g_list_free_full( selRows, (GDestroyNotify) gtk_tree_path_free );
+    }
+}
+
+static void font_size_change(GtkTreeView *view, CFontPropertyPage *page)
+{
+    wxButton *btn = (wxButton *) page->GetParent()->GetParent()->FindWindow( wxID_APPLY );
+    if( btn )
+    {
+        GtkTreeIter iter;
+        GValue value = G_VALUE_INIT;
+        GList *selRows = NULL;
+        btn->Enable();
+        GtkTreeSelection *sel = gtk_tree_view_get_selection( view );
+        GtkTreeModel *model = gtk_tree_view_get_model( view );
+        selRows = gtk_tree_selection_get_selected_rows( sel, &model );
+        if( selRows )
+        {
+            gchar *string1 = gtk_tree_path_to_string( (GtkTreePath *) selRows[0].data );
+            g_free( string1 );
+            if( gtk_tree_model_get_iter( model, &iter, (GtkTreePath *) selRows[0].data ) )
+            {
+                gtk_tree_model_get_value( model, &iter, 0, &value );
+                gchar *string2 = g_strdup_value_contents( &value );
+                g_free( string2 );
+            }
+        }
+        const char *str = g_value_get_string( &value );
+        wxString temp = wxGTK_CONV_BACK( g_value_get_string( &value ) );
+        page->SetFaceName( temp );
+        g_list_free_full( selRows, (GDestroyNotify) gtk_tree_path_free );
+    }
 }
 #endif
 
@@ -58,9 +115,10 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, cons
 #else
     gtk_font_selection_set_font_name( (GtkFontSelection *) m_fontPanel, m_font.GetNativeFontInfo()->ToString().c_str() );
     gtk_font_selection_set_preview_text( (GtkFontSelection *) m_fontPanel, "AaBbYyZz" );
-    GtkWidget *names = gtk_font_selection_get_family_list( m_fontPanel );
-    GtkWidget *sizes = gtk_font_selection_get_size_entry( m_fontPanel );
+    GtkWidget *names = gtk_font_selection_get_family_list( (GtkFontSelection *) m_fontPanel );
+    GtkWidget *sizes = gtk_font_selection_get_size_entry( (GtkFontSelection *) m_fontPanel );
     g_signal_connect( names, "cursor-changed", G_CALLBACK( font_name_change ), this );
+    g_signal_connect( sizes, "cursor-changed", G_CALLBACK( font_name_change ), this );
 #endif
 }
 

@@ -89,3 +89,8 @@ wxFontStyle CFontPropertyPageBase::GetStyle() const
 {
     return m_style;
 }
+
+void CFontPropertyPageBase::SetFaceName(const wxString &name)
+{
+    m_faceName = name;
+}
