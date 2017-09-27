@@ -67,14 +67,14 @@ static void font_name_change(GtkTreeView *view, CFontPropertyPage *page)
     }
 }
 
-static void find_widgets(GtkWidget *view, gint count)
+static void find_widgets(GtkWidget *view, CFontPropertyPage *page)
 {
     wxButton *btn = (wxButton *) page->GetParent()->GetParent()->FindWindow( wxID_APPLY );
     if( btn )
     {
         if( GTK_IS_TREE_VIEW( view ) )
         {
-            g_signal_connect( view, "", G_CALLBACK( font_name_change ), this );
+            g_signal_connect( view, "", G_CALLBACK( font_name_change ), page );
         }
 /*            GtkTreeIter iter;
             GValue value = G_VALUE_INIT;
@@ -123,7 +123,7 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, cons
     GtkWidget *names = gtk_font_selection_get_family_list( (GtkFontSelection *) m_fontPanel );
     GtkWidget *sizes = gtk_font_selection_get_size_entry( (GtkFontSelection *) m_fontPanel );
     gint count = 0;
-    gtk_container_forall( GTK_CONTAINER( m_fontPanel ), (GtkCallback) find_widgets, &count );
+    gtk_container_forall( GTK_CONTAINER( m_fontPanel ), (GtkCallback) find_widgets, this );
 #endif
 }
 
