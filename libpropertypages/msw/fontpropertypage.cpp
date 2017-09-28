@@ -406,7 +406,7 @@ void CFontPropertyPage::do_layout()
     sizer2->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
 //    wxGridBagSizer *sizer_3 = new wxGridBagSizer();
     wxFlexGridSizer *sizer_3 = new wxFlexGridSizer( 2, 3, 5, 5 );
-    sizer_3->SetFlexibleDirection( wxVERTICAL );
+    sizer_3->SetFlexibleDirection( wxHORIZONTAL );
     sizer_3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_NONE );
     wxStaticBoxSizer *sizer_4 = new wxStaticBoxSizer( itemStaticBox1, wxVERTICAL );
     wxStaticBoxSizer *sizer_5 = new wxStaticBoxSizer( itemStaticBox2, wxVERTICAL );
@@ -427,7 +427,7 @@ void CFontPropertyPage::do_layout()
     sizer_4->Add( 20, 5, 0, wxEXPAND, 0 );
     sizer_4->Add( itemCheckBox2, 0, wxEXPAND, 0 );
     sizer_8->Add( sizer_4, 0, wxEXPAND, 0 );
-    sizer_5->Add( itemWindow24, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 0 );
+    sizer_5->Add( itemWindow24, 1, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5 );
     sizer_8->Add( sizer_5, 0, wxEXPAND, 0 );
     sizer2->Add( sizer_8, 0, wxEXPAND, 0 );
     sizer_6->Add( itemStaticText15, 0, wxEXPAND, 0 );
