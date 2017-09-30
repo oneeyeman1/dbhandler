@@ -52,41 +52,22 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_properties = new wxNotebook( this, wxID_ANY );
     if( type == 0 )
     {
-        wxFont *data_font, *heading_font, *label_font;
         DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
         res = db->GetTableProperties( table, errors );
-        bool isdataFontName = table->GetDataFontName() == L"";
-        bool isheadingFontName = table->GetHeadingFontName() == L"";
-        bool islabelFontName = table->GetLabelFontName() == L"";
-        if( isdataFontName )
-            data_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
-        else
-        {
-            data_font = wxFont::New( table->GetDataFontSize(), wxFONTFAMILY_DEFAULT, table->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetDataFontUnderline(), table->GetDataFontName() );
-            if( table->GetDataFontStrikethrough() )
-                data_font->SetStrikethrough( true );
-        }
-        if( isheadingFontName )
-            heading_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
-        else
-        {
-            heading_font = wxFont::New( table->GetHeadingFontSize(), wxFONTFAMILY_DEFAULT, table->GetHeadingFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetHeadingFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetHeadingFontUnderline(), table->GetHeadingFontName() );
-            if( table->GetHeadingFontStrikethrough() )
-                heading_font->SetStrikethrough( true );
-        }
-        if( islabelFontName )
-            label_font = wxFont::New( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "MS Sans Serif" );
-        else
-        {
-            label_font = wxFont::New( table->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, table->GetLabelFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetLabelFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetLabelFontUnderline(), table->GetLabelFontName() );
-            if( table->GetLabelFontStrikethrough() )
-                label_font->SetStrikethrough( true );
-        }
+        wxFont data_font( table->GetDataFontSize(), wxFONTFAMILY_DEFAULT, table->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetDataFontUnderline(), table->GetDataFontName() );
+        if( table->GetDataFontStrikethrough() )
+            data_font.SetStrikethrough( true );
+        wxFont heading_font( table->GetHeadingFontSize(), wxFONTFAMILY_DEFAULT, table->GetHeadingFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetHeadingFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetHeadingFontUnderline(), table->GetHeadingFontName() );
+        if( table->GetHeadingFontStrikethrough() )
+            heading_font.SetStrikethrough( true );
+        wxFont label_font( table->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, table->GetLabelFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetLabelFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetLabelFontUnderline(), table->GetLabelFontName() );
+        if( table->GetLabelFontStrikethrough() )
+            label_font.SetStrikethrough( true );
         m_page1 = new TableGeneralProperty( m_properties, table, type );
         m_properties->AddPage( m_page1, _( "General" ) );
-        m_page2 = new CFontPropertyPage( m_properties, data_font, isdataFontName );
-        m_page3 = new CFontPropertyPage( m_properties, heading_font, isheadingFontName );
-        m_page4 = new CFontPropertyPage( m_properties, label_font, islabelFontName );
+        m_page2 = new CFontPropertyPage( m_properties, data_font );
+        m_page3 = new CFontPropertyPage( m_properties, heading_font );
+        m_page4 = new CFontPropertyPage( m_properties, label_font );
         m_properties->AddPage( m_page2, _( "Data Font" ) );
         m_properties->AddPage( m_page3, _( "Heading Font" ) );
         m_properties->AddPage( m_page4, _( "Label Font" ) );
@@ -180,38 +161,70 @@ bool PropertiesDialog::ApplyProperties()
         {
             DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
             wxString newComment = m_page1->GetCommentCtrl()->GetValue();
-            wxFont *dataFont = m_page2->GetFont();
-            wxFont *headingFont = m_page3->GetFont();
-            wxFont *labelFont = m_page4->GetFont();
-            if( newComment != table->GetComment() && !IsLogOnly() )
-            {
-                table->SetComment( newComment.ToStdWstring() );
-            }
+            wxFont dataFont = m_page2->GetFont();
+            wxFont headingFont = m_page3->GetFont();
+            wxFont labelFont = m_page4->GetFont();
             m_tableProperties.m_comment = newComment.Trim();
-            m_tableProperties.m_dataFontName = dataFont->GetFaceName();
-            m_tableProperties.m_headingFontName = headingFont->GetFaceName();
-            m_tableProperties.m_labelFontName = labelFont->GetFaceName();
-            m_tableProperties.m_dataFontSize = dataFont->GetPointSize();
-            m_tableProperties.m_headingFontSize = headingFont->GetPointSize();
-            m_tableProperties.m_labelFontSize = labelFont->GetPointSize();
-            m_tableProperties.m_isDataFontUnderlined = dataFont->GetUnderlined() ? true : false;
-            m_tableProperties.m_isHeadingFontUnderlined = headingFont->GetUnderlined() ? true : false;
-            m_tableProperties.m_isLabelFontUnderlined = labelFont->GetUnderlined() ? true : false;
-            m_tableProperties.m_isDataFontStriken = dataFont->GetStrikethrough() ? true : false;
-            m_tableProperties.m_isHeadingFontStriken = headingFont->GetStrikethrough() ? true : false;
-            m_tableProperties.m_isLabelFontStrioken = labelFont->GetStrikethrough() ? true : false;
-            m_tableProperties.m_isDataFontBold = dataFont->GetWeight() ? true : false;
-            m_tableProperties.m_isHeadingFontBold = headingFont->GetWeight() ? true : false;
-            m_tableProperties.m_isLabelFontBold = labelFont->GetWeight() ? true : false;
-            m_tableProperties.m_isDataFontItalic = dataFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-            m_tableProperties.m_isHeadingFontItalic = headingFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-            m_tableProperties.m_isLabelFontItalic = labelFont->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-            m_tableProperties.m_dataFontEncoding = dataFont->GetEncoding();
-            m_tableProperties.m_headingFontEncoding = headingFont->GetEncoding();
-            m_tableProperties.m_labelFontEncoding = labelFont->GetEncoding();
-            m_tableProperties.m_dataFontPixelSize = dataFont->GetPixelSize().GetWidth();
-            m_tableProperties.m_headingFontPixelSize = headingFont->GetPixelSize().GetWidth();
-            m_tableProperties.m_labelFontPixelSize = labelFont->GetPixelSize().GetWidth();
+            if( m_page2->IsDirty() )
+            {
+                m_tableProperties.m_dataFontName = m_page2->GetFaceName();
+                m_tableProperties.m_dataFontSize = m_page2->GetPointSize();
+                m_tableProperties.m_isDataFontUnderlined = m_page2->GetUnderline() ? true : false;
+                m_tableProperties.m_isDataFontStriken = m_page2->GetStrikethrough() ? true : false;
+                m_tableProperties.m_isDataFontBold = m_page2->GetWeight() == wxFONTWEIGHT_BOLD ? true : false;
+                m_tableProperties.m_isDataFontItalic = m_page2->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+            }
+            else
+            {
+                m_tableProperties.m_dataFontName = dataFont.GetFaceName();
+                m_tableProperties.m_dataFontSize = dataFont.GetPointSize();
+                m_tableProperties.m_isDataFontUnderlined = dataFont.GetUnderlined() ? true : false;
+                m_tableProperties.m_isDataFontStriken = dataFont.GetStrikethrough() ? true : false;
+                m_tableProperties.m_isDataFontBold = dataFont.GetWeight() ? true : false;
+                m_tableProperties.m_isDataFontItalic = dataFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+                m_tableProperties.m_dataFontEncoding = dataFont.GetEncoding();
+                m_tableProperties.m_dataFontPixelSize = dataFont.GetPixelSize().GetWidth();
+            }
+            if( m_page3->IsDirty() )
+            {
+                m_tableProperties.m_headingFontName = m_page3->GetFaceName();
+                m_tableProperties.m_headingFontSize = m_page3->GetPointSize();
+                m_tableProperties.m_isHeadingFontUnderlined = m_page3->GetUnderline() ? true : false;
+                m_tableProperties.m_isHeadingFontStriken = m_page3->GetStrikethrough() ? true : false;
+                m_tableProperties.m_isHeadingFontBold = m_page3->GetWeight() == wxFONTWEIGHT_BOLD ? true : false;
+                m_tableProperties.m_isHeadingFontItalic = m_page3->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+            }
+            else
+            {
+                m_tableProperties.m_headingFontName = headingFont.GetFaceName();
+                m_tableProperties.m_headingFontSize = headingFont.GetPointSize();
+                m_tableProperties.m_isHeadingFontUnderlined = headingFont.GetUnderlined() ? true : false;
+                m_tableProperties.m_isHeadingFontStriken = headingFont.GetStrikethrough() ? true : false;
+                m_tableProperties.m_isHeadingFontBold = headingFont.GetWeight() ? true : false;
+                m_tableProperties.m_isHeadingFontItalic = headingFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+                m_tableProperties.m_headingFontEncoding = headingFont.GetEncoding();
+                m_tableProperties.m_headingFontPixelSize = headingFont.GetPixelSize().GetWidth();
+            }
+            if( m_page4->IsDirty() )
+            {
+                m_tableProperties.m_labelFontName = m_page4->GetFaceName();
+                m_tableProperties.m_labelFontSize = m_page4->GetPointSize();
+                m_tableProperties.m_isLabelFontUnderlined = m_page4->GetUnderline() ? true : false;
+                m_tableProperties.m_isLabelFontStrioken = m_page4->GetStrikethrough() ? true : false;
+                m_tableProperties.m_isLabelFontBold = m_page4->GetWeight() == wxFONTWEIGHT_BOLD? true : false;
+                m_tableProperties.m_isLabelFontItalic = m_page4->GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+            }
+            else
+            {
+                m_tableProperties.m_labelFontName = labelFont.GetFaceName();
+                m_tableProperties.m_labelFontSize = labelFont.GetPointSize();
+                m_tableProperties.m_isLabelFontUnderlined = labelFont.GetUnderlined() ? true : false;
+                m_tableProperties.m_isLabelFontStrioken = labelFont.GetStrikethrough() ? true : false;
+                m_tableProperties.m_isLabelFontBold = labelFont.GetWeight() ? true : false;
+                m_tableProperties.m_isLabelFontItalic = labelFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+                m_tableProperties.m_labelFontEncoding = labelFont.GetEncoding();
+                m_tableProperties.m_labelFontPixelSize = labelFont.GetPixelSize().GetWidth();
+            }
         }
     }
     if( m_type == 1 )

@@ -19,6 +19,10 @@
 #include "../dbhandler/res/properties.xpm"
 #include "res/gui/key-f1.xpm"
 #include "../dbhandler/res/quit.xpm"
+#include "res/gui/toolbox.xpm"
+#include "../dbhandler/res/new.xpm"
+#include "../dbhandler/res/open.xpm"
+#include "../dbhandler/res/save.xpm"
 //#endif
 
 #include <string>
@@ -51,7 +55,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
-typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, Database *, wxString &, bool &);
+typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<FKField *> &, Database *, wxString &, bool &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
@@ -82,6 +86,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_CREATEDATABASE, DrawingView::OnCreateDatabase)
     EVT_MENU(wxID_SELECTALLFIELDS, DrawingView::OnSelectAllFields)
     EVT_MENU(wxID_DESELECTALLFIELDS, DrawingView::OnSelectAllFields)
+    EVT_MENU(wxID_DISTINCT, DrawingView::OnDistinct)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -113,6 +118,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         }
     }
     m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+//    m_frame->SetMenuBar( parent->GetMenuBar() );
     m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
     m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
     wxPoint ptCanvas;
@@ -134,6 +140,12 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     else
     {
+        m_tb->AddTool( wxID_NEW, _( "New" ), wxBitmap( new_xpm ), wxBitmap( new_xpm ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
+        m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
+        m_tb->AddTool( wxID_SAVE, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
+        m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
+        m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
+        m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
     }
     m_tb->Realize();
     m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
@@ -155,9 +167,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_type == QueryView )
     {
         m_queryBook = new wxNotebook( m_frame, wxID_ANY );
-        m_page2 = new WhereHavingPage( m_queryBook );
+        m_page2 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
         m_queryBook->AddPage( m_page2, _( "Where" ) );
-        m_page4 = new WhereHavingPage( m_queryBook );
+        m_page4 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
         m_queryBook->AddPage( m_page4, _( "Having" ) );
         m_page6 = new SyntaxPropPage( m_queryBook );
         m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
@@ -197,10 +209,16 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
-        m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close Database View" ), _( "Close Database View" ) );
+        m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Database View" ) );
     }
     else
     {
+        m_tb->AddTool( wxID_NEW, _( "New" ), wxBitmap( new_xpm ), wxBitmap( new_xpm ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
+        m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
+        m_tb->AddTool( wxID_SAVE, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
+        m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
+        m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
+        m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
     }
     m_tb->Realize();
     wxMDIClientWindow *frame = (wxMDIClientWindow *) parent->GetClientWindow();
@@ -451,6 +469,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     std::vector<std::wstring> errors;
     int result;
     DatabaseTable *table = NULL;
+    std::vector<FKField *> fkfield;
     ShapeList shapes;
     wxString command, kName;
     std::wstring keyName;
@@ -472,7 +491,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-        result = func( m_frame, kName, table, GetDocument()->GetDatabase(), command, logOnly );
+        result = func( m_frame, kName, table, fkfield, GetDocument()->GetDatabase(), command, logOnly );
         if( logOnly )
         {
             m_text->AppendText( command );
@@ -849,5 +868,22 @@ void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstr
 void DrawingView::HideShowSQLBox(bool show)
 {
     m_queryBook->Show( show );
+    m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, show );
     m_frame->Layout();
+}
+
+void DrawingView::OnDistinct(wxCommandEvent &event)
+{
+    wxString qry;
+    wxString query = m_page6->GetSyntaxCtrl()->GetValue();
+    wxTextCtrl *queryText = const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() );
+    if( dynamic_cast<wxMenu *>( event.GetEventObject() )->IsChecked( wxID_DISTINCT ) )
+    {
+        query.Replace( "SELECT ", "SELECT DISTINCT " );
+    }
+    else
+    {
+        query.Replace( "SELECT DISTINCT ", "SELECT " );
+    }
+    queryText->SetValue( query );
 }

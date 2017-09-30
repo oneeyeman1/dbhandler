@@ -18,10 +18,12 @@
 //#include "wx/settings.h"
 #include "wherehavingpage.h"
 
-typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring> &, wxString &);
+typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring> &, wxString &, const wxString &, const wxString &);
 
-WhereHavingPage::WhereHavingPage(wxWindow *parent) : wxPanel( parent )
+WhereHavingPage::WhereHavingPage(wxWindow *parent, const wxString &type, const wxString &subtype) : wxPanel( parent )
 {
+    m_type = type;
+    m_subtype = subtype;
     m_operatorChoices[0] = "=";
     m_operatorChoices[1] = "<";
     m_operatorChoices[2] = ">";
@@ -191,7 +193,7 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
     {
         wxString selection;
         ADDCOLUMNSDIALOG func = (ADDCOLUMNSDIALOG) lib->GetSymbol( "AddColumnToQuery" );
-        func( GetParent()->GetParent(), type, fields, selection );
+        func( GetParent()->GetParent(), type, fields, selection, m_type, m_subtype );
         if( selection != wxEmptyString )
         {
             m_grid->SetCellValue( m_row, m_col, selection );

@@ -27,13 +27,64 @@
 #endif
 
 #include <gtk/gtk.h>
+#include <glib-object.h>
 #include "wx/font.h"
 #include "wx/fontutil.h"
+#include "wx/button.h"
 #include "wx/nativewin.h"
 #include "fontpropertypagebase.h"
 #include "wx/gtk/private.h"
 
-CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, const wxPoint& pos, const wxSize& size, long style)
+static void font_name_change(GtkTreeView *view, CFontPropertyPage *page)
+{
+    wxButton *btn = (wxButton *) page->GetParent()->GetParent()->FindWindow( wxID_APPLY );
+    if( btn )
+    {
+        GtkTreeIter iter;
+        GValue value = G_VALUE_INIT;
+        GList *selRows = NULL;
+        btn->Enable();
+        GtkTreeSelection *sel = gtk_tree_view_get_selection( view );
+        GtkTreeModel *model = gtk_tree_view_get_model( view );
+        selRows = gtk_tree_selection_get_selected_rows( sel, &model );
+        if( selRows )
+        {
+            gchar *string1 = gtk_tree_path_to_string( (GtkTreePath *) selRows[0].data );
+            g_free( string1 );
+            if( gtk_tree_model_get_iter( model, &iter, (GtkTreePath *) selRows[0].data ) )
+            {
+                gtk_tree_model_get_value( model, &iter, 0, &value );
+                gchar *string2 = g_strdup_value_contents( &value );
+                g_free( string2 );
+            }
+        }
+        const char *str = g_value_get_string( &value );
+        wxString temp = wxGTK_CONV_BACK( g_value_get_string( &value ) );
+        page->SetFaceName( temp );
+        g_list_free_full( selRows, (GDestroyNotify) gtk_tree_path_free );
+    }
+}
+
+#if GTK_CHECK_VERSION(3, 2, 0)
+#else
+static void find_widgets(GtkWidget *view, CFontPropertyPage *page)
+{
+    if( GTK_IS_CONTAINER( view ) && !GTK_IS_TREE_VIEW( view ) && !GTK_IS_ENTRY( view ) )
+        gtk_container_foreach( GTK_CONTAINER( view ), (GtkCallback) find_widgets, page );
+    else if( GTK_IS_TREE_VIEW( view ) )
+    {
+        g_signal_connect( view, "cursor-changed", G_CALLBACK( font_name_change ), page );
+        return;
+    }
+    else if( GTK_IS_ENTRY( view ) )
+    {
+        g_signal_connect( view, "changed", G_CALLBACK( font_name_change ), page );
+        return;
+    }
+}
+#endif
+
+CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, const wxPoint& pos, const wxSize& size, long style)
  : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
 {
     m_font = font;
@@ -45,11 +96,15 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont *font, int id, con
     g_object_ref_sink( m_fontPanel );
     m_holder = new wxNativeWindow( this, wxID_ANY, m_fontPanel );
 #if GTK_CHECK_VERSION(3, 2, 0 )
-    gtk_font_chooser_set_font_desc( (GtkFontChooser *) m_fontPanel, m_font->GetNativeFontInfo()->description );
+    gtk_font_chooser_set_font_desc( (GtkFontChooser *) m_fontPanel, m_font.GetNativeFontInfo()->description );
     gtk_font_chooser_set_preview_text( (GtkFontChooser *) m_fontPanel, "AaBbYyZz" );
+    g_signal_connect( m_fontPanel, "notify::font", G_CALLBACK( font_name_change ), this );
 #else
-    gtk_font_selection_set_font_name( (GtkFontSelection *) m_fontPanel, m_font->GetNativeFontInfo()->ToString().c_str() );
+    gtk_font_selection_set_font_name( (GtkFontSelection *) m_fontPanel, m_font.GetNativeFontInfo()->ToString().c_str() );
     gtk_font_selection_set_preview_text( (GtkFontSelection *) m_fontPanel, "AaBbYyZz" );
+    GtkWidget *names = gtk_font_selection_get_family_list( (GtkFontSelection *) m_fontPanel );
+    GtkWidget *sizes = gtk_font_selection_get_size_entry( (GtkFontSelection *) m_fontPanel );
+    gtk_container_forall( GTK_CONTAINER( m_fontPanel ), (GtkCallback) find_widgets, this );
 #endif
 }
 

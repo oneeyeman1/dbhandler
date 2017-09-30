@@ -201,7 +201,7 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, i
     return res;
 }
 
-extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, DatabaseTable *table, Database *db, wxString &command, bool &logOnly)
+extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, DatabaseTable *table, std::vector<FKField *> &fkfield, Database *db, wxString &command, bool &logOnly)
 {
     int res;
 #ifdef __WXMSW__
@@ -215,6 +215,7 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
         command = dlg.GetCommand();
         logOnly = dlg.IsLogOnlyI();
         keyName = dlg.GetKeyNameCtrl()->GetValue();
+        fkfield = dlg.GetForeignKeyVector();
     }
     return res;
 }
@@ -241,10 +242,10 @@ extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTab
     return res;
 }
 
-extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type, const std::vector<std::wstring> &fields, wxString &selection)
+extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type, const std::vector<std::wstring> &fields, wxString &selection, const wxString &dbType, const wxString &dbSubtype)
 {
     int res;
-    AddColumnsDialog dlg( parent, type, fields );
+    AddColumnsDialog dlg( parent, type, fields, dbType, dbSubtype );
     res = dlg.ShowModal();
     if( res == wxID_OK )
     {

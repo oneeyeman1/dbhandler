@@ -35,7 +35,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
     m_header = new HeaderGrid();
     m_pLabel = new wxSFTextShape();
     m_comment = new CommentTableShape();
-    m_pGrid = new GridTableShape();
+    m_pGrid = new GridTableShape( DatabaseView );
     m_pLabel->SetId( 1000 );
     m_comment->SetId( 1001 );
     if( m_header && m_pLabel && m_comment && m_pGrid )
@@ -101,7 +101,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
     m_header = new HeaderGrid();
     m_pLabel = new wxSFTextShape();
     m_comment = new CommentTableShape( table );
-    m_pGrid = new GridTableShape();
+    m_pGrid = new GridTableShape( type );
     m_pLabel->SetId( 1000 );
     m_comment->SetId( 1001 );
     if( m_header && m_pLabel && m_comment && m_pGrid )
@@ -225,6 +225,14 @@ void MyErdTable::DrawHover(wxDC &dc)
 
 void MyErdTable::DrawNormal(wxDC &dc)
 {
+/*    if( this->m_fSelected )
+    {
+        m_header->SetFill( wxBrush( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) ) );
+    }
+    else
+    {
+        m_header->SetFill( wxBrush() );
+    }*/
     wxSFRoundRectShape::DrawNormal( dc );
     DrawDetail( dc );
 }
@@ -343,12 +351,12 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
             {
                 SetCommonProps( type_shape );
                 type_shape->GetFont().SetPointSize( 8 );
-                type_shape->SetText( field->GetComment() );
+                type_shape->SetText( field->GetFullType() );
             }
             else
                 delete type_shape;
         }
-        wxSFTextShape *comment_shape = new wxSFTextShape();
+        CommentFieldShape *comment_shape = new CommentFieldShape();
         if( comment_shape )
         {
             comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
@@ -399,6 +407,6 @@ std::wstring &MyErdTable::GetTableName()
 
 void MyErdTable::DrawSelected(wxDC& dc)
 {
-    if( m_type == QueryView )
-        DrawNormal( dc );
+    if( m_type == DatabaseView )
+        wxSFRoundRectShape::DrawSelected( dc );
 }

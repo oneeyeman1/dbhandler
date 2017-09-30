@@ -26,7 +26,7 @@
 #ifndef CONSTRAINT_H
 #define CONSTRAINT_H
 
-#ifndef __DATABASEVIEW__H
+#if !defined __DATABASEVIEW__H && !defined __GRIDTABLESHAPE_H__
 enum ViewType
 {
     DatabaseView,

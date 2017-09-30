@@ -2,7 +2,7 @@
 class WXEXPORT WhereHavingPage :	public wxPanel
 {
 public:
-    WhereHavingPage(wxWindow *parent);
+    WhereHavingPage(wxWindow *parent, const wxString &type, const wxString &subtype);
     ~WhereHavingPage(void);
     void AppendField(const std::wstring &field);
     wxGrid *GetGrid();
@@ -18,7 +18,7 @@ protected:
 private:
     int m_scrollbarWidth, m_operatorSize, m_logicalSize, m_row, m_col;
     wxGrid *m_grid;
-    wxString m_operatorChoices[28], m_logicalChoices[2];
+    wxString m_operatorChoices[28], m_logicalChoices[2], m_type, m_subtype;
     std::vector<std::wstring> m_fields;
 };
 

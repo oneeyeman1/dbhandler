@@ -253,7 +253,7 @@ void ForeignKeyDialog::GenerateQuery()
     int onUpdate = m_onUpdate->GetSelection();
     if( m_db->GetTableVector().m_type == L"SQLite" )
     {
-        m_command = "CREATE TEMPORARY TABLE temp AS SELECT * FROM " + m_table->GetTableName();
+        m_command = "CREATE TEMPORARY TABLE __temporary_table__ AS SELECT * FROM " + m_table->GetTableName();
         m_command += ";\n\rDROP TABLE " + m_table->GetTableName();
         m_command += ";\n\rCREATE TABLE " + m_table->GetTableName();
         m_command += "(";
@@ -446,4 +446,9 @@ bool ForeignKeyDialog::IsLogOnlyI()
 wxTextCtrl *ForeignKeyDialog::GetKeyNameCtrl() const
 {
     return m_foreignKeyName;
+}
+
+const std::vector<FKField *> &ForeignKeyDialog::GetForeignKeyVector()
+{
+    return m_fkfield;
 }

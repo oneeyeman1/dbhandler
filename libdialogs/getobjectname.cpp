@@ -32,6 +32,8 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     set_properties();
     do_layout();
     m_new->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonNew, this );
+    m_cancel->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonNew, this );
+    m_browse->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonBrowse, this );
 }
 
 void GetObjectName::set_properties()
@@ -94,4 +96,19 @@ void GetObjectName::do_layout()
 void GetObjectName::OnButtonNew(wxCommandEvent &event)
 {
     EndModal( dynamic_cast<wxButton *>( event.GetEventObject() )->GetId() );
+}
+
+void GetObjectName::OnButtonBrowse(wxCommandEvent &event)
+{
+    wxFileDialog dlg( NULL, _( "Open Query" ), wxEmptyString, wxEmptyString, "query files(*.qry)|*.qry", wxFD_OPEN | wxFD_FILE_MUST_EXIST );
+    int res = dlg.ShowModal();
+    if( res == wxID_OK )
+    {
+        m_fileName = dlg.GetPath();
+    }
+}
+
+const wxString &GetObjectName::GetFileName()
+{
+    return m_fileName;
 }

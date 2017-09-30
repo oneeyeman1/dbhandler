@@ -5,7 +5,7 @@ public:
     SyntaxPropPage(wxWindow *parent);
     ~SyntaxPropPage(void);
     void SetSyntaxText(const wxString &text);
-    wxTextCtrl *GetSyntaxCtrl();
+    const wxTextCtrl *GetSyntaxCtrl();
 protected:
     void do_layout();
 private:

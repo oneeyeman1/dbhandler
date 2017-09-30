@@ -181,10 +181,10 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
     std::wstring query1 = L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
     std::wstring query2 = L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));";
     std::wstring query3 = L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));";
-    std::wstring query4 = L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
+    std::wstring query4 = L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
     std::wstring query5 = L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));";
-    std::wstring query6 = L"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC);";
-    std::wstring query7 = L"CREATE INDEX abcatcol_tnam_ownr_cnam ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);";
+    std::wstring query6 = L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcattbl_tnam_ownr\' AND table_name=\'abcattbl\' ) > 0, \"SELECT 0\", \"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC)\"));";
+    std::wstring query7 = L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatcol_tnam_ownr_cnam\' AND table_name=\'abcatcol\' ) > 0, \"SELECT 0\", \"CREATE INDEX abcatcol_tnam_ownr_cnam ON abcatcoll(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\"));";
     std::wstring query8 = L"SELECT USER()";
     res = mysql_query( m_db, "START TRANSACTION" );
     if( res )
@@ -442,30 +442,30 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         int table_id = row[4] ? strtol( row[4], &end, 10 ) : 0;
                                         MYSQL_BIND params[3];
                                         unsigned long str_length1, str_length2, str_length3;
-                                        str_data1 = new char[strlen( catalog_name )], str_data2 = new char[strlen( schema_name )], str_data3 = new char[strlen( table_name )];
-			                            memset( str_data1, '\0', strlen( catalog_name ) );
-			                            memset( str_data2, '\0', strlen( schema_name ) );
-			                            memset( str_data3, '\0', strlen( table_name ) );
+                                        str_length1 = strlen( catalog_name ) * 2;
+                                        str_length2 = strlen( schema_name ) * 2;
+                                        str_length3 = strlen( table_name ) * 2;
+                                        str_data1 = new char[str_length1], str_data2 = new char[str_length2], str_data3 = new char[str_length3];
+                                        memset( str_data1, '\0', str_length1 );
+                                        memset( str_data2, '\0', str_length2 );
+                                        memset( str_data3, '\0', str_length3 );
                                         memset( params, 0, sizeof( params ) );
-                                        str_length1 = strlen( catalog_name );
-                                        str_length2 = strlen( schema_name );
-                                        str_length3 = strlen( table_name );
-                                        strncpy( str_data1, catalog_name, strlen( catalog_name ) );
-                                        strncpy( str_data2, schema_name, strlen( schema_name ) );
-                                        strncpy( str_data3, table_name, strlen( table_name ) );
+                                        strncpy( str_data1, catalog_name, str_length1 );
+                                        strncpy( str_data2, schema_name, str_length2 );
+                                        strncpy( str_data3, table_name, str_length3 );
                                         params[0].buffer_type = MYSQL_TYPE_STRING;
                                         params[0].buffer = (char *) str_data1;
-                                        params[0].buffer_length = strlen( catalog_name );
+                                        params[0].buffer_length = strlen( str_data1 );
                                         params[0].is_null = 0;
                                         params[0].length = &str_length1;
                                         params[1].buffer_type = MYSQL_TYPE_STRING;
                                         params[1].buffer = (char *) str_data2;
-                                        params[1].buffer_length = strlen( schema_name );
+                                        params[1].buffer_length = strlen( str_data2 );
                                         params[1].is_null = 0;
                                         params[1].length = &str_length2;
                                         params[2].buffer_type = MYSQL_TYPE_STRING;
                                         params[2].buffer = (char *) str_data3;
-                                        params[2].buffer_length = strlen( table_name );
+                                        params[2].buffer_length = strlen( str_data3 );
                                         params[2].is_null = 0;
                                         params[2].length = &str_length3;
                                         if( mysql_stmt_bind_param( res1, params ) )
@@ -877,7 +877,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             }
                         }
                     }
-				}
+                }
             }
         }
     }
@@ -1082,7 +1082,7 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
     int tableId;
     short int datafontheight, datafontweight, datafontset, datafontptc, headingfontheight, headingfontweight, headingfontset, headingfontptc, labelfontheight, labelfontweight, labelfontset, labelfontptc;
     char datafontitalic = 'N', datafontunderline = 'N', headingfontitalic = 'N', headingfontunderline = 'N', labelfontitalic = 'N', labelfontunderline = 'N';
-    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_snam = ? AND abt_tnam = ?;";
+    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_ownr = ? AND abt_tnam = ?;";
     std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName();
     stmt = mysql_stmt_init( m_db );
     if( !stmt )

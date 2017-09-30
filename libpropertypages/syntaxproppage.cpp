@@ -39,7 +39,7 @@ void SyntaxPropPage::SetSyntaxText(const wxString &text)
     m_syntax->SetValue( text );
 }
 
-wxTextCtrl *SyntaxPropPage::GetSyntaxCtrl()
+const wxTextCtrl *SyntaxPropPage::GetSyntaxCtrl()
 {
     return m_syntax;
 }

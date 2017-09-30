@@ -29,6 +29,7 @@ public:
     const wxString &GetCommand();
     bool IsLogOnlyI();
     wxTextCtrl *GetKeyNameCtrl() const;
+    const std::vector<FKField *> &GetForeignKeyVector();
     void OnApplyCommand(wxCommandEvent &event);
     void OnFieldSelection(wxListEvent &event);
     void OnFieldsDeselection(wxListEvent &event);
@@ -45,6 +46,7 @@ private:
     void do_layout();
     Database *m_db;
     DatabaseTable *m_table;
+    std::vector<FKField *> m_fkfield;
     // end wxGlade
 
 protected:

@@ -24,14 +24,25 @@
 class WXEXPORT CFontPropertyPageBase : public wxPanel
 {
 public:
-    CFontPropertyPageBase(wxWindow* parent, wxFont *font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
+    CFontPropertyPageBase(wxWindow* parent, wxFont &font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
     ~CFontPropertyPageBase();
     bool IsDirty();
     virtual void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough);
-    virtual wxFont *GetFont();
+    virtual wxFont &GetFont();
+    wxString &GetFaceName() const;
+    void SetFaceName(const wxString &name);
+    wxFontWeight &GetWeight() const;
+    int GetPointSize() const;
+    bool GetUnderline() const;
+    bool GetStrikethrough() const;
+    wxFontStyle GetStyle() const;
 protected:
-    wxFont *m_font;
-    bool m_dirty;
+    wxString m_faceName;
+    int m_ptSize;
+    wxFontWeight m_weight;
+    wxFontStyle m_style;
+    wxFont m_font;
+    bool m_dirty, m_underline, m_striken;
 };
 
 #if defined( __WXMSW__ )

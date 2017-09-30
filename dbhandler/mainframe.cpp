@@ -89,6 +89,11 @@ MainFrame::~MainFrame()
             wxMessageBox( (*it) );
         }
     }
+    for( std::map<wxString, wxDynamicLibrary *>::iterator it = m_painters.begin(); it != m_painters.end(); it++ )
+    {
+        delete m_painters[(*it).first];
+        m_painters[(*it).first] = NULL;
+    }
     delete m_db;
     m_db = NULL;
     delete m_lib;
@@ -179,7 +184,7 @@ void MainFrame::QueryMenu()
     designMenu->Append( wxID_UNIONS, _( "Unions..." ), _( "Unions" ) );
     designMenu->Append( wxID_RETRIEVEARGS, _( "Retrieval Arguments..." ), _( "Define Retrieval Arguments" ) );
     designMenu->Append( wxID_CHECKOPTION, _( "Check Option" ), _( "Check Option" ) );
-    designMenu->Append( wxID_DISTINCT, _( "Distinct" ), _( "Use Distinct in query" ) );
+    designMenu->AppendCheckItem( wxID_DISTINCT, _( "Distinct" ), _( "Use Distinct in query" ) );
     designMenu->AppendSeparator();
     designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert to Syntax" ), _( "Convert to Syntax" ) );
     designMenu->AppendSeparator();
@@ -265,25 +270,32 @@ void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
 
 void MainFrame::OnDatabase(wxCommandEvent &event)
 {
+    wxDynamicLibrary *lib = NULL;
     if( !m_db )
         Connect();
     if( m_db )
     {
         InitMenuBar( event.GetId() );
-        m_lib = new wxDynamicLibrary;
-#ifdef __WXMSW__
-        m_lib->Load( "dbwindow" );
-#elif __WXOSX__
-        m_lib->Load( "liblibdbwindow.dylib" );
-#else
-        m_lib->Load( "libdbwindow" );
-#endif
-        if( m_db && m_lib->IsLoaded() )
+		if( m_painters.find( "Database" ) == m_painters.end() )
         {
-            DATABASE func = (DATABASE) m_lib->GetSymbol( "CreateDatabaseWindow" );
+            lib = new wxDynamicLibrary;
+#ifdef __WXMSW__
+            lib->Load( "dbwindow" );
+#elif __WXOSX__
+            lib->Load( "liblibdbwindow.dylib" );
+#else
+            lib->Load( "libdbwindow" );
+#endif
+            m_painters["Database"] = lib;
+        }
+        else
+            lib = m_painters["Database"];
+        if( m_db && lib->IsLoaded() )
+        {
+            DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
             func( this, m_manager, m_db, DatabaseView );
         }
-        else if( !m_lib->IsLoaded() )
+        else if( !lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
         else
             wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
@@ -292,25 +304,32 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
 
 void MainFrame::OnQuery(wxCommandEvent &event)
 {
+    wxDynamicLibrary *lib = NULL;
     if( !m_db )
         Connect();
     if( m_db )
     {
         InitMenuBar( event.GetId() );
-        m_lib = new wxDynamicLibrary;
-#ifdef __WXMSW__
-        m_lib->Load("dbwindow");
-#elif __WXOSX__
-        m_lib->Load("liblibdbwindow.dylib");
-#else
-        m_lib->Load("libdbwindow");
-#endif
-        if( m_db && m_lib->IsLoaded() )
+        if( m_painters.find( "Query" ) == m_painters.end() )
         {
-            DATABASE func = (DATABASE) m_lib->GetSymbol( "CreateDatabaseWindow" );
+            lib = new wxDynamicLibrary;
+#ifdef __WXMSW__
+            lib->Load("dbwindow");
+#elif __WXOSX__
+            lib->Load("liblibdbwindow.dylib");
+#else
+            lib->Load("libdbwindow");
+#endif
+            m_painters["Query"] = lib;
+        }
+        else
+            lib = m_painters["Query"];
+        if( m_db && lib->IsLoaded() )
+        {
+            DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
             func( this, m_manager, m_db, QueryView );
         }
-        else if( !m_lib->IsLoaded() )
+        else if( !lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
         else
             wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
@@ -329,14 +348,17 @@ void MainFrame::OnTable(wxCommandEvent &event)
     if( m_db )
     {
         InitMenuBar( event.GetId() );
-        m_lib = new wxDynamicLibrary;
+        if( !m_lib )
+        {
+            m_lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-        m_lib->Load( "tablewindow" );
+            m_lib->Load( "tablewindow" );
 #elif __WXOSX__
-        m_lib->Load( "liblibtablewindow.dylib" );
+            m_lib->Load( "liblibtablewindow.dylib" );
 #else
-        m_lib->Load( "libtablewindow" );
+            m_lib->Load( "libtablewindow" );
 #endif
+        }
         if( m_db && m_lib->IsLoaded() )
         {
             TABLE func = (TABLE) m_lib->GetSymbol( "CreateDatabaseWindow" );
