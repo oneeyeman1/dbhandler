@@ -45,38 +45,19 @@ END_EVENT_TABLE()
 void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
     wxPaintDC dc( this );
-    wxRect size = GetRect();
-//    wxFont font = m_font.GetFont();
-    dc.SetPen( *wxWHITE_PEN );
+    wxSize size = GetSize();
+    wxFont font = GetFont();
+    dc.SetPen( *wxBLACK_PEN );
     dc.SetBrush( *wxWHITE_BRUSH );
-//    dc.SetBrush( m_font.GetBackgroundColour() );
     dc.DrawRectangle( 0, 0, size.x, size.y );
-//    if( !font.Ok() )
-//        font = GetFont();
-    if( m_font.Ok() )
+    if( font.IsOk() )
     {
-        dc.SetFont( m_font );
-//        dc.SetTextForeground( m_font.GetTextColour() );
+        dc.SetFont( font );
         dc.SetTextForeground( *wxBLACK );
-        wxSize sizeString = dc.GetTextExtent( m_text );
-        // Calculate vertical centre
-        if( sizeString.x >= /*size.GetRight() - size.GetLeft()*/size.GetWidth() || sizeString.x <= 0 )
-            sizeString.x = size.GetLeft();
-        else
-        {
-            sizeString.x = size.GetLeft() + (( size.GetRight() - size.GetLeft() ) - sizeString.x ) / 2;
-            sizeString.x = sizeString.x - size.x;
-        }
-        if( size.y < size.y - (( size.y - size.x ) - sizeString.y ) / 2 )
-            sizeString.y = ( size.y - sizeString.y ) /  2;
-        else
-        {
-            sizeString.y = size.y - (( size.y - size.x ) - sizeString.y ) / 2;
-            sizeString.y = size.y - sizeString.y;
-        }
-        dc.DrawText( m_text, sizeString.x, sizeString.y );
-        dc.SetFont( wxNullFont );
+        dc.SetClippingRegion( 2, 2, size.x - 4, size.y - 4 );
+        dc.DrawText( m_text, 10, ( size.y - dc.GetTextExtent( wxT( "X" ) ) . y ) / 2 );
         dc.DestroyClippingRegion();
+        dc.SetFont( wxNullFont );
     }
     dc.SetBrush( wxNullBrush );
     dc.SetPen( wxNullPen );
@@ -387,6 +368,7 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont &font, int id, con
     set_properties();
     m_dirty = false;
     itemWindow24->SetFont( m_font );
+    itemWindow24->Refresh();
     itemChoice7->Bind( wxEVT_COMBOBOX, &CFontPropertyPage::OnChangeFont, this );
     itemChoice10->Bind( wxEVT_COMBOBOX, &CFontPropertyPage::OnChangeFont, this );
     itemChoice19->Bind( wxEVT_COMBOBOX, &CFontPropertyPage::OnChangeFont, this );
@@ -406,8 +388,8 @@ void CFontPropertyPage::do_layout()
     sizer2->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
 //    wxGridBagSizer *sizer_3 = new wxGridBagSizer();
     wxFlexGridSizer *sizer_3 = new wxFlexGridSizer( 2, 3, 5, 5 );
-    sizer_3->SetFlexibleDirection( wxHORIZONTAL );
-    sizer_3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_NONE );
+    sizer_3->SetFlexibleDirection( wxBOTH );
+    sizer_3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     wxStaticBoxSizer *sizer_4 = new wxStaticBoxSizer( itemStaticBox1, wxVERTICAL );
     wxStaticBoxSizer *sizer_5 = new wxStaticBoxSizer( itemStaticBox2, wxVERTICAL );
     wxBoxSizer *sizer_6 = new wxBoxSizer( wxVERTICAL );
@@ -427,8 +409,10 @@ void CFontPropertyPage::do_layout()
     sizer_4->Add( 20, 5, 0, wxEXPAND, 0 );
     sizer_4->Add( itemCheckBox2, 0, wxEXPAND, 0 );
     sizer_8->Add( sizer_4, 0, wxEXPAND, 0 );
-    sizer_5->Add( itemWindow24, 1, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5 );
-    sizer_8->Add( sizer_5, 0, wxEXPAND, 0 );
+    sizer_5->Add( itemWindow24, 1, wxGROW | wxALL, 5 );
+    sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_8->Add( sizer_5, 1, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( sizer_8, 0, wxEXPAND, 0 );
     sizer_6->Add( itemStaticText15, 0, wxEXPAND, 0 );
     sizer_6->Add( 20, 5, 0, wxEXPAND, 0 );
@@ -443,7 +427,9 @@ void CFontPropertyPage::do_layout()
     sizer2->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND|wxGROW|wxALL, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND|wxGROW|wxALL, 0 );
-    SetSizer( sizer1 );
+    SetSizerAndFit( sizer1 );
+/*    wxGridBagSizer *sizer3 = new wxGridBagSizer( 0, 0 );
+    sizer3->SetFlexibleDirection( wxBOTH );*/
 //    sizer1->Fit( this );
 //    Layout();
 }
@@ -532,7 +518,7 @@ void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
         m_font.SetUnderlined( itemCheckBox2->GetValue() );
     }
     itemWindow24->SetFont( m_font );
-//    UpdateSampleFont();
+    itemWindow24->Refresh();
     GetParent()->FindWindowById( wxID_APPLY )->Enable();
 }
 
