@@ -677,41 +677,50 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         char *italic = (char *) sqlite3_column_text( stmt, 5 );
                         if( italic )
                             table->SetDataFontItalic( italic[0] == 'Y' );
-                        char *underline = (char *) sqlite3_column_text( stmt, 6 );
-                        if( underline )
-                            table->SetDataFontUnderline( underline[0] == 'Y' );
-                        table->SetDataFontCharacterSet( sqlite3_column_int( stmt, 7 ) );
-                        table->SetDataFontPixelSize( sqlite3_column_int( stmt, 8 ) );
-                        dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 9 );
+                        int underline = sqlite3_column_int( stmt, 6 );
+                        if( underline > 0 )
+                            table->SetDataFontUnderline( true );
+                        int strikethrough = sqlite3_column_int( stmt, 7 );
+                        if( strikethrough > 0 )
+                            table->SetDataFontStrikethrough( true );
+                        table->SetDataFontCharacterSet( sqlite3_column_int( stmt, 8 ) );
+                        table->SetDataFontPixelSize( sqlite3_column_int( stmt, 9 ) );
+                        dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 10 );
                         if( dataFontName )
                             table->SetDataFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
-                        table->SetHeadingFontSize( sqlite3_column_int( stmt, 10 ) );
-                        table->SetHeadingFontWeight( sqlite3_column_int( stmt, 11 ) );
-                        italic = (char *) sqlite3_column_text( stmt, 12 );
+                        table->SetHeadingFontSize( sqlite3_column_int( stmt, 11 ) );
+                        table->SetHeadingFontWeight( sqlite3_column_int( stmt, 12 ) );
+                        italic = (char *) sqlite3_column_text( stmt, 13 );
                         if( italic )
                             table->SetHeadingFontItalic( italic[0] == 'Y' );
-                        underline = (char *) sqlite3_column_text( stmt, 13 );
-                        if( underline )
-                            table->SetHeadingFontUnderline( underline[0] == 'Y' );
-                        table->SetHeadingFontCharacterSet( sqlite3_column_int( stmt, 14 ) );
-                        table->SetHeadingFontPixelSize( sqlite3_column_int( stmt, 15 ) );
-                        headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 16 );
+                        underline = sqlite3_column_int( stmt, 14 );
+                        if( underline > 0 )
+                            table->SetHeadingFontUnderline( true );
+                        strikethrough = sqlite3_column_int( stmt, 15 );
+                        if( strikethrough > 0 )
+                            table->SetHeadingFontStrikethrough( true );
+                        table->SetHeadingFontCharacterSet( sqlite3_column_int( stmt, 16 ) );
+                        table->SetHeadingFontPixelSize( sqlite3_column_int( stmt, 17 ) );
+                        headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 18 );
                         if( headingFontName )
                             table->SetHeadingFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) headingFontName ) );
-                        table->SetLabelFontSize( sqlite3_column_int( stmt, 17 ) );
-                        table->SetLabelFontWeight( sqlite3_column_int( stmt, 18 ) );
-                        italic = (char *) sqlite3_column_text( stmt, 19 );
+                        table->SetLabelFontSize( sqlite3_column_int( stmt, 19 ) );
+                        table->SetLabelFontWeight( sqlite3_column_int( stmt, 20 ) );
+                        italic = (char *) sqlite3_column_text( stmt, 21 );
                         if( italic )
                             table->SetLabelFontItalic( italic[0] == 'Y' );
-                        underline = (char *) sqlite3_column_text( stmt, 20 );
-                        if( underline )
-                            table->SetLabelFontUnderline( underline[0] == 'Y' );
-                        table->SetLabelFontCharacterSet( sqlite3_column_int( stmt, 21 ) );
-                        table->SetLabelFontPixelSize( sqlite3_column_int( stmt, 22 ) );
-                        labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 23 );
+                        underline = sqlite3_column_int( stmt, 22 );
+                        if( underline > 0 )
+                            table->SetLabelFontUnderline( true );
+                        strikethrough = sqlite3_column_int( stmt, 23 );
+                        if( strikethrough > 0 )
+                            table->SetLabelFontStrikethrough( true );
+                        table->SetLabelFontCharacterSet( sqlite3_column_int( stmt, 24 ) );
+                        table->SetLabelFontPixelSize( sqlite3_column_int( stmt, 25 ) );
+                        labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 26 );
                         if( labelFontName )
                             table->SetLabelFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) labelFontName ) );
-                        table->SetComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 24 ) ) );
+                        table->SetComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 27 ) ) );
                     }
                     else if( res == SQLITE_DONE )
                         break;
@@ -797,7 +806,9 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 command += L", \"abd_fitl\" = \'";
                 command += properties.m_isDataFontItalic ? L"Y" : L"N";
                 command += L"\', \"abd_funl\" = \'";
-                command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
+                command += properties.m_isDataFontUnderlined ? L"1" : L"0";
+                command += L"\', \"abd_fstr\" = ";
+                command += properties.m_isDataFontStriken ? L"1" : L"0";
                 command += L"\', \"abd_fchr\" = ";
                 istr << properties.m_dataFontEncoding;
                 command += istr.str();
@@ -823,7 +834,9 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 command += L", \"abh_fitl\" = \'";
                 command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
                 command += L"\', \"abh_funl\" = \'";
-                command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
+                command += properties.m_isHeadingFontUnderlined ? L"1" : L"0";
+                command += L"\', \"abh_fstr\" = \'";
+                command += properties.m_isHeadingFontStriken ? L"1" : L"0";
                 command += L"\', \"abh_fchr\" = ";
                 istr << properties.m_headingFontEncoding;
                 command += istr.str();
@@ -849,7 +862,9 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 command += L", \"abl_fitl\" = \'";
                 command += properties.m_isLabelFontItalic ? L"Y" : L"N";
                 command += L"\', \"abl_funl\" = \'";
-                command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
+                command += properties.m_isLabelFontUnderlined ? L"1" : L"0";
+                command += L"\', \"abl_fstr\" = \'";
+                command += properties.m_isLabelFontStrioken ? L"1" : L"0";
                 command += L"\', \"abl_fchr\" = ";
                 istr << properties.m_labelFontEncoding;
                 command += istr.str();
@@ -898,9 +913,15 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.str( L"" );
                 command += L", \'";
                 command += properties.m_isDataFontItalic ? L"Y" : L"N";
-                command += L"\', \'";
-                command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
                 command += L"\', ";
+                istr << properties.m_isDataFontUnderlined ? 1 : 0;
+                command += istr.str();
+                istr.clear();
+                command += L", ";
+                istr << properties.m_isDataFontStriken ? 1 : 0;
+                command += istr.str();
+                istr.clear();
+                command += L", ";
                 istr << properties.m_dataFontEncoding;
                 command += istr.str();
                 istr.clear();
@@ -924,9 +945,15 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.str( L"" );
                 command += L", \'";
                 command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
-                command += L"\', \'";
-                command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
                 command += L"\', ";
+                istr << properties.m_isHeadingFontUnderlined ? 1 : 0;
+                command += istr.str();
+                istr.clear();
+                command += L", ";
+                istr << properties.m_isHeadingFontStriken ? 1 : 0;
+                command += istr.str();
+                istr.clear();
+                command += L", ";
                 istr << properties.m_headingFontEncoding;
                 command += istr.str();
                 istr.clear();
