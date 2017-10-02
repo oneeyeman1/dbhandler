@@ -44,8 +44,10 @@ END_EVENT_TABLE()
 
 void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
+    int cx, x, y;
     wxPaintDC dc( this );
-    wxSize size = GetSize();
+    wxPoint pos = GetPosition();
+    wxSize size = GetSize(), extent;
     wxFont font = GetFont();
     dc.SetPen( *wxBLACK_PEN );
     dc.SetBrush( *wxWHITE_BRUSH );
@@ -53,10 +55,17 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
     if( font.IsOk() )
     {
         dc.SetFont( font );
+        wxFontMetrics metrics = dc.GetFontMetrics();
+        extent = dc.GetTextExtent( m_text );
+		extent.SetHeight( metrics.ascent - metrics.internalLeading );
+        cx = extent.GetX();
+        if( ( cx >= ( size.GetWidth() - pos.x  ) ) || cx <= 0 )
+            x = pos.x;
+		else
+            x = pos.x + ( ( size.GetWidth() - pos.x ) - cx ) / 2;
+        y = wxMin( size.GetHeight(), size.GetHeight() - ( ( size.GetHeight() - pos.y ) - extent.GetHeight() ) / 2 );
         dc.SetTextForeground( *wxBLACK );
-        dc.SetClippingRegion( 2, 2, size.x - 4, size.y - 4 );
-        dc.DrawText( m_text, 10, ( size.y - dc.GetTextExtent( wxT( "X" ) ) . y ) / 2 );
-        dc.DestroyClippingRegion();
+        dc.DrawText( m_text, x, y );
         dc.SetFont( wxNullFont );
     }
     dc.SetBrush( wxNullBrush );
