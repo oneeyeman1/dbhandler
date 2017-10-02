@@ -80,7 +80,7 @@ int SQLiteDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstr
     return result;
 }
 
-int SQLiteDatabase::ServerConnect(std::vector<std::wstring> &UNUSED(dbList), std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::ServerConnect(std::vector<std::wstring> &UNUSED(dbList), std::vector<std::wstring> &UNUSED(errorMsg))
 {
     return 0;
 }
@@ -1091,7 +1091,7 @@ int SQLiteDatabase::GetFieldProperties(const char *tableName, const char *schema
         res = sqlite3_bind_text( stmt, 1, tableName, -1, SQLITE_TRANSIENT );
         if( res == SQLITE_OK )
         {
-            res = sqlite3_bind_text( stmt, 2, schemaName, -1, SQLITE_TRANSIENT );
+            res = sqlite3_bind_text( stmt, 2, ownerName, -1, SQLITE_TRANSIENT );
             if( res == SQLITE_OK )
             {
                 res = sqlite3_bind_text( stmt, 3, fieldName, -1, SQLITE_TRANSIENT );
