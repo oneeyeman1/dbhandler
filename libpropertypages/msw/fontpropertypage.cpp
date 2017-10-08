@@ -318,8 +318,8 @@ wxBitmapComboBox( parent, id, selection, pos, size, n, choices, style )
 //        dc.SetBrush( wxBrush( m_colourDialogNames.at( i ).m_rgb ) );
         dc.DrawRectangle( 0, 0, w, h );
         dc.SelectObject( wxNullBitmap );
-        wxMask *mask = new wxMask( bmp, magic );
-        bmp.SetMask( mask );
+//        wxMask *mask = new wxMask( bmp, magic );
+//        bmp.SetMask( mask );
 //        Append( m_colourDialogNames.at( i ).m_name, bmp, &m_colourDialogNames.at( i ).m_rgb );
     }
 }
@@ -328,13 +328,14 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont &font, int id, con
  : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
 {
     m_bUnderline = false;
+    m_bStrikethrough = false;
     wxString text;
     text = "AaBbYyZz";
     style = style;
     m_font = font;
     if( m_font.IsOk() )
     {
-        m_fontSize.Format( "%d", m_font.GetPointSize() );
+        m_fontSize = wxString::Format( "%d", m_font.GetPointSize() );
         if( m_font.GetStyle() == wxFONTSTYLE_ITALIC && m_font.GetWeight() == wxFONTWEIGHT_BOLD )
             m_nCurrentStyle = NTM_ITALIC | NTM_BOLD;
         else if( m_font.GetStyle() == wxFONTSTYLE_ITALIC )
@@ -347,11 +348,16 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont &font, int id, con
             m_bUnderline = true;
         else
             m_bUnderline = false;
+        if( m_font.GetStrikethrough() )
+            m_bStrikethrough = true;
+		else
+            m_bStrikethrough = false;
     }
     else
     {
         m_fontSize = wxEmptyString;
         m_bUnderline = false;
+        m_bStrikethrough = false;
     }
     m_nActualStyle = m_nCurrentStyle;
 //    m_textStr = font.GetTextDescription();
@@ -462,6 +468,8 @@ void CFontPropertyPage::set_properties()
     itemChoice16->SetValue( m_textStr );
     itemChoice17->SetValue( m_backgroundStr );
     if( m_bUnderline )
+        itemCheckBox1->Enable( true );
+    if( m_bStrikethrough )
         itemCheckBox2->Enable( true );
     if( m_font.IsOk() )
     {
@@ -613,6 +621,8 @@ void CFontPropertyPage::FillSizeList()
         m_nCurrentStyle = m_nActualStyle;
     if( m_bUnderline )
         itemCheckBox1->SetValue( true );
+    if( m_bStrikethrough )
+        itemCheckBox2->SetValue( true );
     UpdateSampleFont();
 }
 
