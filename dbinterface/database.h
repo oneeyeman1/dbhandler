@@ -141,6 +141,7 @@ public:
         m_headingFontUnderline = false;
         m_labelFontUnderline = false;
         m_dataFontStrikethrough = false;
+        m_headingFontStrikethrough = false;
         m_labelFontStrikethrough = false;
         m_dataFontCharacterSet = -1;
         m_headingFontCharacterSet = -1;
