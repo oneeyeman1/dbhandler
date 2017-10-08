@@ -63,7 +63,7 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
             x = pos.x;
 		else
             x = pos.x + ( ( size.GetWidth() - pos.x ) - cx ) / 2;
-        y = wxMin( size.GetHeight(), size.GetHeight() - ( ( size.GetHeight() - pos.y ) - extent.GetHeight() ) / 2 );
+        y = wxMin( size.GetHeight(), size.GetHeight() - ( pos.y - extent.GetHeight() ) / 2 );
         dc.SetTextForeground( *wxBLACK );
         dc.DrawText( m_text, x, y );
         dc.SetFont( wxNullFont );
@@ -362,8 +362,8 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont &font, int id, con
     itemChoice10 = new CStyleComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_SIMPLE );
     itemStaticText18 = new wxStaticText( this, wxID_ANY, _T("&Size:"), wxDefaultPosition, wxDefaultSize, 0 );
     itemChoice19 = new CSizeComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_SIMPLE );
-    itemCheckBox1 = new wxCheckBox( this, wxID_ANY, _T( "Stri&keout" ) );
-    itemCheckBox2 = new wxCheckBox( this, wxID_ANY, _T( "&Underline" ) );
+    itemCheckBox1 = new wxCheckBox( this, wxID_ANY, _T( "&Underline" ) );
+    itemCheckBox2 = new wxCheckBox( this, wxID_ANY, _T( "Stri&keout" ) );
     itemStaticBox1 = new wxStaticBox( this, wxID_ANY, _T( "Effects" ) );
     itemStaticBox2 = new wxStaticBox( this, wxID_ANY, _T( "Sample" ) );
     itemStaticText15 = new wxStaticText( this, wxID_STATIC, _T( "&Text Color:" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -519,12 +519,12 @@ void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
     if( event.GetEventObject() == itemCheckBox1 )
     {
         m_striken = itemCheckBox1->GetValue();
-        m_font.SetStrikethrough( itemCheckBox1->GetValue() );
+        m_font.SetUnderlined( itemCheckBox1->GetValue() );
     }
     if( event.GetEventObject() == itemCheckBox2 )
     {
         m_underline = itemCheckBox2->GetValue();
-        m_font.SetUnderlined( itemCheckBox2->GetValue() );
+        m_font.SetStrikethrough( itemCheckBox2->GetValue() );
     }
     itemWindow24->SetFont( m_font );
     itemWindow24->Refresh();
