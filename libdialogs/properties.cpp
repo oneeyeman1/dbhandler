@@ -135,7 +135,7 @@ void PropertiesDialog::do_layout()
 
 void PropertiesDialog::OnApply(wxCommandEvent &WXUNUSED(event))
 {
-    if( !ApplyProperties() )
+    if( ApplyProperties() )
         dynamic_cast<wxButton *>( FindWindowById( wxID_APPLY ) )->Enable( false );
 }
 
