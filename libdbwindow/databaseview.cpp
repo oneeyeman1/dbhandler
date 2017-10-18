@@ -281,6 +281,8 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
     {
         for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
             wxMessageBox( (*it) );
+        event.SetString( "Failed" );
+        return;
     }
     else
     {
