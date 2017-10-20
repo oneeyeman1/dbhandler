@@ -909,7 +909,7 @@ bool MySQLDatabase::IsSystemIndexExists(const std::wstring &indexName, const std
 {
     MYSQL_STMT *res;
     bool exists = false;
-    char *str_data[3];
+    char *str_data[2];
     unsigned long *str_length[3];
     std::wstring query = L"SELECT 1 FROM information_schema.statistics WHERE table_name = ? AND index_name = ?;";
     res = mysql_stmt_init( m_db );
@@ -929,8 +929,10 @@ bool MySQLDatabase::IsSystemIndexExists(const std::wstring &indexName, const std
         {
             MYSQL_BIND values[2];
             memset( values, 0, sizeof( values ) );
-            str_data[0] = new char[tableName.length()];
-            str_data[1] = new char[indexName.length()];
+            str_data[0] = new char[tableName.length() + 1];
+            str_data[1] = new char[indexName.length() + 1];
+            memset( str_data[0], 0, tableName.length() + 1 );
+            memset( str_data[1], 0, indexName.length() + 1 );
             str_length[0] = new unsigned long;
             str_length[1] = new unsigned long;
             values[0].buffer_type = MYSQL_TYPE_STRING;
