@@ -866,7 +866,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 command += L", \"abl_ffce\" = \'";
                 command += properties.m_labelFontName;
                 command += L"\', \"abt_cmnt\" = \'";
-                command += comment;
+                command += properties.m_comment;
                 command += L"\' WHERE \"abt_tnam\" = \'";
                 command += schemaName;
                 command += L".";
@@ -910,7 +910,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L"\', ";
+                command += L", ";
                 istr << ( properties.m_isDataFontStriken ? 1 : 0 );
                 command += istr.str();
                 istr.clear();
@@ -996,7 +996,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 command += L", \'";
                 command += properties.m_labelFontName;
                 command += L"\', \'";
-                command += comment;
+                command += properties.m_comment;
                 command += L"\' );";
             }
             if( !isLog )
