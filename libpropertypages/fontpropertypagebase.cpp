@@ -40,6 +40,12 @@ CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, wxFont &font, int
  : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL)
 {
     m_dirty = false;
+    m_faceName = font.GetFaceName();
+    m_weight = font.GetWeight();
+    m_underline = font.GetUnderlined();
+    m_striken = font.GetStrikethrough();
+    m_style = font.GetStyle();
+    m_ptSize = font.GetPointSize();
 }
 
 CFontPropertyPageBase::~CFontPropertyPageBase()
