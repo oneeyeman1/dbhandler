@@ -238,16 +238,12 @@ void ForeignKeyDialog::OnPrimaryKeyTableSelection(wxCommandEvent &WXUNUSED(event
             m_primaryKey.push_back( (*it)->GetFieldName() );
         }
     }
-}
-
-const wxString &ForeignKeyDialog::GetCommand()
-{
-    return m_command;
+    m_refTableName = m_primaryKeyTable->GetValue();
 }
 
 void ForeignKeyDialog::GenerateQuery()
 {
-    wxString keyName = m_foreignKeyName->GetValue();
+/*    wxString keyName = m_foreignKeyName->GetValue();
     wxString pkTable = m_primaryKeyTable->GetValue();
     int onDelete = m_onDelete->GetSelection();
     int onUpdate = m_onUpdate->GetSelection();
@@ -435,7 +431,9 @@ void ForeignKeyDialog::GenerateQuery()
                 break;
         }
         m_command += ";\r\n";
-    }
+    }*/
+    m_delete = m_onDelete->GetSelection();
+    m_update = m_onUpdate->GetSelection();
 }
 
 bool ForeignKeyDialog::IsLogOnlyI()
@@ -452,3 +450,29 @@ const std::vector<FKField *> &ForeignKeyDialog::GetForeignKeyVector()
 {
     return m_fkfield;
 }
+
+const std::vector<std::wstring> &ForeignKeyDialog::GetForeignKeyFields() const
+{
+    return m_foreignKey;
+}
+
+const std::vector<std::wstring> &ForeignKeyDialog::GetPrimaryKeyFields() const
+{
+    return m_primaryKey;
+}
+
+const std::wstring &ForeignKeyDialog::GetReferencedTable() const
+{
+    return m_refTableName;
+}
+
+const int ForeignKeyDialog::GetDeleteParam() const
+{
+    return m_delete;
+}
+
+const int ForeignKeyDialog::GetUpdateParam() const
+{
+    return m_update;
+}
+

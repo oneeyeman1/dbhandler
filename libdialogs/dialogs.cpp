@@ -201,7 +201,7 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, i
     return res;
 }
 
-extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, DatabaseTable *table, std::vector<FKField *> &fkfield, Database *db, wxString &command, bool &logOnly)
+extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, DatabaseTable *table, std::vector<std::wstring> &foreignKeyFields, std::vector<std::wstring> &refKeyFields, std::wstring &refTableName, int &deleteProp, int &updateProp, Database *db, bool &logOnly)
 {
     int res;
 #ifdef __WXMSW__
@@ -212,10 +212,13 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
     res = dlg.ShowModal();
     if( res != wxID_CANCEL )
     {
-        command = dlg.GetCommand();
         logOnly = dlg.IsLogOnlyI();
         keyName = dlg.GetKeyNameCtrl()->GetValue();
-        fkfield = dlg.GetForeignKeyVector();
+        foreignKeyFields = dlg.GetForeignKeyFields();
+        refKeyFields = dlg.GetPrimaryKeyFields();
+        refTableName = dlg.GetReferencedTable();
+        deleteProp = dlg.GetDeleteParam();
+        updateProp = dlg.GetUpdateParam();
     }
     return res;
 }
