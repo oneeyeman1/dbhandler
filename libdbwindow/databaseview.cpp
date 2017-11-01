@@ -472,10 +472,10 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     int result, deleteProp, updateProp;
     DatabaseTable *table = NULL;
     std::vector<std::wstring> foreignKeyFields, refKeyFields;
-    std::wstring refTableName;
+    std::wstring refTableName, command;
     std::vector<FKField *> fkfield;
     ShapeList shapes;
-    wxString command, kName;
+    wxString kName;
     std::wstring keyName;
     bool logOnly = false;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
@@ -506,7 +506,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
         else
         {
             if( result != wxID_CANCEL )
-                GetDocument()->GetDatabase()->ApplyForeignKey( command.ToStdWstring(), kName.ToStdWstring(), *table, errors );
+                GetDocument()->GetDatabase()->ApplyForeignKey( command, kName.ToStdWstring(), *table, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, errors );
         }
     }
     else
