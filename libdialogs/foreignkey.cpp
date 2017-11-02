@@ -56,15 +56,17 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
         _( "Disallow if Dependent Row Exist (RESTRICT)" ),
         _( "Delete any Dependent Row (CASCADE)" ),
         _( "Set Dependent Columns to NULL (SET NULL)" ),
+        _( "Set to Default (SET DEFAULT)" ),
     };
     const wxString m_onUpdate_choices[] = {
         _( "Perform No Action (NO ACTION)" ),
         _( "Disallow if Dependent Row Exist (RESTRICT)" ),
         _( "Update any Dependent Row (CASCADE)" ),
         _( "Set Dependent Columns to NULL (SET NULL)" ),
+        _( "Set to Default (SET DEFAULT)" ),
     };
-    m_onDelete = new wxRadioBox( this, wxID_ANY, _( "On Delete of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 4, m_onDelete_choices, 1, wxRA_SPECIFY_COLS );
-    m_onUpdate = new wxRadioBox( this, wxID_ANY, _( "On Update of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 4, m_onUpdate_choices, 1, wxRA_SPECIFY_COLS );
+    m_onDelete = new wxRadioBox( this, wxID_ANY, _( "On Delete of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 5, m_onDelete_choices, 1, wxRA_SPECIFY_COLS );
+    m_onUpdate = new wxRadioBox( this, wxID_ANY, _( "On Update of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 5, m_onUpdate_choices, 1, wxRA_SPECIFY_COLS );
     set_properties();
     do_layout();
     // end wxGlade
