@@ -496,17 +496,23 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     {
         CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
         result = func( m_frame, kName, table, foreignKeyFields, refKeyFields, refTableName, deleteProp, updateProp, GetDocument()->GetDatabase(),  logOnly );
-        if( logOnly )
+        if( result != wxID_CANCEL )
         {
-            m_text->AppendText( command );
-            m_text->AppendText( "\n\r\n\r" );
-            if( !m_log->IsShown() )
-                m_log->Show();
-        }
-        else
-        {
-            if( result != wxID_CANCEL )
-                GetDocument()->GetDatabase()->ApplyForeignKey( command, kName.ToStdWstring(), *table, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, errors );
+            int res = GetDocument()->GetDatabase()->ApplyForeignKey( command, kName.ToStdWstring(), *table, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, errors );
+            if( res )
+            {
+                for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
+                {
+                    wxMessageBox( (*it), _( "Error" ), wxOK | wxICON_ERROR );
+                }
+            }
+            else if( logOnly )
+            {
+                m_text->AppendText( command );
+                m_text->AppendText( "\n\r\n\r" );
+                if( !m_log->IsShown() )
+                    m_log->Show();
+            }
         }
     }
     else

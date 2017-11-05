@@ -1182,17 +1182,21 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
     query += tableName.GetTableName();
     query += L"\' AND type = 'table'";
     int result = 0;
+    int res;
     // set writable schema
-    int res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query0.c_str() ).c_str(), NULL, NULL, &error );
-    if( res != SQLITE_OK )
+    if( !logOnly )
     {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query0.c_str() ).c_str(), NULL, NULL, &error );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
     }
-    else
+    // start transacion
+    if( !logOnly && !result )
     {
-        // start transacion
         res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), NULL, NULL, &error );
         if( res != SQLITE_OK )
         {
@@ -1200,116 +1204,126 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
             GetErrorMessage( res, errorMessage );
             errorMsg.push_back( errorMessage );
         }
+    }
+    if( !result )
+    {
+        // get Create Table sql
+        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, NULL );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
         else
         {
-            // get Create Table sql
-            res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, NULL );
-            if( res != SQLITE_OK )
+            for( ; ; )
             {
-                result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-            }
-            else
-            {
-                for( ; ; )
+                res = sqlite3_step( stmt );
+                if( res == SQLITE_ROW )
+                    sql = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 0 ) );
+                else if( res == SQLITE_DONE )
+                    break;
+                else
                 {
-                    res = sqlite3_step( stmt );
-                    if( res == SQLITE_ROW )
-                        sql = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 0 ) );
-                    else if( res == SQLITE_DONE )
-                        break;
+                    result = 1;
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                    break;
+                }
+            }
+            sqlite3_finalize( stmt );
+            if( !result )
+            {
+                std::wstring fk = L", CONSTRAINT " + keyName + L" FOREIGN KEY(";
+                for( std::vector<std::wstring>::const_iterator it = foreignKeyFields.begin(); it < foreignKeyFields.end(); it++ )
+                {
+                    fk += (*it);
+                    if( it == foreignKeyFields.end() - 1 )
+                        fk += L")";
                     else
+                        fk += L", ";
+                }
+                fk += L" REFERENCES " + refTableName + L"(";
+                FK_ONUPDATE updProp = NO_ACTION_UPDATE;
+                FK_ONDELETE delProp = NO_ACTION_DELETE;
+                for( std::vector<std::wstring>::const_iterator it = refKeyFields.begin(); it < refKeyFields.end(); it++ )
+                {
+                    fk += (*it);
+                    if( it == refKeyFields.end() - 1 )
+                        fk += L")";
+                    else
+                        fk += L", ";
+                }
+                if( deleteProp > 0 )
+                {
+                    fk += L" ON DELETE ";
+                    switch( deleteProp )
+                    {
+                    case 0:
+                        fk += L"NO ACTION";
+                        delProp = NO_ACTION_DELETE;
+                        break;
+                    case 1:
+                        fk += L"RESTRICT";
+                        delProp = RESTRICT_DELETE;
+                        break;
+                    case 2:
+                        fk += L"CASCADE";
+                        delProp = CASCADE_DELETE;
+                        break;
+                    case 3:
+                        fk += L"SET NULL";
+                        delProp = SET_NULL_DELETE;
+                        break;
+                    case 4:
+                        fk += L"SET DEFAULT";
+                        delProp = SET_DEFAULT_DELETE;
+                        break;
+                    }
+                }
+                if( updateProp > 0 )
+                {
+                    fk += L" ON UPDATE ";
+                    switch( updateProp )
+                    {
+                    case 0:
+                        fk += L"NO ACTION";
+                        updProp = NO_ACTION_UPDATE;
+                        break;
+                    case 1:
+                        fk += L"RESTRICT";
+                        updProp = RESTRICT_UPDATE;
+                        break;
+                    case 2:
+                        fk += L"CASCADE";
+                        updProp = CASCADE_UPDATE;
+                        break;
+                    case 3:
+                        fk += L"SET NULL";
+                        updProp = SET_NULL_UPDATE;
+                        break;
+                    case 4:
+                        fk += L"SET DEFAULT";
+                        updProp = SET_DEFAULT_UPDATE;
+                        break;
+                    }
+                }
+                fk += L")";
+                sql.replace( sql.length() - 1, 1, fk );
+                std::wstring fkQuery = L"UPDATE sqlite_master SET sql = ? WHERE type = \'table\' AND name = ?;";
+                if( !logOnly )
+                {
+                    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( fkQuery.c_str() ).c_str(), (int) query.length(), &stmt, NULL );
+                    if( res != SQLITE_OK )
                     {
                         result = 1;
                         GetErrorMessage( res, errorMessage );
                         errorMsg.push_back( errorMessage );
-                        break;
                     }
-                }
-                sqlite3_finalize( stmt );
-                if( !result )
-                {
-                    std::wstring fk = L", CONSTRAINT " + keyName + L" FOREIGN KEY(";
-                    for( std::vector<std::wstring>::const_iterator it = foreignKeyFields.begin(); it < foreignKeyFields.end(); it++ )
+                    else
                     {
-                        fk += (*it);
-                        if( it == foreignKeyFields.end() - 1 )
-                            fk += L")";
-                        else
-                            fk += L", ";
-                    }
-                    fk += L" REFERENCES " + refTableName + L"(";
-                    FK_ONUPDATE updProp = NO_ACTION_UPDATE;
-                    FK_ONDELETE delProp = NO_ACTION_DELETE;
-                    for( std::vector<std::wstring>::const_iterator it = refKeyFields.begin(); it < refKeyFields.end(); it++ )
-                    {
-                        fk += (*it);
-                        if( it == refKeyFields.end() - 1 )
-                            fk += L")";
-                        else
-                            fk += L", ";
-                    }
-                    if( deleteProp > 0 )
-                    {
-                        fk += L" ON DELETE ";
-                        switch( deleteProp )
-                        {
-                        case 0:
-                            fk += L"NO ACTION";
-                            delProp = NO_ACTION_DELETE;
-                            break;
-                        case 1:
-                            fk += L"RESTRICT";
-                            delProp = RESTRICT_DELETE;
-                            break;
-                        case 2:
-                            fk += L"CASCADE";
-                            delProp = CASCADE_DELETE;
-                            break;
-                        case 3:
-                            fk += L"SET NULL";
-                            delProp = SET_NULL_DELETE;
-                            break;
-                        case 4:
-                            fk += L"SET DEFAULT";
-                            delProp = SET_DEFAULT_DELETE;
-                            break;
-                        }
-                    }
-                    if( updateProp > 0 )
-                    {
-                        fk += L" ON UPDATE ";
-                        switch( updateProp )
-                        {
-                        case 0:
-                            fk += L"NO ACTION";
-                            updProp = NO_ACTION_UPDATE;
-                            break;
-                        case 1:
-                            fk += L"RESTRICT";
-                            updProp = RESTRICT_UPDATE;
-                            break;
-                        case 2:
-                            fk += L"CASCADE";
-                            updProp = CASCADE_UPDATE;
-                            break;
-                        case 3:
-                            fk += L"SET NULL";
-                            updProp = SET_NULL_UPDATE;
-                            break;
-                        case 4:
-                            fk += L"SET DEFAULT";
-                            updProp = SET_DEFAULT_UPDATE;
-                            break;
-                        }
-                    }
-                    fk += L")";
-                    sql.replace( sql.length() - 1, 1, fk );
-                    std::wstring fkQuery = L"UPDATE sqlite_master SET sql = ? WHERE type = \'table\' AND name = ?;";
-                    if( !logOnly )
-                    {
-                        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( fkQuery.c_str() ).c_str(), (int) query.length(), &stmt, NULL );
+                        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( sql.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
                         if( res != SQLITE_OK )
                         {
                             result = 1;
@@ -1318,164 +1332,66 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                         }
                         else
                         {
-                            res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( sql.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+                            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( tableName.GetTableName().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
                             if( res != SQLITE_OK )
                             {
                                 result = 1;
                                 GetErrorMessage( res, errorMessage );
                                 errorMsg.push_back( errorMessage );
                             }
-							else
+                            else
                             {
-                                res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( tableName.GetTableName().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-                                if( res != SQLITE_OK )
+                                res = sqlite3_step( stmt );
+                                if( res != SQLITE_DONE )
                                 {
                                     result = 1;
                                     GetErrorMessage( res, errorMessage );
                                     errorMsg.push_back( errorMessage );
                                 }
-                                else
-                                {
-                                    res = sqlite3_step( stmt );
-                                    if( res != SQLITE_DONE )
-                                    {
-                                        result = 1;
-                                        GetErrorMessage( res, errorMessage );
-                                        errorMsg.push_back( errorMessage );
-                                    }
-                                }
                             }
                         }
-                        sqlite3_finalize( stmt );
-                        if( !result )
-                            query3 = L"COMMIT";
-                        else
-                            query3 = L"ROLLBACK";
-                        // commit transaction
-                        res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), NULL, NULL, &error );
-                        if( res != SQLITE_OK )
-                        {
-                            result = 1;
-                            GetErrorMessage( res, errorMessage );
-                            errorMsg.push_back( errorMessage );
-                        }
+                    }
+                    sqlite3_finalize( stmt );
+                    if( !result )
+                        query3 = L"COMMIT";
+                    else
+                        query3 = L"ROLLBACK";
+                    // commit transaction
+                    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), NULL, NULL, &error );
+                    if( res != SQLITE_OK )
+                    {
+                        result = 1;
+                        GetErrorMessage( res, errorMessage );
+                        errorMsg.push_back( errorMessage );
+                    }
+                }
+                else
+                {
+                    command = fkQuery;
+                    command.replace( command.find( '?' ), 1, L"\'" + sql + L"\'" );
+                    command.replace( command.find( '?' ), 1, L"\'" + tableName.GetTableName() + L"\'" );
+                }
+                if( !logOnly && !result )
+                {
+                    res = sqlite3_exec( m_db, "ANALYZE sqlite_master", NULL, NULL, &error );
+                    if( res != SQLITE_OK )
+                    {
+                        result = 1;
+                        GetErrorMessage( res, errorMessage );
+                        errorMsg.push_back( errorMessage );
                     }
                     else
-                        command = fkQuery;
-                    if( !result )
                     {
-                        res = sqlite3_exec( m_db, "ANALYZE sqlite_master", NULL, NULL, &error );
-                        if( res != SQLITE_OK )
-                        {
-                            result = 1;
-                            GetErrorMessage( res, errorMessage );
-                            errorMsg.push_back( errorMessage );
-                        }
-                        else
-                        {
-                            std::map<int, std::vector<FKField *> > fKeys = tableName.GetForeignKeyVector();
-                            int size = fKeys.size();
-                            size++;
-                            for( int i = 0; i < foreignKeyFields.size(); i++ )
-                                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
-                        }
+                        std::map<int, std::vector<FKField *> > fKeys = tableName.GetForeignKeyVector();
+                        int size = fKeys.size();
+                        size++;
+                        for( int i = 0; i < foreignKeyFields.size(); i++ )
+                            fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
                     }
                 }
             }
         }
     }
-/*    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, NULL );
-    if( res != SQLITE_OK )
-    {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-        return result;
-    }
-    for( ; ; )
-    {
-        res = sqlite3_step( stmt );
-        if( res == SQLITE_ROW )
-            references.push_back( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 1 ) ) );
-        else if( res == SQLITE_DONE )
-            break;
-        else
-        {
-            result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-            break;
-        }
-    }
-    sqlite3_finalize( stmt );
-    if( res != SQLITE_DONE )
-        return 1;
-    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query0.c_str() ).c_str(), NULL, NULL, &error );
-    if( res != SQLITE_OK )
-    {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-        return result;
-    }
-    std::wstring alterQuery = command.substr( 0, command.find( ';' ) );
-    while( alterQuery != L"" )
-    {
-        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( alterQuery.c_str() ).c_str(), (int) alterQuery.length(), &stmt, NULL );
-        if( res != SQLITE_OK )
-        {
-            result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-            return result;
-        }
-        for( ; ; )
-        {
-            res = sqlite3_step( stmt );
-            if( res == SQLITE_ROW )
-                references.push_back( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 1 ) ) );
-            else if( res == SQLITE_DONE )
-                break;
-            else
-            {
-                result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-                break;
-            }
-        }
-        sqlite3_finalize( stmt );
-        if( res != SQLITE_DONE )
-            break;
-        alterQuery = alterQuery.substr( 2 );
-        alterQuery = alterQuery.substr( 0, alterQuery.find( ';' ) );
-    }
-    if( res != SQLITE_DONE )
-    {
-        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, &error );
-        return 1;
-    }
-    for( std::vector<std::wstring>::iterator it = references.begin(); it < references.end(); it++ )
-    {
-        res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( (*it).c_str() ).c_str(), NULL, NULL, &error );
-        if( res != SQLITE_OK )
-            break;
-    }
-    if( res != SQLITE_OK )
-    {
-        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, &error );
-        return 1;
-    }
-    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), NULL, NULL, &error );
-    if( res != SQLITE_OK )
-    {
-        result = 1;
-        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, &error );
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-    }
-    else
-        sqlite3_exec( m_db, "COMMIT", NULL, NULL, &error );*/
     return result;
 }
 
