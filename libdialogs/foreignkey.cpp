@@ -56,15 +56,17 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
         _( "Disallow if Dependent Row Exist (RESTRICT)" ),
         _( "Delete any Dependent Row (CASCADE)" ),
         _( "Set Dependent Columns to NULL (SET NULL)" ),
+        _( "Set to Default (SET DEFAULT)" ),
     };
     const wxString m_onUpdate_choices[] = {
         _( "Perform No Action (NO ACTION)" ),
         _( "Disallow if Dependent Row Exist (RESTRICT)" ),
         _( "Update any Dependent Row (CASCADE)" ),
         _( "Set Dependent Columns to NULL (SET NULL)" ),
+        _( "Set to Default (SET DEFAULT)" ),
     };
-    m_onDelete = new wxRadioBox( this, wxID_ANY, _( "On Delete of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 4, m_onDelete_choices, 1, wxRA_SPECIFY_COLS );
-    m_onUpdate = new wxRadioBox( this, wxID_ANY, _( "On Update of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 4, m_onUpdate_choices, 1, wxRA_SPECIFY_COLS );
+    m_onDelete = new wxRadioBox( this, wxID_ANY, _( "On Delete of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 5, m_onDelete_choices, 1, wxRA_SPECIFY_COLS );
+    m_onUpdate = new wxRadioBox( this, wxID_ANY, _( "On Update of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 5, m_onUpdate_choices, 1, wxRA_SPECIFY_COLS );
     set_properties();
     do_layout();
     // end wxGlade
@@ -238,16 +240,12 @@ void ForeignKeyDialog::OnPrimaryKeyTableSelection(wxCommandEvent &WXUNUSED(event
             m_primaryKey.push_back( (*it)->GetFieldName() );
         }
     }
-}
-
-const wxString &ForeignKeyDialog::GetCommand()
-{
-    return m_command;
+    m_refTableName = m_primaryKeyTable->GetValue();
 }
 
 void ForeignKeyDialog::GenerateQuery()
 {
-    wxString keyName = m_foreignKeyName->GetValue();
+/*    wxString keyName = m_foreignKeyName->GetValue();
     wxString pkTable = m_primaryKeyTable->GetValue();
     int onDelete = m_onDelete->GetSelection();
     int onUpdate = m_onUpdate->GetSelection();
@@ -435,7 +433,9 @@ void ForeignKeyDialog::GenerateQuery()
                 break;
         }
         m_command += ";\r\n";
-    }
+    }*/
+    m_delete = m_onDelete->GetSelection();
+    m_update = m_onUpdate->GetSelection();
 }
 
 bool ForeignKeyDialog::IsLogOnlyI()
@@ -452,3 +452,29 @@ const std::vector<FKField *> &ForeignKeyDialog::GetForeignKeyVector()
 {
     return m_fkfield;
 }
+
+const std::vector<std::wstring> &ForeignKeyDialog::GetForeignKeyFields() const
+{
+    return m_foreignKey;
+}
+
+const std::vector<std::wstring> &ForeignKeyDialog::GetPrimaryKeyFields() const
+{
+    return m_primaryKey;
+}
+
+const std::wstring &ForeignKeyDialog::GetReferencedTable() const
+{
+    return m_refTableName;
+}
+
+const int ForeignKeyDialog::GetDeleteParam() const
+{
+    return m_delete;
+}
+
+const int ForeignKeyDialog::GetUpdateParam() const
+{
+    return m_update;
+}
+

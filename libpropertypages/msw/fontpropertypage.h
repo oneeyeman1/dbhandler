@@ -163,7 +163,7 @@ private:
     unsigned long m_nCurrentStyle;
     unsigned long m_nActualStyle;
 //#endif
-    bool m_bUnderline;
+    bool m_bUnderline, m_bStrikethrough;
     wxString m_fontSize, m_textStr, m_backgroundStr, m_fontName;
     wxColour m_text, m_background;
 };
