@@ -519,11 +519,13 @@ void DatabaseCanvas::OnShowComments(wxCommandEvent &WXUNUSED(event))
 void DatabaseCanvas::CreateFKConstraint(const DatabaseTable *fkTable, const std::vector<FKField *> &foreignKeyField)
 {
     Constraint* pConstr = NULL;
-    for( std::vector<MyErdTable *>::iterator it = m_displayedTables.begin(); it < m_displayedTables.end(); it ++ )
+    bool found = false;
+    for( std::vector<MyErdTable *>::iterator it = m_displayedTables.begin(); it < m_displayedTables.end() && !found; it ++ )
     {
         if( const_cast<DatabaseTable &>( (*it)->GetTable() ).GetTableName() == foreignKeyField.at( 0 )->GetReferencedTableName() )
         {
-            Constraint* pConstr = new Constraint( ((DrawingView *) m_view)->GetViewType() );
+            found = true;
+            pConstr = new Constraint( ((DrawingView *) m_view)->GetViewType() );
             for( int i = 0; i < foreignKeyField.size(); i++ )
             {
                 pConstr->SetLocalColumn( foreignKeyField.at( i )->GetOriginalFieldName() );
@@ -567,8 +569,7 @@ void DatabaseCanvas::CreateFKConstraint(const DatabaseTable *fkTable, const std:
         for( std::vector<MyErdTable *>::iterator it2 = m_displayedTables.begin(); it2 < m_displayedTables.end(); it2 ++ )
         {
             if( const_cast<DatabaseTable &>( (*it2)->GetTable() ).GetTableName() == const_cast<DatabaseTable *>( fkTable )->GetTableName() )
-                wxMessageBox( "Hello!!" );
-//                (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( foreignKeyField.at( i )->GetReferencedTableName() )->GetId(), new ErdForeignKey( pConstr, ((DrawingView *) m_view)->GetViewType() ), sfDONT_SAVE_STATE );
+                (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( foreignKeyField.at( 0 )->GetReferencedTableName() )->GetId(), new ErdForeignKey( pConstr, ((DrawingView *) m_view)->GetViewType() ), sfDONT_SAVE_STATE );
         }
     }
 }
