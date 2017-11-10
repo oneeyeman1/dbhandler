@@ -474,6 +474,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     std::vector<std::wstring> foreignKeyFields, refKeyFields;
     std::wstring refTableName, command;
     std::vector<FKField *> fkfield;
+    std::vector<FKField *> newFK;
     ShapeList shapes;
     wxString kName;
     std::wstring keyName;
@@ -498,7 +499,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
         result = func( m_frame, kName, table, foreignKeyFields, refKeyFields, refTableName, deleteProp, updateProp, GetDocument()->GetDatabase(),  logOnly );
         if( result != wxID_CANCEL )
         {
-            int res = GetDocument()->GetDatabase()->ApplyForeignKey( command, kName.ToStdWstring(), *table, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, errors );
+            int res = GetDocument()->GetDatabase()->ApplyForeignKey( command, kName.ToStdWstring(), *table, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, errors );
             if( res )
             {
                 for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
@@ -512,6 +513,10 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
                 m_text->AppendText( "\n\r\n\r" );
                 if( !m_log->IsShown() )
                     m_log->Show();
+            }
+			else
+            {
+                m_canvas->CreateFKConstraint( table, newFK );
             }
         }
     }

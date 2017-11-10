@@ -1171,7 +1171,7 @@ int SQLiteDatabase::GetFieldProperties(const char *tableName, const char *schema
     return result;
 }
 
-int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage, sql;
@@ -1387,6 +1387,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                         size++;
                         for( int i = 0; i < foreignKeyFields.size(); i++ )
                             fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
+                        newFK = fKeys[size];
                     }
                 }
             }
