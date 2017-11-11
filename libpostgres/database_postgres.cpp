@@ -1121,23 +1121,78 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
     bool exist = false;
     int result = 0;
     std::wstring err;
-    std::wstring query1 = L"SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = $1 AND table_schema = $2 AND table_name = $2";
-    char *values[3];
-    values[0] = new char[(keyName.length() + 1) * 2];
-    values[1] = new char[(tableName.GetSchemaName().length() + 1) * 2];
-    values[2] = new char[(tableName.GetTableName().length() + 1) * 2];
-    memset( values[0], '\0', keyName.length() + 1 );
-    memset( values[1], '\0', tableName.GetSchemaName().length() + 1 );
-    memset( values[2], '\0', tableName.GetTableName().length() + 1 );
-    strcpy( values[0], m_pimpl->m_myconv.to_bytes( keyName.c_str() ).c_str() );
-    strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.GetSchemaName().c_str() ).c_str() );
-    strcpy( values[2], m_pimpl->m_myconv.to_bytes( tableName.GetTableName().c_str() ).c_str() );
-    int len0 = strlen( values[0] );
-    int len1 = strlen( values[1] );
-    int len2 = strlen( values[2] );
-    int length[3] = { len0, len1, len2 };
-    int formats[3] = { 1, 1, 1 };
-    PGresult *res = PQexec( m_db, "START TRANSACTION" );
+    std::wstring query = L"ALTER TABLE ";
+    query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
+    query += L"ADD CONSTRAINT " + keyName + L" ";
+    query += L"FOREIGN KEY(";
+    for( std::vector<std::wstring>::const_iterator it1 = foreignKeyFields.begin(); it1 < foreignKeyFields.end(); it1++ )
+    {
+        query += (*it1);
+        if( it1 == foreignKeyFields.end() - 1 )
+            query += L") ";
+        else
+            query += L",";
+    }
+    query += L"REFERENCES " + refTableName + L"(";
+    for( std::vector<std::wstring>::const_iterator it1 = refKeyFields.begin(); it1 < refKeyFields.end(); it1++ )
+    {
+        query += (*it1);
+        if( it1 == refKeyFields.end() - 1 )
+            query += L") ";
+        else
+            query += L",";
+    }
+    query += L"ON DELETE ";
+    FK_ONUPDATE updProp = NO_ACTION_UPDATE;
+    FK_ONDELETE delProp = NO_ACTION_DELETE;
+    switch( deleteProp )
+    {
+    case 0:
+        query += L"NO ACTION ";
+        delProp = NO_ACTION_DELETE;
+        break;
+    case 1:
+        query += L"RESTRICT ";
+        delProp = RESTRICT_DELETE;
+        break;
+    case 2:
+        query += L"CASCADE ";
+        delProp = CASCADE_DELETE;
+        break;
+    case 3:
+        query += L"SET NULL ";
+        delProp = SET_NULL_DELETE;
+        break;
+    case 4:
+        query += L"SET DEFAULT ";
+        delProp = SET_DEFAULT_DELETE;
+        break;
+    }
+    query += L"ON UPDATE ";
+    switch( updateProp )
+    {
+    case 0:
+        query += L"NO ACTION";
+        updProp = NO_ACTION_UPDATE;
+        break;
+    case 1:
+        query += L"RESTRICT";
+        updProp = RESTRICT_UPDATE;
+        break;
+    case 2:
+        query += L"CASCADE";
+        updProp = CASCADE_UPDATE;
+        break;
+    case 3:
+        query += L"SET NULL";
+        updProp = SET_NULL_UPDATE;
+        break;
+    case 4:
+        query += L"SET DEFAULT";
+        updProp = SET_DEFAULT_UPDATE;
+        break;
+    }
+    PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         PQclear( res );
@@ -1147,66 +1202,13 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
     }
     else
     {
-        res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), 3, NULL, values, length, formats, 1 );
-        ExecStatusType status = PQresultStatus( res );
-        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
-        {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Error executing query: " + err );
-            PQclear( res );
-            result = 1;
-        }
-        else if( status == PGRES_TUPLES_OK )
-        {
-            exist = true;
-        }
-        PQclear( res );
-        if( !exist )
-        {
-            res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
-            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
-            {
-                PQclear( res );
-                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                errorMsg.push_back( err );
-                result = 1;
-            }
-        }
-        else
-        {
-            PQclear( res );
-            errorMsg.push_back( L"Foreign key specified already exist!" );
-            result = 1;
-        }
-        if( !result )
-        {
-            res = PQexec( m_db, "COMMIT" );
-            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
-            {
-                PQclear( res );
-                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
-                result = 1;
-            }
-        }
-        else
-        {
-            res = PQexec( m_db, "ROLLBACK" );
-            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
-            {
-                PQclear( res );
-                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
-                result = 1;
-            }
-        }
+        std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+        int size = fKeys.size();
+        size++;
+        for( int i = 0; i < foreignKeyFields.size(); i++ )
+            fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
+        newFK = fKeys[size];
     }
-    delete values[0];
-    values[0] = NULL;
-    delete values[1];
-    values[1] = NULL;
-    delete values[2];
-    values[2] = NULL;
     return result;
 }
 
