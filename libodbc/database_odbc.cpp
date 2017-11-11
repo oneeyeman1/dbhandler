@@ -3197,10 +3197,80 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
 
 int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
 {
-    tableName = tableName;
+    std::wstring query = L"ALTER TABLE ";
+    query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
+    query += L"ADD CONSTRAINT " + keyName + L" ";
+    query += L"FOREIGN KEY(";
+    for( std::vector<std::wstring>::const_iterator it1 = foreignKeyFields.begin(); it1 < foreignKeyFields.end(); it1++ )
+    {
+        query += (*it1);
+        if( it1 == foreignKeyFields.end() - 1 )
+            query += L") ";
+        else
+            query += L",";
+    }
+    query += L"REFERENCES " + refTableName + L"(";
+    for( std::vector<std::wstring>::const_iterator it1 = refKeyFields.begin(); it1 < refKeyFields.end(); it1++ )
+    {
+        query += (*it1);
+        if( it1 == refKeyFields.end() - 1 )
+            query += L") ";
+        else
+            query += L",";
+    }
+    query += L"ON DELETE ";
+    FK_ONUPDATE updProp = NO_ACTION_UPDATE;
+    FK_ONDELETE delProp = NO_ACTION_DELETE;
+    switch( deleteProp )
+    {
+    case 0:
+        query += L"NO ACTION ";
+        delProp = NO_ACTION_DELETE;
+        break;
+    case 1:
+        query += L"RESTRICT ";
+        delProp = RESTRICT_DELETE;
+        break;
+    case 2:
+        query += L"CASCADE ";
+        delProp = CASCADE_DELETE;
+        break;
+    case 3:
+        query += L"SET NULL ";
+        delProp = SET_NULL_DELETE;
+        break;
+    case 4:
+        query += L"SET DEFAULT ";
+        delProp = SET_DEFAULT_DELETE;
+        break;
+    }
+    query += L"ON UPDATE ";
+    switch( updateProp )
+    {
+    case 0:
+        query += L"NO ACTION";
+        updProp = NO_ACTION_UPDATE;
+        break;
+    case 1:
+        query += L"RESTRICT";
+        updProp = RESTRICT_UPDATE;
+        break;
+    case 2:
+        query += L"CASCADE";
+        updProp = CASCADE_UPDATE;
+        break;
+    case 3:
+        query += L"SET NULL";
+        updProp = SET_NULL_UPDATE;
+        break;
+    case 4:
+        query += L"SET DEFAULT";
+        updProp = SET_DEFAULT_UPDATE;
+        break;
+    }
     int result = 0;
     SQLRETURN ret;
-    SQLWCHAR *query = NULL;
+    SQLWCHAR *qry = NULL;
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -3209,14 +3279,23 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
     }
     else
     {
-        query = new SQLWCHAR[command.length() + 2];
-        memset( query, '\0', command.size() + 2 );
-        uc_to_str_cpy( query, command );
-        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+        qry = new SQLWCHAR[query.length() + 2];
+        memset( qry, '\0', query.size() + 2 );
+        uc_to_str_cpy( qry, query );
+        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
-            GetErrorMessage( errorMsg, 2, m_hstmt );
+            GetErrorMessage( errorMsg, 1, m_hstmt );
             result = 1;
+        }
+		else
+        {
+            std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+            int size = fKeys.size();
+            size++;
+            for( int i = 0; i < foreignKeyFields.size(); i++ )
+                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
+            newFK = fKeys[size];
         }
         ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3227,8 +3306,8 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
         else
             m_hstmt = 0;
     }
-    delete query;
-    query = NULL;
+    delete qry;
+    qry = NULL;
     return result;
 }
 
