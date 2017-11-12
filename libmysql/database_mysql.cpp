@@ -1873,22 +1873,26 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
         updProp = SET_DEFAULT_UPDATE;
         break;
     }
-    if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() ) )
+    if( !logOnly )
     {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( err );
-        errorMsg.push_back( L"Starting transaction failed for applying foreign key" );
-        result = 1;
+        if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( L"Applying foreign key failed: " + err );
+            result = 1;
+        }
+        else
+        {
+            std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+            int size = fKeys.size();
+            size++;
+            for( int i = 0; i < foreignKeyFields.size(); i++ )
+                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
+            newFK = fKeys[size];
+        }
     }
     else
-    {
-        std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
-        int size = fKeys.size();
-        size++;
-        for( int i = 0; i < foreignKeyFields.size(); i++ )
-            fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
-        newFK = fKeys[size];
-    }
+        command = query;
     return result;
 }
 
