@@ -1192,23 +1192,28 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
         updProp = SET_DEFAULT_UPDATE;
         break;
     }
-    PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
-    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    if( !logOnly )
     {
-        PQclear( res );
-        err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-        errorMsg.push_back( L"Starting transaction failed during connection: " + err );
-        result = 1;
+        PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        {
+            PQclear( res );
+            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Adding forign key failed: " + err );
+            result = 1;
+        }
+        else
+        {
+            std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+            int size = fKeys.size();
+            size++;
+            for( int i = 0; i < foreignKeyFields.size(); i++ )
+                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
+            newFK = fKeys[size];
+        }
     }
     else
-    {
-        std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
-        int size = fKeys.size();
-        size++;
-        for( int i = 0; i < foreignKeyFields.size(); i++ )
-            fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
-        newFK = fKeys[size];
-    }
+        command = query;
     return result;
 }
 
