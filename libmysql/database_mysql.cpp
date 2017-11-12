@@ -1802,10 +1802,78 @@ int MySQLDatabase::GetFieldProperties(const char *tableName, const char *schemaN
 int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
-    MYSQL_STMT *stmt = NULL;
-    std::wstring query = L"SELECT 1 FROM information_schema.key_column_usage kcu WHERE constraint_name = ? AND table_schema = ? AND table_name = ?";
-    if( mysql_query( m_db, "START TRANSACTION" ) )
+    std::wstring query = L"ALTER TABLE ";
+    query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
+    query += L"ADD CONSTRAINT " + keyName + L" ";
+    query += L"FOREIGN KEY(";
+    for( std::vector<std::wstring>::const_iterator it1 = foreignKeyFields.begin(); it1 < foreignKeyFields.end(); it1++ )
+    {
+        query += (*it1);
+        if( it1 == foreignKeyFields.end() - 1 )
+            query += L") ";
+        else
+            query += L",";
+    }
+    query += L"REFERENCES " + refTableName + L"(";
+    for( std::vector<std::wstring>::const_iterator it1 = refKeyFields.begin(); it1 < refKeyFields.end(); it1++ )
+    {
+        query += (*it1);
+        if( it1 == refKeyFields.end() - 1 )
+            query += L") ";
+        else
+            query += L",";
+    }
+    query += L"ON DELETE ";
+    FK_ONUPDATE updProp = NO_ACTION_UPDATE;
+    FK_ONDELETE delProp = NO_ACTION_DELETE;
+    switch( deleteProp )
+    {
+    case 0:
+        query += L"NO ACTION ";
+        delProp = NO_ACTION_DELETE;
+        break;
+    case 1:
+        query += L"RESTRICT ";
+        delProp = RESTRICT_DELETE;
+        break;
+    case 2:
+        query += L"CASCADE ";
+        delProp = CASCADE_DELETE;
+        break;
+    case 3:
+        query += L"SET NULL ";
+        delProp = SET_NULL_DELETE;
+        break;
+    case 4:
+        query += L"SET DEFAULT ";
+        delProp = SET_DEFAULT_DELETE;
+        break;
+    }
+    query += L"ON UPDATE ";
+    switch( updateProp )
+    {
+    case 0:
+        query += L"NO ACTION";
+        updProp = NO_ACTION_UPDATE;
+        break;
+    case 1:
+        query += L"RESTRICT";
+        updProp = RESTRICT_UPDATE;
+        break;
+    case 2:
+        query += L"CASCADE";
+        updProp = CASCADE_UPDATE;
+        break;
+    case 3:
+        query += L"SET NULL";
+        updProp = SET_NULL_UPDATE;
+        break;
+    case 4:
+        query += L"SET DEFAULT";
+        updProp = SET_DEFAULT_UPDATE;
+        break;
+    }
+    if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() ) )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
@@ -1814,115 +1882,13 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
     }
     else
     {
-        stmt = mysql_stmt_init( m_db );
-        if( !stmt )
-        {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-            errorMsg.push_back( err );
-            result = 1;
-        }
-        else
-        {
-            if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
-            {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                errorMsg.push_back( err );
-                result = 1;
-            }
-            else
-            {
-                MYSQL_BIND params[3];
-                unsigned long str_length1, str_length2, str_length3;
-                str_data1 = new char[keyName.length()], str_data2 = new char[tableName.GetSchemaName().length()], str_data3 = new char[tableName.GetTableName().length()];
-                memset( params, 0, sizeof( params ) );
-                params[0].buffer_type = MYSQL_TYPE_STRING;
-                params[0].buffer = (char *) str_data1;
-                params[0].buffer_length = keyName.length();
-                params[0].is_null = 0;
-                params[0].length = &str_length1;
-                params[1].buffer_type = MYSQL_TYPE_STRING;
-                params[1].buffer = (char *) str_data2;
-                params[1].buffer_length = tableName.GetSchemaName().length();
-                params[1].is_null = 0;
-                params[1].length = &str_length2;
-                params[2].buffer_type = MYSQL_TYPE_STRING;
-                params[2].buffer = (char *) str_data3;
-                params[2].buffer_length = tableName.GetTableName().length();
-                params[2].is_null = 0;
-                params[2].length = &str_length3;
-                if( mysql_stmt_bind_param( stmt, params ) )
-                {
-                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                    errorMsg.push_back( err );
-                    result = 1;
-                }
-                else
-                {
-                    if( mysql_stmt_execute( stmt ) )
-                    {
-                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                        errorMsg.push_back( err );
-                        result = 1;
-                    }
-                    else
-                    {
-                        if( !( mysql_store_result( m_db ) ) )
-                        {
-                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                            errorMsg.push_back( err );
-                            result = 1;
-                        }
-                        else
-                        {
-                            if( mysql_stmt_num_rows( stmt ) == 0 )
-                            {
-                                if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() ) )
-                                {
-                                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                                    errorMsg.push_back( err );
-                                    result = 1;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if( result == 0 )
-        {
-            if( mysql_query( m_db, "COMMIT" ) )
-            {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                errorMsg.push_back( L"Applying foreign key failed." );
-                errorMsg.push_back( err );
-                return 1;
-            }
-        }
-        else
-        {
-            if( mysql_query( m_db, "ROLLBACK" ) )
-            {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                errorMsg.push_back( err );
-                return 1;
-            }
-        }
+        std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+        int size = fKeys.size();
+        size++;
+        for( int i = 0; i < foreignKeyFields.size(); i++ )
+            fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
+        newFK = fKeys[size];
     }
-    if( stmt )
-    {
-        if( mysql_stmt_close( stmt ) )
-        {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-            errorMsg.push_back( err );
-            result = 1;
-        }
-    }
-    delete str_data1;
-    str_data1 = NULL;
-    delete str_data2;
-    str_data2 = NULL;
-    delete str_data3;
-    str_data3 = NULL;
     return result;
 }
 
