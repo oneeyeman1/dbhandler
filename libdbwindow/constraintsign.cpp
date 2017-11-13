@@ -20,10 +20,15 @@
 
 #include "wxsf/RectShape.h"
 #include "wxsf/TextShape.h"
+#include "wxsf/BitmapShape.h"
+#include "constraint.h"
 #include "constraintsign.h"
 
-ConstraintSign::ConstraintSign()
+ConstraintSign::ConstraintSign(ViewType type)
 {
+    m_type = type;
+    m_sign = NULL;
+    m_fKey = NULL;
 }
 
 ConstraintSign::~ConstraintSign()

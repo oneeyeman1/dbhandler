@@ -158,7 +158,7 @@ protected:
     wxString m_refCol;
     constraintAction m_onDelete;
     constraintAction m_onUpdate;
-    ConstraintSign *m_sign;
+//    ConstraintSign *m_sign;
     ViewType m_viewType;
     void InitSerializable();
 };
