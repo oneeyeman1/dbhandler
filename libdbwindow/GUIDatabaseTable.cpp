@@ -1,5 +1,6 @@
 #include <string>
 #include "wxsf/BitmapShape.h"
+#include "wxsf/FlexGridShape.h"
 #include "wxsf/TextShape.h"
 #include "database.h"
 #include "XmlSerializer.h"

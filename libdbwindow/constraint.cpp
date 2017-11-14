@@ -26,6 +26,7 @@
 #include <wx/wx.h>
 #include <wxxmlserializer/XmlSerializer.h>
 #include "wxsf/BitmapShape.h"
+#include "wxsf/FlexGridShape.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/ShapeBase.h"
 #include "constraint.h"

@@ -12,6 +12,7 @@
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/RoundRectShape.h"
+#include "wxsf/GridShape.h"
 #include "constraint.h"
 #include "constraintsign.h"
 #include "GridTableShape.h"
@@ -40,7 +41,7 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type)
 {
     AcceptChild( "ConstraintSign" );
     m_constraint = pConstraint;
-    m_signConstraint = new wxSFRectShape;
+    m_signConstraint = new ConstraintSign( type );
     if( m_signConstraint )
     {
         m_signConstraint->SetVAlign( wxSFShapeBase::valignMIDDLE );

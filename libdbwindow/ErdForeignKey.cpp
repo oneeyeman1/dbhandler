@@ -15,7 +15,7 @@
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/BitmapShape.h"
-#include "wxsf/GridShape.h"
+#include "wxsf/FlexGridShape.h"
 #include "database.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include <string>
 #include "wxsf/TextShape.h"
+#include "wxsf/FlexGridShape.h"
 #include "wxsf/BitmapShape.h"
 #include "database.h"
 #include "constraint.h"
