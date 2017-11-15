@@ -8,6 +8,9 @@ public:
     virtual ~ConstraintSign();
     const wxString &GetSign();
     void SetSign(const wxString &sign);
+protected:
+    virtual void DrawSelected(wxDC &dc);
+    virtual void DrawNormal(wxDC &dc);
 private:
     wxSFFlexGridShape *m_grid;
     wxSFTextShape *m_sign;

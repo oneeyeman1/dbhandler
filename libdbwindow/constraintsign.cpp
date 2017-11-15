@@ -79,3 +79,18 @@ const wxString &ConstraintSign::GetSign()
 {
     return m_sign->GetText();
 }
+
+void ConstraintSign::DrawSelected(wxDC &dc)
+{
+//    dc.SetBackground( *wxBLACK_BRUSH );
+    DrawNormal( dc );
+}
+
+void ConstraintSign::DrawNormal(wxDC &dc)
+{
+    if( this->m_fSelected )
+        dc.SetBackground( *wxBLACK_BRUSH );
+	else
+        dc.SetBackground( *wxWHITE_BRUSH );
+    wxSFRectShape::DrawNormal( dc );
+}
