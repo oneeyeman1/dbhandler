@@ -29,6 +29,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/ShapeBase.h"
+#include "database.h"
 #include "constraint.h"
 #include "constraintsign.h"
 

@@ -52,7 +52,8 @@ public:
         restrict,
         cascade,
         setNull,
-        noAction
+        noAction,
+        setDefault
     };
 
     XS_DECLARE_CLONABLE_CLASS(Constraint);
@@ -88,6 +89,11 @@ public:
     void SetRefTable(const wxString & refTable)
     {
         this->m_refTable = refTable;
+    }
+
+    void SetFKDatabaseTable(const DatabaseTable *table)
+    {
+       m_fkTable = const_cast<DatabaseTable *>( table );
     }
 
     /*! \brief Set constraint type */
@@ -144,16 +150,32 @@ public:
         return m_refTable;
     }
 	
+    const DatabaseTable *GetFKTable() const
+    {
+        return m_fkTable;
+    }
+
     /*! \brief Get constraint type */
     constraintType GetType() const
     {
         return m_type;
     }
 
+    constraintAction GetDeleteAction() const
+    {
+        return m_onDelete;
+    }
+
+    constraintAction GetUpdateAction() const
+    {
+        return m_onUpdate;
+    }
+
 protected:
     constraintType m_type;
     wxString m_name;
     wxString m_localColumn;
+    DatabaseTable *m_fkTable;
     wxString m_refTable;
     wxString m_refCol;
     constraintAction m_onDelete;
