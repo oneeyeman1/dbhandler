@@ -44,8 +44,9 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type)
     m_signConstraint = new ConstraintSign( type );
     if( m_signConstraint )
     {
+        m_signConstraint->SetConstraint( pConstraint );
         m_signConstraint->SetVAlign( wxSFShapeBase::valignMIDDLE );
-        m_signConstraint->SetStyle( wxSFShapeBase::sfsALWAYS_INSIDE | wxSFShapeBase::sfsPROCESS_DEL | wxSFShapeBase::sfsPROPAGATE_DRAGGING | wxSFShapeBase::sfsPROPAGATE_SELECTION | wxSFShapeBase::sfsLOCK_CHILDREN );
+        m_signConstraint->SetStyle( wxSFShapeBase::sfsEMIT_EVENTS | wxSFShapeBase::sfsALWAYS_INSIDE | wxSFShapeBase::sfsPROCESS_DEL | wxSFShapeBase::sfsPROPAGATE_DRAGGING | wxSFShapeBase::sfsPROPAGATE_SELECTION | wxSFShapeBase::sfsLOCK_CHILDREN );
         m_signConstraint->AcceptChild( wxT( "wxSFTextShape" ) );
         m_signConstraint->Activate( true );
         SF_ADD_COMPONENT( m_signConstraint, wxT( "sign" ) );

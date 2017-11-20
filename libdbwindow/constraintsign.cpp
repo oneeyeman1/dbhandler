@@ -22,6 +22,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/BitmapShape.h"
+#include "database.h"
 #include "constraint.h"
 #include "constraintsign.h"
 #include "res/gui/key-f.xpm"
@@ -93,4 +94,15 @@ void ConstraintSign::DrawNormal(wxDC &dc)
 	else
         dc.SetBackground( *wxWHITE_BRUSH );
     wxSFRectShape::DrawNormal( dc );
+}
+
+
+void ConstraintSign::SetConstraint(const Constraint *constraint)
+{
+    m_constraint = const_cast<Constraint *>( constraint );
+}
+
+Constraint *ConstraintSign::GetConstraint() const
+{
+    return m_constraint;
 }

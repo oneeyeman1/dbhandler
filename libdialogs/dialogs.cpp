@@ -201,7 +201,7 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, i
     return res;
 }
 
-extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, DatabaseTable *table, std::vector<std::wstring> &foreignKeyFields, std::vector<std::wstring> &refKeyFields, std::wstring &refTableName, int &deleteProp, int &updateProp, Database *db, bool &logOnly)
+extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, DatabaseTable *table, std::vector<std::wstring> &foreignKeyFields, std::vector<std::wstring> &refKeyFields, std::wstring &refTableName, int &deleteProp, int &updateProp, Database *db, bool &logOnly, bool isView)
 {
     int res;
 #ifdef __WXMSW__

@@ -19,6 +19,7 @@
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/FlexGridShape.h"
+#include "database.h"
 #include "constraint.h"
 #include "constraintsign.h"
 #include "GridTableShape.h"
