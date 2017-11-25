@@ -30,12 +30,14 @@
 
 
 
-ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, const wxPoint& pos, const wxSize& size, long style):
+ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, std::vector<std::wstring> &foreignKeyFields, wxString &refTableName, bool isView, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     m_db = db;
     m_table = table;
     m_isLogOnly = false;
+    m_isView = isView;
+    m_refTableName = refTableName;
     // begin wxGlade: ForeignKeyDialog::ForeignKeyDialog
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Foreign Key Name:" ) );
     m_foreignKeyName = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
@@ -67,11 +69,14 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     };
     m_onDelete = new wxRadioBox( this, wxID_ANY, _( "On Delete of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 5, m_onDelete_choices, 1, wxRA_SPECIFY_COLS );
     m_onUpdate = new wxRadioBox( this, wxID_ANY, _( "On Update of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 5, m_onUpdate_choices, 1, wxRA_SPECIFY_COLS );
+    m_OK->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
+    m_logOnly->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
+    list_ctrl_1->Bind( wxEVT_LIST_ITEM_SELECTED, &ForeignKeyDialog::OnFieldSelection, this );
+    list_ctrl_1->Bind( wxEVT_LIST_ITEM_DESELECTED, &ForeignKeyDialog::OnFieldsDeselection, this );
+    m_primaryKeyTable->Bind( wxEVT_TEXT, &ForeignKeyDialog::OnPrimaryKeyTableSelection, this );
     set_properties();
     do_layout();
     // end wxGlade
-    m_OK->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
-    m_logOnly->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
     wxPoint pt1 = m_foreignKeyColumns->GetPosition();
     int width1 = m_foreignKeyColumns->GetSize().GetWidth();
     m_foreignKeyColumns->Hide();
@@ -80,9 +85,6 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     int width2 = m_primaryKeyColumns->GetSize().GetWidth();
     m_primaryKeyColumns->Hide();
     m_primaryKeyColumnsFields = new FieldWindow( this, 0, pt2, width2 );
-    list_ctrl_1->Bind( wxEVT_LIST_ITEM_SELECTED, &ForeignKeyDialog::OnFieldSelection, this );
-    list_ctrl_1->Bind( wxEVT_LIST_ITEM_DESELECTED, &ForeignKeyDialog::OnFieldsDeselection, this );
-    m_primaryKeyTable->Bind( wxEVT_COMBOBOX, &ForeignKeyDialog::OnPrimaryKeyTableSelection, this );
 }
 
 ForeignKeyDialog::~ForeignKeyDialog()
@@ -114,6 +116,10 @@ void ForeignKeyDialog::set_properties()
         list_ctrl_1->InsertItem( row++, (*it)->GetFieldName() );
     }
     // end wxGlade
+    if( m_isView )
+    {
+        m_primaryKeyTable->SetValue( m_refTableName );
+    }
 }
 
 

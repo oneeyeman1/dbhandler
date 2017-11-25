@@ -24,7 +24,7 @@ class ForeignKeyDialog: public wxDialog
 public:
     // begin wxGlade: ForeignKeyDialog::ids
     // end wxGlade
-    ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, std::vector<std::wstring> &foreignKeyFields, wxString &refTableName, bool isView, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
     ~ForeignKeyDialog();
     bool IsLogOnlyI();
     wxTextCtrl *GetKeyNameCtrl() const;
@@ -44,7 +44,7 @@ private:
     std::vector<int> m_selectedForeignKeyField;
     int m_delete, m_update;
     DatabaseTable *m_pkTable;
-    bool m_isLogOnly;
+    bool m_isLogOnly, m_isView;
     int m_nextKey;
     // begin wxGlade: ForeignKeyDialog::methods
     void set_properties();

@@ -594,10 +594,14 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                 ConstraintSign *constraint = wxDynamicCast( sign->GetParentShape()->GetParentShape(), ConstraintSign );
 //                for( int i = 0; i < constraint->GetConstraint()->GetR
                 DatabaseTable *table = const_cast<DatabaseTable *>( constraint->GetConstraint()->GetFKTable() );
-                for( std::vector<MyErdTable *>::iterator it = m_displayedTables.begin(); it <= m_displayedTables.end(); it++ )
+                bool found = false;
+                for( std::vector<MyErdTable *>::iterator it = m_displayedTables.begin(); it < m_displayedTables.end() && !found; it++ )
                 {
                     if( const_cast<DatabaseTable &>( (*it)->GetTable() ).GetTableName() == const_cast<DatabaseTable *>( constraint->GetConstraint()->GetFKTable() )->GetTableName() )
+                    {
                         (*it)->Select( true );
+                        found = true;
+                    }
                 }
                 int deleteProp, updateProp;
                 Constraint::constraintAction action = constraint->GetConstraint()->GetDeleteAction();
