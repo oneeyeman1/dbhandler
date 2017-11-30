@@ -24,22 +24,27 @@ class ForeignKeyDialog: public wxDialog
 public:
     // begin wxGlade: ForeignKeyDialog::ids
     // end wxGlade
-    ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, std::vector<std::wstring> &foreignKeyFields, wxString &refTableName, bool isView, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
     ~ForeignKeyDialog();
-    const wxString &GetCommand();
     bool IsLogOnlyI();
     wxTextCtrl *GetKeyNameCtrl() const;
     const std::vector<FKField *> &GetForeignKeyVector();
+    const std::vector<std::wstring> &GetForeignKeyFields() const;
+    const std::vector<std::wstring> &GetPrimaryKeyFields() const;
+    const int GetDeleteParam() const;
+    const int GetUpdateParam() const;
+    const std::wstring &GetReferencedTable() const;
     void OnApplyCommand(wxCommandEvent &event);
     void OnFieldSelection(wxListEvent &event);
     void OnFieldsDeselection(wxListEvent &event);
     void OnPrimaryKeyTableSelection(wxCommandEvent &event);
 private:
     std::vector<std::wstring> m_foreignKey, m_primaryKey;
+    std::wstring m_refTableName;
     std::vector<int> m_selectedForeignKeyField;
+    int m_delete, m_update;
     DatabaseTable *m_pkTable;
-    wxString m_command;
-    bool m_isLogOnly;
+    bool m_isLogOnly, m_isView;
     int m_nextKey;
     // begin wxGlade: ForeignKeyDialog::methods
     void set_properties();

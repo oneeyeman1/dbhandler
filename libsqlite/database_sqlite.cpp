@@ -80,7 +80,7 @@ int SQLiteDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstr
     return result;
 }
 
-int SQLiteDatabase::ServerConnect(std::vector<std::wstring> &UNUSED(dbList), std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::ServerConnect(std::vector<std::wstring> &UNUSED(dbList), std::vector<std::wstring> &UNUSED(errorMsg))
 {
     return 0;
 }
@@ -229,6 +229,7 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 
 void SQLiteDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
 {
+    code = sqlite3_errcode( m_db );
     switch( code )
     {
     case 1:
@@ -677,41 +678,50 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         char *italic = (char *) sqlite3_column_text( stmt, 5 );
                         if( italic )
                             table->SetDataFontItalic( italic[0] == 'Y' );
-                        char *underline = (char *) sqlite3_column_text( stmt, 6 );
-                        if( underline )
-                            table->SetDataFontUnderline( underline[0] == 'Y' );
-                        table->SetDataFontCharacterSet( sqlite3_column_int( stmt, 7 ) );
-                        table->SetDataFontPixelSize( sqlite3_column_int( stmt, 8 ) );
-                        dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 9 );
+                        int underline = sqlite3_column_int( stmt, 6 );
+                        if( underline > 0 )
+                            table->SetDataFontUnderline( true );
+                        int strikethrough = sqlite3_column_int( stmt, 7 );
+                        if( strikethrough > 0 )
+                            table->SetDataFontStrikethrough( true );
+                        table->SetDataFontCharacterSet( sqlite3_column_int( stmt, 8 ) );
+                        table->SetDataFontPixelSize( sqlite3_column_int( stmt, 9 ) );
+                        dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 10 );
                         if( dataFontName )
                             table->SetDataFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName ) );
-                        table->SetHeadingFontSize( sqlite3_column_int( stmt, 10 ) );
-                        table->SetHeadingFontWeight( sqlite3_column_int( stmt, 11 ) );
-                        italic = (char *) sqlite3_column_text( stmt, 12 );
+                        table->SetHeadingFontSize( sqlite3_column_int( stmt, 11 ) );
+                        table->SetHeadingFontWeight( sqlite3_column_int( stmt, 12 ) );
+                        italic = (char *) sqlite3_column_text( stmt, 13 );
                         if( italic )
                             table->SetHeadingFontItalic( italic[0] == 'Y' );
-                        underline = (char *) sqlite3_column_text( stmt, 13 );
-                        if( underline )
-                            table->SetHeadingFontUnderline( underline[0] == 'Y' );
-                        table->SetHeadingFontCharacterSet( sqlite3_column_int( stmt, 14 ) );
-                        table->SetHeadingFontPixelSize( sqlite3_column_int( stmt, 15 ) );
-                        headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 16 );
+                        underline = sqlite3_column_int( stmt, 14 );
+                        if( underline > 0 )
+                            table->SetHeadingFontUnderline( true );
+                        strikethrough = sqlite3_column_int( stmt, 15 );
+                        if( strikethrough > 0 )
+                            table->SetHeadingFontStrikethrough( true );
+                        table->SetHeadingFontCharacterSet( sqlite3_column_int( stmt, 16 ) );
+                        table->SetHeadingFontPixelSize( sqlite3_column_int( stmt, 17 ) );
+                        headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 18 );
                         if( headingFontName )
                             table->SetHeadingFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) headingFontName ) );
-                        table->SetLabelFontSize( sqlite3_column_int( stmt, 17 ) );
-                        table->SetLabelFontWeight( sqlite3_column_int( stmt, 18 ) );
-                        italic = (char *) sqlite3_column_text( stmt, 19 );
+                        table->SetLabelFontSize( sqlite3_column_int( stmt, 19 ) );
+                        table->SetLabelFontWeight( sqlite3_column_int( stmt, 20 ) );
+                        italic = (char *) sqlite3_column_text( stmt, 21 );
                         if( italic )
                             table->SetLabelFontItalic( italic[0] == 'Y' );
-                        underline = (char *) sqlite3_column_text( stmt, 20 );
-                        if( underline )
-                            table->SetLabelFontUnderline( underline[0] == 'Y' );
-                        table->SetLabelFontCharacterSet( sqlite3_column_int( stmt, 21 ) );
-                        table->SetLabelFontPixelSize( sqlite3_column_int( stmt, 22 ) );
-                        labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 23 );
+                        underline = sqlite3_column_int( stmt, 22 );
+                        if( underline > 0 )
+                            table->SetLabelFontUnderline( true );
+                        strikethrough = sqlite3_column_int( stmt, 23 );
+                        if( strikethrough > 0 )
+                            table->SetLabelFontStrikethrough( true );
+                        table->SetLabelFontCharacterSet( sqlite3_column_int( stmt, 24 ) );
+                        table->SetLabelFontPixelSize( sqlite3_column_int( stmt, 25 ) );
+                        labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 26 );
                         if( labelFontName )
                             table->SetLabelFontName( sqlite_pimpl->m_myconv.from_bytes( (const char *) labelFontName ) );
-                        table->SetComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 24 ) ) );
+                        table->SetComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 27 ) ) );
                     }
                     else if( res == SQLITE_DONE )
                         break;
@@ -796,9 +806,17 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.str( L"" );
                 command += L", \"abd_fitl\" = \'";
                 command += properties.m_isDataFontItalic ? L"Y" : L"N";
-                command += L"\', \"abd_funl\" = \'";
-                command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
-                command += L"\', \"abd_fchr\" = ";
+                command += L"\', \"abd_funl\" = ";
+                istr << ( properties.m_isDataFontUnderlined ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", \"abd_fstr\" = ";
+                istr << ( properties.m_isDataFontStriken ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", \"abd_fchr\" = ";
                 istr << properties.m_dataFontEncoding;
                 command += istr.str();
                 istr.clear();
@@ -822,9 +840,17 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.str( L"" );
                 command += L", \"abh_fitl\" = \'";
                 command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
-                command += L"\', \"abh_funl\" = \'";
-                command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
-                command += L"\', \"abh_fchr\" = ";
+                command += L"\', \"abh_funl\" = ";
+                istr << ( properties.m_isHeadingFontUnderlined ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", \"abh_fstr\" = ";
+                istr << ( properties.m_isHeadingFontStriken ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", \"abh_fchr\" = ";
                 istr << properties.m_headingFontEncoding;
                 command += istr.str();
                 istr.clear();
@@ -848,9 +874,17 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.str( L"" );
                 command += L", \"abl_fitl\" = \'";
                 command += properties.m_isLabelFontItalic ? L"Y" : L"N";
-                command += L"\', \"abl_funl\" = \'";
-                command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
-                command += L"\', \"abl_fchr\" = ";
+                command += L"\', \"abl_funl\" = ";
+                istr << ( properties.m_isLabelFontUnderlined ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", \"abl_fstr\" = ";
+                istr << ( properties.m_isLabelFontStrioken ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", \"abl_fchr\" = ";
                 istr << properties.m_labelFontEncoding;
                 command += istr.str();
                 istr.clear();
@@ -863,7 +897,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 command += L", \"abl_ffce\" = \'";
                 command += properties.m_labelFontName;
                 command += L"\', \"abt_cmnt\" = \'";
-                command += comment;
+                command += properties.m_comment;
                 command += L"\' WHERE \"abt_tnam\" = \'";
                 command += tableName;
                 command += L"\' AND \"abt_tid\" = ";
@@ -898,9 +932,17 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.str( L"" );
                 command += L", \'";
                 command += properties.m_isDataFontItalic ? L"Y" : L"N";
-                command += L"\', \'";
-                command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
                 command += L"\', ";
+                istr << ( properties.m_isDataFontUnderlined ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", ";
+                istr << ( properties.m_isDataFontStriken ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", ";
                 istr << properties.m_dataFontEncoding;
                 command += istr.str();
                 istr.clear();
@@ -924,9 +966,17 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 istr.str( L"" );
                 command += L", \'";
                 command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
-                command += L"\', \'";
-                command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
                 command += L"\', ";
+                istr << ( properties.m_isHeadingFontUnderlined ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", ";
+                istr << ( properties.m_isHeadingFontStriken ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", ";
                 istr << properties.m_headingFontEncoding;
                 command += istr.str();
                 istr.clear();
@@ -951,8 +1001,16 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 command += L", \'";
                 command += properties.m_isLabelFontItalic ? L"Y" : L"N";
                 command += L"\', \'";
-                command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
+                istr << ( properties.m_isLabelFontUnderlined ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
                 command += L"\', ";
+                istr << ( properties.m_isLabelFontStrioken ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", ";
                 istr << properties.m_labelFontEncoding;
                 command += istr.str();
                 istr.clear();
@@ -965,7 +1023,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 command += L", \'";
                 command += properties.m_labelFontName;
                 command += L"\', \'";
-                command += comment;
+                command += properties.m_comment;
                 command += L"\' );";
             }
             if( !isLog )
@@ -1064,7 +1122,7 @@ int SQLiteDatabase::GetFieldProperties(const char *tableName, const char *schema
         res = sqlite3_bind_text( stmt, 1, tableName, -1, SQLITE_TRANSIENT );
         if( res == SQLITE_OK )
         {
-            res = sqlite3_bind_text( stmt, 2, schemaName, -1, SQLITE_TRANSIENT );
+            res = sqlite3_bind_text( stmt, 2, ownerName, -1, SQLITE_TRANSIENT );
             if( res == SQLITE_OK )
             {
                 res = sqlite3_bind_text( stmt, 3, fieldName, -1, SQLITE_TRANSIENT );
@@ -1113,109 +1171,228 @@ int SQLiteDatabase::GetFieldProperties(const char *tableName, const char *schema
     return result;
 }
 
-int SQLiteDatabase::ApplyForeignKey(const std::wstring &command, const std::wstring &UNUSED(keyName), DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt = NULL;
-    std::wstring errorMessage;
+    std::wstring errorMessage, sql;
     char *error;
     std::vector<std::wstring> references;
-    std::wstring query0 = L"PRAGMA foreign_keys=OFF", query1 = L"PRAGMA foreign_keys=ON";
-    std::wstring query = L"SELECT type, sql FROM sqlite_master WHERE tbl_name = ";
+    std::wstring query0 = L"PRAGMA writable_schema=true", query1 = L"PRAGMA writable_schema=false", query2 = L"BEGIN", query3;
+    std::wstring query = L"SELECT sql FROM sqlite_master WHERE tbl_name = \'";
     query += tableName.GetTableName();
-    query += L" AND type <> 'table'";
+    query += L"\' AND type = 'table'";
     int result = 0;
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, NULL );
-    if( res != SQLITE_OK )
+    int res;
+    // set writable schema
+    if( !logOnly )
     {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-        return result;
+        res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query0.c_str() ).c_str(), NULL, NULL, &error );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
     }
-    for( ; ; )
+    // start transacion
+    if( !logOnly && !result )
     {
-        res = sqlite3_step( stmt );
-        if( res == SQLITE_ROW )
-            references.push_back( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 1 ) ) );
-        else if( res == SQLITE_DONE )
-            break;
+        res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), NULL, NULL, &error );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    if( !result )
+    {
+        // get Create Table sql
+        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, NULL );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
         else
         {
-            result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-            break;
-        }
-    }
-    sqlite3_finalize( stmt );
-    if( res != SQLITE_DONE )
-        return 1;
-    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query0.c_str() ).c_str(), NULL, NULL, &error );
-    if( res != SQLITE_OK )
-    {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-        return result;
-    }
-    std::wstring alterQuery = command.substr( 0, command.find( ';' ) );
-    while( alterQuery != L"" )
-    {
-        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( alterQuery.c_str() ).c_str(), (int) alterQuery.length(), &stmt, NULL );
-        if( res != SQLITE_OK )
-        {
-            result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
-            return result;
-        }
-        for( ; ; )
-        {
-            res = sqlite3_step( stmt );
-            if( res == SQLITE_ROW )
-                references.push_back( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 1 ) ) );
-            else if( res == SQLITE_DONE )
-                break;
-            else
+            for( ; ; )
             {
-                result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-                break;
+                res = sqlite3_step( stmt );
+                if( res == SQLITE_ROW )
+                    sql = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 0 ) );
+                else if( res == SQLITE_DONE )
+                    break;
+                else
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                    break;
+                }
+            }
+            sqlite3_finalize( stmt );
+            if( !result )
+            {
+                std::wstring fk = L", CONSTRAINT " + keyName + L" FOREIGN KEY(";
+                for( std::vector<std::wstring>::const_iterator it = foreignKeyFields.begin(); it < foreignKeyFields.end(); it++ )
+                {
+                    fk += (*it);
+                    if( it == foreignKeyFields.end() - 1 )
+                        fk += L")";
+                    else
+                        fk += L", ";
+                }
+                fk += L" REFERENCES " + refTableName + L"(";
+                FK_ONUPDATE updProp = NO_ACTION_UPDATE;
+                FK_ONDELETE delProp = NO_ACTION_DELETE;
+                for( std::vector<std::wstring>::const_iterator it = refKeyFields.begin(); it < refKeyFields.end(); it++ )
+                {
+                    fk += (*it);
+                    if( it == refKeyFields.end() - 1 )
+                        fk += L")";
+                    else
+                        fk += L", ";
+                }
+                if( deleteProp > 0 )
+                {
+                    fk += L" ON DELETE ";
+                    switch( deleteProp )
+                    {
+                    case 0:
+                        fk += L"NO ACTION";
+                        delProp = NO_ACTION_DELETE;
+                        break;
+                    case 1:
+                        fk += L"RESTRICT";
+                        delProp = RESTRICT_DELETE;
+                        break;
+                    case 2:
+                        fk += L"CASCADE";
+                        delProp = CASCADE_DELETE;
+                        break;
+                    case 3:
+                        fk += L"SET NULL";
+                        delProp = SET_NULL_DELETE;
+                        break;
+                    case 4:
+                        fk += L"SET DEFAULT";
+                        delProp = SET_DEFAULT_DELETE;
+                        break;
+                    }
+                }
+                if( updateProp > 0 )
+                {
+                    fk += L" ON UPDATE ";
+                    switch( updateProp )
+                    {
+                    case 0:
+                        fk += L"NO ACTION";
+                        updProp = NO_ACTION_UPDATE;
+                        break;
+                    case 1:
+                        fk += L"RESTRICT";
+                        updProp = RESTRICT_UPDATE;
+                        break;
+                    case 2:
+                        fk += L"CASCADE";
+                        updProp = CASCADE_UPDATE;
+                        break;
+                    case 3:
+                        fk += L"SET NULL";
+                        updProp = SET_NULL_UPDATE;
+                        break;
+                    case 4:
+                        fk += L"SET DEFAULT";
+                        updProp = SET_DEFAULT_UPDATE;
+                        break;
+                    }
+                }
+                fk += L")";
+                sql.replace( sql.length() - 1, 1, fk );
+                std::wstring fkQuery = L"UPDATE sqlite_master SET sql = ? WHERE type = \'table\' AND name = ?;";
+                if( !logOnly )
+                {
+                    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( fkQuery.c_str() ).c_str(), (int) query.length(), &stmt, NULL );
+                    if( res != SQLITE_OK )
+                    {
+                        result = 1;
+                        GetErrorMessage( res, errorMessage );
+                        errorMsg.push_back( errorMessage );
+                    }
+                    else
+                    {
+                        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( sql.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+                        if( res != SQLITE_OK )
+                        {
+                            result = 1;
+                            GetErrorMessage( res, errorMessage );
+                            errorMsg.push_back( errorMessage );
+                        }
+                        else
+                        {
+                            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( tableName.GetTableName().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+                            if( res != SQLITE_OK )
+                            {
+                                result = 1;
+                                GetErrorMessage( res, errorMessage );
+                                errorMsg.push_back( errorMessage );
+                            }
+                            else
+                            {
+                                res = sqlite3_step( stmt );
+                                if( res != SQLITE_DONE )
+                                {
+                                    result = 1;
+                                    GetErrorMessage( res, errorMessage );
+                                    errorMsg.push_back( errorMessage );
+                                }
+                            }
+                        }
+                    }
+                    sqlite3_finalize( stmt );
+                    if( !result )
+                        query3 = L"COMMIT";
+                    else
+                        query3 = L"ROLLBACK";
+                    // commit transaction
+                    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), NULL, NULL, &error );
+                    if( res != SQLITE_OK )
+                    {
+                        result = 1;
+                        GetErrorMessage( res, errorMessage );
+                        errorMsg.push_back( errorMessage );
+                    }
+                }
+                else
+                {
+                    command = fkQuery;
+                    command.replace( command.find( '?' ), 1, L"\'" + sql + L"\'" );
+                    command.replace( command.find( '?' ), 1, L"\'" + tableName.GetTableName() + L"\'" );
+                }
+                if( !logOnly && !result )
+                {
+                    res = sqlite3_exec( m_db, "ANALYZE sqlite_master", NULL, NULL, &error );
+                    if( res != SQLITE_OK )
+                    {
+                        result = 1;
+                        GetErrorMessage( res, errorMessage );
+                        errorMsg.push_back( errorMessage );
+                    }
+                    else
+                    {
+                        std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+                        int size = fKeys.size();
+                        size++;
+                        for( int i = 0; i < foreignKeyFields.size(); i++ )
+                            fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
+                        newFK = fKeys[size];
+                    }
+                }
             }
         }
-        sqlite3_finalize( stmt );
-        if( res != SQLITE_DONE )
-            break;
-        alterQuery = alterQuery.substr( 2 );
-        alterQuery = alterQuery.substr( 0, alterQuery.find( ';' ) );
     }
-    if( res != SQLITE_DONE )
-    {
-        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, &error );
-        return 1;
-    }
-    for( std::vector<std::wstring>::iterator it = references.begin(); it < references.end(); it++ )
-    {
-        res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( (*it).c_str() ).c_str(), NULL, NULL, &error );
-        if( res != SQLITE_OK )
-            break;
-    }
-    if( res != SQLITE_OK )
-    {
-        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, &error );
-        return 1;
-    }
-    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), NULL, NULL, &error );
-    if( res != SQLITE_OK )
-    {
-        result = 1;
-        sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, &error );
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-    }
-    else
-        sqlite3_exec( m_db, "COMMIT", NULL, NULL, &error );
     return result;
 }
 

@@ -20,7 +20,7 @@ public:
     virtual int GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, const char *fieldName, Field *field, std::vector<std::wstring> &errorMsg);
     virtual int SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg);
-    virtual int ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg);
+    virtual int ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg);
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     int CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg);
 protected:
@@ -29,7 +29,7 @@ protected:
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
-    bool IsSystemIndexExists(const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
+    bool IsSystemIndexExists(MYSQL_STMT *res, const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     int TokenizeConnectionString(const std::wstring &connectStr, std::vector<std::wstring> &errorMsg);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);

@@ -1,7 +1,10 @@
 #include <string>
+#include "wxsf/BitmapShape.h"
+#include "wxsf/FlexGridShape.h"
 #include "wxsf/TextShape.h"
 #include "database.h"
 #include "XmlSerializer.h"
+#include "constraint.h"
 #include "constraintsign.h"
 #include "GUIDatabaseTable.h"
 

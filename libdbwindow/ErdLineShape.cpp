@@ -4,6 +4,7 @@
 #include "wx/notebook.h"
 #include "wx/grid.h"
 #include "database.h"
+#include "wxsf/BitmapShape.h"
 #include "wxsf/CommonFcn.h"
 #include "wxsf/RectShape.h"
 #include "wxsf/LineShape.h"
@@ -11,8 +12,9 @@
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/RoundRectShape.h"
-#include "constraintsign.h"
+#include "wxsf/GridShape.h"
 #include "constraint.h"
+#include "constraintsign.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "fieldwindow.h"
@@ -37,10 +39,17 @@ ErdLineShape::ErdLineShape()
 
 ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type)
 {
+    AcceptChild( "ConstraintSign" );
     m_constraint = pConstraint;
-	if (type == QueryView)
+    m_signConstraint = new ConstraintSign( type );
+    if( m_signConstraint )
     {
-		m_signConstraint = new wxSFRectShape;
+        m_signConstraint->SetConstraint( pConstraint );
+        m_signConstraint->SetVAlign( wxSFShapeBase::valignMIDDLE );
+        m_signConstraint->SetStyle( wxSFShapeBase::sfsEMIT_EVENTS | wxSFShapeBase::sfsALWAYS_INSIDE | wxSFShapeBase::sfsPROCESS_DEL | wxSFShapeBase::sfsPROPAGATE_DRAGGING | wxSFShapeBase::sfsPROPAGATE_SELECTION | wxSFShapeBase::sfsLOCK_CHILDREN );
+        m_signConstraint->AcceptChild( wxT( "wxSFTextShape" ) );
+        m_signConstraint->Activate( true );
+        SF_ADD_COMPONENT( m_signConstraint, wxT( "sign" ) );
     }
     m_isEnabled = true;
 }

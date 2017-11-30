@@ -21,7 +21,7 @@ protected:
     void GetDirectionalLine(wxRealPoint& src, wxRealPoint& trg);
 private:
     Constraint *m_constraint;
-    wxSFRectShape *m_signConstraint;
+    ConstraintSign *m_signConstraint;
     bool m_isEnabled;
 };
 

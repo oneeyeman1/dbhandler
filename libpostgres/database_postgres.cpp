@@ -167,7 +167,7 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
     std::string query1 = "CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
     std::string query2 = "CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));";
     std::string query3 = "CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));";
-    std::string query4 = "CREATE TABLE IF NOT EXISTS abcattbl(abt_snam char(129), abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
+    std::string query4 = "CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129), abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
     std::string query5 = "CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));";
     std::string query6 = "CREATE INDEX IF NOT EXISTS \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
     std::string query7 = "CREATE INDEX IF NOT EXISTS \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
@@ -314,7 +314,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring query2 = L"SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = 'leagues') THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = $1 AND col.table_name = $2 ORDER BY ordinal_position;";
     std::wstring query3 = L"SELECT (SELECT con.oid FROM pg_constraint con WHERE con.conname = c.constraint_name) AS id, x.ordinal_position AS pos, c.constraint_name AS name, x.table_schema as schema, x.table_name AS table, x.column_name AS column, y.table_schema as ref_schema, y.table_name as ref_table, y.column_name as ref_column, c.update_rule, c.delete_rule FROM information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y WHERE x.constraint_name = c.constraint_name AND y.ordinal_position = x.position_in_unique_constraint AND y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 ORDER BY c.constraint_name, x.ordinal_position;";
     std::wstring query4 = L"SELECT indexname FROM pg_indexes WHERE schemaname = $1 AND tablename = $2;";
-    std::wstring query5 = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
+    std::wstring query5 = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fstr, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fstr, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fstr, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
     std::wstring query6 = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = $1 AND \"abc_ownr\" = $2 AND \"abc_cnam\" = $3;";
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     ExecStatusType status = PQresultStatus( res ); 
@@ -691,25 +691,29 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
             table->SetDataFontSize( atoi( PQgetvalue( res, i, 3 ) ) );
             table->SetDataFontWeight( atoi( PQgetvalue( res, i, 4 ) ) );
             table->SetDataFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 5 ) ) == L"Y" ? true : false );
-            table->SetDataFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 6 ) ) == L"Y" ? true : false );
-            table->SetDataFontCharacterSet( atoi( PQgetvalue( res, i, 7 ) ) );
-            table->SetDataFontPixelSize( atoi( PQgetvalue( res, i, 8 ) ) );
-            table->SetDataFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 9 ) ) );
-            table->SetHeadingFontSize( atoi( PQgetvalue( res, i, 10 ) ) );
-            table->SetDataFontWeight( atoi( PQgetvalue( res, i, 11 ) ) );
-            table->SetHeadingFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 12 ) ) == L"Y" ? true : false );
-            table->SetHeadingFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 13 ) ) == L"Y" ? true : false );
-            table->SetHeadingFontCharacterSet( atoi( PQgetvalue( res, i, 14 ) ) );
-            table->SetHeadingFontPixelSize( atoi( PQgetvalue( res, i, 15 ) ) );
-            table->SetHeadingFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 16 ) ) );
-            table->SetLabelFontSize( atoi( PQgetvalue( res, i, 17 ) ) );
-            table->SetLabelFontWeight( atoi( PQgetvalue( res, i, 18 ) ) );
-            table->SetLabelFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 19 ) ) == L"Y" ? true : false );
-            table->SetLabelFontUnderline( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 20 ) ) == L"Y" ? true : false );
-            table->SetLabelFontCharacterSet( atoi( PQgetvalue( res, i, 21 ) ) );
-            table->SetLabelFontPixelSize( atoi( PQgetvalue( res, i, 22 ) ) );
-            table->SetLabelFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 23 ) ) );
-            table->SetComment( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 24 ) ) );
+            table->SetDataFontUnderline( atoi( PQgetvalue( res, i, 6 ) ) );
+            table->SetDataFontStrikethrough( atoi( PQgetvalue( res, i, 7 ) ) );
+            table->SetDataFontCharacterSet( atoi( PQgetvalue( res, i, 8 ) ) );
+            table->SetDataFontPixelSize( atoi( PQgetvalue( res, i, 9 ) ) );
+            table->SetDataFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 10 ) ) );
+            table->SetHeadingFontSize( atoi( PQgetvalue( res, i, 11 ) ) );
+            table->SetHeadingFontWeight( atoi( PQgetvalue( res, i, 12 ) ) );
+            table->SetHeadingFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 13 ) ) == L"Y" ? true : false );
+            table->SetHeadingFontUnderline( atoi( PQgetvalue( res, i, 14 ) ) );
+            table->SetHeadingFontStrikethrough(( atoi( PQgetvalue( res, i, 15 ) ) ));
+            table->SetHeadingFontCharacterSet( atoi( PQgetvalue( res, i, 16 ) ) );
+            table->SetHeadingFontPixelSize( atoi( PQgetvalue( res, i, 17 ) ) );
+            table->SetHeadingFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 18 ) ) );
+            table->SetLabelFontSize( atoi( PQgetvalue( res, i, 19 ) ) );
+            table->SetLabelFontWeight( atoi( PQgetvalue( res, i, 20 ) ) );
+            table->SetLabelFontItalic( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 21 ) ) == L"Y" ? true : false );
+            table->SetLabelFontUnderline( atoi( PQgetvalue( res, i, 22 ) ) );
+            table->SetLabelFontStrikethrough(( atoi( PQgetvalue( res, i, 23 ) ) ));
+            table->SetLabelFontCharacterSet( atoi( PQgetvalue( res, i, 24 ) ) );
+            char *temp = PQgetvalue( res, i, 25 );
+            table->SetLabelFontPixelSize( atoi( PQgetvalue( res, i, 25 ) ) );
+            table->SetLabelFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 26 ) ) );
+            table->SetComment( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 27 ) ) );
         }
     }
     PQclear( res );
@@ -772,9 +776,17 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.str( L"" );
                 command += L", \"abd_fitl\" = \'";
                 command += properties.m_isDataFontItalic ? L"Y" : L"N";
-                command += L"\', \"abd_funl\" = \'";
-                command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
-                command += L"\', \"abd_fchr\" = ";
+                command += L"\', \"abd_funl\" = ";
+                istr << ( properties.m_isDataFontUnderlined ? 1 : 0 );
+                command +=  istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", \"abd_fstr\" = ";
+                istr << ( properties.m_isDataFontStriken ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", \"abd_fchr\" = ";
                 istr << properties.m_dataFontEncoding;
                 command += istr.str();
                 istr.clear();
@@ -798,9 +810,17 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.str( L"" );
                 command += L", \"abh_fitl\" = \'";
                 command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
-                command += L"\', \"abh_funl\" = \'";
-                command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
-                command += L"\', \"abh_fchr\" = ";
+                command += L"\', \"abh_funl\" = ";
+                istr << ( properties.m_isHeadingFontUnderlined ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", \"abh_fstr\" = ";
+                istr << ( properties.m_isHeadingFontStriken ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", \"abh_fchr\" = ";
                 istr << properties.m_headingFontEncoding;
                 command += istr.str();
                 istr.clear();
@@ -824,9 +844,17 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.str( L"" );
                 command += L", \"abl_fitl\" = \'";
                 command += properties.m_isLabelFontItalic ? L"Y" : L"N";
-                command += L"\', \"abl_funl\" = \'";
-                command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
-                command += L"\', \"abl_fchr\" = ";
+                command += L"\', \"abl_funl\" = ";
+                istr << ( properties.m_isLabelFontUnderlined ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", \"abl_fstr\" = ";
+                istr << ( properties.m_isLabelFontStrioken ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", \"abl_fchr\" = ";
                 istr << properties.m_labelFontEncoding;
                 command += istr.str();
                 istr.clear();
@@ -839,7 +867,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 command += L", \"abl_ffce\" = \'";
                 command += properties.m_labelFontName;
                 command += L"\', \"abt_cmnt\" = \'";
-                command += comment;
+                command += properties.m_comment;
                 command += L"\' WHERE \"abt_tnam\" = \'";
                 command += schemaName;
                 command += L".";
@@ -878,9 +906,17 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.str( L"" );
                 command += L", \'";
                 command += properties.m_isDataFontItalic ? L"Y" : L"N";
-                command += L"\', \'";
-                command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
                 command += L"\', ";
+                istr << ( properties.m_isDataFontUnderlined ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", ";
+                istr << ( properties.m_isDataFontStriken ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", ";
                 istr << properties.m_dataFontEncoding;
                 command += istr.str();
                 istr.clear();
@@ -904,9 +940,17 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.str( L"" );
                 command += L", \'";
                 command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
-                command += L"\', \'";
-                command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
                 command += L"\', ";
+                istr << ( properties.m_isHeadingFontUnderlined ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", ";
+                istr << ( properties.m_headingFontSize ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", ";
                 istr << properties.m_headingFontEncoding;
                 command += istr.str();
                 istr.clear();
@@ -930,9 +974,17 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.str( L"" );
                 command += L", \'";
                 command += properties.m_isLabelFontItalic ? L"Y" : L"N";
-                command += L"\', \'";
-                command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
                 command += L"\', ";
+                istr << ( properties.m_isLabelFontUnderlined ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", ";
+                istr << ( properties.m_isLabelFontStrioken ? 1 : 0 );
+                command += istr.str();
+                istr.clear();
+                istr.str( L"" );
+                command += L", ";
                 istr << properties.m_labelFontEncoding;
                 command += istr.str();
                 istr.clear();
@@ -945,7 +997,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 command += L", \'";
                 command += properties.m_labelFontName;
                 command += L"\', \'";
-                command += comment;
+                command += properties.m_comment;
                 command += L"\' );";
             }
             if( !isLog )
@@ -1064,97 +1116,104 @@ int PostgresDatabase::GetFieldProperties(const char *tableName, const char *sche
     return result;
 }
 
-int PostgresDatabase::ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
 {
     bool exist = false;
     int result = 0;
     std::wstring err;
-    std::wstring query1 = L"SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = $1 AND table_schema = $2 AND table_name = $2";
-    char *values[3];
-    values[0] = new char[(keyName.length() + 1) * 2];
-    values[1] = new char[(tableName.GetSchemaName().length() + 1) * 2];
-    values[2] = new char[(tableName.GetTableName().length() + 1) * 2];
-    memset( values[0], '\0', keyName.length() + 1 );
-    memset( values[1], '\0', tableName.GetSchemaName().length() + 1 );
-    memset( values[2], '\0', tableName.GetTableName().length() + 1 );
-    strcpy( values[0], m_pimpl->m_myconv.to_bytes( keyName.c_str() ).c_str() );
-    strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.GetSchemaName().c_str() ).c_str() );
-    strcpy( values[2], m_pimpl->m_myconv.to_bytes( tableName.GetTableName().c_str() ).c_str() );
-    int len0 = strlen( values[0] );
-    int len1 = strlen( values[1] );
-    int len2 = strlen( values[2] );
-    int length[3] = { len0, len1, len2 };
-    int formats[3] = { 1, 1, 1 };
-    PGresult *res = PQexec( m_db, "START TRANSACTION" );
-    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    std::wstring query = L"ALTER TABLE ";
+    query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
+    query += L"ADD CONSTRAINT " + keyName + L" ";
+    query += L"FOREIGN KEY(";
+    for( std::vector<std::wstring>::const_iterator it1 = foreignKeyFields.begin(); it1 < foreignKeyFields.end(); it1++ )
     {
-        PQclear( res );
-        err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-        errorMsg.push_back( L"Starting transaction failed during connection: " + err );
-        result = 1;
+        query += (*it1);
+        if( it1 == foreignKeyFields.end() - 1 )
+            query += L") ";
+        else
+            query += L",";
+    }
+    query += L"REFERENCES " + refTableName + L"(";
+    for( std::vector<std::wstring>::const_iterator it1 = refKeyFields.begin(); it1 < refKeyFields.end(); it1++ )
+    {
+        query += (*it1);
+        if( it1 == refKeyFields.end() - 1 )
+            query += L") ";
+        else
+            query += L",";
+    }
+    query += L"ON DELETE ";
+    FK_ONUPDATE updProp = NO_ACTION_UPDATE;
+    FK_ONDELETE delProp = NO_ACTION_DELETE;
+    switch( deleteProp )
+    {
+    case 0:
+        query += L"NO ACTION ";
+        delProp = NO_ACTION_DELETE;
+        break;
+    case 1:
+        query += L"RESTRICT ";
+        delProp = RESTRICT_DELETE;
+        break;
+    case 2:
+        query += L"CASCADE ";
+        delProp = CASCADE_DELETE;
+        break;
+    case 3:
+        query += L"SET NULL ";
+        delProp = SET_NULL_DELETE;
+        break;
+    case 4:
+        query += L"SET DEFAULT ";
+        delProp = SET_DEFAULT_DELETE;
+        break;
+    }
+    query += L"ON UPDATE ";
+    switch( updateProp )
+    {
+    case 0:
+        query += L"NO ACTION";
+        updProp = NO_ACTION_UPDATE;
+        break;
+    case 1:
+        query += L"RESTRICT";
+        updProp = RESTRICT_UPDATE;
+        break;
+    case 2:
+        query += L"CASCADE";
+        updProp = CASCADE_UPDATE;
+        break;
+    case 3:
+        query += L"SET NULL";
+        updProp = SET_NULL_UPDATE;
+        break;
+    case 4:
+        query += L"SET DEFAULT";
+        updProp = SET_DEFAULT_UPDATE;
+        break;
+    }
+    if( !logOnly )
+    {
+        PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        {
+            PQclear( res );
+            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Adding forign key failed: " + err );
+            result = 1;
+        }
+        else
+        {
+            std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+            int size = fKeys.size();
+            size++;
+            for( int i = 0; i < foreignKeyFields.size(); i++ )
+                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
+            newFK = fKeys[size];
+        }
     }
     else
-    {
-        res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), 3, NULL, values, length, formats, 1 );
-        ExecStatusType status = PQresultStatus( res );
-        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
-        {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Error executing query: " + err );
-            PQclear( res );
-            result = 1;
-        }
-        else if( status == PGRES_TUPLES_OK )
-        {
-            exist = true;
-        }
-        PQclear( res );
-        if( !exist )
-        {
-            res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
-            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
-            {
-                PQclear( res );
-                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                errorMsg.push_back( err );
-                result = 1;
-            }
-        }
-        else
-        {
-            PQclear( res );
-            errorMsg.push_back( L"Foreign key specified already exist!" );
-            result = 1;
-        }
-        if( !result )
-        {
-            res = PQexec( m_db, "COMMIT" );
-            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
-            {
-                PQclear( res );
-                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
-                result = 1;
-            }
-        }
-        else
-        {
-            res = PQexec( m_db, "ROLLBACK" );
-            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
-            {
-                PQclear( res );
-                err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                errorMsg.push_back( L"Starting transaction failed during connection: " + err );
-                result = 1;
-            }
-        }
-    }
-    delete values[0];
-    values[0] = NULL;
-    delete values[1];
-    values[1] = NULL;
-    delete values[2];
-    values[2];
+        command = query;
     return result;
 }
 

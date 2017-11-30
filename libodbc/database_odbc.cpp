@@ -618,7 +618,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         query1 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE \"abcatcol\"(abc_tnam varchar(129) NOT NULL, abc_tid integer, abc_ownr varchar(129) NOT NULL, abc_cnam varchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn varchar(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt varchar(254), abc_edit varchar(31), abc_tag varchar(254) PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
         query2 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatedt' AND xtype='U') CREATE TABLE \"abcatedt\"(abe_name varchar(30) NOT NULL, abe_edit varchar(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work varchar(32) PRIMARY KEY( abe_name, abe_seqn ));";
         query3 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatfmt' AND xtype='U') CREATE TABLE \"abcatfmt\"(abf_name varchar(30) NOT NULL, abf_frmt varchar(254), abf_type smallint, abf_cntr integer PRIMARY KEY( abf_name ));";
-        query4 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE \"abcattbl\"(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254) PRIMARY KEY( abt_tnam, abt_ownr ));";
+        query4 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE \"abcattbl\"(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254) PRIMARY KEY( abt_tnam, abt_ownr ));";
         query5 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatvld' AND xtype='U') CREATE TABLE \"abcatvld\"(abv_name varchar(30) NOT NULL, abv_vald varchar(254), abv_type smallint, abv_cntr integer, abv_msg varchar(254) PRIMARY KEY( abv_name ));";
         query6 = L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='abcattbl_tnam_ownr' AND object_id = OBJECT_ID('abcattbl')) CREATE INDEX \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
         query7 = L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='abcatcol_tnam_ownr_cnam' AND object_id = OBJECT_ID('abcatcol')) CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
@@ -2187,15 +2187,15 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLHDBC hdbc_tableProp = 0;
     SQLHSTMT stmt_tableProp = 0;
     SQLWCHAR *qry = NULL, *table_name = NULL, *owner_name = NULL;
-    unsigned short dataFontSize, dataFontWeight = 0, headingFontSize, headingFontWeight, labelFontSize, labelFontWeight;
+    unsigned short dataFontSize, dataFontWeight = 0, dataFontUnderline, dataFontStriken, headingFontSize, headingFontWeight, headingFontUnderline, headingFontStriken, labelFontSize, labelFontWeight, labelFontUnderline, labelFontStriken;
     unsigned short dataFontCharacterSet, headingFontCharacterSet, labelFontCharacterSet, dataFontPixelSize, headingFontPixelSize, labelFontPixelSize;
-    SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontUnderline[2], headingFontUnderline[2], labelFontUnderline[2], dataFontName[20], headingFontName[20], labelFontName[20];
+    SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontName[20], headingFontName[20], labelFontName[20];
     SQLWCHAR comments[225];
-    SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = SQL_NTS, cbDataFontUnderline = SQL_NTS, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
-    SQLLEN cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontName = 0, cbComment;
-    SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontName = 0;
+    SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = SQL_NTS, cbDataFontUnderline = SQL_NTS, cbDataFontStriken = SQL_NTS, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
+    SQLLEN cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontStriken = 0, cbHeadingFontName = 0, cbComment;
+    SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontStriken = 0, cbLabelFontName = 0;
     SQLLEN cbDataFontCharacterSet = 0, cbHeadingFontCharacterSet = 0, cbLabelFontCharacterSet = 0, cbDataFontPixelSize = 0, cbHeadingFontPixelSize = 0, cbLabelFontPixelSize = 0;
-    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE rtrim(\"abt_tnam\") = ? AND rtrim(\"abt_ownr\") = ?;";
+    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fstr, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fstr, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fstr, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE rtrim(\"abt_tnam\") = ? AND rtrim(\"abt_ownr\") = ?;";
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName(), ownerName = table->GetTableOwner();
     std::wstring t = schemaName + L".";
     t += tableName;
@@ -2323,7 +2323,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 7, SQL_C_CHAR, &dataFontUnderline, 2, &cbDataFontUnderline );
+                                            ret = SQLBindCol( stmt_tableProp, 7, SQL_C_SSHORT, &dataFontUnderline, 2, &cbDataFontUnderline );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2332,7 +2332,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 8, SQL_C_SSHORT, &dataFontCharacterSet, 0, &cbDataFontCharacterSet );
+                                            ret = SQLBindCol( stmt_tableProp, 8, SQL_C_SSHORT, &dataFontStriken, 2, &cbDataFontStriken );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2341,7 +2341,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 9, SQL_C_SSHORT, &dataFontPixelSize, 0, &cbDataFontPixelSize );
+                                            ret = SQLBindCol( stmt_tableProp, 9, SQL_C_SSHORT, &dataFontCharacterSet, 0, &cbDataFontCharacterSet );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2350,7 +2350,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 10, SQL_C_WCHAR, &dataFontName, 44, &cbDataFontName );
+                                            ret = SQLBindCol( stmt_tableProp, 10, SQL_C_SSHORT, &dataFontPixelSize, 0, &cbDataFontPixelSize );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2359,7 +2359,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 11, SQL_C_SSHORT, &headingFontSize, 0, &cbHeadingFontSize );
+                                            ret = SQLBindCol( stmt_tableProp, 11, SQL_C_WCHAR, &dataFontName, 44, &cbDataFontName );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2368,7 +2368,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 12, SQL_C_SSHORT, &headingFontWeight, 0, &cbHeadingFontWeight );
+                                            ret = SQLBindCol( stmt_tableProp, 12, SQL_C_SSHORT, &headingFontSize, 0, &cbHeadingFontSize );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2377,7 +2377,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 13, SQL_C_CHAR, &headingFontItalic, 2, &cbHeadingFontItalic );
+                                            ret = SQLBindCol( stmt_tableProp, 13, SQL_C_SSHORT, &headingFontWeight, 0, &cbHeadingFontWeight );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2386,7 +2386,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 14, SQL_C_CHAR, &headingFontUnderline, 2, &cbHeadingFontUnderline );
+                                            ret = SQLBindCol( stmt_tableProp, 14, SQL_C_CHAR, &headingFontItalic, 2, &cbHeadingFontItalic );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2395,7 +2395,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 15, SQL_C_SSHORT, &headingFontCharacterSet, 0, &cbHeadingFontCharacterSet );
+                                            ret = SQLBindCol( stmt_tableProp, 15, SQL_C_SSHORT, &headingFontUnderline, 2, &cbHeadingFontUnderline );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2404,7 +2404,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 16, SQL_C_SSHORT, &headingFontPixelSize, 0, &cbHeadingFontPixelSize );
+                                            ret = SQLBindCol( stmt_tableProp, 16, SQL_C_SSHORT, &headingFontStriken, 2, &cbHeadingFontStriken );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2413,7 +2413,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 17, SQL_C_WCHAR, &headingFontName, 44, &cbHeadingFontName );
+                                            ret = SQLBindCol( stmt_tableProp, 17, SQL_C_SSHORT, &headingFontCharacterSet, 0, &cbHeadingFontCharacterSet );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2422,7 +2422,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 18, SQL_C_SSHORT, &labelFontSize, 0, &cbLabelFontSize );
+                                            ret = SQLBindCol( stmt_tableProp, 18, SQL_C_SSHORT, &headingFontPixelSize, 0, &cbHeadingFontPixelSize );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2431,7 +2431,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 19, SQL_C_SSHORT, &labelFontWeight, 0, &cbLabelFontWeight );
+                                            ret = SQLBindCol( stmt_tableProp, 19, SQL_C_WCHAR, &headingFontName, 44, &cbHeadingFontName );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2440,7 +2440,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 20, SQL_C_CHAR, &labelFontItalic, 3, &cbLabelFontItalic );
+                                            ret = SQLBindCol( stmt_tableProp, 20, SQL_C_SSHORT, &labelFontSize, 0, &cbLabelFontSize );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2449,7 +2449,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 21, SQL_C_CHAR, &labelFontUnderline, 3, &cbLabelFontUnderline );
+                                            ret = SQLBindCol( stmt_tableProp, 21, SQL_C_SSHORT, &labelFontWeight, 0, &cbLabelFontWeight );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2458,7 +2458,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 22, SQL_C_SSHORT, &labelFontCharacterSet, 0, &cbLabelFontCharacterSet );
+                                            ret = SQLBindCol( stmt_tableProp, 22, SQL_C_CHAR, &labelFontItalic, 3, &cbLabelFontItalic );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2467,7 +2467,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 23, SQL_C_SSHORT, &labelFontPixelSize, 0, &cbLabelFontPixelSize );
+                                            ret = SQLBindCol( stmt_tableProp, 23, SQL_C_SSHORT, &labelFontUnderline, 3, &cbLabelFontUnderline );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2476,7 +2476,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 24, SQL_C_WCHAR, &labelFontName, 44, &cbLabelFontName );
+                                            ret = SQLBindCol( stmt_tableProp, 24, SQL_C_SSHORT, &labelFontStriken, 3, &cbLabelFontStriken );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2485,7 +2485,34 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                         }
                                         if( !result )
                                         {
-                                            ret = SQLBindCol( stmt_tableProp, 25, SQL_C_WCHAR, &comments, 225, &cbComment );
+                                            ret = SQLBindCol( stmt_tableProp, 25, SQL_C_SSHORT, &labelFontCharacterSet, 0, &cbLabelFontCharacterSet );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 26, SQL_C_SSHORT, &labelFontPixelSize, 0, &cbLabelFontPixelSize );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 27, SQL_C_WCHAR, &labelFontName, 44, &cbLabelFontName );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, stmt_tableProp );
+                                                result = 1;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLBindCol( stmt_tableProp, 28, SQL_C_WCHAR, &comments, 225, &cbComment );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, stmt_tableProp );
@@ -2501,7 +2528,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                                 table->SetDataFontSize( dataFontSize );
                                                 table->SetDataFontWeight( dataFontWeight );
                                                 table->SetDataFontItalic( dataFontItalic[0] == 'Y' );
-                                                table->SetDataFontUnderline( dataFontUnderline[0] == 'Y' );
+                                                table->SetDataFontUnderline( dataFontUnderline == 1 );
+                                                table->SetDataFontStrikethrough( dataFontStriken == 1 );
                                                 table->SetDataFontCharacterSet( dataFontCharacterSet );
                                                 table->SetDataFontPixelSize( dataFontPixelSize );
                                                 str_to_uc_cpy( name, dataFontName );
@@ -2510,7 +2538,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                                 table->SetHeadingFontSize( headingFontSize );
                                                 table->SetHeadingFontWeight( headingFontWeight );
                                                 table->SetHeadingFontItalic( headingFontItalic[0] == 'Y' );
-                                                table->SetHeadingFontUnderline( headingFontUnderline[0] == 'Y' );
+                                                table->SetHeadingFontUnderline( headingFontUnderline == 1 );
+                                                table->SetHeadingFontStrikethrough( headingFontStriken );
                                                 table->SetHeadingFontCharacterSet( headingFontCharacterSet );
                                                 table->SetHeadingFontPixelSize( headingFontPixelSize );
                                                 str_to_uc_cpy( name, headingFontName );
@@ -2519,7 +2548,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                                 table->SetLabelFontSize( labelFontSize );
                                                 table->SetLabelFontWeight( labelFontWeight );
                                                 table->SetLabelFontItalic( labelFontItalic[0] == 'Y' );
-                                                table->SetLabelFontUnderline( labelFontUnderline[0] == 'Y' );
+                                                table->SetLabelFontUnderline( labelFontUnderline == 1 );
+                                                table->SetLabelFontStrikethrough( labelFontStriken == 1 );
                                                 table->SetLabelFontCharacterSet( labelFontCharacterSet );
                                                 table->SetLabelFontPixelSize( labelFontPixelSize );
                                                 str_to_uc_cpy( name, labelFontName );
@@ -2575,6 +2605,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
 
 int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
+    SQLRETURN ret;
     int result = 0;
     bool exist;
     std::wostringstream istr;
@@ -2585,7 +2616,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     RETCODE rets = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( rets == SQL_SUCCESS || rets == SQL_SUCCESS_WITH_INFO )
     {
-        SQLRETURN ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -2638,9 +2669,17 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.str( L"" );
                         command += L", \"abd_fitl\" = \'";
                         command += properties.m_isDataFontItalic ? L"Y" : L"N";
-                        command += L"\', \"abd_funl\" = \'";
-                        command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
-                        command += L"\', \"abd_fchr\" = ";
+                        command += L"\', \"abd_funl\" = ";
+                        istr << ( properties.m_isDataFontUnderlined ? 1 : 0 );
+                        command += istr.str();
+                        istr.clear();
+                        istr.str( L"" );
+                        command += L", \"abd_fstr\" = ";
+                        istr << ( properties.m_isDataFontStriken ? 1: 0 );
+                        command += istr.str();
+                        istr.clear();
+                        istr.str( L"" );
+                        command += L", \"abd_fchr\" = ";
                         istr << properties.m_dataFontEncoding;
                         command += istr.str();
                         istr.clear();
@@ -2657,16 +2696,24 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );
-                        command += L", \"abd_fwgt\" = ";
+                        command += L", \"abh_fwgt\" = ";
                         istr << properties.m_isHeadingFontBold;
                         command += istr.str();
                         istr.clear();
                         istr.str( L"" );
                         command += L", \"abh_fitl\" = \'";
                         command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
-                        command += L"\', \"abh_funl\" = \'";
-                        command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
-                        command += L"\', \"abh_fchr\" = ";
+                        command += L"\', \"abh_funl\" = ";
+                        istr << ( properties.m_isHeadingFontUnderlined ? 1 : 0 );
+                        command += istr.str();
+                        istr.clear();
+                        istr.str( L"" );
+                        command += L", \"abh_fstr\" = ";
+                        istr << ( properties.m_isHeadingFontStriken ? 1 : 0 );
+                        command += istr.str();
+                        istr.clear();
+                        istr.str( L"" );
+                        command += L", \"abh_fchr\" = ";
                         istr << properties.m_headingFontEncoding;
                         command += istr.str();
                         istr.clear();
@@ -2690,9 +2737,17 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.str( L"" );
                         command += L", \"abl_fitl\" = \'";
                         command += properties.m_isLabelFontItalic ? L"Y" : L"N";
-                        command += L"\', \"abl_funl\" = \'";
-                        command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
-                        command += L"\', \"abl_fchr\" = ";
+                        command += L"\', \"abl_funl\" = ";
+                        istr << ( properties.m_isLabelFontUnderlined ? 1 : 0 );
+                        command += istr.str();
+                        istr.clear();
+                        istr.str( L"" );
+                        comment += L", \"abl_fstr\" = ";
+                        istr << ( properties.m_isLabelFontStrioken ? 1 : 0 );
+                        comment += istr.str();
+                        istr.clear();
+                        istr.str( L"" );
+                        command += L", \"abl_fchr\" = ";
                         istr << properties.m_labelFontEncoding;
                         command += istr.str();
                         istr.clear();
@@ -2705,7 +2760,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         command += L", \"abl_ffce\" = \'";
                         command += properties.m_labelFontName;
                         command += L"\', \"abt_cmnt\" = \'";
-                        command += comment;
+                        command += properties.m_comment;
                         command += L"\' WHERE \"abt_tnam\" = \'";
                         command += schemaName;
                         command += L".";
@@ -2744,9 +2799,17 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.str( L"" );
                         command += L", \'";
                         command += properties.m_isDataFontItalic ? L"Y" : L"N";
-                        command += L"\', \'";
-                        command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
                         command += L"\', ";
+                        istr << ( properties.m_isDataFontUnderlined ? 1 : 0 );
+                        command += istr.str();
+                        istr.clear();
+                        istr.str( L"" );
+                        command += L", ";
+                        istr << ( properties.m_isDataFontStriken ? 1 : 0 );
+                        command += istr.str();
+                        istr.clear();
+                        istr.str( L"" );
+                        command += L", ";
                         istr << properties.m_dataFontEncoding;
                         command += istr.str();
                         istr.clear();
@@ -2770,9 +2833,17 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.str( L"" );
                         command += L", \'";
                         command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
-                        command += L"\', \'";
-                        command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
                         command += L"\', ";
+                        istr << ( properties.m_isHeadingFontUnderlined ? 1 : 0 );
+                        command += istr.str();
+                        istr.clear();
+                        istr.str( L"" );
+                        command += L", ";
+                        istr << ( properties.m_isHeadingFontStriken ? 1 : 0 );
+                        command += istr.str();
+                        istr.clear();
+                        istr.str( L"" );
+                        command += L", ";
                         istr << properties.m_headingFontEncoding;
                         command += istr.str();
                         istr.clear();
@@ -2796,9 +2867,17 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.str( L"" );
                         command += L", \'";
                         command += properties.m_isLabelFontItalic ? L"Y" : L"N";
-                        command += L"\', \'";
-                        command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
                         command += L"\', ";
+                        istr << ( properties.m_isLabelFontUnderlined ? 1 : 0 );
+                        command += istr.str();
+                        istr.clear();
+                        istr.str( L"" );
+                        command += L", ";
+                        istr << ( properties.m_isLabelFontStrioken ? 1 : 0 );
+                        command += istr.str();
+                        istr.clear();
+                        istr.str( L"" );
+                        command += L", ";
                         istr << properties.m_labelFontEncoding;
                         command += istr.str();
                         istr.clear();
@@ -2811,7 +2890,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         command += L", \'";
                         command += properties.m_labelFontName;
                         command += L"\', \'";
-                        command += comment;
+                        command += properties.m_comment;
                         command += L"\' );";
                     }
                     if( !isLog )
@@ -2855,7 +2934,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     qry = new SQLWCHAR[query.length() + 2];
     memset( qry, '\0', query.length() + 2 );
     uc_to_str_cpy( qry, query );
-    SQLRETURN ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+    ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3116,40 +3195,126 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
     return result;
 }
 
-int ODBCDatabase::ApplyForeignKey(const std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
 {
-    tableName = tableName;
     int result = 0;
-    SQLRETURN ret;
-    SQLWCHAR *query = NULL;
-    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    std::wstring query = L"ALTER TABLE ";
+    query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
+    query += L"ADD CONSTRAINT " + keyName + L" ";
+    query += L"FOREIGN KEY(";
+    for( std::vector<std::wstring>::const_iterator it1 = foreignKeyFields.begin(); it1 < foreignKeyFields.end(); it1++ )
     {
-        GetErrorMessage( errorMsg, 2, m_hstmt );
-        result = 1;
+        query += (*it1);
+        if( it1 == foreignKeyFields.end() - 1 )
+            query += L") ";
+        else
+            query += L",";
     }
-    else
+    query += L"REFERENCES " + refTableName + L"(";
+    for( std::vector<std::wstring>::const_iterator it1 = refKeyFields.begin(); it1 < refKeyFields.end(); it1++ )
     {
-        query = new SQLWCHAR[command.length() + 2];
-        memset( query, '\0', command.size() + 2 );
-        uc_to_str_cpy( query, command );
-        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 2, m_hstmt );
-            result = 1;
-        }
-        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        query += (*it1);
+        if( it1 == refKeyFields.end() - 1 )
+            query += L") ";
+        else
+            query += L",";
+    }
+    query += L"ON DELETE ";
+    FK_ONUPDATE updProp = NO_ACTION_UPDATE;
+    FK_ONDELETE delProp = NO_ACTION_DELETE;
+    switch( deleteProp )
+    {
+    case 0:
+        query += L"NO ACTION ";
+        delProp = NO_ACTION_DELETE;
+        break;
+    case 1:
+        query += L"RESTRICT ";
+        delProp = RESTRICT_DELETE;
+        break;
+    case 2:
+        query += L"CASCADE ";
+        delProp = CASCADE_DELETE;
+        break;
+    case 3:
+        query += L"SET NULL ";
+        delProp = SET_NULL_DELETE;
+        break;
+    case 4:
+        query += L"SET DEFAULT ";
+        delProp = SET_DEFAULT_DELETE;
+        break;
+    }
+    query += L"ON UPDATE ";
+    switch( updateProp )
+    {
+    case 0:
+        query += L"NO ACTION";
+        updProp = NO_ACTION_UPDATE;
+        break;
+    case 1:
+        query += L"RESTRICT";
+        updProp = RESTRICT_UPDATE;
+        break;
+    case 2:
+        query += L"CASCADE";
+        updProp = CASCADE_UPDATE;
+        break;
+    case 3:
+        query += L"SET NULL";
+        updProp = SET_NULL_UPDATE;
+        break;
+    case 4:
+        query += L"SET DEFAULT";
+        updProp = SET_DEFAULT_UPDATE;
+        break;
+    }
+    if( !logOnly )
+    {
+        SQLRETURN ret;
+        SQLWCHAR *qry = NULL;
+        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 2, m_hstmt );
             result = 1;
         }
         else
-            m_hstmt = 0;
+        {
+            qry = new SQLWCHAR[query.length() + 2];
+            memset( qry, '\0', query.size() + 2 );
+            uc_to_str_cpy( qry, query );
+            ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+            else
+            {
+                std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+                int size = fKeys.size();
+                size++;
+                for( int i = 0; i < foreignKeyFields.size(); i++ )
+                    fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
+                newFK = fKeys[size];
+            }
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 2, m_hstmt );
+                result = 1;
+            }
+            else
+                m_hstmt = 0;
+        }
+        delete qry;
+        qry = NULL;
     }
-    delete query;
-    query = NULL;
+	else
+    {
+        command = query;
+    }
     return result;
 }
 

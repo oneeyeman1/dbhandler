@@ -18,11 +18,12 @@
 #include "wx/grid.h"
 #include "database.h"
 #include "wxsf/RoundRectShape.h"
+#include "wxsf/BitmapShape.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/ShapeCanvas.h"
-#include "constraintsign.h"
 #include "constraint.h"
+#include "constraintsign.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "commenttableshape.h"
@@ -40,6 +41,7 @@
 #include "ErdForeignKey.h"
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
+typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool);
 /*
 BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
     EVT_MENU(wxID_TABLEDROPTABLE, DatabaseCanvas::OnDropTable)
@@ -136,6 +138,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                     pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
                     pConstr->SetRefTable( referencedTableName );
                     pConstr->SetType( Constraint::foreignKey );
+                    pConstr->SetFKDatabaseTable( &(*it2)->GetTable() );
                     if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
                     {
                         if( secondIteration )
@@ -514,4 +517,137 @@ void DatabaseCanvas::OnShowComments(wxCommandEvent &WXUNUSED(event))
         }
     }
     Refresh();
+}
+
+void DatabaseCanvas::CreateFKConstraint(const DatabaseTable *fkTable, const std::vector<FKField *> &foreignKeyField)
+{
+    Constraint* pConstr = NULL;
+    bool found = false;
+    for( std::vector<MyErdTable *>::iterator it = m_displayedTables.begin(); it < m_displayedTables.end() && !found; it ++ )
+    {
+        if( const_cast<DatabaseTable &>( (*it)->GetTable() ).GetTableName() == foreignKeyField.at( 0 )->GetReferencedTableName() )
+        {
+            found = true;
+            pConstr = new Constraint( ((DrawingView *) m_view)->GetViewType() );
+            for( int i = 0; i < foreignKeyField.size(); i++ )
+            {
+                pConstr->SetLocalColumn( foreignKeyField.at( i )->GetOriginalFieldName() );
+                pConstr->SetRefCol( foreignKeyField.at( i )->GetReferencedFieldName() );
+                pConstr->SetRefTable( foreignKeyField.at( i )->GetReferencedTableName() );
+                pConstr->SetType( Constraint::foreignKey );
+            }
+            switch( foreignKeyField.at( 0 )->GetOnUpdateConstraint() )
+            {
+                case RESTRICT_UPDATE:
+                    pConstr->SetOnUpdate( Constraint::restrict );
+                    break;
+                case SET_NULL_UPDATE:
+                    pConstr->SetOnUpdate( Constraint::setNull );
+                    break;
+                case SET_DEFAULT_UPDATE:
+                case CASCADE_UPDATE:
+                    pConstr->SetOnUpdate( Constraint::cascade );
+                    break;
+                case NO_ACTION_UPDATE:
+                    pConstr->SetOnUpdate( Constraint::noAction );
+                    break;
+            }
+            switch( foreignKeyField.at( 0 )->GetOnDeleteConstraint() )
+            {
+                case RESTRICT_DELETE:
+                    pConstr->SetOnUpdate( Constraint::restrict );
+                    break;
+                case SET_NULL_DELETE:
+                    pConstr->SetOnUpdate( Constraint::setNull );
+                    break;
+                case SET_DEFAULT_UPDATE:
+                case CASCADE_DELETE:
+                    pConstr->SetOnUpdate( Constraint::cascade );
+                    break;
+                case NO_ACTION_DELETE:
+                    pConstr->SetOnUpdate( Constraint::noAction );
+                    break;
+            }
+        }
+        for( std::vector<MyErdTable *>::iterator it2 = m_displayedTables.begin(); it2 < m_displayedTables.end(); it2 ++ )
+        {
+            if( const_cast<DatabaseTable &>( (*it2)->GetTable() ).GetTableName() == const_cast<DatabaseTable *>( fkTable )->GetTableName() )
+                (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( foreignKeyField.at( 0 )->GetReferencedTableName() )->GetId(), new ErdForeignKey( pConstr, ((DrawingView *) m_view)->GetViewType() ), sfDONT_SAVE_STATE );
+        }
+    }
+}
+
+void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
+{
+    int result;
+    m_selectedShape = GetShapeUnderCursor();
+    ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
+    if( m_selectedShape )
+    {
+        if( type == DatabaseView )
+        {
+            bool logOnly;
+            std::vector<std::wstring> foreignKeyFields, refKeyFields;
+            wxSFBitmapShape *sign = wxDynamicCast( m_selectedShape, wxSFBitmapShape );
+            if( sign )
+            {
+                ConstraintSign *constraint = wxDynamicCast( sign->GetParentShape()->GetParentShape(), ConstraintSign );
+//                for( int i = 0; i < constraint->GetConstraint()->GetR
+                DatabaseTable *table = const_cast<DatabaseTable *>( constraint->GetConstraint()->GetFKTable() );
+                bool found = false;
+                for( std::vector<MyErdTable *>::iterator it = m_displayedTables.begin(); it < m_displayedTables.end() && !found; it++ )
+                {
+                    if( const_cast<DatabaseTable &>( (*it)->GetTable() ).GetTableName() == const_cast<DatabaseTable *>( constraint->GetConstraint()->GetFKTable() )->GetTableName() )
+                    {
+                        (*it)->Select( true );
+                        found = true;
+                    }
+                }
+                int deleteProp, updateProp;
+                Constraint::constraintAction action = constraint->GetConstraint()->GetDeleteAction();
+                if( action == Constraint::restrict )
+                    deleteProp = 1;
+                if( action == Constraint::cascade )
+                    deleteProp = 2;
+                if( action == Constraint::setNull )
+                    deleteProp = 3;
+                if( action == Constraint::noAction )
+                    deleteProp = 0;
+                if( action == Constraint::setDefault )
+                    deleteProp = 4;
+                action = constraint->GetConstraint()->GetUpdateAction();
+                if( action == Constraint::restrict )
+                    updateProp = 1;
+                if( action == Constraint::cascade )
+                    updateProp = 2;
+                if( action == Constraint::setNull )
+                    updateProp = 3;
+                if( action == Constraint::noAction )
+                    updateProp = 0;
+                if( action == Constraint::setDefault )
+                    updateProp = 4;
+                wxDynamicLibrary lib;
+#ifdef __WXMSW__
+                lib.Load( "dialogs" );
+#elif __WXMAC__
+                lib.Load( "liblibdialogs.dylib" );
+#else
+                lib.Load( "libdialogs" );
+#endif
+                wxString constraintName = constraint->GetConstraint()->GetName();
+                std::wstring refTable = constraint->GetConstraint()->GetRefTable().ToStdWstring();
+                if( lib.IsLoaded() )
+                {
+                    CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
+                    result = func( m_view->GetFrame(), constraintName, table, foreignKeyFields, refKeyFields, refTable, deleteProp, updateProp, dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase(),  logOnly, true );
+                }
+            }
+        }
+        else
+        {
+            wxSFTextShape *sign = wxDynamicCast( m_selectedShape, wxSFTextShape );
+            if( sign )
+                wxMessageBox( "Double clicked the relations control" );
+        }
+    }
 }

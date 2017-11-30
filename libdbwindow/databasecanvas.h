@@ -10,8 +10,10 @@ public:
     DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent = NULL);
     void DisplayTables(std::vector<wxString> &selections, wxString &query);
     virtual ~DatabaseCanvas();
+    void CreateFKConstraint(const DatabaseTable *fkTable, const std::vector<FKField *> &foreignKeyField);
     virtual void OnLeftDown(wxMouseEvent &event);
     virtual void OnRightDown(wxMouseEvent &event);
+    virtual void OnLeftDoubleClick(wxMouseEvent& event);
     void OnDropTable(wxCommandEvent &event);
     void OnShowSQLBox(wxCommandEvent &event);
     void OnShowComments(wxCommandEvent &event);

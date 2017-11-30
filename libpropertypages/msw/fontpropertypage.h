@@ -29,7 +29,6 @@ public:
     wxFontPreviewer(wxWindow *parent, wxFont &font, wxString text, const wxSize& sz = wxDefaultSize) : wxWindow(parent, wxID_ANY, wxDefaultPosition, sz, wxBORDER_NONE)
     {
         m_text = text;
-        m_font = font;
     }
     wxFontPreviewer(wxWindow *parent, const wxString text, wxWindowID id = wxID_ANY ) : wxWindow(parent, id, wxDefaultPosition, wxDefaultSize)
     {
@@ -40,7 +39,6 @@ public:
     void SetFont(wxFont &font) { m_font = font; Refresh(); };
     DECLARE_EVENT_TABLE()
 private:
-    wxFont m_font;
     wxString m_text;
     void OnPaint(wxPaintEvent& event);
 };
@@ -165,7 +163,7 @@ private:
     unsigned long m_nCurrentStyle;
     unsigned long m_nActualStyle;
 //#endif
-    bool m_bUnderline;
+    bool m_bUnderline, m_bStrikethrough;
     wxString m_fontSize, m_textStr, m_backgroundStr, m_fontName;
     wxColour m_text, m_background;
 };
