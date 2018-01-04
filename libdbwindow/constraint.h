@@ -34,7 +34,6 @@ enum ViewType
 };
 #endif
 
-/*! \brief Class representing one table constraint. */
 class Constraint : public xsSerializable
 {
 public:
@@ -56,80 +55,23 @@ public:
         setDefault
     };
 
-    XS_DECLARE_CLONABLE_CLASS(Constraint);
-    /*! \brief Default constructors */
-    Constraint();
-    Constraint(ViewType type);
-
-    Constraint(const Constraint& obj);
-
-    Constraint(const wxString& name, const wxString& localColumn, constraintType type, constraintAction onDelete, constraintAction onUpdate);
-    /*! \brief Default destructors */
-    virtual ~Constraint();
-	
-    /*! \brief Set local column name */
-    void SetLocalColumn(const wxString & localColumn)
+	/*! \brief Set local column name */
+    virtual void SetLocalColumn(const wxString & localColumn)
     {
-        this->m_localColumn = localColumn;
     }
 	
     /*! \brief Set constraint name  */
     void SetName(const wxString & name)
     {
-        this->m_name = name;
+        m_name = name;
     }
 	
-    /*! \brief Set reference column name */
-    void SetRefCol(const wxString & refCol)
+    virtual void GetLocalColumn(wxString &) const
     {
-        this->m_refCol = refCol;
     }
 
-    /*! \brief Set reference table name */
-    void SetRefTable(const wxString & refTable)
+    virtual void GetLocalColumn(std::vector<std::wstring> &) const
     {
-        this->m_refTable = refTable;
-    }
-
-    void SetFKDatabaseTable(const DatabaseTable *table)
-    {
-       m_fkTable = const_cast<DatabaseTable *>( table );
-    }
-
-    /*! \brief Set constraint type */
-    void SetType(constraintType type)
-    {
-        this->m_type = type;
-    }
-	
-    /*! \brief Set action OnDelete */
-    void SetOnDelete(constraintAction onDelete)
-    {
-        this->m_onDelete = onDelete;
-    }
-	
-    /*! \brief Set action OnUpdate */
-    void SetOnUpdate(constraintAction onUpdate)
-    {
-        this->m_onUpdate = onUpdate;
-    }
-	
-    /*! \brief Get action OnDelete */
-    constraintAction GetOnDelete() const
-    {
-        return m_onDelete;
-    }
-	
-    /*! \brief Get action OnUpdate */
-    constraintAction GetOnUpdate() const
-    {
-        return m_onUpdate;
-    }
-	
-    /*! \brief Get local column name */
-    const wxString & GetLocalColumn() const
-    {
-        return m_localColumn;
     }
 	
     /*! \brief Get constraint name */
@@ -138,10 +80,45 @@ public:
         return m_name;
     }
 	
-    /*! \brief Get reference column name */
-    const wxString & GetRefCol() const
+    /*! \brief Set reference column name */
+    virtual void SetRefCol(const wxString & refCol)
     {
-        return m_refCol;
+    }
+
+    virtual const void GetRefCol(wxString &refCol) const
+    {
+    }
+
+    virtual const void GetRefCol(std::vector<std::wstring> &refCol) const
+    {
+    }
+
+	/*! \brief Set constraint type */
+    void SetType(constraintType type)
+    {
+        this->m_type = type;
+    }
+	
+    /*! \brief Get constraint type */
+    constraintType GetType() const
+    {
+        return m_type;
+    }
+
+    const DatabaseTable *GetFKTable() const
+    {
+        return m_fkTable;
+    }
+
+    void SetFKDatabaseTable(const DatabaseTable *table)
+    {
+       m_fkTable = const_cast<DatabaseTable *>( table );
+    }
+
+    /*! \brief Set reference table name */
+    void SetRefTable(const wxString & refTable)
+    {
+        this->m_refTable = refTable;
     }
 
     /*! \brief Get reference table name */
@@ -150,38 +127,127 @@ public:
         return m_refTable;
     }
 	
-    const DatabaseTable *GetFKTable() const
+	/*! \brief Set action OnDelete */
+    void SetOnDelete(constraintAction onDelete)
     {
-        return m_fkTable;
+        this->m_onDelete = onDelete;
     }
-
-    /*! \brief Get constraint type */
-    constraintType GetType() const
-    {
-        return m_type;
-    }
-
-    constraintAction GetDeleteAction() const
+	
+    /*! \brief Get action OnDelete */
+    constraintAction GetOnDelete() const
     {
         return m_onDelete;
     }
+	
+    /*! \brief Set action OnUpdate */
+    void SetOnUpdate(constraintAction onUpdate)
+    {
+        this->m_onUpdate = onUpdate;
+    }
 
-    constraintAction GetUpdateAction() const
+    /*! \brief Get action OnUpdate */
+    constraintAction GetOnUpdate() const
     {
         return m_onUpdate;
     }
+	
+private:
+    wxString m_refTable, m_name;
+    DatabaseTable *m_fkTable;
+    constraintType m_type;
+    constraintAction m_onUpdate, m_onDelete;
+protected:
+    ViewType m_viewType;
+};
+
+class DatabaseConstraint : public Constraint
+{
+public:
+    DatabaseConstraint(ViewType type);
+	virtual ~DatabaseConstraint();
+    /*! \brief Set local column name */
+    virtual void SetLocalColumn(const wxString &localColumn)
+    {
+        this->m_fkColumns.push_back( localColumn.ToStdWstring() );
+    }
+	
+    /*! \brief Get local column name */
+    virtual void GetLocalColumn(std::vector<std::wstring> &column) const
+    {
+        column = m_fkColumns;
+    }
+	
+    /*! \brief Set reference column name */
+    virtual void SetRefCol(const wxString &refCol)
+    {
+        this->m_refColumns.push_back( refCol.ToStdWstring() );
+    }
+
+    /*! \brief Get reference column name */
+    virtual const void GetRefCol(std::vector<std::wstring> &refCol) const
+    {
+        refCol = m_refColumns;
+    }
+
+private:
+    std::vector<std::wstring> m_fkColumns, m_refColumns;
+};
+
+/*! \brief Class representing one table constraint. */
+class QueryConstraint : public Constraint
+{
+public:
+    XS_DECLARE_CLONABLE_CLASS(Constraint);
+    /*! \brief Default constructors */
+    QueryConstraint();
+
+    QueryConstraint(ViewType type);
+
+    QueryConstraint(const QueryConstraint& obj);
+
+    QueryConstraint(const wxString& name, const wxString &localColumn, constraintType type, constraintAction onDelete, constraintAction onUpdate);
+    /*! \brief Default destructors */
+    virtual ~QueryConstraint();
+	
+    /*! \brief Set local column name */
+    virtual void SetLocalColumn(const wxString & localColumn)
+    {
+        this->m_localColumn = localColumn;
+    }
+	
+    /*! \brief Set reference column name */
+    virtual void SetRefCol(const wxString & refCol)
+    {
+        this->m_refCol = refCol;
+    }
+
+    void SetSign(int sign)
+    {
+        m_sign = sign;
+    }
+	
+    /*! \brief Get local column name */
+    virtual void GetLocalColumn(wxString &column) const
+    {
+        column = m_localColumn;
+    }
+	
+    /*! \brief Get reference column name */
+    virtual const void GetRefCol(wxString &refCol) const
+    {
+        refCol = m_refCol;
+    }
+
+    int GetSign() const
+    {
+        return m_sign;
+    }
 
 protected:
-    constraintType m_type;
-    wxString m_name;
     wxString m_localColumn;
-    DatabaseTable *m_fkTable;
-    wxString m_refTable;
     wxString m_refCol;
-    constraintAction m_onDelete;
-    constraintAction m_onUpdate;
+    int m_sign;
 //    ConstraintSign *m_sign;
-    ViewType m_viewType;
     void InitSerializable();
 };
 

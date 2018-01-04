@@ -39,6 +39,7 @@ ErdLineShape::ErdLineShape()
 
 ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type)
 {
+    m_type = type;
     AcceptChild( "ConstraintSign" );
     m_constraint = pConstraint;
     m_signConstraint = new ConstraintSign( type );
@@ -60,6 +61,7 @@ ErdLineShape::~ErdLineShape()
 
 wxRealPoint ErdLineShape::GetModSrcPoint()
 {
+    wxString constraintColumnQuery;
     bool found = false;
     wxSFShapeBase* pSrcShape = GetShapeManager()->FindShape( m_nSrcShapeId );
     if( !pSrcShape ) return wxRealPoint();
@@ -83,14 +85,20 @@ wxRealPoint ErdLineShape::GetModSrcPoint()
             if( pColumn )
             {
                 wxString columnText = pColumn->GetText();
-                wxString constraintColumn = m_constraint->GetLocalColumn();
-                if( columnText != constraintColumn )
-                    y += pColumn->GetBoundingBox().GetHeight();
-                if( columnText == constraintColumn )
+                if( m_type == QueryView )
                 {
-                    found = true;
-                    y += pColumn->GetBoundingBox().GetHeight() / 2;
+                    m_constraint->GetLocalColumn( constraintColumnQuery );
+                    if( columnText != constraintColumnQuery )
+                        y += pColumn->GetBoundingBox().GetHeight();
+                    if( columnText == constraintColumnQuery )
+                    {
+                        found = true;
+                        y += pColumn->GetBoundingBox().GetHeight() / 2;
+                    }
                 }
+				if( m_type == DatabaseView )
+				{
+				}
             }
             node = node->GetNext();
         }
@@ -123,13 +131,21 @@ wxRealPoint ErdLineShape::GetModTrgPoint()
             wxSFTextShape *pColumn = wxDynamicCast( node->GetData(), wxSFTextShape );
             if( pColumn )
             {
-                wxString columnText = pColumn->GetText();
-                if( columnText != m_constraint->GetRefCol() )
-                    y += pColumn->GetBoundingBox().GetHeight();
-                if( columnText == m_constraint->GetRefCol() )
+                if( m_type == QueryView )
                 {
-                    found = true;
-                    y += pColumn->GetBoundingBox().GetHeight() / 2;
+                    wxString columnText = pColumn->GetText();
+                    wxString refCol;
+                    m_constraint->GetRefCol( refCol );
+                    if( columnText != refCol )
+                        y += pColumn->GetBoundingBox().GetHeight();
+                    if( columnText == refCol )
+                    {
+                        found = true;
+                        y += pColumn->GetBoundingBox().GetHeight() / 2;
+                    }
+                }
+                if( m_type == DatabaseView )
+                {
                 }
             }
             node = node->GetNext();

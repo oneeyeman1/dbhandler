@@ -16,6 +16,8 @@ public:
     DrawingView() : wxView(), m_canvas(NULL) {}
     ~DrawingView();
 //    std::vector<Table> &GetTablesForView(Database *db);
+    wxFrame *GetLogWindow() const;
+    wxTextCtrl *GetTextLogger() const;
     void GetTablesForView(Database *db, bool init);
     void SetViewType(ViewType type);
     ViewType GetViewType();

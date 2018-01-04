@@ -33,61 +33,76 @@
 #include "constraint.h"
 #include "constraintsign.h"
 
-XS_IMPLEMENT_CLONABLE_CLASS(Constraint,xsSerializable);
+XS_IMPLEMENT_CLONABLE_CLASS(QueryConstraint,xsSerializable);
 
-Constraint::Constraint(ViewType type)
+DatabaseConstraint::DatabaseConstraint(ViewType type)
 {
-    m_viewType = type;
     m_viewType = DatabaseView;
-    m_type = foreignKey;
-    m_onDelete = restrict;
-    m_onUpdate = restrict;
+    SetType( foreignKey );
+    SetOnDelete( restrict );
+    SetOnUpdate( restrict );
+}
+
+DatabaseConstraint::~DatabaseConstraint()
+{
+}
+
+QueryConstraint::QueryConstraint(ViewType type)
+{
+    m_viewType = QueryView;
+    SetType( foreignKey );
+    SetOnDelete( restrict );
+    SetOnUpdate( restrict );
     InitSerializable();
 }
 
-Constraint::Constraint()
+QueryConstraint::QueryConstraint()
 {
     m_viewType = DatabaseView;
-    m_type = foreignKey;
-    m_onDelete = restrict;
-    m_onUpdate = restrict;
+    SetType( foreignKey );
+    SetOnDelete( restrict );
+    SetOnUpdate( restrict );
     InitSerializable();
 }
 
-Constraint::Constraint(const Constraint& obj):xsSerializable(obj)
+QueryConstraint::QueryConstraint(const QueryConstraint& obj):Constraint(obj)
 {
     m_viewType = obj.m_viewType;
-    m_name = obj.m_name;
+    SetName( obj.GetName() );
     m_localColumn = obj.m_localColumn;
-    m_type = obj.m_type;
-    m_refTable = obj.m_refTable;
+    SetType( obj.GetType() );
+    SetRefTable( obj.GetRefTable() );
     m_refCol = obj.m_refCol;
-    m_onDelete = obj.m_onDelete;
-    m_onUpdate = obj.m_onUpdate;
+    SetOnDelete( obj.GetOnDelete() );
+    SetOnUpdate( obj.GetOnUpdate() );
     InitSerializable();
 }
 
-Constraint::Constraint(const wxString& name, const wxString& localColumn, constraintType type, constraintAction onDelete, constraintAction onUpdate)
+QueryConstraint::QueryConstraint(const wxString& name, const wxString &localColumn, constraintType type, constraintAction onDelete, constraintAction onUpdate)
 {
-    m_name = name;
+    SetName( name );
     m_localColumn = localColumn;
-    m_type = type;
-    m_onDelete = onDelete;
-    m_onUpdate = onUpdate;
+    SetType( type );
+    SetOnDelete( onDelete );
+    SetOnUpdate( onUpdate );
     InitSerializable();
 }
 
-Constraint::~Constraint()
+QueryConstraint::~QueryConstraint()
 {
 }
 
-void Constraint::InitSerializable()
+void QueryConstraint::InitSerializable()
 {
-    XS_SERIALIZE( m_name, wxT( "name" ) );
+    wxString name = GetName(), refTable = const_cast<wxString &>( GetRefTable() );
+    int type = GetType();
+    constraintAction onDelete = GetOnDelete(), onUpdate = GetOnUpdate();
+    XS_SERIALIZE( name, wxT( "name" ) );
     XS_SERIALIZE( m_localColumn, wxT( "localColumn" ) );
-    XS_SERIALIZE_INT( m_type, wxT( "type" ) );
-    XS_SERIALIZE( m_refTable, wxT( "refTable" ) );
+    XS_SERIALIZE_INT( type, wxT( "type" ) );
+    XS_SERIALIZE( refTable, wxT( "refTable" ) );
     XS_SERIALIZE( m_refCol, wxT( "refCol" ) );
-    XS_SERIALIZE_INT( m_onDelete,wxT( "onDelete" ) );
-    XS_SERIALIZE_INT( m_onUpdate,wxT( "onUpdate" ) );
+    XS_SERIALIZE_INT( onDelete, wxT( "onDelete" ) );
+    XS_SERIALIZE_INT( onUpdate, wxT( "onUpdate" ) );
+    XS_SERIALIZE_INT( m_sign, wxT( "querySign" ) );
 }

@@ -31,6 +31,7 @@ public:
     const std::vector<FKField *> &GetForeignKeyVector();
     const std::vector<std::wstring> &GetForeignKeyFields() const;
     const std::vector<std::wstring> &GetPrimaryKeyFields() const;
+    bool IsForeignKeyEdited() const;
     const int GetDeleteParam() const;
     const int GetUpdateParam() const;
     const std::wstring &GetReferencedTable() const;
@@ -38,13 +39,15 @@ public:
     void OnFieldSelection(wxListEvent &event);
     void OnFieldsDeselection(wxListEvent &event);
     void OnPrimaryKeyTableSelection(wxCommandEvent &event);
+    void OnDeleteChanges(wxCommandEvent &event);
+    void OnUpdateChanges(wxCommandEvent &event);
 private:
     std::vector<std::wstring> m_foreignKey, m_primaryKey;
     std::wstring m_refTableName;
     std::vector<int> m_selectedForeignKeyField;
     int m_delete, m_update;
     DatabaseTable *m_pkTable;
-    bool m_isLogOnly, m_isView;
+    bool m_isLogOnly, m_isView, m_edited;
     int m_nextKey;
     // begin wxGlade: ForeignKeyDialog::methods
     void set_properties();
@@ -56,7 +59,7 @@ private:
 
 protected:
     bool Verify();
-    void GenerateQuery();
+    void DoChangePrimaryKeyTableName();
     // begin wxGlade: ForeignKeyDialog::attributes
     wxStaticText* m_label1;
     wxTextCtrl* m_foreignKeyName;

@@ -475,7 +475,6 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     DatabaseTable *table = NULL;
     std::vector<std::wstring> foreignKeyFields, refKeyFields;
     std::wstring refTableName, command;
-    std::vector<FKField *> fkfield;
     std::vector<FKField *> newFK;
     ShapeList shapes;
     wxString kName;
@@ -903,4 +902,14 @@ void DrawingView::OnDistinct(wxCommandEvent &event)
         query.Replace( "SELECT DISTINCT ", "SELECT " );
     }
     queryText->SetValue( query );
+}
+
+wxFrame *DrawingView::GetLogWindow() const
+{
+    return m_log;
+}
+
+wxTextCtrl *DrawingView::GetTextLogger() const
+{
+    return m_text;
 }

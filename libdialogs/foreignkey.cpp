@@ -38,6 +38,7 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_isLogOnly = false;
     m_isView = isView;
     m_refTableName = refTableName;
+    m_edited = false;
     // begin wxGlade: ForeignKeyDialog::ForeignKeyDialog
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Foreign Key Name:" ) );
     m_foreignKeyName = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
@@ -73,7 +74,9 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_logOnly->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
     list_ctrl_1->Bind( wxEVT_LIST_ITEM_SELECTED, &ForeignKeyDialog::OnFieldSelection, this );
     list_ctrl_1->Bind( wxEVT_LIST_ITEM_DESELECTED, &ForeignKeyDialog::OnFieldsDeselection, this );
-    m_primaryKeyTable->Bind( wxEVT_TEXT, &ForeignKeyDialog::OnPrimaryKeyTableSelection, this );
+    m_primaryKeyTable->Bind( wxEVT_COMBOBOX, &ForeignKeyDialog::OnPrimaryKeyTableSelection, this );
+    m_onDelete->Bind( wxEVT_RADIOBOX, &ForeignKeyDialog::OnDeleteChanges, this );
+    m_onUpdate->Bind( wxEVT_RADIOBOX, &ForeignKeyDialog::OnUpdateChanges, this );
     set_properties();
     do_layout();
     // end wxGlade
@@ -85,6 +88,15 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     int width2 = m_primaryKeyColumns->GetSize().GetWidth();
     m_primaryKeyColumns->Hide();
     m_primaryKeyColumnsFields = new FieldWindow( this, 0, pt2, width2 );
+    if( m_isView )
+    {
+        m_primaryKeyTable->SetValue( m_refTableName );
+        DoChangePrimaryKeyTableName();
+        for( std::vector<std::wstring>::iterator it = foreignKeyFields.begin(); it < foreignKeyFields.end(); it++ )
+        {
+            list_ctrl_1->SetItemState( list_ctrl_1->FindItem( -1, (*it) ), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+        }
+    }
 }
 
 ForeignKeyDialog::~ForeignKeyDialog()
@@ -116,10 +128,6 @@ void ForeignKeyDialog::set_properties()
         list_ctrl_1->InsertItem( row++, (*it)->GetFieldName() );
     }
     // end wxGlade
-    if( m_isView )
-    {
-        m_primaryKeyTable->SetValue( m_refTableName );
-    }
 }
 
 
@@ -200,7 +208,8 @@ void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
     {
         if( event.GetEventObject() == m_logOnly )
             m_isLogOnly = true;
-        GenerateQuery();
+        m_delete = m_onDelete->GetSelection();
+        m_update = m_onUpdate->GetSelection();
         EndModal( event.GetId() );
     }
 }
@@ -211,19 +220,23 @@ void ForeignKeyDialog::OnFieldSelection(wxListEvent &event)
     m_foreignKeyColumnsFields->AddField( item );
     m_foreignKey.push_back( item.ToStdWstring() );
     m_selectedForeignKeyField.push_back( event.GetIndex() );
+    m_edited = true;
 }
 
 void ForeignKeyDialog::OnFieldsDeselection(wxListEvent &event)
 {
     wxString item = event.GetLabel();
     m_foreignKey.erase( std::remove_if( m_foreignKey.begin(), m_foreignKey.end(), 
-        [&item](const std::wstring &e1) { return e1.find( item ) != e1.npos; } ), m_foreignKey.end() );
+        [&item](const wxString &e1) { return e1.find( item ) != e1.npos; } ), m_foreignKey.end() );
     m_foreignKeyColumnsFields->RemoveField( m_foreignKey );
+    m_edited = true;
 }
 
 void ForeignKeyDialog::OnPrimaryKeyTableSelection(wxCommandEvent &WXUNUSED(event))
 {
-    bool found = false;
+    DoChangePrimaryKeyTableName();
+    m_edited = true;
+/*    bool found = false;
     m_primaryKeyColumnsFields->Clear();
     m_primaryKey.clear();
     std::map<std::wstring, std::vector<DatabaseTable *> > tableVec = m_db->GetTableVector().m_tables;
@@ -246,202 +259,7 @@ void ForeignKeyDialog::OnPrimaryKeyTableSelection(wxCommandEvent &WXUNUSED(event
             m_primaryKey.push_back( (*it)->GetFieldName() );
         }
     }
-    m_refTableName = m_primaryKeyTable->GetValue();
-}
-
-void ForeignKeyDialog::GenerateQuery()
-{
-/*    wxString keyName = m_foreignKeyName->GetValue();
-    wxString pkTable = m_primaryKeyTable->GetValue();
-    int onDelete = m_onDelete->GetSelection();
-    int onUpdate = m_onUpdate->GetSelection();
-    if( m_db->GetTableVector().m_type == L"SQLite" )
-    {
-        m_command = "CREATE TEMPORARY TABLE __temporary_table__ AS SELECT * FROM " + m_table->GetTableName();
-        m_command += ";\n\rDROP TABLE " + m_table->GetTableName();
-        m_command += ";\n\rCREATE TABLE " + m_table->GetTableName();
-        m_command += "(";
-        for( std::vector<Field *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
-        {
-            m_command += (*it)->GetFieldName();
-            m_command += " ";
-            m_command += (*it)->GetFieldType();
-            if( (*it)->IsPrimaryKey() )
-                m_command += " PRIMARY KEY";
-            m_command += ", ";
-        }
-        wxString temp1, temp2, temp3;
-        FK_ONUPDATE onUpdate = NO_ACTION_UPDATE;
-        FK_ONDELETE onDelete = NO_ACTION_DELETE;
-        std::map<int,std::vector<FKField *> > fk = m_table->GetForeignKeyVector();
-        for( std::map<int,std::vector<FKField *> >::iterator it = fk.begin(); it != fk.end(); it++ )
-        {
-            for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
-            {
-                temp1 += (*it1)->GetOriginalFieldName();
-                temp2 += (*it1)->GetReferencedFieldName();
-                temp3 = (*it1)->GetReferencedTableName();
-                onUpdate = (*it1)->GetOnUpdateConstraint();
-                onDelete = (*it1)->GetOnDeleteConstraint();
-                if( it1 != (*it).second.end() - 1 )
-                {
-                    temp1 += ", ";
-                    temp2 += ", ";
-                }
-            }
-            m_command += "FOREIGN KEY(";
-            m_command += temp1;
-            m_command += ") REFERENCES ";
-            m_command += temp3;
-            m_command += "(";
-            m_command += temp2;
-            m_command += ") ";
-            switch( onUpdate )
-            {
-                case RESTRICT_UPDATE:
-                    m_command += "ON UPDATE RESTRICT ";
-                    break;
-                case SET_NULL_UPDATE:
-                    m_command += "ON UPDATE SET NULL ";
-                    break;
-                case SET_DEFAULT_UPDATE:
-                    m_command += "ON UPDATE SET DEFAULT ";
-                    break;
-                case CASCADE_UPDATE:
-                    m_command += "ON UPDATE CASCADE ";
-                    break;
-                default:
-                    break;
-            }
-            switch( onDelete )
-            {
-                case RESTRICT_DELETE:
-                    m_command += "ON DELETE RESTRICT ";
-                    break;
-                case SET_NULL_DELETE:
-                    m_command += "ON DELETE SET NULL ";
-                    break;
-                case SET_DEFAULT_DELETE:
-                    m_command += "ON DELETE SET DEFAULT ";
-                    break;
-                case CASCADE_DELETE:
-                    m_command += "ON DELETE CASCADE ";
-                    break;
-                default:
-                    break;
-            }
-            m_command += ", ";
-            temp1 = temp2 = temp3 = "";
-            m_nextKey = (*it).first + 1;
-        }
-        m_command += "CONSTRAINT ";
-        m_command += keyName;
-        m_command += " FOREIGN KEY(";
-        for( std::vector<std::wstring>::iterator it = m_foreignKey.begin(); it < m_foreignKey.end(); it++ )
-        {
-            m_command += (*it);
-            if( it == m_foreignKey.end() - 1 )
-                m_command += ")";
-            else
-                m_command += ", ";
-        }
-        m_command += " REFERENCES " + pkTable;
-        m_command += "(";
-        for( std::vector<std::wstring>::iterator it = m_primaryKey.begin(); it < m_primaryKey.end(); it++ )
-        {
-            m_command += (*it);
-            if( it == m_primaryKey.end() - 1 )
-                m_command += ")";
-			else
-                m_command += ", ";
-        }
-        switch( onDelete )
-        {
-            case 1:
-                m_command += " ON DELETE RESTRICT";
-                break;
-            case 2:
-                m_command += " ON DELETE CASCADE";
-                break;
-            case 3:
-                m_command += " ON DELETE SET NULL";
-                break;
-            default:
-                break;
-        }
-        switch( onUpdate )
-        {
-            case 1:
-                m_command += " ON UPDATE RESTRICT";
-                break;
-            case 2:
-                m_command += " ON UPDATE CASCADE";
-                break;
-            case 3:
-                m_command += " ON UPDATE SET NULL";
-                break;
-            default:
-                break;
-        }
-        m_command += " );\r\n\r\n";
-        m_command += "INSERT INTO " + m_table->GetTableName();
-        m_command += " SELECT * FROM temp;\r\n\r\nDROP TABLE temp;\r\n\r\n";
-    }
-    else
-    {
-        m_command = "ALTER TABLE " + m_table->GetTableName();
-        m_command += " ADD CONSTRAINT " + keyName;
-        m_command += " FOREIGN KEY (";
-        for( std::vector<std::wstring>::iterator it = m_foreignKey.begin(); it < m_foreignKey.end(); it++ )
-        {
-            m_command += (*it);
-            if( it == m_foreignKey.end() - 1 )
-                m_command += ")";
-            else
-                m_command += ", ";
-        }
-        m_command += " REFERENCES " + pkTable;
-        m_command += "(";
-        for( std::vector<std::wstring>::iterator it = m_primaryKey.begin(); it < m_primaryKey.end(); it++ )
-        {
-            m_command += (*it);
-            if( it == m_primaryKey.end() - 1 )
-                m_command += ")";
-            else
-                m_command += ", ";
-        }
-        switch( onDelete )
-        {
-            case 1:
-                m_command += " ON DELETE RESTRICT";
-                break;
-            case 2:
-                m_command += " ON DELETE CASCADE";
-                break;
-            case 3:
-                m_command += " ON DELETE SET NULL";
-                break;
-            default:
-                break;
-        }
-        switch( onUpdate )
-        {
-            case 1:
-                m_command += " ON UPDATE RESTRICT";
-                break;
-            case 2:
-                m_command += " ON UPDATE CASCADE";
-                break;
-            case 3:
-                m_command += " ON UPDATE SET NULL";
-                break;
-            default:
-                break;
-        }
-        m_command += ";\r\n";
-    }*/
-    m_delete = m_onDelete->GetSelection();
-    m_update = m_onUpdate->GetSelection();
+    m_refTableName = m_primaryKeyTable->GetValue();*/
 }
 
 bool ForeignKeyDialog::IsLogOnlyI()
@@ -484,3 +302,45 @@ const int ForeignKeyDialog::GetUpdateParam() const
     return m_update;
 }
 
+void ForeignKeyDialog::DoChangePrimaryKeyTableName()
+{
+    bool found = false;
+    m_primaryKeyColumnsFields->Clear();
+    m_primaryKey.clear();
+    std::map<std::wstring, std::vector<DatabaseTable *> > tableVec = m_db->GetTableVector().m_tables;
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = tableVec.begin(); it != tableVec.end() && !found; it++ )
+    {
+        for( std::vector<DatabaseTable *>::iterator it1 = (it)->second.begin(); it1 < (*it).second.end() && !found; it1++ )
+        {
+            if( (*it1)->GetTableName() == m_primaryKeyTable->GetValue() )
+            {
+                m_pkTable = (*it1);
+                found = true;
+            }
+        }
+    }
+    for( std::vector<Field *>::const_iterator it = m_pkTable->GetFields().begin(); it < m_pkTable->GetFields().end(); it++ )
+    {
+        if( (*it)->IsPrimaryKey() )
+        {
+            m_primaryKeyColumnsFields->AddField( (*it)->GetFieldName() );
+            m_primaryKey.push_back( (*it)->GetFieldName() );
+        }
+    }
+    m_refTableName = m_primaryKeyTable->GetValue();
+}
+
+void ForeignKeyDialog::OnDeleteChanges(wxCommandEvent &WXUNUSED(event))
+{
+    m_edited = true;
+}
+
+void ForeignKeyDialog::OnUpdateChanges(wxCommandEvent &WXUNUSED(event))
+{
+    m_edited = true;
+}
+
+bool ForeignKeyDialog::IsForeignKeyEdited() const
+{
+    return m_edited;
+}
