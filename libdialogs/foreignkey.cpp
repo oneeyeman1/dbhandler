@@ -179,7 +179,7 @@ void ForeignKeyDialog::do_layout()
 bool ForeignKeyDialog::Verify()
 {
     bool verified = true;
-    if( m_foreignKeyName->GetValue().IsEmpty() )
+    if( m_db->GetTableVector().GetDatabaseType() != L"SQLite" && m_foreignKeyName->GetValue().IsEmpty() )
     {
         wxMessageBox( _( "Key name is required" ) );
         verified = false;
