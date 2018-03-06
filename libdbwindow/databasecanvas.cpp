@@ -734,11 +734,11 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             if( lib.IsLoaded() )
             {
                 CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-                result = func( m_view->GetFrame(), constraintName, table, foreignKeyFields, refKeyFields, refTable, deleteProp, updateProp, dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase(),  logOnly, true );
+                result = func( m_view->GetFrame(), constraintName, table, foreignKeyFields, refKeyFields, const_cast<std::wstring &>( refTableName.ToStdWstring() ), deleteProp, updateProp, dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase(),  logOnly, true );
                 if( result != wxID_CANCEL )
                 {
                     std::wstring command = L"";
-                    int res = ((DrawingDocument *) m_view->GetDocument())->GetDatabase()->ApplyForeignKey( command, kName, *table, foreignKeyFields, refTableName.ToStdWstring(), refKeyFields, deleteProp, updateProp, logOnly, newFK, errors );
+                    int res = ((DrawingDocument *) m_view->GetDocument())->GetDatabase()->ApplyForeignKey( command, kName, *table, foreignKeyFields, refTable, refKeyFields, deleteProp, updateProp, logOnly, newFK, errors );
                     if( res )
                     {
                         for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
@@ -754,7 +754,11 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                             dynamic_cast<DrawingView *>( m_view )->GetLogWindow()->Show();
                     }
                     else
+                    {
+                        m_pManager.RemoveShape( sign );
                         CreateFKConstraint( table, newFK );
+                        Refresh();
+                    }
                 }
             }
         }

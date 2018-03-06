@@ -1236,93 +1236,13 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
             if( !result )
             {
                 std::wstring newSQL;
-                std::wstring s, sUpper, keyTemp, constraintTemp;
-                bool isFK = false, isConstraint = false;
-                if( newFK.size() > 0 )
-                {
-                    std::wstring refTableOrig = newFK.at( 0 )->GetReferencedTableName();
-                    std::wistringstream str( sql );
-                    bool isKeyAdded = true;
-                    while( std::getline( str, s, L',' ) )
-                    {
-                        sUpper = s;
-                        std::transform( s.begin(), s.end(), s.begin(), toupper );
-                        std::wstring temp = s.substr( s.find_first_not_of( L' ' ) );
-                        size_t constraint = temp.find( L"CONSTRAINT" );
-                        size_t fkPos = temp.find( L"FOREIGN KEY" );
-                        if( constraint == std::wstring::npos && fkPos == std::wstring::npos )
-                            newSQL += sUpper + L',';
-						else
-                        {
-                            if( ( constraint != 0 && constraint != std::wstring::npos ) || ( constraint == 0 && fkPos == std::wstring::npos ) )
-                            {
-                                newSQL += sUpper + L',';
-                                continue;
-                            }
-                            if( ( constraint == 0 && fkPos != std::wstring::npos ) )
-                            {
-                                keyTemp += sUpper + L',';
-                                s = s.substr( fkPos );
-                                isConstraint = true;
-                            }
-                            size_t fkPos = temp.find( L"FOREIGN KEY" );
-                            if( fkPos == 0 )
-                            {
-                                std::wstring ref = L"REFERENCES";
-                                size_t refTablePos;
-                                keyTemp += sUpper;
-                                std::wstring temp1 = temp;
-                                while( ( refTablePos = temp1.find( ref ) ) == std::wstring::npos )
-                                {
-                                    isFK = true;
-                                    std::getline( str, s, L',' );
-                                    sUpper = s;
-                                    std::transform( s.begin(), s.end(), s.begin(), toupper );
-                                    keyTemp += sUpper + L',';
-                                    temp1 = s.substr( s.find_first_not_of( L' ' ) );
-                                }
-                                std::wstring tName = sUpper.substr( refTablePos + ref.length()  + 1 );
-                                tName = tName.substr( 0, tName.find( L'(' ) );
-                                tName = tName.substr( tName.find_first_not_of( L' ' ) );
-                                tName = tName.substr( 0, tName.find_last_not_of( L' ' ) + 1 );
-                                std::wstring refTableName = newFK[0]->GetReferencedTableName();
-                                if( tName == refTableName )
-                                {
-                                    isKeyAdded = false;
-                                }
-                                if( isFK )
-                                {
-                                    ref = L")";
-                                    temp1 = sUpper.substr( sUpper.find( tName ) );
-                                    while( ( refTablePos = temp1.find( ref ) ) == std::wstring::npos )
-                                    {
-                                        std::getline( str, s, L',' );
-                                        sUpper = s;
-                                        std::transform( s.begin(), s.end(), s.begin(), toupper );
-                                        keyTemp += sUpper + L',';
-                                        temp1 = s.substr( s.find_first_not_of( L' ' ) );
-                                    }
-                                }
-                                isFK = false;
-                                if( keyTemp.at( keyTemp.length() - 1 ) == L')' && keyTemp.at( keyTemp.length() - 2 ) != L')' && tableName.GetForeignKeyVector().size() > 1 )
-                                    keyTemp += L',';
-                                if( keyTemp.at( keyTemp.length() - 2 ) == L')' )
-                                {
-                                    if( isKeyAdded )
-                                    {
-                                        newSQL += keyTemp;
-                                    }
-                                    keyTemp = L"";
-                                }
-                                isKeyAdded = true;
-                            }
-                        }
-                    }
-                    if( newSQL.back() == L',' )
-                        newSQL = newSQL.substr( 0, newSQL.length() - 1 ) + L")";
-                }
+                DropForeignKey( tableName, newFK, sql, newSQL );
                 sql = newSQL;
-                std::wstring fk = L", CONSTRAINT " + keyName + L" FOREIGN KEY(";
+                std::wstring fk;
+                if( !keyName.empty() )
+                    fk = L", CONSTRAINT " + keyName + L" FOREIGN KEY(";
+				else
+                    fk = L", FOREIGN KEY(";
                 for( std::vector<std::wstring>::const_iterator it = foreignKeyFields.begin(); it < foreignKeyFields.end(); it++ )
                 {
                     fk += (*it);
@@ -1481,6 +1401,118 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
         }
     }
     return result;
+}
+
+int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL)
+{
+    std::wstring s, sUpper, keyTemp, constraintTemp, refTableOrig;
+    std::map<int, std::vector<FKField *> > &fkFields = /*const_cast<DatabaseTable &>*/( tableName ).GetForeignKeyVector();
+    bool isFK = false, isConstraint = false;
+    if( newFK.size() > 0 )
+    {
+        refTableOrig = newFK.at( 0 )->GetReferencedTableName();
+        std::wistringstream str( sql );
+        bool isKeyAdded = true;
+        while( std::getline( str, s, L',' ) )
+        {
+            sUpper = s;
+            std::transform( s.begin(), s.end(), s.begin(), toupper );
+            std::wstring temp = s.substr( s.find_first_not_of( L' ' ) );
+            size_t constraint = temp.find( L"CONSTRAINT" );
+            size_t fkPos = temp.find( L"FOREIGN KEY" );
+            if( constraint == std::wstring::npos && fkPos == std::wstring::npos )
+                newSQL += sUpper + L',';
+            else
+            {
+                if( ( constraint != 0 && constraint != std::wstring::npos ) || ( constraint == 0 && fkPos == std::wstring::npos ) )
+                {
+                    newSQL += sUpper + L',';
+                    continue;
+                }
+                if( ( constraint == 0 && fkPos != std::wstring::npos ) )
+                {
+                    keyTemp += sUpper + L',';
+                    s = s.substr( fkPos );
+                    isConstraint = true;
+                }
+                size_t fkPos = temp.find( L"FOREIGN KEY" );
+                if( fkPos == 0 )
+                {
+                    std::wstring ref = L"REFERENCES";
+                    size_t refTablePos;
+                    keyTemp += sUpper;
+                    std::wstring temp1 = temp;
+                    while( ( refTablePos = temp1.find( ref ) ) == std::wstring::npos )
+                    {
+                        isFK = true;
+                        std::getline( str, s, L',' );
+                        sUpper = s;
+                        std::transform( s.begin(), s.end(), s.begin(), toupper );
+                        keyTemp += sUpper + L',';
+                        temp1 = s.substr( s.find_first_not_of( L' ' ) );
+                    }
+                    std::wstring tName = sUpper.substr( refTablePos + ref.length()  + 1 );
+                    tName = tName.substr( 0, tName.find( L'(' ) );
+                    tName = tName.substr( tName.find_first_not_of( L' ' ) );
+                    tName = tName.substr( 0, tName.find_last_not_of( L' ' ) + 1 );
+                    std::wstring refTableName = newFK[0]->GetReferencedTableName();
+                    if( tName == refTableName )
+                    {
+                        isKeyAdded = false;
+                    }
+                    if( isFK )
+                    {
+                        ref = L")";
+                        temp1 = sUpper.substr( sUpper.find( tName ) );
+                        while( ( refTablePos = temp1.find( ref ) ) == std::wstring::npos )
+                        {
+                            std::getline( str, s, L',' );
+                            sUpper = s;
+                            std::transform( s.begin(), s.end(), s.begin(), toupper );
+                            keyTemp += sUpper + L',';
+                            temp1 = s.substr( s.find_first_not_of( L' ' ) );
+                        }
+                    }
+                    isFK = false;
+                    if( keyTemp.at( keyTemp.length() - 1 ) == L')' && keyTemp.at( keyTemp.length() - 2 ) != L')' && const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector().size() > 1 )
+                        keyTemp += L',';
+                    if( keyTemp.at( keyTemp.length() - 2 ) == L')' )
+                    {
+                        if( isKeyAdded )
+                        {
+                            newSQL += keyTemp;
+                        }
+                        keyTemp = L"";
+                    }
+                    isKeyAdded = true;
+                }
+            }
+        }
+        if( newSQL.back() == L',' )
+            newSQL = newSQL.substr( 0, newSQL.length() - 1 ) + L")";
+    }
+    bool found = false;
+    for( std::map<int, std::vector<FKField *> >::iterator it = fkFields.begin(); it != fkFields.end() && !found; it++ )
+    {
+        for( std::vector<FKField *>::iterator it1 = it->second.begin(); it1 != it->second.end(); )
+        {
+            if( refTableOrig == (*it1)->GetReferencedTableName() )
+            {
+                found = true;
+                delete (*it1);
+                (*it1) = NULL;
+                it1 = it->second.erase( it1 );
+            }
+			else
+                ++it1;
+        }
+        if( found )
+		{
+            fkFields.erase( it );
+            break;
+        }
+    }
+    return 0;
 }
 
 int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
