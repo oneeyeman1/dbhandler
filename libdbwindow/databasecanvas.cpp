@@ -738,7 +738,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                 if( result != wxID_CANCEL )
                 {
                     std::wstring command = L"";
-                    int res = ((DrawingDocument *) m_view->GetDocument())->GetDatabase()->ApplyForeignKey( command, kName, *table, foreignKeyFields, refTable, refKeyFields, deleteProp, updateProp, logOnly, newFK, errors );
+                    int res = ((DrawingDocument *) m_view->GetDocument())->GetDatabase()->ApplyForeignKey( command, kName, *table, foreignKeyFields, refTableName.ToStdWstring(), refKeyFields, deleteProp, updateProp, logOnly, newFK, errors );
                     if( res )
                     {
                         for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
@@ -755,7 +755,9 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                     }
                     else
                     {
-                        m_pManager.RemoveShape( sign );
+                        m_pManager.RemoveShape( sign->GetParentShape() );
+//                        Refresh();
+//                        m_pManager.RemoveShape( sign );
                         CreateFKConstraint( table, newFK );
                         Refresh();
                     }
