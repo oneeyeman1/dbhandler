@@ -21,6 +21,7 @@ public:
     virtual int SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg);
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
+    virtual int DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL);
 protected:
     struct SQLiteImpl;
     SQLiteImpl *sqlite_pimpl;

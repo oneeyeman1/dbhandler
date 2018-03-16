@@ -6,6 +6,7 @@ public:
     virtual ~FieldWindow();
     void AddField(const wxString &fieldName);
     void RemoveField(const std::vector<std::wstring> &names);
+    void RemoveField(const std::vector<wxString> &names);
     virtual void OnLeftDown(wxMouseEvent &event);
     void Clear();
 private:

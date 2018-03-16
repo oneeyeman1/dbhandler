@@ -65,8 +65,6 @@ ErdForeignKey::ErdForeignKey(const ErdForeignKey& obj):ErdLineShape(obj)
 
 ErdForeignKey::~ErdForeignKey()
 {
-    delete m_pConstraint;
-    m_pConstraint = NULL;
 }
 
 void ErdForeignKey::CreateHandles()

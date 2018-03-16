@@ -211,7 +211,7 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
     ForeignKeyDialog dlg( parent, wxID_ANY, _( "" ), table, db, foreignKeyFields, refTblName, isView );
     dlg.Center();
     res = dlg.ShowModal();
-    if( res != wxID_CANCEL )
+    if( res != wxID_CANCEL || dlg.IsForeignKeyEdited() )
     {
         logOnly = dlg.IsLogOnlyI();
         keyName = dlg.GetKeyNameCtrl()->GetValue();
