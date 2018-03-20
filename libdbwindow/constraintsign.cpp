@@ -69,6 +69,8 @@ ConstraintSign::ConstraintSign(ViewType type)
 
 ConstraintSign::~ConstraintSign()
 {
+    delete m_constraint;
+    m_constraint = NULL;
 }
 
 void ConstraintSign::SetSign(const wxString &sign)
@@ -105,4 +107,10 @@ void ConstraintSign::SetConstraint(const Constraint *constraint)
 Constraint *ConstraintSign::GetConstraint() const
 {
     return m_constraint;
+}
+
+void ConstraintSign::DeleteConstraint()
+{
+    delete m_constraint;
+    m_constraint = NULL;
 }

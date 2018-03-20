@@ -10,6 +10,7 @@ public:
     void SetSign(const wxString &sign);
     void SetConstraint(const Constraint *constraint);
     Constraint *GetConstraint() const;
+    void DeleteConstraint();
 protected:
     virtual void DrawSelected(wxDC &dc);
     virtual void DrawNormal(wxDC &dc);
