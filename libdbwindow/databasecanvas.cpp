@@ -287,6 +287,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 {
     FieldShape *erdField = NULL;
     MyErdTable *erdTable = NULL;
+    ConstraintSign *erdSign = NULL;
     wxPoint pt = event.GetPosition();
     wxMenu mnu;
     int allSelected = 0;
@@ -301,6 +302,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             DeselectAll();
         wxRect tableRect;
         bool fieldSelected = false;
+        bool signSelected = false;
         for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
         {
             MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
@@ -321,6 +323,17 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                     field->SetParentRect( tableRect );
                     fieldSelected = true;
                     erdField = field;
+                }
+				else
+                {
+                    ConstraintSign *sign = wxDynamicCast( (*it), ConstraintSign );
+                    if( sign )
+                    {
+                        if( type == DatabaseView )
+                            sign->Select( true );
+                        signSelected = true;
+                        erdSign = sign;
+                    }
                 }
             }
         }
@@ -358,7 +371,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         Refresh();
         if( type == DatabaseView )
         {
-            if( !fieldSelected )
+            if( !fieldSelected && !signSelected )
             {
                 mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
                 mnu.AppendSeparator();
@@ -378,10 +391,16 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 mnu.AppendSeparator();
                 mnu.Append( wxID_TABLEPRINTDEFINITION, _( "Print Definition" ), _( "Print Definition" ), false );
             }
-            else
+            else if( fieldSelected )
             {
                 mnu.Append( wxID_FIELDDEFINITION, _( "Definition" ), _( "Edit definition of selected object" ), false );
                 mnu.Append( wxID_FIELDPROPERTIES, _( "Properties..." ), _( "Show properties of selected object" ), false );
+            }
+            else
+            {
+                mnu.Append( wxID_FKDEFINITION, _( "Definition" ), _( "Edit definition of selected object" ) );
+                mnu.Append( wxID_FKOPENREFTABLE, _( "Open Referenced Table" ), _( "Open Referenced Table" ) );
+                mnu.Append( wxID_FKDROP, _( "Drop Foreign Key..." ), _( "Drop Foreign Key for the table" ) );
             }
         }
         else

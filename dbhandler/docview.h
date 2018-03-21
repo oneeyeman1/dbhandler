@@ -115,6 +115,9 @@ wxDECLARE_APP(MyApp);
 #define wxID_SHOWLABELS           118
 #define wxID_SHOWCOMMENTS         119
 #define wxID_SHOWSQLTOOLBOX       120
+#define wxID_FKDEFINITION         121
+#define wxID_FKOPENREFTABLE       122
+#define wxID_FKDROP               123
 #define WHEREPAGECOLUMNS          194
 #define WHEREPAGEFUNCTIONS        195
 #define WHEREPAGEARGUMENTS        196
