@@ -755,7 +755,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                     }
                     else
                     {
-                        delete sign->GetConstraint();
+                        sign->DeleteConstraint();
                         m_pManager.RemoveShape( sign->GetParentShape() );
 //                        Refresh();
 //                        m_pManager.RemoveShape( sign );
