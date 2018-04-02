@@ -4,6 +4,8 @@
 class ConstraintSign : public wxSFRectShape
 {
 public:
+    XS_DECLARE_CLONABLE_CLASS(MyErdTable);
+    ConstraintSign();
     ConstraintSign(ViewType type);
     virtual ~ConstraintSign();
     const wxString &GetSign();

@@ -27,7 +27,13 @@
 #include "constraintsign.h"
 #include "res/gui/key-f.xpm"
 
-ConstraintSign::ConstraintSign(ViewType type)
+XS_IMPLEMENT_CLONABLE_CLASS(ConstraintSign, wxSFRectShape);
+
+ConstraintSign::ConstraintSign() : wxSFRectShape()
+{
+}
+
+ConstraintSign::ConstraintSign(ViewType type) : wxSFRectShape()
 {
     m_type = type;
     m_sign = NULL;
@@ -92,9 +98,9 @@ void ConstraintSign::DrawSelected(wxDC &dc)
 void ConstraintSign::DrawNormal(wxDC &dc)
 {
     if( this->m_fSelected )
-        dc.SetBackground( *wxBLACK_BRUSH );
+        SetFill( *wxBLACK_BRUSH );
 	else
-        dc.SetBackground( *wxWHITE_BRUSH );
+        SetFill( *wxWHITE_BRUSH );
     wxSFRectShape::DrawNormal( dc );
 }
 

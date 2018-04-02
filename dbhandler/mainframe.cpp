@@ -158,7 +158,7 @@ void MainFrame::DatabaseMenu()
     menuNewObject->Append( wxID_OBJECTNEWVIEW, _( "View" ), _( "New View" ) );
     menuNewObject->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
     menuObject->AppendSubMenu( menuNewObject, _( "New" ), _( "New Object" ) );
-    menuObject->Append( wxID_TABLEDROPTABLE, _( "Drop" ), _( "Drop database object" ) );
+    menuObject->Append( wxID_DROPOBJECT, _( "Drop" ), _( "Drop database object" ) );
     menuObject->AppendSeparator();
     menuObject->Append( wxID_PROPERTIES, _( "Properties..." ), _( "Properties" ) );
     GetMenuBar()->Insert( 1, menuObject, _( "&Object" ) );
