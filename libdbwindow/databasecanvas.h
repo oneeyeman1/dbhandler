@@ -36,7 +36,7 @@ private:
 #define wxID_TABLEALTERTABLE       21
 #define wxID_TABLEPROPERTIES       22
 #define wxID_TABLENEW              23
-#define wxID_TABLEDROPTABLE        24
+//#define wxID_TABLEDROPTABLE        24
 #define wxID_TABLEEDITDATA         25
 #define wxID_TABLEDATATRANSFER     26
 #define wxID_TABLEPRINTDEFINITION  27
@@ -68,7 +68,7 @@ private:
 #define wxID_SHOWSQLTOOLBOX       120
 #define wxID_FKDEFINITION         121
 #define wxID_FKOPENREFTABLE       122
-#define wxID_FKDROP               123
+#define wxID_DROPOBJECT           123
 #define WHEREPAGECOLUMNS          194
 #define WHEREPAGEFUNCTIONS        195
 #define WHEREPAGEARGUMENTS        196

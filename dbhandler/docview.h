@@ -92,7 +92,6 @@ wxDECLARE_APP(MyApp);
 #define wxID_TABLE                  3
 #define wxID_DATABASE               4
 #define wxID_QUERY                  5
-#define wxID_TABLEDROPTABLE        24
 #define wxID_PROPERTIES            50
 #define wxID_CREATEDATABASE       100
 #define wxID_DELETEDATABASE       101
@@ -117,7 +116,7 @@ wxDECLARE_APP(MyApp);
 #define wxID_SHOWSQLTOOLBOX       120
 #define wxID_FKDEFINITION         121
 #define wxID_FKOPENREFTABLE       122
-#define wxID_FKDROP               123
+#define wxID_DROPOBJECT           123
 #define WHEREPAGECOLUMNS          194
 #define WHEREPAGEFUNCTIONS        195
 #define WHEREPAGEARGUMENTS        196

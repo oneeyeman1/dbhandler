@@ -62,7 +62,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent
     m_mode = modeDESIGN;
     SetCanvasColour( *wxWHITE );
 //    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
-    Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_TABLEDROPTABLE );
+    Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_DROPOBJECT );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnShowSQLBox, this, wxID_SHOWSQLTOOLBOX );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnShowComments, this, wxID_VIEWSHOWCOMMENTS );
 }
@@ -220,8 +220,38 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
     ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
     wxSFShapeBase* pShape = NULL;
     ShapeList shapes, list;
+    ConstraintSign *sign = NULL;
     GetSelectedShapes( shapes );
     GetShapesAtPosition( event.GetPosition(), list );
+    int count = 0;
+    for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); it++ )
+    {
+        MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
+        if( table )
+            count++;
+        sign = wxDynamicCast( (*it), ConstraintSign );
+        if( sign )
+            count++;
+    }
+    if( count == 2 )
+    {
+        sign->Select( true );
+        Refresh();
+    }
+    bool found = false;
+    if( count == 1 )
+    {
+        for( ShapeList::iterator it1 = list.begin(); it1 != list.end() && !found; it1++ )
+        {
+            sign = wxDynamicCast( (*it1), ConstraintSign );
+            if( sign )
+            {
+                found = true;
+                sign->Select( true );
+                Refresh();
+            }
+        }
+    }
     switch( m_mode )
     {
         case modeTABLE:
@@ -231,7 +261,8 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         case modeVIEW:
             break;
         default:
-            wxSFShapeCanvas::OnLeftDown( event );
+            if( !found )
+                wxSFShapeCanvas::OnLeftDown( event );
     }
     if( pShape )
     {
@@ -291,7 +322,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     wxPoint pt = event.GetPosition();
     wxMenu mnu;
     int allSelected = 0;
-    mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_TABLEDROPTABLE );
+    mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_DROPOBJECT );
     m_selectedShape = GetShapeUnderCursor();
     ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
     if( m_selectedShape )
@@ -383,7 +414,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 newObjectMenu->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
                 mnu.AppendSubMenu( newObjectMenu, _( "New" ), _( "New" ) );
                 mnu.AppendSeparator();
-                mnu.Append( wxID_TABLEDROPTABLE, _( "Drop Table" ), _( "Drop Table" ), false );
+                mnu.Append( wxID_DROPOBJECT, _( "Drop Table" ), _( "Drop Table" ), false );
                 mnu.AppendSeparator();
                 mnu.Append( wxID_TABLEEDITDATA, _( "Edit Data" ), _( "Edit Data" ), false );
                 mnu.AppendSeparator();
@@ -400,7 +431,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             {
                 mnu.Append( wxID_FKDEFINITION, _( "Definition" ), _( "Edit definition of selected object" ) );
                 mnu.Append( wxID_FKOPENREFTABLE, _( "Open Referenced Table" ), _( "Open Referenced Table" ) );
-                mnu.Append( wxID_FKDROP, _( "Drop Foreign Key..." ), _( "Drop Foreign Key for the table" ) );
+                mnu.Append( wxID_DROPOBJECT, _( "Drop Foreign Key..." ), _( "Drop Foreign Key for the table" ) );
             }
         }
         else
@@ -485,10 +516,23 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 
 void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
 {
+    ShapeList list;
+    bool isTable;
+    MyErdTable *erdTable;
+    DatabaseTable *table;
+    wxString name;
+    this->GetSelectedShapes( list );
+    if( list.size() == 1 )
+        isTable = true;
+	else
+        isTable = false;
     std::vector<std::wstring> errors;
-    MyErdTable *erdTable = dynamic_cast<MyErdTable *>( m_selectedShape );
-    DatabaseTable *table = &( const_cast<DatabaseTable &>( erdTable->GetTable() ) );
-    wxString name = const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableName();
+    if( isTable )
+    {
+        erdTable = dynamic_cast<MyErdTable *>( m_selectedShape );
+        table = &( const_cast<DatabaseTable &>( erdTable->GetTable() ) );
+        name = const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableName();
+    }
     DrawingDocument *doc = (DrawingDocument *) m_view->GetDocument();
     Database *db = doc->GetDatabase();
     int answer = wxMessageBox( _( "You are about to delete table " ) + name + _( ". Are you sure?" ), _( "Database" ), wxYES_NO | wxNO_DEFAULT );

@@ -23,6 +23,7 @@
 #include "../dbhandler/res/new.xpm"
 #include "../dbhandler/res/open.xpm"
 #include "../dbhandler/res/save.xpm"
+#include "../dbhandler/res/cut.xpm"
 //#endif
 
 #include <string>
@@ -137,6 +138,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     {
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+        m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxBitmap( cut_xpm ), wxBitmap( cut_xpm ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close Database View" ), _( "Close Database View" ) );
     }
@@ -210,6 +212,7 @@ void DrawingView::CreateViewToolBar()
     {
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+        m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxBitmap( cut_xpm ), wxBitmap( cut_xpm ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Database View" ) );
     }
