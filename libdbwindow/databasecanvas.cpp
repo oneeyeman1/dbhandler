@@ -51,6 +51,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent
 {
     m_view = view;
     m_showDataTypes = m_showLabels = m_showToolBox = m_showComments = m_showIndexKeys = m_showIntegrity = true;
+    m_oldSelectedSign = NULL;
     startPoint.x = 10;
     startPoint.y = 10;
     m_showComments = m_showIndexKeys = m_showIntegrity = true;
@@ -233,23 +234,21 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         if( sign )
             count++;
     }
-    if( count == 2 )
-    {
-        sign->Select( true );
-        Refresh();
-    }
     bool found = false;
-    if( count == 1 )
+    for( ShapeList::iterator it1 = list.begin(); it1 != list.end() && !found; it1++ )
     {
-        for( ShapeList::iterator it1 = list.begin(); it1 != list.end() && !found; it1++ )
+        sign = wxDynamicCast( (*it1), ConstraintSign );
+        if( sign )
         {
-            sign = wxDynamicCast( (*it1), ConstraintSign );
-            if( sign )
+            if( sign != m_oldSelectedSign )
             {
-                found = true;
-                sign->Select( true );
-                Refresh();
+                if( m_oldSelectedSign )
+                    m_oldSelectedSign->Select( false );
+                m_oldSelectedSign = sign;
             }
+            found = true;
+            sign->Select( true );
+            Refresh();
         }
     }
     switch( m_mode )
