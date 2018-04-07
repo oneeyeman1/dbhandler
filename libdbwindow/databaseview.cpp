@@ -187,6 +187,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_frame->Show();
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
+    Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, m_canvas, wxID_DROPOBJECT );
 #if defined __WXMSW__ || defined __WXGTK__
     CreateViewToolBar();
 #endif
