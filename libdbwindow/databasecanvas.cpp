@@ -517,20 +517,28 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
 {
     ShapeList list;
     bool isTable;
-    MyErdTable *erdTable;
+    MyErdTable *erdTable = NULL;
     DatabaseTable *table;
     wxString name;
-    this->GetSelectedShapes( list );
+    ConstraintSign *sign = NULL;
+    GetSelectedShapes( list );
     if( list.size() == 1 )
         isTable = true;
 	else
         isTable = false;
+    for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
+    {
+        erdTable = wxDynamicCast( (*it), MyErdTable );
+        sign = wxDynamicCast( (*it), ConstraintSign );
+    }
     std::vector<std::wstring> errors;
     if( isTable )
     {
-        erdTable = dynamic_cast<MyErdTable *>( m_selectedShape );
         table = &( const_cast<DatabaseTable &>( erdTable->GetTable() ) );
         name = const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableName();
+    }
+	else
+    {
     }
     DrawingDocument *doc = (DrawingDocument *) m_view->GetDocument();
     Database *db = doc->GetDatabase();
