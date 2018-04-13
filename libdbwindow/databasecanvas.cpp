@@ -329,7 +329,8 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         ShapeList list;
         GetShapesAtPosition( pt, list );
         if( type == DatabaseView )
-            DeselectAll();
+            if( m_selectedShape->IsKindOf( CLASSINFO( MyErdTable ) ) )
+                DeselectAll();
         wxRect tableRect;
         bool fieldSelected = false;
         bool signSelected = false;
