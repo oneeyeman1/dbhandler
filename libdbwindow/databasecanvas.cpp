@@ -521,6 +521,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
     DatabaseTable *table;
     wxString name;
     ConstraintSign *sign = NULL;
+    Constraint *constraint;
     GetSelectedShapes( list );
     if( list.size() == 1 )
         isTable = true;
@@ -528,10 +529,15 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
         isTable = false;
     for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
     {
-        erdTable = wxDynamicCast( (*it), MyErdTable );
-        sign = wxDynamicCast( (*it), ConstraintSign );
+        MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
+        if( table )
+            erdTable = table;
+        ConstraintSign *s = wxDynamicCast( (*it), ConstraintSign );
+        if( s )
+            sign = s;
     }
-    std::vector<std::wstring> errors;
+    std::vector<std::wstring> errors, localColumns, refColumn;
+    std::vector<FKField *> newFK;
     if( isTable )
     {
         table = &( const_cast<DatabaseTable &>( erdTable->GetTable() ) );
@@ -539,13 +545,29 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
     }
 	else
     {
+        constraint = sign->GetConstraint();
+        constraint->GetLocalColumn( localColumns );
+        constraint->GetRefCol( refColumn );
     }
     DrawingDocument *doc = (DrawingDocument *) m_view->GetDocument();
     Database *db = doc->GetDatabase();
-    int answer = wxMessageBox( _( "You are about to delete table " ) + name + _( ". Are you sure?" ), _( "Database" ), wxYES_NO | wxNO_DEFAULT );
+    std::wstring command;
+    wxString message = _( "You are about to delete " );
+    if( isTable )
+        message += _( "table " ) + name + _( ". Are you sure?" );
+	else
+	{
+        message += _( "foreign key " );
+        wxString fkName = constraint->GetName();
+        if( !fkName.empty() )
+            message += fkName;
+		else
+            message += _( " on " ) + const_cast<DatabaseTable *>( constraint->GetFKTable() )->GetTableName() + _( " references " ) + constraint->GetRefTable() + _( ". Are you sure?" );
+    }
+    int answer = wxMessageBox( message, _( "Database" ), wxYES_NO | wxNO_DEFAULT );
     if( answer == wxYES )
     {
-        if( !db->DeleteTable( name.ToStdWstring(), errors ) )
+        if( isTable && !db->DeleteTable( name.ToStdWstring(), errors ) )
         {
             m_pManager.RemoveShape( erdTable );
             std::map<std::wstring, std::vector<DatabaseTable *> > tables = db->GetTableVector().m_tables;
@@ -554,6 +576,10 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
             std::vector<std::wstring> names = doc->GetTableNameVector();
             names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
         }
+		else if( !isTable && !db->ApplyForeignKey( command, constraint->GetName().ToStdWstring(), *( const_cast<DatabaseTable *>( constraint->GetFKTable() ) ), localColumns, constraint->GetRefTable().ToStdWstring(), refColumn, constraint->GetOnDelete(), constraint->GetOnUpdate(), false, newFK, errors ) )
+		{
+// deleting the foreign key
+		}
         else
         {
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
