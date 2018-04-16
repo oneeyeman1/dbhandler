@@ -30,6 +30,7 @@ private:
     wxSFShapeBase *m_selectedShape;
     MODE m_mode;
     wxPoint startPoint;
+    ConstraintSign *m_oldSelectedSign;
 };
 
 #define wxID_TABLECLOSE            20
