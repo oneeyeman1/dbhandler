@@ -1238,10 +1238,10 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
             if( !result )
             {
                 std::wstring newSQL;
-                DropForeignKey( tableName, newFK, sql, newSQL );
+                DropForeignKey( tableName, newFK, sql, newSQL, refTableName );
+                sql = newSQL;
                 if( newFK.size() > 0 )
                 {
-                    sql = newSQL;
                     std::wstring fk;
                     if( !keyName.empty() )
                         fk = L", CONSTRAINT " + keyName + L" FOREIGN KEY(";
@@ -1412,12 +1412,15 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
     return result;
 }
 
-int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL)
+int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName)
 {
     std::wstring s, sUpper, keyTemp, constraintTemp, refTableOrig;
     std::map<int, std::vector<FKField *> > &fkFields = /*const_cast<DatabaseTable &>*/( tableName ).GetForeignKeyVector();
     bool isFK = false, isConstraint = false;
-    refTableOrig = newFK.at( 0 )->GetReferencedTableName();
+    if( newFK.size() > 0 )
+        refTableOrig = newFK.at( 0 )->GetReferencedTableName();
+	else
+        refTableOrig = refTableName;
     std::wistringstream str( sql );
     bool isKeyAdded = true;
     while( std::getline( str, s, L',' ) )
@@ -1462,7 +1465,11 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
                 tName = tName.substr( 0, tName.find( L'(' ) );
                 tName = tName.substr( tName.find_first_not_of( L' ' ) );
                 tName = tName.substr( 0, tName.find_last_not_of( L' ' ) + 1 );
-                std::wstring refTableName = newFK[0]->GetReferencedTableName();
+                std::wstring refTable;
+                if( newFK.size() > 0 )
+                    refTable = newFK[0]->GetReferencedTableName();
+                else
+                    refTable = refTableName;
                 if( tName == refTableName )
                 {
                     isKeyAdded = false;
