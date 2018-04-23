@@ -1183,6 +1183,8 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
     query += L"\' AND type = 'table'";
     int result = 0;
     int res;
+    FK_ONUPDATE updProp = NO_ACTION_UPDATE;
+    FK_ONDELETE delProp = NO_ACTION_DELETE;
     // set writable schema
     if( !logOnly )
     {
@@ -1236,88 +1238,89 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
             if( !result )
             {
                 std::wstring newSQL;
-                DropForeignKey( tableName, newFK, sql, newSQL );
+                DropForeignKey( tableName, newFK, sql, newSQL, refTableName );
                 sql = newSQL;
-                std::wstring fk;
-                if( !keyName.empty() )
-                    fk = L", CONSTRAINT " + keyName + L" FOREIGN KEY(";
-				else
-                    fk = L", FOREIGN KEY(";
-                for( std::vector<std::wstring>::const_iterator it = foreignKeyFields.begin(); it < foreignKeyFields.end(); it++ )
+                if( newFK.size() > 0 )
                 {
-                    fk += (*it);
-                    if( it == foreignKeyFields.end() - 1 )
-                        fk += L")";
+                    std::wstring fk;
+                    if( !keyName.empty() )
+                        fk = L", CONSTRAINT " + keyName + L" FOREIGN KEY(";
                     else
-                        fk += L", ";
-                }
-                fk += L" REFERENCES " + refTableName + L"(";
-                FK_ONUPDATE updProp = NO_ACTION_UPDATE;
-                FK_ONDELETE delProp = NO_ACTION_DELETE;
-                for( std::vector<std::wstring>::const_iterator it = refKeyFields.begin(); it < refKeyFields.end(); it++ )
-                {
-                    fk += (*it);
-                    if( it == refKeyFields.end() - 1 )
-                        fk += L")";
-                    else
-                        fk += L", ";
-                }
-                if( deleteProp > 0 )
-                {
-                    fk += L" ON DELETE ";
-                    switch( deleteProp )
+                        fk = L", FOREIGN KEY(";
+                    for( std::vector<std::wstring>::const_iterator it = foreignKeyFields.begin(); it < foreignKeyFields.end(); it++ )
                     {
-                    case 0:
-                        fk += L"NO ACTION";
-                        delProp = NO_ACTION_DELETE;
-                        break;
-                    case 1:
-                        fk += L"RESTRICT";
-                        delProp = RESTRICT_DELETE;
-                        break;
-                    case 2:
-                        fk += L"CASCADE";
-                        delProp = CASCADE_DELETE;
-                        break;
-                    case 3:
-                        fk += L"SET NULL";
-                        delProp = SET_NULL_DELETE;
-                        break;
-                    case 4:
-                        fk += L"SET DEFAULT";
-                        delProp = SET_DEFAULT_DELETE;
-                        break;
+                        fk += (*it);
+                        if( it == foreignKeyFields.end() - 1 )
+                            fk += L")";
+                        else
+                            fk += L", ";
                     }
-                }
-                if( updateProp > 0 )
-                {
-                    fk += L" ON UPDATE ";
-                    switch( updateProp )
+                    fk += L" REFERENCES " + refTableName + L"(";
+                    for( std::vector<std::wstring>::const_iterator it = refKeyFields.begin(); it < refKeyFields.end(); it++ )
                     {
-                    case 0:
-                        fk += L"NO ACTION";
-                        updProp = NO_ACTION_UPDATE;
-                        break;
-                    case 1:
-                        fk += L"RESTRICT";
-                        updProp = RESTRICT_UPDATE;
-                        break;
-                    case 2:
-                        fk += L"CASCADE";
-                        updProp = CASCADE_UPDATE;
-                        break;
-                    case 3:
-                        fk += L"SET NULL";
-                        updProp = SET_NULL_UPDATE;
-                        break;
-                    case 4:
-                        fk += L"SET DEFAULT";
-                        updProp = SET_DEFAULT_UPDATE;
-                        break;
+                        fk += (*it);
+                        if( it == refKeyFields.end() - 1 )
+                            fk += L")";
+                        else
+                            fk += L", ";
                     }
+                    if( deleteProp > 0 )
+                    {
+                        fk += L" ON DELETE ";
+                        switch( deleteProp )
+                        {
+                            case 0:
+                                fk += L"NO ACTION";
+                                delProp = NO_ACTION_DELETE;
+                                break;
+                            case 1:
+                                fk += L"RESTRICT";
+                                delProp = RESTRICT_DELETE;
+                                break;
+                            case 2:
+                                fk += L"CASCADE";
+                                delProp = CASCADE_DELETE;
+                                break;
+                            case 3:
+                                fk += L"SET NULL";
+                                delProp = SET_NULL_DELETE;
+                                break;
+                            case 4:
+                                fk += L"SET DEFAULT";
+                                delProp = SET_DEFAULT_DELETE;
+                                break;
+                        }
+                    }
+                    if( updateProp > 0 )
+                    {
+                        fk += L" ON UPDATE ";
+                        switch( updateProp )
+                        {
+                            case 0:
+                                fk += L"NO ACTION";
+                                updProp = NO_ACTION_UPDATE;
+                                break;
+                            case 1:
+                                fk += L"RESTRICT";
+                                updProp = RESTRICT_UPDATE;
+                                break;
+                            case 2:
+                                fk += L"CASCADE";
+                                updProp = CASCADE_UPDATE;
+                                break;
+                            case 3:
+                                fk += L"SET NULL";
+                                updProp = SET_NULL_UPDATE;
+                                break;
+                            case 4:
+                                fk += L"SET DEFAULT";
+                                updProp = SET_DEFAULT_UPDATE;
+                                break;
+                        }
+                    }
+                    fk += L")";
+                    sql.replace( sql.length() - 1, 1, fk );
                 }
-                fk += L")";
-                sql.replace( sql.length() - 1, 1, fk );
                 std::wstring fkQuery = L"UPDATE sqlite_master SET sql = ? WHERE type = \'table\' AND name = ?;";
                 if( !logOnly )
                 {
@@ -1409,94 +1412,98 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
     return result;
 }
 
-int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL)
+int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName)
 {
     std::wstring s, sUpper, keyTemp, constraintTemp, refTableOrig;
     std::map<int, std::vector<FKField *> > &fkFields = /*const_cast<DatabaseTable &>*/( tableName ).GetForeignKeyVector();
     bool isFK = false, isConstraint = false;
     if( newFK.size() > 0 )
-    {
         refTableOrig = newFK.at( 0 )->GetReferencedTableName();
-        std::wistringstream str( sql );
-        bool isKeyAdded = true;
-        while( std::getline( str, s, L',' ) )
+	else
+        refTableOrig = refTableName;
+    std::wistringstream str( sql );
+    bool isKeyAdded = true;
+    while( std::getline( str, s, L',' ) )
+    {
+        sUpper = s;
+        std::transform( s.begin(), s.end(), s.begin(), toupper );
+        std::wstring temp = s.substr( s.find_first_not_of( L' ' ) );
+        size_t constraint = temp.find( L"CONSTRAINT" );
+        size_t fkPos = temp.find( L"FOREIGN KEY" );
+        if( constraint == std::wstring::npos && fkPos == std::wstring::npos )
+            newSQL += sUpper + L',';
+        else
         {
-            sUpper = s;
-            std::transform( s.begin(), s.end(), s.begin(), toupper );
-            std::wstring temp = s.substr( s.find_first_not_of( L' ' ) );
-            size_t constraint = temp.find( L"CONSTRAINT" );
-            size_t fkPos = temp.find( L"FOREIGN KEY" );
-            if( constraint == std::wstring::npos && fkPos == std::wstring::npos )
-                newSQL += sUpper + L',';
-            else
+            if( ( constraint != 0 && constraint != std::wstring::npos ) || ( constraint == 0 && fkPos == std::wstring::npos ) )
             {
-                if( ( constraint != 0 && constraint != std::wstring::npos ) || ( constraint == 0 && fkPos == std::wstring::npos ) )
+                newSQL += sUpper + L',';
+                continue;
+            }
+            if( ( constraint == 0 && fkPos != std::wstring::npos ) )
+            {
+                keyTemp += sUpper + L',';
+                s = s.substr( fkPos );
+                isConstraint = true;
+            }
+            size_t fkPos = temp.find( L"FOREIGN KEY" );
+            if( fkPos == 0 )
+            {
+                std::wstring ref = L"REFERENCES";
+                size_t refTablePos;
+                keyTemp += sUpper;
+                std::wstring temp1 = temp;
+                while( ( refTablePos = temp1.find( ref ) ) == std::wstring::npos )
                 {
-                    newSQL += sUpper + L',';
-                    continue;
-                }
-                if( ( constraint == 0 && fkPos != std::wstring::npos ) )
-                {
+                    isFK = true;
+                    std::getline( str, s, L',' );
+                    sUpper = s;
+                    std::transform( s.begin(), s.end(), s.begin(), toupper );
                     keyTemp += sUpper + L',';
-                    s = s.substr( fkPos );
-                    isConstraint = true;
+                    temp1 = s.substr( s.find_first_not_of( L' ' ) );
                 }
-                size_t fkPos = temp.find( L"FOREIGN KEY" );
-                if( fkPos == 0 )
+                std::wstring tName = sUpper.substr( refTablePos + ref.length()  + 1 );
+                tName = tName.substr( 0, tName.find( L'(' ) );
+                tName = tName.substr( tName.find_first_not_of( L' ' ) );
+                tName = tName.substr( 0, tName.find_last_not_of( L' ' ) + 1 );
+                std::wstring refTable;
+                if( newFK.size() > 0 )
+                    refTable = newFK[0]->GetReferencedTableName();
+                else
+                    refTable = refTableName;
+                if( tName == refTableName )
                 {
-                    std::wstring ref = L"REFERENCES";
-                    size_t refTablePos;
-                    keyTemp += sUpper;
-                    std::wstring temp1 = temp;
+                    isKeyAdded = false;
+                }
+                if( isFK )
+                {
+                    ref = L")";
+                    temp1 = sUpper.substr( sUpper.find( tName ) );
                     while( ( refTablePos = temp1.find( ref ) ) == std::wstring::npos )
                     {
-                        isFK = true;
                         std::getline( str, s, L',' );
                         sUpper = s;
                         std::transform( s.begin(), s.end(), s.begin(), toupper );
                         keyTemp += sUpper + L',';
                         temp1 = s.substr( s.find_first_not_of( L' ' ) );
                     }
-                    std::wstring tName = sUpper.substr( refTablePos + ref.length()  + 1 );
-                    tName = tName.substr( 0, tName.find( L'(' ) );
-                    tName = tName.substr( tName.find_first_not_of( L' ' ) );
-                    tName = tName.substr( 0, tName.find_last_not_of( L' ' ) + 1 );
-                    std::wstring refTableName = newFK[0]->GetReferencedTableName();
-                    if( tName == refTableName )
-                    {
-                        isKeyAdded = false;
-                    }
-                    if( isFK )
-                    {
-                        ref = L")";
-                        temp1 = sUpper.substr( sUpper.find( tName ) );
-                        while( ( refTablePos = temp1.find( ref ) ) == std::wstring::npos )
-                        {
-                            std::getline( str, s, L',' );
-                            sUpper = s;
-                            std::transform( s.begin(), s.end(), s.begin(), toupper );
-                            keyTemp += sUpper + L',';
-                            temp1 = s.substr( s.find_first_not_of( L' ' ) );
-                        }
-                    }
-                    isFK = false;
-                    if( keyTemp.at( keyTemp.length() - 1 ) == L')' && keyTemp.at( keyTemp.length() - 2 ) != L')' && const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector().size() > 1 )
-                        keyTemp += L',';
-                    if( keyTemp.at( keyTemp.length() - 2 ) == L')' )
-                    {
-                        if( isKeyAdded )
-                        {
-                            newSQL += keyTemp;
-                        }
-                        keyTemp = L"";
-                    }
-                    isKeyAdded = true;
                 }
+                isFK = false;
+                if( keyTemp.at( keyTemp.length() - 1 ) == L')' && keyTemp.at( keyTemp.length() - 2 ) != L')' && const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector().size() > 1 )
+                    keyTemp += L',';
+                if( keyTemp.at( keyTemp.length() - 2 ) == L')' )
+                {
+                    if( isKeyAdded )
+                    {
+                        newSQL += keyTemp;
+                    }
+                    keyTemp = L"";
+                }
+                isKeyAdded = true;
             }
         }
-        if( newSQL.back() == L',' )
-            newSQL = newSQL.substr( 0, newSQL.length() - 1 ) + L")";
     }
+    if( newSQL.back() == L',' )
+        newSQL = newSQL.substr( 0, newSQL.length() - 1 ) + L")";
     bool found = false;
     for( std::map<int, std::vector<FKField *> >::iterator it = fkFields.begin(); it != fkFields.end() && !found; it++ )
     {
@@ -1509,11 +1516,11 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
                 (*it1) = NULL;
                 it1 = it->second.erase( it1 );
             }
-			else
+            else
                 ++it1;
         }
         if( found )
-		{
+        {
             fkFields.erase( it );
             break;
         }
@@ -1566,4 +1573,3 @@ int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg)
     pimpl->m_versionRevision = 2;
     return 0;
 }
-

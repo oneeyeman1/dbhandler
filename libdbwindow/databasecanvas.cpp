@@ -579,7 +579,9 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
         }
 		else if( !isTable && !db->ApplyForeignKey( command, constraint->GetName().ToStdWstring(), *( const_cast<DatabaseTable *>( constraint->GetFKTable() ) ), localColumns, constraint->GetRefTable().ToStdWstring(), refColumn, constraint->GetOnDelete(), constraint->GetOnUpdate(), false, newFK, errors ) )
 		{
-// deleting the foreign key
+            sign->DeleteConstraint();
+            m_pManager.RemoveShape( sign->GetParentShape() );
+            Refresh();
 		}
         else
         {
