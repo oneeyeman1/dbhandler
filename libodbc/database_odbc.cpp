@@ -1536,7 +1536,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     }
                                                                                      //id,         name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
                                     foreign_keys[keySequence].push_back( new FKField( keySequence, fkName, origSchema,   origTable,   origCol,     refSchema,  refTable,  refCol,    update_constraint, delete_constraint ) );
-                                    fk_fieldNames.push_back( primaryKey );
+                                    fk_fieldNames.push_back( szPkCol );
                                     primaryKey = L"";
                                     fkSchema = L"";
                                     fkTable = L"";
@@ -1544,6 +1544,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     memset( szFkName, '\0', fkNameLength );
                                     memset( szFkTable, '\0', SQL_MAX_TABLE_NAME_LEN + 1 );
                                     memset( szPkTable, '\0', SQL_MAX_TABLE_NAME_LEN + 1 );
+                                    origSchema = L"";
+                                    origTable = L"";
+                                    origCol = L"";
+                                    refSchema = L"";
+                                    refTable = L"";
+                                    refCol = L"";
                                 }
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                                 {
