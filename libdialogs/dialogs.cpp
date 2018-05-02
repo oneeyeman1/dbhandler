@@ -208,7 +208,7 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
     wxTheApp->SetTopWindow( parent );
 #endif
     wxString refTblName = wxString( refTableName );
-    ForeignKeyDialog dlg( parent, wxID_ANY, _( "" ), table, db, foreignKeyFields, refTblName, isView );
+    ForeignKeyDialog dlg( parent, wxID_ANY, _( "" ), table, db, keyName, foreignKeyFields, refTblName, isView );
     dlg.Center();
     res = dlg.ShowModal();
     if( res != wxID_CANCEL || dlg.IsForeignKeyEdited() )

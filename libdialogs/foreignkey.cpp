@@ -30,7 +30,7 @@
 
 
 
-ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, std::vector<std::wstring> &foreignKeyFields, wxString &refTableName, bool isView, const wxPoint& pos, const wxSize& size, long style):
+ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, wxString &keyName, std::vector<std::wstring> &foreignKeyFields, wxString &refTableName, bool isView, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     m_db = db;
@@ -90,6 +90,7 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_primaryKeyColumnsFields = new FieldWindow( this, 0, pt2, width2 );
     if( m_isView )
     {
+        m_foreignKeyName->SetValue( keyName );
         m_primaryKeyTable->SetValue( m_refTableName );
         DoChangePrimaryKeyTableName();
         for( std::vector<std::wstring>::iterator it = foreignKeyFields.begin(); it < foreignKeyFields.end(); it++ )

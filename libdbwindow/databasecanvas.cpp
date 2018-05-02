@@ -123,8 +123,8 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
         std::map<int, std::vector<FKField *> > foreignKeys = const_cast<DatabaseTable &>( (*it2)->GetTable() ).GetForeignKeyVector();
         for( std::map<int, std::vector<FKField *> >::iterator it3 = foreignKeys.begin(); it3 != foreignKeys.end(); it3++ )
         {
-            if( ((DrawingView *) m_view)->GetViewType() == DatabaseView )
-                pConstr = new DatabaseConstraint( DatabaseView );
+//            if( ((DrawingView *) m_view)->GetViewType() == DatabaseView )
+//                pConstr = new DatabaseConstraint( (*it3).second );
             for( std::vector<FKField *>::iterator it4 = (*it3).second.begin(); it4 < (*it3).second.end(); it4++ )
             {
                 wxString referencedTableName = (*it4)->GetReferencedTableName();
@@ -149,7 +149,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                     }
                     if( ((DrawingView *) m_view)->GetViewType() == DatabaseView )
                     {
-//                        pConstr = new DatabaseConstraint( DatabaseView );
+                        pConstr = new DatabaseConstraint( (*it4)->GetFKName() );
                         pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
                         pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
                         pConstr->SetRefTable( referencedTableName );
@@ -655,7 +655,7 @@ void DatabaseCanvas::CreateFKConstraint(const DatabaseTable *fkTable, const std:
             }*/
             if( ((DrawingView *) m_view)->GetViewType() == DatabaseView )
             {
-                pConstr = new DatabaseConstraint( DatabaseView );
+                pConstr = new DatabaseConstraint( foreignKeyField.at( 0 )->GetFKName() );
 /*            pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
             pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
             pConstr->SetRefTable( referencedTableName );
