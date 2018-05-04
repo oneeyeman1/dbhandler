@@ -43,7 +43,7 @@ ErdForeignKey::ErdForeignKey(Constraint* pConstraint, ViewType type):ErdLineShap
     {
         pLabel->GetFont().SetPointSize( 8 );
         pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
-        pLabel->SetText( pConstraint->GetName() );
+        pLabel->SetText( "" );
         pLabel->SetVAlign( valignMIDDLE );
         pLabel->SetHAlign( halignCENTER );
         pLabel->SetFill( *wxTRANSPARENT_BRUSH );
