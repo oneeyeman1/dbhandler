@@ -35,10 +35,11 @@
 
 XS_IMPLEMENT_CLONABLE_CLASS(QueryConstraint,xsSerializable);
 
-DatabaseConstraint::DatabaseConstraint(ViewType type)
+DatabaseConstraint::DatabaseConstraint(std::wstring fkName)
 {
     m_viewType = DatabaseView;
     SetType( foreignKey );
+    SetName( fkName );
     SetOnDelete( restrict );
     SetOnUpdate( restrict );
 }

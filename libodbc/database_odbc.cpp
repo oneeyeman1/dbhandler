@@ -886,10 +886,10 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0, stmt_ind = 0;
     SQLHDBC hdbc_col = 0, hdbc_pk = 0, hdbc_colattr = 0, hdbc_fk = 0, hdbc_ind = 0;
     SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1], userName[1024];
-    SQLWCHAR szFkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szPkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkSchema[SQL_MAX_COLUMN_NAME_LEN + 1], szFkTableSchema[SQL_MAX_SCHEMA_NAME_LEN + 1], szFkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szFkName[SQL_MAX_COLUMN_NAME_LEN + 1], szFkCatalog[SQL_MAX_CATALOG_NAME_LEN + 1];
+    SQLWCHAR szFkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szPkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkSchema[SQL_MAX_COLUMN_NAME_LEN + 1], szFkTableSchema[SQL_MAX_SCHEMA_NAME_LEN + 1], szFkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szFkName[256], szFkCatalog[SQL_MAX_CATALOG_NAME_LEN + 1];
     SQLSMALLINT updateRule, deleteRule, keySequence;
     SQLWCHAR **columnNames = NULL;
-    SQLLEN cbPkCol, cbFkTable, cbFkCol, cbFkName, cbFkSchemaName, cbUpdateRule, cbDeleteRule, cbKeySequence, cbFkCatalog;
+    SQLLEN cbPkCol, cbFkTable, cbFkCol, cbFkName, cbFkSchemaName, cbUpdateRule, cbDeleteRule, cbKeySequence, cbFkCatalog, fkNameLength = 256;
     SQLLEN cbColumnName, cbDataType, cbTypeName, cbColumnSize, cbBufferLength, cbDecimalDigits, cbNumPrecRadix, pkLength;
     SQLLEN cbNullable, cbRemarks, cbColumnDefault, cbSQLDataType, cbDatetimeSubtypeCode, cbCharOctetLength, cbOrdinalPosition, cbIsNullable;
     SQLSMALLINT DataType, DecimalDigits, NumPrecRadix, Nullable, SQLDataType, DatetimeSubtypeCode, numCols = 0;
@@ -1475,7 +1475,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     result = 1;
                                     break;
                                 }
-                                ret = SQLBindCol( stmt_fk, 12, SQL_C_WCHAR, szFkName, SQL_MAX_COLUMN_NAME_LEN + 1, &cbFkName );
+                                ret = SQLBindCol( stmt_fk, 12, SQL_C_WCHAR, szFkName, fkNameLength, &cbFkName );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt_fk );
@@ -1489,11 +1489,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     result = 1;
                                     break;
                                 }
+                                memset( szFkName, '\0', fkNameLength );
                                 for( ret = SQLFetch( stmt_fk ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_fk ) )
                                 {
                                     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
                                     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
-                                    if( szFkName[0] = '\0' )
+                                    if( szFkName[0] == '\0' )
                                         fkName = L"";
 									else
                                         str_to_uc_cpy( fkName, szFkName );
@@ -1535,11 +1536,20 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     }
                                                                                      //id,         name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
                                     foreign_keys[keySequence].push_back( new FKField( keySequence, fkName, origSchema,   origTable,   origCol,     refSchema,  refTable,  refCol,    update_constraint, delete_constraint ) );
-                                    fk_fieldNames.push_back( primaryKey );
+                                    fk_fieldNames.push_back( szPkCol );
                                     primaryKey = L"";
                                     fkSchema = L"";
                                     fkTable = L"";
                                     fkName = L"";
+                                    memset( szFkName, '\0', fkNameLength );
+                                    memset( szFkTable, '\0', SQL_MAX_TABLE_NAME_LEN + 1 );
+                                    memset( szPkTable, '\0', SQL_MAX_TABLE_NAME_LEN + 1 );
+                                    origSchema = L"";
+                                    origTable = L"";
+                                    origCol = L"";
+                                    refSchema = L"";
+                                    refTable = L"";
+                                    refCol = L"";
                                 }
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                                 {
@@ -3269,51 +3279,55 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
         updProp = SET_DEFAULT_UPDATE;
         break;
     }
-    if( !logOnly )
+    result = DropForeignKey( command, keyName, tableName, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, errorMsg );
+    if( !result )
     {
-        SQLRETURN ret;
-        SQLWCHAR *qry = NULL;
-        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        if( !logOnly && !newFK.empty() )
         {
-            GetErrorMessage( errorMsg, 2, m_hstmt );
-            result = 1;
-        }
-        else
-        {
-            qry = new SQLWCHAR[query.length() + 2];
-            memset( qry, '\0', query.size() + 2 );
-            uc_to_str_cpy( qry, query );
-            ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 1, m_hstmt );
-                result = 1;
-            }
-            else
-            {
-                std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
-                int size = fKeys.size();
-                size++;
-                for( int i = 0; i < foreignKeyFields.size(); i++ )
-                    fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
-                newFK = fKeys[size];
-            }
-            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+            SQLRETURN ret;
+            SQLWCHAR *qry = NULL;
+            ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 2, m_hstmt );
                 result = 1;
             }
             else
-                m_hstmt = 0;
+            {
+                qry = new SQLWCHAR[query.length() + 2];
+                memset( qry, '\0', query.size() + 2 );
+                uc_to_str_cpy( qry, query );
+                ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                else
+                {
+                    std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+                    int size = fKeys.size();
+                    size++;
+                    for( int i = 0; i < foreignKeyFields.size(); i++ )
+                        fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
+                    newFK = fKeys[size];
+                }
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 2, m_hstmt );
+                    result = 1;
+                }
+                else
+                    m_hstmt = 0;
+            }
+            delete qry;
+            qry = NULL;
         }
-        delete qry;
-        qry = NULL;
-    }
-	else
-    {
-        command = query;
+	    else if( logOnly )
+        {
+            command = query;
+        }
     }
     return result;
 }
@@ -3935,5 +3949,94 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
     qry3 = NULL;
     delete qry4;
     qry4 = NULL;
+    return result;
+}
+
+/*    query += L"FOREIGN KEY(";
+    for( std::vector<std::wstring>::const_iterator it1 = foreignKeyFields.begin(); it1 < foreignKeyFields.end(); it1++ )
+    {
+        query += (*it1);
+        if( it1 == foreignKeyFields.end() - 1 )
+            query += L") ";
+        else
+            query += L",";
+    }
+    query += L"REFERENCES " + refTableName + L"(";
+    for( std::vector<std::wstring>::const_iterator it1 = refKeyFields.begin(); it1 < refKeyFields.end(); it1++ )
+    {
+        query += (*it1);
+        if( it1 == refKeyFields.end() - 1 )
+            query += L") ";
+        else
+            query += L",";
+    }
+    query += L"ON DELETE ";
+    FK_ONUPDATE updProp = NO_ACTION_UPDATE;
+    FK_ONDELETE delProp = NO_ACTION_DELETE;*/
+int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query;
+    if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
+    {
+        query = L"ALTER TABLE ";
+        query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
+        query += L"DROP CONSTRAINT " + keyName + L" ";
+    }
+    if( !logOnly )
+    {
+        SQLRETURN ret;
+        SQLWCHAR *qry = NULL;
+        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2, m_hstmt );
+            result = 1;
+        }
+        else
+        {
+            qry = new SQLWCHAR[query.length() + 2];
+            memset( qry, '\0', query.size() + 2 );
+            uc_to_str_cpy( qry, query );
+            ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+            else
+            {
+                bool found = false;
+                std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+                for( std::map<int, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
+                    for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found;  )
+                    {
+                        if( (*it1)->GetFKName() == keyName )
+                        {
+                            found = true;
+                            delete (*it1);
+                            (*it1) = NULL;
+                            it1 = (*it).second.erase( it1 );
+                        }
+						else
+                            ++it1;
+                    }
+            }
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 2, m_hstmt );
+                result = 1;
+            }
+            else
+                m_hstmt = 0;
+        }
+        delete qry;
+        qry = NULL;
+    }
+	else
+    {
+        command = query;
+    }
     return result;
 }

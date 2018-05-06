@@ -163,7 +163,7 @@ protected:
 class DatabaseConstraint : public Constraint
 {
 public:
-    DatabaseConstraint(ViewType type);
+    DatabaseConstraint(std::wstring fkName);
 	virtual ~DatabaseConstraint();
     /*! \brief Set local column name */
     virtual void SetLocalColumn(const wxString &localColumn)
