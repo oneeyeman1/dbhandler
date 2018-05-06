@@ -1536,7 +1536,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     }
                                                                                      //id,         name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
                                     foreign_keys[keySequence].push_back( new FKField( keySequence, fkName, origSchema,   origTable,   origCol,     refSchema,  refTable,  refCol,    update_constraint, delete_constraint ) );
-                                    fk_fieldNames.push_back( szPkCol );
+                                    fk_fieldNames.push_back( origCol );
                                     primaryKey = L"";
                                     fkSchema = L"";
                                     fkTable = L"";
@@ -3977,12 +3977,9 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
 {
     int result = 0;
     std::wstring query;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
-    {
-        query = L"ALTER TABLE ";
-        query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
-        query += L"DROP CONSTRAINT " + keyName + L" ";
-    }
+    query = L"ALTER TABLE ";
+    query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
+    query += L"DROP CONSTRAINT " + keyName + L" ";
     if( !logOnly )
     {
         SQLRETURN ret;
