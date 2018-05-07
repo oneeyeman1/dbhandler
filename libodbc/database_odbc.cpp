@@ -3977,12 +3977,9 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
 {
     int result = 0;
     std::wstring query;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
-    {
-        query = L"ALTER TABLE ";
-        query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
-        query += L"DROP CONSTRAINT " + keyName + L" ";
-    }
+    query = L"ALTER TABLE ";
+    query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
+    query += L"DROP CONSTRAINT " + keyName + L" ";
     if( !logOnly )
     {
         SQLRETURN ret;
