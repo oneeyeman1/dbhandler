@@ -3552,7 +3552,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT cast(su.name AS nvarchar(128)) FROM sysobjects so, sysusers su, sys.tables t, sys.schemas s WHERE so.uid = su.uid AND t.object_id = so.id AND t.schema_id = s.schema_id AND s.name = ? AND so.name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
-        query = L"SELECT u.usename FROM pg_class c, pg_user u WHERE u.usesysid = c.relowner AND relname = ?";
+        query = L"SELECT u.usename FROM pg_class c, pg_user u, pg_namespace n WHERE n.oid = c.relnamespace AND u.usesysid = c.relowner AND n.nspname = ? AND relname = ?";
     if( pimpl->m_subtype == L"Sybase" )
         query = L"SELECT su.name FROM sysobject so, sysusers su WHERE su.uid = so.uid AND so.name = ?";
     if( pimpl->m_subtype == L"MySQL" )
@@ -3613,7 +3613,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                                 if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                                 {
                                     owner = new SQLWCHAR[columnSizePtr + 1];
-                                    retcode = SQLBindCol( stmt, 1, dataTypePtr, &owner, columnSizePtr, &cbTableOwner );
+                                    retcode = SQLBindCol( stmt, 1, SQL_C_WCHAR, &owner, columnSizePtr, &cbTableOwner );
                                     if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                                     {
                                         retcode = SQLFetch( stmt );
