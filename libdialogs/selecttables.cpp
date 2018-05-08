@@ -68,7 +68,6 @@ void SelectTables::set_properties()
     // end wxGlade
 }
 
-
 void SelectTables::do_layout()
 {
     // begin wxGlade: SelectTables::do_layout
@@ -123,7 +122,6 @@ END_EVENT_TABLE();
 void SelectTables::OnSelectingLBItem(wxCommandEvent &event)
 {
     m_open->Enable( true );
-    event.Skip();
 }
 
 void SelectTables::OnOpenTables(wxCommandEvent &event)
@@ -191,9 +189,6 @@ void SelectTables::FillTableList(bool sysTableIncluded)
             }
         }
     }
-    if( sizer_1 )
-        sizer_1->Fit( this );
-    Layout();
 }
 
 void SelectTables::OnShowSystemTables(wxCommandEvent &WXUNUSED(event))
