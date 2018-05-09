@@ -3613,7 +3613,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                                 if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                                 {
                                     owner = new SQLWCHAR[columnSizePtr + 1];
-                                    retcode = SQLBindCol( stmt, 1, SQL_C_WCHAR, &owner, columnSizePtr, &cbTableOwner );
+                                    retcode = SQLBindCol( stmt, 1, SQL_C_WCHAR, owner, columnSizePtr, &cbTableOwner );
                                     if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                                     {
                                         retcode = SQLFetch( stmt );
