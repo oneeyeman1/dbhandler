@@ -864,6 +864,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                 }
             }
         }
+        m_oldSelectedSign = NULL;
     }
     else if( sign && type == QueryView )
     {
