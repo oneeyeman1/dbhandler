@@ -862,6 +862,12 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                         Refresh();
                     }
                 }
+                for( std::vector<FKField *>::iterator it = newFK.begin(); it < newFK.end(); ++it )
+                {
+                    delete (*it);
+                    (*it) = NULL;
+                }
+                newFK.clear();
             }
         }
         m_oldSelectedSign = NULL;
