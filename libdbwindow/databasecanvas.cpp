@@ -723,8 +723,6 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
     {
         ShapeList list;
         GetShapesAtPosition( event.GetPosition(), list );
-        if( type == DatabaseView )
-            DeselectAll();
         bool found = false;
         for( ShapeList::iterator it = list.begin(); it != list.end() && !found; it++ )
         {
@@ -732,6 +730,8 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             if( sign )
                 found = true;
         }
+        if( type == DatabaseView && !sign )
+            DeselectAll();
         if( sign && type == DatabaseView )
         {
             bool logOnly;
