@@ -1439,7 +1439,7 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
                 newSQL += sUpper + L',';
                 continue;
             }
-            if( ( constraint == 0 && fkPos != std::wstring::npos ) )
+            if( ( constraint == 0 && fkPos != std::wstring::npos ) || ( constraint == std::wstring::npos && fkPos == 0 ) )
             {
                 keyTemp += sUpper + L',';
                 s = s.substr( fkPos );
