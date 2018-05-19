@@ -1428,40 +1428,29 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
         sUpper = s;
         std::transform( s.begin(), s.end(), s.begin(), toupper );
         std::wstring temp = s.substr( s.find_first_not_of( L' ' ) );
-        size_t constraint = temp.find( L"CONSTRAINT" );
         size_t fkPos = temp.find( L"FOREIGN KEY" );
-        if( constraint == std::wstring::npos && fkPos == std::wstring::npos )
+        if( fkPos == std::wstring::npos )
             newSQL += sUpper + L',';
         else
         {
-            if( ( constraint != 0 && constraint != std::wstring::npos ) || ( constraint == 0 && fkPos == std::wstring::npos ) )
+            keyTemp += sUpper + L',';
+            s = s.substr( fkPos );
+            isConstraint = true;
+            std::wstring ref = L"REFERENCES ";
+            size_t fkPos = keyTemp.find( ref );
+            while( fkPos == std::wstring::npos )
             {
-                newSQL += sUpper + L',';
-                continue;
-            }
-            if( ( constraint == 0 && fkPos != std::wstring::npos ) || ( constraint == std::wstring::npos && fkPos == 0 ) )
-            {
+                std::getline( str, s, L',' );
+                sUpper = s;
+                std::transform( s.begin(), s.end(), s.begin(), toupper );
                 keyTemp += sUpper + L',';
-                s = s.substr( fkPos );
-                isConstraint = true;
-            }
-            size_t fkPos = temp.find( L"FOREIGN KEY" );
-            if( fkPos == 0 )
-            {
-                std::wstring ref = L"REFERENCES";
-                size_t refTablePos;
+                isFK = true;
+                fkPos = keyTemp.find( ref );
+//                    temp1 = s.substr( s.find_first_not_of( L' ' ) );
                 keyTemp += sUpper;
+			}
                 std::wstring temp1 = temp;
-                while( ( refTablePos = temp1.find( ref ) ) == std::wstring::npos )
-                {
-                    isFK = true;
-                    std::getline( str, s, L',' );
-                    sUpper = s;
-                    std::transform( s.begin(), s.end(), s.begin(), toupper );
-                    keyTemp += sUpper + L',';
-                    temp1 = s.substr( s.find_first_not_of( L' ' ) );
-                }
-                std::wstring tName = sUpper.substr( refTablePos + ref.length()  + 1 );
+                std::wstring tName = sUpper.substr( fkPos + ref.length()  );
                 tName = tName.substr( 0, tName.find( L'(' ) );
                 tName = tName.substr( tName.find_first_not_of( L' ' ) );
                 tName = tName.substr( 0, tName.find_last_not_of( L' ' ) + 1 );
@@ -1478,7 +1467,7 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
                 {
                     ref = L")";
                     temp1 = sUpper.substr( sUpper.find( tName ) );
-                    while( ( refTablePos = temp1.find( ref ) ) == std::wstring::npos )
+                    while( ( fkPos = temp1.find( ref ) ) == std::wstring::npos )
                     {
                         std::getline( str, s, L',' );
                         sUpper = s;
@@ -1501,7 +1490,7 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
                 isKeyAdded = true;
             }
         }
-    }
+//    }
     if( newSQL.back() == L',' )
         newSQL = newSQL.substr( 0, newSQL.length() - 1 ) + L")";
     bool found = false;

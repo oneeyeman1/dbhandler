@@ -201,7 +201,7 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, i
     return res;
 }
 
-extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, DatabaseTable *table, std::vector<std::wstring> &foreignKeyFields, std::vector<std::wstring> &refKeyFields, std::wstring &refTableName, int &deleteProp, int &updateProp, Database *db, bool &logOnly, bool isView)
+extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, DatabaseTable *table, std::vector<std::wstring> &foreignKeyFields, std::vector<std::wstring> &refKeyFields, std::wstring &refTableName, int &deleteProp, int &updateProp, Database *db, bool &logOnly, bool isView, std::vector<FKField *> &newFK)
 {
     int res;
 #ifdef __WXMSW__
@@ -215,11 +215,15 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
     {
         logOnly = dlg.IsLogOnlyI();
         keyName = dlg.GetKeyNameCtrl()->GetValue();
-        foreignKeyFields = dlg.GetForeignKeyFields();
-        refKeyFields = dlg.GetPrimaryKeyFields();
-        refTableName = dlg.GetReferencedTable();
-        deleteProp = dlg.GetDeleteParam();
-        updateProp = dlg.GetUpdateParam();
+        if( !isView )
+        {
+            foreignKeyFields = dlg.GetForeignKeyFields();
+            refKeyFields = dlg.GetPrimaryKeyFields();
+            refTableName = dlg.GetReferencedTable();
+            deleteProp = dlg.GetDeleteParam();
+            updateProp = dlg.GetUpdateParam();
+		}
+        newFK = dlg.GetForeignKeyVector();
     }
     return res;
 }

@@ -205,12 +205,52 @@ bool ForeignKeyDialog::Verify()
 
 void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
 {
+    FK_ONUPDATE updateProp;
+    FK_ONDELETE deleteProp;
     if( Verify() )
     {
         if( event.GetEventObject() == m_logOnly )
             m_isLogOnly = true;
         m_delete = m_onDelete->GetSelection();
         m_update = m_onUpdate->GetSelection();
+        switch( m_delete )
+        {
+            case 0:
+                deleteProp = NO_ACTION_DELETE;
+                break;
+            case 1:
+                deleteProp = RESTRICT_DELETE;
+                break;
+            case 2:
+                deleteProp = CASCADE_DELETE;
+                break;
+            case 3:
+                deleteProp = SET_NULL_DELETE;
+                break;
+            case 4:
+                deleteProp = SET_DEFAULT_DELETE;
+                break;
+        }
+        switch( m_update )
+        {
+            case 0:
+                updateProp = NO_ACTION_UPDATE;
+                break;
+            case 1:
+                updateProp = RESTRICT_UPDATE;
+                break;
+            case 2:
+                updateProp = CASCADE_UPDATE;
+                break;
+            case 3:
+                updateProp = SET_NULL_UPDATE;
+                break;
+            case 4:
+                updateProp = SET_DEFAULT_UPDATE;
+                break;
+        }
+        for( int i = 0; i < m_foreignKey.size(); i++ )
+            m_fkfield.push_back( new FKField( i, m_foreignKeyName->GetValue().ToStdWstring(), m_table->GetSchemaName(), m_table->GetTableName(), m_foreignKey.at( i ), m_table->GetSchemaName(), m_primaryKeyTable->GetValue().ToStdWstring(), m_primaryKey.at( i ), updateProp, deleteProp ) );
         EndModal( event.GetId() );
     }
 }
