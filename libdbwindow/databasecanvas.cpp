@@ -858,7 +858,8 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                         m_pManager.RemoveShape( sign->GetParentShape() );
 //                        Refresh();
 //                        m_pManager.RemoveShape( sign );
-                        CreateFKConstraint( table, newFK );
+                        if( newFK.size() > 0 )
+                            CreateFKConstraint( table, newFK );
                         Refresh();
                     }
                 }

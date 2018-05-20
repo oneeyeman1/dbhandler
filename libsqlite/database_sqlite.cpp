@@ -1395,15 +1395,15 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                         std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
                         int size = fKeys.size();
                         size++;
-                        for( int i = 0; i < foreignKeyFields.size(); i++ )
-                            fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
-                        for( std::vector<FKField *>::iterator it = newFK.begin(); it != newFK.end(); )
+                        for( int i = 0; i < newFK.size(); i++ )
+                            fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), newFK.at( i )->GetOriginalFieldName(), L"", newFK.at( i )->GetReferencedTableName(), newFK.at( i )->GetReferencedFieldName(), newFK.at( i )->GetOnUpdateConstraint(), newFK.at( i )->GetOnDeleteConstraint() ) );
+/*                        for( std::vector<FKField *>::iterator it = newFK.begin(); it != newFK.end(); )
                         {
                             delete (*it);
                             (*it) = NULL;
                             it = newFK.erase( it );
                         }
-                        newFK = fKeys[size];
+                        newFK = fKeys[size];*/
                     }
                 }
             }
