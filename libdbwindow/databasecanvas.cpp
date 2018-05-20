@@ -812,14 +812,14 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                 updateProp = 4;
                 actionUpdate = SET_DEFAULT_UPDATE;
             }
-            int id = 0;
+/*            int id = 0;
             std::vector<std::wstring>::iterator it1 = refKeyFields.begin();
             for( std::vector<std::wstring>::iterator it = foreignKeyFields.begin(); it < foreignKeyFields.end(); it++ )
             {
                 newFK.push_back( new FKField( id, kName, L"", const_cast<DatabaseTable *>( constraint->GetFKTable() )->GetTableName(), (*it), L"", constraint->GetRefTable().ToStdWstring(),  (*it1), actionUpdate, actionDelete ) );
                 id++;
                 it1++;
-            }
+            }*/
             wxDynamicLibrary lib;
 #ifdef __WXMSW__
             lib.Load( "dialogs" );

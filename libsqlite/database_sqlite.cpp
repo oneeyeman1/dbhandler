@@ -1247,19 +1247,19 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                         fk = L", CONSTRAINT " + keyName + L" FOREIGN KEY(";
                     else
                         fk = L", FOREIGN KEY(";
-                    for( std::vector<std::wstring>::const_iterator it = foreignKeyFields.begin(); it < foreignKeyFields.end(); it++ )
+                    for( std::vector<FKField *>::const_iterator it = newFK.begin(); it < newFK.end(); ++it )
                     {
-                        fk += (*it);
-                        if( it == foreignKeyFields.end() - 1 )
+                        fk += (*it)->GetOriginalFieldName();
+                        if( it == newFK.end() - 1 )
                             fk += L")";
                         else
                             fk += L", ";
                     }
-                    fk += L" REFERENCES " + refTableName + L"(";
-                    for( std::vector<std::wstring>::const_iterator it = refKeyFields.begin(); it < refKeyFields.end(); it++ )
+                    fk += L" REFERENCES " + newFK.at ( 0 )->GetReferencedTableName() + L"(";
+                    for( std::vector<FKField *>::const_iterator it = newFK.begin(); it < newFK.end(); ++it )
                     {
-                        fk += (*it);
-                        if( it == refKeyFields.end() - 1 )
+                        fk += (*it)->GetReferencedFieldName();
+                        if( it == newFK.end() - 1 )
                             fk += L")";
                         else
                             fk += L", ";
@@ -1417,9 +1417,9 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
     std::wstring s, sUpper, keyTemp, constraintTemp, refTableOrig;
     std::map<int, std::vector<FKField *> > &fkFields = /*const_cast<DatabaseTable &>*/( tableName ).GetForeignKeyVector();
     bool isFK = false, isConstraint = false;
-    if( newFK.size() > 0 )
+/*    if( newFK.size() > 0 )
         refTableOrig = newFK.at( 0 )->GetReferencedTableName();
-	else
+	else*/
         refTableOrig = refTableName;
     std::wistringstream str( sql );
     bool isKeyAdded = true;
