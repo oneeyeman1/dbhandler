@@ -1171,7 +1171,7 @@ int SQLiteDatabase::GetFieldProperties(const char *tableName, const char *schema
     return result;
 }
 
-int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage, sql;
@@ -1238,8 +1238,11 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
             if( !result )
             {
                 std::wstring newSQL;
-                DropForeignKey( tableName, newFK, sql, newSQL, refTableName );
-                sql = newSQL;
+                if( !isNew )
+                {
+                    DropForeignKey( tableName, newFK, sql, newSQL, refTableName );
+                    sql = newSQL;
+                }
                 if( newFK.size() > 0 )
                 {
                     std::wstring fk;
@@ -1392,18 +1395,14 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                     }
                     else
                     {
-                        std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
-                        int size = fKeys.size();
-                        size++;
-                        for( int i = 0; i < newFK.size(); i++ )
-                            fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), newFK.at( i )->GetOriginalFieldName(), L"", newFK.at( i )->GetReferencedTableName(), newFK.at( i )->GetReferencedFieldName(), newFK.at( i )->GetOnUpdateConstraint(), newFK.at( i )->GetOnDeleteConstraint() ) );
-/*                        for( std::vector<FKField *>::iterator it = newFK.begin(); it != newFK.end(); )
+                        if( newFK.size() > 0 )
                         {
-                            delete (*it);
-                            (*it) = NULL;
-                            it = newFK.erase( it );
+                            std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+                            int size = fKeys.size();
+                            size++;
+                            for( int i = 0; i < newFK.size(); i++ )
+                                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), newFK.at( i )->GetOriginalFieldName(), L"", newFK.at( i )->GetReferencedTableName(), newFK.at( i )->GetReferencedFieldName(), newFK.at( i )->GetOnUpdateConstraint(), newFK.at( i )->GetOnDeleteConstraint() ) );
                         }
-                        newFK = fKeys[size];*/
                     }
                 }
             }

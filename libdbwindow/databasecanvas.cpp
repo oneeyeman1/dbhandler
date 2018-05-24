@@ -577,7 +577,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
             std::vector<std::wstring> names = doc->GetTableNameVector();
             names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
         }
-		else if( !isTable && !db->ApplyForeignKey( command, constraint->GetName().ToStdWstring(), *( const_cast<DatabaseTable *>( constraint->GetFKTable() ) ), localColumns, constraint->GetRefTable().ToStdWstring(), refColumn, constraint->GetOnDelete(), constraint->GetOnUpdate(), false, newFK, errors ) )
+		else if( !isTable && !db->ApplyForeignKey( command, constraint->GetName().ToStdWstring(), *( const_cast<DatabaseTable *>( constraint->GetFKTable() ) ), localColumns, constraint->GetRefTable().ToStdWstring(), refColumn, constraint->GetOnDelete(), constraint->GetOnUpdate(), false, newFK, false, errors ) )
 		{
             sign->DeleteConstraint();
             m_pManager.RemoveShape( sign->GetParentShape() );
@@ -837,7 +837,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                 if( result != wxID_CANCEL )
                 {
                     std::wstring command = L"";
-                    int res = ((DrawingDocument *) m_view->GetDocument())->GetDatabase()->ApplyForeignKey( command, kName, *table, foreignKeyFields, refTableName.ToStdWstring(), refKeyFields, deleteProp, updateProp, logOnly, newFK, errors );
+                    int res = ((DrawingDocument *) m_view->GetDocument())->GetDatabase()->ApplyForeignKey( command, kName, *table, foreignKeyFields, refTableName.ToStdWstring(), refKeyFields, deleteProp, updateProp, logOnly, newFK, false, errors );
                     if( res )
                     {
                         for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )

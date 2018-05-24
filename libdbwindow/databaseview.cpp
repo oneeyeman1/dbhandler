@@ -504,7 +504,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
         result = func( m_frame, kName, table, foreignKeyFields, refKeyFields, refTableName, deleteProp, updateProp, GetDocument()->GetDatabase(),  logOnly, false, newFK );
         if( result != wxID_CANCEL )
         {
-            int res = GetDocument()->GetDatabase()->ApplyForeignKey( command, kName.ToStdWstring(), *table, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, errors );
+            int res = GetDocument()->GetDatabase()->ApplyForeignKey( command, kName.ToStdWstring(), *table, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, true, errors );
             if( res )
             {
                 for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
@@ -524,6 +524,12 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
                 m_canvas->CreateFKConstraint( table, newFK );
             }
         }
+        for( std::vector<FKField *>::iterator it = newFK.begin(); it != newFK.end(); ++it )
+        {
+            delete (*it);
+            (*it) = NULL;
+        }
+        newFK.clear();
     }
     else
         wxMessageBox( _( "Error loading the DLL/so" ) );
