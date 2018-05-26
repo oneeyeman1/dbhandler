@@ -1399,7 +1399,6 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                         {
                             std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
                             int size = fKeys.size();
-                            size++;
                             for( int i = 0; i < newFK.size(); i++ )
                                 fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), newFK.at( i )->GetOriginalFieldName(), L"", newFK.at( i )->GetReferencedTableName(), newFK.at( i )->GetReferencedFieldName(), newFK.at( i )->GetOnUpdateConstraint(), newFK.at( i )->GetOnDeleteConstraint() ) );
                         }

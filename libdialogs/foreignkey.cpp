@@ -112,6 +112,11 @@ void ForeignKeyDialog::set_properties()
 {
     // begin wxGlade: ForeignKeyDialog::set_properties
     SetTitle( _( "Foreign Key Definition - " ) + m_table->GetTableName() );
+    if( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Microsoft SQL Server" )
+    {
+        m_onUpdate->Enable( 1, false );
+        m_onDelete->Enable( 1, false );
+    }
     m_OK->SetDefault();
     m_onDelete->SetSelection( 0 );
     for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end(); it++ )
