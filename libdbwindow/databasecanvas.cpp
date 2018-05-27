@@ -41,7 +41,7 @@
 #include "ErdForeignKey.h"
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
-typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool);
+typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &);
 /*
 BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
     EVT_MENU(wxID_TABLEDROPTABLE, DatabaseCanvas::OnDropTable)
@@ -577,7 +577,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
             std::vector<std::wstring> names = doc->GetTableNameVector();
             names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
         }
-		else if( !isTable && !db->ApplyForeignKey( command, constraint->GetName().ToStdWstring(), *( const_cast<DatabaseTable *>( constraint->GetFKTable() ) ), localColumns, constraint->GetRefTable().ToStdWstring(), refColumn, constraint->GetOnDelete(), constraint->GetOnUpdate(), false, newFK, errors ) )
+		else if( !isTable && !db->ApplyForeignKey( command, constraint->GetName().ToStdWstring(), *( const_cast<DatabaseTable *>( constraint->GetFKTable() ) ), localColumns, constraint->GetRefTable().ToStdWstring(), refColumn, constraint->GetOnDelete(), constraint->GetOnUpdate(), false, newFK, false, errors ) )
 		{
             sign->DeleteConstraint();
             m_pManager.RemoveShape( sign->GetParentShape() );
@@ -812,14 +812,14 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                 updateProp = 4;
                 actionUpdate = SET_DEFAULT_UPDATE;
             }
-            int id = 0;
+/*            int id = 0;
             std::vector<std::wstring>::iterator it1 = refKeyFields.begin();
             for( std::vector<std::wstring>::iterator it = foreignKeyFields.begin(); it < foreignKeyFields.end(); it++ )
             {
                 newFK.push_back( new FKField( id, kName, L"", const_cast<DatabaseTable *>( constraint->GetFKTable() )->GetTableName(), (*it), L"", constraint->GetRefTable().ToStdWstring(),  (*it1), actionUpdate, actionDelete ) );
                 id++;
                 it1++;
-            }
+            }*/
             wxDynamicLibrary lib;
 #ifdef __WXMSW__
             lib.Load( "dialogs" );
@@ -833,11 +833,11 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             if( lib.IsLoaded() )
             {
                 CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-                result = func( m_view->GetFrame(), constraintName, table, foreignKeyFields, refKeyFields, const_cast<std::wstring &>( refTableName.ToStdWstring() ), deleteProp, updateProp, dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase(),  logOnly, true );
+                result = func( m_view->GetFrame(), constraintName, table, foreignKeyFields, refKeyFields, const_cast<std::wstring &>( refTableName.ToStdWstring() ), deleteProp, updateProp, dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase(),  logOnly, true, newFK );
                 if( result != wxID_CANCEL )
                 {
                     std::wstring command = L"";
-                    int res = ((DrawingDocument *) m_view->GetDocument())->GetDatabase()->ApplyForeignKey( command, kName, *table, foreignKeyFields, refTableName.ToStdWstring(), refKeyFields, deleteProp, updateProp, logOnly, newFK, errors );
+                    int res = ((DrawingDocument *) m_view->GetDocument())->GetDatabase()->ApplyForeignKey( command, kName, *table, foreignKeyFields, refTableName.ToStdWstring(), refKeyFields, deleteProp, updateProp, logOnly, newFK, false, errors );
                     if( res )
                     {
                         for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
@@ -858,7 +858,8 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                         m_pManager.RemoveShape( sign->GetParentShape() );
 //                        Refresh();
 //                        m_pManager.RemoveShape( sign );
-                        CreateFKConstraint( table, newFK );
+                        if( newFK.size() > 0 )
+                            CreateFKConstraint( table, newFK );
                         Refresh();
                     }
                 }

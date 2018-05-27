@@ -1519,6 +1519,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             update_constraint = CASCADE_UPDATE;
                                             break;
                                     }
+                                    if( pimpl->m_subtype == L"Microsoft SQL Server" && updateRule == SQL_RESTRICT )
+                                        update_constraint = NO_ACTION_UPDATE;
                                     switch( deleteRule )
                                     {
                                         case SQL_NO_ACTION:
@@ -1534,6 +1536,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             delete_constraint = CASCADE_DELETE;
                                             break;
                                     }
+                                    if( pimpl->m_subtype == L"Microsoft SQL Server" && deleteRule == SQL_RESTRICT )
+                                        delete_constraint = NO_ACTION_DELETE;
                                                                                      //id,         name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
                                     foreign_keys[keySequence].push_back( new FKField( keySequence, fkName, origSchema,   origTable,   origCol,     refSchema,  refTable,  refCol,    update_constraint, delete_constraint ) );
                                     fk_fieldNames.push_back( origCol );
@@ -3205,26 +3209,26 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
     return result;
 }
 
-int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query = L"ALTER TABLE ";
     query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
     query += L"ADD CONSTRAINT " + keyName + L" ";
     query += L"FOREIGN KEY(";
-    for( std::vector<std::wstring>::const_iterator it1 = foreignKeyFields.begin(); it1 < foreignKeyFields.end(); it1++ )
+    for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
     {
-        query += (*it1);
-        if( it1 == foreignKeyFields.end() - 1 )
+        query += (*it1)->GetOriginalFieldName();
+        if( it1 == newFK.end() - 1 )
             query += L") ";
         else
             query += L",";
     }
-    query += L"REFERENCES " + refTableName + L"(";
-    for( std::vector<std::wstring>::const_iterator it1 = refKeyFields.begin(); it1 < refKeyFields.end(); it1++ )
+    query += L"REFERENCES " + newFK.at ( 0 )->GetReferencedTableName() + L"(";
+    for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
     {
-        query += (*it1);
-        if( it1 == refKeyFields.end() - 1 )
+        query += (*it1)->GetReferencedFieldName();
+        if( it1 == newFK.end() - 1 )
             query += L") ";
         else
             query += L",";
@@ -3239,8 +3243,16 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
         delProp = NO_ACTION_DELETE;
         break;
     case 1:
-        query += L"RESTRICT ";
-        delProp = RESTRICT_DELETE;
+        if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        {
+            query += L"NO ACTION ";
+            delProp = NO_ACTION_DELETE;
+        }
+        else
+        {
+            query += L"RESTRICT ";
+            delProp = RESTRICT_DELETE;
+        }
         break;
     case 2:
         query += L"CASCADE ";
@@ -3263,6 +3275,16 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
         updProp = NO_ACTION_UPDATE;
         break;
     case 1:
+        if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        {
+            query += L"NO ACTION ";
+            updProp = NO_ACTION_UPDATE;
+        }
+        else
+        {
+            query += L"RESTRICT ";
+            updProp = RESTRICT_UPDATE;
+        }
         query += L"RESTRICT";
         updProp = RESTRICT_UPDATE;
         break;
@@ -3279,7 +3301,8 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
         updProp = SET_DEFAULT_UPDATE;
         break;
     }
-    result = DropForeignKey( command, keyName, tableName, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, errorMsg );
+    if( !isNew )
+        result = DropForeignKey( command, keyName, tableName, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, errorMsg );
     if( !result )
     {
         if( !logOnly && !newFK.empty() )
@@ -3307,10 +3330,8 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
                 {
                     std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
                     int size = fKeys.size();
-                    size++;
                     for( int i = 0; i < foreignKeyFields.size(); i++ )
                         fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
-                    newFK = fKeys[size];
                 }
                 ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
