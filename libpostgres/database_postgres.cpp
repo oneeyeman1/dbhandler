@@ -1118,26 +1118,25 @@ int PostgresDatabase::GetFieldProperties(const char *tableName, const char *sche
 
 int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, std::vector<std::wstring> &errorMsg)
 {
-    bool exist = false;
     int result = 0;
-    std::wstring err;
-    std::wstring query = L"ALTER TABLE ";
+    std::wstring query = L"ALTER TABLE ", err;
     query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
     query += L"ADD CONSTRAINT " + keyName + L" ";
     query += L"FOREIGN KEY(";
-    for( std::vector<std::wstring>::const_iterator it1 = foreignKeyFields.begin(); it1 < foreignKeyFields.end(); it1++ )
+    for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
     {
-        query += (*it1);
-        if( it1 == foreignKeyFields.end() - 1 )
+        query += (*it1)->GetOriginalFieldName();
+        if( it1 == newFK.end() - 1 )
             query += L") ";
         else
             query += L",";
     }
-    query += L"REFERENCES " + refTableName + L"(";
-    for( std::vector<std::wstring>::const_iterator it1 = refKeyFields.begin(); it1 < refKeyFields.end(); it1++ )
+    if( newFK.size() > 0 )
+        query += L"REFERENCES " + newFK.at( 0 )->GetReferencedTableName() + L"(";
+    for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
     {
-        query += (*it1);
-        if( it1 == refKeyFields.end() - 1 )
+        query += (*it1)->GetReferencedTableName();
+        if( it1 == newFK.end() - 1 )
             query += L") ";
         else
             query += L",";
@@ -1192,6 +1191,8 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
         updProp = SET_DEFAULT_UPDATE;
         break;
     }
+    if( !isNew )
+        DropForeignKey( command, keyName, tableName, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, errorMsg );
     if( !logOnly )
     {
         PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
@@ -1209,7 +1210,6 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
             size++;
             for( int i = 0; i < foreignKeyFields.size(); i++ )
                 fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
-            newFK = fKeys[size];
         }
     }
     else
@@ -1314,5 +1314,46 @@ int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring>
             }
         }
     }
+    return result;
+}
+
+int PostgresDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query, err;
+    query = L"ALTER TABLE ";
+    query += tableName.GetSchemaName() + L"." + tableName.GetTableName() +L" ";
+    query += L"DROP CONSTRAINT " + keyName;
+    if( !logOnly )
+    {
+        PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        {
+            PQclear( res );
+            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Adding forign key failed: " + err );
+            result = 1;
+        }
+        else
+        {
+            bool found = false;
+            std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+            for( std::map<int, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
+                for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found; )
+                {
+                    if( (*it1)->GetFKName() == keyName )
+                    {
+                        found = true;
+                        delete (*it1);
+                        (*it1) = NULL;
+                        it1 = (*it).second.erase( it1 );
+                    }
+                    else
+                        ++it1;
+                }
+        }
+    }
+    else
+        command = query;
     return result;
 }
