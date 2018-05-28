@@ -77,7 +77,7 @@ protected:
     wxButton* m_logOnly;
     wxStaticText* m_label6;
     wxListCtrl* list_ctrl_1;
-    wxRadioBox* m_onDelete, *m_onUpdate;
+    wxRadioBox* m_onDelete, *m_onUpdate, *m_matching;
     // end wxGlade
 }; // wxGlade: end class
 

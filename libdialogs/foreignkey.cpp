@@ -33,6 +33,7 @@
 ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, wxString &keyName, std::vector<std::wstring> &foreignKeyFields, wxString &refTableName, bool isView, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
+    m_matching = NULL;
     m_db = db;
     m_table = table;
     m_isLogOnly = false;
@@ -70,6 +71,15 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     };
     m_onDelete = new wxRadioBox( this, wxID_ANY, _( "On Delete of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 5, m_onDelete_choices, 1, wxRA_SPECIFY_COLS );
     m_onUpdate = new wxRadioBox( this, wxID_ANY, _( "On Update of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 5, m_onUpdate_choices, 1, wxRA_SPECIFY_COLS );
+    if( m_db->GetTableVector().m_type == L"Postgres" || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Postgres" ) )
+    {
+        const wxString m_matching_choices[] = {
+            _( "MATCH FULL" ),
+            _( "MATCH PARTIAL" ),
+            _( "MATCH SIMPLE" ),
+        };
+        m_matching = new wxRadioBox( this, wxID_ANY, _( "Matching Options" ), wxDefaultPosition, wxDefaultSize, 3, m_matching_choices, 3, wxRA_SPECIFY_COLS );
+    }
     m_OK->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
     m_logOnly->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
     list_ctrl_1->Bind( wxEVT_LIST_ITEM_SELECTED, &ForeignKeyDialog::OnFieldSelection, this );
@@ -157,6 +167,11 @@ void ForeignKeyDialog::do_layout()
     optionsSizer->Add( m_onDelete, 0, 0, 0 );
     optionsSizer->Add( 5, 5, 0, 0, 0 );
     optionsSizer->Add( m_onUpdate, 0, 0, 0 );
+    if( m_db->GetTableVector().m_type == L"Postgres" || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Postgres" ) )
+    {
+        optionsSizer->Add( 5, 5, 0, wxEXPAND, 0 );
+        optionsSizer->Add( m_matching, 0, wxEXPAND, 0 );
+    }
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     grid_sizer_1->Add( m_label1, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND );
