@@ -3224,7 +3224,8 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
         else
             query += L",";
     }
-    query += L"REFERENCES " + newFK.at ( 0 )->GetReferencedTableName() + L"(";
+    if( newFK.size() > 0 )
+        query += L"REFERENCES " + newFK.at ( 0 )->GetReferencedTableName() + L"(";
     for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
     {
         query += (*it1)->GetReferencedFieldName();
