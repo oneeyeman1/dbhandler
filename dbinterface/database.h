@@ -86,7 +86,7 @@ private:
 class FKField
 {
 public:
-    FKField(int id, const std::wstring &name, const std::wstring &orig_schema, const std::wstring &table_name, const std::wstring &original_field, const std::wstring &ref_schema, const std::wstring &ref_table, const std::wstring &referenced_field, FK_ONUPDATE update_constraint, FK_ONDELETE delete_constraint)
+    FKField(int id, const std::wstring &name, const std::wstring &orig_schema, const std::wstring &table_name, const std::wstring &original_field, const std::wstring &ref_schema, const std::wstring &ref_table, const std::wstring &referenced_field, FK_ONUPDATE update_constraint, FK_ONDELETE delete_constraint, int match = -1)
     {
         this->fkId = id;
         this->fkName = name;
@@ -98,6 +98,7 @@ public:
         this->referencedField = referenced_field;
         this->updateConstraint = update_constraint;
         this->deleteConstraint = delete_constraint;
+        this->match = match;
     }
     const int GetForeignKeyId() { return fkId; }
 	const std::wstring &GetFKName() { return fkName; }
@@ -106,11 +107,13 @@ public:
     const std::wstring &GetReferencedFieldName() { return referencedField; }
     const FK_ONUPDATE GetOnUpdateConstraint() { return updateConstraint; }
     const FK_ONDELETE GetOnDeleteConstraint() { return deleteConstraint; }
+	const int GetMatchOPtion() { return match; }
 private:
     int fkId;
     std::wstring tableName, originalField, referencedField, refTable, origSchema, refSchema, fkName;
     FK_ONUPDATE updateConstraint;
     FK_ONDELETE deleteConstraint;
+    int match;
 };
 
 class DatabaseTable
