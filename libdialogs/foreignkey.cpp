@@ -30,9 +30,10 @@
 
 
 
-ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, wxString &keyName, std::vector<std::wstring> &foreignKeyFields, wxString &refTableName, bool isView, const wxPoint& pos, const wxSize& size, long style):
+ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, wxString &keyName, std::vector<std::wstring> &foreignKeyFields, wxString &refTableName, bool isView, int matchOptions, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
+    m_match = matchOptions;
     m_matching = NULL;
     m_db = db;
     m_table = table;
@@ -233,6 +234,7 @@ void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
             m_isLogOnly = true;
         m_delete = m_onDelete->GetSelection();
         m_update = m_onUpdate->GetSelection();
+        m_match = m_matching->GetSelection();
         switch( m_delete )
         {
             case 0:
@@ -404,4 +406,9 @@ void ForeignKeyDialog::OnUpdateChanges(wxCommandEvent &WXUNUSED(event))
 bool ForeignKeyDialog::IsForeignKeyEdited() const
 {
     return m_edited;
+}
+
+const int ForeignKeyDialog::GetMatchingOptions() const
+{
+    return m_match;
 }

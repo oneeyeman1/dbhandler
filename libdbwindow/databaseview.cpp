@@ -58,7 +58,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
-typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &);
+typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
@@ -484,6 +484,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     wxString kName;
     std::wstring keyName;
     bool logOnly = false;
+    int match = 2;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
     {
@@ -501,7 +502,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-        result = func( m_frame, kName, table, foreignKeyFields, refKeyFields, refTableName, deleteProp, updateProp, GetDocument()->GetDatabase(),  logOnly, false, newFK );
+        result = func( m_frame, kName, table, foreignKeyFields, refKeyFields, refTableName, deleteProp, updateProp, GetDocument()->GetDatabase(),  logOnly, false, newFK, match );
         if( result != wxID_CANCEL )
         {
             int res = GetDocument()->GetDatabase()->ApplyForeignKey( command, kName.ToStdWstring(), *table, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, true, errors );
