@@ -41,7 +41,7 @@
 #include "ErdForeignKey.h"
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
-typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &);
+typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 /*
 BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
     EVT_MENU(wxID_TABLEDROPTABLE, DatabaseCanvas::OnDropTable)
@@ -155,6 +155,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                         pConstr->SetRefTable( referencedTableName );
                         pConstr->SetType( QueryConstraint::foreignKey );
                         pConstr->SetFKDatabaseTable( &(*it2)->GetTable() );
+                        pConstr->SetPGMatch( (*it4)->GetMatchOPtion() );
                     }
                     if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
                     {
@@ -742,6 +743,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             constraint->GetRefCol( refKeyFields );
             DatabaseTable *table = const_cast<DatabaseTable *>( constraint->GetFKTable() );
             wxString refTableName = constraint->GetRefTable();
+            int match = constraint->GetPGMatch();
             bool found1 = false, found2 = false;
             for( std::vector<MyErdTable *>::iterator it = m_displayedTables.begin(); it < m_displayedTables.end() && !found1 && !found2; it++ )
             {
@@ -833,7 +835,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             if( lib.IsLoaded() )
             {
                 CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-                result = func( m_view->GetFrame(), constraintName, table, foreignKeyFields, refKeyFields, const_cast<std::wstring &>( refTableName.ToStdWstring() ), deleteProp, updateProp, dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase(),  logOnly, true, newFK );
+                result = func( m_view->GetFrame(), constraintName, table, foreignKeyFields, refKeyFields, const_cast<std::wstring &>( refTableName.ToStdWstring() ), deleteProp, updateProp, dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase(),  logOnly, true, newFK, match );
                 if( result != wxID_CANCEL )
                 {
                     std::wstring command = L"";

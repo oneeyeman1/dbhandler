@@ -151,11 +151,22 @@ public:
         return m_onUpdate;
     }
 	
+    void SetPGMatch(int match)
+    {
+        m_match = match;
+    }
+
+    int GetPGMatch()
+    {
+        return m_match;
+    }
+
 private:
     wxString m_refTable, m_name;
     DatabaseTable *m_fkTable;
     constraintType m_type;
     constraintAction m_onUpdate, m_onDelete;
+    int m_match;
 protected:
     ViewType m_viewType;
 };
