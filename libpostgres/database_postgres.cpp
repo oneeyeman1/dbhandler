@@ -429,9 +429,9 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         fkReference = atoi( fk_reference );
                                         if( temp == L"MATCH FULL" )
                                             fkMatch = 0;
-                                        if( temp == L"MATCH PARTIAL" )
+                                        else if( temp == L"MATCH PARTIAL" )
                                             fkMatch = 1;
-                                        if( temp == L"MATCH SIMPLE" )
+                                        else
                                             fkMatch = 2;
                                         if( fkUpdateConstraint == L"NO ACTION" )
                                             update_constraint = NO_ACTION_UPDATE;
