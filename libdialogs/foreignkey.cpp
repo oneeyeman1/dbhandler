@@ -71,7 +71,7 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     };
     m_onDelete = new wxRadioBox( this, wxID_ANY, _( "On Delete of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 5, m_onDelete_choices, 1, wxRA_SPECIFY_COLS );
     m_onUpdate = new wxRadioBox( this, wxID_ANY, _( "On Update of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 5, m_onUpdate_choices, 1, wxRA_SPECIFY_COLS );
-    if( m_db->GetTableVector().m_type == L"Postgres" || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Postgres" ) )
+    if( m_db->GetTableVector().m_type == L"PostgreSQL" || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) )
     {
         const wxString m_matching_choices[] = {
             _( "MATCH FULL" ),
@@ -122,10 +122,15 @@ void ForeignKeyDialog::set_properties()
 {
     // begin wxGlade: ForeignKeyDialog::set_properties
     SetTitle( _( "Foreign Key Definition - " ) + m_table->GetTableName() );
-    if( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Microsoft SQL Server" )
+    if( ( )m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Microsoft SQL Server" ) || m_db->GetTableVector().m_type == L"Microsoft SQL Server" )
     {
         m_onUpdate->Enable( 1, false );
         m_onDelete->Enable( 1, false );
+    }
+    if( ( )m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) || m_db->GetTableVector().m_type == L"PostgreSQL" )
+    {
+        if( )
+        m_matching
     }
     m_OK->SetDefault();
     m_onDelete->SetSelection( 0 );
@@ -167,7 +172,7 @@ void ForeignKeyDialog::do_layout()
     optionsSizer->Add( m_onDelete, 0, 0, 0 );
     optionsSizer->Add( 5, 5, 0, 0, 0 );
     optionsSizer->Add( m_onUpdate, 0, 0, 0 );
-    if( m_db->GetTableVector().m_type == L"Postgres" || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Postgres" ) )
+    if( m_db->GetTableVector().m_type == L"PostgreSQL" || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) )
     {
         optionsSizer->Add( 5, 5, 0, wxEXPAND, 0 );
         optionsSizer->Add( m_matching, 0, wxEXPAND, 0 );
