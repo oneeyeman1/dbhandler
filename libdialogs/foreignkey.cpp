@@ -123,15 +123,15 @@ void ForeignKeyDialog::set_properties()
 {
     // begin wxGlade: ForeignKeyDialog::set_properties
     SetTitle( _( "Foreign Key Definition - " ) + m_table->GetTableName() );
-    if( ( )m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Microsoft SQL Server" ) || m_db->GetTableVector().m_type == L"Microsoft SQL Server" )
+    if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Microsoft SQL Server" ) || m_db->GetTableVector().m_type == L"Microsoft SQL Server" )
     {
         m_onUpdate->Enable( 1, false );
         m_onDelete->Enable( 1, false );
     }
-    if( ( )m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) || m_db->GetTableVector().m_type == L"PostgreSQL" )
+    if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) || m_db->GetTableVector().m_type == L"PostgreSQL" )
     {
-        if( )
-        m_matching
+//        if( )
+        m_matching->SetSelection( m_match );
     }
     m_OK->SetDefault();
     m_onDelete->SetSelection( 0 );
