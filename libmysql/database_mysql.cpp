@@ -2019,3 +2019,43 @@ int MySQLDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg))
     pimpl->m_versionRevision = ( version - pimpl->m_versionMajor ) / 100;
     return result;
 }
+
+int MySQLDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query, err;
+    query = L"ALTER TABLE ";
+    query += tableName.GetSchemaName() + L"." + tableName.GetTableName() +L" ";
+    query += L"DROP CONSTRAINT " + keyName;
+    if( !logOnly )
+    {
+        if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+        else
+        {
+            bool found = false;
+            std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+            for( std::map<int, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
+                for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found; )
+                {
+                    if( (*it1)->GetFKName() == keyName )
+                    {
+                        found = true;
+                        delete (*it1);
+                        (*it1) = NULL;
+                        it1 = (*it).second.erase( it1 );
+                    }
+                    else
+                        ++it1;
+                }
+        }
+    }
+    else
+        command = query;
+    return result;
+}
+
