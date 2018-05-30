@@ -1142,7 +1142,7 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
         query += L"REFERENCES " + newFK.at( 0 )->GetReferencedTableName() + L"(";
     for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
     {
-        query += (*it1)->GetReferencedTableName();
+        query += (*it1)->GetReferencedFieldName();
         if( it1 == newFK.end() - 1 )
             query += L") ";
         else
