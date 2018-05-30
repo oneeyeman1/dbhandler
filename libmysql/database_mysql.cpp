@@ -1806,19 +1806,19 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
     query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
     query += L"ADD CONSTRAINT " + keyName + L" ";
     query += L"FOREIGN KEY(";
-    for( std::vector<std::wstring>::const_iterator it1 = foreignKeyFields.begin(); it1 < foreignKeyFields.end(); it1++ )
+    for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
     {
-        query += (*it1);
-        if( it1 == foreignKeyFields.end() - 1 )
+        query += (*it1)->GetOriginalFieldName();
+        if( it1 == newFK.end() - 1 )
             query += L") ";
         else
             query += L",";
     }
-    query += L"REFERENCES " + refTableName + L"(";
-    for( std::vector<std::wstring>::const_iterator it1 = refKeyFields.begin(); it1 < refKeyFields.end(); it1++ )
+    query += L"REFERENCES " + newFK.at( 0 )->GetReferencedTableName() + L"(";
+    for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
     {
-        query += (*it1);
-        if( it1 == refKeyFields.end() - 1 )
+        query += (*it1)->GetReferencedFieldName();
+        if( it1 == newFK.end() - 1 )
             query += L") ";
         else
             query += L",";
@@ -1873,7 +1873,9 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
         updProp = SET_DEFAULT_UPDATE;
         break;
     }
-    if( !logOnly )
+    if( !isNew )
+        result = DropForeignKey( command, keyName, tableName, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, errorMsg );
+    if( !logOnly && !result )
     {
         if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() ) )
         {
