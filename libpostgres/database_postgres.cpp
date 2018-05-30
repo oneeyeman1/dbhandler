@@ -1123,7 +1123,7 @@ int PostgresDatabase::GetFieldProperties(const char *tableName, const char *sche
     return result;
 }
 
-int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int match, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query = L"ALTER TABLE ", err;
@@ -1148,6 +1148,12 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
         else
             query += L",";
     }
+    if( match == 0 )
+        query += L"MATCH FULL ";
+    else if( match == 1 )
+        query += L"MATCH PARTIAL";
+	else
+        query += L"MATCH SIMPLE ";
     query += L"ON DELETE ";
     FK_ONUPDATE updProp = NO_ACTION_UPDATE;
     FK_ONDELETE delProp = NO_ACTION_DELETE;

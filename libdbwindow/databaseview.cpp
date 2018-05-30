@@ -505,7 +505,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
         result = func( m_frame, kName, table, foreignKeyFields, refKeyFields, refTableName, deleteProp, updateProp, GetDocument()->GetDatabase(),  logOnly, false, newFK, match );
         if( result != wxID_CANCEL )
         {
-            int res = GetDocument()->GetDatabase()->ApplyForeignKey( command, kName.ToStdWstring(), *table, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, true, errors );
+            int res = GetDocument()->GetDatabase()->ApplyForeignKey( command, kName.ToStdWstring(), *table, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, true, match, errors );
             if( res )
             {
                 for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )

@@ -839,7 +839,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                 if( result != wxID_CANCEL )
                 {
                     std::wstring command = L"";
-                    int res = ((DrawingDocument *) m_view->GetDocument())->GetDatabase()->ApplyForeignKey( command, kName, *table, foreignKeyFields, refTableName.ToStdWstring(), refKeyFields, deleteProp, updateProp, logOnly, newFK, false, errors );
+                    int res = ((DrawingDocument *) m_view->GetDocument())->GetDatabase()->ApplyForeignKey( command, kName, *table, foreignKeyFields, refTableName.ToStdWstring(), refKeyFields, deleteProp, updateProp, logOnly, newFK, false, match, errors );
                     if( res )
                     {
                         for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
