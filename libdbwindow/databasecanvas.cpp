@@ -538,6 +538,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
         if( s )
             sign = s;
     }
+    int match;
     std::vector<std::wstring> errors, localColumns, refColumn;
     std::vector<FKField *> newFK;
     if( isTable )
@@ -550,6 +551,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
         constraint = sign->GetConstraint();
         constraint->GetLocalColumn( localColumns );
         constraint->GetRefCol( refColumn );
+        match = constraint->GetPGMatch();
     }
     DrawingDocument *doc = (DrawingDocument *) m_view->GetDocument();
     Database *db = doc->GetDatabase();
@@ -578,7 +580,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
             std::vector<std::wstring> names = doc->GetTableNameVector();
             names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
         }
-		else if( !isTable && !db->ApplyForeignKey( command, constraint->GetName().ToStdWstring(), *( const_cast<DatabaseTable *>( constraint->GetFKTable() ) ), localColumns, constraint->GetRefTable().ToStdWstring(), refColumn, constraint->GetOnDelete(), constraint->GetOnUpdate(), false, newFK, false, errors ) )
+		else if( !isTable && !db->ApplyForeignKey( command, constraint->GetName().ToStdWstring(), *( const_cast<DatabaseTable *>( constraint->GetFKTable() ) ), localColumns, constraint->GetRefTable().ToStdWstring(), refColumn, constraint->GetOnDelete(), constraint->GetOnUpdate(), false, newFK, false, match, errors ) )
 		{
             sign->DeleteConstraint();
             m_pManager.RemoveShape( sign->GetParentShape() );
