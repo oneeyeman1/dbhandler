@@ -239,7 +239,10 @@ void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
             m_isLogOnly = true;
         m_delete = m_onDelete->GetSelection();
         m_update = m_onUpdate->GetSelection();
-        m_match = m_matching->GetSelection();
+        if( m_matching )
+            m_match = m_matching->GetSelection();
+		else
+            m_match = -1;
         switch( m_delete )
         {
             case 0:
