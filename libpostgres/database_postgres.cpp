@@ -1222,7 +1222,7 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
             int size = fKeys.size();
             size++;
             for( int i = 0; i < foreignKeyFields.size(); i++ )
-                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
+                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp, match ) );
         }
     }
     else
