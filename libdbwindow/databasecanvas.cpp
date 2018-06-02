@@ -646,70 +646,52 @@ void DatabaseCanvas::CreateFKConstraint(const DatabaseTable *fkTable, const std:
         if( const_cast<DatabaseTable &>( (*it)->GetTable() ).GetTableName() == foreignKeyField.at( 0 )->GetReferencedTableName() )
         {
             found = true;
-/*            if( ((DrawingView *) m_view)->GetViewType() == QueryView )
+            for( std::vector<FKField *>::const_iterator it4 = foreignKeyField.begin(); it4 < foreignKeyField.end(); it4++ )
             {
-                pConstr = new QueryConstraint( ((DrawingView *) m_view)->GetViewType() );
-            pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
-            pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
-            pConstr->SetRefTable( referencedTableName );
-            pConstr->SetType( QueryConstraint::foreignKey );
-            pConstr->SetFKDatabaseTable( &(*it2)->GetTable() );
-            dynamic_cast<QueryConstraint *>( pConstr )->SetSign( 0 );
-            }*/
-            if( ((DrawingView *) m_view)->GetViewType() == DatabaseView )
-            {
-                pConstr = new DatabaseConstraint( foreignKeyField.at( 0 )->GetFKName() );
-/*            pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
-            pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
-            pConstr->SetRefTable( referencedTableName );
-            pConstr->SetType( QueryConstraint::foreignKey );
-            pConstr->SetFKDatabaseTable( &(*it2)->GetTable() );*/
+                if( ((DrawingView *) m_view)->GetViewType() == DatabaseView )
+                {
+                    pConstr = new DatabaseConstraint( (*it4)->GetFKName() );
+                    pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
+                    pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
+                    pConstr->SetRefTable( (*it4)->GetReferencedTableName() );
+                    pConstr->SetType( Constraint::foreignKey );
+                    pConstr->SetFKDatabaseTable( fkTable );
+                    pConstr->SetPGMatch( (*it4)->GetMatchOPtion() );
+                    switch( foreignKeyField.at( 0 )->GetOnUpdateConstraint() )
+                    {
+                        case RESTRICT_UPDATE:
+                            pConstr->SetOnUpdate( Constraint::restrict );
+                            break;
+                        case SET_NULL_UPDATE:
+                            pConstr->SetOnUpdate( Constraint::setNull );
+                            break;
+                        case SET_DEFAULT_UPDATE:
+                        case CASCADE_UPDATE:
+                            pConstr->SetOnUpdate( Constraint::cascade );
+                            break;
+                        case NO_ACTION_UPDATE:
+                            pConstr->SetOnUpdate( Constraint::noAction );
+                            break;
+                    }
+                    switch( foreignKeyField.at( 0 )->GetOnDeleteConstraint() )
+                    {
+                        case RESTRICT_DELETE:
+                            pConstr->SetOnUpdate( Constraint::restrict );
+                            break;
+                        case SET_NULL_DELETE:
+                            pConstr->SetOnUpdate( Constraint::setNull );
+                            break;
+                        case SET_DEFAULT_UPDATE:
+                        case CASCADE_DELETE:
+                            pConstr->SetOnUpdate( Constraint::cascade );
+                            break;
+                        case NO_ACTION_DELETE:
+                            pConstr->SetOnUpdate( Constraint::noAction );
+                            break;
+                    }
+                    (*it)->GetShapeManager()->CreateConnection( (*it)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( foreignKeyField.at( 0 )->GetReferencedTableName() )->GetId(), new ErdForeignKey( pConstr, ((DrawingView *) m_view)->GetViewType() ), sfDONT_SAVE_STATE );
+                }
             }
-            for( size_t i = 0; i < foreignKeyField.size(); i++ )
-            {
-                pConstr->SetLocalColumn( foreignKeyField.at( i )->GetOriginalFieldName() );
-                pConstr->SetRefCol( foreignKeyField.at( i )->GetReferencedFieldName() );
-                pConstr->SetRefTable( foreignKeyField.at( i )->GetReferencedTableName() );
-                pConstr->SetType( Constraint::foreignKey );
-                pConstr->SetFKDatabaseTable( fkTable );
-            }
-            switch( foreignKeyField.at( 0 )->GetOnUpdateConstraint() )
-            {
-                case RESTRICT_UPDATE:
-                    pConstr->SetOnUpdate( Constraint::restrict );
-                    break;
-                case SET_NULL_UPDATE:
-                    pConstr->SetOnUpdate( Constraint::setNull );
-                    break;
-                case SET_DEFAULT_UPDATE:
-                case CASCADE_UPDATE:
-                    pConstr->SetOnUpdate( Constraint::cascade );
-                    break;
-                case NO_ACTION_UPDATE:
-                    pConstr->SetOnUpdate( Constraint::noAction );
-                    break;
-            }
-            switch( foreignKeyField.at( 0 )->GetOnDeleteConstraint() )
-            {
-                case RESTRICT_DELETE:
-                    pConstr->SetOnUpdate( Constraint::restrict );
-                    break;
-                case SET_NULL_DELETE:
-                    pConstr->SetOnUpdate( Constraint::setNull );
-                    break;
-                case SET_DEFAULT_UPDATE:
-                case CASCADE_DELETE:
-                    pConstr->SetOnUpdate( Constraint::cascade );
-                    break;
-                case NO_ACTION_DELETE:
-                    pConstr->SetOnUpdate( Constraint::noAction );
-                    break;
-            }
-        }
-        for( std::vector<MyErdTable *>::iterator it2 = m_displayedTables.begin(); it2 < m_displayedTables.end(); it2 ++ )
-        {
-            if( const_cast<DatabaseTable &>( (*it2)->GetTable() ).GetTableName() == const_cast<DatabaseTable *>( fkTable )->GetTableName() )
-                (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( foreignKeyField.at( 0 )->GetReferencedTableName() )->GetId(), new ErdForeignKey( pConstr, ((DrawingView *) m_view)->GetViewType() ), sfDONT_SAVE_STATE );
         }
     }
 }
