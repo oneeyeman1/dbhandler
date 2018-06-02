@@ -1206,7 +1206,7 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
     }
     if( !isNew )
         result = DropForeignKey( command, keyName, tableName, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, errorMsg );
-    if( !logOnly && !result )
+    if( !logOnly && !result && isNew )
     {
         PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
         if( PQresultStatus( res ) != PGRES_COMMAND_OK )
