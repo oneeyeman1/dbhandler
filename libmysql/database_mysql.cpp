@@ -577,7 +577,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                     results[6].is_null = &is_null[6];
                                                     results[6].length = &length[6];
                                                     results[6].error = &error[6];
-
+                                                    std::vector<std::wstring> origFields, refFields;
                                                     if( mysql_stmt_bind_result( res1, results ) )
                                                     {
                                                         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
@@ -589,6 +589,20 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                     {
                                                         int foreign_key_row = mysql_stmt_fetch( res1 );
                                                         while( !mysql_stmt_fetch( res1 ) )
+                                                        {
+                                                            fkFld = m_pimpl->m_myconv.from_bytes( fkField );
+                                                            fkTableField = m_pimpl->m_myconv.from_bytes( refTableField );
+                                                            origFields.push_back( fkFld );
+                                                            refFields.push_back( fkTableField );
+                                                        }
+                                                        if( mysql_stmt_reset( res1 ) )
+                                                        {
+                                                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
+                                                            errorMsg.push_back( err );
+                                                            result = 1;
+                                                            break;
+                                                        }
+														else
                                                         {
                                                             fkFld = m_pimpl->m_myconv.from_bytes( fkField );
                                                             fkSchema = m_pimpl->m_myconv.from_bytes( refTableSchema );
@@ -1806,6 +1820,7 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
     query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
     query += L"ADD CONSTRAINT " + keyName + L" ";
     query += L"FOREIGN KEY(";
+    std::vector<std::wstring> origFields, refFields;
     for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
     {
         query += (*it1)->GetOriginalFieldName();
@@ -1813,6 +1828,7 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
             query += L") ";
         else
             query += L",";
+        origFields.push_back( (*it1)->GetOriginalFieldName() );
     }
     query += L"REFERENCES " + newFK.at( 0 )->GetReferencedTableName() + L"(";
     for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
@@ -1822,6 +1838,7 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
             query += L") ";
         else
             query += L",";
+        refFields.push_back( (*it1)->GetReferencedFieldName() );
     }
     query += L"ON DELETE ";
     FK_ONUPDATE updProp = NO_ACTION_UPDATE;
@@ -1889,7 +1906,7 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
             int size = fKeys.size();
             size++;
             for( int i = 0; i < foreignKeyFields.size(); i++ )
-                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
+                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp ) );
             newFK = fKeys[size];
         }
     }

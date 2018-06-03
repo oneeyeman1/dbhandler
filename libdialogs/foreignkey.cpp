@@ -280,7 +280,7 @@ void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
                 break;
         }
         for( int i = 0; i < m_foreignKey.size(); i++ )
-            m_fkfield.push_back( new FKField( i, m_foreignKeyName->GetValue().ToStdWstring(), m_table->GetSchemaName(), m_table->GetTableName(), m_foreignKey.at( i ), m_table->GetSchemaName(), m_primaryKeyTable->GetValue().ToStdWstring(), m_primaryKey.at( i ), updateProp, deleteProp ) );
+            m_fkfield.push_back( new FKField( i, m_foreignKeyName->GetValue().ToStdWstring(), m_table->GetSchemaName(), m_table->GetTableName(), m_foreignKey.at( i ), m_table->GetSchemaName(), m_primaryKeyTable->GetValue().ToStdWstring(), m_primaryKey.at( i ), GetForeignKeyFields(), GetPrimaryKeyFields(), updateProp, deleteProp ) );
         EndModal( event.GetId() );
     }
 }

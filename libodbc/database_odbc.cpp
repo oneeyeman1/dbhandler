@@ -1489,72 +1489,15 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     result = 1;
                                     break;
                                 }
+                                std::vector<std::wstring> origFields, refFields;
                                 memset( szFkName, '\0', fkNameLength );
                                 for( ret = SQLFetch( stmt_fk ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_fk ) )
                                 {
-                                    FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
-                                    FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
-                                    if( szFkName[0] == '\0' )
-                                        fkName = L"";
-									else
-                                        str_to_uc_cpy( fkName, szFkName );
-                                    str_to_uc_cpy( origSchema, schemaName );
-                                    str_to_uc_cpy( origTable, tableName );
                                     str_to_uc_cpy( origCol, szPkCol );
-                                    str_to_uc_cpy( refSchema, szPkSchema );
-                                    str_to_uc_cpy( refTable, szPkTable );
                                     str_to_uc_cpy( refCol, szFkCol );
-                                    switch( updateRule )
-                                    {
-                                        case SQL_NO_ACTION:
-                                            update_constraint = NO_ACTION_UPDATE;
-                                            break;
-                                        case SQL_SET_NULL:
-                                            update_constraint = SET_NULL_UPDATE;
-                                            break;
-                                        case SQL_SET_DEFAULT:
-                                            update_constraint = SET_DEFAULT_UPDATE;
-                                            break;
-                                        case SQL_CASCADE:
-                                            update_constraint = CASCADE_UPDATE;
-                                            break;
-                                    }
-                                    if( pimpl->m_subtype == L"Microsoft SQL Server" && updateRule == SQL_RESTRICT )
-                                        update_constraint = NO_ACTION_UPDATE;
-                                    switch( deleteRule )
-                                    {
-                                        case SQL_NO_ACTION:
-                                            delete_constraint = NO_ACTION_DELETE;
-                                            break;
-                                        case SQL_SET_NULL:
-                                            delete_constraint = SET_NULL_DELETE;
-                                            break;
-                                        case SQL_SET_DEFAULT:
-                                            delete_constraint = SET_DEFAULT_DELETE;
-                                            break;
-                                        case SQL_CASCADE:
-                                            delete_constraint = CASCADE_DELETE;
-                                            break;
-                                    }
-                                    if( pimpl->m_subtype == L"Microsoft SQL Server" && deleteRule == SQL_RESTRICT )
-                                        delete_constraint = NO_ACTION_DELETE;
-                                                                                     //id,         name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
-                                    foreign_keys[keySequence].push_back( new FKField( keySequence, fkName, origSchema,   origTable,   origCol,     refSchema,  refTable,  refCol,    update_constraint, delete_constraint ) );
-                                    fk_fieldNames.push_back( origCol );
-                                    primaryKey = L"";
-                                    fkSchema = L"";
-                                    fkTable = L"";
-                                    fkName = L"";
-                                    memset( szFkName, '\0', fkNameLength );
-                                    memset( szFkTable, '\0', SQL_MAX_TABLE_NAME_LEN + 1 );
-                                    memset( szPkTable, '\0', SQL_MAX_TABLE_NAME_LEN + 1 );
-                                    origSchema = L"";
-                                    origTable = L"";
-                                    origCol = L"";
-                                    refSchema = L"";
-                                    refTable = L"";
-                                    refCol = L"";
-                                }
+                                    origFields.push_back( origCol );
+                                    refFields.push_back( refCol );
+								}
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt_fk );
@@ -1563,7 +1506,99 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 }
                                 else
                                 {
-                                    ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fk );
+                                    ret = SQLSetPos( stmt_fk, 0, SQL_POSITION, SQL_LOCK_NO_CHANGE );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 1, stmt_fk );
+                                        result = 1;
+                                        break;
+                                    }
+									else
+                                    {
+                                        for( ret = SQLFetch( stmt_fk ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_fk ) )
+                                        {
+                                            FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
+                                            FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
+                                            if( szFkName[0] == '\0' )
+                                                fkName = L"";
+                                            else
+                                                str_to_uc_cpy( fkName, szFkName );
+                                            str_to_uc_cpy( origSchema, schemaName );
+                                            str_to_uc_cpy( origTable, tableName );
+                                            str_to_uc_cpy( origCol, szPkCol );
+                                            str_to_uc_cpy( refSchema, szPkSchema );
+                                            str_to_uc_cpy( refTable, szPkTable );
+                                            str_to_uc_cpy( refCol, szFkCol );
+                                            switch( updateRule )
+                                            {
+                                                case SQL_NO_ACTION:
+                                                    update_constraint = NO_ACTION_UPDATE;
+                                                    break;
+                                                case SQL_SET_NULL:
+                                                    update_constraint = SET_NULL_UPDATE;
+                                                    break;
+                                                case SQL_SET_DEFAULT:
+                                                    update_constraint = SET_DEFAULT_UPDATE;
+                                                    break;
+                                                case SQL_CASCADE:
+                                                    update_constraint = CASCADE_UPDATE;
+                                                    break;
+                                            }
+                                            if( pimpl->m_subtype == L"Microsoft SQL Server" && updateRule == SQL_RESTRICT )
+                                                update_constraint = NO_ACTION_UPDATE;
+                                            switch( deleteRule )
+                                            {
+                                                case SQL_NO_ACTION:
+                                                    delete_constraint = NO_ACTION_DELETE;
+                                                    break;
+                                                case SQL_SET_NULL:
+                                                    delete_constraint = SET_NULL_DELETE;
+                                                    break;
+                                                case SQL_SET_DEFAULT:
+                                                    delete_constraint = SET_DEFAULT_DELETE;
+                                                    break;
+                                                case SQL_CASCADE:
+                                                    delete_constraint = CASCADE_DELETE;
+                                                    break;
+                                            }
+                                            if( pimpl->m_subtype == L"Microsoft SQL Server" && deleteRule == SQL_RESTRICT )
+                                                delete_constraint = NO_ACTION_DELETE;
+                                                                                     //id,         name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
+                                            foreign_keys[keySequence].push_back( new FKField( keySequence, fkName, origSchema, origTable, origCol, refSchema,  refTable,  refCol, origFields, refFields, update_constraint, delete_constraint ) );
+                                            fk_fieldNames.push_back( origCol );
+                                            primaryKey = L"";
+                                            fkSchema = L"";
+                                            fkTable = L"";
+                                            fkName = L"";
+                                            memset( szFkName, '\0', fkNameLength );
+                                            memset( szFkTable, '\0', SQL_MAX_TABLE_NAME_LEN + 1 );
+                                            memset( szPkTable, '\0', SQL_MAX_TABLE_NAME_LEN + 1 );
+                                            origSchema = L"";
+                                            origTable = L"";
+                                            origCol = L"";
+                                            refSchema = L"";
+                                            refTable = L"";
+                                            refCol = L"";
+                                        }
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, stmt_fk );
+                                            result = 1;
+                                            break;
+                                        }
+                                    }
+                                }
+                                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fk );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 2, hdbc_fk );
+                                    result = 1;
+                                    break;
+                                }
+                                else
+                                {
+                                    stmt_fk = 0;
+                                    ret = SQLDisconnect( hdbc_fk );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
                                         GetErrorMessage( errorMsg, 2, hdbc_fk );
@@ -1572,8 +1607,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     }
                                     else
                                     {
-                                        stmt_fk = 0;
-                                        ret = SQLDisconnect( hdbc_fk );
+                                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_fk );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 2, hdbc_fk );
@@ -1581,17 +1615,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             break;
                                         }
                                         else
-                                        {
-                                            ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_fk );
-                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                            {
-                                                GetErrorMessage( errorMsg, 2, hdbc_fk );
-                                                result = 1;
-                                                break;
-                                            }
-                                            else
-                                                hdbc_fk = 0;
-                                        }
+                                            hdbc_fk = 0;
                                     }
                                 }
                             }
@@ -3216,6 +3240,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
     query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
     query += L"ADD CONSTRAINT " + keyName + L" ";
     query += L"FOREIGN KEY(";
+    std::vector<std::wstring> origFields, refFields;
     for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
     {
         query += (*it1)->GetOriginalFieldName();
@@ -3223,6 +3248,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
             query += L") ";
         else
             query += L",";
+        origFields.push_back( (*it1)->GetOriginalFieldName() );
     }
     if( newFK.size() > 0 )
         query += L"REFERENCES " + newFK.at ( 0 )->GetReferencedTableName() + L"(";
@@ -3233,6 +3259,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
             query += L") ";
         else
             query += L",";
+        refFields.push_back( (*it1)->GetReferencedFieldName() );
     }
     query += L"ON DELETE ";
     FK_ONUPDATE updProp = NO_ACTION_UPDATE;
@@ -3332,7 +3359,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
                     std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
                     int size = fKeys.size();
                     for( int i = 0; i < foreignKeyFields.size(); i++ )
-                        fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp ) );
+                        fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp ) );
                 }
                 ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )

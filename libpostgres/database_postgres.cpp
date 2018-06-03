@@ -398,7 +398,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 int length1[2] = { len1, len2 };
                                 int formats1[2] = { 1, 1 };
                                 res1 = PQexecPrepared( m_db, "get_fkeys", 2, values1, length1, formats1, 1 );
-                                status = PQresultStatus( res1 ); 
+                                status = PQresultStatus( res1 );
+                                std::vector<std::wstring> origFields, refFields;
                                 if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
                                 {
                                     std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -411,6 +412,13 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 }
                                 else if( status == PGRES_TUPLES_OK )
                                 {
+                                    for( int j = 0; j < PQntuples( res1 ); j++ )
+                                    {
+                                        origField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 5 ) );
+                                        origFields.push_back( origField );
+                                        refField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 8 ) );
+                                        refFields.push_back( refField );
+                                    }
                                     for( int j = 0; j < PQntuples( res1 ); j++ )
                                     {
                                         char *key_id = PQgetvalue( res1, j, 0 );
@@ -454,7 +462,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         if( fkDeleteConstraint == L"CASCADE" )
                                             delete_constraint = CASCADE_DELETE;
                                                                                      //id,       name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
-                                        foreign_keys[fkId].push_back( new FKField( fkReference, fkName, origSchema, origTable, origField, refSchema, refTable, refField, update_constraint, delete_constraint, fkMatch ) );
+                                        foreign_keys[fkId].push_back( new FKField( fkReference, fkName, origSchema, origTable, origField, refSchema, refTable, refField, origFields, refFields, update_constraint, delete_constraint, fkMatch ) );
                                         fk_names.push_back( origField );
                                     }
                                     PQclear( res1 );
@@ -1130,6 +1138,7 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
     query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
     query += L"ADD CONSTRAINT " + keyName + L" ";
     query += L"FOREIGN KEY(";
+    std::vector<std::wstring> origFields, refFields;
     for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
     {
         query += (*it1)->GetOriginalFieldName();
@@ -1137,6 +1146,7 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
             query += L") ";
         else
             query += L",";
+        origFields.push_back( (*it1)->GetOriginalFieldName() );
     }
     if( newFK.size() > 0 )
         query += L"REFERENCES " + newFK.at( 0 )->GetReferencedTableName() + L"(";
@@ -1147,6 +1157,7 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
             query += L") ";
         else
             query += L",";
+        refFields.push_back( (*it1)->GetReferencedFieldName() );
     }
     if( match == 0 )
         query += L"MATCH FULL ";
@@ -1222,7 +1233,7 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
             int size = fKeys.size();
             size++;
             for( int i = 0; i < foreignKeyFields.size(); i++ )
-                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), updProp, delProp, match ) );
+                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp, match ) );
         }
     }
     else

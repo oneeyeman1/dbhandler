@@ -86,7 +86,7 @@ private:
 class FKField
 {
 public:
-    FKField(int id, const std::wstring &name, const std::wstring &orig_schema, const std::wstring &table_name, const std::wstring &original_field, const std::wstring &ref_schema, const std::wstring &ref_table, const std::wstring &referenced_field, FK_ONUPDATE update_constraint, FK_ONDELETE delete_constraint, int match = -1)
+    FKField(int id, const std::wstring &name, const std::wstring &orig_schema, const std::wstring &table_name, const std::wstring &original_field, const std::wstring &ref_schema, const std::wstring &ref_table, const std::wstring &referenced_field, const std::vector<std::wstring> &origFields, const std::vector<std::wstring> &refFields, FK_ONUPDATE update_constraint, FK_ONDELETE delete_constraint, int match = -1)
     {
         this->fkId = id;
         this->fkName = name;
@@ -98,19 +98,24 @@ public:
         this->referencedField = referenced_field;
         this->updateConstraint = update_constraint;
         this->deleteConstraint = delete_constraint;
+        this->origFields = origFields;
+        this->refFields = refFields;
         this->match = match;
     }
     const int GetForeignKeyId() { return fkId; }
 	const std::wstring &GetFKName() { return fkName; }
     const std::wstring &GetReferencedTableName() { return refTable; }
     const std::wstring &GetOriginalFieldName() { return originalField; }
+	const std::vector<std::wstring> &GetOriginalFields() { return origFields; }
     const std::wstring &GetReferencedFieldName() { return referencedField; }
+	const std::vector<std::wstring> &GetReferencedFields() { return refFields; }
     const FK_ONUPDATE GetOnUpdateConstraint() { return updateConstraint; }
     const FK_ONDELETE GetOnDeleteConstraint() { return deleteConstraint; }
 	const int GetMatchOPtion() { return match; }
 private:
     int fkId;
     std::wstring tableName, originalField, referencedField, refTable, origSchema, refSchema, fkName;
+    std::vector<std::wstring> origFields, refFields;
     FK_ONUPDATE updateConstraint;
     FK_ONDELETE deleteConstraint;
     int match;

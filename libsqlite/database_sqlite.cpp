@@ -346,43 +346,18 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 res2 = sqlite3_prepare( m_db, y, -1, &stmt3, 0 );
                 if( res2 == SQLITE_OK )
                 {
+                    std::vector<std::wstring> origFields, refFields;
                     for( ; ; )
                     {
                         res3 = sqlite3_step( stmt3 );
                         if( res3 == SQLITE_ROW )
                         {
-                            fkId = sqlite3_column_int( stmt3, 0 );
-                            fkReference = sqlite3_column_int( stmt3, 1 );
-                            fkTable = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 2 ) );
                             fkField = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 3 ) );
                             fkTableField = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 4 ) );
-                            fkUpdateConstraint = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 5 ) );
-                            if( !strcmp( fkUpdateConstraint.c_str(), "NO ACTION" ) )
-                                update_constraint = NO_ACTION_UPDATE;
-                            if( !strcmp( fkUpdateConstraint.c_str(), "RESTRICT" ) )
-                                update_constraint = RESTRICT_UPDATE;
-                            if( !strcmp( fkUpdateConstraint.c_str(), "SET NULL" ) )
-                                update_constraint = SET_NULL_UPDATE;
-                            if( !strcmp( fkUpdateConstraint.c_str(), "SET DEFAULT" ) )
-                                update_constraint = SET_DEFAULT_UPDATE;
-                            if( !strcmp( fkUpdateConstraint.c_str(), "CASCADE" ) )
-                                update_constraint = CASCADE_UPDATE;
-                            fkDeleteConstraint = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 6 ) );
-                            if( !strcmp( fkDeleteConstraint.c_str(), "NO ACTION" ) )
-                                delete_constraint = NO_ACTION_DELETE;
-                            if( !strcmp( fkDeleteConstraint.c_str(), "RESTRICT" ) )
-                                delete_constraint = RESTRICT_DELETE;
-                            if( !strcmp( fkDeleteConstraint.c_str(), "SET NULL" ) )
-                                delete_constraint = SET_NULL_DELETE;
-                            if( !strcmp( fkDeleteConstraint.c_str(), "SET DEFAULT" ) )
-                                delete_constraint = SET_DEFAULT_DELETE;
-                            if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
-                                delete_constraint = CASCADE_DELETE;
-                                                                      //id, name, orig_schema,         table_name,                                  original_field,                      ref_schema,           ref_table,                              referenced_field,                          update_constraint, delete_constraint
-                            foreign_keys[fkId].push_back( new FKField( fkReference, L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), sqlite_pimpl->m_myconv.from_bytes( fkField ), L"", sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), update_constraint, delete_constraint ) );
-                            fk_names.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
+                            origFields.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
+                            refFields.push_back( sqlite_pimpl->m_myconv.from_bytes( fkTableField ) );
                         }
-                        else if( res3 == SQLITE_DONE )
+						else if( res == SQLITE_DONE )
                             break;
                         else
                         {
@@ -390,6 +365,56 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             GetErrorMessage( res, errorMessage );
                             errorMsg.push_back( errorMessage );
                             break;
+                        }
+                    }
+                    if( !result )
+                    {
+                        sqlite3_reset( stmt3 );
+                        for( ; ; )
+                        {
+                            res = sqlite3_step( stmt3 );
+                            if( res == SQLITE_ROW )
+                            {
+                                fkId = sqlite3_column_int( stmt3, 0 );
+                                fkReference = sqlite3_column_int( stmt3, 1 );
+                                fkTable = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 2 ) );
+                                fkField = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 3 ) );
+                                fkTableField = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 4 ) );
+                                fkUpdateConstraint = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 5 ) );
+                                if( !strcmp( fkUpdateConstraint.c_str(), "NO ACTION" ) )
+                                    update_constraint = NO_ACTION_UPDATE;
+                                if( !strcmp( fkUpdateConstraint.c_str(), "RESTRICT" ) )
+                                    update_constraint = RESTRICT_UPDATE;
+                                if( !strcmp( fkUpdateConstraint.c_str(), "SET NULL" ) )
+                                    update_constraint = SET_NULL_UPDATE;
+                                if( !strcmp( fkUpdateConstraint.c_str(), "SET DEFAULT" ) )
+                                    update_constraint = SET_DEFAULT_UPDATE;
+                                if( !strcmp( fkUpdateConstraint.c_str(), "CASCADE" ) )
+                                    update_constraint = CASCADE_UPDATE;
+                                fkDeleteConstraint = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 6 ) );
+                                if( !strcmp( fkDeleteConstraint.c_str(), "NO ACTION" ) )
+                                    delete_constraint = NO_ACTION_DELETE;
+                                if( !strcmp( fkDeleteConstraint.c_str(), "RESTRICT" ) )
+                                    delete_constraint = RESTRICT_DELETE;
+                                if( !strcmp( fkDeleteConstraint.c_str(), "SET NULL" ) )
+                                    delete_constraint = SET_NULL_DELETE;
+                                if( !strcmp( fkDeleteConstraint.c_str(), "SET DEFAULT" ) )
+                                    delete_constraint = SET_DEFAULT_DELETE;
+                                if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
+                                    delete_constraint = CASCADE_DELETE;
+                                                                       //id, name, orig_schema,         table_name,                                  original_field,                      ref_schema,           ref_table,                              referenced_field,                          update_constraint, delete_constraint
+                                foreign_keys[fkId].push_back( new FKField( fkReference, L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), sqlite_pimpl->m_myconv.from_bytes( fkField ), L"", sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), origFields, refFields, update_constraint, delete_constraint ) );
+                                fk_names.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
+                            }
+                            else if( res3 == SQLITE_DONE )
+                                break;
+                            else
+                            {
+                                result = 1;
+                                GetErrorMessage( res, errorMessage );
+                                errorMsg.push_back( errorMessage );
+                                break;
+                            }
                         }
                     }
                     if( res3 != SQLITE_DONE )
@@ -1176,7 +1201,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage, sql;
     char *error;
-    std::vector<std::wstring> references;
+    std::vector<std::wstring> references, origFields, refFields;
     std::wstring query0 = L"PRAGMA writable_schema=true", query1 = L"PRAGMA writable_schema=false", query2 = L"BEGIN", query3;
     std::wstring query = L"SELECT sql FROM sqlite_master WHERE tbl_name = \'";
     query += tableName.GetTableName();
@@ -1257,6 +1282,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                             fk += L")";
                         else
                             fk += L", ";
+                        origFields.push_back( (*it)->GetOriginalFieldName() );
                     }
                     fk += L" REFERENCES " + newFK.at ( 0 )->GetReferencedTableName() + L"(";
                     for( std::vector<FKField *>::const_iterator it = newFK.begin(); it < newFK.end(); ++it )
@@ -1266,6 +1292,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                             fk += L")";
                         else
                             fk += L", ";
+                        refFields.push_back( (*it)->GetReferencedFieldName() );
                     }
                     if( deleteProp > 0 )
                     {
@@ -1400,7 +1427,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                             std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
                             int size = fKeys.size();
                             for( int i = 0; i < newFK.size(); i++ )
-                                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), newFK.at( i )->GetOriginalFieldName(), L"", newFK.at( i )->GetReferencedTableName(), newFK.at( i )->GetReferencedFieldName(), newFK.at( i )->GetOnUpdateConstraint(), newFK.at( i )->GetOnDeleteConstraint() ) );
+                                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), newFK.at( i )->GetOriginalFieldName(), L"", newFK.at( i )->GetReferencedTableName(), newFK.at( i )->GetReferencedFieldName(), origFields, refFields, newFK.at( i )->GetOnUpdateConstraint(), newFK.at( i )->GetOnDeleteConstraint() ) );
                         }
                     }
                 }
