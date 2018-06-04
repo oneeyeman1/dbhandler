@@ -167,16 +167,21 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
         else
         {
             sqlite_pimpl->m_catalog = selectedDSN;
-            GetTableListFromDb( errorMsg );
-            res = sqlite3_exec( m_db, "PRAGMA foreign_keys = ON", NULL, NULL, NULL );
-            if( res != SQLITE_OK )
+            res = GetTableListFromDb( errorMsg );
+            if( !res )
             {
-                result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                res = sqlite3_exec( m_db, "PRAGMA foreign_keys = ON", NULL, NULL, NULL );
+                if( res != SQLITE_OK )
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                }
+                else
+                    pimpl->m_dbName = sqlite_pimpl->m_catalog;
             }
-            else
-                pimpl->m_dbName = sqlite_pimpl->m_catalog;
+			else
+                result = 1;
         }
     }
     return result;
@@ -357,7 +362,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             origFields.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
                             refFields.push_back( sqlite_pimpl->m_myconv.from_bytes( fkTableField ) );
                         }
-						else if( res == SQLITE_DONE )
+						else if( res3 == SQLITE_DONE )
                             break;
                         else
                         {
@@ -369,11 +374,11 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
-                        sqlite3_reset( stmt3 );
+                        res3 = sqlite3_reset( stmt3 );
                         for( ; ; )
                         {
-                            res = sqlite3_step( stmt3 );
-                            if( res == SQLITE_ROW )
+                            res3 = sqlite3_step( stmt3 );
+                            if( res3 == SQLITE_ROW )
                             {
                                 fkId = sqlite3_column_int( stmt3, 0 );
                                 fkReference = sqlite3_column_int( stmt3, 1 );
@@ -411,7 +416,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             else
                             {
                                 result = 1;
-                                GetErrorMessage( res, errorMessage );
+                                GetErrorMessage( res3, errorMessage );
                                 errorMsg.push_back( errorMessage );
                                 break;
                             }
