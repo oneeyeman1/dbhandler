@@ -187,7 +187,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                         case SET_NULL_DELETE:
                             pConstr->SetOnUpdate( Constraint::setNull );
                             break;
-                        case SET_DEFAULT_UPDATE:
+                        case SET_DEFAULT_DELETE:
                         case CASCADE_DELETE:
                             pConstr->SetOnUpdate( Constraint::cascade );
                             break;
