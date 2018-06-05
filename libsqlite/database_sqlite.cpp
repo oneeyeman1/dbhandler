@@ -180,7 +180,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
                 else
                     pimpl->m_dbName = sqlite_pimpl->m_catalog;
             }
-			else
+            else
                 result = 1;
         }
     }
@@ -362,7 +362,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             origFields.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
                             refFields.push_back( sqlite_pimpl->m_myconv.from_bytes( fkTableField ) );
                         }
-						else if( res3 == SQLITE_DONE )
+                        else if( res3 == SQLITE_DONE )
                             break;
                         else
                         {
@@ -1478,7 +1478,7 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
                 fkPos = keyTemp.find( ref );
 //                    temp1 = s.substr( s.find_first_not_of( L' ' ) );
                 keyTemp += sUpper;
-			}
+            }
                 std::wstring temp1 = temp;
                 std::wstring tName = sUpper.substr( fkPos + ref.length()  );
                 tName = tName.substr( 0, tName.find( L'(' ) );
