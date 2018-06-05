@@ -558,7 +558,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                     foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                                                     fk_names.clear();
                                                     PQclear( res4 );
-												}
+                                                }
                                             }
                                         }
                                     }
