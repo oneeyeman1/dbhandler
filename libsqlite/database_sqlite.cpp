@@ -346,10 +346,11 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             res = sqlite3_step( stmt );
             if( res == SQLITE_ROW  )
             {
+                auto fkPresent = false;
                 const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
                 char *y = sqlite3_mprintf( query3.c_str(), tableName );
-                res2 = sqlite3_prepare( m_db, y, -1, &stmt3, 0 );
-                if( res2 == SQLITE_OK )
+                res3 = sqlite3_prepare( m_db, y, -1, &stmt3, 0 );
+                if( res3 == SQLITE_OK )
                 {
                     std::vector<std::wstring> origFields, refFields;
                     for( ; ; )
@@ -357,6 +358,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         res3 = sqlite3_step( stmt3 );
                         if( res3 == SQLITE_ROW )
                         {
+                            fkPresent = true;
                             fkField = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 3 ) );
                             fkTableField = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 4 ) );
                             origFields.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
@@ -372,7 +374,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             break;
                         }
                     }
-                    if( !result )
+                    if( !result && fkPresent )
                     {
                         res3 = sqlite3_reset( stmt3 );
                         for( ; ; )
