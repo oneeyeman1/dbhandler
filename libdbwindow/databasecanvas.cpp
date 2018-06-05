@@ -356,7 +356,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                     fieldSelected = true;
                     erdField = field;
                 }
-				else
+                else
                 {
                     ConstraintSign *sign = wxDynamicCast( (*it), ConstraintSign );
                     if( sign )
@@ -546,7 +546,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
         table = &( const_cast<DatabaseTable &>( erdTable->GetTable() ) );
         name = const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableName();
     }
-	else
+    else
     {
         constraint = sign->GetConstraint();
         constraint->GetLocalColumn( localColumns );
@@ -559,13 +559,13 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
     wxString message = _( "You are about to delete " );
     if( isTable )
         message += _( "table " ) + name + _( ". Are you sure?" );
-	else
-	{
+    else
+    {
         message += _( "foreign key " );
         wxString fkName = constraint->GetName();
         if( !fkName.empty() )
             message += fkName;
-		else
+        else
             message += _( " on " ) + const_cast<DatabaseTable *>( constraint->GetFKTable() )->GetTableName() + _( " references " ) + constraint->GetRefTable() + _( ". Are you sure?" );
     }
     int answer = wxMessageBox( message, _( "Database" ), wxYES_NO | wxNO_DEFAULT );
@@ -580,12 +580,12 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
             std::vector<std::wstring> names = doc->GetTableNameVector();
             names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
         }
-		else if( !isTable && !db->ApplyForeignKey( command, constraint->GetName().ToStdWstring(), *( const_cast<DatabaseTable *>( constraint->GetFKTable() ) ), localColumns, constraint->GetRefTable().ToStdWstring(), refColumn, constraint->GetOnDelete(), constraint->GetOnUpdate(), false, newFK, false, match, errors ) )
-		{
+        else if( !isTable && !db->ApplyForeignKey( command, constraint->GetName().ToStdWstring(), *( const_cast<DatabaseTable *>( constraint->GetFKTable() ) ), localColumns, constraint->GetRefTable().ToStdWstring(), refColumn, constraint->GetOnDelete(), constraint->GetOnUpdate(), false, newFK, false, match, errors ) )
+        {
             sign->DeleteConstraint();
             m_pManager.RemoveShape( sign->GetParentShape() );
             Refresh();
-		}
+        }
         else
         {
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
@@ -681,7 +681,7 @@ void DatabaseCanvas::CreateFKConstraint(const DatabaseTable *fkTable, const std:
                         case SET_NULL_DELETE:
                             pConstr->SetOnUpdate( Constraint::setNull );
                             break;
-                        case SET_DEFAULT_UPDATE:
+                        case SET_DEFAULT_DELETE:
                         case CASCADE_DELETE:
                             pConstr->SetOnUpdate( Constraint::cascade );
                             break;
