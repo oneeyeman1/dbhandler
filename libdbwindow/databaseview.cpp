@@ -520,7 +520,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
                 if( !m_log->IsShown() )
                     m_log->Show();
             }
-			else
+            else
             {
                 m_canvas->CreateFKConstraint( table, newFK );
             }
