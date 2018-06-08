@@ -1589,9 +1589,9 @@ void SQLiteDatabase::SetFullType(Field *field, const std::wstring &type)
 
 int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg))
 {
-    pimpl->m_serverVersion = L"392";
+    pimpl->m_serverVersion = L"3240";
     pimpl->m_versionMajor = 3;
-    pimpl->m_versionMinor = 9;
-    pimpl->m_versionRevision = 2;
+    pimpl->m_versionMinor = 24;
+    pimpl->m_versionRevision = 0;
     return 0;
 }
