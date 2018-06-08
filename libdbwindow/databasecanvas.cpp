@@ -195,7 +195,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                             pConstr->SetOnUpdate( Constraint::noAction );
                             break;
                     }
-                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( referencedTableName )->GetId(), new ErdForeignKey( pConstr, ((DrawingView *) m_view)->GetViewType() ), sfDONT_SAVE_STATE );
+                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( referencedTableName )->GetId(), new ErdForeignKey( pConstr, ((DrawingView *) m_view)->GetViewType(), m_pManager ), sfDONT_SAVE_STATE );
                 }
             }
         }
@@ -689,7 +689,7 @@ void DatabaseCanvas::CreateFKConstraint(const DatabaseTable *fkTable, const std:
                             pConstr->SetOnUpdate( Constraint::noAction );
                             break;
                     }
-                    (*it)->GetShapeManager()->CreateConnection( (*it)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( foreignKeyField.at( 0 )->GetReferencedTableName() )->GetId(), new ErdForeignKey( pConstr, ((DrawingView *) m_view)->GetViewType() ), sfDONT_SAVE_STATE );
+                    (*it)->GetShapeManager()->CreateConnection( (*it)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( foreignKeyField.at( 0 )->GetReferencedTableName() )->GetId(), new ErdForeignKey( pConstr, ((DrawingView *) m_view)->GetViewType(), GetDiagramManager() ), sfDONT_SAVE_STATE );
                 }
             }
         }

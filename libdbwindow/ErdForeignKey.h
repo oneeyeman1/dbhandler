@@ -36,6 +36,8 @@
 #include "NArrow.h"
 #include "OneArrow.h"
 #include "constraint.h"
+#include "MyErdTable.h"
+#include "FieldShape.h"
 #include "ErdLineShape.h"
 
 /*! \brief Class representing line in ERD diagram constructed on Foreign Key base. For more info see wxSF manual */
@@ -45,7 +47,7 @@ public:
     XS_DECLARE_CLONABLE_CLASS(ErdForeignKey);	
     ErdForeignKey();
     ErdForeignKey(const ErdForeignKey& obj);
-    ErdForeignKey(Constraint* pConstraint, ViewType type);
+    ErdForeignKey(Constraint* pConstraint, ViewType type, const wxSFDiagramManager &pManager);
     virtual ~ErdForeignKey();
     virtual void CreateHandles();
 

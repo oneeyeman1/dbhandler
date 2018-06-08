@@ -6,7 +6,7 @@ class ErdLineShape : public wxSFRoundOrthoLineShape
 public:
     ErdLineShape();
     virtual ~ErdLineShape();
-    ErdLineShape(Constraint *pConstraint, ViewType type);
+    ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDiagramManager &pManager);
     virtual wxRect GetBoundingBox();
     wxRealPoint GetModTrgPoint();
     wxRealPoint GetModSrcPoint();
@@ -23,6 +23,8 @@ private:
     Constraint *m_constraint;
     ViewType m_type;
     ConstraintSign *m_signConstraint;
+    MyErdTable *m_sourceTbl, *m_targetTbl;
+    FieldShape *m_sourceFld, *m_targetFld;
     bool m_isEnabled;
 };
 

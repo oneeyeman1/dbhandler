@@ -35,7 +35,7 @@ ErdForeignKey::ErdForeignKey():ErdLineShape()
     EnableSerialization( false );
 }
 
-ErdForeignKey::ErdForeignKey(Constraint* pConstraint, ViewType type):ErdLineShape( pConstraint, type )
+ErdForeignKey::ErdForeignKey(Constraint* pConstraint, ViewType type, const wxSFDiagramManager &pManager):ErdLineShape( pConstraint, type, pManager )
 {
     m_pConstraint = pConstraint;
     wxSFTextShape* pLabel = new wxSFTextShape();

@@ -37,8 +37,11 @@ ErdLineShape::ErdLineShape()
     m_isEnabled = true;
 }
 
-ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type)
+ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDiagramManager &pManager)
 {
+    ShapeList listShapes;
+    SerializableList sourceFields, targetFields;
+    m_sourceTbl = m_targetTbl = NULL;
     m_type = type;
     AcceptChild( "ConstraintSign" );
     m_constraint = pConstraint;
@@ -52,7 +55,34 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type)
         m_signConstraint->Activate( true );
         SF_ADD_COMPONENT( m_signConstraint, wxT( "sign" ) );
     }
-    m_isEnabled = true;
+    if( type == DatabaseView )
+    {
+        const_cast<wxSFDiagramManager &>( pManager ).GetShapes( CLASSINFO( MyErdTable ), listShapes );
+        bool found = false;
+        for( ShapeList::iterator it = listShapes.begin(); it != listShapes.end() && !found; ++it )
+        {
+            if( dynamic_cast<MyErdTable *>( (*it) )->GetTableName() == const_cast<DatabaseTable *>( m_constraint->GetFKTable() )->GetTableName() )
+                m_sourceTbl = dynamic_cast<MyErdTable *>( (*it) );
+            if( dynamic_cast<MyErdTable *>( (*it) )->GetTableName() == m_constraint->GetRefTable() )
+                m_targetTbl = dynamic_cast<MyErdTable *>( (*it) );
+            if( m_sourceTbl && m_targetTbl )
+                found = true;
+        }
+        m_sourceTbl->GetChildrenRecursively( CLASSINFO( FieldShape ), sourceFields );
+        m_targetTbl->GetChildrenRecursively( CLASSINFO( FieldShape ), targetFields );
+        wxString originalFKField, refFKField;
+        m_constraint->GetLocalColumn( originalFKField );
+        m_constraint->GetRefCol( refFKField );
+        found = false;
+        for( SerializableList::iterator it = sourceFields.begin(); it != sourceFields.end() && !found; ++it )
+        {
+        }
+        found = false;
+        for( SerializableList::iterator it = targetFields.begin(); it != targetFields.end() && !found; ++it )
+        {
+        }
+        m_isEnabled = true;
+    }
 }
 
 ErdLineShape::~ErdLineShape()
