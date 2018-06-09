@@ -71,8 +71,8 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDia
         m_sourceTbl->GetChildrenRecursively( CLASSINFO( FieldShape ), sourceFields );
         m_targetTbl->GetChildrenRecursively( CLASSINFO( FieldShape ), targetFields );
         wxString originalFKField, refFKField;
-        m_constraint->GetLocalColumn( originalFKField );
-        m_constraint->GetRefCol( refFKField );
+        originalFKField = m_constraint->GetLocalColumn();
+        refFKField = m_constraint->GetRefColumn();
         found = false;
         for( SerializableList::iterator it = sourceFields.begin(); it != sourceFields.end() && !found; ++it )
         {
@@ -117,7 +117,7 @@ wxRealPoint ErdLineShape::GetModSrcPoint()
                 wxString columnText = pColumn->GetText();
                 if( m_type == QueryView )
                 {
-                    m_constraint->GetLocalColumn( constraintColumnQuery );
+                    constraintColumnQuery = m_constraint->GetLocalColumn();
                     if( columnText != constraintColumnQuery )
                         y += pColumn->GetBoundingBox().GetHeight();
                     if( columnText == constraintColumnQuery )
@@ -165,7 +165,7 @@ wxRealPoint ErdLineShape::GetModTrgPoint()
                 {
                     wxString columnText = pColumn->GetText();
                     wxString refCol;
-                    m_constraint->GetRefCol( refCol );
+                    refCol = m_constraint->GetRefColumn();
                     if( columnText != refCol )
                         y += pColumn->GetBoundingBox().GetHeight();
                     if( columnText == refCol )

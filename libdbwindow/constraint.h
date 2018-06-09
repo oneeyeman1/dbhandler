@@ -55,23 +55,10 @@ public:
         setDefault
     };
 
-	/*! \brief Set local column name */
-    virtual void SetLocalColumn(const wxString & localColumn)
-    {
-    }
-	
     /*! \brief Set constraint name  */
     void SetName(const wxString & name)
     {
         m_name = name;
-    }
-	
-    virtual void GetLocalColumn(wxString &) const
-    {
-    }
-
-    virtual void GetLocalColumn(std::vector<std::wstring> &) const
-    {
     }
 	
     /*! \brief Get constraint name */
@@ -80,16 +67,42 @@ public:
         return m_name;
     }
 	
-    /*! \brief Set reference column name */
-    virtual void SetRefCol(const wxString & refCol)
+	/*! \brief Set local column name */
+    virtual void SetLocalColumn(const std::wstring &)
+    {
+    }
+	
+    virtual const std::wstring &GetLocalColumn() const
+    {
+        return wxEmptyString;
+    }
+
+    virtual const std::vector<std::wstring> &GetLocalColumns() const
+    {
+        std::vector<std::wstring> temp;
+        return temp;
+    }
+	
+    virtual void SetLocalColumns(const std::vector<std::wstring> &)
     {
     }
 
-    virtual const void GetRefCol(wxString &refCol) const
+    virtual void SetRefColumn(const std::wstring &)
     {
     }
 
-    virtual const void GetRefCol(std::vector<std::wstring> &refCol) const
+    virtual const std::wstring &GetRefColumn()
+    {
+        return L"";
+    }
+
+    virtual const std::vector<std::wstring> &GetRefColumns() const
+    {
+        std::vector<std::wstring> temp;
+        return temp;
+    }
+
+    virtual void SetRefColumns(const std::vector<std::wstring> &)
     {
     }
 
@@ -176,32 +189,53 @@ class DatabaseConstraint : public Constraint
 public:
     DatabaseConstraint(std::wstring fkName);
 	virtual ~DatabaseConstraint();
+
     /*! \brief Set local column name */
-    virtual void SetLocalColumn(const wxString &localColumn)
+    virtual void SetLocalColumn(const std::wstring &localColumn)
     {
-        this->m_fkColumns.push_back( localColumn.ToStdWstring() );
+        m_localCol = localColumn;
     }
-	
+
+    virtual const std::wstring &GetLocalColumn()
+    {
+        return m_localCol;
+    }
+
+    virtual void SetLocalColumns(const std::vector<std::wstring> &columns)
+    {
+        m_fkColumns = columns;
+    }
+
     /*! \brief Get local column name */
-    virtual void GetLocalColumn(std::vector<std::wstring> &column) const
+    virtual const std::vector<std::wstring> &GetLocalColumns() const
     {
-        column = m_fkColumns;
+        return m_fkColumns;
     }
 	
-    /*! \brief Set reference column name */
-    virtual void SetRefCol(const wxString &refCol)
+    virtual void SetRefColumn(const std::wstring &refCol)
     {
-        this->m_refColumns.push_back( refCol.ToStdWstring() );
+        m_refCol = refCol;
+    }
+
+    virtual const std::wstring &GetRefColumn()
+    {
+        return m_refCol;
     }
 
     /*! \brief Get reference column name */
-    virtual const void GetRefCol(std::vector<std::wstring> &refCol) const
+    virtual const std::vector<std::wstring> &GetRefColumns() const
     {
-        refCol = m_refColumns;
+        return m_refColumns;
+    }
+
+    virtual void SetRefColumns(const std::vector<std::wstring> &refCol)
+    {
+        m_refColumns = refCol;
     }
 
 private:
     std::vector<std::wstring> m_fkColumns, m_refColumns;
+    std::wstring m_localCol, m_refCol;
 };
 
 /*! \brief Class representing one table constraint. */
