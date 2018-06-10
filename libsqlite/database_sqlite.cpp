@@ -353,16 +353,17 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     res3 = sqlite3_bind_text( stmt3, 1, tableName, -1, SQLITE_TRANSIENT );
                     if( res3 == SQLITE_OK )
                     {
-                        std::vector<std::wstring> origFields, refFields;
+                        std::map<int, std::vector<std::wstring> > origFields, refFields;
                         for( ; ; )
                         {
                             res3 = sqlite3_step( stmt3 );
                             if( res3 == SQLITE_ROW )
                             {
+                                fkId = sqlite3_column_int( stmt3, 0 );
                                 fkField = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 3 ) );
                                 fkTableField = reinterpret_cast<const char *>( sqlite3_column_text( stmt3, 4 ) );
-                                origFields.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
-                                refFields.push_back( sqlite_pimpl->m_myconv.from_bytes( fkTableField ) );
+                                origFields[fkId].push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
+                                refFields[fkId].push_back( sqlite_pimpl->m_myconv.from_bytes( fkTableField ) );
                             }
                             else if( res3 == SQLITE_DONE )
                                 break;
@@ -410,7 +411,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
                                         delete_constraint = CASCADE_DELETE;
                                                                        //id, name, orig_schema,         table_name,                                  original_field,                      ref_schema,           ref_table,                              referenced_field,                          update_constraint, delete_constraint
-                                    foreign_keys[fkId].push_back( new FKField( fkReference, L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), sqlite_pimpl->m_myconv.from_bytes( fkField ), L"", sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), origFields, refFields, update_constraint, delete_constraint ) );
+                                    foreign_keys[fkId].push_back( new FKField( fkReference, L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), sqlite_pimpl->m_myconv.from_bytes( fkField ), L"", sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), origFields[fkId], refFields[fkId], update_constraint, delete_constraint ) );
                                     fk_names.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
                                 }
                                 else if( res3 == SQLITE_DONE )
