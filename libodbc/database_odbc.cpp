@@ -1489,22 +1489,24 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     result = 1;
                                     break;
                                 }
-                                std::vector<std::wstring> origFields, refFields;
+                                bool fkFound = false;
+                                std::map<int, std::vector<std::wstring> >origFields, refFields;
                                 memset( szFkName, '\0', fkNameLength );
                                 for( ret = SQLFetch( stmt_fk ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_fk ) )
                                 {
                                     str_to_uc_cpy( origCol, szPkCol );
                                     str_to_uc_cpy( refCol, szFkCol );
-                                    origFields.push_back( origCol );
-                                    refFields.push_back( refCol );
-								}
+                                    origFields[keySequence].push_back( origCol );
+                                    refFields[keySequence].push_back( refCol );
+                                    fkFound = true;
+                                }
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt_fk );
                                     result = 1;
                                     break;
                                 }
-                                else
+                                else if( fkFound )
                                 {
                                     ret = SQLSetPos( stmt_fk, 0, SQL_POSITION, SQL_LOCK_NO_CHANGE );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -1513,7 +1515,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         result = 1;
                                         break;
                                     }
-									else
+                                    else
                                     {
                                         for( ret = SQLFetch( stmt_fk ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_fk ) )
                                         {
@@ -1564,7 +1566,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             if( pimpl->m_subtype == L"Microsoft SQL Server" && deleteRule == SQL_RESTRICT )
                                                 delete_constraint = NO_ACTION_DELETE;
                                                                                      //id,         name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
-                                            foreign_keys[keySequence].push_back( new FKField( keySequence, fkName, origSchema, origTable, origCol, refSchema,  refTable,  refCol, origFields, refFields, update_constraint, delete_constraint ) );
+                                            foreign_keys[keySequence].push_back( new FKField( keySequence, fkName, origSchema, origTable, origCol, refSchema,  refTable,  refCol, origFields[keySequence], refFields[keySequence], update_constraint, delete_constraint ) );
                                             fk_fieldNames.push_back( origCol );
                                             primaryKey = L"";
                                             fkSchema = L"";
