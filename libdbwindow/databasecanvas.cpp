@@ -141,7 +141,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                     {
                         pConstr = new QueryConstraint( ((DrawingView *) m_view)->GetViewType() );
                         pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
-                        pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
+                        pConstr->SetRefColumn( (*it4)->GetReferencedFieldName() );
                         pConstr->SetRefTable( referencedTableName );
                         pConstr->SetType( QueryConstraint::foreignKey );
                         pConstr->SetFKDatabaseTable( &(*it2)->GetTable() );
@@ -150,8 +150,10 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                     if( ((DrawingView *) m_view)->GetViewType() == DatabaseView )
                     {
                         pConstr = new DatabaseConstraint( (*it4)->GetFKName() );
+                        pConstr->SetLocalColumns( (*it4)->GetOriginalFields() );
+                        pConstr->SetRefColumns( (*it4)->GetReferencedFields() );
                         pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
-                        pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
+                        pConstr->SetRefColumn( (*it4)->GetReferencedFieldName() );
                         pConstr->SetRefTable( referencedTableName );
                         pConstr->SetType( QueryConstraint::foreignKey );
                         pConstr->SetFKDatabaseTable( &(*it2)->GetTable() );
@@ -549,8 +551,8 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
     else
     {
         constraint = sign->GetConstraint();
-        constraint->GetLocalColumn( localColumns );
-        constraint->GetRefCol( refColumn );
+        localColumns = constraint->GetLocalColumns();
+        refColumn = constraint->GetRefColumns();
         match = constraint->GetPGMatch();
     }
     DrawingDocument *doc = (DrawingDocument *) m_view->GetDocument();
@@ -652,7 +654,7 @@ void DatabaseCanvas::CreateFKConstraint(const DatabaseTable *fkTable, const std:
                 {
                     pConstr = new DatabaseConstraint( (*it4)->GetFKName() );
                     pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
-                    pConstr->SetRefCol( (*it4)->GetReferencedFieldName() );
+                    pConstr->SetRefColumn( (*it4)->GetReferencedFieldName() );
                     pConstr->SetRefTable( (*it4)->GetReferencedTableName() );
                     pConstr->SetType( Constraint::foreignKey );
                     pConstr->SetFKDatabaseTable( fkTable );
@@ -723,8 +725,8 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             Constraint *constraint = sign->GetConstraint();
             std::wstring kName = constraint->GetName().ToStdWstring(), refTable, fkTable;
             std::vector<std::wstring> foreignKeyFields, refKeyFields;
-            constraint->GetLocalColumn( foreignKeyFields );
-            constraint->GetRefCol( refKeyFields );
+            foreignKeyFields = constraint->GetLocalColumns();
+            refKeyFields = constraint->GetRefColumns();
             DatabaseTable *table = const_cast<DatabaseTable *>( constraint->GetFKTable() );
             wxString refTableName = constraint->GetRefTable();
             int match = constraint->GetPGMatch();

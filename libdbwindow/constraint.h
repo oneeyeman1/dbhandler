@@ -196,7 +196,7 @@ public:
         m_localCol = localColumn;
     }
 
-    virtual const std::wstring &GetLocalColumn()
+    virtual const std::wstring &GetLocalColumn() const
     {
         return m_localCol;
     }
