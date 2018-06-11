@@ -399,7 +399,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 int formats1[2] = { 1, 1 };
                                 res1 = PQexecPrepared( m_db, "get_fkeys", 2, values1, length1, formats1, 1 );
                                 status = PQresultStatus( res1 );
-                                std::vector<std::wstring> origFields, refFields;
+                                std::map<int, std::vector<std::wstring> > origFields, refFields;
                                 if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
                                 {
                                     std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -414,10 +414,11 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 {
                                     for( int j = 0; j < PQntuples( res1 ); j++ )
                                     {
+                                        fkId = atoi( PQgetvalue( res1, j, 0 ) );
                                         origField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 5 ) );
-                                        origFields.push_back( origField );
+                                        origFields[fkId].push_back( origField );
                                         refField = m_pimpl->m_myconv.from_bytes( PQgetvalue( res1, j, 8 ) );
-                                        refFields.push_back( refField );
+                                        refFields[fkId].push_back( refField );
                                     }
                                     for( int j = 0; j < PQntuples( res1 ); j++ )
                                     {
@@ -462,7 +463,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         if( fkDeleteConstraint == L"CASCADE" )
                                             delete_constraint = CASCADE_DELETE;
                                                                                      //id,       name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
-                                        foreign_keys[fkId].push_back( new FKField( fkReference, fkName, origSchema, origTable, origField, refSchema, refTable, refField, origFields, refFields, update_constraint, delete_constraint, fkMatch ) );
+                                        foreign_keys[fkId].push_back( new FKField( fkReference, fkName, origSchema, origTable, origField, refSchema, refTable, refField, origFields[fkId], refFields[fkId], update_constraint, delete_constraint, fkMatch ) );
                                         fk_names.push_back( origField );
                                     }
                                     PQclear( res1 );
