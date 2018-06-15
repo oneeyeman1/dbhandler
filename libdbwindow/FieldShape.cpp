@@ -110,3 +110,12 @@ void FieldShape::Select(bool state)
 {
     m_fSelected = state;
 }
+
+wxRect FieldShape::GetBoundingBox()
+{
+    wxRect rect = wxSFRectShape::GetBoundingBox();
+    wxRect parentRect = this->GetParentShape()->GetBoundingBox();
+    rect.SetLeft( parentRect.GetLeft() );
+    rect.SetWidth( parentRect.GetWidth() );
+    return rect;
+}

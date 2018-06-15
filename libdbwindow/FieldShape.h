@@ -6,6 +6,7 @@ public:
     FieldShape(void);
     FieldShape(const FieldShape &shape);
     virtual ~FieldShape(void);
+    virtual wxRect GetBoundingBox();
     virtual bool Contains(const wxPoint& pos);
     void SetParentRect(const wxRect &rect);
     void SetField(Field *field);
