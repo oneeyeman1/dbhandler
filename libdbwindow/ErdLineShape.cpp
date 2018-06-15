@@ -76,10 +76,20 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDia
         found = false;
         for( SerializableList::iterator it = sourceFields.begin(); it != sourceFields.end() && !found; ++it )
         {
+            if( dynamic_cast<FieldShape *>( (*it) )->GetField()->GetFieldName() == originalFKField )
+            {
+                m_sourceFld = dynamic_cast<FieldShape *>( (*it) );
+                found = true;
+            }
         }
         found = false;
         for( SerializableList::iterator it = targetFields.begin(); it != targetFields.end() && !found; ++it )
         {
+            if( dynamic_cast<FieldShape *>( (*it) )->GetField()->GetFieldName() == refFKField )
+            {
+                m_targetFld = dynamic_cast<FieldShape *>( (*it) );
+                found = true;
+            }
         }
         m_isEnabled = true;
     }
@@ -92,10 +102,11 @@ ErdLineShape::~ErdLineShape()
 wxRealPoint ErdLineShape::GetModSrcPoint()
 {
     wxString constraintColumnQuery;
-    bool found = false;
-    wxSFShapeBase* pSrcShape = GetShapeManager()->FindShape( m_nSrcShapeId );
+//    bool found = false;
+    wxSFShapeBase* pSrcShape = m_sourceFld;
     if( !pSrcShape ) return wxRealPoint();
     wxRealPoint nModPoint;
+    double y;
     if( m_nTrgOffset != sfdvLINESHAPE_OFFSET )
     {
         wxRect bbRct = pSrcShape->GetBoundingBox();
@@ -106,7 +117,11 @@ wxRealPoint ErdLineShape::GetModSrcPoint()
     else
     {
         wxRect shpBB = pSrcShape->GetBoundingBox();
-        double y = shpBB.GetTop();
+        if( m_type == DatabaseView )
+        {
+            y = m_sourceFld->GetBoundingBox().GetHeight() / 2;
+        }
+/*        double y = shpBB.GetTop();
         y += dynamic_cast<MyErdTable *>( pSrcShape )->GetLabel()->GetBoundingBox().GetHeight();
         SerializableList::compatibility_iterator node = dynamic_cast<MyErdTable *>( pSrcShape )->GetFieldGrid()->GetFirstChildNode();
         while( node && !found )
@@ -126,12 +141,9 @@ wxRealPoint ErdLineShape::GetModSrcPoint()
                         y += pColumn->GetBoundingBox().GetHeight() / 2;
                     }
                 }
-				if( m_type == DatabaseView )
-				{
-				}
             }
             node = node->GetNext();
-        }
+        }*/
         nModPoint = wxRealPoint( shpBB.GetLeft() + shpBB.GetWidth() / 2, y );
     }
     return nModPoint;
@@ -139,10 +151,11 @@ wxRealPoint ErdLineShape::GetModSrcPoint()
 
 wxRealPoint ErdLineShape::GetModTrgPoint()
 {
-    bool found = false;
-    wxSFShapeBase* pTrgShape = GetShapeManager()->FindShape( m_nTrgShapeId );
+//    bool found = false;
+    wxSFShapeBase* pTrgShape = m_targetFld;
     if( !pTrgShape ) return wxRealPoint();
     wxRealPoint nModPoint;
+    double y;
     if( m_nTrgOffset != sfdvLINESHAPE_OFFSET )
     {
         wxRect bbRct = pTrgShape->GetBoundingBox();
@@ -153,7 +166,11 @@ wxRealPoint ErdLineShape::GetModTrgPoint()
     else
     {
         wxRect shpBB = pTrgShape->GetBoundingBox();
-        double y = shpBB.GetTop();
+        if( m_type == DatabaseView )
+        {
+            y = m_targetFld->GetBoundingBox().GetHeight() / 2;
+        }
+/*        double y = shpBB.GetTop();
         y += dynamic_cast<MyErdTable *>( pTrgShape )->GetLabel()->GetBoundingBox().GetHeight();
         SerializableList::compatibility_iterator node = dynamic_cast<MyErdTable *>( pTrgShape )->GetFieldGrid()->GetFirstChildNode();
         while( node && !found )
@@ -161,25 +178,20 @@ wxRealPoint ErdLineShape::GetModTrgPoint()
             wxSFTextShape *pColumn = wxDynamicCast( node->GetData(), wxSFTextShape );
             if( pColumn )
             {
-                if( m_type == QueryView )
+                if( m_type == DatabaseView )
                 {
                     wxString columnText = pColumn->GetText();
                     wxString refCol;
                     refCol = m_constraint->GetRefColumn();
-                    if( columnText != refCol )
-                        y += pColumn->GetBoundingBox().GetHeight();
                     if( columnText == refCol )
                     {
                         found = true;
-                        y += pColumn->GetBoundingBox().GetHeight() / 2;
+                        y = pColumn->GetBoundingBox().GetHeight() / 2;
                     }
-                }
-                if( m_type == DatabaseView )
-                {
                 }
             }
             node = node->GetNext();
-        }
+        }*/
         nModPoint = wxRealPoint( shpBB.GetLeft() + shpBB.GetWidth() / 2, y );
     }
     return nModPoint;
@@ -243,7 +255,7 @@ wxRealPoint ErdLineShape::GetSourcePoint()
     else
     {
         wxRealPoint pt1, pt2;
-        wxSFShapeBase* pSrcShape = GetShapeManager()->FindShape( m_nSrcShapeId );
+        wxSFShapeBase* pSrcShape = m_sourceFld;
         if( pSrcShape && !m_lstPoints.IsEmpty() )
         {
             if( pSrcShape->GetConnectionPoints().IsEmpty() )
@@ -279,7 +291,7 @@ wxRealPoint ErdLineShape::GetTargetPoint()
     else
     {
         wxRealPoint pt1, pt2;
-        wxSFShapeBase* pTrgShape = GetShapeManager()->FindShape( m_nTrgShapeId );
+        wxSFShapeBase* pTrgShape = m_targetFld;
         if( pTrgShape && !m_lstPoints.IsEmpty() )
         {
             if( pTrgShape->GetConnectionPoints().IsEmpty() )
@@ -315,8 +327,8 @@ void ErdLineShape::GetDirectionalLine(wxRealPoint& src, wxRealPoint& trg)
     }
     else
     {
-        wxSFShapeBase* pSrcShape = GetShapeManager()->FindShape( m_nSrcShapeId );
-        wxSFShapeBase* pTrgShape = GetShapeManager()->FindShape( m_nTrgShapeId );
+        wxSFShapeBase* pSrcShape = m_sourceFld;
+        wxSFShapeBase* pTrgShape = m_targetFld;
         if( pSrcShape && pTrgShape )
         {
             wxRealPoint trgCenter = GetModTrgPoint();
@@ -417,7 +429,7 @@ void ErdLineShape::DrawCompleteLine(wxDC& dc)
             }
             else
             {
-                wxSFShapeBase* pSrcShape = GetShapeManager()->FindShape( m_nSrcShapeId );
+                wxSFShapeBase* pSrcShape = m_sourceFld;
                 if( pSrcShape )
                 {
                     if( pSrcShape->GetConnectionPoints().IsEmpty() )
