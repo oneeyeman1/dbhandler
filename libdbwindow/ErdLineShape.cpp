@@ -333,6 +333,19 @@ void ErdLineShape::GetDirectionalLine(wxRealPoint& src, wxRealPoint& trg)
         {
             wxRealPoint trgCenter = GetModTrgPoint();
             wxRealPoint srcCenter = GetModSrcPoint();
+            wxRect trgParent = pTrgShape->GetParentShape()->GetBoundingBox();
+            wxRect srcParent = pSrcShape->GetParentShape()->GetBoundingBox();
+            wxRect srcRect = pSrcShape->GetBoundingBox(), trgRect = pTrgShape->GetBoundingBox();
+            if( trgCenter.x < srcCenter.x )
+            {
+                trgCenter.x = trgParent.GetLeft() + trgParent.GetWidth();
+                srcCenter.x = srcParent.GetLeft();
+            }
+            if( trgCenter.x > srcCenter.x )
+            {
+                trgCenter.x = trgParent.GetLeft();
+                srcCenter.x = srcParent.GetLeft() + srcParent.GetWidth();
+            }
             if( ( pSrcShape->GetParent() == pTrgShape ) || ( pTrgShape->GetParent() == pSrcShape ) )
             {
                 wxRect trgBB = pTrgShape->GetBoundingBox();
@@ -367,11 +380,15 @@ void ErdLineShape::GetDirectionalLine(wxRealPoint& src, wxRealPoint& trg)
                 }
             }			
             if( pSrcShape->GetConnectionPoints().IsEmpty() )
-                src = pSrcShape->GetBorderPoint( srcCenter, trgCenter );
+            {
+                src = wxRealPoint( srcCenter.x, ( ( srcRect.GetBottom() - srcRect.GetTop() ) / 2 ) + srcRect.GetTop() );
+            }
             else
                 src = srcCenter;
             if( pTrgShape->GetConnectionPoints().IsEmpty() )
-                trg = pTrgShape->GetBorderPoint(trgCenter, srcCenter);
+            {
+                trg = wxRealPoint( trgCenter.x, ( ( trgRect.GetBottom() - trgRect.GetTop() ) / 2 ) + trgRect.GetTop() );
+            }
             else
                 trg = trgCenter;
         }
