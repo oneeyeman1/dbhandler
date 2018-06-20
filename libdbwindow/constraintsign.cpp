@@ -70,6 +70,21 @@ ConstraintSign::ConstraintSign(ViewType type) : wxSFRectShape()
                     delete m_fKey;
             }
         }
+        if( type == QueryView )
+        {
+            m_sign = new wxSFTextShape;
+            if( m_sign )
+            {
+                m_sign->SetId( 1000 );
+                m_sign->SetVAlign( wxSFShapeBase::valignMIDDLE );
+                m_sign->SetHAlign( wxSFShapeBase::halignCENTER );
+                m_sign->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+                if( m_grid->InsertToGrid( 1, 0, m_sign ) )
+                    m_sign->SetText( "=" );
+				else
+                    delete m_sign;
+            }
+        }
     }
 }
 
