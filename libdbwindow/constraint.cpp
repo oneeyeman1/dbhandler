@@ -70,7 +70,6 @@ QueryConstraint::QueryConstraint(const QueryConstraint& obj):Constraint(obj)
 {
     m_viewType = obj.m_viewType;
     SetName( obj.GetName() );
-    m_localColumn = obj.m_localColumn;
     SetType( obj.GetType() );
     SetRefTable( obj.GetRefTable() );
     m_refCol = obj.m_refCol;
@@ -82,7 +81,6 @@ QueryConstraint::QueryConstraint(const QueryConstraint& obj):Constraint(obj)
 QueryConstraint::QueryConstraint(const wxString& name, const wxString &localColumn, constraintType type, constraintAction onDelete, constraintAction onUpdate)
 {
     SetName( name );
-    m_localColumn = localColumn;
     SetType( type );
     SetOnDelete( onDelete );
     SetOnUpdate( onUpdate );
@@ -97,9 +95,10 @@ void QueryConstraint::InitSerializable()
 {
     wxString name = GetName(), refTable = const_cast<wxString &>( GetRefTable() );
     int type = GetType();
+    wxString temp( GetLocalColumn() );
     constraintAction onDelete = GetOnDelete(), onUpdate = GetOnUpdate();
     XS_SERIALIZE( name, wxT( "name" ) );
-    XS_SERIALIZE( m_localColumn, wxT( "localColumn" ) );
+    XS_SERIALIZE( temp, wxT( "localColumn" ) );
     XS_SERIALIZE_INT( type, wxT( "type" ) );
     XS_SERIALIZE( refTable, wxT( "refTable" ) );
     XS_SERIALIZE( m_refCol, wxT( "refCol" ) );

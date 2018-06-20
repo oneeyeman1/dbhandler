@@ -55,44 +55,41 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDia
         m_signConstraint->Activate( true );
         SF_ADD_COMPONENT( m_signConstraint, wxT( "sign" ) );
     }
-    if( type == DatabaseView )
+    const_cast<wxSFDiagramManager &>( pManager ).GetShapes( CLASSINFO( MyErdTable ), listShapes );
+    bool found = false;
+    for( ShapeList::iterator it = listShapes.begin(); it != listShapes.end() && !found; ++it )
     {
-        const_cast<wxSFDiagramManager &>( pManager ).GetShapes( CLASSINFO( MyErdTable ), listShapes );
-        bool found = false;
-        for( ShapeList::iterator it = listShapes.begin(); it != listShapes.end() && !found; ++it )
-        {
-            if( dynamic_cast<MyErdTable *>( (*it) )->GetTableName() == const_cast<DatabaseTable *>( m_constraint->GetFKTable() )->GetTableName() )
-                m_sourceTbl = dynamic_cast<MyErdTable *>( (*it) );
-            if( dynamic_cast<MyErdTable *>( (*it) )->GetTableName() == m_constraint->GetRefTable() )
-                m_targetTbl = dynamic_cast<MyErdTable *>( (*it) );
-            if( m_sourceTbl && m_targetTbl )
-                found = true;
-        }
-        m_sourceTbl->GetChildrenRecursively( CLASSINFO( FieldShape ), sourceFields );
-        m_targetTbl->GetChildrenRecursively( CLASSINFO( FieldShape ), targetFields );
-        wxString originalFKField, refFKField;
-        originalFKField = m_constraint->GetLocalColumn();
-        refFKField = m_constraint->GetRefColumn();
-        found = false;
-        for( SerializableList::iterator it = sourceFields.begin(); it != sourceFields.end() && !found; ++it )
-        {
-            if( dynamic_cast<FieldShape *>( (*it) )->GetField()->GetFieldName() == originalFKField )
-            {
-                m_sourceFld = dynamic_cast<FieldShape *>( (*it) );
-                found = true;
-            }
-        }
-        found = false;
-        for( SerializableList::iterator it = targetFields.begin(); it != targetFields.end() && !found; ++it )
-        {
-            if( dynamic_cast<FieldShape *>( (*it) )->GetField()->GetFieldName() == refFKField )
-            {
-                m_targetFld = dynamic_cast<FieldShape *>( (*it) );
-                found = true;
-            }
-        }
-        m_isEnabled = true;
+        if( dynamic_cast<MyErdTable *>( (*it) )->GetTableName() == const_cast<DatabaseTable *>( m_constraint->GetFKTable() )->GetTableName() )
+            m_sourceTbl = dynamic_cast<MyErdTable *>( (*it) );
+        if( dynamic_cast<MyErdTable *>( (*it) )->GetTableName() == m_constraint->GetRefTable() )
+            m_targetTbl = dynamic_cast<MyErdTable *>( (*it) );
+        if( m_sourceTbl && m_targetTbl )
+            found = true;
     }
+    m_sourceTbl->GetChildrenRecursively( CLASSINFO( FieldShape ), sourceFields );
+    m_targetTbl->GetChildrenRecursively( CLASSINFO( FieldShape ), targetFields );
+    wxString originalFKField, refFKField;
+    originalFKField = m_constraint->GetLocalColumn();
+    refFKField = m_constraint->GetRefColumn();
+    found = false;
+    for( SerializableList::iterator it = sourceFields.begin(); it != sourceFields.end() && !found; ++it )
+    {
+        if( dynamic_cast<FieldShape *>( (*it) )->GetField()->GetFieldName() == originalFKField )
+        {
+            m_sourceFld = dynamic_cast<FieldShape *>( (*it) );
+            found = true;
+        }
+    }
+    found = false;
+    for( SerializableList::iterator it = targetFields.begin(); it != targetFields.end() && !found; ++it )
+    {
+        if( dynamic_cast<FieldShape *>( (*it) )->GetField()->GetFieldName() == refFKField )
+        {
+            m_targetFld = dynamic_cast<FieldShape *>( (*it) );
+            found = true;
+        }
+    }
+    m_isEnabled = true;
 }
 
 ErdLineShape::~ErdLineShape()
@@ -117,10 +114,10 @@ wxRealPoint ErdLineShape::GetModSrcPoint()
     else
     {
         wxRect shpBB = pSrcShape->GetBoundingBox();
-        if( m_type == DatabaseView )
-        {
+//        if( m_type == DatabaseView )
+//        {
             y = m_sourceFld->GetBoundingBox().GetHeight() / 2;
-        }
+//        }
 /*        double y = shpBB.GetTop();
         y += dynamic_cast<MyErdTable *>( pSrcShape )->GetLabel()->GetBoundingBox().GetHeight();
         SerializableList::compatibility_iterator node = dynamic_cast<MyErdTable *>( pSrcShape )->GetFieldGrid()->GetFirstChildNode();
@@ -166,10 +163,10 @@ wxRealPoint ErdLineShape::GetModTrgPoint()
     else
     {
         wxRect shpBB = pTrgShape->GetBoundingBox();
-        if( m_type == DatabaseView )
-        {
+//        if( m_type == DatabaseView )
+//        {
             y = m_targetFld->GetBoundingBox().GetHeight() / 2;
-        }
+//        }
 /*        double y = shpBB.GetTop();
         y += dynamic_cast<MyErdTable *>( pTrgShape )->GetLabel()->GetBoundingBox().GetHeight();
         SerializableList::compatibility_iterator node = dynamic_cast<MyErdTable *>( pTrgShape )->GetFieldGrid()->GetFirstChildNode();
