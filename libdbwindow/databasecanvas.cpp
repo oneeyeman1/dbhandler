@@ -283,36 +283,42 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
     }
     if( type == QueryView )
     {
-        for( ShapeList::iterator it1 = shapes.begin(); it1 != shapes.end(); it1++ )
+        if( sign )
         {
-            FieldShape *shape = wxDynamicCast( (*it1), FieldShape );
-            if( shape )
-                shape->Select( true );
         }
-		FieldShape *fld = NULL;
-        MyErdTable *tbl = NULL;
-        for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
+        else
         {
-            MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
-            if( table )
+            for( ShapeList::iterator it1 = shapes.begin(); it1 != shapes.end(); it1++ )
             {
-                tbl = table;
+                FieldShape *shape = wxDynamicCast( (*it1), FieldShape );
+                if( shape )
+                    shape->Select( true );
             }
-            else
+            FieldShape *fld = NULL;
+            MyErdTable *tbl = NULL;
+            for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
             {
-                FieldShape *field = wxDynamicCast( (*it), FieldShape );
-                if( field )
+                MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
+                if( table )
                 {
-                    fld = field;
-                    field->Select( !field->IsSelected() );
+                    tbl = table;
+                }
+                else
+                {
+                    FieldShape *field = wxDynamicCast( (*it), FieldShape );
+                    if( field )
+                    {
+                        fld = field;
+                        field->Select( !field->IsSelected() );
+                    }
                 }
             }
+            if( tbl )
+                tbl->Select( false );
+            Refresh();
+            if( fld )
+                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), const_cast<DatabaseTable &>( tbl->GetTable() ).GetTableName() );
         }
-        if( tbl )
-            tbl->Select( false );
-        Refresh();
-        if( fld )
-            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), const_cast<DatabaseTable &>( tbl->GetTable() ).GetTableName() );
     }
 }
 
