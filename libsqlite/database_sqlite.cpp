@@ -89,6 +89,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
 {
     int result = 0;
     char *err;
+    sqlite3_stmt *stmt;
     std::string query1 = "CREATE TABLE IF NOT EXISTS \"sys.abcatcol\"(\"abc_tnam\" char(129) NOT NULL, \"abc_tid\" integer, \"abc_ownr\" char(129) NOT NULL, \"abc_cnam\" char(129) NOT NULL, \"abc_cid\" smallint, \"abc_labl\" char(254), \"abc_lpos\" smallint, \"abc_hdr\" char(254), \"abc_hpos\" smallint, \"abc_itfy\" smallint, \"abc_mask\" char(31), \"abc_case\" smallint, \"abc_hght\" smallint, \"abc_wdth\" smallint, \"abc_ptrn\" char(31), \"abc_bmap\" char(1), \"abc_init\" char(254), \"abc_cmnt\" char(254), \"abc_edit\" char(31), \"abc_tag\" char(254), PRIMARY KEY( \"abc_tnam\", \"abc_ownr\", \"abc_cnam\" ));";
     std::string query2 = "CREATE TABLE IF NOT EXISTS \"sys.abcatedt\"(\"abe_name\" char(30) NOT NULL, \"abe_edit\" char(254), \"abe_type\" smallint, \"abe_cntr\" integer, \"abe_seqn\" smallint NOT NULL, \"abe_flag\" integer, \"abe_work\" char(32), PRIMARY KEY( \"abe_name\", \"abe_seqn\" ));";
     std::string query3 = "CREATE TABLE IF NOT EXISTS \"sys.abcatfmt\"(\"abf_name\" char(30) NOT NULL, \"abf_frmt\" char(254), \"abf_type\" smallint, \"abf_cntr\" integer, PRIMARY KEY( \"abf_name\" ));";
@@ -178,7 +179,28 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
                     errorMsg.push_back( errorMessage );
                 }
                 else
-                    pimpl->m_dbName = sqlite_pimpl->m_catalog;
+                {
+                    if( sqlite3_prepare_v2( m_db, "PRAGMA schema_version", -1, &stmt, NULL ) == SQLITE_OK )
+                    {
+                        if( ( res = sqlite3_step( stmt ) ) == SQLITE_ROW )
+                        {
+                            m_schema = sqlite3_column_int( stmt, 0 );
+                            pimpl->m_dbName = sqlite_pimpl->m_catalog;
+                        }
+                        else
+                        {
+                            result = 1;
+                            GetErrorMessage( res, errorMessage );
+                            errorMsg.push_back( errorMessage );
+                        }
+                    }
+                    else
+                    {
+                        result = 1;
+                        GetErrorMessage( res, errorMessage );
+                        errorMsg.push_back( errorMessage );
+                    }
+                }
             }
             else
                 result = 1;
