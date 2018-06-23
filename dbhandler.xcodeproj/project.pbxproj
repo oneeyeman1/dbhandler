@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E362C3F320DEC4A00089E44E /* newtablehandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E362C3F120DEC4A00089E44E /* newtablehandler.cpp */; };
 		E3D05D3E1CA4AB1D002CB677 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D05D3D1CA4AB1D002CB677 /* Cocoa.framework */; };
 		E3D05D481CA4AB1D002CB677 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E3D05D461CA4AB1D002CB677 /* InfoPlist.strings */; };
 		E3D05D4E1CA4AB1D002CB677 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E3D05D4C1CA4AB1D002CB677 /* Credits.rtf */; };
@@ -121,6 +122,8 @@
 /* Begin PBXFileReference section */
 		E33E6F531E6A9A6A003A0B92 /* libtablewindow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libtablewindow.xcodeproj; path = libtablewindow/libtablewindow.xcodeproj; sourceTree = "<group>"; };
 		E33E6F9C1EBC26B6003A0B92 /* libpostgres.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libpostgres.xcodeproj; path = libpostgres/libpostgres.xcodeproj; sourceTree = "<group>"; };
+		E362C3F120DEC4A00089E44E /* newtablehandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = newtablehandler.cpp; sourceTree = "<group>"; };
+		E362C3F220DEC4A00089E44E /* newtablehandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = newtablehandler.h; sourceTree = "<group>"; };
 		E38708C51D2B61D7004EF478 /* libdbwindow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdbwindow.xcodeproj; path = libdbwindow/libdbwindow.xcodeproj; sourceTree = "<group>"; };
 		E38708E81D431E9B004EF478 /* libshapeframework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libshapeframework.xcodeproj; path = libshapeframework/libshapeframework.xcodeproj; sourceTree = "<group>"; };
 		E39501BF1DF3B99C0046E51B /* libpropertypages.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libpropertypages.xcodeproj; path = libpropertypages/libpropertypages.xcodeproj; sourceTree = "<group>"; };
@@ -275,6 +278,8 @@
 		E3D05D431CA4AB1D002CB677 /* dbhandler */ = {
 			isa = PBXGroup;
 			children = (
+				E362C3F120DEC4A00089E44E /* newtablehandler.cpp */,
+				E362C3F220DEC4A00089E44E /* newtablehandler.h */,
 				E3D05D711CA564F5002CB677 /* doc.cpp */,
 				E3D05D721CA564F5002CB677 /* doc.h */,
 				E3D05D731CA564F5002CB677 /* docview.cpp */,
@@ -614,6 +619,7 @@
 				E3D05D7D1CA564F5002CB677 /* mainframe.cpp in Sources */,
 				E3D05D7B1CA564F5002CB677 /* doc.cpp in Sources */,
 				E3D05D7E1CA564F5002CB677 /* view.cpp in Sources */,
+				E362C3F320DEC4A00089E44E /* newtablehandler.cpp in Sources */,
 				E3D05D7C1CA564F5002CB677 /* docview.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
