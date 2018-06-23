@@ -28,10 +28,13 @@ private:
     void OnDatabase(wxCommandEvent &event);
     void OnQuery(wxCommandEvent &event);
     void OnSize(wxSizeEvent &event);
+    void OnClose(wxCloseEvent &event);
     Database *m_db;
     wxDynamicLibrary *m_lib;
     wxMenu *m_menuFile;
     wxDocManager *m_manager;
+    NewTableHandler *m_handler;
+    wxCriticalSection m_threadCS;
 #if defined __WXMSW__ || defined __WXGTK__
     wxToolBar *m_tb;
 #endif

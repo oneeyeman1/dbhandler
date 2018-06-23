@@ -1382,3 +1382,9 @@ int PostgresDatabase::DropForeignKey(std::wstring &command, const std::wstring &
         command = query;
     return result;
 }
+
+int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
+{
+    return 0;
+}
+

@@ -372,6 +372,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 if( res == SQLITE_ROW  )
                 {
                     const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
+                    pimpl->PushTableName( sqlite_pimpl->m_myconv.from_bytes( tableName ) );
                     res3 = sqlite3_bind_text( stmt3, 1, tableName, -1, SQLITE_TRANSIENT );
                     if( res3 == SQLITE_OK )
                     {
@@ -1617,4 +1618,61 @@ int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg)
     pimpl->m_versionMinor = 24;
     pimpl->m_versionRevision = 0;
     return 0;
+}
+
+int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0, res, schema;
+    sqlite3_stmt *stmt, *stmt1;
+    std::wstring errorMessage;
+    std::vector<std::wstring> tableNames = pimpl->GetTableNames();
+    std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
+        if( sqlite3_prepare_v2( m_db, "PRAGMA schema_version", -1, &stmt, NULL ) == SQLITE_OK )
+        {
+            if( ( res = sqlite3_step( stmt ) ) == SQLITE_ROW )
+            {
+                schema = sqlite3_column_int( stmt, 0 );
+                if( schema != m_schema )
+                {
+                    if( sqlite3_prepare_v2( m_db, query1.c_str(), -1, &stmt1, NULL ) == SQLITE_OK )
+                    {
+                        while( true )
+						{
+                            if( ( res = sqlite3_step( stmt1 ) ) == SQLITE_ROW )
+                            {
+                                if( std::find( tableNames.begin(), tableNames.end(), sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( stmt, 0 ) ) ) != tableNames.end() )
+                                    continue;
+                                else
+                                {
+                                }
+                            }
+                            else if( res == SQLITE_DONE )
+                                break;
+							else
+                            {
+                                result = 1;
+                                break;
+                            }
+						}
+                        if( result )
+                            result = 1;
+                        sqlite3_finalize( stmt1 );
+                    }
+                    else
+                    {
+                        result = 1;
+                    }
+                }
+            }
+            else
+            {
+                result = 1;
+            }
+            sqlite3_finalize( stmt );
+        }
+        else
+        {
+            result = 1;
+        }
+    return result;
 }

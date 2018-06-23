@@ -22,6 +22,7 @@ public:
     virtual int ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int match, std::vector<std::wstring> &errorMsg);
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     int CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg);
+    virtual int NewTableCreation(std::vector<std::wstring> &errorMsg);
 protected:
     struct PostgresImpl;
     PostgresImpl *m_pimpl;

@@ -26,6 +26,7 @@
 #include "wx/dynlib.h"
 #include "database.h"
 #include "docview.h"
+#include "newtablehandler.h"
 #include "mainframe.h"
 
 #include "res/odbc1.xpm"
@@ -50,11 +51,13 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_DATABASE, MainFrame::OnDatabase)
     EVT_MENU(wxID_QUERY, MainFrame::OnQuery)
     EVT_SIZE(MainFrame::OnSize)
+    EVT_CLOSE(MainFrame::OnClose)
 END_EVENT_TABLE()
 
 MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL, wxID_ANY, "DB Handler" )
 {
     m_db = NULL;
+    m_handler = NULL;
 #if defined __WXMSW__ || defined __WXGTK__
     m_tb = NULL;
 #endif
@@ -98,6 +101,30 @@ MainFrame::~MainFrame()
     m_db = NULL;
     delete m_lib;
     m_lib = NULL;
+}
+
+void MainFrame::OnClose(wxCloseEvent &event)
+{
+    {
+        wxCriticalSectionLocker enter( m_threadCS );
+        if( m_handler )
+        {
+            if( m_handler->Delete() != wxTHREAD_NO_ERROR )
+            {
+            }
+            m_handler = NULL;
+        }
+    }
+    while( 1 )
+    {
+        {
+            wxCriticalSectionLocker enter( m_threadCS );
+			if( !m_handler )
+                break;
+        }
+        wxThread::This()->Sleep( 1 );
+    }
+    Destroy();
 }
 
 void MainFrame::InitToolBar(wxToolBar* toolBar)
@@ -217,6 +244,7 @@ void MainFrame::TableMenu()
 void MainFrame::Connect()
 {
     Database *db = NULL;
+    std::vector<std::wstring> errorMsg;
     if( !m_lib )
     {
         m_lib = new wxDynamicLibrary();
@@ -238,6 +266,24 @@ void MainFrame::Connect()
         db = func( this, name, engine, connectStr, connectedUser );
         if( db )
         {
+            {
+                wxCriticalSectionLocker enter( m_threadCS );
+                if( m_handler )
+                {
+                    if( m_handler->Delete() != wxTHREAD_NO_ERROR )
+                    {
+                    }
+                }
+            }
+            while( 1 )
+            {
+                {
+                    wxCriticalSectionLocker enter( m_threadCS );
+                    if( !m_handler )
+                        break;
+                }
+                wxThread::This()->Sleep( 1 );
+            }
             delete m_db;
             m_db = NULL;
             wxGetApp().SetDBEngine( engine );
@@ -246,6 +292,16 @@ void MainFrame::Connect()
             wxGetApp().SetConnectedUser( connectedUser );
         }
         m_db = db;
+        m_handler = new NewTableHandler( m_db );
+        if( m_handler->Run() != wxTHREAD_NO_ERROR )
+        {
+            wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
+            delete m_handler;
+            m_handler = NULL;
+            m_db->Disconnect( errorMsg );
+            delete m_db;
+            m_db = NULL;
+        }
     }
 }
 

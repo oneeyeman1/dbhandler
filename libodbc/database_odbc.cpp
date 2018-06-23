@@ -4088,3 +4088,9 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
     }
     return result;
 }
+
+int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
+{
+    return 0;
+}
+

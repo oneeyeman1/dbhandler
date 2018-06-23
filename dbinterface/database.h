@@ -259,11 +259,13 @@ public:
     virtual int SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
     virtual int ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int match, std::vector<std::wstring> &errorMsg) = 0;
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int NewTableCreation(std::vector<std::wstring> &errorMsg) = 0;
 };
 
 struct Database::Impl
 {
     std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
+    std::vector<std::wstring> m_tableNames;
     std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
     std::wstring m_serverVersion;
     int m_versionMajor, m_versionMinor, m_versionRevision;
@@ -271,6 +273,8 @@ struct Database::Impl
     void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
     const std::wstring &GetDatabaseType() const { return m_type; };
     const std::wstring &GetDatabaseSubtype() const { return m_subtype; };
+	void PushTableName(const std::wstring tableName) { m_tableNames.push_back( tableName ); };
+	const std::vector<std::wstring> &GetTableNames() { return m_tableNames; };
 };
 
 inline Database::~Database()

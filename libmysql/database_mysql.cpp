@@ -2078,3 +2078,8 @@ int MySQLDatabase::DropForeignKey(std::wstring &command, const std::wstring &key
     return result;
 }
 
+int MySQLDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
+{
+    return 0;
+}
+

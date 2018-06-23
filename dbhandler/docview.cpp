@@ -36,6 +36,7 @@
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "database.h"
+#include "newtablehandler.h"
 #include "mainframe.h"
 #include "docview.h"
 #include "doc.h"

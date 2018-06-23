@@ -30,6 +30,9 @@
     <ClCompile Include="viewbase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="newtablehandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="doc.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="viewbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="newtablehandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
