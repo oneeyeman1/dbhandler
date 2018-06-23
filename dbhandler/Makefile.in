@@ -103,7 +103,8 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_dbhandler_OBJECTS = dbhandler-doc.$(OBJEXT) \
 	dbhandler-docview.$(OBJEXT) dbhandler-mainframe.$(OBJEXT) \
-	dbhandler-view.$(OBJEXT) dbhandler-viewbase.$(OBJEXT)
+	dbhandler-view.$(OBJEXT) dbhandler-viewbase.$(OBJEXT) \
+	dbhandler-newtablehandler.$(OBJEXT)
 dbhandler_OBJECTS = $(am_dbhandler_OBJECTS)
 dbhandler_LDADD = $(LDADD)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -355,7 +356,9 @@ dbhandler_SOURCES = \
 	view.cpp \
 	view.h \
 	viewbase.cpp \
-	viewbase.h
+	viewbase.h \
+	newtablehandler.cpp \
+	newtablehandler.h
 
 dbhandler_CXXFLAGS = -I../../dbinterface \
 	-I../../libdbwindow/res/gui \
@@ -463,6 +466,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbhandler-doc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbhandler-docview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbhandler-mainframe.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbhandler-newtablehandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbhandler-view.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbhandler-viewbase.Po@am__quote@
 
@@ -556,6 +560,20 @@ dbhandler-viewbase.obj: viewbase.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='viewbase.cpp' object='dbhandler-viewbase.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -c -o dbhandler-viewbase.obj `if test -f 'viewbase.cpp'; then $(CYGPATH_W) 'viewbase.cpp'; else $(CYGPATH_W) '$(srcdir)/viewbase.cpp'; fi`
+
+dbhandler-newtablehandler.o: newtablehandler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -MT dbhandler-newtablehandler.o -MD -MP -MF $(DEPDIR)/dbhandler-newtablehandler.Tpo -c -o dbhandler-newtablehandler.o `test -f 'newtablehandler.cpp' || echo '$(srcdir)/'`newtablehandler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dbhandler-newtablehandler.Tpo $(DEPDIR)/dbhandler-newtablehandler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='newtablehandler.cpp' object='dbhandler-newtablehandler.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -c -o dbhandler-newtablehandler.o `test -f 'newtablehandler.cpp' || echo '$(srcdir)/'`newtablehandler.cpp
+
+dbhandler-newtablehandler.obj: newtablehandler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -MT dbhandler-newtablehandler.obj -MD -MP -MF $(DEPDIR)/dbhandler-newtablehandler.Tpo -c -o dbhandler-newtablehandler.obj `if test -f 'newtablehandler.cpp'; then $(CYGPATH_W) 'newtablehandler.cpp'; else $(CYGPATH_W) '$(srcdir)/newtablehandler.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dbhandler-newtablehandler.Tpo $(DEPDIR)/dbhandler-newtablehandler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='newtablehandler.cpp' object='dbhandler-newtablehandler.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dbhandler_CXXFLAGS) $(CXXFLAGS) -c -o dbhandler-newtablehandler.obj `if test -f 'newtablehandler.cpp'; then $(CYGPATH_W) 'newtablehandler.cpp'; else $(CYGPATH_W) '$(srcdir)/newtablehandler.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
