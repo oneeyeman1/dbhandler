@@ -1,3 +1,4 @@
+#include <string>
 #include "wx/thread.h"
 #include "database.h"
 #include "newtablehandler.h"
