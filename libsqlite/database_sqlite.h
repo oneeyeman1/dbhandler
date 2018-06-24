@@ -35,6 +35,7 @@ protected:
     int DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName);
 private:
     sqlite3 *m_db;
+    sqlite3_stmt *m_stmt1, *m_stmt2;
     int m_schema;
 };
 

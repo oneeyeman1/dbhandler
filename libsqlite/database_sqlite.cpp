@@ -26,6 +26,7 @@ SQLiteDatabase::SQLiteDatabase() : Database()
     sqlite_pimpl = NULL;
     m_db = NULL;
     connectToDatabase = false;
+    m_stmt1 = m_stmt2 = NULL;
 }
 
 SQLiteDatabase::~SQLiteDatabase()
@@ -211,10 +212,14 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
 
 int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
+    int result = 0, res;
     const char *query = NULL;
     std::wstring errorMessage;
-    int res = sqlite3_close( m_db );
+    if( m_stmt1 )
+        res = sqlite3_finalize( m_stmt1 );
+    if( !res && m_stmt2 )
+        res = sqlite3_finalize( m_stmt2 );
+    res = sqlite3_close( m_db );
     if( res != SQLITE_OK )
     {
         GetErrorMessage( res, errorMessage );
@@ -1623,56 +1628,57 @@ int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg)
 int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res, schema;
-    sqlite3_stmt *stmt, *stmt1;
     std::wstring errorMessage;
     std::vector<std::wstring> tableNames = pimpl->GetTableNames();
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
-        if( sqlite3_prepare_v2( m_db, "PRAGMA schema_version", -1, &stmt, NULL ) == SQLITE_OK )
+    if( sqlite3_prepare_v2( m_db, "PRAGMA schema_version", -1, &m_stmt1, NULL ) == SQLITE_OK )
+    {
+        if( ( res = sqlite3_step( m_stmt1 ) ) == SQLITE_ROW )
         {
-            if( ( res = sqlite3_step( stmt ) ) == SQLITE_ROW )
+            schema = sqlite3_column_int( m_stmt1, 0 );
+            if( schema != m_schema )
             {
-                schema = sqlite3_column_int( stmt, 0 );
-                if( schema != m_schema )
+                if( sqlite3_prepare_v2( m_db, query1.c_str(), -1, &m_stmt2, NULL ) == SQLITE_OK )
                 {
-                    if( sqlite3_prepare_v2( m_db, query1.c_str(), -1, &stmt1, NULL ) == SQLITE_OK )
+                    while( true )
                     {
-                        while( true )
-						{
-                            if( ( res = sqlite3_step( stmt1 ) ) == SQLITE_ROW )
+                        if( ( res = sqlite3_step( m_stmt2 ) ) == SQLITE_ROW )
+                        {
+                            if( std::find( tableNames.begin(), tableNames.end(), sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt2, 0 ) ) ) != tableNames.end() )
+                                continue;
+                            else
                             {
-                                if( std::find( tableNames.begin(), tableNames.end(), sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( stmt, 0 ) ) ) != tableNames.end() )
-                                    continue;
-                                else
-                                {
-                                }
                             }
-                            else if( res == SQLITE_DONE )
-                                break;
-							else
-                            {
-                                result = 1;
-                                break;
-                            }
-						}
-                        if( result )
+                        }
+                        else if( res == SQLITE_DONE )
+                            break;
+                        else
+                        {
                             result = 1;
-                        sqlite3_finalize( stmt1 );
+                            break;
+                        }
                     }
-                    else
-                    {
+                    if( result )
                         result = 1;
-                    }
+                    sqlite3_finalize( m_stmt1 );
+                    m_stmt1 = NULL;
+                }
+                else
+                {
+                    result = 1;
                 }
             }
-            else
-            {
-                result = 1;
-            }
-            sqlite3_finalize( stmt );
         }
         else
         {
             result = 1;
         }
+        sqlite3_finalize( m_stmt2 );
+        m_stmt2 = NULL;
+    }
+    else
+    {
+        result = 1;
+    }
     return result;
 }
