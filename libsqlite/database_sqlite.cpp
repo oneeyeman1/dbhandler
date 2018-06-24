@@ -201,6 +201,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
                         GetErrorMessage( res, errorMessage );
                         errorMsg.push_back( errorMessage );
                     }
+                    sqlite3_finalize( stmt );
                 }
             }
             else
@@ -217,7 +218,7 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     std::wstring errorMessage;
     if( m_stmt1 )
         res = sqlite3_finalize( m_stmt1 );
-    if( !res && m_stmt2 )
+    if( m_stmt2 )
         res = sqlite3_finalize( m_stmt2 );
     res = sqlite3_close( m_db );
     if( res != SQLITE_OK )
@@ -1660,8 +1661,8 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     }
                     if( result )
                         result = 1;
-                    sqlite3_finalize( m_stmt1 );
-                    m_stmt1 = NULL;
+                    sqlite3_finalize( m_stmt2 );
+                    m_stmt2 = NULL;
                 }
                 else
                 {
@@ -1673,8 +1674,8 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         {
             result = 1;
         }
-        sqlite3_finalize( m_stmt2 );
-        m_stmt2 = NULL;
+        sqlite3_finalize( m_stmt1 );
+        m_stmt1 = NULL;
     }
     else
     {
