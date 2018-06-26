@@ -33,9 +33,10 @@ protected:
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
     int DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName);
+    virtual int AddDropTable(const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg);
 private:
     sqlite3 *m_db;
-    sqlite3_stmt *m_stmt1, *m_stmt2;
+    sqlite3_stmt *m_stmt1, *m_stmt2, *m_stmt3;
     int m_schema;
 };
 

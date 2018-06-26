@@ -18,6 +18,7 @@ wxThread::ExitCode NewTableHandler::Entry()
     while( !TestDestroy() )
     {
         m_db->NewTableCreation( errorMsg );
+        Sleep( 5000 );
     }
     return (wxThread::ExitCode) 0;
 }
