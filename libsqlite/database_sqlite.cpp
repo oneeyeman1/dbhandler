@@ -1635,6 +1635,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> tableNames = pimpl->GetTableNames();
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
     std::string query2 = "SELECT count(name) FROM sqlite_master WHERE type = 'table' OR type = 'view';";
+    std::vector<std::wstring> temp = pimpl->m_tableNames;
     if( sqlite3_prepare_v2( m_db, "PRAGMA schema_version", -1, &m_stmt1, NULL ) == SQLITE_OK )
     {
         if( ( res = sqlite3_step( m_stmt1 ) ) == SQLITE_ROW )
@@ -1654,14 +1655,17 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                 if( ( res = sqlite3_step( m_stmt2 ) ) == SQLITE_ROW )
                                 {
                                     std::wstring tableName = sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt2, 0 ) );
-                                    if( std::find( tableNames.begin(), tableNames.end(), tableName ) != tableNames.end() )
-                                        continue;
+                                    if( count > tableNames.size() )
+                                    {
+                                        if( std::find( tableNames.begin(), tableNames.end(), tableName ) != tableNames.end() )
+                                            continue;
+                                        AddDropTable( tableName, true, errorMsg );
+                                    }
                                     else
                                     {
-                                        if( count > tableNames.size() )
-                                            AddDropTable( tableName, true, errorMsg );
-                                        m_schema = schema;
+                                        temp.erase( std::remove( temp.begin(), temp.end(), tableName ), temp.end() );
                                     }
+                                    m_schema = schema;
                                 }
                                 else if( res == SQLITE_DONE )
                                     break;
@@ -1676,6 +1680,8 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             result = 1;
                         sqlite3_finalize( m_stmt2 );
                         m_stmt2 = NULL;
+                        if( count < tableNames.size() )
+                            AddDropTable( temp.at( 0 ), false, errorMsg );
                     }
 					else
                         result = 1;
@@ -1928,7 +1934,40 @@ int SQLiteDatabase::AddDropTable(const std::wstring &tableName, bool tableAdded,
                 fk_names.clear();
             }
         }
+        pimpl->PushTableName( tableName );
     }
-    pimpl->PushTableName( tableName );
+    else
+    {
+        std::vector<DatabaseTable *> &tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
+        for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it != tableVec.end(); )
+        {
+            if( (*it)->GetTableName() == tableName )
+            {
+                std::vector<Field *> fields = (*it)->GetFields();
+                for( std::vector<Field *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
+                {
+                    delete (*it1);
+                    (*it1) = NULL;
+                }
+                fields.clear();
+                std::map<int,std::vector<FKField *> > fk_fields = (*it)->GetForeignKeyVector();
+                for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
+                {
+                    for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
+                    {
+                        delete (*it3);
+                        (*it3) = NULL;
+                    }
+                }
+                fk_fields.clear();
+                delete (*it);
+                (*it) = NULL;
+                it = tableVec.erase( it );
+            }
+            else
+                ++it;
+        }
+        pimpl->m_tableNames.erase( std::remove( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ), pimpl->m_tableNames.end() );
+    }
     return result;
 }
