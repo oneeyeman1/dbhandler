@@ -103,15 +103,15 @@ public:
         this->match = match;
     }
     const int GetForeignKeyId() { return fkId; }
-	const std::wstring &GetFKName() { return fkName; }
+    const std::wstring &GetFKName() { return fkName; }
     const std::wstring &GetReferencedTableName() { return refTable; }
     const std::wstring &GetOriginalFieldName() { return originalField; }
-	const std::vector<std::wstring> &GetOriginalFields() { return origFields; }
+    const std::vector<std::wstring> &GetOriginalFields() { return origFields; }
     const std::wstring &GetReferencedFieldName() { return referencedField; }
-	const std::vector<std::wstring> &GetReferencedFields() { return refFields; }
+    const std::vector<std::wstring> &GetReferencedFields() { return refFields; }
     const FK_ONUPDATE GetOnUpdateConstraint() { return updateConstraint; }
     const FK_ONDELETE GetOnDeleteConstraint() { return deleteConstraint; }
-	const int GetMatchOPtion() { return match; }
+    const int GetMatchOPtion() { return match; }
 private:
     int fkId;
     std::wstring tableName, originalField, referencedField, refTable, origSchema, refSchema, fkName;
@@ -274,8 +274,8 @@ struct Database::Impl
     void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
     const std::wstring &GetDatabaseType() const { return m_type; };
     const std::wstring &GetDatabaseSubtype() const { return m_subtype; };
-	void PushTableName(const std::wstring tableName) { m_tableNames.push_back( tableName ); };
-	const std::vector<std::wstring> &GetTableNames() { return m_tableNames; };
+    void PushTableName(const std::wstring tableName) { m_tableNames.push_back( tableName ); };
+    const std::vector<std::wstring> &GetTableNames() { return m_tableNames; };
 };
 
 inline Database::~Database()
