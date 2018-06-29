@@ -559,7 +559,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                 GetErrorMessage( errorMsg, 2, m_hdbc );
                                                 result = 1;
                                             }
-											else
+                                            else
                                             {
                                                 query = new SQLWCHAR[query8.size() + 2];
                                                 memset( query, '\0', query8.size() + 2 );
@@ -638,9 +638,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                         result = 1;
                                     }
 /*****************************************/
-									else
+                                    else
                                     {
-									    ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
+                                        ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 2 );
@@ -3541,7 +3541,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
             delete qry;
             qry = NULL;
         }
-	    else if( logOnly )
+        else if( logOnly )
         {
             command = query;
         }
@@ -3842,7 +3842,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                                         if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                                             str_to_uc_cpy( tableOwner, owner );
                                     }
-									else
+                                    else
                                     {
                                         if( pimpl->m_subtype == L"Microsoft SQL Server" )
                                         {
@@ -4015,7 +4015,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
             }
             else
             {
-				retcode = SQLBindCol( m_hstmt, 2, SQL_C_SLONG, &versionMajor, 0, 0 );
+                retcode = SQLBindCol( m_hstmt, 2, SQL_C_SLONG, &versionMajor, 0, 0 );
                 if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -4169,27 +4169,6 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
     return result;
 }
 
-/*    query += L"FOREIGN KEY(";
-    for( std::vector<std::wstring>::const_iterator it1 = foreignKeyFields.begin(); it1 < foreignKeyFields.end(); it1++ )
-    {
-        query += (*it1);
-        if( it1 == foreignKeyFields.end() - 1 )
-            query += L") ";
-        else
-            query += L",";
-    }
-    query += L"REFERENCES " + refTableName + L"(";
-    for( std::vector<std::wstring>::const_iterator it1 = refKeyFields.begin(); it1 < refKeyFields.end(); it1++ )
-    {
-        query += (*it1);
-        if( it1 == refKeyFields.end() - 1 )
-            query += L") ";
-        else
-            query += L",";
-    }
-    query += L"ON DELETE ";
-    FK_ONUPDATE updProp = NO_ACTION_UPDATE;
-    FK_ONDELETE delProp = NO_ACTION_DELETE;*/
 int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
@@ -4232,7 +4211,7 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
                             (*it1) = NULL;
                             it1 = (*it).second.erase( it1 );
                         }
-						else
+                        else
                             ++it1;
                     }
             }
@@ -4248,7 +4227,7 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
         delete qry;
         qry = NULL;
     }
-	else
+    else
     {
         command = query;
     }
@@ -4346,7 +4325,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &schemaName, const std::wstrin
                             SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
                             hdbc_colattr = 0;
                         }
-						else
+                        else
                         {
                             columnNames = new SQLWCHAR * [numCols];
                             SQLLEN autoincrement;
