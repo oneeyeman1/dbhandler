@@ -535,7 +535,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
     GetSelectedShapes( list );
     if( list.size() == 1 )
         isTable = true;
-	else
+    else
         isTable = false;
     for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
     {
