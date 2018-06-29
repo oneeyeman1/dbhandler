@@ -1389,7 +1389,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int PostgresDatabase::AddDropTable(const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::AddDropTable(const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     return result;

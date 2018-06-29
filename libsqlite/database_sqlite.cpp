@@ -1659,7 +1659,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     {
                                         if( std::find( tableNames.begin(), tableNames.end(), tableName ) != tableNames.end() )
                                             continue;
-                                        AddDropTable( tableName, true, errorMsg );
+                                        AddDropTable( L"", tableName, true, errorMsg );
                                     }
                                     else
                                     {
@@ -1681,7 +1681,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         sqlite3_finalize( m_stmt2 );
                         m_stmt2 = NULL;
                         if( count < tableNames.size() )
-                            AddDropTable( temp.at( 0 ), false, errorMsg );
+                            AddDropTable( L"", temp.at( 0 ), false, errorMsg );
                     }
 					else
                         result = 1;
@@ -1698,7 +1698,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::AddDropTable(const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::AddDropTable(const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     if( tableAdded )
