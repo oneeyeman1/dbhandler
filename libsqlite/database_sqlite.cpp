@@ -1713,11 +1713,8 @@ int SQLiteDatabase::AddDropTable(const std::wstring &schemaName, const std::wstr
         FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
         FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
         std::map<int, std::vector<std::wstring> > origFields, refFields;
-//        std::string query2 = "PRAGMA table_info(\"%w\");";
         std::string query2 = "SELECT * FROM pragma_table_info(?)";
-//    std::string query3 = "PRAGMA foreign_key_list(\"%w\")";
         std::string query3 = "SELECT * FROM pragma_foreign_key_list(?)";
-//        std::string query4 = "PRAGMA index_list( \"%w\" );";
         std::string query4 = "SELECT * FROM pragma_index_list(?)";
         if( ( res3 = sqlite3_prepare_v2( m_db, query3.c_str(), (int) query3.length(), &stmt3, 0 ) ) == SQLITE_OK )
         {
@@ -1728,7 +1725,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &schemaName, const std::wstr
                 GetErrorMessage( res, errorMessage );
                 errorMsg.push_back( errorMessage );
             }
-			else
+            else
             {
                 for( ; ; )
                 {
@@ -1891,7 +1888,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &schemaName, const std::wstr
                     GetErrorMessage( res, errorMessage );
                     errorMsg.push_back( errorMessage );
                 }
-				else
+                else
                 {
                     for( ; ; )
                     {
