@@ -374,7 +374,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             if( res == SQLITE_ROW  )
             {
                 const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
-                AddDropTable( L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), true, errorMsg );
+                AddDropTable( L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), true, errorMsg );
             }
 			else if( res == SQLITE_DONE )
                 break;
@@ -1444,7 +1444,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     {
                                         if( std::find( tableNames.begin(), tableNames.end(), tableName ) != tableNames.end() )
                                             continue;
-                                        AddDropTable( L"", tableName, true, errorMsg );
+                                        AddDropTable( L"", L"", tableName, true, errorMsg );
                                     }
                                     else
                                     {
@@ -1466,7 +1466,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         sqlite3_finalize( m_stmt2 );
                         m_stmt2 = NULL;
                         if( count < tableNames.size() )
-                            AddDropTable( L"", temp.at( 0 ), false, errorMsg );
+                            AddDropTable( L"", L"", temp.at( 0 ), false, errorMsg );
                     }
 					else
                         result = 1;
@@ -1483,7 +1483,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::AddDropTable(const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     if( tableAdded )

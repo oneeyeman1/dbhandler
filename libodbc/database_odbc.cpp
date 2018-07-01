@@ -1152,6 +1152,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         schema = cat;
                         copy_uc_to_uc( schemaName, catalogName );
                     }
+                    AddDropTable( cat, schema, table, true, errorMsg );
                     if( GetTableOwner( schema, table, owner, errorMsg ) )
                     {
                         result = 1;
@@ -4225,7 +4226,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int ODBCDatabase::AddDropTable(const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     SQLRETURN ret;
     SQLHDBC hdbc_colattr;
