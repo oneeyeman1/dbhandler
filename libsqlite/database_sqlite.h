@@ -16,7 +16,7 @@ public:
     virtual int Disconnect(std::vector<std::wstring> &errorMsg);
     virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
-    virtual int GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, const char *fieldName, Field *field, std::vector<std::wstring> &errorMsg);
+    virtual int GetFieldProperties(const char *tableName, const char *UNUSED(schemaName), const char *ownerName, const char *fieldName, Field *field, std::vector<std::wstring> &errorMsg);
     virtual int SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int match, std::vector<std::wstring> &errorMsg);
@@ -33,7 +33,7 @@ protected:
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
     int DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName);
-    virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg);
+    virtual int AddDropTable(const std::wstring &UNUSED(catalog), const std::wstring &UNUSED(schemaName), const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg);
 private:
     sqlite3 *m_db;
     sqlite3_stmt *m_stmt1, *m_stmt2, *m_stmt3;

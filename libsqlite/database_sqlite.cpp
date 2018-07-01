@@ -360,15 +360,13 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> fk_names, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
-    sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL, *stmt4 = NULL;
+    sqlite3_stmt *stmt = NULL;
     std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    int result = 0, res = SQLITE_OK, res1 = SQLITE_OK, res2 = SQLITE_OK, res3 = SQLITE_OK, res4 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc, fkId;
-    FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
-    FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
+    int result = 0, res = SQLITE_OK;
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
     if( ( res = sqlite3_prepare_v2( m_db, query1.c_str(), (int) query1.length(), &stmt, 0 ) ) == SQLITE_OK )
     {
-        while( true )
+        for( ; ; )
         {
             res = sqlite3_step( stmt );
             if( res == SQLITE_ROW  )
@@ -965,7 +963,7 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
     return result;
 }
 
-int SQLiteDatabase::GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, const char *fieldName, Field *field, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::GetFieldProperties(const char *tableName, const char *, const char *ownerName, const char *fieldName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt;
     std::wstring errorMessage;
@@ -1256,7 +1254,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                         {
                             std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
                             int size = fKeys.size();
-                            for( int i = 0; i < newFK.size(); i++ )
+                            for( unsigned int i = 0; i < newFK.size(); i++ )
                                 fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), newFK.at( i )->GetOriginalFieldName(), L"", newFK.at( i )->GetReferencedTableName(), newFK.at( i )->GetReferencedFieldName(), origFields, refFields, newFK.at( i )->GetOnUpdateConstraint(), newFK.at( i )->GetOnDeleteConstraint() ) );
                         }
                     }
@@ -1270,12 +1268,9 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
 int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName)
 {
     std::wstring s, sUpper, keyTemp, constraintTemp, refTableOrig;
-    std::map<int, std::vector<FKField *> > &fkFields = /*const_cast<DatabaseTable &>*/( tableName ).GetForeignKeyVector();
+    std::map<int, std::vector<FKField *> > &fkFields = ( tableName ).GetForeignKeyVector();
     bool isFK = false, isConstraint = false;
-/*    if( newFK.size() > 0 )
-        refTableOrig = newFK.at( 0 )->GetReferencedTableName();
-	else*/
-        refTableOrig = refTableName;
+    refTableOrig = refTableName;
     std::wistringstream str( sql );
     bool isKeyAdded = true;
     while( std::getline( str, s, L',' ) )
@@ -1420,7 +1415,8 @@ int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg)
 
 int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
-    int result = 0, res, schema, count;
+    int result = 0, res, schema;
+    unsigned int count;
     std::wstring errorMessage;
     std::vector<std::wstring> tableNames = pimpl->GetTableNames();
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
@@ -1440,7 +1436,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 						count = sqlite3_column_int( m_stmt3, 0 );
                         if( sqlite3_prepare_v2( m_db, query1.c_str(), -1, &m_stmt2, NULL ) == SQLITE_OK )
                         {
-                            while( true )
+                            for( ; ; )
                             {
                                 if( ( res = sqlite3_step( m_stmt2 ) ) == SQLITE_ROW )
                                 {
@@ -1494,7 +1490,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     if( tableAdded )
@@ -1505,15 +1501,12 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
         std::wstring errorMessage;
         sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL, *stmt4 = NULL;
         std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-        int result = 0, res = SQLITE_OK, res1 = SQLITE_OK, res2 = SQLITE_OK, res3 = SQLITE_OK, res4 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc, fkId;
+        int result = 0, res = SQLITE_OK, res1 = SQLITE_OK, res3 = SQLITE_OK, res4 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc, fkId;
         FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
         FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
         std::map<int, std::vector<std::wstring> > origFields, refFields;
-//        std::string query2 = "PRAGMA table_info(\"%w\");";
         std::string query2 = "SELECT * FROM pragma_table_info(?)";
-//    std::string query3 = "PRAGMA foreign_key_list(\"%w\")";
         std::string query3 = "SELECT * FROM pragma_foreign_key_list(?)";
-//        std::string query4 = "PRAGMA index_list( \"%w\" );";
         std::string query4 = "SELECT * FROM pragma_index_list(?)";
         if( ( res3 = sqlite3_prepare_v2( m_db, query3.c_str(), (int) query3.length(), &stmt3, 0 ) ) == SQLITE_OK )
         {
