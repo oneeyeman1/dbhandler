@@ -374,7 +374,12 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             if( res == SQLITE_ROW  )
             {
                 const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
-                AddDropTable( L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), true, errorMsg );
+                res = AddDropTable( L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), true, errorMsg );
+                if( res )
+                {
+                    result = 1;
+                    break;
+                }
             }
 			else if( res == SQLITE_DONE )
                 break;
@@ -1444,7 +1449,9 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     {
                                         if( std::find( tableNames.begin(), tableNames.end(), tableName ) != tableNames.end() )
                                             continue;
-                                        AddDropTable( L"", L"", tableName, true, errorMsg );
+                                        res = AddDropTable( L"", L"", tableName, true, errorMsg );
+                                        if( res )
+                                            errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
                                     }
                                     else
                                     {
@@ -1466,7 +1473,11 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         sqlite3_finalize( m_stmt2 );
                         m_stmt2 = NULL;
                         if( count < tableNames.size() )
-                            AddDropTable( L"", L"", temp.at( 0 ), false, errorMsg );
+                        {
+                            result = AddDropTable( L"", L"", temp.at( 0 ), false, errorMsg );
+                            if( res )
+                                errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
+                        }
                     }
 					else
                         result = 1;
