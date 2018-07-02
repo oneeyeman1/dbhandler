@@ -1040,7 +1040,13 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     SQLWCHAR **columnNames = NULL;
     SQLSMALLINT numCols = 0;
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
-    if( !result)
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1 );
+        result = 1;
+    }
+    else
     {
         for( int i = 0; i < 5; i++ )
         {
@@ -1715,7 +1721,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                                                 table->SetHeadingFontWeight( headingFontWeight );
                                                 table->SetHeadingFontItalic( headingFontItalic[0] == 'Y' );
                                                 table->SetHeadingFontUnderline( headingFontUnderline == 1 );
-                                                table->SetHeadingFontStrikethrough( headingFontStriken );
+                                                table->SetHeadingFontStrikethrough( headingFontStriken == 1 ? true : false );
                                                 table->SetHeadingFontCharacterSet( headingFontCharacterSet );
                                                 table->SetHeadingFontPixelSize( headingFontPixelSize );
                                                 str_to_uc_cpy( name, headingFontName );
@@ -2371,7 +2377,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
     return result;
 }
 
-int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int match, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query = L"ALTER TABLE ";
@@ -2496,7 +2502,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
                 {
                     std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
                     int size = fKeys.size();
-                    for( int i = 0; i < foreignKeyFields.size(); i++ )
+                    for( unsigned int i = 0; i < foreignKeyFields.size(); i++ )
                         fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp ) );
                 }
                 ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
