@@ -4187,7 +4187,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     else
                     {
                         table->SetIndexNames( indexes );
-                        pimpl->m_tables[catalog_name].push_back( table );
+                        pimpl->m_tables[tempCatalogName].push_back( table );
                         fields.erase( fields.begin(), fields.end() );
                         foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                         fields.clear();
