@@ -73,7 +73,7 @@ private:
     SQLHWND m_handle;
     bool m_ask;
     SQLUSMALLINT m_statementsNumber;
-    bool m_oneStatement;
+    bool m_oneStatement, m_isConnected;
     SQLWCHAR *m_connectString;
 };
 

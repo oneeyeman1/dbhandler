@@ -37,6 +37,7 @@ ODBCDatabase::ODBCDatabase() : Database()
     odbc_pimpl = NULL;
     m_oneStatement = false;
     m_connectString = NULL;
+    m_isConnected = false;
     connectToDatabase = false;
 }
 
@@ -158,12 +159,14 @@ bool ODBCDatabase::GetDSNList(std::vector<std::wstring> &dsns, std::vector<std::
         }
         else
         {
-            while( ( ret = SQLDataSources( m_env, direct, dsn, SQL_MAX_DSN_LENGTH, &pcbDSN, dsnDescr, 254, &pcbDesc ) ) == SQL_SUCCESS )
+            ret = SQLDataSources( m_env, direct, dsn, SQL_MAX_DSN_LENGTH, &pcbDSN, dsnDescr, 254, &pcbDesc );
+            while( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
                 std::wstring s1;
                 str_to_uc_cpy( s1, dsn );
                 dsns.push_back( s1 );
                 direct = SQL_FETCH_NEXT;
+                ret = SQLDataSources( m_env, direct, dsn, SQL_MAX_DSN_LENGTH, &pcbDSN, dsnDescr, 254, &pcbDesc );
             }
             if( ret != SQL_SUCCESS && ret != SQL_NO_DATA )
             {
@@ -361,11 +364,13 @@ int ODBCDatabase::GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<s
     SQLUSMALLINT direct = SQL_FETCH_FIRST;
     SWORD pcbDSN, pcbDesc;
     SQLWCHAR dsnDescr[255], dsnRead[SQL_MAX_DSN_LENGTH + 1];
-    while( ( ret1 = SQLDataSources( m_env, direct, dsnRead, SQL_MAX_DSN_LENGTH, &pcbDSN, dsnDescr, 254, &pcbDesc ) ) == SQL_SUCCESS && !found )
+    ret1 = SQLDataSources( m_env, direct, dsnRead, SQL_MAX_DSN_LENGTH, &pcbDSN, dsnDescr, 254, &pcbDesc );
+    while( ( ret1 == SQL_SUCCESS || ret1 == SQL_SUCCESS_WITH_INFO ) && !found )
     {
         if( equal( dsn, dsnRead ) )
             found = true;
         direct = SQL_FETCH_NEXT;
+        ret1 = SQLDataSources( m_env, direct, dsnRead, SQL_MAX_DSN_LENGTH, &pcbDSN, dsnDescr, 254, &pcbDesc );
     }
     if( ret1 != SQL_SUCCESS && ret1 != SQL_NO_DATA )
     {
@@ -684,6 +689,8 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
             errorMsg.push_back( strMsg );
         }
     }
+    else
+        m_isConnected = true;
     delete query;
     query = NULL;
     return result;
@@ -890,34 +897,34 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     }
     if( m_hdbc != 0 )
     {
-        ret = SQLDisconnect( m_hdbc );
+        if( m_isConnected )
+        {
+            ret = SQLDisconnect( m_hdbc );
+            if( ret != SQL_SUCCESS )
+            {
+                GetErrorMessage( errorMsg, 2 );
+                result = 1;
+            }
+        }
+        ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
         if( ret != SQL_SUCCESS )
         {
             GetErrorMessage( errorMsg, 2 );
             result = 1;
         }
         else
+            m_hdbc = 0;
+    }
+    if( m_env != 0 )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
+        if( ret != SQL_SUCCESS )
         {
-            ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
-            if( ret != SQL_SUCCESS )
-            {
-                GetErrorMessage( errorMsg, 2 );
-                result = 1;
-            }
-            else
-                m_hdbc = 0;
+            GetErrorMessage( errorMsg, 0 );
+            result = 1;
         }
-        if( m_env != 0 )
-        {
-            ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
-            if( ret != SQL_SUCCESS )
-            {
-                GetErrorMessage( errorMsg, 0 );
-                result = 1;
-            }
-            else
-                m_env = 0;
-        }
+        else
+            m_env = 0;
     }
     for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
     {
