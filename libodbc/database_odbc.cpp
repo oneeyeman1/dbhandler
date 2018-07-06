@@ -3101,6 +3101,18 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
 int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    {
+        std::wstring sub_query1 = L"DECLARE @TargetDialogHandle UNIQUEIDENTIFIER; ";
+        std::wstring sub_query2 = L"DECLARE @EventMessage XML; ";
+        std::wstring sub_query3 = L"DECLARE @EventMessageTypeName sysname; ";
+        std::wstring sub_query4 = L"WAITFOR( RECEIVE TOP(1) @TargetDialogHandle = conversation_handle, @EventMessage = CONVERT(XML, message_body), @EventMessageTypeName = message_type_name FROM dbo.EventNotificationQueue ), TIMEOUT 1000;";
+        std::wstring sub_query5 = L"SELECT @TargetDialogHandle AS DialogHandle, @EventMessageTypeName AS MessageTypeName, @EventMessage.value('(/EVENT_INSTANCE/TSQLCommand/CommandText)[1]','nvarchar(max)') AS TSQLCommand, @EventMessage.value('(/EVENT_INSTANCE/ObjectName)[1]', 'varchar(128)' ) as TableName";
+        std::wstring query = sub_query1 + sub_query2 + sub_query3 + sub_query4 + sub_query5;
+        SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+        memset( qry, '\0', query.length() + 2 );
+        uc_to_str_cpy( qry, query );
+    }
     return result;
 }
 
