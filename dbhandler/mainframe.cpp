@@ -292,15 +292,18 @@ void MainFrame::Connect()
             wxGetApp().SetConnectedUser( connectedUser );
         }
         m_db = db;
-        m_handler = new NewTableHandler( m_db );
-        if( m_handler->Run() != wxTHREAD_NO_ERROR )
+        if( m_db )
         {
-            wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
-            delete m_handler;
-            m_handler = NULL;
-            m_db->Disconnect( errorMsg );
-            delete m_db;
-            m_db = NULL;
+            m_handler = new NewTableHandler( m_db );
+            if( m_handler->Run() != wxTHREAD_NO_ERROR )
+            {
+                wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
+                delete m_handler;
+                m_handler = NULL;
+                m_db->Disconnect( errorMsg );
+                delete m_db;
+                m_db = NULL;
+            }
         }
     }
 }
