@@ -496,6 +496,7 @@
     <ClCompile Include="getobjectname.cpp" />
     <ClCompile Include="jointype.cpp" />
     <ClCompile Include="odbcconfigure.cpp" />
+    <ClCompile Include="odbccredentials.cpp" />
     <ClCompile Include="properties.cpp" />
     <ClCompile Include="retrievalarguments.cpp" />
     <ClCompile Include="selecttables.cpp" />
@@ -508,6 +509,7 @@
     <ClInclude Include="getobjectname.h" />
     <ClInclude Include="jointype.h" />
     <ClInclude Include="odbcconfigure.h" />
+    <ClInclude Include="odbccredentials.h" />
     <ClInclude Include="properties.h" />
     <ClInclude Include="retrievalarguments.h" />
     <ClInclude Include="selecttables.h" />

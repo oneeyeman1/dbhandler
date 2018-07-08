@@ -136,6 +136,13 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
         ask = dlg.GetODBCConnectionParam();
         if( name.empty() )
             name = dlg.GetConnectString();
+#if !defined(__WXMSW__)
+        if( dbEngine == "ODBC" )
+        {
+            ODBCCredentials dlg( parent, wxID_ANY );
+            dlg.ShowModal();
+        }
+#endif
         res = wxID_OK;
     }
 	else
