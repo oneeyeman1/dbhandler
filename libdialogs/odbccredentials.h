@@ -30,7 +30,7 @@ public:
     // begin wxGlade: ODBCCredentials::ids
     // end wxGlade
 
-    ODBCCredentials(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
 
 private:
     // begin wxGlade: ODBCCredentials::methods

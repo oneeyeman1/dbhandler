@@ -30,6 +30,9 @@
 #ifdef __WXOSX_COCOA__
 #include "wx/nativewin.h"
 #endif
+#ifndef __WXMSW__
+#include "odbccredentials.h"
+#endif
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wx/fontenum.h"
@@ -139,7 +142,7 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
 #if !defined(__WXMSW__)
         if( dbEngine == "ODBC" )
         {
-            ODBCCredentials dlg( parent, wxID_ANY );
+            ODBCCredentials dlg( parent, wxID_ANY, L"" );
             dlg.ShowModal();
         }
 #endif

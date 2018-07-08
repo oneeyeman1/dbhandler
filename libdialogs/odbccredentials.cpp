@@ -16,7 +16,7 @@
 
 
 
-ODBCCredentials::ODBCCredentials(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
+ODBCCredentials::ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, wxCAPTION)
 {
     // begin wxGlade: ODBCCredentials::ODBCCredentials
