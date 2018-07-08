@@ -23,7 +23,9 @@ libdialogs_la_SOURCES =  \
 	jointype.cpp \
 	jointype.h \
 	addcolumnsdialog.cpp \
-	addcolumnsdialog.h
+	addcolumnsdialog.h \
+	odbccredentials.cpp \
+	odbccredentials.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
@@ -31,7 +33,7 @@ libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libpropertypages \
 	`pkg-config \
 	--cflags \
-	gtk+-2.0` \
+	gtk+-3.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
@@ -40,7 +42,7 @@ libdialogs_la_LDFLAGS = -L../libsqlite \
 	-L../dbinterface \
 	-L../libfieldswindow \
 	-L../libodbc \
-	-L../libpropertypages \
+	-L../libpostgres \
 	-Wl,-rpath,/home/igor/dbhandler/Debug/libpropertypages/.libs \
 	-ldbinterface \
 	-lsqlite_lib \
@@ -48,6 +50,8 @@ libdialogs_la_LDFLAGS = -L../libsqlite \
 	-lshapeframework \
 	-lfieldswindow \
 	-lpropertypages \
+	-lpostgres \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs`
+	
 	 
