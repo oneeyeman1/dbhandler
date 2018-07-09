@@ -64,6 +64,8 @@ void ODBCCredentials::do_layout()
     SetSizer( sizer );
     sizer->Fit( this );
     Layout();
+    wxSize size = GetMinSize();
+    SetMinSize( wxSize( size.GetWidth() * 3, size.GetHeight() ) );
     // end wxGlade
 }
 
