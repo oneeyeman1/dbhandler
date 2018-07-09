@@ -269,10 +269,10 @@ extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type, const std::
     return res;
 }
 
-extern "C" WXEXPORT int GetODBCCredentails(wxWindow *parent, wxString &userID, wxString &password)
+extern "C" WXEXPORT int GetODBCCredentails(wxWindow *parent, const wxString &dsn, wxString &userID, wxString &password)
 {
 #ifndef __WXMSW__
-    ODBCCredentials dlg( parent, wxID_ANY, L"", userID, password );
+    ODBCCredentials dlg( parent, wxID_ANY, L"", dsn, userID, password );
     int res = dlg.ShowModal();
     if( res == wxID_OK )
     {

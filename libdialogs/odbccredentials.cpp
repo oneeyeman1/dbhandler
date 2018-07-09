@@ -11,9 +11,10 @@
 #include <wx/wx.h>
 #include "odbccredentials.h"
 
-ODBCCredentials::ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString& title, const wxString &userID, const wxString &password, const wxPoint& pos, const wxSize& size, long style):
+ODBCCredentials::ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString& title, const wxString &dsn, const wxString &userID, const wxString &password, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, wxCAPTION)
 {
+    m_dsn = dsn;
     // begin wxGlade: ODBCCredentials::ODBCCredentials
     m_panel = new wxPanel( this, wxID_ANY );
     label_1 = new wxStaticText( this, wxID_ANY, _( "User ID" ) );
@@ -28,7 +29,7 @@ ODBCCredentials::ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString
 void ODBCCredentials::set_properties()
 {
     // begin wxGlade: ODBCCredentials::set_properties
-    SetTitle( _( "Connecting to " ) );
+    SetTitle( _( "Connecting to " ) + m_dsn );
     // end wxGlade
 }
 
@@ -43,14 +44,15 @@ void ODBCCredentials::do_layout()
     wxStdDialogButtonSizer *m_stdbuttonsizer = new wxStdDialogButtonSizer();
     m_stdbuttonsizer->AddButton( new wxButton( m_panel, wxID_OK, _( "OK" ) ) );
     m_stdbuttonsizer->AddButton( new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) ) );
+    m_stdbuttonsizer->Realize();
     wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer( 2, 2, 5, 5 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     grid_sizer_1->Add( label_1, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 0 );
     grid_sizer_1->Add( m_userID, 1, wxEXPAND, 0 );
     grid_sizer_1->Add( label_2, 0, 0, 0 );
-    grid_sizer_1->Add( m_password, 1, 0, 0 );
-    sizer_3->Add( grid_sizer_1, 1, 0, 0 );
+    grid_sizer_1->Add( m_password, 1, wxEXPAND, 0 );
+    sizer_3->Add( grid_sizer_1, 1, wxEXPAND, 0 );
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_3->Add( m_stdbuttonsizer, 1, wxALIGN_RIGHT, 0 );
     sizer_2->Add( sizer_3, 1, 0, 0 );

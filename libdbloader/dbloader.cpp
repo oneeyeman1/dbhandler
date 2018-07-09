@@ -38,7 +38,7 @@
 #include "database_mysql.h"
 
 typedef int (*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, bool, const std::vector<std::wstring> &);
-typedef int (*GETODBCCREDENTIALS)(wxWindow *, wxString &, wxString &);
+typedef int (*GETODBCCREDENTIALS)(wxWindow *, const wxString &, wxString &, wxString &);
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -142,11 +142,12 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
                 dynamic_cast<ODBCDatabase *>( pdb )->SetWindowHandle( parent->GetHandle() );
 #if !defined(__WXMSW__)
                 std::wstring user, password;
-                int res = dynamic_cast<ODBCDatabase *>( pdb )->GetConnectedUser( name.ToStdWstring(), user, errorMsg );
+                dynamic_cast<ODBCDatabase *>( pdb )->GetConnectedUser( name.ToStdWstring(), user );
+                dynamic_cast<ODBCDatabase *>( pdb )->GetConnectionPassword ( name.ToStdWstring(), password );
 	            wxString user_wx( user );
                 wxString password_wx( password );
                 GETODBCCREDENTIALS func1 = (GETODBCCREDENTIALS) lib.GetSymbol( "GetODBCCredentails" );
-                result = func1( parent, user_wx, password_wx );
+                result = func1( parent, name, user_wx, password_wx );
 #endif
             }
             if( engine == "PostgreSQL" )

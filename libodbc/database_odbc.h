@@ -43,7 +43,8 @@ public:
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     int CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg);
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg);
-    int GetConnectedUser(const std::wstring &dsn, std::wstring &connectedUser, std::vector<std::wstring> &errorMsg);
+    void GetConnectedUser(const std::wstring &dsn, std::wstring &connectedUser);
+    void GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword);
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;

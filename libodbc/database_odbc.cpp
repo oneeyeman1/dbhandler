@@ -4231,33 +4231,50 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     return result;
 }
 
-int ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &connectedUser, std::vector<std::wstring> &errorMsg)
+void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &connectedUser)
 {
     SQLWCHAR *connectDSN = new SQLWCHAR[dsn.length() + 2];
     SQLWCHAR *entry = new SQLWCHAR[50];
     SQLWCHAR *retBuffer = new SQLWCHAR[256];
-    SQLWCHAR fileName[8];
-    fileName[0] = 'o';
-    fileName[1] = 'd';
-    fileName[2] = 'b';
-    fileName[3] = 'c';
-    fileName[4] = '.';
-    fileName[5] = 'i';
-    fileName[6] = 'n';
-    fileName[7] = 'i';
-    SQLWCHAR defValue[3];
-    defValue[0] = ' ';
-    defValue[1] = ' ';
-    defValue[2] = '\0';
+    SQLWCHAR fileName[16];
+    SQLWCHAR defValue[50];
+    memset( fileName, '\0', 16 );
+    memset( retBuffer, '\0', 256 );
     memset( entry, '\0', 52 );
     memset( connectDSN, '\0', dsn.length() + 2 );
+    memset( defValue, '\0', 50 );
+    uc_to_str_cpy( fileName, L"odbc.ini" );
+    uc_to_str_cpy( retBuffer, L" " );
     uc_to_str_cpy( entry, L"UserID" );
     uc_to_str_cpy( connectDSN, dsn );
-    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, SQL_NTS, fileName );
+    uc_to_str_cpy( defValue, L" " );
+    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
     if( ret < 0 )
-    {
-        GetDSNErrorMessage( errorMsg );
-    }
+        connectedUser = L"";
     else
         str_to_uc_cpy( connectedUser, retBuffer );
+}
+
+void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword)
+{
+    SQLWCHAR *connectDSN = new SQLWCHAR[dsn.length() + 2];
+    SQLWCHAR *entry = new SQLWCHAR[50];
+    SQLWCHAR *retBuffer = new SQLWCHAR[256];
+    SQLWCHAR fileName[16];
+    SQLWCHAR defValue[50];
+    memset( fileName, '\0', 16 );
+    memset( retBuffer, '\0', 256 );
+    memset( entry, '\0', 52 );
+    memset( connectDSN, '\0', dsn.length() + 2 );
+    memset( defValue, '\0', 50 );
+    uc_to_str_cpy( fileName, L"odbc.ini" );
+    uc_to_str_cpy( retBuffer, L" " );
+    uc_to_str_cpy( entry, L"Password" );
+    uc_to_str_cpy( connectDSN, dsn );
+    uc_to_str_cpy( defValue, L" " );
+    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+    if( ret < 0 )
+        connectionPassword = L"";
+    else
+        str_to_uc_cpy( connectionPassword, retBuffer );
 }
