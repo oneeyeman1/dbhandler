@@ -117,7 +117,7 @@ extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
     dlg.ShowModal();
 }
 
-extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title, wxString &name, wxString &dbEngine, wxString &connectedUser, bool ask, const std::vector<std::wstring> &dsn)
+extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title, wxString &name, wxString &dbEngine, wxString &connectedUser, bool ask, const std::vector<std::wstring> &dsn, wxString &password)
 {
     int res;
 #ifdef __WXMSW__
@@ -139,13 +139,6 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
         ask = dlg.GetODBCConnectionParam();
         if( name.empty() )
             name = dlg.GetConnectString();
-#if !defined(__WXMSW__)
-        if( dbEngine == "ODBC" )
-        {
-            ODBCCredentials dlg( parent, wxID_ANY, L"" );
-            dlg.ShowModal();
-        }
-#endif
         res = wxID_OK;
     }
 	else
@@ -274,4 +267,18 @@ extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type, const std::
 	else
         selection = wxEmptyString;
     return res;
+}
+
+extern "C" WXEXPORT int GetODBCCredentails(wxWindow *parent, wxString &userID, wxString &password)
+{
+#ifndef __WXMSW__
+    ODBCCredentials dlg( parent, wxID_ANY, L"", userID, password );
+    int res = dlg.ShowModal();
+    if( res == wxID_OK )
+    {
+        userID = dlg.GetUserIDControl().GetValue();
+        password = dlg.GetPasswordControl().GetValue();
+    }
+    return res;
+#endif
 }

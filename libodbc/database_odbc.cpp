@@ -4230,3 +4230,34 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     qry = NULL;
     return result;
 }
+
+int ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &connectedUser, std::vector<std::wstring> &errorMsg)
+{
+    SQLWCHAR *connectDSN = new SQLWCHAR[dsn.length() + 2];
+    SQLWCHAR *entry = new SQLWCHAR[50];
+    SQLWCHAR *retBuffer = new SQLWCHAR[256];
+    SQLWCHAR fileName[8];
+    fileName[0] = 'o';
+    fileName[1] = 'd';
+    fileName[2] = 'b';
+    fileName[3] = 'c';
+    fileName[4] = '.';
+    fileName[5] = 'i';
+    fileName[6] = 'n';
+    fileName[7] = 'i';
+    SQLWCHAR defValue[3];
+    defValue[0] = ' ';
+    defValue[1] = ' ';
+    defValue[2] = '\0';
+    memset( entry, '\0', 52 );
+    memset( connectDSN, '\0', dsn.length() + 2 );
+    uc_to_str_cpy( entry, L"UserID" );
+    uc_to_str_cpy( connectDSN, dsn );
+    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, SQL_NTS, fileName );
+    if( ret < 0 )
+    {
+        GetDSNErrorMessage( errorMsg );
+    }
+    else
+        str_to_uc_cpy( connectedUser, retBuffer );
+}

@@ -16,21 +16,15 @@
 #define APP_CATALOG "app"  // replace with the appropriate catalog name
 #endif
 
-
-// begin wxGlade: ::dependencies
-// end wxGlade
-
-// begin wxGlade: ::extracode
-// end wxGlade
-
-
 class ODBCCredentials: public wxDialog
 {
 public:
     // begin wxGlade: ODBCCredentials::ids
     // end wxGlade
 
-    ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString& title, const wxString &userID, const wxString &password, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    const wxTextCtrl &GetUserIDControl();
+    const wxTextCtrl &GetPasswordControl();
 
 private:
     // begin wxGlade: ODBCCredentials::methods

@@ -11,25 +11,19 @@
 #include <wx/wx.h>
 #include "odbccredentials.h"
 
-// begin wxGlade: ::extracode
-// end wxGlade
-
-
-
-ODBCCredentials::ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
+ODBCCredentials::ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString& title, const wxString &userID, const wxString &password, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, wxCAPTION)
 {
     // begin wxGlade: ODBCCredentials::ODBCCredentials
     m_panel = new wxPanel( this, wxID_ANY );
     label_1 = new wxStaticText( this, wxID_ANY, _( "User ID" ) );
-    m_userID = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    m_userID = new wxTextCtrl( this, wxID_ANY, userID );
     label_2 = new wxStaticText( this, wxID_ANY, _( "Password" ) );
-    m_password = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    m_password = new wxTextCtrl( this, wxID_ANY, password, wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
     set_properties();
     do_layout();
     // end wxGlade
 }
-
 
 void ODBCCredentials::set_properties()
 {
@@ -71,3 +65,12 @@ void ODBCCredentials::do_layout()
     // end wxGlade
 }
 
+const wxTextCtrl &ODBCCredentials::GetUserIDControl()
+{
+    return *m_userID;
+}
+
+const wxTextCtrl &ODBCCredentials::GetPasswordControl()
+{
+    return *m_password;
+}
