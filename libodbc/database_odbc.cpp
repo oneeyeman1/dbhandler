@@ -475,6 +475,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     SQLSMALLINT OutConnStrLen;
     SQLRETURN ret;
     SQLUSMALLINT options;
+    SQLWCHAR *user = NULL, *password = NULL;
     std::wstring connectingDSN, connectingUser = L"", connectingPassword = L"";
     if( !pimpl )
     {
@@ -489,8 +490,16 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     else
 	{
         connectingDSN = selectedDSN.substr( 0, pos );
-        selectedDSN = selectedDSN.substr( 0, pos );
-        pos = selectedDSN.find( L';' );
+        std::wstring temp = selectedDSN.substr( pos + 1 );
+        pos = temp.find( L';' );
+        connectingUser = temp.substr( 0, pos );
+        connectingPassword = temp.substr( pos + 1 );
+        user = new SQLWCHAR[connectingUser.length() + 2];
+        password = new SQLWCHAR[connectingPassword.length() + 2];
+        memset( user, '\0', connectingUser.length() + 2 );
+        memset( password, '\0', connectingPassword.length() + 2 );
+        uc_to_str_cpy( user, connectingUser );
+        uc_to_str_cpy( password, connectingPassword );
 	}
     m_connectString = new SQLWCHAR[sizeof(SQLWCHAR) * 1024];
     memset( dsn, 0, sizeof( dsn ) );
@@ -519,6 +528,13 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                         uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1" );
                     delete temp;
                     temp = NULL;
+                    if( user && password )
+                    {
+                        uc_to_str_cpy( connectStrIn, L";UID=" );
+                        copy_uc_to_uc( connectStrIn, user );
+                        uc_to_str_cpy( connectStrIn, L";PWD=" );
+                        copy_uc_to_uc( connectStrIn, password );
+                    }
                     ret = SQLSetConnectAttr( m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0 );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
