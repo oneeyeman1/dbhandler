@@ -2,20 +2,20 @@
 Maximized=1
 Geometry=1366x704+0+27
 
+[File Loader]
+Files=../../libdialogs/dialogs.cpp#272%%%../../libdialogs/odbccredentials.h#33%%%../../libdialogs/odbccredentials.cpp#27%%%../../libdbloader/dbloader.cpp#146%%%../../libodbc/database_odbc.h#52%%%../../libodbc/database_odbc.cpp#4240
+
+[Document Manager]
+bookmarks=<?xml version="1.0" encoding="UTF-8"?>\n<bookmarks/>\n
+
 [Execution]
 Program uri=../../Debug/dbhandler/dbhandler%%%../../Debug/src/dbhandler
 Run in terminal=2
 Working directories=../../.
 
-[File Loader]
-Files=../../libdialogs/odbcconfigure.cpp#173%%%../../libdialogs/odbcconfigure.h#52%%%../../libodbc/database_odbc.cpp#123%%%../../libodbc/database_odbc.h#26%%%../../libdbloader/dbloader.cpp#174
-
-[Document Manager]
-bookmarks=<?xml version="1.0" encoding="UTF-8"?>\n<bookmarks/>\n
-
 [Project Manager]
 Shortcut=dbhandler//dbhandler//dbhandler%%%dbhandler//dbinterface//libdbinterface.a%%%dbhandler//libsqlite//libsqlite_lib.la%%%dbhandler//libdialogs//libdialogs.la%%%dbhandler//libdbloader//libdbloader.la%%%dbhandler//libodbc//libodbc_lib.la
-Expand=dbhandler
+Expand=dbhandler%%%dbhandler//libodbc%%%dbhandler//libodbc//libodbc_lib.la
 
 [Build]
 Configuration list=1:Default:%%%1:Debug:Debug%%%1:Profiling:Profiling%%%1:Optimized:Optimized%%%1:MinGW32:MinGW32
@@ -27,5 +27,4 @@ BuildArgs/Optimized=--enable-maintainer-mode 'CFLAGS=-O2' 'CXXFLAGS=-O2' 'JFLAGS
 
 [Debugger]
 Watch=lib%%%lib
-Breakpoint=1:../../libdbloader/dbloader.cpp:99:0:%%%1:../../libdialogs/odbcconfigure.cpp:90:0:%%%1:../../libdialogs/odbcconfigure.cpp:78:0:
 Stop at beginning=2
