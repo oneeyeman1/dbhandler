@@ -475,6 +475,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     SQLSMALLINT OutConnStrLen;
     SQLRETURN ret;
     SQLUSMALLINT options;
+    std::wstring connectingDSN, connectingUser = L"", connectingPassword = L"";
     if( !pimpl )
     {
         pimpl = new Impl;
@@ -482,6 +483,15 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     }
     if( !odbc_pimpl )
         odbc_pimpl = new ODBCImpl;
+    int pos = selectedDSN.find( L';' );
+    if( pos == std::wstring::npos )
+        connectingDSN = selectedDSN;
+    else
+	{
+        connectingDSN = selectedDSN.substr( 0, pos );
+        selectedDSN = selectedDSN.substr( 0, pos );
+        pos = selectedDSN.find( L';' );
+	}
     m_connectString = new SQLWCHAR[sizeof(SQLWCHAR) * 1024];
     memset( dsn, 0, sizeof( dsn ) );
     memset( connectStrIn, 0, sizeof( connectStrIn ) );

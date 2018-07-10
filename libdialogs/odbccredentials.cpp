@@ -46,6 +46,7 @@ void ODBCCredentials::do_layout()
     m_stdbuttonsizer->AddButton( new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) ) );
     m_stdbuttonsizer->Realize();
     wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer( 2, 2, 5, 5 );
+    grid_sizer_1->AddGrowableCol( 1, 1 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     grid_sizer_1->Add( label_1, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 0 );
