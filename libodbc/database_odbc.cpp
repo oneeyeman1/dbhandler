@@ -767,7 +767,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             }
         }
     }
-    if( pimpl->m_subtype == L"Sybase" )
+    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
     {
         query1 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatcol' AND type = 'U') EXECUTE(CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam )));";
         query2 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatedt' AND type = 'U') EXECUTE(CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn )));";
@@ -903,6 +903,8 @@ int ODBCDatabase::ServerConnect(std::vector<std::wstring> &UNUSED(dbList), std::
     std::wstring query;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT name AS Database FROM master.dbo.sysdatabases;";
+    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
+        query = L"SELECT name FROM sp_helpdb";
     if( pimpl->m_subtype == L"MySQL"  )
         query = L"SELECT schema_name AS Database FROM information_schema.schemata;";
     if( pimpl->m_subtype == L"PostgreSQL" )
@@ -1188,6 +1190,8 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
         query1 = L"SELECT 1 FROM information_schema.statistics WHERE index_name = ? AND table_name = ? AND schema_name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query1 = L"SELECT 1 FROM pg_indexes WHERE indexname = $1 AND tablename = $2 AND schemaname = $3;";
+    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
+        query1 = L"SELECT 1 FROM sysindexes ind, sysobjects obj WHERE obj.id = ind.id AND ind.name = ? AND obj.name = ?";
     index_name = new SQLWCHAR[indexName.length() + 2];
     memset( index_name, '\0', indexName.length() + 2 );
     uc_to_str_cpy( index_name, indexName );
@@ -2503,7 +2507,7 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
     int result = 0;
     std::wstring query;
     SQLWCHAR *qry = NULL, *tname = NULL, *sname = NULL;;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" || pimpl->m_subtype == L"Sybase" )
+    if( pimpl->m_subtype == L"Microsoft SQL Server" || pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
         query = L"SELECT OBJECT_ID(?);";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?;";
@@ -2671,8 +2675,8 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
         query = L"SELECT cast(su.name AS nvarchar(128)) FROM sysobjects so, sysusers su, sys.tables t, sys.schemas s WHERE so.uid = su.uid AND t.object_id = so.id AND t.schema_id = s.schema_id AND s.name = ? AND so.name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT u.usename FROM pg_class c, pg_user u, pg_namespace n WHERE n.oid = c.relnamespace AND u.usesysid = c.relowner AND n.nspname = ? AND relname = ?";
-    if( pimpl->m_subtype == L"Sybase" )
-        query = L"SELECT su.name FROM sysobject so, sysusers su WHERE su.uid = so.uid AND so.name = ?";
+    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
+        query = L"SELECT su.name FROM sysobjects so, sysusers su WHERE su.uid = so.uid AND so.name = ?";
     if( pimpl->m_subtype == L"MySQL" )
     {
         odbc_pimpl->m_currentTableOwner = L"";
@@ -2882,7 +2886,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     {
         query = L"SELECT version() AS version, split_part( split_part( version(), ' ', 2 ) , '.', 1 ) AS major, split_part( split_part( version(), ' ', 2 ), '.', 2 ) AS minor;";
     }
-    if( pimpl->m_subtype == L"Sybase" )
+    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
     {
         query = L"SELECT @@version AS version, @@version_as_int / 1000 AS major;";
     }
@@ -3514,7 +3518,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 stmt_pk = 0;
                                 hdbc_pk = 0;
                             }
-							else
+                            else
                             {
                                 ret = SQLPrimaryKeys( stmt_pk, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
