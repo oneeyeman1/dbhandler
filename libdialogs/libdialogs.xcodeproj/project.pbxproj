@@ -13,6 +13,8 @@
 		E33E6F851EAD310A003A0B92 /* getobjectname.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F811EAD310A003A0B92 /* getobjectname.h */; };
 		E33E6F861EAD310A003A0B92 /* jointype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F821EAD310A003A0B92 /* jointype.cpp */; };
 		E33E6F871EAD310A003A0B92 /* jointype.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F831EAD310A003A0B92 /* jointype.h */; };
+		E362C40220F475990089E44E /* odbccredentials.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E362C40020F475990089E44E /* odbccredentials.cpp */; };
+		E362C40320F475990089E44E /* odbccredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = E362C40120F475990089E44E /* odbccredentials.h */; };
 		E39501D31DF3C4730046E51B /* liblibpropertypages.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E39501D21DF3C4730046E51B /* liblibpropertypages.dylib */; };
 		E3D139511D0D0D7100A5A0F7 /* databasetype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D1394A1D0D0D7100A5A0F7 /* databasetype.cpp */; };
 		E3D139521D0D0D7100A5A0F7 /* databasetype.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D1394B1D0D0D7100A5A0F7 /* databasetype.h */; };
@@ -38,6 +40,8 @@
 		E33E6F811EAD310A003A0B92 /* getobjectname.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = getobjectname.h; sourceTree = "<group>"; };
 		E33E6F821EAD310A003A0B92 /* jointype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jointype.cpp; sourceTree = "<group>"; };
 		E33E6F831EAD310A003A0B92 /* jointype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jointype.h; sourceTree = "<group>"; };
+		E362C40020F475990089E44E /* odbccredentials.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = odbccredentials.cpp; sourceTree = "<group>"; };
+		E362C40120F475990089E44E /* odbccredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = odbccredentials.h; sourceTree = "<group>"; };
 		E39501D21DF3C4730046E51B /* liblibpropertypages.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibpropertypages.dylib; path = ../libpropertypages/build/Debug/liblibpropertypages.dylib; sourceTree = "<group>"; };
 		E3D1393C1D0D0CD100A5A0F7 /* liblibdialogs.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdialogs.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D1394A1D0D0D7100A5A0F7 /* databasetype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasetype.cpp; sourceTree = "<group>"; };
@@ -97,6 +101,8 @@
 		E3D139491D0D0CDE00A5A0F7 /* libdialogs */ = {
 			isa = PBXGroup;
 			children = (
+				E362C40020F475990089E44E /* odbccredentials.cpp */,
+				E362C40120F475990089E44E /* odbccredentials.h */,
 				E3E62CC71EF71830005BBB37 /* addcolumnsdialog.cpp */,
 				E3E62CC81EF71830005BBB37 /* addcolumnsdialog.h */,
 				E33E6F801EAD310A003A0B92 /* getobjectname.cpp */,
@@ -136,6 +142,7 @@
 				E33E6F391E46EE1C003A0B92 /* foreignkey.h in Headers */,
 				E3E91D3D1DC678C900675CF8 /* createindex.h in Headers */,
 				E3E91D891DEE520B00675CF8 /* properties.h in Headers */,
+				E362C40320F475990089E44E /* odbccredentials.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,6 +197,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E362C40220F475990089E44E /* odbccredentials.cpp in Sources */,
 				E3D139561D0D0D7100A5A0F7 /* selecttables.cpp in Sources */,
 				E33E6F381E46EE1C003A0B92 /* foreignkey.cpp in Sources */,
 				E33E6F841EAD310A003A0B92 /* getobjectname.cpp in Sources */,
