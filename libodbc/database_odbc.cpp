@@ -505,7 +505,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     memset( dsn, 0, sizeof( dsn ) );
     memset( connectStrIn, 0, sizeof( connectStrIn ) );
     memset( driver, 0, sizeof( driver ) );
-    uc_to_str_cpy( dsn, selectedDSN.c_str() );
+    uc_to_str_cpy( dsn, connectingDSN.c_str() );
     ret = SQLAllocHandle( SQL_HANDLE_ENV, SQL_NULL_HENV, &m_env );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
