@@ -16,6 +16,8 @@ dbhandler_SOURCES =  \
 	viewbase.cpp \
 	viewbase.h \
 	newtablehandler.cpp \
+	newtablehandler.h \
+	newtablehandler.cpp \
 	newtablehandler.h
 
 dbhandler_CXXFLAGS = -I../../dbinterface \

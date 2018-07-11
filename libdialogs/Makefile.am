@@ -25,6 +25,8 @@ libdialogs_la_SOURCES =  \
 	addcolumnsdialog.cpp \
 	addcolumnsdialog.h \
 	odbccredentials.cpp \
+	odbccredentials.h \
+	odbccredentials.cpp \
 	odbccredentials.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
