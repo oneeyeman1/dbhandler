@@ -4289,6 +4289,15 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
     if( ret < 0 )
         connectedUser = L"";
+    else if( ret == 0 )
+    {
+        uc_to_str_cpy( entry, L"UserName" );
+        int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+        if( ret < 0 )
+            connectedUser = L"";
+        else
+            str_to_uc_cpy( connectedUser, retBuffer );
+    }
     else
         str_to_uc_cpy( connectedUser, retBuffer );
 }
