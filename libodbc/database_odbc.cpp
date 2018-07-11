@@ -582,20 +582,20 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
 /**************************************/
                                         SQLWCHAR *query;
                                         std::wstring query8, query9, query10, query11;
-                                        if( pimpl->m_subtype == L"Microsoft SQL Server" )
+                                        SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                                        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                                         {
-                                            std::wstring query8 = L"IF EXISTS(SELECT * FROM sys.databases WHERE name = \'" +  pimpl->m_dbName + L"\' AND is_broker_enabled = 0) ALTER DATABASE " + pimpl->m_dbName + L" SET ENABLE_BROKER";
-                                            std::wstring query9 = L"IF NOT EXISTS(SELECT * FROM sys.service_queues WHERE name = \'EventNotificationQueue\') CREATE QUEUE dbo.EventNotificationQueue";
-                                            std::wstring query10 = L"IF NOT EXISTS(SELECT * FROM sys.services WHERE name = \'//" + pimpl->m_dbName + L"/EventNotificationService\') CREATE SERVICE [//" + pimpl->m_dbName +L"/EventNotificationService] ON QUEUE dbo.EventNotificationQueue([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])";
-                                            std::wstring query11 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEvents\') CREATE EVENT NOTIFICATION SchemaChangeEvents ON DATABASE FOR DDL_TABLE_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
-                                            SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                                            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                                            GetErrorMessage( errorMsg, 2, m_hdbc );
+                                            result = 1;
+                                        }
+                                        else
+                                        {
+                                            if( pimpl->m_subtype == L"Microsoft SQL Server" )
                                             {
-                                                GetErrorMessage( errorMsg, 2, m_hdbc );
-                                                result = 1;
-                                            }
-                                            else
-                                            {
+                                                std::wstring query8 = L"IF EXISTS(SELECT * FROM sys.databases WHERE name = \'" +  pimpl->m_dbName + L"\' AND is_broker_enabled = 0) ALTER DATABASE " + pimpl->m_dbName + L" SET ENABLE_BROKER";
+                                                std::wstring query9 = L"IF NOT EXISTS(SELECT * FROM sys.service_queues WHERE name = \'EventNotificationQueue\') CREATE QUEUE dbo.EventNotificationQueue";
+                                                std::wstring query10 = L"IF NOT EXISTS(SELECT * FROM sys.services WHERE name = \'//" + pimpl->m_dbName + L"/EventNotificationService\') CREATE SERVICE [//" + pimpl->m_dbName +L"/EventNotificationService] ON QUEUE dbo.EventNotificationQueue([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])";
+                                                std::wstring query11 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEvents\') CREATE EVENT NOTIFICATION SchemaChangeEvents ON DATABASE FOR DDL_TABLE_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
                                                 query = new SQLWCHAR[query8.size() + 2];
                                                 memset( query, '\0', query8.size() + 2 );
                                                 uc_to_str_cpy( query, query8 );
