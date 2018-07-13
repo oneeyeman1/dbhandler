@@ -3209,7 +3209,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
             result = 1;
             ret = SQL_ERROR;
         }
-		else
+        else
         {
             ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_fk );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3340,7 +3340,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 GetErrorMessage( errorMsg, 1, stmt_fk );
                                 result = 1;
                             }
-							else
+                            else
                             {
                                 bool fkFound = false;
                                 std::map<int, std::vector<std::wstring> >origFields, refFields;
@@ -3484,7 +3484,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 }
             }
             if( !result )
-			{
+            {
                 ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_pk );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
@@ -3969,7 +3969,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 }
                             }
                             if( !result )
-							{
+                            {
                                 int i = 0;
                                 for( ret = SQLFetch( stmt_col ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_col ) )
                                 {
