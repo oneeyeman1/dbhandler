@@ -362,7 +362,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring errorMessage;
     sqlite3_stmt *stmt = NULL;
     std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    int result = 0, res = SQLITE_OK;
+    int result = 0, res = SQLITE_OK, count = 0;
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
     if( ( res = sqlite3_prepare_v2( m_db, query1.c_str(), (int) query1.length(), &stmt, 0 ) ) == SQLITE_OK )
     {
@@ -378,6 +378,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     result = 1;
                     break;
                 }
+                count++;
             }
 			else if( res == SQLITE_DONE )
                 break;
@@ -397,6 +398,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         errorMsg.push_back( errorMessage );
     }
     sqlite3_finalize( stmt );
+    m_numOfTables = count;
     return result;
 }
 
@@ -1416,6 +1418,7 @@ int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg)
 int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res, schema;
+    sqlite3_stmt *stmt1, *stmt2;
     unsigned int count;
     std::wstring errorMessage;
     std::vector<std::wstring> tableNames = pimpl->GetTableNames();
@@ -1441,7 +1444,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                 if( ( res = sqlite3_step( m_stmt2 ) ) == SQLITE_ROW )
                                 {
                                     std::wstring tableName = sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt2, 0 ) );
-                                    if( count > tableNames.size() )
+                                    if( count > m_numOfTables )
                                     {
                                         if( std::find( tableNames.begin(), tableNames.end(), tableName ) != tableNames.end() )
                                             continue;
@@ -1449,9 +1452,81 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                         if( res )
                                             errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
                                     }
-                                    else
+                                    else if( count < m_numOfTables )
                                     {
                                         temp.erase( std::remove( temp.begin(), temp.end(), tableName ), temp.end() );
+                                    }
+									else if( count == m_numOfTables )
+                                    {
+                                        int num1, num2;
+                                        std::string query3 = "SELECT count(*) FROM pragma_table_info(?)";
+                                        std::string query4 = "SELECT count(*) FROM pragma_index_list(?)";
+                                        std::vector<DatabaseTable *> &tables = pimpl->m_tables.at( pimpl->m_dbName );
+                                        bool found = false;
+                                        DatabaseTable *table;
+                                        for( std::vector<DatabaseTable *>::iterator it = tables.begin(); it < tables.end() && !found; ++it )
+                                        {
+                                            if( (*it)->GetTableName() == tableName )
+                                            {
+                                                table = (*it);
+                                                found = true;
+                                            }
+                                        }
+                                        if( sqlite3_prepare_v2( m_db, query3.c_str(), -1, &stmt1, NULL ) == SQLITE_OK )
+                                        {
+                                            res = sqlite3_bind_text( stmt1, 1, sqlite_pimpl->m_myconv.to_bytes( tableName ).c_str(), -1, SQLITE_TRANSIENT );
+                                            if( res == SQLITE_OK )
+											{
+                                                res = sqlite3_step( stmt1 );
+                                                if( res == SQLITE_ROW )
+                                                    num1 = sqlite3_column_int( stmt1, 0 );
+											    else if( res != SQLITE_DONE )
+                                                {
+                                                    result = 1;
+                                                    break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                result = 1;
+                                                break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            result = 1;
+                                            break;
+                                        }
+                                        if( sqlite3_prepare_v2( m_db, query4.c_str(), -1, &stmt2, NULL ) == SQLITE_OK )
+                                        {
+                                            res = sqlite3_bind_text( stmt2, 1, sqlite_pimpl->m_myconv.to_bytes( tableName ).c_str(), -1, SQLITE_TRANSIENT );
+                                            if( res == SQLITE_OK )
+											{
+                                                res = sqlite3_step( stmt2 );
+                                                if( res == SQLITE_ROW )
+                                                    num2 = sqlite3_column_int( stmt2, 0 );
+											    else if( res != SQLITE_DONE )
+                                                {
+                                                    result = 1;
+                                                    break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                result = 1;
+                                                break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            result = 1;
+                                            break;
+                                        }
+                                        if( num1 != table->GetNumberOfFields() || num2 != table->GetNumberOfIndexes() )
+                                        {
+                                            delete table;
+                                            AddDropTable( L"", L"", tableName, true, errorMsg );
+                                        }
                                     }
                                     m_schema = schema;
                                 }
@@ -1468,9 +1543,15 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             result = 1;
                         sqlite3_finalize( m_stmt2 );
                         m_stmt2 = NULL;
-                        if( count < tableNames.size() )
+                        if( count < m_numOfTables )
                         {
                             result = AddDropTable( L"", L"", temp.at( 0 ), false, errorMsg );
+                            if( res )
+                                errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
+                        }
+                        if( !result && count == m_numOfTables )
+                        {
+							result = AddDropTable( L"", L"", temp.at( 0 ), true, errorMsg );
                             if( res )
                                 errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
                         }
@@ -1502,6 +1583,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
         sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL, *stmt4 = NULL;
         std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
         int result = 0, res = SQLITE_OK, res1 = SQLITE_OK, res3 = SQLITE_OK, res4 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc, fkId;
+        int count1 = 0, count2 = 0;
         FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
         FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
         std::map<int, std::vector<std::wstring> > origFields, refFields;
@@ -1645,6 +1727,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
                                     sqlite3_finalize( stmt2 );
                                     break;
                                 }
+                                count1++;
                                 SetFullType( field, type );
                                 fields.push_back( field );
                             }
@@ -1686,7 +1769,10 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
                     {
                         res4 = sqlite3_step( stmt4 );
                         if( res4 == SQLITE_ROW )
+                        {
                             indexes.push_back( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt4, 2 ) ) ) );
+                            count2++;
+                        }
                         else if( res4 == SQLITE_DONE )
                             break;
                         else
@@ -1705,6 +1791,8 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
         {
             std::wstring comment = L"";
             DatabaseTable *table = new DatabaseTable( tableName, L"", fields, foreign_keys );
+            table->SetNumberOfFields( count1 );
+            table->SetNumberOfIndexes( count2 );
             table->SetTableId( 0 );
             if( GetTableProperties( table, errorMsg ) )
             {
