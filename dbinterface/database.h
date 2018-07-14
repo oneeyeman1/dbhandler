@@ -155,6 +155,27 @@ public:
         m_headingFontCharacterSet = -1;
         m_labelFontCharacterSer = -1;
     }
+
+    ~DatabaseTable()
+    {
+        for( std::vector<Field *>::iterator it = table_fields.begin(); it < table_fields.end(); ++it )
+        {
+            delete (*it);
+            (*it) = NULL;
+        }
+        table_fields.clear();
+        for( std::map<int, std::vector< FKField *> >::iterator it1 = foreign_keys.begin(); it1 != foreign_keys.end(); ++it1 )
+        {
+            for( std::vector<FKField *>::iterator it2 = (*it1).second.begin(); it2 < (*it1).second.end(); ++it2 )
+            {
+                delete (*it2);
+                (*it2) = NULL;
+            }
+            (*it1).second.clear();
+        }
+        foreign_keys.clear();
+    }
+
     const std::wstring &GetTableName() { return table_name; }
     const std::wstring &GetSchemaName() { return schema_name; }
     const std::wstring &GetComment() { return comment; }
@@ -215,12 +236,16 @@ public:
     void SetTableOwner(const std::wstring &owner) { this->owner = owner; }
     void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
     const std::vector<std::wstring> &GetIndexNames() { return m_indexes; }
+	void SetNumberOfFields(int count) { m_numFields = count; }
+	int GetNumberOfFields() { return m_numFields; }
+	void SetNumberOfIndexes(int count) { m_numIndex = count; }
+    int GetNumberOfIndexes() { return m_numIndex; }
 private:
     std::wstring table_name, schema_name, comment, owner;
     std::vector<Field *> table_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring m_dataFontName, m_labelFontName, m_headingFontName;
-    int m_dataFontWeight, m_labelFontWeight, m_headingFontWeight;
+    int m_dataFontWeight, m_labelFontWeight, m_headingFontWeight, m_numFields, m_numIndex;
     unsigned long m_objectId;
     bool m_dataFontItalic, m_labelFontItalic, m_headingFontItalic;
     int m_dataFontSize, m_labelFontSize, m_headingFontSize, m_dataFontCharacterSet, m_labelFontCharacterSer, m_headingFontCharacterSet;
@@ -240,6 +265,7 @@ protected:
     struct Impl;
     Impl *pimpl;
     bool connectToDatabase;
+    unsigned int m_numOfTables;
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
