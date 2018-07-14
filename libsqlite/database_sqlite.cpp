@@ -237,21 +237,6 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
     for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
     {
-        std::vector<Field *> fields = (*it)->GetFields();
-        for( std::vector<Field *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
-        {
-            delete (*it1);
-            (*it1) = NULL;
-        }
-        std::map<int,std::vector<FKField *> > fk_fields = (*it)->GetForeignKeyVector();
-        for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
-        {
-            for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
-            {
-                delete (*it3);
-                (*it3) = NULL;
-            }
-        }
         delete (*it);
         (*it) = NULL;
     }
