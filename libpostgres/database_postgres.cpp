@@ -271,24 +271,6 @@ int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
         std::vector<DatabaseTable *> tableVec = (*it).second;
         for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
         {
-            std::vector<Field *> fields = (*it1)->GetFields();
-            for( std::vector<Field *>::iterator it2 = fields.begin(); it2 < fields.end(); it2++ )
-            {
-                delete (*it2);
-                (*it2) = NULL;
-            }
-            std::map<int,std::vector<FKField *> > fk_fields = (*it1)->GetForeignKeyVector();
-            for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
-            {
-                for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
-                {
-                    delete (*it3);
-                    (*it3) = NULL;
-                }
-            }
-        }
-        for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
-        {
             delete (*it1);
             (*it1) = NULL;
         }
