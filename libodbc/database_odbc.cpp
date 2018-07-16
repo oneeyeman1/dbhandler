@@ -980,24 +980,6 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
         std::vector<DatabaseTable *> tableVec = (*it).second;
         for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
         {
-            std::vector<Field *> fields = (*it1)->GetFields();
-            for( std::vector<Field *>::iterator it2 = fields.begin(); it2 < fields.end(); it2++ )
-            {
-                delete (*it2);
-                (*it2) = NULL;
-            }
-            std::map<int,std::vector<FKField *> > fk_fields = (*it1)->GetForeignKeyVector();
-            for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
-            {
-                for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
-                {
-                    delete (*it3);
-                    (*it3) = NULL;
-                }
-            }
-        }
-        for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
-        {
             delete (*it1);
             (*it1) = NULL;
         }
@@ -3218,7 +3200,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
             result = 1;
             ret = SQL_ERROR;
         }
-		else
+        else
         {
             ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_fk );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3349,7 +3331,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 GetErrorMessage( errorMsg, 1, stmt_fk );
                                 result = 1;
                             }
-							else
+                            else
                             {
                                 bool fkFound = false;
                                 std::map<int, std::vector<std::wstring> >origFields, refFields;
@@ -3493,7 +3475,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 }
             }
             if( !result )
-			{
+            {
                 ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_pk );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
@@ -3978,7 +3960,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 }
                             }
                             if( !result )
-							{
+                            {
                                 int i = 0;
                                 for( ret = SQLFetch( stmt_col ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_col ) )
                                 {
