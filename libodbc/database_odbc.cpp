@@ -3235,8 +3235,26 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
                     {
                         ret = SQLGetData( m_hstmt, 1, *columnDataType[0], columnData[0], *columnDataSize[0], &messageType );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                            break;
+                        }
                         ret = SQLGetData( m_hstmt, 2, *columnDataType[1], columnData[1], *columnDataSize[1], &sqlCommand );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                            break;
+                        }
                         ret = SQLGetData( m_hstmt, 3, *columnDataType[2], columnData[2], *columnDataSize[2], &name );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                            break;
+                        }
                         str_to_uc_cpy( tableName, columnData[2] );
                         //if( *columnData[1] == 'C' )
                         str_to_uc_cpy( command, columnData[1] );
