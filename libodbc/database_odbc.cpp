@@ -3143,7 +3143,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         GetErrorMessage( errorMsg, 2, m_hstmt );
         result = 1;
     }
-	else
+    else
     {
         if( pimpl->m_subtype == L"Microsoft SQL Server" )
         {
@@ -3199,7 +3199,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             result = 1;
                             break;
                         }
-//                        unsigned int size = (unsigned int) *columnDataSize[i];
                         if( *columnDataSize[i] == 0 )
                             *columnDataSize[i] = 2048;
                         columnData[i] = new SQLWCHAR[(unsigned int) *columnDataSize[i] + 1];
@@ -3218,13 +3217,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                 *columnDataType[i] = SQL_C_WCHAR;
                                 break;
                         }
-/*                        ret = SQLBindCol( m_hstmt, i + 1, *columnDataType[i], columnData[i], *columnDataSize[i], columnDataLen[i] );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, m_hstmt );
-                            result = 1;
-                            break;
-                        }*/
                     }
                     ret = SQLExecute( m_hstmt );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3256,7 +3248,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             break;
                         }
                         str_to_uc_cpy( tableName, columnData[2] );
-                        //if( *columnData[1] == 'C' )
                         str_to_uc_cpy( command, columnData[1] );
                     }
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
