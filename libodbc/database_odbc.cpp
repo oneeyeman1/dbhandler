@@ -3131,18 +3131,149 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
 
 int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    int result = 0, ret;
+    SQLSMALLINT **columnNameLen, numCols, **columnDataType, **colummnDataDigits, **columnDataNullable;
+    SQLULEN **columnDataSize;
+    SQLWCHAR *columnName[4], **columnData;
+    SQLLEN **columnDataLen;
+    std::wstring tableName, command;
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        std::wstring sub_query1 = L"DECLARE @TargetDialogHandle UNIQUEIDENTIFIER; ";
-        std::wstring sub_query2 = L"DECLARE @EventMessage XML; ";
-        std::wstring sub_query3 = L"DECLARE @EventMessageTypeName sysname; ";
-        std::wstring sub_query4 = L"WAITFOR( RECEIVE TOP(1) @TargetDialogHandle = conversation_handle, @EventMessage = CONVERT(XML, message_body), @EventMessageTypeName = message_type_name FROM dbo.EventNotificationQueue ), TIMEOUT 1000;";
-        std::wstring sub_query5 = L"SELECT @TargetDialogHandle AS DialogHandle, @EventMessageTypeName AS MessageTypeName, @EventMessage.value('(/EVENT_INSTANCE/TSQLCommand/CommandText)[1]','nvarchar(max)') AS TSQLCommand, @EventMessage.value('(/EVENT_INSTANCE/ObjectName)[1]', 'varchar(128)' ) as TableName";
-        std::wstring query = sub_query1 + sub_query2 + sub_query3 + sub_query4 + sub_query5;
-        SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
-        memset( qry, '\0', query.length() + 2 );
-        uc_to_str_cpy( qry, query );
+        GetErrorMessage( errorMsg, 2, m_hstmt );
+        result = 1;
+    }
+	else
+    {
+        if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        {
+            SQLLEN messageType, sqlCommand, name;
+            std::wstring sub_query1 = L"SET NOCOUNT ON; DECLARE @TargetDialogHandle UNIQUEIDENTIFIER; ";
+            std::wstring sub_query2 = L"DECLARE @EventMessage XML; ";
+            std::wstring sub_query3 = L"DECLARE @EventMessageTypeName sysname; ";
+            std::wstring sub_query4 = L"WAITFOR( RECEIVE TOP(1) @TargetDialogHandle = conversation_handle, @EventMessage = CONVERT(XML, message_body), @EventMessageTypeName = message_type_name FROM dbo.EventNotificationQueue ), TIMEOUT 1000;";
+            std::wstring sub_query5 = L"SELECT @EventMessageTypeName AS MessageTypeName, @EventMessage.value('(/EVENT_INSTANCE/TSQLCommand/CommandText)[1]','nvarchar(max)') AS TSQLCommand, @EventMessage.value('(/EVENT_INSTANCE/ObjectName)[1]', 'varchar(128)' ) as TableName";
+            std::wstring query = sub_query1 + sub_query2 + sub_query3 + sub_query4 + sub_query5;
+            SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+            memset( qry, '\0', query.length() + 2 );
+            uc_to_str_cpy( qry, query );
+            ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+            else
+            {
+                ret = SQLNumResultCols( m_hstmt, &numCols );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                else
+                {
+                    for( int i = 0; i < numCols; i++ )
+                    {
+                        columnNameLen = new SQLSMALLINT *[numCols];
+                        columnDataType = new SQLSMALLINT *[numCols];
+                        columnDataSize = new SQLULEN *[numCols];
+                        colummnDataDigits = new SQLSMALLINT *[numCols];
+                        columnDataNullable = new SQLSMALLINT *[numCols];
+                        columnData = new SQLWCHAR *[numCols];
+                        columnDataLen = new SQLLEN *[numCols];
+                    }
+                    for( int i = 0; i < numCols; i++ )
+                    {
+                        columnNameLen[i] = new SQLSMALLINT;
+                        columnDataType[i] = new SQLSMALLINT;
+                        columnDataSize[i] = new SQLULEN;
+                        colummnDataDigits[i] = new SQLSMALLINT;
+                        columnDataNullable[i] = new SQLSMALLINT;
+                        columnName[i] = new SQLWCHAR[256];
+                        columnDataLen[i] = new SQLLEN;
+                        ret = SQLDescribeCol( m_hstmt, i + 1, columnName[i], 256, columnNameLen[i], columnDataType[i], columnDataSize[i], colummnDataDigits[i], columnDataNullable[i] );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                            break;
+                        }
+//                        unsigned int size = (unsigned int) *columnDataSize[i];
+                        if( *columnDataSize[i] == 0 )
+                            *columnDataSize[i] = 2048;
+                        columnData[i] = new SQLWCHAR[(unsigned int) *columnDataSize[i] + 1];
+                        memset( columnData[i], '\0', (unsigned int) *columnDataSize[i] + 1 );
+                        switch( *columnDataType[i] )
+                        {
+                            case SQL_INTEGER:
+                                *columnDataType[i] = SQL_C_LONG;
+                                break;
+                            case SQL_VARCHAR:
+                            case SQL_CHAR:
+                                *columnDataType[i] = SQL_C_CHAR;
+                                break;
+                            case SQL_WVARCHAR:
+                            case SQL_WCHAR:
+                                *columnDataType[i] = SQL_C_WCHAR;
+                                break;
+                        }
+/*                        ret = SQLBindCol( m_hstmt, i + 1, *columnDataType[i], columnData[i], *columnDataSize[i], columnDataLen[i] );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                            break;
+                        }*/
+                    }
+                    ret = SQLExecute( m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
+                    }
+                    for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
+                    {
+                        ret = SQLGetData( m_hstmt, 1, *columnDataType[0], columnData[0], *columnDataSize[0], &messageType );
+                        ret = SQLGetData( m_hstmt, 2, *columnDataType[1], columnData[1], *columnDataSize[1], &sqlCommand );
+                        ret = SQLGetData( m_hstmt, 3, *columnDataType[2], columnData[2], *columnDataSize[2], &name );
+                        str_to_uc_cpy( tableName, columnData[2] );
+                        //if( *columnData[1] == 'C' )
+                        str_to_uc_cpy( command, columnData[1] );
+                    }
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
+                    }
+                }
+            }
+            for( int i = 0; i < numCols; i++ )
+            {
+                delete columnNameLen[i];
+                delete columnDataType[i];
+                delete columnDataSize[i];
+                delete colummnDataDigits[i];
+                delete columnDataNullable[i];
+                delete columnData[i];
+                delete columnDataLen[i];
+                delete columnName[i];
+            }
+            delete columnNameLen;
+            delete columnDataType;
+            delete columnDataSize;
+            delete colummnDataDigits;
+            delete columnDataNullable;
+            delete columnData;
+            delete columnDataLen;
+            delete columnName;
+        }
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+        result = 1;
     }
     return result;
 }
