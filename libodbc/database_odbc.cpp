@@ -3134,7 +3134,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     int result = 0, ret;
     SQLSMALLINT **columnNameLen, numCols, **columnDataType, **colummnDataDigits, **columnDataNullable;
     SQLULEN **columnDataSize;
-    SQLWCHAR *columnName[4], **columnData;
+    SQLWCHAR *columnName[3], **columnData;
     SQLLEN **columnDataLen;
     std::wstring tableName, command;
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
@@ -3275,7 +3275,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             delete columnDataNullable;
             delete columnData;
             delete columnDataLen;
-            delete columnName;
         }
     }
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
