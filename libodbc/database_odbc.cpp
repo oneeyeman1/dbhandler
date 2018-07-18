@@ -3131,12 +3131,12 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
 
 int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
-    int result = 0, ret;
+    int result = 0, ret, ops;
     SQLSMALLINT **columnNameLen, numCols, **columnDataType, **colummnDataDigits, **columnDataNullable;
     SQLULEN **columnDataSize;
     SQLWCHAR *columnName[3], **columnData;
     SQLLEN **columnDataLen;
-    std::wstring tableName, command;
+    std::wstring tableName, command, operation, element;
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -3249,6 +3249,34 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         }
                         str_to_uc_cpy( tableName, columnData[2] );
                         str_to_uc_cpy( command, columnData[1] );
+                        int pos = command.find( L' ' );
+                        operation = command.substr( 0, pos );
+                        command = command.substr( pos + 1 );
+                        pos = command.find( L' ' );
+                        element = command.substr( 0, pos );
+                        command = command.substr( pos + 1 );
+                        std::transform( element.begin(), element.end(), element.begin(), towupper );
+                        if( element == L"TABLE" )
+                        {
+                            if( operation == L"DROP" )
+                            {
+                                ops = 1;
+                                tableName = command.substr( 0, command.length() - 1 );
+                            }
+                            if( operation == L"CREATE" )
+                            {
+                                ops = 0;
+                                tableName = command.substr( 0, command.find( L'(' ) );
+                            }
+                            if( operation == L"ALTER" )
+                            {
+                                ops = 2;
+                                tableName = command.substr( 0, command.find( L' ' ) );
+                            }
+                            tableName.erase( std::find_if( tableName.rbegin(), tableName.rend(), [](int ch) { return !isspace( ch ); } ).base(), tableName.end() );
+                            if( ops == 0 )
+                                AddDropTable( L"", L"", tableName, true, errorMsg );
+                        }
                     }
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                     {
