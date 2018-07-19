@@ -22,6 +22,7 @@
 #include <vector>
 #include <locale>
 #include <codecvt>
+#include <algorithm>
 #ifdef _IODBCUNIX_FRAMEWORK
 #include "iODBC/sqlext.h"
 #else
