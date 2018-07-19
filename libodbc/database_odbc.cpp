@@ -3323,12 +3323,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                 schemaName = L"";
                                 tableName = L"";
                             }
-                            if( schemaName == L"" )
-                            {
-                                schema = new SQLWCHAR[SQL_MAX_SCHEMA_NAME_LEN];
-                                memset( schema, '\0', SQL_MAX_SCHEMA_NAME_LEN );
-                            }
-                            else
+                            if( schemaName != L"" )
                             {
                                 schema = new SQLWCHAR[schemaName.length() + 2];
                                 memset( schema, '\0', schemaName.length() + 2 );
@@ -3369,7 +3364,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                         result = 1;
                                         break;
                                     }
-									else
+                                    else
                                     {
                                         ret = SQLAllocHandle( SQL_HANDLE_DBC, hdbc, &hstmt );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
