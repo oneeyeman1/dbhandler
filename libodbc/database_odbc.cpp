@@ -3420,6 +3420,12 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             }
                         }
                     }
+                    if( command == L"VIEW" )
+		    {
+		    }
+                    if( command == L"INDEX" )
+		    {
+		    }
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                     {
                         GetErrorMessage( errorMsg, 1, m_hstmt );
