@@ -3405,7 +3405,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                     str_to_uc_cpy( catalogName, cat );
                                                     str_to_uc_cpy( schemaName, schema );
                                                     str_to_uc_cpy( tableName, table );
-                                                    if( schema == L"" && cat != L"" )
+                                                    if( schemaName == L"" && catalogName != L"" )
                                                     {
                                                         schema = cat;
                                                         copy_uc_to_uc( schema, cat );
