@@ -2774,7 +2774,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                                             tableOwner = L"dbo";
                                             result = 0;
                                         }
-										else
+                                        else
                                         {
                                             GetErrorMessage( errorMsg, 1, stmt );
                                             result = 1;
@@ -3244,8 +3244,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                 break;
                             case SQL_VARCHAR:
                             case SQL_CHAR:
-                                *columnDataType[i] = SQL_C_CHAR;
-                                break;
                             case SQL_WVARCHAR:
                             case SQL_WCHAR:
                                 *columnDataType[i] = SQL_C_WCHAR;
