@@ -3168,7 +3168,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     SQLULEN **columnDataSize;
     SQLWCHAR *columnName[3], **columnData;
     SQLLEN **columnDataLen;
-    std::wstring tableName, command, operation, element, schemaName, catalogName;
+    std::wstring tableName, command, operation, schemaName, catalogName;
     SQLWCHAR *cat = NULL, *schema = NULL, *table = NULL;
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
@@ -3288,27 +3288,16 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         command = command.substr( pos + 1 );
                         trim( command );
                         pos = command.find( L' ' );
-                        element = command.substr( 0, pos );
-                        command = command.substr( pos + 1 );
-                        trim( command );
+                        std::wstring element = L"TABLE";
                         std::transform( element.begin(), element.end(), element.begin(), towupper );
                         if( element == L"TABLE" )
                         {
                             if( operation == L"DROP" )
-                            {
                                 ops = 1;
-                                tableName = command.substr( 0, command.length() - 1 );
-                            }
                             if( operation == L"CREATE" )
-                            {
                                 ops = 0;
-                                tableName = command.substr( 0, command.find( L'(' ) );
-                            }
                             if( operation == L"ALTER" )
-                            {
                                 ops = 2;
-                                tableName = command.substr( 0, command.find( L' ' ) );
-                            }
                             tableName.erase( std::find_if( tableName.rbegin(), tableName.rend(), [](int ch) { return !isspace( ch ); } ).base(), tableName.end() );
                             pos = tableName.find( L'.' );
                             if( pos != std::wstring::npos )
