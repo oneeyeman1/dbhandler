@@ -3308,7 +3308,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             else
                             {
                                 schemaName = L"";
-                                tableName = L"";
                             }
                             if( schemaName != L"" )
                             {
@@ -3317,7 +3316,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             }
                             table = new SQLWCHAR[tableName.length() + 2];
                             memset( table, '\0', tableName.length() + 2 );
-                            uc_to_str_cpy( schema, schemaName );
+                            if( schema )
+                                uc_to_str_cpy( schema, schemaName );
                             uc_to_str_cpy( table, tableName );
                             for( int i = 0; i < 5; i++ )
                             {
@@ -3356,7 +3356,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                         ret = SQLAllocHandle( SQL_HANDLE_DBC, hdbc, &hstmt );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
-                                            GetErrorMessage( errorMsg, 1 );
+                                            GetErrorMessage( errorMsg, 2 );
                                             result = 1;
                                             break;
                                         }
