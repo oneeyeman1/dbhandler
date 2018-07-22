@@ -649,7 +649,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                                 result = 1;
                                                             }
                                                             else
-							    {
+                                                            {
                                                                 query = new SQLWCHAR[query12.size() + 2];
                                                                 memset( query, '\0', query12.size() + 2 );
                                                                 uc_to_str_cpy( query, query12 );
@@ -675,7 +675,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                                         result = 1;
                                                                     }
                                                                 }
-							    }
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -683,13 +683,13 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                         }
                                     }
                                     if( pimpl->m_subtype == L"PostgreSQL" )
-				    {
+                                    {
                                         if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 3 )
                                         {
                                             std::wstring query8 = L"IF NOT EXIST(SELECT 1 FROM pg_proc AS proc, pg_namespace AS ns WHERE proc.pronamespace = ns.oid AND ns.nspname = \'public\' AND proname = \'watch_schema_changes\') CREATE FUNCTION watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
                                             std::wstring query9 = L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE watch_schema_changes();";
                                         }
-				    }
+                                    }
                                     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
@@ -699,14 +699,17 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
 /*****************************************/
                                     else
                                     {
-                                        ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
-                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        if( pimpl->m_subtype != L"Sybase" && pimpl->m_subtype != L"ASE" )
                                         {
-                                            GetErrorMessage( errorMsg, 2 );
-                                            result = 1;
-                                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                            ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 2 );
+                                                result = 1;
+                                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                            }
                                         }
-                                        else
+                                        if( !result )
                                         {
                                             if( !connectToDatabase )
                                             {
