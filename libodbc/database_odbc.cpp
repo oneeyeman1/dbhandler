@@ -649,7 +649,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                                 result = 1;
                                                             }
                                                             else
-							    {
+                                                            {
                                                                 query = new SQLWCHAR[query12.size() + 2];
                                                                 memset( query, '\0', query12.size() + 2 );
                                                                 uc_to_str_cpy( query, query12 );
@@ -675,7 +675,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                                         result = 1;
                                                                     }
                                                                 }
-							    }
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -683,13 +683,13 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                         }
                                     }
                                     if( pimpl->m_subtype == L"PostgreSQL" )
-				    {
+                                    {
                                         if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 3 )
                                         {
                                             std::wstring query8 = L"IF NOT EXIST(SELECT 1 FROM pg_proc AS proc, pg_namespace AS ns WHERE proc.pronamespace = ns.oid AND ns.nspname = \'public\' AND proname = \'watch_schema_changes\') CREATE FUNCTION watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
                                             std::wstring query9 = L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE watch_schema_changes();";
                                         }
-				    }
+                                    }
                                     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
@@ -3186,7 +3186,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             std::wstring sub_query2 = L"DECLARE @EventMessage XML; ";
             std::wstring sub_query3 = L"DECLARE @EventMessageTypeName sysname; ";
             std::wstring sub_query4 = L"WAITFOR( RECEIVE @TargetDialogHandle = conversation_handle, @EventMessage = CONVERT(XML, message_body), @EventMessageTypeName = message_type_name FROM dbo.EventNotificationQueue ), TIMEOUT 1000;";
-            std::wstring sub_query5 = L"SELECT @EventMessageTypeName AS MessageTypeName, @EventMessage.value('(/EVENT_INSTANCE/TSQLCommand/CommandText)[1]','nvarchar(max)') AS TSQLCommand, IIF( @EventMessage.value('(/EVENT_INSTANCE/TargetObjectName)[1]', 'varchar(128)' ) IS NULL, @EventMessage.value('(/EVENT_INSTANCE/ObjectName)[1]', 'varchar(128)' ), @EventMessage.value('(/EVENT_INSTANCE/TargetObjectName)[1]', 'varchar(128)' ) ) AS TableName";
+            std::wstring sub_query5 = L"SELECT @EventMessage.value('(/EVENT_INSTANCE/TSQLCommand/CommandText)[1]','nvarchar(max)') AS TSQLCommand, IIF( @EventMessage.value('(/EVENT_INSTANCE/TargetObjectName)[1]', 'varchar(128)' ) IS NULL, @EventMessage.value('(/EVENT_INSTANCE/ObjectName)[1]', 'varchar(128)' ), @EventMessage.value('(/EVENT_INSTANCE/TargetObjectName)[1]', 'varchar(128)' ) ) AS TableName";
             std::wstring query = sub_query1 + sub_query2 + sub_query3 + sub_query4 + sub_query5;
             SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
             memset( qry, '\0', query.length() + 2 );
@@ -3272,15 +3272,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             result = 1;
                             break;
                         }
-                        ret = SQLGetData( hstmt, 3, *columnDataType[2], columnData[2], *columnDataSize[2], &name );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, m_hstmt );
-                            result = 1;
-                            break;
-                        }
-                        str_to_uc_cpy( tableName, columnData[2] );
-                        str_to_uc_cpy( command, columnData[1] );
+                        str_to_uc_cpy( tableName, columnData[1] );
+                        str_to_uc_cpy( command, columnData[0] );
                         trim( tableName );
                         trim( command );
                         int pos = command.find( L' ' );
