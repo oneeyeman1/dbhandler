@@ -3189,7 +3189,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             std::wstring sub_query2 = L"DECLARE @EventMessage XML; ";
             std::wstring sub_query3 = L"DECLARE @EventMessageTypeName sysname; ";
             std::wstring sub_query4 = L"WAITFOR( RECEIVE @TargetDialogHandle = conversation_handle, @EventMessage = CONVERT(XML, message_body), @EventMessageTypeName = message_type_name FROM dbo.EventNotificationQueue ), TIMEOUT 1000;";
-            std::wstring sub_query5 = L"SELECT @EventMessage.value('(/EVENT_INSTANCE/TSQLCommand/CommandText)[1]','nvarchar(max)') AS TSQLCommand, IIF( @EventMessage.value('(/EVENT_INSTANCE/TargetObjectName)[1]', 'varchar(128)' ) IS NULL, @EventMessage.value('(/EVENT_INSTANCE/ObjectName)[1]', 'varchar(128)' ), @EventMessage.value('(/EVENT_INSTANCE/TargetObjectName)[1]', 'varchar(128)' ) ) AS TableName";
+            std::wstring sub_query5 = L"SELECT @EventMessage.value('(/EVENT_INSTANCE/TSQLCommand/CommandText)[1]','nvarchar(max)') AS TSQLCommand, CASE WHEN @EventMessage.value('(/EVENT_INSTANCE/TargetObjectName)[1]', 'varchar(128)' ) IS NULL THEN @EventMessage.value('(/EVENT_INSTANCE/ObjectName)[1]', 'varchar(128)' ) ELSE @EventMessage.value('(/EVENT_INSTANCE/TargetObjectName)[1]', 'varchar(128)' ) END AS TableName";
             std::wstring query = sub_query1 + sub_query2 + sub_query3 + sub_query4 + sub_query5;
             SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
             memset( qry, '\0', query.length() + 2 );
@@ -3197,7 +3197,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             ret = SQLPrepare( hstmt, qry, SQL_NTS );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
-                GetErrorMessage( errorMsg, 1, m_hstmt );
+                GetErrorMessage( errorMsg, 1, hstmt );
                 result = 1;
             }
             else
@@ -3205,7 +3205,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 ret = SQLNumResultCols( hstmt, &numCols );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    GetErrorMessage( errorMsg, 1, hstmt );
                     result = 1;
                 }
                 else
@@ -3232,7 +3232,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         ret = SQLDescribeCol( hstmt, i + 1, columnName[i], 256, columnNameLen[i], columnDataType[i], columnDataSize[i], colummnDataDigits[i], columnDataNullable[i] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            GetErrorMessage( errorMsg, 1, hstmt );
                             result = 1;
                             break;
                         }
@@ -3256,7 +3256,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     ret = SQLExecute( hstmt );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
-                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        GetErrorMessage( errorMsg, 1, hstmt );
                         result = 1;
                     }
                     for( ret = SQLFetch( hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( hstmt ) )
@@ -3264,14 +3264,14 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         ret = SQLGetData( hstmt, 1, *columnDataType[0], columnData[0], *columnDataSize[0], &messageType );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            GetErrorMessage( errorMsg, 1, hstmt );
                             result = 1;
                             break;
                         }
                         ret = SQLGetData( hstmt, 2, *columnDataType[1], columnData[1], *columnDataSize[1], &sqlCommand );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            GetErrorMessage( errorMsg, 1, hstmt );
                             result = 1;
                             break;
                         }
@@ -3873,7 +3873,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     }
                 }
             }
-            if( !result )
+            if( !result && ( ( schemaName != L"sys" && pimpl->m_subtype == L"Microsoft SQL Server" ) || pimpl->m_subtype != L"Microsoft SQL Server" ) )
             {
                 ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_colattr );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -4318,31 +4318,34 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     }
                 }
             }
-            ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            if( stmt_colattr )
             {
-                GetErrorMessage( errorMsg, 1, stmt_colattr );
-                result = 1;
-            }
-            else
-            {
-                stmt_colattr = 0;
-                ret = SQLDisconnect( hdbc_colattr );
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, 2, hdbc_colattr );
+                    GetErrorMessage( errorMsg, 1, stmt_colattr );
                     result = 1;
                 }
                 else
                 {
-                    ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                    if( ret != SQL_SUCCESS )
+                    stmt_colattr = 0;
+                    ret = SQLDisconnect( hdbc_colattr );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 2, hdbc_colattr );
                         result = 1;
                     }
                     else
-                        hdbc_colattr = 0;
+                    {
+                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                        if( ret != SQL_SUCCESS )
+                        {
+                            GetErrorMessage( errorMsg, 2, hdbc_colattr );
+                            result = 1;
+                        }
+                        else
+                            hdbc_colattr = 0;
+                    }
                 }
             }
             if( !result )
