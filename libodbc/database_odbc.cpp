@@ -389,6 +389,9 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstr
 {
     int result = 0;
     SQLWCHAR *query = NULL;
+    std::wstring qry = L"CREATE DATABASE " + name + L" ";
+    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        qry = L"CREATE DATABASE " + name + L"";
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
@@ -429,13 +432,14 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstr
 int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    std::wstring qry = L"DROP DATABASE " + name
     SQLWCHAR *query = NULL;
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        query = new SQLWCHAR[name.length() + 2];
-        memset( query, '\0', name.length() + 2 );
-        uc_to_str_cpy( query, name );
+        query = new SQLWCHAR[qry.length() + 2];
+        memset( query, '\0', qry.length() + 2 );
+        uc_to_str_cpy( query, qry );
         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
