@@ -3480,6 +3480,8 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
         query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_schema = ? AND table_name = ?;";
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query4 = L"SELECT i.name FROM sys.indexes i, sys.tables t WHERE i.object_id = t.object_id AND SCHEMA_NAME(t.schema_id) = ? AND t.name = ?;";
+    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
+        query4 = L"SELECT o.name, i.name FROM sysobjects o, sysindexes i, sysusers u WHERE o.id = i.id AND o.uid = u.uid AND u.name = ? AND o.name= ?";
     memset( table_name, '\0', tableName.length() + 2 );
     memset( schema_name, '\0', schemaName.length() + 2 );
     memset( catalog_name, '\0', catalog.length() + 2 );
