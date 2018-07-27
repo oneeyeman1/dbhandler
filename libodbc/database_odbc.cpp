@@ -3286,7 +3286,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                 result = 1;
                             }
                         }
-                    }https://start.fedoraproject.org/
+                    }
                     ret = SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
