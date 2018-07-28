@@ -3295,8 +3295,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             result = 1;
                         }
                         m_hstmt = 0;
-                        delete query;
-                        query = NULL;
+                        delete qry;
+                        qry = NULL;
                         if( !result )
                         {
                             str_to_uc_cpy( tableName, columnData[2] );
@@ -3412,7 +3412,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     }
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                     {
-                        GetErrorMessage( errorMsg, 1, hstmt1 );
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
                         result = 1;
                     }
                 }
@@ -3437,10 +3437,10 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             delete columnDataLen;
         }
     }
-    ret = SQLFreeHandle( SQL_HANDLE_STMT, hstmt1 );
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        GetErrorMessage( errorMsg, 1, hstmt );
+        GetErrorMessage( errorMsg, 1, m_hstmt );
         result = 1;
     }
     return result;
