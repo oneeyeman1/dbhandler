@@ -3299,8 +3299,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         qry = NULL;
                         if( !result )
                         {
-                            str_to_uc_cpy( tableName, columnData[2] );
-                            str_to_uc_cpy( command, columnData[1] );
+                            str_to_uc_cpy( tableName, columnData[1] );
+                            str_to_uc_cpy( command, columnData[0] );
                             trim( tableName );
                             trim( command );
                             int pos = command.find( L' ' );
