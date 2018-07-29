@@ -1,6 +1,11 @@
 #include <map>
 #include <vector>
 #include <cctype>
+#ifdef WIN32
+#include "wx/thread.h"
+#else
+#include <mutex>
+#endif
 
 #ifndef DBMANAGER_DATABASE
 #define DBMANAGER_DATABASE
@@ -277,6 +282,11 @@ protected:
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
     virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg) = 0;
 public:
+#ifdef WIN32
+    static wxMutex my_mutex;
+#else
+    static std::mutex my_mutex;
+#endif
     virtual ~Database() = 0;
     Impl &GetTableVector() { return *pimpl; };
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
