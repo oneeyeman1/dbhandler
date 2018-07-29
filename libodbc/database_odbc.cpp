@@ -3342,7 +3342,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             table = new SQLWCHAR[tableName.length() + 2];
                             memset( table, '\0', tableName.length() + 2 );
                             uc_to_str_cpy( table, tableName );
-                            ret = SQLAllocHandle( SQL_HANDLE_DBC, m_hdbc, &m_hstmt );
+                            ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 2, m_hdbc );
@@ -3400,6 +3400,22 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                             }
                                             if( ops == 0 )
                                                 AddDropTable( catalogName, schemaName, tableName, true, errorMsg );
+                                            else
+                                            {
+                                                bool found = false;
+                                                std::vector<DatabaseTable *> tables = pimpl->m_tables[pimpl->m_dbName];
+                                                for( std::vector<DatabaseTable *>::iterator it = tables.begin(); it < tables.end() && !found; ++it )
+                                                {
+                                                    if( (*it)->GetSchemaName() == schemaName && (*it)->GetTableName() == tableName )
+                                                    {
+                                                        delete (*it);
+                                                        (*it) = NULL;
+                                                        found = true;
+                                                    }
+                                                }
+                                                if( ops == 2 )
+                                                    AddDropTable( catalogName, schemaName, tableName, true, errorMsg );
+                                            }
                                         }
                                     }
                                 }
