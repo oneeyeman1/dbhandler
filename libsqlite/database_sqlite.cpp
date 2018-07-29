@@ -617,7 +617,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
         std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
         std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
         std::wstring tableOwner = const_cast<DatabaseTable *>( table )->GetTableOwner();
-        int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
+        unsigned long tableId = const_cast<DatabaseTable *>( table )->GetTableId();
         exist = IsTablePropertiesExist( table, errorMsg );
         if( errorMsg.size() != 0 )
             result = 1;
@@ -1240,7 +1240,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                         if( newFK.size() > 0 )
                         {
                             std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
-                            int size = fKeys.size();
+                            unsigned long size = fKeys.size();
                             for( unsigned int i = 0; i < newFK.size(); i++ )
                                 fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), newFK.at( i )->GetOriginalFieldName(), L"", newFK.at( i )->GetReferencedTableName(), newFK.at( i )->GetReferencedFieldName(), origFields, refFields, newFK.at( i )->GetOnUpdateConstraint(), newFK.at( i )->GetOnDeleteConstraint() ) );
                         }
@@ -1443,12 +1443,12 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     }
 									else if( count == m_numOfTables )
                                     {
-                                        int num1, num2;
+                                        int num1 = 0, num2 = 0;
                                         std::string query3 = "SELECT count(*) FROM pragma_table_info(?)";
                                         std::string query4 = "SELECT count(*) FROM pragma_index_list(?)";
                                         std::vector<DatabaseTable *> &tables = pimpl->m_tables.at( pimpl->m_dbName );
                                         bool found = false;
-                                        DatabaseTable *table;
+                                        DatabaseTable *table = NULL;
                                         for( std::vector<DatabaseTable *>::iterator it = tables.begin(); it < tables.end() && !found; ++it )
                                         {
                                             if( (*it)->GetTableName() == tableName )
