@@ -1,11 +1,7 @@
 #include <map>
 #include <vector>
 #include <cctype>
-#ifdef WIN32
-#include "wx/thread.h"
-#else
 #include <mutex>
-#endif
 
 #ifndef DBMANAGER_DATABASE
 #define DBMANAGER_DATABASE
@@ -242,9 +238,9 @@ public:
     void SetTableOwner(const std::wstring &owner) { this->owner = owner; }
     void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
     const std::vector<std::wstring> &GetIndexNames() { return m_indexes; }
-	void SetNumberOfFields(int count) { m_numFields = count; }
-	int GetNumberOfFields() { return m_numFields; }
-	void SetNumberOfIndexes(int count) { m_numIndex = count; }
+    void SetNumberOfFields(int count) { m_numFields = count; }
+    int GetNumberOfFields() { return m_numFields; }
+    void SetNumberOfIndexes(int count) { m_numIndex = count; }
     int GetNumberOfIndexes() { return m_numIndex; }
 private:
     std::wstring table_name, schema_name, comment, owner;
@@ -274,7 +270,7 @@ protected:
     unsigned int m_numOfTables;
     void ltrim(std::wstring &str) { str.erase( str.begin(), std::find_if( str.begin(), str.end(), [](int ch) { return !std::isspace( ch ); } ) ); };
     void rtrim(std::wstring &str) { str.erase( std::find_if( str.rbegin(), str.rend(), [](int ch) { return !std::isspace( ch ); } ).base(), str.end() ); };
-	void trim(std::wstring str) { ltrim( str ); rtrim( str ); };
+    void trim(std::wstring str) { ltrim( str ); rtrim( str ); };
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
@@ -282,11 +278,7 @@ protected:
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
     virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg) = 0;
 public:
-#ifdef WIN32
-    static wxMutex my_mutex;
-#else
     static std::mutex my_mutex;
-#endif
     virtual ~Database() = 0;
     Impl &GetTableVector() { return *pimpl; };
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
