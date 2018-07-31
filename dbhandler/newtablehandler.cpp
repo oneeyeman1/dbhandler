@@ -21,18 +21,10 @@ wxThread::ExitCode NewTableHandler::Entry()
     std::vector<std::wstring> errorMsg;
     while( !TestDestroy() )
     {
-#ifdef WIN32
-        m_db->my_mutex.Lock();
-#else
-		{
+        {
             std::lock_guard<std::mutex> locker( m_db->my_mutex );
-#endif
-        m_db->NewTableCreation( errorMsg );
-#ifdef WIN32
-        m_db->my_mutex.Unlock();
-#else
-		}
-#endif
+            m_db->NewTableCreation( errorMsg );
+        }
         Sleep( 5000 );
     }
     return (wxThread::ExitCode) 0;
