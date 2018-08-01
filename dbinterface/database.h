@@ -40,7 +40,7 @@ class Field
 public:
     Field()
     {
-        comment = L"";
+        m_comment = L"";
         column_name = column_type = column_defaultValue = L"";
         field_size = -1;
         decimal_size = -1;
@@ -49,7 +49,7 @@ public:
 
     Field(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false, const bool columnFK = false)
     {
-        comment = L"";
+        m_comment = L"";
         column_name = columnName;
         column_type = columnType;
         field_size = size;
@@ -69,18 +69,18 @@ public:
     const std::wstring &GetFieldName() { return column_name; }
     const std::wstring &GetFieldType() { return column_type; }
     const std::wstring &GetDefaultValue() { return column_defaultValue; }
-    const std::wstring &GetComment() { return comment; }
+    const std::wstring &GetComment() { return m_comment; }
     bool IsNullAllowed() { return column_isNull; }
     int GetFieldSize() { return field_size; }
     int GetPrecision() { return decimal_size; }
     bool IsPrimaryKey() { return column_pk; }
     bool IsForeignKey() { return column_fk; }
     bool IsAutoIncrement() { return autoIncrement; }
-    void SetComment(const std::wstring &comment) { this->comment = comment; }
+    void SetComment(const std::wstring &comment) { m_comment = comment; }
     void SetFullType(const std::wstring type) { full_type = type; }
     const std::wstring &GetFullType() { return full_type; }
 private:
-    std::wstring column_name, column_type, column_defaultValue, comment, label, heading, full_type;
+    std::wstring column_name, column_type, column_defaultValue, m_comment, label, heading, full_type;
     bool autoIncrement, column_isNull, column_pk, column_fk;
     int field_size, decimal_size;
 };
@@ -129,8 +129,8 @@ public:
     DatabaseTable(const std::wstring &tableName, const std::wstring &schemaName, const std::vector<Field *> &tableFields, const std::map<int,std::vector<FKField *> > &foreignKeys)
     {
         m_objectId = 0;
-        owner = L"";
-        comment = L"";
+        m_owner = L"";
+        m_comment = L"";
         table_name = tableName;
         schema_name = schemaName;
         table_fields = tableFields;
@@ -180,8 +180,8 @@ public:
 
     const std::wstring &GetTableName() { return table_name; }
     const std::wstring &GetSchemaName() { return schema_name; }
-    const std::wstring &GetComment() { return comment; }
-    void SetComment(const std::wstring &comment) { this->comment = comment; }
+    const std::wstring &GetComment() { return m_comment; }
+    void SetComment(const std::wstring &comment) { m_comment = comment; }
     void SetDataFontName(const std::wstring &name) { m_dataFontName = name; }
     const std::wstring &GetDataFontName() { return m_dataFontName; }
     void SetHeadingFontName(const std::wstring &name) { m_headingFontName = name; }
@@ -234,8 +234,8 @@ public:
     std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
     const unsigned long GetTableId() { return m_objectId; }
     void SetTableId(unsigned long id) { m_objectId = id; }
-    const std::wstring &GetTableOwner() { return owner; }
-    void SetTableOwner(const std::wstring &owner) { this->owner = owner; }
+    const std::wstring &GetTableOwner() { return m_owner; }
+    void SetTableOwner(const std::wstring &owner) { m_owner = owner; }
     void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
     const std::vector<std::wstring> &GetIndexNames() { return m_indexes; }
     void SetNumberOfFields(int count) { m_numFields = count; }
@@ -243,7 +243,7 @@ public:
     void SetNumberOfIndexes(int count) { m_numIndex = count; }
     int GetNumberOfIndexes() { return m_numIndex; }
 private:
-    std::wstring table_name, schema_name, comment, owner;
+    std::wstring table_name, schema_name, m_comment, m_owner;
     std::vector<Field *> table_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring m_dataFontName, m_labelFontName, m_headingFontName;
@@ -278,7 +278,6 @@ protected:
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
     virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg) = 0;
 public:
-    static std::mutex my_mutex;
     virtual ~Database() = 0;
     Impl &GetTableVector() { return *pimpl; };
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
@@ -297,6 +296,7 @@ public:
 
 struct Database::Impl
 {
+    static std::mutex my_mutex;
     std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
     std::vector<std::wstring> m_tableNames;
     std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
