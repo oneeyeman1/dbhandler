@@ -1274,7 +1274,7 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
             s = s.substr( fkPos );
             isConstraint = true;
             std::wstring ref = L"REFERENCES ";
-            size_t fkPos = keyTemp.find( ref );
+            fkPos = keyTemp.find( ref );
             while( fkPos == std::wstring::npos )
             {
                 std::getline( str, s, L',' );
@@ -1567,7 +1567,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
         std::wstring errorMessage;
         sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL, *stmt4 = NULL;
         std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-        int result = 0, res = SQLITE_OK, res1 = SQLITE_OK, res3 = SQLITE_OK, res4 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc, fkId;
+        int res = SQLITE_OK, res1 = SQLITE_OK, res3 = SQLITE_OK, res4 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc, fkId;
         int count1 = 0, count2 = 0;
         FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
         FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
@@ -1690,7 +1690,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
                             else
                                 fieldDefaultValue = reinterpret_cast<char *>( temp );
                             fieldPK = sqlite3_column_int( stmt2, 5 );
-                            int res = sqlite3_table_column_metadata( m_db, NULL, sqlite_pimpl->m_myconv.to_bytes( tableName ).c_str(), fieldName.c_str(), NULL, NULL, NULL, NULL, &autoinc );
+                            res = sqlite3_table_column_metadata( m_db, NULL, sqlite_pimpl->m_myconv.to_bytes( tableName ).c_str(), fieldName.c_str(), NULL, NULL, NULL, NULL, &autoinc );
                             if( res != SQLITE_OK )
                             {
                                 result = 1;
