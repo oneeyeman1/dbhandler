@@ -261,10 +261,10 @@ extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type, const std::
     res = dlg.ShowModal();
     if( res == wxID_OK )
     {
-        wxListBox *fields = dlg.GetFieldsControl();
-        selection = fields->GetString( fields->GetSelection() );
+        wxListBox *flds = dlg.GetFieldsControl();
+        selection = flds->GetString( flds->GetSelection() );
     }
-	else
+    else
         selection = wxEmptyString;
     return res;
 }
