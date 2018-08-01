@@ -75,7 +75,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     }
     if( type == 1 )
     {
-        wxString tableName = title.substr( 0, title.find( '.' ) );
+        wxString tbleName = title.substr( 0, title.find( '.' ) );
         wxString fieldName = title.substr( title.find( '.' ) + 1 );
         Field *field = static_cast<Field *>( m_object );
 /*        res = db->GetFieldProperties( tableName.ToStdWstring(), schemaName.ToStdWstring(), field, errors );
