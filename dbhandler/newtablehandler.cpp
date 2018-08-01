@@ -1,8 +1,6 @@
 #include <string>
 #include <algorithm>
-#ifndef WIN32
 #include <mutex>
-#endif
 #include "wx/thread.h"
 #include "database.h"
 #include "newtablehandler.h"
