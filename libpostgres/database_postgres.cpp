@@ -310,7 +310,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     else
     {
         res1 = PQprepare( m_db, "get_fkeys", m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), 2, NULL );
-        ExecStatusType status = PQresultStatus( res1 );
+        status = PQresultStatus( res1 );
         if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -520,7 +520,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             else
                                             {
                                                 res4 = PQexecPrepared( m_db, "get_indexes", 2, values1, length1, formats1, 1 );
-                                                ExecStatusType status = PQresultStatus( res4 );
+                                                status = PQresultStatus( res4 );
                                                 if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
                                                 {
                                                     std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
