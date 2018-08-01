@@ -193,7 +193,7 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
     res_stmt = mysql_stmt_init( m_db );
     if( !res_stmt )
     {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res_stmt ) );
+        err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res_stmt ) );
         errorMsg.push_back( err );
     }
     res = mysql_query( m_db, "START TRANSACTION" );
@@ -220,7 +220,7 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
                     {
                         if( mysql_stmt_prepare( res_stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
                         {
-                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res_stmt ) );
+                            err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res_stmt ) );
                             errorMsg.push_back( err );
                         }
                         else
@@ -242,13 +242,13 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
                                     res = mysql_commit( m_db );
                                 else
                                 {
-                                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                                    err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
                                     errorMsg.push_back( err );
                                 }
                             }
                             if( mysql_stmt_close( res_stmt ) )
                             {
-                                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res_stmt ) );
+                                err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res_stmt ) );
                                 errorMsg.push_back( err );
                             }
                         }
@@ -276,7 +276,7 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
                 MYSQL_RES *results = mysql_store_result( m_db );
                 if( !results )
                 {
-                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
                     errorMsg.push_back( err );
                     result = 1;
                 }
@@ -291,7 +291,7 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
             }
             else
             {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
                 errorMsg.push_back( err );
                 result = 1;
             }
