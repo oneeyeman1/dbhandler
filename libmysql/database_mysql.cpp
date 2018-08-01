@@ -314,8 +314,8 @@ int MySQLDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<
     }
     else
     {
-        MYSQL_RES *res;
-        if( !( res = mysql_store_result( m_db ) ) )
+        MYSQL_RES *res1 = mysql_store_result(m_db);
+        if( !res1 )
         {
             err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
@@ -324,7 +324,7 @@ int MySQLDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<
         else
         {
             MYSQL_ROW row;
-            while( ( row = mysql_fetch_row( res ) ) != NULL )
+            while( ( row = mysql_fetch_row( res1 ) ) != NULL )
             {
                 dbList.push_back( m_pimpl->m_myconv.from_bytes( row[0] ) );
             }
@@ -506,61 +506,61 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                 }
                                                 else
                                                 {
-                                                    MYSQL_BIND results[7];
+                                                    MYSQL_BIND results1[7];
                                                     my_bool is_null[7], error[7];
                                                     unsigned long length[7];
                                                     memset( results, 0, sizeof( results ) );
-                                                    results[0].buffer_type = results[2].buffer_type = results[3].buffer_type = results[4].buffer_type = results[5].buffer_type = results[6].buffer_type = MYSQL_TYPE_STRING;
-                                                    results[1].buffer_type = MYSQL_TYPE_LONG;
+                                                    results1[0].buffer_type = results1[2].buffer_type = results1[3].buffer_type = results1[4].buffer_type = results1[5].buffer_type = results1[6].buffer_type = MYSQL_TYPE_STRING;
+                                                    results1[1].buffer_type = MYSQL_TYPE_LONG;
 
-                                                    results[1].buffer = (char *) &fkId;
-                                                    results[1].is_null = &is_null[1];
-                                                    results[1].error = &error[1];
-                                                    results[1].length = &length[1];
+                                                    results1[1].buffer = (char *) &fkId;
+                                                    results1[1].is_null = &is_null[1];
+                                                    results1[1].error = &error[1];
+                                                    results1[1].length = &length[1];
 
                                                     length[0] = 64;
-                                                    results[0].buffer = fkField;
-                                                    results[0].buffer_length = length[0];
-                                                    results[0].is_null = &is_null[0];
-                                                    results[0].length = &length[0];
-                                                    results[0].error = &error[1];
+                                                    results1[0].buffer = fkField;
+                                                    results1[0].buffer_length = length[0];
+                                                    results1[0].is_null = &is_null[0];
+                                                    results1[0].length = &length[0];
+                                                    results1[0].error = &error[1];
 
                                                     length[2] = 64;
-                                                    results[2].buffer = refTableSchema;
-                                                    results[2].buffer_length = length[2];
-                                                    results[2].is_null = &is_null[2];
-                                                    results[2].length = &length[2];
-                                                    results[2].error = &error[2];
+                                                    results1[2].buffer = refTableSchema;
+                                                    results1[2].buffer_length = length[2];
+                                                    results1[2].is_null = &is_null[2];
+                                                    results1[2].length = &length[2];
+                                                    results1[2].error = &error[2];
 
                                                     length[3] = 64;
-                                                    results[3].buffer = refTableName;
-                                                    results[3].buffer_length = length[3];
-                                                    results[3].is_null = &is_null[3];
-                                                    results[3].length = &length[3];
-                                                    results[3].error = &error[3];
+                                                    results1[3].buffer = refTableName;
+                                                    results1[3].buffer_length = length[3];
+                                                    results1[3].is_null = &is_null[3];
+                                                    results1[3].length = &length[3];
+                                                    results1[3].error = &error[3];
 
                                                     length[4] = 64;
-                                                    results[4].buffer = refTableField;
-                                                    results[4].buffer_length = length[4];
-                                                    results[4].is_null = &is_null[4];
-                                                    results[4].length = &length[4];
-                                                    results[4].error = &error[4];
+                                                    results1[4].buffer = refTableField;
+                                                    results1[4].buffer_length = length[4];
+                                                    results1[4].is_null = &is_null[4];
+                                                    results1[4].length = &length[4];
+                                                    results1[4].error = &error[4];
 
                                                     length[5] = 64;
-                                                    results[5].buffer = updateCon;
-                                                    results[5].buffer_length = length[5];
-                                                    results[5].is_null = &is_null[5];
-                                                    results[5].length = &length[5];
-                                                    results[5].error = &error[5];
+                                                    results1[5].buffer = updateCon;
+                                                    results1[5].buffer_length = length[5];
+                                                    results1[5].is_null = &is_null[5];
+                                                    results1[5].length = &length[5];
+                                                    results1[5].error = &error[5];
 
                                                     length[6] = 64;
-                                                    results[6].buffer = deleteCon;
-                                                    results[6].buffer_length = length[6];
-                                                    results[6].is_null = &is_null[6];
-                                                    results[6].length = &length[6];
-                                                    results[6].error = &error[6];
+                                                    results1[6].buffer = deleteCon;
+                                                    results1[6].buffer_length = length[6];
+                                                    results1[6].is_null = &is_null[6];
+                                                    results1[6].length = &length[6];
+                                                    results1[6].error = &error[6];
                                                     std::vector<std::wstring> origFields, refFields;
-                                                    if( mysql_stmt_bind_result( res1, results ) )
+                                                    if( mysql_stmt_bind_result( res1, results1 ) )
                                                     {
                                                         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
                                                         errorMsg.push_back( err );
@@ -646,81 +646,81 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                     }
                                                                     else
                                                                     {
-                                                                        MYSQL_BIND results1[10];
+                                                                        MYSQL_BIND results2[10];
                                                                         my_bool is_null1[10], error1[10];
                                                                         long unsigned int length1[10];
      
                                                                         length1[0] = 64;
-                                                                        results1[0].buffer = colName;
-                                                                        results1[0].buffer_type = MYSQL_TYPE_STRING;
-                                                                        results1[0].buffer_length = length1[0];
-                                                                        results1[0].is_null = &is_null1[0];
-                                                                        results1[0].length = &length1[0];
-                                                                        results1[0].error = &error1[0];
+                                                                        results2[0].buffer = colName;
+                                                                        results2[0].buffer_type = MYSQL_TYPE_STRING;
+                                                                        results2[0].buffer_length = length1[0];
+                                                                        results2[0].is_null = &is_null1[0];
+                                                                        results2[0].length = &length1[0];
+                                                                        results2[0].error = &error1[0];
 
                                                                         length1[1] = 64;
-                                                                        results1[1].buffer = colType;
-                                                                        results1[1].buffer_type = MYSQL_TYPE_STRING;
-                                                                        results1[1].buffer_length = length1[1];
-                                                                        results1[1].is_null = &is_null1[1];
-                                                                        results1[1].length = &length1[1];
-                                                                        results1[1].error = &error1[1];
+                                                                        results2[1].buffer = colType;
+                                                                        results2[1].buffer_type = MYSQL_TYPE_STRING;
+                                                                        results2[1].buffer_length = length1[1];
+                                                                        results2[1].is_null = &is_null1[1];
+                                                                        results2[1].length = &length1[1];
+                                                                        results2[1].error = &error1[1];
 
-                                                                        results1[2].buffer = (char *) &charLen;
-                                                                        results1[2].buffer_type = MYSQL_TYPE_LONG;
-                                                                        results1[2].is_null = &is_null1[2];
-                                                                        results1[2].length = &length1[2];
-                                                                        results1[2].error = &error1[2];
+                                                                        results2[2].buffer = (char *) &charLen;
+                                                                        results2[2].buffer_type = MYSQL_TYPE_LONG;
+                                                                        results2[2].is_null = &is_null1[2];
+                                                                        results2[2].length = &length1[2];
+                                                                        results2[2].error = &error1[2];
 
-                                                                        results1[3].buffer = (char *) &charOctet;
-                                                                        results1[3].buffer_type = MYSQL_TYPE_LONG;
-                                                                        results1[3].is_null = &is_null1[3];
-                                                                        results1[3].length = &length1[3];
-                                                                        results1[3].error = &error1[3];
+                                                                        results2[3].buffer = (char *) &charOctet;
+                                                                        results2[3].buffer_type = MYSQL_TYPE_LONG;
+                                                                        results2[3].is_null = &is_null1[3];
+                                                                        results2[3].length = &length1[3];
+                                                                        results2[3].error = &error1[3];
 
-                                                                        results1[4].buffer = (char *) &numLen;
-                                                                        results1[4].buffer_type = MYSQL_TYPE_LONG;
-                                                                        results1[4].is_null = &is_null1[4];
-                                                                        results1[4].length = &length1[4];
-                                                                        results1[4].error = &error1[4];
+                                                                        results2[4].buffer = (char *) &numLen;
+                                                                        results2[4].buffer_type = MYSQL_TYPE_LONG;
+                                                                        results2[4].is_null = &is_null1[4];
+                                                                        results2[4].length = &length1[4];
+                                                                        results2[4].error = &error1[4];
 
-                                                                        results1[5].buffer = (char *) &numPrec;
-                                                                        results1[5].buffer_type = MYSQL_TYPE_LONG;
-                                                                        results1[5].is_null = &is_null1[5];
-                                                                        results1[5].length = &length1[5];
-                                                                        results1[5].error = &error1[5];
+                                                                        results2[5].buffer = (char *) &numPrec;
+                                                                        results2[5].buffer_type = MYSQL_TYPE_LONG;
+                                                                        results2[5].is_null = &is_null1[5];
+                                                                        results2[5].length = &length1[5];
+                                                                        results2[5].error = &error1[5];
 
                                                                         length1[6] = 64;
-                                                                        results1[6].buffer = defValue;
-                                                                        results1[6].buffer_type = MYSQL_TYPE_STRING;
-                                                                        results1[6].buffer_length = length1[6];
-                                                                        results1[6].is_null = &is_null1[6];
-                                                                        results1[6].length = &length1[6];
-                                                                        results1[6].error = &error[6];
+                                                                        results2[6].buffer = defValue;
+                                                                        results2[6].buffer_type = MYSQL_TYPE_STRING;
+                                                                        results2[6].buffer_length = length1[6];
+                                                                        results2[6].is_null = &is_null1[6];
+                                                                        results2[6].length = &length1[6];
+                                                                        results2[6].error = &error[6];
 
                                                                         length1[7] = 3;
-                                                                        results1[7].buffer = nullable;
-                                                                        results1[7].buffer_type = MYSQL_TYPE_STRING;
-                                                                        results1[7].buffer_length = length1[7];
-                                                                        results1[7].is_null = &is_null1[7];
-                                                                        results1[7].length = &length1[7];
-                                                                        results1[7].error = &error[7];
+                                                                        results2[7].buffer = nullable;
+                                                                        results2[7].buffer_type = MYSQL_TYPE_STRING;
+                                                                        results2[7].buffer_length = length1[7];
+                                                                        results2[7].is_null = &is_null1[7];
+                                                                        results2[7].length = &length1[7];
+                                                                        results2[7].error = &error[7];
  
                                                                         length1[8] = 30;
-                                                                        results1[8].buffer = autoInc;
-                                                                        results1[8].buffer_type = MYSQL_TYPE_STRING;
-                                                                        results1[8].buffer_length = length1[8];
-                                                                        results1[8].is_null = &is_null1[8];
-                                                                        results1[8].length = &length1[8];
-                                                                        results1[8].error = &error1[8];
+                                                                        results2[8].buffer = autoInc;
+                                                                        results2[8].buffer_type = MYSQL_TYPE_STRING;
+                                                                        results2[8].buffer_length = length1[8];
+                                                                        results2[8].is_null = &is_null1[8];
+                                                                        results2[8].length = &length1[8];
+                                                                        results2[8].error = &error1[8];
 
-                                                                        results1[9].buffer = (char *) &pk;
-                                                                        results1[9].buffer_type = MYSQL_TYPE_LONG;
-                                                                        results1[9].is_null = &is_null1[9];
-                                                                        results1[9].length = &length1[9];
-                                                                        results1[9].error = &error1[9];
+                                                                        results2[9].buffer = (char *) &pk;
+                                                                        results2[9].buffer_type = MYSQL_TYPE_LONG;
+                                                                        results2[9].is_null = &is_null1[9];
+                                                                        results2[9].length = &length1[9];
+                                                                        results2[9].error = &error1[9];
 
-                                                                        if( mysql_stmt_bind_result( res2, results1 ) )
+                                                                        if( mysql_stmt_bind_result( res2, results2 ) )
                                                                         {
                                                                             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
                                                                             errorMsg.push_back( err );
@@ -846,18 +846,18 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                                 }
                                                                                                 else
                                                                                                 {
-                                                                                                    MYSQL_BIND results[1];
-                                                                                                    my_bool is_null[1], error[1];
-                                                                                                    unsigned long length[1];
-                                                                                                    memset( results, 0, sizeof( results ) );
-                                                                                                    results[0].buffer_type = MYSQL_TYPE_STRING;
+                                                                                                    MYSQL_BIND results3[1];
+                                                                                                    my_bool is_null3[1], error3[1];
+                                                                                                    unsigned long length3[1];
+                                                                                                    memset( results3, 0, sizeof( results ) );
+                                                                                                    results3[0].buffer_type = MYSQL_TYPE_STRING;
                                                                                                     length[0] = 64;
-                                                                                                    results[0].buffer = indexName;
-                                                                                                    results[0].buffer_length = length[0];
-                                                                                                    results[0].is_null = &is_null[0];
-                                                                                                    results[0].length = &length[0];
-                                                                                                    results[0].error = &error[0];
-                                                                                                    if( mysql_stmt_bind_result( res3, results ) )
+                                                                                                    results3[0].buffer = indexName;
+                                                                                                    results3[0].buffer_length = length3[0];
+                                                                                                    results3[0].is_null = &is_null3[0];
+                                                                                                    results3[0].length = &length[0];
+                                                                                                    results3[0].error = &error3[0];
+                                                                                                    if( mysql_stmt_bind_result( res3, results3 ) )
                                                                                                     {
                                                                                                         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
                                                                                                         errorMsg.push_back( err );
@@ -2032,7 +2032,7 @@ int MySQLDatabase::DropForeignKey(std::wstring &command, const std::wstring &key
     {
         if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() ) )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
             result = 1;
         }
