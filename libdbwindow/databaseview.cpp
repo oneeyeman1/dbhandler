@@ -27,6 +27,7 @@
 //#endif
 
 #include <string>
+#include <mutex>
 #include "wx/docview.h"
 #include "wx/notebook.h"
 #include "wx/docmdi.h"
@@ -62,6 +63,8 @@ typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, s
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
+
+std::mutex Database::Impl::my_mutex;
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -465,8 +468,8 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         {
             Database *db = dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase();
 		    {
-                std::lock_guard<std::mutex> locker( m_db->my_mutex );
-                dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->CreateIndex( command.ToStdWstring(), indexName.ToStdWstring(), table->GetSchemaName(), table->GetTableName(), errors );
+                std::lock_guard<std::mutex> locker( db->GetTableVector()->my_mutex );
+                db->CreateIndex( command.ToStdWstring(), indexName.ToStdWstring(), table->GetSchemaName(), table->GetTableName(), errors );
             }
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
                 wxMessageBox( (*it) );
