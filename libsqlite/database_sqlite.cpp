@@ -16,6 +16,7 @@
 #include <codecvt>
 #include <sstream>
 #include <algorithm>
+#include <cwctype>
 #include "sqlite3.h"
 #include "database.h"
 #include "database_sqlite.h"
@@ -1263,7 +1264,7 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
     while( std::getline( str, s, L',' ) )
     {
         sUpper = s;
-        std::transform( s.begin(), s.end(), s.begin(), toupper );
+        std::transform( s.begin(), s.end(), s.begin(), [](auto ch) { return static_cast<wchar_t>( std::towupper( ch ) ); } );
         std::wstring temp = s.substr( s.find_first_not_of( L' ' ) );
         size_t fkPos = temp.find( L"FOREIGN KEY" );
         if( fkPos == std::wstring::npos )
@@ -1279,8 +1280,8 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
             {
                 std::getline( str, s, L',' );
                 sUpper = s;
-                std::transform( s.begin(), s.end(), s.begin(), toupper );
-                keyTemp += sUpper + L',';
+                std::transform( s.begin(), s.end(), s.begin(), [](auto ch) { return static_cast<wchar_t>( std::towupper( ch ) ); } );
+				keyTemp += sUpper + L',';
                 isFK = true;
                 fkPos = keyTemp.find( ref );
 //                    temp1 = s.substr( s.find_first_not_of( L' ' ) );
@@ -1308,8 +1309,8 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
                     {
                         std::getline( str, s, L',' );
                         sUpper = s;
-                        std::transform( s.begin(), s.end(), s.begin(), toupper );
-                        keyTemp += sUpper + L',';
+                        std::transform( s.begin(), s.end(), s.begin(), [](auto ch) { return static_cast<wchar_t>( std::towupper( ch ) ); } );
+						keyTemp += sUpper + L',';
                         temp1 = s.substr( s.find_first_not_of( L' ' ) );
                     }
                 }
