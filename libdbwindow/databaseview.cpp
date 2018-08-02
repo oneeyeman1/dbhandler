@@ -360,7 +360,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             }
         }
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
+        res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
         if( res != wxID_CANCEL )
         {
             if( m_type == QueryView )
@@ -468,7 +468,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         {
             Database *db = dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase();
             {
-                std::lock_guard<std::mutex> locker( db->GetTableVector()->my_mutex );
+                std::lock_guard<std::mutex> locker( db->GetTableVector().my_mutex );
                 db->CreateIndex( command.ToStdWstring(), indexName.ToStdWstring(), table->GetSchemaName(), table->GetTableName(), errors );
             }
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
@@ -578,10 +578,10 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             field = ((FieldShape *) event.GetEventObject())->GetField();
             if( (*it)->IsSelected() )
             {
-                MyErdTable *table = dynamic_cast<MyErdTable *>( *it );
-                if( table )
+                MyErdTable *my_table = dynamic_cast<MyErdTable *>( *it );
+                if( my_table )
                 {
-                    erdTable = table;
+                    erdTable = my_table;
                     tableName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetTableName();
                     schemaName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetSchemaName();
                     type = 1;
@@ -887,11 +887,11 @@ void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstr
         SerializableList::compatibility_iterator node = children.GetFirst();
         while( node )
         {
-            FieldShape *field = (FieldShape *) node->GetData();
-            if( field && isAdd ? !field->IsSelected() : field->IsSelected() )
+            FieldShape *field2add = (FieldShape *) node->GetData();
+            if( field2add && isAdd ? !field2add->IsSelected() : field2add->IsSelected() )
             {
-                field->Select( isAdd );
-                AddFieldToQuery( *field, isAdd, tableName );
+                field2add->Select( isAdd );
+                AddFieldToQuery( *field2add, isAdd, tableName );
             }
             node = node->GetNext();
         }

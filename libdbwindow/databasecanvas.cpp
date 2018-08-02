@@ -386,7 +386,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             }
             else
             {
-                MyErdTable *table = wxDynamicCast( m_selectedShape->GetParentShape()->GetParentShape(), MyErdTable );
+                table = wxDynamicCast( m_selectedShape->GetParentShape()->GetParentShape(), MyErdTable );
                 table->Select( true );
             }
         }
@@ -539,9 +539,9 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
         isTable = false;
     for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
     {
-        MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
-        if( table )
-            erdTable = table;
+        MyErdTable *tbl = wxDynamicCast( (*it), MyErdTable );
+        if( tbl )
+            erdTable = tbl;
         ConstraintSign *s = wxDynamicCast( (*it), ConstraintSign );
         if( s )
             sign = s;
@@ -869,8 +869,8 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
     }
     else if( sign && type == QueryView )
     {
-        wxSFTextShape *sign = wxDynamicCast( m_selectedShape, wxSFTextShape );
-        if( sign )
+        wxSFTextShape *c_sign = wxDynamicCast( m_selectedShape, wxSFTextShape );
+        if( c_sign )
             wxMessageBox( "Double clicked the relations control" );
     }
 }

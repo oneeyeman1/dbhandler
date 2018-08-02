@@ -127,9 +127,9 @@ public:
         return m_fkTable;
     }
 
-    void SetFKDatabaseTable(const DatabaseTable *table)
+    void SetFKDatabaseTable(const DatabaseTable *dbTable)
     {
-       m_fkTable = const_cast<DatabaseTable *>( table );
+       m_fkTable = const_cast<DatabaseTable *>( dbTable );
     }
 
     /*! \brief Set reference table name */
