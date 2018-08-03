@@ -1,3 +1,6 @@
+#if _MSC_VER >= 1900
+#pragma comment(lib, "legacy_stdio_definitions.lib")
+#endif
 #ifdef WIN32
 #include <windows.h>
 #endif
@@ -584,7 +587,6 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                     else
                                     {
 /**************************************/
-                                        SQLWCHAR *query;
                                         std::wstring query8, query9, query10, query11;
                                         SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                                         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
@@ -596,10 +598,10 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                         {
                                             if( pimpl->m_subtype == L"Microsoft SQL Server" )
                                             {
-                                                std::wstring query8 = L"IF EXISTS(SELECT * FROM sys.databases WHERE name = \'" +  pimpl->m_dbName + L"\' AND is_broker_enabled = 0) ALTER DATABASE " + pimpl->m_dbName + L" SET ENABLE_BROKER";
-                                                std::wstring query9 = L"IF NOT EXISTS(SELECT * FROM sys.service_queues WHERE name = \'EventNotificationQueue\') CREATE QUEUE dbo.EventNotificationQueue";
-                                                std::wstring query10 = L"IF NOT EXISTS(SELECT * FROM sys.services WHERE name = \'//" + pimpl->m_dbName + L"/EventNotificationService\') CREATE SERVICE [//" + pimpl->m_dbName +L"/EventNotificationService] ON QUEUE dbo.EventNotificationQueue([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])";
-                                                std::wstring query11 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsTable\') CREATE EVENT NOTIFICATION SchemaChangeEventsTable ON DATABASE FOR DDL_TABLE_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
+                                                query8 = L"IF EXISTS(SELECT * FROM sys.databases WHERE name = \'" +  pimpl->m_dbName + L"\' AND is_broker_enabled = 0) ALTER DATABASE " + pimpl->m_dbName + L" SET ENABLE_BROKER";
+                                                query9 = L"IF NOT EXISTS(SELECT * FROM sys.service_queues WHERE name = \'EventNotificationQueue\') CREATE QUEUE dbo.EventNotificationQueue";
+                                                query10 = L"IF NOT EXISTS(SELECT * FROM sys.services WHERE name = \'//" + pimpl->m_dbName + L"/EventNotificationService\') CREATE SERVICE [//" + pimpl->m_dbName +L"/EventNotificationService] ON QUEUE dbo.EventNotificationQueue([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])";
+                                                query11 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsTable\') CREATE EVENT NOTIFICATION SchemaChangeEventsTable ON DATABASE FOR DDL_TABLE_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
                                                 std::wstring query12 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsIndex\') CREATE EVENT NOTIFICATION SchemaChangeEventsIndex ON DATABASE FOR DDL_INDEX_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
                                                 std::wstring query13 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsView\') CREATE EVENT NOTIFICATION SchemaChangeEventsView ON DATABASE FOR DDL_VIEW_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
                                                 query = new SQLWCHAR[query8.size() + 2];
@@ -1170,10 +1172,10 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
             bool exists = IsIndexExists( index_name, schemaName, tableName, errorMsg );
             if( exists )
             {
-                std::wstring temp = L"Index ";
-                temp += index_name;
-                temp += L" already exists.";
-                errorMsg.push_back( temp );
+                std::wstring temp1 = L"Index ";
+                temp1 += index_name;
+                temp1 += L" already exists.";
+                errorMsg.push_back( temp1 );
                 result = 1;
             }
             else if( !errorMsg.empty() )
@@ -3064,7 +3066,7 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
         }
         else
         {
-            RETCODE ret = SQLExecDirect( m_hstmt, qry2, SQL_NTS );
+            ret = SQLExecDirect( m_hstmt, qry2, SQL_NTS );
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
                 ret = SQLFetch( m_hstmt );
@@ -4281,7 +4283,6 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 int i = 0;
                                 for( ret = SQLFetch( stmt_col ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_col ) )
                                 {
-                                    std::wstring schema_name, table_name;
                                     str_to_uc_cpy( fieldName, szColumnName );
                                     str_to_uc_cpy( fieldType, szTypeName );
                                     str_to_uc_cpy( defaultValue, szColumnDefault );
@@ -4427,7 +4428,6 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             else
                             {
-                                SQLSMALLINT DataType, DecimalDigits, Nullable;
                                 SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS;
                                 SQLULEN ParamSize;
                                 ret = SQLDescribeParam( stmt_ind, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
@@ -4544,22 +4544,22 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 str_to_uc_cpy( tempTableName, table_name );
                 if( pimpl->m_subtype == L"Microsoft SQL Server" && tempSchemaName == L"sys" )
                     tempTableName = tempSchemaName + L"." + tempTableName;
-                DatabaseTable *table = new DatabaseTable( tempTableName, tempSchemaName, fields, foreign_keys );
-                table->SetTableOwner( owner );
-                if( GetTableId( table, errorMsg ) )
+                DatabaseTable *new_table = new DatabaseTable( tempTableName, tempSchemaName, fields, foreign_keys );
+                new_table->SetTableOwner( owner );
+                if( GetTableId( new_table, errorMsg ) )
                 {
                     result = 1;
                 }
                 else
                 {
-                    if( GetTableProperties( table, errorMsg ) )
+                    if( GetTableProperties( new_table, errorMsg ) )
                     {
                         result = 1;
                     }
                     else
                     {
-                        table->SetIndexNames( indexes );
-                        pimpl->m_tables[tempCatalogName].push_back( table );
+                        new_table->SetIndexNames( indexes );
+                        pimpl->m_tables[tempCatalogName].push_back( new_table );
                         fields.erase( fields.begin(), fields.end() );
                         foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                         fields.clear();
@@ -4603,13 +4603,13 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     else if( ret == 0 )
     {
         uc_to_str_cpy( entry, L"UserName" );
-        int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+        ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
         if( ret < 0 )
             connectedUser = L"";
         else if( ret == 0 )
         {
             uc_to_str_cpy( entry, L"User" );
-            int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+            ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
             if( ret < 0 )
                 connectedUser = L"";
             else
