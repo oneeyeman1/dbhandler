@@ -569,7 +569,6 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                     }
                                                     else
                                                     {
-                                                        int foreign_key_row = mysql_stmt_fetch( res1 );
                                                         while( !mysql_stmt_fetch( res1 ) )
                                                         {
                                                             fkFld = m_pimpl->m_myconv.from_bytes( fkField );
@@ -739,7 +738,6 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                             else
                                                                             {
                                                                                 int fieldSize = 0, fieldPrec = 0;
-                                                                                int field_row = mysql_stmt_fetch( res2 );
                                                                                 while( !mysql_stmt_fetch( res2 ) )
                                                                                 {
                                                                                     fieldName = m_pimpl->m_myconv.from_bytes( colName );
@@ -866,7 +864,6 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                                     }
                                                                                                     else
                                                                                                     {
-                                                                                                        int indexes_row = mysql_stmt_fetch( res3 );
                                                                                                         while( !mysql_stmt_fetch( res3 ) )
                                                                                                             indexes.push_back( m_pimpl->m_myconv.from_bytes( indexName ) );
                                                                                                         table->SetIndexNames( indexes );
@@ -919,12 +916,24 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 int MySQLDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    int res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
-    if( res )
+    bool exists = IsIndexExists( index_name, schemaName, tableName, errorMsg );
+    if( exists )
     {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( err );
+        std::wstring temp1 = L"Index ";
+        temp1 += index_name;
+        temp1 += L" already exists.";
+        errorMsg.push_back( temp1 );
         result = 1;
+    }
+    else
+    {
+        int res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
+        if( res )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
     }
     return result;
 }
