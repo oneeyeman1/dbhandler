@@ -84,7 +84,10 @@ MainFrame::~MainFrame()
     std::vector<std::wstring> errorMsg;
     int result = 0;
     if( m_db )
+    {
+        std::lock_guard<std::mutex> locker( m_db->GetTableVector().my_mutex );
         result = m_db->Disconnect( errorMsg );
+    }
     if( result )
     {
         for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
