@@ -3198,17 +3198,18 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     {
         if( pimpl->m_subtype == L"Microsoft SQL Server" )
         {
+            long count;
+            bool nocount = false;
+            SQLINTEGER cbNocount;
             SQLLEN messageType, sqlCommand, name;
-            std::wstring sub_query1 = L"SET NOCOUNT ON; DECLARE @TargetDialogHandle UNIQUEIDENTIFIER; ";
+            std::wstring sub_query1 = L"DECLARE @TargetDialogHandle UNIQUEIDENTIFIER; ";
             std::wstring sub_query2 = L"DECLARE @EventMessage XML; ";
             std::wstring sub_query3 = L"DECLARE @EventMessageTypeName sysname; ";
             std::wstring sub_query4 = L"WAITFOR( RECEIVE @TargetDialogHandle = conversation_handle, @EventMessage = CONVERT(XML, message_body), @EventMessageTypeName = message_type_name FROM dbo.EventNotificationQueue ), TIMEOUT 1000;";
             std::wstring sub_query5 = L"SELECT @EventMessage.value('(/EVENT_INSTANCE/TSQLCommand/CommandText)[1]','nvarchar(max)') AS TSQLCommand, CASE WHEN @EventMessage.value('(/EVENT_INSTANCE/TargetObjectName)[1]', 'varchar(128)' ) IS NULL THEN @EventMessage.value('(/EVENT_INSTANCE/ObjectName)[1]', 'varchar(128)' ) ELSE @EventMessage.value('(/EVENT_INSTANCE/TargetObjectName)[1]', 'varchar(128)' ) END AS TableName";
+            std::wstring query1 = L"SET NOCOUNT OFF";
             std::wstring query = sub_query1 + sub_query2 + sub_query3 + sub_query4 + sub_query5;
-            SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
-            memset( qry, '\0', query.length() + 2 );
-            uc_to_str_cpy( qry, query );
-            ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+            ret = SQLExecDirect( m_hstmt, (SQLWCHAR *) L"SELECT CASE WHEN (512 & @@OPTIONS) = 512 THEN 1 ELSE 0 END", SQL_NTS );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3216,7 +3217,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             }
             else
             {
-                ret = SQLNumResultCols( m_hstmt, &numCols );
+                ret = SQLBindCol( m_hstmt, 1, SQL_C_LONG, &count, 1, &cbNocount );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3224,81 +3225,14 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 }
                 else
                 {
-                    for( int i = 0; i < numCols; i++ )
+                    ret = SQLFetch( m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
-                        columnNameLen = new SQLSMALLINT *[numCols];
-                        columnDataType = new SQLSMALLINT *[numCols];
-                        columnDataSize = new SQLULEN *[numCols];
-                        colummnDataDigits = new SQLSMALLINT *[numCols];
-                        columnDataNullable = new SQLSMALLINT *[numCols];
-                        columnData = new SQLWCHAR *[numCols];
-                        columnDataLen = new SQLLEN *[numCols];
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
                     }
-                    for( int i = 0; i < numCols; i++ )
+                    else
                     {
-                        columnNameLen[i] = new SQLSMALLINT;
-                        columnDataType[i] = new SQLSMALLINT;
-                        columnDataSize[i] = new SQLULEN;
-                        colummnDataDigits[i] = new SQLSMALLINT;
-                        columnDataNullable[i] = new SQLSMALLINT;
-                        columnName[i] = new SQLWCHAR[256];
-                        columnDataLen[i] = new SQLLEN;
-                        ret = SQLDescribeCol( m_hstmt, i + 1, columnName[i], 256, columnNameLen[i], columnDataType[i], columnDataSize[i], colummnDataDigits[i], columnDataNullable[i] );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, m_hstmt );
-                            result = 1;
-                            break;
-                        }
-                        if( *columnDataSize[i] == 0 )
-                            *columnDataSize[i] = 2048;
-                        columnData[i] = new SQLWCHAR[(unsigned int) *columnDataSize[i] + 1];
-                        memset( columnData[i], '\0', (unsigned int) *columnDataSize[i] + 1 );
-                        switch( *columnDataType[i] )
-                        {
-                            case SQL_INTEGER:
-                                *columnDataType[i] = SQL_C_LONG;
-                                break;
-                            case SQL_VARCHAR:
-                            case SQL_CHAR:
-                            case SQL_WVARCHAR:
-                            case SQL_WCHAR:
-                                *columnDataType[i] = SQL_C_WCHAR;
-                                break;
-                        }
-                    }
-                    if( !result )
-                    {
-                        ret = SQLExecute( m_hstmt );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, m_hstmt );
-                            result = 1;
-                        }
-                        ret = SQLFetch( m_hstmt );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, m_hstmt );
-                            result = 1;
-                        }
-                        else
-                        {
-                            ret = SQLGetData( m_hstmt, 1, *columnDataType[0], columnData[0], *columnDataSize[0], &messageType );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, 1, m_hstmt );
-                                result = 1;
-                            }
-                            else
-                            {
-                                ret = SQLGetData( m_hstmt, 2, *columnDataType[1], columnData[1], *columnDataSize[1], &sqlCommand );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, 1, m_hstmt );
-                                    result = 1;
-                                }
-                            }
-                        }
                         ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
@@ -3306,77 +3240,102 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             result = 1;
                         }
                         m_hstmt = 0;
-                        delete qry;
-                        qry = NULL;
-                        if( !result )
+                    }
+                }
+            }
+            if( m_hstmt == 0 )
+            {
+                if( count == 1 )
+                    nocount = true;
+                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                if( !nocount )
+                    query = L"SET NOCOUNT ON; " + query;
+                SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+                memset( qry, '\0', query.length() + 2 );
+                uc_to_str_cpy( qry, query );
+                ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                else
+                {
+                    ret = SQLNumResultCols( m_hstmt, &numCols );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
+                    }
+                    else
+                    {
+                        for( int i = 0; i < numCols; i++ )
                         {
-                            str_to_uc_cpy( tableName, columnData[1] );
-                            str_to_uc_cpy( command, columnData[0] );
-                            trim( tableName );
-                            trim( command );
-                            int pos = command.find( L' ' );
-                            operation = command.substr( 0, pos );
-                            command = command.substr( pos + 1 );
-                            trim( command );
-                            pos = command.find( L' ' );
-                            std::wstring element = command.substr( 0, command.find( L' ' ) );
-                            std::transform( element.begin(), element.end(), element.begin(), towupper );
-                            if( element == L"TABLE" || element == L"VIEW" )
-                            {
-                                if( operation == L"DROP" )
-                                    ops = 1;
-                                if( operation == L"CREATE" )
-                                    ops = 0;
-                                if( operation == L"ALTER" )
-                                    ops = 2;
-                            }
-                            if( element == L"INDEX" )
-                            {
-                                ops = 2;
-                            }
-                            pos = tableName.find( L'.' );
-                            if( pos != std::wstring::npos )
-                            {
-                                schemaName = tableName.substr( 0, pos );
-                                tableName = tableName.substr( pos + 1 );
-                            }
-                            else
-                            {
-                                schemaName = L"";
-                            }
-                            if( schemaName != L"" )
-                            {
-                                schema = new SQLWCHAR[schemaName.length() + 2];
-                                memset( schema, '\0', schemaName.length() + 2 );
-                                uc_to_str_cpy( schema, schemaName );
-                            }
-                            table = new SQLWCHAR[tableName.length() + 2];
-                            memset( table, '\0', tableName.length() + 2 );
-                            uc_to_str_cpy( table, tableName );
-                            ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                            columnNameLen = new SQLSMALLINT *[numCols];
+                            columnDataType = new SQLSMALLINT *[numCols];
+                            columnDataSize = new SQLULEN *[numCols];
+                            colummnDataDigits = new SQLSMALLINT *[numCols];
+                            columnDataNullable = new SQLSMALLINT *[numCols];
+                            columnData = new SQLWCHAR *[numCols];
+                            columnDataLen = new SQLLEN *[numCols];
+                        }
+                        for( int i = 0; i < numCols; i++ )
+                        {
+                            columnNameLen[i] = new SQLSMALLINT;
+                            columnDataType[i] = new SQLSMALLINT;
+                            columnDataSize[i] = new SQLULEN;
+                            colummnDataDigits[i] = new SQLSMALLINT;
+                            columnDataNullable[i] = new SQLSMALLINT;
+                            columnName[i] = new SQLWCHAR[256];
+                            columnDataLen[i] = new SQLLEN;
+                            ret = SQLDescribeCol( m_hstmt, i + 1, columnName[i], 256, columnNameLen[i], columnDataType[i], columnDataSize[i], colummnDataDigits[i], columnDataNullable[i] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
-                                GetErrorMessage( errorMsg, 2, m_hdbc );
+                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                result = 1;
+                                break;
+                            }
+                            if( *columnDataSize[i] == 0 )
+                                *columnDataSize[i] = 2048;
+                            columnData[i] = new SQLWCHAR[(unsigned int) *columnDataSize[i] + 1];
+                            memset( columnData[i], '\0', (unsigned int) *columnDataSize[i] + 1 );
+                            switch( *columnDataType[i] )
+                            {
+                                case SQL_INTEGER:
+                                    *columnDataType[i] = SQL_C_LONG;
+                                    break;
+                                case SQL_VARCHAR:
+                                case SQL_CHAR:
+                                case SQL_WVARCHAR:
+                                case SQL_WCHAR:
+                                    *columnDataType[i] = SQL_C_WCHAR;
+                                    break;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLExecute( m_hstmt );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, m_hstmt );
                                 result = 1;
                             }
                             else
                             {
-                                for( int i = 0; i < 5; i++ )
+                                ret = SQLFetch( m_hstmt );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                                 {
-                                    catalog[i].TargetType = SQL_C_WCHAR;
-                                    catalog[i].BufferLength = ( bufferSize + 1 );
-                                    catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
-                                    ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, 1, m_hstmt );
-                                        result = 1;
-                                        break;
-                                    }
+                                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                                    result = 1;
                                 }
-                                if( !result )
+                                else if( ret != SQL_NO_DATA )
                                 {
-                                    ret = SQLTables( m_hstmt, NULL, 0, schema, SQL_NTS, table, SQL_NTS, NULL, 0 );
+                                    ret = SQLGetData( m_hstmt, 1, *columnDataType[0], columnData[0], *columnDataSize[0], &messageType );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
                                         GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3384,63 +3343,192 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     }
                                     else
                                     {
-                                        ret = SQLFetch( m_hstmt );
+                                        ret = SQLGetData( m_hstmt, 2, *columnDataType[1], columnData[1], *columnDataSize[1], &sqlCommand );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 1, m_hstmt );
                                             result = 1;
                                         }
-                                        else
+                                    }
+                                }
+                                else if( ret == SQL_NO_DATA )
+                                    result = -1;
+                                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                                    result = 1;
+                                }
+                                m_hstmt = 0;
+                                delete qry;
+                                qry = NULL;
+                            }
+                            if( !result )
+                            {
+                                str_to_uc_cpy( tableName, columnData[1] );
+                                str_to_uc_cpy( command, columnData[0] );
+                                trim( tableName );
+                                trim( command );
+                                if( !command.empty() )
+                                {
+                                    int pos = command.find( L' ' );
+                                    operation = command.substr( 0, pos );
+                                    command = command.substr( pos + 1 );
+                                    trim( command );
+                                    pos = command.find( L' ' );
+                                    std::wstring element = command.substr( 0, command.find( L' ' ) );
+                                    std::transform( element.begin(), element.end(), element.begin(), towupper );
+                                    if( element == L"TABLE" || element == L"VIEW" )
+                                    {
+                                        if( operation == L"DROP" )
+                                            ops = 1;
+                                        if( operation == L"CREATE" )
+                                            ops = 0;
+                                        if( operation == L"ALTER" )
+                                            ops = 2;
+                                    }
+                                    if( element == L"INDEX" )
+                                    {
+                                        ops = 2;
+                                    }
+                                    pos = tableName.find( L'.' );
+                                    if( pos != std::wstring::npos )
+                                    {
+                                        schemaName = tableName.substr( 0, pos );
+                                        tableName = tableName.substr( pos + 1 );
+                                    }
+                                    else
+                                    {
+                                        schemaName = L"";
+                                    }
+                                    if( schemaName != L"" )
+                                    {
+                                        schema = new SQLWCHAR[schemaName.length() + 2];
+                                        memset( schema, '\0', schemaName.length() + 2 );
+                                        uc_to_str_cpy( schema, schemaName );
+                                    }
+                                    table = new SQLWCHAR[tableName.length() + 2];
+                                    memset( table, '\0', tableName.length() + 2 );
+                                    uc_to_str_cpy( table, tableName );
+                                    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 2, m_hdbc );
+                                        result = 1;
+                                    }
+                                    else
+                                    {
+                                        for( int i = 0; i < 5; i++ )
                                         {
-                                            if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
-                                                cat = (SQLWCHAR *) catalog[0].TargetValuePtr;
-                                            if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
-                                                schema = (SQLWCHAR *) catalog[1].TargetValuePtr;
-                                            if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
-                                                table = (SQLWCHAR *) catalog[2].TargetValuePtr;
-                                            catalogName = L"";
-                                            schemaName = L"";
-                                            tableName = L"";
-                                            str_to_uc_cpy( catalogName, cat );
-                                            str_to_uc_cpy( schemaName, schema );
-                                            str_to_uc_cpy( tableName, table );
-                                            if( schemaName == L"" && catalogName != L"" )
+                                            catalog[i].TargetType = SQL_C_WCHAR;
+                                            catalog[i].BufferLength = ( bufferSize + 1 );
+                                            catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
+                                            ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
-                                                schema = cat;
-                                                copy_uc_to_uc( schema, cat );
+                                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                result = 1;
+                                                break;
                                             }
-                                            if( ops == 0 )
-                                                AddDropTable( catalogName, schemaName, tableName, true, errorMsg );
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLTables( m_hstmt, NULL, 0, schema, SQL_NTS, table, SQL_NTS, NULL, 0 );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                result = 1;
+                                            }
                                             else
                                             {
-                                                bool found = false;
-                                                std::vector<DatabaseTable *> tables = pimpl->m_tables[pimpl->m_dbName];
-                                                for( std::vector<DatabaseTable *>::iterator it = tables.begin(); it < tables.end() && !found; ++it )
+                                                ret = SQLFetch( m_hstmt );
+                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                                                 {
-                                                    if( (*it)->GetSchemaName() == schemaName && (*it)->GetTableName() == tableName )
+                                                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                    result = 1;
+                                                }
+                                                else if( ret != SQL_NO_DATA )
+                                                {
+                                                    if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
+                                                        cat = (SQLWCHAR *) catalog[0].TargetValuePtr;
+                                                    if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
+                                                        schema = (SQLWCHAR *) catalog[1].TargetValuePtr;
+                                                    if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
+                                                        table = (SQLWCHAR *) catalog[2].TargetValuePtr;
+                                                    catalogName = L"";
+                                                    schemaName = L"";
+                                                    tableName = L"";
+                                                    str_to_uc_cpy( catalogName, cat );
+                                                    str_to_uc_cpy( schemaName, schema );
+                                                    str_to_uc_cpy( tableName, table );
+                                                    if( schemaName == L"" && catalogName != L"" )
                                                     {
-                                                        delete (*it);
-                                                        (*it) = NULL;
-                                                        found = true;
+                                                        schema = cat;
+                                                        copy_uc_to_uc( schema, cat );
+                                                    }
+                                                    if( ops == 0 )
+                                                        AddDropTable( catalogName, schemaName, tableName, true, errorMsg );
+                                                    else
+                                                    {
+                                                        bool found = false;
+                                                        std::vector<DatabaseTable *> tables = pimpl->m_tables[pimpl->m_dbName];
+                                                        for( std::vector<DatabaseTable *>::iterator it = tables.begin(); it < tables.end() && !found; ++it )
+                                                        {
+                                                            if( (*it)->GetSchemaName() == schemaName && (*it)->GetTableName() == tableName )
+                                                            {
+                                                                 delete (*it);
+                                                                (*it) = NULL;
+                                                                found = true;
+                                                            }
+                                                        }
+                                                        if( ops == 2 )
+                                                            AddDropTable( catalogName, schemaName, tableName, true, errorMsg );
                                                     }
                                                 }
-                                                if( ops == 2 )
-                                                    AddDropTable( catalogName, schemaName, tableName, true, errorMsg );
                                             }
+                                        }
+                                        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                                            result = 1;
                                         }
                                     }
                                 }
                             }
+                            delete table;
+                            delete schema;
+                            table = NULL;
+                            schema = NULL;
                         }
-                        delete table;
-                        delete schema;
-                        table = NULL;
-                        schema = NULL;
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                        }
                     }
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                }
+                if( !nocount )
+                {
+                    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
-                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        GetErrorMessage( errorMsg, 2, m_hdbc );
                         result = 1;
+                    }
+                    else
+                    {
+                        qry = new SQLWCHAR[query1.length() + 2];
+                        memset( qry, '\0', query1.length() + 2 );
+                        uc_to_str_cpy( qry, query1 );
+                        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                        }
+                        delete qry;
+                        qry = NULL;
                     }
                 }
             }
