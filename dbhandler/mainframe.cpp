@@ -85,7 +85,7 @@ MainFrame::~MainFrame()
     int result = 0;
     if( m_db )
     {
-        std::lock_guard<std::mutex> locker( m_db->GetTableVector().my_mutex );
+        wxCriticalSectionLocker enter( m_threadCS );
         result = m_db->Disconnect( errorMsg );
     }
     if( result )
