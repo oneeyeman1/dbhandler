@@ -3210,7 +3210,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         {
             long count;
             bool nocount = false;
-            SQLINTEGER cbNocount;
+            SQLLEN cbNocount;
             SQLLEN messageType, sqlCommand, name;
             std::wstring sub_query1 = L"DECLARE @TargetDialogHandle UNIQUEIDENTIFIER; ";
             std::wstring sub_query2 = L"DECLARE @EventMessage XML; ";
