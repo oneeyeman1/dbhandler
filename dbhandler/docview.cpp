@@ -35,6 +35,7 @@
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
+#include "wx/fswatcher.h"
 #include "database.h"
 #include "newtablehandler.h"
 #include "mainframe.h"
