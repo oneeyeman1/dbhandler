@@ -3558,6 +3558,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         GetErrorMessage( errorMsg, 1, m_hstmt );
         result = 1;
     }
+    m_hstmt = 0;
     return result;
 }
 
