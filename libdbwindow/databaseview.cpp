@@ -62,7 +62,7 @@ typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, vo
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
-typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
+typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 
 std::mutex Database::Impl::my_mutex;
 
@@ -799,7 +799,7 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
         DBPROFILE func = (DBPROFILE) lib->GetSymbol( "ConnectToDb" );
         wxString name = wxEmptyString;
         wxString engine = GetDocument()->GetDatabase()->GetTableVector().m_type;
-        db = func( m_frame->GetParent(), name, engine );
+        db = func( m_frame->GetParent(), name, engine, L"" );
         if( db )
         {
             delete db1;
