@@ -297,7 +297,7 @@ void MainFrame::Connect()
             wxGetApp().SetConnectedUser( connectedUser );
         }
         m_db = db;
-        if( db->GetTableVector().m_subtype == L"PostgreSQL" && db->GetTableVector().m_versionMajor <= 9 && db->GetTableVector().m_versionMinor <= 3 )
+        if( ( ( db->GetTableVector().m_type == L"ODBC" && db->GetTableVector().m_subtype == L"PostgreSQL" ) || db->GetTableVector().m_type == L"PostgreSQL" ) && db->GetTableVector().m_versionMajor <= 9 && db->GetTableVector().m_versionMinor <= 3 )
         {
             m_oldPGWatcher = new wxFileSystemWatcher;
             m_oldPGWatcher->SetOwner( this );
