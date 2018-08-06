@@ -52,9 +52,9 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_properties = new wxNotebook( this, wxID_ANY );
     if( type == 0 )
     {
+        DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
         {
             std::lock_guard<std::mutex> lock( m_db->GetTableVector().my_mutex );
-            DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
             res = db->GetTableProperties( table, errors );
         }
         wxFont data_font( table->GetDataFontSize(), wxFONTFAMILY_DEFAULT, table->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetDataFontUnderline(), table->GetDataFontName() );
