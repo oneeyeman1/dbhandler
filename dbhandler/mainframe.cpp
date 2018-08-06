@@ -24,6 +24,7 @@
 #include "wx/docmdi.h"
 #include "wx/config.h"
 #include "wx/dynlib.h"
+#include "wx/fswatcher.h"
 #include "database.h"
 #include "docview.h"
 #include "newtablehandler.h"
@@ -58,6 +59,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
 {
     m_db = NULL;
     m_handler = NULL;
+    m_oldPGWatcher = NULL;
 #if defined __WXMSW__ || defined __WXGTK__
     m_tb = NULL;
 #endif
@@ -302,6 +304,11 @@ void MainFrame::Connect()
             wxGetApp().SetConnectedUser( connectedUser );
         }
         m_db = db;
+        if( ( ( db->GetTableVector().m_type == L"ODBC" && db->GetTableVector().m_subtype == L"PostgreSQL" ) || db->GetTableVector().m_type == L"PostgreSQL" ) && db->GetTableVector().m_versionMajor <= 9 && db->GetTableVector().m_versionMinor <= 3 )
+        {
+            m_oldPGWatcher = new wxFileSystemWatcher;
+            m_oldPGWatcher->SetOwner( this );
+        }
         if( m_db )
         {
             if( ( m_db->GetTableVector().m_type != L"PostgreSQL" ) || ( m_db->GetTableVector().m_type == L"ODBC" &&  m_db->GetTableVector().m_subtype != L"PostgreSQL" ) || ( m_db->GetTableVector().m_type == L"PostgreSQL" && m_db->GetTableVector().m_versionMajor >= 9 && m_db->GetTableVector().m_versionMinor >= 3 ) || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" && m_db->GetTableVector().m_versionMajor >= 9 && m_db->GetTableVector().m_versionMinor >= 3 ) )

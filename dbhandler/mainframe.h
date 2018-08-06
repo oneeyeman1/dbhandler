@@ -39,6 +39,7 @@ private:
     wxToolBar *m_tb;
 #endif
     std::map<wxString, wxDynamicLibrary *> m_painters;
+    wxFileSystemWatcher *m_oldPGWatcher;
     wxDECLARE_EVENT_TABLE();
 };
 

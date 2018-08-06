@@ -686,6 +686,16 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                     }
                                                 }
                                             }
+                                            if( pimpl->m_subtype == L"PostgreSQL" )
+                                            {
+                                                if( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor <= 3 )
+                                                {
+                                                }
+                                                else
+                                                {
+
+                                                }
+                                            }
                                         }
                                     }
                                     if( pimpl->m_subtype == L"PostgreSQL" )
