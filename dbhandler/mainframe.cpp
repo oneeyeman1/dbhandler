@@ -81,6 +81,13 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
 
 MainFrame::~MainFrame()
 {
+    wxConfigBase *config = wxConfigBase::Get( "DBManager" );
+    wxString path = config->GetPath();
+    config->SetPath( "CurrentDB" );
+    wxString temp( m_db->GetTableVector().m_type );
+    config->Write( "Engine", temp );
+    temp = m_db->GetTableVector().m_subtype;
+    config->Write( "Subtype", temp );
     std::vector<std::wstring> errorMsg;
     int result = 0;
     if( m_db )
@@ -297,15 +304,18 @@ void MainFrame::Connect()
         m_db = db;
         if( m_db )
         {
-            m_handler = new NewTableHandler( m_db );
-            if( m_handler->Run() != wxTHREAD_NO_ERROR )
+            if( ( m_db->GetTableVector().m_type != L"PostgreSQL" ) || ( m_db->GetTableVector().m_type == L"ODBC" &&  m_db->GetTableVector().m_subtype != L"PostgreSQL" ) || ( m_db->GetTableVector().m_type == L"PostgreSQL" && m_db->GetTableVector().m_versionMajor >= 9 && m_db->GetTableVector().m_versionMinor >= 3 ) || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" && m_db->GetTableVector().m_versionMajor >= 9 && m_db->GetTableVector().m_versionMinor >= 3 ) )
             {
-                wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
-                delete m_handler;
-                m_handler = NULL;
-                m_db->Disconnect( errorMsg );
-                delete m_db;
-                m_db = NULL;
+                m_handler = new NewTableHandler( m_db );
+                if( m_handler->Run() != wxTHREAD_NO_ERROR )
+                {
+                    wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
+                    delete m_handler;
+                    m_handler = NULL;
+                    m_db->Disconnect( errorMsg );
+                    delete m_db;
+                    m_db = NULL;
+                }
             }
         }
     }
