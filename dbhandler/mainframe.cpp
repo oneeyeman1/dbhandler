@@ -308,6 +308,7 @@ void MainFrame::Connect()
         {
             m_oldPGWatcher = new wxFileSystemWatcher;
             m_oldPGWatcher->SetOwner( this );
+            Bind( wxEVT_FSWATCHER, &MainFrame::OnPGSchemaChanged, this );
         }
         if( m_db )
         {
@@ -482,4 +483,8 @@ void MainFrame::OnSize(wxSizeEvent &event)
     }
     else if( !tb || tb->GetName() == "PowerBar" )
         event.Skip();
+}
+
+void MainFrame::OnPGSchemaChanged(wxFileSystemWatcherEvent& event)
+{
 }
