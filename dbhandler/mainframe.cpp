@@ -356,7 +356,7 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
     if( m_db )
     {
         InitMenuBar( event.GetId() );
-		if( m_painters.find( "Database" ) == m_painters.end() )
+        if( m_painters.find( "Database" ) == m_painters.end() )
         {
             lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
