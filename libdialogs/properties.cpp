@@ -36,6 +36,7 @@
 #include "fontpropertypagebase.h"
 #include "properties.h"
 
+std::mutex Database::Impl::my_mutex;
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 
 PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxPoint& pos, const wxSize& size, long style):
