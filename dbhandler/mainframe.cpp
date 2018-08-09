@@ -256,6 +256,7 @@ void MainFrame::TableMenu()
 void MainFrame::Connect()
 {
     Database *db = NULL;
+    wxString title;
     std::vector<std::wstring> errorMsg;
     if( !m_lib )
     {
@@ -304,6 +305,11 @@ void MainFrame::Connect()
             wxGetApp().SetConnectedUser( connectedUser );
         }
         m_db = db;
+        if( m_db->GetTableVector().m_type == L"ODBC" )
+            title = "Connected to " + m_db->GetTableVector().m_subtype + " version " + m_db->GetTableVector().m_serverVersion + " thru the ODBC";
+        else
+            title = "Connected to " + m_db->GetTableVector().m_type + " version " + m_db->GetTableVector().m_serverVersion;
+        SetTitle( title );
         if( ( ( db->GetTableVector().m_type == L"ODBC" && db->GetTableVector().m_subtype == L"PostgreSQL" ) || db->GetTableVector().m_type == L"PostgreSQL" ) && db->GetTableVector().m_versionMajor <= 9 && db->GetTableVector().m_versionMinor <= 3 )
         {
             m_oldPGWatcher = new wxFileSystemWatcher;
