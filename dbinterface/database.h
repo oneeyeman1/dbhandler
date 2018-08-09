@@ -1,7 +1,9 @@
 #include <map>
 #include <vector>
 #include <cctype>
+#if _MSC_VER >= 1900 || !defined WIN32
 #include <mutex>
+#endif
 
 #ifndef DBMANAGER_DATABASE
 #define DBMANAGER_DATABASE
@@ -296,7 +298,9 @@ public:
 
 struct Database::Impl
 {
+#if _MSC_VER >= 1900 || !defined WIN32
     static std::mutex my_mutex;
+#endif
     std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
     std::vector<std::wstring> m_tableNames;
     std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
