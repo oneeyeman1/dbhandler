@@ -305,31 +305,33 @@ void MainFrame::Connect()
             wxGetApp().SetConnectedUser( connectedUser );
         }
         if( db && db != m_db )
+        {
             m_db = db;
-        if( m_db && m_db->GetTableVector().m_type == L"ODBC" )
-            title = "Connected to " + m_db->GetTableVector().m_subtype + " version " + m_db->GetTableVector().m_serverVersion + " thru the ODBC";
-        else if( m_db )
-            title = "Connected to " + m_db->GetTableVector().m_type + " version " + m_db->GetTableVector().m_serverVersion;
-        SetTitle( title );
-        if( ( ( db->GetTableVector().m_type == L"ODBC" && db->GetTableVector().m_subtype == L"PostgreSQL" ) || db->GetTableVector().m_type == L"PostgreSQL" ) && db->GetTableVector().m_versionMajor <= 9 && db->GetTableVector().m_versionMinor <= 3 )
-        {
-            m_oldPGWatcher = new wxFileSystemWatcher;
-            m_oldPGWatcher->SetOwner( this );
-            Bind( wxEVT_FSWATCHER, &MainFrame::OnPGSchemaChanged, this );
-        }
-        if( m_db )
-        {
-            if( ( m_db->GetTableVector().m_type != L"PostgreSQL" ) || ( m_db->GetTableVector().m_type == L"ODBC" &&  m_db->GetTableVector().m_subtype != L"PostgreSQL" ) || ( m_db->GetTableVector().m_type == L"PostgreSQL" && m_db->GetTableVector().m_versionMajor >= 9 && m_db->GetTableVector().m_versionMinor >= 3 ) || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" && m_db->GetTableVector().m_versionMajor >= 9 && m_db->GetTableVector().m_versionMinor >= 3 ) )
+            if( m_db && m_db->GetTableVector().m_type == L"ODBC" )
+                title = "Connected to " + m_db->GetTableVector().m_subtype + " version " + m_db->GetTableVector().m_serverVersion + " thru the ODBC";
+            else if( m_db )
+                title = "Connected to " + m_db->GetTableVector().m_type + " version " + m_db->GetTableVector().m_serverVersion;
+            SetTitle( title );
+            if( ( ( db->GetTableVector().m_type == L"ODBC" && db->GetTableVector().m_subtype == L"PostgreSQL" ) || db->GetTableVector().m_type == L"PostgreSQL" ) && db->GetTableVector().m_versionMajor <= 9 && db->GetTableVector().m_versionMinor <= 3 )
             {
-                m_handler = new NewTableHandler( m_db );
-                if( m_handler->Run() != wxTHREAD_NO_ERROR )
+                m_oldPGWatcher = new wxFileSystemWatcher;
+                m_oldPGWatcher->SetOwner( this );
+                Bind( wxEVT_FSWATCHER, &MainFrame::OnPGSchemaChanged, this );
+            }
+            if( m_db )
+            {
+                if( ( m_db->GetTableVector().m_type != L"PostgreSQL" ) || ( m_db->GetTableVector().m_type == L"ODBC" &&  m_db->GetTableVector().m_subtype != L"PostgreSQL" ) || ( m_db->GetTableVector().m_type == L"PostgreSQL" && m_db->GetTableVector().m_versionMajor >= 9 && m_db->GetTableVector().m_versionMinor >= 3 ) || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" && m_db->GetTableVector().m_versionMajor >= 9 && m_db->GetTableVector().m_versionMinor >= 3 ) )
                 {
-                    wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
-                    delete m_handler;
-                    m_handler = NULL;
-                    m_db->Disconnect( errorMsg );
-                    delete m_db;
-                    m_db = NULL;
+                    m_handler = new NewTableHandler( m_db );
+                    if( m_handler->Run() != wxTHREAD_NO_ERROR )
+                    {
+                        wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
+                        delete m_handler;
+                        m_handler = NULL;
+                        m_db->Disconnect( errorMsg );
+                        delete m_db;
+                        m_db = NULL;
+                    }
                 }
             }
         }
