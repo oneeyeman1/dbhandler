@@ -131,7 +131,7 @@ void MainFrame::OnClose(wxCloseEvent &event)
     {
         {
             wxCriticalSectionLocker enter( m_threadCS );
-			if( !m_handler )
+            if( !m_handler )
                 break;
         }
         wxThread::This()->Sleep( 1 );
@@ -304,10 +304,11 @@ void MainFrame::Connect()
             wxGetApp().SetConnectString( connectStr );
             wxGetApp().SetConnectedUser( connectedUser );
         }
-        m_db = db;
-        if( m_db->GetTableVector().m_type == L"ODBC" )
+        if( db && db != m_db )
+            m_db = db;
+        if( m_db && m_db->GetTableVector().m_type == L"ODBC" )
             title = "Connected to " + m_db->GetTableVector().m_subtype + " version " + m_db->GetTableVector().m_serverVersion + " thru the ODBC";
-        else
+        else if( m_db )
             title = "Connected to " + m_db->GetTableVector().m_type + " version " + m_db->GetTableVector().m_serverVersion;
         SetTitle( title );
         if( ( ( db->GetTableVector().m_type == L"ODBC" && db->GetTableVector().m_subtype == L"PostgreSQL" ) || db->GetTableVector().m_type == L"PostgreSQL" ) && db->GetTableVector().m_versionMajor <= 9 && db->GetTableVector().m_versionMinor <= 3 )
