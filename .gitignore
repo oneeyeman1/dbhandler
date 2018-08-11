@@ -102,6 +102,5 @@ libsqlite/vc_mswuddll10/
 libtablewindow/vc_mswuddll10/
 dbhandler/vc_mswuddll10/*.dll
 *.log
-
-
-
+libpg\src\interfaces\libpq10
+libpg\src\interfaces\libpq
