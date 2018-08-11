@@ -55,4 +55,10 @@ Build/
 #project.xcworkspace
 .anjuta/
 dbhandler/vc_mswuddll10/*.obj
+dbhandler/vc_mswuddll10/*.ilk
+dbhandler/vc_mswuddll10/*.tlog
+dbhandler/vc_mswuddll10/*.obj
+*.log
+
+
 
