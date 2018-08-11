@@ -54,4 +54,5 @@ Build/
 #*.xcuserstatte
 #project.xcworkspace
 .anjuta/
+dbhandler/vc_mswuddll10/*.obj
 
