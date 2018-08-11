@@ -162,8 +162,8 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">vc_mswu\my_dll\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">vc_mswuddll\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">vc_mswuddll\my_dll\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">vc_mswuddll10\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">vc_mswuddll10\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">true</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">vc_mswudll\</OutDir>
@@ -202,8 +202,8 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <ObjectFileName>vc_mswud\my_dll\</ObjectFileName>
-      <ProgramDataBaseFileName>vc_mswud\my_dll.pdb</ProgramDataBaseFileName>
+      <ObjectFileName>vc_mswud10\dbwindow\</ObjectFileName>
+      <ProgramDataBaseFileName>vc_mswud10\dbwindow.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -216,12 +216,12 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>vc_mswud\my_dll.dll</OutputFile>
-      <ImportLibrary>vc_mswud\my_dll.lib</ImportLibrary>
+      <OutputFile>vc_mswud10\dbwindow.dll</OutputFile>
+      <ImportLibrary>vc_mswud10\dbwindow.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>.\..\..\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>vc_mswud\my_dll.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>vc_mswud10\dbwindow.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Bscmake>
@@ -286,13 +286,13 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <ObjectFileName>vc_mswuddll\</ObjectFileName>
-      <ProgramDataBaseFileName>vc_mswuddll\dbwindow.pdb</ProgramDataBaseFileName>
+      <ObjectFileName>vc_mswuddll10\</ObjectFileName>
+      <ProgramDataBaseFileName>vc_mswuddll10\dbwindow.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <PrecompiledHeaderOutputFile>vc_mswuddll\dbwindow.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>vc_mswuddll\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>vc_mswuddll10\dbwindow.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>vc_mswuddll10\</AssemblerListingLocation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;MY_DLL_BUILDING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -301,14 +301,14 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>fieldswindow.lib;propertypages.lib;shapeframework.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\dbhandler\vc_mswuddll\dbwindow.dll</OutputFile>
-      <ImportLibrary>vc_mswuddll\dbwindow.lib</ImportLibrary>
+      <OutputFile>..\dbhandler\vc_mswuddll10\dbwindow.dll</OutputFile>
+      <ImportLibrary>vc_mswuddll10\dbwindow.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>C:\Users\Igor\OneDrive\Documents\VLD\lib\Win32;..\libpropertypages\vc_mswuddll;..\libshapeframework\vc_mswuddll;..\libfieldswindow\vc_mswuddll;c:\wxWidgets\lib\vc_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Igor\OneDrive\Documents\VLD\lib\Win32;..\libpropertypages\vc_mswuddll10;..\libshapeframework\vc_mswuddll10;..\libfieldswindow\vc_mswuddll10;c:\wxWidgets\lib\vc_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>vc_mswuddll\dbwindowl.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>vc_mswuddll10\dbwindowl.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
-      <ManifestFile>vc_mswuddll\dbwindow$(TargetExt).intermediate.manifest</ManifestFile>
+      <ManifestFile>vc_mswuddll10\dbwindow$(TargetExt).intermediate.manifest</ManifestFile>
     </Link>
     <Bscmake>
       <OutputFile>vc_mswuddll\dll_vc9_my_dll.bsc</OutputFile>

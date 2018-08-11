@@ -124,8 +124,8 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">vc_mswu\my_dll\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">vc_mswuddll\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">vc_mswuddll\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">vc_mswuddll10\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">vc_mswuddll10\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">true</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">vc_mswudll\</OutDir>
@@ -163,14 +163,14 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <ObjectFileName>vc_mswuddll\</ObjectFileName>
-      <ProgramDataBaseFileName>vc_mswuddll\odbc_dll.pdb</ProgramDataBaseFileName>
+      <ObjectFileName>vc_mswuddll10\</ObjectFileName>
+      <ProgramDataBaseFileName>vc_mswuddll10\odbc_dll.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <PrecompiledHeaderOutputFile>vcmswuddll\odbc_dll.pch</PrecompiledHeaderOutputFile>
-      <BrowseInformationFile>vc_mswuddll\</BrowseInformationFile>
-      <AssemblerListingLocation>vc_mswuddll\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>vcmswuddll10\odbc_dll.pch</PrecompiledHeaderOutputFile>
+      <BrowseInformationFile>vc_mswuddll10\</BrowseInformationFile>
+      <AssemblerListingLocation>vc_mswuddll10\</AssemblerListingLocation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;MY_DLL_BUILDING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -180,15 +180,15 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>dbinterface.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\docview\vc_mswuddll\odbc_lib.dll</OutputFile>
-      <ImportLibrary>vc_mswuddll\odbc_dll.lib</ImportLibrary>
+      <OutputFile>..\docview\vc_mswuddll10\odbc_lib.dll</OutputFile>
+      <ImportLibrary>vc_mswuddll10\odbc_dll.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\dbhandler\debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>vc_mswuddll\odbc_dll.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>vc_mswuddll10\odbc_dll.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
-      <ManifestFile>vc_mswuddll\$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
-      <ProfileGuidedDatabase>C:\Users\Igor\OneDrive\Documents\dbhandler_app\libodbc\vc_mswuddll\odbc.pgd</ProfileGuidedDatabase>
+      <ManifestFile>vc_mswuddll10\$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
+      <ProfileGuidedDatabase>C:\Users\Igor\OneDrive\Documents\dbhandler_app\libodbc\vc_mswuddll10\odbc.pgd</ProfileGuidedDatabase>
     </Link>
     <Bscmake>
       <OutputFile>vc_mswud\dll_vc9_my_dll.bsc</OutputFile>
@@ -252,8 +252,8 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <ObjectFileName>vc_mswuddll\</ObjectFileName>
-      <ProgramDataBaseFileName>vc_mswuddll\libmysql.pdb</ProgramDataBaseFileName>
+      <ObjectFileName>vc_mswuddll10\</ObjectFileName>
+      <ProgramDataBaseFileName>vc_mswuddll10\libmysql.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -266,12 +266,12 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>dbinterface.lib;libmysql.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;WS2_32.lib;wininet.lib;Secur32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\dbhandler\vc_mswuddll\mysql_dll.dll</OutputFile>
-      <ImportLibrary>vc_mswuddll\mysql_dll.lib</ImportLibrary>
+      <OutputFile>..\dbhandler\vc_mswuddll10\mysql_dll.dll</OutputFile>
+      <ImportLibrary>vc_mswuddll10\mysql_dll.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>C:\Users\Igor\OneDrive\Documents\VLD\lib\Win32;..\dbhandler\Debug;..\mysql-connector\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>vc_mswuddll\mysql_dll.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>vc_mswuddll10\mysql_dll.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Bscmake>

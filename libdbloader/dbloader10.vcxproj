@@ -120,8 +120,8 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">vc_mswu\my_dll\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">vc_mswuddll\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">vc_mswuddll\my_dll\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">vc_mswuddll10\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">vc_mswuddll10\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">true</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">vc_mswudll\</OutDir>
@@ -160,8 +160,8 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <ObjectFileName>vc_mswud\my_dll\</ObjectFileName>
-      <ProgramDataBaseFileName>vc_mswud\my_dll.pdb</ProgramDataBaseFileName>
+      <ObjectFileName>vc_mswud10\dbloader\</ObjectFileName>
+      <ProgramDataBaseFileName>vc_mswud10\dbloader.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -173,12 +173,12 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>dbinterface.lib;sqlite_dll.lib;odbc_dll.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\docview\vc_mswuddll\dbloader.dll</OutputFile>
-      <ImportLibrary>vc_mswud\dbloader.lib</ImportLibrary>
+      <OutputFile>..\docview\vc_mswuddll10\dbloader.dll</OutputFile>
+      <ImportLibrary>vc_mswud10\dbloader.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>c:\wxWidgets\lib\vc_lib;..\libsqlite\vc_mswuddll;..\libodbc\vc_mswuddll\;..\dbhandler\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>vc_mswud\my_dll.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>vc_mswud10\dbloader.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Bscmake>
@@ -243,13 +243,13 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <ObjectFileName>vc_mswuddll\</ObjectFileName>
-      <ProgramDataBaseFileName>vc_mswuddll\dbloader.pdb</ProgramDataBaseFileName>
+      <ObjectFileName>vc_mswuddll10\</ObjectFileName>
+      <ProgramDataBaseFileName>vc_mswuddll10\dbloader.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <PrecompiledHeaderOutputFile>vc_mswuddll\dbloader.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>vc_mswuddll\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>vc_mswuddll10\dbloader.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>vc_mswuddll10\</AssemblerListingLocation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;MY_DLL_BUILDING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -259,14 +259,14 @@
     <Link>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>sqlite_dll.lib;libpqd.lib;odbc_dll.lib;postgres_dll.lib;mysql_dll.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\dbhandler\vc_mswuddll\dbloader.dll</OutputFile>
-      <ImportLibrary>vc_mswuddll\dbloader.lib</ImportLibrary>
+      <OutputFile>..\dbhandler\vc_mswuddll10\dbloader.dll</OutputFile>
+      <ImportLibrary>vc_mswuddll10\dbloader.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>C:\Users\Igor\OneDrive\Documents\VLD\lib\Win32;c:\wxWidgets\lib\vc_dll;..\libsqlite\vc_mswuddll;..\libodbc\vc_mswuddll;..\libpostgres\vc_mswuddll;..\libpg\src\interfaces\libpq\Debug;..\libmysql\vc_mswuddll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Igor\OneDrive\Documents\VLD\lib\Win32;c:\wxWidgets\lib\vc_dll;..\libsqlite\vc_mswuddll10;..\libodbc\vc_mswuddll10;..\libpostgres\vc_mswuddll10;..\libpg\src\interfaces\libpq\Debug;..\libmysql\vc_mswuddll10;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>vc_mswuddll\dbloader.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>vc_mswuddll10\dbloader.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
-      <ManifestFile>vc_mswuddll\$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
+      <ManifestFile>vc_mswuddll10\$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
     </Link>
     <Bscmake>
       <OutputFile>vc_mswuddll\dll_vc9_my_dll.bsc</OutputFile>
