@@ -58,6 +58,17 @@ dbhandler/vc_mswuddll10/*.obj
 dbhandler/vc_mswuddll10/*.ilk
 dbhandler/vc_mswuddll10/*.tlog
 dbhandler/vc_mswuddll10/*.obj
+libdbloader/vc_mswuddll10/
+libdbwindow/vc_mswuddll10/
+libdialogs/vc_mswuddll10/
+libfieldswindow/vc_mswuddll10/
+libmysql/vc_mswuddll10/
+libodbc/vc_mswuddll10/
+libpostgres/vc_mswuddll10/
+libpropertypages/vc_mswuddll10/
+libshapeframework/vc_mswuddll10/
+libsqlite/vc_mswuddll10/
+libtablewindow/vc_mswuddll10/
 *.log
 
 
