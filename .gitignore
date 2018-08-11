@@ -69,6 +69,7 @@ libpropertypages/vc_mswuddll10/
 libshapeframework/vc_mswuddll10/
 libsqlite/vc_mswuddll10/
 libtablewindow/vc_mswuddll10/
+dbhandler/vc_mswuddll10/*.dll
 *.log
 
 
