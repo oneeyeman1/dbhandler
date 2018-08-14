@@ -36,7 +36,9 @@
 #include "fontpropertypagebase.h"
 #include "properties.h"
 
+#if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
+#endif
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 
 PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxPoint& pos, const wxSize& size, long style):
@@ -55,7 +57,9 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     {
         DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
         {
+#if _MSC_VER >= 1900
             std::lock_guard<std::mutex> lock( m_db->GetTableVector().my_mutex );
+#endif
             res = db->GetTableProperties( table, errors );
         }
         wxFont data_font( table->GetDataFontSize(), wxFONTFAMILY_DEFAULT, table->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetDataFontUnderline(), table->GetDataFontName() );
