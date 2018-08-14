@@ -70,6 +70,9 @@ dbhandler/ipch/
 dbhandler/docview_vc9.sdf
 dbhandler/docview_vc9.suo
 dbhandler/docview_vc9.opensdf
+dbhandler/docview_vc10.sdf
+dbhandler/docview_vc10.suo
+dbhandler/docview_vc10.opensdf
 dbhandler/res/odbc1.xpm
 dbhandler/res/database.xpm
 libdbwindow/vc_mswuddll
