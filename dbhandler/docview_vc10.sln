@@ -17,16 +17,28 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fieldswindow", "..\libfieldswindow\fieldswindow10.vcxproj", "{EF89C84B-B5ED-496F-A980-5C7071081A19}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mysql", "..\libmysql\mysql10.vcxproj", "{33992568-0337-47DF-8C4D-05FB71CA4D1C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FD87BACC-A171-41D8-9F84-F51E0812D30D} = {FD87BACC-A171-41D8-9F84-F51E0812D30D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "odbc", "..\libodbc\odbc10.vcxproj", "{FB4DCDE9-41C9-4E4E-B243-62911D690A8E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FD87BACC-A171-41D8-9F84-F51E0812D30D} = {FD87BACC-A171-41D8-9F84-F51E0812D30D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "postgres", "..\libpostgres\postgres10.vcxproj", "{9DEB8989-110C-4C61-921B-08B1A49D10FB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FD87BACC-A171-41D8-9F84-F51E0812D30D} = {FD87BACC-A171-41D8-9F84-F51E0812D30D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "propertypages", "..\libpropertypages\propertypages10.vcxproj", "{22017CA3-FB1B-44E4-AC21-E02576A36937}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shapeframework", "..\libshapeframework\shapeframework10.vcxproj", "{3EA1F0FB-D6C1-4E80-A024-662A74C3719F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite", "..\libsqlite\sqlite10.vcxproj", "{97DE9390-2665-4A10-A724-A76B8C78DC54}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FD87BACC-A171-41D8-9F84-F51E0812D30D} = {FD87BACC-A171-41D8-9F84-F51E0812D30D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tablewindow", "..\libtablewindow\tablewindow10.vcxproj", "{D333C980-1282-4047-96AC-F7FD649C0512}"
 EndProject
