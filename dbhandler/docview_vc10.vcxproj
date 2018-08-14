@@ -487,6 +487,7 @@
     <ClCompile Include="doc.cpp" />
     <ClCompile Include="docview.cpp" />
     <ClCompile Include="mainframe.cpp" />
+    <ClCompile Include="newtablehandler.cpp" />
     <ClCompile Include="view.cpp" />
     <ClCompile Include="viewbase.cpp" />
   </ItemGroup>
@@ -494,6 +495,7 @@
     <ClInclude Include="doc.h" />
     <ClInclude Include="docview.h" />
     <ClInclude Include="mainframe.h" />
+    <ClInclude Include="newtablehandler.h" />
     <ClInclude Include="view.h" />
     <ClInclude Include="viewbase.h" />
   </ItemGroup>
