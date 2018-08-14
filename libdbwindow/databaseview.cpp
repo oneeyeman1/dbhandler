@@ -27,7 +27,9 @@
 //#endif
 
 #include <string>
+#if _MSC_VER >= 1900 || !(defined __WXMSW__)
 #include <mutex>
+#endif
 #include "wx/docview.h"
 #include "wx/notebook.h"
 #include "wx/docmdi.h"
@@ -64,7 +66,9 @@ typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, c
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 
+#if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
+#endif
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -309,7 +313,9 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
                 dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) erdTable)->GetTable() );
                 Database *db = GetDocument()->GetDatabase();
                 {
+#if _MSC_VER >= 1900 || !(defined __WXMSW__)
                     std::lock_guard<std::mutex> lock( db->GetTableVector().my_mutex );
+#endif
                     db->GetTableProperties( dbTable, errors );
                 }
                 erdTable->SetTableComment( dbTable->GetComment() );
@@ -472,7 +478,9 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         {
             Database *db = dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase();
             {
+#if _MSC_VER >= 1900 || !(defined __WXMSW__)
                 std::lock_guard<std::mutex> locker( db->GetTableVector().my_mutex );
+#endif
                 db->CreateIndex( command.ToStdWstring(), indexName.ToStdWstring(), dbTable->GetSchemaName(), dbTable->GetTableName(), errors );
             }
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
