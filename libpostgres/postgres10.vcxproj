@@ -269,7 +269,7 @@
       <OutputFile>..\dbhandler\vc_mswuddll10\postgres_dll.dll</OutputFile>
       <ImportLibrary>vc_mswuddll10\postgres_dll.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>C:\Users\Igor\OneDrive\Documents\VLD\lib\Win32;..\dbhandler\Debug;..\libpg\src\interfaces\libpq\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Igor\OneDrive\Documents\VLD\lib\Win32;..\dbhandler\Debug;..\libpg\src\interfaces\libpq10\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll10\postgres_dll.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
