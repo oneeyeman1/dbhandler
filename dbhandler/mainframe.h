@@ -14,6 +14,7 @@ class MainFrame : public wxDocMDIParentFrame
 public:
     MainFrame(wxDocManager *manager);
     ~MainFrame();
+    wxCriticalSection &GetCriticalSection();
 protected:
     void Connect();
 private:
