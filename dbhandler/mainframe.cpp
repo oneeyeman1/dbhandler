@@ -83,17 +83,17 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
 
 MainFrame::~MainFrame()
 {
+    std::vector<std::wstring> errorMsg;
+    int result = 0;
     wxConfigBase *config = wxConfigBase::Get( "DBManager" );
     wxString path = config->GetPath();
     config->SetPath( "CurrentDB" );
-    wxString temp( m_db->GetTableVector().m_type );
-    config->Write( "Engine", temp );
-    temp = m_db->GetTableVector().m_subtype;
-    config->Write( "Subtype", temp );
-    std::vector<std::wstring> errorMsg;
-    int result = 0;
     if( m_db )
     {
+        wxString temp( m_db->GetTableVector().m_type );
+        config->Write( "Engine", temp );
+        temp = m_db->GetTableVector().m_subtype;
+        config->Write( "Subtype", temp );
         wxCriticalSectionLocker enter( m_threadCS );
         result = m_db->Disconnect( errorMsg );
     }
