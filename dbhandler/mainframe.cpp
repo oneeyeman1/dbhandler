@@ -128,7 +128,8 @@ void MainFrame::OnClose(wxCloseEvent &event)
 #if defined __WXMSW__ && _MSC_VER < 1900
         wxCriticalSectionLocker enter( m_threadCS );
 #else
-        std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
+        if( m_db )
+            std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
 #endif
         if( m_handler )
         {
@@ -144,7 +145,8 @@ void MainFrame::OnClose(wxCloseEvent &event)
 #if defined __WXMSW__ && _MSC_VER < 1900
         wxCriticalSectionLocker enter( m_threadCS );
 #else
-        std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
+        if( m_db )
+            std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
 #endif
             if( !m_handler )
                 break;
