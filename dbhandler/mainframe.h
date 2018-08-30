@@ -9,12 +9,13 @@
 #ifndef _WX_SAMPLES_MAINFRAME_H_
 #define _WX_SAMPLES_MAINFRAME_H_
 
+
 class MainFrame : public wxDocMDIParentFrame
 {
 public:
     MainFrame(wxDocManager *manager);
     ~MainFrame();
-    wxCriticalSection &GetCriticalSection();
+    wxCriticalSection m_threadCS;
 protected:
     void Connect();
 private:
@@ -36,7 +37,6 @@ private:
     wxMenu *m_menuFile;
     wxDocManager *m_manager;
     NewTableHandler *m_handler;
-    wxCriticalSection m_threadCS;
 #if defined __WXMSW__ || defined __WXGTK__
     wxToolBar *m_tb;
 #endif

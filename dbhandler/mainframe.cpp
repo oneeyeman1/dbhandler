@@ -41,7 +41,11 @@
 
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &);
+#if defined __WXMSW__ && _MSC_VER < 1900
+typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, wxCriticalSection &);
+#else
 typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType);
+#endif
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 
@@ -94,7 +98,11 @@ MainFrame::~MainFrame()
         config->Write( "Engine", temp );
         temp = m_db->GetTableVector().m_subtype;
         config->Write( "Subtype", temp );
+#if defined __WXMSW__ && _MSC_VER < 1900
         wxCriticalSectionLocker enter( m_threadCS );
+#else
+        std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
+#endif
         result = m_db->Disconnect( errorMsg );
     }
     if( result )
@@ -118,7 +126,11 @@ MainFrame::~MainFrame()
 void MainFrame::OnClose(wxCloseEvent &event)
 {
     {
+#if defined __WXMSW__ && _MSC_VER < 1900
         wxCriticalSectionLocker enter( m_threadCS );
+#else
+        std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
+#endif
         if( m_handler )
         {
             if( m_handler->Delete() != wxTHREAD_NO_ERROR )
@@ -130,7 +142,11 @@ void MainFrame::OnClose(wxCloseEvent &event)
     while( 1 )
     {
         {
-            wxCriticalSectionLocker enter( m_threadCS );
+#if defined __WXMSW__ && _MSC_VER < 1900
+        wxCriticalSectionLocker enter( m_threadCS );
+#else
+        std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
+#endif
             if( !m_handler )
                 break;
         }
@@ -280,7 +296,11 @@ void MainFrame::Connect()
         if( db )
         {
             {
+#if defined __WXMSW__ && _MSC_VER < 1900
                 wxCriticalSectionLocker enter( m_threadCS );
+#else
+                std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
+#endif
                 if( m_handler )
                 {
                     if( m_handler->Delete() != wxTHREAD_NO_ERROR )
@@ -291,7 +311,11 @@ void MainFrame::Connect()
             while( 1 )
             {
                 {
+#if defined __WXMSW__ && _MSC_VER < 1900
                     wxCriticalSectionLocker enter( m_threadCS );
+#else
+                    std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
+#endif
                     if( !m_handler )
                         break;
                 }
@@ -322,7 +346,7 @@ void MainFrame::Connect()
             {
                 if( ( m_db->GetTableVector().m_type != L"PostgreSQL" ) || ( m_db->GetTableVector().m_type == L"ODBC" &&  m_db->GetTableVector().m_subtype != L"PostgreSQL" ) || ( m_db->GetTableVector().m_type == L"PostgreSQL" && m_db->GetTableVector().m_versionMajor >= 9 && m_db->GetTableVector().m_versionMinor >= 3 ) || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" && m_db->GetTableVector().m_versionMajor >= 9 && m_db->GetTableVector().m_versionMinor >= 3 ) )
                 {
-                    m_handler = new NewTableHandler( m_db );
+                    m_handler = new NewTableHandler( this, m_db );
                     if( m_handler->Run() != wxTHREAD_NO_ERROR )
                     {
                         wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
@@ -382,7 +406,11 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
+#if defined __WXMSW__ && _MSC_VER < 1900
+            func( this, m_manager, m_db, DatabaseView, m_threadCS );
+#else
             func( this, m_manager, m_db, DatabaseView );
+#endif
         }
         else if( !lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
@@ -416,7 +444,11 @@ void MainFrame::OnQuery(wxCommandEvent &event)
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
+#if defined __WXMSW__ && _MSC_VER < 1900
+            func( this, m_manager, m_db, QueryView, m_threadCS );
+#else
             func( this, m_manager, m_db, QueryView );
+#endif
         }
         else if( !lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
