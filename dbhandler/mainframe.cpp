@@ -28,7 +28,6 @@
 #include "database.h"
 #include "docview.h"
 #include "newtablehandler.h"
-#include "mainframe.h"
 
 #include "res/odbc1.xpm"
 #include "res/database_profile.xpm"

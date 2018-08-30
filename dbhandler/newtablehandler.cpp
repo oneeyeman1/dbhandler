@@ -9,7 +9,6 @@
 #include "wx/thread.h"
 #include "wx/msgdlg.h"
 #include "database.h"
-#include "mainframe.h"
 #include "newtablehandler.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)

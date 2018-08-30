@@ -9,6 +9,7 @@
 #ifndef _WX_SAMPLES_MAINFRAME_H_
 #define _WX_SAMPLES_MAINFRAME_H_
 
+class NewTableHandler;
 
 class MainFrame : public wxDocMDIParentFrame
 {

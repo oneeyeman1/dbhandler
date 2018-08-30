@@ -1,4 +1,7 @@
 #pragma once
+
+#include "mainframe.h"
+
 class NewTableHandler :	public wxThread
 {
 public:
