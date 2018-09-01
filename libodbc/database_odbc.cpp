@@ -4120,7 +4120,39 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 columnNames = NULL;
                             }
                         }
-/***********************/
+                        /*************************/
+                    }
+                }
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, stmt_colattr );
+                    result = 1;
+                    SQLDisconnect( hdbc_colattr );
+                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                    stmt_colattr = 0;
+                    hdbc_colattr = 0;
+                }
+                else
+                {
+                    stmt_colattr = 0;
+                    ret = SQLDisconnect( hdbc_colattr );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 2, hdbc_colattr );
+                        result = 1;
+                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                        hdbc_colattr = 0;
+                    }
+                    else
+                    {
+                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 2, hdbc_colattr );
+                            result = 1;
+                        }
+                        hdbc_colattr = 0;
                     }
                 }
             }
@@ -4385,32 +4417,18 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     str_to_uc_cpy( fieldName, szColumnName );
                                     str_to_uc_cpy( fieldType, szTypeName );
                                     str_to_uc_cpy( defaultValue, szColumnDefault );
-/*
-									SQLLEN autoincrement;
-                                    autoincrement = 0;
-                                    ret = SQLColAttribute( stmt_colattr, (SQLUSMALLINT) i + 1, SQL_DESC_AUTO_UNIQUE_VALUE, NULL, 0, NULL, &autoincrement );
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, 1, stmt_colattr );
-                                        result = 1;
-                                        break;
-                                    }
-									else
-*/
-                                    {
-                                        Field *field = new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, /*autoincrement == SQL_TRUE ? true : false*/std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
+                                    Field *field = new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) != autoinc_fields.end() ? true : false, std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
 /*                                    if( GetFieldProperties( fieldName.c_str(), schemaName, odbc_pimpl->m_currentTableOwner, szColumnName, field, errorMsg ) )
                                     {
                                         GetErrorMessage( errorMsg, 2 );
                                         result = 1;
                                         break;
                                     }*/
-                                        fields.push_back( field );
-                                        fieldName = L"";
-                                        fieldType = L"";
-                                        defaultValue = L"";
-                                        i++;
-                                    }
+                                    fields.push_back( field );
+                                    fieldName = L"";
+                                    fieldType = L"";
+                                    defaultValue = L"";
+                                    i++;
                                 }
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                                 {
@@ -4446,36 +4464,6 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         }
                         else
                             hdbc_col = 0;
-                    }
-                }
-            }
-            if( stmt_colattr )
-            {
-                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1, stmt_colattr );
-                    result = 1;
-                }
-                else
-                {
-                    stmt_colattr = 0;
-                    ret = SQLDisconnect( hdbc_colattr );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, 2, hdbc_colattr );
-                        result = 1;
-                    }
-                    else
-                    {
-                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                        if( ret != SQL_SUCCESS )
-                        {
-                            GetErrorMessage( errorMsg, 2, hdbc_colattr );
-                            result = 1;
-                        }
-                        else
-                            hdbc_colattr = 0;
                     }
                 }
             }
@@ -4632,6 +4620,33 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 }
                             }
                         }
+                    }
+                }
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, stmt_ind );
+                    result = 1;
+                }
+                else
+                {
+                    stmt_ind = 0;
+                    ret = SQLDisconnect( hdbc_ind );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 2, hdbc_ind );
+                        result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
+                        if( ret != SQL_SUCCESS )
+                        {
+                            GetErrorMessage( errorMsg, 2, hdbc_ind );
+                            result = 1;
+                        }
+                        else
+                            hdbc_ind = 0;
                     }
                 }
             }
