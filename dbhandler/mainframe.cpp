@@ -294,7 +294,7 @@ void MainFrame::Connect()
         wxString connectStr = wxGetApp().GetConnectString();
         wxString connectedUser = wxGetApp().GetConnectedUser();
         db = func( this, name, engine, connectStr, connectedUser );
-        if( db )
+        if( db && m_db )
         {
             {
 #if defined __WXMSW__ && _MSC_VER < 1900
