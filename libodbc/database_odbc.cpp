@@ -1032,6 +1032,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
             delete (*it1);
             (*it1) = NULL;
         }
+        (*it).second.clear();
     }
     delete pimpl;
     pimpl = NULL;
