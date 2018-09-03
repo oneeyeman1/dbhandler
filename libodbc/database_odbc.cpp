@@ -710,10 +710,26 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                             memset( query, '\0', query8.length() + 2 );
                                             uc_to_str_cpy( query, query8 );
                                             ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                            delete query;
+                                            query = NULL;
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1 );
                                                 result = 1;
+                                            }
+                                            else
+                                            {
+                                                query = new SQLWCHAR[query9.length() + 2];
+                                                memset( query, '0', query9.length() + 2 );
+                                                uc_to_str_cpy( query, query9 );
+                                                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                                delete query;
+                                                query = NULL;
+                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                {
+                                                    GetErrorMessage( errorMsg, 1 );
+                                                    result = 1;
+                                                }
                                             }
                                         }
                                     }
