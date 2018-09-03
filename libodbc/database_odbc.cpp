@@ -4714,6 +4714,12 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 }
             }
         }
+        delete table_name;
+        table_name = NULL;
+        delete schema_name;
+        schema_name = NULL;
+        delete catalog_name;
+        catalog_name = NULL;
     }
     else
     {
@@ -4763,6 +4769,9 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     }
     else
         str_to_uc_cpy( connectedUser, retBuffer );
+    delete connectDSN;
+    delete entry;
+    delete retBuffer;
 }
 
 void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword)
@@ -4787,4 +4796,7 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
         connectionPassword = L"";
     else
         str_to_uc_cpy( connectionPassword, retBuffer );
+    delete connectDSN;
+    delete entry;
+    delete retBuffer;
 }
