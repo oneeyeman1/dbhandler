@@ -1186,6 +1186,8 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+        delete query;
+        query = NULL;
         if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -1193,8 +1195,6 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
         }
         else
         {
-            delete query;
-            query = NULL;
             query = new SQLWCHAR[command.length() + 2];
             memset( query, '\0', command.length() + 2 );
             uc_to_str_cpy( query, command );
@@ -1212,34 +1212,44 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
             else
             {
                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                delete query;
+                query = NULL;
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, 1, m_hstmt );
                     result = 1;
                 }
+                if( result == 1 )
+                {
+                    query = new SQLWCHAR[10];
+                    memset( query, '\0', 10 );
+                    uc_to_str_cpy( query, L"ROLLBACK" );
+                }
+                else
+                {
+                    query = new SQLWCHAR[8];
+                    memset( query, '\0', 8 );
+                    uc_to_str_cpy( query, L"COMMIT" );
+                }
+                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                delete query;
+                query = NULL;
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                else
+                    m_hstmt = 0;
             }
         }
-        if( result == 1 )
-            uc_to_str_cpy( query, L"ROLLBACK" );
-        else
-            uc_to_str_cpy( query, L"COMMIT" );
-        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 1, m_hstmt );
-            result = 1;
-        }
-        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 1, m_hstmt );
-            result = 1;
-        }
-        else
-            m_hstmt = 0;
     }
-    delete query;
-    query = NULL;
     return result;
 }
 
