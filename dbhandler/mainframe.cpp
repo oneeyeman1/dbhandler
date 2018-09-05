@@ -116,6 +116,8 @@ MainFrame::~MainFrame()
         delete m_painters[(*it).first];
         m_painters[(*it).first] = NULL;
     }
+    delete m_oldPGWatcher;
+    m_oldPGWatcher = NULL;
     delete m_db;
     m_db = NULL;
     delete m_lib;
@@ -322,6 +324,8 @@ void MainFrame::Connect()
                 }
                 wxThread::This()->Sleep( 1 );
             }
+            delete m_oldPGWatcher;
+            m_oldPGWatcher = NULL;
             delete m_db;
             m_db = NULL;
             wxGetApp().SetDBEngine( engine );
