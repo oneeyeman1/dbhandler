@@ -113,10 +113,10 @@ MainFrame::~MainFrame()
     }
     delete m_db;
     m_db = NULL;
-    for( std::map<wxString, wxDynamicLibrary *>::iterator it = m_painters.begin(); it != m_painters.end(); it++ )
+    for( std::map<wxString, wxDynamicLibrary *>::iterator it = m_painters.begin(); it != m_painters.end(); ++it )
     {
-        delete m_painters[(*it).first];
-        m_painters[(*it).first] = NULL;
+        delete (*it).second;
+        (*it).second = NULL;
     }
     delete m_oldPGWatcher;
     m_oldPGWatcher = NULL;
