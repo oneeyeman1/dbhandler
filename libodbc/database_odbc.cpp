@@ -491,7 +491,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     }
     if( !odbc_pimpl )
         odbc_pimpl = new ODBCImpl;
-    int pos = selectedDSN.find( L';' );
+    std::wstring::size_type pos = selectedDSN.find( L';' );
     if( pos == std::wstring::npos )
         connectingDSN = selectedDSN;
     else
@@ -533,7 +533,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     copy_uc_to_uc( connectStrIn, driver );
                     if( equal( temp, driver ) )
                         uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1" );
-                    delete temp;
+                    delete[] temp;
                     temp = NULL;
                     if( user && password )
                     {
@@ -1825,7 +1825,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
                 std::wstring tableOwner = const_cast<DatabaseTable *>( table )->GetTableOwner();
                 unsigned long tableId = const_cast<DatabaseTable *>( table )->GetTableId();
-                delete qry;
+                delete[] qry;
                 qry = NULL;
                 exist = IsTablePropertiesExist( table, errorMsg );
                 if( errorMsg.size() != 0 )
@@ -2101,7 +2101,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                                 result = 1;
                             }
                         }
-                        delete qry;
+                        delete[] qry;
                         qry = NULL;
                     }
                 }
@@ -2113,7 +2113,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
         GetErrorMessage( errorMsg, 2 );
         result = 1;
     }
-    delete qry;
+    delete[] qry;
     qry = NULL;
     if( result == 1 )
         query = L"ROLLBACK";
@@ -2136,7 +2136,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     }
     else
         m_hstmt = 0;
-    delete qry;
+    delete[] qry;
     qry = NULL;
     return result;
 }
@@ -2203,11 +2203,11 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
             }
         }
     }
-    delete qry;
+    delete[] qry;
     qry = NULL;
-    delete table_name;
+    delete[] table_name;
     table_name = NULL;
-    delete owner_name;
+    delete[] owner_name;
     owner_name = NULL;
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -2507,7 +2507,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
                 else
                 {
                     std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
-                    int size = fKeys.size();
+                    std::map<int, std::vector<FKField *> >::size_type size = fKeys.size();
                     for( unsigned int i = 0; i < foreignKeyFields.size(); i++ )
                         fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp ) );
                 }
@@ -3218,9 +3218,8 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
 
 int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
-    SQLHDBC hdbc;
     int result = 0, ret, ops, bufferSize = 1024;
-    SQLSMALLINT **columnNameLen, numCols, **columnDataType, **colummnDataDigits, **columnDataNullable;
+    SQLSMALLINT **columnNameLen, numCols = 0, **columnDataType, **colummnDataDigits, **columnDataNullable;
     SQLULEN **columnDataSize;
     SQLWCHAR *columnName[3], **columnData;
     SQLLEN **columnDataLen;
@@ -3237,10 +3236,10 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     {
         if( pimpl->m_subtype == L"Microsoft SQL Server" )
         {
-            long count;
+            long count = 0;
             bool nocount = false;
             SQLLEN cbNocount;
-            SQLLEN messageType, sqlCommand, name;
+            SQLLEN messageType, sqlCommand;
             std::wstring sub_query1 = L"DECLARE @TargetDialogHandle UNIQUEIDENTIFIER; ";
             std::wstring sub_query2 = L"DECLARE @EventMessage XML; ";
             std::wstring sub_query3 = L"DECLARE @EventMessageTypeName sysname; ";
@@ -3399,7 +3398,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     result = 1;
                                 }
                                 m_hstmt = 0;
-                                delete qry;
+                                delete[] qry;
                                 qry = NULL;
                             }
                             if( !result )
@@ -3410,7 +3409,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                 trim( command );
                                 if( !command.empty() )
                                 {
-                                    int pos = command.find( L' ' );
+                                    std::wstring::size_type pos = command.find( L' ' );
                                     operation = command.substr( 0, pos );
                                     command = command.substr( pos + 1 );
                                     trim( command );
@@ -3566,7 +3565,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             GetErrorMessage( errorMsg, 1, m_hstmt );
                             result = 1;
                         }
-                        delete qry;
+                        delete[] qry;
                         qry = NULL;
                     }
                 }
@@ -4137,7 +4136,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     }
                                 }
                             }
-                            delete queryTemp;
+                            delete[] queryTemp;
                             if( columnNames )
                             {
                                 for( int i = 0; i < numCols; i++ )
@@ -4714,11 +4713,11 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 }
             }
         }
-        delete table_name;
+        delete[] table_name;
         table_name = NULL;
-        delete schema_name;
+        delete[] schema_name;
         schema_name = NULL;
-        delete catalog_name;
+        delete[] catalog_name;
         catalog_name = NULL;
     }
     else
@@ -4769,9 +4768,9 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     }
     else
         str_to_uc_cpy( connectedUser, retBuffer );
-    delete connectDSN;
-    delete entry;
-    delete retBuffer;
+    delete[] connectDSN;
+    delete[] entry;
+    delete[] retBuffer;
 }
 
 void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword)
@@ -4796,7 +4795,7 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
         connectionPassword = L"";
     else
         str_to_uc_cpy( connectionPassword, retBuffer );
-    delete connectDSN;
-    delete entry;
-    delete retBuffer;
+    delete[] connectDSN;
+    delete[] entry;
+    delete[] retBuffer;
 }
