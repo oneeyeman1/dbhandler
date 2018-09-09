@@ -17,8 +17,10 @@ public:
     MainFrame(wxDocManager *manager);
     ~MainFrame();
     wxCriticalSection m_threadCS;
+    NewTableHandler *m_handler;
 protected:
     void Connect();
+    bool IsLibraryLoaded(const wxString &name, wxDynamicLibrary *lib);
 private:
     void InitToolBar(wxToolBar* toolBar);
     void InitMenuBar(int id);
@@ -37,7 +39,6 @@ private:
     wxDynamicLibrary *m_lib;
     wxMenu *m_menuFile;
     wxDocManager *m_manager;
-    NewTableHandler *m_handler;
 #if defined __WXMSW__ || defined __WXGTK__
     wxToolBar *m_tb;
 #endif

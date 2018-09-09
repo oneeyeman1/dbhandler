@@ -111,6 +111,8 @@ MainFrame::~MainFrame()
             wxMessageBox( (*it) );
         }
     }
+    delete m_db;
+    m_db = NULL;
     for( std::map<wxString, wxDynamicLibrary *>::iterator it = m_painters.begin(); it != m_painters.end(); it++ )
     {
         delete m_painters[(*it).first];
@@ -118,13 +120,11 @@ MainFrame::~MainFrame()
     }
     delete m_oldPGWatcher;
     m_oldPGWatcher = NULL;
-    delete m_db;
-    m_db = NULL;
     delete m_lib;
     m_lib = NULL;
 }
 
-void MainFrame::OnClose(wxCloseEvent &event)
+void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
 {
     {
 #if defined __WXMSW__ && _MSC_VER < 1900
@@ -277,20 +277,24 @@ void MainFrame::Connect()
     Database *db = NULL;
     wxString title;
     std::vector<std::wstring> errorMsg;
-    if( !m_lib )
+    wxDynamicLibrary *lib = NULL;
+    if( m_painters.find( "DBloader" ) == m_painters.end() )
     {
-        m_lib = new wxDynamicLibrary();
+        lib = new wxDynamicLibrary();
 #ifdef __WXMSW__
-        m_lib->Load( "dbloader" );
+        lib->Load( "dbloader" );
 #elif __WXMAC__
-        m_lib->Load( "liblibdbloader.dylib" );
+        lib->Load( "liblibdbloader.dylib" );
 #else
-        m_lib->Load( "libdbloader" );
+        lib->Load( "libdbloader" );
 #endif
+        m_painters["DBloader"] = lib;
     }
-    if( m_lib->IsLoaded() )
+    else
+        lib = m_painters ["DBloader"];
+    if( lib->IsLoaded() )
     {
-        DBPROFILE func = (DBPROFILE) m_lib->GetSymbol( "ConnectToDb" );
+        DBPROFILE func = (DBPROFILE) lib->GetSymbol( "ConnectToDb" );
         wxString name = wxGetApp().GetDBName();
         wxString engine = wxGetApp().GetDBEngine();
         wxString connectStr = wxGetApp().GetConnectString();
@@ -369,17 +373,24 @@ void MainFrame::Connect()
 
 void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
 {
-    wxDynamicLibrary lib;
-#ifdef __WXMSW__
-    lib.Load( "dialogs" );
-#elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
-#else
-    lib.Load( "libdialogs" );
-#endif
-    if( lib.IsLoaded() )
+    wxDynamicLibrary *lib;
+    if( m_painters.find( "dialogs" ) == m_painters.end() )
     {
-        ODBCSETUP func = (ODBCSETUP) lib.GetSymbol( "ODBCSetup" );
+        lib = new wxDynamicLibrary();
+#ifdef __WXMSW__
+        lib->Load( "dialogs" );
+#elif __WXMAC__
+        lib->Load( "liblibdialogs.dylib" );
+#else
+        lib->Load( "libdialogs" );
+#endif
+        m_painters["dialogs"] = lib;
+    }
+    else
+        lib = m_painters ["dialogs"];
+    if( lib->IsLoaded() )
+    {
+        ODBCSETUP func = (ODBCSETUP) lib->GetSymbol( "ODBCSetup" );
         func( this );
     }
     else
@@ -469,12 +480,13 @@ void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
 
 void MainFrame::OnTable(wxCommandEvent &event)
 {
+    wxDynamicLibrary *lib = NULL;
     if( !m_db )
         Connect();
     if( m_db )
     {
         InitMenuBar( event.GetId() );
-        if( !m_lib )
+        if( m_painters.find( "TableView" ) == m_painters.end() )
         {
             m_lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
@@ -485,6 +497,8 @@ void MainFrame::OnTable(wxCommandEvent &event)
             m_lib->Load( "libtablewindow" );
 #endif
         }
+        else
+            lib = m_painters["TableView"];
         if( m_db && m_lib->IsLoaded() )
         {
             TABLE func = (TABLE) m_lib->GetSymbol( "CreateDatabaseWindow" );
@@ -531,6 +545,6 @@ void MainFrame::OnSize(wxSizeEvent &event)
         event.Skip();
 }
 
-void MainFrame::OnPGSchemaChanged(wxFileSystemWatcherEvent& event)
+void MainFrame::OnPGSchemaChanged(wxFileSystemWatcherEvent& WXUNUSED(event))
 {
 }
