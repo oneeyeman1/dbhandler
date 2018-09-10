@@ -20,7 +20,6 @@ public:
     NewTableHandler *m_handler;
 protected:
     void Connect();
-    bool IsLibraryLoaded(const wxString &name, wxDynamicLibrary *lib);
 private:
     void InitToolBar(wxToolBar* toolBar);
     void InitMenuBar(int id);
