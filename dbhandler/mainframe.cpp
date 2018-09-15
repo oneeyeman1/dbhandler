@@ -66,7 +66,6 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
 #if defined __WXMSW__ || defined __WXGTK__
     m_tb = NULL;
 #endif
-    m_lib = NULL;
     m_manager = manager;
     m_menuFile = new wxMenu;
     m_menuFile->Append( wxID_NEW );
@@ -120,8 +119,6 @@ MainFrame::~MainFrame()
     }
     delete m_oldPGWatcher;
     m_oldPGWatcher = NULL;
-    delete m_lib;
-    m_lib = NULL;
 }
 
 void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
