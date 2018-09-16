@@ -49,7 +49,7 @@ ODBCDatabase::~ODBCDatabase()
     RETCODE ret;
     std::vector<std::wstring> errorMsg;
     delete m_connectString;
-    m_connectString = 0;
+    m_connectString = NULL;
     delete pimpl;
     pimpl = NULL;
     delete odbc_pimpl;
@@ -543,7 +543,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                         copy_uc_to_uc( connectStrIn, password );
                     }
                     delete user;
+                    user = NULL;
                     delete password;
+                    password = NULL;
                     ret = SQLSetConnectAttr( m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0 );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
@@ -1156,12 +1158,14 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     for( int i = 0; i < 5; i++ )
     {
         free( catalog[i].TargetValuePtr );
+        catalog[i].TargetValuePtr = NULL;
     }
     delete szTableName;
     szTableName = NULL;
     delete szSchemaName;
     szSchemaName = NULL;
     free( catalog );
+    catalog = NULL;
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -3221,7 +3225,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     int result = 0, ret, ops, bufferSize = 1024;
     SQLSMALLINT **columnNameLen, numCols = 0, **columnDataType, **colummnDataDigits, **columnDataNullable;
     SQLULEN **columnDataSize;
-    SQLWCHAR *columnName[3], **columnData;
+    SQLWCHAR **columnName, **columnData;
     SQLLEN **columnDataLen;
     std::wstring tableName, command, operation, schemaName, catalogName;
     SQLWCHAR *cat = NULL, *schema = NULL, *table = NULL;
@@ -3321,6 +3325,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             columnDataNullable = new SQLSMALLINT *[numCols];
                             columnData = new SQLWCHAR *[numCols];
                             columnDataLen = new SQLLEN *[numCols];
+                            columnName = new SQLWCHAR *[numCols];
                         }
                         for( int i = 0; i < numCols; i++ )
                         {
@@ -3531,6 +3536,11 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                             GetErrorMessage( errorMsg, 1, m_hstmt );
                                             result = 1;
                                         }
+                                        for( int i = 0; i < 5; i++ )
+                                        {
+                                            free( catalog[i].TargetValuePtr );
+                                            catalog[i].TargetValuePtr = NULL;
+                                        }
                                     }
                                 }
                             }
@@ -3538,6 +3548,41 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             delete schema;
                             table = NULL;
                             schema = NULL;
+                            for( int i = 0; i < numCols; i++ )
+                            {
+                                delete columnNameLen[i];
+                                columnNameLen[i] = NULL;
+                                delete columnDataType[i];
+                                columnDataType[i] = NULL;
+                                delete columnDataSize[i];
+                                columnDataSize[i] = NULL;
+                                delete colummnDataDigits[i];
+                                colummnDataDigits[i] = NULL;
+                                delete columnDataNullable[i];
+                                columnDataNullable[i] = NULL;
+                                delete columnData[i];
+                                columnData[i] = NULL;
+                                delete columnDataLen[i];
+                                columnDataLen[i] = NULL;
+                                delete columnName[i];
+                                columnName[i] = NULL;
+                            }
+                            delete columnNameLen;
+                            columnNameLen = NULL;
+                            delete columnDataType;
+                            columnDataType = NULL;
+                            delete columnDataSize;
+                            columnDataSize = NULL;
+                            delete colummnDataDigits;
+                            colummnDataDigits = NULL;
+                            delete columnDataNullable;
+                            columnDataNullable = NULL;
+                            delete columnData;
+                            columnData = NULL;
+                            delete columnDataLen;
+                            columnDataLen = NULL;
+                            delete[] columnName;
+                            columnName = NULL;
                         }
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                         {
@@ -3570,24 +3615,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     }
                 }
             }
-            for( int i = 0; i < numCols; i++ )
-            {
-                delete columnNameLen[i];
-                delete columnDataType[i];
-                delete columnDataSize[i];
-                delete colummnDataDigits[i];
-                delete columnDataNullable[i];
-                delete columnData[i];
-                delete columnDataLen[i];
-                delete columnName[i];
-            }
-            delete columnNameLen;
-            delete columnDataType;
-            delete columnDataSize;
-            delete colummnDataDigits;
-            delete columnDataNullable;
-            delete columnData;
-            delete columnDataLen;
         }
     }
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
@@ -3597,6 +3624,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         result = 1;
     }
     m_hstmt = 0;
+    free( catalog );
+    catalog = NULL;
     return result;
 }
 
