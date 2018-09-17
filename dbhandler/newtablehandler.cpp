@@ -24,7 +24,7 @@ NewTableHandler::NewTableHandler(MainFrame *frame, Database *db)
 NewTableHandler::~NewTableHandler(void)
 {
 #if defined __WXMSW__ && _MSC_VER < 1900
-    wxCriticalSectionLocker enter( m_threadCS );
+    wxCriticalSectionLocker enter( pCs->m_threadCS );
 #else
     std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
 #endif

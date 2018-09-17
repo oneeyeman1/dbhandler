@@ -449,7 +449,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         char *catalog_name = row[0] ? row[0] : NULL;
                                         char *schema_name = row[1] ? row[1] : NULL;
                                         char *table_name = row[2] ? row[2] : NULL;
-                                        int table_id = row[4] ? strtol( row[4], &end, 10 ) : 0;
+                                        long table_id = row[4] ? strtol( row[4], &end, 10 ) : 0;
                                         MYSQL_BIND params[3];
                                         unsigned long str_length1, str_length2, str_length3;
                                         str_length1 = strlen( catalog_name ) * 2;
@@ -509,7 +509,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                     MYSQL_BIND results1[7];
                                                     my_bool is_null[7], error[7];
                                                     unsigned long length[7];
-                                                    memset( results, 0, sizeof( results ) );
+                                                    memset( results1, 0, sizeof( results1 ) );
                                                     results1[0].buffer_type = results1[2].buffer_type = results1[3].buffer_type = results1[4].buffer_type = results1[5].buffer_type = results1[6].buffer_type = MYSQL_TYPE_STRING;
                                                     results1[1].buffer_type = MYSQL_TYPE_LONG;
 
@@ -1394,7 +1394,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
         std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
         std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
         std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
-        int tableId = const_cast<DatabaseTable *>( table )->GetTableId();
+        unsigned long tableId = const_cast<DatabaseTable *>( table )->GetTableId();
         exist = IsTablePropertiesExist( table, errorMsg );
         if( errorMsg.size() != 0 )
             result = 1;
@@ -1705,7 +1705,7 @@ int MySQLDatabase::GetFieldProperties(const char *tableName, const char *schemaN
 {
     char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
     int result = 0;
-    int len = strlen( tableName ) + strlen( schemaName ) + 2;
+    size_t len = strlen( tableName ) + strlen( schemaName ) + 2;
     char *tname = new char[len];
     memset( tname, '\0', len );
     strcpy( tname, schemaName );
@@ -1894,7 +1894,7 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
         else
         {
             std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
-            int size = fKeys.size();
+            size_t size = fKeys.size();
             size++;
             for( int i = 0; i < foreignKeyFields.size(); i++ )
                 fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp ) );
@@ -1988,7 +1988,7 @@ int MySQLDatabase::TokenizeConnectionString(const std::wstring &connectStr, std:
         }
         else
         {
-            mysql_option option;
+            mysql_option option = MYSQL_DEFAULT_AUTH;
             if( temp1 == L"MYSQL_DEFAULT_AUTH" )
                 option = MYSQL_DEFAULT_AUTH;
             if( temp1 == L"MYSQL_ENABLE_CLEARTEXT_PLUGIN" )

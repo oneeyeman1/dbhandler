@@ -20,7 +20,6 @@ public:
     NewTableHandler *m_handler;
 protected:
     void Connect();
-    bool IsLibraryLoaded(const wxString &name, wxDynamicLibrary *lib);
 private:
     void InitToolBar(wxToolBar* toolBar);
     void InitMenuBar(int id);
@@ -36,7 +35,6 @@ private:
     void OnClose(wxCloseEvent &event);
     void OnPGSchemaChanged(wxFileSystemWatcherEvent& event);
     Database *m_db;
-    wxDynamicLibrary *m_lib;
     wxMenu *m_menuFile;
     wxDocManager *m_manager;
 #if defined __WXMSW__ || defined __WXGTK__

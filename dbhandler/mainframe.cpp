@@ -66,7 +66,6 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
 #if defined __WXMSW__ || defined __WXGTK__
     m_tb = NULL;
 #endif
-    m_lib = NULL;
     m_manager = manager;
     m_menuFile = new wxMenu;
     m_menuFile->Append( wxID_NEW );
@@ -120,8 +119,6 @@ MainFrame::~MainFrame()
     }
     delete m_oldPGWatcher;
     m_oldPGWatcher = NULL;
-    delete m_lib;
-    m_lib = NULL;
 }
 
 void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
@@ -488,23 +485,24 @@ void MainFrame::OnTable(wxCommandEvent &event)
         InitMenuBar( event.GetId() );
         if( m_painters.find( "TableView" ) == m_painters.end() )
         {
-            m_lib = new wxDynamicLibrary;
+            lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-            m_lib->Load( "tablewindow" );
+            lib->Load( "tablewindow" );
 #elif __WXOSX__
-            m_lib->Load( "liblibtablewindow.dylib" );
+            lib->Load( "liblibtablewindow.dylib" );
 #else
-            m_lib->Load( "libtablewindow" );
+            lib->Load( "libtablewindow" );
 #endif
+            m_painters["TableView"] = lib;
         }
         else
             lib = m_painters["TableView"];
-        if( m_db && m_lib->IsLoaded() )
+        if( m_db && lib->IsLoaded() )
         {
-            TABLE func = (TABLE) m_lib->GetSymbol( "CreateDatabaseWindow" );
+            TABLE func = (TABLE) lib->GetSymbol( "CreateDatabaseWindow" );
             func( this, m_manager, m_db, NULL, wxEmptyString );                 // create with possible alteration table
         }
-        else if( !m_lib->IsLoaded() )
+        else if( !lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
         else
             wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
