@@ -3590,6 +3590,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             delete columnDataLen;
         }
     }
+    free( catalog );
+    catalog = NULL;
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
