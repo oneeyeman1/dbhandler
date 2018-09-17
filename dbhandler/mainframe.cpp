@@ -66,6 +66,11 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
 #if defined __WXMSW__ || defined __WXGTK__
     m_tb = NULL;
 #endif
+    wxConfigBase *config = wxConfigBase::Get( "DBManager" );
+    wxString path = config->GetPath();
+    config->SetPath( "CurrentDB" );
+    m_pgLogfile = config->Read( "Logfile", "" );
+    config->SetPath( path );
     m_manager = manager;
     m_menuFile = new wxMenu;
     m_menuFile->Append( wxID_NEW );
