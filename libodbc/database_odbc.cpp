@@ -48,8 +48,8 @@ ODBCDatabase::~ODBCDatabase()
 {
     RETCODE ret;
     std::vector<std::wstring> errorMsg;
-    delete[] m_connectString;
-    m_connectString = NULL;
+    delete m_connectString;
+    m_connectString = 0;
     delete pimpl;
     pimpl = NULL;
     delete odbc_pimpl;
@@ -427,7 +427,7 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstr
         GetErrorMessage( errorMsg, 2 );
         result = 1;
     }
-    delete[] query;
+    delete query;
     query = NULL;
     return result;
 }
@@ -469,7 +469,7 @@ int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstrin
         GetErrorMessage( errorMsg, 2 );
         result = 1;
     }
-    delete[] query;
+    delete query;
     query = NULL;
     return result;
 }
@@ -542,10 +542,8 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                         uc_to_str_cpy( connectStrIn, L";PWD=" );
                         copy_uc_to_uc( connectStrIn, password );
                     }
-                    delete[] user;
-                    user = NULL;
-                    delete[] password;
-                    password = NULL;
+                    delete user;
+                    delete password;
                     ret = SQLSetConnectAttr( m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0 );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
@@ -612,7 +610,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                 memset( query, '\0', query8.size() + 2 );
                                                 uc_to_str_cpy( query, query8 );
                                                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                delete[] query;
+                                                delete query;
                                                 query = NULL;
                                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                 {
@@ -625,7 +623,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                     memset( query, '\0', query9.size() + 2 );
                                                     uc_to_str_cpy( query, query9 );
                                                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                    delete[] query;
+                                                    delete query;
                                                     query = NULL;
                                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                     {
@@ -638,7 +636,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                         memset( query, '\0', query10.size() + 2 );
                                                         uc_to_str_cpy( query, query10 );
                                                         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                        delete[] query;
+                                                        delete query;
                                                         query = NULL;
                                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                         {
@@ -651,7 +649,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                             memset( query, '\0', query11.size() + 2 );
                                                             uc_to_str_cpy( query, query11 );
                                                             ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                            delete[] query;
+                                                            delete query;
                                                             query = NULL;
                                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                             {
@@ -664,7 +662,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                                 memset( query, '\0', query12.size() + 2 );
                                                                 uc_to_str_cpy( query, query12 );
                                                                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                                delete[] query;
+                                                                delete query;
                                                                 query = NULL;
                                                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                                 {
@@ -677,7 +675,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                                     memset( query, '\0', query13.size() + 2 );
                                                                     uc_to_str_cpy( query, query13 );
                                                                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                                    delete[] query;
+                                                                    delete query;
                                                                     query = NULL;
                                                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                                     {
@@ -712,7 +710,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                             memset( query, '\0', query8.length() + 2 );
                                             uc_to_str_cpy( query, query8 );
                                             ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                            delete[] query;
+                                            delete query;
                                             query = NULL;
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
@@ -725,7 +723,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                 memset( query, '0', query9.length() + 2 );
                                                 uc_to_str_cpy( query, query9 );
                                                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                delete[] query;
+                                                delete query;
                                                 query = NULL;
                                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                 {
@@ -807,7 +805,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     }
     else
         m_isConnected = true;
-    delete[] query;
+    delete query;
     query = NULL;
     return result;
 }
@@ -880,7 +878,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         memset( query, '\0', query1.size() + 2 );
         uc_to_str_cpy( query, query1 );
         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        delete[] query;
+        delete query;
         query = NULL;
         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
         {
@@ -888,7 +886,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             memset( query, '\0', query2.size() + 2 );
             uc_to_str_cpy( query, query2 );
             ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-            delete[] query;
+            delete query;
             query = NULL;
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
             {
@@ -896,7 +894,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 memset( query, '\0', query3.size() + 2 );
                 uc_to_str_cpy( query, query3 );
                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                delete[] query;
+                delete query;
                 query = NULL;
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
                 {
@@ -904,7 +902,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                     memset( query, '\0', query4.size() + 2 );
                     uc_to_str_cpy( query, query4 );
                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                    delete[] query;
+                    delete query;
                     query = NULL;
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
                     {
@@ -912,7 +910,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                         memset( query, '\0', query5.size() + 2 );
                         uc_to_str_cpy( query, query5 );
                         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                        delete[] query;
+                        delete query;
                         query = NULL;
                         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
                         {
@@ -922,7 +920,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                                 memset( query, '\0', query6.size() + 2 );
                                 uc_to_str_cpy( query, query6 );
                                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                delete[] query;
+                                delete query;
                                 query = NULL;
                                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
                                 {
@@ -930,7 +928,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                                     memset( query, '\0', query7.size() + 2 );
                                     uc_to_str_cpy( query, query7 );
                                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                    delete[] query;
+                                    delete query;
                                     query = NULL;
                                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
                                     {
@@ -1070,7 +1068,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::vector<std::wstring> indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
-    SQLWCHAR *catalogName = NULL, *schemaName = NULL, *tableName = NULL;
+    SQLWCHAR *catalogName = NULL, *schemaName = NULL, *tableName = NULL, *szSchemaName = NULL, *szTableName = NULL;
     SQLWCHAR userName[1024];
     SQLSMALLINT numCols = 0;
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
@@ -1158,10 +1156,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     for( int i = 0; i < 5; i++ )
     {
         free( catalog[i].TargetValuePtr );
-        catalog[i].TargetValuePtr = NULL;
     }
+    delete szTableName;
+    szTableName = NULL;
+    delete szSchemaName;
+    szSchemaName = NULL;
     free( catalog );
-    catalog = NULL;
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -1186,7 +1186,7 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        delete[] query;
+        delete query;
         query = NULL;
         if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -1212,7 +1212,7 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
             else
             {
                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                delete[] query;
+                delete query;
                 query = NULL;
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
@@ -1232,7 +1232,7 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
                     uc_to_str_cpy( query, L"COMMIT" );
                 }
                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                delete[] query;
+                delete query;
                 query = NULL;
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
@@ -1357,13 +1357,13 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
     }
     else
         m_hstmt = 0;
-    delete[] index_name;
+    delete index_name;
     index_name = NULL;
-    delete[] table_name;
+    delete table_name;
     table_name = NULL;
-    delete[] schema_name;
+    delete schema_name;
     schema_name = NULL;
-    delete[] query;
+    delete query;
     query = NULL;
     return exists;
 }
@@ -1375,8 +1375,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLHDBC hdbc_tableProp = 0;
     SQLHSTMT stmt_tableProp = 0;
     SQLWCHAR *qry = NULL, *table_name = NULL, *owner_name = NULL;
-    unsigned short dataFontSize = 0, dataFontWeight = 0, dataFontUnderline = 0, dataFontStriken = 0, headingFontSize = 0, headingFontWeight = 0, headingFontUnderline = 0, headingFontStriken = 0, labelFontSize = 0, labelFontWeight = 0, labelFontUnderline = 0, labelFontStriken = 0;
-    unsigned short dataFontCharacterSet, headingFontCharacterSet, labelFontCharacterSet, dataFontPixelSize = 0, headingFontPixelSize = 0, labelFontPixelSize = 0;
+    unsigned short dataFontSize, dataFontWeight = 0, dataFontUnderline, dataFontStriken, headingFontSize, headingFontWeight, headingFontUnderline, headingFontStriken, labelFontSize, labelFontWeight, labelFontUnderline, labelFontStriken;
+    unsigned short dataFontCharacterSet, headingFontCharacterSet, labelFontCharacterSet, dataFontPixelSize, headingFontPixelSize, labelFontPixelSize;
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontName[20], headingFontName[20], labelFontName[20];
     SQLWCHAR comments[225];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = SQL_NTS, cbDataFontUnderline = SQL_NTS, cbDataFontStriken = SQL_NTS, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
@@ -1782,11 +1782,11 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             }
         }
     }
-    delete[] qry;
+    delete qry;
     qry = NULL;
-    delete[] table_name;
+    delete table_name;
     table_name = NULL;
-    delete[] owner_name;
+    delete owner_name;
     owner_name = NULL;
     return 0;
 }
@@ -2378,7 +2378,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
             }
         }
     }
-    delete[] qry;
+    delete qry;
     qry = NULL;
     return result;
 }
@@ -2520,7 +2520,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
                 else
                     m_hstmt = 0;
             }
-            delete[] qry;
+            delete qry;
             qry = NULL;
         }
         else if( logOnly )
@@ -2564,7 +2564,7 @@ int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::ws
         else
             m_hstmt = 0;
     }
-    delete[] qry;
+    delete qry;
     qry = NULL;
     return result;
 }
@@ -2700,11 +2700,11 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
             }
         }
     }
-    delete[] qry;
+    delete qry;
     qry = NULL;
-    delete[] tname;
+    delete tname;
     tname = NULL;
-    delete[] sname;
+    delete sname;
     sname = NULL;
     if( stmt )
     {
@@ -2900,13 +2900,13 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
             }
         }
     }
-    delete[] qry;
+    delete qry;
     qry = NULL;
-    delete[] table_name;
+    delete table_name;
     table_name = NULL;
-    delete[] schema_name;
+    delete schema_name;
     schema_name = NULL;
-    delete[] owner;
+    delete owner;
     owner = NULL;
     return result;
 }
@@ -3037,7 +3037,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         }
         m_hstmt = 0;
     }
-    delete[] qry;
+    delete qry;
     qry = NULL;
     return result;
 }
@@ -3140,13 +3140,13 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
             }
         }
     }
-    delete[] qry1;
+    delete qry1;
     qry1 = NULL;
-    delete[] qry2;
+    delete qry2;
     qry2 = NULL;
-    delete[] qry3;
+    delete qry3;
     qry3 = NULL;
-    delete[] qry4;
+    delete qry4;
     qry4 = NULL;
     return result;
 }
@@ -3206,7 +3206,7 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
             else
                 m_hstmt = 0;
         }
-        delete[] qry;
+        delete qry;
         qry = NULL;
     }
     else
@@ -3218,10 +3218,10 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
 
 int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
-    int result = 0, ret, ops = 0, bufferSize = 1024;
+    int result = 0, ret, ops, bufferSize = 1024;
     SQLSMALLINT **columnNameLen, numCols = 0, **columnDataType, **colummnDataDigits, **columnDataNullable;
     SQLULEN **columnDataSize;
-    SQLWCHAR **columnName, **columnData;
+    SQLWCHAR *columnName[3], **columnData;
     SQLLEN **columnDataLen;
     std::wstring tableName, command, operation, schemaName, catalogName;
     SQLWCHAR *cat = NULL, *schema = NULL, *table = NULL;
@@ -3321,7 +3321,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             columnDataNullable = new SQLSMALLINT *[numCols];
                             columnData = new SQLWCHAR *[numCols];
                             columnDataLen = new SQLLEN *[numCols];
-                            columnName = new SQLWCHAR *[numCols];
                         }
                         for( int i = 0; i < numCols; i++ )
                         {
@@ -3532,53 +3531,13 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                             GetErrorMessage( errorMsg, 1, m_hstmt );
                                             result = 1;
                                         }
-                                        for( int i = 0; i < 5; i++ )
-                                        {
-                                            free( catalog[i].TargetValuePtr );
-                                            catalog[i].TargetValuePtr = NULL;
-                                        }
                                     }
                                 }
                             }
-                            delete[] table;
-                            delete[] schema;
+                            delete table;
+                            delete schema;
                             table = NULL;
                             schema = NULL;
-                            for( int i = 0; i < numCols; i++ )
-                            {
-                                delete columnNameLen[i];
-                                columnNameLen[i] = NULL;
-                                delete columnDataType[i];
-                                columnDataType[i] = NULL;
-                                delete columnDataSize[i];
-                                columnDataSize[i] = NULL;
-                                delete colummnDataDigits[i];
-                                colummnDataDigits[i] = NULL;
-                                delete columnDataNullable[i];
-                                columnDataNullable[i] = NULL;
-                                delete columnData[i];
-                                columnData[i] = NULL;
-                                delete columnDataLen[i];
-                                columnDataLen[i] = NULL;
-                                delete[] columnName[i];
-                                columnName[i] = NULL;
-                            }
-                            delete[] columnNameLen;
-                            columnNameLen = NULL;
-                            delete[] columnDataType;
-                            columnDataType = NULL;
-                            delete[] columnDataSize;
-                            columnDataSize = NULL;
-                            delete[] colummnDataDigits;
-                            colummnDataDigits = NULL;
-                            delete[] columnDataNullable;
-                            columnDataNullable = NULL;
-                            delete[] columnData;
-                            columnData = NULL;
-                            delete[] columnDataLen;
-                            columnDataLen = NULL;
-                            delete[] columnName;
-                            columnName = NULL;
                         }
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                         {
@@ -3611,6 +3570,24 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     }
                 }
             }
+            for( int i = 0; i < numCols; i++ )
+            {
+                delete columnNameLen[i];
+                delete columnDataType[i];
+                delete columnDataSize[i];
+                delete colummnDataDigits[i];
+                delete columnDataNullable[i];
+                delete columnData[i];
+                delete columnDataLen[i];
+                delete columnName[i];
+            }
+            delete columnNameLen;
+            delete columnDataType;
+            delete columnDataSize;
+            delete colummnDataDigits;
+            delete columnDataNullable;
+            delete columnData;
+            delete columnDataLen;
         }
     }
     free( catalog );
@@ -3622,8 +3599,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         result = 1;
     }
     m_hstmt = 0;
-    free( catalog );
-    catalog = NULL;
     return result;
 }
 
@@ -4168,10 +4143,10 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             {
                                 for( int i = 0; i < numCols; i++ )
                                 {
-                                    delete[] columnNames[i];
+                                    delete columnNames[i];
                                     columnNames[i] = NULL;
                                 }
-                                delete[] columnNames;
+                                delete columnNames;
                                 columnNames = NULL;
                             }
                         }
@@ -4750,7 +4725,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     else
     {
     }
-    delete[] qry;
+    delete qry;
     qry = NULL;
     return result;
 }
