@@ -305,6 +305,7 @@ struct Database::Impl
     std::vector<std::wstring> m_tableNames;
     std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
     std::wstring m_serverVersion;
+    std::wstring m_pgLogFile;
     int m_versionMajor, m_versionMinor, m_versionRevision;
     const std::wstring &GetConnectedUser() { return m_connectedUser; };
     void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
@@ -312,6 +313,7 @@ struct Database::Impl
     const std::wstring &GetDatabaseSubtype() const { return m_subtype; };
     void PushTableName(const std::wstring tableName) { m_tableNames.push_back( tableName ); };
     const std::vector<std::wstring> &GetTableNames() { return m_tableNames; };
+    const std::wstring &GetPostgreLogFile() const { return m_pgLogFile; };
 };
 
 inline Database::~Database()

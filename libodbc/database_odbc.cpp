@@ -42,6 +42,7 @@ ODBCDatabase::ODBCDatabase() : Database()
     m_connectString = NULL;
     m_isConnected = false;
     connectToDatabase = false;
+    m_pgLogFile = L"";
 }
 
 ODBCDatabase::~ODBCDatabase()
@@ -4800,4 +4801,94 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     delete[] connectDSN;
     delete[] entry;
     delete[] retBuffer;
+}
+
+const std::wstring &ODBCDatabase::GetPostgreLogFile() const
+{
+    return m_pgLogFile;
+}
+
+int ODBCDatabase::AskPostgresForLogFile()
+{
+    int result = 0;
+    SQLWCHAR *columnName = new SQLWCHAR[256], *columnData;
+    SQLSMALLINT columnNameLen, columnDataType, columnDataDigits, columnDataNullable;
+    SQLLEN columnDataLen;
+    SQLULEN columnDataSize;
+    std::wstring query = L"SHOW log_directory";
+    std::vector<std::wstring> errorMsg;
+    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+    memset( qry, '\0', query.length() + 2 );
+    uc_to_str_cpy( qry, query );
+    RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1 );
+            result = 1;
+        }
+        else
+        {
+            ret = SQLDescribeCol( m_hstmt, 1, columnName, 256, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1 );
+                result = 1;
+            }
+            else
+            {
+                switch( columnDataType )
+                {
+                    case SQL_VARCHAR:
+                    case SQL_WVARCHAR:
+                        columnDataType = SQL_C_WCHAR;
+                        break;
+                }
+                columnData = new SQLWCHAR[columnDataSize + 1];
+                ret = SQLBindCol( m_hstmt, 1, columnDataType, columnData, columnDataSize, &columnDataLen );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1 );
+                    result = 1;
+                }
+                else
+                {
+                    ret = SQLExecute( m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1 );
+                        result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLFetch( m_hstmt );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1 );
+                            result = 1;
+                        }
+                        else
+                            str_to_uc_cpy( m_pgLogFile, columnData );
+                    }
+                }
+            }
+        }
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1 );
+        result = 1;
+    }
+    else
+        m_hstmt = 0;
+    delete[] qry;
+    qry = NULL;
+    delete[] columnName;
+    columnName = NULL;
+    delete[] columnData;
+    columnData = NULL;
+    return result;
 }
