@@ -97,10 +97,15 @@ MainFrame::~MainFrame()
     config->SetPath( "CurrentDB" );
     if( m_db )
     {
-        wxString temp( m_db->GetTableVector().m_type );
-        config->Write( "Engine", temp );
-        temp = m_db->GetTableVector().m_subtype;
-        config->Write( "Subtype", temp );
+        wxString temp1( m_db->GetTableVector().m_type );
+        config->Write( "Engine", temp1 );
+        wxString temp2 = m_db->GetTableVector().m_subtype;
+        config->Write( "Subtype", temp2 );
+        if( temp2 == "PostgreSQL" )
+        {
+            wxString temp3( m_db->GetTableVector().GetPostgreLogFile() );
+            config->Write( "Logfile", temp3 );
+        }
 #if defined __WXMSW__ && _MSC_VER < 1900
         wxCriticalSectionLocker enter( m_threadCS );
 #else
