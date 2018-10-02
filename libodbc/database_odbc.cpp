@@ -8,10 +8,6 @@
 #include <sstream>
 #endif
 
-#if defined __WXMSW__ && defined __MEMORYLEAKS__
-#include <vld.h>
-#endif
-
 #include <map>
 #include <set>
 #include <vector>
@@ -31,6 +27,10 @@
 #include "database.h"
 #include "database_odbc.h"
 
+#if defined __WXMSW__ && defined __MEMORYLEAKS__
+#include <vld.h>
+#endif
+
 ODBCDatabase::ODBCDatabase() : Database()
 {
     m_env = 0;
@@ -42,7 +42,6 @@ ODBCDatabase::ODBCDatabase() : Database()
     m_connectString = NULL;
     m_isConnected = false;
     connectToDatabase = false;
-    m_pgLogFile = L"";
 }
 
 ODBCDatabase::~ODBCDatabase()
@@ -489,6 +488,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     {
         pimpl = new Impl;
         pimpl->m_type = L"ODBC";
+        pimpl->m_pgLogFile = L"";
     }
     if( !odbc_pimpl )
         odbc_pimpl = new ODBCImpl;
@@ -3219,13 +3219,19 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
 
 int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
-    int result = 0, ret, ops = 0, bufferSize = 1024;
+#if defined _DEBUG
+    printf( "Starting the thread function in MyClass...\n\r" );
+#endif
+    int result = 0,  ret, ops = 0, bufferSize = 1024;
     SQLSMALLINT **columnNameLen, numCols = 0, **columnDataType, **colummnDataDigits, **columnDataNullable;
     SQLULEN **columnDataSize;
     SQLWCHAR **columnName, **columnData;
     SQLLEN **columnDataLen;
     std::wstring tableName, command, operation, schemaName, catalogName;
     SQLWCHAR *cat = NULL, *schema = NULL, *table = NULL;
+#if defined _DEBUG
+    printf( "First memory allocation...\n\r" );
+#endif
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3294,6 +3300,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 }
                 if( !nocount )
                     query = L"SET NOCOUNT ON; " + query;
+#if defined _DEBUG
+                printf( "Query memory allocation\n\r" );
+#endif
                 SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
                 memset( qry, '\0', query.length() + 2 );
                 uc_to_str_cpy( qry, query );
@@ -3313,6 +3322,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     }
                     else
                     {
+#if defined _DEBUG
+                        printf( "Data types memory allocation...\n\r" );
+#endif
                         for( int i = 0; i < numCols; i++ )
                         {
                             columnNameLen = new SQLSMALLINT *[numCols];
@@ -3331,8 +3343,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             columnDataSize[i] = new SQLULEN;
                             colummnDataDigits[i] = new SQLSMALLINT;
                             columnDataNullable[i] = new SQLSMALLINT;
-                            columnName[i] = new SQLWCHAR[256];
                             columnDataLen[i] = new SQLLEN;
+                            columnName[i] = new SQLWCHAR[256];
                             ret = SQLDescribeCol( m_hstmt, i + 1, columnName[i], 256, columnNameLen[i], columnDataType[i], columnDataSize[i], colummnDataDigits[i], columnDataNullable[i] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
@@ -3400,6 +3412,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     result = 1;
                                 }
                                 m_hstmt = 0;
+#if defined _DEBUG
+                                printf( "Delete query\n\r" );
+#endif
                                 delete[] qry;
                                 qry = NULL;
                             }
@@ -3545,6 +3560,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             delete[] schema;
                             table = NULL;
                             schema = NULL;
+#if defined _DEBUG
+                            printf( "Delete data types memory\n\r" );
+#endif
                             for( int i = 0; i < numCols; i++ )
                             {
                                 delete columnNameLen[i];
@@ -3614,8 +3632,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             }
         }
     }
-    free( catalog );
-    catalog = NULL;
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -3623,6 +3639,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         result = 1;
     }
     m_hstmt = 0;
+#if defined _DEBUG
+    printf( "Delete first memory allocation\n\r" );
+#endif
     free( catalog );
     catalog = NULL;
     return result;
@@ -4828,11 +4847,6 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     delete[] retBuffer;
 }
 
-const std::wstring &ODBCDatabase::GetPostgreLogFile() const
-{
-    return m_pgLogFile;
-}
-
 int ODBCDatabase::AskPostgresForLogFile()
 {
     int result = 0;
@@ -4895,7 +4909,7 @@ int ODBCDatabase::AskPostgresForLogFile()
                             result = 1;
                         }
                         else
-                            str_to_uc_cpy( m_pgLogFile, columnData );
+                            str_to_uc_cpy( pimpl->m_pgLogFile, columnData );
                     }
                 }
             }

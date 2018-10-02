@@ -133,6 +133,9 @@ MainFrame::~MainFrame()
 
 void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
 {
+#if defined _DEBUG
+    printf( "Starting MainFrame::OnClose\n\r" );
+#endif
     {
 #if defined __WXMSW__ && _MSC_VER < 1900
         wxCriticalSectionLocker enter( m_threadCS );
@@ -142,14 +145,19 @@ void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
 #endif
         if( m_handler )
         {
+#if defined _DEBUG
+            printf( "Deleting the thread...\n\r" );
+#endif
             if( m_handler->Delete() != wxTHREAD_NO_ERROR )
             {
             }
-            m_handler = NULL;
         }
     }
     while( 1 )
     {
+#if defined _DEBUG
+        printf( "Looping for thread deletionn\n\r" );
+#endif
         {
 #if defined __WXMSW__ && _MSC_VER < 1900
         wxCriticalSectionLocker enter( m_threadCS );
@@ -162,6 +170,9 @@ void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
         }
         wxThread::This()->Sleep( 1 );
     }
+#if defined _DEBUG
+    printf( "Thread destroyed. Deleting application....\n\r" );
+#endif
     Destroy();
 }
 
