@@ -45,7 +45,6 @@ public:
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg);
     void GetConnectedUser(const std::wstring &dsn, std::wstring &connectedUser);
     void GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword);
-    const std::wstring &GetPostgreLogFile() const;
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;
@@ -79,7 +78,6 @@ private:
     SQLUSMALLINT m_statementsNumber;
     bool m_oneStatement, m_isConnected;
     SQLWCHAR *m_connectString;
-    std::wstring m_pgLogFile;
 };
 
 struct ODBCDatabase::ODBCImpl
