@@ -3219,19 +3219,13 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
 
 int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
-#if defined _DEBUG
-    printf( "Starting the thread function in MyClass...\n\r" );
-#endif
     int result = 0,  ret, ops = 0, bufferSize = 1024;
-    SQLSMALLINT **columnNameLen, numCols = 0, **columnDataType, **colummnDataDigits, **columnDataNullable;
-    SQLULEN **columnDataSize;
+    SQLSMALLINT *columnNameLen, numCols = 0, *columnDataType, *colummnDataDigits, *columnDataNullable;
+    SQLULEN *columnDataSize;
     SQLWCHAR **columnName, **columnData;
-    SQLLEN **columnDataLen;
+    SQLLEN *columnDataLen;
     std::wstring tableName, command, operation, schemaName, catalogName;
     SQLWCHAR *cat = NULL, *schema = NULL, *table = NULL;
-#if defined _DEBUG
-    printf( "First memory allocation...\n\r" );
-#endif
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3300,9 +3294,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 }
                 if( !nocount )
                     query = L"SET NOCOUNT ON; " + query;
-#if defined _DEBUG
-                printf( "Query memory allocation\n\r" );
-#endif
                 SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
                 memset( qry, '\0', query.length() + 2 );
                 uc_to_str_cpy( qry, query );
@@ -3322,50 +3313,41 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     }
                     else
                     {
-#if defined _DEBUG
-                        printf( "Data types memory allocation...\n\r" );
-#endif
+                        columnNameLen = new SQLSMALLINT[numCols];
+                        columnDataType = new SQLSMALLINT[numCols];
+                        columnDataSize = new SQLULEN[numCols];
+                        colummnDataDigits = new SQLSMALLINT[numCols];
+                        columnDataNullable = new SQLSMALLINT[numCols];
+                        columnDataLen = new SQLLEN[numCols];
                         for( int i = 0; i < numCols; i++ )
                         {
-                            columnNameLen = new SQLSMALLINT *[numCols];
-                            columnDataType = new SQLSMALLINT *[numCols];
-                            columnDataSize = new SQLULEN *[numCols];
-                            colummnDataDigits = new SQLSMALLINT *[numCols];
-                            columnDataNullable = new SQLSMALLINT *[numCols];
-                            columnData = new SQLWCHAR *[numCols];
-                            columnDataLen = new SQLLEN *[numCols];
-                            columnName = new SQLWCHAR *[numCols];
+                            columnData = new SQLWCHAR *[i];
+                            columnName = new SQLWCHAR *[i];
                         }
                         for( int i = 0; i < numCols; i++ )
                         {
-                            columnNameLen[i] = new SQLSMALLINT;
-                            columnDataType[i] = new SQLSMALLINT;
-                            columnDataSize[i] = new SQLULEN;
-                            colummnDataDigits[i] = new SQLSMALLINT;
-                            columnDataNullable[i] = new SQLSMALLINT;
-                            columnDataLen[i] = new SQLLEN;
                             columnName[i] = new SQLWCHAR[256];
-                            ret = SQLDescribeCol( m_hstmt, i + 1, columnName[i], 256, columnNameLen[i], columnDataType[i], columnDataSize[i], colummnDataDigits[i], columnDataNullable[i] );
+                            ret = SQLDescribeCol( m_hstmt, i + 1, columnName[i], 256, &columnNameLen[i], &columnDataType[i], &columnDataSize[i], &colummnDataDigits[i], &columnDataNullable[i] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, m_hstmt );
                                 result = 1;
                                 break;
                             }
-                            if( *columnDataSize[i] == 0 )
-                                *columnDataSize[i] = 2048;
-                            columnData[i] = new SQLWCHAR[(unsigned int) *columnDataSize[i] + 1];
-                            memset( columnData[i], '\0', (unsigned int) *columnDataSize[i] + 1 );
-                            switch( *columnDataType[i] )
+                            if( columnDataSize[i] == 0 )
+                                columnDataSize[i] = 2048;
+                            columnData[i] = new SQLWCHAR[(unsigned int) columnDataSize[i] + 1];
+                            memset( columnData[i], '\0', (unsigned int) columnDataSize[i] + 1 );
+                            switch( columnDataType[i] )
                             {
                                 case SQL_INTEGER:
-                                    *columnDataType[i] = SQL_C_LONG;
+                                    columnDataType[i] = SQL_C_LONG;
                                     break;
                                 case SQL_VARCHAR:
                                 case SQL_CHAR:
                                 case SQL_WVARCHAR:
                                 case SQL_WCHAR:
-                                    *columnDataType[i] = SQL_C_WCHAR;
+                                    columnDataType[i] = SQL_C_WCHAR;
                                     break;
                             }
                         }
@@ -3387,7 +3369,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                 }
                                 else if( ret != SQL_NO_DATA )
                                 {
-                                    ret = SQLGetData( m_hstmt, 1, *columnDataType[0], columnData[0], *columnDataSize[0], &messageType );
+                                    ret = SQLGetData( m_hstmt, 1, columnDataType[0], columnData[0], columnDataSize[0], &messageType );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
                                         GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3395,7 +3377,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     }
                                     else
                                     {
-                                        ret = SQLGetData( m_hstmt, 2, *columnDataType[1], columnData[1], *columnDataSize[1], &sqlCommand );
+                                        ret = SQLGetData( m_hstmt, 2, columnDataType[1], columnData[1], columnDataSize[1], &sqlCommand );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3412,9 +3394,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     result = 1;
                                 }
                                 m_hstmt = 0;
-#if defined _DEBUG
-                                printf( "Delete query\n\r" );
-#endif
                                 delete[] qry;
                                 qry = NULL;
                             }
@@ -3560,28 +3539,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             delete[] schema;
                             table = NULL;
                             schema = NULL;
-#if defined _DEBUG
-                            printf( "Delete data types memory\n\r" );
-#endif
-                            for( int i = 0; i < numCols; i++ )
-                            {
-                                delete columnNameLen[i];
-                                columnNameLen[i] = NULL;
-                                delete columnDataType[i];
-                                columnDataType[i] = NULL;
-                                delete columnDataSize[i];
-                                columnDataSize[i] = NULL;
-                                delete colummnDataDigits[i];
-                                colummnDataDigits[i] = NULL;
-                                delete columnDataNullable[i];
-                                columnDataNullable[i] = NULL;
-                                delete columnData[i];
-                                columnData[i] = NULL;
-                                delete columnDataLen[i];
-                                columnDataLen[i] = NULL;
-                                delete[] columnName[i];
-                                columnName[i] = NULL;
-                            }
                             delete[] columnNameLen;
                             columnNameLen = NULL;
                             delete[] columnDataType;
@@ -3592,12 +3549,19 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             colummnDataDigits = NULL;
                             delete[] columnDataNullable;
                             columnDataNullable = NULL;
-                            delete[] columnData;
-                            columnData = NULL;
                             delete[] columnDataLen;
                             columnDataLen = NULL;
-                            delete[] columnName;
-                            columnName = NULL;
+                            for( int i = 0; i < numCols; i++ )
+                            {
+                                delete columnData[i];
+                                columnData[i] = NULL;
+                                delete columnName[i];
+                                columnName[i] = NULL;
+                            }
+                            delete[] *columnData;
+                            *columnData = NULL;
+                            delete[] *columnName;
+                            *columnName = NULL;
                         }
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                         {
@@ -3639,9 +3603,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         result = 1;
     }
     m_hstmt = 0;
-#if defined _DEBUG
-    printf( "Delete first memory allocation\n\r" );
-#endif
     free( catalog );
     catalog = NULL;
     return result;
