@@ -3319,11 +3319,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         colummnDataDigits = new SQLSMALLINT[numCols];
                         columnDataNullable = new SQLSMALLINT[numCols];
                         columnDataLen = new SQLLEN[numCols];
-                        for( int i = 0; i < numCols; i++ )
-                        {
-                            columnData = new SQLWCHAR *[i];
-                            columnName = new SQLWCHAR *[i];
-                        }
+//                        auto columnName = std::unique_ptr<SQLWCHAR[2]>( new SQLWCHAR( 256 ) );
+                        columnData = new SQLWCHAR *[numCols];
+                        columnName = new SQLWCHAR *[numCols];
                         for( int i = 0; i < numCols; i++ )
                         {
                             columnName[i] = new SQLWCHAR[256];
@@ -3558,10 +3556,10 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                 delete columnName[i];
                                 columnName[i] = NULL;
                             }
-                            delete[] *columnData;
-                            *columnData = NULL;
-                            delete[] *columnName;
-                            *columnName = NULL;
+                            delete[] columnData;
+                            columnData = NULL;
+                            delete[] columnName;
+                            columnName = NULL;
                         }
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                         {
