@@ -178,7 +178,7 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     return res;
 }
 
-extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, int type, void *object, wxString &command, bool logOnly, const wxString &tableName, const wxString &schemaName)
+extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, int type, void *object, wxString &command, bool logOnly, const wxString &tableName, const wxString &schemaName, wxCriticalSection &cs)
 {
     wxString title;
     int res = 0;
@@ -193,7 +193,7 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, i
         title += tableName + ".";
         title += static_cast<Field *>( object )->GetFieldName();
     }
-    PropertiesDialog dlg( parent, wxID_ANY, title, db, type, object, tableName, schemaName );
+    PropertiesDialog dlg( parent, wxID_ANY, title, db, type, object, tableName, schemaName, cs );
 	dlg.Center();
     res = dlg.ShowModal();
     if( res != wxID_CANCEL )

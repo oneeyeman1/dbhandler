@@ -23,12 +23,18 @@ NewTableHandler::NewTableHandler(MainFrame *frame, Database *db)
 
 NewTableHandler::~NewTableHandler(void)
 {
+#if defined _DEBUG
+    printf( "Starting thread destructor...\n\r" );
+#endif
 #if defined __WXMSW__ && _MSC_VER < 1900
     wxCriticalSectionLocker enter( pCs->m_threadCS );
 #else
     std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
 #endif
     pCs->m_handler = NULL;
+#if defined _DEBUG
+    printf( "Thread deleted\n\r" );
+#endif
 }
 
 wxThread::ExitCode NewTableHandler::Entry()

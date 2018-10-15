@@ -60,7 +60,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST 
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
-typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
@@ -313,7 +313,10 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
                 dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) erdTable)->GetTable() );
                 Database *db = GetDocument()->GetDatabase();
                 {
-#if _MSC_VER >= 1900 || !(defined __WXMSW__)
+#if defined __WXMSW__ && _MSC_VER < 1900
+                    wxCriticalSectionLocker( *pcs );
+#else
+//#if _MSC_VER >= 1900 || !(defined __WXMSW__)
                     std::lock_guard<std::mutex> lock( db->GetTableVector().my_mutex );
 #endif
                     db->GetTableProperties( dbTable, errors );
@@ -478,7 +481,10 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         {
             Database *db = dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase();
             {
-#if _MSC_VER >= 1900 || !(defined __WXMSW__)
+#if defined __WXMSW__ && _MSC_VER < 1900
+                wxCriticalSectionLocker( *pcs );
+#else
+//#if _MSC_VER >= 1900 || !(defined __WXMSW__)
                 std::lock_guard<std::mutex> locker( db->GetTableVector().my_mutex );
 #endif
                 db->CreateIndex( command.ToStdWstring(), indexName.ToStdWstring(), dbTable->GetSchemaName(), dbTable->GetTableName(), errors );
@@ -615,9 +621,9 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == 0 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly, wxEmptyString, wxEmptyString );
+            res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly, wxEmptyString, wxEmptyString, *pcs );
         if( type == 1 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName );
+            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName, *pcs );
         if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );
@@ -942,4 +948,9 @@ wxFrame *DrawingView::GetLogWindow() const
 wxTextCtrl *DrawingView::GetTextLogger() const
 {
     return m_text;
+}
+
+void DrawingView::SetSynchronisationObject(wxCriticalSection &cs)
+{
+    pcs = &cs;
 }

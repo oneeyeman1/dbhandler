@@ -41,10 +41,11 @@ std::mutex Database::Impl::my_mutex;
 #endif
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 
-PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxPoint& pos, const wxSize& size, long style):
+PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, wxCriticalSection &cs, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     std::vector<std::wstring> errors;
+    pcs = &cs;
     m_isApplied = false;
     m_type = type;
     m_db = db;
@@ -57,7 +58,10 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     {
         DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
         {
-#if _MSC_VER >= 1900
+#if defined __WXMSW__ && _MSC_VER < 1900
+            wxCriticalSectionLocker( *pcs );
+#else
+//#if _MSC_VER >= 1900
             std::lock_guard<std::mutex> lock( m_db->GetTableVector().my_mutex );
 #endif
             res = db->GetTableProperties( table, errors );

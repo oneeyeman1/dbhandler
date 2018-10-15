@@ -15,7 +15,7 @@
 class PropertiesDialog: public wxDialog
 {
 public:
-    PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, wxCriticalSection &cs, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
     const std::wstring &GetCommand();
     bool IsLogOnly();
     void GetTableProperties();
@@ -29,6 +29,7 @@ private:
     std::wstring m_dbType, m_command;
     bool m_isApplied;
     TableProperties m_tableProperties;
+    wxCriticalSection *pcs;
     // begin wxGlade: PropertiesDialog::methods
     void set_properties();
     void do_layout();
