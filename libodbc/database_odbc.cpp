@@ -3220,10 +3220,10 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
 int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     int result = 0, ret, ops = 0, bufferSize = 1024;
-    SQLSMALLINT **columnNameLen, numCols = 0, **columnDataType, **colummnDataDigits, **columnDataNullable;
-    SQLULEN **columnDataSize;
+    SQLSMALLINT *columnNameLen, numCols = 0, *columnDataType, *colummnDataDigits, *columnDataNullable;
+    SQLULEN *columnDataSize;
     SQLWCHAR **columnName, **columnData;
-    SQLLEN **columnDataLen;
+    SQLLEN *columnDataLen;
     std::wstring tableName, command, operation, schemaName, catalogName;
     SQLWCHAR *cat = NULL, *schema = NULL, *table = NULL;
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
@@ -3313,47 +3313,38 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     }
                     else
                     {
+                        columnNameLen = new SQLSMALLINT [numCols];
+                        columnDataType = new SQLSMALLINT [numCols];
+                        columnDataSize = new SQLULEN [numCols];
+                        colummnDataDigits = new SQLSMALLINT [numCols];
+                        columnDataNullable = new SQLSMALLINT [numCols];
+                        columnData = new SQLWCHAR *[numCols];
+                        columnDataLen = new SQLLEN [numCols];
+                        columnName = new SQLWCHAR *[numCols];
                         for( int i = 0; i < numCols; i++ )
                         {
-                            columnNameLen = new SQLSMALLINT *[numCols];
-                            columnDataType = new SQLSMALLINT *[numCols];
-                            columnDataSize = new SQLULEN *[numCols];
-                            colummnDataDigits = new SQLSMALLINT *[numCols];
-                            columnDataNullable = new SQLSMALLINT *[numCols];
-                            columnData = new SQLWCHAR *[numCols];
-                            columnDataLen = new SQLLEN *[numCols];
-                            columnName = new SQLWCHAR *[numCols];
-                        }
-                        for( int i = 0; i < numCols; i++ )
-                        {
-                            columnNameLen[i] = new SQLSMALLINT;
-                            columnDataType[i] = new SQLSMALLINT;
-                            columnDataSize[i] = new SQLULEN;
-                            colummnDataDigits[i] = new SQLSMALLINT;
-                            columnDataNullable[i] = new SQLSMALLINT;
                             columnName[i] = new SQLWCHAR[256];
-                            columnDataLen[i] = new SQLLEN;
-                            ret = SQLDescribeCol( m_hstmt, i + 1, columnName[i], 256, columnNameLen[i], columnDataType[i], columnDataSize[i], colummnDataDigits[i], columnDataNullable[i] );
+                            ret = SQLDescribeCol( m_hstmt, i + 1, columnName[i], 256, &columnNameLen[i], &columnDataType[i], &columnDataSize[i], &colummnDataDigits[i], &columnDataNullable[i] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, m_hstmt );
                                 result = 1;
                                 break;
                             }
-                            if( *columnDataSize[i] == 0 )
-                                *columnDataSize[i] = 2048;
-                            columnData[i] = new SQLWCHAR[(unsigned int) *columnDataSize[i] + 1];
-                            memset( columnData[i], '\0', (unsigned int) *columnDataSize[i] + 1 );
-                            switch( *columnDataType[i] )
+                            if( columnDataSize[i] == 0 )
+                                columnDataSize[i] = 2048;
+                            columnData[i] = new SQLWCHAR[(unsigned int) columnDataSize[i] + 1];
+                            memset( columnData[i], '\0', (unsigned int) columnDataSize[i] + 1 );
+                            switch( columnDataType[i] )
                             {
                                 case SQL_INTEGER:
-                                    *columnDataType[i] = SQL_C_LONG;
+                                    columnDataType[i] = SQL_C_LONG;
                                     break;
                                 case SQL_VARCHAR:
                                 case SQL_CHAR:
                                 case SQL_WVARCHAR:
                                 case SQL_WCHAR:
-                                    *columnDataType[i] = SQL_C_WCHAR;
+                                    columnDataType[i] = SQL_C_WCHAR;
                                     break;
                             }
                         }
@@ -3375,7 +3366,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                 }
                                 else if( ret != SQL_NO_DATA )
                                 {
-                                    ret = SQLGetData( m_hstmt, 1, *columnDataType[0], columnData[0], *columnDataSize[0], &messageType );
+                                    ret = SQLGetData( m_hstmt, 1, columnDataType[0], columnData[0], columnDataSize[0], &messageType );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
                                         GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3383,7 +3374,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     }
                                     else
                                     {
-                                        ret = SQLGetData( m_hstmt, 2, *columnDataType[1], columnData[1], *columnDataSize[1], &sqlCommand );
+                                        ret = SQLGetData( m_hstmt, 2, columnDataType[1], columnData[1], columnDataSize[1], &sqlCommand );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3547,21 +3538,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                             schema = NULL;
                             for( int i = 0; i < numCols; i++ )
                             {
-                                delete columnNameLen[i];
-                                columnNameLen[i] = NULL;
-                                delete columnDataType[i];
-                                columnDataType[i] = NULL;
-                                delete columnDataSize[i];
-                                columnDataSize[i] = NULL;
-                                delete colummnDataDigits[i];
-                                colummnDataDigits[i] = NULL;
-                                delete columnDataNullable[i];
-                                columnDataNullable[i] = NULL;
                                 delete columnData[i];
                                 columnData[i] = NULL;
-                                delete columnDataLen[i];
-                                columnDataLen[i] = NULL;
-                                delete[] columnName[i];
+                                delete columnName[i];
                                 columnName[i] = NULL;
                             }
                             delete[] columnNameLen;
