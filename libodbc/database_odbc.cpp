@@ -42,7 +42,6 @@ ODBCDatabase::ODBCDatabase() : Database()
     m_connectString = NULL;
     m_isConnected = false;
     connectToDatabase = false;
-    m_pgLogFile = L"";
 }
 
 ODBCDatabase::~ODBCDatabase()
@@ -489,6 +488,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     {
         pimpl = new Impl;
         pimpl->m_type = L"ODBC";
+        pimpl->m_pgLogFile = L"";
     }
     if( !odbc_pimpl )
         odbc_pimpl = new ODBCImpl;
@@ -4828,11 +4828,6 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     delete[] retBuffer;
 }
 
-const std::wstring &ODBCDatabase::GetPostgreLogFile() const
-{
-    return m_pgLogFile;
-}
-
 int ODBCDatabase::AskPostgresForLogFile()
 {
     int result = 0;
@@ -4895,7 +4890,7 @@ int ODBCDatabase::AskPostgresForLogFile()
                             result = 1;
                         }
                         else
-                            str_to_uc_cpy( m_pgLogFile, columnData );
+                            str_to_uc_cpy( pimpl->m_pgLogFile, columnData );
                     }
                 }
             }
