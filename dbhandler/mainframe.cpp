@@ -363,16 +363,15 @@ void MainFrame::Connect()
             else if( m_db )
                 title = "Connected to " + m_db->GetTableVector().m_type + " version " + m_db->GetTableVector().m_serverVersion;
             SetTitle( title );
-            if( ( ( db->GetTableVector().m_type == L"ODBC" && db->GetTableVector().m_subtype == L"PostgreSQL" ) || db->GetTableVector().m_type == L"PostgreSQL" ) && db->GetTableVector().m_versionMajor <= 9 && db->GetTableVector().m_versionMinor <= 3 )
-            {
-                m_oldPGWatcher = new wxFileSystemWatcher;
-                m_oldPGWatcher->SetOwner( this );
-                Bind( wxEVT_FSWATCHER, &MainFrame::OnPGSchemaChanged, this );
-            }
             if( m_db )
             {
-                if( ( m_db->GetTableVector().m_type != L"PostgreSQL" ) || ( m_db->GetTableVector().m_type == L"ODBC" &&  m_db->GetTableVector().m_subtype != L"PostgreSQL" ) ||
-                    ( ( ( m_db->GetTableVector().m_type == L"PostgreSQL" ) || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ) && m_db->GetTableVector().m_versionMajor >= 9 && m_db->GetTableVector().m_versionMinor >= 3 ) )//|| ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" && m_db->GetTableVector().m_versionMajor >= 9 && m_db->GetTableVector().m_versionMinor >= 3 ) ) )
+                if( ( m_db->GetTableVector().m_type == L"PostgreSQL" || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ) && m_db->GetTableVector().m_versionMajor <= 9 && m_db->GetTableVector().m_versionMinor < 3 )
+                {
+                    m_oldPGWatcher = new wxFileSystemWatcher;
+                    m_oldPGWatcher->SetOwner( this );
+                    Bind( wxEVT_FSWATCHER, &MainFrame::OnPGSchemaChanged, this );
+                }
+                else
                 {
                     m_handler = new NewTableHandler( this, m_db );
                     if( m_handler->Run() != wxTHREAD_NO_ERROR )
