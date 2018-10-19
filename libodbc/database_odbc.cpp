@@ -693,8 +693,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                             }
                                             if( pimpl->m_subtype == L"PostgreSQL" )
                                             {
-                                                if( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor <= 3 )
+                                                if( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor < 3 )
                                                 {
+                                                    AskPostgresForLogFile();
                                                 }
                                                 else
                                                 {
@@ -4814,15 +4815,19 @@ int ODBCDatabase::AskPostgresForLogFile()
     SQLSMALLINT columnNameLen, columnDataType, columnDataDigits, columnDataNullable;
     SQLLEN columnDataLen;
     SQLULEN columnDataSize;
-    std::wstring query = L"SHOW log_directory";
+    std::wstring query1 = L"SHOW log_directory";
+    std::wstring query2 = L"SHOW log_filename";
     std::vector<std::wstring> errorMsg;
-    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
-    memset( qry, '\0', query.length() + 2 );
-    uc_to_str_cpy( qry, query );
+    SQLWCHAR *qry1 = new SQLWCHAR[query1.length() + 2];
+    SQLWCHAR *qry2 = new SQLWCHAR[query2.length() + 2];
+    memset( qry1, '\0', query1.length() + 2 );
+    memset( qry2, '\0', query2.length() + 2 );
+    uc_to_str_cpy( qry1, query1 );
+    uc_to_str_cpy( qry2, query2 );
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+        ret = SQLPrepare( m_hstmt, qry1, SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1 );
@@ -4883,8 +4888,10 @@ int ODBCDatabase::AskPostgresForLogFile()
     }
     else
         m_hstmt = 0;
-    delete[] qry;
-    qry = NULL;
+    delete[] qry1;
+    qry1 = NULL;
+    delete[] qry2;
+    qry2 = NULL;
     delete[] columnName;
     columnName = NULL;
     delete[] columnData;
