@@ -4815,8 +4815,8 @@ int ODBCDatabase::AskPostgresForLogFile()
     SQLSMALLINT columnNameLen, columnDataType, columnDataDigits, columnDataNullable;
     SQLLEN columnDataLen;
     SQLULEN columnDataSize;
-    std::wstring query1 = L"SHOW log_directory";
-    std::wstring query2 = L"SHOW log_filename";
+    std::wstring query1 = L"SELECT setting FROM pg_settings WHERE name = \'log_directory\'";
+    std::wstring query2 = L"SELECT setting FROM pg_settings WHERE name = \'log_filename\'";
     std::vector<std::wstring> errorMsg;
     SQLWCHAR *qry1 = new SQLWCHAR[query1.length() + 2];
     SQLWCHAR *qry2 = new SQLWCHAR[query2.length() + 2];
@@ -4847,6 +4847,72 @@ int ODBCDatabase::AskPostgresForLogFile()
                 {
                     case SQL_VARCHAR:
                     case SQL_WVARCHAR:
+                    case SQL_WLONGVARCHAR:
+                        columnDataType = SQL_C_WCHAR;
+                        break;
+                }
+                columnData = new SQLWCHAR[columnDataSize + 1];
+                ret = SQLBindCol( m_hstmt, 1, columnDataType, columnData, columnDataSize, &columnDataLen );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1 );
+                    result = 1;
+                }
+                else
+                {
+                    ret = SQLExecute( m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1 );
+                        result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLFetch( m_hstmt );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1 );
+                            result = 1;
+                        }
+                        else
+                            str_to_uc_cpy( pimpl->m_pgLogDir, columnData );
+                    }
+                }
+            }
+        }
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1 );
+        result = 1;
+    }
+    else
+        m_hstmt = 0;
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        ret = SQLPrepare( m_hstmt, qry2, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1 );
+            result = 1;
+        }
+        else
+        {
+            ret = SQLDescribeCol( m_hstmt, 1, columnName, 256, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1 );
+                result = 1;
+            }
+            else
+            {
+                switch( columnDataType )
+                {
+                    case SQL_VARCHAR:
+                    case SQL_WVARCHAR:
+                    case SQL_WLONGVARCHAR:
                         columnDataType = SQL_C_WCHAR;
                         break;
                 }
