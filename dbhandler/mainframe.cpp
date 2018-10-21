@@ -367,8 +367,10 @@ void MainFrame::Connect()
             {
                 if( ( m_db->GetTableVector().m_type == L"PostgreSQL" || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ) && m_db->GetTableVector().m_versionMajor <= 9 && m_db->GetTableVector().m_versionMinor < 3 )
                 {
+                    wxString logfile = wxFileName( m_db->GetTableVector().GetPostgresLogDir(), m_db->GetTableVector().GetPostgreLogFile() ).GetPath();
                     m_oldPGWatcher = new wxFileSystemWatcher;
                     m_oldPGWatcher->SetOwner( this );
+                    m_oldPGWatcher->Add( logfile );
                     Bind( wxEVT_FSWATCHER, &MainFrame::OnPGSchemaChanged, this );
                 }
                 else
@@ -564,6 +566,11 @@ void MainFrame::OnSize(wxSizeEvent &event)
         event.Skip();
 }
 
-void MainFrame::OnPGSchemaChanged(wxFileSystemWatcherEvent& WXUNUSED(event))
+void MainFrame::OnPGSchemaChanged(wxFileSystemWatcherEvent &event)
 {
+    int type = event.GetChangeType();
+    if( type == wxFSW_EVENT_MODIFY )
+    {
+        wxMessageBox( "Log file modified!" );
+    }
 }
