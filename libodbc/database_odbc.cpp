@@ -695,8 +695,8 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                     AskPostgresForLogFile();
                                             else if( pimpl->m_subtype == L"PostgreSQL" )
                                             {
-                                                std::wstring query8 = L"IF NOT EXIST(SELECT 1 FROM pg_proc AS proc, pg_namespace AS ns WHERE proc.pronamespace = ns.oid AND ns.nspname = \'public\' AND proname = \'watch_schema_changes\') CREATE FUNCTION watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
-                                                std::wstring query9 = L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE watch_schema_changes();";
+                                                query8 = L"IF NOT EXIST(SELECT 1 FROM pg_proc AS proc, pg_namespace AS ns WHERE proc.pronamespace = ns.oid AND ns.nspname = \'public\' AND proname = \'watch_schema_changes\') CREATE FUNCTION watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
+                                                query9 = L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE watch_schema_changes();";
                                                 query = new SQLWCHAR[query8.length() + 2];
                                                 memset( query, '\0', query8.length() + 2 );
                                                 uc_to_str_cpy( query, query8 );
@@ -3583,10 +3583,49 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     }
                 }
             }
+            free( catalog );
+            catalog = NULL;
+        }
+        if( pimpl->m_subtype == L"PostgreSQL" )
+        {
+            if( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor < 3 )
+            {
+                int count;
+                SQLLEN cbCount;
+                ret = SQLExecDirect( m_hstmt, L"SELECT count(*) FROM information_schema.tables", SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                else
+                {
+                    ret = SQLBindCol( m_hstmt, 1, SQL_C_SLONG, &count, 0, &cbCount );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLFetch( m_hstmt );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                }
+            }
+            else
+            {
+            }
         }
     }
-    free( catalog );
-    catalog = NULL;
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -3594,8 +3633,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         result = 1;
     }
     m_hstmt = 0;
-    free( catalog );
-    catalog = NULL;
     return result;
 }
 
