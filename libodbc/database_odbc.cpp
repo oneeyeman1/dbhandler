@@ -691,41 +691,15 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                     }
                                                 }
                                             }
-                                            if( pimpl->m_subtype == L"PostgreSQL" )
-                                            {
-                                                if( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor < 3 )
-                                                {
+                                            if( pimpl->m_subtype == L"PostgreSQL" && ( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor < 3 ) )
                                                     AskPostgresForLogFile();
-                                                }
-                                                else
-                                                {
-
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if( pimpl->m_subtype == L"PostgreSQL" )
-                                    {
-                                        if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 3 )
-                                        {
-                                            std::wstring query8 = L"IF NOT EXIST(SELECT 1 FROM pg_proc AS proc, pg_namespace AS ns WHERE proc.pronamespace = ns.oid AND ns.nspname = \'public\' AND proname = \'watch_schema_changes\') CREATE FUNCTION watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
-                                            std::wstring query9 = L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE watch_schema_changes();";
-                                            query = new SQLWCHAR[query8.length() + 2];
-                                            memset( query, '\0', query8.length() + 2 );
-                                            uc_to_str_cpy( query, query8 );
-                                            ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                            delete[] query;
-                                            query = NULL;
-                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            else if( pimpl->m_subtype == L"PostgreSQL" )
                                             {
-                                                GetErrorMessage( errorMsg, 1 );
-                                                result = 1;
-                                            }
-                                            else
-                                            {
-                                                query = new SQLWCHAR[query9.length() + 2];
-                                                memset( query, '0', query9.length() + 2 );
-                                                uc_to_str_cpy( query, query9 );
+                                                std::wstring query8 = L"IF NOT EXIST(SELECT 1 FROM pg_proc AS proc, pg_namespace AS ns WHERE proc.pronamespace = ns.oid AND ns.nspname = \'public\' AND proname = \'watch_schema_changes\') CREATE FUNCTION watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
+                                                std::wstring query9 = L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE watch_schema_changes();";
+                                                query = new SQLWCHAR[query8.length() + 2];
+                                                memset( query, '\0', query8.length() + 2 );
+                                                uc_to_str_cpy( query, query8 );
                                                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                 delete[] query;
                                                 query = NULL;
@@ -734,44 +708,61 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                     GetErrorMessage( errorMsg, 1 );
                                                     result = 1;
                                                 }
+                                                else
+                                                {
+                                                    query = new SQLWCHAR[query9.length() + 2];
+                                                    memset( query, '0', query9.length() + 2 );
+                                                    uc_to_str_cpy( query, query9 );
+                                                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                                    delete[] query;
+                                                    query = NULL;
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                    {
+                                                        GetErrorMessage( errorMsg, 1 );
+                                                        result = 1;
+                                                    }
+                                                }
                                             }
                                         }
                                     }
-                                    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    if( pimpl->m_subtype == L"PostgreSQL" && ( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor <= 2 ) )
                                     {
-                                        GetErrorMessage( errorMsg, 2 );
-                                        result = 1;
                                     }
-/*****************************************/
                                     else
                                     {
-                                        if( pimpl->m_subtype != L"Sybase" && pimpl->m_subtype != L"ASE" )
+                                        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
-                                            ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
-                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            GetErrorMessage( errorMsg, 2 );
+                                            result = 1;
+                                        }
+                                    }
+/*****************************************/
+                                    if( pimpl->m_subtype != L"Sybase" && pimpl->m_subtype != L"ASE" )
+                                    {
+                                        ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 2 );
+                                            result = 1;
+                                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                        }
+                                    }
+                                    if( !result )
+                                    {
+                                        if( !connectToDatabase )
+                                        {
+                                            if( ServerConnect( dbList, errorMsg ) )
                                             {
-                                                GetErrorMessage( errorMsg, 2 );
                                                 result = 1;
-                                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                                             }
                                         }
-                                        if( !result )
+                                        else
                                         {
-                                            if( !connectToDatabase )
+                                            if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
                                             {
-                                                if( ServerConnect( dbList, errorMsg ) )
-                                                {
-                                                    result = 1;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
-                                                {
-                                                    result = 1;
-                                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                                }
+                                                result = 1;
+                                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                                             }
                                         }
                                     }
