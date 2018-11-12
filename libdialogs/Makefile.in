@@ -134,7 +134,6 @@ am_libdialogs_la_OBJECTS = libdialogs_la-databasetype.lo \
 	libdialogs_la-properties.lo libdialogs_la-foreignkey.lo \
 	libdialogs_la-getobjectname.lo libdialogs_la-jointype.lo \
 	libdialogs_la-addcolumnsdialog.lo \
-	libdialogs_la-odbccredentials.lo \
 	libdialogs_la-odbccredentials.lo
 libdialogs_la_OBJECTS = $(am_libdialogs_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -401,8 +400,6 @@ libdialogs_la_SOURCES = \
 	jointype.h \
 	addcolumnsdialog.cpp \
 	addcolumnsdialog.h \
-	odbccredentials.cpp \
-	odbccredentials.h \
 	odbccredentials.cpp \
 	odbccredentials.h
 
