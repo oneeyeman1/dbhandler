@@ -117,7 +117,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxRect clientRect = parent->GetClientRect();
     wxWindowList children = parent->GetChildren();
     bool found = false;
-    int height = 0;
     for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
     {
         tb = wxDynamicCast( *it, wxToolBar );
@@ -430,7 +429,6 @@ bool DrawingView::OnClose(bool deleteWindow)
         GetFrame()->Destroy();
         SetFrame( NULL );
     }
-    wxDocManager *manager = GetDocumentManager();
     wxMDIClientWindow *parent = dynamic_cast<wxMDIClientWindow *>( mainWin->GetClientWindow() );
     wxWindowList children = parent->GetChildren();
     if( parent->GetChildren().size() == 0 )
@@ -757,7 +755,7 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     ShapeList shapes;
     MyErdTable *dbTable;
-    FieldShape *field;
+    FieldShape *field = NULL;
     ShapeList::iterator it;
     bool found = false;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );

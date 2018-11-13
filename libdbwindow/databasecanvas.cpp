@@ -528,10 +528,10 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
     ShapeList list;
     bool isTable;
     MyErdTable *erdTable = NULL;
-    DatabaseTable *table;
+    DatabaseTable *table = NULL;
     wxString name;
     ConstraintSign *sign = NULL;
-    Constraint *constraint;
+    Constraint *constraint = NULL;
     GetSelectedShapes( list );
     if( list.size() == 1 )
         isTable = true;
@@ -546,7 +546,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
         if( s )
             sign = s;
     }
-    int match;
+    int match = 0;
     std::vector<std::wstring> errors, localColumns, refColumn;
     std::vector<FKField *> newFK;
     if( isTable )
@@ -557,8 +557,8 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &WXUNUSED(event))
     else
     {
         constraint = sign->GetConstraint();
-        localColumns = constraint->GetLocalColumns();
-        refColumn = constraint->GetRefColumns();
+        constraint->GetLocalColumns( localColumns );
+        constraint->GetRefColumns( refColumn );
         match = constraint->GetPGMatch();
     }
     DrawingDocument *doc = (DrawingDocument *) m_view->GetDocument();
@@ -731,8 +731,8 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             Constraint *constraint = sign->GetConstraint();
             std::wstring kName = constraint->GetName().ToStdWstring(), refTable, fkTable;
             std::vector<std::wstring> foreignKeyFields, refKeyFields;
-            foreignKeyFields = constraint->GetLocalColumns();
-            refKeyFields = constraint->GetRefColumns();
+            constraint->GetLocalColumns( foreignKeyFields );
+            constraint->GetRefColumns( refKeyFields );
             DatabaseTable *table = const_cast<DatabaseTable *>( constraint->GetFKTable() );
             wxString refTableName = constraint->GetRefTable();
             int match = constraint->GetPGMatch();
