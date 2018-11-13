@@ -3590,9 +3590,13 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         {
             if( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor < 3 )
             {
+				std::wstring query = L"SELECT count(*) FROM information_schema.tables";
+				SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+				memset( qry, '\0', query.length() + 2 );
+				uc_to_str_cpy( qry, query );
                 int count;
                 SQLLEN cbCount;
-                ret = SQLExecDirect( m_hstmt, L"SELECT count(*) FROM information_schema.tables", SQL_NTS );
+                ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, 1, m_hstmt );
