@@ -231,8 +231,8 @@ bool ForeignKeyDialog::Verify()
 
 void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
 {
-    FK_ONUPDATE updateProp;
-    FK_ONDELETE deleteProp;
+    FK_ONUPDATE updateProp = NO_ACTION_UPDATE;
+    FK_ONDELETE deleteProp = NO_ACTION_DELETE;
     if( Verify() )
     {
         if( event.GetEventObject() == m_logOnly )

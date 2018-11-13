@@ -1703,7 +1703,7 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
 
 int MySQLDatabase::GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, const char *fieldName, Field *field, std::vector<std::wstring> &errorMsg)
 {
-    char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
+    char /**str_data1 = NULL, *str_data2 = NULL, */*str_data3 = NULL;
     int result = 0;
     size_t len = strlen( tableName ) + strlen( schemaName ) + 2;
     char *tname = new char[len];
