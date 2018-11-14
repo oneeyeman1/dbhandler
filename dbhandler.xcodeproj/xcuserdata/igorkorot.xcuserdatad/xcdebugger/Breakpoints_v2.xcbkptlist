@@ -144,7 +144,7 @@
             startingLineNumber = "144"
             endingLineNumber = "144"
             landmarkName = "ConnectToDb(wxWindow *parent, wxString &amp;name, wxString &amp;engine, wxString &amp;connectStr, wxString &amp;connectedUser)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
