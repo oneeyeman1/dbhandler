@@ -245,6 +245,13 @@
 					/Users/igorkorot/wxWidgets/include,
 					../dbinterface,
 				);
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.1",
+					/Users/igorkorot/wxWidgets/include,
+					../dbinterface,
+				);
 				OTHER_LDFLAGS = (
 					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
 					"-framework",
