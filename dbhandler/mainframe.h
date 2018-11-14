@@ -33,7 +33,6 @@ private:
     void OnQuery(wxCommandEvent &event);
     void OnSize(wxSizeEvent &event);
     void OnClose(wxCloseEvent &event);
-    void OnPGSchemaChanged(wxFileSystemWatcherEvent& event);
     Database *m_db;
     wxMenu *m_menuFile;
     wxDocManager *m_manager;

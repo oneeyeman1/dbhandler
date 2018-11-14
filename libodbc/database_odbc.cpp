@@ -3620,7 +3620,63 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         }
                         else
                         {
-
+                            delete qry;
+                            qry = NULL;
+                            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                result = 1;
+                            }
+                            else
+                            {
+                                m_hstmt = 0;
+                                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 2, m_hstmt );
+                                    result = 1;
+                                }
+                                else
+                                {
+                                    if( count > m_numOfTables || count < m_numOfTables )
+                                    {
+                                        query = L"SELECT name FROM information_schema.tables";
+                                        SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+                                        memset( qry, '\0', query.length() + 2 );
+                                        uc_to_str_cpy( qry, query );
+                                        SQLWCHAR name;
+                                        SQLLEN cbCount;
+                                        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                                            result = 1;
+                                        }
+                                        else
+                                        {
+                                            ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &name, 0, &cbCount );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                result = 1;
+                                            }
+                                            else
+                                            {
+                                                for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
+                                                {
+                                                    if( count > m_numOfTables )
+                                                    {
+                                                        if( std::find( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ) != pimpl->m_tableNames.end() )
+                                                            continue;
+                                                        AddDropTable( L"", L"", tableName, true, errorMsg );
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
