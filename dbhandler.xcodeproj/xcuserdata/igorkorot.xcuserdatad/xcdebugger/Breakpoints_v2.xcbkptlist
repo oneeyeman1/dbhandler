@@ -143,8 +143,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "144"
             endingLineNumber = "144"
-            landmarkName = "ConnectToDb(wxWindow *parent, wxString &amp;name, wxString &amp;engine, wxString &amp;connectStr)"
-            landmarkType = "7">
+            landmarkName = "ConnectToDb(wxWindow *parent, wxString &amp;name, wxString &amp;engine, wxString &amp;connectStr, wxString &amp;connectedUser)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -159,8 +159,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "244"
             endingLineNumber = "244"
-            landmarkName = "MySQLDatabase::GetTableListFromDb(std::vector&lt;std::wstring&gt; &amp;errorMsg)"
-            landmarkType = "5">
+            landmarkName = "MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector&lt;std::wstring&gt; &amp;errorMsg)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -175,8 +175,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1437"
             endingLineNumber = "1437"
-            landmarkName = "SQLiteDatabase::DropForeignKey(DatabaseTable &amp;tableName, std::vector&lt;FKField *&gt; &amp;newFK, const std::wstring &amp;sql, std::wstring &amp;newSQL, const std::wstring &amp;refTableName)"
-            landmarkType = "5">
+            landmarkName = "SQLiteDatabase::NewTableCreation(std::vector&lt;std::wstring&gt; &amp;errorMsg)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
