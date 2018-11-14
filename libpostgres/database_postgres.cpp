@@ -708,7 +708,6 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
             table->SetLabelFontUnderline( atoi( PQgetvalue( res, i, 22 ) ) );
             table->SetLabelFontStrikethrough(( atoi( PQgetvalue( res, i, 23 ) ) ));
             table->SetLabelFontCharacterSet( atoi( PQgetvalue( res, i, 24 ) ) );
-            char *temp = PQgetvalue( res, i, 25 );
             table->SetLabelFontPixelSize( atoi( PQgetvalue( res, i, 25 ) ) );
             table->SetLabelFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 26 ) ) );
             table->SetComment( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 27 ) ) );

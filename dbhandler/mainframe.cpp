@@ -365,26 +365,15 @@ void MainFrame::Connect()
             SetTitle( title );
             if( m_db )
             {
-                if( ( m_db->GetTableVector().m_type == L"PostgreSQL" || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ) && m_db->GetTableVector().m_versionMajor <= 9 && m_db->GetTableVector().m_versionMinor < 3 )
+                m_handler = new NewTableHandler( this, m_db );
+                if( m_handler->Run() != wxTHREAD_NO_ERROR )
                 {
-                    wxString logfile = wxFileName( m_db->GetTableVector().GetPostgresLogDir(), m_db->GetTableVector().GetPostgreLogFile() ).GetPath();
-                    m_oldPGWatcher = new wxFileSystemWatcher;
-                    m_oldPGWatcher->SetOwner( this );
-                    m_oldPGWatcher->Add( logfile );
-                    Bind( wxEVT_FSWATCHER, &MainFrame::OnPGSchemaChanged, this );
-                }
-                else
-                {
-                    m_handler = new NewTableHandler( this, m_db );
-                    if( m_handler->Run() != wxTHREAD_NO_ERROR )
-                    {
-                        wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
-                        delete m_handler;
-                        m_handler = NULL;
-                        m_db->Disconnect( errorMsg );
-                        delete m_db;
-                        m_db = NULL;
-                    }
+                    wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
+                    delete m_handler;
+                    m_handler = NULL;
+                    m_db->Disconnect( errorMsg );
+                    delete m_db;
+                    m_db = NULL;
                 }
             }
         }
@@ -566,11 +555,3 @@ void MainFrame::OnSize(wxSizeEvent &event)
         event.Skip();
 }
 
-void MainFrame::OnPGSchemaChanged(wxFileSystemWatcherEvent &event)
-{
-    int type = event.GetChangeType();
-    if( type == wxFSW_EVENT_MODIFY )
-    {
-        wxMessageBox( "Log file modified!" );
-    }
-}
