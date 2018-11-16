@@ -232,8 +232,8 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					../dbinterface,
-					pg_config,
-					"--includedir",
+					../libpg/src/interfaces/libpq,
+					../libpg/src/include/libpq,
 				);
 				"LIBRARY_SEARCH_PATHS[arch=*]" = ../libpg/src/interfaces/libpq/Debug/osx;
 				"OTHER_LDFLAGS[arch=*]" = "";
