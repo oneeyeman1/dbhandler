@@ -11,9 +11,9 @@ public:
     void DisplayTables(std::vector<wxString> &selections, wxString &query);
     virtual ~DatabaseCanvas();
     void CreateFKConstraint(const DatabaseTable *fkTable, const std::vector<FKField *> &foreignKeyField);
-    virtual void OnLeftDown(wxMouseEvent &event);
-    virtual void OnRightDown(wxMouseEvent &event);
-    virtual void OnLeftDoubleClick(wxMouseEvent& event);
+    virtual void OnLeftDown(wxMouseEvent &event) wxOVERRIDE;
+    virtual void OnRightDown(wxMouseEvent &event) wxOVERRIDE;
+    virtual void OnLeftDoubleClick(wxMouseEvent& event) wxOVERRIDE;
     void OnDropTable(wxCommandEvent &event);
     void OnShowSQLBox(wxCommandEvent &event);
     void OnShowComments(wxCommandEvent &event);

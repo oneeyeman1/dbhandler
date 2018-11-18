@@ -1065,7 +1065,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::map<int,std::vector<FKField *> > foreign_keys;
     SQLWCHAR *catalogName = NULL, *schemaName = NULL, *tableName = NULL;
     SQLWCHAR userName[1024];
-    SQLSMALLINT numCols = 0;
+//    SQLSMALLINT numCols = 0;
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -1369,7 +1369,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLHSTMT stmt_tableProp = 0;
     SQLWCHAR *qry = NULL, *table_name = NULL, *owner_name = NULL;
     unsigned short dataFontSize = 0, dataFontWeight = 0, dataFontUnderline = 0, dataFontStriken = 0, headingFontSize = 0, headingFontWeight = 0, headingFontUnderline = 0, headingFontStriken = 0, labelFontSize = 0, labelFontWeight = 0, labelFontUnderline = 0, labelFontStriken = 0;
-    unsigned short dataFontCharacterSet, headingFontCharacterSet, labelFontCharacterSet, dataFontPixelSize = 0, headingFontPixelSize = 0, labelFontPixelSize = 0;
+    unsigned short dataFontCharacterSet = 0, headingFontCharacterSet = 0, labelFontCharacterSet = 0, dataFontPixelSize = 0, headingFontPixelSize = 0, labelFontPixelSize = 0;
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontName[20], headingFontName[20], labelFontName[20];
     SQLWCHAR comments[225];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = SQL_NTS, cbDataFontUnderline = SQL_NTS, cbDataFontStriken = SQL_NTS, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
@@ -3620,7 +3620,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         }
                         else
                         {
-                            delete qry;
+                            delete[] qry;
                             qry = NULL;
                             ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3716,22 +3716,21 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     SQLWCHAR *qry = NULL;
     SQLWCHAR **columnNames = NULL;
     std::wstring query4;
-    int result = 0, bufferSize = 1024;
+    int result = 0;
     std::vector<Field *> fields;
     std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol, cat;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::map<int,std::vector<FKField *> > foreign_keys;
-    SQLWCHAR *szSchemaName = NULL;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0, stmt_ind = 0;
     SQLHDBC hdbc_col = 0, hdbc_pk = 0, hdbc_colattr = 0, hdbc_fk = 0, hdbc_ind = 0;
-    SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1], userName[1024];
+    SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1];
     SQLWCHAR szFkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szPkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkSchema[SQL_MAX_COLUMN_NAME_LEN + 1], szFkTableSchema[SQL_MAX_SCHEMA_NAME_LEN + 1], szFkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szFkName[256], szFkCatalog[SQL_MAX_CATALOG_NAME_LEN + 1];
-    SQLSMALLINT updateRule, deleteRule, keySequence;
+    SQLSMALLINT updateRule = 0, deleteRule = 0, keySequence = 0;
     SQLLEN cbPkCol, cbFkTable, cbFkCol, cbFkName, cbFkSchemaName, cbUpdateRule, cbDeleteRule, cbKeySequence, cbFkCatalog, fkNameLength = 256;
     SQLLEN cbColumnName, cbDataType, cbTypeName, cbColumnSize, cbBufferLength, cbDecimalDigits, cbNumPrecRadix, pkLength;
     SQLLEN cbNullable, cbRemarks, cbColumnDefault, cbSQLDataType, cbDatetimeSubtypeCode, cbCharOctetLength, cbOrdinalPosition, cbIsNullable;
-    SQLSMALLINT DataType, DecimalDigits, NumPrecRadix, Nullable, SQLDataType, DatetimeSubtypeCode, numCols = 0;
-    SQLINTEGER ColumnSize, BufferLength, CharOctetLength, OrdinalPosition;
+    SQLSMALLINT DataType, DecimalDigits = 0, NumPrecRadix, Nullable = 0, SQLDataType, DatetimeSubtypeCode, numCols = 0;
+    SQLINTEGER ColumnSize = 0, BufferLength, CharOctetLength, OrdinalPosition;
     if( pimpl->m_subtype == L"PostgreSQL" )
         query4 = L"SELECT indexname FROM pg_indexes WHERE schemaname = ? AND tablename = ?";
     if( pimpl->m_subtype == L"MySQL" )
@@ -4910,7 +4909,7 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
 int ODBCDatabase::AskPostgresForLogFile()
 {
     int result = 0;
-    SQLWCHAR *columnName = new SQLWCHAR[256], *columnData;
+    SQLWCHAR *columnName = new SQLWCHAR[256], *columnData = NULL;
     SQLSMALLINT columnNameLen, columnDataType, columnDataDigits, columnDataNullable;
     SQLLEN columnDataLen;
     SQLULEN columnDataSize;

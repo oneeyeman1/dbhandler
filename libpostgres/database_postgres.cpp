@@ -1108,7 +1108,7 @@ int PostgresDatabase::GetFieldProperties(const char *tableName, const char *sche
     values[1] = NULL;
     delete values[2];
     values[2] = NULL;
-    delete tname;
+    delete[] tname;
     tname = NULL;
     return result;
 }
