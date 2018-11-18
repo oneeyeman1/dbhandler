@@ -3663,6 +3663,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                             }
                                             else
                                             {
+                                                std::vector<std::wstring> temp = pimpl->m_tableNames;
                                                 for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
                                                 {
                                                     if( count > m_numOfTables )
@@ -3671,6 +3672,16 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                             continue;
                                                         AddDropTable( L"", L"", tableName, true, errorMsg );
                                                     }
+                                                    else if( count < m_numOfTables )
+                                                    {
+                                                        temp.erase( std::remove( temp.begin(), temp.end(), tableName ), temp.end() );
+                                                    }
+                                                }
+                                                if( count < m_numOfTables )
+                                                {
+                                                    result = AddDropTable( L"", L"", temp.at( 0 ), false, errorMsg );
+                                                    if( result )
+                                                        errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
                                                 }
                                             }
                                         }
