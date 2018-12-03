@@ -533,7 +533,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     uc_to_str_cpy( connectStrIn, L";Driver=" );
                     copy_uc_to_uc( connectStrIn, driver );
                     if( equal( temp, driver ) )
-                        uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1" );
+                        uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1;ShowSystemTables=1;" );
                     delete[] temp;
                     temp = NULL;
                     if( user && password )
