@@ -313,13 +313,13 @@ void ODBCDatabase::uc_to_str_cpy(SQLWCHAR *dest, const std::wstring &src)
     const wchar_t *temp = src.c_str();
     while( *dest )
     {
-        *dest++;
+        dest++;
     }
     while( *temp )
     {
         *dest = *temp;
-        *dest++;
-        *temp++;
+        dest++;
+        temp++;
     }
     *dest++ = 0;
     *dest = 0;
@@ -345,7 +345,7 @@ bool ODBCDatabase::equal(SQLWCHAR *dest, SQLWCHAR *src)
 void ODBCDatabase::copy_uc_to_uc(SQLWCHAR *dest, SQLWCHAR *src)
 {
     while( *dest )
-        *dest++;
+        dest++;
     while( *src )
         *dest++ = *src++;
     *dest = 0;
