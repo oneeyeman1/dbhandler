@@ -104,6 +104,7 @@ PROGRAMS = $(bin_PROGRAMS)
 am_dbhandler_OBJECTS = dbhandler-doc.$(OBJEXT) \
 	dbhandler-docview.$(OBJEXT) dbhandler-mainframe.$(OBJEXT) \
 	dbhandler-view.$(OBJEXT) dbhandler-viewbase.$(OBJEXT) \
+	dbhandler-newtablehandler.$(OBJEXT) \
 	dbhandler-newtablehandler.$(OBJEXT)
 dbhandler_OBJECTS = $(am_dbhandler_OBJECTS)
 dbhandler_LDADD = $(LDADD)
@@ -357,6 +358,8 @@ dbhandler_SOURCES = \
 	view.h \
 	viewbase.cpp \
 	viewbase.h \
+	newtablehandler.cpp \
+	newtablehandler.h \
 	newtablehandler.cpp \
 	newtablehandler.h
 
