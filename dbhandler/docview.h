@@ -74,7 +74,7 @@ private:
     wxDocManager *m_docManager;
     MyCanvas *m_canvas;
     wxMenu *m_menuEdit;
-    wxString m_dbName, m_dbEngine, m_connectString, m_connectedUser;
+    wxString m_dbName, m_dbEngine, m_subtype, m_connectString, m_connectedUser;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(MyApp);
 };

@@ -1,5 +1,5 @@
 /* XPM */
-static char *toolbox[] = {
+static const char *toolbox[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 167 2 ",
 "   c gray100",

@@ -1,5 +1,9 @@
 #include <map>
 #include <vector>
+#include <cctype>
+#if _MSC_VER >= 1900 || !defined WIN32
+#include <mutex>
+#endif
 
 #ifndef DBMANAGER_DATABASE
 #define DBMANAGER_DATABASE
@@ -38,7 +42,7 @@ class Field
 public:
     Field()
     {
-        comment = L"";
+        m_comment = L"";
         column_name = column_type = column_defaultValue = L"";
         field_size = -1;
         decimal_size = -1;
@@ -47,7 +51,7 @@ public:
 
     Field(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false, const bool columnFK = false)
     {
-        comment = L"";
+        m_comment = L"";
         column_name = columnName;
         column_type = columnType;
         field_size = size;
@@ -67,18 +71,18 @@ public:
     const std::wstring &GetFieldName() { return column_name; }
     const std::wstring &GetFieldType() { return column_type; }
     const std::wstring &GetDefaultValue() { return column_defaultValue; }
-    const std::wstring &GetComment() { return comment; }
+    const std::wstring &GetComment() { return m_comment; }
     bool IsNullAllowed() { return column_isNull; }
     int GetFieldSize() { return field_size; }
     int GetPrecision() { return decimal_size; }
     bool IsPrimaryKey() { return column_pk; }
     bool IsForeignKey() { return column_fk; }
     bool IsAutoIncrement() { return autoIncrement; }
-    void SetComment(const std::wstring &comment) { this->comment = comment; }
+    void SetComment(const std::wstring &comment) { m_comment = comment; }
     void SetFullType(const std::wstring type) { full_type = type; }
     const std::wstring &GetFullType() { return full_type; }
 private:
-    std::wstring column_name, column_type, column_defaultValue, comment, label, heading, full_type;
+    std::wstring column_name, column_type, column_defaultValue, m_comment, label, heading, full_type;
     bool autoIncrement, column_isNull, column_pk, column_fk;
     int field_size, decimal_size;
 };
@@ -127,8 +131,8 @@ public:
     DatabaseTable(const std::wstring &tableName, const std::wstring &schemaName, const std::vector<Field *> &tableFields, const std::map<int,std::vector<FKField *> > &foreignKeys)
     {
         m_objectId = 0;
-        owner = L"";
-        comment = L"";
+        m_owner = L"";
+        m_comment = L"";
         table_name = tableName;
         schema_name = schemaName;
         table_fields = tableFields;
@@ -155,10 +159,31 @@ public:
         m_headingFontCharacterSet = -1;
         m_labelFontCharacterSer = -1;
     }
+
+    ~DatabaseTable()
+    {
+        for( std::vector<Field *>::iterator it = table_fields.begin(); it < table_fields.end(); ++it )
+        {
+            delete (*it);
+            (*it) = NULL;
+        }
+        table_fields.clear();
+        for( std::map<int, std::vector< FKField *> >::iterator it1 = foreign_keys.begin(); it1 != foreign_keys.end(); ++it1 )
+        {
+            for( std::vector<FKField *>::iterator it2 = (*it1).second.begin(); it2 < (*it1).second.end(); ++it2 )
+            {
+                delete (*it2);
+                (*it2) = NULL;
+            }
+            (*it1).second.clear();
+        }
+        foreign_keys.clear();
+    }
+
     const std::wstring &GetTableName() { return table_name; }
     const std::wstring &GetSchemaName() { return schema_name; }
-    const std::wstring &GetComment() { return comment; }
-    void SetComment(const std::wstring &comment) { this->comment = comment; }
+    const std::wstring &GetComment() { return m_comment; }
+    void SetComment(const std::wstring &comment) { m_comment = comment; }
     void SetDataFontName(const std::wstring &name) { m_dataFontName = name; }
     const std::wstring &GetDataFontName() { return m_dataFontName; }
     void SetHeadingFontName(const std::wstring &name) { m_headingFontName = name; }
@@ -211,16 +236,20 @@ public:
     std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
     const unsigned long GetTableId() { return m_objectId; }
     void SetTableId(unsigned long id) { m_objectId = id; }
-    const std::wstring &GetTableOwner() { return owner; }
-    void SetTableOwner(const std::wstring &owner) { this->owner = owner; }
+    const std::wstring &GetTableOwner() { return m_owner; }
+    void SetTableOwner(const std::wstring &owner) { m_owner = owner; }
     void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
     const std::vector<std::wstring> &GetIndexNames() { return m_indexes; }
+    void SetNumberOfFields(int count) { m_numFields = count; }
+    int GetNumberOfFields() { return m_numFields; }
+    void SetNumberOfIndexes(int count) { m_numIndex = count; }
+    int GetNumberOfIndexes() { return m_numIndex; }
 private:
-    std::wstring table_name, schema_name, comment, owner;
+    std::wstring table_name, schema_name, m_comment, m_owner;
     std::vector<Field *> table_fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring m_dataFontName, m_labelFontName, m_headingFontName;
-    int m_dataFontWeight, m_labelFontWeight, m_headingFontWeight;
+    int m_dataFontWeight, m_labelFontWeight, m_headingFontWeight, m_numFields, m_numIndex;
     unsigned long m_objectId;
     bool m_dataFontItalic, m_labelFontItalic, m_headingFontItalic;
     int m_dataFontSize, m_labelFontSize, m_headingFontSize, m_dataFontCharacterSet, m_labelFontCharacterSer, m_headingFontCharacterSet;
@@ -240,6 +269,10 @@ protected:
     struct Impl;
     Impl *pimpl;
     bool connectToDatabase;
+    unsigned int m_numOfTables;
+    void ltrim(std::wstring &str) { str.erase( str.begin(), std::find_if( str.begin(), str.end(), [](int ch) { return !std::isspace( ch ); } ) ); };
+    void rtrim(std::wstring &str) { str.erase( std::find_if( str.rbegin(), str.rend(), [](int ch) { return !std::isspace( ch ); } ).base(), str.end() ); };
+    void trim(std::wstring str) { ltrim( str ); rtrim( str ); };
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
@@ -265,10 +298,14 @@ public:
 
 struct Database::Impl
 {
+#if _MSC_VER >= 1900 || !defined WIN32
+    static std::mutex my_mutex;
+#endif
     std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
     std::vector<std::wstring> m_tableNames;
     std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
     std::wstring m_serverVersion;
+    std::wstring m_pgLogFile, m_pgLogDir;
     int m_versionMajor, m_versionMinor, m_versionRevision;
     const std::wstring &GetConnectedUser() { return m_connectedUser; };
     void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
@@ -276,6 +313,8 @@ struct Database::Impl
     const std::wstring &GetDatabaseSubtype() const { return m_subtype; };
     void PushTableName(const std::wstring tableName) { m_tableNames.push_back( tableName ); };
     const std::vector<std::wstring> &GetTableNames() { return m_tableNames; };
+    const std::wstring &GetPostgreLogFile() const { return m_pgLogFile; };
+    const std::wstring &GetPostgresLogDir() const { return m_pgLogDir; };
 };
 
 inline Database::~Database()

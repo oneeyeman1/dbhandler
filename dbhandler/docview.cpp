@@ -35,6 +35,7 @@
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
+#include "wx/fswatcher.h"
 #include "database.h"
 #include "newtablehandler.h"
 #include "mainframe.h"
@@ -96,9 +97,12 @@ bool MyApp::OnInit()
 
     // Fill in the application information fields before creating wxConfig.
     wxConfigBase *config = wxConfigBase::Get( "DBManager" );
+    wxString path = config->GetPath();
     config->SetPath( "CurrentDB" );
     m_dbName = config->Read( "Database Name", "" );
-    m_dbEngine = config->Read( "Database Engine", "" );
+    m_dbEngine = config->Read( "Engine", "" );
+    m_subtype = config->Read( "Subtype", "" );
+    config->SetPath( path );
     SetVendorName( "wxWidgets" );
     SetAppName( "dbhandler" );
     SetAppDisplayName( "DB Handler" );

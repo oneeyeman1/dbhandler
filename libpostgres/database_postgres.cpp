@@ -271,24 +271,6 @@ int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
         std::vector<DatabaseTable *> tableVec = (*it).second;
         for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
         {
-            std::vector<Field *> fields = (*it1)->GetFields();
-            for( std::vector<Field *>::iterator it2 = fields.begin(); it2 < fields.end(); it2++ )
-            {
-                delete (*it2);
-                (*it2) = NULL;
-            }
-            std::map<int,std::vector<FKField *> > fk_fields = (*it1)->GetForeignKeyVector();
-            for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
-            {
-                for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
-                {
-                    delete (*it3);
-                    (*it3) = NULL;
-                }
-            }
-        }
-        for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
-        {
             delete (*it1);
             (*it1) = NULL;
         }
@@ -328,7 +310,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     else
     {
         res1 = PQprepare( m_db, "get_fkeys", m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), 2, NULL );
-        ExecStatusType status = PQresultStatus( res1 );
+        status = PQresultStatus( res1 );
         if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -538,7 +520,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                             else
                                             {
                                                 res4 = PQexecPrepared( m_db, "get_indexes", 2, values1, length1, formats1, 1 );
-                                                ExecStatusType status = PQresultStatus( res4 );
+                                                status = PQresultStatus( res4 );
                                                 if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
                                                 {
                                                     std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -726,7 +708,6 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
             table->SetLabelFontUnderline( atoi( PQgetvalue( res, i, 22 ) ) );
             table->SetLabelFontStrikethrough(( atoi( PQgetvalue( res, i, 23 ) ) ));
             table->SetLabelFontCharacterSet( atoi( PQgetvalue( res, i, 24 ) ) );
-            char *temp = PQgetvalue( res, i, 25 );
             table->SetLabelFontPixelSize( atoi( PQgetvalue( res, i, 25 ) ) );
             table->SetLabelFontName( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 26 ) ) );
             table->SetComment( m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 27 ) ) );
@@ -1127,7 +1108,7 @@ int PostgresDatabase::GetFieldProperties(const char *tableName, const char *sche
     values[1] = NULL;
     delete values[2];
     values[2] = NULL;
-    delete tname;
+    delete[] tname;
     tname = NULL;
     return result;
 }

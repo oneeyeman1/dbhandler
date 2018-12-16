@@ -25,6 +25,7 @@ public:
     WhereHavingPage *GetHavingPage();
     void AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName);
     void HideShowSQLBox(bool show);
+    void SetSynchronisationObject(wxCriticalSection &cs);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
@@ -70,6 +71,7 @@ private:
     wxBoxSizer *sizer;
     WhereHavingPage *m_page2, *m_page4;
     SyntaxPropPage *m_page6;
+    wxCriticalSection *pcs;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };

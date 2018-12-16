@@ -78,10 +78,9 @@ public:
         return m_localCol;
     }
 
-    virtual const std::vector<std::wstring> &GetLocalColumns() const
+    virtual void GetLocalColumns(std::vector<std::wstring> &) const
     {
-        std::vector<std::wstring> temp;
-        return temp;
+        return;
     }
 	
     virtual void SetLocalColumns(const std::vector<std::wstring> &)
@@ -100,10 +99,9 @@ public:
         return m_refCol;
     }
 
-    virtual const std::vector<std::wstring> &GetRefColumns() const
+    virtual void GetRefColumns(std::vector<std::wstring> &) const
     {
-        std::vector<std::wstring> temp;
-        return temp;
+        return;
     }
 
     virtual void SetRefColumns(const std::vector<std::wstring> &)
@@ -127,9 +125,9 @@ public:
         return m_fkTable;
     }
 
-    void SetFKDatabaseTable(const DatabaseTable *table)
+    void SetFKDatabaseTable(const DatabaseTable *dbTable)
     {
-       m_fkTable = const_cast<DatabaseTable *>( table );
+       m_fkTable = const_cast<DatabaseTable *>( dbTable );
     }
 
     /*! \brief Set reference table name */
@@ -202,15 +200,15 @@ public:
     }
 
     /*! \brief Get local column name */
-    virtual const std::vector<std::wstring> &GetLocalColumns() const
+    virtual void GetLocalColumns(std::vector<std::wstring> &temp) const
     {
-        return m_fkColumns;
+        temp = m_fkColumns;
     }
 	
     /*! \brief Get reference column name */
-    virtual const std::vector<std::wstring> &GetRefColumns() const
+    virtual void GetRefColumns(std::vector<std::wstring> &temp) const
     {
-        return m_refColumns;
+        temp = m_refColumns;
     }
 
     virtual void SetRefColumns(const std::vector<std::wstring> &refCol)

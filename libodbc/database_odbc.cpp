@@ -1,3 +1,6 @@
+#if _MSC_VER >= 1900
+#pragma comment(lib, "legacy_stdio_definitions.lib")
+#endif
 #ifdef WIN32
 #include <windows.h>
 #endif
@@ -45,8 +48,8 @@ ODBCDatabase::~ODBCDatabase()
 {
     RETCODE ret;
     std::vector<std::wstring> errorMsg;
-    delete m_connectString;
-    m_connectString = 0;
+    delete[] m_connectString;
+    m_connectString = NULL;
     delete pimpl;
     pimpl = NULL;
     delete odbc_pimpl;
@@ -310,13 +313,13 @@ void ODBCDatabase::uc_to_str_cpy(SQLWCHAR *dest, const std::wstring &src)
     const wchar_t *temp = src.c_str();
     while( *dest )
     {
-        *dest++;
+        dest++;
     }
     while( *temp )
     {
         *dest = *temp;
-        *dest++;
-        *temp++;
+        dest++;
+        temp++;
     }
     *dest++ = 0;
     *dest = 0;
@@ -342,7 +345,7 @@ bool ODBCDatabase::equal(SQLWCHAR *dest, SQLWCHAR *src)
 void ODBCDatabase::copy_uc_to_uc(SQLWCHAR *dest, SQLWCHAR *src)
 {
     while( *dest )
-        *dest++;
+        dest++;
     while( *src )
         *dest++ = *src++;
     *dest = 0;
@@ -389,6 +392,9 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstr
 {
     int result = 0;
     SQLWCHAR *query = NULL;
+    std::wstring qry = L"CREATE DATABASE " + name + L" ";
+    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        qry = L"CREATE DATABASE " + name + L"";
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
@@ -421,7 +427,7 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstr
         GetErrorMessage( errorMsg, 2 );
         result = 1;
     }
-    delete query;
+    delete[] query;
     query = NULL;
     return result;
 }
@@ -429,13 +435,14 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstr
 int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    std::wstring qry = L"DROP DATABASE " + name;
     SQLWCHAR *query = NULL;
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        query = new SQLWCHAR[name.length() + 2];
-        memset( query, '\0', name.length() + 2 );
-        uc_to_str_cpy( query, name );
+        query = new SQLWCHAR[qry.length() + 2];
+        memset( query, '\0', qry.length() + 2 );
+        uc_to_str_cpy( query, qry );
         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -462,7 +469,7 @@ int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstrin
         GetErrorMessage( errorMsg, 2 );
         result = 1;
     }
-    delete query;
+    delete[] query;
     query = NULL;
     return result;
 }
@@ -481,10 +488,11 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     {
         pimpl = new Impl;
         pimpl->m_type = L"ODBC";
+        pimpl->m_pgLogFile = L"";
     }
     if( !odbc_pimpl )
         odbc_pimpl = new ODBCImpl;
-    int pos = selectedDSN.find( L';' );
+    std::wstring::size_type pos = selectedDSN.find( L';' );
     if( pos == std::wstring::npos )
         connectingDSN = selectedDSN;
     else
@@ -525,8 +533,8 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     uc_to_str_cpy( connectStrIn, L";Driver=" );
                     copy_uc_to_uc( connectStrIn, driver );
                     if( equal( temp, driver ) )
-                        uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1" );
-                    delete temp;
+                        uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1;ShowSystemTables=1;" );
+                    delete[] temp;
                     temp = NULL;
                     if( user && password )
                     {
@@ -535,6 +543,10 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                         uc_to_str_cpy( connectStrIn, L";PWD=" );
                         copy_uc_to_uc( connectStrIn, password );
                     }
+                    delete[] user;
+                    user = NULL;
+                    delete[] password;
+                    password = NULL;
                     ret = SQLSetConnectAttr( m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0 );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
@@ -580,7 +592,6 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                     else
                                     {
 /**************************************/
-                                        SQLWCHAR *query;
                                         std::wstring query8, query9, query10, query11;
                                         SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                                         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
@@ -592,15 +603,17 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                         {
                                             if( pimpl->m_subtype == L"Microsoft SQL Server" )
                                             {
-                                                std::wstring query8 = L"IF EXISTS(SELECT * FROM sys.databases WHERE name = \'" +  pimpl->m_dbName + L"\' AND is_broker_enabled = 0) ALTER DATABASE " + pimpl->m_dbName + L" SET ENABLE_BROKER";
-                                                std::wstring query9 = L"IF NOT EXISTS(SELECT * FROM sys.service_queues WHERE name = \'EventNotificationQueue\') CREATE QUEUE dbo.EventNotificationQueue";
-                                                std::wstring query10 = L"IF NOT EXISTS(SELECT * FROM sys.services WHERE name = \'//" + pimpl->m_dbName + L"/EventNotificationService\') CREATE SERVICE [//" + pimpl->m_dbName +L"/EventNotificationService] ON QUEUE dbo.EventNotificationQueue([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])";
-                                                std::wstring query11 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEvents\') CREATE EVENT NOTIFICATION SchemaChangeEvents ON DATABASE FOR DDL_TABLE_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
+                                                query8 = L"IF EXISTS(SELECT * FROM sys.databases WHERE name = \'" +  pimpl->m_dbName + L"\' AND is_broker_enabled = 0) ALTER DATABASE " + pimpl->m_dbName + L" SET ENABLE_BROKER";
+                                                query9 = L"IF NOT EXISTS(SELECT * FROM sys.service_queues WHERE name = \'EventNotificationQueue\') CREATE QUEUE dbo.EventNotificationQueue";
+                                                query10 = L"IF NOT EXISTS(SELECT * FROM sys.services WHERE name = \'//" + pimpl->m_dbName + L"/EventNotificationService\') CREATE SERVICE [//" + pimpl->m_dbName +L"/EventNotificationService] ON QUEUE dbo.EventNotificationQueue([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])";
+                                                query11 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsTable\') CREATE EVENT NOTIFICATION SchemaChangeEventsTable ON DATABASE FOR DDL_TABLE_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
+                                                std::wstring query12 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsIndex\') CREATE EVENT NOTIFICATION SchemaChangeEventsIndex ON DATABASE FOR DDL_INDEX_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
+                                                std::wstring query13 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsView\') CREATE EVENT NOTIFICATION SchemaChangeEventsView ON DATABASE FOR DDL_VIEW_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
                                                 query = new SQLWCHAR[query8.size() + 2];
                                                 memset( query, '\0', query8.size() + 2 );
                                                 uc_to_str_cpy( query, query8 );
                                                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                delete query;
+                                                delete[] query;
                                                 query = NULL;
                                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                 {
@@ -613,7 +626,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                     memset( query, '\0', query9.size() + 2 );
                                                     uc_to_str_cpy( query, query9 );
                                                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                    delete query;
+                                                    delete[] query;
                                                     query = NULL;
                                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                     {
@@ -626,7 +639,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                         memset( query, '\0', query10.size() + 2 );
                                                         uc_to_str_cpy( query, query10 );
                                                         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                        delete query;
+                                                        delete[] query;
                                                         query = NULL;
                                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                         {
@@ -639,35 +652,93 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                             memset( query, '\0', query11.size() + 2 );
                                                             uc_to_str_cpy( query, query11 );
                                                             ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                            delete query;
+                                                            delete[] query;
                                                             query = NULL;
                                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                             {
                                                                 GetErrorMessage( errorMsg, 1 );
                                                                 result = 1;
                                                             }
+                                                            else
+                                                            {
+                                                                query = new SQLWCHAR[query12.size() + 2];
+                                                                memset( query, '\0', query12.size() + 2 );
+                                                                uc_to_str_cpy( query, query12 );
+                                                                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                                                delete[] query;
+                                                                query = NULL;
+                                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                                {
+                                                                    GetErrorMessage( errorMsg, 1 );
+                                                                    result = 1;
+                                                                }
+                                                                else
+                                                                {
+                                                                    query = new SQLWCHAR[query13.size() + 2];
+                                                                    memset( query, '\0', query13.size() + 2 );
+                                                                    uc_to_str_cpy( query, query13 );
+                                                                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                                                    delete[] query;
+                                                                    query = NULL;
+                                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                                    {
+                                                                        GetErrorMessage( errorMsg, 1 );
+                                                                        result = 1;
+                                                                    }
+                                                                }
+                                                            }
                                                         }
+                                                    }
+                                                }
+                                            }
+                                            if( pimpl->m_subtype == L"PostgreSQL" && ( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor < 3 ) )
+                                                    AskPostgresForLogFile();
+                                            else if( pimpl->m_subtype == L"PostgreSQL" )
+                                            {
+                                                query8 = L"IF NOT EXIST(SELECT 1 FROM pg_proc AS proc, pg_namespace AS ns WHERE proc.pronamespace = ns.oid AND ns.nspname = \'public\' AND proname = \'watch_schema_changes\') CREATE FUNCTION watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
+                                                query9 = L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE watch_schema_changes();";
+                                                query = new SQLWCHAR[query8.length() + 2];
+                                                memset( query, '\0', query8.length() + 2 );
+                                                uc_to_str_cpy( query, query8 );
+                                                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                                delete[] query;
+                                                query = NULL;
+                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                {
+                                                    GetErrorMessage( errorMsg, 1 );
+                                                    result = 1;
+                                                }
+                                                else
+                                                {
+                                                    query = new SQLWCHAR[query9.length() + 2];
+                                                    memset( query, '0', query9.length() + 2 );
+                                                    uc_to_str_cpy( query, query9 );
+                                                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                                    delete[] query;
+                                                    query = NULL;
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                    {
+                                                        GetErrorMessage( errorMsg, 1 );
+                                                        result = 1;
                                                     }
                                                 }
                                             }
                                         }
                                     }
-                                    if( pimpl->m_subtype == L"PostgreSQL" )
-				    {
-                                        if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 3 )
-                                        {
-                                            std::wstring query8 = L"IF NOT EXIST(SELECT 1 FROM pg_proc AS proc, pg_namespace AS ns WHERE proc.pronamespace = ns.oid AND ns.nspname = \'public\' AND proname = \'watch_schema_changes\') CREATE FUNCTION watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
-                                            std::wstring query9 = L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE watch_schema_changes();";
-                                        }
-				    }
-                                    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    if( pimpl->m_subtype == L"PostgreSQL" && ( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor <= 2 ) )
                                     {
-                                        GetErrorMessage( errorMsg, 2 );
-                                        result = 1;
+                                    }
+                                    else
+                                    {
+                                        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 2 );
+                                            result = 1;
+                                        }
                                     }
 /*****************************************/
-                                    else
+                                    if( pimpl->m_subtype != L"Sybase" && pimpl->m_subtype != L"ASE" )
                                     {
                                         ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -676,22 +747,22 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                             result = 1;
                                             ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                                         }
+                                    }
+                                    if( !result )
+                                    {
+                                        if( !connectToDatabase )
+                                        {
+                                            if( ServerConnect( dbList, errorMsg ) )
+                                            {
+                                                result = 1;
+                                            }
+                                        }
                                         else
                                         {
-                                            if( !connectToDatabase )
+                                            if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
                                             {
-                                                if( ServerConnect( dbList, errorMsg ) )
-                                                {
-                                                    result = 1;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
-                                                {
-                                                    result = 1;
-                                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                                }
+                                                result = 1;
+                                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                                             }
                                         }
                                     }
@@ -729,7 +800,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     }
     else
         m_isConnected = true;
-    delete query;
+    delete[] query;
     query = NULL;
     return result;
 }
@@ -777,13 +848,13 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     }
     if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
     {
-        query1 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatcol' AND type = 'U') EXECUTE(CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam )));";
-        query2 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatedt' AND type = 'U') EXECUTE(CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn )));";
-        query3 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatfmt' AND type = 'U') EXECUTE(CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name )));";
-        query4 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcattbl' AND type = 'U') EXECUTE(CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr )));";
-        query5 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatvld' AND type = 'U') EXECUTE(CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name )));";
-        query6 = L"IF NOT EXISTS(SELECT o.name, i.name FROM tempdb..sysobjects o, tempdb..sysindexes i WHERE o.id = i.id AND o.name='abcattbl' AND i.name='abcattbl_tnam_ownr') CREATE INDEX \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC)";
-        query7 = L"IF NOT EXISTS(SELECT o.name, i.name FROM tempdb..sysobjects o, tempdb..sysindexes i WHERE o.id = i.id AND o.name='abcatcol' AND i.name='abcatcol_tnam_ownr_cnam') CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC)";
+        query1 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatcol' AND type = 'U') EXECUTE(\"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))\")";
+        query2 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatedt' AND type = 'U') EXECUTE(\"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ))\")";
+        query3 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatfmt' AND type = 'U') EXECUTE(\"CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ))\")";
+        query4 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcattbl' AND type = 'U') EXECUTE(\"CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))\")";
+        query5 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatvld' AND type = 'U') EXECUTE(\"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))\")";
+        query6 = L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name='abcattbl' AND i.name='abcattbl_tnam_ownr') EXECUTE(\"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC)\")";
+        query7 = L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name='abcatcol' AND i.name='abcatcol_tnam_ownr_cnam') EXECUTE(\"CREATE INDEX abcatcol_tnam_ownr_cnam ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\")";
     }
     if( pimpl->m_subtype == L"Oracle" )
     {
@@ -802,41 +873,41 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         memset( query, '\0', query1.size() + 2 );
         uc_to_str_cpy( query, query1 );
         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        delete query;
+        delete[] query;
         query = NULL;
-        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
         {
             query = new SQLWCHAR[query2.length() + 2];
             memset( query, '\0', query2.size() + 2 );
             uc_to_str_cpy( query, query2 );
             ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-            delete query;
+            delete[] query;
             query = NULL;
-            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
             {
                 query = new SQLWCHAR[query3.length() + 2];
                 memset( query, '\0', query3.size() + 2 );
                 uc_to_str_cpy( query, query3 );
                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                delete query;
+                delete[] query;
                 query = NULL;
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
                 {
                     query = new SQLWCHAR[query4.length() + 2];
                     memset( query, '\0', query4.size() + 2 );
                     uc_to_str_cpy( query, query4 );
                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                    delete query;
+                    delete[] query;
                     query = NULL;
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
                     {
                         query = new SQLWCHAR[query5.length() + 2];
                         memset( query, '\0', query5.size() + 2 );
                         uc_to_str_cpy( query, query5 );
                         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                        delete query;
+                        delete[] query;
                         query = NULL;
-                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
                         {
                             if( ( pimpl->m_subtype == L"PostgreSQL" && pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 5 ) || pimpl->m_subtype != L"PostgreSQL" )
                             {
@@ -844,17 +915,17 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                                 memset( query, '\0', query6.size() + 2 );
                                 uc_to_str_cpy( query, query6 );
                                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                delete query;
+                                delete[] query;
                                 query = NULL;
-                                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
                                 {
                                     query = new SQLWCHAR[query7.length() + 2];
                                     memset( query, '\0', query7.size() + 2 );
                                     uc_to_str_cpy( query, query7 );
                                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                    delete query;
+                                    delete[] query;
                                     query = NULL;
-                                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
                                     {
                                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
                                     }
@@ -971,27 +1042,10 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
         std::vector<DatabaseTable *> tableVec = (*it).second;
         for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
         {
-            std::vector<Field *> fields = (*it1)->GetFields();
-            for( std::vector<Field *>::iterator it2 = fields.begin(); it2 < fields.end(); it2++ )
-            {
-                delete (*it2);
-                (*it2) = NULL;
-            }
-            std::map<int,std::vector<FKField *> > fk_fields = (*it1)->GetForeignKeyVector();
-            for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
-            {
-                for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
-                {
-                    delete (*it3);
-                    (*it3) = NULL;
-                }
-            }
-        }
-        for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
-        {
             delete (*it1);
             (*it1) = NULL;
         }
+        (*it).second.clear();
     }
     delete pimpl;
     pimpl = NULL;
@@ -1002,16 +1056,16 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     RETCODE ret;
     std::wstring query4;
-    int result = 0, bufferSize = 1024;
+    int result = 0, bufferSize = 1024, count = 0;
     std::vector<Field *> fields;
     std::wstring owner;
     std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol, cat;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::vector<std::wstring> indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
-    SQLWCHAR *catalogName = NULL, *schemaName = NULL, *tableName = NULL, *szSchemaName = NULL, *szTableName = NULL;
+    SQLWCHAR *catalogName = NULL, *schemaName = NULL, *tableName = NULL;
     SQLWCHAR userName[1024];
-    SQLSMALLINT numCols = 0;
+//    SQLSMALLINT numCols = 0;
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -1066,6 +1120,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     result = AddDropTable( cat, schema, table, true, errorMsg );
                     if( result )
                         break;
+                    count++;
                 }
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                 {
@@ -1097,12 +1152,10 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     for( int i = 0; i < 5; i++ )
     {
         free( catalog[i].TargetValuePtr );
+        catalog[i].TargetValuePtr = NULL;
     }
-    delete szTableName;
-    szTableName = NULL;
-    delete szSchemaName;
-    szSchemaName = NULL;
     free( catalog );
+    catalog = NULL;
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -1111,6 +1164,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     else
         m_hstmt = 0;
+    if( !result )
+        m_numOfTables = count;
     return result;
 }
 
@@ -1127,6 +1182,8 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+        delete[] query;
+        query = NULL;
         if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -1134,18 +1191,16 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
         }
         else
         {
-            delete query;
-            query = NULL;
             query = new SQLWCHAR[command.length() + 2];
             memset( query, '\0', command.length() + 2 );
             uc_to_str_cpy( query, command );
             bool exists = IsIndexExists( index_name, schemaName, tableName, errorMsg );
             if( exists )
             {
-                std::wstring temp = L"Index ";
-                temp += index_name;
-                temp += L" already exists.";
-                errorMsg.push_back( temp );
+                std::wstring temp1 = L"Index ";
+                temp1 += index_name;
+                temp1 += L" already exists.";
+                errorMsg.push_back( temp1 );
                 result = 1;
             }
             else if( !errorMsg.empty() )
@@ -1153,34 +1208,44 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
             else
             {
                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                delete[] query;
+                query = NULL;
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, 1, m_hstmt );
                     result = 1;
                 }
+                if( result == 1 )
+                {
+                    query = new SQLWCHAR[10];
+                    memset( query, '\0', 10 );
+                    uc_to_str_cpy( query, L"ROLLBACK" );
+                }
+                else
+                {
+                    query = new SQLWCHAR[8];
+                    memset( query, '\0', 8 );
+                    uc_to_str_cpy( query, L"COMMIT" );
+                }
+                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                delete[] query;
+                query = NULL;
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                else
+                    m_hstmt = 0;
             }
         }
-        if( result == 1 )
-            uc_to_str_cpy( query, L"ROLLBACK" );
-        else
-            uc_to_str_cpy( query, L"COMMIT" );
-        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 1, m_hstmt );
-            result = 1;
-        }
-        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 1, m_hstmt );
-            result = 1;
-        }
-        else
-            m_hstmt = 0;
     }
-    delete query;
-    query = NULL;
     return result;
 }
 
@@ -1288,13 +1353,13 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
     }
     else
         m_hstmt = 0;
-    delete index_name;
+    delete[] index_name;
     index_name = NULL;
-    delete table_name;
+    delete[] table_name;
     table_name = NULL;
-    delete schema_name;
+    delete[] schema_name;
     schema_name = NULL;
-    delete query;
+    delete[] query;
     query = NULL;
     return exists;
 }
@@ -1306,8 +1371,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLHDBC hdbc_tableProp = 0;
     SQLHSTMT stmt_tableProp = 0;
     SQLWCHAR *qry = NULL, *table_name = NULL, *owner_name = NULL;
-    unsigned short dataFontSize, dataFontWeight = 0, dataFontUnderline, dataFontStriken, headingFontSize, headingFontWeight, headingFontUnderline, headingFontStriken, labelFontSize, labelFontWeight, labelFontUnderline, labelFontStriken;
-    unsigned short dataFontCharacterSet, headingFontCharacterSet, labelFontCharacterSet, dataFontPixelSize, headingFontPixelSize, labelFontPixelSize;
+    unsigned short dataFontSize = 0, dataFontWeight = 0, dataFontUnderline = 0, dataFontStriken = 0, headingFontSize = 0, headingFontWeight = 0, headingFontUnderline = 0, headingFontStriken = 0, labelFontSize = 0, labelFontWeight = 0, labelFontUnderline = 0, labelFontStriken = 0;
+    unsigned short dataFontCharacterSet = 0, headingFontCharacterSet = 0, labelFontCharacterSet = 0, dataFontPixelSize = 0, headingFontPixelSize = 0, labelFontPixelSize = 0;
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontName[20], headingFontName[20], labelFontName[20];
     SQLWCHAR comments[225];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = SQL_NTS, cbDataFontUnderline = SQL_NTS, cbDataFontStriken = SQL_NTS, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
@@ -1713,11 +1778,11 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             }
         }
     }
-    delete qry;
+    delete[] qry;
     qry = NULL;
-    delete table_name;
+    delete[] table_name;
     table_name = NULL;
-    delete owner_name;
+    delete[] owner_name;
     owner_name = NULL;
     return 0;
 }
@@ -1756,7 +1821,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
                 std::wstring tableOwner = const_cast<DatabaseTable *>( table )->GetTableOwner();
                 unsigned long tableId = const_cast<DatabaseTable *>( table )->GetTableId();
-                delete qry;
+                delete[] qry;
                 qry = NULL;
                 exist = IsTablePropertiesExist( table, errorMsg );
                 if( errorMsg.size() != 0 )
@@ -2032,7 +2097,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                                 result = 1;
                             }
                         }
-                        delete qry;
+                        delete[] qry;
                         qry = NULL;
                     }
                 }
@@ -2044,7 +2109,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
         GetErrorMessage( errorMsg, 2 );
         result = 1;
     }
-    delete qry;
+    delete[] qry;
     qry = NULL;
     if( result == 1 )
         query = L"ROLLBACK";
@@ -2067,7 +2132,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     }
     else
         m_hstmt = 0;
-    delete qry;
+    delete[] qry;
     qry = NULL;
     return result;
 }
@@ -2134,11 +2199,11 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
             }
         }
     }
-    delete qry;
+    delete[] qry;
     qry = NULL;
-    delete table_name;
+    delete[] table_name;
     table_name = NULL;
-    delete owner_name;
+    delete[] owner_name;
     owner_name = NULL;
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -2309,7 +2374,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
             }
         }
     }
-    delete qry;
+    delete[] qry;
     qry = NULL;
     return result;
 }
@@ -2438,7 +2503,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
                 else
                 {
                     std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
-                    int size = fKeys.size();
+                    std::map<int, std::vector<FKField *> >::size_type size = fKeys.size();
                     for( unsigned int i = 0; i < foreignKeyFields.size(); i++ )
                         fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp ) );
                 }
@@ -2451,7 +2516,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
                 else
                     m_hstmt = 0;
             }
-            delete qry;
+            delete[] qry;
             qry = NULL;
         }
         else if( logOnly )
@@ -2495,7 +2560,7 @@ int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::ws
         else
             m_hstmt = 0;
     }
-    delete qry;
+    delete[] qry;
     qry = NULL;
     return result;
 }
@@ -2631,11 +2696,11 @@ int ODBCDatabase::GetTableId(DatabaseTable *table, std::vector<std::wstring> &er
             }
         }
     }
-    delete qry;
+    delete[] qry;
     qry = NULL;
-    delete tname;
+    delete[] tname;
     tname = NULL;
-    delete sname;
+    delete[] sname;
     sname = NULL;
     if( stmt )
     {
@@ -2762,7 +2827,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
                                             tableOwner = L"dbo";
                                             result = 0;
                                         }
-										else
+                                        else
                                         {
                                             GetErrorMessage( errorMsg, 1, stmt );
                                             result = 1;
@@ -2831,13 +2896,13 @@ int ODBCDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstri
             }
         }
     }
-    delete qry;
+    delete[] qry;
     qry = NULL;
-    delete table_name;
+    delete[] table_name;
     table_name = NULL;
-    delete schema_name;
+    delete[] schema_name;
     schema_name = NULL;
-    delete owner;
+    delete[] owner;
     owner = NULL;
     return result;
 }
@@ -2896,7 +2961,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     }
     if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
     {
-        query = L"SELECT @@version AS version, @@version_as_int / 1000 AS major;";
+        query = L"SELECT @@version_number AS version, @@version_as_integer / 1000 AS major";
     }
     if( pimpl->m_subtype == L"Oracle" )
     {
@@ -2968,7 +3033,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         }
         m_hstmt = 0;
     }
-    delete qry;
+    delete[] qry;
     qry = NULL;
     return result;
 }
@@ -3036,7 +3101,7 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
         }
         else
         {
-            RETCODE ret = SQLExecDirect( m_hstmt, qry2, SQL_NTS );
+            ret = SQLExecDirect( m_hstmt, qry2, SQL_NTS );
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
                 ret = SQLFetch( m_hstmt );
@@ -3071,13 +3136,13 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
             }
         }
     }
-    delete qry1;
+    delete[] qry1;
     qry1 = NULL;
-    delete qry2;
+    delete[] qry2;
     qry2 = NULL;
-    delete qry3;
+    delete[] qry3;
     qry3 = NULL;
-    delete qry4;
+    delete[] qry4;
     qry4 = NULL;
     return result;
 }
@@ -3137,7 +3202,7 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
             else
                 m_hstmt = 0;
         }
-        delete qry;
+        delete[] qry;
         qry = NULL;
     }
     else
@@ -3149,19 +3214,535 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
 
 int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    int result = 0, ret, ops = 0, bufferSize = 1024;
+    SQLSMALLINT *columnNameLen, numCols = 0, *columnDataType, *colummnDataDigits, *columnDataNullable;
+    SQLULEN *columnDataSize;
+    SQLWCHAR **columnName, **columnData;
+    SQLLEN *columnDataLen;
+    std::wstring tableName, command, operation, schemaName, catalogName;
+    SQLWCHAR *cat = NULL, *schema = NULL, *table = NULL;
+    SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        std::wstring sub_query1 = L"DECLARE @TargetDialogHandle UNIQUEIDENTIFIER; ";
-        std::wstring sub_query2 = L"DECLARE @EventMessage XML; ";
-        std::wstring sub_query3 = L"DECLARE @EventMessageTypeName sysname; ";
-        std::wstring sub_query4 = L"WAITFOR( RECEIVE TOP(1) @TargetDialogHandle = conversation_handle, @EventMessage = CONVERT(XML, message_body), @EventMessageTypeName = message_type_name FROM dbo.EventNotificationQueue ), TIMEOUT 1000;";
-        std::wstring sub_query5 = L"SELECT @TargetDialogHandle AS DialogHandle, @EventMessageTypeName AS MessageTypeName, @EventMessage.value('(/EVENT_INSTANCE/TSQLCommand/CommandText)[1]','nvarchar(max)') AS TSQLCommand, @EventMessage.value('(/EVENT_INSTANCE/ObjectName)[1]', 'varchar(128)' ) as TableName";
-        std::wstring query = sub_query1 + sub_query2 + sub_query3 + sub_query4 + sub_query5;
-        SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
-        memset( qry, '\0', query.length() + 2 );
-        uc_to_str_cpy( qry, query );
+        GetErrorMessage( errorMsg, 2, m_hstmt );
+        result = 1;
     }
+    else
+    {
+        if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        {
+            long count = 0;
+            bool nocount = false;
+            SQLLEN cbNocount;
+            SQLLEN messageType, sqlCommand;
+            std::wstring sub_query1 = L"DECLARE @TargetDialogHandle UNIQUEIDENTIFIER; ";
+            std::wstring sub_query2 = L"DECLARE @EventMessage XML; ";
+            std::wstring sub_query3 = L"DECLARE @EventMessageTypeName sysname; ";
+            std::wstring sub_query4 = L"WAITFOR( RECEIVE @TargetDialogHandle = conversation_handle, @EventMessage = CONVERT(XML, message_body), @EventMessageTypeName = message_type_name FROM dbo.EventNotificationQueue ), TIMEOUT 1000;";
+            std::wstring sub_query5 = L"SELECT @EventMessage.value('(/EVENT_INSTANCE/TSQLCommand/CommandText)[1]','nvarchar(max)') AS TSQLCommand, CASE WHEN @EventMessage.value('(/EVENT_INSTANCE/TargetObjectName)[1]', 'varchar(128)' ) IS NULL THEN @EventMessage.value('(/EVENT_INSTANCE/ObjectName)[1]', 'varchar(128)' ) ELSE @EventMessage.value('(/EVENT_INSTANCE/TargetObjectName)[1]', 'varchar(128)' ) END AS TableName";
+            std::wstring query1 = L"SET NOCOUNT OFF";
+            std::wstring query = sub_query1 + sub_query2 + sub_query3 + sub_query4 + sub_query5;
+            ret = SQLExecDirect( m_hstmt, (SQLWCHAR *) L"SELECT CASE WHEN (512 & @@OPTIONS) = 512 THEN 1 ELSE 0 END", SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+            else
+            {
+                ret = SQLBindCol( m_hstmt, 1, SQL_C_LONG, &count, 1, &cbNocount );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                else
+                {
+                    ret = SQLFetch( m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                        }
+                        m_hstmt = 0;
+                    }
+                }
+            }
+            if( m_hstmt == 0 )
+            {
+                if( count == 1 )
+                    nocount = true;
+                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                if( !nocount )
+                    query = L"SET NOCOUNT ON; " + query;
+                SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+                memset( qry, '\0', query.length() + 2 );
+                uc_to_str_cpy( qry, query );
+                ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                else
+                {
+                    ret = SQLNumResultCols( m_hstmt, &numCols );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
+                    }
+                    else
+                    {
+                        columnNameLen = new SQLSMALLINT [numCols];
+                        columnDataType = new SQLSMALLINT [numCols];
+                        columnDataSize = new SQLULEN [numCols];
+                        colummnDataDigits = new SQLSMALLINT [numCols];
+                        columnDataNullable = new SQLSMALLINT [numCols];
+                        columnData = new SQLWCHAR *[numCols];
+                        columnDataLen = new SQLLEN [numCols];
+                        columnName = new SQLWCHAR *[numCols];
+                        for( int i = 0; i < numCols; i++ )
+                        {
+                            columnName[i] = new SQLWCHAR[256];
+                            ret = SQLDescribeCol( m_hstmt, i + 1, columnName[i], 256, &columnNameLen[i], &columnDataType[i], &columnDataSize[i], &colummnDataDigits[i], &columnDataNullable[i] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                result = 1;
+                                break;
+                            }
+                            if( columnDataSize[i] == 0 )
+                                columnDataSize[i] = 2048;
+                            columnData[i] = new SQLWCHAR[(unsigned int) columnDataSize[i] + 1];
+                            memset( columnData[i], '\0', (unsigned int) columnDataSize[i] + 1 );
+                            switch( columnDataType[i] )
+                            {
+                                case SQL_INTEGER:
+                                    columnDataType[i] = SQL_C_LONG;
+                                    break;
+                                case SQL_VARCHAR:
+                                case SQL_CHAR:
+                                case SQL_WVARCHAR:
+                                case SQL_WCHAR:
+                                    columnDataType[i] = SQL_C_WCHAR;
+                                    break;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLExecute( m_hstmt );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                result = 1;
+                            }
+                            else
+                            {
+                                ret = SQLFetch( m_hstmt );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                                {
+                                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                                    result = 1;
+                                }
+                                else if( ret != SQL_NO_DATA )
+                                {
+                                    ret = SQLGetData( m_hstmt, 1, columnDataType[0], columnData[0], columnDataSize[0], &messageType );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                                        result = 1;
+                                    }
+                                    else
+                                    {
+                                        ret = SQLGetData( m_hstmt, 2, columnDataType[1], columnData[1], columnDataSize[1], &sqlCommand );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                                            result = 1;
+                                        }
+                                    }
+                                }
+                                else if( ret == SQL_NO_DATA )
+                                    result = -1;
+                                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                                    result = 1;
+                                }
+                                m_hstmt = 0;
+                                delete[] qry;
+                                qry = NULL;
+                            }
+                            if( !result )
+                            {
+                                str_to_uc_cpy( tableName, columnData[1] );
+                                str_to_uc_cpy( command, columnData[0] );
+                                trim( tableName );
+                                trim( command );
+                                if( !command.empty() )
+                                {
+                                    std::wstring::size_type pos = command.find( L' ' );
+                                    operation = command.substr( 0, pos );
+                                    command = command.substr( pos + 1 );
+                                    trim( command );
+                                    pos = command.find( L' ' );
+                                    std::wstring element = command.substr( 0, command.find( L' ' ) );
+                                    std::transform( element.begin(), element.end(), element.begin(), towupper );
+                                    if( element == L"TABLE" || element == L"VIEW" )
+                                    {
+                                        if( operation == L"DROP" )
+                                            ops = 1;
+                                        if( operation == L"CREATE" )
+                                            ops = 0;
+                                        if( operation == L"ALTER" )
+                                            ops = 2;
+                                    }
+                                    if( element == L"INDEX" )
+                                    {
+                                        ops = 2;
+                                    }
+                                    pos = tableName.find( L'.' );
+                                    if( pos != std::wstring::npos )
+                                    {
+                                        schemaName = tableName.substr( 0, pos );
+                                        tableName = tableName.substr( pos + 1 );
+                                    }
+                                    else
+                                    {
+                                        schemaName = L"";
+                                    }
+                                    if( schemaName != L"" )
+                                    {
+                                        schema = new SQLWCHAR[schemaName.length() + 2];
+                                        memset( schema, '\0', schemaName.length() + 2 );
+                                        uc_to_str_cpy( schema, schemaName );
+                                    }
+                                    table = new SQLWCHAR[tableName.length() + 2];
+                                    memset( table, '\0', tableName.length() + 2 );
+                                    uc_to_str_cpy( table, tableName );
+                                    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 2, m_hdbc );
+                                        result = 1;
+                                    }
+                                    else
+                                    {
+                                        for( int i = 0; i < 5; i++ )
+                                        {
+                                            catalog[i].TargetType = SQL_C_WCHAR;
+                                            catalog[i].BufferLength = ( bufferSize + 1 );
+                                            catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
+                                            ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                result = 1;
+                                                break;
+                                            }
+                                        }
+                                        if( !result )
+                                        {
+                                            ret = SQLTables( m_hstmt, NULL, 0, schema, SQL_NTS, table, SQL_NTS, NULL, 0 );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                result = 1;
+                                            }
+                                            else
+                                            {
+                                                ret = SQLFetch( m_hstmt );
+                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                                                {
+                                                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                    result = 1;
+                                                }
+                                                else if( ret != SQL_NO_DATA )
+                                                {
+                                                    if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
+                                                        cat = (SQLWCHAR *) catalog[0].TargetValuePtr;
+                                                    if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
+                                                        schema = (SQLWCHAR *) catalog[1].TargetValuePtr;
+                                                    if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
+                                                        table = (SQLWCHAR *) catalog[2].TargetValuePtr;
+                                                    catalogName = L"";
+                                                    schemaName = L"";
+                                                    tableName = L"";
+                                                    str_to_uc_cpy( catalogName, cat );
+                                                    str_to_uc_cpy( schemaName, schema );
+                                                    str_to_uc_cpy( tableName, table );
+                                                    if( schemaName == L"" && catalogName != L"" )
+                                                    {
+                                                        schema = cat;
+                                                        copy_uc_to_uc( schema, cat );
+                                                    }
+                                                    if( ops == 0 )
+                                                        AddDropTable( catalogName, schemaName, tableName, true, errorMsg );
+                                                    else
+                                                    {
+                                                        bool found = false;
+                                                        std::vector<DatabaseTable *> tables = pimpl->m_tables[pimpl->m_dbName];
+                                                        for( std::vector<DatabaseTable *>::iterator it = tables.begin(); it < tables.end() && !found; ++it )
+                                                        {
+                                                            if( (*it)->GetSchemaName() == schemaName && (*it)->GetTableName() == tableName )
+                                                            {
+                                                                 delete (*it);
+                                                                (*it) = NULL;
+                                                                found = true;
+                                                            }
+                                                        }
+                                                        if( ops == 2 )
+                                                            AddDropTable( catalogName, schemaName, tableName, true, errorMsg );
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                                            result = 1;
+                                        }
+                                        for( int i = 0; i < 5; i++ )
+                                        {
+                                            free( catalog[i].TargetValuePtr );
+                                            catalog[i].TargetValuePtr = NULL;
+                                        }
+                                    }
+                                }
+                            }
+                            delete[] table;
+                            delete[] schema;
+                            table = NULL;
+                            schema = NULL;
+                            for( int i = 0; i < numCols; i++ )
+                            {
+                                delete columnData[i];
+                                columnData[i] = NULL;
+                                delete columnName[i];
+                                columnName[i] = NULL;
+                            }
+                            delete[] columnNameLen;
+                            columnNameLen = NULL;
+                            delete[] columnDataType;
+                            columnDataType = NULL;
+                            delete[] columnDataSize;
+                            columnDataSize = NULL;
+                            delete[] colummnDataDigits;
+                            colummnDataDigits = NULL;
+                            delete[] columnDataNullable;
+                            columnDataNullable = NULL;
+                            delete[] columnData;
+                            columnData = NULL;
+                            delete[] columnDataLen;
+                            columnDataLen = NULL;
+                            delete[] columnName;
+                            columnName = NULL;
+                        }
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                        }
+                    }
+                }
+                if( !nocount )
+                {
+                    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 2, m_hdbc );
+                        result = 1;
+                    }
+                    else
+                    {
+                        qry = new SQLWCHAR[query1.length() + 2];
+                        memset( qry, '\0', query1.length() + 2 );
+                        uc_to_str_cpy( qry, query1 );
+                        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                        }
+                        delete[] qry;
+                        qry = NULL;
+                    }
+                }
+            }
+            free( catalog );
+            catalog = NULL;
+        }
+        if( pimpl->m_subtype == L"PostgreSQL" )
+        {
+            if( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor < 3 )
+            {
+				std::wstring query = L"SELECT count(*) FROM information_schema.tables";
+				SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+				memset( qry, '\0', query.length() + 2 );
+				uc_to_str_cpy( qry, query );
+                int count;
+                SQLLEN cbCount;
+                ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                else
+                {
+                    ret = SQLBindCol( m_hstmt, 1, SQL_C_SLONG, &count, 0, &cbCount );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                        result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLFetch( m_hstmt );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                            result = 1;
+                        }
+                        else
+                        {
+                            delete[] qry;
+                            qry = NULL;
+                            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                result = 1;
+                            }
+                            else
+                            {
+                                m_hstmt = 0;
+                                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, 2, m_hstmt );
+                                    result = 1;
+                                }
+                                else
+                                {
+                                    if( count > m_numOfTables || count < m_numOfTables )
+                                    {
+                                        query = L"SELECT table_schema, table_name FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
+                                        SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+                                        memset( qry, '\0', query.length() + 2 );
+                                        uc_to_str_cpy( qry, query );
+                                        SQLWCHAR *table_schema, *table_name;
+                                        SQLLEN cbCountSchema, cbCountName;
+                                        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                                            result = 1;
+                                        }
+                                        else
+                                        {
+                                            SQLSMALLINT columnNameLen, columnDataType, columnDataDigits, columnDataNullable;
+                                            SQLULEN columnDataSize;
+                                            ret = SQLDescribeCol( m_hstmt, 1, NULL, 0, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                result = 1;
+                                            }
+                                            else
+                                            {
+                                                table_schema = new SQLWCHAR[columnDataSize + 1];
+                                                memset( table_schema, '\0', columnDataSize + 1 );
+                                                ret = SQLDescribeCol( m_hstmt, 2, NULL, 0, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
+                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                {
+                                                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                    result = 1;
+                                                }
+                                                else
+                                                {
+                                                    table_name = new SQLWCHAR[columnDataSize + 1];
+                                                    memset( table_name, '\0', columnDataSize + 1 );
+                                                    std::vector<std::wstring> temp = pimpl->m_tableNames;
+                                                    for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
+                                                    {
+                                                        ret = SQLGetData( m_hstmt, 1, SQL_C_WCHAR, table_schema, 256, &cbCountSchema );
+                                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                        {
+                                                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                            result = 1;
+                                                        }
+                                                        else
+                                                        {
+                                                            ret = SQLGetData( m_hstmt, 2, SQL_C_WCHAR, table_name, 256, &cbCountName );
+                                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                            {
+                                                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                                result = 1;
+                                                            }
+                                                            else
+                                                            {
+                                                                std::wstring tname, sname;
+                                                                str_to_uc_cpy( sname, table_schema );
+                                                                str_to_uc_cpy( tname, table_name );
+                                                                if( count > m_numOfTables )
+                                                                {
+                                                                    if( std::find( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ) != pimpl->m_tableNames.end() )
+                                                                        continue;
+                                                                    AddDropTable( L"", L"", tableName, true, errorMsg );
+                                                                }
+                                                                else if( count < m_numOfTables )
+                                                                {
+                                                                    temp.erase( std::remove( temp.begin(), temp.end(), tableName ), temp.end() );
+                                                                }
+                                                                if( count < m_numOfTables )
+                                                                {
+                                                                    result = AddDropTable( L"", L"", temp.at( 0 ), false, errorMsg );
+                                                                    if( result )
+                                                                        errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+            }
+        }
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+        result = 1;
+    }
+    m_hstmt = 0;
     return result;
 }
 
@@ -3174,28 +3755,29 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     SQLWCHAR *qry = NULL;
     SQLWCHAR **columnNames = NULL;
     std::wstring query4;
-    int result = 0, bufferSize = 1024;
+    int result = 0;
     std::vector<Field *> fields;
     std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol, cat;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::map<int,std::vector<FKField *> > foreign_keys;
-    SQLWCHAR *szSchemaName = NULL;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0, stmt_ind = 0;
     SQLHDBC hdbc_col = 0, hdbc_pk = 0, hdbc_colattr = 0, hdbc_fk = 0, hdbc_ind = 0;
-    SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1], userName[1024];
+    SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1];
     SQLWCHAR szFkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szPkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkSchema[SQL_MAX_COLUMN_NAME_LEN + 1], szFkTableSchema[SQL_MAX_SCHEMA_NAME_LEN + 1], szFkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szFkName[256], szFkCatalog[SQL_MAX_CATALOG_NAME_LEN + 1];
-    SQLSMALLINT updateRule, deleteRule, keySequence;
+    SQLSMALLINT updateRule = 0, deleteRule = 0, keySequence = 0;
     SQLLEN cbPkCol, cbFkTable, cbFkCol, cbFkName, cbFkSchemaName, cbUpdateRule, cbDeleteRule, cbKeySequence, cbFkCatalog, fkNameLength = 256;
     SQLLEN cbColumnName, cbDataType, cbTypeName, cbColumnSize, cbBufferLength, cbDecimalDigits, cbNumPrecRadix, pkLength;
     SQLLEN cbNullable, cbRemarks, cbColumnDefault, cbSQLDataType, cbDatetimeSubtypeCode, cbCharOctetLength, cbOrdinalPosition, cbIsNullable;
-    SQLSMALLINT DataType, DecimalDigits, NumPrecRadix, Nullable, SQLDataType, DatetimeSubtypeCode, numCols = 0;
-    SQLINTEGER ColumnSize, BufferLength, CharOctetLength, OrdinalPosition;
+    SQLSMALLINT DataType, DecimalDigits = 0, NumPrecRadix, Nullable = 0, SQLDataType, DatetimeSubtypeCode, numCols = 0;
+    SQLINTEGER ColumnSize = 0, BufferLength, CharOctetLength, OrdinalPosition;
     if( pimpl->m_subtype == L"PostgreSQL" )
         query4 = L"SELECT indexname FROM pg_indexes WHERE schemaname = ? AND tablename = ?";
     if( pimpl->m_subtype == L"MySQL" )
         query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_schema = ? AND table_name = ?;";
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query4 = L"SELECT i.name FROM sys.indexes i, sys.tables t WHERE i.object_id = t.object_id AND SCHEMA_NAME(t.schema_id) = ? AND t.name = ?;";
+    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
+        query4 = L"SELECT o.name, i.name FROM sysobjects o, sysindexes i, sysusers u WHERE o.id = i.id AND o.uid = u.uid AND u.name = ? AND o.name= ?";
     memset( table_name, '\0', tableName.length() + 2 );
     memset( schema_name, '\0', schemaName.length() + 2 );
     memset( catalog_name, '\0', catalog.length() + 2 );
@@ -3209,7 +3791,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
             result = 1;
             ret = SQL_ERROR;
         }
-		else
+        else
         {
             ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_fk );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3340,7 +3922,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 GetErrorMessage( errorMsg, 1, stmt_fk );
                                 result = 1;
                             }
-							else
+                            else
                             {
                                 bool fkFound = false;
                                 std::map<int, std::vector<std::wstring> >origFields, refFields;
@@ -3484,7 +4066,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 }
             }
             if( !result )
-			{
+            {
                 ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_pk );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
@@ -3596,7 +4178,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     }
                 }
             }
-            if( !result )
+            if( !result && ( ( schemaName != L"sys" && pimpl->m_subtype == L"Microsoft SQL Server" ) || pimpl->m_subtype != L"Microsoft SQL Server" ) )
             {
                 ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_colattr );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3699,19 +4281,51 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     }
                                 }
                             }
-                            delete queryTemp;
+                            delete[] queryTemp;
                             if( columnNames )
                             {
                                 for( int i = 0; i < numCols; i++ )
                                 {
-                                    delete columnNames[i];
+                                    delete[] columnNames[i];
                                     columnNames[i] = NULL;
                                 }
-                                delete columnNames;
+                                delete[] columnNames;
                                 columnNames = NULL;
                             }
                         }
-/***********************/
+                        /*************************/
+                    }
+                }
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, stmt_colattr );
+                    result = 1;
+                    SQLDisconnect( hdbc_colattr );
+                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                    stmt_colattr = 0;
+                    hdbc_colattr = 0;
+                }
+                else
+                {
+                    stmt_colattr = 0;
+                    ret = SQLDisconnect( hdbc_colattr );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 2, hdbc_colattr );
+                        result = 1;
+                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                        hdbc_colattr = 0;
+                    }
+                    else
+                    {
+                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 2, hdbc_colattr );
+                            result = 1;
+                        }
+                        hdbc_colattr = 0;
                     }
                 }
             }
@@ -3969,40 +4583,25 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 }
                             }
                             if( !result )
-							{
+                            {
                                 int i = 0;
                                 for( ret = SQLFetch( stmt_col ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_col ) )
                                 {
-                                    std::wstring schema_name, table_name;
                                     str_to_uc_cpy( fieldName, szColumnName );
                                     str_to_uc_cpy( fieldType, szTypeName );
                                     str_to_uc_cpy( defaultValue, szColumnDefault );
-/*
-									SQLLEN autoincrement;
-                                    autoincrement = 0;
-                                    ret = SQLColAttribute( stmt_colattr, (SQLUSMALLINT) i + 1, SQL_DESC_AUTO_UNIQUE_VALUE, NULL, 0, NULL, &autoincrement );
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, 1, stmt_colattr );
-                                        result = 1;
-                                        break;
-                                    }
-									else
-*/
-                                    {
-                                        Field *field = new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, /*autoincrement == SQL_TRUE ? true : false*/std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) == autoinc_fields.end(), std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
+                                    Field *field = new Field( fieldName, fieldType, ColumnSize, DecimalDigits, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) != autoinc_fields.end() ? true : false, std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
 /*                                    if( GetFieldProperties( fieldName.c_str(), schemaName, odbc_pimpl->m_currentTableOwner, szColumnName, field, errorMsg ) )
                                     {
                                         GetErrorMessage( errorMsg, 2 );
                                         result = 1;
                                         break;
                                     }*/
-                                        fields.push_back( field );
-                                        fieldName = L"";
-                                        fieldType = L"";
-                                        defaultValue = L"";
-                                        i++;
-                                    }
+                                    fields.push_back( field );
+                                    fieldName = L"";
+                                    fieldType = L"";
+                                    defaultValue = L"";
+                                    i++;
                                 }
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                                 {
@@ -4039,33 +4638,6 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         else
                             hdbc_col = 0;
                     }
-                }
-            }
-            ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 1, stmt_colattr );
-                result = 1;
-            }
-            else
-            {
-                stmt_colattr = 0;
-                ret = SQLDisconnect( hdbc_colattr );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 2, hdbc_colattr );
-                    result = 1;
-                }
-                else
-                {
-                    ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                    if( ret != SQL_SUCCESS )
-                    {
-                        GetErrorMessage( errorMsg, 2, hdbc_colattr );
-                        result = 1;
-                    }
-                    else
-                        hdbc_colattr = 0;
                 }
             }
             if( !result )
@@ -4116,7 +4688,6 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             else
                             {
-                                SQLSMALLINT DataType, DecimalDigits, Nullable;
                                 SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS;
                                 SQLULEN ParamSize;
                                 ret = SQLDescribeParam( stmt_ind, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
@@ -4224,6 +4795,33 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         }
                     }
                 }
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, stmt_ind );
+                    result = 1;
+                }
+                else
+                {
+                    stmt_ind = 0;
+                    ret = SQLDisconnect( hdbc_ind );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 2, hdbc_ind );
+                        result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
+                        if( ret != SQL_SUCCESS )
+                        {
+                            GetErrorMessage( errorMsg, 2, hdbc_ind );
+                            result = 1;
+                        }
+                        else
+                            hdbc_ind = 0;
+                    }
+                }
             }
             if( !result )
             {
@@ -4233,22 +4831,22 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 str_to_uc_cpy( tempTableName, table_name );
                 if( pimpl->m_subtype == L"Microsoft SQL Server" && tempSchemaName == L"sys" )
                     tempTableName = tempSchemaName + L"." + tempTableName;
-                DatabaseTable *table = new DatabaseTable( tempTableName, tempSchemaName, fields, foreign_keys );
-                table->SetTableOwner( owner );
-                if( GetTableId( table, errorMsg ) )
+                DatabaseTable *new_table = new DatabaseTable( tempTableName, tempSchemaName, fields, foreign_keys );
+                new_table->SetTableOwner( owner );
+                if( GetTableId( new_table, errorMsg ) )
                 {
                     result = 1;
                 }
                 else
                 {
-                    if( GetTableProperties( table, errorMsg ) )
+                    if( GetTableProperties( new_table, errorMsg ) )
                     {
                         result = 1;
                     }
                     else
                     {
-                        table->SetIndexNames( indexes );
-                        pimpl->m_tables[tempCatalogName].push_back( table );
+                        new_table->SetIndexNames( indexes );
+                        pimpl->m_tables[tempCatalogName].push_back( new_table );
                         fields.erase( fields.begin(), fields.end() );
                         foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                         fields.clear();
@@ -4260,11 +4858,17 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 }
             }
         }
+        delete[] table_name;
+        table_name = NULL;
+        delete[] schema_name;
+        schema_name = NULL;
+        delete[] catalog_name;
+        catalog_name = NULL;
     }
     else
     {
     }
-    delete qry;
+    delete[] qry;
     qry = NULL;
     return result;
 }
@@ -4292,14 +4896,26 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     else if( ret == 0 )
     {
         uc_to_str_cpy( entry, L"UserName" );
-        int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+        ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
         if( ret < 0 )
             connectedUser = L"";
+        else if( ret == 0 )
+        {
+            uc_to_str_cpy( entry, L"User" );
+            ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+            if( ret < 0 )
+                connectedUser = L"";
+            else
+                str_to_uc_cpy( connectedUser, retBuffer );
+        }
         else
             str_to_uc_cpy( connectedUser, retBuffer );
     }
     else
         str_to_uc_cpy( connectedUser, retBuffer );
+    delete[] connectDSN;
+    delete[] entry;
+    delete[] retBuffer;
 }
 
 void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword)
@@ -4324,4 +4940,164 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
         connectionPassword = L"";
     else
         str_to_uc_cpy( connectionPassword, retBuffer );
+    delete[] connectDSN;
+    delete[] entry;
+    delete[] retBuffer;
+}
+
+int ODBCDatabase::AskPostgresForLogFile()
+{
+    int result = 0;
+    SQLWCHAR *columnName = new SQLWCHAR[256], *columnData = NULL;
+    SQLSMALLINT columnNameLen, columnDataType, columnDataDigits, columnDataNullable;
+    SQLLEN columnDataLen;
+    SQLULEN columnDataSize;
+    std::wstring query1 = L"SELECT setting FROM pg_settings WHERE name = \'log_directory\'";
+    std::wstring query2 = L"SELECT setting FROM pg_settings WHERE name = \'log_filename\'";
+    std::vector<std::wstring> errorMsg;
+    SQLWCHAR *qry1 = new SQLWCHAR[query1.length() + 2];
+    SQLWCHAR *qry2 = new SQLWCHAR[query2.length() + 2];
+    memset( qry1, '\0', query1.length() + 2 );
+    memset( qry2, '\0', query2.length() + 2 );
+    uc_to_str_cpy( qry1, query1 );
+    uc_to_str_cpy( qry2, query2 );
+    RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        ret = SQLPrepare( m_hstmt, qry1, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1 );
+            result = 1;
+        }
+        else
+        {
+            ret = SQLDescribeCol( m_hstmt, 1, columnName, 256, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1 );
+                result = 1;
+            }
+            else
+            {
+                switch( columnDataType )
+                {
+                    case SQL_VARCHAR:
+                    case SQL_WVARCHAR:
+                    case SQL_WLONGVARCHAR:
+                        columnDataType = SQL_C_WCHAR;
+                        break;
+                }
+                columnData = new SQLWCHAR[columnDataSize + 1];
+                ret = SQLBindCol( m_hstmt, 1, columnDataType, columnData, columnDataSize, &columnDataLen );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1 );
+                    result = 1;
+                }
+                else
+                {
+                    ret = SQLExecute( m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1 );
+                        result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLFetch( m_hstmt );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1 );
+                            result = 1;
+                        }
+                        else
+                            str_to_uc_cpy( pimpl->m_pgLogDir, columnData );
+                    }
+                }
+            }
+        }
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1 );
+        result = 1;
+    }
+    else
+        m_hstmt = 0;
+    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        ret = SQLPrepare( m_hstmt, qry2, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1 );
+            result = 1;
+        }
+        else
+        {
+            ret = SQLDescribeCol( m_hstmt, 1, columnName, 256, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1 );
+                result = 1;
+            }
+            else
+            {
+                switch( columnDataType )
+                {
+                    case SQL_VARCHAR:
+                    case SQL_WVARCHAR:
+                    case SQL_WLONGVARCHAR:
+                        columnDataType = SQL_C_WCHAR;
+                        break;
+                }
+                columnData = new SQLWCHAR[columnDataSize + 1];
+                ret = SQLBindCol( m_hstmt, 1, columnDataType, columnData, columnDataSize, &columnDataLen );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1 );
+                    result = 1;
+                }
+                else
+                {
+                    ret = SQLExecute( m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1 );
+                        result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLFetch( m_hstmt );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1 );
+                            result = 1;
+                        }
+                        else
+                            str_to_uc_cpy( pimpl->m_pgLogFile, columnData );
+                    }
+                }
+            }
+        }
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1 );
+        result = 1;
+    }
+    else
+        m_hstmt = 0;
+    delete[] qry1;
+    qry1 = NULL;
+    delete[] qry2;
+    qry2 = NULL;
+    delete[] columnName;
+    columnName = NULL;
+    delete[] columnData;
+    columnData = NULL;
+    return result;
 }

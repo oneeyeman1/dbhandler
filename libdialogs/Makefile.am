@@ -25,8 +25,6 @@ libdialogs_la_SOURCES =  \
 	addcolumnsdialog.cpp \
 	addcolumnsdialog.h \
 	odbccredentials.cpp \
-	odbccredentials.h \
-	odbccredentials.cpp \
 	odbccredentials.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
@@ -45,6 +43,7 @@ libdialogs_la_LDFLAGS = -L../libsqlite \
 	-L../libfieldswindow \
 	-L../libodbc \
 	-L../libpostgres \
+	-L../libpropertypages \
 	-Wl,-rpath,/home/igor/dbhandler/Debug/libpropertypages/.libs \
 	-ldbinterface \
 	-lsqlite_lib \

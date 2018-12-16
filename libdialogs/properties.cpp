@@ -36,12 +36,16 @@
 #include "fontpropertypagebase.h"
 #include "properties.h"
 
+#if _MSC_VER >= 1900 || !(defined __WXMSW__)
+std::mutex Database::Impl::my_mutex;
+#endif
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 
-PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxPoint& pos, const wxSize& size, long style):
+PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, wxCriticalSection &cs, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     std::vector<std::wstring> errors;
+    pcs = &cs;
     m_isApplied = false;
     m_type = type;
     m_db = db;
@@ -53,7 +57,15 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     if( type == 0 )
     {
         DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
-        res = db->GetTableProperties( table, errors );
+        {
+#if defined __WXMSW__ && _MSC_VER < 1900
+            wxCriticalSectionLocker( *pcs );
+#else
+//#if _MSC_VER >= 1900
+            std::lock_guard<std::mutex> lock( m_db->GetTableVector().my_mutex );
+#endif
+            res = db->GetTableProperties( table, errors );
+        }
         wxFont data_font( table->GetDataFontSize(), wxFONTFAMILY_DEFAULT, table->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetDataFontUnderline(), table->GetDataFontName() );
         if( table->GetDataFontStrikethrough() )
             data_font.SetStrikethrough( true );
@@ -75,7 +87,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     }
     if( type == 1 )
     {
-        wxString tableName = title.substr( 0, title.find( '.' ) );
+        wxString tbleName = title.substr( 0, title.find( '.' ) );
         wxString fieldName = title.substr( title.find( '.' ) + 1 );
         Field *field = static_cast<Field *>( m_object );
 /*        res = db->GetFieldProperties( tableName.ToStdWstring(), schemaName.ToStdWstring(), field, errors );

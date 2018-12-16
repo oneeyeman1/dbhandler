@@ -12,6 +12,7 @@
 		E3D139781D0D141400A5A0F7 /* liblibodbc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D139761D0D141400A5A0F7 /* liblibodbc.dylib */; };
 		E3D139791D0D141400A5A0F7 /* liblibsqlite.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D139771D0D141400A5A0F7 /* liblibsqlite.dylib */; };
 		E3D859751EEA09F70093FB1C /* liblibmysql.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D859741EEA09F70093FB1C /* liblibmysql.dylib */; };
+		E3F2B2EB219D1D1A00FBFF69 /* iODBC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3F2B2EA219D1D1A00FBFF69 /* iODBC.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		E3D139761D0D141400A5A0F7 /* liblibodbc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibodbc.dylib; path = ../Build/Products/Debug/liblibodbc.dylib; sourceTree = "<group>"; };
 		E3D139771D0D141400A5A0F7 /* liblibsqlite.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibsqlite.dylib; path = ../Build/Products/Debug/liblibsqlite.dylib; sourceTree = "<group>"; };
 		E3D859741EEA09F70093FB1C /* liblibmysql.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibmysql.dylib; path = ../libmysql/build/Debug/liblibmysql.dylib; sourceTree = "<group>"; };
+		E3F2B2EA219D1D1A00FBFF69 /* iODBC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iODBC.framework; path = ../../../../../Library/Frameworks/iODBC.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -28,6 +30,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3F2B2EB219D1D1A00FBFF69 /* iODBC.framework in Frameworks */,
 				E3D859751EEA09F70093FB1C /* liblibmysql.dylib in Frameworks */,
 				E33E6FAC1EBC2984003A0B92 /* liblibpostgres.dylib in Frameworks */,
 				E3D139781D0D141400A5A0F7 /* liblibodbc.dylib in Frameworks */,
@@ -47,6 +50,7 @@
 				E3D139771D0D141400A5A0F7 /* liblibsqlite.dylib */,
 				E3D139731D0D112F00A5A0F7 /* libdbloader */,
 				E3D139671D0D110A00A5A0F7 /* Products */,
+				E3F2B2E9219D1D1A00FBFF69 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -64,6 +68,14 @@
 				E3D139741D0D11B400A5A0F7 /* dbloader.cpp */,
 			);
 			name = libdbloader;
+			sourceTree = "<group>";
+		};
+		E3F2B2E9219D1D1A00FBFF69 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E3F2B2EA219D1D1A00FBFF69 /* iODBC.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -209,7 +221,21 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					WXUSINGDLL,
+					"_FILE_OFFSET_BITS=64",
+					__WXMAC__,
+					__WXOSX__,
+					__WXOSX_COCOA__,
+					_IODBCUNIX_FRAMEWORK,
+				);
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
 					"DEBUG=1",
 					"$(inherited)",
 					WXUSINGDLL,
@@ -229,6 +255,8 @@
 					../libpostgres,
 					"../mysql-connector/include",
 					../libmysql,
+					../libpg/src/include/libpq,
+					../libpg/src/interfaces/libpq,
 				);
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
@@ -270,6 +298,10 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,

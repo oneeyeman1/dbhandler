@@ -1,5 +1,7 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "docview", "docview_vc9.vcxproj", "{C7CB6A06-F2AE-5909-894B-558223A98719}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D333C980-1282-4047-96AC-F7FD649C0512} = {D333C980-1282-4047-96AC-F7FD649C0512}
@@ -284,5 +286,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9042D4B2-625B-4FC2-AD70-07BB98674E53}
 	EndGlobalSection
 EndGlobal

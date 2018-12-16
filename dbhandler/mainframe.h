@@ -9,11 +9,15 @@
 #ifndef _WX_SAMPLES_MAINFRAME_H_
 #define _WX_SAMPLES_MAINFRAME_H_
 
+class NewTableHandler;
+
 class MainFrame : public wxDocMDIParentFrame
 {
 public:
     MainFrame(wxDocManager *manager);
     ~MainFrame();
+    wxCriticalSection m_threadCS;
+    NewTableHandler *m_handler;
 protected:
     void Connect();
 private:
@@ -30,15 +34,14 @@ private:
     void OnSize(wxSizeEvent &event);
     void OnClose(wxCloseEvent &event);
     Database *m_db;
-    wxDynamicLibrary *m_lib;
     wxMenu *m_menuFile;
     wxDocManager *m_manager;
-    NewTableHandler *m_handler;
-    wxCriticalSection m_threadCS;
 #if defined __WXMSW__ || defined __WXGTK__
     wxToolBar *m_tb;
 #endif
     std::map<wxString, wxDynamicLibrary *> m_painters;
+    wxString m_pgLogfile;
+    wxFileSystemWatcher *m_oldPGWatcher;
     wxDECLARE_EVENT_TABLE();
 };
 

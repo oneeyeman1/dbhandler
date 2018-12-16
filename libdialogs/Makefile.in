@@ -276,6 +276,7 @@ INTLTOOL_V_MERGE = @INTLTOOL_V_MERGE@
 INTLTOOL_V_MERGE_OPTIONS = @INTLTOOL_V_MERGE_OPTIONS@
 INTLTOOL__v_MERGE_ = @INTLTOOL__v_MERGE_@
 INTLTOOL__v_MERGE_0 = @INTLTOOL__v_MERGE_0@
+INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -418,6 +419,7 @@ libdialogs_la_LDFLAGS = -L../libsqlite \
 	-L../libfieldswindow \
 	-L../libodbc \
 	-L../libpostgres \
+	-L../libpropertypages \
 	-Wl,-rpath,/home/igor/dbhandler/Debug/libpropertypages/.libs \
 	-ldbinterface \
 	-lsqlite_lib \

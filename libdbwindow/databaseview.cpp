@@ -27,6 +27,9 @@
 //#endif
 
 #include <string>
+#if _MSC_VER >= 1900 || !(defined __WXMSW__)
+#include <mutex>
+#endif
 #include "wx/docview.h"
 #include "wx/notebook.h"
 #include "wx/docmdi.h"
@@ -57,11 +60,15 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST 
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
-typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
-typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &);
+typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
+
+#if _MSC_VER >= 1900 || !(defined __WXMSW__)
+std::mutex Database::Impl::my_mutex;
+#endif
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -110,7 +117,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxRect clientRect = parent->GetClientRect();
     wxWindowList children = parent->GetChildren();
     bool found = false;
-    int height = 0;
     for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
     {
         tb = wxDynamicCast( *it, wxToolBar );
@@ -244,8 +250,8 @@ void DrawingView::OnDraw(wxDC *WXUNUSED(dc))
 void DrawingView::OnSetProperties(wxCommandEvent &event)
 {
     std::vector<std::wstring> errors;
-    TableProperties *properties = NULL;
-    DatabaseTable *table;
+    TableProperties *tableProperties = NULL;
+    DatabaseTable *dbTable;
     int res = -1;
     ShapeList shapes;
     bool found = false;
@@ -262,7 +268,7 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         {
             if( type == 0 )
             {
-                properties = (TableProperties *) event.GetClientData();
+                tableProperties = (TableProperties *) event.GetClientData();
                 erdTable = (MyErdTable *)(*it);
                 found = true;
             }
@@ -280,7 +286,7 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         }
     }
     if( type == 0 )
-        res = GetDocument()->GetDatabase()->SetTableProperties( &erdTable->GetTable(), *properties, isLogOnly, const_cast<std::wstring &>( command.ToStdWstring() ), errors );
+        res = GetDocument()->GetDatabase()->SetTableProperties( &erdTable->GetTable(), *tableProperties, isLogOnly, const_cast<std::wstring &>( command.ToStdWstring() ), errors );
 //    if( type == 1 )
 //        res = GetDocument()->GetDatabase()->SetFieldProperties( command->ToStdWstring(), errors );
     if( res )
@@ -303,9 +309,18 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         {
             if( type == 0 )
             {
-                table = const_cast<DatabaseTable *>( &((MyErdTable *) erdTable)->GetTable() );
-                GetDocument()->GetDatabase()->GetTableProperties( table, errors );
-                erdTable->SetTableComment( table->GetComment() );
+                dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) erdTable)->GetTable() );
+                Database *db = GetDocument()->GetDatabase();
+                {
+#if defined __WXMSW__ && _MSC_VER < 1900
+                    wxCriticalSectionLocker( *pcs );
+#else
+//#if _MSC_VER >= 1900 || !(defined __WXMSW__)
+                    std::lock_guard<std::mutex> lock( db->GetTableVector().my_mutex );
+#endif
+                    db->GetTableProperties( dbTable, errors );
+                }
+                erdTable->SetTableComment( dbTable->GetComment() );
                 erdTable->Update();
                 erdTable->Refresh();
             }
@@ -357,7 +372,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             }
         }
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        int res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
+        res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
         if( res != wxID_CANCEL )
         {
             if( m_type == QueryView )
@@ -414,7 +429,6 @@ bool DrawingView::OnClose(bool deleteWindow)
         GetFrame()->Destroy();
         SetFrame( NULL );
     }
-    wxDocManager *manager = GetDocumentManager();
     wxMDIClientWindow *parent = dynamic_cast<wxMDIClientWindow *>( mainWin->GetClientWindow() );
     wxWindowList children = parent->GetChildren();
     if( parent->GetChildren().size() == 0 )
@@ -434,13 +448,13 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
     int result;
     wxString command, indexName;
     std::vector<std::wstring> errors;
-    DatabaseTable *table = NULL;
+    DatabaseTable *dbTable = NULL;
     ShapeList shapes;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), shapes );
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
     {
         if( (*it)->IsSelected() )
-            table = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
+            dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
     }
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -453,7 +467,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         CREATEINDEX func = (CREATEINDEX) lib.GetSymbol( "CreateIndexForDatabase" );
-        result = func( m_frame, table, GetDocument()->GetDatabase(), command, indexName );
+        result = func( m_frame, dbTable, GetDocument()->GetDatabase(), command, indexName );
         if( result != wxID_OK && result != wxID_CANCEL )
         {
             m_text->AppendText( command );
@@ -463,7 +477,16 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         }
         else if( result == wxID_OK )
         {
-            dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->CreateIndex( command.ToStdWstring(), indexName.ToStdWstring(), table->GetSchemaName(), table->GetTableName(), errors );
+            Database *db = dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase();
+            {
+#if defined __WXMSW__ && _MSC_VER < 1900
+                wxCriticalSectionLocker( *pcs );
+#else
+//#if _MSC_VER >= 1900 || !(defined __WXMSW__)
+                std::lock_guard<std::mutex> locker( db->GetTableVector().my_mutex );
+#endif
+                db->CreateIndex( command.ToStdWstring(), indexName.ToStdWstring(), dbTable->GetSchemaName(), dbTable->GetTableName(), errors );
+            }
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
                 wxMessageBox( (*it) );
         }
@@ -476,7 +499,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
 {
     std::vector<std::wstring> errors;
     int result, deleteProp, updateProp;
-    DatabaseTable *table = NULL;
+    DatabaseTable *dbTable = NULL;
     std::vector<std::wstring> foreignKeyFields, refKeyFields;
     std::wstring refTableName, command;
     std::vector<FKField *> newFK;
@@ -489,7 +512,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
     {
         if( (*it)->IsSelected() )
-            table = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
+            dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
     }
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -502,10 +525,10 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-        result = func( m_frame, kName, table, foreignKeyFields, refKeyFields, refTableName, deleteProp, updateProp, GetDocument()->GetDatabase(),  logOnly, false, newFK, match );
+        result = func( m_frame, kName, dbTable, foreignKeyFields, refKeyFields, refTableName, deleteProp, updateProp, GetDocument()->GetDatabase(),  logOnly, false, newFK, match );
         if( result != wxID_CANCEL )
         {
-            int res = GetDocument()->GetDatabase()->ApplyForeignKey( command, kName.ToStdWstring(), *table, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, true, match, errors );
+            int res = GetDocument()->GetDatabase()->ApplyForeignKey( command, kName.ToStdWstring(), *dbTable, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, true, match, errors );
             if( res )
             {
                 for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
@@ -522,7 +545,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
             }
             else
             {
-                m_canvas->CreateFKConstraint( table, newFK );
+                m_canvas->CreateFKConstraint( dbTable, newFK );
             }
         }
         for( std::vector<FKField *>::iterator it = newFK.begin(); it != newFK.end(); ++it )
@@ -546,7 +569,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     std::vector<std::wstring> errors;
     bool found = false;
     int type = 0;
-    DatabaseTable *table = NULL;
+    DatabaseTable *dbTable = NULL;
     Field *field = NULL;
     ShapeList shapes;
     wxString command = "";
@@ -561,7 +584,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             if( (*it)->IsSelected() )
             {
                 erdTable = (MyErdTable *)(*it);
-                table = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
+                dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
                 type = 0;
                 found = true;
             }
@@ -571,10 +594,10 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             field = ((FieldShape *) event.GetEventObject())->GetField();
             if( (*it)->IsSelected() )
             {
-                MyErdTable *table = dynamic_cast<MyErdTable *>( *it );
-                if( table )
+                MyErdTable *my_table = dynamic_cast<MyErdTable *>( *it );
+                if( my_table )
                 {
-                    erdTable = table;
+                    erdTable = my_table;
                     tableName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetTableName();
                     schemaName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetSchemaName();
                     type = 1;
@@ -596,9 +619,9 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == 0 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly, wxEmptyString, wxEmptyString );
+            res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly, wxEmptyString, wxEmptyString, *pcs );
         if( type == 1 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName );
+            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName, *pcs );
         if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );
@@ -731,8 +754,8 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
 {
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     ShapeList shapes;
-    MyErdTable *table;
-    FieldShape *field;
+    MyErdTable *dbTable;
+    FieldShape *field = NULL;
     ShapeList::iterator it;
     bool found = false;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
@@ -741,7 +764,7 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
         if( (*it)->IsSelected() )
         {
             if( wxDynamicCast( (*it), MyErdTable ) )
-                table = wxDynamicCast( (*it), MyErdTable );
+                dbTable = wxDynamicCast( (*it), MyErdTable );
             if( wxDynamicCast( (*it), FieldShape ) )
                 field = wxDynamicCast( (*it), FieldShape );
         }
@@ -792,7 +815,7 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
         DBPROFILE func = (DBPROFILE) lib->GetSymbol( "ConnectToDb" );
         wxString name = wxEmptyString;
         wxString engine = GetDocument()->GetDatabase()->GetTableVector().m_type;
-        db = func( m_frame->GetParent(), name, engine );
+        db = func( m_frame->GetParent(), name, engine, L"" );
         if( db )
         {
             delete db1;
@@ -880,11 +903,11 @@ void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstr
         SerializableList::compatibility_iterator node = children.GetFirst();
         while( node )
         {
-            FieldShape *field = (FieldShape *) node->GetData();
-            if( field && isAdd ? !field->IsSelected() : field->IsSelected() )
+            FieldShape *field2add = (FieldShape *) node->GetData();
+            if( field2add && isAdd ? !field2add->IsSelected() : field2add->IsSelected() )
             {
-                field->Select( isAdd );
-                AddFieldToQuery( *field, isAdd, tableName );
+                field2add->Select( isAdd );
+                AddFieldToQuery( *field2add, isAdd, tableName );
             }
             node = node->GetNext();
         }
@@ -923,4 +946,9 @@ wxFrame *DrawingView::GetLogWindow() const
 wxTextCtrl *DrawingView::GetTextLogger() const
 {
     return m_text;
+}
+
+void DrawingView::SetSynchronisationObject(wxCriticalSection &cs)
+{
+    pcs = &cs;
 }
