@@ -104,7 +104,6 @@ PROGRAMS = $(bin_PROGRAMS)
 am_dbhandler_OBJECTS = dbhandler-doc.$(OBJEXT) \
 	dbhandler-docview.$(OBJEXT) dbhandler-mainframe.$(OBJEXT) \
 	dbhandler-view.$(OBJEXT) dbhandler-viewbase.$(OBJEXT) \
-	dbhandler-newtablehandler.$(OBJEXT) \
 	dbhandler-newtablehandler.$(OBJEXT)
 dbhandler_OBJECTS = $(am_dbhandler_OBJECTS)
 dbhandler_LDADD = $(LDADD)
@@ -247,7 +246,6 @@ INTLTOOL_V_MERGE = @INTLTOOL_V_MERGE@
 INTLTOOL_V_MERGE_OPTIONS = @INTLTOOL_V_MERGE_OPTIONS@
 INTLTOOL__v_MERGE_ = @INTLTOOL__v_MERGE_@
 INTLTOOL__v_MERGE_0 = @INTLTOOL__v_MERGE_0@
-INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -359,8 +357,6 @@ dbhandler_SOURCES = \
 	view.h \
 	viewbase.cpp \
 	viewbase.h \
-	newtablehandler.cpp \
-	newtablehandler.h \
 	newtablehandler.cpp \
 	newtablehandler.h
 
