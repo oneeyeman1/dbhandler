@@ -1333,11 +1333,12 @@ int PostgresDatabase::DropForeignKey(std::wstring &command, const std::wstring &
     if( !logOnly )
     {
         PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
-        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        int status = PQresultStatus( res );
+        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
             PQclear( res );
             err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Adding forign key failed: " + err );
+            errorMsg.push_back( L"Adding foreign key failed: " + err );
             result = 1;
         }
         else
@@ -1367,6 +1368,20 @@ int PostgresDatabase::DropForeignKey(std::wstring &command, const std::wstring &
 int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    std::wstring err;
+    if( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor < 3 )
+    {
+        std::wstring query = L"SELECT count(*) FROM information_schema.tables";
+        PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+        int status = PQresultStatus( res );
+        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+        {
+            PQclear( res );
+            err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Adding foreign key failed: " + err );
+            result = 1;
+        }
+    }
     return result;
 }
 
