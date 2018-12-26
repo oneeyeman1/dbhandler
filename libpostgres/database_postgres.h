@@ -23,6 +23,7 @@ public:
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     int CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg);
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg);
+    int GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg);
 protected:
     struct PostgresImpl;
     PostgresImpl *m_pimpl;
