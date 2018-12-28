@@ -1112,29 +1112,29 @@ int PostgresDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring>
                 errorMsg.push_back( err );
                 PQclear( res );
             }
+        }
+        if( !result )
+        {
+            res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str() );
+            if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+            {
+                result = 1;
+                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( err );
+                PQclear( res );
+            }
             if( !result )
             {
-                res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str() );
-                if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+                if( PQntuples( res ) == 0 )
                 {
-                    result = 1;
-                    std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                    errorMsg.push_back( err );
-                    PQclear( res );
-                }
-                if( !result )
-                {
-                    if( PQntuples( res ) == 0 )
+                    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str() );
+                    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
                     {
-                        res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str() );
-                        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
-                        {
-                            result = 1;
-                            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                            errorMsg.push_back( err );
-                        }
-                        PQclear( res );
+                        result = 1;
+                        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                        errorMsg.push_back( err );
                     }
+                    PQclear( res );
                 }
             }
         }
@@ -1221,6 +1221,8 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     {
                         for( int i = 0; i < PQntuples (res); i++ )
                         {
+                            const char *schema = PQgetvalue( res, i, 0 );
+                            const char *table = PQgetvalue( res, i, 1 );
                             schemaName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
                             tableName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
                             if( count > m_numOfTables )
@@ -1445,14 +1447,15 @@ int PostgresDatabase::GetTableOwner (const std::wstring &schemaName, const std::
     std::wstring query = L"SELECT u.usename FROM pg_class c, pg_user u, pg_namespace n WHERE n.oid = c.relnamespace AND u.usesysid = c.relowner AND n.nspname = $1 AND relname = $2";
     char *values[2];
     values[0] = NULL, values[1] = NULL;
-    values[0] = new char[schemaName.length() + 1];
-    values[1] = new char[tableName.length() + 1];
-    memset( values[0], '\0', schemaName.length() + 1 );
-    memset( values[1], '\0', tableName.length() + 1 );
+    int charlength1 = schemaName.length() * sizeof( wchar_t ), charlength2 = tableName.length() * sizeof( wchar_t );
+    values[0] = new char[schemaName.length() * sizeof( wchar_t ) + 1];
+    values[1] = new char[tableName.length() * sizeof( wchar_t ) + 1];
+    memset( values[0], '\0', schemaName.length()  * sizeof( wchar_t ) + 1 );
+    memset( values[1], '\0', tableName.length() * sizeof( wchar_t ) + 1 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
-    int len1 = (int) schemaName.length();
-    int len2 = (int) tableName.length();
+    int len1 = (int) schemaName.length() * sizeof( wchar_t );
+    int len2 = (int) tableName.length() * sizeof( wchar_t );
     int length[2] = { len1, len2 };
     int formats[2] = { 1, 1 };
     PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, length, formats, 1 );
