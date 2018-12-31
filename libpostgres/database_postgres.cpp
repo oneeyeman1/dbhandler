@@ -29,6 +29,7 @@ PostgresDatabase::PostgresDatabase() : Database()
     pimpl = NULL;
     m_pimpl = NULL;
     connectToDatabase = false;
+    m_isConnected = false;
 }
 
 PostgresDatabase::~PostgresDatabase()
@@ -86,6 +87,7 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
     if( !m_pimpl )
         m_pimpl = new PostgresImpl;
     m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
+    m_isConnected = true;
     if( PQstatus( m_db ) != CONNECTION_OK )
     {
         err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -125,8 +127,6 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
                 pimpl->m_dbName = dbname;
                 if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
                 {
-                    PQfinish( m_db );
-                    errorMsg.push_back( L"Problem during connection. Please fix and restart the application" );
                     result = 1;
                 }
             }
@@ -259,7 +259,11 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
 int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 {
     int result = 0;
-    PQfinish( m_db );
+    if( m_isConnected )
+    {
+        PQfinish( m_db );
+        m_isConnected = false;
+    }
     for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
     {
         std::vector<DatabaseTable *> tableVec = (*it).second;
@@ -1249,11 +1253,12 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
     std::map<int,std::vector<FKField *> > foreign_keys;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
+    char *values1[2];
+    values1[0] = values1[1] = NULL;
     if( tableAdded )
     {
         if( !GetTableOwner( schemaName, tableName, owner, errorMsg ) )
         {
-            char *values1[2];
             values1[0] = new char[schemaName.length() *sizeof( wchar_t ) + 1];
             values1[1] = new char[tableName.length() * sizeof( wchar_t ) + 1];
             memset( values1[0], '\0', schemaName.length() * sizeof( wchar_t ) + 1 );
@@ -1433,10 +1438,14 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
     else
     {
     }
+    delete values1[0];
+    values1[0] = NULL;
+    delete values1[1];
+    values1[1] = NULL;
     return result;
 }
 
-int PostgresDatabase::GetTableOwner (const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query = L"SELECT u.usename FROM pg_class c, pg_user u, pg_namespace n WHERE n.oid = c.relnamespace AND u.usesysid = c.relowner AND n.nspname = $1 AND relname = $2";
@@ -1466,5 +1475,9 @@ int PostgresDatabase::GetTableOwner (const std::wstring &schemaName, const std::
     {
         owner = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, 0, 0 ) );
     }
+    delete values[0];
+    values[0] = NULL;
+    delete values[1];
+    values[1] = NULL;
     return result;
 }

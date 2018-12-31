@@ -37,6 +37,7 @@ protected:
     virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg);
 private:
     PGconn *m_db;
+    bool m_isConnected;
 };
 
 struct PostgresDatabase::PostgresImpl

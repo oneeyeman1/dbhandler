@@ -170,10 +170,6 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
                 errorMsg.clear();
                 wxMessageBox( _( "Can't connect to the database! Please restart the application" ) );
                 pdb->Disconnect( errorMsg );
-                for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
-                {
-                    wxMessageBox( (*it) );
-                }
                 delete pdb;
                 pdb = NULL;
                 result = 1;
