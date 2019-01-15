@@ -2075,7 +2075,7 @@ int MySQLDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &tableOwner, int tableId, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     return result;

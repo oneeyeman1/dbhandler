@@ -1159,7 +1159,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         schema = cat;
                         copy_uc_to_uc( schemaName, catalogName );
                     }
-                    result = AddDropTable( cat, schema, table, true, errorMsg );
+                    result = AddDropTable( cat, schema, table, L"", 0, true, errorMsg );
                     if( result )
                         break;
                     count++;
@@ -3535,7 +3535,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                         copy_uc_to_uc( schema, cat );
                                                     }
                                                     if( ops == 0 )
-                                                        AddDropTable( catalogName, schemaName, tableName, true, errorMsg );
+                                                        AddDropTable( catalogName, schemaName, tableName, L"", 0, true, errorMsg );
                                                     else
                                                     {
                                                         bool found = false;
@@ -3550,7 +3550,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                             }
                                                         }
                                                         if( ops == 2 )
-                                                            AddDropTable( catalogName, schemaName, tableName, true, errorMsg );
+                                                            AddDropTable( catalogName, schemaName, tableName, L"", 0, true, errorMsg );
                                                     }
                                                 }
                                             }
@@ -3748,7 +3748,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                                 {
                                                                     if( std::find( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ) != pimpl->m_tableNames.end() )
                                                                         continue;
-                                                                    AddDropTable( L"", L"", tableName, true, errorMsg );
+                                                                    AddDropTable( L"", L"", tableName, L"", 0, true, errorMsg );
                                                                 }
                                                                 else if( count < m_numOfTables )
                                                                 {
@@ -3756,7 +3756,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                                 }
                                                                 if( count < m_numOfTables )
                                                                 {
-                                                                    result = AddDropTable( L"", L"", temp.at( 0 ), false, errorMsg );
+                                                                    result = AddDropTable( L"", L"", temp.at( 0 ), L"", 0, false, errorMsg );
                                                                     if( result )
                                                                         errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
                                                                 }
@@ -3788,7 +3788,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, int tableId, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     SQLRETURN ret;
     SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + 2], *schema_name = new SQLWCHAR[schemaName.length() + 2], *catalog_name = new SQLWCHAR[catalog.size() + 2];

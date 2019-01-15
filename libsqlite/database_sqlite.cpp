@@ -358,7 +358,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             if( res == SQLITE_ROW  )
             {
                 const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
-                res = AddDropTable( L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), true, errorMsg );
+                res = AddDropTable( L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), L"", 0, true, errorMsg );
                 if( res )
                 {
                     result = 1;
@@ -1434,7 +1434,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     {
                                         if( std::find( tableNames.begin(), tableNames.end(), tableName ) != tableNames.end() )
                                             continue;
-                                        res = AddDropTable( L"", L"", tableName, true, errorMsg );
+                                        res = AddDropTable( L"", L"", tableName, L"", 0, true, errorMsg );
                                         if( res )
                                             errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
                                     }
@@ -1511,7 +1511,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                         if( num1 != table->GetNumberOfFields() || num2 != table->GetNumberOfIndexes() )
                                         {
                                             delete table;
-                                            AddDropTable( L"", L"", tableName, true, errorMsg );
+                                            AddDropTable( L"", L"", tableName, L"", 0, true, errorMsg );
                                         }
                                     }
                                     m_schema = schema;
@@ -1531,13 +1531,13 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         m_stmt2 = NULL;
                         if( count < m_numOfTables )
                         {
-                            result = AddDropTable( L"", L"", temp.at( 0 ), false, errorMsg );
+                            result = AddDropTable( L"", L"", temp.at( 0 ), L"", 0, false, errorMsg );
                             if( res )
                                 errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
                         }
                         if( !result && count == m_numOfTables )
                         {
-							result = AddDropTable( L"", L"", temp.at( 0 ), true, errorMsg );
+							result = AddDropTable( L"", L"", temp.at( 0 ), L"", 0, true, errorMsg );
                             if( res )
                                 errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
                         }
@@ -1557,7 +1557,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, const std::wstring &tableName, const std::wstring &tableOwner, int tableId, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     if( tableAdded )
