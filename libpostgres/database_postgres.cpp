@@ -275,6 +275,8 @@ int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
     }
     delete m_pimpl;
     m_pimpl = NULL;
+    delete pimpl;
+    pimpl = NULL;
     return result;
 }
 
