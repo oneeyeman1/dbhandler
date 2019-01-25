@@ -1174,6 +1174,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     if( result )
                         break;
                     count++;
+                    pimpl->m_tableNames.push_back( schema + L"." + table );
                 }
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                 {
@@ -3721,7 +3722,11 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                         else if( GetTableId( catalogName, schemaName, tableName, tableId, errorMsg ) )
                                                             result = 1;
                                                         else
+                                                        {
                                                             AddDropTable( catalogName, schemaName, tableName, tableOwner, tableId, true, errorMsg );
+                                                            count++;
+                                                            pimpl->m_tableNames.push_back( schemaName + L"." + tableName );
+                                                        }
                                                     }
                                                     else
                                                     {
@@ -3737,7 +3742,10 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                             }
                                                         }
                                                         if( ops == 2 )
+                                                        {
                                                             AddDropTable( catalogName, schemaName, tableName, L"", 0, true, errorMsg );
+                                                            count--;
+                                                        }
                                                     }
                                                 }
                                             }
@@ -3869,11 +3877,13 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                 {
                                     if( count > m_numOfTables || count < m_numOfTables )
                                     {
-                                        query = L"SELECT table_schema, table_name FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
+                                        std::wstring tname, sname, cname;
+                                        std::vector<std::wstring> temp = pimpl->m_tableNames;
+                                        query = L"SELECT table_schema, table_name, table_catalog FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
                                         SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
                                         memset( qry, '\0', query.length() + 2 );
                                         uc_to_str_cpy( qry, query );
-                                        SQLWCHAR *table_schema, *table_name;
+                                        SQLWCHAR *table_schema, *table_name, *table_catalog;
                                         SQLLEN cbCountSchema, cbCountName;
                                         ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3905,18 +3915,19 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                 {
                                                     table_name = new SQLWCHAR[columnDataSize + 1];
                                                     memset( table_name, '\0', columnDataSize + 1 );
-                                                    std::vector<std::wstring> temp = pimpl->m_tableNames;
-                                                    for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
+                                                    ret = SQLDescribeCol( m_hstmt, 3, NULL, 0, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                     {
-                                                        ret = SQLGetData( m_hstmt, 1, SQL_C_WCHAR, table_schema, 256, &cbCountSchema );
-                                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                        result = 1;
+                                                    }
+                                                    else
+                                                    {
+                                                        table_catalog = new SQLWCHAR[columnDataSize + 1];
+                                                        memset( table_catalog, '\0', columnDataSize + 1 );
+                                                        for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
                                                         {
-                                                            GetErrorMessage( errorMsg, 1, m_hstmt );
-                                                            result = 1;
-                                                        }
-                                                        else
-                                                        {
-                                                            ret = SQLGetData( m_hstmt, 2, SQL_C_WCHAR, table_name, 256, &cbCountName );
+                                                            ret = SQLGetData( m_hstmt, 1, SQL_C_WCHAR, table_schema, 256, &cbCountSchema );
                                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                             {
                                                                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3924,27 +3935,50 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                             }
                                                             else
                                                             {
-                                                                std::wstring tname, sname;
-                                                                str_to_uc_cpy( sname, table_schema );
-                                                                str_to_uc_cpy( tname, table_name );
-                                                                if( count > m_numOfTables )
+                                                                ret = SQLGetData( m_hstmt, 2, SQL_C_WCHAR, table_name, 256, &cbCountName );
+                                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                                 {
-                                                                    if( std::find( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ) != pimpl->m_tableNames.end() )
-                                                                        continue;
-                                                                    AddDropTable( L"", L"", tableName, L"", 0, true, errorMsg );
+                                                                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                                    result = 1;
                                                                 }
-                                                                else if( count < m_numOfTables )
+                                                                else
                                                                 {
-                                                                    temp.erase( std::remove( temp.begin(), temp.end(), tableName ), temp.end() );
-                                                                }
-                                                                if( count < m_numOfTables )
-                                                                {
-                                                                    result = AddDropTable( L"", L"", temp.at( 0 ), L"", 0, false, errorMsg );
-                                                                    if( result )
-                                                                        errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
+                                                                    ret = SQLGetData( m_hstmt, 3, SQL_C_WCHAR, table_catalog, 256, &cbCountName );
+                                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                                    {
+                                                                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                                        result = 1;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        str_to_uc_cpy( sname, table_schema );
+                                                                        str_to_uc_cpy( tname, table_name );
+                                                                        str_to_uc_cpy( cname, table_catalog );
+                                                                        tableName = sname + L"." + tname;
+                                                                        if( count > m_numOfTables )
+                                                                        {
+                                                                            if( std::find( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ) != pimpl->m_tableNames.end() )
+                                                                                continue;
+                                                                            if( !( AddDropTable( cname, sname, tname, L"", 0, true, errorMsg ) ) )
+                                                                                m_numOfTables++;
+                                                                        }
+                                                                        else if( count < m_numOfTables && temp.size() > 0 )
+                                                                        {
+                                                                            temp.erase( std::remove( temp.begin(), temp.end(), tableName ), temp.end() );
+                                                                            sname = L"";
+                                                                            tname = L"";
+                                                                            continue;
+                                                                        }
+                                                                    }
                                                                 }
                                                             }
                                                         }
+                                                    }
+                                                    if( count < m_numOfTables )
+                                                    {
+                                                        result = AddDropTable( cname, sname, temp.at( 0 ), L"", 0, false, errorMsg );
+                                                        if( result )
+                                                            errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
                                                     }
                                                 }
                                             }
@@ -5092,6 +5126,20 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     }
     else
     {
+        pimpl->m_tableNames.erase( std::remove( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ), pimpl->m_tableNames.end() );
+        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
+        {
+            std::vector<DatabaseTable *> tableVec = (*it).second;
+            for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
+            {
+                if( (*it1)->GetTableName() == tableName )
+                {
+                    delete (*it1);
+                    (*it1) = NULL;
+                }
+            }
+            (*it).second.clear();
+        }
     }
     delete[] qry;
     qry = NULL;
