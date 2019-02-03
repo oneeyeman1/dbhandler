@@ -696,24 +696,13 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                             else if( pimpl->m_subtype == L"PostgreSQL" )
                                             {
 //                                                query8 = L"IF NOT EXIST(SELECT 1 FROM pg_proc AS proc, pg_namespace AS ns WHERE proc.pronamespace = ns.oid AND ns.nspname = \'public\' AND proname = \'watch_schema_changes\') CREATE FUNCTION watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
-                                                query8 = L"CREATE FUNCTION __watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
-                                                query9 = L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE __watch_schema_changes();";
-                                                query = new SQLWCHAR[query8.length() + 2];
-                                                memset( query, '\0', query8.length() + 2 );
-                                                uc_to_str_cpy( query, query8 );
-                                                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                delete[] query;
-                                                query = NULL;
-                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor > 3 )
                                                 {
-                                                    GetErrorMessage( errorMsg, 1 );
-                                                    result = 1;
-                                                }
-                                                else
-                                                {
-                                                    query = new SQLWCHAR[query9.length() + 2];
-                                                    memset( query, '\0', query9.length() + 2 );
-                                                    uc_to_str_cpy( query, query9 );
+                                                    query8 = L"CREATE FUNCTION __watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
+                                                    query9 = L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE __watch_schema_changes();";
+                                                    query = new SQLWCHAR[query8.length() + 2];
+                                                    memset( query, '\0', query8.length() + 2 );
+                                                    uc_to_str_cpy( query, query8 );
                                                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                     delete[] query;
                                                     query = NULL;
@@ -721,6 +710,20 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                     {
                                                         GetErrorMessage( errorMsg, 1 );
                                                         result = 1;
+                                                    }
+                                                    else
+                                                    {
+                                                        query = new SQLWCHAR[query9.length() + 2];
+                                                        memset( query, '\0', query9.length() + 2 );
+                                                        uc_to_str_cpy( query, query9 );
+                                                        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                                        delete[] query;
+                                                        query = NULL;
+                                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                        {
+                                                            GetErrorMessage( errorMsg, 1 );
+                                                            result = 1;
+                                                        }
                                                     }
                                                 }
                                             }
@@ -996,7 +999,12 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     RETCODE ret;
-    if( pimpl->m_subtype == L"PostgreSQL" && ( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor > 3 ) )
+    long connectionAlive;
+    SQLINTEGER pcbValue;
+    ret = SQLGetConnectAttr( m_hdbc, SQL_ATTR_CONNECTION_DEAD, (SQLPOINTER) &connectionAlive, 0, &pcbValue );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        connectionAlive = SQL_CD_TRUE;
+    if( pimpl->m_subtype == L"PostgreSQL" && connectionAlive != SQL_CD_TRUE )
     {
         ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -1006,26 +1014,15 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
         }
         else
         {
-            std::wstring query8, query9;
-            SQLWCHAR *query = NULL;
-            query9 = L"DROP FUNCTION __watch_schema_changes() CASCADE;";
-            query8 = L"DROP EVENT TRIGGER schema_change_notify CASCADE;";
-            query = new SQLWCHAR[query8.length() + 2];
-            memset( query, '\0', query8.length() + 2 );
-            uc_to_str_cpy( query, query8 );
-            ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-            delete[] query;
-            query = NULL;
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor > 3 )
             {
-                GetErrorMessage( errorMsg, 1 );
-                result = 1;
-            }
-            else
-            {
-                query = new SQLWCHAR[query9.length() + 2];
-                memset( query, '\0', query9.length() + 2 );
-                uc_to_str_cpy( query, query9 );
+                std::wstring query8, query9;
+                SQLWCHAR *query = NULL;
+                query9 = L"DROP FUNCTION __watch_schema_changes() CASCADE;";
+                query8 = L"DROP EVENT TRIGGER schema_change_notify CASCADE;";
+                query = new SQLWCHAR[query8.length() + 2];
+                memset( query, '\0', query8.length() + 2 );
+                uc_to_str_cpy( query, query8 );
                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                 delete[] query;
                 query = NULL;
@@ -1033,6 +1030,20 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
                 {
                     GetErrorMessage( errorMsg, 1 );
                     result = 1;
+                }
+                else
+                {
+                    query = new SQLWCHAR[query9.length() + 2];
+                    memset( query, '\0', query9.length() + 2 );
+                    uc_to_str_cpy( query, query9 );
+                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                    delete[] query;
+                    query = NULL;
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1 );
+                        result = 1;
+                    }
                 }
             }
         }
@@ -1050,7 +1061,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     }
     if( m_hdbc != 0 )
     {
-        if( m_isConnected )
+        if( m_isConnected && connectionAlive != SQL_CD_TRUE )
         {
             ret = SQLDisconnect( m_hdbc );
             if( ret != SQL_SUCCESS )
@@ -3434,6 +3445,8 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
 int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     int result = 0, ret, ops = 0, bufferSize = 1024;
+    long connectionAlive;
+    SQLINTEGER pcbValue;
     SQLSMALLINT *columnNameLen, numCols = 0, *columnDataType, *colummnDataDigits, *columnDataNullable;
     SQLULEN *columnDataSize;
     SQLWCHAR **columnName, **columnData;
@@ -3441,6 +3454,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     std::wstring tableName, command, operation, schemaName, catalogName;
     SQLWCHAR *cat = NULL, *schema = NULL, *table = NULL;
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
+    SQLGetConnectAttr( m_hdbc, SQL_ATTR_CONNECTION_DEAD, (SQLPOINTER) &connectionAlive, 0, &pcbValue );
+    if( connectionAlive == SQL_CD_TRUE )
+        return 1;
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -3822,17 +3838,23 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             free( catalog );
             catalog = NULL;
         }
-        if( pimpl->m_subtype == L"PostgreSQL" )
+        if( pimpl->m_subtype == L"PostgreSQL" || pimpl->m_subtype == L"MySQL" )
         {
-            if( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor < 3 )
+            std::wstring query = L"SELECT count(*) FROM information_schema.tables";
+            SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+            memset( qry, '\0', query.length() + 2 );
+            uc_to_str_cpy( qry, query );
+            int count;
+            SQLLEN cbCount;
+            ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
-				std::wstring query = L"SELECT count(*) FROM information_schema.tables";
-				SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
-				memset( qry, '\0', query.length() + 2 );
-				uc_to_str_cpy( qry, query );
-                int count;
-                SQLLEN cbCount;
-                ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+            else
+            {
+                ret = SQLBindCol( m_hstmt, 1, SQL_C_SLONG, &count, 0, &cbCount );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3840,7 +3862,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 }
                 else
                 {
-                    ret = SQLBindCol( m_hstmt, 1, SQL_C_SLONG, &count, 0, &cbCount );
+                    ret = SQLFetch( m_hstmt );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3848,7 +3870,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     }
                     else
                     {
-                        ret = SQLFetch( m_hstmt );
+                        delete[] qry;
+                        qry = NULL;
+                        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3856,36 +3880,36 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         }
                         else
                         {
-                            delete[] qry;
-                            qry = NULL;
-                            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                            m_hstmt = 0;
+                            ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
-                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                                GetErrorMessage( errorMsg, 2, m_hstmt );
                                 result = 1;
                             }
                             else
                             {
-                                m_hstmt = 0;
-                                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                if( count > m_numOfTables || count < m_numOfTables )
                                 {
-                                    GetErrorMessage( errorMsg, 2, m_hstmt );
-                                    result = 1;
-                                }
-                                else
-                                {
-                                    if( count > m_numOfTables || count < m_numOfTables )
+                                    std::wstring tname, sname, cname;
+                                    std::vector<std::wstring> temp = pimpl->m_tableNames;
+                                    query = L"SELECT table_schema, table_name, table_catalog FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
+                                    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+                                    memset( qry, '\0', query.length() + 2 );
+                                    uc_to_str_cpy( qry, query );
+                                    SQLWCHAR *table_schema, *table_name, *table_catalog;
+                                    SQLLEN cbCountSchema, cbCountName;
+                                    ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
-                                        std::wstring tname, sname, cname;
-                                        std::vector<std::wstring> temp = pimpl->m_tableNames;
-                                        query = L"SELECT table_schema, table_name, table_catalog FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
-                                        SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
-                                        memset( qry, '\0', query.length() + 2 );
-                                        uc_to_str_cpy( qry, query );
-                                        SQLWCHAR *table_schema, *table_name, *table_catalog;
-                                        SQLLEN cbCountSchema, cbCountName;
-                                        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                                        result = 1;
+                                    }
+                                    else
+                                    {
+                                        SQLSMALLINT columnNameLen, columnDataType, columnDataDigits, columnDataNullable;
+                                        SQLULEN columnDataSize;
+                                        ret = SQLDescribeCol( m_hstmt, 1, NULL, 0, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3893,9 +3917,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                         }
                                         else
                                         {
-                                            SQLSMALLINT columnNameLen, columnDataType, columnDataDigits, columnDataNullable;
-                                            SQLULEN columnDataSize;
-                                            ret = SQLDescribeCol( m_hstmt, 1, NULL, 0, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
+                                            table_schema = new SQLWCHAR[columnDataSize + 1];
+                                            memset( table_schema, '\0', columnDataSize + 1 );
+                                            ret = SQLDescribeCol( m_hstmt, 2, NULL, 0, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3903,9 +3927,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                             }
                                             else
                                             {
-                                                table_schema = new SQLWCHAR[columnDataSize + 1];
-                                                memset( table_schema, '\0', columnDataSize + 1 );
-                                                ret = SQLDescribeCol( m_hstmt, 2, NULL, 0, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
+                                                table_name = new SQLWCHAR[columnDataSize + 1];
+                                                memset( table_name, '\0', columnDataSize + 1 );
+                                                ret = SQLDescribeCol( m_hstmt, 3, NULL, 0, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
                                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                 {
                                                     GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3913,21 +3937,19 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                 }
                                                 else
                                                 {
-                                                    table_name = new SQLWCHAR[columnDataSize + 1];
-                                                    memset( table_name, '\0', columnDataSize + 1 );
-                                                    ret = SQLDescribeCol( m_hstmt, 3, NULL, 0, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
-                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                    table_catalog = new SQLWCHAR[columnDataSize + 1];
+                                                    memset( table_catalog, '\0', columnDataSize + 1 );
+                                                    for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
                                                     {
-                                                        GetErrorMessage( errorMsg, 1, m_hstmt );
-                                                        result = 1;
-                                                    }
-                                                    else
-                                                    {
-                                                        table_catalog = new SQLWCHAR[columnDataSize + 1];
-                                                        memset( table_catalog, '\0', columnDataSize + 1 );
-                                                        for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
+                                                        ret = SQLGetData( m_hstmt, 1, SQL_C_WCHAR, table_schema, 256, &cbCountSchema );
+                                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                         {
-                                                            ret = SQLGetData( m_hstmt, 1, SQL_C_WCHAR, table_schema, 256, &cbCountSchema );
+                                                            GetErrorMessage( errorMsg, 1, m_hstmt );
+                                                            result = 1;
+                                                        }
+                                                        else
+                                                        {
+                                                            ret = SQLGetData( m_hstmt, 2, SQL_C_WCHAR, table_name, 256, &cbCountName );
                                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                             {
                                                                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3935,7 +3957,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                             }
                                                             else
                                                             {
-                                                                ret = SQLGetData( m_hstmt, 2, SQL_C_WCHAR, table_name, 256, &cbCountName );
+                                                                ret = SQLGetData( m_hstmt, 3, SQL_C_WCHAR, table_catalog, 256, &cbCountName );
                                                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                                 {
                                                                     GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3943,55 +3965,62 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                                 }
                                                                 else
                                                                 {
-                                                                    ret = SQLGetData( m_hstmt, 3, SQL_C_WCHAR, table_catalog, 256, &cbCountName );
-                                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                                    str_to_uc_cpy( sname, table_schema );
+                                                                    str_to_uc_cpy( tname, table_name );
+                                                                    str_to_uc_cpy( cname, table_catalog );
+                                                                    tableName = sname + L"." + tname;
+                                                                    if( count > m_numOfTables )
                                                                     {
-                                                                        GetErrorMessage( errorMsg, 1, m_hstmt );
-                                                                        result = 1;
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        str_to_uc_cpy( sname, table_schema );
-                                                                        str_to_uc_cpy( tname, table_name );
-                                                                        str_to_uc_cpy( cname, table_catalog );
-                                                                        tableName = sname + L"." + tname;
-                                                                        if( count > m_numOfTables )
+                                                                        if( std::find( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ) != pimpl->m_tableNames.end() )
                                                                         {
-                                                                            if( std::find( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ) != pimpl->m_tableNames.end() )
-                                                                                continue;
-                                                                            if( !( AddDropTable( cname, sname, tname, L"", 0, true, errorMsg ) ) )
-                                                                                m_numOfTables++;
-                                                                        }
-                                                                        else if( count < m_numOfTables && temp.size() > 0 )
-                                                                        {
-                                                                            temp.erase( std::remove( temp.begin(), temp.end(), tableName ), temp.end() );
                                                                             sname = L"";
                                                                             tname = L"";
+                                                                            cname = L"";
                                                                             continue;
                                                                         }
+                                                                        if( !( AddDropTable( cname, sname, tname, L"", 0, true, errorMsg ) ) )
+                                                                        {
+                                                                            sname = L"";
+                                                                            tname = L"";
+                                                                            cname = L"";
+                                                                            m_numOfTables++;
+                                                                        }
+                                                                    }
+                                                                    else if( count < m_numOfTables && temp.size() > 0 )
+                                                                    {
+                                                                        temp.erase( std::remove( temp.begin(), temp.end(), tableName ), temp.end() );
+                                                                        sname = L"";
+                                                                        tname = L"";
+                                                                        cname = L"";
+                                                                        continue;
                                                                     }
                                                                 }
                                                             }
                                                         }
                                                     }
-                                                    if( count < m_numOfTables )
-                                                    {
-                                                        result = AddDropTable( cname, sname, temp.at( 0 ), L"", 0, false, errorMsg );
-                                                        if( result )
-                                                            errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
-                                                    }
+                                                }
+                                                if( count < m_numOfTables )
+                                                {
+                                                    result = AddDropTable( cname, sname, temp.at( 0 ), L"", 0, false, errorMsg );
+                                                    if( result )
+                                                        errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
                                                 }
                                             }
                                         }
                                     }
+                                    delete table_name;
+                                    delete table_schema;
+                                    delete table_catalog;
+                                    table_name = NULL;
+                                    table_schema = NULL;
+                                    table_catalog = NULL;
+                                    delete qry;
+                                    qry = NULL;
                                 }
                             }
                         }
                     }
                 }
-            }
-            else
-            {
             }
         }
     }
