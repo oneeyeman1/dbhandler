@@ -691,8 +691,6 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                     }
                                                 }
                                             }
-                                            if( pimpl->m_subtype == L"PostgreSQL" && ( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor < 3 ) )
-                                                    AskPostgresForLogFile();
                                             else if( pimpl->m_subtype == L"PostgreSQL" )
                                             {
 //                                                query8 = L"IF NOT EXIST(SELECT 1 FROM pg_proc AS proc, pg_namespace AS ns WHERE proc.pronamespace = ns.oid AND ns.nspname = \'public\' AND proname = \'watch_schema_changes\') CREATE FUNCTION watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
@@ -4031,6 +4029,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         result = 1;
     }
     m_hstmt = 0;
+    free( catalog );
+    catalog = NULL;
     return result;
 }
 
@@ -5245,161 +5245,4 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     delete[] connectDSN;
     delete[] entry;
     delete[] retBuffer;
-}
-
-int ODBCDatabase::AskPostgresForLogFile()
-{
-    int result = 0;
-    SQLWCHAR *columnName = new SQLWCHAR[256], *columnData = NULL;
-    SQLSMALLINT columnNameLen, columnDataType, columnDataDigits, columnDataNullable;
-    SQLLEN columnDataLen;
-    SQLULEN columnDataSize;
-    std::wstring query1 = L"SELECT setting FROM pg_settings WHERE name = \'log_directory\'";
-    std::wstring query2 = L"SELECT setting FROM pg_settings WHERE name = \'log_filename\'";
-    std::vector<std::wstring> errorMsg;
-    SQLWCHAR *qry1 = new SQLWCHAR[query1.length() + 2];
-    SQLWCHAR *qry2 = new SQLWCHAR[query2.length() + 2];
-    memset( qry1, '\0', query1.length() + 2 );
-    memset( qry2, '\0', query2.length() + 2 );
-    uc_to_str_cpy( qry1, query1 );
-    uc_to_str_cpy( qry2, query2 );
-    RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-    {
-        ret = SQLPrepare( m_hstmt, qry1, SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 1 );
-            result = 1;
-        }
-        else
-        {
-            ret = SQLDescribeCol( m_hstmt, 1, columnName, 256, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 1 );
-                result = 1;
-            }
-            else
-            {
-                switch( columnDataType )
-                {
-                    case SQL_VARCHAR:
-                    case SQL_WVARCHAR:
-                    case SQL_WLONGVARCHAR:
-                        columnDataType = SQL_C_WCHAR;
-                        break;
-                }
-                columnData = new SQLWCHAR[columnDataSize + 1];
-                ret = SQLBindCol( m_hstmt, 1, columnDataType, columnData, columnDataSize, &columnDataLen );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    result = 1;
-                }
-                else
-                {
-                    ret = SQLExecute( m_hstmt );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, 1 );
-                        result = 1;
-                    }
-                    else
-                    {
-                        ret = SQLFetch( m_hstmt );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1 );
-                            result = 1;
-                        }
-                        else
-                            str_to_uc_cpy( pimpl->m_pgLogDir, columnData );
-                    }
-                }
-            }
-        }
-    }
-    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1 );
-        result = 1;
-    }
-    else
-        m_hstmt = 0;
-    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-    {
-        ret = SQLPrepare( m_hstmt, qry2, SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 1 );
-            result = 1;
-        }
-        else
-        {
-            ret = SQLDescribeCol( m_hstmt, 1, columnName, 256, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 1 );
-                result = 1;
-            }
-            else
-            {
-                switch( columnDataType )
-                {
-                    case SQL_VARCHAR:
-                    case SQL_WVARCHAR:
-                    case SQL_WLONGVARCHAR:
-                        columnDataType = SQL_C_WCHAR;
-                        break;
-                }
-                columnData = new SQLWCHAR[columnDataSize + 1];
-                ret = SQLBindCol( m_hstmt, 1, columnDataType, columnData, columnDataSize, &columnDataLen );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    result = 1;
-                }
-                else
-                {
-                    ret = SQLExecute( m_hstmt );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, 1 );
-                        result = 1;
-                    }
-                    else
-                    {
-                        ret = SQLFetch( m_hstmt );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1 );
-                            result = 1;
-                        }
-                        else
-                            str_to_uc_cpy( pimpl->m_pgLogFile, columnData );
-                    }
-                }
-            }
-        }
-    }
-    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, 1 );
-        result = 1;
-    }
-    else
-        m_hstmt = 0;
-    delete[] qry1;
-    qry1 = NULL;
-    delete[] qry2;
-    qry2 = NULL;
-    delete[] columnName;
-    columnName = NULL;
-    delete[] columnData;
-    columnData = NULL;
-    return result;
 }
