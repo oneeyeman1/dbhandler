@@ -1168,13 +1168,13 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         schema = cat;
                         copy_uc_to_uc( schemaName, catalogName );
                     }
-                    if( GetTableOwner( cat, schemaName, tableName, owner, errorMsg ) )
+                    if( GetTableOwner( cat, schema, table, owner, errorMsg ) )
                     {
                         result = 1;
                         break;
                     }
                     int tableId;
-                    if( GetTableId( cat, schemaName, tableName, tableId, errorMsg ) )
+                    if( GetTableId( cat, schema, table, tableId, errorMsg ) )
                     {
                         result = 1;
                         break;
