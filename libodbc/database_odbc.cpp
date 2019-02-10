@@ -3838,7 +3838,11 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         }
         if( pimpl->m_subtype == L"PostgreSQL" || pimpl->m_subtype == L"MySQL" )
         {
-            std::wstring query = L"SELECT count(*) FROM information_schema.tables";
+            std::wstring query;
+            if( pimpl->m_subtype == L"PostgreSQL" )
+                query = L"SELECT count(*) FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
+            else
+                query = L"SELECT count(*) FROM information_schema.tables WHERE table_schema = \'" + pimpl->m_dbName + L"\';";
             SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
             memset( qry, '\0', query.length() + 2 );
             uc_to_str_cpy( qry, query );
@@ -3891,7 +3895,10 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                 {
                                     std::wstring tname, sname, cname;
                                     std::vector<std::wstring> temp = pimpl->m_tableNames;
-                                    query = L"SELECT table_schema, table_name, table_catalog FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
+                                    if( pimpl->m_subtype == L"PostgreSQL" )
+                                        query = L"SELECT table_schema, table_name, table_catalog FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
+                                    else
+                                        query = L"SELECT table_schema, table_name, table_catalog FROM information_schma.tables WHERE table_schema = \'" + pimpl->m_dbName + L"\';";
                                     SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
                                     memset( qry, '\0', query.length() + 2 );
                                     uc_to_str_cpy( qry, query );
