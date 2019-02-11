@@ -7,7 +7,7 @@ public:
 protected:
     void do_layout();
 private:
-    wxStaticText *m_label1;
+    wxStaticText *m_label;
     wxTextCtrl *m_comment;
     wxCheckBox *m_log;
 };
