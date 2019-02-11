@@ -28,6 +28,9 @@
     <ClInclude Include="wherehavingpage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fieldgeneral.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tablegeneral.cpp">
@@ -46,6 +49,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="wherehavingpage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fieldgeneral.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

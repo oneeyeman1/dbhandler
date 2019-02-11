@@ -34,6 +34,7 @@
 #include "database.h"
 #include "tablegeneral.h"
 #include "fontpropertypagebase.h"
+#include "fieldgeneral.h"
 #include "properties.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -90,6 +91,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         wxString tbleName = title.substr( 0, title.find( '.' ) );
         wxString fieldName = title.substr( title.find( '.' ) + 1 );
         Field *field = static_cast<Field *>( m_object );
+        m_page5 = new FieldGeneral( m_properties );
 /*        res = db->GetFieldProperties( tableName.ToStdWstring(), schemaName.ToStdWstring(), field, errors );
         if( !res )
         {

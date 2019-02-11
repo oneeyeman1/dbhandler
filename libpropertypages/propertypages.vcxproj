@@ -35,6 +35,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fieldgeneral.h" />
     <ClInclude Include="fieldheader.h" />
     <ClInclude Include="fontpropertypagebase.h" />
     <ClInclude Include="msw\fontpropertypage.h" />
@@ -43,6 +44,7 @@
     <ClInclude Include="wherehavingpage.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="fieldgeneral.cpp" />
     <ClCompile Include="fieldheader.cpp" />
     <ClCompile Include="fontpropertypagebase.cpp" />
     <ClCompile Include="msw\fontpropertypage.cpp" />

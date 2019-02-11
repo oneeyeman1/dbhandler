@@ -23,6 +23,7 @@ public:
 private:
     TableGeneralProperty *m_page1;
     CFontPropertyPage *m_page2, *m_page3, *m_page4;
+    FieldGeneral *m_page5;
     int m_type;
     Database *m_db;
     void *m_object;

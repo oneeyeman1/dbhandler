@@ -44,6 +44,7 @@
 #include "fieldwindow.h"
 #include "createindex.h"
 #include "fontpropertypagebase.h"
+#include "fieldgeneral.h"
 #include "foreignkey.h"
 #include "getobjectname.h"
 #include "jointype.h"
