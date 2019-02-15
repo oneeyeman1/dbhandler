@@ -23,9 +23,10 @@
 #endif
 
 #include "database.h"
+#include "propertypagebase.h"
 #include "tablegeneral.h"
 
-TableGeneralProperty::TableGeneralProperty(wxWindow *parent, void *table, int type) : wxPanel( parent )
+TableGeneralProperty::TableGeneralProperty(wxWindow *parent, void *table, int type) : PropertyPageBase( parent )
 {
     m_table = table;
     m_type = type;
@@ -105,11 +106,6 @@ void TableGeneralProperty::OnCommentKeyEntered(wxKeyEvent &event)
         dynamic_cast<wxButton *>( GetParent()->GetParent()->FindWindowById( wxID_APPLY ) )->Enable( true );
         event.Skip();
     }
-}
-
-bool TableGeneralProperty::IsModified()
-{
-    return m_isModified;
 }
 
 void TableGeneralProperty::OnEditComment(wxCommandEvent &WXUNUSED(event))

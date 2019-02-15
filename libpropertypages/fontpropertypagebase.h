@@ -21,7 +21,7 @@
 #ifndef FONTPROPERTYPAGEBASE_H
 #define FONTPROPERTYPAGEBASE_H
 
-class WXEXPORT CFontPropertyPageBase : public wxPanel
+class WXEXPORT CFontPropertyPageBase : public PropertyPageBase
 {
 public:
     CFontPropertyPageBase(wxWindow* parent, wxFont &font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);

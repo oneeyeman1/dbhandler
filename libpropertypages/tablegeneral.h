@@ -1,12 +1,11 @@
 #ifndef _TABLEGENERALPROPERTY
 #define _TABLEGENERALPROPERTY
 
-class WXEXPORT TableGeneralProperty : public wxPanel
+class WXEXPORT TableGeneralProperty : public PropertyPageBase
 {
 public:
     TableGeneralProperty(wxWindow *parent, void *table, int type);
     ~TableGeneralProperty();
-    bool IsModified();
     wxTextCtrl *GetCommentCtrl();
     const std::wstring &GetComment();
     bool IsLogOnly();
@@ -23,7 +22,6 @@ private:
     wxTextCtrl *m_tableName;
     wxTextCtrl *m_comment;
     wxCheckBox *m_log;
-    bool m_isModified;
     void *m_table;
     int m_type;
 };

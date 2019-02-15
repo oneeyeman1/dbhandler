@@ -34,10 +34,11 @@
 #if defined __WXGTK__ || defined __WXOSX_COCOA__
 #include "wx/nativewin.h"
 #endif
+#include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 
 CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, wxFont &font, int id, const wxPoint& pos, const wxSize& size, long style)
- : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL)
+ : PropertyPageBase(parent, id)
 {
     m_dirty = false;
     m_faceName = font.GetFaceName();

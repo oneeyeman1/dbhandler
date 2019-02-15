@@ -5,9 +5,10 @@
 #pragma hdrstop
 #endif
 
+#include "propertypagebase.h"
 #include "fieldgeneral.h"
 
-FieldGeneral::FieldGeneral(wxWindow *parent) : wxPanel(parent, wxID_ANY)
+FieldGeneral::FieldGeneral(wxWindow *parent) : PropertyPageBase(parent, wxID_ANY)
 {
     m_label = new wxStaticText( this, wxID_ANY, _( "&Column comment:" ) );
     m_comment = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
@@ -33,7 +34,12 @@ void FieldGeneral::do_layout()
     sizer3->Add( m_log, 0, wxEXPAND, 0 );
     sizer2->Add( sizer3, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer1->Add( sizer1, 0, wxEXPAND, 0 );
+    sizer1->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( sizer1 );
+}
+
+bool FieldGeneral::IsLogOnly ()
+{
+    return m_log->GetValue();
 }
