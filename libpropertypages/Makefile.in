@@ -132,7 +132,9 @@ am_libpropertypages_la_OBJECTS = libpropertypages_la-tablegeneral.lo \
 	libpropertypages_la-fontpropertypagebase.lo \
 	libpropertypages_la-fontpropertypage.lo \
 	libpropertypages_la-syntaxproppage.lo \
-	libpropertypages_la-wherehavingpage.lo
+	libpropertypages_la-wherehavingpage.lo \
+	libpropertypages_la-fieldgeneral.lo \
+	libpropertypages_la-fieldheader.lo
 libpropertypages_la_OBJECTS = $(am_libpropertypages_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -388,18 +390,23 @@ libpropertypages_la_SOURCES = \
 	syntaxproppage.cpp \
 	syntaxproppage.h \
 	wherehavingpage.cpp \
-	wherehavingpage.h
+	wherehavingpage.h \
+	fieldgeneral.cpp \
+	fieldgeneral.h \
+	fieldheader.cpp \
+	fieldheader.h \
+	propertypagebase.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	`pkg-config \
 	--cflags \
-	gtk+-2.0` \
+	gtk+-3.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
 libpropertypages_la_LDFLAGS = `pkg-config \
 	--libs \
-	gtk+-2.0` \
+	gtk+-3.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 
 
@@ -481,6 +488,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fieldgeneral.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fieldheader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fontpropertypage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fontpropertypagebase.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-syntaxproppage.Plo@am__quote@
@@ -542,6 +551,20 @@ libpropertypages_la-wherehavingpage.lo: wherehavingpage.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='wherehavingpage.cpp' object='libpropertypages_la-wherehavingpage.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-wherehavingpage.lo `test -f 'wherehavingpage.cpp' || echo '$(srcdir)/'`wherehavingpage.cpp
+
+libpropertypages_la-fieldgeneral.lo: fieldgeneral.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertypages_la-fieldgeneral.lo -MD -MP -MF $(DEPDIR)/libpropertypages_la-fieldgeneral.Tpo -c -o libpropertypages_la-fieldgeneral.lo `test -f 'fieldgeneral.cpp' || echo '$(srcdir)/'`fieldgeneral.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertypages_la-fieldgeneral.Tpo $(DEPDIR)/libpropertypages_la-fieldgeneral.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fieldgeneral.cpp' object='libpropertypages_la-fieldgeneral.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-fieldgeneral.lo `test -f 'fieldgeneral.cpp' || echo '$(srcdir)/'`fieldgeneral.cpp
+
+libpropertypages_la-fieldheader.lo: fieldheader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertypages_la-fieldheader.lo -MD -MP -MF $(DEPDIR)/libpropertypages_la-fieldheader.Tpo -c -o libpropertypages_la-fieldheader.lo `test -f 'fieldheader.cpp' || echo '$(srcdir)/'`fieldheader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertypages_la-fieldheader.Tpo $(DEPDIR)/libpropertypages_la-fieldheader.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fieldheader.cpp' object='libpropertypages_la-fieldheader.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-fieldheader.lo `test -f 'fieldheader.cpp' || echo '$(srcdir)/'`fieldheader.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

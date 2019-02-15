@@ -14,7 +14,12 @@ libpropertypages_la_SOURCES =  \
 	syntaxproppage.cpp \
 	syntaxproppage.h \
 	wherehavingpage.cpp \
-	wherehavingpage.h
+	wherehavingpage.h \
+	fieldgeneral.cpp \
+	fieldgeneral.h \
+	fieldheader.cpp \
+	fieldheader.h \
+	propertypagebase.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	`pkg-config \
