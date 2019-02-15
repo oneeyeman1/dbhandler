@@ -5,9 +5,10 @@
     #pragma hdrstop
 #endif
 
+#include "propertypagebase.h"
 #include "fieldheader.h"
 
-FieldHeader::FieldHeader(wxWindow *parent) : wxPanel( parent, wxID_ANY )
+FieldHeader::FieldHeader(wxWindow *parent) : PropertyPageBase( parent, wxID_ANY )
 {
     m_label1 = new wxStaticText( this, wxID_ANY, _( "&Label:" ) );
     m_label = new wxTextCtrl( this, wxID_ANY, "" );
