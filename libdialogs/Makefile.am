@@ -33,7 +33,7 @@ libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libpropertypages \
 	`pkg-config \
 	--cflags \
-	gtk+-2.0` \
+	gtk+-3.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
