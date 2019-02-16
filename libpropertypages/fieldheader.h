@@ -1,5 +1,5 @@
 #pragma once
-class FieldHeader :	public wxPanel
+class WXEXPORT FieldHeader :	public PropertyPageBase
 {
 public:
     FieldHeader(wxWindow *parent);
