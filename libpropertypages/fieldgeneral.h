@@ -1,9 +1,10 @@
 #pragma once
-class WXEXPORT FieldGeneral : public wxPanel
+class WXEXPORT FieldGeneral : public PropertyPageBase
 {
 public:
     FieldGeneral(wxWindow *parent);
     ~FieldGeneral();
+    bool IsLogOnly();
 protected:
     void do_layout();
 private:

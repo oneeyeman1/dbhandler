@@ -36,6 +36,7 @@
 #include "wx/font.h"
 #include "wx/vector.h"
 #include "wx/bmpcbox.h"
+#include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 
 BEGIN_EVENT_TABLE(wxFontPreviewer, wxWindow)

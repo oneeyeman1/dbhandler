@@ -32,6 +32,7 @@
 #include "wx/nativewin.h"
 #endif
 #include "database.h"
+#include "propertypagebase.h"
 #include "tablegeneral.h"
 #include "fontpropertypagebase.h"
 #include "fieldgeneral.h"
@@ -42,7 +43,7 @@ std::mutex Database::Impl::my_mutex;
 #endif
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 
-PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, wxCriticalSection &cs, const wxPoint& pos, const wxSize& size, long style):
+PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxString &ownerName, wxCriticalSection &cs, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     std::vector<std::wstring> errors;
@@ -88,10 +89,19 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     }
     if( type == 1 )
     {
-        wxString tbleName = title.substr( 0, title.find( '.' ) );
-        wxString fieldName = title.substr( title.find( '.' ) + 1 );
         Field *field = static_cast<Field *>( m_object );
+        wxString fieldName( field->GetFieldName() );
+        {
+#if defined __WXMSW__ && _MSC_VER < 1900
+            wxCriticalSectionLocker( *pcs );
+#else
+            //#if _MSC_VER >= 1900
+            std::lock_guard<std::mutex> lock( m_db->GetTableVector().my_mutex );
+#endif
+            res = db->GetFieldProperties( tableName, schemaName, ownerName, fieldName, field, errors );
+        }
         m_page5 = new FieldGeneral( m_properties );
+        m_properties->AddPage( m_page5, _( "General" ) );
 /*        res = db->GetFieldProperties( tableName.ToStdWstring(), schemaName.ToStdWstring(), field, errors );
         if( !res )
         {
@@ -157,9 +167,11 @@ void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 {
     if( !m_isApplied )
     {
-        if( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() )
+        for( int i = 0; i < m_properties->GetPageCount(); ++i )
         {
-            ApplyProperties();
+            PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
+            if( page->IsModified() )
+                ApplyProperties();
         }
     }
     EndModal( wxID_OK );
@@ -168,7 +180,13 @@ void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 bool PropertiesDialog::ApplyProperties()
 {
     bool exist;
-    bool isModified = ( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() );
+    bool isModified/* = ( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() )*/;
+    for( int i = 0; i < m_properties->GetPageCount(); ++i )
+    {
+        PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
+        if( page->IsModified() )
+            isModified = true;
+    }
     std::vector<std::wstring> errors;
     if( m_type == 0 )
     {
@@ -232,5 +250,8 @@ const std::wstring &PropertiesDialog::GetCommand()
 
 bool PropertiesDialog::IsLogOnly()
 {
-    return m_page1->IsLogOnly();
+    if( m_type == 0 )
+        return m_page1->IsLogOnly();
+    if( m_type == 1 )
+        return m_page5->IsLogOnly();
 }

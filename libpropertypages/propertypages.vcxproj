@@ -39,6 +39,7 @@
     <ClInclude Include="fieldheader.h" />
     <ClInclude Include="fontpropertypagebase.h" />
     <ClInclude Include="msw\fontpropertypage.h" />
+    <ClInclude Include="propertypagebase.h" />
     <ClInclude Include="syntaxproppage.h" />
     <ClInclude Include="tablegeneral.h" />
     <ClInclude Include="wherehavingpage.h" />
