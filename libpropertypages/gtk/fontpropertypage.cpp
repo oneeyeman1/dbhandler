@@ -32,6 +32,7 @@
 #include "wx/fontutil.h"
 #include "wx/button.h"
 #include "wx/nativewin.h"
+#include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 #include "wx/gtk/private.h"
 
