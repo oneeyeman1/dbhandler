@@ -257,4 +257,6 @@ bool PropertiesDialog::IsLogOnly()
         return m_page1->IsLogOnly();
     if( m_type == 1 )
         return m_page5->IsLogOnly();
+    else
+        return false;
 }

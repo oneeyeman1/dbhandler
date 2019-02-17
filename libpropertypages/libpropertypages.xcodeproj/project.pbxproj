@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E305643B2217CB4C00F5576C /* fieldgeneral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E30564372217CB4B00F5576C /* fieldgeneral.cpp */; };
+		E305643C2217CB4C00F5576C /* fieldheader.h in Headers */ = {isa = PBXBuildFile; fileRef = E30564382217CB4C00F5576C /* fieldheader.h */; };
+		E305643D2217CB4C00F5576C /* fieldgeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E30564392217CB4C00F5576C /* fieldgeneral.h */; };
+		E305643E2217CB4C00F5576C /* fieldheader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E305643A2217CB4C00F5576C /* fieldheader.cpp */; };
+		E30564402217CB5F00F5576C /* propertypagebase.h in Headers */ = {isa = PBXBuildFile; fileRef = E305643F2217CB5F00F5576C /* propertypagebase.h */; };
 		E33E6F7C1EAD3067003A0B92 /* syntaxproppage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F781EAD3067003A0B92 /* syntaxproppage.cpp */; };
 		E33E6F7D1EAD3067003A0B92 /* syntaxproppage.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F791EAD3067003A0B92 /* syntaxproppage.h */; };
 		E33E6F7E1EAD3067003A0B92 /* wherehavingpage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F7A1EAD3067003A0B92 /* wherehavingpage.cpp */; };
@@ -20,6 +25,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E30564372217CB4B00F5576C /* fieldgeneral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fieldgeneral.cpp; sourceTree = "<group>"; };
+		E30564382217CB4C00F5576C /* fieldheader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fieldheader.h; sourceTree = "<group>"; };
+		E30564392217CB4C00F5576C /* fieldgeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fieldgeneral.h; sourceTree = "<group>"; };
+		E305643A2217CB4C00F5576C /* fieldheader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fieldheader.cpp; sourceTree = "<group>"; };
+		E305643F2217CB5F00F5576C /* propertypagebase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = propertypagebase.h; sourceTree = "<group>"; };
 		E33E6F781EAD3067003A0B92 /* syntaxproppage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = syntaxproppage.cpp; sourceTree = "<group>"; };
 		E33E6F791EAD3067003A0B92 /* syntaxproppage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = syntaxproppage.h; sourceTree = "<group>"; };
 		E33E6F7A1EAD3067003A0B92 /* wherehavingpage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wherehavingpage.cpp; sourceTree = "<group>"; };
@@ -63,6 +73,11 @@
 		E39501CD1DF3BA080046E51B /* libpropertypages */ = {
 			isa = PBXGroup;
 			children = (
+				E305643F2217CB5F00F5576C /* propertypagebase.h */,
+				E30564372217CB4B00F5576C /* fieldgeneral.cpp */,
+				E30564392217CB4C00F5576C /* fieldgeneral.h */,
+				E305643A2217CB4C00F5576C /* fieldheader.cpp */,
+				E30564382217CB4C00F5576C /* fieldheader.h */,
 				E39573F71F0FAADD00FA817A /* fontpropertypage.mm */,
 				E33E6F781EAD3067003A0B92 /* syntaxproppage.cpp */,
 				E33E6F791EAD3067003A0B92 /* syntaxproppage.h */,
@@ -86,8 +101,11 @@
 			files = (
 				E33E6F7F1EAD3067003A0B92 /* wherehavingpage.h in Headers */,
 				E39501D11DF3C2300046E51B /* tablegeneral.h in Headers */,
+				E305643D2217CB4C00F5576C /* fieldgeneral.h in Headers */,
 				E3AC9DD81E176AB80083DD62 /* fontpropertypage.h in Headers */,
 				E3AC9DDC1E176C640083DD62 /* fontpropertypagebase.h in Headers */,
+				E30564402217CB5F00F5576C /* propertypagebase.h in Headers */,
+				E305643C2217CB4C00F5576C /* fieldheader.h in Headers */,
 				E33E6F7D1EAD3067003A0B92 /* syntaxproppage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -143,9 +161,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E305643E2217CB4C00F5576C /* fieldheader.cpp in Sources */,
 				E33E6F7C1EAD3067003A0B92 /* syntaxproppage.cpp in Sources */,
 				E3AC9DDB1E176C640083DD62 /* fontpropertypagebase.cpp in Sources */,
 				E33E6F7E1EAD3067003A0B92 /* wherehavingpage.cpp in Sources */,
+				E305643B2217CB4C00F5576C /* fieldgeneral.cpp in Sources */,
 				E39573F81F0FAADD00FA817A /* fontpropertypage.mm in Sources */,
 				E39501D01DF3C2300046E51B /* tablegeneral.cpp in Sources */,
 			);
