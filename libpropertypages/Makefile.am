@@ -24,12 +24,12 @@ libpropertypages_la_SOURCES =  \
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	`pkg-config \
 	--cflags \
-	gtk+-3.0` \
+	gtk+-2.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
 libpropertypages_la_LDFLAGS = `pkg-config \
 	--libs \
-	gtk+-3.0` \
+	gtk+-2.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 
