@@ -1834,3 +1834,9 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
     }
     return result;
 }
+
+int SQLiteDatabase::GetFieldProperties (const std::wstring &table, Field *field, std::vector<std::wstring> &errorMsg)
+{
+    std::wstring schema = L"", owner = L"";
+    return GetFieldProperties( sqlite_pimpl->m_myconv.to_bytes( table ).c_str(), sqlite_pimpl->m_myconv.to_bytes( schema ).c_str(), sqlite_pimpl->m_myconv.to_bytes( owner ).c_str(), sqlite_pimpl->m_myconv.to_bytes( field->GetFieldName() ).c_str(), field, errorMsg );
+}

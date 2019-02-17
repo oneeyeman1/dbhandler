@@ -99,7 +99,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             //#if _MSC_VER >= 1900
             std::lock_guard<std::mutex> lock( m_db->GetTableVector().my_mutex );
 #endif
-            res = db->GetFieldProperties( tableName, schemaName, ownerName, fieldName, field, errors );
+            res = db->GetFieldProperties( tableName.ToStdWstring(), field, errors );
         }
         m_page5 = new FieldGeneral( m_properties );
         m_properties->AddPage( m_page5, _( "General" ) );
