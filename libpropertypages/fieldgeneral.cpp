@@ -5,15 +5,19 @@
 #pragma hdrstop
 #endif
 
+#include "database.h"
 #include "propertypagebase.h"
 #include "fieldgeneral.h"
 
-FieldGeneral::FieldGeneral(wxWindow *parent) : PropertyPageBase(parent, wxID_ANY)
+FieldGeneral::FieldGeneral(wxWindow *parent, Field *field) : PropertyPageBase(parent, wxID_ANY)
 {
+    m_field = field;
     m_label = new wxStaticText( this, wxID_ANY, _( "&Column comment:" ) );
     m_comment = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
     m_log = new wxCheckBox( this, wxID_ANY, _( "&Log Only" ) );
+    set_properties();
     do_layout();
+    m_comment->Bind( wxEVT_TEXT, &FieldGeneral::OnCommentChanged, this );
 }
 
 FieldGeneral::~FieldGeneral()
@@ -39,7 +43,17 @@ void FieldGeneral::do_layout()
     SetSizer( sizer1 );
 }
 
+void FieldGeneral::set_properties ()
+{
+    m_comment->SetValue( m_field->GetComment() );
+}
+
 bool FieldGeneral::IsLogOnly ()
 {
     return m_log->GetValue();
+}
+
+void FieldGeneral::OnCommentChanged (wxCommandEvent &event)
+{
+    m_isModified = true;
 }

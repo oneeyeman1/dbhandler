@@ -43,6 +43,7 @@
 std::mutex Database::Impl::my_mutex;
 #endif
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
+const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
 
 PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxString &ownerName, wxCriticalSection &cs, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
@@ -101,7 +102,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
 #endif
             res = db->GetFieldProperties( tableName.ToStdWstring(), field, errors );
         }
-        m_page5 = new FieldGeneral( m_properties );
+        m_page5 = new FieldGeneral( m_properties, field );
         m_properties->AddPage( m_page5, _( "General" ) );
         m_page6 = new FieldHeader( m_properties );
         m_properties->AddPage( m_page6, _( "Header" ) );
@@ -182,7 +183,7 @@ void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 
 bool PropertiesDialog::ApplyProperties()
 {
-    bool exist;
+    bool exist, result = true;
     bool isModified/* = ( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() )*/;
     for( int i = 0; i < m_properties->GetPageCount(); ++i )
     {
@@ -225,22 +226,26 @@ bool PropertiesDialog::ApplyProperties()
             m_tableProperties.m_isLabelFontItalic = labelFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
             m_tableProperties.m_labelFontEncoding = labelFont.GetEncoding();
             m_tableProperties.m_labelFontPixelSize = labelFont.GetPixelSize().GetWidth();
+            wxCommandEvent event( wxEVT_SET_TABLE_PROPERTY );
+            event.SetInt( IsLogOnly() );
+            event.SetExtraLong( m_type );
+            event.SetClientData( &m_tableProperties );
+            dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
+            if( event.GetString() == "Failed" )
+                result = false;
         }
     }
     if( m_type == 1 )
     {
-    }
-    bool result = true;
-    if( isModified )
-    {
-        wxCommandEvent event( wxEVT_SET_TABLE_PROPERTY );
+        Field *field = static_cast<Field *>( m_object );
+        wxCommandEvent event( wxEVT_SET_FIELD_PROPERTY );
         event.SetInt( IsLogOnly() );
         event.SetExtraLong( m_type );
-        event.SetClientData( &m_tableProperties );
+        event.SetClientData( &field );
         dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
         if( event.GetString() == "Failed" )
             result = false;
-	}
+    }
     m_isApplied = true;
     isModified = false;
     return result;

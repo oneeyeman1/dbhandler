@@ -77,6 +77,7 @@ private:
 };
 
 wxDECLARE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_SET_FIELD_PROPERTY, wxCommandEvent);
 
 #define wxID_DATABASEWINDOW 2
 

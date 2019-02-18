@@ -47,5 +47,6 @@ protected:
 }; // wxGlade: end class
 
 wxDECLARE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_SET_FIELD_PROPERTY, wxCommandEvent);
 
 #endif // PROPERTIES_H

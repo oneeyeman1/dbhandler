@@ -57,10 +57,11 @@
 #include "databaseview.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
+const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
-typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, wxCriticalSection &);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, const wxString &, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
@@ -193,6 +194,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_frame->Show();
     m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
+    Bind( wxEVT_SET_FIELD_PROPERTY, &DrawingView::OnSetProperties, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, m_canvas, wxID_DROPOBJECT );
 #if defined __WXMSW__ || defined __WXGTK__
     CreateViewToolBar();
@@ -575,8 +577,10 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     wxString command = "";
     bool logOnly = false;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
-    wxString tableName, schemaName;
+    wxString tableName, schemaName, ownerName;
     MyErdTable *erdTable = NULL;
+    ConstraintSign *sign = NULL;
+    Constraint *constraint = NULL;
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
     {
         if( event.GetId() == wxID_PROPERTIES )
@@ -584,9 +588,12 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             if( (*it)->IsSelected() )
             {
                 erdTable = (MyErdTable *)(*it);
-                dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
-                type = 0;
-                found = true;
+                if( erdTable )
+                {
+                    dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
+                    type = 0;
+                    found = true;
+                }
             }
         }
         if( event.GetId() == wxID_FIELDPROPERTIES )
@@ -600,6 +607,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
                     erdTable = my_table;
                     tableName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetTableName();
                     schemaName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetSchemaName();
+                    ownerName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetTableOwner();
                     type = 1;
                     found = true;
                 }
@@ -619,9 +627,9 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == 0 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly, wxEmptyString, wxEmptyString, *pcs );
+            res = func( m_frame, GetDocument()->GetDatabase(), type, dbTable, command, logOnly, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
         if( type == 1 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName, *pcs );
+            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName, ownerName, *pcs );
         if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );
