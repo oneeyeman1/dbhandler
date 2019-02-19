@@ -1063,7 +1063,7 @@ int PostgresDatabase::DeleteTable(const std::wstring &tableName, std::vector<std
     return result;
 }
 
-int PostgresDatabase::SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const Field *field, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
     return res;
