@@ -39,6 +39,7 @@ private:
 
 protected:
     void OnApply(wxCommandEvent &event);
+    void OnApplyUpdateUI(wxUpdateUIEvent &event);
     void OnOk(wxCommandEvent &event);
     bool ApplyProperties();
     // begin wxGlade: PropertiesDialog::attributes

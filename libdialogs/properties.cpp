@@ -128,6 +128,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         ok->SetDefault();
         apply->Enable( false );
         apply->Bind( wxEVT_BUTTON, &PropertiesDialog::OnApply, this );
+        apply->Bind( wxEVT_UPDATE_UI, &PropertiesDialog::OnApplyUpdateUI, this );
         ok->Bind( wxEVT_BUTTON, &PropertiesDialog::OnOk, this );
     }
 }
@@ -264,4 +265,14 @@ bool PropertiesDialog::IsLogOnly()
         return m_page5->IsLogOnly();
     else
         return false;
+}
+
+void PropertiesDialog::OnApplyUpdateUI (wxUpdateUIEvent &event)
+{
+    for( int i = 0; i < m_properties->GetPageCount(); ++i )
+    {
+        PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
+        if( page->IsModified() )
+            event.Enable( true );
+    }
 }
