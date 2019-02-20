@@ -274,6 +274,7 @@ protected:
     void rtrim(std::wstring &str) { str.erase( std::find_if( str.rbegin(), str.rend(), [](int ch) { return !std::isspace( ch ); } ).base(), str.end() ); };
     void trim(std::wstring str) { ltrim( str ); rtrim( str ); };
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
+    virtual bool IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg) = 0;
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) = 0;

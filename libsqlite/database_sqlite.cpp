@@ -2030,3 +2030,50 @@ int SQLiteDatabase::GetFieldProperties (const std::wstring &table, Field *field,
     std::wstring schema = L"", owner = L"";
     return GetFieldProperties( sqlite_pimpl->m_myconv.to_bytes( table ).c_str(), sqlite_pimpl->m_myconv.to_bytes( schema ).c_str(), sqlite_pimpl->m_myconv.to_bytes( owner ).c_str(), sqlite_pimpl->m_myconv.to_bytes( field->GetFieldName() ).c_str(), field, errorMsg );
 }
+
+bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
+{
+    bool exist = false;
+    std::wstring errorMessage;
+    std::wstring query = L"SELECT 1 FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &m_stmt1, NULL );
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_bind_text( m_stmt1, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res == SQLITE_OK )
+        {
+            res = sqlite3_bind_text( m_stmt1, 2, sqlite_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+            if( res == SQLITE_OK )
+            {
+                res = sqlite3_bind_text( m_stmt1, 3, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+                if( res == SQLITE_OK )
+                {
+                    res = sqlite3_step( m_stmt1 );
+                    if( res == SQLITE_ROW )
+                        exist = true;
+                }
+                else
+                {
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                }
+            }
+            else
+            {
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+        else
+        {
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    return exist;
+}

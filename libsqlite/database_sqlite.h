@@ -30,6 +30,7 @@ protected:
     void SetFullType(Field *field, const std::wstring &type);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
+    virtual bool IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg);
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg);
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg);
