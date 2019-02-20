@@ -70,7 +70,17 @@ void FieldHeader::do_layout()
 //    Layout();
 }
 
-void FieldHeader::set_properties ()
+void FieldHeader::set_properties()
 {
     m_label4->Hide();
+}
+
+wxTextCtrl *FieldHeader::GetLabelCtrl()
+{
+    return m_label;
+}
+
+wxTextCtrl *FieldHeader::GetHeadingCtrl()
+{
+    return m_heading;
 }

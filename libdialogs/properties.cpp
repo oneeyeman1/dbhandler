@@ -239,6 +239,9 @@ bool PropertiesDialog::ApplyProperties()
     if( m_type == 1 )
     {
         Field *field = static_cast<Field *>( m_object );
+        field->SetComment( m_page5->GetCommentCtrl()->GetValue().ToStdWstring() );
+        field->SetLabel( m_page6->GetLabelCtrl()->GetValue().ToStdWstring() );
+        field->SetHeading( m_page6->GetHeadingCtrl()->GetValue().ToStdWstring() );
         wxCommandEvent event( wxEVT_SET_FIELD_PROPERTY );
         event.SetInt( IsLogOnly() );
         event.SetExtraLong( m_type );

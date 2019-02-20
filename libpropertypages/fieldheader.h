@@ -4,6 +4,8 @@ class WXEXPORT FieldHeader :	public PropertyPageBase
 public:
     FieldHeader(wxWindow *parent);
     ~FieldHeader(void);
+    wxTextCtrl *GetLabelCtrl();
+    wxTextCtrl *GetHeadingCtrl();
 protected:
     void do_layout();
     void set_properties();

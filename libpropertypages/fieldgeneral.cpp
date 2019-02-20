@@ -57,3 +57,8 @@ void FieldGeneral::OnCommentChanged (wxCommandEvent &event)
 {
     m_isModified = true;
 }
+
+wxTextCtrl *FieldGeneral::GetCommentCtrl ()
+{
+    return m_comment;
+}

@@ -6,6 +6,7 @@ public:
     ~FieldGeneral();
     bool IsLogOnly();
     void OnCommentChanged(wxCommandEvent &event);
+    wxTextCtrl *GetCommentCtrl();
 protected:
     void set_properties();
     void do_layout();
