@@ -2628,7 +2628,7 @@ int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::ws
     return result;
 }
 
-int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const Field *field, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const Field *field, bool isLogOnly, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
     return res;
