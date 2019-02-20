@@ -1920,7 +1920,7 @@ int MySQLDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::w
     return res;
 }
 
-int MySQLDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const Field *field, bool isLogOnly, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const Field *field, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
 /*    if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() ) )

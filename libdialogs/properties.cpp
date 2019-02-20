@@ -171,14 +171,7 @@ void PropertiesDialog::OnApply(wxCommandEvent &WXUNUSED(event))
 void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 {
     if( !m_isApplied )
-    {
-        for( int i = 0; i < m_properties->GetPageCount(); ++i )
-        {
-            PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
-            if( page->IsModified() )
-                ApplyProperties();
-        }
-    }
+        ApplyProperties();
     EndModal( wxID_OK );
 }
 
