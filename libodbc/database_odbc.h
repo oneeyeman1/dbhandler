@@ -58,6 +58,7 @@ protected:
     int GetDSNErrorMessage(std::vector<std::wstring> &errorMsg);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg);
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg);
+    virtual bool IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg);
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schema_name, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
 //    int GetTableId(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     int GetTableId(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, int &tableId, std::vector<std::wstring> &errorMsg);

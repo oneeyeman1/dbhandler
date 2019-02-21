@@ -2081,3 +2081,44 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
     return result;
 }
 
+bool MySQLDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
+{
+    bool exist = false;
+    std::wstring query = L"SELECT 1 FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
+    MYSQL_BIND bind[3], bind_result;
+    unsigned long str_len1, str_len2, str_len3;
+    MYSQL_STMT *res = mysql_stmt_init( m_db );
+    if( res )
+    {
+        if( !mysql_stmt_prepare( res, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str (), query.length () ) )
+        {
+            bind[0].buffer_type = MYSQL_TYPE_STRING;
+            bind[0].buffer = (char *) m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str();
+            bind[0].buffer_length = strlen( m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
+            bind[0].is_null = 0;
+            bind[0].length = &str_len1;
+            bind[1].buffer_type = MYSQL_TYPE_STRING;
+            bind[1].buffer = (char *) m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str();
+            bind[1].buffer_length = strlen( m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
+            bind[1].is_null = 0;
+            bind[1].length = &str_len2;
+            bind[2].buffer_type = MYSQL_TYPE_STRING;
+            bind[2].buffer = (char *) m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
+            bind[2].buffer_length = strlen( m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() );
+            bind[2].is_null = 0;
+            bind[2].length = &str_len3;
+            if( !mysql_stmt_bind_param( res, bind ) )
+            {
+                str_len1 = bind[0].buffer_length;
+                str_len2 = bind[1].buffer_length;
+                str_len3 = bind[2].buffer_length;
+                if( !mysql_stmt_execute( res ) )
+                {
+                    if( mysql_stmt_affected_rows( res ) )
+                        exist = true;
+                }
+            }
+        }
+    }
+    return exist;
+}

@@ -1476,3 +1476,40 @@ int PostgresDatabase::GetTableOwner(const std::wstring &schemaName, const std::w
     values[1] = NULL;
     return result;
 }
+
+bool PostgresDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
+{
+    bool exist = false;
+    std::wstring query = L"SELECT 1 FROM abcatcol WHERE abc_tnam = $1 AND abc_ownr = $2 AND abc_cnam = $3;";
+    char *values[3];
+    values[0] = new char[tableName.length() * sizeof( wchar_t ) + 1];
+    values[1] = new char[ownerName.length() * sizeof( wchar_t ) + 1];
+    values[2] = new char[fieldName.length() * sizeof( wchar_t ) + 1];
+    int charlength1 = tableName.length() * sizeof( wchar_t ) + 1, charlength2 = ownerName.length() * sizeof( wchar_t ) + 1, charlength3 = fieldName.length() * sizeof( wchar_t ) + 1;
+    memset( values[0], '\0', charlength1 );
+    memset( values[1], '\0', charlength2 );
+    memset( values[2], '\0', charlength3 );
+    strcpy( values[0], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
+    strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
+    strcpy( values[2], m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() );
+    int length[3] = {charlength1, charlength2, charlength3};
+    int formats[3] = {1, 1, 1};
+    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL, values, length, formats, 1 );
+    ExecStatusType status = PQresultStatus( res );
+    if( status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK )
+        exist = true;
+    else
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( err );
+
+    }
+    PQclear( res );
+    delete values[0];
+    values[0] = NULL;
+    delete values[1];
+    values[1] = NULL;
+    delete values[2];
+    values[2] = NULL;
+    return exist;
+}

@@ -3899,7 +3899,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                         query = L"SELECT table_schema, table_name, table_catalog FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
                                     else
                                         query = L"SELECT table_schema, table_name, table_catalog FROM information_schma.tables WHERE table_schema = \'" + pimpl->m_dbName + L"\';";
-                                    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+                                    qry = new SQLWCHAR[query.length() + 2];
                                     memset( qry, '\0', query.length() + 2 );
                                     uc_to_str_cpy( qry, query );
                                     SQLWCHAR *table_schema, *table_name, *table_catalog;
@@ -5252,4 +5252,74 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     delete[] connectDSN;
     delete[] entry;
     delete[] retBuffer;
+}
+
+bool ODBCDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
+{
+    bool exist = false;
+    SQLLEN cbTableName = SQL_NTS, cbOwnerName = SQL_NTS, cbFieldName = SQL_NTS;
+    std::wstring query = L"SELECT 1 FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
+    SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + 2], *owner_name = new SQLWCHAR[ownerName.length() + 2], *field_name = new SQLWCHAR[fieldName.length() + 2];
+    memset( table_name, '\0', tableName.length() + 2 );
+    memset( owner_name, '\0', ownerName.length() + 2 );
+    memset( field_name, '\0', fieldName.length() + 2 );
+    uc_to_str_cpy( table_name, tableName );
+    uc_to_str_cpy( owner_name, ownerName );
+    uc_to_str_cpy( field_name, fieldName );
+    SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+        memset( qry, '\0', query.length() + 2 );
+        uc_to_str_cpy( qry, query );
+        SQLRETURN ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+        {
+            ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+            {
+                ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name, 0, &cbTableName );
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                {
+                    ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbTableName );
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    {
+                        ret = SQLExecute( m_hstmt );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            ret = SQLFetch( m_hstmt );
+                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                exist = true;
+                            else if( ret != SQL_NO_DATA )
+                                GetErrorMessage( errorMsg, 1, m_hstmt );
+                        }
+                        else
+                        {
+                        }
+                    }
+                    else
+                    {
+                    }
+                }
+                else
+                {
+                }
+            }
+            else
+            {
+            }
+        }
+        else
+        {
+        }
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        m_hstmt = 0;
+    }
+    delete table_name;
+    table_name = NULL;
+    delete owner_name;
+    owner_name = NULL;
+    delete field_name;
+    field_name = NULL;
+    return exist;
 }
