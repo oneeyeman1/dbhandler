@@ -2631,6 +2631,57 @@ int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::ws
 int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const Field *field, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
+    SQLRETURN result = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 1, m_hstmt );
+        res = 1;
+    }
+    else
+    {
+        bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
+        if( exist )
+        {
+            command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_hdr, abc_cmnt) VALUES(";
+            command += tableName;
+            command += L", " + ownerName;
+            command += L", " + fieldName;
+            command += L", " + const_cast<Field *>( field )->GetLabel();
+            command += L", " + const_cast<Field *>( field )->GetHeading();
+            command += L", " + const_cast<Field *>( field )->GetComment() + L");";
+        }
+        else
+        {
+            command = L"UPDATE abcatcol SET abc_labl = ";
+            command += const_cast<Field *>( field )->GetLabel() + L", abc_hdr = ";
+            command += const_cast<Field *>( field )->GetHeading() + L", abc_cmnt = ";
+            command += const_cast<Field *>( field )->GetComment() + L"WHERE abc_tnam = ";
+            command += tableName + L" AND abc_ownr = ";
+            command += ownerName + L" AND abc_cnam = ";
+            command += fieldName + L";";
+        }
+        if( !isLogOnly )
+        {
+            SQLWCHAR *query = new SQLWCHAR[command.length() + 2];
+            memset( query, '\0', command.length() + 2 );
+            uc_to_str_cpy( query, command );
+            result = SQLExecDirect( m_hstmt, query, command.length() + 2 );
+            if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                res = 1;
+            }
+            delete query;
+            query = NULL;
+        }
+        result = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            res = 1;
+        }
+        m_hstmt = 0;
+    }
     return res;
 }
 
