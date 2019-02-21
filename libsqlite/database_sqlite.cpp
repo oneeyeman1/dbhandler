@@ -1386,8 +1386,6 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
     char *error;
     std::wstring err;
     int result = 0;
-    std::wstring query1 = L"INSERT INTO sys.abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_hdr, abc_cmnt) VALUES( ?, ?, ?, ?, ?, ? );";
-    std::wstring query2 = L"UPDATE sys.abcatcol SET abc_labl = ?, abc_hdr = ?, abc_cmnt = ? WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     result = sqlite3_exec( m_db, "BEGIN", NULL, NULL, &error );
     if( result != SQLITE_OK )
     {
@@ -1397,181 +1395,46 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
     }
     else
     {
-        result = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), -1, &m_stmt1, 0 );
-        if( result != SQLITE_OK )
+        bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
+        if( exist )
         {
-            GetErrorMessage( result, err );
-            errorMsg.push_back( err );
-            res = 1;
+            command = L"INSERT INTO \"sys.abcatcol\"(\"abc_tnam\", \"abc_ownr\", \"abc_cnam\", \"abc_labl\", \"abc_hdr\", \"abc_cmnt\") VALUES(";
+            command += tableName;
+            command += L", " + ownerName;
+            command += L", " + fieldName;
+            command += L", " + const_cast<Field *>( field )->GetLabel();
+            command += L", " + const_cast<Field *>( field )->GetHeading();
+            command += L", " + const_cast<Field *>( field )->GetComment() + L");";
         }
         else
         {
-            result = sqlite3_bind_text( m_stmt1, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+            command = L"UPDATE \"sys.abcatcol\" SET \"abc_labl\" = ";
+            command += const_cast<Field *>( field )->GetLabel() + L", \"abc_hdr\" = ";
+            command += const_cast<Field *>( field )->GetHeading() + L", \"abc_cmnt\" = ";
+            command += const_cast<Field *>( field )->GetComment() + L"WHERE \"abc_tnam\" = ";
+            command += tableName + L" AND \"abc_ownr\" = ";
+            command += ownerName + L" AND \"abc_cnam\" = ";
+            command += fieldName + L";";
+        }
+        if( !isLogOnly )
+        {
+            result = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), NULL, NULL, &error );
             if( result != SQLITE_OK )
             {
                 GetErrorMessage( result, err );
                 errorMsg.push_back( err );
                 res = 1;
             }
-            if( !res )
-            {
-                result = sqlite3_bind_text( m_stmt1, 2, sqlite_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-                if( result != SQLITE_OK )
-                {
-                    GetErrorMessage( result, err );
-                    errorMsg.push_back( err );
-                    res = 1;
-                }
-            }
-            if( !res )
-            {
-                result = sqlite3_bind_text( m_stmt1, 3, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-                if( result != SQLITE_OK )
-                {
-                    GetErrorMessage( result, err );
-                    errorMsg.push_back( err );
-                    res = 1;
-                }
-            }
-            if( !res )
-            {
-                result = sqlite3_bind_text( m_stmt1, 4, sqlite_pimpl->m_myconv.to_bytes( const_cast<Field *>( field )->GetLabel().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-                if( result != SQLITE_OK )
-                {
-                    GetErrorMessage( result, err );
-                    errorMsg.push_back( err );
-                    res = 1;
-                }
-            }
-            if( !res )
-            {
-                result = sqlite3_bind_text( m_stmt1, 5, sqlite_pimpl->m_myconv.to_bytes( const_cast<Field *>( field )->GetHeading().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-                if( result != SQLITE_OK )
-                {
-                    GetErrorMessage( result, err );
-                    errorMsg.push_back( err );
-                    res = 1;
-                }
-            }
-            if( !res )
-            {
-                result = sqlite3_bind_text( m_stmt1, 6, sqlite_pimpl->m_myconv.to_bytes( const_cast<Field *>( field )->GetComment().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-                if( result != SQLITE_OK )
-                {
-                    GetErrorMessage( result, err );
-                    errorMsg.push_back( err );
-                    res = 1;
-                }
-            }
-            if( !res )
-            {
-                result = sqlite3_step( m_stmt1 );
-                if( result == SQLITE_DONE )
-                {
-                    result = sqlite3_exec( m_db, "COMMIT", NULL, NULL, &error );
-                    if( result )
-                    {
-                        GetErrorMessage( result, err );
-                        errorMsg.push_back( err );
-                        res = 1;
-                    }
-                }
-                else
-                {
-                    result = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), -1, &m_stmt2, 0 );
-                    result = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), -1, &m_stmt1, 0 );
-                    if( result != SQLITE_OK )
-                    {
-                        GetErrorMessage( result, err );
-                        errorMsg.push_back( err );
-                        res = 1;
-                    }
-                    else
-                    {
-                        result = sqlite3_bind_text( m_stmt2, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-                        if( result != SQLITE_OK )
-                        {
-                            GetErrorMessage( result, err );
-                            errorMsg.push_back( err );
-                            res = 1;
-                        }
-                        if( !res )
-                        {
-                            result = sqlite3_bind_text( m_stmt2, 2, sqlite_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-                            if( result != SQLITE_OK )
-                            {
-                                GetErrorMessage( result, err );
-                                errorMsg.push_back( err );
-                                res = 1;
-                            }
-                        }
-                        if( !res )
-                        {
-                            result = sqlite3_bind_text( m_stmt2, 3, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-                            if( result != SQLITE_OK )
-                            {
-                                GetErrorMessage( result, err );
-                                errorMsg.push_back( err );
-                                res = 1;
-                            }
-                        }
-                        if( !res )
-                        {
-                            result = sqlite3_bind_text( m_stmt2, 4, sqlite_pimpl->m_myconv.to_bytes( const_cast<Field *>( field )->GetLabel().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-                            if( result != SQLITE_OK )
-                            {
-                                GetErrorMessage( result, err );
-                                errorMsg.push_back( err );
-                                res = 1;
-                            }
-                        }
-                        if( !res )
-                        {
-                            result = sqlite3_bind_text( m_stmt2, 5, sqlite_pimpl->m_myconv.to_bytes( const_cast<Field *>( field )->GetHeading().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-                            if( result != SQLITE_OK )
-                            {
-                                GetErrorMessage( result, err );
-                                errorMsg.push_back( err );
-                                res = 1;
-                            }
-                        }
-                        if( !res )
-                        {
-                            result = sqlite3_bind_text( m_stmt2, 6, sqlite_pimpl->m_myconv.to_bytes( const_cast<Field *>( field )->GetComment().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-                            if( result != SQLITE_OK )
-                            {
-                                GetErrorMessage( result, err );
-                                errorMsg.push_back( err );
-                                res = 1;
-                            }
-                        }
-                        if( !res )
-                        {
-                            result = sqlite3_step( m_stmt2 );
-                            if( result == SQLITE_DONE )
-                            {
-                                result = sqlite3_exec( m_db, "COMMIT", NULL, NULL, &error );
-                                if( result )
-                                {
-                                    GetErrorMessage( result, err );
-                                    errorMsg.push_back( err );
-                                    res = 1;
-                                }
-                            }
-                            else
-                            {
-                                result = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, &error );
-                                if( result )
-                                {
-                                    GetErrorMessage( result, err );
-                                    errorMsg.push_back( err );
-                                    res = 1;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        }
+        if( res )
+            result = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, &error );
+        else
+            result = sqlite3_exec( m_db, "COMMIT", NULL, NULL, &error );
+        if( result != SQLITE_OK )
+        {
+            GetErrorMessage( result, err );
+            errorMsg.push_back( err );
+            res = 1;
         }
     }
     return res;
@@ -2054,26 +1917,18 @@ bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const
                 }
                 else
                 {
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
                 }
             }
             else
             {
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
             }
         }
         else
         {
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
         }
     }
     else
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
     }
     return exist;
 }
