@@ -104,7 +104,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         }
         m_page5 = new FieldGeneral( m_properties, field );
         m_properties->AddPage( m_page5, _( "General" ) );
-        m_page6 = new FieldHeader( m_properties );
+        m_page6 = new FieldHeader( m_properties, field );
         m_properties->AddPage( m_page6, _( "Header" ) );
 /*        res = db->GetFieldProperties( tableName.ToStdWstring(), schemaName.ToStdWstring(), field, errors );
         if( !res )

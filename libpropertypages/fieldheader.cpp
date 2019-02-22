@@ -5,11 +5,14 @@
     #pragma hdrstop
 #endif
 
+#include <string>
+#include "database.h"
 #include "propertypagebase.h"
 #include "fieldheader.h"
 
-FieldHeader::FieldHeader(wxWindow *parent) : PropertyPageBase( parent, wxID_ANY )
+FieldHeader::FieldHeader(wxWindow *parent, Field *field) : PropertyPageBase( parent, wxID_ANY )
 {
+    m_field = field;
     m_label1 = new wxStaticText( this, wxID_ANY, _( "&Label:" ) );
     m_label = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "&Position: " ) );
@@ -72,6 +75,8 @@ void FieldHeader::do_layout()
 
 void FieldHeader::set_properties()
 {
+    m_label->SetValue( m_field->GetLabel() );
+    m_heading->SetValue( m_field->GetHeading() );
     m_label4->Hide();
 }
 
