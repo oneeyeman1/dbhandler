@@ -5,7 +5,8 @@
 #pragma hdrstop
 #endif
 
-#include "database.h"
+#include <string>
+#include <database.h>
 #include "propertypagebase.h"
 #include "fieldgeneral.h"
 
