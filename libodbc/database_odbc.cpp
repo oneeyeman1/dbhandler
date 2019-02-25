@@ -5323,7 +5323,7 @@ bool ODBCDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const 
         SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
         memset( qry, '\0', query.length() + 2 );
         uc_to_str_cpy( qry, query );
-        SQLRETURN ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+        ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
         {
             ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
