@@ -1066,6 +1066,38 @@ int PostgresDatabase::DeleteTable(const std::wstring &tableName, std::vector<std
 int PostgresDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const Field *field, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
+    bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
+    if( exist )
+    {
+        command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_hdr, abc_cmnt) VALUES(";
+        command += tableName;
+        command += L", " + ownerName;
+        command += L", " + fieldName;
+        command += L", " + const_cast<Field *>( field )->GetLabel();
+        command += L", " + const_cast<Field *>( field )->GetHeading();
+        command += L", " + const_cast<Field *>( field )->GetComment() + L");";
+    }
+    else
+    {
+        command = L"UPDATE abcatcol SET abc_labl = ";
+        command += const_cast<Field *>( field )->GetLabel() + L", abc_hdr = ";
+        command += const_cast<Field *>( field )->GetHeading() + L", abc_cmnt = ";
+        command += const_cast<Field *>( field )->GetComment() + L"WHERE abc_tnam = ";
+        command += tableName + L" AND abc_ownr = ";
+        command += ownerName + L" AND abc_cnam = ";
+        command += fieldName + L";";
+    }
+    if( !isLogOnly )
+    {
+        PGresult *result = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
+        if( PQresultStatus (result) != PGRES_COMMAND_OK || PQresultStatus (result) != PGRES_TUPLES_OK )
+        {
+            res = 1;
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( err );
+            PQclear( result );
+        }
+    }
     return res;
 }
 
