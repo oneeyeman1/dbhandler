@@ -1610,7 +1610,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, const std::wstring &tableName, const std::wstring &tableOwner, int tableId, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, const std::wstring &tableName, const std::wstring &, int, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     if( tableAdded )
@@ -1917,18 +1917,26 @@ bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const
                 }
                 else
                 {
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
                 }
             }
             else
             {
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
             }
         }
         else
         {
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
         }
     }
     else
     {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
     }
     return exist;
 }
