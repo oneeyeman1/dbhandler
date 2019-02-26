@@ -936,6 +936,12 @@ int PostgresDatabase::GetFieldProperties(const char *tableName, const char *sche
     return result;
 }
 
+int PostgresDatabase::GetFieldProperties(const std::wstring &table, Field *field, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+}
+
 int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int match, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
