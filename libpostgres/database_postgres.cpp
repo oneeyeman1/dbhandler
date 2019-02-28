@@ -886,26 +886,30 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     return result;
 }
 
-int PostgresDatabase::GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, const char *fieldName, Field *field, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    int len = (int) strlen( tableName ) + (int) strlen( schemaName ) + 2;
+    const char *table = m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str();
+    const char *schema = m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str();
+    const char *owner = m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str();
+    const char *fieldNameReq = m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
+    int len = (int) strlen( table ) + (int) strlen( schema ) + 2;
     char *tname = new char[len];
     memset( tname, '\0', len );
-    strcpy( tname, schemaName );
+    strcpy( tname, schema );
     strcat( tname, "." );
-    strcat( tname, tableName );
+    strcat( tname, table );
     char *values[3];
     values[0] = NULL, values[1] = NULL, values[2] = NULL;
     values[0] = new char[strlen( tname ) + 1];
-    values[1] = new char[strlen( ownerName ) + 1];
-    values[2] = new char[strlen( fieldName ) + 1];
+    values[1] = new char[strlen( owner ) + 1];
+    values[2] = new char[strlen( fieldNameReq ) + 1];
     memset( values[0], '\0', strlen( tname ) + 1 );
-    memset( values[1], '\0', strlen( ownerName ) + 1 );
-    memset( values[2], '\0', strlen( fieldName ) + 1 );
+    memset( values[1], '\0', strlen( owner ) + 1 );
+    memset( values[2], '\0', strlen( fieldNameReq ) + 1 );
     strcpy( values[0], tname );
-    strcpy( values[1], ownerName );
-    strcpy( values[2], fieldName );
+    strcpy( values[1], owner );
+    strcpy( values[2], fieldNameReq );
     int len1 = (int) strlen( values[0] );
     int len2 = (int) strlen( values[1] );
     int len3 = (int) strlen( values[2] );
@@ -939,6 +943,24 @@ int PostgresDatabase::GetFieldProperties(const char *tableName, const char *sche
 int PostgresDatabase::GetFieldProperties(const std::wstring &table, Field *field, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    bool found = false;
+    std::wstring schemaName, ownerName;
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
+    {
+        if( ( *it ).first == pimpl->m_dbName )
+        {
+            for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() || !found; ++it1 )
+            {
+                if( ( *it1 )->GetTableName () == table )
+                {
+                    found = true;
+                    schemaName = (*it1)->GetSchemaName();
+                    ownerName = (*it1)->GetTableOwner();
+                }
+            }
+        }
+    }
+    result = GetFieldProperties( table, schemaName, ownerName, field->GetFieldName(), field, errorMsg );
     return result;
 }
 
@@ -1418,7 +1440,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                 if( fieldType == L"serial" || fieldType == L"bigserial" )
                     autoinc = true;
                 Field *field = new Field( fieldName, fieldType, size, precision, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
-                if( GetFieldProperties( table_name, schema_name, table_owner, field_name, field, errorMsg ) )
+                if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_owner ), m_pimpl->m_myconv.from_bytes( field_name ), field, errorMsg ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                     errorMsg.push_back( err );
