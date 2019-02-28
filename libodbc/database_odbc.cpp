@@ -2277,13 +2277,20 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
     return result;
 }
 
-int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, const SQLWCHAR *fieldName, Field *field, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     SQLHDBC hdbc_fieldProp;
     SQLHSTMT stmt_fieldProp;
     int result = 0;
     SQLWCHAR *commentField;
     SQLWCHAR *qry = NULL;
+    SQLWCHAR *table = new SQLWCHAR[tableName.length() + 2], *owner = new SQLWCHAR[ownerName.length() + 2], *fieldNameReq = new SQLWCHAR[fieldName.length() + 2];
+    memset( table, '\0', tableName.length() + 2 );
+    memset( owner, '0', ownerName.length() + 2 );
+    memset( fieldNameReq, '\0', fieldName.length() + 2);
+    uc_to_str_cpy( table, tableName );
+    uc_to_str_cpy( owner, ownerName );
+    uc_to_str_cpy( fieldNameReq, fieldName );
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbDataFontItalic;
     SQLSMALLINT OutConnStrLen;
     std::wstring query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
@@ -2324,7 +2331,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
                 }
                 else
                 {
-                    ret = SQLBindParameter( stmt_fieldProp, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, &tableName, 0, &cbTableName );
+                    ret = SQLBindParameter( stmt_fieldProp, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, &table, 0, &cbTableName );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 1, stmt_fieldProp );
@@ -2340,7 +2347,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
                         }
                         else
                         {
-                            ret = SQLBindParameter( stmt_fieldProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, &ownerName, 0, &cbSchemaName );
+                            ret = SQLBindParameter( stmt_fieldProp, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, &owner, 0, &cbSchemaName );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, stmt_fieldProp );
@@ -2356,7 +2363,7 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
                                 }
                                 else
                                 {
-                                    ret = SQLBindParameter( stmt_fieldProp, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, &fieldName, 0, &cbFieldName );
+                                    ret = SQLBindParameter( stmt_fieldProp, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, &fieldNameReq, 0, &cbFieldName );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
                                         GetErrorMessage( errorMsg, 1, stmt_fieldProp );
@@ -2439,12 +2446,41 @@ int ODBCDatabase::GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *
     }
     delete[] qry;
     qry = NULL;
+    delete[] table;
+    table = NULL;
+    delete[] owner;
+    owner = NULL;
+    delete[] fieldNameReq;
+    fieldNameReq = NULL;
     return result;
 }
 
 int ODBCDatabase::GetFieldProperties (const std::wstring &table, Field *field, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    bool found = false;
+    std::wstring schemaName, ownerName;
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
+    {
+        if( ( *it ).first == pimpl->m_dbName )
+        {
+            for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() || !found; ++it1 )
+            {
+                if( ( *it1 )->GetTableName () == table )
+                {
+                    found = true;
+                    schemaName = (*it1)->GetSchemaName();
+                    ownerName = (*it1)->GetTableOwner();
+                }
+            }
+        }
+    }
+    SQLWCHAR *schameStr = new SQLWCHAR[schemaName.length() + 2], *ownerStr = new SQLWCHAR[ownerName.length() + 2];
+    memset( schameStr, '\0', schemaName.length() + 2 );
+    uc_to_str_cpy( schameStr, schemaName );
+    memset( ownerStr, '\0', ownerName.length() + 2 );
+    uc_to_str_cpy( ownerStr, ownerName );
+    result = GetFieldProperties( table, schameStr, ownerStr, field->GetFieldName(), field, errorMsg );
     return result;
 }
 
