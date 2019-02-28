@@ -771,7 +771,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                         autoincrement = false;
                                                                                     is_pk = pk == 1 ? true : false;
                                                                                     Field *field = new Field( fieldName, fieldType, fieldSize, fieldPrec, fieldDefaultValue, is_nullable, autoincrement, is_pk, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
-                                                                                    if( GetFieldProperties( (const char *) table_name, (const char *) schema_name, "", (const char *) colName, field, errorMsg ) )
+                                                                                    if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), L"", m_pimpl->m_myconv.from_bytes( colName ), field, errorMsg ) )
                                                                                     {
                                                                                         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
                                                                                         errorMsg.push_back( err );
@@ -1701,16 +1701,20 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
     return result;
 }
 
-int MySQLDatabase::GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, const char *fieldName, Field *field, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     char /**str_data1 = NULL, *str_data2 = NULL, */*str_data3 = NULL;
     int result = 0;
-    size_t len = strlen( tableName ) + strlen( schemaName ) + 2;
+    const char *table = m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str();
+    const char *schema = m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str();
+    const char *owner = m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str();
+    const char *fieldNameReq = m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
+    size_t len = strlen( table ) + strlen( schema ) + 2;
     char *tname = new char[len];
     memset( tname, '\0', len );
-    strcpy( tname, schemaName );
+    strcpy( tname, schema );
     strcat( tname, "." );
-    strcat( tname, tableName );
+    strcat( tname, table );
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?";
 //    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = \'abcﬂ\' AND abc_ownr = \'\' AND abc_cnam = \'id\'";
     MYSQL_STMT *stmt = mysql_stmt_init( m_db );
@@ -1752,13 +1756,13 @@ int MySQLDatabase::GetFieldProperties(const char *tableName, const char *schemaN
             params[0].is_null = 0;
             params[0].length = &str_length1;
             params[1].buffer_type = MYSQL_TYPE_STRING;
-            params[1].buffer = (char *) ownerName;
-            params[1].buffer_length = strlen( ownerName );
+            params[1].buffer = (char *) owner;
+            params[1].buffer_length = strlen( owner );
             params[1].is_null = 0;
             params[1].length = &str_length2;
             params[2].buffer_type = MYSQL_TYPE_STRING;
-            params[2].buffer = (char *) fieldName;
-            params[2].buffer_length = strlen( fieldName );
+            params[2].buffer = (char *) fieldNameReq;
+            params[2].buffer_length = strlen( fieldNameReq );
             params[2].is_null = 0;
             params[2].length = &str_length3;
             if( mysql_stmt_bind_param( stmt, params ) )
@@ -1807,6 +1811,24 @@ int MySQLDatabase::GetFieldProperties(const char *tableName, const char *schemaN
 int MySQLDatabase::GetFieldProperties(const std::wstring &table, Field *field, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    bool found = false;
+    std::wstring schemaName, ownerName;
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
+    {
+        if( ( *it ).first == pimpl->m_dbName )
+        {
+            for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() || !found; ++it1 )
+            {
+                if( ( *it1 )->GetTableName () == table )
+                {
+                    found = true;
+                    schemaName = (*it1)->GetSchemaName();
+                    ownerName = (*it1)->GetTableOwner();
+                }
+            }
+        }
+    }
+    result = GetFieldProperties( table, schemaName, ownerName, field->GetFieldName(), field, errorMsg );
     return result;
 }
 
