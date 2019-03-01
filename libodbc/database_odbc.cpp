@@ -2475,12 +2475,7 @@ int ODBCDatabase::GetFieldProperties (const std::wstring &table, Field *field, s
             }
         }
     }
-    SQLWCHAR *schameStr = new SQLWCHAR[schemaName.length() + 2], *ownerStr = new SQLWCHAR[ownerName.length() + 2];
-    memset( schameStr, '\0', schemaName.length() + 2 );
-    uc_to_str_cpy( schameStr, schemaName );
-    memset( ownerStr, '\0', ownerName.length() + 2 );
-    uc_to_str_cpy( ownerStr, ownerName );
-    result = GetFieldProperties( table, schameStr, ownerStr, field->GetFieldName(), field, errorMsg );
+    result = GetFieldProperties( table, schemaName, ownerName, field->GetFieldName(), field, errorMsg );
     return result;
 }
 
