@@ -326,7 +326,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
 void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 {
     FieldShape *erdField = NULL;
-    MyErdTable *erdTable = NULL, *realSelectedShape = NULL;
+    MyErdTable *erdTable = NULL;
     ConstraintSign *erdSign = NULL;
     wxPoint pt = event.GetPosition();
     ShapeList selection;
@@ -335,17 +335,13 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     {
         MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
         if( table )
-            realSelectedShape = table;
+            m_realSelectedShape = table;
     }
     wxMenu mnu;
     int allSelected = 0;
     mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_DROPOBJECT );
     mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_TABLECLOSE );
     m_selectedShape = GetShapeUnderCursor();
-    if( m_selectedShape == realSelectedShape )
-        wxMessageBox( "Equal" );
-    else
-        wxMessageBox( "Not equal" );
     ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
     if( m_selectedShape )
     {
@@ -534,17 +530,6 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             GetEventHandler()->ProcessEvent( evt );
         else
             m_view->ProcessEvent( evt );
-        if( rc == wxID_DROPOBJECT || rc == wxID_TABLECLOSE )
-        {
-            if( realSelectedShape == m_selectedShape )
-            {
-
-            }
-            else
-            {
-                realSelectedShape->Select( true );
-            }
-        }
     }
 }
 
@@ -622,6 +607,14 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
                 tableVec.erase( std::remove( tableVec.begin(), tableVec.end(), table ), tableVec.end() );
             }
             names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
+            if( m_realSelectedShape == m_selectedShape )
+            {
+
+            }
+            else
+            {
+                m_realSelectedShape->Select( true );
+            }
         }
         else if( !isTable && !db->ApplyForeignKey( command, constraint->GetName().ToStdWstring(), *( const_cast<DatabaseTable *>( constraint->GetFKTable() ) ), localColumns, constraint->GetRefTable().ToStdWstring(), refColumn, constraint->GetOnDelete(), constraint->GetOnUpdate(), false, newFK, false, match, errors ) )
         {

@@ -27,7 +27,7 @@ private:
     wxSFDiagramManager m_pManager;
     bool m_showComments, m_showIndexKeys, m_showIntegrity;
     bool m_showDataTypes, m_showLabels, m_showToolBox;
-    wxSFShapeBase *m_selectedShape;
+    wxSFShapeBase *m_selectedShape, *m_realSelectedShape;
     MODE m_mode;
     wxPoint startPoint;
     ConstraintSign *m_oldSelectedSign;
