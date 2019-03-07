@@ -598,7 +598,42 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
     {
         if( isTable && ( ( eventId == wxID_DROPOBJECT && !db->DeleteTable( name.ToStdWstring(), errors ) ) || eventId != wxID_DROPOBJECT ) )
         {
+            if( m_realSelectedShape == m_selectedShape )
+            {
+                ShapeList listShapes;
+                m_pManager.GetShapes( CLASSINFO( MyErdTable ), listShapes );
+                int size = listShapes.size();
+                if( listShapes.size() == 1 )
+                    m_realSelectedShape = NULL;
+                else
+                {
+                    MyErdTable *tableToRemove = (MyErdTable *) ( listShapes.Item( size - 1 )->GetData() );
+                    if( tableToRemove == erdTable )
+                        m_realSelectedShape = (MyErdTable *) ( listShapes.Item( size - 2 )->GetData() );
+                    else
+                    {
+                        bool found = false;
+                        int i;
+                        for( i = 0; i < size || !found; ++i )
+                            if( listShapes.Item( i )->GetData() == erdTable )
+                                found = true;
+                        m_realSelectedShape = listShapes.Item( i + 1 )->GetData();
+                    }
+                }
+            }
             m_pManager.RemoveShape( erdTable );
+/*            for( ShapeList::iterator it = listShapes.begin(); it != listShapes.end() || !nextShapeFound; ++it )
+            {
+                CommentFieldShape *shape = wxDynamicCast( (*it), CommentFieldShape );
+                if( m_showComments )
+                {
+                    shape->SetText( const_cast<Field *>( shape->GetFieldForComment() )->GetComment() );
+                }
+                else
+                {
+                    shape->SetText( wxEmptyString );
+                }
+            }*/
             std::map<std::wstring, std::vector<DatabaseTable *> > tables = db->GetTableVector().m_tables;
             std::vector<DatabaseTable *> tableVec = tables.at( db->GetTableVector().m_dbName );
             std::vector<std::wstring> names = doc->GetTableNameVector();
@@ -607,14 +642,15 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
                 tableVec.erase( std::remove( tableVec.begin(), tableVec.end(), table ), tableVec.end() );
             }
             names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
-            if( m_realSelectedShape == m_selectedShape )
+/*            if( m_realSelectedShape == m_selectedShape )
             {
-
+                
             }
             else
-            {
-                m_realSelectedShape->Select( true );
-            }
+            {*/
+                if( m_realSelectedShape )
+                    m_realSelectedShape->Select( true );
+//            }
         }
         else if( !isTable && !db->ApplyForeignKey( command, constraint->GetName().ToStdWstring(), *( const_cast<DatabaseTable *>( constraint->GetFKTable() ) ), localColumns, constraint->GetRefTable().ToStdWstring(), refColumn, constraint->GetOnDelete(), constraint->GetOnUpdate(), false, newFK, false, match, errors ) )
         {
