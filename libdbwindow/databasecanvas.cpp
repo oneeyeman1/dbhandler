@@ -642,7 +642,8 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
             {
                 tableVec.erase( std::remove( tableVec.begin(), tableVec.end(), table ), tableVec.end() );
             }
-            names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
+            else
+                names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
 /*            if( m_realSelectedShape == m_selectedShape )
             {
                 
