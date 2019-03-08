@@ -600,6 +600,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
         {
             if( m_realSelectedShape == m_selectedShape )
             {
+                m_realSelectedShape = NULL;
                 ShapeList listShapes;
                 m_pManager.GetShapes( CLASSINFO( MyErdTable ), listShapes );
                 int size = listShapes.size();
@@ -614,7 +615,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
                     {
                         bool found = false;
                         int i;
-                        for( i = 0; i < size || !found; ++i )
+                        for( i = 0; i < size - 1 || !found; i++ )
                             if( listShapes.Item( i )->GetData() == erdTable )
                                 found = true;
                         m_realSelectedShape = listShapes.Item( i + 1 )->GetData();
@@ -636,7 +637,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
             }*/
             std::map<std::wstring, std::vector<DatabaseTable *> > tables = db->GetTableVector().m_tables;
             std::vector<DatabaseTable *> tableVec = tables.at( db->GetTableVector().m_dbName );
-            std::vector<std::wstring> names = doc->GetTableNameVector();
+            std::vector<std::wstring> &names = doc->GetTableNameVector();
             if( event.GetId() == wxID_DROPOBJECT )
             {
                 tableVec.erase( std::remove( tableVec.begin(), tableVec.end(), table ), tableVec.end() );
