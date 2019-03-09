@@ -248,7 +248,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Visual Leak Detector\include;..\dbinterface;..\libfieldswindow;..\libshapeframework;..\libpropertypages;c:\wxWidgets\lib\vc_dll\mswud;c:\wxWidgets\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Visual Leak Detector\include;.\res;..\dbinterface;..\libfieldswindow;..\libshapeframework;..\libpropertypages;c:\wxWidgets\lib\vc_dll\mswud;c:\wxWidgets\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_USRDLL;DLL_EXPORTS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;MY_DLL_BUILDING;;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -498,12 +498,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="addcolumnsdialog.cpp" />
+    <ClCompile Include="bitmappanel.cpp" />
     <ClCompile Include="createindex.cpp" />
     <ClCompile Include="databasetype.cpp" />
     <ClCompile Include="dialogs.cpp" />
     <ClCompile Include="foreignkey.cpp" />
     <ClCompile Include="getobjectname.cpp" />
     <ClCompile Include="jointype.cpp" />
+    <ClCompile Include="newquery.cpp" />
     <ClCompile Include="odbcconfigure.cpp" />
     <ClCompile Include="odbccredentials.cpp" />
     <ClCompile Include="properties.cpp" />
@@ -512,11 +514,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="addcolumnsdialog.h" />
+    <ClInclude Include="bitmappanel.h" />
     <ClInclude Include="createindex.h" />
     <ClInclude Include="databasetype.h" />
     <ClInclude Include="foreignkey.h" />
     <ClInclude Include="getobjectname.h" />
     <ClInclude Include="jointype.h" />
+    <ClInclude Include="newquery.h" />
     <ClInclude Include="odbcconfigure.h" />
     <ClInclude Include="odbccredentials.h" />
     <ClInclude Include="properties.h" />
