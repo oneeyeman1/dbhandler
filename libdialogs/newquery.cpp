@@ -9,8 +9,8 @@
 #include "wx/wx.h"
 #endif
 
-#include "Quick_Select.xpm"
-#include "SQL_Select.xpm"
+#include "res/Quick_Select.xpm"
+#include "res/SQL_Select.xpm"
 #include "bitmappanel.h"
 #include "newquery.h"
 
