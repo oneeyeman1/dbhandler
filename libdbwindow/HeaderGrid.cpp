@@ -1,7 +1,7 @@
 #include "wxsf/GridShape.h"
 #include "HeaderGrid.h"
 
-HeaderGrid::HeaderGrid(void)
+HeaderGrid::HeaderGrid(void) : wxSFGridShape()
 {
 }
 
