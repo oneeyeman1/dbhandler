@@ -1,0 +1,27 @@
+/* XPM */
+static const char *const query[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 5 1",
+"  c black",
+". c blue",
+"X c #008080",
+"o c #C0C0C0",
+"O c gray100",
+/* pixels */
+"oooooooooooooooo",
+"oooooooooo     o",
+"ooooooooo OXXX  ",
+"oooooooOO       ",
+"ooooooOOo OOXX  ",
+"oooooOOOo OXXX  ",
+"oooooOOOo OOXX  ",
+".....OOO...XXX  ",
+"....OOOOO..OXX  ",
+"o oo OOOoo.     ",
+"      O   .ooooo",
+"o oo oo oo.ooooo",
+"          .ooooo",
+"o oo oo oo.ooooo",
+"          .ooooo",
+"oooooooooooooooo"
+};

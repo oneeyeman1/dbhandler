@@ -8,6 +8,8 @@
 
 #include "wx/dir.h"
 #include "wx/listctrl.h"
+#include "bitmappanel.h"
+#include "newquery.h"
 #include "getobjectname.h"
 
 GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId) : wxDialog( parent, id, title )
@@ -95,6 +97,11 @@ void GetObjectName::do_layout()
 
 void GetObjectName::OnButtonNew(wxCommandEvent &event)
 {
+    if( m_id == 1 )
+    {
+        NewQuery dlg( GetParent(), _( "New Query" ) );
+        dlg.ShowModal();
+    }
     EndModal( dynamic_cast<wxButton *>( event.GetEventObject() )->GetId() );
 }
 

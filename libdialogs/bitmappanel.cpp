@@ -21,5 +21,38 @@
 
 BitmapPanel::BitmapPanel (wxWindow *parent, const wxBitmap &bitmap, const wxString &label) : wxPanel(parent)
 {
+    m_bitmap = new wxStaticBitmap( this, wxID_ANY, bitmap );
     m_label = new wxStaticText( this, wxID_ANY, label );
+    do_layout();
+    Bind( wxEVT_SET_FOCUS, &BitmapPanel::OnSetFocus, this );
+    Bind( wxEVT_KILL_FOCUS, &BitmapPanel::OnKillFocus, this );
+}
+
+void BitmapPanel::do_layout()
+{
+    wxBoxSizer *sizer1 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *sizer2 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer *sizer3 = new wxBoxSizer( wxVERTICAL );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer3->Add( 5, 20, 0, wxEXPAND, 0 );
+    sizer3->Add( m_bitmap, 0, wxEXPAND, 0 );
+    sizer3->Add( 5, 10, wxEXPAND, 0 );
+    sizer3->Add( m_label, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
+    sizer3->Add( 5, 20, wxEXPAND, 0 );
+    sizer2->Add( sizer3, 0, wxEXPAND, 0 );
+    sizer1->Add( sizer2, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    SetSizer( sizer1 );
+}
+
+void BitmapPanel::OnSetFocus (wxFocusEvent &event)
+{
+    m_label->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+    event.Skip();
+}
+
+void BitmapPanel::OnKillFocus (wxFocusEvent &event)
+{
+    m_label->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+    event.Skip();
 }
