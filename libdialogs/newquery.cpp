@@ -9,12 +9,12 @@
 #include "wx/wx.h"
 #endif
 
-#include "Quick_Select.xpm"
-#include "SQL_Select.xpm"
-#include "query.xpm"
-#include "external.xpm"
-#include "composite.xpm"
-#include "group.xpm"
+#include "res/Quick_Select.xpm"
+#include "res/SQL_Select.xpm"
+#include "res/query.xpm"
+#include "res/external.xpm"
+#include "res/composite.xpm"
+#include "res/group.xpm"
 #include "bitmappanel.h"
 #include "newquery.h"
 

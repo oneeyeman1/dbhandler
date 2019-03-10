@@ -408,8 +408,7 @@ libdialogs_la_SOURCES = \
 	newquery.cpp \
 	newquery.h
 
-libdialogs_la_CXXFLAGS = -I./res \
-	-I../../dbinterface \
+libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
 	-I../../libshapeframework \
 	-I../../libpropertypages \
