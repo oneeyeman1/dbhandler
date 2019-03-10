@@ -3,8 +3,8 @@ class BitmapPanel : public wxPanel
 {
 public:
     BitmapPanel(wxWindow *parent, const wxBitmap &bitmap, const wxString &label);
-    void OnSetFocus(wxFocusEvent &event);
-    void OnKillFocus(wxFocusEvent &event);
+    wxStaticText *GetLabel();
+    void OnBitmapClicked(wxMouseEvent &event);
 protected:
     void do_layout();
 private:
