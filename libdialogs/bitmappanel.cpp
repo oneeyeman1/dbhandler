@@ -52,5 +52,7 @@ wxStaticText *BitmapPanel::GetLabel()
 
 void BitmapPanel::OnBitmapClicked(wxMouseEvent &event)
 {
+    event.ResumePropagation( wxEVENT_PROPAGATE_MAX );
+    event.SetEventObject( this );
     event.Skip();
 }

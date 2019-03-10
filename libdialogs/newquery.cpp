@@ -126,7 +126,8 @@ void NewQuery::do_layout()
 
 void NewQuery::OnPanelClicked (wxMouseEvent &event)
 {
-    for( int i = 0; i < 5; ++i )
+    bool found = false;
+    for( int i = 0; i < 4 || !found; ++i )
     {
         if( event.GetEventObject () == m_panels[i] )
         {
@@ -135,6 +136,7 @@ void NewQuery::OnPanelClicked (wxMouseEvent &event)
                 m_panels[m_source - 1]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
                 m_source = i + 1;
                 m_panels[m_source - 1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                found = true;
             }
         }
     }
