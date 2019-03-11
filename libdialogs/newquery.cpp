@@ -124,7 +124,7 @@ void NewQuery::do_layout()
     // end wxGlade
 }
 
-void NewQuery::OnPanelClicked (wxMouseEvent &event)
+void NewQuery::OnPanelClicked(wxMouseEvent &event)
 {
     bool found = false;
     for( int i = 0; i < 4 || !found; ++i )
@@ -140,5 +140,6 @@ void NewQuery::OnPanelClicked (wxMouseEvent &event)
             }
         }
     }
+    Refresh();
     event.Skip();
 }

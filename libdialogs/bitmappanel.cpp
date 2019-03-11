@@ -19,7 +19,7 @@
 
 #include "bitmappanel.h"
 
-BitmapPanel::BitmapPanel (wxWindow *parent, const wxBitmap &bitmap, const wxString &label) : wxPanel(parent)
+BitmapPanel::BitmapPanel(wxWindow *parent, const wxBitmap &bitmap, const wxString &label) : wxPanel(parent)
 {
     m_bitmap = new wxStaticBitmap( this, wxID_ANY, bitmap );
     m_label = new wxStaticText( this, wxID_ANY, label );
