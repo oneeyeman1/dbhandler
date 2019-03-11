@@ -11,7 +11,7 @@ protected:
     void set_properties();
 private:
     wxPanel *m_panel;
-    BitmapPanel *m_panels[14];
+    BitmapPanel *m_panels[15];
     wxButton *m_ok, *m_cancel, *m_help, *m_options;
     wxCheckBox *m_preview;
     wxString m_title;

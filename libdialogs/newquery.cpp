@@ -19,6 +19,11 @@
 #include "res/graph.xpm"
 #include "res/grid.xpm"
 #include "res/group.xpm"
+#include "res/label.xpm"
+#include "res/n_up.xpm"
+#include "res/ole.xpm"
+#include "res/richtext.xpm"
+#include "res/tabular.xpm"
 #include "bitmappanel.h"
 #include "newquery.h"
 
@@ -34,8 +39,14 @@ NewQuery::NewQuery(wxWindow *parent, const wxString &title) : wxDialog(parent, w
     m_panels[4] = new BitmapPanel( m_panel, wxBitmap( composite ), _( "Composite" ) );
     m_panels[5] = new BitmapPanel( m_panel, wxBitmap( crosstab ), _( "Crosstab" ) );
     m_panels[6] = new BitmapPanel( m_panel, wxBitmap( freeform ), _( "Freeform" ) );
+    m_panels[7] = new BitmapPanel( m_panel, wxBitmap( graph ), _( "Graph" ) );
     m_panels[8] = new BitmapPanel( m_panel, wxBitmap( grid ), _( "Grid" ) );
     m_panels[9] = new BitmapPanel( m_panel, wxBitmap( group ), _( "Group" ) );
+    m_panels[10] = new BitmapPanel( m_panel, wxBitmap( label ), _( "Label" ) );
+    m_panels[11] = new BitmapPanel( m_panel, wxBitmap( n_up ), _( "N-Up" ) );
+    m_panels[12] = new BitmapPanel( m_panel, wxBitmap( ole ), _( "Ole 2.0" ) );
+    m_panels[13] = new BitmapPanel( m_panel, wxBitmap( richtext ), _( "RichText" ) );
+    m_panels[14] = new BitmapPanel( m_panel, wxBitmap( tabular ), _( "Tabular" ) );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
     m_help = new wxButton( m_panel, wxID_HELP, _( "Help" ) );
@@ -45,12 +56,13 @@ NewQuery::NewQuery(wxWindow *parent, const wxString &title) : wxDialog(parent, w
     do_layout();
     m_panels[1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
     m_source = 2;
+    m_panels[8]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
     m_presentation = 4;
-    for( int i = 0; i < 5; ++i )
+    for( int i = 0; i < 4; ++i )
     {
         m_panels[i]->Bind( wxEVT_LEFT_DOWN, &NewQuery::OnPanelSourceClicked, this );
     }
-    for( int i = 5; i < 14; ++i )
+    for( int i = 4; i < 15; ++i )
     {
         m_panels[i]->Bind( wxEVT_LEFT_DOWN, &NewQuery::OnPanelPresentationClicked, this );
     }
@@ -82,13 +94,13 @@ void NewQuery::do_layout()
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_4->Add( m_panels[0], 0, 0, 0 );
-    sizer_4->Add( 1, 1, 0, wxEXPAND, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_4->Add( m_panels[1], 0, wxEXPAND, 0, 0 );
-    sizer_4->Add( 1, 1, 0, wxEXPAND, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_4->Add( m_panels[2], 0, wxEXPAND, 0, 0 );
-    sizer_4->Add( 1, 1, 0, wxEXPAND, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_4->Add( m_panels[3], 0, wxEXPAND, 0 );
-    sizer_4->Add( 1, 1, 0, wxEXPAND, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
     grid_sizer_1->Add( sizer_4, 0, wxEXPAND, 0 );
     sizer_9->Add( m_ok, 0, 0, 0 );
     sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -97,27 +109,27 @@ void NewQuery::do_layout()
     sizer_9->Add( m_help, 0, 0, 0 );
     grid_sizer_1->Add( sizer_9, 0, wxEXPAND, 0 );
     sizer_7->Add( m_panels[4], 0, wxEXPAND, 0 );
-    sizer_7->Add( 1, 1, 0, wxEXPAND, 0 );
+    sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_7->Add( m_panels[5], 0, wxEXPAND, 0 );
-    sizer_7->Add( 1, 1, 0, wxEXPAND, 0 );
+    sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_7->Add( m_panels[6], 0, wxEXPAND, 0 );
-    sizer_7->Add( 1, 1, 0, wxEXPAND, 0 );
+    sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_7->Add( m_panels[7], 0, wxEXPAND, 0 );
-    sizer_7->Add( 1, 1, 0, wxEXPAND, 0 );
+    sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_7->Add( m_panels[8], 0, wxEXPAND, 0 );
     sizer_6->Add( sizer_7, 1, wxEXPAND, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_8->Add( m_panels[9], 0, wxEXPAND, 0 );
     sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_8->Add( 0, 0, 0, 0, 0 );
-    sizer_8->Add( 0, 0, 0, 0, 0 );
-    sizer_8->Add( 0, 0, 0, 0, 0 );
-    sizer_8->Add( 0, 0, 0, 0, 0 );
-    sizer_8->Add( 0, 0, 0, 0, 0 );
-    sizer_8->Add( 0, 0, 0, 0, 0 );
-    sizer_8->Add( 0, 0, 0, 0, 0 );
-    sizer_8->Add( 0, 0, 0, 0, 0 );
-    sizer_8->Add( 0, 0, 0, 0, 0 );
+    sizer_8->Add( m_panels[10], 0, wxEXPAND, 0 );
+    sizer_8->Add( 5, 5, 0, 0, 0 );
+    sizer_8->Add( m_panels[11], 0, wxEXPAND, 0 );
+    sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_8->Add( m_panels[12], 0, wxEXPAND, 0 );
+    sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_8->Add( m_panels[13], 0, wxEXPAND, 0 );
+    sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_8->Add( m_panels[14], 0, wxEXPAND, 0 );
     sizer_6->Add( sizer_8, 1, wxEXPAND, 0 );
     sizer_5->Add( sizer_6, 0, wxEXPAND, 0 );
     grid_sizer_1->Add( sizer_5, 0, wxEXPAND, 0 );
@@ -148,8 +160,8 @@ void NewQuery::OnPanelSourceClicked(wxMouseEvent &event)
                 m_panels[m_source - 1]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
                 m_source = i + 1;
                 m_panels[m_source - 1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-                found = true;
             }
+            found = true;
         }
     }
     Refresh();
@@ -159,17 +171,17 @@ void NewQuery::OnPanelSourceClicked(wxMouseEvent &event)
 void NewQuery::OnPanelPresentationClicked(wxMouseEvent &event)
 {
     bool found = false;
-    for( int i = 5; i < 14 || !found; ++i )
+    for( int i = 4; i < 14 || !found; ++i )
     {
         if( event.GetEventObject () == m_panels[i] )
         {
             if( i + 1 != m_presentation + 4 )
             {
-                m_panels[m_presentation - 4]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
-                m_presentation = i + 4;
-                m_panels[m_presentation - 1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-                found = true;
+                m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                m_presentation = i - 4;
+                m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
             }
+            found = true;
         }
     }
     Refresh();
