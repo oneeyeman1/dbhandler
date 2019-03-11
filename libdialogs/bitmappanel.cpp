@@ -25,7 +25,7 @@ BitmapPanel::BitmapPanel(wxWindow *parent, const wxBitmap &bitmap, const wxStrin
     m_label = new wxStaticText( this, wxID_ANY, label );
     do_layout();
     m_bitmap->Bind( wxEVT_LEFT_DOWN, &BitmapPanel::OnBitmapClicked, this );
-//    Bind( wxEVT_KILL_FOCUS, &BitmapPanel::OnKillFocus, this );
+    m_label->Bind( wxEVT_LEFT_DOWN, &BitmapPanel::OnLabelClicked, this );
 }
 
 void BitmapPanel::do_layout()
@@ -51,6 +51,13 @@ wxStaticText *BitmapPanel::GetLabel()
 }
 
 void BitmapPanel::OnBitmapClicked(wxMouseEvent &event)
+{
+    event.ResumePropagation( wxEVENT_PROPAGATE_MAX );
+    event.SetEventObject( this );
+    event.Skip();
+}
+
+void BitmapPanel::OnLabelClicked(wxMouseEvent &event)
 {
     event.ResumePropagation( wxEVENT_PROPAGATE_MAX );
     event.SetEventObject( this );

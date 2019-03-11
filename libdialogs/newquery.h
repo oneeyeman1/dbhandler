@@ -4,7 +4,8 @@ class NewQuery : public wxDialog
 public:
     NewQuery(wxWindow *parent, const wxString &title);
     ~NewQuery();
-    void OnPanelClicked(wxMouseEvent &event);
+    void OnPanelSourceClicked(wxMouseEvent &event);
+    void OnPanelPresentationClicked(wxMouseEvent &event);
 protected:
     void do_layout();
     void set_properties();

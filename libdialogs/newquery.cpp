@@ -14,6 +14,10 @@
 #include "res/query.xpm"
 #include "res/external.xpm"
 #include "res/composite.xpm"
+#include "res/crosstab.xpm"
+#include "res/freeform.xpm"
+#include "res/graph.xpm"
+#include "res/grid.xpm"
 #include "res/group.xpm"
 #include "bitmappanel.h"
 #include "newquery.h"
@@ -28,6 +32,9 @@ NewQuery::NewQuery(wxWindow *parent, const wxString &title) : wxDialog(parent, w
     m_panels[2] = new BitmapPanel( m_panel, wxBitmap( query ), _( "Query" ) );
     m_panels[3] = new BitmapPanel( m_panel, wxBitmap( external ), _( "External" ) );
     m_panels[4] = new BitmapPanel( m_panel, wxBitmap( composite ), _( "Composite" ) );
+    m_panels[5] = new BitmapPanel( m_panel, wxBitmap( crosstab ), _( "Crosstab" ) );
+    m_panels[6] = new BitmapPanel( m_panel, wxBitmap( freeform ), _( "Freeform" ) );
+    m_panels[8] = new BitmapPanel( m_panel, wxBitmap( grid ), _( "Grid" ) );
     m_panels[9] = new BitmapPanel( m_panel, wxBitmap( group ), _( "Group" ) );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
@@ -38,9 +45,14 @@ NewQuery::NewQuery(wxWindow *parent, const wxString &title) : wxDialog(parent, w
     do_layout();
     m_panels[1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
     m_source = 2;
+    m_presentation = 4;
     for( int i = 0; i < 5; ++i )
     {
-        m_panels[i]->Bind( wxEVT_LEFT_DOWN, &NewQuery::OnPanelClicked, this );
+        m_panels[i]->Bind( wxEVT_LEFT_DOWN, &NewQuery::OnPanelSourceClicked, this );
+    }
+    for( int i = 5; i < 14; ++i )
+    {
+        m_panels[i]->Bind( wxEVT_LEFT_DOWN, &NewQuery::OnPanelPresentationClicked, this );
     }
 }
 
@@ -85,14 +97,14 @@ void NewQuery::do_layout()
     sizer_9->Add( m_help, 0, 0, 0 );
     grid_sizer_1->Add( sizer_9, 0, wxEXPAND, 0 );
     sizer_7->Add( m_panels[4], 0, wxEXPAND, 0 );
-    sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_7->Add( 0, 0, 0, 0, 0 );
-    sizer_7->Add( 0, 0, 0, 0, 0 );
-    sizer_7->Add( 0, 0, 0, 0, 0 );
-    sizer_7->Add( 0, 0, 0, 0, 0 );
-    sizer_7->Add( 0, 0, 0, 0, 0 );
-    sizer_7->Add( 0, 0, 0, 0, 0 );
-    sizer_7->Add( 0, 0, 0, 0, 0 );
+    sizer_7->Add( 1, 1, 0, wxEXPAND, 0 );
+    sizer_7->Add( m_panels[5], 0, wxEXPAND, 0 );
+    sizer_7->Add( 1, 1, 0, wxEXPAND, 0 );
+    sizer_7->Add( m_panels[6], 0, wxEXPAND, 0 );
+    sizer_7->Add( 1, 1, 0, wxEXPAND, 0 );
+    sizer_7->Add( m_panels[7], 0, wxEXPAND, 0 );
+    sizer_7->Add( 1, 1, 0, wxEXPAND, 0 );
+    sizer_7->Add( m_panels[8], 0, wxEXPAND, 0 );
     sizer_6->Add( sizer_7, 1, wxEXPAND, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_8->Add( m_panels[9], 0, wxEXPAND, 0 );
@@ -124,7 +136,7 @@ void NewQuery::do_layout()
     // end wxGlade
 }
 
-void NewQuery::OnPanelClicked(wxMouseEvent &event)
+void NewQuery::OnPanelSourceClicked(wxMouseEvent &event)
 {
     bool found = false;
     for( int i = 0; i < 4 || !found; ++i )
@@ -136,6 +148,26 @@ void NewQuery::OnPanelClicked(wxMouseEvent &event)
                 m_panels[m_source - 1]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
                 m_source = i + 1;
                 m_panels[m_source - 1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                found = true;
+            }
+        }
+    }
+    Refresh();
+    event.Skip();
+}
+
+void NewQuery::OnPanelPresentationClicked(wxMouseEvent &event)
+{
+    bool found = false;
+    for( int i = 5; i < 14 || !found; ++i )
+    {
+        if( event.GetEventObject () == m_panels[i] )
+        {
+            if( i + 1 != m_presentation + 4 )
+            {
+                m_panels[m_presentation - 4]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                m_presentation = i + 4;
+                m_panels[m_presentation - 1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
                 found = true;
             }
         }

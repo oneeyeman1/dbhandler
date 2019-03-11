@@ -5,6 +5,7 @@ public:
     BitmapPanel(wxWindow *parent, const wxBitmap &bitmap, const wxString &label);
     wxStaticText *GetLabel();
     void OnBitmapClicked(wxMouseEvent &event);
+    void OnLabelClicked(wxMouseEvent &event);
 protected:
     void do_layout();
 private:
