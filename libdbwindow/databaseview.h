@@ -72,6 +72,7 @@ private:
     WhereHavingPage *m_page2, *m_page4;
     SyntaxPropPage *m_page6;
     wxCriticalSection *pcs;
+    int m_source, m_presentation;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };

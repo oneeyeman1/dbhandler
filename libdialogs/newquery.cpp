@@ -66,6 +66,7 @@ NewQuery::NewQuery(wxWindow *parent, const wxString &title) : wxDialog(parent, w
     {
         m_panels[i]->Bind( wxEVT_LEFT_DOWN, &NewQuery::OnPanelPresentationClicked, this );
     }
+    m_options->Bind( wxEVT_UPDATE_UI, &NewQuery::OnOptionsUpdateUI, this );
 }
 
 NewQuery::~NewQuery()
@@ -186,4 +187,22 @@ void NewQuery::OnPanelPresentationClicked(wxMouseEvent &event)
     }
     Refresh();
     event.Skip();
+}
+
+void NewQuery::OnOptionsUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_presentation == 0 || m_presentation == 3 || m_presentation == 8 || m_presentation == 9 )
+        event.Enable( false );
+    else
+        event.Enable( true );
+}
+
+const int NewQuery::GetSource()
+{
+    return m_source;
+}
+
+const int NewQuery::GetPresentation()
+{
+    return m_presentation;
 }

@@ -100,7 +100,12 @@ void GetObjectName::OnButtonNew(wxCommandEvent &event)
     if( m_id == 1 )
     {
         NewQuery dlg( GetParent(), _( "New Query" ) );
-        dlg.ShowModal();
+        int res = dlg.ShowModal();
+        if( res == wxID_OK )
+        {
+            m_source = dlg.GetSource();
+            m_presentation = dlg.GetPresentation();
+        }
     }
     EndModal( dynamic_cast<wxButton *>( event.GetEventObject() )->GetId() );
 }
@@ -118,4 +123,14 @@ void GetObjectName::OnButtonBrowse(wxCommandEvent &event)
 const wxString &GetObjectName::GetFileName()
 {
     return m_fileName;
+}
+
+const int GetObjectName::GetSource()
+{
+    return m_source;
+}
+
+const int GetObjectName::GetPresentation()
+{
+    return m_presentation;
 }

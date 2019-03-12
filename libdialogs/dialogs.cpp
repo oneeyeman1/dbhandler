@@ -236,14 +236,31 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
     return res;
 }
 
-extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId)
+extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId, int &source, int &presentation)
 {
     int res;
+    wxString title;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    GetObjectName dlg( parent, wxID_ANY, _( "Query" ), objectId );
+    switch( objectId )
+    {
+    case 1:
+        title = _( "Query" );
+        break;
+    default:
+        break;
+    }
+    GetObjectName dlg( parent, wxID_ANY, title, objectId );
     res = dlg.ShowModal();
+    if( res == wxID_OK )
+    {
+        if( objectId == 1 )
+        {
+            source = dlg.GetSource();
+            presentation = dlg.GetPresentation();
+        }
+    }
     return res;
 }
 
