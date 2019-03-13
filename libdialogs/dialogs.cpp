@@ -253,7 +253,7 @@ extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId, int &source
     }
     GetObjectName dlg( parent, wxID_ANY, title, objectId );
     res = dlg.ShowModal();
-    if( res == wxID_OK )
+    if( res == wxID_NEWOBJECT )
     {
         if( objectId == 1 )
         {

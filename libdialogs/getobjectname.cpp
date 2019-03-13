@@ -28,7 +28,7 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     m_commentsText = new wxTextCtrl( m_panel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
-    m_new = new wxButton( m_panel, wxID_ANY, _( "&New" ) );
+    m_new = new wxButton( m_panel, wxID_NEWOBJECT, _( "&New" ) );
     m_browse = new wxButton( m_panel, wxID_ANY, _( "&Browse" ) );
     m_help = new wxButton( m_panel, wxID_HELP, _( "&Help" ) );
     set_properties();

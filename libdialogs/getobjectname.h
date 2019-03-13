@@ -1,6 +1,8 @@
 #ifndef __GETOBJECTNAME_H__
 #define __GETOBJECTNAME_H__
 
+#define wxID_NEWOBJECT 1000
+
 class GetObjectName : public wxDialog
 {
 public:
