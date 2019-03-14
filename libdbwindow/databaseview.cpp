@@ -129,8 +129,11 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
 //    m_frame->SetMenuBar( parent->GetMenuBar() );
-    m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
-    m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
+    if( m_type == DatabaseView )
+    {
+        m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
+        m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
+    }
     wxPoint ptCanvas;
     sizer = new wxBoxSizer( wxVERTICAL );
 #ifdef __WXOSX__
