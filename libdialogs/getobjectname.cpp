@@ -34,7 +34,6 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     set_properties();
     do_layout();
     m_new->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonNew, this );
-    m_cancel->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonNew, this );
     m_browse->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonBrowse, this );
 }
 
