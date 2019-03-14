@@ -373,8 +373,14 @@ void DrawingView::GetTablesForView(Database *db, bool init)
 #endif
             }
         }
-        TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
+        if( m_source != 1 )
+        {
+            TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
+            res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
+        }
+        else
+        {
+        }
         if( res != wxID_CANCEL )
         {
             if( m_type == QueryView )
