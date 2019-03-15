@@ -104,6 +104,7 @@ wxEND_EVENT_TABLE()
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
+    m_log = NULL;
     m_isActive = false;
     m_tb = NULL;
     wxToolBar *tb = NULL;
