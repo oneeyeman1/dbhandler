@@ -52,6 +52,8 @@
 #include "jointype.h"
 #include "properties.h"
 #include "addcolumnsdialog.h"
+#include "bitmappanel.h"
+#include "newquery.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -236,7 +238,7 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
     return res;
 }
 
-extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId, int &source, int &presentation)
+extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId)
 {
     int res;
     wxString title;
@@ -253,13 +255,28 @@ extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId, int &source
     }
     GetObjectName dlg( parent, wxID_ANY, title, objectId );
     res = dlg.ShowModal();
-    if( res == wxID_NEWOBJECT )
+/*    if( res == wxID_NEWOBJECT )
     {
         if( objectId == 1 )
         {
             source = dlg.GetSource();
             presentation = dlg.GetPresentation();
         }
+    }*/
+    return res;
+}
+
+extern "C" WXEXPORT int NewQuery(wxWindow *parent, int &source, int &presentation)
+{
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    NewQuery dlg( parent, _( "New Query" ) );
+    int res = dlg.ShowModal();
+    if( res == wxID_OK )
+    {
+        source = dlg.GetSource();
+        presentation = dlg.GetPresentation();
     }
     return res;
 }

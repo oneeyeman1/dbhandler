@@ -64,12 +64,15 @@ typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, 
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, const wxString &, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
-typedef int (*CHOOSEOBJECT)(wxWindow *, int, int &, int &);
+typedef int (*CHOOSEOBJECT)(wxWindow *, int);
+typedef int (*NEWQUERY)(wxWindow *, int &, int &);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
 #endif
+
+#define wxID_NEWOBJECT 1000
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -360,11 +363,16 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             if( init )
             {
                 CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-                res = func( m_frame, 1, m_source, m_presentation );
+                res = func( m_frame, 1 );
                 if( res == wxID_CANCEL )
                 {
                     m_frame->Close();
                     return;
+                }
+                if( res == wxID_NEWOBJECT )
+                {
+                    NEWQUERY func1 = (NEWQUERY) lib.GetSymbol( "NewQuery" );
+                    res = func1( m_frame, m_source, m_presentation );
                 }
                 m_fields->Show( true );
                 m_queryBook->Show( true );
