@@ -47,6 +47,7 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     do_layout();
     m_ok->Bind( wxEVT_UPDATE_UI, &QuickSelect::OnOkEnableUI, this );
     m_addAll->Bind( wxEVT_UPDATE_UI, &QuickSelect::OnAddAllUpdateUI, this );
+    m_tables->Bind( wxEVT_LISTBOX, &QuickSelect::OnSelectingTable, this );
 }
 
 QuickSelect::~QuickSelect()
@@ -58,11 +59,13 @@ void QuickSelect::set_properties ()
     m_ok->Enable( false );
     m_grid->CreateGrid( 4, 0 );
     m_grid->GetTable()->SetAttrProvider( new CustomRowHeaderProvider );
+    m_grid->GetTable()->SetAttrProvider( new CustomCornerHeaderProvider );
     m_grid->SetRowLabelValue( 0, _( "Column:" ) );
     m_grid->SetRowLabelValue( 1, _( "Sort:" ) );
     m_grid->SetRowLabelValue( 2, _( "Criteria:" ) );
     m_grid->SetRowLabelValue( 3, _( "Or:" ) );
     m_grid->SetRowLabelValue( 4, _( "" ) );
+    FillTableListBox();
 }
 
 void QuickSelect::do_layout()
@@ -97,8 +100,11 @@ void QuickSelect::do_layout()
     sizer9->Add( m_cancel, 0, wxEXPAND, 0 );
     sizer9->Add( m_addAll, 0, wxEXPAND, 0 );
     sizer9->Add( m_help, 0, wxEXPAND, 0 );
+    sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer4->Add( sizer9, 0, wxEXPAND, 0 );
     sizer3->Add( sizer4, 0, wxEXPAND, 0 );
+    sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer3->Add( m_label7, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer3->Add( m_comments, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -129,4 +135,35 @@ void QuickSelect::OnAddAllUpdateUI(wxUpdateUIEvent &event)
         event.Enable( true );
     else
         event.Enable( false );
+}
+
+void QuickSelect::FillTableListBox()
+{
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector ().m_tables.begin (); it != m_db->GetTableVector ().m_tables.end (); ++it )
+    {
+        wxString name( (*it).first );
+        for( std::vector<DatabaseTable *>::iterator it1 = ( *it ).second.begin (); it1 < ( *it ).second.end (); ++it1 )
+        {
+            m_tables->Append( name + "." + (*it1)->GetTableName() );
+        }
+    }
+    int count = m_tables->GetCount();
+    for( int i = 0; i < count; ++i )
+        m_fields->Append( "" );
+}
+
+void QuickSelect::OnSelectingTable(wxCommandEvent &event)
+{
+    int count = m_tables->GetCount();
+    if( count > 1 )
+    {
+        for( int i = 0; i < event.GetSelection(); i++ )
+            m_tables->Delete( i );
+        for( int j = 1; j < m_tables->GetCount(); j++ )
+            m_tables->Delete( j );
+    }
+    else
+    {
+        wxMessageBox( "List is restored" );
+    }
 }
