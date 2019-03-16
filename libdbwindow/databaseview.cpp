@@ -66,6 +66,7 @@ typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, s
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
+typedef int (*QUICKSELECT)(wxWindow *, const Database *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -349,6 +350,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
     wxString query;
     std::vector<wxString> tables;
     wxDynamicLibrary lib;
+    bool quickSelect = false;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
@@ -371,28 +373,37 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 }
                 if( res == wxID_NEWOBJECT )
                 {
-                    NEWQUERY func1 = (NEWQUERY) lib.GetSymbol( "NewQuery" );
+                    NEWQUERY func1 = (NEWQUERY) lib.GetSymbol( "NewQueryDlg" );
                     res = func1( m_frame, m_source, m_presentation );
                 }
-                m_fields->Show( true );
-                m_queryBook->Show( true );
-                m_frame->Layout();
-                sizer->Layout();
+                if( res != wxID_CANCEL )
+                {
+                    if( m_source != 1 )
+                    {
+                        TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
+                        res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false );
+                    }
+                    else
+                    {
+                        QUICKSELECT func2 = (QUICKSELECT) lib.GetSymbol( "QuickSelectDlg" );
+                        res = func2( m_frame, db );
+                        quickSelect = true;
+                    }
+                    if( !quickSelect )
+                    {
+                        m_fields->Show( true );
+                        m_queryBook->Show( true );
+                        m_frame->Layout();
+                        sizer->Layout();
+                    }
 #ifdef __WXGTK__
-                wxDocMDIParentFrame *parent = wxDynamicCast( m_frame->GetMDIParent(), wxDocMDIParentFrame );
-                wxSize size = parent->GetSize();
-                parent->SetSize( size.GetWidth() - 5, size.GetHeight() - 5 );
-                parent->SetSize( size.GetWidth() + 5, size.GetHeight() + 5 );
+                    wxDocMDIParentFrame *parent = wxDynamicCast( m_frame->GetMDIParent(), wxDocMDIParentFrame );
+                    wxSize size = parent->GetSize();
+                    parent->SetSize( size.GetWidth() - 5, size.GetHeight() - 5 );
+                    parent->SetSize( size.GetWidth() + 5, size.GetHeight() + 5 );
 #endif
+                }
             }
-        }
-        if( m_source != 1 )
-        {
-            TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-            res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
-        }
-        else
-        {
         }
         if( res != wxID_CANCEL )
         {
