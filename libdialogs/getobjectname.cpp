@@ -98,13 +98,6 @@ void GetObjectName::OnButtonNew(wxCommandEvent &event)
 {
     if( m_id == 1 )
     {
-        NewQuery dlg( GetParent(), _( "New Query" ) );
-        int res = dlg.ShowModal();
-        if( res == wxID_OK )
-        {
-            m_source = dlg.GetSource();
-            m_presentation = dlg.GetPresentation();
-        }
     }
     EndModal( dynamic_cast<wxButton *>( event.GetEventObject() )->GetId() );
 }
