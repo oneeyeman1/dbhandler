@@ -99,12 +99,6 @@ void QuickSelect::do_layout()
     sizer9->Add( m_help, 0, wxEXPAND, 0 );
     sizer4->Add( sizer9, 0, wxEXPAND, 0 );
     sizer3->Add( sizer4, 0, wxEXPAND, 0 );
-    sizer7->Add( m_ok, 0, wxEXPAND, 0 );
-    sizer7->Add( m_cancel, 0, wxEXPAND, 0 );
-    sizer7->Add( m_help, 0, wxEXPAND, 0 );
-    sizer4->Add( sizer7, 0, wxEXPAND, 0 );
-    sizer3->Add( sizer4, 0, wxEXPAND, 0 );
-    sizer3->Add( m_label7, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer3->Add( m_comments, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
