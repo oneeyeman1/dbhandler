@@ -23,6 +23,7 @@
 #include "wx/notebook.h"
 #include "wx/spinctrl.h"
 #include "wx/bmpcbox.h"
+#include "wx/grid.h"
 #ifdef __WXGTK__
 #include "gtk/gtk.h"
 #include "wx/nativewin.h"
@@ -54,6 +55,7 @@
 #include "addcolumnsdialog.h"
 #include "bitmappanel.h"
 #include "newquery.h"
+#include "quickselect.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -255,29 +257,32 @@ extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId)
     }
     GetObjectName dlg( parent, wxID_ANY, title, objectId );
     res = dlg.ShowModal();
-/*    if( res == wxID_NEWOBJECT )
-    {
-        if( objectId == 1 )
-        {
-            source = dlg.GetSource();
-            presentation = dlg.GetPresentation();
-        }
-    }*/
     return res;
 }
 
-extern "C" WXEXPORT int NewQuery(wxWindow *parent, int &source, int &presentation)
+extern "C" WXEXPORT int NewQueryDlg(wxWindow *parent, int &source, int &presentation)
 {
+    int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
     NewQuery dlg( parent, _( "New Query" ) );
-    int res = dlg.ShowModal();
+    res = dlg.ShowModal();
     if( res == wxID_OK )
     {
         source = dlg.GetSource();
         presentation = dlg.GetPresentation();
     }
+    return res;
+}
+
+extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db)
+{
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    QuickSelect dlg( parent, db );
+    int res = dlg.ShowModal();
     return res;
 }
 
