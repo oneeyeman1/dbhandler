@@ -20,13 +20,119 @@
 #endif
 
 #include "wx/dialog.h"
+#include "wx/grid.h"
+#include "database.h"
 #include "quickselect.h"
 
-QuickSelect::QuickSelect(wxWindow *parent) : wxDialog(parent, wxID_ANY, _(""))
+QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent, wxID_ANY, _(""))
 {
+    m_db = const_cast<Database *>( db );
+    m_panel = new wxPanel( this, wxID_ANY );
+    m_label1 = new wxStaticText( m_panel, wxID_ANY, _( "1. Click on the table to select or deselect" ) );
+    m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "2. Select one or more column" ) );
+    m_label3 = new wxStaticText( m_panel, wxID_ANY, _( "3. (Optional) Enter sorting and\n\rselection criteria below" ) );
+    m_label4 = new wxStaticText( m_panel, wxID_ANY, _( "To display a comment for a \n\rtable or column, click\n\rthe right mouse button" ) );
+    m_label5 = new wxStaticText( m_panel, wxID_ANY, _( "Tables:" ) );
+    m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL );
+    m_label6 = new wxStaticText( m_panel, wxID_ANY, _( "Columns:" ) );
+    m_fields = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
+    m_label7 = new wxStaticText( m_panel, wxID_ANY, _( "Comments" ) );
+    m_comments = new wxStaticText( m_panel, wxID_ANY, "" );
+    m_grid = new wxGrid( m_panel, wxID_ANY );
+    m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
+    m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
+    m_addAll = new wxButton( m_panel, wxID_ANY, _( "Add All" ) );
+    m_help = new wxButton( m_panel, wxID_HELP, _( "Help" ) );
+    set_properties();
+    do_layout();
+    m_ok->Bind( wxEVT_UPDATE_UI, &QuickSelect::OnOkEnableUI, this );
+    m_addAll->Bind( wxEVT_UPDATE_UI, &QuickSelect::OnAddAllUpdateUI, this );
 }
 
 QuickSelect::~QuickSelect()
 {
+}
 
+void QuickSelect::set_properties ()
+{
+    m_ok->Enable( false );
+    m_grid->CreateGrid( 4, 0 );
+    m_grid->GetTable()->SetAttrProvider( new CustomRowHeaderProvider );
+    m_grid->SetRowLabelValue( 0, _( "Column:" ) );
+    m_grid->SetRowLabelValue( 1, _( "Sort:" ) );
+    m_grid->SetRowLabelValue( 2, _( "Criteria:" ) );
+    m_grid->SetRowLabelValue( 3, _( "Or:" ) );
+    m_grid->SetRowLabelValue( 4, _( "" ) );
+}
+
+void QuickSelect::do_layout()
+{
+    auto *mainSizer = new wxBoxSizer( wxHORIZONTAL );
+    auto *sizer1 = new wxBoxSizer( wxHORIZONTAL );
+    auto *sizer2 = new wxBoxSizer( wxVERTICAL );
+    auto *sizer3 = new wxBoxSizer( wxVERTICAL );
+    auto *sizer4 = new wxBoxSizer( wxHORIZONTAL );
+    auto *sizer5 = new wxFlexGridSizer( 2, 2, 5, 5 );
+    auto *sizer6 = new wxBoxSizer( wxVERTICAL );
+    auto *sizer7 = new wxBoxSizer( wxVERTICAL );
+    auto *sizer8 = new wxBoxSizer( wxVERTICAL );
+    auto *sizer9 = new wxBoxSizer( wxVERTICAL );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer6->Add( m_label1, 0, wxEXPAND, 0 );
+    sizer6->Add( m_label2, 0, wxEXPAND, 0 );
+    sizer6->Add( m_label3, 0, wxEXPAND, 0 );
+    sizer5->Add( sizer6, 0, wxEXPAND, 0 );
+    sizer5->Add( m_label4, 0, wxEXPAND, 0 );
+    sizer7->Add( m_label5, 0, wxEXPAND, 0 );
+    sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer7->Add( m_tables, 0, wxEXPAND, 0 );
+    sizer5->Add( sizer7, 0, wxEXPAND, 0 );
+    sizer8->Add( m_label6, 0, wxEXPAND, 0 );
+    sizer8->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer8->Add( m_fields, 0, wxEXPAND, 0 );
+    sizer5->Add( sizer8, 0, wxEXPAND, 0 );
+    sizer4->Add( sizer5, 0, wxEXPAND, 0 );
+    sizer9->Add( m_ok, 0, wxEXPAND, 0 );
+    sizer9->Add( m_cancel, 0, wxEXPAND, 0 );
+    sizer9->Add( m_addAll, 0, wxEXPAND, 0 );
+    sizer9->Add( m_help, 0, wxEXPAND, 0 );
+    sizer4->Add( sizer9, 0, wxEXPAND, 0 );
+    sizer3->Add( sizer4, 0, wxEXPAND, 0 );
+    sizer7->Add( m_ok, 0, wxEXPAND, 0 );
+    sizer7->Add( m_cancel, 0, wxEXPAND, 0 );
+    sizer7->Add( m_help, 0, wxEXPAND, 0 );
+    sizer4->Add( sizer7, 0, wxEXPAND, 0 );
+    sizer3->Add( sizer4, 0, wxEXPAND, 0 );
+    sizer3->Add( m_label7, 0, wxEXPAND, 0 );
+    sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer3->Add( m_comments, 0, wxEXPAND, 0 );
+    sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer3->Add( m_grid, 0, wxEXPAND, 0 );
+    sizer2->Add( sizer3, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer1->Add( sizer2, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_panel->SetSizer( sizer1 );
+    sizer1->Fit( m_panel );
+    mainSizer->Add( m_panel, 0, wxEXPAND, 0 );
+    SetSizerAndFit( mainSizer );
+    Layout();
+}
+
+void QuickSelect::OnOkEnableUI(wxUpdateUIEvent &event)
+{
+    wxArrayInt arr;
+    if( m_fields->GetSelections( arr ) > 0 )
+        event.Enable( true );
+    else
+        event.Enable( false );
+}
+
+void QuickSelect::OnAddAllUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_fields->GetCount() > 0 )
+        event.Enable( true );
+    else
+        event.Enable( false );
 }
