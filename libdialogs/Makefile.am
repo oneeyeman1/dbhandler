@@ -29,7 +29,9 @@ libdialogs_la_SOURCES =  \
 	bitmappanel.cpp \
 	bitmappanel.h \
 	newquery.cpp \
-	newquery.h
+	newquery.h \
+	quickselect.cpp \
+	quickselect.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
