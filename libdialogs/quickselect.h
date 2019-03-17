@@ -9,7 +9,7 @@ public:
 
     virtual void DrawLabel (const wxGrid &WXUNUSED(grid), wxDC &dc, const wxString &value, const wxRect &rect, int horizAlign, int vertAlign, int WXUNUSED(textOrientation)) const wxOVERRIDE
     {
-        dc.SetTextBackground( COLOR_BTNFACE );
+        dc.SetTextBackground( wxSYS_COLOUR_WINDOWTEXT );
         dc.SetTextForeground( *wxBLACK );
         wxFont font = dc.GetFont();
         font.SetWeight( wxFONTWEIGHT_NORMAL );

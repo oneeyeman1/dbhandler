@@ -57,6 +57,7 @@ QuickSelect::~QuickSelect()
 void QuickSelect::set_properties ()
 {
     m_ok->Enable( false );
+    m_addAll->Enable( false );
     m_grid->CreateGrid( 4, 0 );
     m_grid->GetTable()->SetAttrProvider( new CustomRowHeaderProvider );
     m_grid->GetTable()->SetAttrProvider( new CustomCornerHeaderProvider );
