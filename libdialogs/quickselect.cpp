@@ -61,6 +61,7 @@ void QuickSelect::set_properties ()
     m_grid->CreateGrid( 4, 0 );
     m_grid->GetTable()->SetAttrProvider( new CustomRowHeaderProvider );
     m_grid->GetTable()->SetAttrProvider( new CustomCornerHeaderProvider );
+    m_grid->SetRowLabelAlignment( wxALIGN_RIGHT, wxALIGN_CENTER );
     m_grid->SetRowLabelValue( 0, _( "Column:" ) );
     m_grid->SetRowLabelValue( 1, _( "Sort:" ) );
     m_grid->SetRowLabelValue( 2, _( "Criteria:" ) );

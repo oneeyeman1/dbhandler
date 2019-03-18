@@ -7,9 +7,10 @@ public:
     {
     }
 
-    virtual void DrawLabel (const wxGrid &WXUNUSED(grid), wxDC &dc, const wxString &value, const wxRect &rect, int horizAlign, int vertAlign, int WXUNUSED(textOrientation)) const wxOVERRIDE
+    virtual void DrawLabel (const wxGrid &grid, wxDC &dc, const wxString &value, const wxRect &rect, int horizAlign, int vertAlign, int WXUNUSED(textOrientation)) const wxOVERRIDE
     {
-        dc.SetTextBackground( wxSYS_COLOUR_WINDOWTEXT );
+        wxColour color = grid.GetParent()->GetBackgroundColour();
+        dc.SetTextBackground( color );
         dc.SetTextForeground( *wxBLACK );
         wxFont font = dc.GetFont();
         font.SetWeight( wxFONTWEIGHT_NORMAL );
@@ -19,7 +20,7 @@ public:
     virtual void DrawBorder (const wxGrid &WXUNUSED(grid), wxDC &dc, wxRect &rect) const wxOVERRIDE
     {
         dc.SetPen( *wxTRANSPARENT_PEN );
-        dc.SetBrush( /*wxBrush( COLOR_BTNFACE )*/*wxTRANSPARENT_BRUSH );
+        dc.SetBrush( *wxTRANSPARENT_BRUSH );
         dc.DrawRectangle( rect );
     }
     wxDECLARE_NO_COPY_CLASS( GridRowLabelRenderer );
