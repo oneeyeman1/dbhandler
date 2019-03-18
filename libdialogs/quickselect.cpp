@@ -21,6 +21,7 @@
 
 #include "wx/dialog.h"
 #include "wx/grid.h"
+#include "wx/gdicmn.h"
 #include "database.h"
 #include "quickselect.h"
 
@@ -30,8 +31,8 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_panel = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( m_panel, wxID_ANY, _( "1. Click on the table to select or deselect" ) );
     m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "2. Select one or more column" ) );
-    m_label3 = new wxStaticText( m_panel, wxID_ANY, _( "3. (Optional) Enter sorting and\n\rselection criteria below" ) );
-    m_label4 = new wxStaticText( m_panel, wxID_ANY, _( "To display a comment for a \n\rtable or column, click\n\rthe right mouse button" ) );
+    m_label3 = new wxStaticText( m_panel, wxID_ANY, _( "3. (Optional) Enter sorting and selection criteria below" ) );
+    m_label4 = new wxStaticText( m_panel, wxID_ANY, _( "To display a comment for a table or column, click the right mouse button" ) );
     m_label5 = new wxStaticText( m_panel, wxID_ANY, _( "Tables:" ) );
     m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL );
     m_label6 = new wxStaticText( m_panel, wxID_ANY, _( "Columns:" ) );
@@ -57,10 +58,10 @@ QuickSelect::~QuickSelect()
 void QuickSelect::set_properties ()
 {
     m_ok->Enable( false );
-    m_addAll->Enable( false );
+//    m_addAll->Enable( false );
     m_grid->CreateGrid( 4, 0 );
+    m_grid->HideColLabels();
     m_grid->GetTable()->SetAttrProvider( new CustomRowHeaderProvider );
-    m_grid->GetTable()->SetAttrProvider( new CustomCornerHeaderProvider );
     m_grid->SetRowLabelAlignment( wxALIGN_RIGHT, wxALIGN_CENTER );
     m_grid->SetRowLabelValue( 0, _( "Column:" ) );
     m_grid->SetRowLabelValue( 1, _( "Sort:" ) );
@@ -150,22 +151,38 @@ void QuickSelect::FillTableListBox()
         }
     }
     int count = m_tables->GetCount();
-    for( int i = 0; i < count; ++i )
-        m_fields->Append( "" );
+/*    for( int i = 0; i < count; ++i )
+        m_fields->Append( "" );*/
 }
 
 void QuickSelect::OnSelectingTable(wxCommandEvent &event)
 {
     int count = m_tables->GetCount();
+    bool found = false;
+    wxString selectedTable = m_tables->GetStringSelection();
     if( count > 1 )
     {
-        for( int i = 0; i < event.GetSelection(); i++ )
-            m_tables->Delete( i );
-        for( int j = 1; j < m_tables->GetCount(); j++ )
-            m_tables->Delete( j );
+        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++it )
+        {
+            wxString name( (*it).first );
+            for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
+            {
+                if( selectedTable == name + "." + (*it1)->GetTableName() )
+                {
+                    found = true;
+                    std::vector<Field *> fields = (*it1)->GetFields();
+                    for( std::vector<Field *>::iterator it2 = fields.begin(); it2 < fields.end(); ++it2 )
+                        m_fields->Append( (*it2)->GetFieldName() );
+                }
+            }
+        }
+        m_tables->Clear();
+        m_tables->Append( selectedTable );
     }
     else
     {
-        wxMessageBox( "List is restored" );
+        m_tables->Delete( 0 );
+        m_fields->Clear();
+        FillTableListBox();
     }
 }

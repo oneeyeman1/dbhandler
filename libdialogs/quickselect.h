@@ -12,8 +12,7 @@ public:
         wxColour color = grid.GetParent()->GetBackgroundColour();
         dc.SetTextBackground( color );
         dc.SetTextForeground( *wxBLACK );
-        wxFont font = dc.GetFont();
-        font.SetWeight( wxFONTWEIGHT_NORMAL );
+        dc.SetFont( *wxNORMAL_FONT );
         dc.DrawLabel( value, rect, horizAlign | vertAlign );
     }
 
@@ -40,38 +39,6 @@ protected:
 private:
     GridRowLabelRenderer m_customRowLabelRenderer;
     wxDECLARE_NO_COPY_CLASS( CustomRowHeaderProvider );
-};
-
-class GridCornerHeaderRenderer : public wxGridCornerHeaderRenderer
-{
-public:
-    GridCornerHeaderRenderer()
-    {
-    }
-
-    virtual void DrawBorder(const wxGrid &WXUNUSED(grid), wxDC &dc, wxRect &rect) const wxOVERRIDE
-    {
-        dc.SetPen( *wxTRANSPARENT_PEN );
-        dc.SetBrush( *wxTRANSPARENT_BRUSH );
-        dc.DrawRectangle( rect );
-    }
-    wxDECLARE_NO_COPY_CLASS( GridCornerHeaderRenderer );
-};
-
-class CustomCornerHeaderProvider : public wxGridCellAttrProvider
-{
-public:
-    CustomCornerHeaderProvider() : m_customCornerLabelRenderer()
-    {
-    }
-protected:
-    virtual const wxGridCornerHeaderRenderer &GetCornerRenderer() wxOVERRIDE
-    {
-        return m_customCornerLabelRenderer;
-    }
-private:
-    GridCornerHeaderRenderer m_customCornerLabelRenderer;
-    wxDECLARE_NO_COPY_CLASS( CustomCornerHeaderProvider );
 };
 
 class QuickSelect : public wxDialog
