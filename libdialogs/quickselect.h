@@ -10,9 +10,11 @@ public:
     virtual void DrawLabel (const wxGrid &grid, wxDC &dc, const wxString &value, const wxRect &rect, int horizAlign, int vertAlign, int WXUNUSED(textOrientation)) const wxOVERRIDE
     {
         wxColour color = grid.GetParent()->GetBackgroundColour();
+        wxFont font( grid.GetLabelFont() );
+        font.SetWeight( wxFONTWEIGHT_NORMAL );
         dc.SetTextBackground( color );
         dc.SetTextForeground( *wxBLACK );
-        dc.SetFont( *wxNORMAL_FONT );
+        dc.SetFont( font );
         dc.DrawLabel( value, rect, horizAlign | vertAlign );
     }
 
@@ -49,6 +51,7 @@ public:
     void OnOkEnableUI(wxUpdateUIEvent &event);
     void OnAddAllUpdateUI(wxUpdateUIEvent &event);
     void OnSelectingTable(wxCommandEvent &event);
+    void OnDisplayComment(wxMouseEvent &event);
 protected:
     void do_layout();
     void set_properties();
@@ -56,8 +59,14 @@ protected:
 private:
     wxPanel *m_panel;
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7, *m_comments;
+
+    //
+    wxStaticText *m_label10, *m_label11, *m_label12;
+    //
+
     wxListBox *m_tables, *m_fields;
     wxGrid *m_grid;
     wxButton *m_ok, *m_cancel, *m_addAll, *m_help;
     Database *m_db;
+    std::vector<Field *> m_tableFields;
 };
