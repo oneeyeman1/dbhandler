@@ -300,11 +300,19 @@ void QuickSelect::AddFieldToGrid(const wxString &field, bool isAdded)
     };
     if( isAdded )
     {
-        m_grid->AppendCols();
-        m_cols++;
-        m_grid->SetCellValue( 0, m_cols - 1, field );
-        m_grid->SetCellAlignment( 0, m_cols - 1, wxALIGN_CENTRE, wxALIGN_CENTRE );
-        m_grid->SetCellEditor( 1, m_cols - 1, new wxGridCellChoiceEditor( WXSIZEOF( choices ), choices ) );
+        for( auto i = 0; i < m_grid->GetNumberCols() && !found; i++ )
+        {
+            if( m_grid->GetCellValue( 0, i ) == field )
+                found = true;
+        }
+        if( !found )
+        {
+            m_grid->AppendCols();
+            m_cols++;
+            m_grid->SetCellValue( 0, m_cols - 1, field );
+            m_grid->SetCellAlignment( 0, m_cols - 1, wxALIGN_CENTRE, wxALIGN_CENTRE );
+            m_grid->SetCellEditor( 1, m_cols - 1, new wxGridCellChoiceEditor( WXSIZEOF( choices ), choices ) );
+        }
     }
     else
     {
