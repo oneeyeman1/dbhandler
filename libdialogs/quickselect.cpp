@@ -28,6 +28,7 @@
 QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent, wxID_ANY, _(""))
 {
     m_db = const_cast<Database *>( db );
+    m_cols = 0;
     m_panel = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( m_panel, wxID_ANY, _( "1. Click on the table to select or deselect" ) );
     m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "2. Select one or more column" ) );
@@ -55,9 +56,13 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     do_layout();
     m_ok->Bind( wxEVT_UPDATE_UI, &QuickSelect::OnOkEnableUI, this );
     m_addAll->Bind( wxEVT_UPDATE_UI, &QuickSelect::OnAddAllUpdateUI, this );
+    m_addAll->Bind( wxEVT_BUTTON, &QuickSelect::OnAllFieldsSelected, this );
     m_tables->Bind( wxEVT_LISTBOX, &QuickSelect::OnSelectingTable, this );
+    m_fields->Bind( wxEVT_LISTBOX, &QuickSelect::OnFieldSelected, this );
     m_tables->Bind( wxEVT_RIGHT_DOWN, &QuickSelect::OnDisplayComment, this);
     m_fields->Bind( wxEVT_RIGHT_DOWN, &QuickSelect::OnDisplayComment, this);
+    m_grid->Bind( wxEVT_GRID_ROW_SIZE, &QuickSelect::OnGridRowLines, this );
+    m_grid->Bind( wxEVT_GRID_CELL_LEFT_CLICK, &QuickSelect::OnCellLeftClicked, this );
 }
 
 QuickSelect::~QuickSelect()
@@ -95,7 +100,7 @@ void QuickSelect::do_layout()
     auto *sizer9 = new wxBoxSizer( wxVERTICAL );
 
     //
-    auto *sizer10 = new wxBoxSizer( wxVERTICAL );
+    m_sizer10 = new wxBoxSizer( wxVERTICAL );
     auto *sizer11 = new wxBoxSizer( wxHORIZONTAL );
     //
 
@@ -128,12 +133,10 @@ void QuickSelect::do_layout()
     sizer3->Add( m_comments, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
     //
-    sizer10->Add( m_label10, 0, wxEXPAND, 0 );
-    sizer10->Add( 10, 10, 0, wxEXPAND, 0 );
-    sizer10->Add( m_label11, 0, wxEXPAND, 0 );
-    sizer10->Add( 10, 10, 0, wxEXPAND, 0 );
-    sizer10->Add( m_label12, 0, wxEXPAND, 0 );
-    sizer11->Add( sizer10, 0, wxEXPAND, 0 );
+    m_sizer10->Add( m_label10, wxSizerFlags().Border( wxRIGHT ).Right() );
+    m_sizer10->Add( m_label11, wxSizerFlags().Border( wxRIGHT ).Right() );
+    m_sizer10->Add( m_label12, wxSizerFlags().Border( wxRIGHT ).Right() );
+    sizer11->Add( m_sizer10, 0, wxEXPAND, 0 );
     sizer11->Add( m_grid, 1, wxEXPAND, 0 );
     sizer3->Add( sizer11, 0, wxEXPAND, 0 );
     //
@@ -176,15 +179,12 @@ void QuickSelect::FillTableListBox()
             m_tables->Append( name + "." + (*it1)->GetTableName() );
         }
     }
-    int count = m_tables->GetCount();
-/*    for( int i = 0; i < count; ++i )
-        m_fields->Append( "" );*/
 }
 
 void QuickSelect::OnSelectingTable(wxCommandEvent &event)
 {
-    int count = m_tables->GetCount();
-    bool found = false;
+    auto count = m_tables->GetCount();
+    auto found = false;
     wxString selectedTable = m_tables->GetStringSelection();
     if( count > 1 )
     {
@@ -204,11 +204,15 @@ void QuickSelect::OnSelectingTable(wxCommandEvent &event)
         }
         m_tables->Clear();
         m_tables->Append( selectedTable );
+        m_tables->SetSelection( 0 );
     }
     else
     {
         m_tables->Delete( 0 );
         m_fields->Clear();
+        for( auto i = 0; i < m_grid->GetNumberCols(); ++i )
+            m_grid->DeleteCols();
+        m_tableFields.clear();
         FillTableListBox();
     }
 }
@@ -216,8 +220,8 @@ void QuickSelect::OnSelectingTable(wxCommandEvent &event)
 void QuickSelect::OnDisplayComment(wxMouseEvent &event)
 {
     wxListBox *object = (wxListBox *) event.GetEventObject();
-    int item = m_tables->HitTest( event.GetPosition() );
-    bool found = false;
+    auto item = m_tables->HitTest( event.GetPosition() );
+    auto found = false;
     if( item != wxNOT_FOUND )
     {
         wxString stringClicked = object->GetString( item );
@@ -249,4 +253,115 @@ void QuickSelect::OnDisplayComment(wxMouseEvent &event)
         }
     }
     event.Skip();
+}
+
+void QuickSelect::OnGridRowLines(wxGridSizeEvent &event)
+{
+    for( size_t i = 0; i < m_sizer10->GetItemCount (); ++i )
+    {
+        m_sizer10->SetItemMinSize( i, -1, m_grid->GetRowSize( i ) );
+    }
+    m_sizer10->Layout();
+    event.Skip();
+}
+
+void QuickSelect::OnFieldSelected(wxCommandEvent &event)
+{
+    if( event.IsSelection() )
+        AddFieldToGrid( event.GetString(), true );
+    else
+        AddFieldToGrid( event.GetString(), false );
+}
+
+void QuickSelect::OnAllFieldsSelected(wxCommandEvent &event)
+{
+    m_grid->BeginBatch();
+    auto i = 0;
+    for( std::vector<Field *>::iterator it = m_tableFields.begin(); it < m_tableFields.end(); ++it )
+    {
+        if( !m_fields->IsSelected( i ) )
+        {
+            AddFieldToGrid( (*it)->GetFieldName(), true );
+            m_fields->SetSelection( i );
+        }
+        i++;
+    }
+    m_grid->EndBatch();
+}
+
+void QuickSelect::AddFieldToGrid(const wxString &field, bool isAdded)
+{
+    bool found = false;
+    const wxString choices[] =
+    {
+        _( "Ascending" ),
+        _( "Descending" ),
+        _( "(not sorted)" ),
+    };
+    if( isAdded )
+    {
+        m_grid->AppendCols();
+        m_cols++;
+        m_grid->SetCellValue( 0, m_cols - 1, field );
+        m_grid->SetCellAlignment( 0, m_cols - 1, wxALIGN_CENTRE, wxALIGN_CENTRE );
+        m_grid->SetCellEditor( 1, m_cols - 1, new wxGridCellChoiceEditor( WXSIZEOF( choices ), choices ) );
+    }
+    else
+    {
+        for( auto i = 0; i < m_grid->GetNumberCols () && !found; ++i )
+        {
+            if( m_grid->GetCellValue( 0, i ) == field )
+            {
+                wxGridCellChoiceEditor *editor = (wxGridCellChoiceEditor *) m_grid->GetCellEditor( 1, i );
+                wxComboBox *combo = (wxComboBox *) editor->GetControl();
+                if( combo )
+                    combo->Dismiss();
+                editor->DecRef();
+                m_grid->DeleteCols( i );
+                m_cols--;
+                found = true;
+            }
+        }
+    }
+}
+
+void QuickSelect::OnCellLeftClicked(wxGridEvent &event)
+{
+    auto oldrow = m_grid->GetGridCursorRow();
+    auto oldcolumn = m_grid->GetGridCursorCol();
+    if( oldrow == 1 )
+    {
+        wxGridCellChoiceEditor *editor = (wxGridCellChoiceEditor *) m_grid->GetCellEditor( oldrow, oldcolumn );
+        wxComboBox *combo = (wxComboBox *) editor->GetControl();
+        if( combo )
+            combo->Dismiss();
+        wxString value = m_grid->GetCellValue( oldrow, oldcolumn );
+        if( value == _T( "(not selected)" ) )
+            m_grid->SetCellValue( oldrow, oldcolumn, _T( "" ) );
+        editor->DecRef();
+    }
+    auto row = event.GetRow();
+    auto column = event.GetCol();
+    if( event.GetRow() == 1 )
+    {
+        m_grid->GoToCell( row, column );
+        m_grid->EnableCellEditControl( true );
+        m_grid->ShowCellEditControl();
+        wxGridCellChoiceEditor *editor = (wxGridCellChoiceEditor *) m_grid->GetCellEditor( row, column );
+        wxComboBox *combo = (wxComboBox *) editor->GetControl();
+        wxString value = m_grid->GetCellValue( row, column );
+        combo->Popup();
+        combo->SetSelection( 2 );
+//        combo->SetFocus();
+        editor->DecRef();
+    }
+    else if( event.GetRow() > 1 )
+    {
+        m_grid->GoToCell( row, column );
+        m_grid->EnableCellEditControl( true );
+        m_grid->ShowCellEditControl();
+        event.Skip();
+    }
+    else
+        event.Skip();
 }
