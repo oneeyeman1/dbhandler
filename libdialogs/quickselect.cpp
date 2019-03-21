@@ -54,6 +54,11 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
 
     set_properties();
     do_layout();
+    for( size_t i = 0; i < m_sizer10->GetItemCount (); ++i )
+    {
+        m_sizer10->SetItemMinSize( i, -1, m_grid->GetRowSize( i ) );
+    }
+    m_sizer10->Layout();
     m_ok->Bind( wxEVT_UPDATE_UI, &QuickSelect::OnOkEnableUI, this );
     m_addAll->Bind( wxEVT_UPDATE_UI, &QuickSelect::OnAddAllUpdateUI, this );
     m_addAll->Bind( wxEVT_BUTTON, &QuickSelect::OnAllFieldsSelected, this );
@@ -76,6 +81,8 @@ void QuickSelect::set_properties ()
     m_grid->CreateGrid( 4, 0 );
     m_grid->HideColLabels();
     m_grid->HideRowLabels();
+    m_grid->DisableDragColSize();
+    m_grid->DisableDragRowSize();
     m_grid->GetTable()->SetAttrProvider( new CustomRowHeaderProvider );
     m_grid->SetRowLabelAlignment( wxALIGN_RIGHT, wxALIGN_CENTER );
     m_grid->SetRowLabelValue( 0, _( "Column:" ) );
@@ -303,7 +310,9 @@ void QuickSelect::AddFieldToGrid(const wxString &field, bool isAdded)
         for( auto i = 0; i < m_grid->GetNumberCols() && !found; i++ )
         {
             if( m_grid->GetCellValue( 0, i ) == field )
+            {
                 found = true;
+            }
         }
         if( !found )
         {
