@@ -45,13 +45,9 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
     m_addAll = new wxButton( m_panel, wxID_ANY, _( "Add All" ) );
     m_help = new wxButton( m_panel, wxID_HELP, _( "Help" ) );
-
-    //
     m_label10 = new wxStaticText( m_panel, wxID_ANY, _( "Column:" ) );
     m_label11 = new wxStaticText( m_panel, wxID_ANY, _( "Sort:" ) );
     m_label12 = new wxStaticText( m_panel, wxID_ANY, _( "Criteria:" ) );
-    //
-
     set_properties();
     do_layout();
     for( size_t i = 0; i < m_sizer10->GetItemCount (); ++i )
@@ -83,7 +79,6 @@ void QuickSelect::set_properties ()
     m_grid->HideRowLabels();
     m_grid->DisableDragColSize();
     m_grid->DisableDragRowSize();
-    m_grid->GetTable()->SetAttrProvider( new CustomRowHeaderProvider );
     m_grid->SetRowLabelAlignment( wxALIGN_RIGHT, wxALIGN_CENTER );
     m_grid->SetRowLabelValue( 0, _( "Column:" ) );
     m_grid->SetRowLabelValue( 1, _( "Sort:" ) );
@@ -105,12 +100,8 @@ void QuickSelect::do_layout()
     auto *sizer7 = new wxBoxSizer( wxVERTICAL );
     auto *sizer8 = new wxBoxSizer( wxVERTICAL );
     auto *sizer9 = new wxBoxSizer( wxVERTICAL );
-
-    //
     m_sizer10 = new wxBoxSizer( wxVERTICAL );
     auto *sizer11 = new wxBoxSizer( wxHORIZONTAL );
-    //
-
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer6->Add( m_label1, 0, wxEXPAND, 0 );
@@ -139,15 +130,12 @@ void QuickSelect::do_layout()
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer3->Add( m_comments, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
-    //
     m_sizer10->Add( m_label10, wxSizerFlags().Border( wxRIGHT ).Right() );
     m_sizer10->Add( m_label11, wxSizerFlags().Border( wxRIGHT ).Right() );
     m_sizer10->Add( m_label12, wxSizerFlags().Border( wxRIGHT ).Right() );
     sizer11->Add( m_sizer10, 0, wxEXPAND, 0 );
     sizer11->Add( m_grid, 1, wxEXPAND, 0 );
     sizer3->Add( sizer11, 0, wxEXPAND, 0 );
-    //
-//    sizer3->Add( m_grid, 0, wxEXPAND, 0 );
     sizer2->Add( sizer3, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND, 0 );
