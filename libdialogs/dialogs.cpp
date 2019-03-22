@@ -256,6 +256,7 @@ extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId)
         break;
     }
     GetObjectName dlg( parent, wxID_ANY, title, objectId );
+    dlg.Center();
     res = dlg.ShowModal();
     return res;
 }
