@@ -35,7 +35,7 @@ void BitmapPanel::do_layout()
     wxBoxSizer *sizer3 = new wxBoxSizer( wxVERTICAL );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 20, 0, wxEXPAND, 0 );
-    sizer3->Add( m_bitmap, 0, wxEXPAND, 0 );
+    sizer3->Add( m_bitmap, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_CENTER_HORIZONTAL, 0 );
     sizer3->Add( 5, 5, wxEXPAND, 0 );
     sizer3->Add( m_label, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
     sizer3->Add( 5, 20, wxEXPAND, 0 );
