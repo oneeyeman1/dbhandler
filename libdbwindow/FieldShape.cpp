@@ -116,6 +116,5 @@ wxRect FieldShape::GetBoundingBox()
     wxRect rect = wxSFRectShape::GetBoundingBox();
     wxRect parentRect = this->GetParentShape()->GetParentShape()->GetBoundingBox();
     rect.SetLeft( parentRect.GetLeft() );
-    rect.SetWidth( parentRect.GetWidth() );
     return rect;
 }

@@ -134,7 +134,8 @@ am_libdialogs_la_OBJECTS = libdialogs_la-databasetype.lo \
 	libdialogs_la-properties.lo libdialogs_la-foreignkey.lo \
 	libdialogs_la-getobjectname.lo libdialogs_la-jointype.lo \
 	libdialogs_la-addcolumnsdialog.lo \
-	libdialogs_la-odbccredentials.lo
+	libdialogs_la-odbccredentials.lo libdialogs_la-bitmappanel.lo \
+	libdialogs_la-newquery.lo libdialogs_la-quickselect.lo
 libdialogs_la_OBJECTS = $(am_libdialogs_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -400,7 +401,13 @@ libdialogs_la_SOURCES = \
 	addcolumnsdialog.cpp \
 	addcolumnsdialog.h \
 	odbccredentials.cpp \
-	odbccredentials.h
+	odbccredentials.h \
+	bitmappanel.cpp \
+	bitmappanel.h \
+	newquery.cpp \
+	newquery.h \
+	quickselect.cpp \
+	quickselect.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
@@ -509,15 +516,18 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-addcolumnsdialog.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-bitmappanel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-createindex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-databasetype.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-dialogs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-foreignkey.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-getobjectname.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-jointype.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-newquery.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-odbcconfigure.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-odbccredentials.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-properties.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-quickselect.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-selecttables.Plo@am__quote@
 
 .cpp.o:
@@ -617,6 +627,27 @@ libdialogs_la-odbccredentials.lo: odbccredentials.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='odbccredentials.cpp' object='libdialogs_la-odbccredentials.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-odbccredentials.lo `test -f 'odbccredentials.cpp' || echo '$(srcdir)/'`odbccredentials.cpp
+
+libdialogs_la-bitmappanel.lo: bitmappanel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-bitmappanel.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-bitmappanel.Tpo -c -o libdialogs_la-bitmappanel.lo `test -f 'bitmappanel.cpp' || echo '$(srcdir)/'`bitmappanel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-bitmappanel.Tpo $(DEPDIR)/libdialogs_la-bitmappanel.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='bitmappanel.cpp' object='libdialogs_la-bitmappanel.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-bitmappanel.lo `test -f 'bitmappanel.cpp' || echo '$(srcdir)/'`bitmappanel.cpp
+
+libdialogs_la-newquery.lo: newquery.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-newquery.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-newquery.Tpo -c -o libdialogs_la-newquery.lo `test -f 'newquery.cpp' || echo '$(srcdir)/'`newquery.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-newquery.Tpo $(DEPDIR)/libdialogs_la-newquery.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='newquery.cpp' object='libdialogs_la-newquery.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-newquery.lo `test -f 'newquery.cpp' || echo '$(srcdir)/'`newquery.cpp
+
+libdialogs_la-quickselect.lo: quickselect.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-quickselect.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-quickselect.Tpo -c -o libdialogs_la-quickselect.lo `test -f 'quickselect.cpp' || echo '$(srcdir)/'`quickselect.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-quickselect.Tpo $(DEPDIR)/libdialogs_la-quickselect.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='quickselect.cpp' object='libdialogs_la-quickselect.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-quickselect.lo `test -f 'quickselect.cpp' || echo '$(srcdir)/'`quickselect.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

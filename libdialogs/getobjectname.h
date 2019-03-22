@@ -1,6 +1,8 @@
 #ifndef __GETOBJECTNAME_H__
 #define __GETOBJECTNAME_H__
 
+#define wxID_NEWOBJECT 1000
+
 class GetObjectName : public wxDialog
 {
 public:
@@ -8,6 +10,8 @@ public:
     void OnButtonNew(wxCommandEvent &event);
     void OnButtonBrowse(wxCommandEvent &event);
     const wxString &GetFileName();
+    const int GetSource();
+    const int GetPresentation();
 protected:
     void set_properties();
     void do_layout();
@@ -17,7 +21,7 @@ private:
     wxTextCtrl *m_painterName, *m_commentsText;
     wxListCtrl *m_objectList;
     wxButton *m_ok, *m_cancel, *m_new, *m_browse, *m_help;
-    int m_id;
+    int m_id, m_source, m_presentation;
     wxString m_fileName;
 };
 #endif

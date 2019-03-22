@@ -25,7 +25,13 @@ libdialogs_la_SOURCES =  \
 	addcolumnsdialog.cpp \
 	addcolumnsdialog.h \
 	odbccredentials.cpp \
-	odbccredentials.h
+	odbccredentials.h \
+	bitmappanel.cpp \
+	bitmappanel.h \
+	newquery.cpp \
+	newquery.h \
+	quickselect.cpp \
+	quickselect.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \

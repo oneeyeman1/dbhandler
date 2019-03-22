@@ -951,7 +951,7 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
     return result;
 }
 
-int SQLiteDatabase::GetFieldProperties(const char *tableName, const char *, const char *ownerName, const char *fieldName, Field *field, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt;
     std::wstring errorMessage;
@@ -960,19 +960,27 @@ int SQLiteDatabase::GetFieldProperties(const char *tableName, const char *, cons
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
-        res = sqlite3_bind_text( stmt, 1, tableName, -1, SQLITE_TRANSIENT );
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
         if( res == SQLITE_OK )
         {
-            res = sqlite3_bind_text( stmt, 2, ownerName, -1, SQLITE_TRANSIENT );
+            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
             if( res == SQLITE_OK )
             {
-                res = sqlite3_bind_text( stmt, 3, fieldName, -1, SQLITE_TRANSIENT );
+                res = sqlite3_bind_text( stmt, 3, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
                 if( res == SQLITE_OK )
                 {
                     res = sqlite3_step( stmt );
                     if( res == SQLITE_ROW )
                     {
-                        field->SetComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 17 ) ) );
+                        const char *label = (const char *) sqlite3_column_text( stmt, 5 );
+                        const char *heading = (const char *) sqlite3_column_text( stmt, 7 );
+                        const char *comment = (const char *) sqlite3_column_text( stmt, 17 );
+                        if( label )
+                            field->SetLabel( sqlite_pimpl->m_myconv.from_bytes( label ) );
+                        if( heading )
+                            field->SetHeading( sqlite_pimpl->m_myconv.from_bytes( heading ) );
+                        if( comment )
+                            field->SetComment( sqlite_pimpl->m_myconv.from_bytes( comment ) );
                     }
                     else if( res != SQLITE_DONE )
                     {
@@ -1372,17 +1380,62 @@ int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::
     return res;
 }
 
-int SQLiteDatabase::SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const Field *field, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
     char *error;
     std::wstring err;
-    int result = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( command ).c_str(), 0, 0, &error );
+    int result = 0;
+    result = sqlite3_exec( m_db, "BEGIN", NULL, NULL, &error );
     if( result != SQLITE_OK )
     {
         GetErrorMessage( result, err );
         errorMsg.push_back( err );
         res = 1;
+    }
+    else
+    {
+        bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
+        if( exist )
+        {
+            command = L"INSERT INTO \"sys.abcatcol\"(\"abc_tnam\", \"abc_ownr\", \"abc_cnam\", \"abc_labl\", \"abc_hdr\", \"abc_cmnt\") VALUES(";
+            command += tableName;
+            command += L", " + ownerName;
+            command += L", " + fieldName;
+            command += L", " + const_cast<Field *>( field )->GetLabel();
+            command += L", " + const_cast<Field *>( field )->GetHeading();
+            command += L", " + const_cast<Field *>( field )->GetComment() + L");";
+        }
+        else
+        {
+            command = L"UPDATE \"sys.abcatcol\" SET \"abc_labl\" = ";
+            command += const_cast<Field *>( field )->GetLabel() + L", \"abc_hdr\" = ";
+            command += const_cast<Field *>( field )->GetHeading() + L", \"abc_cmnt\" = ";
+            command += const_cast<Field *>( field )->GetComment() + L"WHERE \"abc_tnam\" = ";
+            command += tableName + L" AND \"abc_ownr\" = ";
+            command += ownerName + L" AND \"abc_cnam\" = ";
+            command += fieldName + L";";
+        }
+        if( !isLogOnly )
+        {
+            result = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), NULL, NULL, &error );
+            if( result != SQLITE_OK )
+            {
+                GetErrorMessage( result, err );
+                errorMsg.push_back( err );
+                res = 1;
+            }
+        }
+        if( res )
+            result = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, &error );
+        else
+            result = sqlite3_exec( m_db, "COMMIT", NULL, NULL, &error );
+        if( result != SQLITE_OK )
+        {
+            GetErrorMessage( result, err );
+            errorMsg.push_back( err );
+            res = 1;
+        }
     }
     return res;
 }
@@ -1557,7 +1610,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, const std::wstring &tableName, const std::wstring &tableOwner, int tableId, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, const std::wstring &tableName, const std::wstring &, int, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     if( tableAdded )
@@ -1705,7 +1758,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
                             {
                                 std::wstring type = sqlite_pimpl->m_myconv.from_bytes( fieldType );
                                 Field *field = new Field( sqlite_pimpl->m_myconv.from_bytes( fieldName ), type, 0, 0, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK >= 1 ? true : false, std::find( fk_names.begin(), fk_names.end(), sqlite_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
-                                if( GetFieldProperties( sqlite_pimpl->m_myconv.to_bytes( tableName ).c_str(), "", "", fieldName.c_str(), field, errorMsg ) )
+                                if( GetFieldProperties( tableName, L"", L"", sqlite_pimpl->m_myconv.from_bytes( fieldName ), field, errorMsg ) )
                                 {
                                     result = 1;
                                     GetErrorMessage( res, errorMessage );
@@ -1833,4 +1886,57 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
         pimpl->m_tableNames.erase( std::remove( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ), pimpl->m_tableNames.end() );
     }
     return result;
+}
+
+int SQLiteDatabase::GetFieldProperties (const std::wstring &table, Field *field, std::vector<std::wstring> &errorMsg)
+{
+//    std::wstring schema = L"", owner = L"";
+    return GetFieldProperties( table, L"", L"", field->GetFieldName(), field, errorMsg );
+}
+
+bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
+{
+    bool exist = false;
+    std::wstring errorMessage;
+    std::wstring query = L"SELECT 1 FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &m_stmt1, NULL );
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_bind_text( m_stmt1, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res == SQLITE_OK )
+        {
+            res = sqlite3_bind_text( m_stmt1, 2, sqlite_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+            if( res == SQLITE_OK )
+            {
+                res = sqlite3_bind_text( m_stmt1, 3, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+                if( res == SQLITE_OK )
+                {
+                    res = sqlite3_step( m_stmt1 );
+                    if( res == SQLITE_ROW )
+                        exist = true;
+                }
+                else
+                {
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                }
+            }
+            else
+            {
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+        else
+        {
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    return exist;
 }

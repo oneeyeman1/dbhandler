@@ -46,6 +46,15 @@
     <ClCompile Include="odbccredentials.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="newquery.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bitmappanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="quickselect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="odbcconfigure.h">
@@ -79,6 +88,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="odbccredentials.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="newquery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bitmappanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="quickselect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

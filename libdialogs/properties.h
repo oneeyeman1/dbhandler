@@ -39,6 +39,7 @@ private:
 
 protected:
     void OnApply(wxCommandEvent &event);
+    void OnApplyUpdateUI(wxUpdateUIEvent &event);
     void OnOk(wxCommandEvent &event);
     bool ApplyProperties();
     // begin wxGlade: PropertiesDialog::attributes
@@ -47,5 +48,6 @@ protected:
 }; // wxGlade: end class
 
 wxDECLARE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_SET_FIELD_PROPERTY, wxCommandEvent);
 
 #endif // PROPERTIES_H

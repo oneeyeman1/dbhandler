@@ -43,6 +43,7 @@
 std::mutex Database::Impl::my_mutex;
 #endif
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
+const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
 
 PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxString &ownerName, wxCriticalSection &cs, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
@@ -99,11 +100,11 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             //#if _MSC_VER >= 1900
             std::lock_guard<std::mutex> lock( m_db->GetTableVector().my_mutex );
 #endif
-            res = db->GetFieldProperties( tableName, schemaName, ownerName, fieldName, field, errors );
+            res = db->GetFieldProperties( tableName.ToStdWstring(), field, errors );
         }
-        m_page5 = new FieldGeneral( m_properties );
+        m_page5 = new FieldGeneral( m_properties, field );
         m_properties->AddPage( m_page5, _( "General" ) );
-        m_page6 = new FieldHeader( m_properties );
+        m_page6 = new FieldHeader( m_properties, field );
         m_properties->AddPage( m_page6, _( "Header" ) );
 /*        res = db->GetFieldProperties( tableName.ToStdWstring(), schemaName.ToStdWstring(), field, errors );
         if( !res )
@@ -127,6 +128,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         ok->SetDefault();
         apply->Enable( false );
         apply->Bind( wxEVT_BUTTON, &PropertiesDialog::OnApply, this );
+        apply->Bind( wxEVT_UPDATE_UI, &PropertiesDialog::OnApplyUpdateUI, this );
         ok->Bind( wxEVT_BUTTON, &PropertiesDialog::OnOk, this );
     }
 }
@@ -169,20 +171,13 @@ void PropertiesDialog::OnApply(wxCommandEvent &WXUNUSED(event))
 void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 {
     if( !m_isApplied )
-    {
-        for( int i = 0; i < m_properties->GetPageCount(); ++i )
-        {
-            PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
-            if( page->IsModified() )
-                ApplyProperties();
-        }
-    }
+        ApplyProperties();
     EndModal( wxID_OK );
 }
 
 bool PropertiesDialog::ApplyProperties()
 {
-    bool exist;
+    bool exist, result = true;
     bool isModified/* = ( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() )*/;
     for( int i = 0; i < m_properties->GetPageCount(); ++i )
     {
@@ -225,22 +220,29 @@ bool PropertiesDialog::ApplyProperties()
             m_tableProperties.m_isLabelFontItalic = labelFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
             m_tableProperties.m_labelFontEncoding = labelFont.GetEncoding();
             m_tableProperties.m_labelFontPixelSize = labelFont.GetPixelSize().GetWidth();
+            wxCommandEvent event( wxEVT_SET_TABLE_PROPERTY );
+            event.SetInt( IsLogOnly() );
+            event.SetExtraLong( m_type );
+            event.SetClientData( &m_tableProperties );
+            dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
+            if( event.GetString() == "Failed" )
+                result = false;
         }
     }
     if( m_type == 1 )
     {
-    }
-    bool result = true;
-    if( isModified )
-    {
-        wxCommandEvent event( wxEVT_SET_TABLE_PROPERTY );
+        Field *field = static_cast<Field *>( m_object );
+        field->SetComment( m_page5->GetCommentCtrl()->GetValue().ToStdWstring() );
+        field->SetLabel( m_page6->GetLabelCtrl()->GetValue().ToStdWstring() );
+        field->SetHeading( m_page6->GetHeadingCtrl()->GetValue().ToStdWstring() );
+        wxCommandEvent event( wxEVT_SET_FIELD_PROPERTY );
         event.SetInt( IsLogOnly() );
         event.SetExtraLong( m_type );
-        event.SetClientData( &m_tableProperties );
+        event.SetClientData( &field );
         dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
         if( event.GetString() == "Failed" )
             result = false;
-	}
+    }
     m_isApplied = true;
     isModified = false;
     return result;
@@ -259,4 +261,14 @@ bool PropertiesDialog::IsLogOnly()
         return m_page5->IsLogOnly();
     else
         return false;
+}
+
+void PropertiesDialog::OnApplyUpdateUI (wxUpdateUIEvent &event)
+{
+    for( int i = 0; i < m_properties->GetPageCount(); ++i )
+    {
+        PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
+        if( page->IsModified() )
+            event.Enable( true );
+    }
 }

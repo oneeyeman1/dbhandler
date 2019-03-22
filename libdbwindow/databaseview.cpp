@@ -57,18 +57,23 @@
 #include "databaseview.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
+const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
-typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, wxCriticalSection &);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, const wxString &, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
+typedef int (*NEWQUERY)(wxWindow *, int &, int &);
+typedef int (*QUICKSELECT)(wxWindow *, const Database *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
 #endif
+
+#define wxID_NEWOBJECT 1000
 
 // ----------------------------------------------------------------------------
 // DrawingView implementation
@@ -103,6 +108,7 @@ wxEND_EVENT_TABLE()
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
+    m_log = NULL;
     m_isActive = false;
     m_tb = NULL;
     wxToolBar *tb = NULL;
@@ -128,8 +134,11 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, _T( "Database" ), wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
 //    m_frame->SetMenuBar( parent->GetMenuBar() );
-    m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
-    m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
+    if( m_type == DatabaseView )
+    {
+        m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
+        m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
+    }
     wxPoint ptCanvas;
     sizer = new wxBoxSizer( wxVERTICAL );
 #ifdef __WXOSX__
@@ -191,8 +200,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
-    m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
+    if( m_log )
+        m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
+    Bind( wxEVT_SET_FIELD_PROPERTY, &DrawingView::OnSetProperties, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, m_canvas, wxID_DROPOBJECT );
 #if defined __WXMSW__ || defined __WXGTK__
     CreateViewToolBar();
@@ -287,8 +298,8 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
     }
     if( type == 0 )
         res = GetDocument()->GetDatabase()->SetTableProperties( &erdTable->GetTable(), *tableProperties, isLogOnly, const_cast<std::wstring &>( command.ToStdWstring() ), errors );
-//    if( type == 1 )
-//        res = GetDocument()->GetDatabase()->SetFieldProperties( command->ToStdWstring(), errors );
+    if( type == 1 )
+        res = GetDocument()->GetDatabase()->SetFieldProperties( const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableName(), const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableOwner(), field->GetField()->GetFieldName(), field->GetField(), isLogOnly, const_cast<std::wstring &>( command.ToStdWstring() ), errors );
     if( res )
     {
         for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
@@ -339,6 +350,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
     wxString query;
     std::vector<wxString> tables;
     wxDynamicLibrary lib;
+    bool quickSelect = false;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
@@ -359,20 +371,40 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     m_frame->Close();
                     return;
                 }
-                m_fields->Show( true );
-                m_queryBook->Show( true );
-                m_frame->Layout();
-                sizer->Layout();
+                if( res == wxID_NEWOBJECT )
+                {
+                    NEWQUERY func1 = (NEWQUERY) lib.GetSymbol( "NewQueryDlg" );
+                    res = func1( m_frame, m_source, m_presentation );
+                }
+                if( res != wxID_CANCEL )
+                {
+                    if( m_source != 1 )
+                    {
+                        TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
+                        res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false );
+                    }
+                    else
+                    {
+                        QUICKSELECT func2 = (QUICKSELECT) lib.GetSymbol( "QuickSelectDlg" );
+                        res = func2( m_frame, db );
+                        quickSelect = true;
+                    }
+                    if( !quickSelect )
+                    {
+                        m_fields->Show( true );
+                        m_queryBook->Show( true );
+                        m_frame->Layout();
+                        sizer->Layout();
+                    }
 #ifdef __WXGTK__
-                wxDocMDIParentFrame *parent = wxDynamicCast( m_frame->GetMDIParent(), wxDocMDIParentFrame );
-                wxSize size = parent->GetSize();
-                parent->SetSize( size.GetWidth() - 5, size.GetHeight() - 5 );
-                parent->SetSize( size.GetWidth() + 5, size.GetHeight() + 5 );
+                    wxDocMDIParentFrame *parent = wxDynamicCast( m_frame->GetMDIParent(), wxDocMDIParentFrame );
+                    wxSize size = parent->GetSize();
+                    parent->SetSize( size.GetWidth() - 5, size.GetHeight() - 5 );
+                    parent->SetSize( size.GetWidth() + 5, size.GetHeight() + 5 );
 #endif
+                }
             }
         }
-        TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        res = func( m_frame, db, tables, GetDocument()->GetTableNames(), false );
         if( res != wxID_CANCEL )
         {
             if( m_type == QueryView )
@@ -575,8 +607,10 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     wxString command = "";
     bool logOnly = false;
     m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
-    wxString tableName, schemaName;
+    wxString tableName, schemaName, ownerName;
     MyErdTable *erdTable = NULL;
+    ConstraintSign *sign = NULL;
+    Constraint *constraint = NULL;
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
     {
         if( event.GetId() == wxID_PROPERTIES )
@@ -584,9 +618,12 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             if( (*it)->IsSelected() )
             {
                 erdTable = (MyErdTable *)(*it);
-                dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
-                type = 0;
-                found = true;
+                if( erdTable )
+                {
+                    dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
+                    type = 0;
+                    found = true;
+                }
             }
         }
         if( event.GetId() == wxID_FIELDPROPERTIES )
@@ -600,6 +637,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
                     erdTable = my_table;
                     tableName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetTableName();
                     schemaName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetSchemaName();
+                    ownerName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetTableOwner();
                     type = 1;
                     found = true;
                 }
@@ -619,9 +657,9 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == 0 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, table, command, logOnly, wxEmptyString, wxEmptyString, *pcs );
+            res = func( m_frame, GetDocument()->GetDatabase(), type, dbTable, command, logOnly, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
         if( type == 1 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName, *pcs );
+            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName, ownerName, *pcs );
         if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );

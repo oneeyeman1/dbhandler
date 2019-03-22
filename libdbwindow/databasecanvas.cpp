@@ -329,6 +329,14 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     MyErdTable *erdTable = NULL;
     ConstraintSign *erdSign = NULL;
     wxPoint pt = event.GetPosition();
+    ShapeList selection;
+    this->GetSelectedShapes( selection );
+    for( ShapeList::iterator it = selection.begin(); it != selection.end(); ++it )
+    {
+        MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
+        if( table )
+            m_realSelectedShape = table;
+    }
     wxMenu mnu;
     int allSelected = 0;
     mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_DROPOBJECT );
@@ -345,7 +353,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         wxRect tableRect;
         bool fieldSelected = false;
         bool signSelected = false;
-        for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
+        for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
         {
             MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
             if( table )
@@ -546,29 +554,30 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
         isTable = true;
     else
         isTable = false;
-    if( event.GetId() == wxID_DROPOBJECT )
+    for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
     {
-        for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
-        {
-            MyErdTable *tbl = wxDynamicCast( (*it), MyErdTable );
-            if( tbl )
-                erdTable = tbl;
-            ConstraintSign *s = wxDynamicCast( (*it), ConstraintSign );
-            if( s )
-                sign = s;
-        }
-        if( isTable )
-        {
-            table = &( const_cast<DatabaseTable &>( erdTable->GetTable() ) );
-            name = const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableName();
-        }
-        else
-        {
-            constraint = sign->GetConstraint();
-            constraint->GetLocalColumns( localColumns );
-            constraint->GetRefColumns( refColumn );
-            match = constraint->GetPGMatch();
-        }
+        MyErdTable *tbl = wxDynamicCast( (*it), MyErdTable );
+        if( tbl )
+            erdTable = tbl;
+        ConstraintSign *s = wxDynamicCast( (*it), ConstraintSign );
+        if( s )
+            sign = s;
+    }
+    if( isTable )
+    {
+        table = &( const_cast<DatabaseTable &>( erdTable->GetTable() ) );
+        name = const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableName();
+    }
+    else
+    {
+        constraint = sign->GetConstraint();
+        constraint->GetLocalColumns( localColumns );
+        constraint->GetRefColumns( refColumn );
+        match = constraint->GetPGMatch();
+    }
+    int eventId = event.GetId();
+    if( eventId == wxID_DROPOBJECT )
+    {
         wxString message = _( "You are about to delete " );
         if( isTable )
             message += _( "table " ) + name + _( ". Are you sure?" );
@@ -587,14 +596,63 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
         answer = wxYES;
     if( answer == wxYES )
     {
-        if( isTable && ( ( !db->DeleteTable( name.ToStdWstring(), errors ) && event.GetId() == wxID_DROPOBJECT ) || event.GetId() != wxID_DROPOBJECT ) )
+        if( isTable && ( ( eventId == wxID_DROPOBJECT && !db->DeleteTable( name.ToStdWstring(), errors ) ) || eventId != wxID_DROPOBJECT ) )
         {
+            if( m_realSelectedShape == m_selectedShape )
+            {
+                m_realSelectedShape = NULL;
+                ShapeList listShapes;
+                m_pManager.GetShapes( CLASSINFO( MyErdTable ), listShapes );
+                int size = listShapes.size();
+                if( listShapes.size() == 1 )
+                    m_realSelectedShape = NULL;
+                else
+                {
+                    MyErdTable *tableToRemove = (MyErdTable *) ( listShapes.Item( size - 1 )->GetData() );
+                    if( tableToRemove == erdTable )
+                        m_realSelectedShape = (MyErdTable *) ( listShapes.Item( size - 2 )->GetData() );
+                    else
+                    {
+                        bool found = false;
+                        int i;
+                        for( i = 0; i < size - 1 || !found; i++ )
+                            if( listShapes.Item( i )->GetData() == erdTable )
+                                found = true;
+                        m_realSelectedShape = listShapes.Item( i + 1 )->GetData();
+                    }
+                }
+            }
             m_pManager.RemoveShape( erdTable );
+/*            for( ShapeList::iterator it = listShapes.begin(); it != listShapes.end() || !nextShapeFound; ++it )
+            {
+                CommentFieldShape *shape = wxDynamicCast( (*it), CommentFieldShape );
+                if( m_showComments )
+                {
+                    shape->SetText( const_cast<Field *>( shape->GetFieldForComment() )->GetComment() );
+                }
+                else
+                {
+                    shape->SetText( wxEmptyString );
+                }
+            }*/
             std::map<std::wstring, std::vector<DatabaseTable *> > tables = db->GetTableVector().m_tables;
             std::vector<DatabaseTable *> tableVec = tables.at( db->GetTableVector().m_dbName );
-            tableVec.erase( std::remove( tableVec.begin(), tableVec.end(), table ), tableVec.end() );
-            std::vector<std::wstring> names = doc->GetTableNameVector();
-            names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
+            std::vector<std::wstring> &names = doc->GetTableNameVector();
+            if( event.GetId() == wxID_DROPOBJECT )
+            {
+                tableVec.erase( std::remove( tableVec.begin(), tableVec.end(), table ), tableVec.end() );
+            }
+            else
+                names.erase( std::remove( names.begin(), names.end(), table->GetTableName() ), names.end() );
+/*            if( m_realSelectedShape == m_selectedShape )
+            {
+                
+            }
+            else
+            {*/
+                if( m_realSelectedShape )
+                    m_realSelectedShape->Select( true );
+//            }
         }
         else if( !isTable && !db->ApplyForeignKey( command, constraint->GetName().ToStdWstring(), *( const_cast<DatabaseTable *>( constraint->GetFKTable() ) ), localColumns, constraint->GetRefTable().ToStdWstring(), refColumn, constraint->GetOnDelete(), constraint->GetOnUpdate(), false, newFK, false, match, errors ) )
         {
@@ -610,6 +668,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
             }
         }
     }
+    Refresh();
 }
 
 void DatabaseCanvas::OnShowSQLBox(wxCommandEvent &WXUNUSED(event))

@@ -1,0 +1,38 @@
+/* XPM */
+static const char *const crosstab[] = {
+/* columns rows colors chars-per-pixel */
+"30 26 6 1",
+"  c black",
+". c yellow",
+"X c cyan",
+"o c #808080",
+"O c #C0C0C0",
+"+ c gray100",
+/* pixels */
+"                              ",
+" XXXXoXXXXXXXXoXXXXXXXoXXXXXX ",
+" XXXXoXXXXXXXXoXXXXXXXoXXXXXX ",
+" XXXXoXXXXXXXXoXXXXXXXoXXXXXX ",
+" XXXXoXXXXXXXXoXXXXXXXoXXXXXX ",
+" XXXXoXXXXXXXXoXXXXXXXoXXXXXX ",
+" XXXXoXXXXX                   ",
+" XXXXoXXXXX OOOOOO OOOOO .+.+ ",
+" XXXXoXXXXX OOOOOO OOOOO +.+. ",
+" oooooooooo OOOOOO OOOOO .+.+ ",
+" XXXXoXXXXX OOOOOO OOOOO +.+. ",
+" XXXXoXXXXX OOOOOO OOOOO .+.+ ",
+" XXXXoXXXXX OOOOOO OOOOO +.+. ",
+" XXXXoXXXXX                   ",
+" XXXXoXXXXX .+.+.+ +.+.+ OOOO ",
+" XXXXoXXXXX +.+.+. .+.+. OOOO ",
+" XXXXoXXXXX .+.+.+ +.+.+ OOOO ",
+" oooooooooo +.+.+. .+.+. OOOO ",
+" XXXXoXXXXX                   ",
+" XXXXoXXXXX OOOOOO OOOOO .+.+ ",
+" XXXXoXXXXX OOOOOO OOOOO +.+. ",
+" XXXXoXXXXX OOOOOO OOOOO .+.+ ",
+" XXXXoXXXXX OOOOOO OOOOO +.+. ",
+" XXXXoXXXXX OOOOOO OOOOO .+.+ ",
+" XXXXoXXXXX OOOOOO OOOOO +.+. ",
+"                              "
+};

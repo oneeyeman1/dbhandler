@@ -8,6 +8,8 @@
 
 #include "wx/dir.h"
 #include "wx/listctrl.h"
+#include "bitmappanel.h"
+#include "newquery.h"
 #include "getobjectname.h"
 
 GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId) : wxDialog( parent, id, title )
@@ -26,13 +28,12 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     m_commentsText = new wxTextCtrl( m_panel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
-    m_new = new wxButton( m_panel, wxID_ANY, _( "&New" ) );
+    m_new = new wxButton( m_panel, wxID_NEWOBJECT, _( "&New" ) );
     m_browse = new wxButton( m_panel, wxID_ANY, _( "&Browse" ) );
     m_help = new wxButton( m_panel, wxID_HELP, _( "&Help" ) );
     set_properties();
     do_layout();
     m_new->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonNew, this );
-    m_cancel->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonNew, this );
     m_browse->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonBrowse, this );
 }
 
@@ -95,6 +96,9 @@ void GetObjectName::do_layout()
 
 void GetObjectName::OnButtonNew(wxCommandEvent &event)
 {
+    if( m_id == 1 )
+    {
+    }
     EndModal( dynamic_cast<wxButton *>( event.GetEventObject() )->GetId() );
 }
 
@@ -111,4 +115,14 @@ void GetObjectName::OnButtonBrowse(wxCommandEvent &event)
 const wxString &GetObjectName::GetFileName()
 {
     return m_fileName;
+}
+
+const int GetObjectName::GetSource()
+{
+    return m_source;
+}
+
+const int GetObjectName::GetPresentation()
+{
+    return m_presentation;
 }

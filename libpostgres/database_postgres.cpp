@@ -886,26 +886,30 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     return result;
 }
 
-int PostgresDatabase::GetFieldProperties(const char *tableName, const char *schemaName, const char *ownerName, const char *fieldName, Field *field, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    int len = (int) strlen( tableName ) + (int) strlen( schemaName ) + 2;
+    const char *table = m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str();
+    const char *schema = m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str();
+    const char *owner = m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str();
+    const char *fieldNameReq = m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
+    int len = (int) strlen( table ) + (int) strlen( schema ) + 2;
     char *tname = new char[len];
     memset( tname, '\0', len );
-    strcpy( tname, schemaName );
+    strcpy( tname, schema );
     strcat( tname, "." );
-    strcat( tname, tableName );
+    strcat( tname, table );
     char *values[3];
     values[0] = NULL, values[1] = NULL, values[2] = NULL;
     values[0] = new char[strlen( tname ) + 1];
-    values[1] = new char[strlen( ownerName ) + 1];
-    values[2] = new char[strlen( fieldName ) + 1];
+    values[1] = new char[strlen( owner ) + 1];
+    values[2] = new char[strlen( fieldNameReq ) + 1];
     memset( values[0], '\0', strlen( tname ) + 1 );
-    memset( values[1], '\0', strlen( ownerName ) + 1 );
-    memset( values[2], '\0', strlen( fieldName ) + 1 );
+    memset( values[1], '\0', strlen( owner ) + 1 );
+    memset( values[2], '\0', strlen( fieldNameReq ) + 1 );
     strcpy( values[0], tname );
-    strcpy( values[1], ownerName );
-    strcpy( values[2], fieldName );
+    strcpy( values[1], owner );
+    strcpy( values[2], fieldNameReq );
     int len1 = (int) strlen( values[0] );
     int len2 = (int) strlen( values[1] );
     int len3 = (int) strlen( values[2] );
@@ -933,6 +937,30 @@ int PostgresDatabase::GetFieldProperties(const char *tableName, const char *sche
     values[2] = NULL;
     delete[] tname;
     tname = NULL;
+    return result;
+}
+
+int PostgresDatabase::GetFieldProperties(const std::wstring &table, Field *field, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    bool found = false;
+    std::wstring schemaName, ownerName;
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
+    {
+        if( ( *it ).first == pimpl->m_dbName )
+        {
+            for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() || !found; ++it1 )
+            {
+                if( ( *it1 )->GetTableName () == table )
+                {
+                    found = true;
+                    schemaName = (*it1)->GetSchemaName();
+                    ownerName = (*it1)->GetTableOwner();
+                }
+            }
+        }
+    }
+    result = GetFieldProperties( table, schemaName, ownerName, field->GetFieldName(), field, errorMsg );
     return result;
 }
 
@@ -1063,9 +1091,41 @@ int PostgresDatabase::DeleteTable(const std::wstring &tableName, std::vector<std
     return result;
 }
 
-int PostgresDatabase::SetFieldProperties(const std::wstring &command, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const Field *field, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
+    bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
+    if( exist )
+    {
+        command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_hdr, abc_cmnt) VALUES(";
+        command += tableName;
+        command += L", " + ownerName;
+        command += L", " + fieldName;
+        command += L", " + const_cast<Field *>( field )->GetLabel();
+        command += L", " + const_cast<Field *>( field )->GetHeading();
+        command += L", " + const_cast<Field *>( field )->GetComment() + L");";
+    }
+    else
+    {
+        command = L"UPDATE abcatcol SET abc_labl = ";
+        command += const_cast<Field *>( field )->GetLabel() + L", abc_hdr = ";
+        command += const_cast<Field *>( field )->GetHeading() + L", abc_cmnt = ";
+        command += const_cast<Field *>( field )->GetComment() + L"WHERE abc_tnam = ";
+        command += tableName + L" AND abc_ownr = ";
+        command += ownerName + L" AND abc_cnam = ";
+        command += fieldName + L";";
+    }
+    if( !isLogOnly )
+    {
+        PGresult *result = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
+        if( PQresultStatus (result) != PGRES_COMMAND_OK || PQresultStatus (result) != PGRES_TUPLES_OK )
+        {
+            res = 1;
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( err );
+            PQclear( result );
+        }
+    }
     return res;
 }
 
@@ -1380,7 +1440,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                 if( fieldType == L"serial" || fieldType == L"bigserial" )
                     autoinc = true;
                 Field *field = new Field( fieldName, fieldType, size, precision, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
-                if( GetFieldProperties( table_name, schema_name, table_owner, field_name, field, errorMsg ) )
+                if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_owner ), m_pimpl->m_myconv.from_bytes( field_name ), field, errorMsg ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                     errorMsg.push_back( err );
@@ -1475,4 +1535,41 @@ int PostgresDatabase::GetTableOwner(const std::wstring &schemaName, const std::w
     delete values[1];
     values[1] = NULL;
     return result;
+}
+
+bool PostgresDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
+{
+    bool exist = false;
+    std::wstring query = L"SELECT 1 FROM abcatcol WHERE abc_tnam = $1 AND abc_ownr = $2 AND abc_cnam = $3;";
+    char *values[3];
+    values[0] = new char[tableName.length() * sizeof( wchar_t ) + 1];
+    values[1] = new char[ownerName.length() * sizeof( wchar_t ) + 1];
+    values[2] = new char[fieldName.length() * sizeof( wchar_t ) + 1];
+    int charlength1 = tableName.length() * sizeof( wchar_t ) + 1, charlength2 = ownerName.length() * sizeof( wchar_t ) + 1, charlength3 = fieldName.length() * sizeof( wchar_t ) + 1;
+    memset( values[0], '\0', charlength1 );
+    memset( values[1], '\0', charlength2 );
+    memset( values[2], '\0', charlength3 );
+    strcpy( values[0], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
+    strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
+    strcpy( values[2], m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() );
+    int length[3] = {charlength1, charlength2, charlength3};
+    int formats[3] = {1, 1, 1};
+    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL, values, length, formats, 1 );
+    ExecStatusType status = PQresultStatus( res );
+    if( status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK )
+        exist = true;
+    else
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( err );
+
+    }
+    PQclear( res );
+    delete values[0];
+    values[0] = NULL;
+    delete values[1];
+    values[1] = NULL;
+    delete values[2];
+    values[2] = NULL;
+    return exist;
 }

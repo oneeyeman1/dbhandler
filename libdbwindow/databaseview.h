@@ -72,11 +72,13 @@ private:
     WhereHavingPage *m_page2, *m_page4;
     SyntaxPropPage *m_page6;
     wxCriticalSection *pcs;
+    int m_source, m_presentation;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
 
 wxDECLARE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_SET_FIELD_PROPERTY, wxCommandEvent);
 
 #define wxID_DATABASEWINDOW 2
 
