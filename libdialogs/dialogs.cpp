@@ -284,6 +284,7 @@ extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db)
     wxTheApp->SetTopWindow( parent );
 #endif
     QuickSelect dlg( parent, db );
+    dlg.Center();
     int res = dlg.ShowModal();
     return res;
 }
