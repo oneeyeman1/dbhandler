@@ -4,6 +4,7 @@ class QuickSelect : public wxDialog
 public:
     QuickSelect(wxWindow *parent, const Database *db);
     ~QuickSelect();
+    std::vector<wxString> &GetQueryString();
     void OnOkEnableUI(wxUpdateUIEvent &event);
     void OnAddAllUpdateUI(wxUpdateUIEvent &event);
     void OnSelectingTable(wxCommandEvent &event);
@@ -17,9 +18,8 @@ protected:
     void OnFieldSelected(wxCommandEvent &event);
     void OnAllFieldsSelected(wxCommandEvent &event);
     void OnCellLeftClicked(wxGridEvent &event);
-    //
     void OnFieldsSetFocus(wxCommandEvent &event);
-    //
+    void OnOkButton(wxCommandEvent &event);
 private:
     wxPanel *m_panel;
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7, *m_comments;
@@ -31,4 +31,5 @@ private:
     std::vector<Field *> m_tableFields;
     wxBoxSizer *m_sizer10;
     int m_cols;
+    std::vector<wxString> m_queryFields;
 };

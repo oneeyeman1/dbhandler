@@ -64,6 +64,7 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_fields->Bind( wxEVT_RIGHT_DOWN, &QuickSelect::OnDisplayComment, this);
     m_grid->Bind( wxEVT_GRID_ROW_SIZE, &QuickSelect::OnGridRowLines, this );
     m_grid->Bind( wxEVT_GRID_CELL_LEFT_CLICK, &QuickSelect::OnCellLeftClicked, this );
+    m_ok->Bind( wxEVT_BUTTON, &QuickSelect::OnOkButton, this );
 }
 
 QuickSelect::~QuickSelect()
@@ -177,7 +178,7 @@ void QuickSelect::FillTableListBox()
     }
 }
 
-void QuickSelect::OnSelectingTable(wxCommandEvent &event)
+void QuickSelect::OnSelectingTable(wxCommandEvent &WXUNUSED(event))
 {
     auto count = m_tables->GetCount();
     auto found = false;
@@ -269,7 +270,7 @@ void QuickSelect::OnFieldSelected(wxCommandEvent &event)
         AddFieldToGrid( event.GetString(), false );
 }
 
-void QuickSelect::OnAllFieldsSelected(wxCommandEvent &event)
+void QuickSelect::OnAllFieldsSelected(wxCommandEvent &WXUNUSED(event))
 {
     m_grid->BeginBatch();
     auto i = 0;
@@ -378,7 +379,7 @@ void QuickSelect::OnCellLeftClicked(wxGridEvent &event)
         event.Skip();
 }
 
-void QuickSelect::OnFieldsSetFocus(wxCommandEvent &event)
+void QuickSelect::OnFieldsSetFocus(wxCommandEvent &WXUNUSED(event))
 {
     auto pt = wxGetMousePosition();
     auto ptWindow = ScreenToClient( pt );
@@ -396,4 +397,16 @@ void QuickSelect::OnFieldsSetFocus(wxCommandEvent &event)
             m_fields->SetSelection( item );
         }
     }
+}
+
+std::vector<wxString> &QuickSelect::GetQueryString()
+{
+    return m_queryFields;
+}
+
+void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
+{
+    for( auto i = 0; i < m_grid->GetNumberCols(); ++i )
+        m_queryFields.push_back( m_grid->GetCellValue( 0, i ) );
+    EndModal( wxID_OK );
 }
