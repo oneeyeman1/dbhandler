@@ -72,6 +72,7 @@ QuickSelect::~QuickSelect()
 
 void QuickSelect::set_properties ()
 {
+    SetTitle( _( "Quick Select" ) );
     m_ok->Enable( false );
 //    m_addAll->Enable( false );
     m_grid->CreateGrid( 4, 0 );
@@ -115,7 +116,7 @@ void QuickSelect::do_layout()
     sizer5->Add( sizer7, 0, wxEXPAND, 0 );
     sizer8->Add( m_label6, 0, wxEXPAND, 0 );
     sizer8->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer8->Add( m_fields, 0, wxEXPAND, 0 );
+    sizer8->Add( m_fields, 1, wxEXPAND, 0 );
     sizer5->Add( sizer8, 0, wxEXPAND, 0 );
     sizer4->Add( sizer5, 0, wxEXPAND, 0 );
     sizer9->Add( m_ok, 0, wxEXPAND, 0 );
@@ -339,7 +340,10 @@ void QuickSelect::OnCellLeftClicked(wxGridEvent &event)
         wxGridCellChoiceEditor *editor = (wxGridCellChoiceEditor *) m_grid->GetCellEditor( oldrow, oldcolumn );
         wxComboBox *combo = (wxComboBox *) editor->GetControl();
         if( combo )
+        {
             combo->Dismiss();
+            combo->Unbind( wxEVT_COMBOBOX_CLOSEUP, &QuickSelect::OnFieldsSetFocus, this );
+        }
         wxString value = m_grid->GetCellValue( oldrow, oldcolumn );
         if( value == _T( "(not selected)" ) )
             m_grid->SetCellValue( oldrow, oldcolumn, _T( "" ) );
@@ -354,6 +358,9 @@ void QuickSelect::OnCellLeftClicked(wxGridEvent &event)
         m_grid->ShowCellEditControl();
         wxGridCellChoiceEditor *editor = (wxGridCellChoiceEditor *) m_grid->GetCellEditor( row, column );
         wxComboBox *combo = (wxComboBox *) editor->GetControl();
+        //
+        combo->Bind( wxEVT_COMBOBOX_CLOSEUP, &QuickSelect::OnFieldsSetFocus, this );
+        //
         wxString value = m_grid->GetCellValue( row, column );
         combo->Popup();
         combo->SetSelection( 2 );
@@ -369,4 +376,24 @@ void QuickSelect::OnCellLeftClicked(wxGridEvent &event)
     }
     else
         event.Skip();
+}
+
+void QuickSelect::OnFieldsSetFocus(wxCommandEvent &event)
+{
+    auto pt = wxGetMousePosition();
+    auto ptWindow = ScreenToClient( pt );
+    auto pos1 = m_fields->GetPosition();
+    wxPoint pos2( pos1.x + m_fields->GetSize().GetWidth(), pos1.y + m_fields->GetSize().GetHeight() );
+    if( ptWindow.x >= pos1.x && ptWindow.x <= pos2.x && ptWindow.y >= pos1.y && ptWindow.y <= pos2.y )
+    {
+        auto item = m_fields->HitTest( m_fields->ScreenToClient( pt ) );
+        if( item != wxNOT_FOUND )
+        {
+            if( m_fields->IsSelected( item ) )
+                AddFieldToGrid( m_fields->GetString( item ), false );
+            else
+                AddFieldToGrid( m_fields->GetString( item ), true );
+            m_fields->SetSelection( item );
+        }
+    }
 }
