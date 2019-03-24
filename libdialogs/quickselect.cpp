@@ -390,11 +390,12 @@ void QuickSelect::OnFieldsSetFocus(wxCommandEvent &WXUNUSED(event))
         auto item = m_fields->HitTest( m_fields->ScreenToClient( pt ) );
         if( item != wxNOT_FOUND )
         {
-            if( m_fields->IsSelected( item ) )
+			auto selection = m_fields->IsSelected( item ); 
+            if( selection )
                 AddFieldToGrid( m_fields->GetString( item ), false );
             else
                 AddFieldToGrid( m_fields->GetString( item ), true );
-            m_fields->SetSelection( item );
+            m_fields->SetSelection( item, !selection );
         }
     }
 }
