@@ -73,6 +73,8 @@ private:
     SyntaxPropPage *m_page6;
     wxCriticalSection *pcs;
     int m_source, m_presentation;
+    wxString m_quickSelectTableName;
+    std::vector<wxString> m_quickSelectFields;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };

@@ -66,7 +66,7 @@ typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, s
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
-typedef int (*QUICKSELECT)(wxWindow *, const Database *);
+typedef int (*QUICKSELECT)(wxWindow *, const Database *, wxString &, std::vector<wxString> &);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -386,7 +386,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     else
                     {
                         QUICKSELECT func2 = (QUICKSELECT) lib.GetSymbol( "QuickSelectDlg" );
-                        res = func2( m_frame, db );
+                        res = func2( m_frame, db, m_quickSelectTableName, m_quickSelectFields );
                         quickSelect = true;
                     }
                     if( !quickSelect )
