@@ -405,6 +405,11 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 }
             }
         }
+        else
+        {
+            TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
+            res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false );
+        }
         if( m_type == QueryView )
         {
             if( res != wxID_CANCEL )
@@ -425,11 +430,11 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 }
                 query += "FROM ";
             }
-            ((DrawingDocument *) GetDocument())->AddTables( tables );
-            ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
-            if( m_type == QueryView )
-                m_page6->SetSyntaxText(query);
         }
+        ((DrawingDocument *) GetDocument())->AddTables( tables );
+        ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
+        if( m_type == QueryView )
+            m_page6->SetSyntaxText(query);
     }
 //    return tables;
 }
