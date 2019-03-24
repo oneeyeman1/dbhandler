@@ -256,6 +256,7 @@ extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId)
         break;
     }
     GetObjectName dlg( parent, wxID_ANY, title, objectId );
+    dlg.Center();
     res = dlg.ShowModal();
     return res;
 }
@@ -267,6 +268,7 @@ extern "C" WXEXPORT int NewQueryDlg(wxWindow *parent, int &source, int &presenta
     wxTheApp->SetTopWindow( parent );
 #endif
     NewQuery dlg( parent, _( "New Query" ) );
+    dlg.Center();
     res = dlg.ShowModal();
     if( res == wxID_OK )
     {
@@ -282,6 +284,7 @@ extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db)
     wxTheApp->SetTopWindow( parent );
 #endif
     QuickSelect dlg( parent, db );
+    dlg.Center();
     int res = dlg.ShowModal();
     return res;
 }
