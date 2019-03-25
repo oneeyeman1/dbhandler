@@ -412,7 +412,7 @@ void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
     EndModal( wxID_OK );
 }
 
-const wxString &QuickSelect::GetQueryTable()
+const wxListBox *QuickSelect::GetQueryTable()
 {
-    return m_tables->GetString( 0 );
+    return m_tables;
 }

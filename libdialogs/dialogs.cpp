@@ -288,7 +288,7 @@ extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std
     int res = dlg.ShowModal();
     if( res == wxID_OK )
     {
-        tableName.push_back( dlg.GetQueryTable() );
+        tableName.push_back( dlg.GetQueryTable()->GetString( 0 ) );
         fields = dlg.GetQueryFields();
     }
     return res;
