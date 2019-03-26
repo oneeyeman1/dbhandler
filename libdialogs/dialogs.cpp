@@ -136,9 +136,7 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
     {
         wxTextCtrl *userId = dlg.GetUserControl();
         if( userId )
-        {
             connectedUser = userId->GetValue();
-        }
         else
             connectedUser = "";
         dlg.GetDatabaseEngine( dbEngine );
@@ -148,7 +146,7 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
             name = dlg.GetConnectString();
         res = wxID_OK;
     }
-	else
+    else
         res = wxID_CANCEL;
     return res;
 }
@@ -234,7 +232,7 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
             deleteProp = dlg.GetDeleteParam();
             updateProp = dlg.GetUpdateParam();
             match = dlg.GetMatchingOptions();
-		}
+        }
         newFK = dlg.GetForeignKeyVector();
     }
     return res;
@@ -294,13 +292,13 @@ extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std
     return res;
 }
 
-extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField)
+extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, Constraint *constraint)
 {
     int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    JointType dlg( parent, wxID_ANY, _( "Join" ), origTable, refTable, origField, refField );
+    JointType dlg( parent, wxID_ANY, _( "Join" ), constraint->GetOrigTable(), constraint->GetRefTable(), constraint->GetOrigField(), constraint->GetRefField );
     res = dlg.ShowModal();
     return res;
 }
