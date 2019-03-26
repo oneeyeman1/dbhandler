@@ -42,7 +42,7 @@
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
-typedef int (*SELECTJOINTYPE)();
+typedef int (*SELECTJOINTYPE)(wxWindow *parent, Constraint *);
 /*
 BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
     EVT_MENU(wxID_TABLEDROPTABLE, DatabaseCanvas::OnDropTable)
@@ -948,6 +948,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
 #endif
             Constraint *constraint = sign->GetConstraint();
             SELECTJOINTYPE func = (SELECTJOINTYPE) lib.GetSymbol( "SelectJoinType" );
+            int result = func( m_view->GetFrame(), constraint );
         }
         m_oldSelectedSign = NULL;
     }
