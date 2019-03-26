@@ -42,6 +42,7 @@
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
+typedef int (*SELECTJOINTYPE)();
 /*
 BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
     EVT_MENU(wxID_TABLEDROPTABLE, DatabaseCanvas::OnDropTable)
@@ -935,12 +936,19 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                 newFK.clear();
             }
         }
+        else if( sign && type == QueryView )
+        {
+            wxDynamicLibrary lib;
+#ifdef __WXMSW__
+            lib.Load( "dialogs" );
+#elif __WXMAC__
+            lib.Load( "liblibdialogs.dylib" );
+#else
+            lib.Load( "libdialogs" );
+#endif
+            Constraint *constraint = sign->GetConstraint();
+            SELECTJOINTYPE func = (SELECTJOINTYPE) lib.GetSymbol( "SelectJoinType" );
+        }
         m_oldSelectedSign = NULL;
-    }
-    else if( sign && type == QueryView )
-    {
-        wxSFTextShape *c_sign = wxDynamicCast( m_selectedShape, wxSFTextShape );
-        if( c_sign )
-            wxMessageBox( "Double clicked the relations control" );
     }
 }
