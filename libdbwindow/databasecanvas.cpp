@@ -458,7 +458,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         }
         else
         {
-            if( !fieldSelected )
+            if( erdTable )
             {
                 mnu.Append( wxID_SELECTALLFIELDS, _( "Select All" ), _( "Select all columns for display" ) );
                 mnu.Append( wxID_DESELECTALLFIELDS, _("Deselect All" ), _( "Deselect all columns for display" ) );
