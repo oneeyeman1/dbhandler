@@ -404,19 +404,22 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         {
             size_t selectedCount = 0;
             SerializableList tableFields;
-            erdTable->GetChildrenRecursively( CLASSINFO( FieldShape ), tableFields );
-            SerializableList::compatibility_iterator node = tableFields.GetFirst();
-            while( node )
-            {
-                FieldShape *shape = dynamic_cast<FieldShape *>( node->GetData() );
-                if( shape->IsSelected() )
-                    selectedCount++;
-                node = node->GetNext();
-            }
-            if( selectedCount == const_cast<DatabaseTable &>( erdTable->GetTable() ).GetFields().size() )
-                allSelected = 1;
-            else
-                allSelected = -1;
+			if( erdTable )
+			{
+                erdTable->GetChildrenRecursively( CLASSINFO( FieldShape ), tableFields );
+                SerializableList::compatibility_iterator node = tableFields.GetFirst();
+                while( node )
+                {
+                    FieldShape *shape = dynamic_cast<FieldShape *>( node->GetData() );
+                    if( shape->IsSelected() )
+                        selectedCount++;
+                    node = node->GetNext();
+                }
+                if( selectedCount == const_cast<DatabaseTable &>( erdTable->GetTable() ).GetFields().size() )
+                    allSelected = 1;
+                else
+                    allSelected = -1;
+			}
         }
         Refresh();
         if( type == DatabaseView )
