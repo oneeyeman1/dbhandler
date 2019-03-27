@@ -300,7 +300,7 @@ extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTab
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    JointType dlg( parent, wxID_ANY, _( "Join" ), origTable, refTable, origField, refField );
+    JointType dlg( parent, wxID_ANY, _( "Join" ), origTable, refTable, origField, refField, type );
     res = dlg.ShowModal();
     return res;
 }

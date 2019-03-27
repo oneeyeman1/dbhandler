@@ -24,16 +24,18 @@
 #include "wx/listctrl.h"
 #include "jointype.h"
 
-JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &origTable, const wxString &origField, const wxString &refField, const wxString &refTable, const wxPoint& pos, const wxSize& size, long style) :
+JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField, int type, const wxPoint& pos, const wxSize& size, long style) :
     wxDialog(parent, id, title, pos, size, style)
 {
+    m_title = title;
+    m_type = type;
     m_origTable = origTable;
     m_refTable = refTable;
     m_origField = origField;
     m_refField = refField;
     // begin wxGlade: MyDialog::MyDialog
     m_panel = new wxPanel( this, wxID_ANY );
-    m_label = new wxStaticText( m_panel, wxID_ANY, _( "Join rows in " ) );
+    m_label = new wxStaticText( m_panel, wxID_ANY, _( "Join rows in " + m_refTable + " and " + m_origTable + " where") );
     m_OK = new wxButton( m_panel, wxID_OK, _( "OK" ) );
     m_joinType = new wxListCtrl( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_NO_HEADER );
     m_Cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
@@ -48,7 +50,7 @@ JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, con
 void JointType::set_properties()
 {
     // begin wxGlade: MyDialog::set_properties
-    SetTitle( _( "Join" ) );
+    SetTitle( m_title );
     m_OK->SetDefault();
     // end wxGlade
     m_joinType->InsertColumn( 0, "" );
@@ -86,6 +88,9 @@ void JointType::set_properties()
     m_joinType->SetItemData( temp, 7 );
     buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
     m_joinType->SetItem( temp, 1, buf );
+    m_joinType->SetItemState( m_type,  wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+    m_joinType->SetColumnWidth( 0, wxLIST_AUTOSIZE );
+    m_joinType->SetColumnWidth( 1, wxLIST_AUTOSIZE );
 }
 
 void JointType::do_layout()
