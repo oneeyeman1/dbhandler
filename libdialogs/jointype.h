@@ -27,6 +27,7 @@ private:
     // end wxGlade
 
 protected:
+    void OnListItemActivated(wxCommandEvent &event);
     // begin wxGlade: MyDialog::attributes
     wxStaticText* m_label;
     wxButton* m_OK;

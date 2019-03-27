@@ -44,6 +44,7 @@ JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, con
 
     set_properties();
     do_layout();
+    m_joinType->Bind( wxEVT_LIST_ITEM_ACTIVATED, &JointType::OnListItemActivated, this );
     // end wxGlade
 }
 
@@ -130,4 +131,9 @@ void JointType::do_layout()
 wxListCtrl *JointType::GetTypeCtrl()
 {
     return m_joinType;
+}
+
+void JointType::OnListItemActivated(wxCommandEvent &event)
+{
+    EndModal( wxID_OK );
 }
