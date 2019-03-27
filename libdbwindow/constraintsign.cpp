@@ -114,12 +114,12 @@ void ConstraintSign::DrawNormal(wxDC &dc)
 {
     if( this->m_fSelected )
     {
-        dc.SetTextForeground( *wxWHITE );
+        m_sign->SetTextColour( *wxWHITE );
         SetFill( *wxBLACK_BRUSH );
     }
 	else
     {
-        dc.SetTextForeground( *wxBLACK );
+        m_sign->SetTextColour( *wxBLACK );
         SetFill( *wxWHITE_BRUSH );
     }
     wxSFRectShape::DrawNormal( dc );
