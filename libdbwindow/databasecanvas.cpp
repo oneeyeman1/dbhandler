@@ -973,6 +973,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                     break;
                 }
                 constraint->SetSign( type );
+                ((DrawingView *) m_view)->UpdateQueryFromSignChange( constraint );
             }
             sign->Select( false );
             Refresh();

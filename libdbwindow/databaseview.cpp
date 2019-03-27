@@ -995,3 +995,7 @@ void DrawingView::SetSynchronisationObject(wxCriticalSection &cs)
 {
     pcs = &cs;
 }
+
+void DrawingView::UpdateQueryFromSignChange(const Constraint *type)
+{
+}
