@@ -37,7 +37,7 @@ JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, con
     m_panel = new wxPanel( this, wxID_ANY );
     m_label = new wxStaticText( m_panel, wxID_ANY, _( "Join rows in " + m_refTable + " and " + m_origTable + " where") );
     m_OK = new wxButton( m_panel, wxID_OK, _( "OK" ) );
-    m_joinType = new wxListCtrl( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_NO_HEADER );
+    m_joinType = new wxListCtrl( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_NO_HEADER | wxLC_SINGLE_SEL );
     m_Cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
     m_delete = new wxButton( m_panel, wxID_ANY, _( "Delete" ) );
     m_help = new wxButton( m_panel, wxID_HELP, _( "Help" ) );
@@ -60,35 +60,36 @@ void JointType::set_properties()
     m_joinType->SetItemData( temp, 0 );
     buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
     m_joinType->SetItem( temp, 1, buf );
-    temp = m_joinType->InsertItem( 0, "=" );
+    temp = m_joinType->InsertItem( 1, "=" );
     m_joinType->SetItemData( temp, 1 );
     buf.Printf( "%s.%s = %s.%s and rows from %s that have no %s", m_origTable, m_origField, m_refTable, m_refField, m_origTable, m_refTable );
     m_joinType->SetItem( temp, 1, buf );
-    temp = m_joinType->InsertItem( 0, "=" );
+    temp = m_joinType->InsertItem( 2, "=" );
     m_joinType->SetItemData( temp, 2 );
     buf.Printf( "%s.%s = %s.%s and rows from %s that have no %s", m_origTable, m_origField, m_refTable, m_refField, m_refTable, m_origTable );
     m_joinType->SetItem( temp, 1, buf );
-    temp = m_joinType->InsertItem( 0, "<" );
+    temp = m_joinType->InsertItem( 3, "<" );
     m_joinType->SetItemData( temp, 3 );
-    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    buf.Printf( "%s.%s < %s.%s", m_origTable, m_origField, m_refTable, m_refField );
     m_joinType->SetItem( temp, 1, buf );
-    temp = m_joinType->InsertItem( 0, ">" );
+    temp = m_joinType->InsertItem( 4, ">" );
     m_joinType->SetItemData( temp, 4 );
-    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    buf.Printf( "%s.%s > %s.%s", m_origTable, m_origField, m_refTable, m_refField );
     m_joinType->SetItem( temp, 1, buf );
-    temp = m_joinType->InsertItem( 0, "<=" );
+    temp = m_joinType->InsertItem( 5, "<=" );
     m_joinType->SetItemData( temp, 5 );
-    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    buf.Printf( "%s.%s <= %s.%s", m_origTable, m_origField, m_refTable, m_refField );
     m_joinType->SetItem( temp, 1, buf );
-    temp = m_joinType->InsertItem( 0, ">=" );
+    temp = m_joinType->InsertItem( 6, ">=" );
     m_joinType->SetItemData( temp, 6 );
-    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    buf.Printf( "%s.%s >= %s.%s", m_origTable, m_origField, m_refTable, m_refField );
     m_joinType->SetItem( temp, 1, buf );
-    temp = m_joinType->InsertItem( 0, "<>" );
+    temp = m_joinType->InsertItem( 7, "<>" );
     m_joinType->SetItemData( temp, 7 );
-    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    buf.Printf( "%s.%s <> %s.%s", m_origTable, m_origField, m_refTable, m_refField );
     m_joinType->SetItem( temp, 1, buf );
     m_joinType->SetItemState( m_type,  wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+    m_joinType->SetItemState( m_type, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED );
     m_joinType->SetColumnWidth( 0, wxLIST_AUTOSIZE );
     m_joinType->SetColumnWidth( 1, wxLIST_AUTOSIZE );
 }
@@ -126,3 +127,7 @@ void JointType::do_layout()
     // end wxGlade
 }
 
+wxListCtrl *JointType::GetTypeCtrl()
+{
+    return m_joinType;
+}
