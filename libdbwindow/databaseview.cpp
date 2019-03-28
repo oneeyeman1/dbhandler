@@ -996,10 +996,60 @@ void DrawingView::SetSynchronisationObject(wxCriticalSection &cs)
     pcs = &cs;
 }
 
-void DrawingView::UpdateQueryFromSignChange(const Constraint *type)
+void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type)
 {
-    wxString query = m_page6->GetSyntaxCtrl()->GetValue();
-    wxString result = query.substr( 0, query.find( "WHERE" ) + 6 );
+    auto res = true;
+    auto query = m_page6->GetSyntaxCtrl()->GetValue();
+    auto result = query.substr( 0, query.find( "WHERE" ) + 6 );
     query = query.substr( query.find( "WHERE" ) + 6 );
-    
+    while( res )
+    {
+        auto temp = query.substr( 0, query.find( ' ' ) );
+        res = ( temp == const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn() ) ||
+              ( temp == type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn() );
+        if( res )
+        {
+            result += temp;
+            switch( type->GetSign() )
+            {
+            case 3:
+                result += " < ";
+                break;
+            case 4:
+                result += " > ";
+                break;
+            case 5:
+                result += " <= ";
+                break;
+            case 6:
+                result += " >= ";
+                break;
+            case 7:
+                result += " <> ";
+                break;
+            case 0:
+                result += " = ";
+                break;
+            }
+            query = query.substr( query.find( ' ' ) + 1 );
+            query = query.substr( query.find( ' ' ) + 1 );
+            result += query;
+        }
+        else
+        {
+            int pos = query.Find( " AND " + 5 );
+            if( pos != wxNOT_FOUND )
+            {
+                result += query.substr( 0, pos + 4 );
+                query = query.substr( 0, pos + 4 );
+            }
+            else
+            {
+                pos = query.Find( " OR " + 4 );
+                result += query.substr( 0, pos + 3 );
+                query = query.substr( 0, pos + 3 );
+            }
+        }
+    }
+    m_page6->SetSyntaxText( result );
 }
