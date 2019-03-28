@@ -15,7 +15,7 @@ class DrawingView : public wxView
 public:
     DrawingView() : wxView(), m_canvas(NULL) {}
     ~DrawingView();
-    void UpdateQueryFromSignChange(const Constraint *type);
+    void UpdateQueryFromSignChange(const QueryConstraint *type);
 //    std::vector<Table> &GetTablesForView(Database *db);
     wxFrame *GetLogWindow() const;
     wxTextCtrl *GetTextLogger() const;
