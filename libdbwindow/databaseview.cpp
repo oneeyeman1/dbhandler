@@ -998,4 +998,8 @@ void DrawingView::SetSynchronisationObject(wxCriticalSection &cs)
 
 void DrawingView::UpdateQueryFromSignChange(const Constraint *type)
 {
+    wxString query = m_page6->GetSyntaxCtrl()->GetValue();
+    wxString result = query.substr( 0, query.find( "WHERE" ) + 6 );
+    query = query.substr( query.find( "WHERE" ) + 6 );
+    
 }
