@@ -1034,21 +1034,23 @@ void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type)
             query = query.substr( query.find( ' ' ) + 1 );
             query = query.substr( query.find( ' ' ) + 1 );
             result += query;
+            res = false;
         }
         else
         {
-            int pos = query.Find( " AND " + 5 );
+            int pos = query.Find( " AND " );
             if( pos != wxNOT_FOUND )
             {
-                result += query.substr( 0, pos + 4 );
-                query = query.substr( 0, pos + 4 );
+                result += query.substr( 0, pos + 5 );
+                query = query.substr( pos + 5 );
             }
             else
             {
-                pos = query.Find( " OR " + 4 );
-                result += query.substr( 0, pos + 3 );
-                query = query.substr( 0, pos + 3 );
+                pos = query.Find( " OR " );
+                result += query.substr( 0, pos + 4 );
+                query = query.substr( pos + 4 );
             }
+            res = true;
         }
     }
     m_page6->SetSyntaxText( result );
