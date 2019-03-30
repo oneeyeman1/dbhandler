@@ -66,7 +66,7 @@ typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, s
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
-typedef int (*QUICKSELECT)(wxWindow *, const Database *);
+typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<wxString> &, std::vector<wxString> &);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -386,7 +386,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     else
                     {
                         QUICKSELECT func2 = (QUICKSELECT) lib.GetSymbol( "QuickSelectDlg" );
-                        res = func2( m_frame, db );
+                        res = func2( m_frame, db, m_selectTableName, m_selectFields );
                         quickSelect = true;
                     }
                     if( !quickSelect )
@@ -405,9 +405,14 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 }
             }
         }
-        if( res != wxID_CANCEL )
+        else
         {
-            if( m_type == QueryView )
+            TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
+            res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false );
+        }
+        if( m_type == QueryView )
+        {
+            if( res != wxID_CANCEL )
             {
                 std::vector<std::wstring> queryFields = GetDocument()->GetQueryFields();
                 query = "SELECT ";
@@ -425,11 +430,11 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 }
                 query += "FROM ";
             }
-            ((DrawingDocument *) GetDocument())->AddTables( tables );
-            ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
-            if( m_type == QueryView )
-                m_page6->SetSyntaxText(query);
         }
+        ((DrawingDocument *) GetDocument())->AddTables( tables );
+        ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
+        if( m_type == QueryView )
+            m_page6->SetSyntaxText(query);
     }
 //    return tables;
 }
@@ -989,4 +994,64 @@ wxTextCtrl *DrawingView::GetTextLogger() const
 void DrawingView::SetSynchronisationObject(wxCriticalSection &cs)
 {
     pcs = &cs;
+}
+
+void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type)
+{
+    auto res = true;
+    auto query = m_page6->GetSyntaxCtrl()->GetValue();
+    auto result = query.substr( 0, query.find( "WHERE" ) + 6 );
+    query = query.substr( query.find( "WHERE" ) + 6 );
+    while( res )
+    {
+        auto temp = query.substr( 0, query.find( ' ' ) );
+        res = ( temp == const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn() ) ||
+              ( temp == type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn() );
+        if( res )
+        {
+            result += temp;
+            switch( type->GetSign() )
+            {
+            case 3:
+                result += " < ";
+                break;
+            case 4:
+                result += " > ";
+                break;
+            case 5:
+                result += " <= ";
+                break;
+            case 6:
+                result += " >= ";
+                break;
+            case 7:
+                result += " <> ";
+                break;
+            case 0:
+                result += " = ";
+                break;
+            }
+            query = query.substr( query.find( ' ' ) + 1 );
+            query = query.substr( query.find( ' ' ) + 1 );
+            result += query;
+            res = false;
+        }
+        else
+        {
+            int pos = query.Find( " AND " );
+            if( pos != wxNOT_FOUND )
+            {
+                result += query.substr( 0, pos + 5 );
+                query = query.substr( pos + 5 );
+            }
+            else
+            {
+                pos = query.Find( " OR " );
+                result += query.substr( 0, pos + 4 );
+                query = query.substr( pos + 4 );
+            }
+            res = true;
+        }
+    }
+    m_page6->SetSyntaxText( result );
 }

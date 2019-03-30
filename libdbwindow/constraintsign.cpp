@@ -113,9 +113,15 @@ void ConstraintSign::DrawSelected(wxDC &dc)
 void ConstraintSign::DrawNormal(wxDC &dc)
 {
     if( this->m_fSelected )
+    {
+        m_sign->SetTextColour( *wxWHITE );
         SetFill( *wxBLACK_BRUSH );
+    }
 	else
+    {
+        m_sign->SetTextColour( *wxBLACK );
         SetFill( *wxWHITE_BRUSH );
+    }
     wxSFRectShape::DrawNormal( dc );
 }
 

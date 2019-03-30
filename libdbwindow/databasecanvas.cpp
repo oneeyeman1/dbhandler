@@ -42,6 +42,7 @@
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
+typedef int (*SELECTJOINTYPE)(wxWindow *parent, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField, int &type);
 /*
 BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
     EVT_MENU(wxID_TABLEDROPTABLE, DatabaseCanvas::OnDropTable)
@@ -404,19 +405,22 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         {
             size_t selectedCount = 0;
             SerializableList tableFields;
-            erdTable->GetChildrenRecursively( CLASSINFO( FieldShape ), tableFields );
-            SerializableList::compatibility_iterator node = tableFields.GetFirst();
-            while( node )
-            {
-                FieldShape *shape = dynamic_cast<FieldShape *>( node->GetData() );
-                if( shape->IsSelected() )
-                    selectedCount++;
-                node = node->GetNext();
-            }
-            if( selectedCount == const_cast<DatabaseTable &>( erdTable->GetTable() ).GetFields().size() )
-                allSelected = 1;
-            else
-                allSelected = -1;
+			if( erdTable )
+			{
+                erdTable->GetChildrenRecursively( CLASSINFO( FieldShape ), tableFields );
+                SerializableList::compatibility_iterator node = tableFields.GetFirst();
+                while( node )
+                {
+                    FieldShape *shape = dynamic_cast<FieldShape *>( node->GetData() );
+                    if( shape->IsSelected() )
+                        selectedCount++;
+                    node = node->GetNext();
+                }
+                if( selectedCount == const_cast<DatabaseTable &>( erdTable->GetTable() ).GetFields().size() )
+                    allSelected = 1;
+                else
+                    allSelected = -1;
+			}
         }
         Refresh();
         if( type == DatabaseView )
@@ -455,7 +459,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         }
         else
         {
-            if( !fieldSelected )
+            if( erdTable )
             {
                 mnu.Append( wxID_SELECTALLFIELDS, _( "Select All" ), _( "Select all columns for display" ) );
                 mnu.Append( wxID_DESELECTALLFIELDS, _("Deselect All" ), _( "Deselect all columns for display" ) );
@@ -932,12 +936,48 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                 newFK.clear();
             }
         }
+        else if( sign && type == QueryView )
+        {
+            wxDynamicLibrary lib;
+#ifdef __WXMSW__
+            lib.Load( "dialogs" );
+#elif __WXMAC__
+            lib.Load( "liblibdialogs.dylib" );
+#else
+            lib.Load( "libdialogs" );
+#endif
+            QueryConstraint *constraint = (QueryConstraint *) sign->GetConstraint();
+            int type = constraint->GetSign();
+            SELECTJOINTYPE func = (SELECTJOINTYPE) lib.GetSymbol( "SelectJoinType" );
+            result = func( m_view->GetFrame(), const_cast<DatabaseTable *>( constraint->GetFKTable() )->GetTableName(), constraint->GetRefTable(), constraint->GetLocalColumn(), constraint->GetRefColumn(), type );
+            if( type != constraint->GetSign () )
+            {
+                switch( type )
+                {
+                case 0:
+                case 1:
+                case 2:
+                    sign->SetSign( "=" );
+                    break;
+                case 3:
+                    sign->SetSign( "<" );
+                    break;
+                case 4:
+                    sign->SetSign( ">" );
+                    break;
+                case 5:
+                    sign->SetSign( "<=" );
+                    break;
+                case 6:
+                    sign->SetSign( "<>" );
+                    break;
+                }
+                constraint->SetSign( type );
+                ((DrawingView *) m_view)->UpdateQueryFromSignChange( constraint );
+            }
+            sign->Select( false );
+            Refresh();
+        }
         m_oldSelectedSign = NULL;
-    }
-    else if( sign && type == QueryView )
-    {
-        wxSFTextShape *c_sign = wxDynamicCast( m_selectedShape, wxSFTextShape );
-        if( c_sign )
-            wxMessageBox( "Double clicked the relations control" );
     }
 }

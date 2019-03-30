@@ -4,7 +4,8 @@ class QuickSelect : public wxDialog
 public:
     QuickSelect(wxWindow *parent, const Database *db);
     ~QuickSelect();
-    std::vector<wxString> &GetQueryString();
+    std::vector<wxString> &GetQueryFields();
+    const wxListBox *GetQueryTable();
     void OnOkEnableUI(wxUpdateUIEvent &event);
     void OnAddAllUpdateUI(wxUpdateUIEvent &event);
     void OnSelectingTable(wxCommandEvent &event);

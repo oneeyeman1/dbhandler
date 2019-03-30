@@ -11,6 +11,14 @@
 		E32A5007223469AE00A57BD1 /* bitmappanel.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A5003223469AE00A57BD1 /* bitmappanel.h */; };
 		E32A5008223469AE00A57BD1 /* newquery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A5004223469AE00A57BD1 /* newquery.cpp */; };
 		E32A5009223469AE00A57BD1 /* newquery.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A5005223469AE00A57BD1 /* newquery.h */; };
+		E32A5010223F1AE600A57BD1 /* createdatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A500A223F1AE600A57BD1 /* createdatabase.cpp */; };
+		E32A5011223F1AE600A57BD1 /* createdatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A500B223F1AE600A57BD1 /* createdatabase.h */; };
+		E32A5012223F1AE600A57BD1 /* queryoptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A500C223F1AE600A57BD1 /* queryoptions.cpp */; };
+		E32A5013223F1AE600A57BD1 /* queryoptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A500D223F1AE600A57BD1 /* queryoptions.h */; };
+		E32A5014223F1AE600A57BD1 /* retrievalarguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A500E223F1AE600A57BD1 /* retrievalarguments.cpp */; };
+		E32A5015223F1AE600A57BD1 /* retrievalarguments.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A500F223F1AE600A57BD1 /* retrievalarguments.h */; };
+		E32A5018223F243C00A57BD1 /* quickselect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A5016223F243C00A57BD1 /* quickselect.cpp */; };
+		E32A5019223F243C00A57BD1 /* quickselect.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A5017223F243C00A57BD1 /* quickselect.h */; };
 		E33E6F381E46EE1C003A0B92 /* foreignkey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F361E46EE1C003A0B92 /* foreignkey.cpp */; };
 		E33E6F391E46EE1C003A0B92 /* foreignkey.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F371E46EE1C003A0B92 /* foreignkey.h */; };
 		E33E6F841EAD310A003A0B92 /* getobjectname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F801EAD310A003A0B92 /* getobjectname.cpp */; };
@@ -42,6 +50,14 @@
 		E32A5003223469AE00A57BD1 /* bitmappanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitmappanel.h; sourceTree = "<group>"; };
 		E32A5004223469AE00A57BD1 /* newquery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = newquery.cpp; sourceTree = "<group>"; };
 		E32A5005223469AE00A57BD1 /* newquery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = newquery.h; sourceTree = "<group>"; };
+		E32A500A223F1AE600A57BD1 /* createdatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = createdatabase.cpp; sourceTree = "<group>"; };
+		E32A500B223F1AE600A57BD1 /* createdatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = createdatabase.h; sourceTree = "<group>"; };
+		E32A500C223F1AE600A57BD1 /* queryoptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = queryoptions.cpp; sourceTree = "<group>"; };
+		E32A500D223F1AE600A57BD1 /* queryoptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = queryoptions.h; sourceTree = "<group>"; };
+		E32A500E223F1AE600A57BD1 /* retrievalarguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = retrievalarguments.cpp; sourceTree = "<group>"; };
+		E32A500F223F1AE600A57BD1 /* retrievalarguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = retrievalarguments.h; sourceTree = "<group>"; };
+		E32A5016223F243C00A57BD1 /* quickselect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = quickselect.cpp; sourceTree = "<group>"; };
+		E32A5017223F243C00A57BD1 /* quickselect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = quickselect.h; sourceTree = "<group>"; };
 		E33E6F361E46EE1C003A0B92 /* foreignkey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = foreignkey.cpp; sourceTree = "<group>"; };
 		E33E6F371E46EE1C003A0B92 /* foreignkey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = foreignkey.h; sourceTree = "<group>"; };
 		E33E6F801EAD310A003A0B92 /* getobjectname.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = getobjectname.cpp; sourceTree = "<group>"; };
@@ -109,6 +125,14 @@
 		E3D139491D0D0CDE00A5A0F7 /* libdialogs */ = {
 			isa = PBXGroup;
 			children = (
+				E32A5016223F243C00A57BD1 /* quickselect.cpp */,
+				E32A5017223F243C00A57BD1 /* quickselect.h */,
+				E32A500A223F1AE600A57BD1 /* createdatabase.cpp */,
+				E32A500B223F1AE600A57BD1 /* createdatabase.h */,
+				E32A500C223F1AE600A57BD1 /* queryoptions.cpp */,
+				E32A500D223F1AE600A57BD1 /* queryoptions.h */,
+				E32A500E223F1AE600A57BD1 /* retrievalarguments.cpp */,
+				E32A500F223F1AE600A57BD1 /* retrievalarguments.h */,
 				E32A5002223469AE00A57BD1 /* bitmappanel.cpp */,
 				E32A5003223469AE00A57BD1 /* bitmappanel.h */,
 				E32A5004223469AE00A57BD1 /* newquery.cpp */,
@@ -145,14 +169,18 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E32A5019223F243C00A57BD1 /* quickselect.h in Headers */,
+				E32A5015223F1AE600A57BD1 /* retrievalarguments.h in Headers */,
 				E32A5007223469AE00A57BD1 /* bitmappanel.h in Headers */,
 				E3D139521D0D0D7100A5A0F7 /* databasetype.h in Headers */,
 				E3E62CCA1EF71830005BBB37 /* addcolumnsdialog.h in Headers */,
 				E3D139571D0D0D7100A5A0F7 /* selecttables.h in Headers */,
+				E32A5013223F1AE600A57BD1 /* queryoptions.h in Headers */,
 				E33E6F871EAD310A003A0B92 /* jointype.h in Headers */,
 				E33E6F851EAD310A003A0B92 /* getobjectname.h in Headers */,
 				E3D139551D0D0D7100A5A0F7 /* odbcconfigure.h in Headers */,
 				E33E6F391E46EE1C003A0B92 /* foreignkey.h in Headers */,
+				E32A5011223F1AE600A57BD1 /* createdatabase.h in Headers */,
 				E32A5009223469AE00A57BD1 /* newquery.h in Headers */,
 				E3E91D3D1DC678C900675CF8 /* createindex.h in Headers */,
 				E3E91D891DEE520B00675CF8 /* properties.h in Headers */,
@@ -213,6 +241,7 @@
 			files = (
 				E362C40220F475990089E44E /* odbccredentials.cpp in Sources */,
 				E32A5006223469AE00A57BD1 /* bitmappanel.cpp in Sources */,
+				E32A5010223F1AE600A57BD1 /* createdatabase.cpp in Sources */,
 				E3D139561D0D0D7100A5A0F7 /* selecttables.cpp in Sources */,
 				E33E6F381E46EE1C003A0B92 /* foreignkey.cpp in Sources */,
 				E33E6F841EAD310A003A0B92 /* getobjectname.cpp in Sources */,
@@ -221,8 +250,11 @@
 				E3E91D3C1DC678C900675CF8 /* createindex.cpp in Sources */,
 				E3D139511D0D0D7100A5A0F7 /* databasetype.cpp in Sources */,
 				E32A5008223469AE00A57BD1 /* newquery.cpp in Sources */,
+				E32A5018223F243C00A57BD1 /* quickselect.cpp in Sources */,
+				E32A5014223F1AE600A57BD1 /* retrievalarguments.cpp in Sources */,
 				E3E91D881DEE520B00675CF8 /* properties.cpp in Sources */,
 				E3D139531D0D0D7100A5A0F7 /* dialogs.cpp in Sources */,
+				E32A5012223F1AE600A57BD1 /* queryoptions.cpp in Sources */,
 				E33E6F861EAD310A003A0B92 /* jointype.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -278,7 +278,7 @@ extern "C" WXEXPORT int NewQueryDlg(wxWindow *parent, int &source, int &presenta
     return res;
 }
 
-extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db)
+extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std::vector<wxString> &tableName, std::vector<wxString> &fields)
 {
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
@@ -286,17 +286,24 @@ extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db)
     QuickSelect dlg( parent, db );
     dlg.Center();
     int res = dlg.ShowModal();
+    if( res == wxID_OK )
+    {
+        tableName.push_back( dlg.GetQueryTable()->GetString( 0 ) );
+        fields = dlg.GetQueryFields();
+    }
     return res;
 }
 
-extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField)
+extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField, int &type)
 {
     int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    JointType dlg( parent, wxID_ANY, _( "Join" ), origTable, refTable, origField, refField );
+    JointType dlg( parent, wxID_ANY, _( "Join" ), origTable, refTable, origField, refField, type );
     res = dlg.ShowModal();
+    if( res == wxID_OK )
+        type = dlg.GetTypeCtrl()->GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
     return res;
 }
 

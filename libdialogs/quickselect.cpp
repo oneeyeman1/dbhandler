@@ -400,7 +400,7 @@ void QuickSelect::OnFieldsSetFocus(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-std::vector<wxString> &QuickSelect::GetQueryString()
+std::vector<wxString> &QuickSelect::GetQueryFields()
 {
     return m_queryFields;
 }
@@ -410,4 +410,9 @@ void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
     for( auto i = 0; i < m_grid->GetNumberCols(); ++i )
         m_queryFields.push_back( m_grid->GetCellValue( 0, i ) );
     EndModal( wxID_OK );
+}
+
+const wxListBox *QuickSelect::GetQueryTable()
+{
+    return m_tables;
 }

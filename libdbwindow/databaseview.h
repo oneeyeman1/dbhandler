@@ -15,6 +15,7 @@ class DrawingView : public wxView
 public:
     DrawingView() : wxView(), m_canvas(NULL) {}
     ~DrawingView();
+    void UpdateQueryFromSignChange(const QueryConstraint *type);
 //    std::vector<Table> &GetTablesForView(Database *db);
     wxFrame *GetLogWindow() const;
     wxTextCtrl *GetTextLogger() const;
@@ -73,6 +74,8 @@ private:
     SyntaxPropPage *m_page6;
     wxCriticalSection *pcs;
     int m_source, m_presentation;
+    std::vector<wxString> m_selectTableName;
+    std::vector<wxString> m_selectFields;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
