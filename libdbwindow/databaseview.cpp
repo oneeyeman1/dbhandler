@@ -892,10 +892,12 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
             temp = temp.substr( 0, temp.Find( "FROM" ) - 1 );
             query.Replace( temp, temp + ", " + name + " " );
         }
+        m_selectFields.push_back( name );
         m_page6->SetSyntaxText( query );
     }
     else
     {
+        wxString temp1;
         GetDocument()->AddRemoveField( name.ToStdWstring(), false );
         std::vector<std::wstring> queryFields = GetDocument()->GetQueryFields();
         m_fields->RemoveField( queryFields );
@@ -909,7 +911,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
             str += " ";
             str += name;
             wxString temp = query.substr( 0, query.Find( str ) );
-            wxString temp1 = query.substr( query.Find( name ) + name.length() );
+            temp1 = query.substr( query.Find( name ) + name.length() );
             if( temp == query )
             {
                 temp = "SELECT ";
@@ -917,6 +919,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
             }
             query = temp + temp1;
         }
+        m_selectFields.erase( std::remove( m_selectFields.begin(), m_selectFields.end(), name ), m_selectFields.end() );
         m_page6->SetSyntaxText( query );
     }
 }
@@ -999,9 +1002,28 @@ void DrawingView::SetSynchronisationObject(wxCriticalSection &cs)
 void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type)
 {
     auto res = true;
+    auto sign = type->GetSign();
     auto query = m_page6->GetSyntaxCtrl()->GetValue();
-    auto result = query.substr( 0, query.find( "WHERE" ) + 6 );
-    query = query.substr( query.find( "WHERE" ) + 6 );
+    if( sign == 1 || sign == 2 )
+    {
+        auto result = query.substr( 0, query.find( "\n" ) + 1 );
+        query = query.substr( query.find( "\n" ) + 1 );
+        result += "FROM(";
+        if( sign == 1 )
+            result += const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + " LEFT OUTER JOIN " + type->GetRefTable() + " ON " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn() + " = " + type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn();
+        else
+            result += type->GetRefTable() + " LEFT OUTER JOIN " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + " ON " + type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn() + " = " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn();
+        auto temp1 = query.substr( 0, query.find( "\n" ) + 1 );
+        temp1 = temp1.substr( temp1.find( " " + 1 ) );
+        while( temp1 != wxEmptyString )
+        {
+            temp1 = temp1.substr( temp1.find( ',' ) + 1 );
+            if( temp1 != const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() && temp1 != type->GetRefTable() )
+                result += ", " + temp1;
+        }
+    }
+    auto result = query.substr( 0, query.find( " WHERE " ) + 7 );
+    query = query.substr( query.find( " WHERE " ) + 7 );
     while( res )
     {
         auto temp = query.substr( 0, query.find( ' ' ) );
