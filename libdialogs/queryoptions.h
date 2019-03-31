@@ -8,7 +8,7 @@ public:
 private:
     wxListBox *m_options;
     wxPanel *m_panel;
-    wxButton *m_ok, *m_cance, *m_help;
+    wxButton *m_ok, *m_cancel, *m_help;
 };
 
 #endif
