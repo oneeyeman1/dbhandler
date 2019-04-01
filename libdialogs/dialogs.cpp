@@ -153,13 +153,13 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
     return res;
 }
 
-extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std::vector<wxString> &tableNames, std::vector<std::wstring> &names, bool isTableView)
+extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std::vector<wxString> &tableNames, std::vector<std::wstring> &names, bool isTableView, const int type)
 {
     int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    SelectTables dlg( parent, wxID_ANY, "", db, names, isTableView );
+    SelectTables dlg( parent, wxID_ANY, "", db, names, isTableView, type );
     if( isTableView )
         dlg.Center();
 	res = dlg.ShowModal();

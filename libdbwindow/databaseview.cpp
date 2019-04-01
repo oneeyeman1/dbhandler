@@ -59,7 +59,7 @@
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
 
-typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool);
+typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool, const int);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, const wxString &, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
@@ -381,7 +381,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     if( m_source != 1 )
                     {
                         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-                        res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false );
+                        res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
                     }
                     else
                     {
@@ -408,7 +408,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
         else
         {
             TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-            res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false );
+            res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
         }
         if( m_type == QueryView )
         {
@@ -1014,12 +1014,13 @@ void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type)
         else
             result += type->GetRefTable() + " LEFT OUTER JOIN " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + " ON " + type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn() + " = " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn();
         auto temp1 = query.substr( 0, query.find( "\n" ) + 1 );
-        temp1 = temp1.substr( temp1.find( " " + 1 ) );
+        temp1 = temp1.substr( temp1.find( ' ' ) + 1 );
         while( temp1 != wxEmptyString )
         {
-            temp1 = temp1.substr( temp1.find( ',' ) + 1 );
-            if( temp1 != const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() && temp1 != type->GetRefTable() )
-                result += ", " + temp1;
+            auto temp2 = temp1.substr( 0, temp1.find( ',' ) + 1 );
+            if( temp2 != const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() && temp2 != type->GetRefTable() )
+                result += ", " + temp2;
+            temp1 = temp1.substr( temp1.find( ',' ) );
         }
     }
     auto result = query.substr( 0, query.find( " WHERE " ) + 7 );
