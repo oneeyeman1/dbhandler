@@ -8,7 +8,6 @@ public:
     wxGrid *GetGrid();
     void OnSize(wxSizeEvent &event);
     void OnColumnName(wxGridEditorCreatedEvent &event);
-    void OnColumnDropDown(wxCommandEvent &event);
     void OnCellRightClick(wxGridEvent &event);
     void OnMenuSelection(wxCommandEvent &event);
     void OnSelection();

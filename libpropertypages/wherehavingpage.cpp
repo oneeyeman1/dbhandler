@@ -122,18 +122,13 @@ void WhereHavingPage::OnSize(wxSizeEvent &event)
     event.Skip();
 }
 
-void WhereHavingPage::OnColumnDropDown(wxCommandEvent &event)
-{
-    wxComboBox *editor = wxDynamicCast( event.GetEventObject(), wxComboBox );
-    for( std::vector<std::wstring>::iterator it = m_fields.begin(); it < m_fields.end(); it++ )
-        editor->Append( (*it) );
-}
-
 void WhereHavingPage::OnColumnName(wxGridEditorCreatedEvent &event)
 {
     if( event.GetCol() == 0 )
     {
-        dynamic_cast<wxComboBox *>( event.GetControl() )->Bind( wxEVT_COMBOBOX_DROPDOWN, &WhereHavingPage::OnColumnDropDown, this );
+        wxComboBox *editor = dynamic_cast<wxComboBox *>( event.GetControl() );
+        for( std::vector<std::wstring>::iterator it = m_fields.begin(); it < m_fields.end(); it++ )
+            editor->Append( (*it) );
     }
 }
 
