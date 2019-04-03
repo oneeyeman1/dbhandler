@@ -7,6 +7,8 @@ public:
     void AppendField(const std::wstring &field);
     wxGrid *GetGrid();
     void OnSize(wxSizeEvent &event);
+    void OnCellChanged(wxCommandEvent &event);
+    void OnGridCellChaqnged(wxGridEvent &event);
     void OnColumnName(wxGridEditorCreatedEvent &event);
     void OnCellRightClick(wxGridEvent &event);
     void OnMenuSelection(wxCommandEvent &event);

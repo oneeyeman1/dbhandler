@@ -64,6 +64,7 @@ WhereHavingPage::WhereHavingPage(wxWindow *parent, const wxString &type, const w
     Bind( wxEVT_SIZE, &WhereHavingPage::OnSize, this );
     m_grid->Bind( wxEVT_GRID_EDITOR_CREATED, &WhereHavingPage::OnColumnName, this );
     m_grid->Bind( wxEVT_GRID_CELL_RIGHT_CLICK, &WhereHavingPage::OnCellRightClick, this );
+    m_grid->Bind( wxEVT_GRID_CELL_CHANGED, &WhereHavingPage::OnGridCellChaqnged, this );
     Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGECOLUMNS);
     Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGEFUNCTIONS);
 }
@@ -129,6 +130,8 @@ void WhereHavingPage::OnColumnName(wxGridEditorCreatedEvent &event)
         wxComboBox *editor = dynamic_cast<wxComboBox *>( event.GetControl() );
         for( std::vector<std::wstring>::iterator it = m_fields.begin(); it < m_fields.end(); it++ )
             editor->Append( (*it) );
+        m_row = event.GetRow();
+        editor->Bind( wxEVT_COMBOBOX, &WhereHavingPage::OnCellChanged, this );
     }
 }
 
@@ -166,10 +169,10 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
     int id = event.GetId();
     int type;
     std::vector<std::wstring> fields;
+    fields = m_fields;
     if( id == WHEREPAGECOLUMNS )
     {
         type = 1;
-        fields = m_fields;
     }
     else
     {
@@ -198,10 +201,28 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
             if( m_col )
             {
                 wxComboBox *combo = dynamic_cast<wxComboBox *>( m_grid->GetCellEditor( m_row, m_col )->GetControl() );
-                combo->SetSelection( selection.size() - 1, selection.size() - 1 );
+                if( combo )
+                    combo->SetSelection( selection.size() - 1, selection.size() - 1 );
             }
         }
     }
     delete lib;
     lib = NULL;
+}
+
+void WhereHavingPage::OnCellChanged(wxCommandEvent &event)
+{
+    if( m_grid->GetCellValue( m_row, 1 ) == wxEmptyString )
+        m_grid->SetCellValue( m_row, 1, "=" );
+
+}
+
+void WhereHavingPage::OnGridCellChaqnged(wxGridEvent &event)
+{
+    if( event.GetCol() == 0 && m_grid->GetCellValue( m_row, 0 ) == wxEmptyString )
+    {
+        m_grid->SetCellValue( m_row, 1, "" );
+        m_grid->SetCellValue( m_row, 2, "" );
+        m_grid->SetCellValue( m_row, 3, "" );
+    }
 }
