@@ -1,4 +1,17 @@
 #pragma once
+class WhereHavingLines
+{
+public:
+    int m_row;
+    wxString m_old, m_new;
+    WhereHavingLines(int row, const wxString &oldValue, const wxString &newValue)
+    {
+        m_row = row;
+        m_old = oldValue;
+        m_new = newValue;
+    }
+};
+
 class WXEXPORT WhereHavingPage :	public wxPanel
 {
 public:
@@ -21,6 +34,7 @@ private:
     wxGrid *m_grid;
     wxString m_operatorChoices[28], m_logicalChoices[2], m_type, m_subtype;
     std::vector<std::wstring> m_fields;
+    std::vector<WhereHavingLines> m_lines;
 };
 
 #define WHEREPAGECOLUMNS          194

@@ -224,5 +224,27 @@ void WhereHavingPage::OnGridCellChaqnged(wxGridEvent &event)
         m_grid->SetCellValue( m_row, 1, "" );
         m_grid->SetCellValue( m_row, 2, "" );
         m_grid->SetCellValue( m_row, 3, "" );
+        m_lines.at( m_row ).m_old = m_lines.at( m_row ).m_new;
+        m_lines.at( m_row ).m_new = "";
+    }
+    if( event.GetCol () == 0 )
+    {
+        if( m_lines.size() == 0 )
+            m_lines.push_back( WhereHavingLines( m_row, "", m_grid->GetCellValue( m_row, 0 ) + " " + m_grid->GetCellValue( m_row, 1 ) + " " + m_grid->GetCellValue( m_row, 2 ) + " " + m_grid->GetCellValue( m_row, 3 ) ) );
+        else
+        {
+            bool found = false;
+            for( std::vector<WhereHavingLines>::iterator it = m_lines.begin(); it < m_lines.end() && !found; ++it )
+            {
+                if( (*it).m_row == m_row )
+                {
+                    found = true;
+                    (*it).m_old = (*it).m_new;
+                    (*it).m_new = m_grid->GetCellValue( m_row, 0 ) + " " + m_grid->GetCellValue( m_row, 1 ) + " " + m_grid->GetCellValue( m_row, 2 ) + " " + m_grid->GetCellValue( m_row, 3 );
+                }
+            }
+            if( !found )
+                m_lines.push_back( WhereHavingLines( m_row, "", m_grid->GetCellValue( m_row, 0 ) + " " + m_grid->GetCellValue( m_row, 1 ) + " " + m_grid->GetCellValue( m_row, 2 ) + " " + m_grid->GetCellValue( m_row, 3 ) ) );
+        }
     }
 }
