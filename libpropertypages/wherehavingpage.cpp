@@ -14,11 +14,14 @@
 #include <string>
 #include "wx/dynlib.h"
 #include "wx/grid.h"
+#include "wx/docmdi.h"
 #include "wx/headerctrl.h"
 //#include "wx/settings.h"
 #include "wherehavingpage.h"
 
 typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring> &, wxString &, const wxString &, const wxString &);
+
+const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 
 WhereHavingPage::WhereHavingPage(wxWindow *parent, const wxString &type, const wxString &subtype) : wxPanel( parent )
 {
@@ -246,5 +249,16 @@ void WhereHavingPage::OnGridCellChaqnged(wxGridEvent &event)
             if( !found )
                 m_lines.push_back( WhereHavingLines( m_row, "", m_grid->GetCellValue( m_row, 0 ) + " " + m_grid->GetCellValue( m_row, 1 ) + " " + m_grid->GetCellValue( m_row, 2 ) + " " + m_grid->GetCellValue( m_row, 3 ) ) );
         }
+    }
+    bool found = false;
+    for( std::vector<WhereHavingLines>::iterator it = m_lines.begin(); it < m_lines.end() && !found; ++it )
+    {
+        if( (*it).m_row == m_row )
+        {
+            found = true;
+            wxCommandEvent event( wxEVT_CHANGE_QUERY );
+//            event.SetClientObject( dynamic_cast<wxClientData *>( (*it) ) );
+            event.SetClientData( &(*it) );
+            dynamic_cast<wxDocMDIChildFrame *>( GetParent()->GetParent() )->GetEventHandler()->ProcessEvent( event );        }
     }
 }

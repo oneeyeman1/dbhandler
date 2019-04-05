@@ -51,6 +51,7 @@ public:
     void OnSelectAllFields(wxCommandEvent &event);
     void OnSQLNotebookPageChanged(wxBookCtrlEvent &event);
     void OnDistinct(wxCommandEvent &event);
+    void OnQueryChange(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
@@ -82,6 +83,7 @@ private:
 
 wxDECLARE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
 wxDECLARE_EVENT(wxEVT_SET_FIELD_PROPERTY, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_CHANGE_QUERY, wxCommandEvent);
 
 #define wxID_DATABASEWINDOW 2
 
