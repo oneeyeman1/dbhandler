@@ -1083,4 +1083,12 @@ void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type)
 
 void DrawingView::OnQueryChange(wxCommandEvent &event)
 {
+    wxString query = m_page6->GetSyntaxCtrl()->GetValue();
+    if( event.GetEventObject () == m_page2 )
+    {
+        wxString wherePart = query.substr( query.find( "WHERE" ) );
+        wherePart = wherePart.substr( 0, wherePart.find( "HAVING" ) );
+        WhereHavingLines line = *(WhereHavingLines *) event.GetClientData();
+        int pos = wherePart.find( line.m_old );
+    }
 }

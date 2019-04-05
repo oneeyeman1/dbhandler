@@ -257,7 +257,7 @@ void WhereHavingPage::OnGridCellChaqnged(wxGridEvent &event)
         {
             found = true;
             wxCommandEvent event( wxEVT_CHANGE_QUERY );
-//            event.SetClientObject( dynamic_cast<wxClientData *>( (*it) ) );
+            event.SetEventObject( this );
             event.SetClientData( &(*it) );
             dynamic_cast<wxDocMDIChildFrame *>( GetParent()->GetParent() )->GetEventHandler()->ProcessEvent( event );        }
     }
