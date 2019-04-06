@@ -163,6 +163,8 @@ void WhereHavingPage::OnCellRightClick(wxGridEvent &event)
             contextMenu.Append( WHEREPAGESELECT, _( "Select..." ) );
         contextMenu.AppendSeparator();
         contextMenu.Append( WHEREPAGECLEAR, _( "Clear" ) );
+        if( m_arguments.size() == 0 )
+            contextMenu.Enable( WHEREPAGEARGUMENTS, false );
         PopupMenu( &contextMenu );
     }
 }
@@ -261,4 +263,9 @@ void WhereHavingPage::OnGridCellChaqnged(wxGridEvent &event)
             event.SetClientData( &(*it) );
             dynamic_cast<wxDocMDIChildFrame *>( GetParent()->GetParent() )->GetEventHandler()->ProcessEvent( event );        }
     }
+}
+
+void WhereHavingPage::SetQueryArguments (const std::vector<QueryArguments> &arguments)
+{
+    m_arguments = arguments;
 }
