@@ -77,6 +77,7 @@ private:
 #define WHEREPAGESELECT           198
 #define WHEREPAGECLEAR            199
 #define wxID_DATASOURCE           301
+#define wxID_RETRIEVEARGS         304
 #define wxID_DISTINCT             306
 
 #endif

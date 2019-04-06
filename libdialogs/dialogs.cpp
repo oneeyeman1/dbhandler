@@ -56,6 +56,7 @@
 #include "bitmappanel.h"
 #include "newquery.h"
 #include "quickselect.h"
+#include "retrievalarguments.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -335,4 +336,11 @@ extern "C" WXEXPORT int GetODBCCredentails(wxWindow *parent, const wxString &dsn
     }
 #endif
     return res;
+}
+
+extern "C" WXEXPORT int GetQueryArguments(wxWindow *parent)
+{
+    RetrievalArguments dlg( parent );
+    int result = dlg.ShowModal();
+    return result;
 }

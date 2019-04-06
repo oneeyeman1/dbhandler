@@ -69,6 +69,7 @@ typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
 typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<wxString> &, std::vector<wxString> &);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
+typedef int (*RETRIEVEARGUMENTS)(wxWindow *);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
@@ -103,6 +104,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_SELECTALLFIELDS, DrawingView::OnSelectAllFields)
     EVT_MENU(wxID_DESELECTALLFIELDS, DrawingView::OnSelectAllFields)
     EVT_MENU(wxID_DISTINCT, DrawingView::OnDistinct)
+    EVT_MENU(wxID_RETRIEVEARGS, DrawingView::OnRetrievalArguments)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -1091,4 +1093,22 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
         WhereHavingLines line = *(WhereHavingLines *) event.GetClientData();
         int pos = wherePart.find( line.m_old );
     }
+}
+
+void DrawingView::OnRetrievalArguments(wxCommandEvent &event)
+{
+    wxDynamicLibrary *lib = new wxDynamicLibrary();
+#ifdef __WXMSW__
+    lib->Load( "dialogs" );
+#elif __WXMAC__
+    lib->Load( "liblibdialogs.dylib" );
+#else
+    lib->Load( "libdialogs" );
+#endif
+    if( lib->IsLoaded() )
+    {
+        RETRIEVEARGUMENTS func = (RETRIEVEARGUMENTS) lib->GetSymbol( "GetQueryArguments" );
+        int res = func( m_frame->GetParent() );
+    }
+    delete lib;
 }
