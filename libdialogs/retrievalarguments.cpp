@@ -240,6 +240,7 @@ RetrievalArguments::~RetrievalArguments(void)
 
 void RetrievalArguments::set_properties()
 {
+    SetTitle( _( "Specify Retrieval Arguments" ) );
 }
 
 void RetrievalArguments::do_layout()
