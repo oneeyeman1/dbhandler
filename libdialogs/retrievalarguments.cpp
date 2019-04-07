@@ -46,7 +46,7 @@ void MySubColLabels::OnPaint(wxPaintEvent &WXUNUSED (event))
     dc.DrawText( _( "Type" ), 200, 5 );
 }
 
-MySubCanvas::MySubCanvas(wxScrolled<wxWindow> *parent, wxWindow *cols, const wxString &dbType, const wxString &subType) : wxPanel( parent, wxID_ANY )
+MySubCanvas::MySubCanvas(wxScrolled<wxWindow> *parent, wxWindow *cols, const wxString &dbType, const wxString &subType, std::vector<QueryArguments> &arguments) : wxPanel( parent, wxID_ANY )
 {
     m_owner = parent;
     m_colLabels = cols;
@@ -138,15 +138,22 @@ MySubCanvas::MySubCanvas(wxScrolled<wxWindow> *parent, wxWindow *cols, const wxS
         if( ( dbType == L"ODBC" && subType == L"MySQL" ) || dbType == L"MySQL" )
             fieldTypes.Add( "year" );
     }
-    m_lines.push_back( QueryLines( new wxStaticBitmap( this, wxID_ANY, wxArtProvider::GetIcon( wxART_GO_FORWARD ) ), new wxStaticText( this, wxID_ANY, "1" ), new wxTextCtrl( this, wxID_ANY ), new wxComboBox( this, wxID_ANY ) ) );
+    auto *sizer = new wxFlexGridSizer( 0, 4, 5, 5 );
+    auto counter = 1;
+    for( std::vector<QueryArguments>::iterator it = arguments.begin(); it < arguments.end(); ++it )
+    {
+        sizer->AddGrowableRow( 1 );
+        m_lines.push_back( QueryLines( new wxStaticBitmap( this, wxID_ANY, wxArtProvider::GetIcon( wxART_GO_FORWARD ) ), new wxStaticText( this, wxID_ANY, wxString::Format( "%d", counter ), wxDefaultPosition, wxDefaultSize, wxBORDER_RAISED ), new wxTextCtrl( this, wxID_ANY, (*it).m_name ), new wxComboBox( this, wxID_ANY, (*it).m_type, wxDefaultPosition, wxDefaultSize, fieldTypes ) ) );
+        sizer->Add( m_lines[counter - 1].m_pointer );
+        sizer->Add( m_lines[counter - 1].m_number );
+        sizer->Add( m_lines[counter - 1].m_name );
+        sizer->Add( m_lines[counter - 1].m_type );
+        counter++;
+    }
     Bind( wxEVT_PAINT, &MySubCanvas::OnPaint, this );
-    auto *sizer = new wxFlexGridSizer( 1, 4, 5, 5 );
-    sizer->Add( m_lines[0].m_pointer );
-    sizer->Add( m_lines[0].m_number );
-    sizer->Add( m_lines[0].m_name );
-    sizer->Add( m_lines[0].m_type );
     SetSizer( sizer );
-    Layout();
+    sizer->Fit( this );
+//    Layout();
 }
 
 void MySubCanvas::ScrollWindow(int dx, int dy, const wxRect *rect)
@@ -166,10 +173,10 @@ void MySubCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
     GetClientSize( &size_x, &size_y );
 }
 
-MySubScrolledWindow::MySubScrolledWindow(wxWindow *parent, const wxString &dbType, const wxString &subType) : wxScrolled<wxWindow>( parent, wxID_ANY )
+MySubScrolledWindow::MySubScrolledWindow(wxWindow *parent, const wxString &dbType, const wxString &subType, std::vector<QueryArguments> &arguments) : wxScrolled<wxWindow>( parent, wxID_ANY )
 {
     auto *cols = new MySubColLabels( this );
-    m_canvas = new MySubCanvas( this, cols, dbType, subType );
+    m_canvas = new MySubCanvas( this, cols, dbType, subType, arguments );
     auto *sizer = new wxFlexGridSizer( 1 );
     sizer->Add( 5, 5 );
     sizer->Add( cols, wxSizerFlags().Expand() );
@@ -216,7 +223,7 @@ void ColumnLabels::OnPaint(wxPaintEvent &WXUNUSED(event))
 RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArguments> &arguments, const wxString &dbType, const wxString &subType) : wxDialog( parent, wxID_ANY, _( "" ) )
 {
     m_panel = new wxPanel( this );
-    m_arguments = new MySubScrolledWindow( this, dbType, subType );
+    m_arguments = new MySubScrolledWindow( this, dbType, subType, arguments );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
     m_help = new wxButton( m_panel, wxID_HELP, _( "Help" ) );

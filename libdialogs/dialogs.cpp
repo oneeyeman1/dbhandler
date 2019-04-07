@@ -344,6 +344,7 @@ extern "C" WXEXPORT int GetQueryArguments(wxWindow *parent, std::vector<QueryArg
     wxTheApp->SetTopWindow( parent );
 #endif
     RetrievalArguments dlg( parent, arguments, dbType, subType );
+    dlg.Center();
     int result = dlg.ShowModal();
     return result;
 }
