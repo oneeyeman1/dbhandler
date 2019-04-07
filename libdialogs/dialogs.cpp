@@ -338,9 +338,12 @@ extern "C" WXEXPORT int GetODBCCredentails(wxWindow *parent, const wxString &dsn
     return res;
 }
 
-extern "C" WXEXPORT int GetQueryArguments(wxWindow *parent)
+extern "C" WXEXPORT int GetQueryArguments(wxWindow *parent, std::vector<QueryArguments> &arguments, const wxString &dbType, const wxString &subType)
 {
-    RetrievalArguments dlg( parent );
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    RetrievalArguments dlg( parent, arguments, dbType, subType );
     int result = dlg.ShowModal();
     return result;
 }

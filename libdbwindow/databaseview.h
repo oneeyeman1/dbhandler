@@ -78,6 +78,7 @@ private:
     int m_source, m_presentation;
     std::vector<wxString> m_selectTableName;
     std::vector<wxString> m_selectFields;
+    std::vector<QueryArguments> m_arguments;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
