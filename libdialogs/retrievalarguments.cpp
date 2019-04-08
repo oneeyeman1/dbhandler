@@ -138,11 +138,10 @@ MySubCanvas::MySubCanvas(wxScrolled<wxWindow> *parent, wxWindow *cols, const wxS
         if( ( dbType == L"ODBC" && subType == L"MySQL" ) || dbType == L"MySQL" )
             fieldTypes.Add( "year" );
     }
-    auto *sizer = new wxFlexGridSizer( 0, 4, 5, 5 );
+    auto *sizer = new wxFlexGridSizer( arguments.size(), 4, 5, 5 );
     auto counter = 1;
     for( std::vector<QueryArguments>::iterator it = arguments.begin(); it < arguments.end(); ++it )
     {
-        sizer->AddGrowableRow( 1 );
         m_lines.push_back( QueryLines( new wxStaticBitmap( this, wxID_ANY, wxArtProvider::GetIcon( wxART_GO_FORWARD ) ), new wxStaticText( this, wxID_ANY, wxString::Format( "%d", counter ), wxDefaultPosition, wxDefaultSize, wxBORDER_RAISED ), new wxTextCtrl( this, wxID_ANY, (*it).m_name ), new wxComboBox( this, wxID_ANY, (*it).m_type, wxDefaultPosition, wxDefaultSize, fieldTypes ) ) );
         sizer->Add( m_lines[counter - 1].m_pointer );
         sizer->Add( m_lines[counter - 1].m_number );
