@@ -149,7 +149,6 @@ MySubCanvas::MySubCanvas(wxScrolled<wxWindow> *parent, wxWindow *cols, const wxS
         sizer->Add( m_lines[counter - 1].m_type );
         counter++;
     }
-    Bind( wxEVT_PAINT, &MySubCanvas::OnPaint, this );
     SetSizer( sizer );
     sizer->Fit( this );
 //    Layout();
@@ -161,15 +160,14 @@ void MySubCanvas::ScrollWindow(int dx, int dy, const wxRect *rect)
     m_colLabels->ScrollWindow( dx, 0, rect );
 }
 
-void MySubCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
+void MySubCanvas::AddArgument()
 {
-    wxPaintDC dc( this );
-    m_owner->PrepareDC( dc );
-    dc.SetPen( *wxBLACK_PEN );
-    auto scroll_x = 0, scroll_y = 0;
-    m_owner->CalcUnscrolledPosition( scroll_x, scroll_y, &scroll_x, &scroll_y );
-    auto size_x = 0, size_y = 0;
-    GetClientSize( &size_x, &size_y );
+
+}
+
+void MySubCanvas::DeleteArgument()
+{
+
 }
 
 MySubScrolledWindow::MySubScrolledWindow(wxWindow *parent, const wxString &dbType, const wxString &subType, std::vector<QueryArguments> &arguments) : wxScrolled<wxWindow>( parent, wxID_ANY )
@@ -178,8 +176,8 @@ MySubScrolledWindow::MySubScrolledWindow(wxWindow *parent, const wxString &dbTyp
     m_canvas = new MySubCanvas( this, cols, dbType, subType, arguments );
     auto *sizer = new wxFlexGridSizer( 1 );
     sizer->Add( 5, 5 );
-    sizer->Add( cols, wxSizerFlags().Expand() );
-    sizer->Add( m_canvas, wxSizerFlags().Expand() );
+    sizer->Add( cols, wxSizerFlags( 1 ).Expand() );
+    sizer->Add( m_canvas, wxSizerFlags( 1 ).Expand() );
     sizer->AddGrowableRow( 1 );
     SetSizer( sizer );
     SetTargetWindow( m_canvas );
@@ -195,10 +193,20 @@ wxSize MySubScrolledWindow::GetSizeAvailableForScrollTarget(const wxSize &size)
     return sizeCanvas;
 }
 
-void MySubScrolledWindow::OnSize(wxSizeEvent &event)
+void MySubScrolledWindow::OnSize(wxSizeEvent &WXUNUSED(event))
 {
     Layout();
     AdjustScrollbars();
+}
+
+void MySubScrolledWindow::AddArgument()
+{
+    m_canvas->AddArgument();
+}
+
+void MySubScrolledWindow::DeleteArgument()
+{
+    m_canvas->DeleteArgument();
 }
 
 ColumnLabels::ColumnLabels(wxScrolled<wxWindow> *parent ) : wxWindow( parent, wxID_ANY )
@@ -231,6 +239,8 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     m_remove = new wxButton( m_panel, wxID_ANY, _( "Delete" ) );
     set_properties();
     do_layout();
+    m_add->Bind( wxEVT_BUTTON, &RetrievalArguments::OnAddArgument, this );
+    m_remove->Bind( wxEVT_BUTTON, &RetrievalArguments::OnRemoveArgument, this );
 }
 
 RetrievalArguments::~RetrievalArguments(void)
@@ -255,7 +265,7 @@ void RetrievalArguments::do_layout()
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_8->Add( m_arguments, 1, wxEXPAND, 0 );
-    sizer_4->Add( sizer_8, 0, wxEXPAND, 0 );
+    sizer_4->Add( sizer_8, 1, wxEXPAND, 0 );
     sizer_4->Add( 10, 10, 0, wxEXPAND, 0 );
     sizer_6->Add( m_ok, 0, wxEXPAND, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -280,4 +290,14 @@ void RetrievalArguments::do_layout()
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     Layout();
+}
+
+void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
+{
+    m_arguments->AddArgument();
+}
+
+void RetrievalArguments::OnRemoveArgument(wxCommandEvent &WXUNUSED(event))
+{
+    m_arguments->DeleteArgument();
 }

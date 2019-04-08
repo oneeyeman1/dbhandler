@@ -44,9 +44,10 @@ class MySubCanvas : public wxPanel
 {
 public:
     MySubCanvas(wxScrolled<wxWindow> *parent, wxWindow *cols, const wxString &dbType, const wxString &subType, std::vector<QueryArguments> &arguments);
+    void AddArgument();
+    void DeleteArgument();
     virtual void ScrollWindow(int dx, int dy, const wxRect *rect) wxOVERRIDE;
 private:
-    void OnPaint(wxPaintEvent &event);
     wxScrolled<wxWindow> *m_owner;
     wxWindow *m_colLabels;
     std::vector<QueryLines> m_lines;
@@ -56,6 +57,8 @@ class MySubScrolledWindow : public wxScrolled<wxWindow>
 {
 public:
     MySubScrolledWindow(wxWindow *parent, const wxString &dbType, const wxString &subType, std::vector<QueryArguments> &arguments);
+    void AddArgument();
+    void DeleteArgument();
 protected:
     virtual wxSize GetSizeAvailableForScrollTarget(const wxSize &size) wxOVERRIDE;
 private:
@@ -69,6 +72,8 @@ public:
     RetrievalArguments(wxWindow *parent, std::vector<QueryArguments> &arguments, const wxString &dbType, const wxString &subType);
     ~RetrievalArguments(void);
 protected:
+    void OnAddArgument(wxCommandEvent &event);
+    void OnRemoveArgument(wxCommandEvent &event);
     void do_layout();
     void set_properties();
 private:
