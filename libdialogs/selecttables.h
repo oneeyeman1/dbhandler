@@ -15,7 +15,7 @@
 class SelectTables: public wxDialog
 {
 public:
-    SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, bool isTableView, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, bool isTableView, const int type, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
     void GetSelectedTableNames(std::vector<wxString> &tableNames);
 private:
     wxBoxSizer* sizer_1;

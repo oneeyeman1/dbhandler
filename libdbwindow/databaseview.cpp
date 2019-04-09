@@ -58,8 +58,9 @@
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
+const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 
-typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool);
+typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool, const int);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, const wxString &, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
@@ -68,6 +69,7 @@ typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
 typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<wxString> &, std::vector<wxString> &);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
+typedef int (*RETRIEVEARGUMENTS)(wxWindow *, std::vector<QueryArguments> &arguments, const wxString &, const wxString &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
@@ -102,6 +104,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_SELECTALLFIELDS, DrawingView::OnSelectAllFields)
     EVT_MENU(wxID_DESELECTALLFIELDS, DrawingView::OnSelectAllFields)
     EVT_MENU(wxID_DISTINCT, DrawingView::OnDistinct)
+    EVT_MENU(wxID_RETRIEVEARGS, DrawingView::OnRetrievalArguments)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -205,6 +208,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
     Bind( wxEVT_SET_FIELD_PROPERTY, &DrawingView::OnSetProperties, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, m_canvas, wxID_DROPOBJECT );
+    m_frame->Bind( wxEVT_CHANGE_QUERY, &DrawingView::OnQueryChange, this );
 #if defined __WXMSW__ || defined __WXGTK__
     CreateViewToolBar();
 #endif
@@ -381,7 +385,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     if( m_source != 1 )
                     {
                         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-                        res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false );
+                        res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
                     }
                     else
                     {
@@ -408,7 +412,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
         else
         {
             TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-            res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false );
+            res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
         }
         if( m_type == QueryView )
         {
@@ -892,10 +896,12 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
             temp = temp.substr( 0, temp.Find( "FROM" ) - 1 );
             query.Replace( temp, temp + ", " + name + " " );
         }
+        m_selectFields.push_back( name );
         m_page6->SetSyntaxText( query );
     }
     else
     {
+        wxString temp1;
         GetDocument()->AddRemoveField( name.ToStdWstring(), false );
         std::vector<std::wstring> queryFields = GetDocument()->GetQueryFields();
         m_fields->RemoveField( queryFields );
@@ -909,7 +915,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
             str += " ";
             str += name;
             wxString temp = query.substr( 0, query.Find( str ) );
-            wxString temp1 = query.substr( query.Find( name ) + name.length() );
+            temp1 = query.substr( query.Find( name ) + name.length() );
             if( temp == query )
             {
                 temp = "SELECT ";
@@ -917,6 +923,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
             }
             query = temp + temp1;
         }
+        m_selectFields.erase( std::remove( m_selectFields.begin(), m_selectFields.end(), name ), m_selectFields.end() );
         m_page6->SetSyntaxText( query );
     }
 }
@@ -999,9 +1006,29 @@ void DrawingView::SetSynchronisationObject(wxCriticalSection &cs)
 void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type)
 {
     auto res = true;
+    auto sign = type->GetSign();
     auto query = m_page6->GetSyntaxCtrl()->GetValue();
-    auto result = query.substr( 0, query.find( "WHERE" ) + 6 );
-    query = query.substr( query.find( "WHERE" ) + 6 );
+    if( sign == 1 || sign == 2 )
+    {
+        auto result = query.substr( 0, query.find( "\n" ) + 1 );
+        query = query.substr( query.find( "\n" ) + 1 );
+        result += "FROM(";
+        if( sign == 1 )
+            result += const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + " LEFT OUTER JOIN " + type->GetRefTable() + " ON " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn() + " = " + type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn();
+        else
+            result += type->GetRefTable() + " LEFT OUTER JOIN " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + " ON " + type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn() + " = " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn();
+        auto temp1 = query.substr( 0, query.find( "\n" ) + 1 );
+        temp1 = temp1.substr( temp1.find( ' ' ) + 1 );
+        while( temp1 != wxEmptyString )
+        {
+            auto temp2 = temp1.substr( 0, temp1.find( ',' ) + 1 );
+            if( temp2 != const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() && temp2 != type->GetRefTable() )
+                result += ", " + temp2;
+            temp1 = temp1.substr( temp1.find( ',' ) );
+        }
+    }
+    auto result = query.substr( 0, query.find( " WHERE " ) + 7 );
+    query = query.substr( query.find( " WHERE " ) + 7 );
     while( res )
     {
         auto temp = query.substr( 0, query.find( ' ' ) );
@@ -1054,4 +1081,36 @@ void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type)
         }
     }
     m_page6->SetSyntaxText( result );
+}
+
+void DrawingView::OnQueryChange(wxCommandEvent &event)
+{
+    wxString query = m_page6->GetSyntaxCtrl()->GetValue();
+    if( event.GetEventObject () == m_page2 )
+    {
+        wxString wherePart = query.substr( query.find( "WHERE" ) );
+        wherePart = wherePart.substr( 0, wherePart.find( "HAVING" ) );
+        WhereHavingLines line = *(WhereHavingLines *) event.GetClientData();
+        int pos = wherePart.find( line.m_old );
+    }
+}
+
+void DrawingView::OnRetrievalArguments(wxCommandEvent &event)
+{
+    wxDynamicLibrary *lib = new wxDynamicLibrary();
+#ifdef __WXMSW__
+    lib->Load( "dialogs" );
+#elif __WXMAC__
+    lib->Load( "liblibdialogs.dylib" );
+#else
+    lib->Load( "libdialogs" );
+#endif
+    if( lib->IsLoaded() )
+    {
+        if( m_arguments.size() == 0 )
+            m_arguments.push_back( QueryArguments( 1, "", "" ) );
+        RETRIEVEARGUMENTS func = (RETRIEVEARGUMENTS) lib->GetSymbol( "GetQueryArguments" );
+        int res = func( m_frame->GetParent(), m_arguments, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
+    }
+    delete lib;
 }
