@@ -1110,7 +1110,7 @@ void DrawingView::OnRetrievalArguments(wxCommandEvent &event)
         if( m_arguments.size() == 0 )
             m_arguments.push_back( QueryArguments( 1, "", "" ) );
         RETRIEVEARGUMENTS func = (RETRIEVEARGUMENTS) lib->GetSymbol( "GetQueryArguments" );
-        int res = func( m_frame->GetParent(), m_arguments, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
+        int res = func( m_frame, m_arguments, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
     }
     delete lib;
 }
