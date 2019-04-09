@@ -1,5 +1,5 @@
 #ifndef __RETRIEVALARGUMENTS__H
-#define __RETRIEVALARGUMENTS_H
+#define __RETRIEVALARGUMENTS__H
 
 class QueryArguments
 {
