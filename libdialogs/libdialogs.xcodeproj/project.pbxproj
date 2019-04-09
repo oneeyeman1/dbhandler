@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E305645122431DBF00F5576C /* retrievalarguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E305644922431DBE00F5576C /* retrievalarguments.cpp */; };
+		E305645222431DBF00F5576C /* quickselect.h in Headers */ = {isa = PBXBuildFile; fileRef = E305644A22431DBF00F5576C /* quickselect.h */; };
+		E305645322431DBF00F5576C /* retrievalarguments.h in Headers */ = {isa = PBXBuildFile; fileRef = E305644B22431DBF00F5576C /* retrievalarguments.h */; };
+		E305645422431DBF00F5576C /* createdatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E305644C22431DBF00F5576C /* createdatabase.cpp */; };
+		E305645522431DBF00F5576C /* createdatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E305644D22431DBF00F5576C /* createdatabase.h */; };
+		E305645622431DBF00F5576C /* quickselect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E305644E22431DBF00F5576C /* quickselect.cpp */; };
+		E305645722431DBF00F5576C /* queryoptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E305644F22431DBF00F5576C /* queryoptions.h */; };
+		E305645822431DBF00F5576C /* queryoptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E305645022431DBF00F5576C /* queryoptions.cpp */; };
 		E32A5006223469AE00A57BD1 /* bitmappanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A5002223469AE00A57BD1 /* bitmappanel.cpp */; };
 		E32A5007223469AE00A57BD1 /* bitmappanel.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A5003223469AE00A57BD1 /* bitmappanel.h */; };
 		E32A5008223469AE00A57BD1 /* newquery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A5004223469AE00A57BD1 /* newquery.cpp */; };
@@ -38,6 +46,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E305644922431DBE00F5576C /* retrievalarguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = retrievalarguments.cpp; sourceTree = "<group>"; };
+		E305644A22431DBF00F5576C /* quickselect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = quickselect.h; sourceTree = "<group>"; };
+		E305644B22431DBF00F5576C /* retrievalarguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = retrievalarguments.h; sourceTree = "<group>"; };
+		E305644C22431DBF00F5576C /* createdatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = createdatabase.cpp; sourceTree = "<group>"; };
+		E305644D22431DBF00F5576C /* createdatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = createdatabase.h; sourceTree = "<group>"; };
+		E305644E22431DBF00F5576C /* quickselect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = quickselect.cpp; sourceTree = "<group>"; };
+		E305644F22431DBF00F5576C /* queryoptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = queryoptions.h; sourceTree = "<group>"; };
+		E305645022431DBF00F5576C /* queryoptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = queryoptions.cpp; sourceTree = "<group>"; };
 		E32A5002223469AE00A57BD1 /* bitmappanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bitmappanel.cpp; sourceTree = "<group>"; };
 		E32A5003223469AE00A57BD1 /* bitmappanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitmappanel.h; sourceTree = "<group>"; };
 		E32A5004223469AE00A57BD1 /* newquery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = newquery.cpp; sourceTree = "<group>"; };
@@ -109,6 +125,14 @@
 		E3D139491D0D0CDE00A5A0F7 /* libdialogs */ = {
 			isa = PBXGroup;
 			children = (
+				E305644C22431DBF00F5576C /* createdatabase.cpp */,
+				E305644D22431DBF00F5576C /* createdatabase.h */,
+				E305645022431DBF00F5576C /* queryoptions.cpp */,
+				E305644F22431DBF00F5576C /* queryoptions.h */,
+				E305644E22431DBF00F5576C /* quickselect.cpp */,
+				E305644A22431DBF00F5576C /* quickselect.h */,
+				E305644922431DBE00F5576C /* retrievalarguments.cpp */,
+				E305644B22431DBF00F5576C /* retrievalarguments.h */,
 				E32A5002223469AE00A57BD1 /* bitmappanel.cpp */,
 				E32A5003223469AE00A57BD1 /* bitmappanel.h */,
 				E32A5004223469AE00A57BD1 /* newquery.cpp */,
@@ -149,12 +173,16 @@
 				E3D139521D0D0D7100A5A0F7 /* databasetype.h in Headers */,
 				E3E62CCA1EF71830005BBB37 /* addcolumnsdialog.h in Headers */,
 				E3D139571D0D0D7100A5A0F7 /* selecttables.h in Headers */,
+				E305645322431DBF00F5576C /* retrievalarguments.h in Headers */,
 				E33E6F871EAD310A003A0B92 /* jointype.h in Headers */,
+				E305645722431DBF00F5576C /* queryoptions.h in Headers */,
 				E33E6F851EAD310A003A0B92 /* getobjectname.h in Headers */,
+				E305645522431DBF00F5576C /* createdatabase.h in Headers */,
 				E3D139551D0D0D7100A5A0F7 /* odbcconfigure.h in Headers */,
 				E33E6F391E46EE1C003A0B92 /* foreignkey.h in Headers */,
 				E32A5009223469AE00A57BD1 /* newquery.h in Headers */,
 				E3E91D3D1DC678C900675CF8 /* createindex.h in Headers */,
+				E305645222431DBF00F5576C /* quickselect.h in Headers */,
 				E3E91D891DEE520B00675CF8 /* properties.h in Headers */,
 				E362C40320F475990089E44E /* odbccredentials.h in Headers */,
 			);
@@ -212,7 +240,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				E362C40220F475990089E44E /* odbccredentials.cpp in Sources */,
+				E305645122431DBF00F5576C /* retrievalarguments.cpp in Sources */,
 				E32A5006223469AE00A57BD1 /* bitmappanel.cpp in Sources */,
+				E305645822431DBF00F5576C /* queryoptions.cpp in Sources */,
 				E3D139561D0D0D7100A5A0F7 /* selecttables.cpp in Sources */,
 				E33E6F381E46EE1C003A0B92 /* foreignkey.cpp in Sources */,
 				E33E6F841EAD310A003A0B92 /* getobjectname.cpp in Sources */,
@@ -223,6 +253,8 @@
 				E32A5008223469AE00A57BD1 /* newquery.cpp in Sources */,
 				E3E91D881DEE520B00675CF8 /* properties.cpp in Sources */,
 				E3D139531D0D0D7100A5A0F7 /* dialogs.cpp in Sources */,
+				E305645622431DBF00F5576C /* quickselect.cpp in Sources */,
+				E305645422431DBF00F5576C /* createdatabase.cpp in Sources */,
 				E33E6F861EAD310A003A0B92 /* jointype.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
