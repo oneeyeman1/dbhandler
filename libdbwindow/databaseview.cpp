@@ -437,13 +437,26 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     query += "<unknown fields>\n";
                 else
                 {
-                    for( std::vector<std::wstring>::iterator it = queryFields.begin(); it < queryFields.end(); it++ )
+                    if( !quickSelect )
                     {
-                        query += (*it);
-                        if( it != queryFields.end() - 1 )
-                            query += ",";
+                        for( std::vector<std::wstring>::iterator it = queryFields.begin(); it < queryFields.end(); it++ )
+                        {
+                            query += (*it);
+                            if( it != queryFields.end() - 1 )
+                                query += ",";
+                        }
+                        query += "\n";
                     }
-                    query += "\n";
+                    else
+                    {
+                        for( std::vector<wxString>::iterator it = m_selectFields.begin(); it < m_selectFields.end(); ++it )
+                        {
+                            query += (*it);
+                            if( it != m_selectFields.end() - 1 )
+                                query += ",";
+                        }
+                        query += "\n";
+                    }
                 }
                 query += "FROM ";
             }
