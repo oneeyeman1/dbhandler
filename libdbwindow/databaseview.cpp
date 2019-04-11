@@ -144,7 +144,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
     }
     wxPoint ptCanvas;
-    auto mainSizer = new wxBoxSizer( wxVERTICAL );
+    mainSizer = new wxBoxSizer( wxHORIZONTAL );
     sizer = new wxBoxSizer( wxVERTICAL );
 #ifdef __WXOSX__
     wxRect parentRect = parent->GetRect();
