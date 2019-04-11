@@ -40,6 +40,7 @@
 #include "syntaxproppage.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
+#include "designcanvas.h"
 #include "databaseview.h"
 #include "databasetemplate.h"
 

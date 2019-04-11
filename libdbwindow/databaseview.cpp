@@ -54,6 +54,7 @@
 #include "wherehavingpage.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
+#include "designcanvas.h"
 #include "databaseview.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
@@ -143,6 +144,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
     }
     wxPoint ptCanvas;
+    auto mainSizer = new wxBoxSizer( wxVERTICAL );
     sizer = new wxBoxSizer( wxVERTICAL );
 #ifdef __WXOSX__
     wxRect parentRect = parent->GetRect();
@@ -199,7 +201,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_queryBook->Show( false );
         m_queryBook->Bind( wxEVT_NOTEBOOK_PAGE_CHANGED, &DrawingView::OnSQLNotebookPageChanged, this );
     }
-    m_frame->SetSizer( sizer );
+    mainSizer->Add( sizer, 0, wxEXPAND, 0 );
+    m_designCanvas = new DesignCanvas( this );
+    mainSizer->Add( m_designCanvas, 0, wxEXPAND, 0 );
+    m_frame->SetSizer( mainSizer );
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
@@ -395,10 +400,18 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     }
                     if( !quickSelect )
                     {
+                        m_designCanvas->Show( false );
                         m_fields->Show( true );
                         m_queryBook->Show( true );
                         m_frame->Layout();
                         sizer->Layout();
+                    }
+                    else
+                    {
+                        m_fields->Show( false );
+                        m_canvas->Show( false );
+                        m_queryBook->Show( false );
+                        m_designCanvas->Show( true );
                     }
 #ifdef __WXGTK__
                     wxDocMDIParentFrame *parent = wxDynamicCast( m_frame->GetMDIParent(), wxDocMDIParentFrame );

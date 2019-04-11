@@ -35,6 +35,7 @@
 #include "syntaxproppage.h"
 #include "databasedoc.h"
 #include "databasecanvas.h"
+#include "designcanvas.h"
 #include "databaseview.h"
 #include "commentfieldshape.h"
 #include "commenttableshape.h"
