@@ -433,7 +433,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             {
                 std::vector<std::wstring> queryFields = GetDocument()->GetQueryFields();
                 query = "SELECT ";
-                if( queryFields.size() == 0 )
+                if( !quickSelect && queryFields.size() == 0 )
                     query += "<unknown fields>\n";
                 else
                 {
@@ -460,6 +460,13 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 }
                 query += "FROM ";
             }
+        }
+        if( quickSelect )
+        {
+            if( db->GetTableVector().GetDatabaseType() == L"SQLite" )
+                tables.push_back( m_selectTableName[0].substr( m_selectTableName[0].find_last_of( '.' ) + 1 ) );
+            else
+                tables.push_back( m_selectTableName[0] );
         }
         ((DrawingDocument *) GetDocument())->AddTables( tables );
         ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );

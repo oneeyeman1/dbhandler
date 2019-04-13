@@ -23,6 +23,11 @@ DesignCanvas::DesignCanvas(wxView *view)
     SetCanvasColour( *wxWHITE );
 }
 
-DesignCanvas::~DesignCanvas ()
+DesignCanvas::~DesignCanvas()
 {
+}
+
+void DesignCanvas::SetQuickQueryFields(const std::vector<wxString> &fields)
+{
+
 }
