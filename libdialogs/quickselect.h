@@ -8,7 +8,7 @@ public:
     const wxListBox *GetQueryTable();
     void OnOkEnableUI(wxUpdateUIEvent &event);
     void OnAddAllUpdateUI(wxUpdateUIEvent &event);
-    void OnSelectingTable(wxCommandEvent &event);
+    void OnSelectingTable(wxMouseEvent &event);
     void OnDisplayComment(wxMouseEvent &event);
 protected:
     void do_layout();

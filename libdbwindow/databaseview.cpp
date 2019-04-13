@@ -461,7 +461,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 query += "FROM ";
             }
         }
-        if( quickSelect )
+        if( quickSelect && m_selectTableName.size() > 0 )
         {
             if( db->GetTableVector().GetDatabaseType() == L"SQLite" )
                 tables.push_back( m_selectTableName[0].substr( m_selectTableName[0].find_last_of( '.' ) + 1 ) );

@@ -58,7 +58,7 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_ok->Bind( wxEVT_UPDATE_UI, &QuickSelect::OnOkEnableUI, this );
     m_addAll->Bind( wxEVT_UPDATE_UI, &QuickSelect::OnAddAllUpdateUI, this );
     m_addAll->Bind( wxEVT_BUTTON, &QuickSelect::OnAllFieldsSelected, this );
-    m_tables->Bind( wxEVT_LISTBOX, &QuickSelect::OnSelectingTable, this );
+    m_tables->Bind( wxEVT_LEFT_DOWN, &QuickSelect::OnSelectingTable, this );
     m_fields->Bind( wxEVT_LISTBOX, &QuickSelect::OnFieldSelected, this );
     m_tables->Bind( wxEVT_RIGHT_DOWN, &QuickSelect::OnDisplayComment, this);
     m_fields->Bind( wxEVT_RIGHT_DOWN, &QuickSelect::OnDisplayComment, this);
@@ -168,50 +168,78 @@ void QuickSelect::OnAddAllUpdateUI(wxUpdateUIEvent &event)
 
 void QuickSelect::FillTableListBox()
 {
+    std::wstring type = m_db->GetTableVector().m_type;
+    std::wstring subType = m_db->GetTableVector().m_subtype;
     for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector ().m_tables.begin (); it != m_db->GetTableVector ().m_tables.end (); ++it )
     {
-        wxString name( (*it).first );
         for( std::vector<DatabaseTable *>::iterator it1 = ( *it ).second.begin (); it1 < ( *it ).second.end (); ++it1 )
         {
-            m_tables->Append( name + "." + (*it1)->GetTableName() );
+            std::wstring tableName = (*it1)->GetTableName();
+            if( type == L"SQLite" && ( tableName.substr( 0, 6 ) == L"sqlite" || tableName.substr( 0, 3 ) == L"sys" ) )
+                continue;
+            if( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
+            {
+                if( tableName.substr( 0, 5 ) == L"abcat" || ( (*it1)->GetSchemaName() == L"sys" || (*it1)->GetSchemaName() == L"INFORMATION_SCHEMA" ) )
+                    continue;
+            }
+            else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
+            {
+                if( tableName.substr( 0, 5 ) == L"abcat" || (*it1)->GetSchemaName() == L"information_schema" )
+                    continue;
+            }
+            else if( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" )
+            {
+                if( tableName.substr( 0, 5 ) == L"abcat" || ( (*it1)->GetSchemaName() == L"information_schema" || (*it1)->GetSchemaName() == L"pg_catalog" ) )
+                    continue;
+            }
+            m_tables->Append( tableName );
         }
     }
 }
 
-void QuickSelect::OnSelectingTable(wxCommandEvent &WXUNUSED(event))
+void QuickSelect::OnSelectingTable(wxMouseEvent &event)
 {
     auto count = m_tables->GetCount();
     auto found = false;
-    wxString selectedTable = m_tables->GetStringSelection();
-    if( count > 1 )
+    auto item = m_tables->HitTest( event.GetPosition() );
+    if( item != wxNOT_FOUND )
     {
-        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++it )
+        wxString selectedTable = m_tables->GetString( item );
+        if( count > 1 )
         {
-            wxString name( (*it).first );
-            for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
+            for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++it )
             {
-                if( selectedTable == name + "." + (*it1)->GetTableName() )
+                for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
                 {
-                    found = true;
-                    m_tableFields = (*it1)->GetFields();
-                    for( std::vector<Field *>::iterator it2 = m_tableFields.begin(); it2 < m_tableFields.end(); ++it2 )
-                        m_fields->Append( (*it2)->GetFieldName() );
+                    if( selectedTable == (*it1)->GetTableName() )
+                    {
+                        found = true;
+                        m_tableFields = (*it1)->GetFields();
+                        for( std::vector<Field *>::iterator it2 = m_tableFields.begin(); it2 < m_tableFields.end(); ++it2 )
+                            m_fields->Append( (*it2)->GetFieldName() );
+                    }
                 }
             }
+            m_tables->Clear();
+            m_tables->Append( selectedTable );
+            m_tables->SetSelection( 0 );
         }
-        m_tables->Clear();
-        m_tables->Append( selectedTable );
-        m_tables->SetSelection( 0 );
+        else
+        {
+            m_tables->Delete( 0 );
+            m_fields->Clear();
+            auto countGrid = m_grid->GetNumberCols();
+            while( countGrid > 0 )
+            {
+                m_grid->DeleteCols();
+                countGrid = m_grid->GetNumberCols();
+            }
+            m_tableFields.clear();
+            FillTableListBox();
+            m_tables->DeselectAll();
+        }
     }
-    else
-    {
-        m_tables->Delete( 0 );
-        m_fields->Clear();
-        for( auto i = 0; i < m_grid->GetNumberCols(); ++i )
-            m_grid->DeleteCols();
-        m_tableFields.clear();
-        FillTableListBox();
-    }
+    event.Skip();
 }
 
 void QuickSelect::OnDisplayComment(wxMouseEvent &event)
