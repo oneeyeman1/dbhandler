@@ -202,7 +202,9 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
     auto count = m_tables->GetCount();
     auto found = false;
     auto item = m_tables->HitTest( event.GetPosition() );
-    if( item != wxNOT_FOUND )
+    if( item == wxNOT_FOUND )
+        event.Skip();
+    else
     {
         wxString selectedTable = m_tables->GetString( item );
         if( count > 1 )
@@ -223,6 +225,7 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
             m_tables->Clear();
             m_tables->Append( selectedTable );
             m_tables->SetSelection( 0 );
+            event.Skip();
         }
         else
         {
@@ -236,10 +239,9 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
             }
             m_tableFields.clear();
             FillTableListBox();
-            m_tables->DeselectAll();
+            m_tables->SetStringSelection( m_tables->GetString( 0 ), false );
         }
     }
-    event.Skip();
 }
 
 void QuickSelect::OnDisplayComment(wxMouseEvent &event)
