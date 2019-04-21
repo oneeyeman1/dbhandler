@@ -24,7 +24,7 @@ public:
     ViewType GetViewType();
     WhereHavingPage *GetWherePage();
     WhereHavingPage *GetHavingPage();
-    void AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName);
+    void AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName, bool quickSelect);
     void HideShowSQLBox(bool show);
     void SetSynchronisationObject(wxCriticalSection &cs);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
@@ -76,8 +76,9 @@ private:
     SyntaxPropPage *m_page6;
     wxCriticalSection *pcs;
     int m_source, m_presentation;
+    std::vector<Field *> m_queryFields;
     std::vector<wxString> m_selectTableName;
-    std::vector<wxString> m_selectFields;
+//    std::vector<wxString> m_selectFields;
     std::vector<QueryArguments> m_arguments;
     DesignCanvas *m_designCanvas;
     wxDECLARE_EVENT_TABLE();

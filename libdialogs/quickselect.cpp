@@ -430,15 +430,37 @@ void QuickSelect::OnFieldsSetFocus(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-std::vector<wxString> &QuickSelect::GetQueryFields()
+std::vector<Field *> &QuickSelect::GetQueryFields()
 {
     return m_queryFields;
 }
 
 void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
 {
+    DatabaseTable *table;
+    auto found = false;
+    auto it1 = m_db->GetTableVector().m_tables[m_db->GetTableVector().m_dbName];
+    for( auto it2 = it1.begin(); it2 < it1.end() && !found; ++it2 )
+    {
+        if( ( *it2 )->GetTableName () == m_tables->GetStringSelection () )
+        {
+            table = (*it2);
+            found = true;
+        }
+    }
+    found = false;
     for( auto i = 0; i < m_grid->GetNumberCols(); ++i )
-        m_queryFields.push_back( m_grid->GetCellValue( 0, i ) );
+    {
+        for( auto it3 = table->GetFields().begin(); it3 < table->GetFields().end() && !found; ++it3 )
+        {
+            if( m_grid->GetCellValue( 0, i ) == (*it3)->GetFieldName() )
+            {
+                m_queryFields.push_back( (*it3) );
+                found = true;
+            }
+        }
+        found = false;
+    }
     EndModal( wxID_OK );
 }
 

@@ -68,7 +68,7 @@ typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, s
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
-typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<wxString> &, std::vector<wxString> &);
+typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<wxString> &, std::vector<Field *> &);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 typedef int (*RETRIEVEARGUMENTS)(wxWindow *, std::vector<QueryArguments> &arguments, const wxString &, const wxString &);
 
@@ -395,7 +395,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     else
                     {
                         QUICKSELECT func2 = (QUICKSELECT) lib.GetSymbol( "QuickSelectDlg" );
-                        res = func2( m_frame, db, m_selectTableName, m_selectFields );
+                        res = func2( m_frame, db, m_selectTableName, m_queryFields );
                         quickSelect = true;
                     }
                     if( !quickSelect )
@@ -426,6 +426,8 @@ void DrawingView::GetTablesForView(Database *db, bool init)
         {
             TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
             res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
+            m_canvas->Show( true );
+            sizer->Layout();
         }
         if( m_type == QueryView )
         {
@@ -449,10 +451,10 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     }
                     else
                     {
-                        for( std::vector<wxString>::iterator it = m_selectFields.begin(); it < m_selectFields.end(); ++it )
+                        for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
                         {
-                            query += (*it);
-                            if( it != m_selectFields.end() - 1 )
+                            query += (*it)->GetFieldName();
+                            if( it != m_queryFields.end() - 1 )
                                 query += ",";
                         }
                         query += "\n";
@@ -468,10 +470,15 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             else
                 tables.push_back( m_selectTableName[0] );
         }
-        ((DrawingDocument *) GetDocument())->AddTables( tables );
-        ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
-        if( m_type == QueryView )
-            m_page6->SetSyntaxText(query);
+    }
+    ((DrawingDocument *) GetDocument())->AddTables( tables );
+    ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
+    if( m_type == QueryView )
+    {
+        m_page6->SetSyntaxText(query);
+        m_canvas->AddQuickQueryFields( m_selectTableName[0], m_queryFields, quickSelect );
+        if( quickSelect ) ;
+//            m_designCanvas->AddFieldToCanvas( m_selectFields;
     }
 //    return tables;
 }
@@ -908,7 +915,7 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
     delete lib;
 }
 
-void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName)
+void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName, bool quickSelect)
 {
     Field *fld = const_cast<FieldShape &>( field ).GetField();
     wxString name = tableName + "." + fld->GetFieldName();
@@ -929,7 +936,8 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
             temp = temp.substr( 0, temp.Find( "FROM" ) - 1 );
             query.Replace( temp, temp + ", " + name + " " );
         }
-        m_selectFields.push_back( name );
+        if( !quickSelect )
+            m_queryFields.push_back( fld );
         m_page6->SetSyntaxText( query );
     }
     else
@@ -956,7 +964,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
             }
             query = temp + temp1;
         }
-        m_selectFields.erase( std::remove( m_selectFields.begin(), m_selectFields.end(), name ), m_selectFields.end() );
+        m_queryFields.erase( std::remove( m_queryFields.begin(), m_queryFields.end(), fld ), m_queryFields.end() );
         m_page6->SetSyntaxText( query );
     }
 }
@@ -990,7 +998,7 @@ void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstr
             if( field2add && isAdd ? !field2add->IsSelected() : field2add->IsSelected() )
             {
                 field2add->Select( isAdd );
-                AddFieldToQuery( *field2add, isAdd, tableName );
+                AddFieldToQuery( *field2add, isAdd, tableName, false );
             }
             node = node->GetNext();
         }

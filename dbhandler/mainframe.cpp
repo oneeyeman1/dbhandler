@@ -249,6 +249,9 @@ void MainFrame::DatabaseMenu()
 
 void MainFrame::QueryMenu()
 {
+    m_menuFile->Insert( 2, wxID_NEW, _( "New...\tCtrl+N" ), _( "Create new query" ) );
+    m_menuFile->Insert( 3, wxID_OPEN, _( "Open...\tCtrl+O" ), _( "Open an existing query" ) );
+    m_menuFile->InsertSeparator( 4 );
     wxMenu *designMenu = new wxMenu;
     designMenu->Append( wxID_UNDOALL, _( "Undo All" ), _( "Undo All" ) );
     designMenu->AppendSeparator();
