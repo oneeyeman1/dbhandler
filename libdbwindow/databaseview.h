@@ -62,7 +62,7 @@ protected:
     void CreateViewToolBar();
 private:
     bool m_isActive;
-    wxToolBar *m_tb;
+    wxToolBar *m_tb, *m_styleBar;
     wxFrame *m_log;
     wxTextCtrl *m_text;
     DatabaseCanvas *m_canvas;

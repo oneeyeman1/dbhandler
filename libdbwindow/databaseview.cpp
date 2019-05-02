@@ -245,6 +245,13 @@ void DrawingView::CreateViewToolBar()
         m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
     else
         m_tb->ClearTools();
+    if( m_type == QueryView )
+    {
+        if( !m_styleBar )
+            m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
+        else
+            m_styleBar->ClearTools();
+    }
     if( m_type == DatabaseView )
     {
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
