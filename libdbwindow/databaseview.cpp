@@ -210,7 +210,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_queryBook->Show( false );
         m_queryBook->Bind( wxEVT_NOTEBOOK_PAGE_CHANGED, &DrawingView::OnSQLNotebookPageChanged, this );
         m_designCanvas = new DesignCanvas( this );
-        mainSizer->Add( m_designCanvas, 0, wxEXPAND, 0 );
+        mainSizer->Add( m_designCanvas, 1, wxEXPAND, 0 );
         m_canvas->Show( false );
     }
     mainSizer->Add( sizer, 1, wxEXPAND, 0 );
