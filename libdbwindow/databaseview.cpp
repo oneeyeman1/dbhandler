@@ -114,7 +114,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
     m_log = NULL;
     m_isActive = false;
-    m_tb = NULL;
+    m_tb = m_styleBar = NULL;
     wxToolBar *tb = NULL;
     m_isCreated = false;
     m_fields = NULL;
@@ -126,15 +126,15 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     wxRect clientRect = parent->GetClientRect();
     wxWindowList children = parent->GetChildren();
-    bool found = false;
-    for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
+    for( wxWindowList::iterator it = children.begin(); it != children.end(); it++ )
     {
         tb = wxDynamicCast( *it, wxToolBar );
-        if( m_tb && m_tb->GetName() == "ViewBar" )
+        if( tb && tb->GetName() == "ViewBar" )
         {
-            found = true;
             m_tb = tb;
         }
+        if( tb && tb->GetName() == "StyleBar" )
+            m_styleBar = tb;
     }
     wxString title;
     if( m_type == QueryView )
@@ -245,6 +245,13 @@ void DrawingView::CreateViewToolBar()
         m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
     else
         m_tb->ClearTools();
+    if( m_type == QueryView )
+    {
+        if( !m_styleBar )
+            m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
+        else
+            m_styleBar->ClearTools();
+    }
     if( m_type == QueryView )
     {
         if( !m_styleBar )
@@ -419,6 +426,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     {
                         m_designCanvas->Show( false );
                         m_fields->Show( true );
+                        m_canvas->Show( true );
                         m_queryBook->Show( true );
                         m_frame->Layout();
                         sizer->Layout();
