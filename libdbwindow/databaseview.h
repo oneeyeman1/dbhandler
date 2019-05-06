@@ -63,6 +63,8 @@ protected:
 private:
     bool m_isActive;
     wxToolBar *m_tb, *m_styleBar;
+    wxTextCtrl *m_fieldText;
+    wxComboBox *m_fontName, *m_fontSize;
     wxFrame *m_log;
     wxTextCtrl *m_text;
     DatabaseCanvas *m_canvas;

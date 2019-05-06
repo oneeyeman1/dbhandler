@@ -121,6 +121,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_queryBook = NULL;
     m_page2 = m_page4 = NULL;
     m_page6 = NULL;
+    m_fieldText = NULL;
+    m_fontName = m_fontSize = NULL;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -209,7 +211,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         sizer->Add( m_queryBook, 0, wxEXPAND, 0 );
         m_queryBook->Show( false );
         m_queryBook->Bind( wxEVT_NOTEBOOK_PAGE_CHANGED, &DrawingView::OnSQLNotebookPageChanged, this );
-        m_designCanvas = new DesignCanvas( this );
+        m_designCanvas = new DesignCanvas( this, ptCanvas );
         mainSizer->Add( m_designCanvas, 1, wxEXPAND, 0 );
         m_canvas->Show( false );
     }
@@ -268,11 +270,24 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
+        m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
+        m_styleBar->AddControl( m_fieldText );
+        m_fontName = new wxComboBox( m_styleBar, wxID_ANY, "" );
+        m_styleBar->AddControl( m_fontName );
+        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "" );
+        m_styleBar->AddControl( m_fontSize );
     }
     m_tb->Realize();
+    if( m_styleBar )
+        m_styleBar->Realize();
     wxMDIClientWindow *frame = (wxMDIClientWindow *) parent->GetClientWindow();
     m_tb->SetSize( 0, 0, size.x, wxDefaultCoord );
     offset = m_tb->GetSize().y;
+    if( m_styleBar )
+    {
+        m_styleBar->SetSize( 0, offset, size.x, wxDefaultCoord );
+        offset += m_styleBar->GetSize().y;
+    }
     frame->SetSize( 0, offset, size.x, size.y - offset );
     m_frame->SetSize( 0, 0, size.x, size.y - offset - 2 );
 }
