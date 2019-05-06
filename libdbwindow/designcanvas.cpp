@@ -17,7 +17,7 @@
 #include "designfield.h"
 #include "designcanvas.h"
 
-DesignCanvas::DesignCanvas(wxView *view)
+DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas()
 {
     m_view = view;
     startPoint.x = 1;

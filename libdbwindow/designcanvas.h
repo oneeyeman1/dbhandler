@@ -3,7 +3,7 @@ class DesignCanvas : public wxSFShapeCanvas
 {
 public:
     enum MODE { modeDESIGN, modeTABLE, modeVIEW, modeLine };
-    DesignCanvas (wxView *view);
+    DesignCanvas (wxView *view, const wxPoint &point);
     virtual ~DesignCanvas ();
     void SetQuickQueryFields(const std::vector<wxString> &fields);
     void AddFieldToCanvas(const wxFont labelFont, const wxFont *dataFont, const Field *label);
