@@ -45,6 +45,7 @@
 #include "syntaxproppage.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
+#include "designcanvas.h"
 #include "databaseview.h"
 #include "ErdForeignKey.h"
 
@@ -105,13 +106,15 @@ Database *DrawingDocument::GetDatabase()
 void DrawingDocument::AddTables(const std::vector<wxString> &selections)
 {
     bool found = false;
+    std::wstring dbType = m_db->GetTableVector().m_type;
     std::map<std::wstring, std::vector<DatabaseTable *> > tables = m_db->GetTableVector().m_tables;
     std::vector<DatabaseTable *> tableVec = tables.at( m_db->GetTableVector().m_dbName );
     for( std::vector<wxString>::const_iterator it = selections.begin(); it < selections.end(); it++ )
     {
         for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end() && !found; it1++ )
         {
-            if( (*it).ToStdWstring() == (*it1)->GetTableName() )
+            if( ( dbType != L"SQLite" && (*it).ToStdWstring() == (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() ) ||
+                ( dbType == L"SQLite" && (*it).ToStdWstring() == (*it1)->GetTableName() ) )
             {
                 DatabaseTable *dbTable = (*it1);
                 MyErdTable *table = new MyErdTable( dbTable, dynamic_cast<DrawingView *>( GetFirstView() )->GetViewType() );

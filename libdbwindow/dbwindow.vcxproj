@@ -44,6 +44,10 @@
     <ClInclude Include="databasedoc.h" />
     <ClInclude Include="databasetemplate.h" />
     <ClInclude Include="databaseview.h" />
+    <ClInclude Include="designcanvas.h" />
+    <ClInclude Include="designfield.h" />
+    <ClInclude Include="designlabel.h" />
+    <ClInclude Include="divider.h" />
     <ClInclude Include="ErdForeignKey.h" />
     <ClInclude Include="ErdLineShape.h" />
     <ClInclude Include="FieldShape.h" />
@@ -68,6 +72,10 @@
     <ClCompile Include="databasetemplate.cpp" />
     <ClCompile Include="databaseview.cpp" />
     <ClCompile Include="dbview.cpp" />
+    <ClCompile Include="designcanvas.cpp" />
+    <ClCompile Include="designfield.cpp" />
+    <ClCompile Include="designlabel.cpp" />
+    <ClCompile Include="divider.cpp" />
     <ClCompile Include="ErdForeignKey.cpp" />
     <ClCompile Include="ErdLineShape.cpp" />
     <ClCompile Include="FieldShape.cpp" />

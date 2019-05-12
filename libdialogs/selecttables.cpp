@@ -24,7 +24,7 @@
 #include "database.h"
 #include "selecttables.h"
 
-SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, bool isTableView, const wxPoint& pos, const wxSize& size, long style):
+SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, bool isTableView, const int type, const wxPoint& pos, const wxSize& size, long style):
     wxDialog(parent, id, title, pos, size, style)
 {
     m_db = db;
@@ -40,6 +40,8 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
         m_readOnly = new wxCheckBox( m_panel, wxID_ANY, _( "&Read-Only" ) );
     m_open = new wxButton( m_panel, wxID_ANY, _( "&Open" ) );
     m_new = new wxButton( m_panel, wxID_ANY, _( "&New..." ) );
+    if( type == 1 )
+        m_new->Enable( false );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "&Cancel" ) );
     m_help = new wxButton( m_panel, wxID_ANY, _( "&Help" ) );
 

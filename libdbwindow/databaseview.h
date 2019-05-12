@@ -24,7 +24,7 @@ public:
     ViewType GetViewType();
     WhereHavingPage *GetWherePage();
     WhereHavingPage *GetHavingPage();
-    void AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName);
+    void AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName, bool quickSelect);
     void HideShowSQLBox(bool show);
     void SetSynchronisationObject(wxCriticalSection &cs);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
@@ -51,6 +51,8 @@ public:
     void OnSelectAllFields(wxCommandEvent &event);
     void OnSQLNotebookPageChanged(wxBookCtrlEvent &event);
     void OnDistinct(wxCommandEvent &event);
+    void OnQueryChange(wxCommandEvent &event);
+    void OnRetrievalArguments(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
@@ -60,7 +62,9 @@ protected:
     void CreateViewToolBar();
 private:
     bool m_isActive;
-    wxToolBar *m_tb;
+    wxToolBar *m_tb, *m_styleBar;
+    wxTextCtrl *m_fieldText;
+    wxComboBox *m_fontName, *m_fontSize;
     wxFrame *m_log;
     wxTextCtrl *m_text;
     DatabaseCanvas *m_canvas;
@@ -69,19 +73,23 @@ private:
     FieldWindow *m_fields;
     wxDocMDIChildFrame *m_frame;
     wxNotebook *m_queryBook;
-    wxBoxSizer *sizer;
+    wxBoxSizer *sizer, *mainSizer;
     WhereHavingPage *m_page2, *m_page4;
     SyntaxPropPage *m_page6;
     wxCriticalSection *pcs;
     int m_source, m_presentation;
+    std::vector<Field *> m_queryFields;
     std::vector<wxString> m_selectTableName;
-    std::vector<wxString> m_selectFields;
+//    std::vector<wxString> m_selectFields;
+    std::vector<QueryArguments> m_arguments;
+    DesignCanvas *m_designCanvas;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
 
 wxDECLARE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);
 wxDECLARE_EVENT(wxEVT_SET_FIELD_PROPERTY, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_CHANGE_QUERY, wxCommandEvent);
 
 #define wxID_DATABASEWINDOW 2
 

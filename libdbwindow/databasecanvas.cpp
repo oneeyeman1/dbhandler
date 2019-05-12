@@ -35,6 +35,7 @@
 #include "syntaxproppage.h"
 #include "databasedoc.h"
 #include "databasecanvas.h"
+#include "designcanvas.h"
 #include "databaseview.h"
 #include "commentfieldshape.h"
 #include "commenttableshape.h"
@@ -319,7 +320,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
                 tbl->Select( false );
             Refresh();
             if( fld )
-                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), const_cast<DatabaseTable &>( tbl->GetTable() ).GetTableName() );
+                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), const_cast<DatabaseTable &>( tbl->GetTable() ).GetTableName(), false );
         }
     }
 }
@@ -980,4 +981,26 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
         }
         m_oldSelectedSign = NULL;
     }
+}
+
+void DatabaseCanvas::AddQuickQueryFields(const wxString &tbl, std::vector<Field *> &quickSelectFields, bool quickSelect)
+{
+    ShapeList shapes;
+    m_pManager.GetShapes( CLASSINFO( FieldShape ), shapes );
+    for( ShapeList::iterator it = shapes.begin (); it != shapes.end (); ++it )
+    {
+        auto fld = wxDynamicCast( (*it), FieldShape );
+        auto fieldName = wxDynamicCast( (*it), FieldShape )->GetField()->GetFieldName();
+        auto found = false;
+        for( std::vector<Field *>::iterator it2 = quickSelectFields.begin(); it2 < quickSelectFields.end() && !false; ++it2 )
+        {
+            if( (*it2)->GetFieldName() == fieldName )
+            {
+                found = true;
+                (*it)->Select( true );
+                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), tbl.ToStdWstring(), quickSelect );
+            }
+        }
+    }
+    Refresh();
 }

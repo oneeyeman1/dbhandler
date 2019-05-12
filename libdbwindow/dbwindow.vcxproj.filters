@@ -73,6 +73,18 @@
     <ClInclude Include="commentfieldshape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="designcanvas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designfield.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="designlabel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="divider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="constraint.cpp">
@@ -133,6 +145,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="commenttableshape.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="designcanvas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="designfield.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="designlabel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="divider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

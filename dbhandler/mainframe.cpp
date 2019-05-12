@@ -249,27 +249,53 @@ void MainFrame::DatabaseMenu()
 
 void MainFrame::QueryMenu()
 {
-    wxMenu *designMenu = new wxMenu;
-    designMenu->Append( wxID_UNDOALL, _( "Undo All" ), _( "Undo All" ) );
-    designMenu->AppendSeparator();
-    designMenu->AppendCheckItem( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ) );
-    designMenu->Append( wxID_PREVIEW, _( "Preview" ), _( "Preview" ) );
-    designMenu->AppendSeparator();
-    designMenu->Append( wxID_SELECTTABLE, _( "Select Tables..." ), _( "Select additional tables for query" ) );
-    designMenu->Append( wxID_ARRANGETABLES, _( "Arrange Tables" ), _( "Arrange Tables" ) );
-    designMenu->Append( wxID_UNIONS, _( "Unions..." ), _( "Unions" ) );
-    designMenu->Append( wxID_RETRIEVEARGS, _( "Retrieval Arguments..." ), _( "Define Retrieval Arguments" ) );
-    designMenu->Append( wxID_CHECKOPTION, _( "Check Option" ), _( "Check Option" ) );
-    designMenu->AppendCheckItem( wxID_DISTINCT, _( "Distinct" ), _( "Use Distinct in query" ) );
-    designMenu->AppendSeparator();
-    designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert to Syntax" ), _( "Convert to Syntax" ) );
-    designMenu->AppendSeparator();
-    wxMenu *showMenu = new wxMenu;
-    designMenu->AppendSubMenu( showMenu, _( "Show" ), _( "Show" ) );
-    designMenu->AppendSeparator();
-    designMenu->Append( wxID_CUSTOMCOLORS, _( "Custom Colors..." ), _( "Define custom coloring scheme" ) );
-    designMenu->Append( wxID_OPTIONS, _( "Options..." ), _( "Query view options" ) );
-    GetMenuBar()->Insert( 1, designMenu, _( "Design" ) );
+    m_menuFile->Insert( 2, wxID_NEW, _( "New...\tCtrl+N" ), _( "Create new query" ) );
+    m_menuFile->Insert( 3, wxID_OPEN, _( "Open...\tCtrl+O" ), _( "Open an existing query" ) );
+    m_menuFile->InsertSeparator( 4 );
+    auto editMenu = new wxMenu;
+    editMenu->Append( wxID_UNDOALL, _( "Undo All" ), _( "Undo All" ) );
+    editMenu->AppendSeparator();
+    editMenu->Append( wxID_CUT, _( "Cut" ), _( "Cut" ) );
+    editMenu->Append( wxID_COPY, _( "Copy" ), _( "Copy" ) );
+    editMenu->Append( wxID_PASTE, _( "Paste" ), _( "Paste" ) );
+    editMenu->Append( wxID_CLEAR, _( "Clear" ), _( "Clear" ) );
+    editMenu->AppendSeparator();
+    auto select = new wxMenu;
+    select->Append( wxID_SELECTALL, _( "Select All" ), _( "Select All" ) );
+    select->Append( wxID_SELECTABOVE, _( "Select Above" ), _( "Select Above" ) );
+    select->Append( wxID_SELECTBELOW, _( "Select Below" ), _( "Select Below" ) );
+    select->Append( wxID_SELECTLEFT, _( "Select Left" ), _( "Select Left" ) );
+    select->Append( wxID_SELECTRIGHT, _( "Select Right" ), _( "Select Right" ) );
+    select->Append( wxID_SELECTCOLUMNS, _( "Select Columns" ), _( "Select Columns" ) );
+    select->Append( wxID_SELECTTEXT, _( "Select Text" ), _( "Select Text" ) );
+    editMenu->AppendSubMenu( select, _( "Select" ), _( "Select" ) );
+    editMenu->Append( wxID_BRINGTOFRONT, _( "Bring to Front" ), _( "Bring to Front" ) );
+    editMenu->Append( wxID_SENDTOBACK, ( "Send to Back" ), ( "Send to Back" ) );
+    editMenu->AppendSeparator();
+    auto format = new wxMenu;
+    format->Append( wxID_FORMATCURRENCY, _( "Currency" ), _( "Currency" ) );
+    format->Append( wxID_FORMATFORMAT, _( "Format" ), _( "Format" ) );
+    editMenu->AppendSubMenu( format, _( "Format" ), _( "Format" ) );
+    editMenu->Append( wxID_PROPERTIES, _( "Properties" ), ( "Properties" ) );
+    editMenu->AppendCheckItem( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ) );
+    editMenu->Append( wxID_PREVIEW, _( "Preview" ), _( "Preview" ) );
+    editMenu->AppendSeparator();
+    editMenu->Append( wxID_SELECTTABLE, _( "Select Tables..." ), _( "Select additional tables for query" ) );
+    editMenu->Append( wxID_ARRANGETABLES, _( "Arrange Tables" ), _( "Arrange Tables" ) );
+    editMenu->Append( wxID_UNIONS, _( "Unions..." ), _( "Unions" ) );
+    editMenu->Append( wxID_RETRIEVEARGS, _( "Retrieval Arguments..." ), _( "Define Retrieval Arguments" ) );
+    editMenu->Append( wxID_CHECKOPTION, _( "Check Option" ), _( "Check Option" ) );
+    editMenu->AppendCheckItem( wxID_DISTINCT, _( "Distinct" ), _( "Use Distinct in query" ) );
+    editMenu->AppendSeparator();
+    editMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert to Syntax" ), _( "Convert to Syntax" ) );
+    editMenu->AppendSeparator();
+    wxMenu *objectMenu = new wxMenu;
+    objectMenu->Append( wxID_SELECTOBJECT, _( "Select Object" ), _( "Select Object" ) );
+    objectMenu->Append( wxID_TEXTOBJECT, _( "Text" ), _( "Text" ) );
+    objectMenu->Append( wxID_PICTUREOBJECT, _( "Picture" ), _( "Picture" ) );
+    objectMenu->Append( wxID_LINEOBJECT, _( "Line" ), _( "Line" ) );
+    GetMenuBar()->Insert( 1, editMenu, _( "Edit" ) );
+    GetMenuBar()->Insert( 2, objectMenu, _( "Object" ) );
 }
 
 void MainFrame::TableMenu()

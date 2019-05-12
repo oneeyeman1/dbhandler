@@ -56,6 +56,7 @@
 #include "bitmappanel.h"
 #include "newquery.h"
 #include "quickselect.h"
+#include "retrievalarguments.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -153,13 +154,13 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
     return res;
 }
 
-extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std::vector<wxString> &tableNames, std::vector<std::wstring> &names, bool isTableView)
+extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std::vector<wxString> &tableNames, std::vector<std::wstring> &names, bool isTableView, const int type)
 {
     int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    SelectTables dlg( parent, wxID_ANY, "", db, names, isTableView );
+    SelectTables dlg( parent, wxID_ANY, "", db, names, isTableView, type );
     if( isTableView )
         dlg.Center();
 	res = dlg.ShowModal();
@@ -278,7 +279,7 @@ extern "C" WXEXPORT int NewQueryDlg(wxWindow *parent, int &source, int &presenta
     return res;
 }
 
-extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std::vector<wxString> &tableName, std::vector<wxString> &fields)
+extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std::vector<wxString> &tableName, std::vector<Field *> &queryFields)
 {
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
@@ -289,7 +290,7 @@ extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std
     if( res == wxID_OK )
     {
         tableName.push_back( dlg.GetQueryTable()->GetString( 0 ) );
-        fields = dlg.GetQueryFields();
+        queryFields = dlg.GetQueryFields();
     }
     return res;
 }
@@ -335,4 +336,15 @@ extern "C" WXEXPORT int GetODBCCredentails(wxWindow *parent, const wxString &dsn
     }
 #endif
     return res;
+}
+
+extern "C" WXEXPORT int GetQueryArguments(wxWindow *parent, std::vector<QueryArguments> &arguments, const wxString &dbType, const wxString &subType)
+{
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    RetrievalArguments dlg( parent, arguments, dbType, subType );
+    dlg.Center();
+    int result = dlg.ShowModal();
+    return result;
 }

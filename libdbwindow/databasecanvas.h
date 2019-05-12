@@ -19,6 +19,7 @@ public:
     void OnShowComments(wxCommandEvent &event);
     inline wxSFDiagramManager &GetDiagramManager() { return m_pManager; }
     virtual void OnDraw(wxDC& dc) wxOVERRIDE;
+    void AddQuickQueryFields(const wxString &tbl, std::vector<Field *> &quickSelectFields, bool quickSelect);
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:
@@ -77,6 +78,7 @@ private:
 #define WHEREPAGESELECT           198
 #define WHEREPAGECLEAR            199
 #define wxID_DATASOURCE           301
+#define wxID_RETRIEVEARGS         304
 #define wxID_DISTINCT             306
 
 #endif
