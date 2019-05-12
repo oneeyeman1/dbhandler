@@ -1,0 +1,75 @@
+/////////////////////////////////////////////////////////////////////////////
+// Name:        samples/docview/mainframe.cpp
+// Purpose:     DB Handler
+// Author:      Igor Korot
+// Created:     17 DEC 2015
+// Licence:     wxWindows licence
+/////////////////////////////////////////////////////////////////////////////
+
+// For compilers that support precompilation, includes "wx/wx.h".
+#include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
+
+#include "wxsf/TextShape.h"
+#include "wxsf/RectShape.h"
+#include "wxsf/GridShape.h"
+#include "designlabel.h"
+
+DesignLabel::DesignLabel() : wxSFRectShape()
+{
+    AddStyle( sfsLOCK_CHILDREN );
+    AcceptChild( "GridShape" );
+    m_grid = new wxSFGridShape;
+    if( m_grid )
+    {
+        m_grid->SetRelativePosition( 0, 1 );
+        m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        m_grid->SetDimensions( 1, 1 );
+        m_grid->SetFill( *wxTRANSPARENT_BRUSH );
+        m_grid->SetBorder( *wxTRANSPARENT_PEN );
+        m_grid->AcceptChild( wxT( "wxSFTextShape" ) );
+        m_grid->Activate( false );
+        SF_ADD_COMPONENT( m_grid, wxT( "grid" ) );
+    }
+    m_font = wxNullFont;
+    m_label = "";
+}
+
+DesignLabel::DesignLabel (const wxFont font, const wxString &label)
+{
+    m_font = font;
+    m_label = label;
+    AddStyle( sfsLOCK_CHILDREN );
+    AcceptChild( "GridShape" );
+    m_grid = new wxSFGridShape;
+    if( m_grid )
+    {
+        m_grid->SetRelativePosition( 0, 1 );
+        m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        m_grid->SetDimensions( 1, 1 );
+        m_grid->SetFill( *wxTRANSPARENT_BRUSH );
+        m_grid->SetBorder( *wxTRANSPARENT_PEN );
+        m_grid->AcceptChild( wxT( "wxSFTextShape" ) );
+        m_grid->Activate( false );
+        SF_ADD_COMPONENT( m_grid, wxT( "grid" ) );
+        m_text = new wxSFTextShape;
+        if( m_text )
+        {
+            m_text->SetHAlign( wxSFShapeBase::halignCENTER );
+            m_text->SetVAlign( wxSFShapeBase::valignMIDDLE );
+            m_text->SetFont( font );
+            m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+            if( m_grid->AppendToGrid( m_text ) )
+                m_text->SetText( m_label );
+            else
+                delete m_text;
+        }
+    }
+}
+
+DesignLabel::~DesignLabel()
+{
+}
