@@ -68,7 +68,7 @@ typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, s
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
-typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<wxString> &, std::vector<Field *> &);
+typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTable *> &, std::vector<Field *> &);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 typedef int (*RETRIEVEARGUMENTS)(wxWindow *, std::vector<QueryArguments> &arguments, const wxString &, const wxString &);
 
@@ -428,6 +428,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     {
                         QUICKSELECT func2 = (QUICKSELECT) lib.GetSymbol( "QuickSelectDlg" );
                         res = func2( m_frame, db, m_selectTableName, m_queryFields );
+                        GetDocument()->SetQueryFields( m_queryFields );
                         quickSelect = true;
                     }
                     if( !quickSelect )
@@ -499,9 +500,12 @@ void DrawingView::GetTablesForView(Database *db, bool init)
         if( quickSelect && m_selectTableName.size() > 0 )
         {
             if( db->GetTableVector().GetDatabaseType() == L"SQLite" )
-                tables.push_back( m_selectTableName[0].substr( m_selectTableName[0].find_last_of( '.' ) + 1 ) );
+            {
+                wxString name = m_selectTableName[0]->GetTableName();
+                tables.push_back( name.substr( name.find_last_of( '.' ) + 1 ) );
+            }
             else
-                tables.push_back( m_selectTableName[0] );
+                tables.push_back( m_selectTableName[0]->GetTableName() );
         }
     }
     ((DrawingDocument *) GetDocument())->AddTables( tables );
@@ -509,10 +513,15 @@ void DrawingView::GetTablesForView(Database *db, bool init)
     if( m_type == QueryView )
     {
         m_page6->SetSyntaxText(query);
+        if( quickSelect && m_selectTableName.size() == 1 )
+            m_canvas->AddQuickQueryFields( m_selectTableName[0]->GetTableName(), m_queryFields, quickSelect );
         if( quickSelect )
-            m_canvas->AddQuickQueryFields( m_selectTableName[0], m_queryFields, quickSelect );
-        if( quickSelect ) ;
-//            m_designCanvas->AddFieldToCanvas( m_selectFields;
+        {
+            for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
+                m_designCanvas->AddFieldToCanvas( *wxFont::New( m_selectTableName[0]->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, m_selectTableName[0]->GetLabelFontItalic(), m_selectTableName[0]->GetLabelFontWeight(), m_selectTableName[0]->GetLabelFontUnderline(), m_selectTableName[0]->GetLabelFontName() ),
+                                                  wxFont::New( m_selectTableName[0]->GetDataFontSize(), wxFONTFAMILY_DEFAULT, m_selectTableName[0]->GetDataFontItalic(), m_selectTableName[0]->GetDataFontWeight(), m_selectTableName[0]->GetDataFontUnderline(), m_selectTableName[0]->GetDataFontName() ), 
+                                                  (*it) );
+        }
     }
 //    return tables;
 }

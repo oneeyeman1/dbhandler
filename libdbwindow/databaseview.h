@@ -79,7 +79,7 @@ private:
     wxCriticalSection *pcs;
     int m_source, m_presentation;
     std::vector<Field *> m_queryFields;
-    std::vector<wxString> m_selectTableName;
+    std::vector<DatabaseTable *> m_selectTableName;
 //    std::vector<wxString> m_selectFields;
     std::vector<QueryArguments> m_arguments;
     DesignCanvas *m_designCanvas;
