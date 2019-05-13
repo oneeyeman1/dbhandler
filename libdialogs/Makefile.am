@@ -31,7 +31,9 @@ libdialogs_la_SOURCES =  \
 	newquery.cpp \
 	newquery.h \
 	quickselect.cpp \
-	quickselect.h
+	quickselect.h \
+	retrievalarguments.cpp \
+	retrievalarguments.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
