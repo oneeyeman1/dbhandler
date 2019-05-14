@@ -22,12 +22,13 @@ DesignField::DesignField() : wxSFRectShape()
 {
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );
+	m_text = new wxSFTextShape;
     m_grid = new wxSFGridShape;
     if( m_grid )
     {
         m_grid->SetRelativePosition( 0, 1 );
         m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-        m_grid->SetDimensions( 1, 1 );
+        m_grid->SetDimensions( 0, 1 );
         m_grid->SetFill( *wxTRANSPARENT_BRUSH );
         m_grid->SetBorder( *wxTRANSPARENT_PEN );
         m_grid->AcceptChild( wxT( "wxSFTextShape" ) );
@@ -44,6 +45,7 @@ DesignField::DesignField (const wxFont font, const wxString &label)
     m_label = label;
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );
+	m_text = new wxSFTextShape;
     m_grid = new wxSFGridShape;
     if( m_grid )
     {
@@ -58,12 +60,14 @@ DesignField::DesignField (const wxFont font, const wxString &label)
         m_text = new wxSFTextShape;
         if( m_text )
         {
-            m_text->SetHAlign( wxSFShapeBase::halignCENTER );
-            m_text->SetVAlign( wxSFShapeBase::valignMIDDLE );
-            m_text->SetFont( font );
-            m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-            if( m_grid->AppendToGrid( m_text ) )
+			if( m_grid->InsertToGrid( 0, 0, m_text ) )
+			{
+                m_text->SetHAlign( wxSFShapeBase::halignCENTER );
+                m_text->SetVAlign( wxSFShapeBase::valignMIDDLE );
+                m_text->SetFont( font );
+                m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
                 m_text->SetText( m_label );
+			}
             else
                 delete m_text;
         }
