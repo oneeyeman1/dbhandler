@@ -39,12 +39,11 @@ DesignField::DesignField() : wxSFRectShape()
     m_label = "";
 }
 
-DesignField::DesignField (const wxFont font, const wxString &label)
+DesignField::DesignField (const wxFont font, const wxString &label) : wxSFRectShape()
 {
     m_font = font;
     m_label = label;
     AddStyle( sfsLOCK_CHILDREN );
-    AddStyle( sfsSHOW_SHADOW );
     AcceptChild( "GridShape" );
 	m_text = new wxSFTextShape;
     m_grid = new wxSFGridShape;
