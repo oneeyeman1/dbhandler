@@ -38,7 +38,7 @@ DesignLabel::DesignLabel() : wxSFRectShape()
     m_label = "";
 }
 
-DesignLabel::DesignLabel (const wxFont font, const wxString &label)
+DesignLabel::DesignLabel (const wxFont font, const wxString &label) : wxSFRectShape()
 {
     m_font = font;
     m_label = label;
@@ -52,7 +52,7 @@ DesignLabel::DesignLabel (const wxFont font, const wxString &label)
         m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
         m_grid->SetDimensions( 1, 1 );
         m_grid->SetFill( *wxTRANSPARENT_BRUSH );
-        m_grid->SetBorder( *wxTRANSPARENT_PEN );
+//        m_grid->SetBorder( *wxTRANSPARENT_PEN );
         m_grid->AcceptChild( wxT( "wxSFTextShape" ) );
         m_grid->Activate( false );
         SF_ADD_COMPONENT( m_grid, wxT( "grid" ) );
@@ -64,6 +64,23 @@ DesignLabel::DesignLabel (const wxFont font, const wxString &label)
             m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
             m_text->SetText( m_label );
         }
+        else
+            delete m_text;
+    }
+    m_grid->RemoveChildren();
+    m_grid->ClearGrid();
+    m_grid->SetDimensions( 1, 1 );
+    Refresh();
+    SetRectSize( GetRectSize().x, 0 );
+    m_text = new wxSFTextShape;
+    if( m_text )
+    {
+        m_text->SetHAlign( wxSFShapeBase::halignCENTER );
+        m_text->SetVAlign( wxSFShapeBase::valignMIDDLE );
+        m_text->SetFont( font );
+        m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        if( m_grid->InsertToGrid( 0, 0, m_text ) )
+            m_text->SetText( m_label );
         else
             delete m_text;
     }
