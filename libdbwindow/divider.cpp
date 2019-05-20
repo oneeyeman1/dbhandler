@@ -72,7 +72,9 @@ Divider::Divider(const wxString &text) : wxSFRectShape()
         m_grid->Activate( false );
         SF_ADD_COMPONENT( m_grid, wxT( "grid" ) );
         m_text->SetHAlign( wxSFShapeBase::halignLEFT );
+        m_text->SetId( 1000 );
         m_arrow->SetHAlign( wxSFShapeBase::halignLEFT );
+        m_arrow->SetId( 1001 );
         m_text->SetVAlign( wxSFShapeBase::valignMIDDLE );
         m_arrow->SetVAlign( wxSFShapeBase::valignMIDDLE );
         auto font = m_text->GetFont();
@@ -93,6 +95,7 @@ Divider::Divider(const wxString &text) : wxSFRectShape()
             delete m_text;
     }
     SetRectSize( 1000, -1 );
+    this->SetUserData( m_text );
 }
 
 Divider::~Divider()
