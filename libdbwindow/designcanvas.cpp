@@ -11,6 +11,8 @@
 #include "wxsf/BitmapShape.h"
 #include "wxsf/RectShape.h"
 #include "wxsf/GridShape.h"
+#include "wxsf/DiagramManager.h"
+//#include "XmlSerializer.h"
 #include "database.h"
 #include "divider.h"
 #include "designlabel.h"
@@ -24,7 +26,7 @@ DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas
     startPoint.y = 1;
     m_pManager.SetRootItem( new xsSerializable() );
     SetDiagramManager( &m_pManager );
-    Create( view->GetFrame(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL | wxALWAYS_SHOW_SB );
+    Create( view->GetFrame(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL | wxVSCROLL | wxALWAYS_SHOW_SB );
     SetVirtualSize( 1000, 1000 );
     SetScrollRate( 10, 10 );
     m_mode = modeDESIGN;
@@ -62,6 +64,6 @@ void DesignCanvas::AddHeaderDivider()
             ypos = temp;
     }
     auto dividerShape = new Divider( _( "Header " ) );
-    m_pManager.AddShape( dividerShape, NULL, wxPoint( 1, ypos ), true, true );
+    m_pManager.AddShape( dividerShape, NULL, wxPoint( 1, ypos ), sfINITIALIZE, sfDONT_SAVE_STATE );
     Refresh();
 }
