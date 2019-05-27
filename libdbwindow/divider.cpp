@@ -24,6 +24,7 @@ XS_IMPLEMENT_CLONABLE_CLASS(Divider, wxSFRectShape);
 
 Divider::Divider() : wxSFRectShape()
 {
+    m_Fill = wxBrush( *wxGREY_BRUSH );
     m_color = "Transparent";
     m_height = 80;
     AddStyle( sfsLOCK_CHILDREN );
@@ -59,7 +60,7 @@ Divider::Divider() : wxSFRectShape()
     XS_SERIALIZE_INT( m_height, "height" );
 }
 
-Divider::Divider(const wxString &text) : wxSFRectShape()
+Divider::Divider(const wxString &text, wxSFDiagramManager *manager) : wxSFRectShape( wxRealPoint( 1, 1 ), wxRealPoint( 5000, -1 ), manager )
 {
     m_color = "Transparent";
     m_height = 80;
@@ -138,6 +139,8 @@ Divider::Divider(const wxString &text) : wxSFRectShape()
     RemoveStyle( sfsSHOW_HANDLES );
     m_grid->Update();
     Update();
+    m_nRectSize.y = GetBoundingBox().GetHeight();
+    m_nRectSize.x = 5000;
     XS_SERIALIZE_STRING( m_color, "color" );
     XS_SERIALIZE_INT( m_height, "height" );
 }
@@ -161,4 +164,11 @@ void Divider::DrawSelected(wxDC &dc)
 void Divider::DrawHover(wxDC &dc)
 {
     DrawNormal( dc );
+}
+
+wxRect Divider::GetBoundingBox()
+{
+    wxRect rect = wxSFRectShape::GetBoundingBox();
+    rect.SetWidth( 5000 );
+    return rect;
 }

@@ -4,8 +4,9 @@ class Divider : public wxSFRectShape
 public:
     XS_DECLARE_CLONABLE_CLASS(Divider);
     Divider();
-    Divider(const wxString &text);
+    Divider(const wxString &text, wxSFDiagramManager *manager);
     virtual ~Divider();
+    virtual wxRect GetBoundingBox() wxOVERRIDE;
 protected:    
     virtual void DrawNormal(wxDC &dc) wxOVERRIDE;
     virtual void DrawSelected(wxDC &dc) wxOVERRIDE;
