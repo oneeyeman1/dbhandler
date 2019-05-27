@@ -63,7 +63,7 @@ void DesignCanvas::AddHeaderDivider()
         if( temp + 2 > ypos )
             ypos = temp;
     }
-    auto dividerShape = new Divider( _( "Header " ) );
+    auto dividerShape = new Divider( _( "Header " ), &m_pManager );
     m_pManager.AddShape( dividerShape, NULL, wxPoint( 1, ypos ), sfINITIALIZE, sfDONT_SAVE_STATE );
     Refresh();
 }
