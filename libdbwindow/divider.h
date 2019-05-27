@@ -2,6 +2,7 @@
 class Divider : public wxSFRectShape
 {
 public:
+    XS_DECLARE_CLONABLE_CLASS(Divider);
     Divider();
     Divider(const wxString &text);
     virtual ~Divider();
@@ -12,4 +13,6 @@ protected:
 private:
     wxSFGridShape *m_grid;
     wxSFTextShape *m_text, *m_arrow;
+    wxString m_color;
+    int m_height;
 };

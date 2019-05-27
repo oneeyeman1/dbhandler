@@ -17,17 +17,22 @@
 #include "wxsf/BitmapShape.h"
 #include "wxsf/GridShape.h"
 #include "wxsf/RectShape.h"
+#include "wxsf/DiagramManager.h"
 #include "divider.h"
+
+XS_IMPLEMENT_CLONABLE_CLASS(Divider, wxSFRectShape);
 
 Divider::Divider() : wxSFRectShape()
 {
+    m_color = "Transparent";
+    m_height = 80;
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );
     m_grid = new wxSFGridShape;
     if( m_grid )
     {
         m_grid->SetRelativePosition( 0, 1 );
-        m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
         m_grid->SetDimensions( 1, 1 );
         m_grid->SetFill( *wxTRANSPARENT_BRUSH );
         m_grid->SetBorder( *wxTRANSPARENT_PEN );
@@ -50,10 +55,14 @@ Divider::Divider() : wxSFRectShape()
                 delete m_text;
         }
     }
+    XS_SERIALIZE_STRING( m_color, "color" );
+    XS_SERIALIZE_INT( m_height, "height" );
 }
 
 Divider::Divider(const wxString &text) : wxSFRectShape()
 {
+    m_color = "Transparent";
+    m_height = 80;
     wxString upArrow( L"\x2191" );
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );
@@ -63,7 +72,7 @@ Divider::Divider(const wxString &text) : wxSFRectShape()
     if( m_grid && m_text && m_arrow )
     {
         m_grid->SetRelativePosition( 0, 1 );
-        m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
         m_grid->SetDimensions( 1, 2 );
         m_grid->SetCellSpace( 2 );
         m_grid->SetFill( *wxTRANSPARENT_BRUSH );
@@ -81,8 +90,8 @@ Divider::Divider(const wxString &text) : wxSFRectShape()
         font.SetWeight( wxFONTWEIGHT_BOLD );
         m_text->SetFont( font );
         m_arrow->SetFont( font );
-        m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-        m_arrow->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        m_arrow->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
         if( m_grid->AppendToGrid( m_text ) )
         {
             m_text->SetText( text );
@@ -96,13 +105,48 @@ Divider::Divider(const wxString &text) : wxSFRectShape()
     }
     SetRectSize( 1000, -1 );
     this->SetUserData( m_text );
+    m_grid->ClearGrid();
+    m_grid->RemoveChildren();
+    m_grid->SetDimensions( 1, 2 );
+    Refresh();
+    m_text = new wxSFTextShape;
+    m_arrow = new wxSFTextShape;
+    m_text->SetHAlign( wxSFShapeBase::halignLEFT );
+    m_text->SetId( 1000 );
+    m_arrow->SetHAlign( wxSFShapeBase::halignLEFT );
+    m_arrow->SetId( 1001 );
+    m_text->SetVAlign( wxSFShapeBase::valignMIDDLE );
+    m_arrow->SetVAlign( wxSFShapeBase::valignMIDDLE );
+    auto font = m_text->GetFont();
+    font.SetWeight( wxFONTWEIGHT_BOLD );
+    m_text->SetFont( font );
+    m_arrow->SetFont( font );
+    m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+    m_arrow->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+    if( m_grid->AppendToGrid( m_text ) )
+    {
+        m_text->SetText( text );
+        if( m_grid->AppendToGrid( m_arrow ) )
+            m_arrow->SetText( upArrow );
+        else
+            delete m_arrow;
+    }
+    else
+        delete m_text;
+    m_arrow->RemoveStyle( sfsSHOW_HANDLES );
+    m_text->RemoveStyle( sfsSHOW_HANDLES );
+    RemoveStyle( sfsSHOW_HANDLES );
+    m_grid->Update();
+    Update();
+    XS_SERIALIZE_STRING( m_color, "color" );
+    XS_SERIALIZE_INT( m_height, "height" );
 }
 
 Divider::~Divider()
 {
 }
 
-void Divider::DrawNormal (wxDC &dc)
+void Divider::DrawNormal(wxDC &dc)
 {
     wxRect rect = GetBoundingBox();
     dc.SetBrush( *wxGREY_BRUSH );
