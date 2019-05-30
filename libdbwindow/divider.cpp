@@ -106,7 +106,6 @@ Divider::Divider(const wxString &text, wxSFDiagramManager *manager) : wxSFRectSh
             delete m_text;
     }
     SetRectSize( 1000, -1 );
-    this->SetUserData( m_text );
     m_grid->ClearGrid();
     m_grid->RemoveChildren();
     m_grid->SetDimensions( 1, 2 );
