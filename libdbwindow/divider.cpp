@@ -18,6 +18,7 @@
 #include "wxsf/GridShape.h"
 #include "wxsf/RectShape.h"
 #include "wxsf/DiagramManager.h"
+#include "wx/image.h"
 #include "divider.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(Divider, wxSFRectShape);
@@ -141,6 +142,7 @@ Divider::Divider(const wxString &text, wxSFDiagramManager *manager) : wxSFRectSh
     Update();
     m_nRectSize.y = GetBoundingBox().GetHeight();
     m_nRectSize.x = 5000;
+    m_Fill = *wxGREY_BRUSH;
     XS_SERIALIZE_STRING( m_color, "color" );
     XS_SERIALIZE_INT( m_height, "height" );
 }
@@ -154,6 +156,7 @@ void Divider::DrawNormal(wxDC &dc)
     wxRect rect = GetBoundingBox();
     dc.SetBrush( *wxGREY_BRUSH );
     dc.DrawRectangle( 1, rect.y, 5000, rect.y );
+    dc.SetBrush( wxNullBrush );
 }
 
 void Divider::DrawSelected(wxDC &dc)
@@ -163,6 +166,7 @@ void Divider::DrawSelected(wxDC &dc)
 
 void Divider::DrawHover(wxDC &dc)
 {
+//    SetCursor( wxImage( "updown.png" ) );
     DrawNormal( dc );
 }
 
@@ -171,4 +175,9 @@ wxRect Divider::GetBoundingBox()
     wxRect rect = wxSFRectShape::GetBoundingBox();
     rect.SetWidth( 5000 );
     return rect;
+}
+
+void Divider::OnDragging(const wxPoint& pos)
+{
+    MoveTo( 1, pos.y );
 }
