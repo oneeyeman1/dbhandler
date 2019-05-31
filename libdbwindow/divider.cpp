@@ -154,7 +154,7 @@ void Divider::DrawNormal(wxDC &dc)
 {
     wxRect rect = GetBoundingBox();
     dc.SetBrush( *wxGREY_BRUSH );
-    dc.DrawRectangle( 1, rect.y, 5000, rect.y );
+    dc.DrawRectangle( 1, rect.y, 5000, m_nRectSize.y );
     dc.SetBrush( wxNullBrush );
 }
 
