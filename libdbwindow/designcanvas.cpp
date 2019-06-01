@@ -7,6 +7,7 @@
 
 #include "wx/docview.h"
 #include "wx/docmdi.h"
+#include "wx/dynlib.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/RectShape.h"
@@ -18,6 +19,8 @@
 #include "designlabel.h"
 #include "designfield.h"
 #include "designcanvas.h"
+
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, const wxString &, wxCriticalSection &);
 
 DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas()
 {
@@ -31,6 +34,7 @@ DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas
     SetScrollRate( 10, 10 );
     m_mode = modeDESIGN;
     SetCanvasColour( *wxWHITE );
+    Bind( wxEVT_MENU, &DesignCanvas::OnProperties, this, wxID_PROPERTIES );
 }
 
 DesignCanvas::~DesignCanvas()
@@ -66,4 +70,68 @@ void DesignCanvas::AddHeaderDivider()
     auto dividerShape = new Divider( _( "Header " ), &m_pManager );
     m_pManager.AddShape( dividerShape, NULL, wxPoint( 1, ypos ), sfINITIALIZE, sfDONT_SAVE_STATE );
     Refresh();
+}
+
+void DesignCanvas::OnRightDown(wxMouseEvent &event)
+{
+    wxPoint pt = event.GetPosition();
+    ShapeList list;
+    GetShapesAtPosition( pt, list );
+    DesignLabel *label = NULL;
+    Divider *divider = NULL;
+    for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
+    {
+        label = wxDynamicCast( (*it), DesignLabel );
+        if( !label )
+        {
+            divider = wxDynamicCast( (*it), Divider );
+            m_menuShape = divider;
+        }
+        else
+            m_menuShape = label;
+    }
+    wxMenu menu;
+    if( label )
+    {
+        menu.Append( wxID_PROPERTIES, _( "Properties..." ), "", false );
+    }
+    else if( divider )
+    {
+        menu.Append( wxID_PROPERTIES, _( "Properties..." ), "Table Properties", false );
+    }
+    int rc = GetPopupMenuSelectionFromUser( menu, pt );
+}
+
+void DesignCanvas::OnProperties(wxCommandEvent &event)
+{
+    int type;
+    if( wxDynamicCast( m_menuShape, DesignLabel ) )
+        type = 2;
+    if( wxDynamicCast( m_menuShape, Divider ) )
+        type = 3;
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    int res = 0;
+    if( lib.IsLoaded() )
+    {
+        CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
+        if( type == 2 )
+            res = func( m_frame, GetDocument()->GetDatabase(), type, m_menuShape, command, logOnly, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
+        if( type == 3 )
+            res = func( m_frame, GetDocument()->GetDatabase(), type, m_menuShape, command, logOnly, tableName, schemaName, ownerName, *pcs );
+        if( res != wxID_CANCEL && logOnly )
+        {
+            m_text->AppendText( command );
+            m_text->AppendText( "\n\r\n\r" );
+            if( !m_log->IsShown() )
+                m_log->Show();
+        }
+    }
+
 }
