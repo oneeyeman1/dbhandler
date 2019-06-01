@@ -5,16 +5,24 @@
 #pragma hdrstop
 #endif
 
+#include <vector>
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wxsf/ShapeCanvas.h"
+#include "wxsf/RoundRectShape.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/RectShape.h"
 #include "wxsf/GridShape.h"
 #include "wxsf/DiagramManager.h"
 //#include "XmlSerializer.h"
 #include "database.h"
+#include "Constraint.h"
+#include "GridTableShape.h"
+#include "HeaderGrid.h"
+#include "commenttableshape.h"
+#include "MyErdTable.h"
+#include "databasedoc.h"
 #include "divider.h"
 #include "designlabel.h"
 #include "designfield.h"
@@ -35,6 +43,7 @@ DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas
     m_mode = modeDESIGN;
     SetCanvasColour( *wxWHITE );
     Bind( wxEVT_MENU, &DesignCanvas::OnProperties, this, wxID_PROPERTIES );
+    m_menuShape = NULL;
 }
 
 DesignCanvas::~DesignCanvas()
@@ -79,16 +88,24 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
     GetShapesAtPosition( pt, list );
     DesignLabel *label = NULL;
     Divider *divider = NULL;
-    for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
+    bool found = false;
+    for( ShapeList::iterator it = list.begin(); it != list.end() && !found; ++it )
     {
         label = wxDynamicCast( (*it), DesignLabel );
         if( !label )
         {
             divider = wxDynamicCast( (*it), Divider );
-            m_menuShape = divider;
+            if( divider )
+            {
+                m_menuShape = divider;
+                found = true;
+            }
         }
         else
+        {
             m_menuShape = label;
+            found = true;
+        }
     }
     wxMenu menu;
     if( label )
@@ -104,6 +121,8 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
 
 void DesignCanvas::OnProperties(wxCommandEvent &event)
 {
+    wxCriticalSection pcs;
+    wxString command = "";
     int type;
     if( wxDynamicCast( m_menuShape, DesignLabel ) )
         type = 2;
@@ -122,16 +141,16 @@ void DesignCanvas::OnProperties(wxCommandEvent &event)
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == 2 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, m_menuShape, command, logOnly, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
+            res = func( m_view->GetFrame(), ((DrawingDocument *) m_view->GetDocument())->GetDatabase(), type, m_menuShape, command, false, wxEmptyString, wxEmptyString, wxEmptyString, pcs );
         if( type == 3 )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, m_menuShape, command, logOnly, tableName, schemaName, ownerName, *pcs );
-        if( res != wxID_CANCEL && logOnly )
+            res = func( m_view->GetFrame(), ((DrawingDocument *) m_view->GetDocument())->GetDatabase(), type, m_menuShape, command, false, wxEmptyString, wxEmptyString, wxEmptyString, pcs );
+        if( res != wxID_CANCEL )
         {
-            m_text->AppendText( command );
+/*            m_text->AppendText( command );
             m_text->AppendText( "\n\r\n\r" );
             if( !m_log->IsShown() )
-                m_log->Show();
+                m_log->Show();*/
         }
     }
-
+    m_menuShape = NULL;
 }
