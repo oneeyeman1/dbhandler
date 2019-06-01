@@ -133,46 +133,47 @@ MainFrame::~MainFrame()
 
 void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
 {
-#if defined _DEBUG
-    printf( "Starting MainFrame::OnClose\n\r" );
-#endif
+    if( m_db )
     {
+#if defined _DEBUG
+        printf( "Starting MainFrame::OnClose\n\r" );
+#endif
+        {
 #if defined __WXMSW__ && _MSC_VER < 1900
-        wxCriticalSectionLocker enter( m_threadCS );
+            wxCriticalSectionLocker enter( m_threadCS );
 #else
-        if( m_db )
             std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
 #endif
-        if( m_handler )
-        {
-#if defined _DEBUG
-            printf( "Deleting the thread...\n\r" );
-#endif
-            if( m_handler->Delete() != wxTHREAD_NO_ERROR )
+            if( m_handler )
             {
+#if defined _DEBUG
+                printf( "Deleting the thread...\n\r" );
+#endif
+                if( m_handler->Delete() != wxTHREAD_NO_ERROR )
+                {
+                }
             }
         }
-    }
-    while( 1 )
-    {
-#if defined _DEBUG
-        printf( "Looping for thread deletionn\n\r" );
-#endif
+        while( 1 )
         {
-#if defined __WXMSW__ && _MSC_VER < 1900
-        wxCriticalSectionLocker enter( m_threadCS );
-#else
-        if( m_db )
-            std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
-#endif
-            if( !m_handler )
-                break;
-        }
-        wxThread::This()->Sleep( 1 );
-    }
 #if defined _DEBUG
-    printf( "Thread destroyed. Deleting application....\n\r" );
+            printf( "Looping for thread deletionn\n\r" );
 #endif
+            {
+#if defined __WXMSW__ && _MSC_VER < 1900
+                wxCriticalSectionLocker enter( m_threadCS );
+#else
+                std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
+#endif
+                if( !m_handler )
+                    break;
+            }
+            wxThread::This()->Sleep( 1 );
+        }
+#if defined _DEBUG
+        printf( "Thread destroyed. Deleting application....\n\r" );
+#endif
+    }
     Destroy();
 }
 

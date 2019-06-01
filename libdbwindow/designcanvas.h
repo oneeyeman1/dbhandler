@@ -6,7 +6,8 @@ public:
     DesignCanvas (wxView *view, const wxPoint &point);
     virtual ~DesignCanvas ();
     void SetQuickQueryFields(const std::vector<wxString> &fields);
-    void AddFieldToCanvas(const wxFont labelFont, const wxFont *dataFont, const Field *label);
+    void AddFieldLabelToCanvas(const wxFont labelFont/*, const wxFont *dataFont*/, const Field *label);
+    void AddHeaderDivider();
 private:
     wxSFDiagramManager m_pManager;
     wxPoint startPoint;

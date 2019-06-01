@@ -186,6 +186,12 @@ void DrawingDocument::AppendFieldToQueryFields(const std::wstring &field)
     m_queryFields.push_back( field );
 }
 
+void DrawingDocument::SetQueryFields(const std::vector<Field *> &fields)
+{
+    for( std::vector<Field *>::const_iterator it = fields.begin(); it < fields.end(); ++it )
+        m_queryFields.push_back( (*it)->GetFieldName() );
+}
+
 const std::vector<std::wstring> &DrawingDocument::GetQueryFields()
 {
     return m_queryFields;

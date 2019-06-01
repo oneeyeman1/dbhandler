@@ -32,6 +32,7 @@ public:
     void AppendFieldToQueryFields(const std::wstring &field);
     void AddRemoveField(const std::wstring &fieldName, bool isAdded);
     const std::vector<std::wstring> &GetQueryFields();
+    void SetQueryFields(const std::vector<Field *> &fields);
 private:
     void DoUpdate();
 

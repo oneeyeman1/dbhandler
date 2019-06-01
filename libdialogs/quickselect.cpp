@@ -27,6 +27,7 @@
 
 QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent, wxID_ANY, _(""))
 {
+    m_oldColumn = -1;
     m_db = const_cast<Database *>( db );
     m_cols = 0;
     m_panel = new wxPanel( this, wxID_ANY );
@@ -65,6 +66,9 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_grid->Bind( wxEVT_GRID_ROW_SIZE, &QuickSelect::OnGridRowLines, this );
     m_grid->Bind( wxEVT_GRID_CELL_LEFT_CLICK, &QuickSelect::OnCellLeftClicked, this );
     m_ok->Bind( wxEVT_BUTTON, &QuickSelect::OnOkButton, this );
+//
+//    m_grid->Bind( wxEVT_GRID_EDITOR_HIDDEN, &QuickSelect::OnSortClosing, this );
+//
 }
 
 QuickSelect::~QuickSelect()
@@ -365,24 +369,24 @@ void QuickSelect::AddFieldToGrid(const wxString &field, bool isAdded)
 void QuickSelect::OnCellLeftClicked(wxGridEvent &event)
 {
     auto oldrow = m_grid->GetGridCursorRow();
-    auto oldcolumn = m_grid->GetGridCursorCol();
-    if( oldrow == 1 )
+//    auto oldcolumn = m_grid->GetGridCursorCol();
+    auto column = event.GetCol();
+    if( oldrow == 1 && m_oldColumn != column && m_oldColumn != -1 )
     {
-        wxGridCellChoiceEditor *editor = (wxGridCellChoiceEditor *) m_grid->GetCellEditor( oldrow, oldcolumn );
+        wxGridCellChoiceEditor *editor = (wxGridCellChoiceEditor *) m_grid->GetCellEditor( oldrow, m_oldColumn );
         wxComboBox *combo = (wxComboBox *) editor->GetControl();
         if( combo )
         {
             combo->Dismiss();
             combo->Unbind( wxEVT_COMBOBOX_CLOSEUP, &QuickSelect::OnFieldsSetFocus, this );
         }
-        wxString value = m_grid->GetCellValue( oldrow, oldcolumn );
-        if( value == _T( "(not selected)" ) )
-            m_grid->SetCellValue( oldrow, oldcolumn, _T( "" ) );
+        wxString value = m_grid->GetCellValue( oldrow, m_oldColumn );
+        if( value == _( "(not sorted)" ) )
+            m_grid->SetCellValue( oldrow, m_oldColumn, _T( "" ) );
         editor->DecRef();
     }
     auto row = event.GetRow();
-    auto column = event.GetCol();
-    if( event.GetRow() == 1 )
+    if( row == 1 )
     {
         m_grid->GoToCell( row, column );
         m_grid->EnableCellEditControl( true );
@@ -390,13 +394,15 @@ void QuickSelect::OnCellLeftClicked(wxGridEvent &event)
         wxGridCellChoiceEditor *editor = (wxGridCellChoiceEditor *) m_grid->GetCellEditor( row, column );
         wxComboBox *combo = (wxComboBox *) editor->GetControl();
         //
-        combo->Bind( wxEVT_COMBOBOX_CLOSEUP, &QuickSelect::OnFieldsSetFocus, this );
+        combo->Bind( wxEVT_COMBOBOX_CLOSEUP, &QuickSelect::OnSortClosing, this );
         //
         wxString value = m_grid->GetCellValue( row, column );
         combo->Popup();
         combo->SetSelection( 2 );
 //        combo->SetFocus();
         editor->DecRef();
+        m_column = column;
+        m_oldColumn = column;
     }
     else if( event.GetRow() > 1 )
     {
@@ -409,6 +415,23 @@ void QuickSelect::OnCellLeftClicked(wxGridEvent &event)
         event.Skip();
 }
 
+void QuickSelect::OnSortClosing(wxCommandEvent &WXUNUSED(event))
+{
+    if( m_grid->GetCellValue( 1, m_column ) == _( "(not sorted)" ) )
+//    wxComboBox *object = wxDynamicCast( event.GetEventObject(), wxComboBox );
+//    if( object->GetStringSelection() == _( "(not sorted)" ) )
+    {
+//        CallAfter( []{ m_grid->SetCellValue( 1, m_column, "" )};/*, 1, m_column, "" );*/
+        CallAfter( [this](){ m_grid->SetCellValue( 1, m_column, "" ); } );
+    }
+}
+/*
+void QuickSelect::OnSortClosing(wxGridEvent &event)
+{
+    if( event.GetRow() == 1 && m_grid->GetCellValue( 1, m_column )  == _( "(not sorted)" ) )
+        m_grid->SetCellValue( 1, m_column, "" );
+}
+*/
 void QuickSelect::OnFieldsSetFocus(wxCommandEvent &WXUNUSED(event))
 {
     auto pt = wxGetMousePosition();
@@ -437,21 +460,20 @@ std::vector<Field *> &QuickSelect::GetQueryFields()
 
 void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
 {
-    DatabaseTable *table;
     auto found = false;
     auto it1 = m_db->GetTableVector().m_tables[m_db->GetTableVector().m_dbName];
     for( auto it2 = it1.begin(); it2 < it1.end() && !found; ++it2 )
     {
         if( ( *it2 )->GetTableName () == m_tables->GetStringSelection () )
         {
-            table = (*it2);
+            m_table = (*it2);
             found = true;
         }
     }
     found = false;
     for( auto i = 0; i < m_grid->GetNumberCols(); ++i )
     {
-        for( auto it3 = table->GetFields().begin(); it3 < table->GetFields().end() && !found; ++it3 )
+        for( auto it3 = m_table->GetFields().begin(); it3 < m_table->GetFields().end() && !found; ++it3 )
         {
             if( m_grid->GetCellValue( 0, i ) == (*it3)->GetFieldName() )
             {
@@ -467,4 +489,9 @@ void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
 const wxListBox *QuickSelect::GetQueryTable()
 {
     return m_tables;
+}
+
+DatabaseTable *QuickSelect::GetDatabaseTable()
+{
+    return m_table;
 }
