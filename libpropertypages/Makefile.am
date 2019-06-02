@@ -19,7 +19,9 @@ libpropertypages_la_SOURCES =  \
 	fieldgeneral.h \
 	fieldheader.cpp \
 	fieldheader.h \
-	propertypagebase.h
+	propertypagebase.h \
+	designlabelgeneral.cpp \
+	designlabelgeneral.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	`pkg-config \
