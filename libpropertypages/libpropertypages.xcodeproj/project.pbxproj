@@ -12,6 +12,8 @@
 		E305643D2217CB4C00F5576C /* fieldgeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E30564392217CB4C00F5576C /* fieldgeneral.h */; };
 		E305643E2217CB4C00F5576C /* fieldheader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E305643A2217CB4C00F5576C /* fieldheader.cpp */; };
 		E30564402217CB5F00F5576C /* propertypagebase.h in Headers */ = {isa = PBXBuildFile; fileRef = E305643F2217CB5F00F5576C /* propertypagebase.h */; };
+		E32A502C22A3A71500A57BD1 /* designlabelgeneral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A502A22A3A71500A57BD1 /* designlabelgeneral.cpp */; };
+		E32A502D22A3A71500A57BD1 /* designlabelgeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A502B22A3A71500A57BD1 /* designlabelgeneral.h */; };
 		E33E6F7C1EAD3067003A0B92 /* syntaxproppage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F781EAD3067003A0B92 /* syntaxproppage.cpp */; };
 		E33E6F7D1EAD3067003A0B92 /* syntaxproppage.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F791EAD3067003A0B92 /* syntaxproppage.h */; };
 		E33E6F7E1EAD3067003A0B92 /* wherehavingpage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F7A1EAD3067003A0B92 /* wherehavingpage.cpp */; };
@@ -30,6 +32,8 @@
 		E30564392217CB4C00F5576C /* fieldgeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fieldgeneral.h; sourceTree = "<group>"; };
 		E305643A2217CB4C00F5576C /* fieldheader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fieldheader.cpp; sourceTree = "<group>"; };
 		E305643F2217CB5F00F5576C /* propertypagebase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = propertypagebase.h; sourceTree = "<group>"; };
+		E32A502A22A3A71500A57BD1 /* designlabelgeneral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = designlabelgeneral.cpp; sourceTree = "<group>"; };
+		E32A502B22A3A71500A57BD1 /* designlabelgeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = designlabelgeneral.h; sourceTree = "<group>"; };
 		E33E6F781EAD3067003A0B92 /* syntaxproppage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = syntaxproppage.cpp; sourceTree = "<group>"; };
 		E33E6F791EAD3067003A0B92 /* syntaxproppage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = syntaxproppage.h; sourceTree = "<group>"; };
 		E33E6F7A1EAD3067003A0B92 /* wherehavingpage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wherehavingpage.cpp; sourceTree = "<group>"; };
@@ -73,6 +77,8 @@
 		E39501CD1DF3BA080046E51B /* libpropertypages */ = {
 			isa = PBXGroup;
 			children = (
+				E32A502A22A3A71500A57BD1 /* designlabelgeneral.cpp */,
+				E32A502B22A3A71500A57BD1 /* designlabelgeneral.h */,
 				E305643F2217CB5F00F5576C /* propertypagebase.h */,
 				E30564372217CB4B00F5576C /* fieldgeneral.cpp */,
 				E30564392217CB4C00F5576C /* fieldgeneral.h */,
@@ -102,6 +108,7 @@
 				E33E6F7F1EAD3067003A0B92 /* wherehavingpage.h in Headers */,
 				E39501D11DF3C2300046E51B /* tablegeneral.h in Headers */,
 				E305643D2217CB4C00F5576C /* fieldgeneral.h in Headers */,
+				E32A502D22A3A71500A57BD1 /* designlabelgeneral.h in Headers */,
 				E3AC9DD81E176AB80083DD62 /* fontpropertypage.h in Headers */,
 				E3AC9DDC1E176C640083DD62 /* fontpropertypagebase.h in Headers */,
 				E30564402217CB5F00F5576C /* propertypagebase.h in Headers */,
@@ -168,6 +175,7 @@
 				E305643B2217CB4C00F5576C /* fieldgeneral.cpp in Sources */,
 				E39573F81F0FAADD00FA817A /* fontpropertypage.mm in Sources */,
 				E39501D01DF3C2300046E51B /* tablegeneral.cpp in Sources */,
+				E32A502C22A3A71500A57BD1 /* designlabelgeneral.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
