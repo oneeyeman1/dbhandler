@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E32A501C2260236300A57BD1 /* designcanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A501A2260236300A57BD1 /* designcanvas.cpp */; };
+		E32A501D2260236300A57BD1 /* designcanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A501B2260236300A57BD1 /* designcanvas.h */; };
+		E32A502422A3A4B200A57BD1 /* designfield.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A501E22A3A4B200A57BD1 /* designfield.cpp */; };
+		E32A502522A3A4B200A57BD1 /* designfield.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A501F22A3A4B200A57BD1 /* designfield.h */; };
+		E32A502622A3A4B200A57BD1 /* designlabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A502022A3A4B200A57BD1 /* designlabel.cpp */; };
+		E32A502722A3A4B200A57BD1 /* designlabel.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A502122A3A4B200A57BD1 /* designlabel.h */; };
+		E32A502822A3A4B200A57BD1 /* divider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A502222A3A4B200A57BD1 /* divider.cpp */; };
+		E32A502922A3A4B200A57BD1 /* divider.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A502322A3A4B200A57BD1 /* divider.h */; };
 		E33E6F6E1E99AD0B003A0B92 /* HeaderGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F6C1E99AD0B003A0B92 /* HeaderGrid.cpp */; };
 		E33E6F6F1E99AD0B003A0B92 /* HeaderGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F6D1E99AD0B003A0B92 /* HeaderGrid.h */; };
 		E33E6F721EA5CAA6003A0B92 /* databasetemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F701EA5CAA6003A0B92 /* databasetemplate.cpp */; };
@@ -54,6 +62,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E32A501A2260236300A57BD1 /* designcanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = designcanvas.cpp; sourceTree = "<group>"; };
+		E32A501B2260236300A57BD1 /* designcanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = designcanvas.h; sourceTree = "<group>"; };
+		E32A501E22A3A4B200A57BD1 /* designfield.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = designfield.cpp; sourceTree = "<group>"; };
+		E32A501F22A3A4B200A57BD1 /* designfield.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = designfield.h; sourceTree = "<group>"; };
+		E32A502022A3A4B200A57BD1 /* designlabel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = designlabel.cpp; sourceTree = "<group>"; };
+		E32A502122A3A4B200A57BD1 /* designlabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = designlabel.h; sourceTree = "<group>"; };
+		E32A502222A3A4B200A57BD1 /* divider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = divider.cpp; sourceTree = "<group>"; };
+		E32A502322A3A4B200A57BD1 /* divider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = divider.h; sourceTree = "<group>"; };
 		E33E6F6C1E99AD0B003A0B92 /* HeaderGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeaderGrid.cpp; sourceTree = "<group>"; };
 		E33E6F6D1E99AD0B003A0B92 /* HeaderGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeaderGrid.h; sourceTree = "<group>"; };
 		E33E6F701EA5CAA6003A0B92 /* databasetemplate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasetemplate.cpp; sourceTree = "<group>"; };
@@ -137,6 +153,14 @@
 		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
+				E32A501E22A3A4B200A57BD1 /* designfield.cpp */,
+				E32A501F22A3A4B200A57BD1 /* designfield.h */,
+				E32A502022A3A4B200A57BD1 /* designlabel.cpp */,
+				E32A502122A3A4B200A57BD1 /* designlabel.h */,
+				E32A502222A3A4B200A57BD1 /* divider.cpp */,
+				E32A502322A3A4B200A57BD1 /* divider.h */,
+				E32A501A2260236300A57BD1 /* designcanvas.cpp */,
+				E32A501B2260236300A57BD1 /* designcanvas.h */,
 				E39573EF1F004F2F00FA817A /* commenttableshape.cpp */,
 				E39573F01F004F2F00FA817A /* commenttableshape.h */,
 				E39573DF1EFF385500FA817A /* commentfieldshape.cpp */,
@@ -194,13 +218,16 @@
 				E3E91D281D6D467C00675CF8 /* GUIDatabaseTable.h in Headers */,
 				E33E6F731EA5CAA6003A0B92 /* databasetemplate.h in Headers */,
 				E38709B81D4CF564004EF478 /* constraint.h in Headers */,
+				E32A502922A3A4B200A57BD1 /* divider.h in Headers */,
 				E39573E21EFF385500FA817A /* commentfieldshape.h in Headers */,
 				E39573F21F004F2F00FA817A /* commenttableshape.h in Headers */,
 				E38709C21D4CF564004EF478 /* OneArrow.h in Headers */,
 				E38709BA1D4CF564004EF478 /* ErdForeignKey.h in Headers */,
 				E38709C41D4CF564004EF478 /* table.h in Headers */,
+				E32A501D2260236300A57BD1 /* designcanvas.h in Headers */,
 				E3E91D391DBF812100675CF8 /* ErdLineShape.h in Headers */,
 				E33E6F771EAD303C003A0B92 /* constraintsign.h in Headers */,
+				E32A502522A3A4B200A57BD1 /* designfield.h in Headers */,
 				E33E6F6F1E99AD0B003A0B92 /* HeaderGrid.h in Headers */,
 				E3E91D851DDEB73400675CF8 /* FieldShape.h in Headers */,
 				E3AC9DD01DFD16EF0083DD62 /* GridTableShape.h in Headers */,
@@ -208,6 +235,7 @@
 				E3E91D2D1D821A5600675CF8 /* MyErdTable.h in Headers */,
 				E38709BE1D4CF564004EF478 /* IDbType.h in Headers */,
 				E3E91D231D6D467C00675CF8 /* databaseview.h in Headers */,
+				E32A502722A3A4B200A57BD1 /* designlabel.h in Headers */,
 				E38709C01D4CF564004EF478 /* NArrow.h in Headers */,
 				E3E91D1F1D6D467C00675CF8 /* databasecanvas.h in Headers */,
 			);
@@ -268,11 +296,14 @@
 				E38709BF1D4CF564004EF478 /* NArrow.cpp in Sources */,
 				E39573F11F004F2F00FA817A /* commenttableshape.cpp in Sources */,
 				E3AC9DCF1DFD16EF0083DD62 /* GridTableShape.cpp in Sources */,
+				E32A501C2260236300A57BD1 /* designcanvas.cpp in Sources */,
 				E3E91D2C1D821A5600675CF8 /* MyErdTable.cpp in Sources */,
+				E32A502422A3A4B200A57BD1 /* designfield.cpp in Sources */,
 				E38709C31D4CF564004EF478 /* table.cpp in Sources */,
 				E33E6F721EA5CAA6003A0B92 /* databasetemplate.cpp in Sources */,
 				E3E91D841DDEB73400675CF8 /* FieldShape.cpp in Sources */,
 				E3E91D241D6D467C00675CF8 /* dbview.cpp in Sources */,
+				E32A502622A3A4B200A57BD1 /* designlabel.cpp in Sources */,
 				E3E91D221D6D467C00675CF8 /* databaseview.cpp in Sources */,
 				E3E91D201D6D467C00675CF8 /* databasedoc.cpp in Sources */,
 				E38709B91D4CF564004EF478 /* ErdForeignKey.cpp in Sources */,
@@ -280,6 +311,7 @@
 				E33E6F761EAD303C003A0B92 /* constraintsign.cpp in Sources */,
 				E38709B71D4CF564004EF478 /* constraint.cpp in Sources */,
 				E3E91D381DBF812100675CF8 /* ErdLineShape.cpp in Sources */,
+				E32A502822A3A4B200A57BD1 /* divider.cpp in Sources */,
 				E3E91D271D6D467C00675CF8 /* GUIDatabaseTable.cpp in Sources */,
 				E38709C11D4CF564004EF478 /* OneArrow.cpp in Sources */,
 				E33E6F6E1E99AD0B003A0B92 /* HeaderGrid.cpp in Sources */,
