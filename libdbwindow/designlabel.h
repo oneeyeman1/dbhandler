@@ -16,6 +16,7 @@ public:
     DesignLabel();
     DesignLabel(const wxFont font, const wxString &label);
     virtual ~DesignLabel();
+    Properties GetProperties();
 protected:
     void InitSerializable();
 private:

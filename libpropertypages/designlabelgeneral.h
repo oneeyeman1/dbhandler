@@ -1,8 +1,18 @@
 #pragma once
-class DesignLabelGeneral : public wxPanel
+struct Properties
+{
+    wxString m_name, m_tag, m_text;
+    bool m_supressPrint;
+    int m_border, m_alignment;
+    wxFont m_font;
+    wxPoint m_position;
+    wxSize m_size;
+};
+
+class WXEXPORT DesignLabelGeneral : public wxPanel
 {
 public:
-    DesignLabelGeneral(wxWindow *parent);
+    DesignLabelGeneral(wxWindow *parent, const Properties *prop);
     ~DesignLabelGeneral();
 protected:
     void do_layout();

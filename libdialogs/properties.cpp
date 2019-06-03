@@ -36,6 +36,7 @@
 #include "tablegeneral.h"
 #include "fontpropertypagebase.h"
 #include "fieldgeneral.h"
+#include "designlabelgeneral.h"
 #include "fieldheader.h"
 #include "properties.h"
 
@@ -117,6 +118,14 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
                 wxMessageBox( (*it) );
         }*/
+    }
+    if( type == 2 )
+    {
+        Properties *prop = static_cast<Properties *>( m_object );
+        m_page7 = new DesignLabelGeneral( m_properties, prop );
+//        m_page2 = new CFontPropertyPage( m_properties );
+        m_properties->AddPage( m_page7, _( "General" ) );
+//        m_properties->AddPage( m_page2, _( "Font" ) );
     }
     if( !res )
     {

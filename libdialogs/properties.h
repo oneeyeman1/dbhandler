@@ -25,6 +25,7 @@ private:
     CFontPropertyPage *m_page2, *m_page3, *m_page4;
     FieldGeneral *m_page5;
     FieldHeader *m_page6;
+    DesignLabelGeneral *m_page7;
     int m_type;
     Database *m_db;
     void *m_object;

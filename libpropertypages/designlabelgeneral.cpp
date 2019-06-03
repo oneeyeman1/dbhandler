@@ -7,7 +7,7 @@
 
 #include "designlabelgeneral.h"
 
-DesignLabelGeneral::DesignLabelGeneral(wxWindow *parent) : wxPanel( parent )
+DesignLabelGeneral::DesignLabelGeneral(wxWindow *parent, const Properties *prop) : wxPanel( parent )
 {
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Name" ) );
     m_name = new wxTextCtrl( this, wxID_ANY );

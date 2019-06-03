@@ -117,6 +117,11 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
         menu.Append( wxID_PROPERTIES, _( "Properties..." ), "Table Properties", false );
     }
     int rc = GetPopupMenuSelectionFromUser( menu, pt );
+    if( rc != wxID_NONE )
+    {
+        wxCommandEvent evt( wxEVT_MENU, rc );
+        GetEventHandler()->ProcessEvent( evt );
+    }
 }
 
 void DesignCanvas::OnProperties(wxCommandEvent &event)
@@ -141,7 +146,7 @@ void DesignCanvas::OnProperties(wxCommandEvent &event)
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == 2 )
-            res = func( m_view->GetFrame(), ((DrawingDocument *) m_view->GetDocument())->GetDatabase(), type, m_menuShape, command, false, wxEmptyString, wxEmptyString, wxEmptyString, pcs );
+            res = func( m_view->GetFrame(), ((DrawingDocument *) m_view->GetDocument())->GetDatabase(), type, &dynamic_cast<DesignLabel *>( m_menuShape )->GetProperties(), command, false, wxEmptyString, wxEmptyString, wxEmptyString, pcs );
         if( type == 3 )
             res = func( m_view->GetFrame(), ((DrawingDocument *) m_view->GetDocument())->GetDatabase(), type, m_menuShape, command, false, wxEmptyString, wxEmptyString, wxEmptyString, pcs );
         if( res != wxID_CANCEL )
