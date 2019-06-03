@@ -5,6 +5,11 @@
 #pragma hdrstop
 #endif
 
+#ifndef WX_PRECOMP
+    #include "wx/wx.h"
+    #include "wx/mdi.h"
+#endif
+
 #include "designlabelgeneral.h"
 
 DesignLabelGeneral::DesignLabelGeneral(wxWindow *parent, const Properties *prop) : wxPanel( parent )

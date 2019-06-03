@@ -17,7 +17,7 @@
 #include "wxsf/DiagramManager.h"
 //#include "XmlSerializer.h"
 #include "database.h"
-#include "Constraint.h"
+#include "constraint.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "commenttableshape.h"
