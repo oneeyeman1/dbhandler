@@ -125,6 +125,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         m_page7 = new DesignLabelGeneral( m_properties, prop );
 //        m_page2 = new CFontPropertyPage( m_properties );
         m_properties->AddPage( m_page7, _( "General" ) );
+        res = 0;
 //        m_properties->AddPage( m_page2, _( "Font" ) );
     }
     if( !res )

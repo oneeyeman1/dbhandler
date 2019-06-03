@@ -9,7 +9,7 @@ struct Properties
     wxSize m_size;
 };
 
-class WXEXPORT DesignLabelGeneral : public wxPanel
+class WXEXPORT DesignLabelGeneral : public PropertyPageBase
 {
 public:
     DesignLabelGeneral(wxWindow *parent, const Properties *prop);
