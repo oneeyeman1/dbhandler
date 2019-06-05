@@ -158,12 +158,13 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     mainSizer = new wxBoxSizer( wxHORIZONTAL );
     sizer = new wxBoxSizer( wxVERTICAL );
 #ifdef __WXOSX__
+    wxBoxSizer *macTBSizer = new wxBoxSizer( wxVERTICAL );
     wxRect parentRect = parent->GetRect();
     wxSize parentClientSize = parent->GetClientSize();
     wxPoint pt;
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
-    m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentRect.GetHeight() - parent->GetToolBar()->GetSize().GetHeight() );
+    m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), /*parentRect.GetHeight() - parent->GetToolBar()->GetSize().GetHeight()*/parentClientSize.GetHeight() );
     m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
     if( m_type == DatabaseView )
     {
@@ -183,10 +184,11 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
     }
     m_tb->Realize();
-    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
+//    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
     ptCanvas.x = -1;
     ptCanvas.y = m_tb->GetSize().GetHeight();
-    sizer->Add( m_tb, 0, wxEXPAND, 0 );
+    macTBSizer->Add( m_tb, 0, wxEXPAND, 0 );
+    sizer->Add( macTBSizer, 0, wxEXPAND, 0 );
 #else
     ptCanvas = wxDefaultPosition;
 #endif
@@ -197,7 +199,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         sizer->Add( m_fields, 0, wxEXPAND, 0 );
         m_fields->Show( false );
     }
-    m_canvas = new DatabaseCanvas( this, /*wxDefaultPosition*/ptCanvas );
+    m_canvas = new DatabaseCanvas( this, ptCanvas );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
     if( m_type == QueryView )
     {
@@ -512,10 +514,11 @@ void DrawingView::GetTablesForView(Database *db, bool init)
     ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
     if( m_type == QueryView )
     {
-        m_page6->SetSyntaxText(query);
+        if( query != L"\n" )
+            m_page6->SetSyntaxText(query);
         if( quickSelect && m_selectTableName.size() == 1 )
             m_canvas->AddQuickQueryFields( m_selectTableName[0]->GetTableName(), m_queryFields, quickSelect );
-        if( quickSelect )
+        if( quickSelect && m_selectTableName.size() > 0 )
         {
             wxFontStyle labelStyle = m_selectTableName[0]->GetLabelFontItalic() == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
             wxFontWeight labelWeight = m_selectTableName[0]->GetLabelFontWeight() == 0 ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD;
