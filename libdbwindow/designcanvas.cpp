@@ -37,7 +37,7 @@ DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas
     startPoint.y = 1;
     m_pManager.SetRootItem( new xsSerializable() );
     SetDiagramManager( &m_pManager );
-    Create( view->GetFrame(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL | wxVSCROLL | wxALWAYS_SHOW_SB );
+    Create( view->GetFrame(), wxID_ANY, point, wxDefaultSize, wxHSCROLL | wxVSCROLL | wxALWAYS_SHOW_SB );
     SetVirtualSize( 1000, 1000 );
     SetScrollRate( 10, 10 );
     m_mode = modeDESIGN;
