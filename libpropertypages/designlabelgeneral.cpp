@@ -16,9 +16,9 @@
 DesignLabelGeneral::DesignLabelGeneral(wxWindow *parent, const Properties *prop) : PropertyPageBase( parent )
 {
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Name" ) );
-    m_name = new wxTextCtrl( this, wxID_ANY );
+    m_name = new wxTextCtrl( this, wxID_ANY, prop->m_name );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Tag" ) );
-    m_tag = new wxTextCtrl( this, wxID_ANY );
+    m_tag = new wxTextCtrl( this, wxID_ANY, prop->m_tag );
     m_suppressPrint = new wxCheckBox( this, wxID_ANY, _( "Supress Print After First Newspaper Column" ) );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Border" ) );
     const wxString choices1[] =
