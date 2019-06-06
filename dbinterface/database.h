@@ -141,8 +141,8 @@ public:
         m_headingFontName = L"MS Sans Serif";
         m_labelFontName = L"MS Sans Serif";
         m_dataFontWeight = 0;
-        m_headingFontWeight = 0;
-        m_labelFontWeight = 0;
+        m_headingFontWeight = 1;
+        m_labelFontWeight = 1;
         m_dataFontItalic = false;
         m_headingFontItalic = false;
         m_labelFontItalic = false;
