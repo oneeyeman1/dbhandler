@@ -119,3 +119,8 @@ void DesignLabel::InitSerializable()
     XS_SERIALIZE_POINT( m_prop.m_position, "LabelPosition" );
     XS_SERIALIZE_SIZE( m_prop.m_size, "LabelSize" );
 }
+
+Properties DesignLabel::GetProperties()
+{
+    return m_prop;
+}

@@ -10,9 +10,10 @@
     #include "wx/mdi.h"
 #endif
 
+#include "propertypagebase.h"
 #include "designlabelgeneral.h"
 
-DesignLabelGeneral::DesignLabelGeneral(wxWindow *parent) : wxPanel( parent )
+DesignLabelGeneral::DesignLabelGeneral(wxWindow *parent, const Properties *prop) : PropertyPageBase( parent )
 {
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Name" ) );
     m_name = new wxTextCtrl( this, wxID_ANY );

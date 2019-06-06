@@ -51,6 +51,7 @@
 #include "foreignkey.h"
 #include "getobjectname.h"
 #include "jointype.h"
+#include "designlabelgeneral.h"
 #include "properties.h"
 #include "addcolumnsdialog.h"
 #include "bitmappanel.h"
@@ -202,6 +203,8 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, i
         title += tableName + ".";
         title += static_cast<Field *>( object )->GetFieldName();
     }
+    if( type == 2 )
+        title = _( "Text Object" );
     PropertiesDialog dlg( parent, wxID_ANY, title, db, type, object, tableName, schemaName, ownerName, cs );
 	dlg.Center();
     res = dlg.ShowModal();
