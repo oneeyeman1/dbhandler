@@ -48,6 +48,7 @@ DesignLabel::DesignLabel (const wxFont font, const wxString &label) : wxSFRectSh
     m_prop.m_supressPrint = false;
     m_prop.m_border = 0;
     m_prop.m_alignment = 2;
+    m_prop.m_text = label;
     m_prop.m_text.Replace( "_", " " );
     m_prop.m_font = font;
     m_label = label;

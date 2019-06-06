@@ -43,6 +43,13 @@ DesignLabelGeneral::DesignLabelGeneral(wxWindow *parent, const Properties *prop)
     m_alignment = new wxComboBox( this, wxID_ANY, _( "Center" ), wxDefaultPosition, wxDefaultSize, 4, choices2 );
     m_label5 = new wxStaticText( this, wxID_ANY, _( "Text" ) );
     m_text = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+    if( prop->m_supressPrint )
+        m_suppressPrint->SetValue( true );
+    m_border->SetSelection( prop->m_border );
+    m_alignment->SetSelection( prop->m_alignment );
+    wxString text = prop->m_text;
+    text.Replace( "_", " " );
+    m_text->SetValue( text );
     do_layout();
 }
 
