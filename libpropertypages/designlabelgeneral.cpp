@@ -51,6 +51,14 @@ DesignLabelGeneral::DesignLabelGeneral(wxWindow *parent, const Properties *prop)
     text.Replace( "_", " " );
     m_text->SetValue( text );
     do_layout();
+    m_name->Bind( wxEVT_TEXT, &DesignLabelGeneral::DataChange, this );
+    m_tag->Bind( wxEVT_TEXT, &DesignLabelGeneral::DataChange, this );
+    m_suppressPrint->Bind( wxEVT_CHECKBOX, &DesignLabelGeneral::DataChange, this );
+    m_border->Bind( wxEVT_COMBOBOX, &DesignLabelGeneral::DataChange, this );
+    m_border->Bind( wxEVT_TEXT, &DesignLabelGeneral::DataChange, this );
+    m_alignment->Bind( wxEVT_COMBOBOX, &DesignLabelGeneral::DataChange, this );
+    m_alignment->Bind( wxEVT_TEXT, &DesignLabelGeneral::DataChange, this );
+    m_text->Bind( wxEVT_TEXT, &DesignLabelGeneral::DataChange, this );
 }
 
 DesignLabelGeneral::~DesignLabelGeneral()
@@ -100,4 +108,9 @@ void DesignLabelGeneral::do_layout()
     mainSizer->Add( sizer1, 0, wxEXPAND, 0 );
     mainSizer->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( mainSizer );
+}
+
+void DesignLabelGeneral::DataChange(wxCommandEvent &event)
+{
+    this->m_isModified = true;
 }

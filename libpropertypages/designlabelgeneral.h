@@ -16,6 +16,7 @@ public:
     ~DesignLabelGeneral();
 protected:
     void do_layout();
+    void DataChange(wxCommandEvent &event);
 private:
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5;
     wxTextCtrl *m_name, *m_tag, *m_text;
