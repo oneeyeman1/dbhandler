@@ -233,7 +233,7 @@ public:
     void SetHeadingFontPixelSize(int size) { m_headingFontPixelSize = size; }
     void SetLabelFontPixelSize(int size) { m_labelFontPixelSize = size; }
     const std::vector<Field *> &GetFields() const { return table_fields; }
-    std::map<int,std::vector<FKField *> > &GetForeignKeyVector() const { return foreign_keys; }
+    std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
     const unsigned long GetTableId() const { return m_objectId; }
     void SetTableId(unsigned long id) { m_objectId = id; }
     const std::wstring &GetTableOwner() const { return m_owner; }
