@@ -64,23 +64,23 @@ public:
         label = columnName;
         heading = columnName;
     }
-    const std::wstring &GetLabel() { return label; }
-    const std::wstring &GetHeading() { return heading; }
+    const std::wstring &GetLabel() const { return label; }
+    const std::wstring &GetHeading() const { return heading; }
     void SetLabel(const std::wstring &lbl) { label = lbl; }
     void SetHeading(const std::wstring &hding) { heading = hding; }
-    const std::wstring &GetFieldName() { return column_name; }
-    const std::wstring &GetFieldType() { return column_type; }
-    const std::wstring &GetDefaultValue() { return column_defaultValue; }
-    const std::wstring &GetComment() { return m_comment; }
-    bool IsNullAllowed() { return column_isNull; }
-    int GetFieldSize() { return field_size; }
-    int GetPrecision() { return decimal_size; }
-    bool IsPrimaryKey() { return column_pk; }
-    bool IsForeignKey() { return column_fk; }
+    const std::wstring &GetFieldName() const { return column_name; }
+    const std::wstring &GetFieldType() const { return column_type; }
+    const std::wstring &GetDefaultValue() const { return column_defaultValue; }
+    const std::wstring &GetComment() const { return m_comment; }
+    bool IsNullAllowed() const { return column_isNull; }
+    int GetFieldSize() const { return field_size; }
+    int GetPrecision() const { return decimal_size; }
+    bool IsPrimaryKey() const { return column_pk; }
+    bool IsForeignKey() const { return column_fk; }
     bool IsAutoIncrement() { return autoIncrement; }
     void SetComment(const std::wstring &comment) { m_comment = comment; }
     void SetFullType(const std::wstring type) { full_type = type; }
-    const std::wstring &GetFullType() { return full_type; }
+    const std::wstring &GetFullType() const { return full_type; }
 private:
     std::wstring column_name, column_type, column_defaultValue, m_comment, label, heading, full_type;
     bool autoIncrement, column_isNull, column_pk, column_fk;
@@ -106,16 +106,16 @@ public:
         this->refFields = refFields;
         this->match = match;
     }
-    const int GetForeignKeyId() { return fkId; }
-    const std::wstring &GetFKName() { return fkName; }
-    const std::wstring &GetReferencedTableName() { return refTable; }
-    const std::wstring &GetOriginalFieldName() { return originalField; }
-    const std::vector<std::wstring> &GetOriginalFields() { return origFields; }
-    const std::wstring &GetReferencedFieldName() { return referencedField; }
-    const std::vector<std::wstring> &GetReferencedFields() { return refFields; }
-    const FK_ONUPDATE GetOnUpdateConstraint() { return updateConstraint; }
-    const FK_ONDELETE GetOnDeleteConstraint() { return deleteConstraint; }
-    const int GetMatchOPtion() { return match; }
+    const int GetForeignKeyId() const { return fkId; }
+    const std::wstring &GetFKName() const { return fkName; }
+    const std::wstring &GetReferencedTableName() const { return refTable; }
+    const std::wstring &GetOriginalFieldName() const { return originalField; }
+    const std::vector<std::wstring> &GetOriginalFields() const { return origFields; }
+    const std::wstring &GetReferencedFieldName() const { return referencedField; }
+    const std::vector<std::wstring> &GetReferencedFields() const { return refFields; }
+    const FK_ONUPDATE GetOnUpdateConstraint() const { return updateConstraint; }
+    const FK_ONDELETE GetOnDeleteConstraint() const { return deleteConstraint; }
+    const int GetMatchOPtion() const { return match; }
 private:
     int fkId;
     std::wstring tableName, originalField, referencedField, refTable, origSchema, refSchema, fkName;
@@ -180,70 +180,70 @@ public:
         foreign_keys.clear();
     }
 
-    const std::wstring &GetTableName() { return table_name; }
-    const std::wstring &GetSchemaName() { return schema_name; }
-    const std::wstring &GetComment() { return m_comment; }
+    const std::wstring &GetTableName() const { return table_name; }
+    const std::wstring &GetSchemaName() const { return schema_name; }
+    const std::wstring &GetComment() const { return m_comment; }
     void SetComment(const std::wstring &comment) { m_comment = comment; }
     void SetDataFontName(const std::wstring &name) { m_dataFontName = name; }
-    const std::wstring &GetDataFontName() { return m_dataFontName; }
+    const std::wstring &GetDataFontName() const { return m_dataFontName; }
     void SetHeadingFontName(const std::wstring &name) { m_headingFontName = name; }
-    const std::wstring &GetHeadingFontName() { return m_headingFontName; }
+    const std::wstring &GetHeadingFontName() const { return m_headingFontName; }
     void SetLabelFontName(const std::wstring &name) { m_labelFontName = name; }
-    const std::wstring &GetLabelFontName() { return m_labelFontName; }
+    const std::wstring &GetLabelFontName() const { return m_labelFontName; }
     void SetDataFontWeight(int weight) { m_dataFontWeight = weight; }
-    int GetDataFontWeight() { return m_dataFontWeight; }
+    int GetDataFontWeight() const { return m_dataFontWeight; }
     void SetHeadingFontWeight(int weight) { m_headingFontWeight = weight; }
-    int GetHeadingFontWeight() { return m_headingFontWeight; }
+    int GetHeadingFontWeight() const { return m_headingFontWeight; }
     void SetLabelFontWeight(int weight) { m_labelFontWeight = weight; }
-    int GetLabelFontWeight() { return m_labelFontWeight; }
+    int GetLabelFontWeight() const { return m_labelFontWeight; }
     void SetDataFontItalic(bool italic) { m_dataFontItalic = italic; }
-    bool GetDataFontItalic() { return m_dataFontItalic; }
+    bool GetDataFontItalic() const { return m_dataFontItalic; }
     void SetHeadingFontItalic(bool italic) { m_headingFontItalic = italic; }
-    bool GetHeadingFontItalic() { return m_headingFontItalic; }
+    bool GetHeadingFontItalic() const { return m_headingFontItalic; }
     void SetLabelFontItalic(bool italic) { m_labelFontItalic = italic; }
-    bool GetLabelFontItalic() { return m_labelFontItalic; }
+    bool GetLabelFontItalic() const { return m_labelFontItalic; }
     void SetDataFontSize(int size) { m_dataFontSize = size; }
-    int GetDataFontSize() { return m_dataFontSize; }
+    int GetDataFontSize() const { return m_dataFontSize; }
     void SetHeadingFontSize(int size) { m_headingFontSize = size; }
-    int GetHeadingFontSize() { return m_headingFontSize; }
+    int GetHeadingFontSize() const { return m_headingFontSize; }
     void SetLabelFontSize(int size) { m_labelFontSize = size; }
-    int GetLabelFontSize() { return m_labelFontSize; }
+    int GetLabelFontSize() const { return m_labelFontSize; }
     void SetDataFontUnderline(bool param) { m_dataFontUnderline = param; }
-    bool GetDataFontUnderline() { return m_dataFontUnderline; }
+    bool GetDataFontUnderline() const { return m_dataFontUnderline; }
     void SetHeadingFontUnderline(bool underline) { m_headingFontUnderline = underline; }
-    bool GetHeadingFontUnderline() { return m_headingFontUnderline; }
+    bool GetHeadingFontUnderline() const { return m_headingFontUnderline; }
     void SetLabelFontUnderline(bool param) { m_labelFontUnderline = param; }
-    bool GetLabelFontUnderline() { return m_labelFontUnderline; }
+    bool GetLabelFontUnderline() const { return m_labelFontUnderline; }
     void SetDataFontStrikethrough(bool param) { m_dataFontStrikethrough = param; }
-    bool GetDataFontStrikethrough() { return m_dataFontStrikethrough; }
+    bool GetDataFontStrikethrough() const { return m_dataFontStrikethrough; }
     void SetHeadingFontStrikethrough(bool strikethrough) { m_headingFontStrikethrough = strikethrough; }
-    bool GetHeadingFontStrikethrough() { return m_headingFontStrikethrough; }
+    bool GetHeadingFontStrikethrough() const { return m_headingFontStrikethrough; }
     void SetLabelFontStrikethrough(bool param) { m_labelFontStrikethrough = param; }
-    bool GetLabelFontStrikethrough() { return m_labelFontStrikethrough; }
+    bool GetLabelFontStrikethrough() const { return m_labelFontStrikethrough; }
     int GetDataFontCharacterSet() { return m_dataFontCharacterSet; }
-    int GetHeadingFontCharacterSet() { return m_headingFontCharacterSet; }
-    int GetLabelFontCharacterSet() { return m_labelFontCharacterSer; }
+    int GetHeadingFontCharacterSet() const { return m_headingFontCharacterSet; }
+    int GetLabelFontCharacterSet() const { return m_labelFontCharacterSer; }
     void SetDataFontCharacterSet(int charSet) { m_dataFontCharacterSet = charSet; }
     void SetHeadingFontCharacterSet(int charSet) { m_headingFontCharacterSet = charSet; }
     void SetLabelFontCharacterSet(int charSet) { m_labelFontCharacterSer = charSet; }
-    int GetDataFontPixelSize() { return m_dataFontPixelSize; }
-    int GetHeadingFontPixelSize() { return m_headingFontPixelSize; }
-    int GetLabelFontPixelSize() { return m_labelFontPixelSize; }
+    int GetDataFontPixelSize() const { return m_dataFontPixelSize; }
+    int GetHeadingFontPixelSize() const { return m_headingFontPixelSize; }
+    int GetLabelFontPixelSize() const { return m_labelFontPixelSize; }
     void SetDataFontPixelSize(int size) { m_dataFontPixelSize = size; }
     void SetHeadingFontPixelSize(int size) { m_headingFontPixelSize = size; }
     void SetLabelFontPixelSize(int size) { m_labelFontPixelSize = size; }
-    const std::vector<Field *> &GetFields() { return table_fields; }
-    std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
-    const unsigned long GetTableId() { return m_objectId; }
+    const std::vector<Field *> &GetFields() const { return table_fields; }
+    std::map<int,std::vector<FKField *> > &GetForeignKeyVector() const { return foreign_keys; }
+    const unsigned long GetTableId() const { return m_objectId; }
     void SetTableId(unsigned long id) { m_objectId = id; }
-    const std::wstring &GetTableOwner() { return m_owner; }
+    const std::wstring &GetTableOwner() const { return m_owner; }
     void SetTableOwner(const std::wstring &owner) { m_owner = owner; }
     void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
-    const std::vector<std::wstring> &GetIndexNames() { return m_indexes; }
+    const std::vector<std::wstring> &GetIndexNames() const { return m_indexes; }
     void SetNumberOfFields(int count) { m_numFields = count; }
-    int GetNumberOfFields() { return m_numFields; }
+    int GetNumberOfFields() const { return m_numFields; }
     void SetNumberOfIndexes(int count) { m_numIndex = count; }
-    int GetNumberOfIndexes() { return m_numIndex; }
+    int GetNumberOfIndexes() const { return m_numIndex; }
 private:
     std::wstring table_name, schema_name, m_comment, m_owner;
     std::vector<Field *> table_fields;
@@ -309,12 +309,12 @@ struct Database::Impl
     std::wstring m_serverVersion;
     std::wstring m_pgLogFile, m_pgLogDir;
     int m_versionMajor, m_versionMinor, m_versionRevision;
-    const std::wstring &GetConnectedUser() { return m_connectedUser; };
+    const std::wstring &GetConnectedUser() const { return m_connectedUser; };
     void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
     const std::wstring &GetDatabaseType() const { return m_type; };
     const std::wstring &GetDatabaseSubtype() const { return m_subtype; };
     void PushTableName(const std::wstring tableName) { m_tableNames.push_back( tableName ); };
-    const std::vector<std::wstring> &GetTableNames() { return m_tableNames; };
+    const std::vector<std::wstring> &GetTableNames() const { return m_tableNames; };
     const std::wstring &GetPostgreLogFile() const { return m_pgLogFile; };
     const std::wstring &GetPostgresLogDir() const { return m_pgLogDir; };
 };
