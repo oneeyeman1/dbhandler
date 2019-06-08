@@ -6,8 +6,10 @@ public:
     DesignCanvas (wxView *view, const wxPoint &point);
     virtual ~DesignCanvas ();
     void SetQuickQueryFields(const std::vector<wxString> &fields);
-    void AddFieldLabelToCanvas(const wxFont labelFont/*, const wxFont *dataFont*/, const Field *label);
+    void AddFieldLabelToCanvas(const wxFont labelFont, const Field *label);
+    void AddFieldToCanvas(const wxFont dataFont, const Field *label);
     void AddHeaderDivider();
+    void AddDataDivider();
     virtual void OnRightDown(wxMouseEvent &event) wxOVERRIDE;
 protected:
     void OnProperties(wxCommandEvent &event);

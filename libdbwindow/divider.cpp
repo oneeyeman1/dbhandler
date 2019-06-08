@@ -63,6 +63,7 @@ Divider::Divider() : wxSFRectShape()
 
 Divider::Divider(const wxString &text, wxSFDiagramManager *manager) : wxSFRectShape( wxRealPoint( 1, 1 ), wxRealPoint( 5000, -1 ), manager )
 {
+    m_type = text;
     m_color = "Transparent";
     m_height = 80;
     wxString upArrow( L"\x2191" );
@@ -179,4 +180,9 @@ wxRect Divider::GetBoundingBox()
 void Divider::OnDragging(const wxPoint& pos)
 {
     MoveTo( 1, pos.y );
+}
+
+wxString &Divider::GetDividerType()
+{
+    return m_type;
 }
