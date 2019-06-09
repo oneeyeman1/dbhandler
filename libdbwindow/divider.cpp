@@ -182,7 +182,7 @@ void Divider::OnDragging(const wxPoint& pos)
     MoveTo( 1, pos.y );
 }
 
-wxString &Divider::GetDividerType()
+const wxString &Divider::GetDividerType()
 {
     return m_type;
 }
