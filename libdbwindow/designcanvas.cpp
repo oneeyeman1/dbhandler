@@ -73,7 +73,8 @@ void DesignCanvas::AddFieldToCanvas(const wxFont dataFont, const Field *label)
     m_pManager.GetShapes( CLASSINFO( Divider ), list );
     for( ShapeList::iterator it = list.begin(); it != list.end() && !found; ++it )
     {
-        if( dynamic_cast<Divider *>( ( *it ) )->GetDividerType().Trim() == _ ("Header") )
+        wxString temp = dynamic_cast<Divider *>( ( *it ) )->GetDividerType();
+        if( temp.Trim() == _ ("Header") )
         {
             found = true;
             ypos = (*it)->GetBoundingBox().GetHeight() + (*it)->GetBoundingBox().GetTop() + 2;
