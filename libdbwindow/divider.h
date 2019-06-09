@@ -7,7 +7,7 @@ public:
     Divider(const wxString &text, wxSFDiagramManager *manager);
     virtual ~Divider();
     virtual wxRect GetBoundingBox() wxOVERRIDE;
-    wxString &GetDividerType();
+    const wxString &GetDividerType();
     virtual void OnDragging(const wxPoint& pos) wxOVERRIDE;
 protected:    
     virtual void DrawNormal(wxDC &dc) wxOVERRIDE;
