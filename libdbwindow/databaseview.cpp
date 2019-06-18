@@ -24,12 +24,16 @@
 #include "../dbhandler/res/open.xpm"
 #include "../dbhandler/res/save.xpm"
 #include "../dbhandler/res/cut.xpm"
+#include "./res/gui/bold_png.c"
 //#endif
 
 #include <string>
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 #include <mutex>
 #endif
+
+#include "wx/file.h"
+
 #include "wx/docview.h"
 #include "wx/notebook.h"
 #include "wx/docmdi.h"
@@ -278,6 +282,7 @@ void DrawingView::CreateViewToolBar()
         m_styleBar->AddControl( m_fontName );
         m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "" );
         m_styleBar->AddControl( m_fontSize );
+		m_styleBar->AddTool( 303, _( "Bold" ), wxBITMAP_PNG( bold ), wxNullBitmap, wxITEM_NORMAL );
     }
     m_tb->Realize();
     if( m_styleBar )
