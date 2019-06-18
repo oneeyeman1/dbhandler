@@ -155,4 +155,7 @@ wxDECLARE_APP(MyApp);
 #define wxID_TEXTOBJECT           322
 #define wxID_PICTUREOBJECT        323
 #define wxID_LINEOBJECT           324
+#define BOLDFONT                  325
+#define ITALICFONT                326
+#define UNDERLINEFONGT            327
 #endif // _WX_SAMPLES_DOCVIEW_DOCVIEW_H_

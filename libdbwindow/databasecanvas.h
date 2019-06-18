@@ -80,5 +80,8 @@ private:
 #define wxID_DATASOURCE           301
 #define wxID_RETRIEVEARGS         304
 #define wxID_DISTINCT             306
+#define BOLDFONT                  325
+#define ITALICFONT                326
+#define UNDERLINEFONGT            327
 
 #endif
