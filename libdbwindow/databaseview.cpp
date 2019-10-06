@@ -24,8 +24,12 @@
 #include "../dbhandler/res/open.xpm"
 #include "../dbhandler/res/save.xpm"
 #include "../dbhandler/res/cut.xpm"
-#include "./res/gui/bold_png.c"
+//#include "./res/gui/bold_png.c"
 //#endif
+
+#include "bold.c"
+#include "italic.c"
+#include "underline.c"
 
 #include <string>
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -282,7 +286,9 @@ void DrawingView::CreateViewToolBar()
         m_styleBar->AddControl( m_fontName );
         m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "" );
         m_styleBar->AddControl( m_fontSize );
-		m_styleBar->AddTool( 303, _( "Bold" ), wxBITMAP_PNG( bold ), wxNullBitmap, wxITEM_NORMAL );
+		m_styleBar->AddTool( 303, _( "Bold" ), wxBitmap::NewFromPNGData( bold_png,  WXSIZEOF( bold_png ) ), wxNullBitmap, wxITEM_NORMAL );
+        m_styleBar->AddTool( 303, _( "Italic" ), wxBitmap::NewFromPNGData( italic_png,  WXSIZEOF( italic_png ) ), wxNullBitmap, wxITEM_NORMAL );
+        m_styleBar->AddTool( 303, _( "Underline" ), wxBitmap::NewFromPNGData( underline_png,  WXSIZEOF( underline_png ) ), wxNullBitmap, wxITEM_NORMAL );
     }
     m_tb->Realize();
     if( m_styleBar )
