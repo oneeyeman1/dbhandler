@@ -227,9 +227,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     mainSizer->Add( sizer, 1, wxEXPAND, 0 );
     m_frame->SetSizer( mainSizer );
-    sizer->Layout();
-    m_frame->Layout();
-    m_frame->Show();
     if( m_log )
         m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
@@ -239,6 +236,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 #if defined __WXMSW__ || defined __WXGTK__
     CreateViewToolBar();
 #endif
+    sizer->Layout();
+    m_frame->Layout();
+    m_frame->Show();
     return true;
 }
 
@@ -537,7 +537,6 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             wxFontWeight dataWeight = m_selectTableName[0]->GetDataFontWeight() == 0 ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD;
             for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
                 m_designCanvas->AddFieldLabelToCanvas( *wxFont::New( m_selectTableName[0]->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, labelStyle, labelWeight, m_selectTableName[0]->GetLabelFontUnderline(), m_selectTableName[0]->GetLabelFontName() ),
-/*                                                  wxFont::New( m_selectTableName[0]->GetDataFontSize(), wxFONTFAMILY_DEFAULT, dataStyle, dataWeight, m_selectTableName[0]->GetDataFontUnderline(), m_selectTableName[0]->GetDataFontName() ), */
                                                   (*it) );
             m_designCanvas->AddHeaderDivider();
             for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
@@ -545,7 +544,6 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             m_designCanvas->AddDataDivider();
         }
     }
-//    return tables;
 }
 
 DrawingDocument* DrawingView::GetDocument()
