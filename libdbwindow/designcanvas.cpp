@@ -227,3 +227,9 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
         }
     }
 }
+
+void DesignCanvas::InitialFieldSizing ()
+{
+    ShapeList labels;
+    m_pManager.GetShapes( CLASSINFO( DesignLabel ), labels );
+}
