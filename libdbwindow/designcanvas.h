@@ -11,6 +11,7 @@ public:
     void AddHeaderDivider();
     void AddDataDivider();
     virtual void OnRightDown(wxMouseEvent &event) wxOVERRIDE;
+    virtual void OnLeftDown(wxMouseEvent &event) wxOVERRIDE;
 protected:
     void OnProperties(wxCommandEvent &event);
 private:

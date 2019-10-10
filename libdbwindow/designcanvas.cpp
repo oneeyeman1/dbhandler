@@ -204,3 +204,26 @@ void DesignCanvas::OnProperties(wxCommandEvent &event)
     m_menuShape = NULL;
 }
 
+void DesignCanvas::OnLeftDown(wxMouseEvent &event)
+{
+    wxPoint pt = event.GetPosition();
+    ShapeList list;
+    GetShapesAtPosition( pt, list );
+    DesignLabel *label = nullptr;
+    DesignField *field = nullptr;
+    Divider *divider = nullptr;
+    for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
+    {
+        label = wxDynamicCast( (*it), DesignLabel );
+        if( !label )
+        {
+            field = wxDynamicCast( (*it), DesignField );
+            if( !field )
+            {
+                divider = wxDynamicCast( (*it), Divider );
+                if( !divider )
+                    continue;
+            }
+        }
+    }
+}
