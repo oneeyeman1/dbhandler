@@ -460,13 +460,14 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                         m_queryBook->Show( false );
                         m_designCanvas->Show( true );
                     }
+/*
 #ifdef __WXGTK__
                     wxDocMDIParentFrame *parent = wxDynamicCast( m_frame->GetMDIParent(), wxDocMDIParentFrame );
                     wxSize size = parent->GetSize();
                     parent->SetSize( size.GetWidth() - 5, size.GetHeight() - 5 );
                     parent->SetSize( size.GetWidth() + 5, size.GetHeight() + 5 );
 #endif
-                }
+*/                }
             }
         }
         else
@@ -1217,4 +1218,9 @@ void DrawingView::OnRetrievalArguments(wxCommandEvent &event)
         int res = func( m_frame, m_arguments, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
     }
     delete lib;
+}
+
+wxTextCtrl *DrawingView::GetFieldTextCtrl()
+{
+    return m_fieldText;
 }

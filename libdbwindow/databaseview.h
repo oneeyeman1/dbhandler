@@ -18,6 +18,7 @@ public:
     void UpdateQueryFromSignChange(const QueryConstraint *type);
 //    std::vector<Table> &GetTablesForView(Database *db);
     wxFrame *GetLogWindow() const;
+    wxTextCtrl *GetFieldTextCtrl();
     wxTextCtrl *GetTextLogger() const;
     void GetTablesForView(Database *db, bool init);
     void SetViewType(ViewType type);
