@@ -18,6 +18,8 @@
 #include "wxsf/GridShape.h"
 #include "designfield.h"
 
+XS_IMPLEMENT_CLONABLE_CLASS(DesignField, wxSFRectShape);
+
 DesignField::DesignField() : wxSFRectShape()
 {
     AddStyle( sfsLOCK_CHILDREN );
