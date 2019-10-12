@@ -532,6 +532,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             m_canvas->AddQuickQueryFields( m_selectTableName[0]->GetTableName(), m_queryFields, quickSelect );
         if( quickSelect && m_selectTableName.size() > 0 )
         {
+            wxBeginBusyCursor();
             wxFontStyle labelStyle = m_selectTableName[0]->GetLabelFontItalic() == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
             wxFontWeight labelWeight = ( ( m_selectTableName[0]->GetLabelFontWeight() == 0 ) ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD );
             wxFontStyle dataStyle = m_selectTableName[0]->GetDataFontItalic()  == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
@@ -543,6 +544,10 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
                 m_designCanvas->AddFieldToCanvas( *wxFont::New( m_selectTableName[0]->GetDataFontSize(), wxFONTFAMILY_DEFAULT, dataStyle, dataWeight, m_selectTableName[0]->GetDataFontUnderline(), m_selectTableName[0]->GetDataFontName() ), (*it) );
             m_designCanvas->AddDataDivider();
+            m_designCanvas->Update();
+            m_designCanvas->InitialFieldSizing();
+            m_designCanvas->Refresh();
+            wxEndBusyCursor();
         }
     }
 }
