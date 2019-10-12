@@ -230,6 +230,22 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
 
 void DesignCanvas::InitialFieldSizing ()
 {
-    ShapeList labels;
+    ShapeList labels, fields;
     m_pManager.GetShapes( CLASSINFO( DesignLabel ), labels );
+    m_pManager.GetShapes( CLASSINFO( DesignField ), fields );
+    int i = 0;
+    for( ShapeList::iterator it = labels.begin(); it != labels.end(); ++it )
+    {
+        wxRect labelWidth = (*it)->GetBoundingBox();
+        wxRect fieldWidth = fields[i]->GetBoundingBox();
+        if( labelWidth.GetWidth() > fieldWidth.GetWidth() )
+        {
+            dynamic_cast<wxSFRectShape *>( fields[i] )->SetRectSize( labelWidth.GetWidth(), fieldWidth.GetHeight() );
+        }
+        if( labelWidth.GetWidth () < fieldWidth.GetWidth () )
+        {
+            dynamic_cast<wxSFRectShape *>( (*it) )->SetRectSize( fieldWidth.GetWidth(), labelWidth.GetHeight() );
+        }
+        i++;
+    }
 }
