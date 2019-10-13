@@ -213,6 +213,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 //    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
     ptCanvas.x = -1;
     ptCanvas.y = m_tb->GetSize().GetHeight();
+    if( m_styleBar )
+        ptCanvas.y += m_styleBar->GetSize().GetHeight();
     macTBSizer->Add( m_tb, 0, wxEXPAND, 0 );
     macTBSizer->Add( m_styleBar, 0, wxEXPAND, 0 );
     sizer->Add( macTBSizer, 0, wxEXPAND, 0 );
@@ -255,6 +257,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 #if defined __WXMSW__ || defined __WXGTK__
     CreateViewToolBar();
 #endif
+    m_fontName->Bind( wxEVT_UPDATE_UI, &DrawingView::FieldTextUpdateUI, this );
+    m_fontName->Disable();
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
@@ -1247,4 +1251,8 @@ void DrawingView::OnRetrievalArguments(wxCommandEvent &event)
 wxTextCtrl *DrawingView::GetFieldTextCtrl()
 {
     return m_fieldText;
+}
+
+void DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &event)
+{
 }

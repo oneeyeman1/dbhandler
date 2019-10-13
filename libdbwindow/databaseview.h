@@ -54,6 +54,7 @@ public:
     void OnDistinct(wxCommandEvent &event);
     void OnQueryChange(wxCommandEvent &event);
     void OnRetrievalArguments(wxCommandEvent &event);
+    void FieldTextUpdateUI(wxUpdateUIEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
