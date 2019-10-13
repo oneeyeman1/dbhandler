@@ -257,8 +257,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 #if defined __WXMSW__ || defined __WXGTK__
     CreateViewToolBar();
 #endif
-    m_fontName->Bind( wxEVT_UPDATE_UI, &DrawingView::FieldTextUpdateUI, this );
-    m_fontName->Disable();
+    m_fieldText->Bind( wxEVT_UPDATE_UI, &DrawingView::FieldTextUpdateUI, this );
+    m_fieldText->Disable();
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
@@ -1255,4 +1255,7 @@ wxTextCtrl *DrawingView::GetFieldTextCtrl()
 
 void DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &event)
 {
+    ShapeList shapes;
+    m_designCanvas->GetSelectedShapes( shapes );
+    event.Enable( shapes.size() == 1 );
 }
