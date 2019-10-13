@@ -39,6 +39,7 @@
 #include "wx/file.h"
 
 #include "wx/docview.h"
+#include "wx/fontenum.h"
 #include "wx/notebook.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
@@ -56,6 +57,7 @@
 #include "HeaderGrid.h"
 #include "FieldShape.h"
 #include "commenttableshape.h"
+#include "fontcombobox.h"
 #include "MyErdTable.h"
 #include "fieldwindow.h"
 #include "syntaxproppage.h"
@@ -120,17 +122,18 @@ wxEND_EVENT_TABLE()
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
-    m_log = NULL;
+    m_log = nullptr;
     m_isActive = false;
-    m_tb = m_styleBar = NULL;
-    wxToolBar *tb = NULL;
+    m_tb = m_styleBar = nullptr;
+    wxToolBar *tb = nullptr;
     m_isCreated = false;
-    m_fields = NULL;
-    m_queryBook = NULL;
-    m_page2 = m_page4 = NULL;
-    m_page6 = NULL;
-    m_fieldText = NULL;
-    m_fontName = m_fontSize = NULL;
+    m_fields = nullptr;
+    m_queryBook = nullptr;
+    m_page2 = m_page4 = nullptr;
+    m_page6 = nullptr;
+    m_fieldText = nullptr;
+    m_fontName = nullptr;
+    m_fontSize = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -282,7 +285,7 @@ void DrawingView::CreateViewToolBar()
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
         m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
         m_styleBar->AddControl( m_fieldText );
-        m_fontName = new wxComboBox( m_styleBar, wxID_ANY, "" );
+        m_fontName = new FontComboBox( m_styleBar );
         m_styleBar->AddControl( m_fontName );
         m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "" );
         m_styleBar->AddControl( m_fontSize );

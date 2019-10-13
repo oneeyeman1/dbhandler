@@ -9,9 +9,16 @@
 #include "wx/wx.h"
 #endif
 
-#include "fontcmbobx.h"
+#include "wx/fontenum.h"
+#include "fontcombobox.h"
 
 FontComboBox::FontComboBox (wxWindow *parent) : wxComboBox (parent, wxID_ANY)
 {
-
+    m_enumerator.EnumerateFacenames();
+    if( m_enumerator.GotAny () )
+    {
+        int count = m_enumerator.GetFacenames().GetCount();
+        for( int i = 0; i < count; ++i )
+            Append( m_enumerator.GetFacenames().Item( i ) );
+    }
 }

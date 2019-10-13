@@ -1,6 +1,7 @@
 #include "wx/wx.h"
 
 #include "wx/docmdi.h"
+#include "wx/fontenum.h"
 #include "wx/notebook.h"
 #include "wx/grid.h"
 #include "database.h"
@@ -19,6 +20,7 @@
 #include "HeaderGrid.h"
 #include "fieldwindow.h"
 #include "commenttableshape.h"
+#include "fontcombobox.h"
 #include "MyErdTable.h"
 #include "FieldShape.h"
 #include "wherehavingpage.h"

@@ -85,6 +85,9 @@
     <ClInclude Include="divider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fntcmbobx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="constraint.cpp">
@@ -157,6 +160,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="divider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fontcombobox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

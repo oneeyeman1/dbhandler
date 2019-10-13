@@ -7,6 +7,7 @@
 
 #include <vector>
 #include "wx/docview.h"
+#include "wx/fontenum.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wxsf/ShapeCanvas.h"
@@ -21,6 +22,7 @@
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "commenttableshape.h"
+#include "fontcombobox.h"
 #include "MyErdTable.h"
 #include "databasedoc.h"
 #include "divider.h"
