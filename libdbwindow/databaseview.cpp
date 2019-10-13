@@ -177,6 +177,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     pt.y = parentRect.height - parentClientSize.GetHeight();
     m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), /*parentRect.GetHeight() - parent->GetToolBar()->GetSize().GetHeight()*/parentClientSize.GetHeight() );
     m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
+    if( m_type == QueryView )
+    {
+        m_styleBar = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
+    }
     if( m_type == DatabaseView )
     {
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
@@ -193,12 +197,24 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
+        m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
+        m_styleBar->AddControl( m_fieldText );
+        m_fontName = new FontComboBox( m_styleBar );
+        m_styleBar->AddControl( m_fontName );
+        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "" );
+        m_styleBar->AddControl( m_fontSize );
+        m_styleBar->AddTool( 303, _( "Bold" ), wxBitmap::NewFromPNGData( bold_png,  WXSIZEOF( bold_png ) ), wxNullBitmap, wxITEM_NORMAL );
+        m_styleBar->AddTool( 303, _( "Italic" ), wxBitmap::NewFromPNGData( italic_png,  WXSIZEOF( italic_png ) ), wxNullBitmap, wxITEM_NORMAL );
+        m_styleBar->AddTool( 303, _( "Underline" ), wxBitmap::NewFromPNGData( underline_png,  WXSIZEOF( underline_png ) ), wxNullBitmap, wxITEM_NORMAL );
     }
     m_tb->Realize();
+    if( m_styleBar )
+        m_styleBar->Realize();
 //    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
     ptCanvas.x = -1;
     ptCanvas.y = m_tb->GetSize().GetHeight();
     macTBSizer->Add( m_tb, 0, wxEXPAND, 0 );
+    macTBSizer->Add( m_styleBar, 0, wxEXPAND, 0 );
     sizer->Add( macTBSizer, 0, wxEXPAND, 0 );
 #else
     ptCanvas = wxDefaultPosition;
