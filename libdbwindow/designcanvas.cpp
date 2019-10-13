@@ -242,10 +242,12 @@ void DesignCanvas::InitialFieldSizing ()
         wxRect fieldWidth = fields[i]->GetBoundingBox();
         if( labelWidth.GetWidth() > fieldWidth.GetWidth() )
         {
+            dynamic_cast<wxSFRectShape *>( fields[i] )->MoveTo( (*it)->GetAbsolutePosition().x, fields[i]->GetAbsolutePosition().y );
             dynamic_cast<wxSFRectShape *>( fields[i] )->SetRectSize( labelWidth.GetWidth(), fieldWidth.GetHeight() );
         }
-        if( labelWidth.GetWidth () < fieldWidth.GetWidth () )
+        if( labelWidth.GetWidth() < fieldWidth.GetWidth() )
         {
+            dynamic_cast<wxSFRectShape *>( (*it) )->MoveTo( fields[i]->GetAbsolutePosition().x, (*it)->GetAbsolutePosition().y );
             dynamic_cast<wxSFRectShape *>( (*it) )->SetRectSize( fieldWidth.GetWidth(), labelWidth.GetHeight() );
         }
         i++;
