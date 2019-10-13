@@ -12,7 +12,7 @@
 #include "wx/fontenum.h"
 #include "fontcombobox.h"
 
-FontComboBox::FontComboBox (wxWindow *parent) : wxComboBox (parent, wxID_ANY)
+FontComboBox::FontComboBox (wxWindow *parent) : wxComboBox (parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_SORT )
 {
     m_enumerator.EnumerateFacenames();
     if( m_enumerator.GotAny () )
@@ -21,4 +21,5 @@ FontComboBox::FontComboBox (wxWindow *parent) : wxComboBox (parent, wxID_ANY)
         for( int i = 0; i < count; ++i )
             Append( m_enumerator.GetFacenames().Item( i ) );
     }
+    SetSelection( 0 );
 }
