@@ -9,7 +9,7 @@
 #include "wx/wx.h"
 #endif
 
-#include "fontcmbobx.h"
+#include "fontcombobox.h"
 
 FontComboBox::FontComboBox (wxWindow *parent) : wxComboBox (parent, wxID_ANY)
 {
