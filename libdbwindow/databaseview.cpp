@@ -267,6 +267,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 
 DrawingView::~DrawingView()
 {
+    delete m_tb;
+    m_tb = nullptr;
+    delete m_styleBar;
+    m_styleBar = nullptr;
 }
 
 #if defined __WXMSW__ || defined __WXGTK__
