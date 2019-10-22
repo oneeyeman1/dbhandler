@@ -2708,7 +2708,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::w
                 GetErrorMessage( errorMsg, 1, m_hstmt );
                 res = 1;
             }
-            delete query;
+            delete[] query;
             query = NULL;
         }
         result = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
@@ -4107,7 +4107,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     table_name = NULL;
                                     table_schema = NULL;
                                     table_catalog = NULL;
-                                    delete qry;
+                                    delete[] qry;
                                     qry = NULL;
                                 }
                             }
@@ -5403,11 +5403,11 @@ bool ODBCDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const 
         ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
         m_hstmt = 0;
     }
-    delete table_name;
+    delete[] table_name;
     table_name = NULL;
-    delete owner_name;
+    delete[] owner_name;
     owner_name = NULL;
-    delete field_name;
+    delete[] field_name;
     field_name = NULL;
     return exist;
 }

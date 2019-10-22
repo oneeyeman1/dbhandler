@@ -179,7 +179,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
     if( m_type == QueryView )
     {
-        m_styleBar = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
+        m_styleBar = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "StyleBar" );
     }
     if( m_type == DatabaseView )
     {

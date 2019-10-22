@@ -1,7 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 ## Created by Anjuta
 
-SUBDIRS = dbinterface libsqlite libodbc libpostgres libmysql libshapeframework libdbloader libfieldswindow libpropertypages libdialogs libdbwindow libtablewindow po dbhandler
+SUBDIRS = dbinterface libmisc libsqlite libodbc libpostgres libmysql libshapeframework libdbloader libfieldswindow libpropertypages libdialogs 
+libdbwindow libtablewindow po dbhandler
 
 dist_doc_DATA = \
 	README \
