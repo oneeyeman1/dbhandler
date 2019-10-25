@@ -262,8 +262,11 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 #if defined __WXMSW__ || defined __WXGTK__
     CreateViewToolBar();
 #endif
-    m_fieldText->Bind( wxEVT_UPDATE_UI, &DrawingView::FieldTextUpdateUI, this );
-    m_fieldText->Disable();
+    if( m_fieldText )
+    {
+        m_fieldText->Bind( wxEVT_UPDATE_UI, &DrawingView::FieldTextUpdateUI, this );
+        m_fieldText->Disable();
+    }
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
@@ -302,7 +305,7 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxBitmap( cut_xpm ), wxBitmap( cut_xpm ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
-        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap( "res/gui/sql.png", wxBITMAP_TYPE_PNG  ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
+        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap( "C:\\Users\\Igor\\OneDrive\\Documents\\dbhandler_app\\libdbwindow\\res\\gui\\sql_ready.png", wxBITMAP_TYPE_PNG ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Database View" ) );
     }
     else
