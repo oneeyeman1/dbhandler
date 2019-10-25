@@ -27,9 +27,10 @@
 //#include "./res/gui/bold_png.c"
 //#endif
 
-#include "bold.c"
-#include "italic.c"
-#include "underline.c"
+#include "res/gui/bold.c"
+#include "res/gui/italic.c"
+#include "res/gui/underline.c"
+#include "res/gui/sql.h"
 
 #include <string>
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -116,6 +117,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_DESELECTALLFIELDS, DrawingView::OnSelectAllFields)
     EVT_MENU(wxID_DISTINCT, DrawingView::OnDistinct)
     EVT_MENU(wxID_RETRIEVEARGS, DrawingView::OnRetrievalArguments)
+    EVT_MENU(wxID_DATASOURCE, DrawingView::OnDataSource)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -134,11 +136,12 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_fieldText = nullptr;
     m_fontName = nullptr;
     m_fontSize = nullptr;
+    wxMenu *menu = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
-    wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
-    wxRect clientRect = parent->GetClientRect();
-    wxWindowList children = parent->GetChildren();
+    m_parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
+    wxRect clientRect = m_parent->GetClientRect();
+    wxWindowList children = m_parent->GetChildren();
     for( wxWindowList::iterator it = children.begin(); it != children.end(); it++ )
     {
         tb = wxDynamicCast( *it, wxToolBar );
@@ -158,7 +161,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     {
         title = "Database - " + wxDynamicCast( GetDocument(), DrawingDocument )->GetDatabase()->GetTableVector().m_dbName;
     }
-    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, title, wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+    m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
 //    m_frame->SetMenuBar( parent->GetMenuBar() );
     if( m_type == DatabaseView )
     {
@@ -187,6 +190,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxBitmap( cut_xpm ), wxBitmap( cut_xpm ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
+        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql ), wxBitmap::NewFromPNGData( sql ), wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close Database View" ), _( "Close Database View" ) );
     }
     else
@@ -195,6 +199,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
         m_tb->AddTool( wxID_SAVE, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
+        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql ), wxBitmap::NewFromPNGData( sql ), wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
         m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
@@ -297,6 +302,7 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxBitmap( cut_xpm ), wxBitmap( cut_xpm ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
+        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap( "res/gui/sql.png", wxBITMAP_TYPE_PNG  ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Database View" ) );
     }
     else
@@ -305,6 +311,7 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
         m_tb->AddTool( wxID_SAVE, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
+        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap( "C:\\Users\\Igor\\OneDrive\\Documents\\dbhandler_app\\libdbwindow\\res\\gui\\sql_ready.png", wxBITMAP_TYPE_PNG ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
         m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
@@ -1262,4 +1269,20 @@ void DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &event)
     ShapeList shapes;
     m_designCanvas->GetSelectedShapes( shapes );
     event.Enable( shapes.size() == 1 );
+}
+
+void DrawingView::OnDataSource(wxCommandEvent &event)
+{
+    if( event.IsChecked () )
+    {
+        wxMessageBox( "Checked" );
+        // Query Design View activate
+    }
+    else
+    {
+        wxMessageBox( "UnChecked" );
+        // Query Presentation View active
+    }
+    m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE )->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
+    m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
 }

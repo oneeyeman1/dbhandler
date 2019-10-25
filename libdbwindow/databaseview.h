@@ -55,6 +55,7 @@ public:
     void OnQueryChange(wxCommandEvent &event);
     void OnRetrievalArguments(wxCommandEvent &event);
     void FieldTextUpdateUI(wxUpdateUIEvent &event);
+    void OnDataSource(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
@@ -64,6 +65,7 @@ protected:
     void CreateViewToolBar();
 private:
     bool m_isActive;
+    wxDocMDIParentFrame *m_parent;
     wxToolBar *m_tb, *m_styleBar;
     wxTextCtrl *m_fieldText;
     FontComboBox *m_fontName;
