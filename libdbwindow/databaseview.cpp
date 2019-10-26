@@ -305,7 +305,7 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxBitmap( cut_xpm ), wxBitmap( cut_xpm ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
-        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap( "C:\\Users\\Igor\\OneDrive\\Documents\\dbhandler_app\\libdbwindow\\res\\gui\\sql_ready.png", wxBITMAP_TYPE_PNG ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
+        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Database View" ) );
     }
     else
@@ -314,7 +314,7 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
         m_tb->AddTool( wxID_SAVE, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
-        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap( "C:\\Users\\Igor\\OneDrive\\Documents\\dbhandler_app\\libdbwindow\\res\\gui\\sql_ready.png", wxBITMAP_TYPE_PNG ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
+        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
         m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
@@ -1278,13 +1278,23 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
 {
     if( event.IsChecked () )
     {
-        wxMessageBox( "Checked" );
-        // Query Design View activate
+        m_styleBar->Show( false );
+        m_designCanvas->Show( false );
+        m_fields->Show( true );
+        m_canvas->Show( true );
+        m_queryBook->Show( true );
+        m_frame->Layout();
+        sizer->Layout();
     }
     else
     {
-        wxMessageBox( "UnChecked" );
-        // Query Presentation View active
+        m_styleBar->Show( true );
+        m_designCanvas->Show( true );
+        m_fields->Show( false );
+        m_canvas->Show( false );
+        m_queryBook->Show( false );
+        m_frame->Layout();
+        sizer->Layout();
     }
     m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE )->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
     m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
