@@ -18,6 +18,7 @@
 #include <vector>
 #include <string>
 #include "wx/docmdi.h"
+#include "wx/fontenum.h"
 #include "wx/docview.h"
 #include "wx/cmdproc.h"
 #include "wx/notebook.h"
@@ -33,6 +34,7 @@
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "commenttableshape.h"
+#include "fontcombobox.h"
 #include "MyErdTable.h"
 #include "FieldShape.h"
 #include "fieldwindow.h"

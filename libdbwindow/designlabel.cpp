@@ -48,6 +48,7 @@ DesignLabel::DesignLabel (const wxFont font, const wxString &label) : wxSFRectSh
     m_prop.m_supressPrint = false;
     m_prop.m_border = 0;
     m_prop.m_alignment = 2;
+    m_prop.m_text = label;
     m_prop.m_text.Replace( "_", " " );
     m_prop.m_font = font;
     m_label = label;
@@ -118,4 +119,9 @@ void DesignLabel::InitSerializable()
     XS_SERIALIZE_FONT( m_prop.m_font, "LabelFont" );
     XS_SERIALIZE_POINT( m_prop.m_position, "LabelPosition" );
     XS_SERIALIZE_SIZE( m_prop.m_size, "LabelSize" );
+}
+
+Properties DesignLabel::GetProperties()
+{
+    return m_prop;
 }

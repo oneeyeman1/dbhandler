@@ -11,6 +11,7 @@
 #endif
 
 #include "wx/docview.h"
+#include "wx/fontenum.h"
 #include "wx/docmdi.h"
 #include "wx/notebook.h"
 #include "wx/grid.h"
@@ -26,6 +27,7 @@
 #include "HeaderGrid.h"
 #include "database.h"
 #include "commenttableshape.h"
+#include "fontcombobox.h"
 #include "MyErdTable.h"
 #include "FieldShape.h"
 #include "fieldwindow.h"

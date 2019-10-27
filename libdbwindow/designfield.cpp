@@ -18,6 +18,8 @@
 #include "wxsf/GridShape.h"
 #include "designfield.h"
 
+XS_IMPLEMENT_CLONABLE_CLASS(DesignField, wxSFRectShape);
+
 DesignField::DesignField() : wxSFRectShape()
 {
     AddStyle( sfsLOCK_CHILDREN );
@@ -68,6 +70,27 @@ DesignField::DesignField (const wxFont font, const wxString &label) : wxSFRectSh
         else
             delete m_text;
     }
+    m_grid->RemoveChildren();
+    m_grid->ClearGrid();
+    m_grid->SetDimensions( 1, 1 );
+    Refresh();
+    SetRectSize( GetRectSize().x, 0 );
+    m_text = new wxSFTextShape;
+    if( m_text )
+    {
+        m_text->SetHAlign( wxSFShapeBase::halignCENTER );
+        m_text->SetVAlign( wxSFShapeBase::valignMIDDLE );
+        m_text->SetFont( font );
+        m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        if( m_grid->InsertToGrid( 0, 0, m_text ) )
+            m_text->SetText( m_label );
+        else
+            delete m_text;
+    }
+    m_text->RemoveStyle( sfsSHOW_HANDLES );
+    RemoveStyle( sfsSHOW_HANDLES );
+    m_grid->Update();
+    Update();
 }
 
 DesignField::~DesignField()

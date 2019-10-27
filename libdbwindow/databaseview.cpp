@@ -24,13 +24,23 @@
 #include "../dbhandler/res/open.xpm"
 #include "../dbhandler/res/save.xpm"
 #include "../dbhandler/res/cut.xpm"
+//#include "./res/gui/bold_png.c"
 //#endif
+
+#include "res/gui/bold.c"
+#include "res/gui/italic.c"
+#include "res/gui/underline.c"
+#include "res/gui/sql.h"
 
 #include <string>
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 #include <mutex>
 #endif
+
+#include "wx/file.h"
+
 #include "wx/docview.h"
+#include "wx/fontenum.h"
 #include "wx/notebook.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
@@ -48,6 +58,7 @@
 #include "HeaderGrid.h"
 #include "FieldShape.h"
 #include "commenttableshape.h"
+#include "fontcombobox.h"
 #include "MyErdTable.h"
 #include "fieldwindow.h"
 #include "syntaxproppage.h"
@@ -106,28 +117,31 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_DESELECTALLFIELDS, DrawingView::OnSelectAllFields)
     EVT_MENU(wxID_DISTINCT, DrawingView::OnDistinct)
     EVT_MENU(wxID_RETRIEVEARGS, DrawingView::OnRetrievalArguments)
+    EVT_MENU(wxID_DATASOURCE, DrawingView::OnDataSource)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
-    m_log = NULL;
+    m_log = nullptr;
     m_isActive = false;
-    m_tb = m_styleBar = NULL;
-    wxToolBar *tb = NULL;
+    m_tb = m_styleBar = nullptr;
+    wxToolBar *tb = nullptr;
     m_isCreated = false;
-    m_fields = NULL;
-    m_queryBook = NULL;
-    m_page2 = m_page4 = NULL;
-    m_page6 = NULL;
-    m_fieldText = NULL;
-    m_fontName = m_fontSize = NULL;
+    m_fields = nullptr;
+    m_queryBook = nullptr;
+    m_page2 = m_page4 = nullptr;
+    m_page6 = nullptr;
+    m_fieldText = nullptr;
+    m_fontName = nullptr;
+    m_fontSize = nullptr;
+    wxMenu *menu = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
-    wxDocMDIParentFrame *parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
-    wxRect clientRect = parent->GetClientRect();
-    wxWindowList children = parent->GetChildren();
+    m_parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
+    wxRect clientRect = m_parent->GetClientRect();
+    wxWindowList children = m_parent->GetChildren();
     for( wxWindowList::iterator it = children.begin(); it != children.end(); it++ )
     {
         tb = wxDynamicCast( *it, wxToolBar );
@@ -147,7 +161,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     {
         title = "Database - " + wxDynamicCast( GetDocument(), DrawingDocument )->GetDatabase()->GetTableVector().m_dbName;
     }
-    m_frame = new wxDocMDIChildFrame( doc, this, parent, wxID_ANY, title, wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+    m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
 //    m_frame->SetMenuBar( parent->GetMenuBar() );
     if( m_type == DatabaseView )
     {
@@ -158,13 +172,18 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     mainSizer = new wxBoxSizer( wxHORIZONTAL );
     sizer = new wxBoxSizer( wxVERTICAL );
 #ifdef __WXOSX__
+    wxBoxSizer *macTBSizer = new wxBoxSizer( wxVERTICAL );
     wxRect parentRect = parent->GetRect();
     wxSize parentClientSize = parent->GetClientSize();
     wxPoint pt;
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
-    m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentRect.GetHeight() - parent->GetToolBar()->GetSize().GetHeight() );
+    m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), /*parentRect.GetHeight() - parent->GetToolBar()->GetSize().GetHeight()*/parentClientSize.GetHeight() );
     m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
+    if( m_type == QueryView )
+    {
+        m_styleBar = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "StyleBar" );
+    }
     if( m_type == DatabaseView )
     {
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
@@ -179,14 +198,30 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
         m_tb->AddTool( wxID_SAVE, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
+        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql ), wxBitmap::NewFromPNGData( sql ), wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
+        m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
+        m_styleBar->AddControl( m_fieldText );
+        m_fontName = new FontComboBox( m_styleBar );
+        m_styleBar->AddControl( m_fontName );
+        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "" );
+        m_styleBar->AddControl( m_fontSize );
+        m_styleBar->AddTool( 303, _( "Bold" ), wxBitmap::NewFromPNGData( bold_png,  WXSIZEOF( bold_png ) ), wxNullBitmap, wxITEM_NORMAL );
+        m_styleBar->AddTool( 303, _( "Italic" ), wxBitmap::NewFromPNGData( italic_png,  WXSIZEOF( italic_png ) ), wxNullBitmap, wxITEM_NORMAL );
+        m_styleBar->AddTool( 303, _( "Underline" ), wxBitmap::NewFromPNGData( underline_png,  WXSIZEOF( underline_png ) ), wxNullBitmap, wxITEM_NORMAL );
     }
     m_tb->Realize();
-    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
+    if( m_styleBar )
+        m_styleBar->Realize();
+//    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
     ptCanvas.x = -1;
     ptCanvas.y = m_tb->GetSize().GetHeight();
-    sizer->Add( m_tb, 0, wxEXPAND, 0 );
+    if( m_styleBar )
+        ptCanvas.y += m_styleBar->GetSize().GetHeight();
+    macTBSizer->Add( m_tb, 0, wxEXPAND, 0 );
+    macTBSizer->Add( m_styleBar, 0, wxEXPAND, 0 );
+    sizer->Add( macTBSizer, 0, wxEXPAND, 0 );
 #else
     ptCanvas = wxDefaultPosition;
 #endif
@@ -197,7 +232,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         sizer->Add( m_fields, 0, wxEXPAND, 0 );
         m_fields->Show( false );
     }
-    m_canvas = new DatabaseCanvas( this, /*wxDefaultPosition*/ptCanvas );
+    m_canvas = new DatabaseCanvas( this, ptCanvas );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
     if( m_type == QueryView )
     {
@@ -217,9 +252,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     mainSizer->Add( sizer, 1, wxEXPAND, 0 );
     m_frame->SetSizer( mainSizer );
-    sizer->Layout();
-    m_frame->Layout();
-    m_frame->Show();
     if( m_log )
         m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
@@ -229,11 +261,23 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 #if defined __WXMSW__ || defined __WXGTK__
     CreateViewToolBar();
 #endif
+    if( m_fieldText )
+    {
+        m_fieldText->Bind( wxEVT_UPDATE_UI, &DrawingView::FieldTextUpdateUI, this );
+        m_fieldText->Disable();
+    }
+    sizer->Layout();
+    m_frame->Layout();
+    m_frame->Show();
     return true;
 }
 
 DrawingView::~DrawingView()
 {
+    delete m_tb;
+    m_tb = nullptr;
+    delete m_styleBar;
+    m_styleBar = nullptr;
 }
 
 #if defined __WXMSW__ || defined __WXGTK__
@@ -268,14 +312,18 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
         m_tb->AddTool( wxID_SAVE, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
+        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
         m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
         m_styleBar->AddControl( m_fieldText );
-        m_fontName = new wxComboBox( m_styleBar, wxID_ANY, "" );
+        m_fontName = new FontComboBox( m_styleBar );
         m_styleBar->AddControl( m_fontName );
         m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "" );
         m_styleBar->AddControl( m_fontSize );
+        m_styleBar->AddTool( 303, _( "Bold" ), wxBitmap::NewFromPNGData( bold_png,  WXSIZEOF( bold_png ) ), wxNullBitmap, wxITEM_NORMAL );
+        m_styleBar->AddTool( 303, _( "Italic" ), wxBitmap::NewFromPNGData( italic_png,  WXSIZEOF( italic_png ) ), wxNullBitmap, wxITEM_NORMAL );
+        m_styleBar->AddTool( 303, _( "Underline" ), wxBitmap::NewFromPNGData( underline_png,  WXSIZEOF( underline_png ) ), wxNullBitmap, wxITEM_NORMAL );
     }
     m_tb->Realize();
     if( m_styleBar )
@@ -421,6 +469,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 {
                     if( m_source != 1 )
                     {
+                        HideStyleBar();
                         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
                         res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
                     }
@@ -447,13 +496,14 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                         m_queryBook->Show( false );
                         m_designCanvas->Show( true );
                     }
+/*
 #ifdef __WXGTK__
                     wxDocMDIParentFrame *parent = wxDynamicCast( m_frame->GetMDIParent(), wxDocMDIParentFrame );
                     wxSize size = parent->GetSize();
                     parent->SetSize( size.GetWidth() - 5, size.GetHeight() - 5 );
                     parent->SetSize( size.GetWidth() + 5, size.GetHeight() + 5 );
 #endif
-                }
+*/                }
             }
         }
         else
@@ -512,23 +562,30 @@ void DrawingView::GetTablesForView(Database *db, bool init)
     ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
     if( m_type == QueryView )
     {
-        m_page6->SetSyntaxText(query);
+        if( query != L"\n" )
+            m_page6->SetSyntaxText(query);
         if( quickSelect && m_selectTableName.size() == 1 )
             m_canvas->AddQuickQueryFields( m_selectTableName[0]->GetTableName(), m_queryFields, quickSelect );
-        if( quickSelect )
+        if( quickSelect && m_selectTableName.size() > 0 )
         {
+            wxBeginBusyCursor();
             wxFontStyle labelStyle = m_selectTableName[0]->GetLabelFontItalic() == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
-            wxFontWeight labelWeight = m_selectTableName[0]->GetLabelFontWeight() == 0 ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD;
+            wxFontWeight labelWeight = ( ( m_selectTableName[0]->GetLabelFontWeight() == 0 ) ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD );
             wxFontStyle dataStyle = m_selectTableName[0]->GetDataFontItalic()  == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
             wxFontWeight dataWeight = m_selectTableName[0]->GetDataFontWeight() == 0 ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD;
             for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
                 m_designCanvas->AddFieldLabelToCanvas( *wxFont::New( m_selectTableName[0]->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, labelStyle, labelWeight, m_selectTableName[0]->GetLabelFontUnderline(), m_selectTableName[0]->GetLabelFontName() ),
-/*                                                  wxFont::New( m_selectTableName[0]->GetDataFontSize(), wxFONTFAMILY_DEFAULT, dataStyle, dataWeight, m_selectTableName[0]->GetDataFontUnderline(), m_selectTableName[0]->GetDataFontName() ), */
                                                   (*it) );
             m_designCanvas->AddHeaderDivider();
+            for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
+                m_designCanvas->AddFieldToCanvas( *wxFont::New( m_selectTableName[0]->GetDataFontSize(), wxFONTFAMILY_DEFAULT, dataStyle, dataWeight, m_selectTableName[0]->GetDataFontUnderline(), m_selectTableName[0]->GetDataFontName() ), (*it) );
+            m_designCanvas->AddDataDivider();
+            m_designCanvas->Update();
+            m_designCanvas->InitialFieldSizing();
+            m_designCanvas->Refresh();
+            wxEndBusyCursor();
         }
     }
-//    return tables;
 }
 
 DrawingDocument* DrawingView::GetDocument()
@@ -1202,4 +1259,58 @@ void DrawingView::OnRetrievalArguments(wxCommandEvent &event)
         int res = func( m_frame, m_arguments, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
     }
     delete lib;
+}
+
+wxTextCtrl *DrawingView::GetFieldTextCtrl()
+{
+    return m_fieldText;
+}
+
+void DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &event)
+{
+    ShapeList shapes;
+    m_designCanvas->GetSelectedShapes( shapes );
+    event.Enable( shapes.size() == 1 );
+}
+
+void DrawingView::OnDataSource(wxCommandEvent &event)
+{
+    if( m_type == QueryView )
+    {
+        if( event.IsChecked () )
+        {
+            HideStyleBar();
+//            m_styleBar->Show( false );
+            m_designCanvas->Show( false );
+            m_fields->Show( true );
+            m_canvas->Show( true );
+            m_queryBook->Show( true );
+            m_frame->Layout();
+            sizer->Layout();
+        }
+        else
+        {
+            m_styleBar->Show( true );
+            m_designCanvas->Show( true );
+            m_fields->Show( false );
+            m_canvas->Show( false );
+            m_queryBook->Show( false );
+            m_frame->Layout();
+            sizer->Layout();
+        }
+    }
+    m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE )->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
+    m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
+}
+
+void DrawingView::HideStyleBar()
+{
+    m_styleBar->Show( false );
+    int heightToolbar = m_tb->GetSize().GetY();
+    int heightStyleBar = m_styleBar->GetSize().y;
+    int framePosition = m_frame->GetPosition().y;
+    if( framePosition == 0 )
+    {
+        m_frame->SetPosition( wxPoint( wxDefaultCoord, -heightStyleBar ) );
+    }
 }

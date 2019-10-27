@@ -11,6 +11,7 @@
     #include "wx/txtstrm.h"
 #endif
 #include "wx/docview.h"
+#include "wx/fontenum.h"
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"
 #include "wx/dynlib.h"
@@ -27,6 +28,7 @@
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "commenttableshape.h"
+#include "fontcombobox.h"
 #include "MyErdTable.h"
 #include "fieldwindow.h"
 #include "FieldShape.h"
