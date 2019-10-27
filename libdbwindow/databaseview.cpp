@@ -190,7 +190,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxBitmap( cut_xpm ), wxBitmap( cut_xpm ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
-        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql ), wxBitmap::NewFromPNGData( sql ), wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close Database View" ), _( "Close Database View" ) );
     }
     else
@@ -305,7 +304,6 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxBitmap( cut_xpm ), wxBitmap( cut_xpm ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
-        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Database View" ) );
     }
     else
@@ -471,6 +469,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 {
                     if( m_source != 1 )
                     {
+                        HideStyleBar();
                         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
                         res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
                     }
@@ -1276,26 +1275,42 @@ void DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &event)
 
 void DrawingView::OnDataSource(wxCommandEvent &event)
 {
-    if( event.IsChecked () )
+    if( m_type == QueryView )
     {
-        m_styleBar->Show( false );
-        m_designCanvas->Show( false );
-        m_fields->Show( true );
-        m_canvas->Show( true );
-        m_queryBook->Show( true );
-        m_frame->Layout();
-        sizer->Layout();
-    }
-    else
-    {
-        m_styleBar->Show( true );
-        m_designCanvas->Show( true );
-        m_fields->Show( false );
-        m_canvas->Show( false );
-        m_queryBook->Show( false );
-        m_frame->Layout();
-        sizer->Layout();
+        if( event.IsChecked () )
+        {
+            HideStyleBar();
+//            m_styleBar->Show( false );
+            m_designCanvas->Show( false );
+            m_fields->Show( true );
+            m_canvas->Show( true );
+            m_queryBook->Show( true );
+            m_frame->Layout();
+            sizer->Layout();
+        }
+        else
+        {
+            m_styleBar->Show( true );
+            m_designCanvas->Show( true );
+            m_fields->Show( false );
+            m_canvas->Show( false );
+            m_queryBook->Show( false );
+            m_frame->Layout();
+            sizer->Layout();
+        }
     }
     m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE )->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
     m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
+}
+
+void DrawingView::HideStyleBar()
+{
+    m_styleBar->Show( false );
+    int heightToolbar = m_tb->GetSize().GetY();
+    int heightStyleBar = m_styleBar->GetSize().y;
+    int framePosition = m_frame->GetPosition().y;
+    if( framePosition == 0 )
+    {
+        m_frame->SetPosition( wxPoint( wxDefaultCoord, -heightStyleBar ) );
+    }
 }

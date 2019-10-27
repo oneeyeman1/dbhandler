@@ -63,6 +63,7 @@ public:
 protected:
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);
     void CreateViewToolBar();
+    void HideStyleBar();
 private:
     bool m_isActive;
     wxDocMDIParentFrame *m_parent;
