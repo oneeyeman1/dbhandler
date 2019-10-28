@@ -214,6 +214,15 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
     DesignLabel *label = nullptr;
     DesignField *field = nullptr;
     Divider *divider = nullptr;
+    if( !wxGetKeyState (WXK_CONTROL) )
+    {
+        ShapeList selShapes;
+        this->GetSelectedShapes( selShapes );
+        for( ShapeList::iterator it = selShapes.begin(); it != selShapes.end(); ++it )
+        {
+            (*it)->Select( false );
+        }
+    }
     for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
     {
         label = wxDynamicCast( (*it), DesignLabel );
@@ -226,7 +235,11 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
                 if( !divider )
                     continue;
             }
+            else
+                field->Select( true );
         }
+        else
+            label->Select( true );
     }
 }
 

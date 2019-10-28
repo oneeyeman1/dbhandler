@@ -51,6 +51,7 @@
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "designlabel.h"
 #include "constraint.h"
 #include "constraintsign.h"
 #include "table.h"
@@ -1270,7 +1271,16 @@ void DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &event)
 {
     ShapeList shapes;
     m_designCanvas->GetSelectedShapes( shapes );
-    event.Enable( shapes.size() == 1 );
+    if( shapes.size() == 1 && wxDynamicCast( shapes[0], DesignLabel ) )
+    {
+        event.Enable( true );
+        m_fieldText->SetValue( dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_text );
+    }
+    else
+    {
+        m_fieldText->SetValue( "" );
+        event.Enable( false );
+    }
 }
 
 void DrawingView::OnDataSource(wxCommandEvent &event)
