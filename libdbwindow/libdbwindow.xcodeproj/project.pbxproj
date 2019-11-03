@@ -42,6 +42,8 @@
 		E39573E21EFF385500FA817A /* commentfieldshape.h in Headers */ = {isa = PBXBuildFile; fileRef = E39573E01EFF385500FA817A /* commentfieldshape.h */; };
 		E39573F11F004F2F00FA817A /* commenttableshape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39573EF1F004F2F00FA817A /* commenttableshape.cpp */; };
 		E39573F21F004F2F00FA817A /* commenttableshape.h in Headers */ = {isa = PBXBuildFile; fileRef = E39573F01F004F2F00FA817A /* commenttableshape.h */; };
+		E39B2DCB2353E59900F72DF2 /* fontcombobox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39B2DC92353E59900F72DF2 /* fontcombobox.cpp */; };
+		E39B2DCC2353E59900F72DF2 /* fontcombobox.h in Headers */ = {isa = PBXBuildFile; fileRef = E39B2DCA2353E59900F72DF2 /* fontcombobox.h */; };
 		E3AC9DCF1DFD16EF0083DD62 /* GridTableShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3AC9DCD1DFD16EF0083DD62 /* GridTableShape.cpp */; };
 		E3AC9DD01DFD16EF0083DD62 /* GridTableShape.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AC9DCE1DFD16EF0083DD62 /* GridTableShape.h */; };
 		E3E91D1E1D6D467C00675CF8 /* databasecanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D131D6D467C00675CF8 /* databasecanvas.cpp */; };
@@ -98,6 +100,8 @@
 		E39573E01EFF385500FA817A /* commentfieldshape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commentfieldshape.h; sourceTree = "<group>"; };
 		E39573EF1F004F2F00FA817A /* commenttableshape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = commenttableshape.cpp; sourceTree = "<group>"; };
 		E39573F01F004F2F00FA817A /* commenttableshape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commenttableshape.h; sourceTree = "<group>"; };
+		E39B2DC92353E59900F72DF2 /* fontcombobox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fontcombobox.cpp; sourceTree = "<group>"; };
+		E39B2DCA2353E59900F72DF2 /* fontcombobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontcombobox.h; sourceTree = "<group>"; };
 		E3AC9DCD1DFD16EF0083DD62 /* GridTableShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GridTableShape.cpp; sourceTree = "<group>"; };
 		E3AC9DCE1DFD16EF0083DD62 /* GridTableShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridTableShape.h; sourceTree = "<group>"; };
 		E3E91D131D6D467C00675CF8 /* databasecanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasecanvas.cpp; sourceTree = "<group>"; };
@@ -153,6 +157,8 @@
 		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
+				E39B2DC92353E59900F72DF2 /* fontcombobox.cpp */,
+				E39B2DCA2353E59900F72DF2 /* fontcombobox.h */,
 				E32A501E22A3A4B200A57BD1 /* designfield.cpp */,
 				E32A501F22A3A4B200A57BD1 /* designfield.h */,
 				E32A502022A3A4B200A57BD1 /* designlabel.cpp */,
@@ -231,6 +237,7 @@
 				E33E6F6F1E99AD0B003A0B92 /* HeaderGrid.h in Headers */,
 				E3E91D851DDEB73400675CF8 /* FieldShape.h in Headers */,
 				E3AC9DD01DFD16EF0083DD62 /* GridTableShape.h in Headers */,
+				E39B2DCC2353E59900F72DF2 /* fontcombobox.h in Headers */,
 				E38709BD1D4CF564004EF478 /* IDbAdapter.h in Headers */,
 				E3E91D2D1D821A5600675CF8 /* MyErdTable.h in Headers */,
 				E38709BE1D4CF564004EF478 /* IDbType.h in Headers */,
@@ -310,6 +317,7 @@
 				E3E91D1E1D6D467C00675CF8 /* databasecanvas.cpp in Sources */,
 				E33E6F761EAD303C003A0B92 /* constraintsign.cpp in Sources */,
 				E38709B71D4CF564004EF478 /* constraint.cpp in Sources */,
+				E39B2DCB2353E59900F72DF2 /* fontcombobox.cpp in Sources */,
 				E3E91D381DBF812100675CF8 /* ErdLineShape.cpp in Sources */,
 				E32A502822A3A4B200A57BD1 /* divider.cpp in Sources */,
 				E3E91D271D6D467C00675CF8 /* GUIDatabaseTable.cpp in Sources */,
