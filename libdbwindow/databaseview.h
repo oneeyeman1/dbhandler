@@ -54,6 +54,9 @@ public:
     void OnDistinct(wxCommandEvent &event);
     void OnQueryChange(wxCommandEvent &event);
     void OnRetrievalArguments(wxCommandEvent &event);
+    void OnTabOrder(wxCommandEvent &event);
+    void FieldTextUpdateUI(wxUpdateUIEvent &event);
+    void OnDataSource(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
@@ -61,8 +64,10 @@ public:
 protected:
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);
     void CreateViewToolBar();
+    void HideStyleBar();
 private:
     bool m_isActive;
+    wxDocMDIParentFrame *m_parent;
     wxToolBar *m_tb, *m_styleBar;
     wxTextCtrl *m_fieldText;
     FontComboBox *m_fontName;

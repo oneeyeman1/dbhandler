@@ -916,7 +916,6 @@ uninstall-am: uninstall-dist_docDATA uninstall-local
 
 .PRECIOUS: Makefile
 
-
 # Remove doc directory on uninstall
 uninstall-local:
 	-rm -r $(docdir)

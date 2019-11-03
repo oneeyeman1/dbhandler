@@ -214,6 +214,15 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
     DesignLabel *label = nullptr;
     DesignField *field = nullptr;
     Divider *divider = nullptr;
+    if( !wxGetKeyState (WXK_CONTROL) )
+    {
+        ShapeList selShapes;
+        this->GetSelectedShapes( selShapes );
+        for( ShapeList::iterator it = selShapes.begin(); it != selShapes.end(); ++it )
+        {
+            (*it)->Select( false );
+        }
+    }
     for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
     {
         label = wxDynamicCast( (*it), DesignLabel );
@@ -226,7 +235,11 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
                 if( !divider )
                     continue;
             }
+            else
+                field->Select( true );
         }
+        else
+            label->Select( true );
     }
 }
 
@@ -242,10 +255,12 @@ void DesignCanvas::InitialFieldSizing ()
         wxRect fieldWidth = fields[i]->GetBoundingBox();
         if( labelWidth.GetWidth() > fieldWidth.GetWidth() )
         {
+            dynamic_cast<wxSFRectShape *>( fields[i] )->MoveTo( (*it)->GetAbsolutePosition().x, fields[i]->GetAbsolutePosition().y );
             dynamic_cast<wxSFRectShape *>( fields[i] )->SetRectSize( labelWidth.GetWidth(), fieldWidth.GetHeight() );
         }
-        if( labelWidth.GetWidth () < fieldWidth.GetWidth () )
+        if( labelWidth.GetWidth() < fieldWidth.GetWidth() )
         {
+            dynamic_cast<wxSFRectShape *>( (*it) )->MoveTo( fields[i]->GetAbsolutePosition().x, (*it)->GetAbsolutePosition().y );
             dynamic_cast<wxSFRectShape *>( (*it) )->SetRectSize( fieldWidth.GetWidth(), labelWidth.GetHeight() );
         }
         i++;

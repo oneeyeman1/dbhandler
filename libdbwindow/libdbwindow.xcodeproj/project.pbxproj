@@ -23,6 +23,8 @@
 		E33E6F771EAD303C003A0B92 /* constraintsign.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F751EAD303C003A0B92 /* constraintsign.h */; };
 		E33E6F891EAD3203003A0B92 /* liblibfieldswindow.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E33E6F881EAD3203003A0B92 /* liblibfieldswindow.dylib */; };
 		E33E6F8B1EAD3508003A0B92 /* liblibpropertypages.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E33E6F8A1EAD3508003A0B92 /* liblibpropertypages.dylib */; };
+		E344B1F223556CA8005C5A3E /* fontcombobox.h in Headers */ = {isa = PBXBuildFile; fileRef = E344B1F023556CA8005C5A3E /* fontcombobox.h */; };
+		E344B1F323556CA8005C5A3E /* fontcombobox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E344B1F123556CA8005C5A3E /* fontcombobox.cpp */; };
 		E38709A41D43BA9C004EF478 /* liblibshapeframework.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E38709A31D43BA9C004EF478 /* liblibshapeframework.dylib */; };
 		E38709B51D4CF564004EF478 /* column.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38709A51D4CF564004EF478 /* column.cpp */; };
 		E38709B61D4CF564004EF478 /* column.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709A61D4CF564004EF478 /* column.h */; };
@@ -80,6 +82,8 @@
 		E33E6F751EAD303C003A0B92 /* constraintsign.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = constraintsign.h; sourceTree = "<group>"; };
 		E33E6F881EAD3203003A0B92 /* liblibfieldswindow.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibfieldswindow.dylib; path = ../Build/Products/Debug/liblibfieldswindow.dylib; sourceTree = "<group>"; };
 		E33E6F8A1EAD3508003A0B92 /* liblibpropertypages.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibpropertypages.dylib; path = ../Build/Products/Debug/liblibpropertypages.dylib; sourceTree = "<group>"; };
+		E344B1F023556CA8005C5A3E /* fontcombobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontcombobox.h; sourceTree = "<group>"; };
+		E344B1F123556CA8005C5A3E /* fontcombobox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fontcombobox.cpp; sourceTree = "<group>"; };
 		E38708BE1D2B61D7004EF478 /* liblibdbwindow.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdbwindow.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E38709A31D43BA9C004EF478 /* liblibshapeframework.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibshapeframework.dylib; path = ../Build/Products/Debug/liblibshapeframework.dylib; sourceTree = "<group>"; };
 		E38709A51D4CF564004EF478 /* column.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = column.cpp; sourceTree = "<group>"; };
