@@ -61,6 +61,7 @@
     <ClInclude Include="NArrow.h" />
     <ClInclude Include="OneArrow.h" />
     <ClInclude Include="table.h" />
+    <ClInclude Include="taborder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="column.cpp" />
@@ -88,6 +89,7 @@
     <ClCompile Include="NArrow.cpp" />
     <ClCompile Include="OneArrow.cpp" />
     <ClCompile Include="table.cpp" />
+    <ClCompile Include="taborder.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>dbwindow</ProjectName>
