@@ -175,8 +175,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     sizer = new wxBoxSizer( wxVERTICAL );
 #ifdef __WXOSX__
     wxBoxSizer *macTBSizer = new wxBoxSizer( wxVERTICAL );
-    wxRect parentRect = parent->GetRect();
-    wxSize parentClientSize = parent->GetClientSize();
+    wxRect parentRect = m_parent->GetRect();
+    wxSize parentClientSize = m_parent->GetClientSize();
     wxPoint pt;
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
@@ -200,7 +200,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
         m_tb->AddTool( wxID_SAVE, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
-        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql ), wxBitmap::NewFromPNGData( sql ), wxITEM_CHECK, _( "Data Source" ), _( "" ) );
+        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
         m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
