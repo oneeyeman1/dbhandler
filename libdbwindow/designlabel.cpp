@@ -41,7 +41,7 @@ DesignLabel::DesignLabel() : wxSFRectShape()
     m_label = "";
 }
 
-DesignLabel::DesignLabel (const wxFont font, const wxString &label) : wxSFRectShape()
+DesignLabel::DesignLabel(const wxFont font, const wxString &label) : wxSFRectShape()
 {
     m_prop.m_name = label + "_t";
     m_prop.m_tag = "";
