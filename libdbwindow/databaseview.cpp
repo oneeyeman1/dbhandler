@@ -179,7 +179,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
     if( m_type == QueryView )
     {
-        m_styleBar = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
+        m_styleBar = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "StyleBar" );
     }
     if( m_type == DatabaseView )
     {
@@ -211,11 +211,14 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_styleBar )
         m_styleBar->Realize();
 //    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
-    ptCanvas.x = -1;
+    ptCanvas.x = 0;
     ptCanvas.y = m_tb->GetSize().GetHeight();
+    if( m_styleBar )
+        ptCanvas.y += m_styleBar->GetSize().GetHeight();
     macTBSizer->Add( m_tb, 0, wxEXPAND, 0 );
     macTBSizer->Add( m_styleBar, 0, wxEXPAND, 0 );
     sizer->Add( macTBSizer, 0, wxEXPAND, 0 );
+    m_frame->SetSize( 0, ptCanvas.y, parentRect.GetWidth(), parentClientSize.GetHeight() - ptCanvas.y );
 #else
     ptCanvas = wxDefaultPosition;
 #endif
