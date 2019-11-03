@@ -1336,9 +1336,13 @@ void DrawingView::OnTabOrder(wxCommandEvent &event)
     if( event.IsChecked() )
     {
         bar->EnableTop( 0, false );
+        bar->EnableTop( 1, false );
+        bar->EnableTop( 2, false );
     }
     else
     {
         bar->EnableTop( 0, true );
+        bar->EnableTop( 1, false );
+        bar->EnableTop( 2, false );
     }
 }
