@@ -83,5 +83,6 @@ private:
 #define BOLDFONT                  325
 #define ITALICFONT                326
 #define UNDERLINEFONGT            327
+#define wxID_DESIGNTABORDER       328
 
 #endif

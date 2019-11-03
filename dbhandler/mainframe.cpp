@@ -295,8 +295,11 @@ void MainFrame::QueryMenu()
     objectMenu->Append( wxID_TEXTOBJECT, _( "Text" ), _( "Text" ) );
     objectMenu->Append( wxID_PICTUREOBJECT, _( "Picture" ), _( "Picture" ) );
     objectMenu->Append( wxID_LINEOBJECT, _( "Line" ), _( "Line" ) );
+    auto designMenu = new wxMenu;
+    designMenu->Append( wxID_DESIGNTABORDER, _( "Tab order" ), _( "Tab order" ), wxITEM_CHECK );
     GetMenuBar()->Insert( 1, editMenu, _( "Edit" ) );
     GetMenuBar()->Insert( 2, objectMenu, _( "Object" ) );
+    GetMenuBar()->Insert( 3, designMenu, _( "Design" ) );
 }
 
 void MainFrame::TableMenu()

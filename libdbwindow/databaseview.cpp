@@ -119,6 +119,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_DISTINCT, DrawingView::OnDistinct)
     EVT_MENU(wxID_RETRIEVEARGS, DrawingView::OnRetrievalArguments)
     EVT_MENU(wxID_DATASOURCE, DrawingView::OnDataSource)
+    EVT_MENU(wxID_DESIGNTABORDER, DrawingView::OnTabOrder)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -1275,11 +1276,15 @@ void DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &event)
     {
         event.Enable( true );
         m_fieldText->SetValue( dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_text );
+        m_fontName->SetSelection( m_fontName->FindString( dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetFaceName() ) );
+        m_fontSize->SetSelection( m_fontSize->FindString( wxString::Format( "%d", dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetPointSize() ) ) );
     }
     else
     {
         m_fieldText->SetValue( "" );
         event.Enable( false );
+        m_fontName->SetSelection( 0 );
+        m_fontSize->SetSelection( 0 );
     }
 }
 
@@ -1322,5 +1327,18 @@ void DrawingView::HideStyleBar()
     if( framePosition == 0 )
     {
         m_frame->SetPosition( wxPoint( wxDefaultCoord, -heightStyleBar ) );
+    }
+}
+
+void DrawingView::OnTabOrder(wxCommandEvent &event)
+{
+    wxMenuBar *bar = m_parent->GetMenuBar();
+    if( event.IsChecked() )
+    {
+        bar->EnableTop( 0, false );
+    }
+    else
+    {
+        bar->EnableTop( 0, true );
     }
 }

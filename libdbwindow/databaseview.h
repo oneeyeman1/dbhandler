@@ -54,6 +54,7 @@ public:
     void OnDistinct(wxCommandEvent &event);
     void OnQueryChange(wxCommandEvent &event);
     void OnRetrievalArguments(wxCommandEvent &event);
+    void OnTabOrder(wxCommandEvent &event);
     void FieldTextUpdateUI(wxUpdateUIEvent &event);
     void OnDataSource(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
