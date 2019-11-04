@@ -472,7 +472,15 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 {
                     if( m_source != 1 )
                     {
-                        HideStyleBar();
+                        int heightStyleBar = m_styleBar->GetSize().y;
+                        wxPoint framePosition = m_frame->GetPosition();
+                        wxSize frameSize = m_frame->GetSize();
+                        if( framePosition.y == 0 )
+                        {
+                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
+                            m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
+                        }
+                        m_styleBar->Show( false );
                         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
                         res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
                     }
@@ -1291,12 +1299,20 @@ void DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &event)
 
 void DrawingView::OnDataSource(wxCommandEvent &event)
 {
+    int heightStyleBar = m_styleBar->GetSize().y;
+    wxPoint framePosition = m_frame->GetPosition();
+    wxSize frameSize = m_frame->GetSize();
     if( m_type == QueryView )
     {
         if( event.IsChecked () )
         {
-            HideStyleBar();
-//            m_styleBar->Show( false );
+//            HideStyleBar();
+            if( framePosition.y == 0 )
+            {
+                m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
+                m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
+            }
+            m_styleBar->Show( false );
             m_designCanvas->Show( false );
             m_fields->Show( true );
             m_canvas->Show( true );
@@ -1306,6 +1322,11 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
         }
         else
         {
+            if( framePosition.y == -heightStyleBar )
+            {
+                m_frame->SetPosition( wxPoint( framePosition.x, 0 ) );
+                m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() - heightStyleBar );
+            }
             m_styleBar->Show( true );
             m_designCanvas->Show( true );
             m_fields->Show( false );
@@ -1317,18 +1338,6 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
     }
     m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE )->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
     m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
-}
-
-void DrawingView::HideStyleBar()
-{
-    m_styleBar->Show( false );
-    int heightToolbar = m_tb->GetSize().GetY();
-    int heightStyleBar = m_styleBar->GetSize().y;
-    int framePosition = m_frame->GetPosition().y;
-    if( framePosition == 0 )
-    {
-        m_frame->SetPosition( wxPoint( wxDefaultCoord, -heightStyleBar ) );
-    }
 }
 
 void DrawingView::OnTabOrder(wxCommandEvent &event)
