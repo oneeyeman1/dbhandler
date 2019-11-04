@@ -25,6 +25,7 @@
 #include "fontcombobox.h"
 #include "MyErdTable.h"
 #include "databasedoc.h"
+#include "taborder.h"
 #include "divider.h"
 #include "designlabel.h"
 #include "designfield.h"

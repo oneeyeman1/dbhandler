@@ -2,6 +2,7 @@
 
 class TabOrder : public wxSFRectShape
 {
+public:
     TabOrder();
     virtual ~TabOrder();
 private:
