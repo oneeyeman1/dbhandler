@@ -1,6 +1,6 @@
 #pragma once
 
-class FontComboBox : public wxComboBox
+class FontComboBox : public wxBitmapComboBox
 {
 public:
     FontComboBox(wxWindow *parent);

@@ -45,6 +45,7 @@
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/cmdproc.h"
+#include "wx/bmpcbox.h"
 #include "wx/grid.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/BitmapShape.h"

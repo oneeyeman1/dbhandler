@@ -85,10 +85,13 @@
     <ClInclude Include="divider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fntcmbobx.h">
+    <ClInclude Include="taborder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="taborder.h">
+    <ClInclude Include="myfontenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fontcombobox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -169,6 +172,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="taborder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="myfontenum.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

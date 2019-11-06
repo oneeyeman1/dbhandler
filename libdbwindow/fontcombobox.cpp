@@ -10,9 +10,10 @@
 #endif
 
 #include "wx/fontenum.h"
+#include "wx/bmpcbox.h"
 #include "fontcombobox.h"
 
-FontComboBox::FontComboBox (wxWindow *parent) : wxComboBox (parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_SORT )
+FontComboBox::FontComboBox(wxWindow *parent) : wxBitmapComboBox(parent, wxID_ANY)
 {
     m_enumerator.EnumerateFacenames();
     if( m_enumerator.GotAny () )

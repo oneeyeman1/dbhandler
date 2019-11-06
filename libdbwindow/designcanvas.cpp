@@ -10,6 +10,7 @@
 #include "wx/fontenum.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
+#include "wx/bmpcbox.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/BitmapShape.h"
