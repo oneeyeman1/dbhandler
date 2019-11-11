@@ -57,6 +57,7 @@ public:
     void OnTabOrder(wxCommandEvent &event);
     void FieldTextUpdateUI(wxUpdateUIEvent &event);
     void OnDataSource(wxCommandEvent &event);
+    void OnFontSeectionChange(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
@@ -64,6 +65,10 @@ public:
 protected:
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);
     void CreateViewToolBar();
+    int AddSize(int size, int lfHeight);
+#ifdef __WXMSW__
+    static int CALLBACK EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam);
+#endif
 private:
     bool m_isActive;
     wxDocMDIParentFrame *m_parent;

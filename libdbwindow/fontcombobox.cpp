@@ -47,7 +47,7 @@ int CALLBACK FontComboBox::EnumFontFamiliesCallback(ENUMLOGFONT *lpelf, NEWTEXTM
     wxBitmap bmp = wxBitmap::NewFromPNGData( opentype_png, WXSIZEOF( opentype_png ) );
     FontComboBox *view = (FontComboBox *) lParam;
     wxASSERT( view );
-    view->Append( lpelf->elfLogFont.lfFaceName, FontType == TRUETYPE_FONTTYPE ? wxBitmap::NewFromPNGData( opentype_png, WXSIZEOF( opentype_png ) ) : wxNullBitmap );
+    view->Append( lpelf->elfLogFont.lfFaceName, FontType == TRUETYPE_FONTTYPE ? wxBitmap::NewFromPNGData( opentype_png, WXSIZEOF( opentype_png ) ) : wxNullBitmap, &FontType );
     return 1;
 }
 #endif
