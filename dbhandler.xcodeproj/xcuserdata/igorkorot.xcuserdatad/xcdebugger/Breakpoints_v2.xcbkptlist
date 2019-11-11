@@ -160,23 +160,7 @@
             startingLineNumber = "244"
             endingLineNumber = "244"
             landmarkName = "MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector&lt;std::wstring&gt; &amp;errorMsg)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "libsqlite/database_sqlite.cpp"
-            timestampString = "547953098.3376549"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1437"
-            endingLineNumber = "1437"
-            landmarkName = "SQLiteDatabase::NewTableCreation(std::vector&lt;std::wstring&gt; &amp;errorMsg)"
-            landmarkType = "7">
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -186,12 +170,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "libdbwindow/databaseview.cpp"
-            timestampString = "549420631.460108"
+            timestampString = "592706260.589457"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "508"
-            endingLineNumber = "508"
-            landmarkName = "DrawingView::OnForeignKey(wxCommandEvent &amp;WXUNUSED(event))"
+            startingLineNumber = "513"
+            endingLineNumber = "513"
+            landmarkName = "DrawingView::GetTablesForView(Database *db, bool init)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -207,7 +191,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "583"
             endingLineNumber = "583"
-            landmarkName = "DatabaseCanvas::OnDropTable(wxCommandEvent &amp;WXUNUSED(event))"
+            landmarkName = "DatabaseCanvas::OnDropTable(wxCommandEvent &amp;event)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -224,6 +208,102 @@
             startingLineNumber = "844"
             endingLineNumber = "844"
             landmarkName = "DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent&amp; event)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "libodbc/database_odbc.cpp"
+            timestampString = "565250073.812335"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "3686"
+            endingLineNumber = "3686"
+            landmarkName = "ODBCDatabase::NewTableCreation(std::vector&lt;std::wstring&gt; &amp;errorMsg)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "libodbc/database_odbc.cpp"
+            timestampString = "565250073.812335"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "3647"
+            endingLineNumber = "3647"
+            landmarkName = "ODBCDatabase::NewTableCreation(std::vector&lt;std::wstring&gt; &amp;errorMsg)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "libpostgres/database_postgres.cpp"
+            timestampString = "568023816.063527"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "91"
+            endingLineNumber = "91"
+            landmarkName = "PostgresDatabase::Connect(const std::wstring &amp;selectedDSN, std::vector&lt;std::wstring&gt; &amp;dbList, std::vector&lt;std::wstring&gt; &amp;errorMsg)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "libpropertypages/wherehavingpage.cpp"
+            timestampString = "575699576.778481"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "221"
+            endingLineNumber = "221"
+            landmarkName = "WhereHavingPage::OnCellChanged(wxCommandEvent &amp;event)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "libpropertypages/wherehavingpage.cpp"
+            timestampString = "575699719.991909"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
+            landmarkName = "WhereHavingPage::OnColumnName(wxGridEditorCreatedEvent &amp;event)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "libdbwindow/databaseview.cpp"
+            timestampString = "595119342.653715"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1274"
+            endingLineNumber = "1274"
+            landmarkName = "DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &amp;event)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

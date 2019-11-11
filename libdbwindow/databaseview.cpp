@@ -208,7 +208,26 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_styleBar->AddControl( m_fieldText );
         m_fontName = new FontComboBox( m_styleBar );
         m_styleBar->AddControl( m_fontName );
-        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "" );
+        const wxString fontSizes[] =
+        {
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "14",
+            "16",
+            "18",
+            "20",
+            "22",
+            "24",
+            "26",
+            "28",
+            "36",
+            "48",
+            "72"
+        };
+        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
         m_styleBar->AddControl( m_fontSize );
         m_styleBar->AddTool( 303, _( "Bold" ), wxBitmap::NewFromPNGData( bold_png,  WXSIZEOF( bold_png ) ), wxNullBitmap, wxITEM_NORMAL );
         m_styleBar->AddTool( 303, _( "Italic" ), wxBitmap::NewFromPNGData( italic_png,  WXSIZEOF( italic_png ) ), wxNullBitmap, wxITEM_NORMAL );
@@ -344,7 +363,7 @@ void DrawingView::CreateViewToolBar()
             "48",
             "72"
         };
-        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, fontSizes );
+        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
         m_styleBar->AddControl( m_fontSize );
         m_styleBar->AddTool( 303, _( "Bold" ), wxBitmap::NewFromPNGData( bold_png,  WXSIZEOF( bold_png ) ), wxNullBitmap, wxITEM_NORMAL );
         m_styleBar->AddTool( 303, _( "Italic" ), wxBitmap::NewFromPNGData( italic_png,  WXSIZEOF( italic_png ) ), wxNullBitmap, wxITEM_NORMAL );
