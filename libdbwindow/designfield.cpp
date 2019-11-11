@@ -16,6 +16,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/RectShape.h"
 #include "wxsf/GridShape.h"
+#include "taborder.h"
 #include "designfield.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(DesignField, wxSFRectShape);
@@ -24,8 +25,10 @@ DesignField::DesignField() : wxSFRectShape()
 {
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );
+    AcceptChild( "TabOrder" );
 	m_text = new wxSFTextShape;
     m_grid = new wxSFGridShape;
+    m_tabOrder = new TabOrder;
     if( m_grid )
     {
         m_grid->SetRelativePosition( 0, 1 );

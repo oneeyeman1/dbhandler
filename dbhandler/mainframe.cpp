@@ -297,9 +297,12 @@ void MainFrame::QueryMenu()
     objectMenu->Append( wxID_LINEOBJECT, _( "Line" ), _( "Line" ) );
     auto designMenu = new wxMenu;
     designMenu->Append( wxID_DESIGNTABORDER, _( "Tab order" ), _( "Tab order" ), wxITEM_CHECK );
+    auto rowsMenu = new wxMenu;
+    rowsMenu->Append( wxID_COLUMNSPEC, _( "Column Specification..." ), _( "Column Specification" ) );
     GetMenuBar()->Insert( 1, editMenu, _( "Edit" ) );
     GetMenuBar()->Insert( 2, objectMenu, _( "Object" ) );
     GetMenuBar()->Insert( 3, designMenu, _( "Design" ) );
+    GetMenuBar()->Insert( 4, rowsMenu, _( "Rows" ) );
 }
 
 void MainFrame::TableMenu()

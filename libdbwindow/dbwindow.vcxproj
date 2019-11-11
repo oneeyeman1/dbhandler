@@ -51,16 +51,18 @@
     <ClInclude Include="ErdForeignKey.h" />
     <ClInclude Include="ErdLineShape.h" />
     <ClInclude Include="FieldShape.h" />
-    <ClInclude Include="fntcmbobx.h" />
+    <ClInclude Include="fontcombobox.h" />
     <ClInclude Include="GridTableShape.h" />
     <ClInclude Include="GUIDatabaseTable.h" />
     <ClInclude Include="HeaderGrid.h" />
     <ClInclude Include="IDbAdapter.h" />
     <ClInclude Include="IDbType.h" />
     <ClInclude Include="MyErdTable.h" />
+    <ClInclude Include="myfontenu.h" />
     <ClInclude Include="NArrow.h" />
     <ClInclude Include="OneArrow.h" />
     <ClInclude Include="table.h" />
+    <ClInclude Include="taborder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="column.cpp" />
@@ -85,9 +87,11 @@
     <ClCompile Include="GUIDatabaseTable.cpp" />
     <ClCompile Include="HeaderGrid.cpp" />
     <ClCompile Include="MyErdTable.cpp" />
+    <ClCompile Include="myfontenum.cpp" />
     <ClCompile Include="NArrow.cpp" />
     <ClCompile Include="OneArrow.cpp" />
     <ClCompile Include="table.cpp" />
+    <ClCompile Include="taborder.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>dbwindow</ProjectName>

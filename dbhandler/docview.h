@@ -159,4 +159,5 @@ wxDECLARE_APP(MyApp);
 #define ITALICFONT                326
 #define UNDERLINEFONGT            327
 #define wxID_DESIGNTABORDER       328
+#define wxID_COLUMNSPEC           329
 #endif // _WX_SAMPLES_DOCVIEW_DOCVIEW_H_
