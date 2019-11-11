@@ -270,6 +270,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_fieldText->Bind( wxEVT_UPDATE_UI, &DrawingView::FieldTextUpdateUI, this );
         m_fieldText->Disable();
     }
+    if( m_fontName )
+        m_fontName->Bind( wxEVT_COMBOBOX, &DrawingView::OnFontSeectionChange, this );
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
@@ -1379,3 +1381,93 @@ void DrawingView::OnTabOrder(wxCommandEvent &event)
     }
 }
 
+void DrawingView::OnFontSeectionChange(wxCommandEvent &event)
+{
+#ifdef __WXMSW__
+    m_fontSize->Clear();
+    wxArrayInt ttSizes;
+    ttSizes.Add( 8 );
+    ttSizes.Add( 9 );
+    ttSizes.Add( 10 );
+    ttSizes.Add( 11 );
+    ttSizes.Add( 12 );
+    ttSizes.Add( 14 );
+    ttSizes.Add( 16 );
+    ttSizes.Add( 18 );
+    ttSizes.Add( 20 );
+    ttSizes.Add( 22 );
+    ttSizes.Add( 24 );
+    ttSizes.Add( 26 );
+    ttSizes.Add( 28 );
+    ttSizes.Add( 36 );
+    ttSizes.Add( 48 );
+    ttSizes.Add( 72 );
+    wxString strFaceName = m_fontName->GetStringSelection();
+    HDC dc = ::GetDC( NULL );
+    EnumFontFamilies( dc, strFaceName, (FONTENUMPROC) DrawingView::EnumFontFamiliesCallback2, (LPARAM) this );
+    ::ReleaseDC( NULL, dc );
+    if( (int) m_fontName->GetClientData( m_fontName->GetSelection() ) != RASTER_FONTTYPE )
+    {
+        for( unsigned int i = 0; i < ttSizes.GetCount(); i++ )
+        {
+            AddSize( ttSizes[i], 0 );
+        }
+    }
+#endif
+}
+
+#ifdef __WXMSW__
+int CALLBACK DrawingView::EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam)
+{
+    DrawingView *pPage = (DrawingView *) lParam;
+    wxASSERT( pPage );
+    if( !( FontType & TRUETYPE_FONTTYPE ) )
+    {
+        int height = lpntm->tmHeight - lpntm->tmInternalLeading;
+        pPage->AddSize( height, height );
+    }
+    return 1;
+}
+#endif
+
+int DrawingView::AddSize(int size, int lfHeight)
+{
+    int pointSize, cyppi = ::GetDeviceCaps( ::GetDC( NULL ), LOGPIXELSY );
+    if( lfHeight != 0 )
+        pointSize = ::MulDiv( size, 72, cyppi );
+    else
+        pointSize = size;
+    if( lfHeight == 0 )
+        lfHeight = ::MulDiv( -cyppi, size, 72 );
+    int max = m_fontSize->GetCount(), i;
+    wxString str;
+    wxStringBuffer( str, 16 );
+    str.Printf( "%d", pointSize );
+    if( lfHeight > 0 )
+    {
+        for( i = 0; i < max; i++ )
+        {
+            int iComp = (int)( lfHeight - m_fontSize->GetSelection() );
+            if( !iComp )
+                return -1;
+            if( iComp < 0 )
+                break;
+        }
+    }
+    else
+    {
+        for( i = 0; i < max; i++ )
+        {
+            int iComp = (int)( lfHeight - m_fontSize->GetSelection() );
+            if( !iComp )
+                return -1;
+            if( iComp > 0 )
+                break;
+        }
+    }
+    if( i == max )
+        i = m_fontSize->Append( str, &lfHeight );
+    else
+        i = m_fontSize->Insert( str, i, &lfHeight );
+    return i;
+}
