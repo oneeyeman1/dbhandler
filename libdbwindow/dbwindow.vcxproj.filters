@@ -88,9 +88,6 @@
     <ClInclude Include="taborder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="myfontenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="fontcombobox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -172,9 +169,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="taborder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="myfontenum.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
