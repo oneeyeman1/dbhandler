@@ -11,9 +11,6 @@
 
 #include "wx/fontenum.h"
 #include "wx/bmpcbox.h"
-#ifndef __WXMSW__
-#include "myfontenum.h"
-#endif
 #include "res/gui/opentype.h"
 #include "fontcombobox.h"
 
