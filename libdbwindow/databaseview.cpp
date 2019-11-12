@@ -1451,6 +1451,7 @@ int CALLBACK DrawingView::EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTM
 
 int DrawingView::AddSize(int size, int lfHeight)
 {
+#ifdef __WXMSW__
     int pointSize, cyppi = ::GetDeviceCaps( ::GetDC( NULL ), LOGPIXELSY );
     if( lfHeight != 0 )
         pointSize = ::MulDiv( size, 72, cyppi );
@@ -1489,4 +1490,7 @@ int DrawingView::AddSize(int size, int lfHeight)
     else
         i = m_fontSize->Insert( str, i, &lfHeight );
     return i;
+#else
+	return 1;
+#endif
 }
