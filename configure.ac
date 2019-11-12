@@ -70,7 +70,6 @@ libdialogs/Makefile
 libdbloader/Makefile
 libdbwindow/Makefile
 dbhandler/Makefile
-libmisc/Makefile
 libmysql/Makefile
 libpostgres/Makefile
 libtablewindow/Makefile

@@ -55,7 +55,9 @@ libdbwindow_la_SOURCES =  \
 	divider.cpp \
 	divider.h \
 	fontcombobox.cpp \
-	fontcombobox.h
+	fontcombobox.h \
+	taborder.cpp \
+	taborder.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \

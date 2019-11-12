@@ -1,10 +1,16 @@
 #pragma once
 
-class FontComboBox : public wxComboBox
+class FontComboBox : public wxBitmapComboBox
 {
 public:
     FontComboBox(wxWindow *parent);
+protected:
+    void PopuateFontNames();
+#ifdef __WXMSW__
+    static int CALLBACK EnumFontFamiliesCallback(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *, int FontType, LPARAM lParam);
+#endif
 private:
+#ifndef __WXMSW__
     class MyFontEnumerator : public wxFontEnumerator
     {
     public:
@@ -25,4 +31,5 @@ private:
         wxArrayString m_facenames;
     };
     MyFontEnumerator m_enumerator;
+#endif
 };

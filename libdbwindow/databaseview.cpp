@@ -45,12 +45,14 @@
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/cmdproc.h"
+#include "wx/bmpcbox.h"
 #include "wx/grid.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "designlabel.h"
 #include "constraint.h"
 #include "constraintsign.h"
 #include "table.h"
@@ -118,6 +120,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_DISTINCT, DrawingView::OnDistinct)
     EVT_MENU(wxID_RETRIEVEARGS, DrawingView::OnRetrievalArguments)
     EVT_MENU(wxID_DATASOURCE, DrawingView::OnDataSource)
+    EVT_MENU(wxID_DESIGNTABORDER, DrawingView::OnTabOrder)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -173,8 +176,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     sizer = new wxBoxSizer( wxVERTICAL );
 #ifdef __WXOSX__
     wxBoxSizer *macTBSizer = new wxBoxSizer( wxVERTICAL );
-    wxRect parentRect = parent->GetRect();
-    wxSize parentClientSize = parent->GetClientSize();
+    wxRect parentRect = m_parent->GetRect();
+    wxSize parentClientSize = m_parent->GetClientSize();
     wxPoint pt;
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
@@ -198,14 +201,33 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
         m_tb->AddTool( wxID_SAVE, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
-        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql ), wxBitmap::NewFromPNGData( sql ), wxITEM_CHECK, _( "Data Source" ), _( "" ) );
+        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
         m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
         m_styleBar->AddControl( m_fieldText );
         m_fontName = new FontComboBox( m_styleBar );
         m_styleBar->AddControl( m_fontName );
-        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "" );
+        const wxString fontSizes[] =
+        {
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "14",
+            "16",
+            "18",
+            "20",
+            "22",
+            "24",
+            "26",
+            "28",
+            "36",
+            "48",
+            "72"
+        };
+        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
         m_styleBar->AddControl( m_fontSize );
         m_styleBar->AddTool( 303, _( "Bold" ), wxBitmap::NewFromPNGData( bold_png,  WXSIZEOF( bold_png ) ), wxNullBitmap, wxITEM_NORMAL );
         m_styleBar->AddTool( 303, _( "Italic" ), wxBitmap::NewFromPNGData( italic_png,  WXSIZEOF( italic_png ) ), wxNullBitmap, wxITEM_NORMAL );
@@ -215,13 +237,14 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_styleBar )
         m_styleBar->Realize();
 //    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
-    ptCanvas.x = -1;
+    ptCanvas.x = 0;
     ptCanvas.y = m_tb->GetSize().GetHeight();
     if( m_styleBar )
         ptCanvas.y += m_styleBar->GetSize().GetHeight();
     macTBSizer->Add( m_tb, 0, wxEXPAND, 0 );
     macTBSizer->Add( m_styleBar, 0, wxEXPAND, 0 );
     sizer->Add( macTBSizer, 0, wxEXPAND, 0 );
+    m_frame->SetSize( 0, ptCanvas.y, parentRect.GetWidth(), parentClientSize.GetHeight() - ptCanvas.y );
 #else
     ptCanvas = wxDefaultPosition;
 #endif
@@ -266,6 +289,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_fieldText->Bind( wxEVT_UPDATE_UI, &DrawingView::FieldTextUpdateUI, this );
         m_fieldText->Disable();
     }
+    if( m_fontName )
+        m_fontName->Bind( wxEVT_COMBOBOX, &DrawingView::OnFontSeectionChange, this );
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
@@ -319,7 +344,26 @@ void DrawingView::CreateViewToolBar()
         m_styleBar->AddControl( m_fieldText );
         m_fontName = new FontComboBox( m_styleBar );
         m_styleBar->AddControl( m_fontName );
-        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "" );
+        const wxString fontSizes[] = 
+        {
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "14",
+            "16",
+            "18",
+            "20",
+            "22",
+            "24",
+            "26",
+            "28",
+            "36",
+            "48",
+            "72"
+        };
+        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
         m_styleBar->AddControl( m_fontSize );
         m_styleBar->AddTool( 303, _( "Bold" ), wxBitmap::NewFromPNGData( bold_png,  WXSIZEOF( bold_png ) ), wxNullBitmap, wxITEM_NORMAL );
         m_styleBar->AddTool( 303, _( "Italic" ), wxBitmap::NewFromPNGData( italic_png,  WXSIZEOF( italic_png ) ), wxNullBitmap, wxITEM_NORMAL );
@@ -469,7 +513,15 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 {
                     if( m_source != 1 )
                     {
-                        HideStyleBar();
+                        int heightStyleBar = m_styleBar->GetSize().y;
+                        wxPoint framePosition = m_frame->GetPosition();
+                        wxSize frameSize = m_frame->GetSize();
+                        if( framePosition.y == 0 )
+                        {
+                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
+                            m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
+                        }
+                        m_styleBar->Show( false );
                         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
                         res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
                     }
@@ -1270,17 +1322,38 @@ void DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &event)
 {
     ShapeList shapes;
     m_designCanvas->GetSelectedShapes( shapes );
-    event.Enable( shapes.size() == 1 );
+    if( shapes.size() == 1 && wxDynamicCast( shapes[0], DesignLabel ) )
+    {
+        event.Enable( true );
+        m_fieldText->SetValue( dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_text );
+        m_fontName->SetSelection( m_fontName->FindString( dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetFaceName() ) );
+        m_fontSize->SetSelection( m_fontSize->FindString( wxString::Format( "%d", dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetPointSize() ) ) );
+    }
+    else
+    {
+        m_fieldText->SetValue( "" );
+        event.Enable( false );
+        m_fontName->SetSelection( 0 );
+        m_fontSize->SetSelection( 0 );
+    }
 }
 
 void DrawingView::OnDataSource(wxCommandEvent &event)
 {
+    int heightStyleBar = m_styleBar->GetSize().y;
+    wxPoint framePosition = m_frame->GetPosition();
+    wxSize frameSize = m_frame->GetSize();
     if( m_type == QueryView )
     {
         if( event.IsChecked () )
         {
-            HideStyleBar();
-//            m_styleBar->Show( false );
+//            HideStyleBar();
+            if( framePosition.y == 0 )
+            {
+                m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
+                m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
+            }
+            m_styleBar->Show( false );
             m_designCanvas->Show( false );
             m_fields->Show( true );
             m_canvas->Show( true );
@@ -1290,6 +1363,11 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
         }
         else
         {
+            if( framePosition.y == -heightStyleBar )
+            {
+                m_frame->SetPosition( wxPoint( framePosition.x, 0 ) );
+                m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() - heightStyleBar );
+            }
             m_styleBar->Show( true );
             m_designCanvas->Show( true );
             m_fields->Show( false );
@@ -1303,14 +1381,116 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
     m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
 }
 
-void DrawingView::HideStyleBar()
+void DrawingView::OnTabOrder(wxCommandEvent &event)
 {
-    m_styleBar->Show( false );
-    int heightToolbar = m_tb->GetSize().GetY();
-    int heightStyleBar = m_styleBar->GetSize().y;
-    int framePosition = m_frame->GetPosition().y;
-    if( framePosition == 0 )
+    wxMenuBar *bar = m_parent->GetMenuBar();
+    if( event.IsChecked() )
     {
-        m_frame->SetPosition( wxPoint( wxDefaultCoord, -heightStyleBar ) );
+        bar->EnableTop( 0, false );
+        bar->EnableTop( 1, false );
+        bar->EnableTop( 2, false );
+        bar->EnableTop( 4, false );
     }
+    else
+    {
+        bar->EnableTop( 0, true );
+        bar->EnableTop( 1, true );
+        bar->EnableTop( 2, true );
+        bar->EnableTop( 4, true );
+    }
+}
+
+void DrawingView::OnFontSeectionChange(wxCommandEvent &event)
+{
+#ifdef __WXMSW__
+    m_fontSize->Clear();
+    wxArrayInt ttSizes;
+    ttSizes.Add( 8 );
+    ttSizes.Add( 9 );
+    ttSizes.Add( 10 );
+    ttSizes.Add( 11 );
+    ttSizes.Add( 12 );
+    ttSizes.Add( 14 );
+    ttSizes.Add( 16 );
+    ttSizes.Add( 18 );
+    ttSizes.Add( 20 );
+    ttSizes.Add( 22 );
+    ttSizes.Add( 24 );
+    ttSizes.Add( 26 );
+    ttSizes.Add( 28 );
+    ttSizes.Add( 36 );
+    ttSizes.Add( 48 );
+    ttSizes.Add( 72 );
+    wxString strFaceName = m_fontName->GetStringSelection();
+    HDC dc = ::GetDC( NULL );
+    EnumFontFamilies( dc, strFaceName, (FONTENUMPROC) DrawingView::EnumFontFamiliesCallback2, (LPARAM) this );
+    ::ReleaseDC( NULL, dc );
+    if( (int) m_fontName->GetClientData( m_fontName->GetSelection() ) != RASTER_FONTTYPE )
+    {
+        for( unsigned int i = 0; i < ttSizes.GetCount(); i++ )
+        {
+            AddSize( ttSizes[i], 0 );
+        }
+    }
+#endif
+}
+
+#ifdef __WXMSW__
+int CALLBACK DrawingView::EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam)
+{
+    DrawingView *pPage = (DrawingView *) lParam;
+    wxASSERT( pPage );
+    if( !( FontType & TRUETYPE_FONTTYPE ) )
+    {
+        int height = lpntm->tmHeight - lpntm->tmInternalLeading;
+        pPage->AddSize( height, height );
+    }
+    return 1;
+}
+#endif
+
+int DrawingView::AddSize(int size, int lfHeight)
+{
+#ifdef __WXMSW__
+    int pointSize, cyppi = ::GetDeviceCaps( ::GetDC( NULL ), LOGPIXELSY );
+    if( lfHeight != 0 )
+        pointSize = ::MulDiv( size, 72, cyppi );
+    else
+        pointSize = size;
+    if( lfHeight == 0 )
+        lfHeight = ::MulDiv( -cyppi, size, 72 );
+    int max = m_fontSize->GetCount(), i;
+    wxString str;
+    wxStringBuffer( str, 16 );
+    str.Printf( "%d", pointSize );
+    if( lfHeight > 0 )
+    {
+        for( i = 0; i < max; i++ )
+        {
+            int iComp = (int)( lfHeight - m_fontSize->GetSelection() );
+            if( !iComp )
+                return -1;
+            if( iComp < 0 )
+                break;
+        }
+    }
+    else
+    {
+        for( i = 0; i < max; i++ )
+        {
+            int iComp = (int)( lfHeight - m_fontSize->GetSelection() );
+            if( !iComp )
+                return -1;
+            if( iComp > 0 )
+                break;
+        }
+    }
+    if( i == max )
+        i = m_fontSize->Append( str, &lfHeight );
+    else
+        i = m_fontSize->Insert( str, i, &lfHeight );
+    return i;
+#else
+	return 1;
+#endif
 }
