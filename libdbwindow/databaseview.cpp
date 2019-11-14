@@ -234,15 +234,19 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_styleBar->AddTool( 303, _( "Underline" ), wxBitmap::NewFromPNGData( underline_png,  WXSIZEOF( underline_png ) ), wxNullBitmap, wxITEM_NORMAL );
     }
     m_tb->Realize();
+    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
     if( m_styleBar )
+    {
         m_styleBar->Realize();
-//    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
+        m_styleBar->SetSize( 0, m_tb->GetSize().y, parentRect.GetWidth(), wxDefaultCoord );
+    }
     ptCanvas.x = 0;
     ptCanvas.y = m_tb->GetSize().GetHeight();
     if( m_styleBar )
         ptCanvas.y += m_styleBar->GetSize().GetHeight();
     macTBSizer->Add( m_tb, 0, wxEXPAND, 0 );
-    macTBSizer->Add( m_styleBar, 0, wxEXPAND, 0 );
+    if( m_styleBar )
+        macTBSizer->Add( m_styleBar, 0, wxEXPAND, 0 );
     sizer->Add( macTBSizer, 0, wxEXPAND, 0 );
     m_frame->SetSize( 0, ptCanvas.y, parentRect.GetWidth(), parentClientSize.GetHeight() - ptCanvas.y );
 #else
@@ -299,10 +303,12 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 
 DrawingView::~DrawingView()
 {
+#ifndef __WXOSX__
     delete m_tb;
     m_tb = nullptr;
     delete m_styleBar;
     m_styleBar = nullptr;
+#endif
 }
 
 #if defined __WXMSW__ || defined __WXGTK__
