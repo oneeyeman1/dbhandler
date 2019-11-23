@@ -202,7 +202,7 @@ void DesignCanvas::OnProperties(wxCommandEvent &event)
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == 2 )
 		{
-			Properties prop = dynamic_cast<DesignLabel *>( m_menuShape )->GetProperties();
+            LabelProperties prop = dynamic_cast<DesignLabel *>( m_menuShape )->GetProperties();
             res = func( m_view->GetFrame(), ((DrawingDocument *) m_view->GetDocument())->GetDatabase(), type, &prop, command, false, wxEmptyString, wxEmptyString, wxEmptyString, pcs );
 		}
         if( type == 3 )

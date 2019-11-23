@@ -1,5 +1,5 @@
 #pragma once
-struct Properties
+struct LabelProperties
 {
     wxString m_name, m_tag, m_text, m_cursor;
     bool m_supressPrint;
@@ -16,13 +16,13 @@ public:
     DesignLabel();
     DesignLabel(const wxFont font, const wxString &label);
     virtual ~DesignLabel();
-    Properties GetProperties();
+    LabelProperties GetProperties();
 protected:
     void InitSerializable();
 private:
     wxString m_label;
     wxSFTextShape *m_text;
     wxSFGridShape *m_grid;
-    Properties m_prop;
+    LabelProperties m_prop;
 };
 
