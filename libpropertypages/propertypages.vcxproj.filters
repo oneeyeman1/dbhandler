@@ -37,9 +37,6 @@
     <ClInclude Include="designlabelgeneral.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="labelfieldgeneral.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tablegeneral.cpp">
@@ -64,9 +61,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="designlabelgeneral.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="labelfieldgeneral.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
