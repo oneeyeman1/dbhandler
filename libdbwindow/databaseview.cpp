@@ -1332,15 +1332,15 @@ void DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &event)
     {
         event.Enable( true );
         m_fieldText->SetValue( dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_text );
-        m_fontName->SetSelection( m_fontName->FindString( dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetFaceName() ) );
-        m_fontSize->SetSelection( m_fontSize->FindString( wxString::Format( "%d", dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetPointSize() ) ) );
+//        m_fontName->SetSelection( m_fontName->FindString( dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetFaceName() ) );
+//        m_fontSize->SetSelection( m_fontSize->FindString( wxString::Format( "%d", dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetPointSize() ) ) );
     }
     else
     {
         m_fieldText->SetValue( "" );
         event.Enable( false );
-        m_fontName->SetSelection( 0 );
-        m_fontSize->SetSelection( 0 );
+//        m_fontName->SetSelection( 0 );
+//        m_fontSize->SetSelection( 0 );
     }
 }
 
@@ -1408,37 +1408,7 @@ void DrawingView::OnTabOrder(wxCommandEvent &event)
 
 void DrawingView::OnFontSeectionChange(wxCommandEvent &event)
 {
-#ifdef __WXMSW__
-    m_fontSize->Clear();
-    wxArrayInt ttSizes;
-    ttSizes.Add( 8 );
-    ttSizes.Add( 9 );
-    ttSizes.Add( 10 );
-    ttSizes.Add( 11 );
-    ttSizes.Add( 12 );
-    ttSizes.Add( 14 );
-    ttSizes.Add( 16 );
-    ttSizes.Add( 18 );
-    ttSizes.Add( 20 );
-    ttSizes.Add( 22 );
-    ttSizes.Add( 24 );
-    ttSizes.Add( 26 );
-    ttSizes.Add( 28 );
-    ttSizes.Add( 36 );
-    ttSizes.Add( 48 );
-    ttSizes.Add( 72 );
-    wxString strFaceName = m_fontName->GetStringSelection();
-    HDC dc = ::GetDC( NULL );
-    EnumFontFamilies( dc, strFaceName, (FONTENUMPROC) DrawingView::EnumFontFamiliesCallback2, (LPARAM) this );
-    ::ReleaseDC( NULL, dc );
-    if( (int) m_fontName->GetClientData( m_fontName->GetSelection() ) != RASTER_FONTTYPE )
-    {
-        for( unsigned int i = 0; i < ttSizes.GetCount(); i++ )
-        {
-            AddSize( ttSizes[i], 0 );
-        }
-    }
-#endif
+    ChangeFontEement();
 }
 
 #ifdef __WXMSW__
@@ -1498,5 +1468,40 @@ int DrawingView::AddSize(int size, int lfHeight)
     return i;
 #else
 	return 1;
+#endif
+}
+
+void DrawingView::ChangeFontEement()
+{
+#ifdef __WXMSW__
+    m_fontSize->Clear();
+    wxArrayInt ttSizes;
+    ttSizes.Add( 8 );
+    ttSizes.Add( 9 );
+    ttSizes.Add( 10 );
+    ttSizes.Add( 11 );
+    ttSizes.Add( 12 );
+    ttSizes.Add( 14 );
+    ttSizes.Add( 16 );
+    ttSizes.Add( 18 );
+    ttSizes.Add( 20 );
+    ttSizes.Add( 22 );
+    ttSizes.Add( 24 );
+    ttSizes.Add( 26 );
+    ttSizes.Add( 28 );
+    ttSizes.Add( 36 );
+    ttSizes.Add( 48 );
+    ttSizes.Add( 72 );
+    wxString strFaceName = m_fontName->GetStringSelection();
+    HDC dc = ::GetDC( NULL );
+    EnumFontFamilies( dc, strFaceName, (FONTENUMPROC) DrawingView::EnumFontFamiliesCallback2, (LPARAM) this );
+    ::ReleaseDC( NULL, dc );
+    if( (int) m_fontName->GetClientData( m_fontName->GetSelection() ) != RASTER_FONTTYPE )
+    {
+        for( unsigned int i = 0; i < ttSizes.GetCount(); i++ )
+        {
+            AddSize( ttSizes[i], 0 );
+        }
+    }
 #endif
 }
