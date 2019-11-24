@@ -13,7 +13,7 @@
 #include "propertypagebase.h"
 #include "designlabelgeneral.h"
 
-template<class T> DesignLabelGeneral<T>::DesignLabelGeneral(wxWindow *parent, const T *prop) : PropertyPageBase( parent )
+DesignLabelGeneral::DesignLabelGeneral(wxWindow *parent, const Properties *prop) : PropertyPageBase( parent )
 {
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Name" ) );
     m_name = new wxTextCtrl( this, wxID_ANY, prop->m_name );
@@ -61,11 +61,11 @@ template<class T> DesignLabelGeneral<T>::DesignLabelGeneral(wxWindow *parent, co
     m_text->Bind( wxEVT_TEXT, &DesignLabelGeneral::DataChange, this );
 }
 
-template<class T> DesignLabelGeneral<T>::~DesignLabelGeneral()
+DesignLabelGeneral::~DesignLabelGeneral()
 {
 }
 
-template<class T> void DesignLabelGeneral<T>::do_layout()
+void DesignLabelGeneral::do_layout()
 {
     auto mainSizer = new wxBoxSizer( wxHORIZONTAL );
     auto sizer1 = new wxBoxSizer( wxVERTICAL );
@@ -110,7 +110,7 @@ template<class T> void DesignLabelGeneral<T>::do_layout()
     SetSizer( mainSizer );
 }
 
-template<class T> void DesignLabelGeneral<T>::DataChange(wxCommandEvent &event)
+void DesignLabelGeneral::DataChange(wxCommandEvent &event)
 {
     this->m_isModified = true;
 }

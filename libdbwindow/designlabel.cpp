@@ -121,7 +121,7 @@ void DesignLabel::InitSerializable()
     XS_SERIALIZE_SIZE( m_prop.m_size, "LabelSize" );
 }
 
-LabelProperties DesignLabel::GetProperties()
+Properties DesignLabel::GetProperties()
 {
     return m_prop;
 }
