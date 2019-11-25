@@ -2576,7 +2576,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
         break;
     }
     if( !isNew )
-        result = DropForeignKey( command, keyName, tableName, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, errorMsg );
+        result = DropForeignKey( command, tableName, keyName, logOnly, errorMsg );
     if( !result )
     {
         if( !logOnly && !newFK.empty() )
@@ -3463,7 +3463,7 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
     return result;
 }
 
-int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query;
@@ -3494,7 +3494,7 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyN
             else
             {
                 bool found = false;
-                std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+                std::map<int, std::vector<FKField *> > &fKeys = const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector();
                 for( std::map<int, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
                     for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found;  )
                     {

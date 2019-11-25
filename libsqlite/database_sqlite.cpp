@@ -1261,6 +1261,12 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
     return result;
 }
 
+int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+}
+
 int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName)
 {
     std::wstring s, sUpper, keyTemp, constraintTemp, refTableOrig;
