@@ -2187,7 +2187,7 @@ bool MySQLDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const
 {
     bool exist = false;
     std::wstring query = L"SELECT 1 FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
-    MYSQL_BIND bind[3], bind_result;
+    MYSQL_BIND bind[3];
     unsigned long str_len1, str_len2, str_len3;
     MYSQL_STMT *res = mysql_stmt_init( m_db );
     if( res )
@@ -2219,8 +2219,24 @@ bool MySQLDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const
                     if( mysql_stmt_affected_rows( res ) )
                         exist = true;
                 }
+                else
+                {
+                    errorMsg.push_back( m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) ) );
+                }
+            }
+            else
+            {
+                errorMsg.push_back( m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) ) );
             }
         }
+        else
+        {
+            errorMsg.push_back( m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) ) );
+        }
+    }
+    else
+    {
+        errorMsg.push_back( m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) ) );
     }
     return exist;
 }
