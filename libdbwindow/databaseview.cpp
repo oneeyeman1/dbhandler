@@ -139,7 +139,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_fieldText = nullptr;
     m_fontName = nullptr;
     m_fontSize = nullptr;
-    wxMenu *menu = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     m_parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -485,7 +484,7 @@ void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
 
 void DrawingView::GetTablesForView(Database *db, bool init)
 {
-    int res;
+    int res = -1;
     wxString query;
     std::vector<wxString> tables;
     wxDynamicLibrary lib;
@@ -1299,7 +1298,7 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     }
 }
 
-void DrawingView::OnRetrievalArguments(wxCommandEvent &event)
+void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
 {
     wxDynamicLibrary *lib = new wxDynamicLibrary();
 #ifdef __WXMSW__
@@ -1406,13 +1405,13 @@ void DrawingView::OnTabOrder(wxCommandEvent &event)
     }
 }
 
-void DrawingView::OnFontSeectionChange(wxCommandEvent &event)
+void DrawingView::OnFontSeectionChange(wxCommandEvent &WXUNUSED(event))
 {
     ChangeFontEement();
 }
 
 #ifdef __WXMSW__
-int CALLBACK DrawingView::EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam)
+int CALLBACK DrawingView::EnumFontFamiliesCallback2(ENUMLOGFONT *WXUNUSED(lpelf), NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam)
 {
     DrawingView *pPage = (DrawingView *) lParam;
     wxASSERT( pPage );

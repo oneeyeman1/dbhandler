@@ -179,7 +179,7 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
     }
 }
 
-void DesignCanvas::OnProperties(wxCommandEvent &event)
+void DesignCanvas::OnProperties(wxCommandEvent &WXUNUSED(event))
 {
     wxCriticalSection pcs;
     wxString command = "";
@@ -188,6 +188,8 @@ void DesignCanvas::OnProperties(wxCommandEvent &event)
         type = 2;
     if( wxDynamicCast( m_menuShape, Divider ) )
         type = 3;
+    else
+        type = -1;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
