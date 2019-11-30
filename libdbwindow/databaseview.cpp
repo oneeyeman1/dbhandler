@@ -139,7 +139,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_fieldText = nullptr;
     m_fontName = nullptr;
     m_fontSize = nullptr;
-    wxMenu *menu = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     m_parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -234,15 +233,19 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_styleBar->AddTool( 303, _( "Underline" ), wxBitmap::NewFromPNGData( underline_png,  WXSIZEOF( underline_png ) ), wxNullBitmap, wxITEM_NORMAL );
     }
     m_tb->Realize();
+    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
     if( m_styleBar )
+    {
         m_styleBar->Realize();
-//    m_tb->SetSize( 0, 0, parentRect.GetWidth(), wxDefaultCoord );
+        m_styleBar->SetSize( 0, m_tb->GetSize().y, parentRect.GetWidth(), wxDefaultCoord );
+    }
     ptCanvas.x = 0;
     ptCanvas.y = m_tb->GetSize().GetHeight();
     if( m_styleBar )
         ptCanvas.y += m_styleBar->GetSize().GetHeight();
     macTBSizer->Add( m_tb, 0, wxEXPAND, 0 );
-    macTBSizer->Add( m_styleBar, 0, wxEXPAND, 0 );
+    if( m_styleBar )
+        macTBSizer->Add( m_styleBar, 0, wxEXPAND, 0 );
     sizer->Add( macTBSizer, 0, wxEXPAND, 0 );
     m_frame->SetSize( 0, ptCanvas.y, parentRect.GetWidth(), parentClientSize.GetHeight() - ptCanvas.y );
 #else
@@ -299,10 +302,12 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 
 DrawingView::~DrawingView()
 {
+#ifndef __WXOSX__
     delete m_tb;
     m_tb = nullptr;
     delete m_styleBar;
     m_styleBar = nullptr;
+#endif
 }
 
 #if defined __WXMSW__ || defined __WXGTK__
@@ -479,7 +484,7 @@ void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
 
 void DrawingView::GetTablesForView(Database *db, bool init)
 {
-    int res;
+    int res = -1;
     wxString query;
     std::vector<wxString> tables;
     wxDynamicLibrary lib;
@@ -1293,7 +1298,7 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     }
 }
 
-void DrawingView::OnRetrievalArguments(wxCommandEvent &event)
+void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
 {
     wxDynamicLibrary *lib = new wxDynamicLibrary();
 #ifdef __WXMSW__
@@ -1326,15 +1331,15 @@ void DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &event)
     {
         event.Enable( true );
         m_fieldText->SetValue( dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_text );
-        m_fontName->SetSelection( m_fontName->FindString( dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetFaceName() ) );
-        m_fontSize->SetSelection( m_fontSize->FindString( wxString::Format( "%d", dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetPointSize() ) ) );
+//        m_fontName->SetSelection( m_fontName->FindString( dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetFaceName() ) );
+//        m_fontSize->SetSelection( m_fontSize->FindString( wxString::Format( "%d", dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetPointSize() ) ) );
     }
     else
     {
         m_fieldText->SetValue( "" );
         event.Enable( false );
-        m_fontName->SetSelection( 0 );
-        m_fontSize->SetSelection( 0 );
+//        m_fontName->SetSelection( 0 );
+//        m_fontSize->SetSelection( 0 );
     }
 }
 
@@ -1343,14 +1348,19 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
     int heightStyleBar = m_styleBar->GetSize().y;
     wxPoint framePosition = m_frame->GetPosition();
     wxSize frameSize = m_frame->GetSize();
+    wxMDIClientWindow *parent = (wxMDIClientWindow *) dynamic_cast<wxMDIParentFrame *>( m_frame->GetParent() )->GetClientWindow();
+    wxSize parentSize = parent->GetSize();
+    wxPoint parentPos = parent->GetPosition();
+    wxMenuBar *menuBar = ((wxMDIParentFrame *) m_frame->GetParent())->GetMenuBar();
+    for( unsigned int i = 1; i < menuBar->GetMenuCount() - 2; ++i )
+        menuBar->Remove( i );
     if( m_type == QueryView )
     {
         if( event.IsChecked () )
         {
-//            HideStyleBar();
             if( framePosition.y == 0 )
             {
-                m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
+                parent->SetSize( parentPos.x, parentPos.y - heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() + heightStyleBar );
                 m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
             }
             m_styleBar->Show( false );
@@ -1363,12 +1373,12 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
         }
         else
         {
-            if( framePosition.y == -heightStyleBar )
-            {
-                m_frame->SetPosition( wxPoint( framePosition.x, 0 ) );
-                m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() - heightStyleBar );
-            }
             m_styleBar->Show( true );
+            if( framePosition.y == 0 )
+            {
+                parent->SetSize( parentPos.x, parentPos.y + heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() - heightStyleBar );
+                m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() - heightStyleBar - 2 );
+            }
             m_designCanvas->Show( true );
             m_fields->Show( false );
             m_canvas->Show( false );
@@ -1377,8 +1387,12 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
             sizer->Layout();
         }
     }
-    m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE )->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
-    m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
+    wxMenuItem *dataSourceMenu = m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE );
+    if( dataSourceMenu )
+    {
+        dataSourceMenu->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
+        m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
+    }
 }
 
 void DrawingView::OnTabOrder(wxCommandEvent &event)
@@ -1400,43 +1414,13 @@ void DrawingView::OnTabOrder(wxCommandEvent &event)
     }
 }
 
-void DrawingView::OnFontSeectionChange(wxCommandEvent &event)
+void DrawingView::OnFontSeectionChange(wxCommandEvent &WXUNUSED(event))
 {
-#ifdef __WXMSW__
-    m_fontSize->Clear();
-    wxArrayInt ttSizes;
-    ttSizes.Add( 8 );
-    ttSizes.Add( 9 );
-    ttSizes.Add( 10 );
-    ttSizes.Add( 11 );
-    ttSizes.Add( 12 );
-    ttSizes.Add( 14 );
-    ttSizes.Add( 16 );
-    ttSizes.Add( 18 );
-    ttSizes.Add( 20 );
-    ttSizes.Add( 22 );
-    ttSizes.Add( 24 );
-    ttSizes.Add( 26 );
-    ttSizes.Add( 28 );
-    ttSizes.Add( 36 );
-    ttSizes.Add( 48 );
-    ttSizes.Add( 72 );
-    wxString strFaceName = m_fontName->GetStringSelection();
-    HDC dc = ::GetDC( NULL );
-    EnumFontFamilies( dc, strFaceName, (FONTENUMPROC) DrawingView::EnumFontFamiliesCallback2, (LPARAM) this );
-    ::ReleaseDC( NULL, dc );
-    if( (int) m_fontName->GetClientData( m_fontName->GetSelection() ) != RASTER_FONTTYPE )
-    {
-        for( unsigned int i = 0; i < ttSizes.GetCount(); i++ )
-        {
-            AddSize( ttSizes[i], 0 );
-        }
-    }
-#endif
+    ChangeFontEement();
 }
 
 #ifdef __WXMSW__
-int CALLBACK DrawingView::EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam)
+int CALLBACK DrawingView::EnumFontFamiliesCallback2(ENUMLOGFONT *WXUNUSED(lpelf), NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam)
 {
     DrawingView *pPage = (DrawingView *) lParam;
     wxASSERT( pPage );
@@ -1492,5 +1476,40 @@ int DrawingView::AddSize(int size, int lfHeight)
     return i;
 #else
 	return 1;
+#endif
+}
+
+void DrawingView::ChangeFontEement()
+{
+#ifdef __WXMSW__
+    m_fontSize->Clear();
+    wxArrayInt ttSizes;
+    ttSizes.Add( 8 );
+    ttSizes.Add( 9 );
+    ttSizes.Add( 10 );
+    ttSizes.Add( 11 );
+    ttSizes.Add( 12 );
+    ttSizes.Add( 14 );
+    ttSizes.Add( 16 );
+    ttSizes.Add( 18 );
+    ttSizes.Add( 20 );
+    ttSizes.Add( 22 );
+    ttSizes.Add( 24 );
+    ttSizes.Add( 26 );
+    ttSizes.Add( 28 );
+    ttSizes.Add( 36 );
+    ttSizes.Add( 48 );
+    ttSizes.Add( 72 );
+    wxString strFaceName = m_fontName->GetStringSelection();
+    HDC dc = ::GetDC( NULL );
+    EnumFontFamilies( dc, strFaceName, (FONTENUMPROC) DrawingView::EnumFontFamiliesCallback2, (LPARAM) this );
+    ::ReleaseDC( NULL, dc );
+    if( (int) m_fontName->GetClientData( m_fontName->GetSelection() ) != RASTER_FONTTYPE )
+    {
+        for( unsigned int i = 0; i < ttSizes.GetCount(); i++ )
+        {
+            AddSize( ttSizes[i], 0 );
+        }
+    }
 #endif
 }

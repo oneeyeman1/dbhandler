@@ -951,7 +951,7 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
     return result;
 }
 
-int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &UNUSED(schemaName), const std::wstring &ownerName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt;
     std::wstring errorMessage;
@@ -1258,6 +1258,12 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
             }
         }
     }
+    return result;
+}
+
+int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
     return result;
 }
 

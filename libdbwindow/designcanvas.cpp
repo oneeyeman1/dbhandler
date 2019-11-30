@@ -11,12 +11,15 @@
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/bmpcbox.h"
+#include "wx/notebook.h"
+#include "wx/grid.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/RectShape.h"
 #include "wxsf/GridShape.h"
 #include "wxsf/DiagramManager.h"
+#include "wxsf/FlexGridShape.h"
 //#include "XmlSerializer.h"
 #include "database.h"
 #include "constraint.h"
@@ -24,13 +27,20 @@
 #include "HeaderGrid.h"
 #include "commenttableshape.h"
 #include "fontcombobox.h"
+#include "fieldwindow.h"
+#include "constraintsign.h"
+#include "FieldShape.h"
 #include "MyErdTable.h"
+#include "syntaxproppage.h"
+#include "wherehavingpage.h"
+#include "databasecanvas.h"
 #include "databasedoc.h"
 #include "taborder.h"
 #include "divider.h"
 #include "designlabel.h"
 #include "designfield.h"
 #include "designcanvas.h"
+#include "databaseview.h"
 
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, const wxString &, wxCriticalSection &);
 
@@ -169,7 +179,7 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
     }
 }
 
-void DesignCanvas::OnProperties(wxCommandEvent &event)
+void DesignCanvas::OnProperties(wxCommandEvent &WXUNUSED(event))
 {
     wxCriticalSection pcs;
     wxString command = "";
@@ -178,6 +188,8 @@ void DesignCanvas::OnProperties(wxCommandEvent &event)
         type = 2;
     if( wxDynamicCast( m_menuShape, Divider ) )
         type = 3;
+    else
+        type = -1;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
@@ -238,10 +250,16 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
                     continue;
             }
             else
+            {
                 field->Select( true );
+                dynamic_cast<DrawingView *>( m_view )->ChangeFontEement();
+            }
         }
         else
+        {
             label->Select( true );
+            dynamic_cast<DrawingView *>( m_view )->ChangeFontEement();
+        }
     }
 }
 

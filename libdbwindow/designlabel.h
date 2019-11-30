@@ -1,7 +1,7 @@
 #pragma once
 struct Properties
 {
-    wxString m_name, m_tag, m_text;
+    wxString m_name, m_tag, m_text, m_cursor;
     bool m_supressPrint;
     int m_border, m_alignment;
     wxFont m_font;
