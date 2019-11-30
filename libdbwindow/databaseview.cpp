@@ -518,13 +518,18 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 {
                     if( m_source != 1 )
                     {
+                        wxMDIClientWindow *parent = (wxMDIClientWindow *) m_parent->GetClientWindow();
+                        wxSize parentSize = parent->GetSize();
+                        wxPoint parentPos = parent->GetPosition();
                         int heightStyleBar = m_styleBar->GetSize().y;
                         wxPoint framePosition = m_frame->GetPosition();
                         wxSize frameSize = m_frame->GetSize();
                         if( framePosition.y == 0 )
                         {
-                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
+                            parent->SetSize( parentPos.x, parentPos.y - heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() + heightStyleBar );
                             m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
+//                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
+//                            m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
                         }
                         m_styleBar->Show( false );
                         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
