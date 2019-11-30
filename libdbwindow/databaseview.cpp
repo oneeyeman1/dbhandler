@@ -1348,11 +1348,11 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
     int heightStyleBar = m_styleBar->GetSize().y;
     wxPoint framePosition = m_frame->GetPosition();
     wxSize frameSize = m_frame->GetSize();
-    wxMDIClientWindow *parent = (wxMDIClientWindow *) dynamic_cast<wxMDIParentFrame *>( m_frame->GetParent() )->GetClientWindow();
+    wxMDIClientWindow *parent = (wxMDIClientWindow *) m_parent->GetClientWindow();
     wxSize parentSize = parent->GetSize();
     wxPoint parentPos = parent->GetPosition();
-    wxMenuBar *menuBar = ((wxMDIParentFrame *) m_frame->GetParent())->GetMenuBar();
-    for( unsigned int i = 1; i < menuBar->GetMenuCount() - 2; ++i )
+    wxMenuBar *menuBar = m_parent->GetMenuBar();
+    for( unsigned int i = menuBar->GetMenuCount() - 2; i < 0; --i )
         menuBar->Remove( i );
     if( m_type == QueryView )
     {
