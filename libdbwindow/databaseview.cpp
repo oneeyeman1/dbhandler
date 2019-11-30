@@ -1348,14 +1348,19 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
     int heightStyleBar = m_styleBar->GetSize().y;
     wxPoint framePosition = m_frame->GetPosition();
     wxSize frameSize = m_frame->GetSize();
+    wxMDIClientWindow *parent = (wxMDIClientWindow *) dynamic_cast<wxMDIParentFrame *>( m_frame->GetParent() )->GetClientWindow();
+    wxSize parentSize = parent->GetSize();
+    wxPoint parentPos = parent->GetPosition();
+    wxMenuBar *menuBar = ((wxMDIParentFrame *) m_frame->GetParent())->GetMenuBar();
+    for( unsigned int i = 1; i < menuBar->GetMenuCount() - 2; ++i )
+        menuBar->Remove( i );
     if( m_type == QueryView )
     {
         if( event.IsChecked () )
         {
-//            HideStyleBar();
             if( framePosition.y == 0 )
             {
-                m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
+                parent->SetSize( parentPos.x, parentPos.y - heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() + heightStyleBar );
                 m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
             }
             m_styleBar->Show( false );
@@ -1368,12 +1373,12 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
         }
         else
         {
-            if( framePosition.y == -heightStyleBar )
-            {
-                m_frame->SetPosition( wxPoint( framePosition.x, 0 ) );
-                m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() - heightStyleBar );
-            }
             m_styleBar->Show( true );
+            if( framePosition.y == 0 )
+            {
+                parent->SetSize( parentPos.x, parentPos.y + heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() - heightStyleBar );
+                m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() - heightStyleBar - 2 );
+            }
             m_designCanvas->Show( true );
             m_fields->Show( false );
             m_canvas->Show( false );
@@ -1382,8 +1387,12 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
             sizer->Layout();
         }
     }
-    m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE )->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
-    m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
+    wxMenuItem *dataSourceMenu = m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE );
+    if( dataSourceMenu )
+    {
+        dataSourceMenu->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
+        m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
+    }
 }
 
 void DrawingView::OnTabOrder(wxCommandEvent &event)
