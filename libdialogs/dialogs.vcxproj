@@ -498,6 +498,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="addcolumnsdialog.cpp" />
+    <ClCompile Include="arguments.c" />
     <ClCompile Include="bitmappanel.cpp" />
     <ClCompile Include="createindex.cpp" />
     <ClCompile Include="databasetype.cpp" />
@@ -512,6 +513,7 @@
     <ClCompile Include="quickselect.cpp" />
     <ClCompile Include="retrievalarguments.cpp" />
     <ClCompile Include="selecttables.cpp" />
+    <ClCompile Include="typecombobox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="addcolumnsdialog.h" />
@@ -528,6 +530,7 @@
     <ClInclude Include="quickselect.h" />
     <ClInclude Include="retrievalarguments.h" />
     <ClInclude Include="selecttables.h" />
+    <ClInclude Include="typecombobox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
