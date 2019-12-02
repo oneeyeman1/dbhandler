@@ -21,51 +21,7 @@ public:
     {
     };
 };
-/*
-class ColumnLabels : public wxWindow
-{
-public:
-    ColumnLabels(wxScrolled<wxWindow> *parent );
-private:
-    void OnPaint(wxPaintEvent &event);
-    wxScrolled<wxWindow> *m_parent;
-};
 
-class MySubColLabels : public wxWindow
-{
-public:
-    MySubColLabels(wxScrolled<wxWindow> *parent);
-private:
-    void OnPaint(wxPaintEvent &event);
-    wxScrolled<wxWindow> *m_owner;
-};
-
-class MySubCanvas : public wxPanel
-{
-public:
-    MySubCanvas(wxScrolled<wxWindow> *parent, wxWindow *cols, const wxString &dbType, const wxString &subType, std::vector<QueryArguments> &arguments);
-    void AddArgument();
-    void DeleteArgument();
-    virtual void ScrollWindow(int dx, int dy, const wxRect *rect) wxOVERRIDE;
-private:
-    wxScrolled<wxWindow> *m_owner;
-    wxWindow *m_colLabels;
-    std::vector<QueryLines> m_lines;
-};
-
-class MySubScrolledWindow : public wxScrolled<wxWindow>
-{
-public:
-    MySubScrolledWindow(wxWindow *parent, const wxString &dbType, const wxString &subType, std::vector<QueryArguments> &arguments);
-    void AddArgument();
-    void DeleteArgument();
-protected:
-    virtual wxSize GetSizeAvailableForScrollTarget(const wxSize &size) wxOVERRIDE;
-private:
-    void OnSize(wxSizeEvent &event);
-    MySubCanvas *m_canvas;
-};
-*/
 class RetrievalArguments : public wxDialog
 {
 public:
