@@ -27,7 +27,7 @@
 
 #include "typecombobox.h"
 
-TypeComboBox::TypeComboBox(wxWindow *parent, const std::wstring &type, const std::wstring &subtype) : wxComboBox(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY | wxCB_SORT)
+TypeComboBox::TypeComboBox(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, const std::string &argType) : wxComboBox(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY | wxCB_SORT)
 {
     if( type == "SQLite" )
     {
@@ -73,4 +73,5 @@ TypeComboBox::TypeComboBox(wxWindow *parent, const std::wstring &type, const std
         Append( "varchar" );
         Append( "xml" );
     }
+    SetValue( argType );
 }

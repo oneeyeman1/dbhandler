@@ -250,12 +250,24 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
         flex->Add( new wxStaticBitmap( args, wxID_ANY, wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) ) ), 0, wxEXPAND, 0 );
         flex->Add( new wxTextCtrl( args, wxID_ANY, "1", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
         flex->Add( new wxTextCtrl( args, wxID_ANY, wxEmptyString ), 1, wxEXPAND, 0 );
-        flex->Add( new TypeComboBox( args, dbType.ToStdWstring(), subType.ToStdWstring() ), 0, wxEXPAND, 0 );
+        flex->Add( new TypeComboBox( args, dbType.ToStdWstring(), subType.ToStdWstring(), "" ), 0, wxEXPAND, 0 );
     }
     else
     {
-
+        for( std::vector<QueryArguments>::iterator it = arguments.begin (); it < arguments.end (); ++it )
+        {
+            int i = 1;
+            flex->Add( new wxStaticBitmap( args, wxID_ANY, wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) ) ), 0, wxEXPAND, 0 );
+            flex->Add( new wxTextCtrl( args, wxID_ANY, wxString::Format( "%d", i ), wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            flex->Add( new wxTextCtrl( args, wxID_ANY, (*it).m_name ), 1, wxEXPAND, 0 );
+            flex->Add( new TypeComboBox( args, dbType.ToStdWstring(), subType.ToStdWstring(), (*it).m_type.ToStdString() ), 0, wxEXPAND, 0 );
+            ++i;
+        }
     }
+    flex->AddGrowableCol( 2 );
+    args->SetSizer( flex );
+    args->SetScrollRate( 15, 15 );
+    argSizer1->Add( flex, 0, wxEXPAND, 0 );
     argPanel->SetSizer( argSizer1 );
     box->Add( argPanel, 0, wxEXPAND, 0 );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
