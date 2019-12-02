@@ -21,7 +21,7 @@ public:
     {
     };
 };
-
+/*
 class ColumnLabels : public wxWindow
 {
 public:
@@ -65,7 +65,7 @@ private:
     void OnSize(wxSizeEvent &event);
     MySubCanvas *m_canvas;
 };
-
+*/
 class RetrievalArguments : public wxDialog
 {
 public:
@@ -77,9 +77,11 @@ protected:
     void do_layout();
     void set_properties();
 private:
-    wxPanel *m_panel;
-    MySubScrolledWindow *m_arguments;
+    wxPanel *m_panel, *argPanel;
+///    MySubScrolledWindow *m_arguments;
+    wxStaticText *m_labe11, *m_label2, *m_label3;
     wxButton *m_ok, *m_cancel, *m_help, *m_add, *m_insert, *m_remove;
+    wxStaticBoxSizer *box;
 };
 
 #endif

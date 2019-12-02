@@ -25,9 +25,11 @@
 #include "wx/wx.h"
 #endif
 
-#include "wx/artprov.h"
+#include <vector>
+#include "arguments.c"
+#include "typecombobox.h"
 #include "retrievalarguments.h"
-
+/*
 MySubColLabels::MySubColLabels(wxScrolled<wxWindow> *parent) : wxWindow(parent, wxID_ANY)
 {
     m_owner = parent;
@@ -226,11 +228,36 @@ void ColumnLabels::OnPaint(wxPaintEvent &WXUNUSED(event))
     dc.DrawText( _( "Name" ), 105, 5 );
     dc.DrawText( _( "Type" ), 205, 5 );
 }
-
+*/
 RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArguments> &arguments, const wxString &dbType, const wxString &subType) : wxDialog( parent, wxID_ANY, _( "" ) )
 {
     m_panel = new wxPanel( this );
-    m_arguments = new MySubScrolledWindow( this, dbType, subType, arguments );
+    box = new wxStaticBoxSizer( wxHORIZONTAL, m_panel, _( "Arguments" ) );
+    argPanel = new wxPanel( box->GetStaticBox() );
+    m_labe11 = new wxStaticText( argPanel, wxID_ANY, _( "Position" ) );
+    m_label2 = new wxStaticText( argPanel, wxID_ANY, _( "Name" ) );
+    m_label3 = new wxStaticText( argPanel, wxID_ANY, _( "Type" ) );
+    wxScrolledWindow *args = new wxScrolledWindow( argPanel, wxID_ANY );
+    wxFlexGridSizer *flex = new wxFlexGridSizer( 4, 0, 0 );
+    wxBoxSizer *argSizer1 = new wxBoxSizer( wxVERTICAL);
+    wxBoxSizer *argSizer2 = new wxBoxSizer( wxHORIZONTAL );
+    argSizer2->Add( m_labe11, 0, wxEXPAND, 0 );
+    argSizer2->Add( m_label2, 0, wxEXPAND, 0 );
+    argSizer2->Add( m_label3, 0, wxEXPAND, 0 );
+    argSizer1->Add( argSizer2, 0, wxEXPAND, 0 );
+    if( arguments.size() == 0 )
+    {
+        flex->Add( new wxStaticBitmap( args, wxID_ANY, wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) ) ), 0, wxEXPAND, 0 );
+        flex->Add( new wxTextCtrl( args, wxID_ANY, "1", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+        flex->Add( new wxTextCtrl( args, wxID_ANY, wxEmptyString ), 1, wxEXPAND, 0 );
+        flex->Add( new TypeComboBox( args, dbType.ToStdWstring(), subType.ToStdWstring() ), 0, wxEXPAND, 0 );
+    }
+    else
+    {
+
+    }
+    argPanel->SetSizer( argSizer1 );
+    box->Add( argPanel, 0, wxEXPAND, 0 );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
     m_help = new wxButton( m_panel, wxID_HELP, _( "Help" ) );
@@ -255,18 +282,19 @@ void RetrievalArguments::set_properties()
 void RetrievalArguments::do_layout()
 {
     auto *sizer_1 = new wxBoxSizer( wxHORIZONTAL );
-    auto *sizer_2 = new wxBoxSizer( wxHORIZONTAL );
-    auto *sizer_3 = new wxBoxSizer( wxVERTICAL );
-    auto *sizer_4 = new wxBoxSizer( wxHORIZONTAL );
+    auto *sizer_2 = new wxBoxSizer( wxVERTICAL );
+    auto *sizer_3 = new wxBoxSizer( wxHORIZONTAL );
+//    auto *sizer_4 = new wxBoxSizer( wxVERTICAL );
     auto *sizer_5 = new wxBoxSizer( wxVERTICAL );
     auto *sizer_7 = new wxBoxSizer( wxVERTICAL );
     auto *sizer_6 = new wxBoxSizer( wxVERTICAL );
-    auto *sizer_8 = new wxStaticBoxSizer(new wxStaticBox( m_panel, wxID_ANY, ( "Argument" ) ), wxHORIZONTAL );
+//    auto *sizer_8 = new wxStaticBoxSizer( box, wxHORIZONTAL );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_8->Add( m_arguments, 1, wxEXPAND, 0 );
-    sizer_4->Add( sizer_8, 1, wxEXPAND, 0 );
-    sizer_4->Add( 10, 10, 0, wxEXPAND, 0 );
+//    sizer_3->Add( sizer_8, 1, wxEXPAND, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_3->Add( box, 0, wxEXPAND, 0 );
+    sizer_3->Add( 5, 5,  0, wxEXPAND, 0 );
     sizer_6->Add( m_ok, 0, wxEXPAND, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_6->Add( m_cancel, 0, wxEXPAND, 0 );
@@ -280,8 +308,8 @@ void RetrievalArguments::do_layout()
     sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_7->Add( m_remove, 0, wxEXPAND, 0 );
     sizer_5->Add( sizer_7, 0, wxEXPAND, 0 );
-    sizer_4->Add( sizer_5, 0, wxEXPAND, 0 );
-    sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
+    sizer_3->Add( sizer_5, 0, wxEXPAND, 0 );
+//    sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );*/
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -294,10 +322,10 @@ void RetrievalArguments::do_layout()
 
 void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
 {
-    m_arguments->AddArgument();
+//    m_arguments->AddArgument();
 }
 
 void RetrievalArguments::OnRemoveArgument(wxCommandEvent &WXUNUSED(event))
 {
-    m_arguments->DeleteArgument();
+//    m_arguments->DeleteArgument();
 }
