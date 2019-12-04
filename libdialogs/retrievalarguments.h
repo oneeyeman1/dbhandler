@@ -33,7 +33,7 @@ protected:
     void do_layout();
     void set_properties();
 private:
-    wxPanel *m_panel, *argPanel;
+    wxPanel *m_panel, *argPanel, *m_mainPanel;
 ///    MySubScrolledWindow *m_arguments;
     wxStaticText *m_labe11, *m_label2, *m_label3;
     wxButton *m_ok, *m_cancel, *m_help, *m_add, *m_insert, *m_remove;

@@ -32,7 +32,7 @@
 
 RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArguments> &arguments, const wxString &dbType, const wxString &subType) : wxDialog( parent, wxID_ANY, _( "" ) )
 {
-    m_panel = new wxPanel( this );
+/*    m_panel = new wxPanel( this );
     box = new wxStaticBoxSizer( wxHORIZONTAL, m_panel, _( "Arguments" ) );
     argPanel = new wxPanel( box->GetStaticBox() );
     m_labe11 = new wxStaticText( argPanel, wxID_ANY, _( "Position" ) );
@@ -80,7 +80,97 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     set_properties();
     do_layout();
     m_add->Bind( wxEVT_BUTTON, &RetrievalArguments::OnAddArgument, this );
-    m_remove->Bind( wxEVT_BUTTON, &RetrievalArguments::OnRemoveArgument, this );
+    m_remove->Bind( wxEVT_BUTTON, &RetrievalArguments::OnRemoveArgument, this );*/
+
+
+
+
+/*	m_panel = new wxPanel( this, wxID_ANY );
+    wxBoxSizer *main_sizer = new wxBoxSizer( wxVERTICAL );
+
+    argPanel = new wxPanel( m_panel, wxID_ANY );
+    m_labe11 = new wxStaticText( argPanel, wxID_ANY, "Position", wxPoint( 4,4 ) );
+    m_label2 = new wxStaticText( argPanel, wxID_ANY, "Name", wxPoint( 40,4 ) );
+    m_label3 = new wxStaticText( argPanel, wxID_ANY, "Type", wxPoint( 48,4 ) );
+
+    main_sizer->Add( argPanel, 0, wxEXPAND|wxBOTTOM, 4 );
+
+    wxScrolledWindow *args = new wxScrolledWindow( m_panel, wxID_ANY );
+
+    wxBitmap bmp = wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) );
+
+    wxFlexGridSizer *fgs = new wxFlexGridSizer( 4, 0, 0 );
+/*    m_locator_dummy_1 = new wxPanel(scrolled, wxID_ANY, wxDefaultPosition, wxSize(1,1));
+    m_locator_dummy_2 = new wxPanel(scrolled, wxID_ANY, wxDefaultPosition, wxSize(1,1));
+    m_locator_dummy_3 = new wxPanel(scrolled, wxID_ANY, wxDefaultPosition, wxSize(1,1));
+    m_locator_dummy_4 = new wxPanel(scrolled, wxID_ANY, wxDefaultPosition, wxSize(1,1));
+    fgs->Add( m_locator_dummy_1 );
+    fgs->Add( m_locator_dummy_2 );
+    fgs->Add( m_locator_dummy_3 );
+    fgs->Add( m_locator_dummy_4 );
+
+    wxString pos;
+    if( arguments.size() == 0 )
+    {
+//    for(int i=0; i<50; i++ )
+        int i = 1;
+        pos.Printf("%d", i);
+        fgs->Add( new wxStaticBitmap( args, wxID_ANY, bmp ), 0, wxEXPAND|wxRIGHT|wxLEFT, 8 );
+        fgs->Add( new wxTextCtrl( args, wxID_ANY, pos, wxDefaultPosition, wxDefaultSize ), 0, wxEXPAND|wxRIGHT, 8 ); 
+        fgs->Add( new wxTextCtrl( args, wxID_ANY, "" ), 1, wxEXPAND|wxRIGHT, 8 );
+        fgs->Add( new TypeComboBox( args, dbType.ToStdWstring(), subType.ToStdWstring(), "TEXT" ), 1, wxEXPAND|wxRIGHT, 8 ); 
+    }
+    fgs->AddGrowableCol(2);
+
+    args->SetSizer(fgs);
+    args->SetScrollRate( 15, 15 );
+
+    main_sizer->Add(args, 1, wxEXPAND, 0);
+
+    m_panel->SetSizer( main_sizer );
+*/
+    m_panel = new wxPanel( this, wxID_ANY );
+    wxBoxSizer *main_sizer = new wxBoxSizer( wxVERTICAL );
+
+    argPanel = new wxPanel( m_panel, wxID_ANY );
+    m_labe11 = new wxStaticText( argPanel, wxID_ANY, "Position", wxPoint( 4,4)  );
+    m_label2 = new wxStaticText( argPanel, wxID_ANY, "Name", wxPoint( 40,4 ) );
+    m_label3 = new wxStaticText( argPanel, wxID_ANY, "Type", wxPoint( 48,4 ) );
+
+    main_sizer->Add( argPanel, 0, wxEXPAND | wxBOTTOM, 4 );
+
+    wxScrolledWindow *args = new wxScrolledWindow( m_panel, wxID_ANY );
+
+    wxBitmap bmp = wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) );
+
+    wxFlexGridSizer *fgs = new wxFlexGridSizer(4, 0, 0);
+/*    m_locator_dummy_1 = new wxPanel(scrolled, wxID_ANY, wxDefaultPosition, wxSize(1,1));
+    m_locator_dummy_2 = new wxPanel(scrolled, wxID_ANY, wxDefaultPosition, wxSize(1,1));
+    m_locator_dummy_3 = new wxPanel(scrolled, wxID_ANY, wxDefaultPosition, wxSize(1,1));
+    m_locator_dummy_4 = new wxPanel(scrolled, wxID_ANY, wxDefaultPosition, wxSize(1,1));
+    fgs->Add( m_locator_dummy_1 );
+    fgs->Add( m_locator_dummy_2 );
+    fgs->Add( m_locator_dummy_3 );
+    fgs->Add( m_locator_dummy_4 );
+*/
+    wxString pos;
+//    if( arguments.size() == 0 )
+    {
+        int i = 1;
+        pos.Printf("%d", i );
+        fgs->Add( new wxStaticBitmap( args, wxID_ANY, bmp ), 0, wxEXPAND | wxRIGHT | wxLEFT, 8 );
+        fgs->Add( new wxTextCtrl( args, wxID_ANY, pos, wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxRIGHT, 8 ); 
+        fgs->Add( new wxTextCtrl( args, wxID_ANY, "ddd" ), 1, wxEXPAND | wxRIGHT, 8 );
+        fgs->Add( new TypeComboBox( args, dbType.ToStdWstring(), subType.ToStdWstring(), "TEXT" ), 1, wxEXPAND | wxRIGHT, 8 ); 
+    }
+    fgs->AddGrowableCol( 2 );
+
+    args->SetSizer( fgs );
+    args->SetScrollRate( 15, 15 );
+
+    main_sizer->Add( args, 1, wxEXPAND, 0 );
+
+    m_panel->SetSizer( main_sizer );
 }
 
 RetrievalArguments::~RetrievalArguments(void)
