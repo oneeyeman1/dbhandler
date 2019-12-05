@@ -30,14 +30,20 @@ public:
 protected:
     void OnAddArgument(wxCommandEvent &event);
     void OnRemoveArgument(wxCommandEvent &event);
+    void OnSize(wxSizeEvent &event);
+    void UpdateHeader();
     void do_layout();
     void set_properties();
 private:
-    wxPanel *m_panel, *argPanel, *m_mainPanel;
+    wxPanel *m_panel, *argPanel, *m_mainPanel, *dummy_1, *dummy_2, *dummy_3, *dummy_4;
+    wxScrolledWindow *args;
+    wxFlexGridSizer *fgs;
 ///    MySubScrolledWindow *m_arguments;
     wxStaticText *m_labe11, *m_label2, *m_label3;
     wxButton *m_ok, *m_cancel, *m_help, *m_add, *m_insert, *m_remove;
     wxStaticBoxSizer *box;
+    wxString m_type, m_subType;
+    int numArgs;
 };
 
 #endif
