@@ -16,6 +16,7 @@
 
 #include <map>
 #include <vector>
+#include <list>
 #include "wx/wizard.h"
 #include "wx/filepicker.h"
 #include "wx/dynlib.h"
@@ -57,6 +58,7 @@
 #include "bitmappanel.h"
 #include "newquery.h"
 #include "quickselect.h"
+#include "typecombobox.h"
 #include "retrievalarguments.h"
 
 #ifdef __WXMSW__

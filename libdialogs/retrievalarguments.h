@@ -15,9 +15,9 @@ public:
     wxStaticBitmap *m_pointer;
     wxStaticText *m_number;
     wxTextCtrl *m_name;
-    wxComboBox *m_type;
+    TypeComboBox *m_type;
 
-    QueryLines (wxStaticBitmap *pointer, wxStaticText *number, wxTextCtrl *name, wxComboBox *type) : m_pointer (pointer), m_number (number), m_name (name), m_type (type)
+    QueryLines (wxStaticBitmap *pointer, wxStaticText *number, wxTextCtrl *name, TypeComboBox *type) : m_pointer (pointer), m_number (number), m_name (name), m_type (type)
     {
     };
 };
@@ -36,6 +36,8 @@ protected:
     void set_properties();
 private:
     wxPanel *m_panel, *argPanel, *m_mainPanel, *dummy_1, *dummy_2, *dummy_3, *dummy_4;
+    wxBoxSizer *sizer;
+    wxBitmap bmp;
     wxScrolledWindow *args;
     wxFlexGridSizer *fgs;
 ///    MySubScrolledWindow *m_arguments;
@@ -43,7 +45,8 @@ private:
     wxButton *m_ok, *m_cancel, *m_help, *m_add, *m_insert, *m_remove;
     wxStaticBoxSizer *box;
     wxString m_type, m_subType;
-    int numArgs;
+    int numArgs, m_currentLine;
+    std::list<QueryLines> m_lines;
 };
 
 #endif

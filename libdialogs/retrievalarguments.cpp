@@ -25,7 +25,7 @@
 #include "wx/wx.h"
 #endif
 
-#include <vector>
+#include <list>
 #include "arguments.c"
 #include "typecombobox.h"
 #include "retrievalarguments.h"
@@ -33,9 +33,10 @@
 RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArguments> &arguments, const wxString &dbType, const wxString &subType) : wxDialog( parent, wxID_ANY, _( "" ) )
 {
     numArgs = 1;
+    m_currentLine = 0;
     m_type = dbType;
     m_subType = subType;
-    wxBoxSizer *sizer = new wxBoxSizer( wxHORIZONTAL );
+    sizer = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer_6 = new wxBoxSizer( wxVERTICAL );
     m_panel = new wxPanel( this, wxID_ANY );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
@@ -55,7 +56,7 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
 
     args = new wxScrolledWindow( main_sizer->GetStaticBox(), wxID_ANY );
 
-    wxBitmap bmp = wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) );
+    bmp = wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) );
 
     fgs = new wxFlexGridSizer( 4, 0, 0 );
     dummy_1 = new wxPanel( args, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
@@ -71,16 +72,27 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     for( std::vector<QueryArguments>::iterator it = arguments.begin(); it < arguments.end(); ++it )
     {
         pos.Printf("%d", (*it).m_pos );
-        fgs->Add( new wxStaticBitmap( args, wxID_ANY, bmp ), 0, wxEXPAND | wxRIGHT | wxLEFT, 8 );
-        fgs->Add( new wxTextCtrl( args, wxID_ANY, pos, wxDefaultPosition, wxSize( 30, -1 ), wxTE_READONLY | wxBORDER_SUNKEN ), 0, wxRIGHT, 8 );
-        fgs->Add( new wxTextCtrl( args, wxID_ANY, (*it).m_name ), 1, wxEXPAND | wxRIGHT, 8 );
-        fgs->Add( new TypeComboBox( args, dbType.ToStdWstring(), subType.ToStdWstring(), (*it).m_type.ToStdString() ), 0, wxEXPAND | wxRIGHT, 8 );
+        wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
+        wxStaticText *number = new wxStaticText( args, wxID_ANY, pos, wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
+        wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, (*it).m_name );
+        TypeComboBox *type = new TypeComboBox( args, dbType.ToStdWstring(), subType.ToStdWstring(), (*it).m_type.ToStdString() );
+        fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT, 8 );
+        fgs->Add( number, 0, wxRIGHT, 8 );
+        fgs->Add( name, 1, wxEXPAND | wxRIGHT, 8 );
+        fgs->Add( type, 0, wxEXPAND | wxRIGHT, 8 );
+        m_lines.push_back( QueryLines( statBmp, number, name, type ) );
+        m_currentLine++;
     }
     numArgs = arguments.size();
     fgs->AddGrowableCol( 2 );
 
     args->SetSizer( fgs );
     args->SetScrollRate( 15, 15 );
+
+    wxSize minsize = fgs->CalcMin();
+    minsize.x += wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y );
+    minsize.y = -1;
+    args->SetMinClientSize( minsize );;
 
     main_sizer->Add( args, 1, wxEXPAND, 0 );
     sizer->Add( main_sizer, 1, wxEXPAND, 0 );
@@ -98,9 +110,10 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     sizer_6->Add( m_remove, 0, wxEXPAND, 0 );
     sizer->Add( sizer_6, 0, wxEXPAND | wxRIGHT, 0 );
     m_panel->SetSizer( sizer );
-//    sizer->SetSizeHints( this );
+    sizer->SetSizeHints( this );
     Layout();
     m_panel->Bind( wxEVT_SIZE, &RetrievalArguments::OnSize, this );
+    m_add->Bind( wxEVT_BUTTON, &RetrievalArguments::OnAddArgument, this );
     CallAfter( &RetrievalArguments::UpdateHeader );
     set_properties();
 }
@@ -163,11 +176,19 @@ void RetrievalArguments::OnSize(wxSizeEvent &event)
 
 void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
 {
+    std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
+    (*it).m_pointer->SetBitmap( wxNullBitmap );
     numArgs++;
-    fgs->Add( new wxStaticBitmap( args, wxID_ANY, bmp ), 0, wxEXPAND | wxRIGHT | wxLEFT, 8 );
-    fgs->Add( new wxTextCtrl( args, wxID_ANY, wxString::Format("%d", numArgs ), wxDefaultPosition, wxSize( 30, -1 ), wxTE_READONLY | wxBORDER_SUNKEN ), 0, wxRIGHT, 8 );
-    fgs->Add( new wxTextCtrl( args, wxID_ANY, "" ), 1, wxEXPAND | wxRIGHT, 8 );
-    fgs->Add( new TypeComboBox( args, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" ), 0, wxEXPAND | wxRIGHT, 8 );
+    wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
+    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%d", numArgs ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
+    wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
+    TypeComboBox *type = new TypeComboBox( args, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
+    fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT, 8 );
+    fgs->Add( number, 0, wxRIGHT, 8 );
+    fgs->Add( name, 1, wxEXPAND | wxRIGHT, 8 );
+    fgs->Add( type, 0, wxEXPAND | wxRIGHT, 8 );
+    m_lines.push_back( QueryLines( statBmp, number, name, type ) );
+    sizer->Layout();
 }
 
 void RetrievalArguments::OnRemoveArgument(wxCommandEvent &WXUNUSED(event))
