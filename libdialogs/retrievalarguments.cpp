@@ -76,7 +76,11 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
         wxStaticText *number = new wxStaticText( args, wxID_ANY, pos, wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
         wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, (*it).m_name );
         name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
+        name->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
+        name->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
         TypeComboBox *type = new TypeComboBox( args, dbType.ToStdWstring(), subType.ToStdWstring(), (*it).m_type.ToStdString() );
+        type->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
+        type->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
         fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT, 8 );
         fgs->Add( number, 0, wxRIGHT, 8 );
         fgs->Add( name, 1, wxEXPAND | wxRIGHT, 8 );
@@ -129,47 +133,6 @@ void RetrievalArguments::set_properties()
     SetTitle( _( "Specify Retrieval Arguments" ) );
 }
 
-void RetrievalArguments::do_layout()
-{
-    auto *sizer_1 = new wxBoxSizer( wxHORIZONTAL );
-    auto *sizer_2 = new wxBoxSizer( wxVERTICAL );
-    auto *sizer_3 = new wxBoxSizer( wxHORIZONTAL );
-//    auto *sizer_4 = new wxBoxSizer( wxVERTICAL );
-    auto *sizer_5 = new wxBoxSizer( wxVERTICAL );
-    auto *sizer_7 = new wxBoxSizer( wxVERTICAL );
-    auto *sizer_6 = new wxBoxSizer( wxVERTICAL );
-//    auto *sizer_8 = new wxStaticBoxSizer( box, wxHORIZONTAL );
-    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
-//    sizer_3->Add( sizer_8, 1, wxEXPAND, 0 );
-    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_3->Add( box, 0, wxEXPAND, 0 );
-    sizer_3->Add( 5, 5,  0, wxEXPAND, 0 );
-    sizer_6->Add( m_ok, 0, wxEXPAND, 0 );
-    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_6->Add( m_cancel, 0, wxEXPAND, 0 );
-    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_6->Add( m_help, 0, wxEXPAND, 0 );
-    sizer_5->Add( sizer_6, 0, wxEXPAND, 0 );
-    sizer_5->Add( 20, 20, 0, wxEXPAND, 0 );
-    sizer_7->Add( m_add, 0, wxEXPAND, 0 );
-    sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_7->Add( m_insert, 0, wxEXPAND, 0 );
-    sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_7->Add( m_remove, 0, wxEXPAND, 0 );
-    sizer_5->Add( sizer_7, 0, wxEXPAND, 0 );
-    sizer_3->Add( sizer_5, 0, wxEXPAND, 0 );
-//    sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );*/
-    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
-    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_panel->SetSizer( sizer_2 );
-    sizer_1->Add( m_panel, 0, wxEXPAND, 0 );
-    SetSizer( sizer_1 );
-    sizer_1->Fit( this );
-    Layout();
-}
-
 void RetrievalArguments::OnSize(wxSizeEvent &event)
 {
     UpdateHeader();
@@ -178,6 +141,7 @@ void RetrievalArguments::OnSize(wxSizeEvent &event)
 
 void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
 {
+    Freeze();
     std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
     (*it).m_pointer->SetBitmap( wxNullBitmap );
     numArgs++;
@@ -185,7 +149,11 @@ void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
     wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%d", numArgs ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
     wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
     name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
+    name->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
+    name->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
     TypeComboBox *type = new TypeComboBox( args, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
+    type->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
+    type->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
     fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT, 8 );
     fgs->Add( number, 0, wxRIGHT, 8 );
     fgs->Add( name, 1, wxEXPAND | wxRIGHT, 8 );
@@ -194,6 +162,7 @@ void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
     m_lines.back().m_name->SetFocus();
     m_currentLine = numArgs;
     sizer->Layout();
+    Thaw();
 }
 
 void RetrievalArguments::OnRemoveArgument(wxCommandEvent &WXUNUSED(event))
@@ -209,6 +178,7 @@ void RetrievalArguments::UpdateHeader()
 
 void RetrievalArguments::OnKeyDown(wxKeyEvent &event)
 {
+    Freeze();
     if( event.GetKeyCode() == WXK_UP )
     {
         if( m_currentLine > 1 )
@@ -238,4 +208,35 @@ void RetrievalArguments::OnKeyDown(wxKeyEvent &event)
             event.Skip();
     }
     event.Skip();
+    Thaw();
+}
+
+void RetrievalArguments::OnMouse(wxMouseEvent &event)
+{
+    Freeze();
+    wxTextCtrl *name = nullptr;
+    TypeComboBox *type = nullptr;
+    bool found = false;
+    name = dynamic_cast<wxTextCtrl *>( event.GetEventObject() );
+    type = dynamic_cast<TypeComboBox *>( event.GetEventObject() );
+    std::list<QueryLines>::iterator it;
+    for( it = m_lines.begin(); it != m_lines.end() && !found; ++it )
+    {
+        if( name && (*it).m_name == name )
+            found = true;
+        else if( type && (*it).m_type == type )
+            found = true;
+    }
+    if( found )
+        --it;
+    int newRow = wxAtoi( (*it).m_number->GetLabel() ) - 1;
+    if( newRow != m_currentLine )
+    {
+        std::list<QueryLines>::iterator oldit = std::next( m_lines.begin(), m_currentLine - 1 );
+        (*oldit).m_pointer->SetBitmap( wxNullBitmap );
+        (*it).m_pointer->SetBitmap( bmp );
+        m_currentLine = wxAtoi( (*it).m_number->GetLabel() );
+    }
+    event.Skip();
+    Thaw();
 }

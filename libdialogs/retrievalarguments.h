@@ -31,9 +31,9 @@ protected:
     void OnAddArgument(wxCommandEvent &event);
     void OnRemoveArgument(wxCommandEvent &event);
     void OnKeyDown(wxKeyEvent &event);
+    void OnMouse(wxMouseEvent &event);
     void OnSize(wxSizeEvent &event);
     void UpdateHeader();
-    void do_layout();
     void set_properties();
 private:
     wxPanel *m_panel, *argPanel, *m_mainPanel, *dummy_1, *dummy_2, *dummy_3, *dummy_4;
