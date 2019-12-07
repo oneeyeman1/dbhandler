@@ -75,12 +75,14 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
         wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
         wxStaticText *number = new wxStaticText( args, wxID_ANY, pos, wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
         wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, (*it).m_name );
+        name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
         TypeComboBox *type = new TypeComboBox( args, dbType.ToStdWstring(), subType.ToStdWstring(), (*it).m_type.ToStdString() );
         fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT, 8 );
         fgs->Add( number, 0, wxRIGHT, 8 );
         fgs->Add( name, 1, wxEXPAND | wxRIGHT, 8 );
         fgs->Add( type, 0, wxEXPAND | wxRIGHT, 8 );
         m_lines.push_back( QueryLines( statBmp, number, name, type ) );
+        m_lines.back().m_name->SetFocus();
         m_currentLine++;
     }
     numArgs = arguments.size();
@@ -182,12 +184,15 @@ void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
     wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
     wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%d", numArgs ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
     wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
+    name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
     TypeComboBox *type = new TypeComboBox( args, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
     fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT, 8 );
     fgs->Add( number, 0, wxRIGHT, 8 );
     fgs->Add( name, 1, wxEXPAND | wxRIGHT, 8 );
     fgs->Add( type, 0, wxEXPAND | wxRIGHT, 8 );
     m_lines.push_back( QueryLines( statBmp, number, name, type ) );
+    m_lines.back().m_name->SetFocus();
+    m_currentLine = numArgs;
     sizer->Layout();
 }
 
@@ -200,4 +205,37 @@ void RetrievalArguments::UpdateHeader()
 {
     m_label2->SetPosition( wxPoint( dummy_3->GetPosition().x, -1 ) );
     m_label3->SetPosition( wxPoint( dummy_4->GetPosition().x, -1 ) );
+}
+
+void RetrievalArguments::OnKeyDown(wxKeyEvent &event)
+{
+    if( event.GetKeyCode() == WXK_UP )
+    {
+        if( m_currentLine > 1 )
+        {
+            std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
+            (*it).m_pointer->SetBitmap( wxNullBitmap );
+            m_currentLine--;
+            it = std::next( m_lines.begin(), m_currentLine - 1 );
+            (*it).m_pointer->SetBitmap( bmp );
+            (*it).m_name->SetFocus();
+        }
+        else
+            event.Skip();
+    }
+    else if( event.GetKeyCode () == WXK_DOWN )
+    {
+        if( m_currentLine < numArgs )
+        {
+            std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
+            (*it).m_pointer->SetBitmap( wxNullBitmap );
+            m_currentLine++;
+            it = std::next( m_lines.begin(), m_currentLine - 1 );
+            (*it).m_pointer->SetBitmap( bmp );
+            (*it).m_name->SetFocus();
+        }
+        else
+            event.Skip();
+    }
+    event.Skip();
 }

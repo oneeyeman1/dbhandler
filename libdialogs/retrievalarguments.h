@@ -30,6 +30,7 @@ public:
 protected:
     void OnAddArgument(wxCommandEvent &event);
     void OnRemoveArgument(wxCommandEvent &event);
+    void OnKeyDown(wxKeyEvent &event);
     void OnSize(wxSizeEvent &event);
     void UpdateHeader();
     void do_layout();
