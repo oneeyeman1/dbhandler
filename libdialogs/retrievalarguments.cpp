@@ -309,3 +309,8 @@ void RetrievalArguments::OnRemoveUpdateUI(wxUpdateUIEvent &event)
     else
         event.Enable( true );
 }
+
+std::list<QueryLines> &RetrievalArguments::GetArgumentLines()
+{
+    return m_lines;
+}

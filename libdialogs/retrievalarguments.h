@@ -27,6 +27,7 @@ class RetrievalArguments : public wxDialog
 public:
     RetrievalArguments(wxWindow *parent, std::vector<QueryArguments> &arguments, const wxString &dbType, const wxString &subType);
     ~RetrievalArguments(void);
+    std::list<QueryLines> &GetArgumentLines();
 protected:
     void OnAddArgument(wxCommandEvent &event);
     void OnInsertArgument(wxCommandEvent &event);
