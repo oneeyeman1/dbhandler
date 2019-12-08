@@ -29,6 +29,7 @@ public:
     ~RetrievalArguments(void);
 protected:
     void OnAddArgument(wxCommandEvent &event);
+    void OnInsertArgument(wxCommandEvent &event);
     void OnRemoveArgument(wxCommandEvent &event);
     void OnKeyDown(wxKeyEvent &event);
     void OnMouse(wxMouseEvent &event);

@@ -120,8 +120,10 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     Layout();
     m_panel->Bind( wxEVT_SIZE, &RetrievalArguments::OnSize, this );
     m_add->Bind( wxEVT_BUTTON, &RetrievalArguments::OnAddArgument, this );
+    m_insert->Bind( wxEVT_BUTTON, &RetrievalArguments::OnInsertArgument, this );
     m_remove->Bind( wxEVT_BUTTON, &RetrievalArguments::OnRemoveArgument, this );
     m_remove->Bind( wxEVT_UPDATE_UI, &RetrievalArguments::OnRemoveUpdateUI, this );
+    m_insert->Bind( wxEVT_UPDATE_UI, &RetrievalArguments::OnRemoveUpdateUI, this );
     CallAfter( &RetrievalArguments::UpdateHeader );
     set_properties();
 }
@@ -163,6 +165,37 @@ void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
     m_lines.push_back( QueryLines( statBmp, number, name, type ) );
     m_lines.back().m_name->SetFocus();
     m_currentLine = numArgs;
+    sizer->Layout();
+    Thaw();
+}
+
+void RetrievalArguments::OnInsertArgument(wxCommandEvent &WXUNUSED(event))
+{
+    Freeze();
+    std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
+    int pos = m_currentLine * 4, position = wxAtoi( (*it).m_number->GetLabel() );
+    wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
+    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%d", m_currentLine ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
+    wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
+    name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
+    name->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
+    name->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+    TypeComboBox *type = new TypeComboBox( args, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
+    type->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
+    type->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+    (*it).m_pointer->SetBitmap( wxNullBitmap );
+    fgs->Insert( pos, statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT, 0 );
+    fgs->Insert( pos + 1, number, 0, wxRIGHT, 8 );
+    fgs->Insert( pos + 2, name, 1, wxEXPAND | wxRIGHT, 8 );
+    fgs->Insert( pos + 3, type, 0, wxEXPAND | wxRIGHT, 8 );
+    m_lines.insert( it, QueryLines( statBmp, number, name, type ) );
+    name->SetFocus();
+    for( it; it != m_lines.end(); ++it )
+    {
+        position++;
+        (*it).m_number->SetLabel( wxString::Format( "%d", position ) );
+    }
+    numArgs++;
     sizer->Layout();
     Thaw();
 }
