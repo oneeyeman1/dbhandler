@@ -33,6 +33,7 @@ protected:
     void OnKeyDown(wxKeyEvent &event);
     void OnMouse(wxMouseEvent &event);
     void OnSize(wxSizeEvent &event);
+    void OnRemoveUpdateUI(wxUpdateUIEvent &event);
     void UpdateHeader();
     void set_properties();
 private:

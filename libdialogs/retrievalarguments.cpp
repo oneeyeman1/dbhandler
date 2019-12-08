@@ -120,6 +120,8 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     Layout();
     m_panel->Bind( wxEVT_SIZE, &RetrievalArguments::OnSize, this );
     m_add->Bind( wxEVT_BUTTON, &RetrievalArguments::OnAddArgument, this );
+    m_remove->Bind( wxEVT_BUTTON, &RetrievalArguments::OnRemoveArgument, this );
+    m_remove->Bind( wxEVT_UPDATE_UI, &RetrievalArguments::OnRemoveUpdateUI, this );
     CallAfter( &RetrievalArguments::UpdateHeader );
     set_properties();
 }
@@ -167,7 +169,33 @@ void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
 
 void RetrievalArguments::OnRemoveArgument(wxCommandEvent &WXUNUSED(event))
 {
-    numArgs++;
+    Freeze();
+    int counter = m_currentLine;
+    std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
+    (*it).m_pointer->Destroy();
+    (*it).m_name->Destroy();
+    (*it).m_number->Destroy();
+    (*it).m_type->Destroy();
+    m_lines.erase( it );
+    sizer->Layout();
+    it = std::next( m_lines.begin(), m_currentLine - 1 );
+    if( m_lines.size() > 0 )
+    {
+        if( it == m_lines.end() )
+        {
+            it--;
+            counter--;
+            m_currentLine--;
+        }
+        (*it).m_pointer->SetBitmap( bmp );
+        for( it; it != m_lines.end(); ++it )
+        {
+            (*it).m_number->SetLabel( wxString::Format( "%d", counter ) );
+            counter++;
+        }
+    }
+    numArgs--;
+    Thaw();
 }
 
 void RetrievalArguments::UpdateHeader()
@@ -239,4 +267,12 @@ void RetrievalArguments::OnMouse(wxMouseEvent &event)
     }
     event.Skip();
     Thaw();
+}
+
+void RetrievalArguments::OnRemoveUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_lines.empty() )
+        event.Enable( false );
+    else
+        event.Enable( true );
 }
