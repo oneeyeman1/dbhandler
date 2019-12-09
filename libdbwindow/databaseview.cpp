@@ -531,7 +531,15 @@ void DrawingView::GetTablesForView(Database *db, bool init)
 //                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
 //                            m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
                         }
+                        m_frame->Freeze();
                         m_styleBar->Show( false );
+                        m_designCanvas->Show( false );
+                        m_fields->Show( true );
+                        m_canvas->Show( true );
+                        m_queryBook->Show( true );
+                        m_frame->Layout();
+                        sizer->Layout();
+                        m_frame->Thaw();
                         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
                         res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
                     }
@@ -542,22 +550,13 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                         GetDocument()->SetQueryFields( m_queryFields );
                         quickSelect = true;
                     }
-                    if( !quickSelect )
-                    {
-                        m_designCanvas->Show( false );
-                        m_fields->Show( true );
-                        m_canvas->Show( true );
-                        m_queryBook->Show( true );
-                        m_frame->Layout();
-                        sizer->Layout();
-                    }
-                    else
+/*                    if( quickSelect )
                     {
                         m_fields->Show( false );
                         m_canvas->Show( false );
                         m_queryBook->Show( false );
                         m_designCanvas->Show( true );
-                    }
+                    }*/
 /*
 #ifdef __WXGTK__
                     wxDocMDIParentFrame *parent = wxDynamicCast( m_frame->GetMDIParent(), wxDocMDIParentFrame );
