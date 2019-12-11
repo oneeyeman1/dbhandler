@@ -85,5 +85,5 @@ private:
 #define UNDERLINEFONGT            327
 #define wxID_DESIGNTABORDER       328
 #define wxID_COLUMNSPEC           329
-
+#define wxID_PREVIEDWQUERY        330
 #endif
