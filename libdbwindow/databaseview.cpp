@@ -1548,6 +1548,10 @@ void DrawingView::SetQueryMenu(const int queryType)
 
 void DrawingView::OnQueryPreviewUpdateUI(wxUpdateUIEvent &event)
 {
+    if( m_arguments.size() > 0 )
+        event.Enable( true );
+    else
+        event.Enable( false );
 }
 
 void DrawingView::OnShowSQLBox (wxCommandEvent &event)
