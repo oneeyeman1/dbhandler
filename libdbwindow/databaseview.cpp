@@ -121,6 +121,8 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_RETRIEVEARGS, DrawingView::OnRetrievalArguments)
     EVT_MENU(wxID_DATASOURCE, DrawingView::OnDataSource)
     EVT_MENU(wxID_DESIGNTABORDER, DrawingView::OnTabOrder)
+    EVT_UPDATE_UI(wxID_PREVIEDWQUERY, DrawingView::OnQueryPreviewUpdateUI)
+    EVT_MENU(wxID_SHOWSQLTOOLBOX, DrawingView::OnShowSQLBox)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -531,6 +533,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
 //                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
 //                            m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
                         }
+                        SetQueryMenu( m_source );
                         m_frame->Freeze();
                         m_styleBar->Show( false );
                         m_designCanvas->Show( false );
@@ -1516,4 +1519,38 @@ void DrawingView::ChangeFontEement()
         }
     }
 #endif
+}
+
+void DrawingView::SetQueryMenu(const int queryType)
+{
+    wxMenuBar *bar = m_parent->GetMenuBar();
+    if( queryType == 2 )
+    {
+        for( int i = bar->GetMenuCount() - 2; i > 0; --i )
+        {
+            auto *menu = bar->Remove( i );
+            delete menu;
+            menu = nullptr;
+        }
+/*        for( size_t j = m_tb->GetToolsCount () - 2; j > 3; --j )
+        {
+            m_tb->DeleteTool( j );
+        }*/
+        auto *designMenu = new wxMenu;
+        designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
+//        m_tb->InsertTool( 4, wxID_DATASOURCE, _( "Data Source" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxITEM_CHECK, ( "Modify SQL syntax" ) );
+        designMenu->Append( wxID_PREVIEDWQUERY, _( "Preview" ), _( "Preview" ) );
+        designMenu->Check( wxID_DATASOURCE, true );
+        m_tb->ToggleTool( wxID_DATASOURCE, true );
+        bar->Insert( 1, designMenu, _( "Design" ) );
+    }
+}
+
+void DrawingView::OnQueryPreviewUpdateUI(wxUpdateUIEvent &event)
+{
+}
+
+void DrawingView::OnShowSQLBox (wxCommandEvent &event)
+{
+    HideShowSQLBox( event.IsChecked() );
 }

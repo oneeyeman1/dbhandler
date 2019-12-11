@@ -59,11 +59,14 @@ public:
     void FieldTextUpdateUI(wxUpdateUIEvent &event);
     void OnDataSource(wxCommandEvent &event);
     void OnFontSeectionChange(wxCommandEvent &event);
+    void OnQueryPreviewUpdateUI(wxUpdateUIEvent &event);
+    void OnShowSQLBox(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
     DrawingDocument* GetDocument();
 protected:
+    void SetQueryMenu(const int queryType);
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);
     void CreateViewToolBar();
     int AddSize(int size, int lfHeight);
