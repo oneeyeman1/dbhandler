@@ -30,6 +30,7 @@
 #include "res/gui/bold.c"
 #include "res/gui/italic.c"
 #include "res/gui/underline.c"
+#include "res/gui/preview.c"
 #include "res/gui/sql.h"
 
 #include <string>
@@ -1538,7 +1539,7 @@ void DrawingView::SetQueryMenu(const int queryType)
         }*/
         auto *designMenu = new wxMenu;
         designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
-//        m_tb->InsertTool( 4, wxID_DATASOURCE, _( "Data Source" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxITEM_CHECK, ( "Modify SQL syntax" ) );
+        m_tb->InsertTool( 4, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( preview, WXSIZEOF( preview ) ), wxBitmap::NewFromPNGData( preview, WXSIZEOF( preview ) ), wxITEM_CHECK, ( "Preview" ) );
         designMenu->Append( wxID_PREVIEDWQUERY, _( "Preview" ), _( "Preview" ) );
         designMenu->Check( wxID_DATASOURCE, true );
         m_tb->ToggleTool( wxID_DATASOURCE, true );
