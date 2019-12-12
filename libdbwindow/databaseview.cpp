@@ -1544,6 +1544,7 @@ void DrawingView::SetQueryMenu(const int queryType)
         designMenu->Check( wxID_DATASOURCE, true );
         m_tb->ToggleTool( wxID_DATASOURCE, true );
         bar->Insert( 1, designMenu, _( "Design" ) );
+        m_tb->Realize();
     }
 }
 
