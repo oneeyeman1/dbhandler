@@ -61,6 +61,7 @@ public:
     void OnFontSeectionChange(wxCommandEvent &event);
     void OnQueryPreviewUpdateUI(wxUpdateUIEvent &event);
     void OnShowSQLBox(wxCommandEvent &event);
+    void OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/

@@ -124,6 +124,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_DESIGNTABORDER, DrawingView::OnTabOrder)
     EVT_UPDATE_UI(wxID_PREVIEDWQUERY, DrawingView::OnQueryPreviewUpdateUI)
     EVT_MENU(wxID_SHOWSQLTOOLBOX, DrawingView::OnShowSQLBox)
+    EVT_UPDATE_UI(wxID_CONVERTTOSYNTAX, DrawingView::OnConvertToSyntaxUpdateUI)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -1549,6 +1550,11 @@ void DrawingView::SetQueryMenu(const int queryType)
         designMenu->Append( wxID_PREVIEDWQUERY, _( "Preview" ), _( "Preview" ) );
         designMenu->AppendSeparator();
         designMenu->Append( wxID_SELECTTABLE, _( "Select Table..." ) );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_RETRIEVEARGS, _( "Retieval Arguments..." ), _( "Define Retrieval Arguments" ) );
+        designMenu->Append( wxID_DISTINCT, _( "Distinct" ), _( "Return distinct rows only" ) );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert To Syntax" ), _( "Convert To Syntax" ) );
         designMenu->Check( wxID_DATASOURCE, true );
         m_tb->ToggleTool( wxID_DATASOURCE, true );
         bar->Insert( 1, designMenu, _( "Design" ) );
@@ -1567,4 +1573,12 @@ void DrawingView::OnQueryPreviewUpdateUI(wxUpdateUIEvent &event)
 void DrawingView::OnShowSQLBox (wxCommandEvent &event)
 {
     HideShowSQLBox( event.IsChecked() );
+}
+
+void DrawingView::OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_queryFields.size() > 0 )
+        event.Enable( true );
+    else
+        event.Enable( false );
 }
