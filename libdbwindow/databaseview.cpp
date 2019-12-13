@@ -570,6 +570,11 @@ void DrawingView::GetTablesForView(Database *db, bool init)
 #endif
 */                }
             }
+            else
+            {
+                TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
+                res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
+            }
         }
         else
         {
@@ -1531,7 +1536,7 @@ void DrawingView::SetQueryMenu(const int queryType)
         {
             auto *menu = bar->Remove( i );
             delete menu;
-            menu = nullptr;
+//            menu = nullptr;
         }
 /*        for( size_t j = m_tb->GetToolsCount () - 2; j > 3; --j )
         {
@@ -1539,8 +1544,11 @@ void DrawingView::SetQueryMenu(const int queryType)
         }*/
         auto *designMenu = new wxMenu;
         designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
-        m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( preview, WXSIZEOF( preview ) ), wxBitmap::NewFromPNGData( preview, WXSIZEOF( preview ) ), wxITEM_CHECK, ( "Preview" ) );
+        m_tb->InsertTool( 3, wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+        m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( preview, WXSIZEOF( preview ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
         designMenu->Append( wxID_PREVIEDWQUERY, _( "Preview" ), _( "Preview" ) );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_SELECTTABLE, _( "Select Table..." ) );
         designMenu->Check( wxID_DATASOURCE, true );
         m_tb->ToggleTool( wxID_DATASOURCE, true );
         bar->Insert( 1, designMenu, _( "Design" ) );
@@ -1550,7 +1558,7 @@ void DrawingView::SetQueryMenu(const int queryType)
 
 void DrawingView::OnQueryPreviewUpdateUI(wxUpdateUIEvent &event)
 {
-    if( m_arguments.size() > 0 )
+    if( m_queryFields.size() > 0 )
         event.Enable( true );
     else
         event.Enable( false );
