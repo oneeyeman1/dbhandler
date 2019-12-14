@@ -547,6 +547,10 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                         m_frame->Thaw();
                         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
                         res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
+#ifdef __WXGTK__
+						m_parent->SendSizeEvent();
+						wxYield();
+#endif
                     }
                     else
                     {
