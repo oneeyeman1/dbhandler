@@ -13,6 +13,7 @@
 #include "wx/bmpcbox.h"
 #include "wx/notebook.h"
 #include "wx/grid.h"
+#include "wx/stc/stc.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/BitmapShape.h"

@@ -4,6 +4,7 @@
 #include "wx/fontenum.h"
 #include "wx/notebook.h"
 #include "wx/grid.h"
+#include "wx/stc/stc.h"
 #include "wx/bmpcbox.h"
 #include "database.h"
 #include "wxsf/BitmapShape.h"

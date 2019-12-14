@@ -48,6 +48,7 @@
 #include "wx/cmdproc.h"
 #include "wx/bmpcbox.h"
 #include "wx/grid.h"
+#include "wx/stc/stc.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/RoundRectShape.h"
@@ -125,6 +126,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_UPDATE_UI(wxID_PREVIEDWQUERY, DrawingView::OnQueryPreviewUpdateUI)
     EVT_MENU(wxID_SHOWSQLTOOLBOX, DrawingView::OnShowSQLBox)
     EVT_UPDATE_UI(wxID_CONVERTTOSYNTAX, DrawingView::OnConvertToSyntaxUpdateUI)
+    EVT_MENU(wxID_CONVERTTOSYNTAX, DrawingView::OnConvertToSyntax)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -279,6 +281,17 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_designCanvas = new DesignCanvas( this, ptCanvas );
         mainSizer->Add( m_designCanvas, 1, wxEXPAND, 0 );
         m_canvas->Show( false );
+        m_edit = new wxStyledTextCtrl( m_frame );
+        std::wstring type = GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType();
+        std::wstring subtype = GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype();
+        if( type == "MySQL" || ( type == "ODBC" && subtype == "MySQL" ) )
+            m_edit->SetLexer( wxSTC_LEX_MYSQL );
+        if( type == "Microsoft SQL Server" || ( type == "ODBC" && subtype == "Microsoft SQL Server" ) )
+            m_edit->SetLexer( wxSTC_LEX_MSSQL );
+        if( type == "SQLite" )
+            m_edit->SetLexer( wxSTC_LEX_SQL );
+        mainSizer->Add( m_edit, 1, wxEXPAND, 0 );
+        m_edit->Show( false );
     }
     mainSizer->Add( sizer, 1, wxEXPAND, 0 );
     m_frame->SetSizer( mainSizer );
@@ -1585,4 +1598,15 @@ void DrawingView::OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event)
         event.Enable( true );
     else
         event.Enable( false );
+}
+
+void DrawingView::OnConvertToSyntax(wxCommandEvent &WXUNUSED(event))
+{
+    m_designCanvas->Show( false );
+    m_fields->Show( false );
+    m_canvas->Show( false );
+    m_queryBook->Show( false );
+    m_edit->Show( true );
+    sizer->Layout();
+    m_frame->Layout();
 }

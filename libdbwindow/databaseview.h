@@ -62,6 +62,7 @@ public:
     void OnQueryPreviewUpdateUI(wxUpdateUIEvent &event);
     void OnShowSQLBox(wxCommandEvent &event);
     void OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event);
+    void OnConvertToSyntax(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
@@ -99,6 +100,7 @@ private:
 //    std::vector<wxString> m_selectFields;
     std::vector<QueryArguments> m_arguments;
     DesignCanvas *m_designCanvas;
+    wxStyledTextCtrl *m_edit;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
