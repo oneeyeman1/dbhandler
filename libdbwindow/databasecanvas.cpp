@@ -17,6 +17,7 @@
 #include "wx/dynlib.h"
 #include "wx/notebook.h"
 #include "wx/grid.h"
+#include "wx/stc/stc.h"
 #include "wx/bmpcbox.h"
 #include "database.h"
 #include "wxsf/RoundRectShape.h"

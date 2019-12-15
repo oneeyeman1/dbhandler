@@ -13,6 +13,7 @@
 #include "wx/bmpcbox.h"
 #include "wx/notebook.h"
 #include "wx/grid.h"
+#include "wx/stc/stc.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/BitmapShape.h"
@@ -179,7 +180,7 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
     }
 }
 
-void DesignCanvas::OnProperties(wxCommandEvent &event)
+void DesignCanvas::OnProperties(wxCommandEvent &WXUNUSED(event))
 {
     wxCriticalSection pcs;
     wxString command = "";
@@ -188,6 +189,8 @@ void DesignCanvas::OnProperties(wxCommandEvent &event)
         type = 2;
     if( wxDynamicCast( m_menuShape, Divider ) )
         type = 3;
+    else
+        type = -1;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
@@ -202,7 +205,7 @@ void DesignCanvas::OnProperties(wxCommandEvent &event)
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == 2 )
 		{
-            LabelProperties prop = dynamic_cast<DesignLabel *>( m_menuShape )->GetProperties();
+			Properties prop = dynamic_cast<DesignLabel *>( m_menuShape )->GetProperties();
             res = func( m_view->GetFrame(), ((DrawingDocument *) m_view->GetDocument())->GetDatabase(), type, &prop, command, false, wxEmptyString, wxEmptyString, wxEmptyString, pcs );
 		}
         if( type == 3 )

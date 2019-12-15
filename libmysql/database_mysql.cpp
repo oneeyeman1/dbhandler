@@ -1716,7 +1716,6 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
     strcat( tname, "." );
     strcat( tname, table );
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?";
-//    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = \'abcß\' AND abc_ownr = \'\' AND abc_cnam = \'id\'";
     MYSQL_STMT *stmt = mysql_stmt_init( m_db );
     if( !stmt )
     {
@@ -1726,11 +1725,6 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
     }
     else 
     {
-//        int a = mysql_query( m_db, u8"SELECT * FROM abcatcol WHERE abc_tnam = \'abcß\' AND abc_ownr = \'\' AND abc_cnam = \'id\'" );
-/*
-        const char *qry = m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str();
-        if( mysql_stmt_prepare( stmt, qry, strlen( qry ) ) )
-*/
         if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -1741,15 +1735,6 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
         {
             MYSQL_BIND params[3];
             unsigned long str_length1, str_length2, str_length3;
-/*            str_data1 = new char[tname.length()], str_data2 = new char[ownerName.length()], str_data3 = new char[fieldName.length()];
-            memset( str_data1, '\0', tname.length() );
-            memset( str_data2, '\0', ownerName.length() );
-            memset( str_data3, '\0', fieldName.length() );
-            memset( params, 0, sizeof( params ) );*/
-//            const char *str_data3 = m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
-//            strncpy( str_data1, tname.c_str(), strlen( tname.c_str() ) );
-//            strncpy( str_data2, ownerName.c_str(), strlen( ownerName.c_str() ) );
-//            strncpy( str_data3, fieldName.c_str(), strlen( fieldName.c_str() ) );
             params[0].buffer_type = MYSQL_TYPE_STRING;
             params[0].buffer = (char *) tname;
             params[0].buffer_length = strlen( tname );
@@ -1789,6 +1774,70 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                     }
                     else
                     {
+                        MYSQL_BIND results[17];
+                        int tableId, fieldId;
+                        my_bool is_null[17], error[17];
+                        unsigned long length[17];
+                        char *label, *comment;
+                        results[0].buffer_type = MYSQL_TYPE_STRING;
+                        results[0].buffer = &table;
+                        results[0].buffer_length = 129;
+                        results[0].is_null = &is_null[0];
+                        results[0].length = &length[0];
+                        results[0].error = &error[0];
+                        results[1].buffer_type = MYSQL_TYPE_LONG;
+                        results[1].buffer = (char *)&tableId;
+                        results[1].is_null = &is_null[1];
+                        results[1].length = &length[1];
+                        results[1].error = &error[1];
+                        results[2].buffer_type = MYSQL_TYPE_STRING;
+                        results[2].buffer = &owner;
+                        results[2].buffer_length = 129;
+                        results[2].is_null = &is_null[2];
+                        results[2].length = &length[2];
+                        results[2].error = &error[2];
+                        results[3].buffer_type = MYSQL_TYPE_STRING;
+                        results[3].buffer = &fieldNameReq;
+                        results[3].buffer_length = 129;
+                        results[3].is_null = &is_null[3];
+                        results[3].length = &length[3];
+                        results[3].error = &error[3];
+                        results[4].buffer_type = MYSQL_TYPE_LONG;
+                        results[4].buffer = (char *)&fieldId;
+                        results[4].is_null = &is_null[4];
+                        results[4].length = &length[4];
+                        results[4].error = &error[4];
+                        results[5].buffer_type = MYSQL_TYPE_STRING;
+                        results[5].buffer = &label;
+                        results[5].buffer_length = 254;
+                        results[5].is_null = &is_null[5];
+                        results[5].length = &length[5];
+                        results[5].error = &error[5];
+                        results[17].buffer_type = MYSQL_TYPE_STRING;
+                        results[17].buffer = &comment;
+                        results[17].buffer_length = 256;
+                        results[17].is_null = &is_null[17];
+                        results[17].length = &length[17];
+                        results[17].error = &error[17];
+                        if( mysql_stmt_bind_result (stmt, results) )
+                        {
+                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                            errorMsg.push_back( err );
+                            result = 1;
+                        }
+                        else
+                        {
+                            if( mysql_stmt_fetch (stmt) )
+                            {
+                                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                                errorMsg.push_back( err );
+                                result = 1;
+                            }
+                            else
+                            {
+                                field->SetComment( m_pimpl->m_myconv.from_bytes( comment ) );
+                            }
+                        }
                     }
                 }
             }
@@ -1834,6 +1883,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &table, Field *field, s
 
 int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int match, std::vector<std::wstring> &errorMsg)
 {
+    match = match;
     int result = 0;
     std::wstring query = L"ALTER TABLE ";
     query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
@@ -1910,7 +1960,7 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
         break;
     }
     if( !isNew )
-        result = DropForeignKey( command, keyName, tableName, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, errorMsg );
+        result = DropForeignKey( command, tableName, keyName, logOnly, errorMsg );
     if( !logOnly && !result )
     {
         if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() ) )
@@ -1924,7 +1974,7 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
             std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
             size_t size = fKeys.size();
             size++;
-            for( int i = 0; i < foreignKeyFields.size(); i++ )
+            for( unsigned int i = 0; i < foreignKeyFields.size(); i++ )
                 fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp ) );
             newFK = fKeys[size];
         }
@@ -2082,13 +2132,13 @@ int MySQLDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg))
     return result;
 }
 
-int MySQLDatabase::DropForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query, err;
     query = L"ALTER TABLE ";
     query += tableName.GetSchemaName() + L"." + tableName.GetTableName() +L" ";
-    query += L"DROP CONSTRAINT " + keyName;
+    query += L"DROP FOREIGN KEY " + keyName;
     if( !logOnly )
     {
         if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() ) )
@@ -2100,7 +2150,7 @@ int MySQLDatabase::DropForeignKey(std::wstring &command, const std::wstring &key
         else
         {
             bool found = false;
-            std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+            std::map<int, std::vector<FKField *> > &fKeys = const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector();
             for( std::map<int, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
                 for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found; )
                 {
@@ -2137,7 +2187,7 @@ bool MySQLDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const
 {
     bool exist = false;
     std::wstring query = L"SELECT 1 FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
-    MYSQL_BIND bind[3], bind_result;
+    MYSQL_BIND bind[3];
     unsigned long str_len1, str_len2, str_len3;
     MYSQL_STMT *res = mysql_stmt_init( m_db );
     if( res )
@@ -2169,8 +2219,24 @@ bool MySQLDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const
                     if( mysql_stmt_affected_rows( res ) )
                         exist = true;
                 }
+                else
+                {
+                    errorMsg.push_back( m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) ) );
+                }
+            }
+            else
+            {
+                errorMsg.push_back( m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) ) );
             }
         }
+        else
+        {
+            errorMsg.push_back( m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) ) );
+        }
+    }
+    else
+    {
+        errorMsg.push_back( m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) ) );
     }
     return exist;
 }

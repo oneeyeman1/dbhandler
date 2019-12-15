@@ -121,10 +121,10 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     }
     if( type == 2 )
     {
-        LabelProperties *prop = static_cast<LabelProperties *>( m_object );
-//        m_page7 = new DesignLabelGeneral<LabelProperties>( m_properties, prop );
+        Properties *prop = static_cast<Properties *>( m_object );
+        m_page7 = new DesignLabelGeneral( m_properties, prop );
         m_page2 = new CFontPropertyPage( m_properties, prop->m_font );
-        m_properties->AddPage( new DesignLabelGeneral<LabelProperties>( m_properties, prop ), _( "General" ) );
+        m_properties->AddPage( m_page7, _( "General" ) );
         m_properties->AddPage( m_page2, _( "Font" ) );
         res = 0;
 //        m_properties->AddPage( m_page2, _( "Font" ) );

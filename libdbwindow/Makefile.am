@@ -73,6 +73,7 @@ libdbwindow_la_LDFLAGS = -L../libpropertypages \
 	-lfieldswindow \
 	-lshapeframework \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs`
+	--libs \
+	stc`
 	
 

@@ -59,11 +59,16 @@ public:
     void FieldTextUpdateUI(wxUpdateUIEvent &event);
     void OnDataSource(wxCommandEvent &event);
     void OnFontSeectionChange(wxCommandEvent &event);
+    void OnQueryPreviewUpdateUI(wxUpdateUIEvent &event);
+    void OnShowSQLBox(wxCommandEvent &event);
+    void OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event);
+    void OnConvertToSyntax(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
     DrawingDocument* GetDocument();
 protected:
+    void SetQueryMenu(const int queryType);
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);
     void CreateViewToolBar();
     int AddSize(int size, int lfHeight);
@@ -95,6 +100,7 @@ private:
 //    std::vector<wxString> m_selectFields;
     std::vector<QueryArguments> m_arguments;
     DesignCanvas *m_designCanvas;
+    wxStyledTextCtrl *m_edit;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };

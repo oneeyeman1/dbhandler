@@ -136,7 +136,8 @@ am_libdialogs_la_OBJECTS = libdialogs_la-databasetype.lo \
 	libdialogs_la-addcolumnsdialog.lo \
 	libdialogs_la-odbccredentials.lo libdialogs_la-bitmappanel.lo \
 	libdialogs_la-newquery.lo libdialogs_la-quickselect.lo \
-	libdialogs_la-retrievalarguments.lo
+	libdialogs_la-retrievalarguments.lo \
+	libdialogs_la-typecombobox.lo
 libdialogs_la_OBJECTS = $(am_libdialogs_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -411,7 +412,9 @@ libdialogs_la_SOURCES = \
 	quickselect.cpp \
 	quickselect.h \
 	retrievalarguments.cpp \
-	retrievalarguments.h
+	retrievalarguments.h \
+	typecombobox.cpp \
+	typecombobox.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
@@ -534,6 +537,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-quickselect.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-retrievalarguments.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-selecttables.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-typecombobox.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -660,6 +664,13 @@ libdialogs_la-retrievalarguments.lo: retrievalarguments.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='retrievalarguments.cpp' object='libdialogs_la-retrievalarguments.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-retrievalarguments.lo `test -f 'retrievalarguments.cpp' || echo '$(srcdir)/'`retrievalarguments.cpp
+
+libdialogs_la-typecombobox.lo: typecombobox.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-typecombobox.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-typecombobox.Tpo -c -o libdialogs_la-typecombobox.lo `test -f 'typecombobox.cpp' || echo '$(srcdir)/'`typecombobox.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-typecombobox.Tpo $(DEPDIR)/libdialogs_la-typecombobox.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='typecombobox.cpp' object='libdialogs_la-typecombobox.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-typecombobox.lo `test -f 'typecombobox.cpp' || echo '$(srcdir)/'`typecombobox.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

@@ -9,21 +9,10 @@ struct Properties
     wxSize m_size;
 };
 
-/*struct LabelProperties
-{
-    wxString m_name, m_tag, m_text, m_cursor;
-    bool m_supressPrint;
-    int m_border, m_alignment;
-    wxFont m_font;
-    wxPoint m_position;
-    wxSize m_size;
-};
-*/
-template<class T>
 class WXEXPORT DesignLabelGeneral : public PropertyPageBase
 {
 public:
-    DesignLabelGeneral(wxWindow *parent, const T *prop);
+    DesignLabelGeneral(wxWindow *parent, const Properties *prop);
     ~DesignLabelGeneral();
 protected:
     void do_layout();

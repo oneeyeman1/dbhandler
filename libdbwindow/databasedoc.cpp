@@ -27,6 +27,7 @@
 #include "wx/cmdproc.h"
 #include "wx/notebook.h"
 #include "wx/grid.h"
+#include "wx/stc/stc.h"
 #include "wx/bmpcbox.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/ShapeCanvas.h"
