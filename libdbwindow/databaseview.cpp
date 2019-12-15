@@ -651,7 +651,10 @@ void DrawingView::GetTablesForView(Database *db, bool init)
     if( m_type == QueryView )
     {
         if( query != L"\n" )
-            m_page6->SetSyntaxText(query);
+        {
+            m_page6->SetSyntaxText( query );
+            m_edit->SetText( query );
+        }
         if( quickSelect && m_selectTableName.size() == 1 )
             m_canvas->AddQuickQueryFields( m_selectTableName[0]->GetTableName(), m_queryFields, quickSelect );
         if( quickSelect && m_selectTableName.size() > 0 )
@@ -1132,6 +1135,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
         if( !quickSelect )
             m_queryFields.push_back( fld );
         m_page6->SetSyntaxText( query );
+        m_edit->SetText( query );
     }
     else
     {
@@ -1159,6 +1163,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
         }
         m_queryFields.erase( std::remove( m_queryFields.begin(), m_queryFields.end(), fld ), m_queryFields.end() );
         m_page6->SetSyntaxText( query );
+        m_edit->SetText( query );
     }
 }
 
@@ -1220,6 +1225,7 @@ void DrawingView::OnDistinct(wxCommandEvent &event)
         query.Replace( "SELECT DISTINCT ", "SELECT " );
     }
     queryText->SetValue( query );
+    m_edit->SetText( query );
 }
 
 wxFrame *DrawingView::GetLogWindow() const
@@ -1315,6 +1321,7 @@ void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type)
         }
     }
     m_page6->SetSyntaxText( result );
+    m_edit->SetText( result );
 }
 
 void DrawingView::OnQueryChange(wxCommandEvent &event)
