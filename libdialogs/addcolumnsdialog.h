@@ -6,6 +6,7 @@ public:
     ~AddColumnsDialog(void);
     wxListBox *GetFieldsControl() const;
     void OnPasteUpdateUI(wxUpdateUIEvent &event);
+    void OnFieldsDoubleClick(wxCommandEvent &event);
 protected:
     void set_properties();
     void do_layout();
