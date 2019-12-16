@@ -87,4 +87,5 @@ private:
 #define wxID_COLUMNSPEC           329
 #define wxID_PREVIEDWQUERY        330
 #define wxID_CONVERTTOSYNTAX      331
+#define wxID_SHOWJOINS            332
 #endif

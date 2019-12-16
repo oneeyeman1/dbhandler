@@ -162,4 +162,5 @@ wxDECLARE_APP(MyApp);
 #define wxID_COLUMNSPEC           329
 #define wxID_PREVIEWQUERY         330
 #define wxID_CONVERTTOSYNTAX      331
+#define wxID_SHOWJOINS            332
 #endif // _WX_SAMPLES_DOCVIEW_DOCVIEW_H_
