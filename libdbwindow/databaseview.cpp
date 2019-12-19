@@ -1216,7 +1216,7 @@ void DrawingView::OnDistinct(wxCommandEvent &event)
     wxString qry;
     wxString query = m_page6->GetSyntaxCtrl()->GetValue();
     wxTextCtrl *queryText = const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() );
-    if( dynamic_cast<wxMenu *>( event.GetEventObject() )->IsChecked( wxID_DISTINCT ) )
+    if( !dynamic_cast<wxMenu *>( event.GetEventObject() )->IsChecked( wxID_DISTINCT ) )
     {
         query.Replace( "SELECT ", "SELECT DISTINCT " );
     }
@@ -1561,12 +1561,7 @@ void DrawingView::SetQueryMenu(const int queryType)
         {
             auto *menu = bar->Remove( i );
             delete menu;
-//            menu = nullptr;
         }
-/*        for( size_t j = m_tb->GetToolsCount () - 2; j > 3; --j )
-        {
-            m_tb->DeleteTool( j );
-        }*/
         auto *designMenu = new wxMenu;
         designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
         m_tb->InsertTool( 3, wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
@@ -1576,7 +1571,7 @@ void DrawingView::SetQueryMenu(const int queryType)
         designMenu->Append( wxID_SELECTTABLE, _( "Select Table..." ) );
         designMenu->AppendSeparator();
         designMenu->Append( wxID_RETRIEVEARGS, _( "Retieval Arguments..." ), _( "Define Retrieval Arguments" ) );
-        designMenu->Append( wxID_DISTINCT, _( "Distinct" ), _( "Return distinct rows only" ) );
+        designMenu->Append( wxID_DISTINCT, _( "Distinct" ), _( "Return distinct rows only" ), wxITEM_CHECK );
         designMenu->AppendSeparator();
         designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert To Syntax" ), _( "Convert To Syntax" ) );
         auto show = new wxMenu;
