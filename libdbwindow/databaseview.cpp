@@ -127,6 +127,12 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_SHOWSQLTOOLBOX, DrawingView::OnShowSQLBox)
     EVT_UPDATE_UI(wxID_CONVERTTOSYNTAX, DrawingView::OnConvertToSyntaxUpdateUI)
     EVT_MENU(wxID_CONVERTTOSYNTAX, DrawingView::OnConvertToSyntax)
+    EVT_MENU(wxID_UNDO, DrawingView::OnUndo)
+    EVT_MENU(wxID_CUT, DrawingView::OnCut)
+    EVT_MENU(wxID_COPY, DrawingView::OnCopy)
+    EVT_MENU(wxID_PASTE, DrawingView::OnPaste)
+    EVT_MENU(wxID_CLEAR, DrawingView::OnClear)
+    EVT_MENU(wxID_SELECTALL, DrawingView::OnSelectAll)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -1614,6 +1620,8 @@ void DrawingView::SetQueryMenu(const int queryType)
         searchMenu->AppendSeparator();
         searchMenu->Append( wxID_GOTOLINE, _( "Go to Line...\tCtrl+L" ), _( "Go to line" ) );
         auto designMenu = new wxMenu;
+        bar->Insert( 1, editMenu, _( "Edit" ) );
+        bar->Insert( 2, searchMenu, _( "Search" ) );
     }
 }
 
@@ -1648,4 +1656,34 @@ void DrawingView::OnConvertToSyntax(wxCommandEvent &WXUNUSED(event))
     m_edit->Show( true );
     sizer->Layout();
     m_frame->Layout();
+}
+
+void DrawingView::OnCut(wxCommandEvent &WXUNUSED(event))
+{
+    m_edit->Cut();
+}
+
+void DrawingView::OnCopy(wxCommandEvent &WXUNUSED(event))
+{
+    m_edit->Copy();
+}
+
+void DrawingView::OnPaste(wxCommandEvent &WXUNUSED(event))
+{
+    m_edit->Paste();
+}
+
+void DrawingView::OnClear(wxCommandEvent &WXUNUSED(event))
+{
+    m_edit->Clear();
+}
+
+void DrawingView::OnSelectAll(wxCommandEvent &WXUNUSED(event))
+{
+    m_edit->SelectAll();
+}
+
+void DrawingView::OnUndo(wxCommandEvent &WXUNUSED(event))
+{
+    m_edit->Undo();
 }

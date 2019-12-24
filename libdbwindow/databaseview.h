@@ -72,6 +72,12 @@ public:
     void OnShowSQLBox(wxCommandEvent &event);
     void OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event);
     void OnConvertToSyntax(wxCommandEvent &event);
+    void OnUndo(wxCommandEvent &event);
+    void OnCut(wxCommandEvent &event);
+    void OnCopy(wxCommandEvent &event);
+    void OnPaste(wxCommandEvent &event);
+    void OnClear(wxCommandEvent &event);
+    void OnSelectAll(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
