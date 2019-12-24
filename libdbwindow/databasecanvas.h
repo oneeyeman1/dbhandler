@@ -88,4 +88,6 @@ private:
 #define wxID_PREVIEDWQUERY        330
 #define wxID_CONVERTTOSYNTAX      331
 #define wxID_SHOWJOINS            332
+#define myID_FINDNEXT             333
+#define wxID_GOTOLINE             334
 #endif

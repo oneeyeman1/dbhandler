@@ -9,6 +9,15 @@ enum ViewType
 };
 #endif
 
+enum DrawinViewMenu
+{
+    QuickQueryMenu,
+    SQLSelectMenu,
+    QueryMenu,
+    ExternalMenu,
+    QuerySyntaxMenu
+};
+
 // The view using MyCanvas to show its contents
 class DrawingView : public wxView
 {

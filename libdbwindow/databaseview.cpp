@@ -548,7 +548,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
 //                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
 //                            m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
                         }
-                        SetQueryMenu( m_source );
+                        SetQueryMenu( SQLSelectMenu );
                         m_frame->Freeze();
                         m_styleBar->Show( false );
                         m_designCanvas->Show( false );
@@ -1555,9 +1555,9 @@ void DrawingView::ChangeFontEement()
 void DrawingView::SetQueryMenu(const int queryType)
 {
     wxMenuBar *bar = m_parent->GetMenuBar();
-    if( queryType == 2 )
+    if( queryType == SQLSelectMenu )
     {
-        for( int i = bar->GetMenuCount() - 2; i > 0; --i )
+        for( int i = bar->GetMenuCount() - 2; i > 0; i-- )
         {
             auto *menu = bar->Remove( i );
             delete menu;
@@ -1591,6 +1591,30 @@ void DrawingView::SetQueryMenu(const int queryType)
         bar->Insert( 1, designMenu, _( "Design" ) );
         m_tb->Realize();
     }
+    if( queryType == QuerySyntaxMenu )
+    {
+        for( int i = bar->GetMenuCount() - 2; i > 0; i-- )
+        {
+            auto *menu = bar->Remove( i );
+            delete menu;
+        }
+        auto editMenu = new wxMenu;
+        editMenu->Append( wxID_UNDO, _( "Undo\tCtrl+Z" ), _( "Undo" ) );
+        editMenu->AppendSeparator();
+        editMenu->Append( wxID_CUT, _( "Cut\tCtrl+X" ), _( "Cut" ) );
+        editMenu->Append( wxID_COPY, _( "Copy\tCtrl+C" ), _( "Copy" ) );
+        editMenu->Append( wxID_PASTE, _( "Paste\tCtrl+V" ), _( "Paste" ) );
+        editMenu->Append( wxID_CLEAR, _( "Clear\tDel" ), _( "Clear" ) );
+        editMenu->AppendSeparator();
+        editMenu->Append( wxID_SELECTALL, _( "Select all\tCtrl+A" ), _( "Select all" ) );
+        auto searchMenu = new wxMenu;
+        searchMenu->Append( wxID_FIND, _( "Find Text...\tCtrl+F" ), _( "Find text" ) );
+        searchMenu->Append( myID_FINDNEXT, _( "Find Next Text\tCtrl+N" ), _( "Find next text" ) );
+        searchMenu->Append( wxID_REPLACE, _( "Replace Text..." ), _( "Replace text" ) );
+        searchMenu->AppendSeparator();
+        searchMenu->Append( wxID_GOTOLINE, _( "Go to Line...\tCtrl+L" ), _( "Go to line" ) );
+        auto designMenu = new wxMenu;
+    }
 }
 
 void DrawingView::OnQueryPreviewUpdateUI(wxUpdateUIEvent &event)
@@ -1616,6 +1640,7 @@ void DrawingView::OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event)
 
 void DrawingView::OnConvertToSyntax(wxCommandEvent &WXUNUSED(event))
 {
+    SetQueryMenu( QuerySyntaxMenu );
     m_designCanvas->Show( false );
     m_fields->Show( false );
     m_canvas->Show( false );
