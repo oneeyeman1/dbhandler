@@ -16,6 +16,7 @@
 #include "wx/cmdproc.h"
 #include "wx/dynlib.h"
 #include "wx/notebook.h"
+#include "wx/fdrepdlg.h"
 #include "wx/grid.h"
 #include "wx/stc/stc.h"
 #include "wx/bmpcbox.h"

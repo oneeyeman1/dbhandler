@@ -43,6 +43,7 @@
 #include "wx/docview.h"
 #include "wx/fontenum.h"
 #include "wx/notebook.h"
+#include "wx/fdrepdlg.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/cmdproc.h"
@@ -133,6 +134,8 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_PASTE, DrawingView::OnPaste)
     EVT_MENU(wxID_CLEAR, DrawingView::OnClear)
     EVT_MENU(wxID_SELECTALL, DrawingView::OnSelectAll)
+    EVT_MENU(wxID_FIND, DrawingView::OnFind)
+    EVT_FIND(wxID_ANY, DrawingView::OnFindReplaceText)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -1686,4 +1689,28 @@ void DrawingView::OnSelectAll(wxCommandEvent &WXUNUSED(event))
 void DrawingView::OnUndo(wxCommandEvent &WXUNUSED(event))
 {
     m_edit->Undo();
+}
+
+void DrawingView::OnFind(wxCommandEvent &event)
+{
+    m_data.SetFlags( wxFR_DOWN );
+    m_findDlg = new wxFindReplaceDialog( m_edit, &m_data, _( "Find Text" ) );
+    m_findDlg->Show( true );
+//    if( dlg )
+}
+
+void DrawingView::OnFindReplaceText(wxFindDialogEvent &event)
+{
+    int searchFlags = 0, start = 0, end = m_edit->GetTextLength();
+    wxFindReplaceDialog *dlg = event.GetDialog();
+    dlg->Destroy();
+    wxString stringToFind = event.GetFindString();
+    int flags = event.GetFlags();
+    if( flags & wxFR_WHOLEWORD )
+        searchFlags = wxSTC_FIND_WHOLEWORD;
+    if( !( flags & wxFR_DOWN ) )
+        std::swap( start, end );
+    int pos = m_edit->FindText( start, end, stringToFind, searchFlags );
+    if( pos != wxSTC_INVALID_POSITION )
+        m_edit->SetSelection( pos, pos + stringToFind.length() );
 }

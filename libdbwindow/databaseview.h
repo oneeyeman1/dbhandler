@@ -78,6 +78,8 @@ public:
     void OnPaste(wxCommandEvent &event);
     void OnClear(wxCommandEvent &event);
     void OnSelectAll(wxCommandEvent &event);
+    void OnFind(wxCommandEvent &event);
+    void OnFindReplaceText(wxFindDialogEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
@@ -116,6 +118,8 @@ private:
     std::vector<QueryArguments> m_arguments;
     DesignCanvas *m_designCanvas;
     wxStyledTextCtrl *m_edit;
+    wxFindReplaceDialog *m_findDlg;
+    wxFindReplaceData m_data;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
