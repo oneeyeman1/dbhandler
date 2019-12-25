@@ -136,6 +136,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_SELECTALL, DrawingView::OnSelectAll)
     EVT_MENU(wxID_FIND, DrawingView::OnFind)
     EVT_FIND(wxID_ANY, DrawingView::OnFindReplaceText)
+    EVT_MENU(wxID_REPLACE, DrawingView::OnFind)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -1694,7 +1695,7 @@ void DrawingView::OnUndo(wxCommandEvent &WXUNUSED(event))
 void DrawingView::OnFind(wxCommandEvent &event)
 {
     m_data.SetFlags( wxFR_DOWN );
-    m_findDlg = new wxFindReplaceDialog( m_edit, &m_data, _( "Find Text" ) );
+    m_findDlg = new wxFindReplaceDialog( m_edit, &m_data, _( "Find Text" ), event.GetId() == wxID_REPLACE ? wxFR_REPLACEDIALOG : 0 );
     m_findDlg->Show( true );
 //    if( dlg )
 }
