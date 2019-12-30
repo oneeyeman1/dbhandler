@@ -136,14 +136,18 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_SELECTALL, DrawingView::OnSelectAll)
     EVT_MENU(wxID_FIND, DrawingView::OnFind)
     EVT_FIND(wxID_ANY, DrawingView::OnFindReplaceText)
+    EVT_FIND_NEXT(wxID_ANY, DrawingView::OnFindReplaceText)
     EVT_MENU(wxID_REPLACE, DrawingView::OnFind)
+    EVT_MENU(myID_FINDNEXT, DrawingView::OnFindNext)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
+    m_searchDirection = 1;
     m_log = nullptr;
+    m_searchPos = 0;
     m_isActive = false;
     m_tb = m_styleBar = nullptr;
     wxToolBar *tb = nullptr;
@@ -329,6 +333,12 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 
 DrawingView::~DrawingView()
 {
+    wxMenuBar *bar = m_parent->GetMenuBar();
+    for( int i = bar->GetMenuCount() - 2; i > 0; i-- )
+    {
+        auto menu = bar->Remove( i );
+        delete menu;
+    }
 #ifndef __WXOSX__
     delete m_tb;
     m_tb = nullptr;
@@ -1702,16 +1712,40 @@ void DrawingView::OnFind(wxCommandEvent &event)
 
 void DrawingView::OnFindReplaceText(wxFindDialogEvent &event)
 {
-    int searchFlags = 0, start = 0, end = m_edit->GetTextLength();
-    wxFindReplaceDialog *dlg = event.GetDialog();
-    dlg->Destroy();
-    wxString stringToFind = event.GetFindString();
-    int flags = event.GetFlags();
-    if( flags & wxFR_WHOLEWORD )
-        searchFlags = wxSTC_FIND_WHOLEWORD;
-    if( !( flags & wxFR_DOWN ) )
-        std::swap( start, end );
-    int pos = m_edit->FindText( start, end, stringToFind, searchFlags );
-    if( pos != wxSTC_INVALID_POSITION )
-        m_edit->SetSelection( pos, pos + stringToFind.length() );
+    wxEventType type = event.GetEventType();
+    if( type == wxEVT_FIND || type == wxEVT_FIND_NEXT )
+    {
+        m_searchFlags = 0, m_start = m_searchPos, m_end = m_edit->GetTextLength();
+        m_stringToFind = event.GetFindString();
+        int flags = event.GetFlags();
+        if( flags & wxFR_WHOLEWORD )
+            m_searchFlags = wxSTC_FIND_WHOLEWORD;
+        if( !( flags & wxFR_DOWN ) )
+        {
+            m_searchDirection = 0;
+            std::swap( m_start, m_end );
+        }
+        else if( type == wxEVT_FIND_NEXT )
+            m_start = m_start + m_stringToFind.length();
+        if( flags & wxFR_MATCHCASE )
+            m_searchFlags |= wxSTC_FIND_MATCHCASE;
+        FindTextInEditor();
+    }
+}
+
+void DrawingView::OnFindNext(wxCommandEvent &event)
+{
+    if( m_searchDirection )
+        m_start = m_start++;
+    FindTextInEditor();
+}
+
+void DrawingView::FindTextInEditor()
+{
+    m_searchPos = m_edit->FindText( m_start, m_end, m_stringToFind, m_searchFlags );
+    if( m_searchPos != wxSTC_INVALID_POSITION )
+    {
+        m_edit->SetSelection( m_searchPos, m_searchPos + m_stringToFind.length() );
+        m_start = m_searchPos;
+    }
 }

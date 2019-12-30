@@ -79,6 +79,7 @@ public:
     void OnClear(wxCommandEvent &event);
     void OnSelectAll(wxCommandEvent &event);
     void OnFind(wxCommandEvent &event);
+    void OnFindNext(wxCommandEvent &event);
     void OnFindReplaceText(wxFindDialogEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
@@ -89,6 +90,7 @@ protected:
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);
     void CreateViewToolBar();
     int AddSize(int size, int lfHeight);
+    void FindTextInEditor();
 #ifdef __WXMSW__
     static int CALLBACK EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam);
 #endif
@@ -111,7 +113,8 @@ private:
     WhereHavingPage *m_page2, *m_page4;
     SyntaxPropPage *m_page6;
     wxCriticalSection *pcs;
-    int m_source, m_presentation;
+    int m_source, m_presentation, m_searchPos, m_start, m_end, m_searchFlags, m_searchDirection;
+    wxString m_stringToFind;
     std::vector<Field *> m_queryFields;
     std::vector<DatabaseTable *> m_selectTableName;
 //    std::vector<wxString> m_selectFields;
