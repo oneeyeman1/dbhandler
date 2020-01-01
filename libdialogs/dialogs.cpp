@@ -60,6 +60,7 @@
 #include "quickselect.h"
 #include "typecombobox.h"
 #include "retrievalarguments.h"
+#include "gotoline.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -358,5 +359,18 @@ extern "C" WXEXPORT int GetQueryArguments(wxWindow *parent, std::vector<QueryArg
         for( std::list<QueryLines>::iterator it = lines.begin(); it != lines.end(); ++it )
             arguments.push_back( QueryArguments( wxAtoi( (*it).m_number->GetLabel() ), (*it).m_name->GetValue(), (*it).m_type->GetValue() ) );
     }
+    return result;
+}
+
+extern "C" WXEXPORT int GotoLine(wxWindow *parent, int &lineNo)
+{
+    int result;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    GoToDialog dlg( parent );
+    result = dlg.ShowModal();
+    if( result == wxID_OK )
+        lineNo = wxAtoi( dlg.GetLineNumberCtrl()->GetValue() );
     return result;
 }

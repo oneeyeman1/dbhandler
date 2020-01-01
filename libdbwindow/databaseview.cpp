@@ -87,6 +87,7 @@ typedef int (*NEWQUERY)(wxWindow *, int &, int &);
 typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTable *> &, std::vector<Field *> &);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 typedef int (*RETRIEVEARGUMENTS)(wxWindow *, std::vector<QueryArguments> &arguments, const wxString &, const wxString &);
+typedef int (*GOTOLINE)(wxWindow *, int &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
@@ -139,7 +140,10 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_FIND_NEXT(wxID_ANY, DrawingView::OnFindReplaceText)
     EVT_MENU(wxID_REPLACE, DrawingView::OnFind)
     EVT_MENU(myID_FINDNEXT, DrawingView::OnFindNext)
-wxEND_EVENT_TABLE()
+    EVT_FIND_REPLACE(wxID_ANY, DrawingView::OnFindReplaceText)
+    EVT_FIND_REPLACE_ALL(wxID_ANY, DrawingView::OnFindReplaceText)
+    EVT_MENU(wxID_GOTOLINE, DrawingView::OnGotoLine)
+    wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
 // windows for displaying the view.
@@ -1713,23 +1717,33 @@ void DrawingView::OnFind(wxCommandEvent &event)
 void DrawingView::OnFindReplaceText(wxFindDialogEvent &event)
 {
     wxEventType type = event.GetEventType();
+    m_searchFlags = 0, m_start = m_searchPos, m_end = m_edit->GetTextLength();
+    m_stringToFind = event.GetFindString();
+    int flags = event.GetFlags();
+    if( flags & wxFR_WHOLEWORD )
+        m_searchFlags = wxSTC_FIND_WHOLEWORD;
+    if( !( flags & wxFR_DOWN ) )
+    {
+        m_searchDirection = 0;
+        std::swap( m_start, m_end );
+    }
+    else if( type == wxEVT_FIND_NEXT )
+        m_start = m_start + m_stringToFind.length();
+    if( flags & wxFR_MATCHCASE )
+        m_searchFlags |= wxSTC_FIND_MATCHCASE;
     if( type == wxEVT_FIND || type == wxEVT_FIND_NEXT )
     {
-        m_searchFlags = 0, m_start = m_searchPos, m_end = m_edit->GetTextLength();
-        m_stringToFind = event.GetFindString();
-        int flags = event.GetFlags();
-        if( flags & wxFR_WHOLEWORD )
-            m_searchFlags = wxSTC_FIND_WHOLEWORD;
-        if( !( flags & wxFR_DOWN ) )
-        {
-            m_searchDirection = 0;
-            std::swap( m_start, m_end );
-        }
-        else if( type == wxEVT_FIND_NEXT )
-            m_start = m_start + m_stringToFind.length();
-        if( flags & wxFR_MATCHCASE )
-            m_searchFlags |= wxSTC_FIND_MATCHCASE;
         FindTextInEditor();
+    }
+    else if( type == wxEVT_FIND_REPLACE || type == wxEVT_FIND_REPLACE_ALL )
+    {
+        wxString repString = event.GetReplaceString();
+        FindTextInEditor();
+        if( m_searchPos != wxSTC_INVALID_POSITION )
+        {
+            m_edit->SetTargetRange( m_searchPos, m_searchPos + m_stringToFind.length() );
+            m_edit->ReplaceTarget( repString );
+        }
     }
 }
 
@@ -1747,5 +1761,25 @@ void DrawingView::FindTextInEditor()
     {
         m_edit->SetSelection( m_searchPos, m_searchPos + m_stringToFind.length() );
         m_start = m_searchPos;
+    }
+}
+
+void DrawingView::OnGotoLine(wxCommandEvent &event)
+{
+    int lineNo, res;
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        GOTOLINE func = (GOTOLINE) lib.GetSymbol( "GotoLine" );
+        res = func( m_frame, lineNo );
+        if( res == wxID_OK && lineNo < m_edit->GetLineCount() )
+            m_edit->GotoLine( lineNo );
     }
 }

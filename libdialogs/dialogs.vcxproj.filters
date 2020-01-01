@@ -61,6 +61,9 @@
     <ClCompile Include="arguments.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="gotoline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="odbcconfigure.h">
@@ -106,6 +109,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="typecombobox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gotoline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
