@@ -31,6 +31,7 @@
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "commenttableshape.h"
+#include "fieldtypeshape.h"
 #include "fontcombobox.h"
 #include "MyErdTable.h"
 #include "fieldwindow.h"
@@ -72,6 +73,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent
 //    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_DROPOBJECT );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_TABLECLOSE );
+    Bind( wxEVT_MENU, &DatabaseCanvas::OnShowDataTypes, this, wxID_SHOWDATATYPES );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnShowSQLBox, this, wxID_SHOWSQLTOOLBOX );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnShowComments, this, wxID_VIEWSHOWCOMMENTS );
 }
@@ -704,7 +706,6 @@ void DatabaseCanvas::OnShowComments(wxCommandEvent &WXUNUSED(event))
             shape->SetText( wxEmptyString );
         }
     }
-    Refresh();
     list.clear();
     m_pManager.GetShapes( CLASSINFO( CommentTableShape ), list );
     for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
@@ -1005,6 +1006,26 @@ void DatabaseCanvas::AddQuickQueryFields(const wxString &tbl, std::vector<Field 
                 (*it)->Select( true );
                 dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), tbl.ToStdWstring(), quickSelect );
             }
+        }
+    }
+    Refresh();
+}
+
+void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &event)
+{
+    ShapeList list;
+    m_showDataTypes = !m_showDataTypes;
+    m_pManager.GetShapes( CLASSINFO( FieldTypeShape ), list );
+    for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
+    {
+        FieldTypeShape *shape = wxDynamicCast( (*it), FieldTypeShape );
+        if( m_showDataTypes )
+        {
+            shape->SetText( const_cast<Field *>( shape->GetFieldForComment() )->GetFullType() );
+        }
+        else
+        {
+            shape->SetText( wxEmptyString );
         }
     }
     Refresh();

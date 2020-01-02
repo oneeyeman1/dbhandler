@@ -69,6 +69,7 @@ public:
     void OnDataSource(wxCommandEvent &event);
     void OnFontSeectionChange(wxCommandEvent &event);
     void OnQueryPreviewUpdateUI(wxUpdateUIEvent &event);
+    void OnShowDataTypes(wxCommandEvent &event);
     void OnShowSQLBox(wxCommandEvent &event);
     void OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event);
     void OnConvertToSyntax(wxCommandEvent &event);

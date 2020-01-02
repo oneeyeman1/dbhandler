@@ -127,6 +127,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_DESIGNTABORDER, DrawingView::OnTabOrder)
     EVT_UPDATE_UI(wxID_PREVIEDWQUERY, DrawingView::OnQueryPreviewUpdateUI)
     EVT_MENU(wxID_SHOWSQLTOOLBOX, DrawingView::OnShowSQLBox)
+    EVT_MENU(wxID_SHOWDATATYPES, DrawingView::OnShowDataTypes)
     EVT_UPDATE_UI(wxID_CONVERTTOSYNTAX, DrawingView::OnConvertToSyntaxUpdateUI)
     EVT_MENU(wxID_CONVERTTOSYNTAX, DrawingView::OnConvertToSyntax)
     EVT_MENU(wxID_UNDO, DrawingView::OnUndo)
@@ -1782,4 +1783,9 @@ void DrawingView::OnGotoLine(wxCommandEvent &event)
         if( res == wxID_OK && lineNo < m_edit->GetLineCount() )
             m_edit->GotoLine( lineNo );
     }
+}
+
+void DrawingView::OnShowDataTypes(wxCommandEvent &event)
+{
+    m_canvas->GetEventHandler()->ProcessEvent( event );
 }
