@@ -30,7 +30,7 @@
 GoToDialog::GoToDialog(wxWindow* parent) : wxDialog(parent, wxID_ANY, "")
 {
     // begin wxGlade: GoToDialog::GoToDialog
-    wxIntegerValidator<unsigned int> val( &m_lineNumber );
+    wxTextValidator val( wxFILTER_DIGITS );
     m_panel = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( m_panel, wxID_ANY, _( "Line Number" ) );
     m_lineNo = new wxTextCtrl( m_panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, val );
