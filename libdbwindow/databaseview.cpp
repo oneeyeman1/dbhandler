@@ -1639,8 +1639,18 @@ void DrawingView::SetQueryMenu(const int queryType)
         searchMenu->AppendSeparator();
         searchMenu->Append( wxID_GOTOLINE, _( "Go to Line...\tCtrl+L" ), _( "Go to line" ) );
         auto designMenu = new wxMenu;
+        designMenu->Append( wxID_UNDOALL, _( "Undo All" ), _( "Undo All" ) );
+        designMenu->AppendSeparator();
+        designMenu->AppendCheckItem( wxID_DATASOURCE, "Data Source", "Data Source" );
+        designMenu->Check( wxID_DATASOURCE, true );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_RETRIEVEARGS, _( "Retrieval Arguments..." ), _( "Retrieval Arguments" ) );
+        designMenu->Append( wxID_CONVERTTOGRAPHICS, _( "Convert To Graphics" ), _( "Convert To Graphics" ) );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_PROPERTIES, _( "Options..."), _( "Options" ) );
         bar->Insert( 1, editMenu, _( "Edit" ) );
         bar->Insert( 2, searchMenu, _( "Search" ) );
+        bar->Insert( 3, designMenu, _( "Design" ) );
     }
 }
 
@@ -1675,6 +1685,7 @@ void DrawingView::OnConvertToSyntax(wxCommandEvent &WXUNUSED(event))
     m_edit->Show( true );
     sizer->Layout();
     m_frame->Layout();
+    m_edit->SetFocus();
 }
 
 void DrawingView::OnCut(wxCommandEvent &WXUNUSED(event))
@@ -1780,7 +1791,7 @@ void DrawingView::OnGotoLine(wxCommandEvent &event)
     {
         GOTOLINE func = (GOTOLINE) lib.GetSymbol( "GotoLine" );
         res = func( m_frame, lineNo );
-        if( res == wxID_OK && lineNo < m_edit->GetLineCount() )
+        if( res == wxID_OK && lineNo <= m_edit->GetLineCount() )
             m_edit->GotoLine( lineNo );
     }
 }

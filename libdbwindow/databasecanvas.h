@@ -91,4 +91,6 @@ private:
 #define wxID_SHOWJOINS            332
 #define myID_FINDNEXT             333
 #define wxID_GOTOLINE             334
+#define wxID_CONVERTTOGRAPHICS    335
+#define wxID_UNDOALL              336
 #endif
