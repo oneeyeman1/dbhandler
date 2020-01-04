@@ -144,7 +144,8 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_FIND_REPLACE(wxID_ANY, DrawingView::OnFindReplaceText)
     EVT_FIND_REPLACE_ALL(wxID_ANY, DrawingView::OnFindReplaceText)
     EVT_MENU(wxID_GOTOLINE, DrawingView::OnGotoLine)
-    wxEND_EVENT_TABLE()
+    EVT_MENU(wxID_CONVERTTOGRAPHICS, DrawingView::OnConvertToGraphics)
+wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
 // windows for displaying the view.
@@ -1580,13 +1581,13 @@ void DrawingView::ChangeFontEement()
 void DrawingView::SetQueryMenu(const int queryType)
 {
     wxMenuBar *bar = m_parent->GetMenuBar();
+    for( int i = bar->GetMenuCount() - 2; i > 0; i-- )
+    {
+        auto *menu = bar->Remove( i );
+        delete menu;
+    }
     if( queryType == SQLSelectMenu )
     {
-        for( int i = bar->GetMenuCount() - 2; i > 0; i-- )
-        {
-            auto *menu = bar->Remove( i );
-            delete menu;
-        }
         auto *designMenu = new wxMenu;
         designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
         m_tb->InsertTool( 3, wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
@@ -1618,11 +1619,6 @@ void DrawingView::SetQueryMenu(const int queryType)
     }
     if( queryType == QuerySyntaxMenu )
     {
-        for( int i = bar->GetMenuCount() - 2; i > 0; i-- )
-        {
-            auto *menu = bar->Remove( i );
-            delete menu;
-        }
         auto editMenu = new wxMenu;
         editMenu->Append( wxID_UNDO, _( "Undo\tCtrl+Z" ), _( "Undo" ) );
         editMenu->AppendSeparator();
@@ -1686,6 +1682,18 @@ void DrawingView::OnConvertToSyntax(wxCommandEvent &WXUNUSED(event))
     sizer->Layout();
     m_frame->Layout();
     m_edit->SetFocus();
+}
+
+void DrawingView::OnConvertToGraphics(wxCommandEvent &WXUNUSED(event))
+{
+    SetQueryMenu( SQLSelectMenu );
+    m_designCanvas->Show( true );
+    m_fields->Show( true );
+    m_canvas->Show( true );
+    m_queryBook->Show( true );
+    m_edit->Show( false );
+    sizer->Layout();
+    m_frame->Layout();
 }
 
 void DrawingView::OnCut(wxCommandEvent &WXUNUSED(event))
