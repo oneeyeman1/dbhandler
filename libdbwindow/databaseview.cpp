@@ -1364,6 +1364,7 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
 
 void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
 {
+    std::vector<QueryArguments> arguments;
     wxDynamicLibrary *lib = new wxDynamicLibrary();
 #ifdef __WXMSW__
     lib->Load( "dialogs" );
@@ -1375,9 +1376,13 @@ void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
     if( lib->IsLoaded() )
     {
         if( m_arguments.size() == 0 )
-            m_arguments.push_back( QueryArguments( 1, "", "" ) );
+            arguments.push_back( QueryArguments( 1, "", "" ) );
+        else
+            arguments = m_arguments;
         RETRIEVEARGUMENTS func = (RETRIEVEARGUMENTS) lib->GetSymbol( "GetQueryArguments" );
-        int res = func( m_frame, m_arguments, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
+        int res = func( m_frame, arguments, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
+        if( res == wxID_OK )
+            m_arguments = arguments;
     }
     delete lib;
 }
@@ -1767,7 +1772,7 @@ void DrawingView::OnFindReplaceText(wxFindDialogEvent &event)
     }
 }
 
-void DrawingView::OnFindNext(wxCommandEvent &event)
+void DrawingView::OnFindNext(wxCommandEvent &WXUNUSED(event))
 {
     if( m_searchDirection )
         m_start = m_start++;
@@ -1784,7 +1789,7 @@ void DrawingView::FindTextInEditor()
     }
 }
 
-void DrawingView::OnGotoLine(wxCommandEvent &event)
+void DrawingView::OnGotoLine(wxCommandEvent &WXUNUSED(event))
 {
     int lineNo, res;
     wxDynamicLibrary lib;
