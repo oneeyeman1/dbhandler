@@ -34,7 +34,7 @@
 #include "constraintsign.h"
 #include "FieldShape.h"
 #include "MyErdTable.h"
-#include "groupbypage.h"
+#include "sortgroupbypage.h"
 #include "syntaxproppage.h"
 #include "wherehavingpage.h"
 #include "databasecanvas.h"

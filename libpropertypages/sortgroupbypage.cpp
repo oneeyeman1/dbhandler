@@ -23,7 +23,7 @@
 #include "wx/listctrl.h"
 #include "sortgroupbypage.h"
 
-SortGroupByPage::SortGroupByPage(wxWindow *parent)
+SortGroupByPage::SortGroupByPage(wxWindow *parent) : wxPanel( parent )
 {
     m_label = new wxStaticText( this, wxID_ANY, _( "Drag and drop the columns in the order that you want them" ) );
     m_source = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
