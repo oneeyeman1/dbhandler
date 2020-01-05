@@ -50,6 +50,7 @@
 #include "wx/bmpcbox.h"
 #include "wx/grid.h"
 #include "wx/stc/stc.h"
+#include "wx/listctrl.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/RoundRectShape.h"
@@ -67,6 +68,7 @@
 #include "MyErdTable.h"
 #include "fieldwindow.h"
 #include "syntaxproppage.h"
+#include "groupbypage.h"
 #include "wherehavingpage.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
@@ -289,8 +291,12 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_type == QueryView )
     {
         m_queryBook = new wxNotebook( m_frame, wxID_ANY );
+        m_page1 = new SortGroupByPage( m_queryBook );
+        m_queryBook->AddPage( m_page1, _( "Sort" ) );
         m_page2 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
         m_queryBook->AddPage( m_page2, _( "Where" ) );
+        m_page3 = new SortGroupByPage( m_queryBook );
+        m_queryBook->AddPage( m_page3, _( "Group" ) );
         m_page4 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
         m_queryBook->AddPage( m_page4, _( "Having" ) );
         m_page6 = new SyntaxPropPage( m_queryBook );

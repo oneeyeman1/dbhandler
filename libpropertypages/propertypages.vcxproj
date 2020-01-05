@@ -39,6 +39,7 @@
     <ClInclude Include="fieldgeneral.h" />
     <ClInclude Include="fieldheader.h" />
     <ClInclude Include="fontpropertypagebase.h" />
+    <ClInclude Include="groupbypage.h" />
     <ClInclude Include="msw\fontpropertypage.h" />
     <ClInclude Include="propertypagebase.h" />
     <ClInclude Include="syntaxproppage.h" />
@@ -50,6 +51,7 @@
     <ClCompile Include="fieldgeneral.cpp" />
     <ClCompile Include="fieldheader.cpp" />
     <ClCompile Include="fontpropertypagebase.cpp" />
+    <ClCompile Include="groupbypage.cpp" />
     <ClCompile Include="msw\fontpropertypage.cpp" />
     <ClCompile Include="syntaxproppage.cpp" />
     <ClCompile Include="tablegeneral.cpp" />

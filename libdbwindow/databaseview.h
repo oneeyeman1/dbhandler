@@ -114,6 +114,7 @@ private:
     wxNotebook *m_queryBook;
     wxBoxSizer *sizer, *mainSizer;
     WhereHavingPage *m_page2, *m_page4;
+    SortGroupByPage *m_page1, *m_page3;
     SyntaxPropPage *m_page6;
     wxCriticalSection *pcs;
     int m_source, m_presentation, m_searchPos, m_start, m_end, m_searchFlags, m_searchDirection;
