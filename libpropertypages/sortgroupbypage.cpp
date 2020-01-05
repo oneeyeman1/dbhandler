@@ -21,7 +21,7 @@
 #endif
 
 #include "wx/listctrl.h"
-#include "groupbypage.h"
+#include "sortgroupbypage.h"
 
 SortGroupByPage::SortGroupByPage(wxWindow *parent)
 {

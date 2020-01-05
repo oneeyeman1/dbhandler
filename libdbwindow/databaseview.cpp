@@ -68,7 +68,7 @@
 #include "MyErdTable.h"
 #include "fieldwindow.h"
 #include "syntaxproppage.h"
-#include "groupbypage.h"
+#include "sortgroupbypage.h"
 #include "wherehavingpage.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"

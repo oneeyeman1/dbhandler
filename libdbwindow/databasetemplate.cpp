@@ -35,7 +35,7 @@
 #include "MyErdTable.h"
 #include "FieldShape.h"
 #include "fieldwindow.h"
-#include "groupbypage.h"
+#include "sortgroupbypage.h"
 #include "wherehavingpage.h"
 #include "syntaxproppage.h"
 #include "databasecanvas.h"
