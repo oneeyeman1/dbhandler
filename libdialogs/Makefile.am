@@ -35,7 +35,9 @@ libdialogs_la_SOURCES =  \
 	retrievalarguments.cpp \
 	retrievalarguments.h \
 	typecombobox.cpp \
-	typecombobox.h
+	typecombobox.h \
+	gotoline.cpp \
+	gotoline.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
