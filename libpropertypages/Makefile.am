@@ -21,7 +21,9 @@ libpropertypages_la_SOURCES =  \
 	fieldheader.h \
 	propertypagebase.h \
 	designlabelgeneral.cpp \
-	designlabelgeneral.h
+	designlabelgeneral.h \
+	sortgroupbypage.cpp \
+	sortgroupbypage.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	`pkg-config \
