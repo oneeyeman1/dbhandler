@@ -684,6 +684,20 @@ void DrawingView::GetTablesForView(Database *db, bool init)
     {
         if( query != L"\n" )
         {
+            int i = 0;
+            std::vector<MyErdTable *> tables = ((DrawingDocument *)GetDocument())->GetTables();
+            for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); ++it )
+            {
+                const DatabaseTable table = (*it)->GetTable();
+                for( std::vector<Field *>::const_iterator it1 = table.GetFields().begin(); it1 < table.GetFields().end(); ++it1 )
+                {
+                    m_page3->GetSourceList()->InsertItem( i++, "\"" + table.GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
+                }
+            }
+            m_page1->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
+            m_page1->GetDestList()->SetColumnWidth( 0, m_page3->GetDestList()->GetSize().GetWidth() );
+            m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
+            m_page3->GetDestList()->SetColumnWidth( 0, m_page3->GetDestList()->GetSize().GetWidth() );
             m_page6->SetSyntaxText( query );
             m_edit->SetText( query );
         }

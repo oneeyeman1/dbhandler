@@ -39,7 +39,14 @@ SortGroupByPage::~SortGroupByPage()
 
 void SortGroupByPage::set_properties()
 {
-
+    wxListItem itemColSource;
+    itemColSource.SetText( "Column 1" );
+    itemColSource.SetImage( -1 );
+    m_source->InsertColumn( 0, _( "" ), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
+    wxListItem itemColDest;
+    itemColDest.SetText( "Column 1" );
+    itemColDest.SetImage( -1 );
+    m_dest->InsertColumn( 0, _( "" ), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
 }
 
 void SortGroupByPage::do_layout()
@@ -52,4 +59,14 @@ void SortGroupByPage::do_layout()
     sizer2->Add( m_dest, 0, wxEXPAND, 0 );
     sizer1->Add( sizer2 );
     SetSizer( sizer1 );
+}
+
+wxListCtrl *SortGroupByPage::GetSourceList()
+{
+    return m_source;
+}
+
+wxListCtrl *SortGroupByPage::GetDestList()
+{
+    return m_dest;
 }
