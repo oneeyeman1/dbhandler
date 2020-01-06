@@ -143,7 +143,8 @@ am_libdbwindow_la_OBJECTS = libdbwindow_la-ErdForeignKey.lo \
 	libdbwindow_la-commenttableshape.lo \
 	libdbwindow_la-designcanvas.lo libdbwindow_la-designfield.lo \
 	libdbwindow_la-designlabel.lo libdbwindow_la-divider.lo \
-	libdbwindow_la-fontcombobox.lo libdbwindow_la-taborder.lo
+	libdbwindow_la-fontcombobox.lo libdbwindow_la-taborder.lo \
+	libdbwindow_la-fieldtypeshape.lo
 libdbwindow_la_OBJECTS = $(am_libdbwindow_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -442,7 +443,9 @@ libdbwindow_la_SOURCES = \
 	fontcombobox.cpp \
 	fontcombobox.h \
 	taborder.cpp \
-	taborder.h
+	taborder.h \
+	fieldtypeshape.cpp \
+	fieldtypeshape.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \
@@ -458,7 +461,8 @@ libdbwindow_la_LDFLAGS = -L../libpropertypages \
 	-lfieldswindow \
 	-lshapeframework \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs`
+	--libs \
+	stc`
 
 all: all-am
 
@@ -561,6 +565,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-designfield.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-designlabel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-divider.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-fieldtypeshape.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-fontcombobox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-table.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdbwindow_la-taborder.Plo@am__quote@
@@ -767,6 +772,13 @@ libdbwindow_la-taborder.lo: taborder.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='taborder.cpp' object='libdbwindow_la-taborder.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-taborder.lo `test -f 'taborder.cpp' || echo '$(srcdir)/'`taborder.cpp
+
+libdbwindow_la-fieldtypeshape.lo: fieldtypeshape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -MT libdbwindow_la-fieldtypeshape.lo -MD -MP -MF $(DEPDIR)/libdbwindow_la-fieldtypeshape.Tpo -c -o libdbwindow_la-fieldtypeshape.lo `test -f 'fieldtypeshape.cpp' || echo '$(srcdir)/'`fieldtypeshape.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdbwindow_la-fieldtypeshape.Tpo $(DEPDIR)/libdbwindow_la-fieldtypeshape.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fieldtypeshape.cpp' object='libdbwindow_la-fieldtypeshape.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdbwindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libdbwindow_la-fieldtypeshape.lo `test -f 'fieldtypeshape.cpp' || echo '$(srcdir)/'`fieldtypeshape.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

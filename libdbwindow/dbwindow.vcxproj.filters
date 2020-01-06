@@ -91,6 +91,9 @@
     <ClInclude Include="fontcombobox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fieldtypeshape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="constraint.cpp">
@@ -169,6 +172,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="taborder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fieldtypeshape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

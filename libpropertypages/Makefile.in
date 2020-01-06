@@ -135,7 +135,8 @@ am_libpropertypages_la_OBJECTS = libpropertypages_la-tablegeneral.lo \
 	libpropertypages_la-wherehavingpage.lo \
 	libpropertypages_la-fieldgeneral.lo \
 	libpropertypages_la-fieldheader.lo \
-	libpropertypages_la-designlabelgeneral.lo
+	libpropertypages_la-designlabelgeneral.lo \
+	libpropertypages_la-sortgroupbypage.lo
 libpropertypages_la_OBJECTS = $(am_libpropertypages_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -397,7 +398,9 @@ libpropertypages_la_SOURCES = \
 	fieldheader.h \
 	propertypagebase.h \
 	designlabelgeneral.cpp \
-	designlabelgeneral.h
+	designlabelgeneral.h \
+	sortgroupbypage.cpp \
+	sortgroupbypage.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	`pkg-config \
@@ -495,6 +498,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fieldheader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fontpropertypage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fontpropertypagebase.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-sortgroupbypage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-syntaxproppage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-tablegeneral.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-wherehavingpage.Plo@am__quote@
@@ -575,6 +579,13 @@ libpropertypages_la-designlabelgeneral.lo: designlabelgeneral.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='designlabelgeneral.cpp' object='libpropertypages_la-designlabelgeneral.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-designlabelgeneral.lo `test -f 'designlabelgeneral.cpp' || echo '$(srcdir)/'`designlabelgeneral.cpp
+
+libpropertypages_la-sortgroupbypage.lo: sortgroupbypage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertypages_la-sortgroupbypage.lo -MD -MP -MF $(DEPDIR)/libpropertypages_la-sortgroupbypage.Tpo -c -o libpropertypages_la-sortgroupbypage.lo `test -f 'sortgroupbypage.cpp' || echo '$(srcdir)/'`sortgroupbypage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertypages_la-sortgroupbypage.Tpo $(DEPDIR)/libpropertypages_la-sortgroupbypage.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='sortgroupbypage.cpp' object='libpropertypages_la-sortgroupbypage.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-sortgroupbypage.lo `test -f 'sortgroupbypage.cpp' || echo '$(srcdir)/'`sortgroupbypage.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

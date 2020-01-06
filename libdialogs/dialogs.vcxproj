@@ -498,12 +498,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="addcolumnsdialog.cpp" />
+    <ClCompile Include="arguments.c" />
     <ClCompile Include="bitmappanel.cpp" />
     <ClCompile Include="createindex.cpp" />
     <ClCompile Include="databasetype.cpp" />
     <ClCompile Include="dialogs.cpp" />
     <ClCompile Include="foreignkey.cpp" />
     <ClCompile Include="getobjectname.cpp" />
+    <ClCompile Include="gotoline.cpp" />
     <ClCompile Include="jointype.cpp" />
     <ClCompile Include="newquery.cpp" />
     <ClCompile Include="odbcconfigure.cpp" />
@@ -512,6 +514,7 @@
     <ClCompile Include="quickselect.cpp" />
     <ClCompile Include="retrievalarguments.cpp" />
     <ClCompile Include="selecttables.cpp" />
+    <ClCompile Include="typecombobox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="addcolumnsdialog.h" />
@@ -520,6 +523,7 @@
     <ClInclude Include="databasetype.h" />
     <ClInclude Include="foreignkey.h" />
     <ClInclude Include="getobjectname.h" />
+    <ClInclude Include="gotoline.h" />
     <ClInclude Include="jointype.h" />
     <ClInclude Include="newquery.h" />
     <ClInclude Include="odbcconfigure.h" />
@@ -528,6 +532,7 @@
     <ClInclude Include="quickselect.h" />
     <ClInclude Include="retrievalarguments.h" />
     <ClInclude Include="selecttables.h" />
+    <ClInclude Include="typecombobox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

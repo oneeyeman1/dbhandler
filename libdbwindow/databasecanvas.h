@@ -17,6 +17,7 @@ public:
     void OnDropTable(wxCommandEvent &event);
     void OnShowSQLBox(wxCommandEvent &event);
     void OnShowComments(wxCommandEvent &event);
+    void OnShowDataTypes(wxCommandEvent &event);
     inline wxSFDiagramManager &GetDiagramManager() { return m_pManager; }
     virtual void OnDraw(wxDC& dc) wxOVERRIDE;
     void AddQuickQueryFields(const wxString &tbl, std::vector<Field *> &quickSelectFields, bool quickSelect);
@@ -85,5 +86,11 @@ private:
 #define UNDERLINEFONGT            327
 #define wxID_DESIGNTABORDER       328
 #define wxID_COLUMNSPEC           329
-
+#define wxID_PREVIEDWQUERY        330
+#define wxID_CONVERTTOSYNTAX      331
+#define wxID_SHOWJOINS            332
+#define myID_FINDNEXT             333
+#define wxID_GOTOLINE             334
+#define wxID_CONVERTTOGRAPHICS    335
+#define wxID_UNDOALL              336
 #endif

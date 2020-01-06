@@ -200,6 +200,8 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
         if( selection != wxEmptyString )
         {
             m_grid->SetCellValue( m_row, m_col, selection );
+            if( m_col == 0 && m_grid->GetCellValue( m_row, 1 ) == wxEmptyString )
+                m_grid->SetCellValue( m_row, 1, "=" );
             m_grid->SetGridCursor( m_row, m_col );
             m_grid->EnableCellEditControl( true );
             m_grid->ShowCellEditControl();

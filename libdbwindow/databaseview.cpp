@@ -30,6 +30,7 @@
 #include "res/gui/bold.c"
 #include "res/gui/italic.c"
 #include "res/gui/underline.c"
+#include "res/gui/preview.c"
 #include "res/gui/sql.h"
 
 #include <string>
@@ -42,11 +43,14 @@
 #include "wx/docview.h"
 #include "wx/fontenum.h"
 #include "wx/notebook.h"
+#include "wx/fdrepdlg.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/cmdproc.h"
 #include "wx/bmpcbox.h"
 #include "wx/grid.h"
+#include "wx/stc/stc.h"
+#include "wx/listctrl.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/RoundRectShape.h"
@@ -64,6 +68,7 @@
 #include "MyErdTable.h"
 #include "fieldwindow.h"
 #include "syntaxproppage.h"
+#include "sortgroupbypage.h"
 #include "wherehavingpage.h"
 #include "databasecanvas.h"
 #include "databasedoc.h"
@@ -84,6 +89,7 @@ typedef int (*NEWQUERY)(wxWindow *, int &, int &);
 typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTable *> &, std::vector<Field *> &);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 typedef int (*RETRIEVEARGUMENTS)(wxWindow *, std::vector<QueryArguments> &arguments, const wxString &, const wxString &);
+typedef int (*GOTOLINE)(wxWindow *, int &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
@@ -121,13 +127,35 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_RETRIEVEARGS, DrawingView::OnRetrievalArguments)
     EVT_MENU(wxID_DATASOURCE, DrawingView::OnDataSource)
     EVT_MENU(wxID_DESIGNTABORDER, DrawingView::OnTabOrder)
+    EVT_UPDATE_UI(wxID_PREVIEDWQUERY, DrawingView::OnQueryPreviewUpdateUI)
+    EVT_MENU(wxID_SHOWSQLTOOLBOX, DrawingView::OnShowSQLBox)
+    EVT_MENU(wxID_SHOWDATATYPES, DrawingView::OnShowDataTypes)
+    EVT_UPDATE_UI(wxID_CONVERTTOSYNTAX, DrawingView::OnConvertToSyntaxUpdateUI)
+    EVT_MENU(wxID_CONVERTTOSYNTAX, DrawingView::OnConvertToSyntax)
+    EVT_MENU(wxID_UNDO, DrawingView::OnUndo)
+    EVT_MENU(wxID_CUT, DrawingView::OnCut)
+    EVT_MENU(wxID_COPY, DrawingView::OnCopy)
+    EVT_MENU(wxID_PASTE, DrawingView::OnPaste)
+    EVT_MENU(wxID_CLEAR, DrawingView::OnClear)
+    EVT_MENU(wxID_SELECTALL, DrawingView::OnSelectAll)
+    EVT_MENU(wxID_FIND, DrawingView::OnFind)
+    EVT_FIND(wxID_ANY, DrawingView::OnFindReplaceText)
+    EVT_FIND_NEXT(wxID_ANY, DrawingView::OnFindReplaceText)
+    EVT_MENU(wxID_REPLACE, DrawingView::OnFind)
+    EVT_MENU(myID_FINDNEXT, DrawingView::OnFindNext)
+    EVT_FIND_REPLACE(wxID_ANY, DrawingView::OnFindReplaceText)
+    EVT_FIND_REPLACE_ALL(wxID_ANY, DrawingView::OnFindReplaceText)
+    EVT_MENU(wxID_GOTOLINE, DrawingView::OnGotoLine)
+    EVT_MENU(wxID_CONVERTTOGRAPHICS, DrawingView::OnConvertToGraphics)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
+    m_searchDirection = 1;
     m_log = nullptr;
+    m_searchPos = 0;
     m_isActive = false;
     m_tb = m_styleBar = nullptr;
     wxToolBar *tb = nullptr;
@@ -263,8 +291,12 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_type == QueryView )
     {
         m_queryBook = new wxNotebook( m_frame, wxID_ANY );
+        m_page1 = new SortGroupByPage( m_queryBook );
+        m_queryBook->AddPage( m_page1, _( "Sort" ) );
         m_page2 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
         m_queryBook->AddPage( m_page2, _( "Where" ) );
+        m_page3 = new SortGroupByPage( m_queryBook );
+        m_queryBook->AddPage( m_page3, _( "Group" ) );
         m_page4 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
         m_queryBook->AddPage( m_page4, _( "Having" ) );
         m_page6 = new SyntaxPropPage( m_queryBook );
@@ -275,6 +307,17 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_designCanvas = new DesignCanvas( this, ptCanvas );
         mainSizer->Add( m_designCanvas, 1, wxEXPAND, 0 );
         m_canvas->Show( false );
+        m_edit = new wxStyledTextCtrl( m_frame );
+        std::wstring type = GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType();
+        std::wstring subtype = GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype();
+        if( type == "MySQL" || ( type == "ODBC" && subtype == "MySQL" ) )
+            m_edit->SetLexer( wxSTC_LEX_MYSQL );
+        if( type == "Microsoft SQL Server" || ( type == "ODBC" && subtype == "Microsoft SQL Server" ) )
+            m_edit->SetLexer( wxSTC_LEX_MSSQL );
+        if( type == "SQLite" )
+            m_edit->SetLexer( wxSTC_LEX_SQL );
+        mainSizer->Add( m_edit, 1, wxEXPAND, 0 );
+        m_edit->Show( false );
     }
     mainSizer->Add( sizer, 1, wxEXPAND, 0 );
     m_frame->SetSizer( mainSizer );
@@ -302,6 +345,12 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 
 DrawingView::~DrawingView()
 {
+    wxMenuBar *bar = m_parent->GetMenuBar();
+    for( int i = bar->GetMenuCount() - 2; i > 0; i-- )
+    {
+        auto menu = bar->Remove( i );
+        delete menu;
+    }
 #ifndef __WXOSX__
     delete m_tb;
     m_tb = nullptr;
@@ -518,17 +567,35 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 {
                     if( m_source != 1 )
                     {
+                        wxMDIClientWindow *parent = (wxMDIClientWindow *) m_parent->GetClientWindow();
+                        wxSize parentSize = parent->GetSize();
+                        wxPoint parentPos = parent->GetPosition();
                         int heightStyleBar = m_styleBar->GetSize().y;
                         wxPoint framePosition = m_frame->GetPosition();
                         wxSize frameSize = m_frame->GetSize();
                         if( framePosition.y == 0 )
                         {
-                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
+                            parent->SetSize( parentPos.x, parentPos.y - heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() + heightStyleBar );
                             m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
+//                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
+//                            m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
                         }
+                        SetQueryMenu( SQLSelectMenu );
+                        m_frame->Freeze();
                         m_styleBar->Show( false );
+                        m_designCanvas->Show( false );
+                        m_fields->Show( true );
+                        m_canvas->Show( true );
+                        m_queryBook->Show( true );
+                        m_frame->Layout();
+                        sizer->Layout();
+                        m_frame->Thaw();
                         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
                         res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
+#ifdef __WXGTK__
+						m_parent->SendSizeEvent();
+						wxYield();
+#endif
                     }
                     else
                     {
@@ -537,22 +604,13 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                         GetDocument()->SetQueryFields( m_queryFields );
                         quickSelect = true;
                     }
-                    if( !quickSelect )
-                    {
-                        m_designCanvas->Show( false );
-                        m_fields->Show( true );
-                        m_canvas->Show( true );
-                        m_queryBook->Show( true );
-                        m_frame->Layout();
-                        sizer->Layout();
-                    }
-                    else
+/*                    if( quickSelect )
                     {
                         m_fields->Show( false );
                         m_canvas->Show( false );
                         m_queryBook->Show( false );
                         m_designCanvas->Show( true );
-                    }
+                    }*/
 /*
 #ifdef __WXGTK__
                     wxDocMDIParentFrame *parent = wxDynamicCast( m_frame->GetMDIParent(), wxDocMDIParentFrame );
@@ -561,6 +619,11 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     parent->SetSize( size.GetWidth() + 5, size.GetHeight() + 5 );
 #endif
 */                }
+            }
+            else
+            {
+                TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
+                res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
             }
         }
         else
@@ -620,7 +683,10 @@ void DrawingView::GetTablesForView(Database *db, bool init)
     if( m_type == QueryView )
     {
         if( query != L"\n" )
-            m_page6->SetSyntaxText(query);
+        {
+            m_page6->SetSyntaxText( query );
+            m_edit->SetText( query );
+        }
         if( quickSelect && m_selectTableName.size() == 1 )
             m_canvas->AddQuickQueryFields( m_selectTableName[0]->GetTableName(), m_queryFields, quickSelect );
         if( quickSelect && m_selectTableName.size() > 0 )
@@ -1101,6 +1167,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
         if( !quickSelect )
             m_queryFields.push_back( fld );
         m_page6->SetSyntaxText( query );
+        m_edit->SetText( query );
     }
     else
     {
@@ -1128,6 +1195,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
         }
         m_queryFields.erase( std::remove( m_queryFields.begin(), m_queryFields.end(), fld ), m_queryFields.end() );
         m_page6->SetSyntaxText( query );
+        m_edit->SetText( query );
     }
 }
 
@@ -1180,7 +1248,7 @@ void DrawingView::OnDistinct(wxCommandEvent &event)
     wxString qry;
     wxString query = m_page6->GetSyntaxCtrl()->GetValue();
     wxTextCtrl *queryText = const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() );
-    if( dynamic_cast<wxMenu *>( event.GetEventObject() )->IsChecked( wxID_DISTINCT ) )
+    if( !dynamic_cast<wxMenu *>( event.GetEventObject() )->IsChecked( wxID_DISTINCT ) )
     {
         query.Replace( "SELECT ", "SELECT DISTINCT " );
     }
@@ -1189,6 +1257,7 @@ void DrawingView::OnDistinct(wxCommandEvent &event)
         query.Replace( "SELECT DISTINCT ", "SELECT " );
     }
     queryText->SetValue( query );
+    m_edit->SetText( query );
 }
 
 wxFrame *DrawingView::GetLogWindow() const
@@ -1284,6 +1353,7 @@ void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type)
         }
     }
     m_page6->SetSyntaxText( result );
+    m_edit->SetText( result );
 }
 
 void DrawingView::OnQueryChange(wxCommandEvent &event)
@@ -1300,6 +1370,7 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
 
 void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
 {
+    std::vector<QueryArguments> arguments;
     wxDynamicLibrary *lib = new wxDynamicLibrary();
 #ifdef __WXMSW__
     lib->Load( "dialogs" );
@@ -1311,9 +1382,13 @@ void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
     if( lib->IsLoaded() )
     {
         if( m_arguments.size() == 0 )
-            m_arguments.push_back( QueryArguments( 1, "", "" ) );
+            arguments.push_back( QueryArguments( 1, "", "" ) );
+        else
+            arguments = m_arguments;
         RETRIEVEARGUMENTS func = (RETRIEVEARGUMENTS) lib->GetSymbol( "GetQueryArguments" );
-        int res = func( m_frame, m_arguments, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
+        int res = func( m_frame, arguments, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
+        if( res == wxID_OK )
+            m_arguments = arguments;
     }
     delete lib;
 }
@@ -1512,4 +1587,235 @@ void DrawingView::ChangeFontEement()
         }
     }
 #endif
+}
+
+void DrawingView::SetQueryMenu(const int queryType)
+{
+    wxMenuBar *bar = m_parent->GetMenuBar();
+    for( int i = bar->GetMenuCount() - 2; i > 0; i-- )
+    {
+        auto *menu = bar->Remove( i );
+        delete menu;
+    }
+    if( queryType == SQLSelectMenu )
+    {
+        auto *designMenu = new wxMenu;
+        designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
+        m_tb->InsertTool( 3, wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+        m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( preview, WXSIZEOF( preview ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
+        designMenu->Append( wxID_PREVIEDWQUERY, _( "Preview" ), _( "Preview" ) );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_SELECTTABLE, _( "Select Table..." ) );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_RETRIEVEARGS, _( "Retieval Arguments..." ), _( "Define Retrieval Arguments" ) );
+        designMenu->Append( wxID_DISTINCT, _( "Distinct" ), _( "Return distinct rows only" ), wxITEM_CHECK );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert To Syntax" ), _( "Convert To Syntax" ) );
+        auto show = new wxMenu;
+        show->Append( wxID_SHOWDATATYPES, _( "Datatypes" ), _( "Show Datatypes" ), wxITEM_CHECK );
+        show->Append( wxID_SHOWLABELS, _( "Labels" ), _( "Show Labels" ), wxITEM_CHECK );
+        show->Append( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Show Comments" ), wxITEM_CHECK );
+        show->Append( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ), wxITEM_CHECK );
+        show->Append( wxID_SHOWJOINS, _( "Joins" ), _( "Show Joins" ), wxITEM_CHECK );
+        designMenu->AppendSubMenu( show, _( "Show" ) );
+        designMenu->Check( wxID_DATASOURCE, true );
+        show->Check( wxID_SHOWDATATYPES, true );
+        show->Check( wxID_SHOWLABELS, true );
+        show->Check( wxID_SHOWCOMMENTS, true );
+        show->Check( wxID_SHOWSQLTOOLBOX, true );
+        show->Check( wxID_SHOWJOINS, true );
+        m_tb->ToggleTool( wxID_DATASOURCE, true );
+        bar->Insert( 1, designMenu, _( "Design" ) );
+        m_tb->Realize();
+    }
+    if( queryType == QuerySyntaxMenu )
+    {
+        auto editMenu = new wxMenu;
+        editMenu->Append( wxID_UNDO, _( "Undo\tCtrl+Z" ), _( "Undo" ) );
+        editMenu->AppendSeparator();
+        editMenu->Append( wxID_CUT, _( "Cut\tCtrl+X" ), _( "Cut" ) );
+        editMenu->Append( wxID_COPY, _( "Copy\tCtrl+C" ), _( "Copy" ) );
+        editMenu->Append( wxID_PASTE, _( "Paste\tCtrl+V" ), _( "Paste" ) );
+        editMenu->Append( wxID_CLEAR, _( "Clear\tDel" ), _( "Clear" ) );
+        editMenu->AppendSeparator();
+        editMenu->Append( wxID_SELECTALL, _( "Select all\tCtrl+A" ), _( "Select all" ) );
+        auto searchMenu = new wxMenu;
+        searchMenu->Append( wxID_FIND, _( "Find Text...\tCtrl+F" ), _( "Find text" ) );
+        searchMenu->Append( myID_FINDNEXT, _( "Find Next Text\tCtrl+N" ), _( "Find next text" ) );
+        searchMenu->Append( wxID_REPLACE, _( "Replace Text..." ), _( "Replace text" ) );
+        searchMenu->AppendSeparator();
+        searchMenu->Append( wxID_GOTOLINE, _( "Go to Line...\tCtrl+L" ), _( "Go to line" ) );
+        auto designMenu = new wxMenu;
+        designMenu->Append( wxID_UNDOALL, _( "Undo All" ), _( "Undo All" ) );
+        designMenu->AppendSeparator();
+        designMenu->AppendCheckItem( wxID_DATASOURCE, "Data Source", "Data Source" );
+        designMenu->Check( wxID_DATASOURCE, true );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_RETRIEVEARGS, _( "Retrieval Arguments..." ), _( "Retrieval Arguments" ) );
+        designMenu->Append( wxID_CONVERTTOGRAPHICS, _( "Convert To Graphics" ), _( "Convert To Graphics" ) );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_PROPERTIES, _( "Options..."), _( "Options" ) );
+        bar->Insert( 1, editMenu, _( "Edit" ) );
+        bar->Insert( 2, searchMenu, _( "Search" ) );
+        bar->Insert( 3, designMenu, _( "Design" ) );
+    }
+}
+
+void DrawingView::OnQueryPreviewUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_queryFields.size() > 0 )
+        event.Enable( true );
+    else
+        event.Enable( false );
+}
+
+void DrawingView::OnShowSQLBox (wxCommandEvent &event)
+{
+    HideShowSQLBox( event.IsChecked() );
+}
+
+void DrawingView::OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_queryFields.size() > 0 )
+        event.Enable( true );
+    else
+        event.Enable( false );
+}
+
+void DrawingView::OnConvertToSyntax(wxCommandEvent &WXUNUSED(event))
+{
+    SetQueryMenu( QuerySyntaxMenu );
+    m_designCanvas->Show( false );
+    m_fields->Show( false );
+    m_canvas->Show( false );
+    m_queryBook->Show( false );
+    m_edit->Show( true );
+    sizer->Layout();
+    m_frame->Layout();
+    m_edit->SetFocus();
+}
+
+void DrawingView::OnConvertToGraphics(wxCommandEvent &WXUNUSED(event))
+{
+    SetQueryMenu( SQLSelectMenu );
+    m_designCanvas->Show( true );
+    m_fields->Show( true );
+    m_canvas->Show( true );
+    m_queryBook->Show( true );
+    m_edit->Show( false );
+    sizer->Layout();
+    m_frame->Layout();
+}
+
+void DrawingView::OnCut(wxCommandEvent &WXUNUSED(event))
+{
+    m_edit->Cut();
+}
+
+void DrawingView::OnCopy(wxCommandEvent &WXUNUSED(event))
+{
+    m_edit->Copy();
+}
+
+void DrawingView::OnPaste(wxCommandEvent &WXUNUSED(event))
+{
+    m_edit->Paste();
+}
+
+void DrawingView::OnClear(wxCommandEvent &WXUNUSED(event))
+{
+    m_edit->Clear();
+}
+
+void DrawingView::OnSelectAll(wxCommandEvent &WXUNUSED(event))
+{
+    m_edit->SelectAll();
+}
+
+void DrawingView::OnUndo(wxCommandEvent &WXUNUSED(event))
+{
+    m_edit->Undo();
+}
+
+void DrawingView::OnFind(wxCommandEvent &event)
+{
+    m_data.SetFlags( wxFR_DOWN );
+    m_findDlg = new wxFindReplaceDialog( m_edit, &m_data, _( "Find Text" ), event.GetId() == wxID_REPLACE ? wxFR_REPLACEDIALOG : 0 );
+    m_findDlg->Show( true );
+//    if( dlg )
+}
+
+void DrawingView::OnFindReplaceText(wxFindDialogEvent &event)
+{
+    wxEventType type = event.GetEventType();
+    m_searchFlags = 0, m_start = m_searchPos, m_end = m_edit->GetTextLength();
+    m_stringToFind = event.GetFindString();
+    int flags = event.GetFlags();
+    if( flags & wxFR_WHOLEWORD )
+        m_searchFlags = wxSTC_FIND_WHOLEWORD;
+    if( !( flags & wxFR_DOWN ) )
+    {
+        m_searchDirection = 0;
+        std::swap( m_start, m_end );
+    }
+    else if( type == wxEVT_FIND_NEXT )
+        m_start = m_start + m_stringToFind.length();
+    if( flags & wxFR_MATCHCASE )
+        m_searchFlags |= wxSTC_FIND_MATCHCASE;
+    if( type == wxEVT_FIND || type == wxEVT_FIND_NEXT )
+    {
+        FindTextInEditor();
+    }
+    else if( type == wxEVT_FIND_REPLACE || type == wxEVT_FIND_REPLACE_ALL )
+    {
+        wxString repString = event.GetReplaceString();
+        FindTextInEditor();
+        if( m_searchPos != wxSTC_INVALID_POSITION )
+        {
+            m_edit->SetTargetRange( m_searchPos, m_searchPos + m_stringToFind.length() );
+            m_edit->ReplaceTarget( repString );
+        }
+    }
+}
+
+void DrawingView::OnFindNext(wxCommandEvent &WXUNUSED(event))
+{
+    if( m_searchDirection )
+        m_start = m_start++;
+    FindTextInEditor();
+}
+
+void DrawingView::FindTextInEditor()
+{
+    m_searchPos = m_edit->FindText( m_start, m_end, m_stringToFind, m_searchFlags );
+    if( m_searchPos != wxSTC_INVALID_POSITION )
+    {
+        m_edit->SetSelection( m_searchPos, m_searchPos + m_stringToFind.length() );
+        m_start = m_searchPos;
+    }
+}
+
+void DrawingView::OnGotoLine(wxCommandEvent &WXUNUSED(event))
+{
+    int lineNo, res;
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        GOTOLINE func = (GOTOLINE) lib.GetSymbol( "GotoLine" );
+        res = func( m_frame, lineNo );
+        if( res == wxID_OK && lineNo <= m_edit->GetLineCount() )
+            m_edit->GotoLine( lineNo );
+    }
+}
+
+void DrawingView::OnShowDataTypes(wxCommandEvent &event)
+{
+    m_canvas->GetEventHandler()->ProcessEvent( event );
 }

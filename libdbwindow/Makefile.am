@@ -57,7 +57,9 @@ libdbwindow_la_SOURCES =  \
 	fontcombobox.cpp \
 	fontcombobox.h \
 	taborder.cpp \
-	taborder.h
+	taborder.h \
+	fieldtypeshape.cpp \
+	fieldtypeshape.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \
@@ -73,6 +75,7 @@ libdbwindow_la_LDFLAGS = -L../libpropertypages \
 	-lfieldswindow \
 	-lshapeframework \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs`
+	--libs \
+	stc`
 	
 

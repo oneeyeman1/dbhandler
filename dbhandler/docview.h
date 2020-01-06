@@ -160,4 +160,11 @@ wxDECLARE_APP(MyApp);
 #define UNDERLINEFONGT            327
 #define wxID_DESIGNTABORDER       328
 #define wxID_COLUMNSPEC           329
+#define wxID_PREVIEWQUERY         330
+#define wxID_CONVERTTOSYNTAX      331
+#define wxID_SHOWJOINS            332
+#define myID_FINDNEXT             333
+#define wxID_GOTOLINE             334
+#define wxID_CONVERTTOGRAPHICS    335
+#define wxID_UNDOALL              336
 #endif // _WX_SAMPLES_DOCVIEW_DOCVIEW_H_

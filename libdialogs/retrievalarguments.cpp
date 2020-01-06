@@ -25,222 +25,107 @@
 #include "wx/wx.h"
 #endif
 
-#include "wx/artprov.h"
+#include <list>
+#include "arguments.c"
+#include "typecombobox.h"
 #include "retrievalarguments.h"
-
-MySubColLabels::MySubColLabels(wxScrolled<wxWindow> *parent) : wxWindow(parent, wxID_ANY)
-{
-    m_owner = parent;
-    Bind( wxEVT_PAINT, &MySubColLabels::OnPaint, this );
-}
-
-void MySubColLabels::OnPaint(wxPaintEvent &WXUNUSED (event))
-{
-    wxPaintDC dc( this );
-    int xScrollUnits, xOrigin;
-    m_owner->GetViewStart( &xOrigin, 0 );
-    m_owner->GetScrollPixelsPerUnit( &xScrollUnits, 0 );
-    dc.SetDeviceOrigin( -xOrigin * xScrollUnits, 0 );
-    dc.DrawText( _( "Position" ), 5, 5 );
-    dc.DrawText( _( "Name" ), 50, 5 );
-    dc.DrawText( _( "Type" ), 200, 5 );
-}
-
-MySubCanvas::MySubCanvas(wxScrolled<wxWindow> *parent, wxWindow *cols, const wxString &dbType, const wxString &subType, std::vector<QueryArguments> &arguments) : wxPanel( parent, wxID_ANY )
-{
-    m_owner = parent;
-    m_colLabels = cols;
-    wxArrayString fieldTypes;
-    if( dbType == L"SQLite" )
-    {
-        fieldTypes.Add( "blob" );
-        fieldTypes.Add( "integer" );
-        fieldTypes.Add( "numeric" );
-        fieldTypes.Add( "real" );
-        fieldTypes.Add( "text" );
-    }
-    else
-    {
-        if( ( dbType == L"ODBC" && subType == L"MySQL" ) || dbType == L"MySQL" )
-            fieldTypes.Add( "JSON" );
-        fieldTypes.Add( "bigint" );
-        fieldTypes.Add( "binary" );
-        fieldTypes.Add( "bit" );
-        if( ( dbType == L"ODBC" && subType == L"MySQL" ) || dbType == L"MySQL" )
-            fieldTypes.Add( "bool" );
-        fieldTypes.Add( "char" );
-        fieldTypes.Add( "cursor" );
-        fieldTypes.Add( "date" );
-        fieldTypes.Add( "datetime" );
-        fieldTypes.Add( "datetime2" );
-        fieldTypes.Add( "datetimeoffset" );
-        fieldTypes.Add( "decimal" );
-        if( ( dbType == L"ODBC" && subType == L"MySQL" ) || dbType == L"MySQL" )
-        {
-            fieldTypes.Add( "double" );
-            fieldTypes.Add( "double precision" );
-            fieldTypes.Add( "enum" );
-        }
-        fieldTypes.Add( "float" );
-        if( ( dbType == L"ODBC" && subType == L"MySQL" ) || dbType == L"MySQL" )
-        {
-            fieldTypes.Add( "geometry" );
-            fieldTypes.Add( "geometrycollection" );
-        }
-        fieldTypes.Add( "hierarchyid" );
-        fieldTypes.Add( "image" );
-        fieldTypes.Add( "int" );
-        if( ( dbType == L"ODBC" && subType == L"MySQL" ) || dbType == L"MySQL" )
-        {
-            fieldTypes.Add( "linestring" );
-            fieldTypes.Add( "longblob" );
-            fieldTypes.Add( "longtext" );
-            fieldTypes.Add( "mediumblob" );
-            fieldTypes.Add("mediumint");
-            fieldTypes.Add( "mediumtext" );
-        }
-        fieldTypes.Add( "money" );
-        if( ( dbType == L"ODBC" && subType == L"MyODBC" ) || dbType == L"MyODBC" )
-        {
-            fieldTypes.Add( "multilinestring" );
-            fieldTypes.Add( "multipoint" );
-            fieldTypes.Add( "multipolygon" );
-        }
-        fieldTypes.Add( "nchar" );
-        fieldTypes.Add( "ntext" );
-        fieldTypes.Add( "numeric" );
-        fieldTypes.Add( "nvarchar" );
-        if( ( dbType == L"ODBC" && subType == L"MySQL" ) || dbType == L"MySQL" )
-        {
-            fieldTypes.Add( "point" );
-            fieldTypes.Add( "polygon" );
-        }
-        fieldTypes.Add( "real" );
-        if( ( dbType == L"ODBC" && subType == L"MySQL" ) || dbType == L"MySQL" )
-            fieldTypes.Add( "set" );
-        fieldTypes.Add( "smalldatetime" );
-        fieldTypes.Add( "smallint" );
-        fieldTypes.Add( "smallmoney" );
-        fieldTypes.Add( "sql_variant" );
-        fieldTypes.Add( "table" );
-        fieldTypes.Add( "text" );
-        fieldTypes.Add( "time" );
-        fieldTypes.Add( "timestamp" );
-        if( ( dbType == L"ODBC" && subType == L"MySQL" ) || dbType == L"MySQL" )
-            fieldTypes.Add( "tinyblob" );
-        fieldTypes.Add( "tinyint" );
-        if( ( dbType == L"ODBC" && subType == L"MySQL" ) || dbType == L"MySQL" )
-            fieldTypes.Add( "tinytext" );
-        fieldTypes.Add("uniqueidentifier");
-        fieldTypes.Add( "varbinary" );
-        fieldTypes.Add( "varchar" );
-        fieldTypes.Add( "xml" );
-        if( ( dbType == L"ODBC" && subType == L"MySQL" ) || dbType == L"MySQL" )
-            fieldTypes.Add( "year" );
-    }
-    auto *sizer = new wxFlexGridSizer( arguments.size(), 4, 5, 5 );
-    auto counter = 1;
-    for( std::vector<QueryArguments>::iterator it = arguments.begin(); it < arguments.end(); ++it )
-    {
-        m_lines.push_back( QueryLines( new wxStaticBitmap( this, wxID_ANY, wxArtProvider::GetIcon( wxART_GO_FORWARD ) ), new wxStaticText( this, wxID_ANY, wxString::Format( "%d", counter ), wxDefaultPosition, wxDefaultSize, wxBORDER_RAISED ), new wxTextCtrl( this, wxID_ANY, (*it).m_name ), new wxComboBox( this, wxID_ANY, (*it).m_type, wxDefaultPosition, wxDefaultSize, fieldTypes ) ) );
-        sizer->Add( m_lines[counter - 1].m_pointer );
-        sizer->Add( m_lines[counter - 1].m_number );
-        sizer->Add( m_lines[counter - 1].m_name );
-        sizer->Add( m_lines[counter - 1].m_type );
-        counter++;
-    }
-    SetSizer( sizer );
-    sizer->Fit( this );
-//    Layout();
-}
-
-void MySubCanvas::ScrollWindow(int dx, int dy, const wxRect *rect)
-{
-    wxPanel::ScrollWindow( dx, dy, rect );
-    m_colLabels->ScrollWindow( dx, 0, rect );
-}
-
-void MySubCanvas::AddArgument()
-{
-
-}
-
-void MySubCanvas::DeleteArgument()
-{
-
-}
-
-MySubScrolledWindow::MySubScrolledWindow(wxWindow *parent, const wxString &dbType, const wxString &subType, std::vector<QueryArguments> &arguments) : wxScrolled<wxWindow>( parent, wxID_ANY )
-{
-    auto *cols = new MySubColLabels( this );
-    m_canvas = new MySubCanvas( this, cols, dbType, subType, arguments );
-    auto *sizer = new wxFlexGridSizer( 1 );
-    sizer->Add( 5, 5 );
-    sizer->Add( cols, wxSizerFlags( 1 ).Expand() );
-    sizer->Add( m_canvas, wxSizerFlags( 1 ).Expand() );
-    sizer->AddGrowableRow( 1 );
-    SetSizer( sizer );
-    SetTargetWindow( m_canvas );
-    SetScrollbars( 10, 10, 50, 50 );
-    Bind( wxEVT_SIZE, &MySubScrolledWindow::OnSize, this );
-}
-
-wxSize MySubScrolledWindow::GetSizeAvailableForScrollTarget(const wxSize &size)
-{
-    wxSize sizeCanvas( size );
-    sizeCanvas.x -= 5;
-    sizeCanvas.y -= 5;
-    return sizeCanvas;
-}
-
-void MySubScrolledWindow::OnSize(wxSizeEvent &WXUNUSED(event))
-{
-    Layout();
-    AdjustScrollbars();
-}
-
-void MySubScrolledWindow::AddArgument()
-{
-    m_canvas->AddArgument();
-}
-
-void MySubScrolledWindow::DeleteArgument()
-{
-    m_canvas->DeleteArgument();
-}
-
-ColumnLabels::ColumnLabels(wxScrolled<wxWindow> *parent ) : wxWindow( parent, wxID_ANY )
-{
-    m_parent = parent;
-    Bind( wxEVT_PAINT, &ColumnLabels::OnPaint, this );
-}
-
-void ColumnLabels::OnPaint(wxPaintEvent &WXUNUSED(event))
-{
-    wxPaintDC dc( this );
-    int scrollunits, origin;
-    m_parent->GetViewStart( &origin, 0 );
-    m_parent->GetScrollPixelsPerUnit( &scrollunits, 0 );
-    dc.SetDeviceOrigin( -origin * scrollunits, 0 );
-    dc.DrawText( _( "Position" ), 5, 5 );
-    dc.DrawText( _( "Name" ), 105, 5 );
-    dc.DrawText( _( "Type" ), 205, 5 );
-}
 
 RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArguments> &arguments, const wxString &dbType, const wxString &subType) : wxDialog( parent, wxID_ANY, _( "" ) )
 {
-    m_panel = new wxPanel( this );
-    m_arguments = new MySubScrolledWindow( this, dbType, subType, arguments );
+    numArgs = 1;
+    m_currentLine = 0;
+    m_type = dbType;
+    m_subType = subType;
+    sizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *sizer_6 = new wxBoxSizer( wxVERTICAL );
+    m_panel = new wxPanel( this, wxID_ANY );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
     m_help = new wxButton( m_panel, wxID_HELP, _( "Help" ) );
     m_add = new wxButton( m_panel, wxID_ANY, _( "Add" ) );
     m_insert = new wxButton( m_panel, wxID_ANY, _( "Insert" ) );
     m_remove = new wxButton( m_panel, wxID_ANY, _( "Delete" ) );
-    set_properties();
-    do_layout();
+    wxStaticBoxSizer *main_sizer = new wxStaticBoxSizer( wxVERTICAL, m_panel, _( "Arguments" ) );
+
+    argPanel = new wxPanel( main_sizer->GetStaticBox(), wxID_ANY );
+    m_labe11 = new wxStaticText( argPanel, wxID_ANY, "Position", wxPoint( 4,4)  );
+    m_label2 = new wxStaticText( argPanel, wxID_ANY, "Name", wxPoint( 40,4 ) );
+    m_label3 = new wxStaticText( argPanel, wxID_ANY, "Type", wxPoint( 48,4 ) );
+
+    main_sizer->Add( argPanel, 0, wxEXPAND | wxBOTTOM, 4 );
+
+    args = new wxScrolledWindow( main_sizer->GetStaticBox(), wxID_ANY );
+
+    bmp = wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) );
+
+    fgs = new wxFlexGridSizer( 4, 0, 0 );
+    dummy_1 = new wxPanel( args, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
+    dummy_2 = new wxPanel( args, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
+    dummy_3 = new wxPanel( args, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
+    dummy_4 = new wxPanel( args, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
+    fgs->Add( dummy_1 );
+    fgs->Add( dummy_2 );
+    fgs->Add( dummy_3 );
+    fgs->Add( dummy_4 );
+
+    wxString pos;
+    for( std::vector<QueryArguments>::iterator it = arguments.begin(); it < arguments.end(); ++it )
+    {
+        pos.Printf("%d", (*it).m_pos );
+        wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
+        wxStaticText *number = new wxStaticText( args, wxID_ANY, pos, wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
+        wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, (*it).m_name );
+        name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
+        name->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
+        name->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+        TypeComboBox *type = new TypeComboBox( args, dbType.ToStdWstring(), subType.ToStdWstring(), (*it).m_type.ToStdString() );
+        type->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
+        type->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+        fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT, 8 );
+        fgs->Add( number, 0, wxRIGHT, 8 );
+        fgs->Add( name, 1, wxEXPAND | wxRIGHT, 8 );
+        fgs->Add( type, 0, wxEXPAND | wxRIGHT, 8 );
+        m_lines.push_back( QueryLines( statBmp, number, name, type ) );
+        m_lines.back().m_name->SetFocus();
+        m_currentLine++;
+    }
+    numArgs = arguments.size();
+    fgs->AddGrowableCol( 2 );
+
+    args->SetSizer( fgs );
+    args->SetScrollRate( 15, 15 );
+
+    wxSize minsize = fgs->CalcMin();
+    minsize.x += wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y );
+    minsize.y = -1;
+    args->SetMinClientSize( minsize );;
+
+    main_sizer->Add( args, 1, wxEXPAND, 0 );
+    sizer->Add( main_sizer, 1, wxEXPAND, 0 );
+    sizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_6->Add( m_ok, 0, wxEXPAND, 0 );
+    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_6->Add( m_cancel, 0, wxEXPAND, 0 );
+    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_6->Add( m_help, 0, wxEXPAND, 0 );
+    sizer_6->Add( 20, 20, 0, wxEXPAND, 0 );
+    sizer_6->Add( m_add, 0, wxEXPAND, 0 );
+    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_6->Add( m_insert, 0, wxEXPAND, 0 );
+    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_6->Add( m_remove, 0, wxEXPAND, 0 );
+    sizer->Add( sizer_6, 0, wxEXPAND | wxRIGHT, 0 );
+    m_panel->SetSizer( sizer );
+    sizer->SetSizeHints( this );
+    Layout();
+    m_panel->Bind( wxEVT_SIZE, &RetrievalArguments::OnSize, this );
     m_add->Bind( wxEVT_BUTTON, &RetrievalArguments::OnAddArgument, this );
+    m_insert->Bind( wxEVT_BUTTON, &RetrievalArguments::OnInsertArgument, this );
     m_remove->Bind( wxEVT_BUTTON, &RetrievalArguments::OnRemoveArgument, this );
+    m_remove->Bind( wxEVT_UPDATE_UI, &RetrievalArguments::OnRemoveUpdateUI, this );
+    m_insert->Bind( wxEVT_UPDATE_UI, &RetrievalArguments::OnRemoveUpdateUI, this );
+    CallAfter( &RetrievalArguments::UpdateHeader );
+    set_properties();
 }
 
 RetrievalArguments::~RetrievalArguments(void)
@@ -252,52 +137,180 @@ void RetrievalArguments::set_properties()
     SetTitle( _( "Specify Retrieval Arguments" ) );
 }
 
-void RetrievalArguments::do_layout()
+void RetrievalArguments::OnSize(wxSizeEvent &event)
 {
-    auto *sizer_1 = new wxBoxSizer( wxHORIZONTAL );
-    auto *sizer_2 = new wxBoxSizer( wxHORIZONTAL );
-    auto *sizer_3 = new wxBoxSizer( wxVERTICAL );
-    auto *sizer_4 = new wxBoxSizer( wxHORIZONTAL );
-    auto *sizer_5 = new wxBoxSizer( wxVERTICAL );
-    auto *sizer_7 = new wxBoxSizer( wxVERTICAL );
-    auto *sizer_6 = new wxBoxSizer( wxVERTICAL );
-    auto *sizer_8 = new wxStaticBoxSizer(new wxStaticBox( m_panel, wxID_ANY, ( "Argument" ) ), wxHORIZONTAL );
-    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_8->Add( m_arguments, 1, wxEXPAND, 0 );
-    sizer_4->Add( sizer_8, 1, wxEXPAND, 0 );
-    sizer_4->Add( 10, 10, 0, wxEXPAND, 0 );
-    sizer_6->Add( m_ok, 0, wxEXPAND, 0 );
-    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_6->Add( m_cancel, 0, wxEXPAND, 0 );
-    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_6->Add( m_help, 0, wxEXPAND, 0 );
-    sizer_5->Add( sizer_6, 0, wxEXPAND, 0 );
-    sizer_5->Add( 20, 20, 0, wxEXPAND, 0 );
-    sizer_7->Add( m_add, 0, wxEXPAND, 0 );
-    sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_7->Add( m_insert, 0, wxEXPAND, 0 );
-    sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_7->Add( m_remove, 0, wxEXPAND, 0 );
-    sizer_5->Add( sizer_7, 0, wxEXPAND, 0 );
-    sizer_4->Add( sizer_5, 0, wxEXPAND, 0 );
-    sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
-    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
-    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_panel->SetSizer( sizer_2 );
-    sizer_1->Add( m_panel, 0, wxEXPAND, 0 );
-    SetSizer( sizer_1 );
-    sizer_1->Fit( this );
-    Layout();
+    UpdateHeader();
+    event.Skip();
 }
 
 void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
 {
-    m_arguments->AddArgument();
+    Freeze();
+    std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
+    (*it).m_pointer->SetBitmap( wxNullBitmap );
+    numArgs++;
+    wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
+    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%d", numArgs ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
+    wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
+    name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
+    name->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
+    name->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+    TypeComboBox *type = new TypeComboBox( args, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
+    type->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
+    type->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+    fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT, 8 );
+    fgs->Add( number, 0, wxRIGHT, 8 );
+    fgs->Add( name, 1, wxEXPAND | wxRIGHT, 8 );
+    fgs->Add( type, 0, wxEXPAND | wxRIGHT, 8 );
+    m_lines.push_back( QueryLines( statBmp, number, name, type ) );
+    m_lines.back().m_name->SetFocus();
+    m_currentLine = numArgs;
+    sizer->Layout();
+    Thaw();
+}
+
+void RetrievalArguments::OnInsertArgument(wxCommandEvent &WXUNUSED(event))
+{
+    Freeze();
+    std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
+    int pos = m_currentLine * 4, position = wxAtoi( (*it).m_number->GetLabel() );
+    wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
+    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%d", m_currentLine ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
+    wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
+    name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
+    name->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
+    name->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+    TypeComboBox *type = new TypeComboBox( args, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
+    type->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
+    type->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+    (*it).m_pointer->SetBitmap( wxNullBitmap );
+    fgs->Insert( pos, statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT, 0 );
+    fgs->Insert( pos + 1, number, 0, wxRIGHT, 8 );
+    fgs->Insert( pos + 2, name, 1, wxEXPAND | wxRIGHT, 8 );
+    fgs->Insert( pos + 3, type, 0, wxEXPAND | wxRIGHT, 8 );
+    m_lines.insert( it, QueryLines( statBmp, number, name, type ) );
+    name->SetFocus();
+    for( it; it != m_lines.end(); ++it )
+    {
+        position++;
+        (*it).m_number->SetLabel( wxString::Format( "%d", position ) );
+    }
+    numArgs++;
+    sizer->Layout();
+    Thaw();
 }
 
 void RetrievalArguments::OnRemoveArgument(wxCommandEvent &WXUNUSED(event))
 {
-    m_arguments->DeleteArgument();
+    Freeze();
+    int counter = m_currentLine;
+    std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
+    (*it).m_pointer->Destroy();
+    (*it).m_name->Destroy();
+    (*it).m_number->Destroy();
+    (*it).m_type->Destroy();
+    m_lines.erase( it );
+    sizer->Layout();
+    it = std::next( m_lines.begin(), m_currentLine - 1 );
+    if( m_lines.size() > 0 )
+    {
+        if( it == m_lines.end() )
+        {
+            it--;
+            counter--;
+            m_currentLine--;
+        }
+        (*it).m_pointer->SetBitmap( bmp );
+        for( it; it != m_lines.end(); ++it )
+        {
+            (*it).m_number->SetLabel( wxString::Format( "%d", counter ) );
+            counter++;
+        }
+    }
+    numArgs--;
+    Thaw();
+}
+
+void RetrievalArguments::UpdateHeader()
+{
+    m_label2->SetPosition( wxPoint( dummy_3->GetPosition().x, -1 ) );
+    m_label3->SetPosition( wxPoint( dummy_4->GetPosition().x, -1 ) );
+}
+
+void RetrievalArguments::OnKeyDown(wxKeyEvent &event)
+{
+    Freeze();
+    if( event.GetKeyCode() == WXK_UP )
+    {
+        if( m_currentLine > 1 )
+        {
+            std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
+            (*it).m_pointer->SetBitmap( wxNullBitmap );
+            m_currentLine--;
+            it = std::next( m_lines.begin(), m_currentLine - 1 );
+            (*it).m_pointer->SetBitmap( bmp );
+            (*it).m_name->SetFocus();
+        }
+        else
+            event.Skip();
+    }
+    else if( event.GetKeyCode () == WXK_DOWN )
+    {
+        if( m_currentLine < numArgs )
+        {
+            std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
+            (*it).m_pointer->SetBitmap( wxNullBitmap );
+            m_currentLine++;
+            it = std::next( m_lines.begin(), m_currentLine - 1 );
+            (*it).m_pointer->SetBitmap( bmp );
+            (*it).m_name->SetFocus();
+        }
+        else
+            event.Skip();
+    }
+    event.Skip();
+    Thaw();
+}
+
+void RetrievalArguments::OnMouse(wxMouseEvent &event)
+{
+    Freeze();
+    wxTextCtrl *name = nullptr;
+    TypeComboBox *type = nullptr;
+    bool found = false;
+    name = dynamic_cast<wxTextCtrl *>( event.GetEventObject() );
+    type = dynamic_cast<TypeComboBox *>( event.GetEventObject() );
+    std::list<QueryLines>::iterator it;
+    for( it = m_lines.begin(); it != m_lines.end() && !found; ++it )
+    {
+        if( name && (*it).m_name == name )
+            found = true;
+        else if( type && (*it).m_type == type )
+            found = true;
+    }
+    if( found )
+        --it;
+    int newRow = wxAtoi( (*it).m_number->GetLabel() ) - 1;
+    if( newRow != m_currentLine )
+    {
+        std::list<QueryLines>::iterator oldit = std::next( m_lines.begin(), m_currentLine - 1 );
+        (*oldit).m_pointer->SetBitmap( wxNullBitmap );
+        (*it).m_pointer->SetBitmap( bmp );
+        m_currentLine = wxAtoi( (*it).m_number->GetLabel() );
+    }
+    event.Skip();
+    Thaw();
+}
+
+void RetrievalArguments::OnRemoveUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_lines.empty() )
+        event.Enable( false );
+    else
+        event.Enable( true );
+}
+
+std::list<QueryLines> &RetrievalArguments::GetArgumentLines()
+{
+    return m_lines;
 }

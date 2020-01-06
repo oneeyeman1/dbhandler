@@ -33,7 +33,11 @@ libdialogs_la_SOURCES =  \
 	quickselect.cpp \
 	quickselect.h \
 	retrievalarguments.cpp \
-	retrievalarguments.h
+	retrievalarguments.h \
+	typecombobox.cpp \
+	typecombobox.h \
+	gotoline.cpp \
+	gotoline.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \

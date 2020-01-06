@@ -12,6 +12,7 @@
 #include "HeaderGrid.h"
 #include "GridTableShape.h"
 #include "FieldShape.h"
+#include "fieldtypeshape.h"
 #include "commentfieldshape.h"
 #include "commenttableshape.h"
 #include "MyErdTable.h"
@@ -82,6 +83,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         m_pGrid->AcceptChild( wxT( "wxSFTextShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFBitmapShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFShapeBase" ) );
+        m_pGrid->AcceptChild( wxT( "FieldTypeShape" ) );
         m_pGrid->Activate( true );
         SF_ADD_COMPONENT( m_pGrid, wxT( "main_grid" ) );
     }
@@ -156,6 +158,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         m_pGrid->AcceptChild( wxT( "wxSFBitmapShape" ) );
         m_pGrid->AcceptChild( wxT( "wxSFShapeBase" ) );
         m_pGrid->AcceptChild( wxT( "CommentFieldShape" ) );
+        m_pGrid->AcceptChild( wxT( "FieldTypeShape" ) );
         m_pGrid->Activate( false );
         SF_ADD_COMPONENT( m_pGrid, wxT( "main_grid" ) );
     }
@@ -341,7 +344,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
             else
                 delete pCol;
         }
-        wxSFTextShape *type_shape = new wxSFTextShape();
+        FieldTypeShape *type_shape = new FieldTypeShape();
         if( type_shape )
         {
             type_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
@@ -353,6 +356,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
                 SetCommonProps( type_shape );
                 type_shape->GetFont().SetPointSize( 8 );
                 type_shape->SetText( field->GetFullType() );
+                type_shape->SetField( field );
             }
             else
                 delete type_shape;

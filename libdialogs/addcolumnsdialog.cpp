@@ -23,11 +23,13 @@ AddColumnsDialog::AddColumnsDialog(wxWindow *parent, int type, const std::vector
     m_panel = new wxPanel( this, wxID_ANY );
     m_fields = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
     m_paste = new wxButton( m_panel, wxID_OK, _( "Paste" ) );
+    m_paste->SetDefault();
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
     set_properties();
     do_layout();
     // end wxGlade
     m_paste->Bind( wxEVT_UPDATE_UI, &AddColumnsDialog::OnPasteUpdateUI, this );
+    m_fields->Bind( wxEVT_LISTBOX_DCLICK, &AddColumnsDialog::OnFieldsDoubleClick, this );
 }
 
 AddColumnsDialog::~AddColumnsDialog(void)
@@ -1286,3 +1288,7 @@ wxListBox *AddColumnsDialog::GetFieldsControl() const
     return m_fields;
 }
 
+void AddColumnsDialog::OnFieldsDoubleClick(wxCommandEvent &event)
+{
+    EndModal( wxID_OK );
+}

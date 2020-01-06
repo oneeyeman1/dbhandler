@@ -16,6 +16,7 @@
 
 #include <map>
 #include <vector>
+#include <list>
 #include "wx/wizard.h"
 #include "wx/filepicker.h"
 #include "wx/dynlib.h"
@@ -57,7 +58,9 @@
 #include "bitmappanel.h"
 #include "newquery.h"
 #include "quickselect.h"
+#include "typecombobox.h"
 #include "retrievalarguments.h"
+#include "gotoline.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -349,5 +352,28 @@ extern "C" WXEXPORT int GetQueryArguments(wxWindow *parent, std::vector<QueryArg
     RetrievalArguments dlg( parent, arguments, dbType, subType );
     dlg.Center();
     int result = dlg.ShowModal();
+    if( result == wxID_OK )
+    {
+        std::list<QueryLines> lines = dlg.GetArgumentLines();
+        arguments.clear();
+        for( std::list<QueryLines>::iterator it = lines.begin(); it != lines.end(); ++it )
+        {
+            arguments.clear();
+            arguments.push_back( QueryArguments( wxAtoi( (*it).m_number->GetLabel() ), (*it).m_name->GetValue(), (*it).m_type->GetValue() ) );
+        }
+    }
+    return result;
+}
+
+extern "C" WXEXPORT int GotoLine(wxWindow *parent, int &lineNo)
+{
+    int result;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    GoToDialog dlg( parent );
+    result = dlg.ShowModal();
+    if( result == wxID_OK )
+        lineNo = wxAtoi( dlg.GetLineNumberCtrl()->GetValue() );
     return result;
 }

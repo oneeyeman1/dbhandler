@@ -9,6 +9,15 @@ enum ViewType
 };
 #endif
 
+enum DrawinViewMenu
+{
+    QuickQueryMenu,
+    SQLSelectMenu,
+    QueryMenu,
+    ExternalMenu,
+    QuerySyntaxMenu
+};
+
 // The view using MyCanvas to show its contents
 class DrawingView : public wxView
 {
@@ -59,14 +68,32 @@ public:
     void FieldTextUpdateUI(wxUpdateUIEvent &event);
     void OnDataSource(wxCommandEvent &event);
     void OnFontSeectionChange(wxCommandEvent &event);
+    void OnQueryPreviewUpdateUI(wxUpdateUIEvent &event);
+    void OnShowDataTypes(wxCommandEvent &event);
+    void OnShowSQLBox(wxCommandEvent &event);
+    void OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event);
+    void OnConvertToSyntax(wxCommandEvent &event);
+    void OnUndo(wxCommandEvent &event);
+    void OnCut(wxCommandEvent &event);
+    void OnCopy(wxCommandEvent &event);
+    void OnPaste(wxCommandEvent &event);
+    void OnClear(wxCommandEvent &event);
+    void OnSelectAll(wxCommandEvent &event);
+    void OnFind(wxCommandEvent &event);
+    void OnFindNext(wxCommandEvent &event);
+    void OnFindReplaceText(wxFindDialogEvent &event);
+    void OnGotoLine(wxCommandEvent &event);
+    void OnConvertToGraphics(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
     DrawingDocument* GetDocument();
 protected:
+    void SetQueryMenu(const int queryType);
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);
     void CreateViewToolBar();
     int AddSize(int size, int lfHeight);
+    void FindTextInEditor();
 #ifdef __WXMSW__
     static int CALLBACK EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam);
 #endif
@@ -87,14 +114,19 @@ private:
     wxNotebook *m_queryBook;
     wxBoxSizer *sizer, *mainSizer;
     WhereHavingPage *m_page2, *m_page4;
+    SortGroupByPage *m_page1, *m_page3;
     SyntaxPropPage *m_page6;
     wxCriticalSection *pcs;
-    int m_source, m_presentation;
+    int m_source, m_presentation, m_searchPos, m_start, m_end, m_searchFlags, m_searchDirection;
+    wxString m_stringToFind;
     std::vector<Field *> m_queryFields;
     std::vector<DatabaseTable *> m_selectTableName;
 //    std::vector<wxString> m_selectFields;
     std::vector<QueryArguments> m_arguments;
     DesignCanvas *m_designCanvas;
+    wxStyledTextCtrl *m_edit;
+    wxFindReplaceDialog *m_findDlg;
+    wxFindReplaceData m_data;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
