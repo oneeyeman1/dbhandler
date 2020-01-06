@@ -17,6 +17,8 @@ class WXEXPORT SortGroupByPage : public wxPanel
 public:
     SortGroupByPage(wxWindow *parent);
     ~SortGroupByPage();
+    wxListCtrl *GetSourceList();
+    wxListCtrl *GetDestList();
 protected:
     void set_properties();
     void do_layout();
