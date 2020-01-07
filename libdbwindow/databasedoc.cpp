@@ -169,7 +169,7 @@ MyErdTable *DrawingDocument::GetReferencedTable(const wxString &tableName)
     MyErdTable *table = NULL;
     for( std::vector<MyErdTable *>::iterator it2 = m_tables.begin(); it2 < m_tables.end() && !found; it2++ )
     {
-        if( const_cast<DatabaseTable &>( (*it2)->GetTable() ).GetTableName() == tableName )
+        if( const_cast<DatabaseTable *>( (*it2)->GetTable() )->GetTableName() == tableName )
         {
             table = (*it2);
             found = true;

@@ -95,7 +95,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
     {
         if( !IsTableDisplayed( (*it)->GetTableName() ) )
         {
-            std::vector<Field *> fields = const_cast<DatabaseTable &>( (*it)->GetTable() ).GetFields();
+            std::vector<Field *> fields = const_cast<DatabaseTable *>( (*it)->GetTable() )->GetFields();
             m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
             if( (*it) == tables.back() && dynamic_cast<DrawingView *>( m_view )->GetViewType() == DatabaseView )
                 (*it)->Select( true );
@@ -115,7 +115,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
     }
     for( std::vector<MyErdTable *>::iterator it1 = m_displayedTables.begin(); it1 < m_displayedTables.end(); it1++ )
     {
-        wxString name = const_cast<DatabaseTable &>( (*it1)->GetTable() ).GetTableName();
+        wxString name = const_cast<DatabaseTable *>( (*it1)->GetTable() )->GetTableName();
         if( std::find( selections.begin(), selections.end(), name ) == selections.end() )
             selections.push_back( name );
         if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
@@ -132,7 +132,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
     bool found = false, secondIteration = false;
     for( std::vector<MyErdTable *>::iterator it2 = tables.begin(); it2 < tables.end(); it2++ )
     {
-        std::map<int, std::vector<FKField *> > foreignKeys = const_cast<DatabaseTable &>( (*it2)->GetTable() ).GetForeignKeyVector();
+        std::map<int, std::vector<FKField *> > foreignKeys = const_cast<DatabaseTable *>( (*it2)->GetTable() )->GetForeignKeyVector();
         for( std::map<int, std::vector<FKField *> >::iterator it3 = foreignKeys.begin(); it3 != foreignKeys.end(); it3++ )
         {
 //            if( ((DrawingView *) m_view)->GetViewType() == DatabaseView )
@@ -156,7 +156,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                         pConstr->SetRefColumn( (*it4)->GetReferencedFieldName() );
                         pConstr->SetRefTable( referencedTableName );
                         pConstr->SetType( QueryConstraint::foreignKey );
-                        pConstr->SetFKDatabaseTable( &(*it2)->GetTable() );
+                        pConstr->SetFKDatabaseTable( (*it2)->GetTable() );
                         dynamic_cast<QueryConstraint *>( pConstr )->SetSign( 0 );
                     }
                     if( ((DrawingView *) m_view)->GetViewType() == DatabaseView )
@@ -168,7 +168,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                         pConstr->SetRefColumn( (*it4)->GetReferencedFieldName() );
                         pConstr->SetRefTable( referencedTableName );
                         pConstr->SetType( QueryConstraint::foreignKey );
-                        pConstr->SetFKDatabaseTable( &(*it2)->GetTable() );
+                        pConstr->SetFKDatabaseTable( (*it2)->GetTable() );
                         pConstr->SetPGMatch( (*it4)->GetMatchOPtion() );
                     }
                     if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
@@ -329,7 +329,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
                 tbl->Select( false );
             Refresh();
             if( fld )
-                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), const_cast<DatabaseTable &>( tbl->GetTable() ).GetTableName(), false );
+                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), const_cast<DatabaseTable *>( tbl->GetTable() )->GetTableName(), false );
         }
     }
 }
@@ -426,7 +426,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                         selectedCount++;
                     node = node->GetNext();
                 }
-                if( selectedCount == const_cast<DatabaseTable &>( erdTable->GetTable() ).GetFields().size() )
+                if( selectedCount == const_cast<DatabaseTable *>( erdTable->GetTable() )->GetFields().size() )
                     allSelected = 1;
                 else
                     allSelected = -1;
@@ -579,8 +579,8 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
     }
     if( isTable )
     {
-        table = &( const_cast<DatabaseTable &>( erdTable->GetTable() ) );
-        name = const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableName();
+        table = ( const_cast<DatabaseTable *>( erdTable->GetTable() ) );
+        name = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName();
     }
     else
     {
@@ -731,7 +731,7 @@ void DatabaseCanvas::CreateFKConstraint(const DatabaseTable *fkTable, const std:
     bool found = false;
     for( std::vector<MyErdTable *>::iterator it = m_displayedTables.begin(); it < m_displayedTables.end() && !found; it ++ )
     {
-        if( const_cast<DatabaseTable &>( (*it)->GetTable() ).GetTableName() == foreignKeyField.at( 0 )->GetReferencedTableName() )
+        if( const_cast<DatabaseTable *>( (*it)->GetTable() )->GetTableName() == foreignKeyField.at( 0 )->GetReferencedTableName() )
         {
             found = true;
             for( std::vector<FKField *>::const_iterator it4 = foreignKeyField.begin(); it4 < foreignKeyField.end(); it4++ )
@@ -819,15 +819,15 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             bool found1 = false, found2 = false;
             for( std::vector<MyErdTable *>::iterator it = m_displayedTables.begin(); it < m_displayedTables.end() && !found1 && !found2; it++ )
             {
-                if( const_cast<DatabaseTable &>( (*it)->GetTable() ).GetTableName() == const_cast<DatabaseTable *>( constraint->GetFKTable() )->GetTableName() )
+                if( const_cast<DatabaseTable *>( (*it)->GetTable() )->GetTableName() == const_cast<DatabaseTable *>( constraint->GetFKTable() )->GetTableName() )
                 {
                     (*it)->Select( true );
-                    fkTable = const_cast<DatabaseTable &>( (*it)->GetTable() ).GetTableName();
+                    fkTable = const_cast<DatabaseTable *>( (*it)->GetTable() )->GetTableName();
                     found1 = true;
                 }
-                if( const_cast<DatabaseTable &>( (*it)->GetTable() ).GetTableName() == refTableName )
+                if( const_cast<DatabaseTable *>( (*it)->GetTable() )->GetTableName() == refTableName )
                 {
-                    refTable = const_cast<DatabaseTable *>( &(*it)->GetTable() )->GetTableName();
+                    refTable = const_cast<DatabaseTable *>( (*it)->GetTable() )->GetTableName();
                     found2 = true;
                 }
             }
