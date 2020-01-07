@@ -25,6 +25,8 @@
 		E33E6F8B1EAD3508003A0B92 /* liblibpropertypages.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E33E6F8A1EAD3508003A0B92 /* liblibpropertypages.dylib */; };
 		E3607DC62379285A00267C14 /* taborder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3607DC42379285A00267C14 /* taborder.cpp */; };
 		E3607DC72379285A00267C14 /* taborder.h in Headers */ = {isa = PBXBuildFile; fileRef = E3607DC52379285A00267C14 /* taborder.h */; };
+		E3607DD223C4422900267C14 /* fieldtypeshape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3607DD023C4422900267C14 /* fieldtypeshape.cpp */; };
+		E3607DD323C4422900267C14 /* fieldtypeshape.h in Headers */ = {isa = PBXBuildFile; fileRef = E3607DD123C4422900267C14 /* fieldtypeshape.h */; };
 		E38709A41D43BA9C004EF478 /* liblibshapeframework.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E38709A31D43BA9C004EF478 /* liblibshapeframework.dylib */; };
 		E38709B51D4CF564004EF478 /* column.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38709A51D4CF564004EF478 /* column.cpp */; };
 		E38709B61D4CF564004EF478 /* column.h in Headers */ = {isa = PBXBuildFile; fileRef = E38709A61D4CF564004EF478 /* column.h */; };
@@ -84,6 +86,8 @@
 		E33E6F8A1EAD3508003A0B92 /* liblibpropertypages.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibpropertypages.dylib; path = ../Build/Products/Debug/liblibpropertypages.dylib; sourceTree = "<group>"; };
 		E3607DC42379285A00267C14 /* taborder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = taborder.cpp; sourceTree = "<group>"; };
 		E3607DC52379285A00267C14 /* taborder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = taborder.h; sourceTree = "<group>"; };
+		E3607DD023C4422900267C14 /* fieldtypeshape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fieldtypeshape.cpp; sourceTree = "<group>"; };
+		E3607DD123C4422900267C14 /* fieldtypeshape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fieldtypeshape.h; sourceTree = "<group>"; };
 		E38708BE1D2B61D7004EF478 /* liblibdbwindow.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdbwindow.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E38709A31D43BA9C004EF478 /* liblibshapeframework.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibshapeframework.dylib; path = ../Build/Products/Debug/liblibshapeframework.dylib; sourceTree = "<group>"; };
 		E38709A51D4CF564004EF478 /* column.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = column.cpp; sourceTree = "<group>"; };
@@ -161,6 +165,8 @@
 		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
+				E3607DD023C4422900267C14 /* fieldtypeshape.cpp */,
+				E3607DD123C4422900267C14 /* fieldtypeshape.h */,
 				E3607DC42379285A00267C14 /* taborder.cpp */,
 				E3607DC52379285A00267C14 /* taborder.h */,
 				E39B2DC92353E59900F72DF2 /* fontcombobox.cpp */,
@@ -238,6 +244,7 @@
 				E38709C41D4CF564004EF478 /* table.h in Headers */,
 				E32A501D2260236300A57BD1 /* designcanvas.h in Headers */,
 				E3E91D391DBF812100675CF8 /* ErdLineShape.h in Headers */,
+				E3607DD323C4422900267C14 /* fieldtypeshape.h in Headers */,
 				E33E6F771EAD303C003A0B92 /* constraintsign.h in Headers */,
 				E32A502522A3A4B200A57BD1 /* designfield.h in Headers */,
 				E33E6F6F1E99AD0B003A0B92 /* HeaderGrid.h in Headers */,
@@ -316,6 +323,7 @@
 				E32A502422A3A4B200A57BD1 /* designfield.cpp in Sources */,
 				E38709C31D4CF564004EF478 /* table.cpp in Sources */,
 				E33E6F721EA5CAA6003A0B92 /* databasetemplate.cpp in Sources */,
+				E3607DD223C4422900267C14 /* fieldtypeshape.cpp in Sources */,
 				E3E91D841DDEB73400675CF8 /* FieldShape.cpp in Sources */,
 				E3E91D241D6D467C00675CF8 /* dbview.cpp in Sources */,
 				E32A502622A3A4B200A57BD1 /* designlabel.cpp in Sources */,
