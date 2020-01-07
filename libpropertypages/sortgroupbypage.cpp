@@ -36,6 +36,7 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent) : wxPanel( parent )
     m_dest->Bind( wxEVT_LIST_BEGIN_DRAG, &SortGroupByPage::OnBeginDrag, this );
     Bind( wxEVT_LEFT_UP, &SortGroupByPage::OnLeftUp, this );
     Bind( wxEVT_RIGHT_DOWN, &SortGroupByPage::OnRightDown, this );
+    m_source->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
 }
 
 SortGroupByPage::~SortGroupByPage()
@@ -115,5 +116,22 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
         this->ReleaseMouse();
         m_isDragging = false;
         m_dragDest = nullptr;
+    }
+}
+
+void SortGroupByPage::OnMouseMove(wxMouseEvent &event)
+{
+    wxListCtrl *list = nullptr;
+    int flags;
+    const wxPoint& pt = event.GetPosition();
+    if( m_source->GetRect().Contains( pt ) )
+        list = m_source;
+    else if( m_dest->GetRect().Contains( pt ) )
+        list = m_dest;
+    if( list )
+    {
+        int pos = list->HitTest( pt, flags );
+        if( list->GetItemState( pos, wxLIST_STATE_FOCUSED ) )
+            list->SetItemState( pos, 0, wxLIST_STATE_FOCUSED );
     }
 }

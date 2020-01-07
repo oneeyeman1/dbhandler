@@ -26,6 +26,7 @@ protected:
     void OnBeginDrag(wxListEvent &event);
     void OnLeftUp(wxMouseEvent &event);
     void OnRightDown(wxMouseEvent &event);
+    void OnMouseMove(wxMouseEvent &event);
 private:
     wxListCtrl *m_source, *m_dest, *m_dragSource, *m_dragDest;
     wxStaticText *m_label;
