@@ -22,11 +22,16 @@ public:
 protected:
     void set_properties();
     void do_layout();
+    void FinishDragging(const wxPoint &pt);
     void OnBeginDrag(wxListEvent &event);
+    void OnLeftUp(wxMouseEvent &event);
+    void OnRightDown(wxMouseEvent &event);
 private:
-    wxListCtrl *m_source, *m_dest;
+    wxListCtrl *m_source, *m_dest, *m_dragSource, *m_dragDest;
     wxStaticText *m_label;
     wxString m_item;
+    int m_itemPos;
+    bool m_isDragging;
 };
 
 #endif // GROUPBYPAGE_H
