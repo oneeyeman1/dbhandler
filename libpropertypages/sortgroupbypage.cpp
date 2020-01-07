@@ -30,6 +30,7 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent) : wxPanel( parent )
     m_dest = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
     set_properties();
     do_layout();
+    m_source->Bind( wxEVT_LIST_BEGIN_DRAG, &SortGroupByPage::OnBeginDrag, this );
 }
 
 SortGroupByPage::~SortGroupByPage()
@@ -39,13 +40,7 @@ SortGroupByPage::~SortGroupByPage()
 
 void SortGroupByPage::set_properties()
 {
-    wxListItem itemColSource;
-    itemColSource.SetText( "Column 1" );
-    itemColSource.SetImage( -1 );
     m_source->InsertColumn( 0, _( "" ), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
-    wxListItem itemColDest;
-    itemColDest.SetText( "Column 1" );
-    itemColDest.SetImage( -1 );
     m_dest->InsertColumn( 0, _( "" ), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
 }
 
@@ -55,9 +50,9 @@ void SortGroupByPage::do_layout()
     auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
     sizer1->Add( m_label, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer2->Add( m_source, 0, wxEXPAND, 0 );
-    sizer2->Add( m_dest, 0, wxEXPAND, 0 );
-    sizer1->Add( sizer2 );
+    sizer2->Add( m_source, 1, wxEXPAND, 0 );
+    sizer2->Add( m_dest, 1, wxEXPAND, 0 );
+    sizer1->Add( sizer2, 1, wxEXPAND, 0 );
     SetSizer( sizer1 );
 }
 
@@ -69,4 +64,13 @@ wxListCtrl *SortGroupByPage::GetSourceList()
 wxListCtrl *SortGroupByPage::GetDestList()
 {
     return m_dest;
+}
+
+void SortGroupByPage::OnBeginDrag(wxListEvent &event)
+{
+    int flags;
+    const wxPoint& pt = event.m_pointDrag;
+    wxListCtrl *source = dynamic_cast<wxListCtrl *>( event.GetEventObject() );
+    m_item = source->GetItemText( source->HitTest( pt, flags ) );
+    this->CaptureMouse();
 }

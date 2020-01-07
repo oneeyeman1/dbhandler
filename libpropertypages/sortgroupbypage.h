@@ -22,9 +22,11 @@ public:
 protected:
     void set_properties();
     void do_layout();
+    void OnBeginDrag(wxListEvent &event);
 private:
     wxListCtrl *m_source, *m_dest;
     wxStaticText *m_label;
+    wxString m_item;
 };
 
 #endif // GROUPBYPAGE_H
