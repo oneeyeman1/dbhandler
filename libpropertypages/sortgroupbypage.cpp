@@ -37,6 +37,8 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent) : wxPanel( parent )
     Bind( wxEVT_LEFT_UP, &SortGroupByPage::OnLeftUp, this );
     Bind( wxEVT_RIGHT_DOWN, &SortGroupByPage::OnRightDown, this );
     m_source->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
+    m_dest->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
+    Bind( wxEVT_MOUSE_CAPTURE_LOST, &SortGroupByPage::OnMouseCaptureLost, this );
 }
 
 SortGroupByPage::~SortGroupByPage()
@@ -80,8 +82,11 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
     if( m_dragSource == m_source )
         m_itemPos = m_dragSource->HitTest( pt, flags );
     else
+    {
+        m_sourcePos = m_dragSource->HitTest( pt, flags );
         m_itemPos = m_dragSource->GetItemData( m_dragSource->HitTest( pt, flags ) );
-    m_item = m_dragSource->GetItemText( m_itemPos );
+    }
+    m_item = m_dragSource->GetItemText( m_dragSource->HitTest( pt, flags ) );
     m_isDragging = true;
     this->CaptureMouse();
 }
@@ -106,10 +111,13 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             m_dragDest = m_dest;
         if( m_dragSource != m_dragDest )
         {
-            m_dragSource->DeleteItem( m_itemPos );
+            long position;
+            m_dragSource->DeleteItem( m_dragDest == m_dest ? m_itemPos : m_sourcePos );
             if( m_dragDest == m_dest )
-                m_itemPos = m_dragDest->GetItemCount();
-            long item = m_dragDest->InsertItem( m_itemPos, m_item );
+                position = m_dragDest->GetItemCount();
+            else
+                position = m_itemPos;
+            long item = m_dragDest->InsertItem( position, m_item );
             if( m_dragDest == m_dest )
                 m_dragDest->SetItemData( item, m_itemPos );
         }
@@ -128,10 +136,14 @@ void SortGroupByPage::OnMouseMove(wxMouseEvent &event)
         list = m_source;
     else if( m_dest->GetRect().Contains( pt ) )
         list = m_dest;
-    if( list )
+    if( list && !m_isDragging )
     {
         int pos = list->HitTest( pt, flags );
         if( list->GetItemState( pos, wxLIST_STATE_FOCUSED ) )
             list->SetItemState( pos, 0, wxLIST_STATE_FOCUSED );
     }
+}
+
+void SortGroupByPage::OnMouseCaptureLost(wxMouseCaptureLostEvent &event)
+{
 }
