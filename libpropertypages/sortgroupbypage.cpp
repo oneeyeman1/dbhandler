@@ -139,7 +139,7 @@ void SortGroupByPage::OnMouseMove(wxMouseEvent &event)
     if( list && !m_isDragging )
     {
         int pos = list->HitTest( pt, flags );
-        if( list->GetItemState( pos, wxLIST_STATE_FOCUSED ) )
+        if( pos != wxNOT_FOUND && list->GetItemState( pos, wxLIST_STATE_FOCUSED ) )
             list->SetItemState( pos, 0, wxLIST_STATE_FOCUSED );
     }
 }
