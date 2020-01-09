@@ -12,6 +12,9 @@
 #ifndef GROUPBYPAGE_H
 #define GROUPBYPAGE_H
 
+#define ADDFIELD 0
+#define REMOVEFIELD 1
+
 class WXEXPORT SortGroupByPage : public wxPanel
 {
 public:

@@ -23,6 +23,8 @@
 #include "wx/listctrl.h"
 #include "sortgroupbypage.h"
 
+const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
+
 SortGroupByPage::SortGroupByPage(wxWindow *parent) : wxPanel( parent )
 {
     m_isDragging = false;
@@ -121,6 +123,11 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             if( m_dragDest == m_dest )
                 m_dragDest->SetItemData( item, m_itemPos );
         }
+        wxCommandEvent event( wxEVT_CHANGE_QUERY );
+        event.SetEventObject( this );
+        event.SetInt( m_dragDest == m_dest ? ADDFIELD : REMOVEFIELD );
+        event.SetString( m_item );
+        GetParent()->GetParent()->GetEventHandler()->ProcessEvent( event );
         this->ReleaseMouse();
         m_isDragging = false;
         m_dragDest = nullptr;
