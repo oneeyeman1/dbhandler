@@ -14,7 +14,6 @@
 #include <string>
 #include "wx/dynlib.h"
 #include "wx/grid.h"
-#include "wx/docmdi.h"
 #include "wx/headerctrl.h"
 #include "wherehavingpage.h"
 
@@ -262,7 +261,7 @@ void WhereHavingPage::OnGridCellChaqnged(wxGridEvent &event)
             wxCommandEvent evt( wxEVT_CHANGE_QUERY );
             evt.SetEventObject( this );
             evt.SetClientData( &(*it) );
-            dynamic_cast<wxDocMDIChildFrame *>( GetParent()->GetParent() )->GetEventHandler()->ProcessEvent( evt );        }
+            GetParent()->GetParent()->GetEventHandler()->ProcessEvent( evt );        }
     }
 }
 
