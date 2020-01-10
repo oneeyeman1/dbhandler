@@ -390,9 +390,9 @@ void MyErdTable::SetCommonProps(wxSFShapeBase* shape)
     shape->SetHBorder( 0 );
 }
 
-const DatabaseTable &MyErdTable::GetTable()
+const DatabaseTable *MyErdTable::GetTable()
 {
-    return *m_table;
+    return m_table;
 }
 
 wxSFTextShape *MyErdTable::GetLabel()

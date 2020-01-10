@@ -484,9 +484,9 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         }
     }
     if( type == 0 )
-        res = GetDocument()->GetDatabase()->SetTableProperties( &erdTable->GetTable(), *tableProperties, isLogOnly, const_cast<std::wstring &>( command.ToStdWstring() ), errors );
+        res = GetDocument()->GetDatabase()->SetTableProperties( erdTable->GetTable(), *tableProperties, isLogOnly, const_cast<std::wstring &>( command.ToStdWstring() ), errors );
     if( type == 1 )
-        res = GetDocument()->GetDatabase()->SetFieldProperties( const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableName(), const_cast<DatabaseTable &>( erdTable->GetTable() ).GetTableOwner(), field->GetField()->GetFieldName(), field->GetField(), isLogOnly, const_cast<std::wstring &>( command.ToStdWstring() ), errors );
+        res = GetDocument()->GetDatabase()->SetFieldProperties( const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName(), const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableOwner(), field->GetField()->GetFieldName(), field->GetField(), isLogOnly, const_cast<std::wstring &>( command.ToStdWstring() ), errors );
     if( res )
     {
         for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
@@ -507,7 +507,7 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         {
             if( type == 0 )
             {
-                dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) erdTable)->GetTable() );
+                dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) erdTable)->GetTable() );
                 Database *db = GetDocument()->GetDatabase();
                 {
 #if defined __WXMSW__ && _MSC_VER < 1900
@@ -688,10 +688,10 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             std::vector<MyErdTable *> tables = ((DrawingDocument *)GetDocument())->GetTables();
             for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); ++it )
             {
-                const DatabaseTable table = (*it)->GetTable();
-                for( std::vector<Field *>::const_iterator it1 = table.GetFields().begin(); it1 < table.GetFields().end(); ++it1 )
+                const DatabaseTable *table = (*it)->GetTable();
+                for( std::vector<Field *>::const_iterator it1 = table->GetFields().begin(); it1 < table->GetFields().end(); ++it1 )
                 {
-                    m_page3->GetSourceList()->InsertItem( i++, "\"" + table.GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
+                    m_page3->GetSourceList()->InsertItem( i++, "\"" + table->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
                 }
             }
             m_page1->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
@@ -777,7 +777,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
     {
         if( (*it)->IsSelected() )
-            dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
+            dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) *it)->GetTable() );
     }
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -835,7 +835,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
     {
         if( (*it)->IsSelected() )
-            dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
+            dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) *it)->GetTable() );
     }
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -911,7 +911,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
                 erdTable = (MyErdTable *)(*it);
                 if( erdTable )
                 {
-                    dbTable = const_cast<DatabaseTable *>( &((MyErdTable *) *it)->GetTable() );
+                    dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) *it)->GetTable() );
                     type = 0;
                     found = true;
                 }
@@ -926,9 +926,9 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
                 if( my_table )
                 {
                     erdTable = my_table;
-                    tableName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetTableName();
-                    schemaName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetSchemaName();
-                    ownerName = const_cast<DatabaseTable *>( &erdTable->GetTable() )->GetTableOwner();
+                    tableName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName();
+                    schemaName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetSchemaName();
+                    ownerName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableOwner();
                     type = 1;
                     found = true;
                 }
@@ -1071,7 +1071,7 @@ void DrawingView::OnAlterTable(wxCommandEvent &WXUNUSED(event))
     {
         TABLE func = (TABLE) lib1.GetSymbol( "CreateDatabaseWindow" );
         MyErdTable *erdTable = dynamic_cast<MyErdTable *>( (*it) );
-        func( parent, GetDocumentManager(), dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase(), const_cast<DatabaseTable *>( &( erdTable->GetTable() ) ), wxEmptyString );                 // create with possible alteration table
+        func( parent, GetDocumentManager(), dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase(), const_cast<DatabaseTable *>( erdTable->GetTable() ), wxEmptyString );                 // create with possible alteration table
     }
     else if( !lib1.IsLoaded() )
         wxMessageBox( "Error loading the library. Please re-install the software and try again." );
@@ -1110,7 +1110,7 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
     {
         TABLE func = (TABLE) lib1.GetSymbol( "CreateDatabaseWindow" );
         MyErdTable *erdTable = dynamic_cast<MyErdTable *>( (*it) );
-        func( parent, GetDocumentManager(), dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase(), const_cast<DatabaseTable *>( &( erdTable->GetTable() ) ), field->GetField()->GetFieldName() );                 // display field parameters
+        func( parent, GetDocumentManager(), dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase(), const_cast<DatabaseTable *>( erdTable->GetTable() ), field->GetField()->GetFieldName() );                 // display field parameters
     }
     else if( !lib1.IsLoaded() )
         wxMessageBox( "Error loading the library. Please re-install the software and try again." );
@@ -1226,7 +1226,7 @@ void DrawingView::OnSelectAllFields(wxCommandEvent &event)
 {
     int id = event.GetId();
     MyErdTable *shape = dynamic_cast<MyErdTable *>( event.GetEventObject() );
-    AddDeleteFields( shape, id == wxID_DESELECTALLFIELDS ? false : true, const_cast<DatabaseTable &>( shape->GetTable() ).GetTableName() );
+    AddDeleteFields( shape, id == wxID_DESELECTALLFIELDS ? false : true, const_cast<DatabaseTable *>( shape->GetTable() )->GetTableName() );
 }
 
 void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstring &tableName)

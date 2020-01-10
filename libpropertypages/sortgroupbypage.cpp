@@ -25,12 +25,20 @@
 
 SortGroupByPage::SortGroupByPage(wxWindow *parent) : wxPanel( parent )
 {
+    m_isDragging = false;
+    m_dragDest = nullptr;
     m_label = new wxStaticText( this, wxID_ANY, _( "Drag and drop the columns in the order that you want them" ) );
     m_source = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
     m_dest = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
     set_properties();
     do_layout();
     m_source->Bind( wxEVT_LIST_BEGIN_DRAG, &SortGroupByPage::OnBeginDrag, this );
+    m_dest->Bind( wxEVT_LIST_BEGIN_DRAG, &SortGroupByPage::OnBeginDrag, this );
+    Bind( wxEVT_LEFT_UP, &SortGroupByPage::OnLeftUp, this );
+    Bind( wxEVT_RIGHT_DOWN, &SortGroupByPage::OnRightDown, this );
+    m_source->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
+    m_dest->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
+    Bind( wxEVT_MOUSE_CAPTURE_LOST, &SortGroupByPage::OnMouseCaptureLost, this );
 }
 
 SortGroupByPage::~SortGroupByPage()
@@ -70,7 +78,72 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
 {
     int flags;
     const wxPoint& pt = event.m_pointDrag;
-    wxListCtrl *source = dynamic_cast<wxListCtrl *>( event.GetEventObject() );
-    m_item = source->GetItemText( source->HitTest( pt, flags ) );
+    m_dragSource = dynamic_cast<wxListCtrl *>( event.GetEventObject() );
+    if( m_dragSource == m_source )
+        m_itemPos = m_dragSource->HitTest( pt, flags );
+    else
+    {
+        m_sourcePos = m_dragSource->HitTest( pt, flags );
+        m_itemPos = m_dragSource->GetItemData( m_dragSource->HitTest( pt, flags ) );
+    }
+    m_item = m_dragSource->GetItemText( m_dragSource->HitTest( pt, flags ) );
+    m_isDragging = true;
     this->CaptureMouse();
+}
+
+void SortGroupByPage::OnLeftUp(wxMouseEvent &event)
+{
+    FinishDragging( event.GetPosition() );
+}
+
+void SortGroupByPage::OnRightDown(wxMouseEvent &event)
+{
+    FinishDragging( event.GetPosition() );
+}
+
+void SortGroupByPage::FinishDragging(const wxPoint &pt)
+{
+    if( m_isDragging )
+    {
+        if( m_source->GetRect().Contains( pt ) )
+            m_dragDest = m_source;
+        else if( m_dest->GetRect().Contains( pt ) )
+            m_dragDest = m_dest;
+        if( m_dragSource != m_dragDest )
+        {
+            long position;
+            m_dragSource->DeleteItem( m_dragDest == m_dest ? m_itemPos : m_sourcePos );
+            if( m_dragDest == m_dest )
+                position = m_dragDest->GetItemCount();
+            else
+                position = m_itemPos;
+            long item = m_dragDest->InsertItem( position, m_item );
+            if( m_dragDest == m_dest )
+                m_dragDest->SetItemData( item, m_itemPos );
+        }
+        this->ReleaseMouse();
+        m_isDragging = false;
+        m_dragDest = nullptr;
+    }
+}
+
+void SortGroupByPage::OnMouseMove(wxMouseEvent &event)
+{
+    wxListCtrl *list = nullptr;
+    int flags;
+    const wxPoint& pt = event.GetPosition();
+    if( m_source->GetRect().Contains( pt ) )
+        list = m_source;
+    else if( m_dest->GetRect().Contains( pt ) )
+        list = m_dest;
+    if( list && !m_isDragging )
+    {
+        int pos = list->HitTest( pt, flags );
+        if( pos != wxNOT_FOUND && list->GetItemState( pos, wxLIST_STATE_FOCUSED ) )
+            list->SetItemState( pos, 0, wxLIST_STATE_FOCUSED );
+    }
+}
+
+void SortGroupByPage::OnMouseCaptureLost(wxMouseCaptureLostEvent &event)
+{
 }
