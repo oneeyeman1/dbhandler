@@ -28,6 +28,9 @@
 #ifdef __WXGTK__
 #include "gtk/gtk.h"
 #include "wx/nativewin.h"
+#if !GTK_CHECK_VERSION(3,6,0)
+#include "wx/generic/stattextg.h"
+#endif
 #endif
 #ifdef __WXOSX_COCOA__
 #include "wx/nativewin.h"

@@ -24,6 +24,13 @@
 #include "res/ole.xpm"
 #include "res/richtext.xpm"
 #include "res/tabular.xpm"
+
+#ifdef __WXGTK__
+#include "gtk/gtk.h"
+#if !GTK_CHECK_VERSION(3,6,0)
+#include "wx/generic/stattextg.h"
+#endif
+#endif
 #include "bitmappanel.h"
 #include "newquery.h"
 

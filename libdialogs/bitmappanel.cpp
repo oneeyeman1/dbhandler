@@ -17,12 +17,22 @@
 #include "wx/wx.h"
 #endif
 
+#ifdef __WXGTK__
+#include "gtk/gtk.h"
+#if !GTK_CHECK_VERSION(3,6,0)
+#include "wx/generic/stattextg.h"
+#endif
+#endif
 #include "bitmappanel.h"
 
 BitmapPanel::BitmapPanel(wxWindow *parent, const wxBitmap &bitmap, const wxString &label) : wxPanel(parent)
 {
     m_bitmap = new wxStaticBitmap( this, wxID_ANY, bitmap );
+#if GTK_CHECK_VERSION(3,6,0)
     m_label = new wxStaticText( this, wxID_ANY, label );
+#else
+    m_label = new wxGenericStaticText( this, wxID_ANY, label );
+#endif
     do_layout();
     m_bitmap->Bind( wxEVT_LEFT_DOWN, &BitmapPanel::OnBitmapClicked, this );
     m_label->Bind( wxEVT_LEFT_DOWN, &BitmapPanel::OnLabelClicked, this );
@@ -45,7 +55,11 @@ void BitmapPanel::do_layout()
     SetSizer( sizer1 );
 }
 
+#if GTK_CHECK_VERSION(3,6,0)
 wxStaticText *BitmapPanel::GetLabel()
+#else
+wxGenericStaticText *BitmapPanel::GetLabel()
+#endif
 {
     return m_label;
 }
