@@ -14,9 +14,7 @@
 #include <string>
 #include "wx/dynlib.h"
 #include "wx/grid.h"
-#include "wx/docmdi.h"
 #include "wx/headerctrl.h"
-//#include "wx/settings.h"
 #include "wherehavingpage.h"
 
 typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring> &, wxString &, const wxString &, const wxString &);
@@ -217,7 +215,7 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
     lib = NULL;
 }
 
-void WhereHavingPage::OnCellChanged(wxCommandEvent &event)
+void WhereHavingPage::OnCellChanged(wxCommandEvent &WXUNUSED(event))
 {
     if( m_grid->GetCellValue( m_row, 1 ) == wxEmptyString )
         m_grid->SetCellValue( m_row, 1, "=" );
@@ -260,10 +258,10 @@ void WhereHavingPage::OnGridCellChaqnged(wxGridEvent &event)
         if( (*it).m_row == m_row )
         {
             found = true;
-            wxCommandEvent event( wxEVT_CHANGE_QUERY );
-            event.SetEventObject( this );
-            event.SetClientData( &(*it) );
-            dynamic_cast<wxDocMDIChildFrame *>( GetParent()->GetParent() )->GetEventHandler()->ProcessEvent( event );        }
+            wxCommandEvent evt( wxEVT_CHANGE_QUERY );
+            evt.SetEventObject( this );
+            evt.SetClientData( &(*it) );
+            GetParent()->GetParent()->GetEventHandler()->ProcessEvent( evt );        }
     }
 }
 
