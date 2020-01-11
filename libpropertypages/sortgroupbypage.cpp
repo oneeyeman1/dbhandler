@@ -96,11 +96,13 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
 void SortGroupByPage::OnLeftUp(wxMouseEvent &event)
 {
     FinishDragging( event.GetPosition() );
+    event.Skip();
 }
 
 void SortGroupByPage::OnRightDown(wxMouseEvent &event)
 {
     FinishDragging( event.GetPosition() );
+    event.Skip();
 }
 
 void SortGroupByPage::FinishDragging(const wxPoint &pt)
@@ -149,6 +151,8 @@ void SortGroupByPage::OnMouseMove(wxMouseEvent &event)
         if( pos != wxNOT_FOUND && list->GetItemState( pos, wxLIST_STATE_FOCUSED ) )
             list->SetItemState( pos, 0, wxLIST_STATE_FOCUSED );
     }
+    if( m_isDragging )
+        event.Skip();
 }
 
 void SortGroupByPage::OnMouseCaptureLost(wxMouseCaptureLostEvent &event)
