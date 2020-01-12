@@ -36,6 +36,10 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent) : wxPanel( parent )
     do_layout();
     m_source->Bind( wxEVT_LIST_BEGIN_DRAG, &SortGroupByPage::OnBeginDrag, this );
     m_dest->Bind( wxEVT_LIST_BEGIN_DRAG, &SortGroupByPage::OnBeginDrag, this );
+    m_source->Bind( wxEVT_LIST_ITEM_SELECTED, &SortGroupByPage::OnItemSelected, this );
+    m_dest->Bind( wxEVT_LIST_ITEM_SELECTED, &SortGroupByPage::OnItemSelected, this );
+    m_source->Bind( wxEVT_LIST_ITEM_FOCUSED, &SortGroupByPage::OnItemFocused, this );
+    m_dest->Bind( wxEVT_LIST_ITEM_FOCUSED, &SortGroupByPage::OnItemFocused, this );
     Bind( wxEVT_LEFT_UP, &SortGroupByPage::OnLeftUp, this );
     Bind( wxEVT_RIGHT_DOWN, &SortGroupByPage::OnRightDown, this );
     m_source->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
@@ -91,6 +95,18 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
     m_item = m_dragSource->GetItemText( m_dragSource->HitTest( pt, flags ) );
     m_isDragging = true;
     this->CaptureMouse();
+}
+
+void SortGroupByPage::OnItemSelected(wxListEvent &event)
+{
+    wxListCtrl *list = dynamic_cast<wxListCtrl *>( event.GetEventObject() );
+    list->SetItemState( event.GetIndex(), 0, wxLIST_STATE_SELECTED );
+}
+
+void SortGroupByPage::OnItemFocused(wxListEvent &event)
+{
+    wxListCtrl *list = dynamic_cast<wxListCtrl *>( event.GetEventObject() );
+    list->SetItemState( event.GetIndex(), 0, wxLIST_STATE_FOCUSED );
 }
 
 void SortGroupByPage::OnLeftUp(wxMouseEvent &event)
