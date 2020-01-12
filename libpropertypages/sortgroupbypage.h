@@ -27,6 +27,8 @@ protected:
     void do_layout();
     void FinishDragging(const wxPoint &pt);
     void OnBeginDrag(wxListEvent &event);
+    void OnItemSelected(wxListEvent &event);
+    void OnItemFocused(wxListEvent &event);
     void OnLeftUp(wxMouseEvent &event);
     void OnRightDown(wxMouseEvent &event);
     void OnMouseMove(wxMouseEvent &event);
