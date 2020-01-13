@@ -100,13 +100,15 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
 void SortGroupByPage::OnItemSelected(wxListEvent &event)
 {
     wxListCtrl *list = dynamic_cast<wxListCtrl *>( event.GetEventObject() );
-    list->SetItemState( event.GetIndex(), 0, wxLIST_STATE_SELECTED );
+    if( list )
+        list->SetItemState( event.GetIndex(), 0, wxLIST_STATE_SELECTED );
 }
 
 void SortGroupByPage::OnItemFocused(wxListEvent &event)
 {
     wxListCtrl *list = dynamic_cast<wxListCtrl *>( event.GetEventObject() );
-    list->SetItemState( event.GetIndex(), 0, wxLIST_STATE_FOCUSED );
+    if( list )
+        list->SetItemState( event.GetIndex(), 0, wxLIST_STATE_FOCUSED );
 }
 
 void SortGroupByPage::OnLeftUp(wxMouseEvent &event)
