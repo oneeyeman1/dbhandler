@@ -120,9 +120,9 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
             selections.push_back( name );
         if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
         {
-            query += (*it1)->GetTableName();
+            query += "\"" + (*it1)->GetTableName() + "\"";
             if( it1 != m_displayedTables.end() - 1 )
-                query += ", ";
+                query += ",\r     ";
         }
     }
     if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
@@ -174,8 +174,8 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                     if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
                     {
                         if( secondIteration )
-                            query += " AND ";
-                        query += wxString::Format( "%s.%s = %s.%s", (*it2)->GetTableName(), (*it4)->GetOriginalFieldName(), referencedTableName, (*it4)->GetReferencedFieldName() );
+                            query += " AND\r      ";
+                        query += wxString::Format( "\"%s\".\"%s\" = \"%s\".\"%s\"", (*it2)->GetTableName(), (*it4)->GetOriginalFieldName(), referencedTableName, (*it4)->GetReferencedFieldName() );
                     }
                     switch( (*it4)->GetOnUpdateConstraint() )
                     {
