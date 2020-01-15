@@ -122,6 +122,7 @@ private:
     std::vector<Field *> m_queryFields;
     std::vector<DatabaseTable *> m_selectTableName;
 //    std::vector<wxString> m_selectFields;
+    std::vector<wxString> m_groupByFields, m_sortedFields;
     std::vector<QueryArguments> m_arguments;
     DesignCanvas *m_designCanvas;
     wxStyledTextCtrl *m_edit;

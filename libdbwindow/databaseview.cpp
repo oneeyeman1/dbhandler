@@ -1373,12 +1373,58 @@ void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type)
 void DrawingView::OnQueryChange(wxCommandEvent &event)
 {
     wxString query = m_page6->GetSyntaxCtrl()->GetValue();
-    if( event.GetEventObject () == m_page2 )
+    if( event.GetEventObject() == m_page2 )
     {
         wxString wherePart = query.substr( query.find( "WHERE" ) );
         wherePart = wherePart.substr( 0, wherePart.find( "HAVING" ) );
         WhereHavingLines line = *(WhereHavingLines *) event.GetClientData();
         int pos = wherePart.find( line.m_old );
+    }
+    if( event.GetEventObject() == m_page3 )
+    {
+        int start = query.find( "GROUP BY" );
+        int end = query.find( "HAVING" );
+        if( start == wxNOT_FOUND )
+        {
+            start = query.length() - 1;
+            end = start + 1;
+        }
+        if( end == wxNOT_FOUND )
+            end = query.length() - 1;
+        int type = event.GetInt();
+        wxString field = event.GetString();
+        wxString str = query.substr( start, end - start ), replace;
+        if( type == ADDFIELD )
+        {
+            m_groupByFields.push_back( field );
+            if( str == ";" )
+                replace = "\rGROUP BY " + field + ";";
+            else
+                replace = str + ",\r         " + field;
+        }
+        else
+        {
+            m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
+            if( m_groupByFields.size() == 0 )
+            {
+                str = "\n" + str;
+                replace = "";
+            }
+            else
+            {
+                replace = str.substr( 0, str.find( field ) );
+                wxString temp = str.substr( str.find( field ) );
+                int pos = temp.find( "," );
+                if( pos != wxNOT_FOUND )
+                {
+                    temp = temp.substr( pos + 1 );
+                    temp = temp.substr( temp.find( "\"" ) );
+                    replace += temp;
+                }
+            }
+        }
+        query.Replace( str, replace );
+        const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
     }
 }
 
