@@ -21,6 +21,7 @@
 #include "wx/stc/stc.h"
 #include "wx/bmpcbox.h"
 #include "wx/listctrl.h"
+#include "wx/dataview.h"
 #include "database.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/BitmapShape.h"

@@ -31,6 +31,7 @@
 #include "wx/stc/stc.h"
 #include "wx/bmpcbox.h"
 #include "wx/listctrl.h"
+#include "wx/dataview.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/RoundRectShape.h"

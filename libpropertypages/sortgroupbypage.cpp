@@ -21,30 +21,43 @@
 #endif
 
 #include "wx/listctrl.h"
+#include "wx/dataview.h"
 #include "sortgroupbypage.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 
-SortGroupByPage::SortGroupByPage(wxWindow *parent) : wxPanel( parent )
+SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( parent )
 {
+    m_isSorting = isSortPage;
     m_isDragging = false;
     m_dragDest = nullptr;
     m_label = new wxStaticText( this, wxID_ANY, _( "Drag and drop the columns in the order that you want them" ) );
-    m_source = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
-    m_dest = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
+    if( isSortPage )
+    {
+        m_sortSource = new wxDataViewListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER );
+        m_sortDest = new wxDataViewListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER );
+    }
+    else
+    {
+        m_source = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
+        m_dest = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
+    }
     set_properties();
     do_layout();
-    m_source->Bind( wxEVT_LIST_BEGIN_DRAG, &SortGroupByPage::OnBeginDrag, this );
-    m_dest->Bind( wxEVT_LIST_BEGIN_DRAG, &SortGroupByPage::OnBeginDrag, this );
-    m_source->Bind( wxEVT_LIST_ITEM_SELECTED, &SortGroupByPage::OnItemSelected, this );
-    m_dest->Bind( wxEVT_LIST_ITEM_SELECTED, &SortGroupByPage::OnItemSelected, this );
-    m_source->Bind( wxEVT_LIST_ITEM_FOCUSED, &SortGroupByPage::OnItemFocused, this );
-    m_dest->Bind( wxEVT_LIST_ITEM_FOCUSED, &SortGroupByPage::OnItemFocused, this );
-    Bind( wxEVT_LEFT_UP, &SortGroupByPage::OnLeftUp, this );
-    Bind( wxEVT_RIGHT_DOWN, &SortGroupByPage::OnRightDown, this );
-    m_source->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
-    m_dest->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
-    Bind( wxEVT_MOUSE_CAPTURE_LOST, &SortGroupByPage::OnMouseCaptureLost, this );
+    if( !isSortPage )
+    {
+        m_source->Bind( wxEVT_LIST_BEGIN_DRAG, &SortGroupByPage::OnBeginDrag, this );
+        m_dest->Bind( wxEVT_LIST_BEGIN_DRAG, &SortGroupByPage::OnBeginDrag, this );
+        m_source->Bind( wxEVT_LIST_ITEM_SELECTED, &SortGroupByPage::OnItemSelected, this );
+        m_dest->Bind( wxEVT_LIST_ITEM_SELECTED, &SortGroupByPage::OnItemSelected, this );
+        m_source->Bind( wxEVT_LIST_ITEM_FOCUSED, &SortGroupByPage::OnItemFocused, this );
+        m_dest->Bind( wxEVT_LIST_ITEM_FOCUSED, &SortGroupByPage::OnItemFocused, this );
+        Bind( wxEVT_LEFT_UP, &SortGroupByPage::OnLeftUp, this );
+        Bind( wxEVT_RIGHT_DOWN, &SortGroupByPage::OnRightDown, this );
+        m_source->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
+        m_dest->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
+        Bind( wxEVT_MOUSE_CAPTURE_LOST, &SortGroupByPage::OnMouseCaptureLost, this );
+    }
 }
 
 SortGroupByPage::~SortGroupByPage()
@@ -54,8 +67,17 @@ SortGroupByPage::~SortGroupByPage()
 
 void SortGroupByPage::set_properties()
 {
-    m_source->InsertColumn( 0, _( "" ), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
-    m_dest->InsertColumn( 0, _( "" ), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
+    if( !m_isSorting )
+    {
+        m_source->InsertColumn( 0, _( "" ), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
+        m_dest->InsertColumn( 0, _( "" ), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
+    }
+    else
+    {
+        m_sortSource->AppendTextColumn( "" );
+        m_sortDest->AppendTextColumn( "" );
+        m_sortDest->AppendToggleColumn( "", wxDATAVIEW_CELL_ACTIVATABLE, -1, wxALIGN_RIGHT );
+    }
 }
 
 void SortGroupByPage::do_layout()
@@ -64,8 +86,16 @@ void SortGroupByPage::do_layout()
     auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
     sizer1->Add( m_label, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer2->Add( m_source, 1, wxEXPAND, 0 );
-    sizer2->Add( m_dest, 1, wxEXPAND, 0 );
+    if( !m_isSorting )
+    {
+        sizer2->Add( m_source, 1, wxEXPAND, 0 );
+        sizer2->Add( m_dest, 1, wxEXPAND, 0 );
+    }
+    else
+    {
+        sizer2->Add( m_sortSource, 1, wxEXPAND, 0 );
+        sizer2->Add( m_sortDest, 1, wxEXPAND, 0 );
+    }
     sizer1->Add( sizer2, 1, wxEXPAND, 0 );
     SetSizer( sizer1 );
 }
@@ -78,6 +108,16 @@ wxListCtrl *SortGroupByPage::GetSourceList()
 wxListCtrl *SortGroupByPage::GetDestList()
 {
     return m_dest;
+}
+
+wxDataViewListCtrl *SortGroupByPage::GetSortSourceList()
+{
+    return m_sortSource;
+}
+
+wxDataViewListCtrl *SortGroupByPage::GetSourceDestList()
+{
+    return m_sortDest;
 }
 
 void SortGroupByPage::OnBeginDrag(wxListEvent &event)

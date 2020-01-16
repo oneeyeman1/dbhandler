@@ -51,6 +51,7 @@
 #include "wx/grid.h"
 #include "wx/stc/stc.h"
 #include "wx/listctrl.h"
+#include "wx/dataview.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/RoundRectShape.h"
@@ -291,11 +292,11 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_type == QueryView )
     {
         m_queryBook = new wxNotebook( m_frame, wxID_ANY );
-        m_page1 = new SortGroupByPage( m_queryBook );
+        m_page1 = new SortGroupByPage( m_queryBook, true );
         m_queryBook->AddPage( m_page1, _( "Sort" ) );
         m_page2 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
         m_queryBook->AddPage( m_page2, _( "Where" ) );
-        m_page3 = new SortGroupByPage( m_queryBook );
+        m_page3 = new SortGroupByPage( m_queryBook, false );
         m_queryBook->AddPage( m_page3, _( "Group" ) );
         m_page4 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
         m_queryBook->AddPage( m_page4, _( "Having" ) );
@@ -694,8 +695,6 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     m_page3->GetSourceList()->InsertItem( i++, "\"" + table->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
                 }
             }
-            m_page1->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
-            m_page1->GetDestList()->SetColumnWidth( 0, m_page3->GetDestList()->GetSize().GetWidth() );
             m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
             m_page3->GetDestList()->SetColumnWidth( 0, m_page3->GetDestList()->GetSize().GetWidth() );
             m_page6->SetSyntaxText( query );
@@ -1380,9 +1379,10 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
         WhereHavingLines line = *(WhereHavingLines *) event.GetClientData();
         int pos = wherePart.find( line.m_old );
     }
-    if( event.GetEventObject() == m_page3 )
+    if( event.GetEventObject() == m_page1 || event.GetEventObject() == m_page3 )
     {
-        int start = query.find( "GROUP BY" );
+        SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query );
+/*        int start = query.find( "GROUP BY" );
         int end = query.find( "HAVING" );
         if( start == wxNOT_FOUND )
         {
@@ -1424,8 +1424,62 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
             }
         }
         query.Replace( str, replace );
-        const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
+        const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );*/
     }
+}
+
+void DrawingView::SortGroupByHandling(const int type, const wxString &field, const int queryType, wxString &query)
+{
+    int start, end;
+    if( queryType == 2 )
+    {
+        start = query.find( "GROUP BY" );
+        end = query.find( "HAVING" );
+    }
+    else
+    {
+        start = query.find( "ORDER BY" );
+        end = query.length() - 1;
+    }
+    if( start == wxNOT_FOUND )
+    {
+        start = query.length() - 1;
+        end = start + 1;
+    }
+    if( end == wxNOT_FOUND )
+        end = query.length() - 1;
+    wxString str = query.substr( start, end - start ), replace;
+    if( type == ADDFIELD )
+    {
+        m_groupByFields.push_back( field );
+        if( str == ";" )
+            replace = "\rGROUP BY " + field + ";";
+        else
+            replace = str + ",\r         " + field;
+    }
+    else
+    {
+        m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
+        if( m_groupByFields.size() == 0 )
+        {
+            str = "\n" + str;
+            replace = "";
+        }
+        else
+        {
+            replace = str.substr( 0, str.find( field ) );
+            wxString temp = str.substr( str.find( field ) );
+            int pos = temp.find( "," );
+            if( pos != wxNOT_FOUND )
+            {
+                temp = temp.substr( pos + 1 );
+                temp = temp.substr( temp.find( "\"" ) );
+                replace += temp;
+            }
+        }
+    }
+    query.Replace( str, replace );
+    const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
 }
 
 void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))

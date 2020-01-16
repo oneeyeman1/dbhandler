@@ -15,13 +15,16 @@
 #define ADDFIELD 0
 #define REMOVEFIELD 1
 
+
 class WXEXPORT SortGroupByPage : public wxPanel
 {
 public:
-    SortGroupByPage(wxWindow *parent);
+    SortGroupByPage(wxWindow *parent, bool isSortPage);
     ~SortGroupByPage();
     wxListCtrl *GetSourceList();
     wxListCtrl *GetDestList();
+    wxDataViewListCtrl *GetSortSourceList();
+    wxDataViewListCtrl *GetSourceDestList();
 protected:
     void set_properties();
     void do_layout();
@@ -35,10 +38,11 @@ protected:
     void OnMouseCaptureLost(wxMouseCaptureLostEvent &event);
 private:
     wxListCtrl *m_source, *m_dest, *m_dragSource, *m_dragDest;
+    wxDataViewListCtrl *m_sortSource, *m_sortDest;
     wxStaticText *m_label;
     wxString m_item;
     int m_itemPos, m_sourcePos;
-    bool m_isDragging;
+    bool m_isDragging, m_isSorting;
 };
 
 #endif // GROUPBYPAGE_H
