@@ -1166,6 +1166,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
     if( isAdding )
     {
         m_fields->AddField( name );
+        m_page1->AddRemoveSortingField( true, name );
         GetDocument()->AddRemoveField( name.ToStdWstring(), true );
         std::vector<std::wstring> queryFields = GetDocument()->GetQueryFields();
 //        queryFields.push_back( name.ToStdWstring() );
@@ -1185,6 +1186,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
     else
     {
         wxString temp1;
+        m_page1->AddRemoveSortingField( false, name );
         GetDocument()->AddRemoveField( name.ToStdWstring(), false );
         std::vector<std::wstring> queryFields = GetDocument()->GetQueryFields();
         m_fields->RemoveField( queryFields );
