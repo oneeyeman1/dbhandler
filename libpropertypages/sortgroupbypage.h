@@ -25,6 +25,7 @@ public:
     wxListCtrl *GetDestList();
     wxDataViewListCtrl *GetSortSourceList();
     wxDataViewListCtrl *GetSourceDestList();
+    void AddRemoveSortingField(bool isAdding, const wxString &field);
 protected:
     void set_properties();
     void do_layout();
@@ -36,9 +37,11 @@ protected:
     void OnRightDown(wxMouseEvent &event);
     void OnMouseMove(wxMouseEvent &event);
     void OnMouseCaptureLost(wxMouseCaptureLostEvent &event);
+    void OnSortBeginDrag(wxDataViewEvent &event);
+    void OnSortDrop(wxDataViewEvent &event);
 private:
     wxListCtrl *m_source, *m_dest, *m_dragSource, *m_dragDest;
-    wxDataViewListCtrl *m_sortSource, *m_sortDest;
+    wxDataViewListCtrl *m_sortSource, *m_sortDest, *m_sortDragSource, *m_sortDragDest;
     wxStaticText *m_label;
     wxString m_item;
     int m_itemPos, m_sourcePos;

@@ -58,6 +58,13 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( p
         m_dest->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
         Bind( wxEVT_MOUSE_CAPTURE_LOST, &SortGroupByPage::OnMouseCaptureLost, this );
     }
+    else
+    {
+        m_sortSource->Bind( wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &SortGroupByPage::OnSortBeginDrag, this );
+        m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_DROP, &SortGroupByPage::OnSortDrop, this );
+        m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &SortGroupByPage::OnSortBeginDrag, this );
+        m_sortSource->Bind( wxEVT_DATAVIEW_ITEM_DROP, &SortGroupByPage::OnSortDrop, this );
+    }
 }
 
 SortGroupByPage::~SortGroupByPage()
@@ -213,6 +220,57 @@ void SortGroupByPage::OnMouseMove(wxMouseEvent &event)
         event.Skip();
 }
 
-void SortGroupByPage::OnMouseCaptureLost(wxMouseCaptureLostEvent &event)
+void SortGroupByPage::OnMouseCaptureLost(wxMouseCaptureLostEvent &WXUNUSED(event))
 {
+}
+
+void SortGroupByPage::AddRemoveSortingField(bool isAdding, const wxString &field)
+{
+    wxVector<wxVariant> data;
+    if( isAdding )
+    {
+        data.push_back( wxVariant( field ) );
+        m_sortSource->AppendItem( data );;
+    }
+}
+
+void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
+{
+/*    if( m_isDragging )
+        return;*/
+    wxDataViewItem item = event.GetItem();
+    wxVariant value = event.GetValue();
+    m_sortDragSource = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
+    if( m_sortDragSource == m_sortSource && item.IsOk())
+        m_itemPos = (int) item.GetID();
+    else if( item.IsOk() )
+        m_itemPos = m_sortDragSource->GetItemData( item );
+    m_item = value.GetString();
+    m_isDragging = true;
+}
+
+void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
+{
+    wxDataViewItem dvitem = event.GetItem();
+    wxVariant value = event.GetValue();
+    m_sortDragDest = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
+    if( m_sortDragSource != m_sortDragDest )
+    {
+        long position;
+        m_sortDragSource->DeleteItem( m_sortDragDest == m_sortDest ? m_itemPos : m_sourcePos );
+        if( m_sortDragDest == m_sortDest )
+            position = m_dragDest->GetItemCount();
+        else
+            position = m_itemPos;
+        long item = m_dragDest->InsertItem( position, m_item );
+        if( m_dragDest == m_dest )
+            m_dragDest->SetItemData( item, m_itemPos );
+    }
+    wxCommandEvent evt( wxEVT_CHANGE_QUERY );
+    evt.SetEventObject( this );
+    evt.SetInt( m_dragDest == m_dest ? ADDFIELD : REMOVEFIELD );
+    evt.SetString( m_item );
+    GetParent()->GetParent()->GetEventHandler()->ProcessEvent( evt );
+    m_isDragging = false;
+    m_dragDest = nullptr;
 }
