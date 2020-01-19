@@ -60,11 +60,15 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( p
     }
     else
     {
+        m_sortSource->EnableDragSource( wxDF_UNICODETEXT );
+        m_sortSource->EnableDropTarget( wxDF_UNICODETEXT );
         m_sortSource->Bind( wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &SortGroupByPage::OnSortBeginDrag, this );
-        m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_DROP, &SortGroupByPage::OnSortDrop, this );
-        m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &SortGroupByPage::OnSortBeginDrag, this );
         m_sortSource->Bind( wxEVT_DATAVIEW_ITEM_DROP, &SortGroupByPage::OnSortDrop, this );
         m_sortSource->Bind( wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE, &SortGroupByPage::OnSortDropPossible, this );
+        m_sortDest->EnableDragSource( wxDF_UNICODETEXT );
+        m_sortDest->EnableDropTarget( wxDF_UNICODETEXT );
+        m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_DROP, &SortGroupByPage::OnSortDrop, this );
+        m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &SortGroupByPage::OnSortBeginDrag, this );
         m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE, &SortGroupByPage::OnSortDropPossible, this );
     }
 }
@@ -263,16 +267,26 @@ void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
         long position;
         m_sortDragSource->DeleteItem( m_sortDragDest == m_sortDest ? m_itemPos : m_sourcePos );
         if( m_sortDragDest == m_sortDest )
-            position = m_dragDest->GetItemCount();
+        {
+            position = m_sortDragDest->GetItemCount();
+            wxVector<wxVariant> data;
+            data.push_back( m_item );
+            data.push_back( (wxVariant) true );
+            m_sortDragDest->AppendItem( data );
+            int item = m_sortDragDest->GetItemCount();
+            m_dragDest->SetItemData( item - 1, m_itemPos );
+        }
         else
+        {
+            wxVector<wxVariant> data;
+            data.push_back( m_item );
             position = m_itemPos;
-        long item = m_dragDest->InsertItem( position, m_item );
-        if( m_dragDest == m_dest )
-            m_dragDest->SetItemData( item, m_itemPos );
+            m_sortDragDest->InsertItem( position, data );
+        }
     }
     wxCommandEvent evt( wxEVT_CHANGE_QUERY );
     evt.SetEventObject( this );
-    evt.SetInt( m_dragDest == m_dest ? ADDFIELD : REMOVEFIELD );
+    evt.SetInt( m_sortDragDest == m_sortDest ? ADDFIELD : REMOVEFIELD );
     evt.SetString( m_item );
     GetParent()->GetParent()->GetEventHandler()->ProcessEvent( evt );
     m_isDragging = false;
