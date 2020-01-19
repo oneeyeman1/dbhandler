@@ -39,6 +39,7 @@ protected:
     void OnMouseCaptureLost(wxMouseCaptureLostEvent &event);
     void OnSortBeginDrag(wxDataViewEvent &event);
     void OnSortDrop(wxDataViewEvent &event);
+    void OnSortDropPossible(wxDataViewEvent &event);
 private:
     wxListCtrl *m_source, *m_dest, *m_dragSource, *m_dragDest;
     wxDataViewListCtrl *m_sortSource, *m_sortDest, *m_sortDragSource, *m_sortDragDest;

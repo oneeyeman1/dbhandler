@@ -64,6 +64,8 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( p
         m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_DROP, &SortGroupByPage::OnSortDrop, this );
         m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &SortGroupByPage::OnSortBeginDrag, this );
         m_sortSource->Bind( wxEVT_DATAVIEW_ITEM_DROP, &SortGroupByPage::OnSortDrop, this );
+        m_sortSource->Bind( wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE, &SortGroupByPage::OnSortDropPossible, this );
+        m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE, &SortGroupByPage::OnSortDropPossible, this );
     }
 }
 
@@ -236,16 +238,18 @@ void SortGroupByPage::AddRemoveSortingField(bool isAdding, const wxString &field
 
 void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
 {
-/*    if( m_isDragging )
-        return;*/
     wxDataViewItem item = event.GetItem();
     wxVariant value = event.GetValue();
     m_sortDragSource = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
     if( m_sortDragSource == m_sortSource && item.IsOk())
         m_itemPos = (int) item.GetID();
-    else if( item.IsOk() )
+    else/* if( item.IsOk() )*/
         m_itemPos = m_sortDragSource->GetItemData( item );
     m_item = value.GetString();
+    wxTextDataObject *obj = new wxTextDataObject;
+    obj->SetText( m_item );
+    event.SetDataObject( obj );
+    event.SetDragFlags( wxDrag_CopyOnly );
     m_isDragging = true;
 }
 
@@ -273,4 +277,9 @@ void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
     GetParent()->GetParent()->GetEventHandler()->ProcessEvent( evt );
     m_isDragging = false;
     m_dragDest = nullptr;
+}
+
+void SortGroupByPage::OnSortDropPossible(wxDataViewEvent &event)
+{
+    event.Allow();
 }
