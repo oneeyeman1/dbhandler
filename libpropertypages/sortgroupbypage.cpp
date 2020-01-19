@@ -242,7 +242,7 @@ void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
     wxVariant value = event.GetValue();
     m_sortDragSource = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
     if( m_sortDragSource == m_sortSource && item.IsOk())
-        m_itemPos = (int) item.GetID();
+        m_itemPos = m_sortDragSource->ItemToRow( item );
     else if( item.IsOk() )
         m_itemPos = m_sortDragSource->GetItemData( item );
     m_item = value.GetString();
