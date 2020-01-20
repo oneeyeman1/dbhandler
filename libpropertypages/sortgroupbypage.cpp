@@ -70,6 +70,7 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( p
         m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_DROP, &SortGroupByPage::OnSortDrop, this );
         m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &SortGroupByPage::OnSortBeginDrag, this );
         m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE, &SortGroupByPage::OnSortDropPossible, this );
+        m_sortSource->Bind( wxEVT_DATAVIEW_SELECTION_CHANGED, &SortGroupByPage::OnSortSelectionChanged, this );
     }
 }
 
@@ -274,7 +275,7 @@ void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
             data.push_back( (wxVariant) true );
             m_sortDragDest->AppendItem( data );
             int item = m_sortDragDest->GetItemCount();
-            m_dragDest->SetItemData( item - 1, m_itemPos );
+            m_sortDragDest->SetItemData( m_sortDragDest->RowToItem( item - 1 ), m_itemPos );
         }
         else
         {
@@ -296,4 +297,11 @@ void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
 void SortGroupByPage::OnSortDropPossible(wxDataViewEvent &event)
 {
     event.Allow();
+}
+
+void SortGroupByPage::OnSortSelectionChanged(wxDataViewEvent &event)
+{
+    wxDataViewListCtrl *object = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
+    wxDataViewItem item = event.GetItem();
+    object->Unselect( event.GetItem() );
 }
