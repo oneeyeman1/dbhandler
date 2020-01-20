@@ -250,7 +250,7 @@ void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
         m_itemPos = m_sortDragSource->ItemToRow( item );
     else if( item.IsOk() )
         m_itemPos = m_sortDragSource->GetItemData( item );
-    m_item = value.GetString();
+    m_item = m_sortDragSource->GetTextValue( m_sortDragSource->ItemToRow( item ), 0 );
     wxTextDataObject *obj = new wxTextDataObject;
     obj->SetText( m_item );
     event.SetDataObject( obj );
