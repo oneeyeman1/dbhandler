@@ -65,12 +65,15 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( p
         m_sortSource->Bind( wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &SortGroupByPage::OnSortBeginDrag, this );
         m_sortSource->Bind( wxEVT_DATAVIEW_ITEM_DROP, &SortGroupByPage::OnSortDrop, this );
         m_sortSource->Bind( wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE, &SortGroupByPage::OnSortDropPossible, this );
+        m_sortSource->Bind( wxEVT_DATAVIEW_SELECTION_CHANGED, &SortGroupByPage::OnSortSelectionChanged, this );
+        m_sortSource->Bind( wxEVT_DATAVIEW_ITEM_START_EDITING, &SortGroupByPage::OnSortListStartEditing, this );
         m_sortDest->EnableDragSource( wxDF_UNICODETEXT );
         m_sortDest->EnableDropTarget( wxDF_UNICODETEXT );
         m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_DROP, &SortGroupByPage::OnSortDrop, this );
         m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &SortGroupByPage::OnSortBeginDrag, this );
         m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE, &SortGroupByPage::OnSortDropPossible, this );
-        m_sortSource->Bind( wxEVT_DATAVIEW_SELECTION_CHANGED, &SortGroupByPage::OnSortSelectionChanged, this );
+        m_sortDest->Bind( wxEVT_DATAVIEW_SELECTION_CHANGED, &SortGroupByPage::OnSortSelectionChanged, this );
+        m_sortDest->Bind( wxEVT_DATAVIEW_ITEM_START_EDITING, &SortGroupByPage::OnSortListStartEditing, this );
     }
 }
 
@@ -90,7 +93,7 @@ void SortGroupByPage::set_properties()
     {
         m_sortSource->AppendTextColumn( "" );
         m_sortDest->AppendTextColumn( "" );
-        m_sortDest->AppendToggleColumn( "", wxDATAVIEW_CELL_ACTIVATABLE, -1, wxALIGN_RIGHT );
+        m_sortDest->AppendToggleColumn( "Ascending", wxDATAVIEW_CELL_ACTIVATABLE, -1, wxALIGN_RIGHT );
     }
 }
 
@@ -147,6 +150,8 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
         m_itemPos = m_dragSource->GetItemData( m_dragSource->HitTest( pt, flags ) );
     }
     m_item = m_dragSource->GetItemText( m_dragSource->HitTest( pt, flags ) );
+    m_dragSource->SetItemState( m_dragSource->HitTest( pt, flags ), 0, wxLIST_STATE_SELECTED );
+    m_dragSource->SetItemState( m_dragSource->HitTest( pt, flags ), 0, wxLIST_STATE_FOCUSED );
     m_isDragging = true;
     this->CaptureMouse();
 }
@@ -249,7 +254,10 @@ void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
     if( m_sortDragSource == m_sortSource && item.IsOk())
         m_itemPos = m_sortDragSource->ItemToRow( item );
     else if( item.IsOk() )
+    {
+        m_sourcePos = m_sortDragSource->ItemToRow( item );
         m_itemPos = m_sortDragSource->GetItemData( item );
+    }
     m_item = m_sortDragSource->GetTextValue( m_sortDragSource->ItemToRow( item ), 0 );
     wxTextDataObject *obj = new wxTextDataObject;
     obj->SetText( m_item );
@@ -282,6 +290,9 @@ void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
             wxVector<wxVariant> data;
             data.push_back( m_item );
             position = m_itemPos;
+            int count = m_sortDragDest->GetItemCount();
+            if( position > count )
+                position = count;
             m_sortDragDest->InsertItem( position, data );
         }
     }
@@ -304,4 +315,9 @@ void SortGroupByPage::OnSortSelectionChanged(wxDataViewEvent &event)
     wxDataViewListCtrl *object = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
     wxDataViewItem item = event.GetItem();
     object->Unselect( event.GetItem() );
+}
+
+void SortGroupByPage::OnSortListStartEditing(wxDataViewEvent &event)
+{
+    event.Veto();
 }
