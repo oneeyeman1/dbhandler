@@ -1433,15 +1433,18 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
 void DrawingView::SortGroupByHandling(const int type, const wxString &field, const int queryType, wxString &query)
 {
     int start, end;
+    wxString queryString;
     if( queryType == 2 )
     {
         start = query.find( "GROUP BY" );
         end = query.find( "HAVING" );
+        queryString = "GROUP BY ";
     }
     else
     {
         start = query.find( "ORDER BY" );
         end = query.length() - 1;
+        queryString = "ORDER BY ";
     }
     if( start == wxNOT_FOUND )
     {
@@ -1455,7 +1458,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &field, con
     {
         m_groupByFields.push_back( field );
         if( str == ";" )
-            replace = "\rGROUP BY " + field + ";";
+            replace = "\n" + queryString + field + ";";
         else
             replace = str + ",\r         " + field;
     }
