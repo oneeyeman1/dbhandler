@@ -15,6 +15,16 @@
 #define ADDFIELD 0
 #define REMOVEFIELD 1
 
+class MyListCtrl : public wxListCtrl
+{
+public:
+    MyListCtrl (wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style) : wxListCtrl (parent, id, pos, size, style)
+    {
+    }
+#ifdef __WXMSW__
+    virtual bool MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result) wxOVERRIDE;
+#endif
+};
 
 class WXEXPORT SortGroupByPage : public wxPanel
 {
@@ -43,7 +53,7 @@ protected:
     void OnSortSelectionChanged(wxDataViewEvent &event);
     void OnSortListStartEditing(wxDataViewEvent &event);
 private:
-    wxListCtrl *m_source, *m_dest, *m_dragSource, *m_dragDest;
+    MyListCtrl *m_source, *m_dest, *m_dragSource, *m_dragDest;
     wxDataViewListCtrl *m_sortSource, *m_sortDest, *m_sortDragSource, *m_sortDragDest;
     wxStaticText *m_label;
     wxString m_item;

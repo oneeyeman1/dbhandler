@@ -22,9 +22,241 @@
 
 #include "wx/listctrl.h"
 #include "wx/dataview.h"
+#include "wx/renderer.h"
 #include "sortgroupbypage.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
+
+#ifdef __WXMSW__
+bool MyListCtrl::MSWOnNotify (int idCtrl, WXLPARAM lParam, WXLPARAM *result)
+{
+    NMHDR *nmhdr = (NMHDR *)lParam;
+    switch ( nmhdr->code )
+    {
+        case LVN_HOTTRACK:
+        {
+            NMLISTVIEW *l = (NMLISTVIEW *)lParam;
+            l->iItem = -1;
+            return 0;
+        }
+    }
+    return wxListCtrl::MSWOnNotify( idCtrl, lParam, result );
+}
+#endif
+
+class SortColumnRenderer
+#ifndef __WXOSX__
+    : public wxDataViewCustomRenderer
+#else
+    : public wxDataViewRenderer
+#endif
+{
+public:
+    static wxString GetDefaultType() { return wxS("wxDataViewCheckIconText"); }
+
+    explicit SortColumnRenderer (wxCheckBoxState state = wxCHK_CHECKED, wxDataViewCellMode mode = wxDATAVIEW_CELL_ACTIVATABLE, int align = wxDVR_DEFAULT_ALIGNMENT)
+        : wxDataViewCustomRenderer(GetDefaultType(), mode, align), m_checkedState(state)
+    {
+        m_allow3rdStateForUser = false;
+        m_value = "Ascending";
+    }
+#ifdef __WXOSX__
+    virtual bool MacRender() wxOVERRIDE
+    {
+        wxDataViewCheckIconText checkIconText;
+
+        checkIconText << GetValue();
+
+        NSButtonCell* cell = (NSButtonCell*) GetNativeData()->GetItemCell();
+
+        int nativecbvalue = 0;
+        switch ( checkIconText.GetCheckedState() )
+        {
+        case wxCHK_CHECKED:
+            nativecbvalue = 1;
+            break;
+        case wxCHK_UNDETERMINED:
+            nativecbvalue = -1;
+            break;
+        case wxCHK_UNCHECKED:
+            nativecbvalue = 0;
+            break;
+        }
+        [cell setIntValue:nativecbvalue];
+        [cell setTitle:wxCFStringRef( checkIconText.GetText() ).AsNSString()];
+        return true;
+    }
+
+    virtual void OSXOnCellChanged(NSObject *value,const wxDataViewItem& item, unsigned col) wxOVERRIDE
+    {
+        wxDataViewModel *model = GetOwner()->GetOwner()->GetModel();
+        // The icon can't be edited so get its old value and reuse it.
+        wxVariant valueOld;
+        model->GetValue( valueOld, item, col );
+
+        wxDataViewCheckIconText checkIconText;
+        checkIconText << valueOld;
+
+        wxCheckBoxState checkedState ;
+        switch( ObjectToLong(value) )
+        {
+        case 1:
+            checkedState = wxCHK_CHECKED;
+            break;
+
+        case 0:
+            checkedState = wxCHK_UNCHECKED;
+            break;
+
+        case -1:
+            checkedState = m_allow3rdStateForUser ? wxCHK_UNDETERMINED : wxCHK_CHECKED;
+            break;
+        }
+
+        checkIconText.SetCheckedState( checkedState );
+
+        wxVariant valueIconText;
+        valueIconText << checkIconText;
+
+        if( !Validate( valueIconText ) )
+            return;
+
+        model->ChangeValue(valueIconText, item, col);
+    }
+#endif
+
+#ifndef __WXOSX__
+    virtual bool SetValue(const wxVariant& value) wxOVERRIDE
+    {
+//        value = value;
+        return true;
+    }
+
+    virtual bool GetValue(wxVariant& value) const wxOVERRIDE
+    {
+        value = value;
+        return true;
+    }
+
+    virtual wxSize GetSize() const wxOVERRIDE
+    {
+        wxSize size = GetCheckSize();
+        size.x += MARGIN_CHECK_ICON;
+
+        wxString text = _( "Ascending" );
+        const wxSize sizeText = GetTextExtent( text );
+        if( sizeText.y > size.y )
+            size.y = sizeText.y;
+        size.x += sizeText.x;
+        return size;
+    }
+
+    virtual bool Render(wxRect cell, wxDC* dc, int state) wxOVERRIDE
+    {
+        // Draw the checkbox first.
+        int renderFlags = 0;
+        switch( GetCheckedState() )
+        {
+        case wxCHK_UNCHECKED:
+            break;
+
+        case wxCHK_CHECKED:
+            renderFlags |= wxCONTROL_CHECKED;
+            break;
+
+        case wxCHK_UNDETERMINED:
+            renderFlags |= wxCONTROL_UNDETERMINED;
+            break;
+        }
+
+        if( state & wxDATAVIEW_CELL_PRELIT )
+            renderFlags |= wxCONTROL_CURRENT;
+
+        const wxSize sizeCheck = GetCheckSize();
+        wxRect rectCheck( cell.GetPosition(), sizeCheck );
+        rectCheck = rectCheck.CentreIn( cell, wxVERTICAL );
+
+        wxRendererNative::Get().DrawCheckBox( GetView(), *dc, rectCheck, renderFlags );
+
+        // Then the icon, if any.
+        int xoffset = sizeCheck.x + MARGIN_CHECK_ICON;
+
+        // Finally the text.
+        RenderText( _( "Ascending" ), xoffset, cell, dc, state );
+
+        return true;
+    }
+
+    virtual bool ActivateCell (const wxRect& cell, wxDataViewModel *model, const wxDataViewItem & item, unsigned int col, const wxMouseEvent *mouseEvent) wxOVERRIDE
+    {
+        if( mouseEvent )
+        {
+            if( !wxRect( GetCheckSize() ).Contains( mouseEvent->GetPosition() ) )
+                return false;
+        }
+
+        // If the 3rd state is user-settable then the cycle is
+        // unchecked->checked->undetermined.
+        wxCheckBoxState checkedState = GetCheckedState();
+        switch ( checkedState )
+        {
+        case wxCHK_CHECKED:
+            checkedState = m_allow3rdStateForUser ? wxCHK_UNDETERMINED
+                : wxCHK_UNCHECKED;
+            break;
+
+        case wxCHK_UNDETERMINED:
+            // Whether 3rd state is user-settable or not, the next state is
+            // unchecked.
+            checkedState = wxCHK_UNCHECKED;
+            break;
+
+        case wxCHK_UNCHECKED:
+            checkedState = wxCHK_CHECKED;
+            break;
+        }
+
+        SetCheckedState( checkedState );
+
+        wxString value;
+        value << m_value;
+
+        model->ChangeValue( value, item, col );
+        return true;
+    }
+    wxCheckBoxState GetCheckedState() const { return m_checkedState; }
+    void SetCheckedState(wxCheckBoxState state) { m_checkedState = state; }
+#endif
+private:
+    wxSize GetCheckSize () const
+    {
+        return wxRendererNative::Get().GetCheckBoxSize(GetView());
+    }
+
+    enum
+    {
+        MARGIN_CHECK_ICON = 3
+    };
+
+    bool m_allow3rdStateForUser;
+    wxCheckBoxState m_checkedState;
+    /*    class SortColumn
+    {
+    public:
+        SortColumn (const wxString &text = wxString( "Ascending" ), wxCheckBoxState checkedState = wxCHK_UNDETERMINED) : m_checkedState (checkedState)
+        {
+        }
+        wxCheckBoxState GetCheckedState() const { return m_checkedState; }
+        void SetCheckedState(wxCheckBoxState state) { m_checkedState = state; }
+    private:
+        wxCheckBoxState m_checkedState;
+    } m_value;
+*/
+    wxString m_value;
+    wxDECLARE_DYNAMIC_CLASS_NO_COPY(SortColumnRenderer);
+};
+
+wxIMPLEMENT_CLASS(SortColumnRenderer, wxDataViewRenderer);
 
 SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( parent )
 {
@@ -39,8 +271,8 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( p
     }
     else
     {
-        m_source = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
-        m_dest = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
+        m_source = new MyListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
+        m_dest = new MyListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
     }
     set_properties();
     do_layout();
@@ -93,7 +325,7 @@ void SortGroupByPage::set_properties()
     {
         m_sortSource->AppendTextColumn( "" );
         m_sortDest->AppendTextColumn( "" );
-        m_sortDest->AppendToggleColumn( "Ascending", wxDATAVIEW_CELL_ACTIVATABLE, -1, wxALIGN_RIGHT );
+        m_sortDest->AppendColumn( new wxDataViewColumn( "", new SortColumnRenderer, 1, wxDVC_DEFAULT_WIDTH, wxALIGN_RIGHT ) );
     }
 }
 
@@ -141,7 +373,7 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
 {
     int flags;
     const wxPoint& pt = event.m_pointDrag;
-    m_dragSource = dynamic_cast<wxListCtrl *>( event.GetEventObject() );
+    m_dragSource = dynamic_cast<MyListCtrl *>( event.GetEventObject() );
     if( m_dragSource == m_source )
         m_itemPos = m_dragSource->HitTest( pt, flags );
     else
