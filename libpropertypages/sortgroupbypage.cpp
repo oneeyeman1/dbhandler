@@ -44,6 +44,12 @@ bool MyListCtrl::MSWOnNotify (int idCtrl, WXLPARAM lParam, WXLPARAM *result)
 }
 #endif
 
+wxSize MyListCtrl::DoGetBestClientSize () const
+{
+    wxClientDC dc( const_cast<MyListCtrl*>( this ) );
+    return wxSize( 50 * dc.GetCharWidth(), 5 * dc.GetCharHeight() );
+}
+
 class SortColumnRenderer
 #ifndef __WXOSX__
     : public wxDataViewCustomRenderer
@@ -53,24 +59,34 @@ class SortColumnRenderer
 {
 public:
     static wxString GetDefaultType() { return wxS("wxDataViewCheckIconText"); }
-
-    explicit SortColumnRenderer (wxCheckBoxState state = wxCHK_CHECKED, wxDataViewCellMode mode = wxDATAVIEW_CELL_ACTIVATABLE, int align = wxDVR_DEFAULT_ALIGNMENT)
-        : wxDataViewCustomRenderer(GetDefaultType(), mode, align), m_checkedState(state)
+#ifndef __WXOSX__
+    explicit SortColumnRenderer(wxCheckBoxState state = wxCHK_CHECKED, wxDataViewCellMode mode = wxDATAVIEW_CELL_ACTIVATABLE, int align = wxDVR_DEFAULT_ALIGNMENT)
+        : wxDataViewCustomRenderer( GetDefaultType(), mode, align ), m_checkedState( state )
     {
         m_allow3rdStateForUser = false;
         m_value = "Ascending";
     }
+#else
+    explicit SortColumnRenderer(wxCheckBoxState state = wxCHK_CHECKED, wxDataViewCellMode mode = wxDATAVIEW_CELL_ACTIVATABLE, int align = wxDVR_DEFAULT_ALIGNMENT)
+        : wxDataViewRenderer( GetDefaultType(), mode, mode ), m_checkedState( state )
+    {
+        m_allow3rdStateForUser = false;
+        NSButtonCell* cell;
+        cell = [[NSButtonCell alloc] init];
+        [cell setAlignment:ConvertToNativeHorizontalTextAlignment( GetAlignment() )];
+        [cell setButtonType: NSSwitchButton];
+        [cell setImagePosition:NSImageLeft];
+        [cell setAllowsMixedState:YES];
+        SetNativeData(new wxDataViewRendererNativeData( cell ) );
+        [cell release];
+    }
+#endif
 #ifdef __WXOSX__
     virtual bool MacRender() wxOVERRIDE
     {
-        wxDataViewCheckIconText checkIconText;
-
-        checkIconText << GetValue();
-
         NSButtonCell* cell = (NSButtonCell*) GetNativeData()->GetItemCell();
-
         int nativecbvalue = 0;
-        switch ( checkIconText.GetCheckedState() )
+        switch( GetCheckedState() )
         {
         case wxCHK_CHECKED:
             nativecbvalue = 1;
@@ -83,11 +99,11 @@ public:
             break;
         }
         [cell setIntValue:nativecbvalue];
-        [cell setTitle:wxCFStringRef( checkIconText.GetText() ).AsNSString()];
+        [cell setTitle:wxCFStringRef( m_value ).AsNSString()];
         return true;
     }
 
-    virtual void OSXOnCellChanged(NSObject *value,const wxDataViewItem& item, unsigned col) wxOVERRIDE
+    virtual void OSXOnCellChanged(NSObject *value, const wxDataViewItem& item, unsigned col) wxOVERRIDE
     {
         wxDataViewModel *model = GetOwner()->GetOwner()->GetModel();
         // The icon can't be edited so get its old value and reuse it.
@@ -506,6 +522,13 @@ void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
     if( m_sortDragSource != m_sortDragDest )
     {
         long position;
+        wxVariant value;
+        wxCheckBoxState state;
+        if( m_sortDragSource == m_sortDest )
+        {
+            m_sortDest->GetValue( value, m_itemPos, 1 );
+//            state = value.
+        }
         m_sortDragSource->DeleteItem( m_sortDragDest == m_sortDest ? m_itemPos : m_sourcePos );
         if( m_sortDragDest == m_sortDest )
         {
@@ -531,6 +554,10 @@ void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
     wxCommandEvent evt( wxEVT_CHANGE_QUERY );
     evt.SetEventObject( this );
     evt.SetInt( m_sortDragDest == m_sortDest ? ADDFIELD : REMOVEFIELD );
+    if( m_sortDragDest != m_sortDest )
+    {
+
+    }
     evt.SetString( m_item );
     GetParent()->GetParent()->GetEventHandler()->ProcessEvent( evt );
     m_isDragging = false;

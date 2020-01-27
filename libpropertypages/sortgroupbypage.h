@@ -24,6 +24,8 @@ public:
 #ifdef __WXMSW__
     virtual bool MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result) wxOVERRIDE;
 #endif
+protected:
+    virtual wxSize DoGetBestClientSize() const wxOVERRIDE;
 };
 
 class WXEXPORT SortGroupByPage : public wxPanel
