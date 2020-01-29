@@ -20,6 +20,7 @@
 #include "wx/bmpcbox.h"
 #include "wx/listctrl.h"
 #include "wx/dataview.h"
+#include "wx/renderer.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/ShapeCanvas.h"

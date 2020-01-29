@@ -9,6 +9,7 @@
 #include "wx/bmpcbox.h"
 #include "wx/listctrl.h"
 #include "wx/dataview.h"
+#include "wx/renderer.h"
 #include "database.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/CommonFcn.h"

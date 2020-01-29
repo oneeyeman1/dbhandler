@@ -50,44 +50,35 @@ wxSize MyListCtrl::DoGetBestClientSize () const
     return wxSize( 50 * dc.GetCharWidth(), 5 * dc.GetCharHeight() );
 }
 
-class SortColumnRenderer
 #ifndef __WXOSX__
-    : public wxDataViewCustomRenderer
-#else
-    : public wxDataViewRenderer
-#endif
+SortColumnRenderer::SortColumnRenderer(wxCheckBoxState state, wxDataViewCellMode mode, int align)
+    : wxDataViewCustomRenderer( GetDefaultType(), mode, align ), m_checkedState( state )
 {
-public:
-    static wxString GetDefaultType() { return wxS("wxDataViewCheckIconText"); }
-#ifndef __WXOSX__
-    explicit SortColumnRenderer(wxCheckBoxState state = wxCHK_CHECKED, wxDataViewCellMode mode = wxDATAVIEW_CELL_ACTIVATABLE, int align = wxDVR_DEFAULT_ALIGNMENT)
-        : wxDataViewCustomRenderer( GetDefaultType(), mode, align ), m_checkedState( state )
-    {
-        m_allow3rdStateForUser = false;
-        m_value = "Ascending";
-    }
+    m_allow3rdStateForUser = false;
+    m_value = "Ascending";
+}
 #else
-    explicit SortColumnRenderer(wxCheckBoxState state = wxCHK_CHECKED, wxDataViewCellMode mode = wxDATAVIEW_CELL_ACTIVATABLE, int align = wxDVR_DEFAULT_ALIGNMENT)
-        : wxDataViewRenderer( GetDefaultType(), mode, mode ), m_checkedState( state )
-    {
-        m_allow3rdStateForUser = false;
-        NSButtonCell* cell;
-        cell = [[NSButtonCell alloc] init];
-        [cell setAlignment:ConvertToNativeHorizontalTextAlignment( GetAlignment() )];
-        [cell setButtonType: NSSwitchButton];
-        [cell setImagePosition:NSImageLeft];
-        [cell setAllowsMixedState:YES];
-        SetNativeData(new wxDataViewRendererNativeData( cell ) );
-        [cell release];
-    }
+SortColumnRenderer::SortColumnRenderer(wxCheckBoxState state, wxDataViewCellMode mode, int align)
+    : wxDataViewRenderer( GetDefaultType(), mode, mode ), m_checkedState( state )
+{
+    m_allow3rdStateForUser = false;
+    NSButtonCell* cell;
+    cell = [[NSButtonCell alloc] init];
+    [cell setAlignment:ConvertToNativeHorizontalTextAlignment( GetAlignment() )];
+    [cell setButtonType: NSSwitchButton];
+    [cell setImagePosition:NSImageLeft];
+    [cell setAllowsMixedState:YES];
+    SetNativeData(new wxDataViewRendererNativeData( cell ) );
+    [cell release];
+}
 #endif
 #ifdef __WXOSX__
-    virtual bool MacRender() wxOVERRIDE
+virtual bool SortColumnRenderer::MacRender() wxOVERRIDE
+{
+    NSButtonCell* cell = (NSButtonCell*) GetNativeData()->GetItemCell();
+    int nativecbvalue = 0;
+    switch( GetCheckedState() )
     {
-        NSButtonCell* cell = (NSButtonCell*) GetNativeData()->GetItemCell();
-        int nativecbvalue = 0;
-        switch( GetCheckedState() )
-        {
         case wxCHK_CHECKED:
             nativecbvalue = 1;
             break;
@@ -97,25 +88,25 @@ public:
         case wxCHK_UNCHECKED:
             nativecbvalue = 0;
             break;
-        }
-        [cell setIntValue:nativecbvalue];
-        [cell setTitle:wxCFStringRef( m_value ).AsNSString()];
-        return true;
     }
+    [cell setIntValue:nativecbvalue];
+    [cell setTitle:wxCFStringRef( m_value ).AsNSString()];
+    return true;
+}
 
-    virtual void OSXOnCellChanged(NSObject *value, const wxDataViewItem& item, unsigned col) wxOVERRIDE
+virtual void SortColumnRenderer::OSXOnCellChanged(NSObject *value, const wxDataViewItem& item, unsigned col) wxOVERRIDE
+{
+    wxDataViewModel *model = GetOwner()->GetOwner()->GetModel();
+    // The icon can't be edited so get its old value and reuse it.
+    wxVariant valueOld;
+    model->GetValue( valueOld, item, col );
+
+    wxDataViewCheckIconText checkIconText;
+    checkIconText << valueOld;
+
+    wxCheckBoxState checkedState ;
+    switch( ObjectToLong(value) )
     {
-        wxDataViewModel *model = GetOwner()->GetOwner()->GetModel();
-        // The icon can't be edited so get its old value and reuse it.
-        wxVariant valueOld;
-        model->GetValue( valueOld, item, col );
-
-        wxDataViewCheckIconText checkIconText;
-        checkIconText << valueOld;
-
-        wxCheckBoxState checkedState ;
-        switch( ObjectToLong(value) )
-        {
         case 1:
             checkedState = wxCHK_CHECKED;
             break;
@@ -127,52 +118,45 @@ public:
         case -1:
             checkedState = m_allow3rdStateForUser ? wxCHK_UNDETERMINED : wxCHK_CHECKED;
             break;
-        }
-
-        checkIconText.SetCheckedState( checkedState );
-
-        wxVariant valueIconText;
-        valueIconText << checkIconText;
-
-        if( !Validate( valueIconText ) )
-            return;
-
-        model->ChangeValue(valueIconText, item, col);
     }
+
+    checkIconText.SetCheckedState( checkedState );
+
+    model->ChangeValue( checedState, item, col );
+}
 #endif
 
 #ifndef __WXOSX__
-    virtual bool SetValue(const wxVariant& value) wxOVERRIDE
-    {
-//        value = value;
-        return true;
-    }
+bool SortColumnRenderer::SetValue(const wxVariant& value)
+{
+//  value = value;
+    return true;
+}
 
-    virtual bool GetValue(wxVariant& value) const wxOVERRIDE
-    {
-        value = value;
-        return true;
-    }
+bool SortColumnRenderer::GetValue(wxVariant& value) const
+{
+    value = value;
+    return true;
+}
 
-    virtual wxSize GetSize() const wxOVERRIDE
-    {
-        wxSize size = GetCheckSize();
-        size.x += MARGIN_CHECK_ICON;
+wxSize SortColumnRenderer::GetSize() const
+{
+    wxSize size = GetCheckSize();
+    size.x += MARGIN_CHECK_ICON;
 
-        wxString text = _( "Ascending" );
-        const wxSize sizeText = GetTextExtent( text );
-        if( sizeText.y > size.y )
-            size.y = sizeText.y;
-        size.x += sizeText.x;
-        return size;
-    }
+    const wxSize sizeText = GetTextExtent( m_value );
+    if( sizeText.y > size.y )
+        size.y = sizeText.y;
+    size.x += sizeText.x;
+    return size;
+}
 
-    virtual bool Render(wxRect cell, wxDC* dc, int state) wxOVERRIDE
+bool SortColumnRenderer::Render(wxRect cell, wxDC* dc, int state)
+{
+    // Draw the checkbox first.
+    int renderFlags = 0;
+    switch( GetCheckedState() )
     {
-        // Draw the checkbox first.
-        int renderFlags = 0;
-        switch( GetCheckedState() )
-        {
         case wxCHK_UNCHECKED:
             break;
 
@@ -183,39 +167,35 @@ public:
         case wxCHK_UNDETERMINED:
             renderFlags |= wxCONTROL_UNDETERMINED;
             break;
-        }
-
-        if( state & wxDATAVIEW_CELL_PRELIT )
-            renderFlags |= wxCONTROL_CURRENT;
-
-        const wxSize sizeCheck = GetCheckSize();
-        wxRect rectCheck( cell.GetPosition(), sizeCheck );
-        rectCheck = rectCheck.CentreIn( cell, wxVERTICAL );
-
-        wxRendererNative::Get().DrawCheckBox( GetView(), *dc, rectCheck, renderFlags );
-
-        // Then the icon, if any.
-        int xoffset = sizeCheck.x + MARGIN_CHECK_ICON;
-
-        // Finally the text.
-        RenderText( _( "Ascending" ), xoffset, cell, dc, state );
-
-        return true;
     }
 
-    virtual bool ActivateCell (const wxRect& cell, wxDataViewModel *model, const wxDataViewItem & item, unsigned int col, const wxMouseEvent *mouseEvent) wxOVERRIDE
-    {
-        if( mouseEvent )
-        {
-            if( !wxRect( GetCheckSize() ).Contains( mouseEvent->GetPosition() ) )
-                return false;
-        }
+    if( state & wxDATAVIEW_CELL_PRELIT )
+        renderFlags |= wxCONTROL_CURRENT;
 
-        // If the 3rd state is user-settable then the cycle is
-        // unchecked->checked->undetermined.
-        wxCheckBoxState checkedState = GetCheckedState();
-        switch ( checkedState )
-        {
+    const wxSize sizeCheck = GetCheckSize();
+    wxRect rectCheck( cell.GetPosition(), sizeCheck );
+    rectCheck = rectCheck.CentreIn( cell, wxVERTICAL );
+
+    wxRendererNative::Get().DrawCheckBox( GetView(), *dc, rectCheck, renderFlags );
+    // Then the icon, if any.
+    int xoffset = sizeCheck.x + MARGIN_CHECK_ICON;
+    // Finally the text.
+    RenderText( m_value, xoffset, cell, dc, state );
+    return true;
+}
+
+bool SortColumnRenderer::ActivateCell (const wxRect& cell, wxDataViewModel *model, const wxDataViewItem & item, unsigned int col, const wxMouseEvent *mouseEvent)
+{
+    if( mouseEvent )
+    {
+        if( !wxRect( GetCheckSize() ).Contains( mouseEvent->GetPosition() ) )
+            return false;
+    }
+    // If the 3rd state is user-settable then the cycle is
+    // unchecked->checked->undetermined.
+    wxCheckBoxState checkedState = GetCheckedState();
+    switch ( checkedState )
+    {
         case wxCHK_CHECKED:
             checkedState = m_allow3rdStateForUser ? wxCHK_UNDETERMINED
                 : wxCHK_UNCHECKED;
@@ -230,48 +210,13 @@ public:
         case wxCHK_UNCHECKED:
             checkedState = wxCHK_CHECKED;
             break;
-        }
-
-        SetCheckedState( checkedState );
-
-        wxString value;
-        value << m_value;
-
-        model->ChangeValue( value, item, col );
-        return true;
     }
-    wxCheckBoxState GetCheckedState() const { return m_checkedState; }
-    void SetCheckedState(wxCheckBoxState state) { m_checkedState = state; }
+    SetCheckedState( checkedState );
+    model->ChangeValue( checkedState, item, col );
+    return true;
+}
+
 #endif
-private:
-    wxSize GetCheckSize () const
-    {
-        return wxRendererNative::Get().GetCheckBoxSize(GetView());
-    }
-
-    enum
-    {
-        MARGIN_CHECK_ICON = 3
-    };
-
-    bool m_allow3rdStateForUser;
-    wxCheckBoxState m_checkedState;
-    /*    class SortColumn
-    {
-    public:
-        SortColumn (const wxString &text = wxString( "Ascending" ), wxCheckBoxState checkedState = wxCHK_UNDETERMINED) : m_checkedState (checkedState)
-        {
-        }
-        wxCheckBoxState GetCheckedState() const { return m_checkedState; }
-        void SetCheckedState(wxCheckBoxState state) { m_checkedState = state; }
-    private:
-        wxCheckBoxState m_checkedState;
-    } m_value;
-*/
-    wxString m_value;
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(SortColumnRenderer);
-};
-
 wxIMPLEMENT_CLASS(SortColumnRenderer, wxDataViewRenderer);
 
 SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( parent )
@@ -522,8 +467,6 @@ void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
     if( m_sortDragSource != m_sortDragDest )
     {
         long position;
-        wxVariant value;
-        wxCheckBoxState state;
         if( m_sortDragSource == m_sortDest )
         {
             m_sortDest->GetValue( value, m_itemPos, 1 );

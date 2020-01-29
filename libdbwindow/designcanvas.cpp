@@ -17,6 +17,7 @@
 #include "wx/stc/stc.h"
 #include "wx/listctrl.h"
 #include "wx/dataview.h"
+#include "wx/renderer.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/BitmapShape.h"

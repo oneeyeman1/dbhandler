@@ -52,6 +52,7 @@
 #include "wx/stc/stc.h"
 #include "wx/listctrl.h"
 #include "wx/dataview.h"
+#include "wx/renderer.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/RoundRectShape.h"
@@ -1456,15 +1457,30 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &field, con
     wxString str = query.substr( start, end - start ), replace;
     if( type == ADDFIELD )
     {
-        m_groupByFields.push_back( field );
-        if( str == ";" )
-            replace = "\n" + queryString + field + ";";
+        if( queryType == 2 )
+            m_groupByFields.push_back( field );
         else
+            m_sortedFields.push_back( queryType == 2 ? field : field + " ASC" );
+        if( str == ";" )
+        {
+            replace = "\n" + queryString + field;
+            if( queryType != 2 )
+                replace += " ASC";
+            replace += ";";
+        }
+        else
+        {
             replace = str + ",\r         " + field;
+            if( queryType != 2 )
+                replace += " ASC";
+        }
     }
     else
     {
-        m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
+        if( queryType == 2 )
+            m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
+        else
+            m_sortedFields.erase( std::remove( m_sortedFields.begin(), m_sortedFields.end(), field ), m_sortedFields.end() );
         if( m_groupByFields.size() == 0 )
         {
             str = "\n" + str;
