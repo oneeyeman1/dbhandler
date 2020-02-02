@@ -57,7 +57,7 @@ SortColumnRenderer::SortColumnRenderer(wxCheckBoxState state, wxDataViewCellMode
     m_allow3rdStateForUser = false;
     m_value = "Ascending";
 }
-#else
+/*#else
 SortColumnRenderer::SortColumnRenderer(wxCheckBoxState state, wxDataViewCellMode mode, int align)
     : wxDataViewRenderer( GetDefaultType(), mode, mode ), m_checkedState( state )
 {
@@ -70,9 +70,10 @@ SortColumnRenderer::SortColumnRenderer(wxCheckBoxState state, wxDataViewCellMode
     [cell setAllowsMixedState:YES];
     SetNativeData(new wxDataViewRendererNativeData( cell ) );
     [cell release];
-}
+}*/
 #endif
 #ifdef __WXOSX__
+/*
 virtual bool SortColumnRenderer::MacRender() wxOVERRIDE
 {
     NSButtonCell* cell = (NSButtonCell*) GetNativeData()->GetItemCell();
@@ -94,7 +95,8 @@ virtual bool SortColumnRenderer::MacRender() wxOVERRIDE
     return true;
 }
 
-virtual void SortColumnRenderer::OSXOnCellChanged(NSObject *value, const wxDataViewItem& item, unsigned col) wxOVERRIDE
+
+void SortColumnRenderer::OSXOnCellChanged(NSObject *value, const wxDataViewItem& item, unsigned col)
 {
     wxDataViewModel *model = GetOwner()->GetOwner()->GetModel();
     // The icon can't be edited so get its old value and reuse it.
@@ -122,8 +124,8 @@ virtual void SortColumnRenderer::OSXOnCellChanged(NSObject *value, const wxDataV
 
     checkIconText.SetCheckedState( checkedState );
 
-    model->ChangeValue( checedState, item, col );
-}
+    model->ChangeValue( checkedState, item, col );
+}*/
 #endif
 
 #ifndef __WXOSX__

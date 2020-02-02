@@ -48,9 +48,11 @@ public:
 #endif
     virtual bool SetValue(const wxVariant& value) wxOVERRIDE;
     virtual bool GetValue(wxVariant& value) const wxOVERRIDE;
+#ifndef __WXOSX__
     virtual wxSize GetSize() const wxOVERRIDE;
     virtual bool Render(wxRect cell, wxDC* dc, int state) wxOVERRIDE;
     virtual bool ActivateCell (const wxRect& cell, wxDataViewModel *model, const wxDataViewItem & item, unsigned int col, const wxMouseEvent *mouseEvent) wxOVERRIDE;
+#endif
     wxCheckBoxState GetCheckedState() const { return m_checkedState; }
     void SetCheckedState(wxCheckBoxState state) { m_checkedState = state; }
 private:
