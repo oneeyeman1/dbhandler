@@ -57,78 +57,8 @@ SortColumnRenderer::SortColumnRenderer(wxCheckBoxState state, wxDataViewCellMode
     m_allow3rdStateForUser = false;
     m_value = "Ascending";
 }
-/*#else
-SortColumnRenderer::SortColumnRenderer(wxCheckBoxState state, wxDataViewCellMode mode, int align)
-    : wxDataViewRenderer( GetDefaultType(), mode, mode ), m_checkedState( state )
-{
-    m_allow3rdStateForUser = false;
-    NSButtonCell* cell;
-    cell = [[NSButtonCell alloc] init];
-    [cell setAlignment:ConvertToNativeHorizontalTextAlignment( GetAlignment() )];
-    [cell setButtonType: NSSwitchButton];
-    [cell setImagePosition:NSImageLeft];
-    [cell setAllowsMixedState:YES];
-    SetNativeData(new wxDataViewRendererNativeData( cell ) );
-    [cell release];
-}*/
-#endif
-#ifdef __WXOSX__
-/*
-virtual bool SortColumnRenderer::MacRender() wxOVERRIDE
-{
-    NSButtonCell* cell = (NSButtonCell*) GetNativeData()->GetItemCell();
-    int nativecbvalue = 0;
-    switch( GetCheckedState() )
-    {
-        case wxCHK_CHECKED:
-            nativecbvalue = 1;
-            break;
-        case wxCHK_UNDETERMINED:
-            nativecbvalue = -1;
-            break;
-        case wxCHK_UNCHECKED:
-            nativecbvalue = 0;
-            break;
-    }
-    [cell setIntValue:nativecbvalue];
-    [cell setTitle:wxCFStringRef( m_value ).AsNSString()];
-    return true;
-}
-
-
-void SortColumnRenderer::OSXOnCellChanged(NSObject *value, const wxDataViewItem& item, unsigned col)
-{
-    wxDataViewModel *model = GetOwner()->GetOwner()->GetModel();
-    // The icon can't be edited so get its old value and reuse it.
-    wxVariant valueOld;
-    model->GetValue( valueOld, item, col );
-
-    wxDataViewCheckIconText checkIconText;
-    checkIconText << valueOld;
-
-    wxCheckBoxState checkedState ;
-    switch( ObjectToLong(value) )
-    {
-        case 1:
-            checkedState = wxCHK_CHECKED;
-            break;
-
-        case 0:
-            checkedState = wxCHK_UNCHECKED;
-            break;
-
-        case -1:
-            checkedState = m_allow3rdStateForUser ? wxCHK_UNDETERMINED : wxCHK_CHECKED;
-            break;
-    }
-
-    checkIconText.SetCheckedState( checkedState );
-
-    model->ChangeValue( checkedState, item, col );
-}*/
 #endif
 
-#ifndef __WXOSX__
 bool SortColumnRenderer::SetValue(const wxVariant& value)
 {
 //  value = value;
@@ -140,7 +70,7 @@ bool SortColumnRenderer::GetValue(wxVariant& value) const
     value = value;
     return true;
 }
-
+#ifndef __WXOSX__
 wxSize SortColumnRenderer::GetSize() const
 {
     wxSize size = GetCheckSize();
