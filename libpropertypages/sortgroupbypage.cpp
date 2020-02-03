@@ -52,16 +52,16 @@ wxSize MyListCtrl::DoGetBestClientSize () const
 
 #ifndef __WXOSX__
 SortColumnRenderer::SortColumnRenderer(wxCheckBoxState state, wxDataViewCellMode mode, int align)
-    : wxDataViewCustomRenderer( GetDefaultType(), mode, align ), m_checkedState( state )
+    : wxDataViewCustomRenderer( GetDefaultType(), mode, align )
 {
+    m_toggle = true;
     m_allow3rdStateForUser = false;
-    m_value = "Ascending";
 }
 #endif
 
 bool SortColumnRenderer::SetValue(const wxVariant& value)
 {
-//  value = value;
+    m_toggle = value.GetBool();
     return true;
 }
 
@@ -76,43 +76,42 @@ wxSize SortColumnRenderer::GetSize() const
     wxSize size = GetCheckSize();
     size.x += MARGIN_CHECK_ICON;
 
-    const wxSize sizeText = GetTextExtent( m_value );
+    const wxSize sizeText = GetTextExtent( _( "Ascending" ) );
     if( sizeText.y > size.y )
         size.y = sizeText.y;
     size.x += sizeText.x;
     return size;
 }
 
+wxString SortColumnRenderer::GetAccessibleDescription() const
+{
+    /* TRANSLATORS: Checkbox state name */
+    return m_toggle ? _("Sort Ascending")
+        /* TRANSLATORS: Checkbox state name */
+        : _("Sort descendending");
+}
+
 bool SortColumnRenderer::Render(wxRect cell, wxDC* dc, int state)
 {
     // Draw the checkbox first.
-    int renderFlags = 0;
-    switch( GetCheckedState() )
-    {
-        case wxCHK_UNCHECKED:
-            break;
-
-        case wxCHK_CHECKED:
-            renderFlags |= wxCONTROL_CHECKED;
-            break;
-
-        case wxCHK_UNDETERMINED:
-            renderFlags |= wxCONTROL_UNDETERMINED;
-            break;
-    }
+    int flags = 0;
+    if( m_toggle )
+        flags |= wxCONTROL_CHECKED;
+    if( GetMode() != wxDATAVIEW_CELL_ACTIVATABLE || !( GetOwner()->GetOwner()->IsEnabled() && GetEnabled() ) )
+        flags |= wxCONTROL_DISABLED;
 
     if( state & wxDATAVIEW_CELL_PRELIT )
-        renderFlags |= wxCONTROL_CURRENT;
+        flags |= wxCONTROL_CURRENT;
 
     const wxSize sizeCheck = GetCheckSize();
     wxRect rectCheck( cell.GetPosition(), sizeCheck );
     rectCheck = rectCheck.CentreIn( cell, wxVERTICAL );
 
-    wxRendererNative::Get().DrawCheckBox( GetView(), *dc, rectCheck, renderFlags );
+    wxRendererNative::Get().DrawCheckBox( GetView(), *dc, rectCheck, flags );
     // Then the icon, if any.
     int xoffset = sizeCheck.x + MARGIN_CHECK_ICON;
     // Finally the text.
-    RenderText( m_value, xoffset, cell, dc, state );
+    RenderText( _( "Ascending" ), xoffset, cell, dc, state );
     return true;
 }
 
@@ -123,28 +122,7 @@ bool SortColumnRenderer::ActivateCell (const wxRect& cell, wxDataViewModel *mode
         if( !wxRect( GetCheckSize() ).Contains( mouseEvent->GetPosition() ) )
             return false;
     }
-    // If the 3rd state is user-settable then the cycle is
-    // unchecked->checked->undetermined.
-    wxCheckBoxState checkedState = GetCheckedState();
-    switch ( checkedState )
-    {
-        case wxCHK_CHECKED:
-            checkedState = m_allow3rdStateForUser ? wxCHK_UNDETERMINED
-                : wxCHK_UNCHECKED;
-            break;
-
-        case wxCHK_UNDETERMINED:
-            // Whether 3rd state is user-settable or not, the next state is
-            // unchecked.
-            checkedState = wxCHK_UNCHECKED;
-            break;
-
-        case wxCHK_UNCHECKED:
-            checkedState = wxCHK_CHECKED;
-            break;
-    }
-    SetCheckedState( checkedState );
-    model->ChangeValue( checkedState, item, col );
+    model->ChangeValue( !m_toggle, item, col );
     return true;
 }
 

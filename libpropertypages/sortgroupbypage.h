@@ -32,7 +32,7 @@ class SortColumnRenderer
 #ifndef __WXOSX__
     : public wxDataViewCustomRenderer
 #else
-    : public wxDataViewRenderer
+    : public wxOSXDataViewDisabledInertRenderer
 #endif
 {
 public:
@@ -46,6 +46,7 @@ public:
     virtual bool MacRender() wxOVERRIDE;
     virtual void OSXOnCellChanged(NSObject *value, const wxDataViewItem& item, unsigned col) wxOVERRIDE;
 #endif
+    virtual wxString GetAccessibleDescription() const wxOVERRIDE;
     virtual bool SetValue(const wxVariant& value) wxOVERRIDE;
     virtual bool GetValue(wxVariant& value) const wxOVERRIDE;
 #ifndef __WXOSX__
@@ -53,8 +54,6 @@ public:
     virtual bool Render(wxRect cell, wxDC* dc, int state) wxOVERRIDE;
     virtual bool ActivateCell (const wxRect& cell, wxDataViewModel *model, const wxDataViewItem & item, unsigned int col, const wxMouseEvent *mouseEvent) wxOVERRIDE;
 #endif
-    wxCheckBoxState GetCheckedState() const { return m_checkedState; }
-    void SetCheckedState(wxCheckBoxState state) { m_checkedState = state; }
 private:
     wxSize GetCheckSize () const { return wxRendererNative::Get().GetCheckBoxSize( GetView() ); }
 
@@ -64,8 +63,7 @@ private:
     };
 
     bool m_allow3rdStateForUser;
-    wxCheckBoxState m_checkedState;
-    wxString m_value;
+    bool m_toggle;
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(SortColumnRenderer);
 };
 
