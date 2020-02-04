@@ -46,7 +46,9 @@ public:
     virtual bool MacRender() wxOVERRIDE;
     virtual void OSXOnCellChanged(NSObject *value, const wxDataViewItem& item, unsigned col) wxOVERRIDE;
 #endif
+#ifdef __WXMSW__
     virtual wxString GetAccessibleDescription() const wxOVERRIDE;
+#endif
     virtual bool SetValue(const wxVariant& value) wxOVERRIDE;
     virtual bool GetValue(wxVariant& value) const wxOVERRIDE;
 #ifndef __WXOSX__
