@@ -82,7 +82,7 @@ wxSize SortColumnRenderer::GetSize() const
     size.x += sizeText.x;
     return size;
 }
-
+#ifdef __WXMSW__
 wxString SortColumnRenderer::GetAccessibleDescription() const
 {
     /* TRANSLATORS: Checkbox state name */
@@ -90,7 +90,7 @@ wxString SortColumnRenderer::GetAccessibleDescription() const
         /* TRANSLATORS: Checkbox state name */
         : _("Sort descendending");
 }
-
+#endif
 bool SortColumnRenderer::Render(wxRect cell, wxDC* dc, int state)
 {
     // Draw the checkbox first.
