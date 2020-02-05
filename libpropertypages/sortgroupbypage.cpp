@@ -123,6 +123,14 @@ bool SortColumnRenderer::ActivateCell (const wxRect& cell, wxDataViewModel *mode
             return false;
     }
     model->ChangeValue( !m_toggle, item, col );
+    wxVariant temp;
+    model->GetValue( temp, item, 0 );
+    wxCommandEvent event( wxEVT_CHANGE_QUERY );
+    event.SetEventObject( GetView()->GetParent() );
+    event.SetInt( m_toggle ? ADDFIELD : REMOVEFIELD );
+    event.SetString( temp.GetString() );
+    wxWindow *win = GetView()->GetParent()->GetParent()->GetParent();
+    GetView()->GetParent()->GetParent()->GetParent()->GetEventHandler()->ProcessEvent( event );
     return true;
 }
 
