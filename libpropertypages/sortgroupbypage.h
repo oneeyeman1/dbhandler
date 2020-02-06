@@ -14,6 +14,7 @@
 
 #define ADDFIELD 0
 #define REMOVEFIELD 1
+#define CHANGEFIELD 2
 
 class MyListCtrl : public wxListCtrl
 {

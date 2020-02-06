@@ -127,7 +127,7 @@ bool SortColumnRenderer::ActivateCell (const wxRect& cell, wxDataViewModel *mode
     model->GetValue( temp, item, 0 );
     wxCommandEvent event( wxEVT_CHANGE_QUERY );
     event.SetEventObject( GetView()->GetParent() );
-    event.SetInt( m_toggle ? ADDFIELD : REMOVEFIELD );
+    event.SetInt( CHANGEFIELD );
     event.SetString( temp.GetString() );
     wxWindow *win = GetView()->GetParent()->GetParent()->GetParent();
     GetView()->GetParent()->GetParent()->GetParent()->GetEventHandler()->ProcessEvent( event );
@@ -203,7 +203,7 @@ void SortGroupByPage::set_properties()
     else
     {
         m_sortSource->AppendTextColumn( "" );
-        m_sortDest->AppendTextColumn( "" );
+        m_sortDest->AppendTextColumn( "", wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT );
         m_sortDest->AppendColumn( new wxDataViewColumn( "", new SortColumnRenderer, 1, wxDVC_DEFAULT_WIDTH, wxALIGN_RIGHT ) );
     }
 }

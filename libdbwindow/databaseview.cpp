@@ -1475,7 +1475,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &field, con
                 replace += " ASC";
         }
     }
-    else
+    else if( type == REMOVEFIELD )
     {
         if( queryType == 2 )
             m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
@@ -1498,6 +1498,10 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &field, con
                 replace += temp;
             }
         }
+    }
+    else
+    {
+
     }
     query.Replace( str, replace );
     const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
