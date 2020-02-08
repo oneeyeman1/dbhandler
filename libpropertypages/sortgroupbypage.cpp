@@ -50,14 +50,12 @@ wxSize MyListCtrl::DoGetBestClientSize () const
     return wxSize( 50 * dc.GetCharWidth(), 5 * dc.GetCharHeight() );
 }
 
-#ifndef __WXOSX__
 SortColumnRenderer::SortColumnRenderer(wxCheckBoxState state, wxDataViewCellMode mode, int align)
     : wxDataViewCustomRenderer( GetDefaultType(), mode, align )
 {
     m_toggle = true;
     m_allow3rdStateForUser = false;
 }
-#endif
 
 bool SortColumnRenderer::SetValue(const wxVariant& value)
 {
@@ -70,7 +68,7 @@ bool SortColumnRenderer::GetValue(wxVariant& value) const
     value = value;
     return true;
 }
-#ifndef __WXOSX__
+
 wxSize SortColumnRenderer::GetSize() const
 {
     wxSize size = GetCheckSize();
@@ -134,7 +132,6 @@ bool SortColumnRenderer::ActivateCell (const wxRect& cell, wxDataViewModel *mode
     return true;
 }
 
-#endif
 wxIMPLEMENT_CLASS(SortColumnRenderer, wxDataViewRenderer);
 
 SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( parent )

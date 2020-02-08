@@ -30,33 +30,19 @@ protected:
 };
 
 class SortColumnRenderer
-#ifndef __WXOSX__
     : public wxDataViewCustomRenderer
-#else
-    : public wxOSXDataViewDisabledInertRenderer
-#endif
 {
 public:
     static wxString GetDefaultType() { return wxS("bool"); }
-#ifndef __WXOSX__
     explicit SortColumnRenderer(wxCheckBoxState state = wxCHK_CHECKED, wxDataViewCellMode mode = wxDATAVIEW_CELL_ACTIVATABLE, int align = wxDVR_DEFAULT_ALIGNMENT);
-#else
-    explicit SortColumnRenderer(wxCheckBoxState state = wxCHK_CHECKED, wxDataViewCellMode mode = wxDATAVIEW_CELL_ACTIVATABLE, int align = wxDVR_DEFAULT_ALIGNMENT);
-#endif
-#ifdef __WXOSX__
-    virtual bool MacRender() wxOVERRIDE;
-    virtual void OSXOnCellChanged(NSObject *value, const wxDataViewItem& item, unsigned col) wxOVERRIDE;
-#endif
 #ifdef __WXMSW__
     virtual wxString GetAccessibleDescription() const wxOVERRIDE;
 #endif
     virtual bool SetValue(const wxVariant& value) wxOVERRIDE;
     virtual bool GetValue(wxVariant& value) const wxOVERRIDE;
-#ifndef __WXOSX__
     virtual wxSize GetSize() const wxOVERRIDE;
     virtual bool Render(wxRect cell, wxDC* dc, int state) wxOVERRIDE;
     virtual bool ActivateCell (const wxRect& cell, wxDataViewModel *model, const wxDataViewItem & item, unsigned int col, const wxMouseEvent *mouseEvent) wxOVERRIDE;
-#endif
 private:
     wxSize GetCheckSize () const { return wxRendererNative::Get().GetCheckBoxSize( GetView() ); }
 
