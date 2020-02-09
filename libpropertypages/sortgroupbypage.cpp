@@ -132,7 +132,7 @@ bool SortColumnRenderer::ActivateCell (const wxRect& cell, wxDataViewModel *mode
     return true;
 }
 
-wxIMPLEMENT_CLASS(SortColumnRenderer, wxDataViewRenderer);
+wxIMPLEMENT_CLASS(SortColumnRenderer, wxDataViewCustomRenderer);
 
 SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( parent )
 {
