@@ -4000,9 +4000,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     }
                                     else
                                     {
-                                        SQLSMALLINT columnNameLen, columnDataType, columnDataDigits, columnDataNullable;
-                                        SQLULEN columnDataSize;
-                                        ret = SQLDescribeCol( m_hstmt, 1, NULL, 0, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
+                                        SQLSMALLINT columnNameLenActual, columnDataTypeActual, columnDataDigits, columnDataNullableActual;
+                                        SQLULEN columnDataSizeActual;
+                                        ret = SQLDescribeCol( m_hstmt, 1, NULL, 0, &columnNameLenActual, &columnDataTypeActual, &columnDataSizeActual, &columnDataDigits, &columnDataNullableActual );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -4010,9 +4010,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                         }
                                         else
                                         {
-                                            table_schema = new SQLWCHAR[columnDataSize + 1];
-                                            memset( table_schema, '\0', columnDataSize + 1 );
-                                            ret = SQLDescribeCol( m_hstmt, 2, NULL, 0, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
+                                            table_schema = new SQLWCHAR[columnDataSizeActual + 1];
+                                            memset( table_schema, '\0', columnDataSizeActual + 1 );
+                                            ret = SQLDescribeCol( m_hstmt, 2, NULL, 0, &columnNameLenActual, &columnDataTypeActual, &columnDataSizeActual, &columnDataDigits, &columnDataNullableActual );
                                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                             {
                                                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -4020,9 +4020,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                             }
                                             else
                                             {
-                                                table_name = new SQLWCHAR[columnDataSize + 1];
-                                                memset( table_name, '\0', columnDataSize + 1 );
-                                                ret = SQLDescribeCol( m_hstmt, 3, NULL, 0, &columnNameLen, &columnDataType, &columnDataSize, &columnDataDigits, &columnDataNullable );
+                                                table_name = new SQLWCHAR[columnDataSizeActual + 1];
+                                                memset( table_name, '\0', columnDataSizeActual + 1 );
+                                                ret = SQLDescribeCol( m_hstmt, 3, NULL, 0, &columnNameLenActual, &columnDataTypeActual, &columnDataSizeActual, &columnDataDigits, &columnDataNullableActual );
                                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                 {
                                                     GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -4030,8 +4030,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                 }
                                                 else
                                                 {
-                                                    table_catalog = new SQLWCHAR[columnDataSize + 1];
-                                                    memset( table_catalog, '\0', columnDataSize + 1 );
+                                                    table_catalog = new SQLWCHAR[columnDataSizeActual + 1];
+                                                    memset( table_catalog, '\0', columnDataSizeActual + 1 );
                                                     for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
                                                     {
                                                         ret = SQLGetData( m_hstmt, 1, SQL_C_WCHAR, table_schema, 256, &cbCountSchema );

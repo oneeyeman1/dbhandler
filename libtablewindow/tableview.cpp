@@ -114,7 +114,6 @@ void TableView::GetTablesForView(Database *db)
         if( res != wxID_CANCEL )
         {
             bool found = false;
-            Database *db = ((TableDocument *) GetDocument())->GetDatabase();
             std::map<std::wstring, std::vector<DatabaseTable *> > tbls = db->GetTableVector().m_tables;
             std::vector<DatabaseTable *> tableVec = tbls.at( db->GetTableVector().m_dbName );
             for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end() && !found; it++ )

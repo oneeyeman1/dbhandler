@@ -687,13 +687,13 @@ void DrawingView::GetTablesForView(Database *db, bool init)
         if( query != L"\n" )
         {
             int i = 0;
-            std::vector<MyErdTable *> tables = ((DrawingDocument *)GetDocument())->GetTables();
-            for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); ++it )
+            std::vector<MyErdTable *> dbTables = ((DrawingDocument *)GetDocument())->GetTables();
+            for( std::vector<MyErdTable *>::iterator it = dbTables.begin(); it < dbTables.end(); ++it )
             {
-                const DatabaseTable *table = (*it)->GetTable();
-                for( std::vector<Field *>::const_iterator it1 = table->GetFields().begin(); it1 < table->GetFields().end(); ++it1 )
+                const DatabaseTable *dbTable = (*it)->GetTable();
+                for( std::vector<Field *>::const_iterator it1 = dbTable->GetFields().begin(); it1 < dbTable->GetFields().end(); ++it1 )
                 {
-                    m_page3->GetSourceList()->InsertItem( i++, "\"" + table->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
+                    m_page3->GetSourceList()->InsertItem( i++, "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
                 }
             }
             m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
@@ -1741,7 +1741,7 @@ void DrawingView::SetQueryMenu(const int queryType)
         auto *designMenu = new wxMenu;
         designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
         m_tb->InsertTool( 3, wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
-        m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( preview, WXSIZEOF( preview ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
+        m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( previewIcon, WXSIZEOF( previewIcon ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
         designMenu->Append( wxID_PREVIEDWQUERY, _( "Preview" ), _( "Preview" ) );
         designMenu->AppendSeparator();
         designMenu->Append( wxID_SELECTTABLE, _( "Select Table..." ) );
