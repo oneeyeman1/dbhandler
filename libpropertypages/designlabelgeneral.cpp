@@ -110,7 +110,7 @@ void DesignLabelGeneral::do_layout()
     SetSizer( mainSizer );
 }
 
-void DesignLabelGeneral::DataChange(wxCommandEvent &event)
+void DesignLabelGeneral::DataChange(wxCommandEvent &WXUNUSED(event))
 {
     this->m_isModified = true;
 }

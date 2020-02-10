@@ -108,7 +108,7 @@ void GetObjectName::OnButtonNew(wxCommandEvent &event)
     EndModal( dynamic_cast<wxButton *>( event.GetEventObject() )->GetId() );
 }
 
-void GetObjectName::OnButtonBrowse(wxCommandEvent &event)
+void GetObjectName::OnButtonBrowse(wxCommandEvent &WXUNUSED(event))
 {
     wxFileDialog dlg( NULL, _( "Open Query" ), wxEmptyString, wxEmptyString, "query files(*.qry)|*.qry", wxFD_OPEN | wxFD_FILE_MUST_EXIST );
     int res = dlg.ShowModal();

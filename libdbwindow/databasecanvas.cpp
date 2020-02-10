@@ -1015,7 +1015,7 @@ void DatabaseCanvas::AddQuickQueryFields(const wxString &tbl, std::vector<Field 
     Refresh();
 }
 
-void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &event)
+void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &WXUNUSED(event))
 {
     ShapeList list;
     m_showDataTypes = !m_showDataTypes;

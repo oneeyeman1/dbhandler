@@ -55,7 +55,7 @@ bool FieldGeneral::IsLogOnly ()
     return m_log->GetValue();
 }
 
-void FieldGeneral::OnCommentChanged (wxCommandEvent &event)
+void FieldGeneral::OnCommentChanged (wxCommandEvent &WXUNUSED(event))
 {
     m_isModified = true;
 }

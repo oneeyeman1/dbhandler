@@ -393,7 +393,7 @@ wxWizardPage *ODBCConnect::GetNext() const
     return NULL;
 }
 
-void ODBCConnect::OnSelectionDClick(wxCommandEvent &event)
+void ODBCConnect::OnSelectionDClick(wxCommandEvent &WXUNUSED(event))
 {
     dynamic_cast<DatabaseType *>( GetParent() )->EndModal( wxID_FORWARD );
 }

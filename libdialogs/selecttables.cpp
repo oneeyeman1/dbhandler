@@ -121,7 +121,7 @@ BEGIN_EVENT_TABLE(SelectTables, wxDialog)
 END_EVENT_TABLE();
 
 
-void SelectTables::OnSelectingLBItem(wxCommandEvent &event)
+void SelectTables::OnSelectingLBItem(wxCommandEvent &WXUNUSED(event))
 {
     m_open->Enable( true );
 }
