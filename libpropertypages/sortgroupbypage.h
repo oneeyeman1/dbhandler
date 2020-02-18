@@ -16,6 +16,9 @@
 #define REMOVEFIELD 1
 #define CHANGEFIELD 2
 
+#define ASCENDING 0
+#define DESCENDING 1
+
 class MyListCtrl : public wxListCtrl
 {
 public:

@@ -126,6 +126,7 @@ bool SortColumnRenderer::ActivateCell (const wxRect& cell, wxDataViewModel *mode
     wxCommandEvent event( wxEVT_CHANGE_QUERY );
     event.SetEventObject( GetView()->GetParent() );
     event.SetInt( CHANGEFIELD );
+    event.SetExtraLong( m_toggle ? ASCENDING : DESCENDING );
     event.SetString( temp.GetString() );
     wxWindow *win = GetView()->GetParent()->GetParent()->GetParent();
     GetView()->GetParent()->GetParent()->GetParent()->GetEventHandler()->ProcessEvent( event );
@@ -200,7 +201,7 @@ void SortGroupByPage::set_properties()
     else
     {
         m_sortSource->AppendTextColumn( "" );
-        m_sortDest->AppendTextColumn( "", wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT );
+        m_sortDest->AppendTextColumn( ""/*, wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT */);
         m_sortDest->AppendColumn( new wxDataViewColumn( "", new SortColumnRenderer, 1, wxDVC_DEFAULT_WIDTH, wxALIGN_RIGHT ) );
     }
 }
@@ -367,6 +368,12 @@ void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
         m_itemPos = m_sortDragSource->GetItemData( item );
     }
     m_item = m_sortDragSource->GetTextValue( m_sortDragSource->ItemToRow( item ), 0 );
+    if( m_sortDragSource == m_sortDest )
+    {
+        wxVariant value;
+        m_sortDest->GetValue( value, m_sortDest->ItemToRow( item), 1 );
+        m_item += value.GetBool() ? " ASC" : " DESC";
+    }
     wxTextDataObject *obj = new wxTextDataObject;
     obj->SetText( m_item );
     event.SetDataObject( obj );

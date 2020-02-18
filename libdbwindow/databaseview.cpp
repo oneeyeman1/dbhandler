@@ -1384,7 +1384,7 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     }
     if( event.GetEventObject() == m_page1 || event.GetEventObject() == m_page3 )
     {
-        SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query );
+        SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query, event.GetExtraLong() );
 /*        int start = query.find( "GROUP BY" );
         int end = query.find( "HAVING" );
         if( start == wxNOT_FOUND )
@@ -1431,7 +1431,7 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     }
 }
 
-void DrawingView::SortGroupByHandling(const int type, const wxString &field, const int queryType, wxString &query)
+void DrawingView::SortGroupByHandling(const int type, const wxString &field, const int queryType, wxString &query, long sortType)
 {
     int start, end;
     wxString queryString;
@@ -1478,15 +1478,39 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &field, con
     else if( type == REMOVEFIELD )
     {
         if( queryType == 2 )
-            m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
-        else
-            m_sortedFields.erase( std::remove( m_sortedFields.begin(), m_sortedFields.end(), field ), m_sortedFields.end() );
-        if( m_groupByFields.size() == 0 )
         {
-            str = "\n" + str;
-            replace = "";
+            m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
+            if( m_groupByFields.size() == 0 )
+            {
+                str = "\n" + str;
+                replace = "";
+            }
+            else
+            {
+
+            }
         }
         else
+        {
+            m_sortedFields.erase( std::remove( m_sortedFields.begin(), m_sortedFields.end(), field ), m_sortedFields.end() );
+            if( m_sortedFields.size () == 0 )
+            {
+                str = "\n" + str + ";";
+                replace = ";";
+            }
+            else
+            {
+                wxString temp = field.substr( 0, field.find( ' ' ) );
+                replace = str.substr( 0, str.find( temp ) );
+                wxString temp1 = str.substr( str.find( temp ) );
+                int pos = str.find( ',' );
+                if( pos == wxNOT_FOUND )
+                    pos = str.find( ';' );
+                temp1 = str.substr( pos );
+                replace += temp1;
+            }
+        }
+/*        else
         {
             replace = str.substr( 0, str.find( field ) );
             wxString temp = str.substr( str.find( field ) );
@@ -1497,11 +1521,13 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &field, con
                 temp = temp.substr( temp.find( "\"" ) );
                 replace += temp;
             }
-        }
+        }*/
     }
     else
     {
-
+        wxString temp = str.substr( str.find( field ) );
+        str = temp.substr( 0, temp.find( ',' ) );
+        replace = field + ( sortType == 0 ? " DESC" : " ASC" );
     }
     query.Replace( str, replace );
     const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
