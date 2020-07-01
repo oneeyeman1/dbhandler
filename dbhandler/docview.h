@@ -137,7 +137,6 @@ wxDECLARE_APP(MyApp);
 #define wxID_RETRIEVEARGS         304
 #define wxID_CHECKOPTION          305
 #define wxID_DISTINCT             306
-#define wxID_CONVERTTOSYNTAX      307
 #define wxID_CUSTOMCOLORS         308
 #define wxID_OPTIONS              309
 #define wxID_SELECTALL            310
