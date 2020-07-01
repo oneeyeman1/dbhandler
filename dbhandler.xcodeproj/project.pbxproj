@@ -158,6 +158,7 @@
 		E3D139431D0D0CD100A5A0F7 /* libdialogs.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdialogs.xcodeproj; path = libdialogs/libdialogs.xcodeproj; sourceTree = "<group>"; };
 		E3D1396D1D0D110A00A5A0F7 /* libdbloader.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdbloader.xcodeproj; path = libdbloader/libdbloader.xcodeproj; sourceTree = "<group>"; };
 		E3D8595E1EEA09030093FB1C /* libmysql.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libmysql.xcodeproj; path = libmysql/libmysql.xcodeproj; sourceTree = "<group>"; };
+		E3E6643924A47893008CA090 /* build_app */ = {isa = PBXFileReference; lastKnownFileType = text; path = build_app; sourceTree = "<group>"; };
 		E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libfieldswindow.xcodeproj; path = libfieldswindow/libfieldswindow.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -227,6 +228,7 @@
 		E3D05D311CA4AB1D002CB677 = {
 			isa = PBXGroup;
 			children = (
+				E3E6643924A47893008CA090 /* build_app */,
 				E3D8595E1EEA09030093FB1C /* libmysql.xcodeproj */,
 				E33E6F9C1EBC26B6003A0B92 /* libpostgres.xcodeproj */,
 				E33E6F531E6A9A6A003A0B92 /* libtablewindow.xcodeproj */,
@@ -391,6 +393,7 @@
 				E3D05D361CA4AB1D002CB677 /* Sources */,
 				E3D05D371CA4AB1D002CB677 /* Frameworks */,
 				E3D05D381CA4AB1D002CB677 /* Resources */,
+				E3E6643824A46D2F008CA090 /* InstallLibraries */,
 			);
 			buildRules = (
 			);
@@ -610,6 +613,23 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		E3E6643824A46D2F008CA090 /* InstallLibraries */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = InstallLibraries;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks\"\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibpropertypages.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertypages.dylib\"\ninstall_name_tool -change /usr/local/lib/liblibpropertypages.dylib @executable_path/../Frameworks/liblibpropertypages.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibdbwindow.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\ninstall_name_tool -change /usr/local/lib/liblibdbwindow.dylib @executable_path/../Frameworks/liblibdbwindow.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibpostgres.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpostgres.dylib\"\ninstall_name_tool -change /usr/local/lib/liblibpostgres.dylib @executable_path/../Frameworks/liblibpostgres.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibshapeframework.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibshapeframework.dylib\"\ninstall_name_tool -change /usr/local/lib/liblibshapeframework.dylib @executable_path/../Frameworks/liblibshapeframework.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibsqlite.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibsqlite.dylib\"\ninstall_name_tool -change /usr/local/lib/liblibsqlite.dylib @executable_path/../Frameworks/liblibsqlite.dylib  \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibdbloader.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\ninstall_name_tool -change /usr/local/lib/liblibdbloader.dylib @executable_path/../Frameworks/liblibdbloader.dylib  \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibdialogs.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdialogs.dylib\"\ninstall_name_tool -change /usr/local/lib/liblibdialogs.dylib @executable_path/../Frameworks/liblibdialogs.dylib  \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibfieldswindow.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibfieldswindow.dylib\"\ninstall_name_tool -change /usr/local/lib/liblibfieldswindow.dylib @executable_path/../Frameworks/liblibfieldswindow.dylib  \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibmysql.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibmysql.dylib\"\ninstall_name_tool -change /usr/local/lib/liblibmysql.lib @executable_path/../Frameworks/liblibmysql.dylib  \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibodbc.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibodbc.dylib\"\ninstall_name_tool -change /usr/local/lib/liblibodbc.dylib @executable_path/../Frameworks/liblibodbc.dylib  \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\n\ninstall_name_tool -change /usr/local/lib/liblibpropertypages.dylib @executable_path/../Frameworks/liblibpropertypages.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change /usr/local/lib/liblibfieldswindow.dylib @executable_path/../Frameworks/liblibfieldswindow.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change /usr/local/lib/liblibshapeframework.dylib @executable_path/../Frameworks/liblibshapeframework.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change /usr/local/lib/liblibshapeframework.dylib @executable_path/../Frameworks/liblibshapeframework.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibfieldswindow.dylib\"\n\ninstall_name_tool -change /usr/local/lib/liblibpropertypages.dylib @executable_path/../Frameworks/liblibpropertypages.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdialogs.dylib\"\n\ninstall_name_tool -change /usr/local/lib/liblibfieldswindow.dylib @executable_path/../Frameworks/liblibfieldswindow.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdialogs.dylib\"\n\ninstall_name_tool -change /usr/local/lib/liblibdbloader.dylib @executable_path/../Frameworks/liblibdbloader.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdialogs.dylib\"\n\ninstall_name_tool -change /usr/local/lib/liblibmysql.dylib @executable_path/../Frameworks/liblibmysql.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change /usr/local/lib/liblibpostgres.dylib @executable_path/../Frameworks/liblibpostgres.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change /usr/local/lib/liblibodbc.dylib @executable_path/../Frameworks/liblibodbc.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change /usr/local/lib/liblibsqlite.dylib @executable_path/../Frameworks/liblibsqlite.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		E3D05D361CA4AB1D002CB677 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -759,6 +779,14 @@
 					__WXOSX_COCOA__,
 				);
 				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					./dbinterface,
+					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.1",
+					/Users/igorkorot/wxWidgets/include,
+					./libdbwindow/res/gui/,
+				);
+				"HEADER_SEARCH_PATHS[arch=*]" = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					./dbinterface,
