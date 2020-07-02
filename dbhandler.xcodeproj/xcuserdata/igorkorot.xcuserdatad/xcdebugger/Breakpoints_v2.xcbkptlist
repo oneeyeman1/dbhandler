@@ -336,7 +336,7 @@
             startingLineNumber = "256"
             endingLineNumber = "256"
             landmarkName = "SortGroupByPage::OnBeginDrag(wxListEvent &amp;event)"
-            landmarkType = "5">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -351,8 +351,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "209"
             endingLineNumber = "209"
-            landmarkName = "SortGroupByPage::set_properties()"
-            landmarkType = "5">
+            landmarkName = "SortGroupByPage::do_layout()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
