@@ -1288,7 +1288,7 @@ wxListBox *AddColumnsDialog::GetFieldsControl() const
     return m_fields;
 }
 
-void AddColumnsDialog::OnFieldsDoubleClick(wxCommandEvent &event)
+void AddColumnsDialog::OnFieldsDoubleClick(wxCommandEvent &WXUNUSED(event))
 {
     EndModal( wxID_OK );
 }

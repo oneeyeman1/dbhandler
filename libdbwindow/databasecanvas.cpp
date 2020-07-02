@@ -958,12 +958,12 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             lib.Load( "libdialogs" );
 #endif
             QueryConstraint *constraint = (QueryConstraint *) sign->GetConstraint();
-            int type = constraint->GetSign();
+            int constraintSign = constraint->GetSign();
             SELECTJOINTYPE func = (SELECTJOINTYPE) lib.GetSymbol( "SelectJoinType" );
-            result = func( m_view->GetFrame(), const_cast<DatabaseTable *>( constraint->GetFKTable() )->GetTableName(), constraint->GetRefTable(), constraint->GetLocalColumn(), constraint->GetRefColumn(), type );
-            if( type != constraint->GetSign () )
+            result = func( m_view->GetFrame(), const_cast<DatabaseTable *>( constraint->GetFKTable() )->GetTableName(), constraint->GetRefTable(), constraint->GetLocalColumn(), constraint->GetRefColumn(), constraintSign );
+            if( constraintSign != constraint->GetSign () )
             {
-                switch( type )
+                switch( constraintSign )
                 {
                 case 0:
                 case 1:
@@ -983,7 +983,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                     sign->SetSign( "<>" );
                     break;
                 }
-                constraint->SetSign( type );
+                constraint->SetSign( constraintSign );
                 ((DrawingView *) m_view)->UpdateQueryFromSignChange( constraint );
             }
             sign->Select( false );
@@ -1015,7 +1015,7 @@ void DatabaseCanvas::AddQuickQueryFields(const wxString &tbl, std::vector<Field 
     Refresh();
 }
 
-void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &event)
+void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &WXUNUSED(event))
 {
     ShapeList list;
     m_showDataTypes = !m_showDataTypes;

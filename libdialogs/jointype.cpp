@@ -133,7 +133,7 @@ wxListCtrl *JointType::GetTypeCtrl()
     return m_joinType;
 }
 
-void JointType::OnListItemActivated(wxCommandEvent &event)
+void JointType::OnListItemActivated(wxCommandEvent &WXUNUSED(event))
 {
     EndModal( wxID_OK );
 }

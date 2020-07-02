@@ -114,7 +114,6 @@ void TableView::GetTablesForView(Database *db)
         if( res != wxID_CANCEL )
         {
             bool found = false;
-            Database *db = ((TableDocument *) GetDocument())->GetDatabase();
             std::map<std::wstring, std::vector<DatabaseTable *> > tbls = db->GetTableVector().m_tables;
             std::vector<DatabaseTable *> tableVec = tbls.at( db->GetTableVector().m_dbName );
             for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end() && !found; it++ )
@@ -178,7 +177,7 @@ void TableView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
     wxMessageBox( "Field definition" );
 }
 
-void TableView::OnFieldProperties(wxCommandEvent &event)
+void TableView::OnFieldProperties(wxCommandEvent &WXUNUSED(event))
 {
     std::vector<std::wstring> errors;
     bool found = false;
@@ -231,7 +230,7 @@ void TableView::OnFieldProperties(wxCommandEvent &event)
     }
 }
 
-void TableView::OnLogUpdateUI(wxUpdateUIEvent &event)
+void TableView::OnLogUpdateUI(wxUpdateUIEvent &WXUNUSED(event))
 {
 }
 
