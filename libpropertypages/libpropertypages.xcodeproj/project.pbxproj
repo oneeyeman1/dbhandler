@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E3014F2523E696D200903DB9 /* sortcolumnrenderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3014F2423E696D200903DB9 /* sortcolumnrenderer.mm */; };
 		E305643B2217CB4C00F5576C /* fieldgeneral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E30564372217CB4B00F5576C /* fieldgeneral.cpp */; };
 		E305643C2217CB4C00F5576C /* fieldheader.h in Headers */ = {isa = PBXBuildFile; fileRef = E30564382217CB4C00F5576C /* fieldheader.h */; };
 		E305643D2217CB4C00F5576C /* fieldgeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E30564392217CB4C00F5576C /* fieldgeneral.h */; };
@@ -30,7 +29,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E3014F2423E696D200903DB9 /* sortcolumnrenderer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = sortcolumnrenderer.mm; sourceTree = "<group>"; };
 		E30564372217CB4B00F5576C /* fieldgeneral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fieldgeneral.cpp; sourceTree = "<group>"; };
 		E30564382217CB4C00F5576C /* fieldheader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fieldheader.h; sourceTree = "<group>"; };
 		E30564392217CB4C00F5576C /* fieldgeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fieldgeneral.h; sourceTree = "<group>"; };
@@ -83,7 +81,6 @@
 		E39501CD1DF3BA080046E51B /* libpropertypages */ = {
 			isa = PBXGroup;
 			children = (
-				E3014F2423E696D200903DB9 /* sortcolumnrenderer.mm */,
 				E3607DD423C4427300267C14 /* sortgroupbypage.cpp */,
 				E3607DD523C4427300267C14 /* sortgroupbypage.h */,
 				E32A502A22A3A71500A57BD1 /* designlabelgeneral.cpp */,
@@ -184,7 +181,6 @@
 				E33E6F7E1EAD3067003A0B92 /* wherehavingpage.cpp in Sources */,
 				E305643B2217CB4C00F5576C /* fieldgeneral.cpp in Sources */,
 				E3607DD623C4427300267C14 /* sortgroupbypage.cpp in Sources */,
-				E3014F2523E696D200903DB9 /* sortcolumnrenderer.mm in Sources */,
 				E39573F81F0FAADD00FA817A /* fontpropertypage.mm in Sources */,
 				E39501D01DF3C2300046E51B /* tablegeneral.cpp in Sources */,
 				E32A502C22A3A71500A57BD1 /* designlabelgeneral.cpp in Sources */,

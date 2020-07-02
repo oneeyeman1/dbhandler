@@ -25,13 +25,14 @@ NSTextAlignment ConvertToNativeHorizontalTextAlignment(int alignment)
 }
 
 SortColumnRenderer::SortColumnRenderer(wxCheckBoxState state, wxDataViewCellMode mode, int align)
-: wxDataViewRenderer( GetDefaultType(), mode, mode ), m_checkedState( state )
+: wxOSXDataViewDisabledInertRenderer( GetDefaultType(), mode, mode )
 {
+    m_toggle = true;
     m_allow3rdStateForUser = false;
     NSButtonCell* cell;
     cell = [[NSButtonCell alloc] init];
     [cell setAlignment:ConvertToNativeHorizontalTextAlignment( GetAlignment() )];
-    [cell setButtonType: NSSwitchButton];
+    [cell setButtonType: static_cast<NSButtonType>( NSSwitchButton )];
     [cell setImagePosition:NSImageLeft];
     [cell setAllowsMixedState:YES];
     SetNativeData(new wxDataViewRendererNativeData( cell ) );
@@ -42,62 +43,31 @@ bool SortColumnRenderer::MacRender()
 {
     NSButtonCell* cell = (NSButtonCell*) GetNativeData()->GetItemCell();
     int nativecbvalue = 0;
-    switch( GetCheckedState() )
-    {
-        case wxCHK_CHECKED:
-            nativecbvalue = 1;
-            break;
-        case wxCHK_UNDETERMINED:
-            nativecbvalue = -1;
-            break;
-        case wxCHK_UNCHECKED:
-            nativecbvalue = 0;
-            break;
-    }
-    [cell setIntValue:nativecbvalue];
-    [cell setTitle:wxCFStringRef( m_value ).AsNSString()];
+    wxVariant value;
+    GetValue( value );
+    [cell setIntValue:value.GetBool()];
     return true;
 }
 
-long ObjectToLong(NSObject *object)
+bool ObjectToBool(NSObject *object)
 {
-    wxCHECK_MSG( [object isKindOfClass:[NSNumber class]], -1,
-                wxString::Format
-                (
-                 "number expected but got %s",
-                 wxCFStringRef::AsString([object className])
-                 ));
-    
-    return [(NSNumber *)object longValue];
+    // actually the value must be of NSCFBoolean class but it's private so we
+    // can't check for it directly
+    wxCHECK_MSG( [object isKindOfClass:[NSNumber class]], false,
+    wxString::Format
+    (
+        "number expected but got %s",
+        wxCFStringRef::AsString([object className])
+    ));
+    return [(NSNumber *)object boolValue];
 }
 
 void SortColumnRenderer::OSXOnCellChanged(NSObject *value, const wxDataViewItem& item, unsigned col)
 {
     wxDataViewModel *model = GetOwner()->GetOwner()->GetModel();
     // The icon can't be edited so get its old value and reuse it.
-    wxVariant valueOld;
-    model->GetValue( valueOld, item, col );
-    
-    wxDataViewCheckIconText checkIconText;
-    checkIconText << valueOld;
-    
-    wxCheckBoxState checkedState ;
-    switch( ObjectToLong(value) )
-    {
-        case 1:
-            checkedState = wxCHK_CHECKED;
-            break;
-            
-        case 0:
-            checkedState = wxCHK_UNCHECKED;
-            break;
-            
-        case -1:
-            checkedState = m_allow3rdStateForUser ? wxCHK_UNDETERMINED : wxCHK_CHECKED;
-            break;
-    }
-    
-    checkIconText.SetCheckedState( checkedState );
-    
-    model->ChangeValue( checkedState, item, col );
+    wxVariant valueToggle( ObjectToBool( value ) );
+    if( !Validate( valueToggle ) )
+        return;
+    model->ChangeValue( valueToggle, item, col );
 }
