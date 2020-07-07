@@ -201,7 +201,7 @@ void SortGroupByPage::set_properties()
     else
     {
         m_sortSource->AppendTextColumn( "" );
-        m_sortDest->AppendTextColumn( ""/*, wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT */);
+        m_sortDest->AppendTextColumn( "", wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT );
         m_sortDest->AppendColumn( new wxDataViewColumn( "", new SortColumnRenderer, 1, wxDVC_DEFAULT_WIDTH, wxALIGN_RIGHT ) );
     }
 }
