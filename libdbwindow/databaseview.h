@@ -95,6 +95,7 @@ protected:
     void CreateViewToolBar();
     int AddSize(int size, int lfHeight);
     void FindTextInEditor();
+    void PopuateQueryCanvas();
 #ifdef __WXMSW__
     static int CALLBACK EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam);
 #endif

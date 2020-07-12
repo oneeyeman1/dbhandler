@@ -681,6 +681,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
         }
     }
     ((DrawingDocument *) GetDocument())->AddTables( tables );
+    m_selectTableName = ((DrawingDocument *) GetDocument())->GetDBTables();
     ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
     if( m_type == QueryView )
     {
@@ -705,22 +706,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             m_canvas->AddQuickQueryFields( m_selectTableName[0]->GetTableName(), m_queryFields, quickSelect );
         if( quickSelect && m_selectTableName.size() > 0 )
         {
-            wxBeginBusyCursor();
-            wxFontStyle labelStyle = m_selectTableName[0]->GetLabelFontItalic() == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
-            wxFontWeight labelWeight = ( ( m_selectTableName[0]->GetLabelFontWeight() == 0 ) ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD );
-            wxFontStyle dataStyle = m_selectTableName[0]->GetDataFontItalic()  == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
-            wxFontWeight dataWeight = m_selectTableName[0]->GetDataFontWeight() == 0 ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD;
-            for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
-                m_designCanvas->AddFieldLabelToCanvas( *wxFont::New( m_selectTableName[0]->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, labelStyle, labelWeight, m_selectTableName[0]->GetLabelFontUnderline(), m_selectTableName[0]->GetLabelFontName() ),
-                                                  (*it) );
-            m_designCanvas->AddHeaderDivider();
-            for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
-                m_designCanvas->AddFieldToCanvas( *wxFont::New( m_selectTableName[0]->GetDataFontSize(), wxFONTFAMILY_DEFAULT, dataStyle, dataWeight, m_selectTableName[0]->GetDataFontUnderline(), m_selectTableName[0]->GetDataFontName() ), (*it) );
-            m_designCanvas->AddDataDivider();
-            m_designCanvas->Update();
-            m_designCanvas->InitialFieldSizing();
-            m_designCanvas->Refresh();
-            wxEndBusyCursor();
+            PopuateQueryCanvas();
         }
     }
 }
@@ -1596,7 +1582,7 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
         menuBar->Remove( i );
     if( m_type == QueryView )
     {
-        if( event.IsChecked () )
+        if( event.IsChecked() )
         {
             if( framePosition.y == 0 )
             {
@@ -1624,6 +1610,7 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
             m_canvas->Show( false );
             m_queryBook->Show( false );
             m_frame->Layout();
+            PopuateQueryCanvas();
             sizer->Layout();
         }
     }
@@ -1983,4 +1970,24 @@ void DrawingView::OnGotoLine(wxCommandEvent &WXUNUSED(event))
 void DrawingView::OnShowDataTypes(wxCommandEvent &event)
 {
     m_canvas->GetEventHandler()->ProcessEvent( event );
+}
+
+void DrawingView::PopuateQueryCanvas()
+{
+    wxBeginBusyCursor();
+    wxFontStyle labelStyle = m_selectTableName[0]->GetLabelFontItalic() == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
+    wxFontWeight labelWeight = ( ( m_selectTableName[0]->GetLabelFontWeight() == 0 ) ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD );
+    wxFontStyle dataStyle = m_selectTableName[0]->GetDataFontItalic()  == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
+    wxFontWeight dataWeight = m_selectTableName[0]->GetDataFontWeight() == 0 ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD;
+    for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
+        m_designCanvas->AddFieldLabelToCanvas( *wxFont::New( m_selectTableName[0]->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, labelStyle, labelWeight, m_selectTableName[0]->GetLabelFontUnderline(), m_selectTableName[0]->GetLabelFontName() ),
+        (*it) );
+    m_designCanvas->AddHeaderDivider();
+    for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
+        m_designCanvas->AddFieldToCanvas( *wxFont::New( m_selectTableName[0]->GetDataFontSize(), wxFONTFAMILY_DEFAULT, dataStyle, dataWeight, m_selectTableName[0]->GetDataFontUnderline(), m_selectTableName[0]->GetDataFontName() ), (*it) );
+    m_designCanvas->AddDataDivider();
+    m_designCanvas->Update();
+    m_designCanvas->InitialFieldSizing();
+    m_designCanvas->Refresh();
+    wxEndBusyCursor();
 }
