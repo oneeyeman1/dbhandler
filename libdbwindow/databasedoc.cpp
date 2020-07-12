@@ -125,6 +125,7 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
             if( ( dbType != L"SQLite" && (*it).ToStdWstring() == (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() ) ||
                 ( dbType == L"SQLite" && (*it).ToStdWstring() == (*it1)->GetTableName() ) )
             {
+                m_dbTables.push_back( (*it1 ) );
                 DatabaseTable *dbTable = (*it1);
                 MyErdTable *table = new MyErdTable( dbTable, dynamic_cast<DrawingView *>( GetFirstView() )->GetViewType() );
                 m_tables.push_back( table );
@@ -163,6 +164,11 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
 std::vector<std::wstring> &DrawingDocument::GetTableNameVector()
 {
     return m_tableNames;
+}
+
+std::vector<DatabaseTable *> &DrawingDocument::GetDBTables ()
+{
+    return m_dbTables;
 }
 
 MyErdTable *DrawingDocument::GetReferencedTable(const wxString &tableName)

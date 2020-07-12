@@ -27,6 +27,7 @@ public:
     void AddTables(const std::vector<wxString> &selections);
     std::vector<MyErdTable *> &GetTables();
     std::vector<std::wstring> &GetTableNameVector();
+    std::vector<DatabaseTable *> &GetDBTables();
     MyErdTable *GetReferencedTable(const wxString &tableName);
     std::vector<std::wstring> &GetTableNames();
     void AppendFieldToQueryFields(const std::wstring &field);
@@ -40,5 +41,6 @@ private:
     std::vector<MyErdTable *> m_tables;
     std::vector<std::wstring> m_tableNames;
     std::vector<std::wstring> m_queryFields;
+    std::vector<DatabaseTable *> m_dbTables;
     wxDECLARE_DYNAMIC_CLASS(DrawingDocument);
 };
