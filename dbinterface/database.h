@@ -43,13 +43,13 @@ public:
     Field()
     {
         m_comment = L"";
-        column_name = column_type = column_defaultValue = L"";
+        column_name = column_type = full_name = column_defaultValue = L"";
         field_size = -1;
         decimal_size = -1;
         column_isNull = autoIncrement = column_pk = column_fk = false;
     }
 
-    Field(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false, const bool columnFK = false)
+    Field(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &fullName, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false, const bool columnFK = false)
     {
         m_comment = L"";
         column_name = columnName;
@@ -63,6 +63,7 @@ public:
         column_fk = columnFK;
         label = columnName;
         heading = columnName;
+        full_name = fullName;
     }
     const std::wstring &GetLabel() const { return label; }
     const std::wstring &GetHeading() const { return heading; }
@@ -82,7 +83,7 @@ public:
     void SetFullType(const std::wstring type) { full_type = type; }
     const std::wstring &GetFullType() const { return full_type; }
 private:
-    std::wstring column_name, column_type, column_defaultValue, m_comment, label, heading, full_type;
+    std::wstring column_name, column_type, column_defaultValue, m_comment, label, heading, full_type, full_name;
     bool autoIncrement, column_isNull, column_pk, column_fk;
     int field_size, decimal_size;
 };
