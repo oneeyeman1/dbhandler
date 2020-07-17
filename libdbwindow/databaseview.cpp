@@ -1979,7 +1979,7 @@ void DrawingView::PopuateQueryCanvas()
     for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
     {
         std::wstring tableName = (*it)->GetFullName().substr( 0, (*it)->GetFullName().find( '.' ) );
-        std::vector<DatabaseTable *> tables = GetDocument()->GetDatabase()->GetTableVector().m_tables[0];
+        std::vector<DatabaseTable *> tables = GetDocument()->GetDatabase()->GetTableVector().m_tables.begin()->second;
         bool found = false;
         for( std::vector<DatabaseTable *>::iterator it1 = tables.begin(); it1 < tables.end() && !found; ++it1 )
         {
