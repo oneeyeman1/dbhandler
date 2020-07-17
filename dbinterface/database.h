@@ -82,6 +82,7 @@ public:
     void SetComment(const std::wstring &comment) { m_comment = comment; }
     void SetFullType(const std::wstring type) { full_type = type; }
     const std::wstring &GetFullType() const { return full_type; }
+    const std::wstring &GetFullName() const { return full_name; }
 private:
     std::wstring column_name, column_type, column_defaultValue, m_comment, label, heading, full_type, full_name;
     bool autoIncrement, column_isNull, column_pk, column_fk;
@@ -298,6 +299,7 @@ public:
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg) = 0;
     virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) = 0;
 };
 
 struct Database::Impl

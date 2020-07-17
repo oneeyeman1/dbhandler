@@ -2240,3 +2240,58 @@ bool MySQLDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const
     }
     return exist;
 }
+
+int MySQLDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &headerStr)
+{
+    int result = 0;
+    headerStr = fieldName;
+    std::wstring query = L"SEECT pbc_hdr FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_cnam\" = ?";
+    MYSQL_BIND bind[2];
+    unsigned long str_len1, str_len2;
+    MYSQL_STMT *res = mysql_stmt_init( m_db );
+    if( res )
+    {
+        if( !mysql_stmt_prepare( res, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str (), query.length() ) )
+        {
+            bind[0].buffer_type = MYSQL_TYPE_STRING;
+            bind[0].buffer = (char *) m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str();
+            bind[0].buffer_length = strlen( m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
+            bind[0].is_null = 0;
+            bind[0].length = &str_len1;
+            bind[1].buffer_type = MYSQL_TYPE_STRING;
+            bind[1].buffer = (char *) m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
+            bind[1].buffer_length = strlen( m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() );
+            bind[1].is_null = 0;
+            bind[1].length = &str_len2;
+            if( !mysql_stmt_bind_param( res, bind ) )
+            {
+                str_len1 = bind[0].buffer_length;
+                str_len2 = bind[1].buffer_length;
+                if( !mysql_stmt_execute( res ) )
+                {
+                    if( ( mysql_store_result( m_db ) ) )
+                    {
+                        MYSQL_BIND results;
+                        my_bool is_null, error;
+                        unsigned long length;
+                        char *comment;
+                        results.buffer_type = MYSQL_TYPE_STRING;
+                        results.buffer = &comment;
+                        results.buffer_length = 256;
+                        results.is_null = &is_null;
+                        results.length = &length;
+                        results.error = &error;
+                        if( !mysql_stmt_bind_result( res, &results ) )
+                        {
+                            if( !mysql_stmt_fetch( res ) )
+                            {
+                                headerStr = m_pimpl->m_myconv.from_bytes( comment );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return result;
+}

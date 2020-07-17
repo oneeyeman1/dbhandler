@@ -46,6 +46,7 @@ public:
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg);
     void GetConnectedUser(const std::wstring &dsn, std::wstring &connectedUser);
     void GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword);
+    virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr);
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;

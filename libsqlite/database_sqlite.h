@@ -24,6 +24,7 @@ public:
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg);
     virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg);
+    virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr);
 protected:
     struct SQLiteImpl;
     SQLiteImpl *sqlite_pimpl;

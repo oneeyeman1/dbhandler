@@ -25,6 +25,7 @@ public:
     int CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg);
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg);
     int GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg);
+    virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr);
 protected:
     struct PostgresImpl;
     PostgresImpl *m_pimpl;

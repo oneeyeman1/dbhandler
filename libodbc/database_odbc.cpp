@@ -5368,10 +5368,10 @@ bool ODBCDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const 
             ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
-                ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name, 0, &cbTableName );
+                ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name, 0, &cbOwnerName );
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                 {
-                    ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbTableName );
+                    ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
                         ret = SQLExecute( m_hstmt );
@@ -5412,4 +5412,55 @@ bool ODBCDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const 
     delete[] field_name;
     field_name = NULL;
     return exist;
+}
+
+int ODBCDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &headerStr)
+{
+    int result = 0;
+    SQLLEN cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbHeaderStr = SQL_NTS;
+    headerStr = fieldName;
+    SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + 2], *field_name = new SQLWCHAR[fieldName.length() + 2];
+    memset( table_name, '\0', tableName.length() + 2 );
+    memset( field_name, '\0', fieldName.length() + 2 );
+    uc_to_str_cpy( table_name, tableName );
+    uc_to_str_cpy( field_name, fieldName );
+    std::wstring query = L"SEECT pbc_hdr FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_cnam\" = ?";
+    SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+        memset( qry, '\0', query.length() + 2 );
+        uc_to_str_cpy( qry, query );
+        ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+        {
+            ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+            {
+                ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                {
+                    SQLWCHAR name[SQL_MAX_COLUMN_NAME_LEN];
+                    ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &name, SQL_MAX_COLUMN_NAME_LEN, &cbHeaderStr );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        ret = SQLExecute( m_hstmt );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            ret = SQLFetch( m_hstmt );
+                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                                str_to_uc_cpy( headerStr, name );
+                        }
+                    }
+                }
+            }
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+            m_hstmt = 0;
+        }
+        delete[] table_name;
+        table_name = NULL;
+        delete[] field_name;
+        field_name = NULL;
+    }
+    return result;
 }

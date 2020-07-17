@@ -1574,3 +1574,29 @@ bool PostgresDatabase::IsFieldPropertiesExist(const std::wstring &tableName, con
     values[2] = NULL;
     return exist;
 }
+
+int PostgresDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &headerStr)
+{
+    int result = 0;
+    headerStr = fieldName;
+    char *values[2];
+    values[0] = new char[tableName.length() * sizeof( wchar_t ) + 1];
+    values[1] = new char[fieldName.length() * sizeof( wchar_t ) + 1];
+    int charlength1 = tableName.length() * sizeof( wchar_t ) + 1, charlength3 = fieldName.length() * sizeof( wchar_t ) + 1;
+    memset( values[0], '\0', charlength1 );
+    memset( values[1], '\0', charlength3 );
+    strcpy( values[0], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
+    strcpy( values[1], m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() );
+    int length[2] = {charlength1, charlength3};
+    int formats[2] = {1, 1};
+    std::wstring query = L"SEECT pbc_hdr FROM \"abcatcol\" WHERE \"abc_tnam\" = $1 AND \"abc_cnam\" = $2";
+    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, length, formats, 1 );
+    ExecStatusType status = PQresultStatus( res ); 
+    if( status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK )
+        headerStr = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, 0, 0 ) );
+    delete values[0];
+    values[0] = nullptr;
+    delete values[1];
+    values[1] = nullptr;
+    return result;
+}

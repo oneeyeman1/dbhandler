@@ -25,6 +25,7 @@ public:
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     int CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg);
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg);
+    virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr);
 protected:
     struct MySQLImpl;
     MySQLImpl *m_pimpl;
