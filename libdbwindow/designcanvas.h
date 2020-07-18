@@ -13,6 +13,7 @@ public:
     void AddDataDivider();
     virtual void OnRightDown(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnLeftDown(wxMouseEvent &event) wxOVERRIDE;
+    void PopulateQueryCanvas(const std::vector<Field *> &queryFields);
 protected:
     void OnProperties(wxCommandEvent &event);
 private:

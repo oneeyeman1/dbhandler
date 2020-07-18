@@ -1974,36 +1974,5 @@ void DrawingView::OnShowDataTypes(wxCommandEvent &event)
 
 void DrawingView::PopuateQueryCanvas()
 {
-    wxBeginBusyCursor();
-    wxFont fontUsed;
-    for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
-    {
-        std::wstring tableName = (*it)->GetFullName().substr( 0, (*it)->GetFullName().find( '.' ) );
-        std::vector<DatabaseTable *> tables = GetDocument()->GetDatabase()->GetTableVector().m_tables.begin()->second;
-        bool found = false;
-        for( std::vector<DatabaseTable *>::iterator it1 = tables.begin(); it1 < tables.end() && !found; ++it1 )
-        {
-            if( (*it1)->GetTableName() == tableName )
-            {
-                std::wstring headerStr;
-                found = true;
-                GetDocument()->GetDatabase()->GetFieldHeader( tableName, (*it)->GetFieldName(), headerStr );
-                wxFontStyle labelStyle = (*it1)->GetLabelFontItalic() == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
-                wxFontWeight labelWeight = ( ( (*it1)->GetLabelFontWeight() == 0 ) ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD );
-                wxFontStyle dataStyle = (*it1)->GetDataFontItalic()  == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
-                wxFontWeight dataWeight = (*it1)->GetDataFontWeight() == 0 ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD;
-                wxFont labelFont( (*it1)->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, labelStyle, labelWeight, m_selectTableName[0]->GetLabelFontUnderline(), m_selectTableName[0]->GetLabelFontName() );
-                wxFont dataFont( (*it1)->GetDataFontSize(), wxFONTFAMILY_DEFAULT, dataStyle, dataWeight, m_selectTableName[0]->GetDataFontUnderline(), m_selectTableName[0]->GetDataFontName() );
-            }
-        m_designCanvas->AddFieldLabelToCanvas( fontUsed, (*it) );
-        }
-    }
-    m_designCanvas->AddHeaderDivider();
-    for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
-        m_designCanvas->AddFieldToCanvas( fontUsed, (*it) );
-    m_designCanvas->AddDataDivider();
-    m_designCanvas->Update();
-    m_designCanvas->InitialFieldSizing();
-    m_designCanvas->Refresh();
-    wxEndBusyCursor();
+    m_designCanvas->PopulateQueryCanvas( m_queryFields );
 }
