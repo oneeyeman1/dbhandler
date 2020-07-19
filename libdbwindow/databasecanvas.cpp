@@ -343,7 +343,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     ConstraintSign *erdSign = NULL;
     wxPoint pt = event.GetPosition();
     ShapeList selection;
-    this->GetSelectedShapes( selection );
+    GetSelectedShapes( selection );
     for( ShapeList::iterator it = selection.begin(); it != selection.end(); ++it )
     {
         MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
@@ -546,6 +546,33 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             GetEventHandler()->ProcessEvent( evt );
         else
             m_view->ProcessEvent( evt );
+    }
+}
+
+void DatabaseCanvas::OnMouseMove(wxMouseEvent &event)
+{
+    ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
+    wxSFShapeCanvas::OnMouseMove( event );
+    if( type == QueryView )
+    {
+        wxSFShapeBase *shape = GetShapeUnderCursor();
+        FieldShape *field = wxDynamicCast( shape, FieldShape );
+        if( field )
+            SetCursor( wxCursor( wxCURSOR_HAND ) );
+        else
+        {
+            FieldTypeShape *type = wxDynamicCast( shape, FieldTypeShape );
+            if( type )
+                SetCursor( wxCursor( wxCURSOR_HAND ) );
+            else
+            {
+                CommentFieldShape *comment = wxDynamicCast( shape, CommentFieldShape );
+                if( comment )
+                    SetCursor( wxCursor( wxCURSOR_HAND ) );
+                else
+                    SetCursor( *wxSTANDARD_CURSOR );
+            }
+        }
     }
 }
 

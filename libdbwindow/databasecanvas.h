@@ -14,6 +14,7 @@ public:
     virtual void OnLeftDown(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnRightDown(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnLeftDoubleClick(wxMouseEvent& event) wxOVERRIDE;
+    virtual void OnMouseMove(wxMouseEvent &event) wxOVERRIDE;
     void OnDropTable(wxCommandEvent &event);
     void OnShowSQLBox(wxCommandEvent &event);
     void OnShowComments(wxCommandEvent &event);

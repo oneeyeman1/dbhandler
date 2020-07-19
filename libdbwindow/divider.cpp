@@ -166,7 +166,6 @@ void Divider::DrawSelected(wxDC &dc)
 
 void Divider::DrawHover(wxDC &dc)
 {
-//    SetCursor( wxImage( "updown.png" ) );
     DrawNormal( dc );
 }
 
