@@ -211,7 +211,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
     m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), /*parentRect.GetHeight() - parent->GetToolBar()->GetSize().GetHeight()*/parentClientSize.GetHeight() );
-    m_tb = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "Second Toolbar" );
+    m_tb = m_frame->CreateToolBar();
     if( m_type == QueryView )
     {
         m_styleBar = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "StyleBar" );
@@ -354,8 +354,6 @@ DrawingView::~DrawingView()
         delete menu;
     }
 #ifndef __WXOSX__
-    delete m_tb;
-    m_tb = nullptr;
     delete m_styleBar;
     m_styleBar = nullptr;
 #endif
