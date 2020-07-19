@@ -740,8 +740,10 @@ bool DrawingView::OnClose(bool deleteWindow)
     wxWindowList children = parent->GetChildren();
     if( parent->GetChildren().size() == 0 )
     {
+#if !defined( __WXOSX__ )
         delete m_tb;
         m_tb = NULL;
+#endif
         wxSize clientSize = mainWin->GetClientSize();
         parent->SetSize( 0, 0, clientSize.x, clientSize.y );
     }
