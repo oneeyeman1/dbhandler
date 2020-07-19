@@ -348,7 +348,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 DrawingView::~DrawingView()
 {
     wxMenuBar *bar = m_parent->GetMenuBar();
-    for( int i = bar->GetMenuCount() - 2; i > 0; i-- )
+    for( auto i = bar->GetMenuCount() - 2; i > 0; i-- )
     {
         auto menu = bar->Remove( i );
         delete menu;
