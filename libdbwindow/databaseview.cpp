@@ -207,6 +207,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxBoxSizer *macTBSizer = new wxBoxSizer( wxVERTICAL );
     wxRect parentRect = m_parent->GetRect();
     wxSize parentClientSize = m_parent->GetClientSize();
+    m_frame->Move( 0, parentRect.y - parentClientSize.y );
     wxPoint pt;
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
@@ -277,7 +278,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_styleBar )
         macTBSizer->Add( m_styleBar, 0, wxEXPAND, 0 );
     sizer->Add( macTBSizer, 0, wxEXPAND, 0 );
-    m_frame->SetSize( 0, ptCanvas.y, parentRect.GetWidth(), parentClientSize.GetHeight() - ptCanvas.y );
 #else
     ptCanvas = wxDefaultPosition;
 #endif
