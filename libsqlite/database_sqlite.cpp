@@ -209,6 +209,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
                 result = 1;
         }
     }
+    GetServerVersion( errorMsg );
     return result;
 }
 
