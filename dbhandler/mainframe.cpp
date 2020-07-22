@@ -391,10 +391,13 @@ void MainFrame::Connect()
         if( db && db != m_db )
         {
             m_db = db;
+            wxString major = wxString::Format( "%d", m_db->GetTableVector().m_versionMajor );
+            wxString minor = wxString::Format( "%d", m_db->GetTableVector().m_versionMinor );
+            wxString revision = wxString::Format( "%d", m_db->GetTableVector().m_versionRevision );
             if( m_db && m_db->GetTableVector().m_type == L"ODBC" )
                 title = "Connected to " + m_db->GetTableVector().m_subtype + " version " + m_db->GetTableVector().m_serverVersion + " thru the ODBC";
             else if( m_db )
-                title = "Connected to " + m_db->GetTableVector().m_type + " version " + m_db->GetTableVector().m_serverVersion;
+                title = wxString::Format( "Connected to " + m_db->GetTableVector().m_type + " version " + major + "." + minor + "." + revision );
             SetTitle( title );
             if( m_db )
             {

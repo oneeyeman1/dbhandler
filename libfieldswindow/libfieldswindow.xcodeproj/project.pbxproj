@@ -10,9 +10,9 @@
 		E3E91D761DCC310600675CF8 /* fieldwindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D731DCC310600675CF8 /* fieldwindow.cpp */; };
 		E3E91D771DCC310600675CF8 /* fieldwindow.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D741DCC310600675CF8 /* fieldwindow.h */; };
 		E3E91D7B1DCC3AFE00675CF8 /* fieldswindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D7A1DCC3AFE00675CF8 /* fieldswindow.cpp */; };
-		E3E91D7D1DCDA0DA00675CF8 /* liblibshapeframework.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3E91D7C1DCDA0DA00675CF8 /* liblibshapeframework.dylib */; };
 		E3E91D801DCECEF300675CF8 /* field.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D7E1DCECEF300675CF8 /* field.cpp */; };
 		E3E91D811DCECEF300675CF8 /* field.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D7F1DCECEF300675CF8 /* field.h */; };
+		E3F2B2EE219E856200FBFF69 /* liblibshapeframework.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3F2B2ED219E856200FBFF69 /* liblibshapeframework.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +23,7 @@
 		E3E91D7C1DCDA0DA00675CF8 /* liblibshapeframework.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibshapeframework.dylib; path = ../libshapeframework/build/Debug/liblibshapeframework.dylib; sourceTree = "<group>"; };
 		E3E91D7E1DCECEF300675CF8 /* field.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = field.cpp; sourceTree = "<group>"; };
 		E3E91D7F1DCECEF300675CF8 /* field.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = field.h; sourceTree = "<group>"; };
+		E3F2B2ED219E856200FBFF69 /* liblibshapeframework.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = liblibshapeframework.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -30,7 +31,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3E91D7D1DCDA0DA00675CF8 /* liblibshapeframework.dylib in Frameworks */,
+				E3F2B2EE219E856200FBFF69 /* liblibshapeframework.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,6 +44,7 @@
 				E3E91D7C1DCDA0DA00675CF8 /* liblibshapeframework.dylib */,
 				E3E91D711DCC30AB00675CF8 /* libfieldswindow */,
 				E3E91D651DCC2E8900675CF8 /* Products */,
+				E3F2B2EC219E856200FBFF69 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -64,6 +66,14 @@
 				E3E91D741DCC310600675CF8 /* fieldwindow.h */,
 			);
 			name = libfieldswindow;
+			sourceTree = "<group>";
+		};
+		E3F2B2EC219E856200FBFF69 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E3F2B2ED219E856200FBFF69 /* liblibshapeframework.dylib */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
