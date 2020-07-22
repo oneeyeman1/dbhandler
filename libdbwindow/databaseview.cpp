@@ -269,12 +269,11 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     {
         m_styleBar->Realize();
         m_styleBar->SetSize( 0, offset, parentRect.GetWidth(), wxDefaultCoord );
+        offset +=m_styleBar->GetSize().y;
         m_frame->SetClientSize( frameClientSize.GetWidth(), frameClientSize.GetHeight() - offset );
     }
     ptCanvas.x = 0;
     ptCanvas.y = offset;
-    if( m_styleBar )
-        ptCanvas.y += m_styleBar->GetSize().y;
 #else
     ptCanvas = wxDefaultPosition;
 #endif
