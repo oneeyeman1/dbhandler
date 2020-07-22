@@ -263,8 +263,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_styleBar->AddTool( 303, _( "Underline" ), wxBitmap::NewFromPNGData( underline_png,  WXSIZEOF( underline_png ) ), wxNullBitmap, wxITEM_NORMAL );
     }
     m_tb->Realize();
-    int offset = m_tb->GetSize().GetHeight();
-    wxSize frameClientSize = m_frame->GetClientSize();
+    int offset = m_tb->GetSize().y;
+    auto frameClientSize = m_frame->GetClientSize();
     if( m_styleBar )
     {
         m_styleBar->Realize();
@@ -272,9 +272,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_frame->SetClientSize( frameClientSize.GetWidth(), frameClientSize.GetHeight() - offset );
     }
     ptCanvas.x = 0;
-    ptCanvas.y = m_tb->GetSize().GetHeight();
+    ptCanvas.y = offset;
     if( m_styleBar )
-        ptCanvas.y += m_styleBar->GetSize().GetHeight();
+        ptCanvas.y += m_styleBar->GetSize().y;
 #else
     ptCanvas = wxDefaultPosition;
 #endif
