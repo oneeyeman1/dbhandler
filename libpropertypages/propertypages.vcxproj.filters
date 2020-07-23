@@ -40,6 +40,9 @@
     <ClInclude Include="sortgroupbypage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bandgeneral.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tablegeneral.cpp">
@@ -67,6 +70,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sortgroupbypage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bandgeneral.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

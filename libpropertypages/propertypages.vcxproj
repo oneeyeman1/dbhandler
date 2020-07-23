@@ -35,6 +35,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bandgeneral.h" />
     <ClInclude Include="designlabelgeneral.h" />
     <ClInclude Include="fieldgeneral.h" />
     <ClInclude Include="fieldheader.h" />
@@ -47,6 +48,7 @@
     <ClInclude Include="wherehavingpage.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bandgeneral.cpp" />
     <ClCompile Include="designlabelgeneral.cpp" />
     <ClCompile Include="fieldgeneral.cpp" />
     <ClCompile Include="fieldheader.cpp" />
