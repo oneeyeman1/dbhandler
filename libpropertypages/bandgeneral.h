@@ -12,9 +12,6 @@
 #ifndef BANDGENERAL_H
 #define BANDGENERAL_H
 
-#include <wx/wx.h>
-#include <wx/image.h>
-
 // begin wxGlade: ::dependencies
 // end wxGlade
 
@@ -38,8 +35,9 @@ private:
 
 protected:
     // begin wxGlade: BandGeneralProperties::attributes
-    wxComboBox* m_colors;
-    wxTextCtrl* m_height;
+    wxBitmapComboBox *m_colors;
+    wxTextCtrl *m_height;
+    wxStaticText *m_label1, *m_label2;
     // end wxGlade
 }; // wxGlade: end class
 

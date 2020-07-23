@@ -8,7 +8,10 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
+#include <wx/wx.h>
+#include <wx/image.h>
 
+#include "wx/bmpcbox.h"
 #include "bandgeneral.h"
 
 // begin wxGlade: ::extracode
@@ -20,9 +23,10 @@ BandGeneralProperties::BandGeneralProperties(wxWindow* parent, wxWindowID id, co
     wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL)
 {
     // begin wxGlade: BandGeneralProperties::BandGeneralProperties
-    const wxString m_colors_choices[] = {};
-    m_colors = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0, m_colors_choices, wxCB_DROPDOWN);
-    m_height = new wxTextCtrl(this, wxID_ANY, wxEmptyString);
+    m_label1 = new wxStaticText( this, wxID_ANY, _( "Color" ) );
+    m_colors = new wxBitmapComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_DROPDOWN );
+    m_label2 = new wxStaticText( this, wxID_ANY, _( "Height" ) );
+    m_height = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
 
     set_properties();
     do_layout();
@@ -40,29 +44,27 @@ void BandGeneralProperties::set_properties()
 void BandGeneralProperties::do_layout()
 {
     // begin wxGlade: BandGeneralProperties::do_layout
-    wxBoxSizer* sizer_1 = new wxBoxSizer(wxHORIZONTAL);
-    wxBoxSizer* sizer_2 = new wxBoxSizer(wxVERTICAL);
-    wxBoxSizer* sizer_3 = new wxBoxSizer(wxVERTICAL);
-    wxBoxSizer* sizer_4 = new wxBoxSizer(wxHORIZONTAL);
-    sizer_1->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_2->Add(5, 5, 0, wxEXPAND, 0);
-    wxStaticText* m_label1 = new wxStaticText(this, wxID_ANY, wxT("Color"));
-    sizer_3->Add(m_label1, 0, wxEXPAND, 0);
-    sizer_3->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_3->Add(m_colors, 0, wxEXPAND, 0);
-    sizer_3->Add(5, 10, 0, wxEXPAND, 0);
-    wxStaticText* m_label2 = new wxStaticText(this, wxID_ANY, wxT("Height"));
-    sizer_3->Add(m_label2, 0, wxEXPAND, 0);
-    sizer_3->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_4->Add(m_height, 0, 0, 0);
-    sizer_4->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_3->Add(sizer_4, 0, wxEXPAND, 0);
-    sizer_2->Add(sizer_3, 0, wxEXPAND, 0);
-    sizer_2->Add(5, 5, 0, 0, 0);
-    sizer_1->Add(sizer_2, 0, wxEXPAND, 0);
-    sizer_1->Add(5, 5, 0, wxEXPAND, 0);
-    SetSizer(sizer_1);
-    sizer_1->Fit(this);
+    wxBoxSizer* sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* sizer_2 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* sizer_3 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* sizer_4 = new wxBoxSizer( wxHORIZONTAL );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_3->Add( m_label1, 0, wxEXPAND, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_3->Add( m_colors, 0, wxEXPAND, 0 );
+    sizer_3->Add( 5, 10, 0, wxEXPAND, 0 );
+    sizer_3->Add( m_label2, 0, wxEXPAND, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_4->Add( m_height, 0, 0, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
+    sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
+    sizer_2->Add( 5, 5, 0, 0, 0 );
+    sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    SetSizer( sizer_1 );
+    sizer_1->Fit( this );
     // end wxGlade
 }
 
