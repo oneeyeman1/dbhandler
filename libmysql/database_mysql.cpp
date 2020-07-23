@@ -167,6 +167,8 @@ int MySQLDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wst
                     {
                         result = 1;
                     }
+                    else
+                        GetServerVersion( errorMsg );
                 }
             }
         }
