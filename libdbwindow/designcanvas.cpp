@@ -181,7 +181,9 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
     if( rc != wxID_NONE )
     {
         wxCommandEvent evt( wxEVT_MENU, rc );
-        GetEventHandler()->ProcessEvent( evt );
+        if( divider )
+            evt.SetEventObject( divider );
+        m_view->ProcessEvent( evt );
     }
 }
 

@@ -76,6 +76,7 @@
 #include "databasedoc.h"
 #include "designcanvas.h"
 #include "databaseview.h"
+#include "divider.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
@@ -108,9 +109,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(DrawingView, wxView);
 wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_SELECTTABLE, DrawingView::OnViewSelectedTables)
     EVT_MENU(wxID_OBJECTNEWINDEX, DrawingView::OnNewIndex)
-    EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_PROPERTIES, DrawingView::OnFieldProperties)
-    EVT_MENU(wxID_FIELDPROPERTIES, DrawingView::OnFieldProperties)
     EVT_MENU(wxID_OBJECTNEWFF, DrawingView::OnForeignKey)
     EVT_UPDATE_UI(wxID_STARTLOG, DrawingView::OnLogUpdateUI)
     EVT_UPDATE_UI(wxID_STOPLOG, DrawingView::OnLogUpdateUI)
@@ -874,37 +873,36 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     std::vector<std::wstring> errors;
     bool found = false;
     int type = 0;
-    DatabaseTable *dbTable = NULL;
+    DatabaseTable *dbTable = nullptr;
+    Divider *divider = nullptr;
     Field *field = NULL;
-    ShapeList shapes;
     wxString command = "";
     bool logOnly = false;
-    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
+    wxSFRectShape *shape = wxDynamicCast( event.GetEventObject(), wxSFRectShape );
     wxString tableName, schemaName, ownerName;
     MyErdTable *erdTable = NULL;
     ConstraintSign *sign = NULL;
     Constraint *constraint = NULL;
-    for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
+    if( event.GetId() == wxID_PROPERTIES )
     {
-        if( event.GetId() == wxID_PROPERTIES )
+        erdTable = wxDynamicCast( shape, MyErdTable );
+        if( erdTable )
         {
-            if( (*it)->IsSelected() )
-            {
-                erdTable = (MyErdTable *)(*it);
-                if( erdTable )
-                {
-                    dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) *it)->GetTable() );
-                    type = 0;
-                    found = true;
-                }
-            }
+            dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) shape)->GetTable() );
+            type = 0;
         }
-        if( event.GetId() == wxID_FIELDPROPERTIES )
+        else
         {
-            field = ((FieldShape *) event.GetEventObject())->GetField();
-            if( (*it)->IsSelected() )
+            divider = wxDynamicCast( shape, Divider );
+            if( divider )
             {
-                MyErdTable *my_table = dynamic_cast<MyErdTable *>( *it );
+                type = 2;
+                dbTable = nullptr;
+            }
+            else
+            {
+                field = ((FieldShape *) shape)->GetField();
+                MyErdTable *my_table = dynamic_cast<MyErdTable *>( ((FieldShape *) shape)->GetParentShape()->GetParentShape() );
                 if( my_table )
                 {
                     erdTable = my_table;
@@ -912,7 +910,6 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
                     schemaName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetSchemaName();
                     ownerName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableOwner();
                     type = 1;
-                    found = true;
                 }
             }
         }

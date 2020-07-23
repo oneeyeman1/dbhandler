@@ -460,7 +460,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             else if( fieldSelected )
             {
                 mnu.Append( wxID_FIELDDEFINITION, _( "Definition" ), _( "Edit definition of selected object" ), false );
-                mnu.Append( wxID_FIELDPROPERTIES, _( "Properties..." ), _( "Show properties of selected object" ), false );
+                mnu.Append( wxID_PROPERTIES, _( "Properties..." ), _( "Show properties of selected object" ), false );
             }
             else
             {
