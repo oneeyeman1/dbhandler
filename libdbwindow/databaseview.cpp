@@ -889,14 +889,14 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
         if( erdTable )
         {
             dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) shape)->GetTable() );
-            type = 0;
+            type = DatabaseTableProperties;
         }
         else
         {
             divider = wxDynamicCast( shape, Divider );
             if( divider )
             {
-                type = 2;
+                type = DividerProperties;
                 dbTable = nullptr;
             }
             else
@@ -909,7 +909,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
                     tableName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName();
                     schemaName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetSchemaName();
                     ownerName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableOwner();
-                    type = 1;
+                    type = DatabaseFieldProperties;
                 }
             }
         }
@@ -926,10 +926,12 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-        if( type == 0 )
+        if( type == DatabaseTableProperties )
             res = func( m_frame, GetDocument()->GetDatabase(), type, dbTable, command, logOnly, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
-        if( type == 1 )
+        if( type == DatabaseFieldProperties )
             res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName, ownerName, *pcs );
+        if( type == DividerProperties )
+            res = func( m_frame, nullptr, type, divider, command, false, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
         if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );

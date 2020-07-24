@@ -18,6 +18,15 @@ enum DrawinViewMenu
     QuerySyntaxMenu
 };
 
+enum
+{
+    DatabaseTableProperties,
+    DatabaseFieldProperties,
+    DesignLabelProperties,
+    DesignFieldProperties,
+    DividerProperties
+};
+
 // The view using MyCanvas to show its contents
 class DrawingView : public wxView
 {

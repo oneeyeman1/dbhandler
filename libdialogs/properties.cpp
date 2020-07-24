@@ -54,7 +54,8 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_isApplied = false;
     m_type = type;
     m_db = db;
-    m_dbType = m_db->GetTableVector().m_type;
+    if( m_db )
+        m_dbType = m_db->GetTableVector().m_type;
     m_object = object;
     int res = -1;
     // begin wxGlade: PropertiesDialog::PropertiesDialog
