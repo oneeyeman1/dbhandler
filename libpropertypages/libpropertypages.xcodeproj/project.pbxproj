@@ -26,6 +26,8 @@
 		E3AC9DD81E176AB80083DD62 /* fontpropertypage.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AC9DD61E176AB80083DD62 /* fontpropertypage.h */; };
 		E3AC9DDB1E176C640083DD62 /* fontpropertypagebase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3AC9DD91E176C640083DD62 /* fontpropertypagebase.cpp */; };
 		E3AC9DDC1E176C640083DD62 /* fontpropertypagebase.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AC9DDA1E176C640083DD62 /* fontpropertypagebase.h */; };
+		E3B92D6D24CA0DF60035428C /* bandgeneral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B92D6B24CA0DF50035428C /* bandgeneral.cpp */; };
+		E3B92D6E24CA0DF60035428C /* bandgeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B92D6C24CA0DF60035428C /* bandgeneral.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +51,8 @@
 		E3AC9DD61E176AB80083DD62 /* fontpropertypage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fontpropertypage.h; path = cocoa/fontpropertypage.h; sourceTree = "<group>"; };
 		E3AC9DD91E176C640083DD62 /* fontpropertypagebase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fontpropertypagebase.cpp; sourceTree = "<group>"; };
 		E3AC9DDA1E176C640083DD62 /* fontpropertypagebase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontpropertypagebase.h; sourceTree = "<group>"; };
+		E3B92D6B24CA0DF50035428C /* bandgeneral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bandgeneral.cpp; sourceTree = "<group>"; };
+		E3B92D6C24CA0DF60035428C /* bandgeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bandgeneral.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +85,8 @@
 		E39501CD1DF3BA080046E51B /* libpropertypages */ = {
 			isa = PBXGroup;
 			children = (
+				E3B92D6B24CA0DF50035428C /* bandgeneral.cpp */,
+				E3B92D6C24CA0DF60035428C /* bandgeneral.h */,
 				E3607DD423C4427300267C14 /* sortgroupbypage.cpp */,
 				E3607DD523C4427300267C14 /* sortgroupbypage.h */,
 				E32A502A22A3A71500A57BD1 /* designlabelgeneral.cpp */,
@@ -111,6 +117,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3B92D6E24CA0DF60035428C /* bandgeneral.h in Headers */,
 				E3607DD723C4427300267C14 /* sortgroupbypage.h in Headers */,
 				E33E6F7F1EAD3067003A0B92 /* wherehavingpage.h in Headers */,
 				E39501D11DF3C2300046E51B /* tablegeneral.h in Headers */,
@@ -182,6 +189,7 @@
 				E305643B2217CB4C00F5576C /* fieldgeneral.cpp in Sources */,
 				E3607DD623C4427300267C14 /* sortgroupbypage.cpp in Sources */,
 				E39573F81F0FAADD00FA817A /* fontpropertypage.mm in Sources */,
+				E3B92D6D24CA0DF60035428C /* bandgeneral.cpp in Sources */,
 				E39501D01DF3C2300046E51B /* tablegeneral.cpp in Sources */,
 				E32A502C22A3A71500A57BD1 /* designlabelgeneral.cpp in Sources */,
 			);
