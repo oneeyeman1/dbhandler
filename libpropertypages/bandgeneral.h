@@ -12,12 +12,10 @@
 #ifndef BANDGENERAL_H
 #define BANDGENERAL_H
 
-// begin wxGlade: ::dependencies
-// end wxGlade
-
-// begin wxGlade: ::extracode
-// end wxGlade
-
+struct BandProperties
+{
+    int color, height;
+};
 
 class WXEXPORT BandGeneralProperties: public wxPanel
 {
@@ -25,7 +23,7 @@ public:
     // begin wxGlade: BandGeneralProperties::ids
     // end wxGlade
 
-    BandGeneralProperties(wxWindow* parent, wxWindowID id, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
+    BandGeneralProperties(wxWindow* parent, const BandProperties *props);
 
 private:
     // begin wxGlade: BandGeneralProperties::methods

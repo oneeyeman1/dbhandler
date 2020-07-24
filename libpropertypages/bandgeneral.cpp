@@ -19,8 +19,8 @@
 
 
 
-BandGeneralProperties::BandGeneralProperties(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style):
-    wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL)
+BandGeneralProperties::BandGeneralProperties(wxWindow* parent,  const BandProperties *props):
+    wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 {
     // begin wxGlade: BandGeneralProperties::BandGeneralProperties
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Color" ) );

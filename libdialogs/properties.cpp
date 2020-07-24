@@ -37,6 +37,7 @@
 #include "fontpropertypagebase.h"
 #include "fieldgeneral.h"
 #include "designlabelgeneral.h"
+#include "bandgeneral.h"
 #include "fieldheader.h"
 #include "properties.h"
 
@@ -60,7 +61,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     int res = -1;
     // begin wxGlade: PropertiesDialog::PropertiesDialog
     m_properties = new wxNotebook( this, wxID_ANY );
-    if( type == 0 )
+    if( type == DatabaseTableProperties )
     {
         DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
         {
@@ -91,7 +92,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         m_properties->AddPage( m_page4, _( "Label Font" ) );
         m_page1->GetCommentCtrl()->SetFocus();
     }
-    if( type == 1 )
+    if( type == DatabaseFieldProperties )
     {
         Field *field = static_cast<Field *>( m_object );
         wxString fieldName( field->GetFieldName() );
@@ -129,6 +130,12 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         m_properties->AddPage( m_page2, _( "Font" ) );
         res = 0;
 //        m_properties->AddPage( m_page2, _( "Font" ) );
+    }
+    if( type == DividerProperties )
+    {
+        BandProperties *prop = static_cast<BandProperties *>( m_object );
+        m_page8 = new BandGeneralProperties( m_properties, prop );
+        m_properties->AddPage( m_page8, _( "General" ) );
     }
     if( !res )
     {

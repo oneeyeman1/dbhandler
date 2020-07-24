@@ -42,6 +42,7 @@
 #include "wxsf/ShapeCanvas.h"
 #include "wx/fontenum.h"
 //#include "fontpropertypagebase.h"
+#include "bandgeneral.h"
 #include "databasetype.h"
 #include "propertypagebase.h"
 #include "tablegeneral.h"
