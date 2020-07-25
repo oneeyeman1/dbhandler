@@ -11,9 +11,10 @@
 #include "propertypagebase.h"
 #include "fieldheader.h"
 
-FieldHeader::FieldHeader(wxWindow *parent, Field *field) : PropertyPageBase( parent, wxID_ANY )
+FieldHeader::FieldHeader(wxWindow *parent, const wxString &label, const wxString &heading) : PropertyPageBase( parent, wxID_ANY )
 {
-    m_field = field;
+    m_labelText = label;
+    m_headingText = heading;
     m_label1 = new wxStaticText( this, wxID_ANY, _( "&Label:" ) );
     m_label = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "&Position: " ) );
@@ -28,6 +29,7 @@ FieldHeader::FieldHeader(wxWindow *parent, Field *field) : PropertyPageBase( par
     wxString choices2[] =
     {
         _( "left" ),
+        _( "right" ),
         _( "right" )
     };
     m_headingPos = new wxComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 2, choices2, wxCB_DROPDOWN | wxCB_READONLY );
@@ -76,8 +78,10 @@ void FieldHeader::do_layout()
 
 void FieldHeader::set_properties()
 {
-    m_label->SetValue( m_field->GetLabel() );
-    m_heading->SetValue( m_field->GetHeading() );
+    m_label->SetValue( m_labelText );
+    m_heading->SetValue( m_headingText );
+    m_labelPos->SetSelection( 0 );
+    m_headingPos->SetSelection( 3 );
     m_label4->Hide();
 }
 

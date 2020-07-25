@@ -927,9 +927,65 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         if( type == DatabaseTableProperties )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, dbTable, command, logOnly, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
+        {
+#if defined __WXMSW__ && _MSC_VER < 1900
+            wxCriticalSectionLocker( *pcs );
+#else
+            //#if _MSC_VER >= 1900
+            std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
+#endif
+            res = GetDocument()->GetDatabase()->GetTableProperties( dbTable, errors );
+            wxFont data_font( dbTable->GetDataFontSize(), wxFONTFAMILY_DEFAULT, dbTable->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, dbTable->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, dbTable->GetDataFontUnderline(), dbTable->GetDataFontName() );
+            if( dbTable->GetDataFontStrikethrough() )
+                data_font.SetStrikethrough( true );
+            wxFont heading_font( dbTable->GetHeadingFontSize(), wxFONTFAMILY_DEFAULT, dbTable->GetHeadingFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, dbTable->GetHeadingFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, dbTable->GetHeadingFontUnderline(), dbTable->GetHeadingFontName() );
+            if( dbTable->GetHeadingFontStrikethrough() )
+                heading_font.SetStrikethrough( true );
+            wxFont label_font( dbTable->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, dbTable->GetLabelFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, dbTable->GetLabelFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, dbTable->GetLabelFontUnderline(), dbTable->GetLabelFontName() );
+            if( dbTable->GetLabelFontStrikethrough() )
+                label_font.SetStrikethrough( true );
+            TableProperties prop;
+            prop.m_comment = dbTable->GetComment();
+            prop.m_dataFontName = dbTable->GetDataFontName();
+            prop.m_headingFontName = dbTable->GetHeadingFontName();
+            prop.m_labelFontName = dbTable->GetLabelFontName();
+            prop.m_dataFontSize = dbTable->GetDataFontSize();
+            prop.m_headingFontSize = dbTable->GetHeadingFontSize();
+            prop.m_labelFontSize = dbTable->GetLabelFontSize();
+            prop.m_isDataFontItalic = dbTable->GetDataFontItalic();
+            prop.m_isDataFontUnderlined = dbTable->GetDataFontUnderline();
+            prop.m_isDataFontStriken = dbTable->GetDataFontStrikethrough();
+            prop.m_isHeadingFontUnderlined = dbTable->GetHeadingFontUnderline();
+            prop.m_isHeadingFontStriken = dbTable->GetHeadingFontStrikethrough();
+            prop.m_isLabelFontUnderlined = dbTable->GetLabelFontUnderline();
+            prop.m_isLabelFontStrioken = dbTable->GetLabelFontStrikethrough();
+            prop.m_isDataFontBold = dbTable->GetDataFontWeight() == wxFONTWEIGHT_BOLD;
+            prop.m_isDataFontItalic = dbTable->GetDataFontItalic();
+            prop.m_isHeadingFontBold = dbTable->GetHeadingFontWeight() == wxFONTWEIGHT_BOLD;
+            prop.m_isHeadingFontItalic = dbTable->GetHeadingFontItalic();
+            prop.m_isLabelFontBold = dbTable->GetLabelFontWeight() == wxFONTWEIGHT_BOLD;
+            prop.m_isLabelFontItalic = dbTable->GetLabelFontItalic();
+            prop.m_name = dbTable->GetTableName();
+            prop.m_owner = dbTable->GetTableOwner();
+            res = func( m_frame, GetDocument()->GetDatabase(), type, &prop, command, logOnly, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
+        }
         if( type == DatabaseFieldProperties )
-            res = func( m_frame, GetDocument()->GetDatabase(), type, field, command, logOnly, tableName, schemaName, ownerName, *pcs );
+        {
+            {
+#if defined __WXMSW__ && _MSC_VER < 1900
+                wxCriticalSectionLocker( *pcs );
+#else
+                //#if _MSC_VER >= 1900
+                std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
+#endif
+                res = GetDocument()->GetDatabase()->GetFieldProperties( tableName.ToStdWstring(), field, errors );
+            }
+            FieldProperties prop;
+            prop.m_comment = field->GetComment();
+            prop.m_label = field->GetLabel();
+            prop.m_heading = field->GetHeading();
+            res = func( m_frame, GetDocument()->GetDatabase(), type, &prop, command, logOnly, tableName, schemaName, ownerName, *pcs );
+        }
         if( type == DividerProperties )
             res = func( m_frame, nullptr, type, divider, command, false, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
         if( res != wxID_CANCEL && logOnly )

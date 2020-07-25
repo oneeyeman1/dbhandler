@@ -58,31 +58,22 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     if( m_db )
         m_dbType = m_db->GetTableVector().m_type;
     m_object = object;
-    int res = -1;
     // begin wxGlade: PropertiesDialog::PropertiesDialog
     m_properties = new wxNotebook( this, wxID_ANY );
     if( type == DatabaseTableProperties )
     {
-        DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
-        {
-#if defined __WXMSW__ && _MSC_VER < 1900
-            wxCriticalSectionLocker( *pcs );
-#else
-//#if _MSC_VER >= 1900
-            std::lock_guard<std::mutex> lock( m_db->GetTableVector().my_mutex );
-#endif
-            res = db->GetTableProperties( table, errors );
-        }
-        wxFont data_font( table->GetDataFontSize(), wxFONTFAMILY_DEFAULT, table->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetDataFontUnderline(), table->GetDataFontName() );
-        if( table->GetDataFontStrikethrough() )
+        TableProperties *props = static_cast<TableProperties *>( m_object );
+        wxFont data_font( props->m_dataFontSize, wxFONTFAMILY_DEFAULT, props->m_isDataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, props->m_isDataFontBold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, props->m_isDataFontUnderlined, props->m_dataFontName );
+        if( props->m_isDataFontStriken )
             data_font.SetStrikethrough( true );
-        wxFont heading_font( table->GetHeadingFontSize(), wxFONTFAMILY_DEFAULT, table->GetHeadingFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetHeadingFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetHeadingFontUnderline(), table->GetHeadingFontName() );
-        if( table->GetHeadingFontStrikethrough() )
+        wxFont heading_font( props->m_headingFontSize, wxFONTFAMILY_DEFAULT, props->m_isHeadingFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, props->m_isHeadingFontBold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, props->m_isHeadingFontUnderlined, props->m_headingFontName );
+        if( props->m_isHeadingFontStriken )
             heading_font.SetStrikethrough( true );
-        wxFont label_font( table->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, table->GetLabelFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, table->GetLabelFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, table->GetLabelFontUnderline(), table->GetLabelFontName() );
-        if( table->GetLabelFontStrikethrough() )
+        wxFont label_font( props->m_labelFontSize, wxFONTFAMILY_DEFAULT, props->m_isLabelFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, props->m_isLabelFontBold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, props->m_isLabelFontUnderlined, props->m_labelFontName );
+        if( props->m_isLabelFontStrioken )
             label_font.SetStrikethrough( true );
-        m_page1 = new TableGeneralProperty( m_properties, table, type );
+        
+        m_page1 = new TableGeneralProperty( m_properties, props->m_name, props->m_owner, props->m_comment, type );
         m_properties->AddPage( m_page1, _( "General" ) );
         m_page2 = new CFontPropertyPage( m_properties, data_font );
         m_page3 = new CFontPropertyPage( m_properties, heading_font );
@@ -94,20 +85,10 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     }
     if( type == DatabaseFieldProperties )
     {
-        Field *field = static_cast<Field *>( m_object );
-        wxString fieldName( field->GetFieldName() );
-        {
-#if defined __WXMSW__ && _MSC_VER < 1900
-            wxCriticalSectionLocker( *pcs );
-#else
-            //#if _MSC_VER >= 1900
-            std::lock_guard<std::mutex> lock( m_db->GetTableVector().my_mutex );
-#endif
-            res = db->GetFieldProperties( tableName.ToStdWstring(), field, errors );
-        }
-        m_page5 = new FieldGeneral( m_properties, field );
+        FieldProperties *props = static_cast<FieldProperties *>( m_object );
+        m_page5 = new FieldGeneral( m_properties, props->m_comment );
         m_properties->AddPage( m_page5, _( "General" ) );
-        m_page6 = new FieldHeader( m_properties, field );
+        m_page6 = new FieldHeader( m_properties, props->m_label, props->m_heading );
         m_properties->AddPage( m_page6, _( "Header" ) );
 /*        res = db->GetFieldProperties( tableName.ToStdWstring(), schemaName.ToStdWstring(), field, errors );
         if( !res )
@@ -128,7 +109,6 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         m_page2 = new CFontPropertyPage( m_properties, prop->m_font );
         m_properties->AddPage( m_page7, _( "General" ) );
         m_properties->AddPage( m_page2, _( "Font" ) );
-        res = 0;
 //        m_properties->AddPage( m_page2, _( "Font" ) );
     }
     if( type == DividerProperties )
@@ -137,19 +117,16 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         m_page8 = new BandGeneralProperties( m_properties, prop );
         m_properties->AddPage( m_page8, _( "General" ) );
     }
-    if( !res )
-    {
-        set_properties();
-        do_layout();
-        // end wxGlade
-        wxButton *apply = dynamic_cast<wxButton *>( FindWindowById( wxID_APPLY ) );
-        wxButton *ok = dynamic_cast<wxButton *>( FindWindowById( wxID_OK ) );
-        ok->SetDefault();
-        apply->Enable( false );
-        apply->Bind( wxEVT_BUTTON, &PropertiesDialog::OnApply, this );
-        apply->Bind( wxEVT_UPDATE_UI, &PropertiesDialog::OnApplyUpdateUI, this );
-        ok->Bind( wxEVT_BUTTON, &PropertiesDialog::OnOk, this );
-    }
+    set_properties();
+    do_layout();
+    // end wxGlade
+    wxButton *apply = dynamic_cast<wxButton *>( FindWindowById( wxID_APPLY ) );
+    wxButton *ok = dynamic_cast<wxButton *>( FindWindowById( wxID_OK ) );
+    ok->SetDefault();
+    apply->Enable( false );
+    apply->Bind( wxEVT_BUTTON, &PropertiesDialog::OnApply, this );
+    apply->Bind( wxEVT_UPDATE_UI, &PropertiesDialog::OnApplyUpdateUI, this );
+    ok->Bind( wxEVT_BUTTON, &PropertiesDialog::OnOk, this );
 }
 
 void PropertiesDialog::set_properties()

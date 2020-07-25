@@ -1,10 +1,19 @@
 #ifndef _TABLEGENERALPROPERTY
 #define _TABLEGENERALPROPERTY
 
+enum
+{
+    DatabaseTableProperties,
+    DatabaseFieldProperties,
+    DesignLabelProperties,
+    DesignFieldProperties,
+    DividerProperties
+};
+
 class WXEXPORT TableGeneralProperty : public PropertyPageBase
 {
 public:
-    TableGeneralProperty(wxWindow *parent, void *table, int type);
+    TableGeneralProperty(wxWindow *parent, const wxString &name, const wxString &owner, const wxString &comment, int type);
     ~TableGeneralProperty();
     wxTextCtrl *GetCommentCtrl();
     const std::wstring &GetComment();
@@ -22,7 +31,7 @@ private:
     wxTextCtrl *m_tableName;
     wxTextCtrl *m_comment;
     wxCheckBox *m_log;
-    void *m_table;
+    wxString m_commentText, m_ownerText, m_nameText;
     int m_type;
 };
 

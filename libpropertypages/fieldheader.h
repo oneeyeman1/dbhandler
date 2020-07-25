@@ -2,7 +2,7 @@
 class WXEXPORT FieldHeader :	public PropertyPageBase
 {
 public:
-    FieldHeader(wxWindow *parent, Field *field);
+    FieldHeader(wxWindow *parent, const wxString &label, const wxString &heading);
     ~FieldHeader(void);
     wxTextCtrl *GetLabelCtrl();
     wxTextCtrl *GetHeadingCtrl();
@@ -13,6 +13,6 @@ private:
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4;
     wxTextCtrl *m_label, *m_heading;
     wxComboBox *m_labelPos, *m_headingPos;
-    Field *m_field;
+    wxString m_labelText, m_headingText;
 };
 

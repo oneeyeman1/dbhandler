@@ -12,15 +12,6 @@
 #ifndef PROPERTIES_H
 #define PROPERTIES_H
 
-enum
-{
-    DatabaseTableProperties,
-    DatabaseFieldProperties,
-    DesignLabelProperties,
-    DesignFieldProperties,
-    DividerProperties
-};
-
 class PropertiesDialog: public wxDialog
 {
 public:

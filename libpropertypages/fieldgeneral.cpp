@@ -11,9 +11,9 @@
 #include "propertypagebase.h"
 #include "fieldgeneral.h"
 
-FieldGeneral::FieldGeneral(wxWindow *parent, Field *field) : PropertyPageBase(parent, wxID_ANY)
+FieldGeneral::FieldGeneral(wxWindow *parent, const wxString &comment) : PropertyPageBase(parent, wxID_ANY)
 {
-    m_field = field;
+    m_commentText = comment;
     m_label = new wxStaticText( this, wxID_ANY, _( "&Column comment:" ) );
     m_comment = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
     m_log = new wxCheckBox( this, wxID_ANY, _( "&Log Only" ) );
@@ -47,7 +47,7 @@ void FieldGeneral::do_layout()
 
 void FieldGeneral::set_properties ()
 {
-    m_comment->SetValue( m_field->GetComment() );
+    m_comment->SetValue( m_commentText );
 }
 
 bool FieldGeneral::IsLogOnly ()

@@ -26,9 +26,11 @@
 #include "propertypagebase.h"
 #include "tablegeneral.h"
 
-TableGeneralProperty::TableGeneralProperty(wxWindow *parent, void *table, int type) : PropertyPageBase( parent )
+TableGeneralProperty::TableGeneralProperty(wxWindow *parent, const wxString &name, const wxString &owner, const wxString &comment, int type) : PropertyPageBase( parent )
 {
-    m_table = table;
+    m_commentText = comment;
+    m_nameText = name;
+    m_ownerText = owner;
     m_type = type;
     m_isModified = false;
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Owner" ) );
@@ -46,7 +48,7 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, void *table, int ty
         ok->SetDefault();
     m_comment->Bind( wxEVT_CHAR, &TableGeneralProperty::OnCommentKeyEntered, this );
     m_comment->Bind( wxEVT_TEXT, &TableGeneralProperty::OnEditComment, this );
-    if( m_type == 1 )
+    if( m_type == DatabaseFieldProperties )
     {
         m_owner->Hide();
         m_tableName->Hide();
@@ -61,17 +63,13 @@ TableGeneralProperty::~TableGeneralProperty()
 
 void TableGeneralProperty::set_properties()
 {
-    if( m_type == 0 )
+    if( m_type == DatabaseTableProperties )
     {
         m_owner->Enable( false );
-        m_owner->SetValue( static_cast<DatabaseTable *>( m_table )->GetTableOwner() );
+        m_owner->SetValue( m_ownerText );
         m_tableName->Enable( false );
-        m_tableName->SetValue( static_cast<DatabaseTable *>( m_table )->GetTableName() );
-        m_comment->SetValue( static_cast<DatabaseTable *>( m_table )->GetComment() );
-    }
-    if( m_type == 1 )
-    {
-        m_comment->SetValue( static_cast<Field *>( m_table )->GetComment() );
+        m_tableName->SetValue( m_nameText );
+        m_comment->SetValue( m_commentText );
     }
 }
 

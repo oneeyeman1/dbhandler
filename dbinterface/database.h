@@ -30,7 +30,7 @@ enum FK_ONDELETE
 
 struct TableProperties
 {
-    std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName;
+    std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName, m_name, m_owner;
     int m_dataFontSize, m_dataFontEncoding, m_headingFontSize, m_headingFontEncoding, m_labelFontSize, m_labelFontEncoding;
     int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;
     bool m_isDataFontUnderlined, m_isDataFontStriken, m_isHeadingFontUnderlined, m_isHeadingFontStriken, m_isLabelFontUnderlined, m_isLabelFontStrioken;
@@ -87,6 +87,11 @@ private:
     std::wstring column_name, column_type, column_defaultValue, m_comment, label, heading, full_type, full_name;
     bool autoIncrement, column_isNull, column_pk, column_fk;
     int field_size, decimal_size;
+};
+
+struct FieldProperties
+{
+    std::wstring m_comment, m_label, m_heading, m_labelPosition, m_headingPosition;
 };
 
 class FKField
