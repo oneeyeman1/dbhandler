@@ -2,7 +2,7 @@
 class WXEXPORT FieldGeneral : public PropertyPageBase
 {
 public:
-    FieldGeneral(wxWindow *parent, Field *field);
+    FieldGeneral(wxWindow *parent, const wxString &comment);
     ~FieldGeneral();
     bool IsLogOnly();
     void OnCommentChanged(wxCommandEvent &event);
@@ -14,6 +14,6 @@ private:
     wxStaticText *m_label;
     wxTextCtrl *m_comment;
     wxCheckBox *m_log;
-    Field *m_field;
+    wxString m_commentText;
 };
 
