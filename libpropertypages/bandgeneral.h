@@ -14,10 +14,13 @@
 
 struct BandProperties
 {
-    int color, height;
+    wxString m_color;
+    wxString m_cursorFile;
+    wxString m_type;
+    int m_height, m_stockCursor;
 };
 
-class WXEXPORT BandGeneralProperties: public wxPanel
+class WXEXPORT BandGeneralProperties: public PropertyPageBase
 {
 public:
     // begin wxGlade: BandGeneralProperties::ids
@@ -30,6 +33,7 @@ private:
     void set_properties();
     void do_layout();
     // end wxGlade
+    unsigned int m_heightValue;
 
 protected:
     // begin wxGlade: BandGeneralProperties::attributes
@@ -37,6 +41,7 @@ protected:
     wxTextCtrl *m_height;
     wxStaticText *m_label1, *m_label2;
     // end wxGlade
+    void OnPageModified(wxCommandEvent &event);
 }; // wxGlade: end class
 
 
