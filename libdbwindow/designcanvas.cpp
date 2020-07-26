@@ -189,7 +189,6 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
 
 void DesignCanvas::OnMouseMove(wxMouseEvent &event)
 {
-    ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
     wxSFShapeBase *shape = GetShapeUnderCursor();
     Divider *divider = wxDynamicCast( shape, Divider );
     if( divider )
