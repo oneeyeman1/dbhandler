@@ -12,6 +12,7 @@
 #include <wx/image.h>
 #include "wx/filepicker.h"
 #include "wx/statbmp.h"
+#include "propertypagebase.h"
 #include "pointerproperty.h"
 
 // begin wxGlade: ::extracode
@@ -19,9 +20,11 @@
 
 
 
-PointerPropertiesPanel::PointerPropertiesPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style):
-    wxPanel(parent, wxID_ANY)
+PointerPropertiesPanel::PointerPropertiesPanel(wxWindow* parent, const wxString &cursorFile, int stockCursor):
+    PropertyPageBase(parent)
 {
+    m_cursorFile = cursorFile;
+    m_stockCursor = stockCursor;
     // begin wxGlade: PointerPropertiesPanel::PointerPropertiesPanel
     filepicker = new wxFilePickerCtrl( this, wxID_ANY );
     const wxString m_pointers_choices[] = {
@@ -53,6 +56,9 @@ void PointerPropertiesPanel::set_properties()
 {
     // begin wxGlade: PointerPropertiesPanel::set_properties
     // end wxGlade
+    if( m_stockCursor != wxNOT_FOUND )
+        m_pointers->SetSelection( m_stockCursor );
+    filepicker->SetPath( m_cursorFile );
 }
 
 

@@ -14,10 +14,13 @@
 
 struct BandProperties
 {
-    int color, height;
+    wxString m_color;
+    wxString m_cursorFile;
+    wxString m_type;
+    int m_height, m_stockCursor;
 };
 
-class WXEXPORT BandGeneralProperties: public wxPanel
+class WXEXPORT BandGeneralProperties: public PropertyPageBase
 {
 public:
     // begin wxGlade: BandGeneralProperties::ids

@@ -26,8 +26,10 @@ XS_IMPLEMENT_CLONABLE_CLASS(Divider, wxSFRectShape);
 Divider::Divider() : wxSFRectShape()
 {
     m_Fill = wxBrush( *wxGREY_BRUSH );
-    m_color = "Transparent";
-    m_height = 80;
+    m_props.m_color = "Transparent";
+    m_props.m_height = 80;
+    m_props.m_cursorFile = wxEmptyString;
+    m_props.m_stockCursor = -1;
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );
     m_grid = new wxSFGridShape;
@@ -57,15 +59,19 @@ Divider::Divider() : wxSFRectShape()
                 delete m_text;
         }
     }
-    XS_SERIALIZE_STRING( m_color, "color" );
-    XS_SERIALIZE_INT( m_height, "height" );
+    XS_SERIALIZE_STRING( m_props.m_color, "color" );
+    XS_SERIALIZE_STRING( m_props.m_cursorFile, "cursor-file" );
+    XS_SERIALIZE_INT( m_props.m_height, "height" );
+    XS_SERIALIZE_INT( m_props.m_stockCursor, "stock-cursor" );
 }
 
-Divider::Divider(const wxString &text, wxSFDiagramManager *manager) : wxSFRectShape( wxRealPoint( 1, 1 ), wxRealPoint( 5000, -1 ), manager )
+Divider::Divider(const wxString &text, const wxString &cursorFile, int stockCursor, wxSFDiagramManager *manager) : wxSFRectShape( wxRealPoint( 1, 1 ), wxRealPoint( 5000, -1 ), manager )
 {
-    m_type = text;
-    m_color = "Transparent";
-    m_height = 80;
+    m_props.m_type = text;
+    m_props.m_color = "Transparent";
+    m_props.m_height = 80;
+    m_props.m_cursorFile = cursorFile;
+    m_props.m_stockCursor = stockCursor;
     wxString upArrow( L"\x2191" );
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );
@@ -143,8 +149,10 @@ Divider::Divider(const wxString &text, wxSFDiagramManager *manager) : wxSFRectSh
     m_nRectSize.y = GetBoundingBox().GetHeight();
     m_nRectSize.x = 5000;
     m_Fill = *wxGREY_BRUSH;
-    XS_SERIALIZE_STRING( m_color, "color" );
-    XS_SERIALIZE_INT( m_height, "height" );
+    XS_SERIALIZE_STRING( m_props.m_color, "color" );
+    XS_SERIALIZE_STRING( m_props.m_cursorFile, "cursor-file" );
+    XS_SERIALIZE_INT( m_props.m_height, "height" );
+    XS_SERIALIZE_INT( m_props.m_stockCursor, "stock-cursor" );
 }
 
 Divider::~Divider()
@@ -183,5 +191,10 @@ void Divider::OnDragging(const wxPoint& pos)
 
 const wxString &Divider::GetDividerType()
 {
-    return m_type;
+    return m_props.m_type;
+}
+
+DividerPropertiesType Divider::GetDividerProperties()
+{
+    return m_props;
 }

@@ -12,19 +12,21 @@
 #ifndef POINTERPROPERTY_H
 #define POINTERPROPERTY_H
 
-class PointerPropertiesPanel: public wxPanel
+class WXEXPORT PointerPropertiesPanel: public PropertyPageBase
 {
 public:
     // begin wxGlade: PointerPropertiesPanel::ids
     // end wxGlade
 
-    PointerPropertiesPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
+    PointerPropertiesPanel(wxWindow* parent, const wxString &cursorFile, int stockCursor);
 
 private:
     // begin wxGlade: PointerPropertiesPanel::methods
     void set_properties();
     void do_layout();
     // end wxGlade
+    wxString m_cursorFile;
+    int m_stockCursor;
 
 protected:
     // begin wxGlade: PointerPropertiesPanel::attributes

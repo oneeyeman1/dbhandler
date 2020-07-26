@@ -23,6 +23,7 @@
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
 #include "wx/docmdi.h"
+#include "wx/filepicker.h"
 #include "wx/fontenum.h"
 #ifdef __WXGTK__
 #include "gtk/gtk.h"
@@ -37,6 +38,7 @@
 #include "fontpropertypagebase.h"
 #include "fieldgeneral.h"
 #include "designlabelgeneral.h"
+#include "pointerproperty.h"
 #include "bandgeneral.h"
 #include "fieldheader.h"
 #include "properties.h"
@@ -116,6 +118,8 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         BandProperties *prop = static_cast<BandProperties *>( m_object );
         m_page8 = new BandGeneralProperties( m_properties, prop );
         m_properties->AddPage( m_page8, _( "General" ) );
+        m_page9 = new PointerPropertiesPanel( m_properties, prop->m_cursorFile, prop->m_stockCursor );
+        m_properties->AddPage( m_page9, _( "Cursor" ) );
     }
     set_properties();
     do_layout();

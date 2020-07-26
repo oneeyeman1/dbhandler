@@ -12,6 +12,7 @@
 #include <wx/image.h>
 
 #include "wx/bmpcbox.h"
+#include "propertypagebase.h"
 #include "bandgeneral.h"
 
 // begin wxGlade: ::extracode
@@ -20,7 +21,7 @@
 
 
 BandGeneralProperties::BandGeneralProperties(wxWindow* parent,  const BandProperties *props):
-    wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+    PropertyPageBase(parent)
 {
     // begin wxGlade: BandGeneralProperties::BandGeneralProperties
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Color" ) );

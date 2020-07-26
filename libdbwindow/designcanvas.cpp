@@ -120,7 +120,7 @@ void DesignCanvas::AddHeaderDivider()
         if( temp + 2 > ypos )
             ypos = temp;
     }
-    auto dividerShape = new Divider( _( "Header " ), &m_pManager );
+    auto dividerShape = new Divider( _( "Header " ), "", -1, &m_pManager );
     m_pManager.AddShape( dividerShape, NULL, wxPoint( 1, ypos ), sfINITIALIZE, sfDONT_SAVE_STATE );
     startPoint.x = 1;
     Refresh();
@@ -137,7 +137,7 @@ void DesignCanvas::AddDataDivider()
         if( temp + 2 > ypos )
             ypos = temp;
     }
-    auto dividerShape = new Divider( _( "Data " ), &m_pManager );
+    auto dividerShape = new Divider( _( "Data " ), "", -1, &m_pManager );
     m_pManager.AddShape( dividerShape, NULL, wxPoint( 1, ypos ), sfINITIALIZE, sfDONT_SAVE_STATE );
     Refresh();
 }

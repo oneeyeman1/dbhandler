@@ -987,7 +987,10 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             res = func( m_frame, GetDocument()->GetDatabase(), type, &prop, command, logOnly, tableName, schemaName, ownerName, *pcs );
         }
         if( type == DividerProperties )
-            res = func( m_frame, nullptr, type, divider, command, false, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
+        {
+            auto prop = divider->GetDividerProperties();
+            res = func( m_frame, nullptr, type, &prop, command, false, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
+        }
         if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );

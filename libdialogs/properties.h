@@ -27,6 +27,7 @@ private:
     FieldHeader *m_page6;
     DesignLabelGeneral *m_page7;
     BandGeneralProperties *m_page8;
+    PointerPropertiesPanel *m_page9;
     int m_type;
     Database *m_db;
     void *m_object;
