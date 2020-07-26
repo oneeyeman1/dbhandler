@@ -12,6 +12,7 @@
 #include <wx/image.h>
 
 #include "wx/bmpcbox.h"
+#include "wx/valnum.h"
 #include "propertypagebase.h"
 #include "bandgeneral.h"
 
@@ -23,15 +24,18 @@
 BandGeneralProperties::BandGeneralProperties(wxWindow* parent,  const BandProperties *props):
     PropertyPageBase(parent)
 {
+//    wxIntegerValidator<unsigned int> val( &m_heightValue );
     // begin wxGlade: BandGeneralProperties::BandGeneralProperties
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Color" ) );
     m_colors = new wxBitmapComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_DROPDOWN );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Height" ) );
-    m_height = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    m_height = new wxTextCtrl( this, wxID_ANY, wxString::Format( "%d", props->m_height )/*, wxDefaultPosition, wxDefaultSize, 0, val*/ );
 
     set_properties();
     do_layout();
     // end wxGlade
+    m_colors->Bind( wxEVT_LISTBOX, &BandGeneralProperties::OnPageModified, this );
+    m_height->Bind( wxEVT_TEXT, &BandGeneralProperties::OnPageModified, this );
 }
 
 
@@ -69,3 +73,8 @@ void BandGeneralProperties::do_layout()
     // end wxGlade
 }
 
+void BandGeneralProperties::OnPageModified(wxCommandEvent &event)
+{
+    dynamic_cast<wxButton *>( GetParent()->GetParent()->FindWindowById( wxID_APPLY ) )->Enable( true );
+    m_isModified = true;
+}
