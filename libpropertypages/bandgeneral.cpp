@@ -24,17 +24,64 @@
 BandGeneralProperties::BandGeneralProperties(wxWindow* parent,  const BandProperties *props):
     PropertyPageBase(parent)
 {
+    BandColor m_colorNames[] =
+    {
+        { wxColour( *wxBLACK ), _( "Black" ) },
+        { wxColour( *wxWHITE ), _( "White" ) },
+        { wxColour( *wxRED ), _( "Red" ) },
+        { wxColour( 0xFF0080 ), _( "Fuschia" ) },
+        {wxTheColourDatabase->Find( "LIME GREEN" ), _( "Lime" ) },
+        { wxColour( *wxYELLOW ), _( "Yellow" ) },
+        { wxColour( *wxBLUE ), _( "Blue" ) },
+        { wxTheColourDatabase->Find( "AQUAMARINE" ), _( "Aqua" ) },
+        { wxTheColourDatabase->Find( "MAROON" ), _( "Maroon" ) },
+        { wxTheColourDatabase->Find( "PURPLE" ), _( "Purple" ) },
+        { wxColour( *wxGREEN ), _( "Green" ) },
+//        { wxTheColourDatabase->Find( "OLIVE" ), _( "Olive" ) },
+        { wxTheColourDatabase->Find( "NAVY" ), _( "Navy" ) },
+        { wxColour( 0x008080 ), _( "Teal" ) },
+        { wxTheColourDatabase->Find( "GREY" ), _( "Grey" ) },
+//        { wxTheColourDatabase->Find( "SILVER" ), _( "Silver" ) },
+//        { wxTheColourDatabase->Find( "MINT" ), _( "Mint" ) },
+        { wxTheColourDatabase->Find( "SKY BLUE" ), _( "Sky" ) },
+//        { wxTheColourDatabase->Find( "CREAM" ), _( "Cream" ) },
+        { wxTheColourDatabase->Find( "MEDIUM GREY" ), _( "Medium Grey" ) },
+        { wxTheColourDatabase->Find( "AQUAMARINE" ), _( "Cream" ) },
+        { wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ), _( "WndBkgrnd" ) },
+        { wxSystemSettings::GetColour( wxSYS_COLOUR_APPWORKSPACE ), _( "AppWrkSpc" ) },
+        { wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ), _( "ButtonFace" ) },
+        { wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ), _( "WndText" ) },
+        { wxColour( wxTransparentColour ), _( "Custom" ) },
+        { wxColour( wxTransparentColour ), _( "Transparent" ) },
+    };
 //    wxIntegerValidator<unsigned int> val( &m_heightValue );
     // begin wxGlade: BandGeneralProperties::BandGeneralProperties
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Color" ) );
     m_colors = new wxBitmapComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_DROPDOWN );
+    int size = sizeof( m_colorNames ) / sizeof( m_colorNames[0] );
+    for( int i = 0; i < size; ++i )
+    {
+        wxMemoryDC dc;
+        wxBitmap bmp( 20, 10 );
+        dc.SelectObject( bmp );
+        
+        dc.SetPen( *wxBLACK_PEN );
+        dc.DrawRectangle( 0, 0, 20, 10 );
+        dc.SetBrush( wxBrush( m_colorNames[i].m_color ) );
+        dc.DrawRectangle( 0, 0, 20, 10 );
+        
+        dc.SelectObject( wxNullBitmap );
+        
+        m_colors->Append( m_colorNames[i].m_colorName, bmp );
+    }
+    m_colors->SetSelection( size - 1 );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Height" ) );
     m_height = new wxTextCtrl( this, wxID_ANY, wxString::Format( "%d", props->m_height )/*, wxDefaultPosition, wxDefaultSize, 0, val*/ );
 
     set_properties();
     do_layout();
     // end wxGlade
-    m_colors->Bind( wxEVT_LISTBOX, &BandGeneralProperties::OnPageModified, this );
+    m_colors->Bind( wxEVT_COMBOBOX, &BandGeneralProperties::OnPageModified, this );
     m_height->Bind( wxEVT_TEXT, &BandGeneralProperties::OnPageModified, this );
 }
 

@@ -12,6 +12,12 @@
 #ifndef BANDGENERAL_H
 #define BANDGENERAL_H
 
+struct BandColor
+{
+    wxColour m_color;
+    wxString m_colorName;
+};
+
 struct BandProperties
 {
     wxString m_color;
