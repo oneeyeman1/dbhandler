@@ -11,8 +11,14 @@
 #endif
 
 #if defined __WXMSW__ && defined __MEMORYLEAKS__
-#include <vld.h>
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 #endif
+
+//#if defined __WXMSW__ && defined __MEMORYLEAKS__
+//#include <vld.h>
+//#endif
 
 #include <map>
 #include <vector>
@@ -67,6 +73,9 @@ BOOL APIENTRY DllMain( HANDLE hModule, DWORD fdwReason, LPVOID lpReserved)
     switch( fdwReason )
     {
     case DLL_PROCESS_ATTACH:
+#if defined __MEMORYLEAKS__
+        _CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+#endif
 #ifdef WXUSINGDLL
         wxInitialize();
 #else
