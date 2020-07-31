@@ -25,7 +25,9 @@ libpropertypages_la_SOURCES =  \
 	sortgroupbypage.cpp \
 	sortgroupbypage.h \
 	bandgeneral.cpp \
-	bandgeneral.h
+	bandgeneral.h \
+	pointerproperty.cpp \
+	pointerproperty.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	`pkg-config \
