@@ -26,7 +26,7 @@ PointerPropertiesPanel::PointerPropertiesPanel(wxWindow* parent, const wxString 
     m_cursorFile = cursorFile;
     m_stockCursor = stockCursor;
     // begin wxGlade: PointerPropertiesPanel::PointerPropertiesPanel
-    filepicker = new wxFilePickerCtrl( this, wxID_ANY );
+    filepicker = new wxFilePickerCtrl( this, wxID_ANY, cursorFile, _( "Seect Cursor" ), "Pointer (*.cur)|*.cur" );
     const wxString m_pointers_choices[] = {
         "AppStarting!",
         "Arrow!",
@@ -49,6 +49,7 @@ PointerPropertiesPanel::PointerPropertiesPanel(wxWindow* parent, const wxString 
     do_layout();
     // end wxGlade
     m_pointers->Bind( wxEVT_LISTBOX, &PointerPropertiesPanel::OnPointerSelected, this );
+    filepicker->Bind( wxEVT_FILEPICKER_CHANGED, &PointerPropertiesPanel::OnPointerSelected, this );
 }
 
 
@@ -80,12 +81,13 @@ void PointerPropertiesPanel::do_layout()
     sizer_3->Add( m_label2, 0, wxEXPAND, 0 );
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_4->Add( m_pointers, 0, wxEXPAND, 0 );
-    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_4->AddStretchSpacer();
     sizer_4->Add( m_pointer, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    sizer_4->AddStretchSpacer();
     sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
     sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
+    sizer_1->Add( sizer_2, 1, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
@@ -94,9 +96,19 @@ void PointerPropertiesPanel::do_layout()
 
 void PointerPropertiesPanel::OnPointerSelected(wxCommandEvent &event)  // wxGlade: PointerPropertiesPanel.<event_handler>
 {
-    event.Skip();
-    // notify the user that he hasn't implemented the event handler yet
-    wxLogDebug(wxT("Event handler (PointerPropertiesPanel::OnPointerSelected) not implemented yet"));
+    dynamic_cast<wxButton *>( GetParent()->GetParent()->FindWindowById( wxID_APPLY ) )->Enable( true );
+    m_isModified = true;
+    if( event.GetEventObject() == filepicker )
+        m_pointer->SetBitmap( wxBitmap( filepicker->GetPath() ) );
+    if( event.GetEventObject () == m_pointers )
+    {
+        m_pointer->SetBitmap( wxBitmap( wxCursor( wxCURSOR_ARROW ) ) );
+/*        switch( m_pointers->GetSelection () )
+        {
+        case 0:
+            bmp.
+        }*/
+    }
 }
 
 
