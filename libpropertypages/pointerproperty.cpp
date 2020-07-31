@@ -27,23 +27,7 @@ PointerPropertiesPanel::PointerPropertiesPanel(wxWindow* parent, const wxString 
     m_stockCursor = stockCursor;
     // begin wxGlade: PointerPropertiesPanel::PointerPropertiesPanel
     filepicker = new wxFilePickerCtrl( this, wxID_ANY );
-    const wxString m_pointers_choices[] = {
-        "AppStarting!",
-        "Arrow!",
-        "Cross!"
-        "Help!",
-        "HourGlass!",
-        "Beam!",
-        "Icon!",
-        "No!",
-        "Size!",
-        "SizeNESW!",
-        "SizeNS!",
-        "SizeNWSE!",
-        "SizeWE!",
-        "UpArrow!"
-    };
-    m_pointers = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 14, m_pointers_choices, wxLB_SINGLE );
+    m_pointers = new wxListBox( this, wxID_ANY );
     m_pointer = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap );
     set_properties();
     do_layout();
@@ -56,6 +40,20 @@ void PointerPropertiesPanel::set_properties()
 {
     // begin wxGlade: PointerPropertiesPanel::set_properties
     // end wxGlade
+    m_pointers->Append( "AppStarting!" );
+    m_pointers->Append( "Arrow!" );
+    m_pointers->Append( "Cross!" );
+    m_pointers->Append( "Help!" );
+    m_pointers->Append( "HourGlass!" );
+    m_pointers->Append( "Beam!" );
+    m_pointers->Append( "Icon!" );
+    m_pointers->Append( "No!" );
+    m_pointers->Append( "Size!" );
+    m_pointers->Append( "SizeNESW!" );
+    m_pointers->Append( "SizeNS!" );
+    m_pointers->Append( "SizeNWSE!" );
+    m_pointers->Append( "SizeWE!" );
+    m_pointers->Append( "UpArrow!" );
     if( m_stockCursor != wxNOT_FOUND )
         m_pointers->SetSelection( m_stockCursor );
     filepicker->SetPath( m_cursorFile );
