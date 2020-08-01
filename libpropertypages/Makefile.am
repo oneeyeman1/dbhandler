@@ -23,17 +23,21 @@ libpropertypages_la_SOURCES =  \
 	designlabelgeneral.cpp \
 	designlabelgeneral.h \
 	sortgroupbypage.cpp \
-	sortgroupbypage.h
+	sortgroupbypage.h \
+	bandgeneral.cpp \
+	bandgeneral.h \
+	pointerproperty.cpp \
+	pointerproperty.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	`pkg-config \
 	--cflags \
-	gtk+-2.0` \
+	gtk+-3.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
 libpropertypages_la_LDFLAGS = `pkg-config \
 	--libs \
-	gtk+-2.0` \
+	gtk+-3.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 

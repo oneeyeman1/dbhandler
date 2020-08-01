@@ -136,7 +136,9 @@ am_libpropertypages_la_OBJECTS = libpropertypages_la-tablegeneral.lo \
 	libpropertypages_la-fieldgeneral.lo \
 	libpropertypages_la-fieldheader.lo \
 	libpropertypages_la-designlabelgeneral.lo \
-	libpropertypages_la-sortgroupbypage.lo
+	libpropertypages_la-sortgroupbypage.lo \
+	libpropertypages_la-bandgeneral.lo \
+	libpropertypages_la-pointerproperty.lo
 libpropertypages_la_OBJECTS = $(am_libpropertypages_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -278,6 +280,7 @@ INTLTOOL_V_MERGE = @INTLTOOL_V_MERGE@
 INTLTOOL_V_MERGE_OPTIONS = @INTLTOOL_V_MERGE_OPTIONS@
 INTLTOOL__v_MERGE_ = @INTLTOOL__v_MERGE_@
 INTLTOOL__v_MERGE_0 = @INTLTOOL__v_MERGE_0@
+INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -400,18 +403,22 @@ libpropertypages_la_SOURCES = \
 	designlabelgeneral.cpp \
 	designlabelgeneral.h \
 	sortgroupbypage.cpp \
-	sortgroupbypage.h
+	sortgroupbypage.h \
+	bandgeneral.cpp \
+	bandgeneral.h \
+	pointerproperty.cpp \
+	pointerproperty.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	`pkg-config \
 	--cflags \
-	gtk+-2.0` \
+	gtk+-3.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
 libpropertypages_la_LDFLAGS = `pkg-config \
 	--libs \
-	gtk+-2.0` \
+	gtk+-3.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 
 
@@ -493,11 +500,13 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-bandgeneral.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-designlabelgeneral.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fieldgeneral.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fieldheader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fontpropertypage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fontpropertypagebase.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-pointerproperty.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-sortgroupbypage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-syntaxproppage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-tablegeneral.Plo@am__quote@
@@ -586,6 +595,20 @@ libpropertypages_la-sortgroupbypage.lo: sortgroupbypage.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='sortgroupbypage.cpp' object='libpropertypages_la-sortgroupbypage.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-sortgroupbypage.lo `test -f 'sortgroupbypage.cpp' || echo '$(srcdir)/'`sortgroupbypage.cpp
+
+libpropertypages_la-bandgeneral.lo: bandgeneral.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertypages_la-bandgeneral.lo -MD -MP -MF $(DEPDIR)/libpropertypages_la-bandgeneral.Tpo -c -o libpropertypages_la-bandgeneral.lo `test -f 'bandgeneral.cpp' || echo '$(srcdir)/'`bandgeneral.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertypages_la-bandgeneral.Tpo $(DEPDIR)/libpropertypages_la-bandgeneral.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='bandgeneral.cpp' object='libpropertypages_la-bandgeneral.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-bandgeneral.lo `test -f 'bandgeneral.cpp' || echo '$(srcdir)/'`bandgeneral.cpp
+
+libpropertypages_la-pointerproperty.lo: pointerproperty.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertypages_la-pointerproperty.lo -MD -MP -MF $(DEPDIR)/libpropertypages_la-pointerproperty.Tpo -c -o libpropertypages_la-pointerproperty.lo `test -f 'pointerproperty.cpp' || echo '$(srcdir)/'`pointerproperty.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertypages_la-pointerproperty.Tpo $(DEPDIR)/libpropertypages_la-pointerproperty.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pointerproperty.cpp' object='libpropertypages_la-pointerproperty.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-pointerproperty.lo `test -f 'pointerproperty.cpp' || echo '$(srcdir)/'`pointerproperty.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
