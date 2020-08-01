@@ -19,6 +19,7 @@ public:
     const std::wstring &GetCommand();
     bool IsLogOnly();
     void GetTableProperties();
+    void *GetObjectProperties() { return m_object; };
 
 private:
     TableGeneralProperty *m_page1;
