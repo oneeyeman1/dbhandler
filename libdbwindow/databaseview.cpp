@@ -889,6 +889,8 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
         if( erdTable )
         {
             dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) shape)->GetTable() );
+            tableName = dbTable->GetTableName();
+            schemaName = dbTable->GetSchemaName();
             type = DatabaseTableProperties;
         }
         else
@@ -923,6 +925,7 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     lib.Load( "libdialogs" );
 #endif
     int res = 0;
+    void *properties;
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
@@ -967,7 +970,8 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             prop.m_isLabelFontItalic = dbTable->GetLabelFontItalic();
             prop.m_name = dbTable->GetTableName();
             prop.m_owner = dbTable->GetTableOwner();
-            res = func( m_frame, GetDocument()->GetDatabase(), type, &prop, command, logOnly, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
+            properties = &prop;
+//            res = func( m_frame, GetDocument()->GetDatabase(), type, &prop, command, logOnly, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
         }
         if( type == DatabaseFieldProperties )
         {
@@ -984,13 +988,16 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             prop.m_comment = field->GetComment();
             prop.m_label = field->GetLabel();
             prop.m_heading = field->GetHeading();
-            res = func( m_frame, GetDocument()->GetDatabase(), type, &prop, command, logOnly, tableName, schemaName, ownerName, *pcs );
+            properties = &prop;
+//            res = func( m_frame, GetDocument()->GetDatabase(), type, &prop, command, logOnly, tableName, schemaName, ownerName, *pcs );
         }
         if( type == DividerProperties )
         {
-            auto prop = divider->GetDividerProperties();
-            res = func( m_frame, nullptr, type, &prop, command, false, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
+            auto props = divider->GetDividerProperties();
+            properties = &props;
+//            res = func( m_frame, nullptr, type, &prop, command, false, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
         }
+        res = func( m_frame, GetDocument()->GetDatabase(), type, &properties, command, logOnly, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
         if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );

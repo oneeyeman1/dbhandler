@@ -177,8 +177,8 @@ void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 
 bool PropertiesDialog::ApplyProperties()
 {
-    bool exist, result = true;
-    bool isModified/* = ( m_page1->IsModified() || m_page2->IsDirty() || m_page3->IsDirty() || m_page4->IsDirty() )*/;
+    bool result = true;
+    bool isModified = false;
     for( int i = 0; i < m_properties->GetPageCount(); ++i )
     {
         PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
@@ -186,62 +186,63 @@ bool PropertiesDialog::ApplyProperties()
             isModified = true;
     }
     std::vector<std::wstring> errors;
-    if( m_type == 0 )
+    if( m_type == DatabaseTableProperties )
     {
         if( !m_isApplied && isModified )
         {
-            DatabaseTable *table = static_cast<DatabaseTable *>( m_object );
             wxString newComment = m_page1->GetCommentCtrl()->GetValue();
             wxFont dataFont = m_page2->GetFont();
             wxFont headingFont = m_page3->GetFont();
             wxFont labelFont = m_page4->GetFont();
-            m_tableProperties.m_comment = newComment.Trim();
-            m_tableProperties.m_dataFontName = dataFont.GetFaceName();
-            m_tableProperties.m_dataFontSize = dataFont.GetPointSize();
-            m_tableProperties.m_isDataFontUnderlined = dataFont.GetUnderlined() ? true : false;
-            m_tableProperties.m_isDataFontStriken = dataFont.GetStrikethrough() ? true : false;
-            m_tableProperties.m_isDataFontBold = dataFont.GetWeight()  == wxFONTWEIGHT_BOLD ? true : false;
-            m_tableProperties.m_isDataFontItalic = dataFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-            m_tableProperties.m_dataFontEncoding = dataFont.GetEncoding();
-            m_tableProperties.m_dataFontPixelSize = dataFont.GetPixelSize().GetWidth();
-            m_tableProperties.m_headingFontName = headingFont.GetFaceName();
-            m_tableProperties.m_headingFontSize = headingFont.GetPointSize();
-            m_tableProperties.m_isHeadingFontUnderlined = headingFont.GetUnderlined() ? true : false;
-            m_tableProperties.m_isHeadingFontStriken = headingFont.GetStrikethrough() ? true : false;
-            m_tableProperties.m_isHeadingFontBold = headingFont.GetWeight() == wxFONTWEIGHT_BOLD ? true : false;
-            m_tableProperties.m_isHeadingFontItalic = headingFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-            m_tableProperties.m_headingFontEncoding = headingFont.GetEncoding();
-            m_tableProperties.m_headingFontPixelSize = headingFont.GetPixelSize().GetWidth();
-            m_tableProperties.m_labelFontName = labelFont.GetFaceName();
-            m_tableProperties.m_labelFontSize = labelFont.GetPointSize();
-            m_tableProperties.m_isLabelFontUnderlined = labelFont.GetUnderlined() ? true : false;
-            m_tableProperties.m_isLabelFontStrioken = labelFont.GetStrikethrough() ? true : false;
-            m_tableProperties.m_isLabelFontBold = labelFont.GetWeight() == wxFONTWEIGHT_BOLD ? true : false;
-            m_tableProperties.m_isLabelFontItalic = labelFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-            m_tableProperties.m_labelFontEncoding = labelFont.GetEncoding();
-            m_tableProperties.m_labelFontPixelSize = labelFont.GetPixelSize().GetWidth();
-            wxCommandEvent event( wxEVT_SET_TABLE_PROPERTY );
+            static_cast<TableProperties *>( m_object )->m_comment = newComment.Trim();
+            static_cast<TableProperties *>( m_object )->m_dataFontName = dataFont.GetFaceName();
+            static_cast<TableProperties *>( m_object )->m_dataFontSize = dataFont.GetPointSize();
+            static_cast<TableProperties *>( m_object )->m_isDataFontUnderlined = dataFont.GetUnderlined() ? true : false;
+            static_cast<TableProperties *>( m_object )->m_isDataFontStriken = dataFont.GetStrikethrough() ? true : false;
+            static_cast<TableProperties *>( m_object )->m_isDataFontBold = dataFont.GetWeight()  == wxFONTWEIGHT_BOLD ? true : false;
+            static_cast<TableProperties *>( m_object )->m_isDataFontItalic = dataFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+            static_cast<TableProperties *>( m_object )->m_dataFontEncoding = dataFont.GetEncoding();
+            static_cast<TableProperties *>( m_object )->m_dataFontPixelSize = dataFont.GetPixelSize().GetWidth();
+            static_cast<TableProperties *>( m_object )->m_headingFontName = headingFont.GetFaceName();
+            static_cast<TableProperties *>( m_object )->m_headingFontSize = headingFont.GetPointSize();
+            static_cast<TableProperties *>( m_object )->m_isHeadingFontUnderlined = headingFont.GetUnderlined() ? true : false;
+            static_cast<TableProperties *>( m_object )->m_isHeadingFontStriken = headingFont.GetStrikethrough() ? true : false;
+            static_cast<TableProperties *>( m_object )->m_isHeadingFontBold = headingFont.GetWeight() == wxFONTWEIGHT_BOLD ? true : false;
+            static_cast<TableProperties *>( m_object )->m_isHeadingFontItalic = headingFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+            static_cast<TableProperties *>( m_object )->m_headingFontEncoding = headingFont.GetEncoding();
+            static_cast<TableProperties *>( m_object )->m_headingFontPixelSize = headingFont.GetPixelSize().GetWidth();
+            static_cast<TableProperties *>( m_object )->m_labelFontName = labelFont.GetFaceName();
+            static_cast<TableProperties *>( m_object )->m_labelFontSize = labelFont.GetPointSize();
+            static_cast<TableProperties *>( m_object )->m_isLabelFontUnderlined = labelFont.GetUnderlined() ? true : false;
+            static_cast<TableProperties *>( m_object )->m_isLabelFontStrioken = labelFont.GetStrikethrough() ? true : false;
+            static_cast<TableProperties *>( m_object )->m_isLabelFontBold = labelFont.GetWeight() == wxFONTWEIGHT_BOLD ? true : false;
+            static_cast<TableProperties *>( m_object )->m_isLabelFontItalic = labelFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
+            static_cast<TableProperties *>( m_object )->m_labelFontEncoding = labelFont.GetEncoding();
+            static_cast<TableProperties *>( m_object )->m_labelFontPixelSize = labelFont.GetPixelSize().GetWidth();
+/*            wxCommandEvent event( wxEVT_SET_TABLE_PROPERTY );
             event.SetInt( IsLogOnly() );
             event.SetExtraLong( m_type );
-            event.SetClientData( &m_tableProperties );
+            event.SetClientData( &m_object );
+            dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
+            if( event.GetString() == "Failed" )
+                result = false;*/
+        }
+    }
+    if( m_type == DatabaseFieldProperties )
+    {
+        if( !m_isApplied && isModified )
+        {
+            static_cast<FieldProperties *>( m_object )->m_comment = m_page5->GetCommentCtrl()->GetValue().ToStdWstring();
+            static_cast<FieldProperties *>( m_object )->m_label = m_page6->GetLabelCtrl()->GetValue().ToStdWstring();
+            static_cast<FieldProperties *>( m_object )->m_heading = m_page6->GetHeadingCtrl()->GetValue().ToStdWstring();
+            wxCommandEvent event( wxEVT_SET_FIELD_PROPERTY );
+            event.SetInt( IsLogOnly() );
+            event.SetExtraLong( m_type );
+            event.SetClientData( &m_object );
             dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
             if( event.GetString() == "Failed" )
                 result = false;
         }
-    }
-    if( m_type == 1 )
-    {
-        Field *field = static_cast<Field *>( m_object );
-        field->SetComment( m_page5->GetCommentCtrl()->GetValue().ToStdWstring() );
-        field->SetLabel( m_page6->GetLabelCtrl()->GetValue().ToStdWstring() );
-        field->SetHeading( m_page6->GetHeadingCtrl()->GetValue().ToStdWstring() );
-        wxCommandEvent event( wxEVT_SET_FIELD_PROPERTY );
-        event.SetInt( IsLogOnly() );
-        event.SetExtraLong( m_type );
-        event.SetClientData( &field );
-        dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
-        if( event.GetString() == "Failed" )
-            result = false;
     }
     m_isApplied = true;
     isModified = false;

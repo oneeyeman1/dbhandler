@@ -201,9 +201,8 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, i
     int res = 0;
     if( type == DatabaseTableProperties )
     {
-        DatabaseTable *table = static_cast<DatabaseTable *>( object );
         title = _( "Table " );
-        title += table->GetSchemaName() + L"." + table->GetTableName();
+        title += schemaName + L"." + tableName;
     }
     if( type == DatabaseFieldProperties )
     {
@@ -218,8 +217,11 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, i
     res = dlg.ShowModal();
     if( res != wxID_CANCEL )
     {
-        command = dlg.GetCommand();
-        logOnly = dlg.IsLogOnly();
+        if( type == DatabaseTableProperties || type == DatabaseFieldProperties )
+        {
+            command = dlg.GetCommand();
+            logOnly = dlg.IsLogOnly();
+        }
     }
     return res;
 }
