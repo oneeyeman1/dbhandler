@@ -558,17 +558,17 @@ void DatabaseCanvas::OnMouseMove(wxMouseEvent &event)
         wxSFShapeBase *shape = GetShapeUnderCursor();
         FieldShape *field = wxDynamicCast( shape, FieldShape );
         if( field )
-            SetCursor( wxCursor( wxCURSOR_HAND ) );
+            SetCursor( wxCURSOR_HAND );
         else
         {
             FieldTypeShape *type = wxDynamicCast( shape, FieldTypeShape );
             if( type )
-                SetCursor( wxCursor( wxCURSOR_HAND ) );
+                SetCursor( wxCURSOR_HAND );
             else
             {
                 CommentFieldShape *comment = wxDynamicCast( shape, CommentFieldShape );
                 if( comment )
-                    SetCursor( wxCursor( wxCURSOR_HAND ) );
+                    SetCursor( wxCURSOR_HAND );
                 else
                     SetCursor( *wxSTANDARD_CURSOR );
             }

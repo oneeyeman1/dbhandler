@@ -192,7 +192,7 @@ void DesignCanvas::OnMouseMove(wxMouseEvent &event)
     wxSFShapeBase *shape = GetShapeUnderCursor();
     Divider *divider = wxDynamicCast( shape, Divider );
     if( divider )
-        SetCursor( wxCursor( wxCURSOR_SIZENS ) );
+        SetCursor( wxCURSOR_SIZENS );
     else
         SetCursor( *wxSTANDARD_CURSOR );
 }
