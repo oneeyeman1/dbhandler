@@ -1333,28 +1333,28 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                         {
                             while( !mysql_stmt_fetch( stmt ) )
                             {
-                                table->SetDataFontSize( datafontheight );
-                                table->SetDataFontWeight( datafontweight );
-                                table->SetDataFontItalic( datafontitalic );
-                                table->SetDataFontUnderline( datafontunderline );
-                                table->SetDataFontCharacterSet( datafontset );
-                                table->SetDataFontPixelSize( datafontptc );
-                                table->SetDataFontName( m_pimpl->m_myconv.from_bytes( datafontname ) );
-                                table->SetHeadingFontSize( headingfontheight );
-                                table->SetHeadingFontWeight( headingfontweight );
-                                table->SetHeadingFontItalic( headingfontitalic );
-                                table->SetHeadingFontUnderline( headingfontunderline );
-                                table->SetHeadingFontCharacterSet( headingfontset );
-                                table->SetHeadingFontPixelSize( headingfontptc );
-                                table->SetHeadingFontName( m_pimpl->m_myconv.from_bytes( headingfontname ) );
-                                table->SetLabelFontSize( labelfontheight );
-                                table->SetLabelFontWeight( labelfontweight );
-                                table->SetLabelFontItalic( labelfontitalic );
-                                table->SetLabelFontUnderline( labelfontunderline );
-                                table->SetLabelFontCharacterSet( labelfontset );
-                                table->SetLabelFontPixelSize( labelfontptc );
-                                table->SetLabelFontName( m_pimpl->m_myconv.from_bytes( labelfontname ) );
-                                table->SetComment( m_pimpl->m_myconv.from_bytes( comments ) );
+                                table->GetTableProperties().m_dataFontSize = datafontheight;
+                                table->GetTableProperties().m_dataFontWeight = datafontweight;
+                                table->GetTableProperties().m_dataFontItalic = datafontitalic;
+                                table->GetTableProperties().m_dataFontUnderline = datafontunderline;
+                                table->GetTableProperties().m_dataFontCharacterSet = datafontset;
+                                table->GetTableProperties().m_dataFontPixelSize = datafontptc;
+                                table->GetTableProperties().m_dataFontName = m_pimpl->m_myconv.from_bytes( datafontname );
+                                table->GetTableProperties().m_headingFontSize = headingfontheight;
+                                table->GetTableProperties().m_headingFontWeight = headingfontweight;
+                                table->GetTableProperties().m_headingFontItalic = headingfontitalic;
+                                table->GetTableProperties().m_headingFontUnderline = headingfontunderline;
+                                table->GetTableProperties().m_headingFontCharacterSet = headingfontset;
+                                table->GetTableProperties().m_headingFontPixelSize = headingfontptc;
+                                table->GetTableProperties().m_headingFontName = m_pimpl->m_myconv.from_bytes( headingfontname );
+                                table->GetTableProperties().m_labelFontSize = labelfontheight;
+                                table->GetTableProperties().m_labelFontWeight = labelfontweight;
+                                table->GetTableProperties().m_labelFontItalic = labelfontitalic;
+                                table->GetTableProperties().m_labelFontUnderline = labelfontunderline;
+                                table->GetTableProperties().m_labelFontCharacterSer = labelfontset;
+                                table->GetTableProperties().m_labelFontPixelSize = labelfontptc;
+                                table->GetTableProperties().m_labelFontName = m_pimpl->m_myconv.from_bytes( labelfontname );
+                                table->GetTableProperties().m_comment = m_pimpl->m_myconv.from_bytes( comments );
                             }
                         }
                     }
@@ -1395,7 +1395,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
     {
         std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
         std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
-        std::wstring comment = const_cast<DatabaseTable *>( table )->GetComment();
+        std::wstring comment = const_cast<DatabaseTable *>( table )->GetTableProperties().m_comment;
         unsigned long tableId = const_cast<DatabaseTable *>( table )->GetTableId();
         exist = IsTablePropertiesExist( table, errorMsg );
         if( errorMsg.size() != 0 )
@@ -1419,14 +1419,14 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abd_fwgt\" = ";
-                istr << properties.m_isDataFontBold;
+                istr << properties.m_dataFontWeight;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abd_fitl\" = \'";
-                command += properties.m_isDataFontItalic ? L"Y" : L"N";
+                command += properties.m_dataFontItalic ? L"Y" : L"N";
                 command += L"\', \"abd_funl\" = \'";
-                command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
+                command += properties.m_dataFontUnderline ? L"Y" : L"N";
                 command += L"\', \"abd_fchr\" = ";
                 istr << properties.m_dataFontEncoding;
                 command += istr.str();
@@ -1445,14 +1445,14 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abd_fwgt\" = ";
-                istr << properties.m_isHeadingFontBold;
+                istr << properties.m_headingFontWeight;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abh_fitl\" = \'";
-                command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
+                command += properties.m_headingFontItalic ? L"Y" : L"N";
                 command += L"\', \"abh_funl\" = \'";
-                command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
+                command += properties.m_headingFontUnderline ? L"Y" : L"N";
                 command += L"\', \"abh_fchr\" = ";
                 istr << properties.m_headingFontEncoding;
                 command += istr.str();
@@ -1471,14 +1471,14 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abl_fwgt\" = ";
-                istr << properties.m_isLabelFontBold;
+                istr << properties.m_labelFontWeight;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abl_fitl\" = \'";
-                command += properties.m_isLabelFontItalic ? L"Y" : L"N";
+                command += properties.m_labelFontItalic ? L"Y" : L"N";
                 command += L"\', \"abl_funl\" = \'";
-                command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
+                command += properties.m_labelFontUnderline ? L"Y" : L"N";
                 command += L"\', \"abl_fchr\" = ";
                 istr << properties.m_labelFontEncoding;
                 command += istr.str();
@@ -1521,14 +1521,14 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_isDataFontBold;
+                istr << properties.m_dataFontWeight;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
                 command += L", \'";
-                command += properties.m_isDataFontItalic ? L"Y" : L"N";
+                command += properties.m_dataFontItalic ? L"Y" : L"N";
                 command += L"\', \'";
-                command += properties.m_isDataFontUnderlined ? L"Y" : L"N";
+                command += properties.m_dataFontUnderline ? L"Y" : L"N";
                 command += L"\', ";
                 istr << properties.m_dataFontEncoding;
                 command += istr.str();
@@ -1547,14 +1547,14 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_isHeadingFontBold;
+                istr << properties.m_headingFontWeight;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
                 command += L", \'";
-                command += properties.m_isHeadingFontItalic ? L"Y" : L"N";
+                command += properties.m_headingFontItalic ? L"Y" : L"N";
                 command += L"\', \'";
-                command += properties.m_isHeadingFontUnderlined ? L"Y" : L"N";
+                command += properties.m_headingFontUnderline ? L"Y" : L"N";
                 command += L"\', ";
                 istr << properties.m_headingFontEncoding;
                 command += istr.str();
@@ -1573,14 +1573,14 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_isLabelFontBold;
+                istr << properties.m_labelFontWeight;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
                 command += L", \'";
-                command += properties.m_isLabelFontItalic ? L"Y" : L"N";
+                command += properties.m_labelFontItalic ? L"Y" : L"N";
                 command += L"\', \'";
-                command += properties.m_isLabelFontUnderlined ? L"Y" : L"N";
+                command += properties.m_labelFontUnderline ? L"Y" : L"N";
                 command += L"\', ";
                 istr << properties.m_labelFontEncoding;
                 command += istr.str();
