@@ -26,52 +26,13 @@
 #include "wx/wx.h"
 #endif
 
-#import "AppKit/AppKit.h"
+#include "wx/fontpicker.h"
+#include "fontpropertypagebase.h"
+#include "fontpropertypage.h"
 
-#include "wx/font.h"
-#include "wx/nativewin.h"
-#include "../fontpropertypagebase.h"
-
-@interface AppDelegate : NSObject <NSApplicationDelegate>
+CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font) : CFontPropertyPageBase( parent, font )
 {
-    NSFont *font;
-}
-- (IBAction)selectFont:(id)sender;
-@end
-
-@implementation AppDelegate
-
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
-{
-    font = [NSFont boldSystemFontOfSize:12];
-}
-
-- (IBAction)selectFont:(id)sender
-{
-    NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    [fontManager setDelegate:self];
-    [fontManager setTarget:self];
-    [fontManager orderFrontFontPanel:self];
-}
-
-- (void)changeFont:(id)sender
-{
-    font = [sender convertFont:font];
-    NSLog(@"%@", font);
-}
-@end
-
-CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, const wxPoint& pos, const wxSize& size, long style)
- : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
-{
-    m_font = font;
-    NSFontManager *manager = [NSFontManager sharedFontManager];
-//    [manager setDelegate:self];
-    NSFontPanel *panel = [manager fontPanel:true];
-//    [panel setPanelFont: m_font->GetNativeFontInfo isMultiple: false];
-//    m_holder = new wxNativeWindow( this, wxID_ANY, panel );
-}
-
-CFontPropertyPage::~CFontPropertyPage()
-{
+    m_holder = new wxFontPickerCtrl( this, wxID_ANY, font );
+    auto *sizer = new wxBoxSizer( wxHORIZONTAL );
+    sizer->Add( m_holder, 0, wxEXPAND, 0 );
 }
