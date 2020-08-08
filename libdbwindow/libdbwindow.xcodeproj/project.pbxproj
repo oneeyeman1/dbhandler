@@ -439,6 +439,7 @@
 					../dbinterface,
 					../libfieldswindow,
 					../libpropertypages,
+					../libdialogs,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
