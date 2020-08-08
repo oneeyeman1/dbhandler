@@ -41,6 +41,7 @@
 #include "pointerproperty.h"
 #include "bandgeneral.h"
 #include "fieldheader.h"
+#include "propertieshandler.h"
 #include "properties.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -49,64 +50,16 @@ std::mutex Database::Impl::my_mutex;
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
 
-PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxString &ownerName, wxCriticalSection &cs, const wxPoint& pos, const wxSize& size, long style):
-    wxDialog(parent, id, title, pos, size, style)
+PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, std::unique_ptr<PropertiesHandler> &handler, wxCriticalSection &cs):
+    wxDialog(parent, id, title)
 {
     std::vector<std::wstring> errors;
     pcs = &cs;
     m_isApplied = false;
-    m_type = type;
-    m_db = db;
-    if( m_db )
-        m_dbType = m_db->GetTableVector().m_type;
-    m_object = object;
     // begin wxGlade: PropertiesDialog::PropertiesDialog
     m_properties = new wxNotebook( this, wxID_ANY );
-    if( type == DatabaseTableProperties )
+/*    if( type == 2 )
     {
-        TableProperties *props = static_cast<TableProperties *>( m_object );
-        wxFont data_font( props->m_dataFontSize, wxFONTFAMILY_DEFAULT, props->m_isDataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, props->m_isDataFontBold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, props->m_isDataFontUnderlined, props->m_dataFontName );
-        if( props->m_isDataFontStriken )
-            data_font.SetStrikethrough( true );
-        wxFont heading_font( props->m_headingFontSize, wxFONTFAMILY_DEFAULT, props->m_isHeadingFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, props->m_isHeadingFontBold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, props->m_isHeadingFontUnderlined, props->m_headingFontName );
-        if( props->m_isHeadingFontStriken )
-            heading_font.SetStrikethrough( true );
-        wxFont label_font( props->m_labelFontSize, wxFONTFAMILY_DEFAULT, props->m_isLabelFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, props->m_isLabelFontBold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, props->m_isLabelFontUnderlined, props->m_labelFontName );
-        if( props->m_isLabelFontStrioken )
-            label_font.SetStrikethrough( true );
-        
-        m_page1 = new TableGeneralProperty( m_properties, props->m_name, props->m_owner, props->m_comment, type );
-        m_properties->AddPage( m_page1, _( "General" ) );
-        m_page2 = new CFontPropertyPage( m_properties, data_font );
-        m_page3 = new CFontPropertyPage( m_properties, heading_font );
-        m_page4 = new CFontPropertyPage( m_properties, label_font );
-        m_properties->AddPage( m_page2, _( "Data Font" ) );
-        m_properties->AddPage( m_page3, _( "Heading Font" ) );
-        m_properties->AddPage( m_page4, _( "Label Font" ) );
-        m_page1->GetCommentCtrl()->SetFocus();
-    }
-    if( type == DatabaseFieldProperties )
-    {
-        FieldProperties *props = static_cast<FieldProperties *>( m_object );
-        m_page5 = new FieldGeneral( m_properties, props->m_comment );
-        m_properties->AddPage( m_page5, _( "General" ) );
-        m_page6 = new FieldHeader( m_properties, props->m_label, props->m_heading );
-        m_properties->AddPage( m_page6, _( "Header" ) );
-/*        res = db->GetFieldProperties( tableName.ToStdWstring(), schemaName.ToStdWstring(), field, errors );
-        if( !res )
-        {
-            m_page1 = new TableGeneralProperty( m_properties, field, type );
-            m_properties->AddPage( m_page1, _( "General" ) );
-        }
-        else
-        {
-            for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
-                wxMessageBox( (*it) );
-        }*/
-    }
-    if( type == 2 )
-    {
-        Properties *prop = static_cast<Properties *>( m_object );
         m_page7 = new DesignLabelGeneral( m_properties, prop );
         m_page2 = new CFontPropertyPage( m_properties, prop->m_font );
         m_properties->AddPage( m_page7, _( "General" ) );
@@ -115,12 +68,12 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     }
     if( type == DividerProperties )
     {
-        BandProperties *prop = static_cast<BandProperties *>( m_object );
         m_page8 = new BandGeneralProperties( m_properties, prop );
         m_properties->AddPage( m_page8, _( "General" ) );
         m_page9 = new PointerPropertiesPanel( m_properties, prop->m_cursorFile, prop->m_stockCursor );
         m_properties->AddPage( m_page9, _( "Cursor" ) );
-    }
+    }*/
+    handler->EditProperies( m_properties );
     set_properties();
     do_layout();
     // end wxGlade
@@ -186,53 +139,17 @@ bool PropertiesDialog::ApplyProperties()
             isModified = true;
     }
     std::vector<std::wstring> errors;
-    if( m_type == DatabaseTableProperties )
+/*    if( m_type == DatabaseTableProperties )
     {
         if( !m_isApplied && isModified )
         {
-            wxString newComment = m_page1->GetCommentCtrl()->GetValue();
-            wxFont dataFont = m_page2->GetFont();
-            wxFont headingFont = m_page3->GetFont();
-            wxFont labelFont = m_page4->GetFont();
-            static_cast<TableProperties *>( m_object )->m_comment = newComment.Trim();
-            static_cast<TableProperties *>( m_object )->m_dataFontName = dataFont.GetFaceName();
-            static_cast<TableProperties *>( m_object )->m_dataFontSize = dataFont.GetPointSize();
-            static_cast<TableProperties *>( m_object )->m_isDataFontUnderlined = dataFont.GetUnderlined() ? true : false;
-            static_cast<TableProperties *>( m_object )->m_isDataFontStriken = dataFont.GetStrikethrough() ? true : false;
-            static_cast<TableProperties *>( m_object )->m_isDataFontBold = dataFont.GetWeight()  == wxFONTWEIGHT_BOLD ? true : false;
-            static_cast<TableProperties *>( m_object )->m_isDataFontItalic = dataFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-            static_cast<TableProperties *>( m_object )->m_dataFontEncoding = dataFont.GetEncoding();
-            static_cast<TableProperties *>( m_object )->m_dataFontPixelSize = dataFont.GetPixelSize().GetWidth();
-            static_cast<TableProperties *>( m_object )->m_headingFontName = headingFont.GetFaceName();
-            static_cast<TableProperties *>( m_object )->m_headingFontSize = headingFont.GetPointSize();
-            static_cast<TableProperties *>( m_object )->m_isHeadingFontUnderlined = headingFont.GetUnderlined() ? true : false;
-            static_cast<TableProperties *>( m_object )->m_isHeadingFontStriken = headingFont.GetStrikethrough() ? true : false;
-            static_cast<TableProperties *>( m_object )->m_isHeadingFontBold = headingFont.GetWeight() == wxFONTWEIGHT_BOLD ? true : false;
-            static_cast<TableProperties *>( m_object )->m_isHeadingFontItalic = headingFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-            static_cast<TableProperties *>( m_object )->m_headingFontEncoding = headingFont.GetEncoding();
-            static_cast<TableProperties *>( m_object )->m_headingFontPixelSize = headingFont.GetPixelSize().GetWidth();
-            static_cast<TableProperties *>( m_object )->m_labelFontName = labelFont.GetFaceName();
-            static_cast<TableProperties *>( m_object )->m_labelFontSize = labelFont.GetPointSize();
-            static_cast<TableProperties *>( m_object )->m_isLabelFontUnderlined = labelFont.GetUnderlined() ? true : false;
-            static_cast<TableProperties *>( m_object )->m_isLabelFontStrioken = labelFont.GetStrikethrough() ? true : false;
-            static_cast<TableProperties *>( m_object )->m_isLabelFontBold = labelFont.GetWeight() == wxFONTWEIGHT_BOLD ? true : false;
-            static_cast<TableProperties *>( m_object )->m_isLabelFontItalic = labelFont.GetStyle() == wxFONTSTYLE_ITALIC ? true : false;
-            static_cast<TableProperties *>( m_object )->m_labelFontEncoding = labelFont.GetEncoding();
-            static_cast<TableProperties *>( m_object )->m_labelFontPixelSize = labelFont.GetPixelSize().GetWidth();
-/*            wxCommandEvent event( wxEVT_SET_TABLE_PROPERTY );
-            event.SetInt( IsLogOnly() );
-            event.SetExtraLong( m_type );
-            event.SetClientData( &m_object );
-            dynamic_cast<wxDocMDIChildFrame *>( GetParent() )->GetView()->ProcessEvent( event );
-            if( event.GetString() == "Failed" )
-                result = false;*/
         }
-    }
-    if( m_type == DatabaseFieldProperties )
+    }*/
+/*    if( m_type == DatabaseFieldProperties )
     {
         if( !m_isApplied && isModified )
         {
-            static_cast<FieldProperties *>( m_object )->m_comment = m_page5->GetCommentCtrl()->GetValue().ToStdWstring();
+/*            static_cast<FieldProperties *>( m_object )->m_comment = m_page5->GetCommentCtrl()->GetValue().ToStdWstring();
             static_cast<FieldProperties *>( m_object )->m_label = m_page6->GetLabelCtrl()->GetValue().ToStdWstring();
             static_cast<FieldProperties *>( m_object )->m_heading = m_page6->GetHeadingCtrl()->GetValue().ToStdWstring();
             wxCommandEvent event( wxEVT_SET_FIELD_PROPERTY );
@@ -243,7 +160,7 @@ bool PropertiesDialog::ApplyProperties()
             if( event.GetString() == "Failed" )
                 result = false;
         }
-    }
+    }*/
     m_isApplied = true;
     isModified = false;
     return result;
@@ -252,16 +169,6 @@ bool PropertiesDialog::ApplyProperties()
 const std::wstring &PropertiesDialog::GetCommand()
 {
     return m_command;
-}
-
-bool PropertiesDialog::IsLogOnly()
-{
-    if( m_type == 0 )
-        return m_page1->IsLogOnly();
-    if( m_type == 1 )
-        return m_page5->IsLogOnly();
-    else
-        return false;
 }
 
 void PropertiesDialog::OnApplyUpdateUI (wxUpdateUIEvent &event)

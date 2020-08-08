@@ -511,6 +511,7 @@
     <ClCompile Include="odbcconfigure.cpp" />
     <ClCompile Include="odbccredentials.cpp" />
     <ClCompile Include="properties.cpp" />
+    <ClCompile Include="propertieshandler.cpp" />
     <ClCompile Include="quickselect.cpp" />
     <ClCompile Include="retrievalarguments.cpp" />
     <ClCompile Include="selecttables.cpp" />
@@ -529,6 +530,7 @@
     <ClInclude Include="odbcconfigure.h" />
     <ClInclude Include="odbccredentials.h" />
     <ClInclude Include="properties.h" />
+    <ClInclude Include="propertieshandler.h" />
     <ClInclude Include="quickselect.h" />
     <ClInclude Include="retrievalarguments.h" />
     <ClInclude Include="selecttables.h" />

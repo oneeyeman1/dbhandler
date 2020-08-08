@@ -18,15 +18,6 @@ enum DrawinViewMenu
     QuerySyntaxMenu
 };
 
-enum
-{
-    DatabaseTableProperties,
-    DatabaseFieldProperties,
-    DesignLabelProperties,
-    DesignFieldProperties,
-    DividerProperties
-};
-
 struct BandProperties
 {
     wxString m_color;

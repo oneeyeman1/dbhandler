@@ -350,12 +350,12 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<Field *> &queryFields)
                             headerString = headerString + " ";
                     }
                 }
-                wxFontStyle labelStyle = (*it1)->GetLabelFontItalic() == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
-                wxFontWeight labelWeight = ( ( (*it1)->GetLabelFontWeight() == 0 ) ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD );
-                wxFontStyle dataStyle = (*it1)->GetDataFontItalic()  == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
-                wxFontWeight dataWeight = (*it1)->GetDataFontWeight() == 0 ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD;
-                wxFont labelFont( (*it1)->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, labelStyle, labelWeight, (*it1)->GetLabelFontUnderline(), (*it1)->GetLabelFontName() );
-                wxFont dataFont( (*it1)->GetDataFontSize(), wxFONTFAMILY_DEFAULT, dataStyle, dataWeight, (*it1)->GetDataFontUnderline(), (*it1)->GetDataFontName() );
+                wxFontStyle labelStyle = (*it1)->GetTableProperties().m_labelFontItalic == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
+                wxFontWeight labelWeight = ( ( (*it1)->GetTableProperties().m_labelFontWeight == 0 ) ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD );
+                wxFontStyle dataStyle = (*it1)->GetTableProperties().m_dataFontItalic  == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
+                wxFontWeight dataWeight = (*it1)->GetTableProperties().m_dataFontWeight == 0 ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD;
+                wxFont labelFont( (*it1)->GetTableProperties().m_labelFontSize, wxFONTFAMILY_DEFAULT, labelStyle, labelWeight, (*it1)->GetTableProperties().m_labelFontUnderline, (*it1)->GetTableProperties().m_labelFontName );
+                wxFont dataFont( (*it1)->GetTableProperties().m_dataFontSize, wxFONTFAMILY_DEFAULT, dataStyle, dataWeight, (*it1)->GetTableProperties().m_dataFontUnderline, (*it1)->GetTableProperties().m_dataFontName );
                 dc.SetFont( labelFont );
                 wxSize size1 = dc.GetTextExtent( headerStr );
                 dc.SetFont( dataFont );

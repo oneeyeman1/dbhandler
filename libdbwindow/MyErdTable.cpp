@@ -138,7 +138,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
             m_comment->SetHAlign( wxSFShapeBase::halignLEFT );
             m_comment->GetFont().SetPointSize( 8 );
             m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
-            m_comment->SetText( m_table->GetComment() );
+            m_comment->SetText( m_table->GetTableProperties().m_comment );
             m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
             m_comment->Activate( false );
 //            SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
@@ -190,8 +190,8 @@ void MyErdTable::UpdateTable()
 
 void MyErdTable::SetTableComment(const wxString &comment)
 {
-    m_table->SetComment( comment.ToStdWstring() );
-    m_comment->SetText( m_table->GetComment() );
+    m_table->GetTableProperties().m_comment = comment.ToStdWstring();
+    m_comment->SetText( m_table->GetTableProperties().m_comment );
 }
 
 void MyErdTable::ClearGrid()

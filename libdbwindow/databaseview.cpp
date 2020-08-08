@@ -77,6 +77,10 @@
 #include "designcanvas.h"
 #include "databaseview.h"
 #include "divider.h"
+#include "propertypagebase.h"
+#include "tablegeneral.h"
+#include "fontpropertypagebase.h"
+#include "propertieshandler.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
@@ -84,7 +88,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool, const int);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
-typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, const wxString &, wxCriticalSection &);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
@@ -513,7 +517,7 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
 #endif
                     db->GetTableProperties( dbTable, errors );
                 }
-                erdTable->SetTableComment( dbTable->GetComment() );
+                erdTable->SetTableComment( dbTable->GetTableProperties().m_comment );
                 erdTable->Update();
                 erdTable->Refresh();
             }
@@ -925,7 +929,8 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
     lib.Load( "libdialogs" );
 #endif
     int res = 0;
-    void *properties;
+    std::unique_ptr<PropertiesHandler> propertiesPtr;
+    wxString title;
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
@@ -938,40 +943,10 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
 #endif
             res = GetDocument()->GetDatabase()->GetTableProperties( dbTable, errors );
-            wxFont data_font( dbTable->GetDataFontSize(), wxFONTFAMILY_DEFAULT, dbTable->GetDataFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, dbTable->GetDataFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, dbTable->GetDataFontUnderline(), dbTable->GetDataFontName() );
-            if( dbTable->GetDataFontStrikethrough() )
-                data_font.SetStrikethrough( true );
-            wxFont heading_font( dbTable->GetHeadingFontSize(), wxFONTFAMILY_DEFAULT, dbTable->GetHeadingFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, dbTable->GetHeadingFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, dbTable->GetHeadingFontUnderline(), dbTable->GetHeadingFontName() );
-            if( dbTable->GetHeadingFontStrikethrough() )
-                heading_font.SetStrikethrough( true );
-            wxFont label_font( dbTable->GetLabelFontSize(), wxFONTFAMILY_DEFAULT, dbTable->GetLabelFontItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, dbTable->GetLabelFontWeight() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, dbTable->GetLabelFontUnderline(), dbTable->GetLabelFontName() );
-            if( dbTable->GetLabelFontStrikethrough() )
-                label_font.SetStrikethrough( true );
-            TableProperties prop;
-            prop.m_comment = dbTable->GetComment();
-            prop.m_dataFontName = dbTable->GetDataFontName();
-            prop.m_headingFontName = dbTable->GetHeadingFontName();
-            prop.m_labelFontName = dbTable->GetLabelFontName();
-            prop.m_dataFontSize = dbTable->GetDataFontSize();
-            prop.m_headingFontSize = dbTable->GetHeadingFontSize();
-            prop.m_labelFontSize = dbTable->GetLabelFontSize();
-            prop.m_isDataFontItalic = dbTable->GetDataFontItalic();
-            prop.m_isDataFontUnderlined = dbTable->GetDataFontUnderline();
-            prop.m_isDataFontStriken = dbTable->GetDataFontStrikethrough();
-            prop.m_isHeadingFontUnderlined = dbTable->GetHeadingFontUnderline();
-            prop.m_isHeadingFontStriken = dbTable->GetHeadingFontStrikethrough();
-            prop.m_isLabelFontUnderlined = dbTable->GetLabelFontUnderline();
-            prop.m_isLabelFontStrioken = dbTable->GetLabelFontStrikethrough();
-            prop.m_isDataFontBold = dbTable->GetDataFontWeight() == wxFONTWEIGHT_BOLD;
-            prop.m_isDataFontItalic = dbTable->GetDataFontItalic();
-            prop.m_isHeadingFontBold = dbTable->GetHeadingFontWeight() == wxFONTWEIGHT_BOLD;
-            prop.m_isHeadingFontItalic = dbTable->GetHeadingFontItalic();
-            prop.m_isLabelFontBold = dbTable->GetLabelFontWeight() == wxFONTWEIGHT_BOLD;
-            prop.m_isLabelFontItalic = dbTable->GetLabelFontItalic();
-            prop.m_name = dbTable->GetTableName();
-            prop.m_owner = dbTable->GetTableOwner();
-            properties = &prop;
-//            res = func( m_frame, GetDocument()->GetDatabase(), type, &prop, command, logOnly, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
+            auto ptr = std::make_unique<DatabasePropertiesHandler>( GetDocument()->GetDatabase(), dbTable );
+            propertiesPtr = std::move( ptr );
+            title = _( "Table " );
+            title += schemaName + L"." + tableName;
         }
         if( type == DatabaseFieldProperties )
         {
@@ -988,16 +963,21 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             prop.m_comment = field->GetComment();
             prop.m_label = field->GetLabel();
             prop.m_heading = field->GetHeading();
-            properties = &prop;
-//            res = func( m_frame, GetDocument()->GetDatabase(), type, &prop, command, logOnly, tableName, schemaName, ownerName, *pcs );
+//            properties = &prop;
+            title = _( "Column " );
+            title += tableName + ".";
+//            title += static_cast<Field *>( object )->GetFieldName();
+            //            res = func( m_frame, GetDocument()->GetDatabase(), type, &prop, command, logOnly, tableName, schemaName, ownerName, *pcs );
         }
         if( type == DividerProperties )
         {
-            auto props = divider->GetDividerProperties();
-            properties = &props;
-//            res = func( m_frame, nullptr, type, &prop, command, false, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
+//            auto props = divider->GetDividerProperties();
+//            properties = &props;
+            title = _( "Band Object" );
+            //            res = func( m_frame, nullptr, type, &prop, command, false, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
         }
-        res = func( m_frame, GetDocument()->GetDatabase(), type, &properties, command, logOnly, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
+//        TableProperties props = *static_cast<TableProperties *>( properties );
+        res = func( m_frame, propertiesPtr, title, command, logOnly, *pcs );
         if( res != wxID_CANCEL && logOnly )
         {
             m_text->AppendText( command );

@@ -744,7 +744,7 @@ void DatabaseCanvas::OnShowComments(wxCommandEvent &WXUNUSED(event))
         CommentTableShape *shape = wxDynamicCast( (*it), CommentTableShape );
         if( m_showComments )
         {
-            shape->SetText( const_cast<DatabaseTable *>( shape->GetDatabaseTable() )->GetComment() );
+            shape->SetText( const_cast<DatabaseTable *>( shape->GetDatabaseTable() )->GetTableProperties().m_comment );
         }
         else
         {

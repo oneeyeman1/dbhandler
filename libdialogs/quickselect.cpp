@@ -277,7 +277,7 @@ void QuickSelect::OnDisplayComment(wxMouseEvent &event)
                     if( stringClicked == name + "." + (*it1)->GetTableName() )
                     {
                         found = true;
-                        m_comments->SetLabel( (*it1)->GetComment() );
+                        m_comments->SetLabel( (*it1)->GetTableProperties().m_comment );
                     }
                 }
             }

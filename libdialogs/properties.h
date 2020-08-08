@@ -15,11 +15,9 @@
 class PropertiesDialog: public wxDialog
 {
 public:
-    PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, int type, void *object, const wxString &tableName, const wxString &schemaName, const wxString &ownerName, wxCriticalSection &cs, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, std::unique_ptr<PropertiesHandler> &handler, wxCriticalSection &cs);
     const std::wstring &GetCommand();
-    bool IsLogOnly();
     void GetTableProperties();
-    void *GetObjectProperties() { return m_object; };
 
 private:
     TableGeneralProperty *m_page1;
@@ -30,8 +28,6 @@ private:
     BandGeneralProperties *m_page8;
     PointerPropertiesPanel *m_page9;
     int m_type;
-    Database *m_db;
-    void *m_object;
     std::wstring m_dbType, m_command;
     bool m_isApplied;
     TableProperties m_tableProperties;

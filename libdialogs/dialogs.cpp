@@ -58,6 +58,7 @@
 #include "getobjectname.h"
 #include "jointype.h"
 #include "designlabelgeneral.h"
+#include "propertieshandler.h"
 #include "properties.h"
 #include "addcolumnsdialog.h"
 #include "bitmappanel.h"
@@ -195,33 +196,19 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     return res;
 }
 
-extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, Database *db, int type, void *object, wxString &command, bool logOnly, const wxString &tableName, const wxString &schemaName, const wxString &ownerName, wxCriticalSection &cs)
+extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title, wxString &command, bool logOnly, wxCriticalSection &cs)
 {
-    wxString title;
     int res = 0;
-    if( type == DatabaseTableProperties )
-    {
-        title = _( "Table " );
-        title += schemaName + L"." + tableName;
-    }
-    if( type == DatabaseFieldProperties )
-    {
-        title = _( "Column " );
-        title += tableName + ".";
-        title += static_cast<Field *>( object )->GetFieldName();
-    }
-    if( type == DividerProperties )
-        title = _( "Band Object" );
-    PropertiesDialog dlg( parent, wxID_ANY, title, db, type, object, tableName, schemaName, ownerName, cs );
+    PropertiesDialog dlg( parent, wxID_ANY, title, handler, cs );
 	dlg.Center();
     res = dlg.ShowModal();
     if( res != wxID_CANCEL )
     {
-        if( type == DatabaseTableProperties || type == DatabaseFieldProperties )
+/*        if( type == DatabaseTableProperties || type == DatabaseFieldProperties )
         {
             command = dlg.GetCommand();
             logOnly = dlg.IsLogOnly();
-        }
+        }*/
     }
     return res;
 }
