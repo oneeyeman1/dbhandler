@@ -23,6 +23,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <memory>
 #include "wx/docmdi.h"
 #include "wx/fontenum.h"
 #include "wx/docview.h"

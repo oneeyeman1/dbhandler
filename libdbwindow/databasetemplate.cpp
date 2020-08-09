@@ -10,6 +10,7 @@
 #include "wx/wx.h"
 #endif
 
+#include <memory>
 #include "wx/docview.h"
 #include "wx/fontenum.h"
 #include "wx/docmdi.h"

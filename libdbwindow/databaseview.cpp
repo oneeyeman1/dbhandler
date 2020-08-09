@@ -33,12 +33,12 @@
 #include "res/gui/preview.c"
 #include "res/gui/sql.h"
 
+#include <memory>
 #include <string>
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 #include <mutex>
 #endif
 
-#include <memory>
 #include "wx/file.h"
 
 #include "wx/docview.h"
@@ -947,7 +947,11 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
             std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
 #endif
             res = GetDocument()->GetDatabase()->GetTableProperties( dbTable, errors );
+#if __cplusplus > 201300
             auto ptr = std::make_unique<DatabasePropertiesHandler>( GetDocument()->GetDatabase(), dbTable );
+#else
+			auto ptr = std::unique_ptr<DatabasePropertiesHandler>( new DatabasePropertiesHandler( GetDocument()->GetDatabase(), dbTable ) );
+#endif
             propertiesPtr = std::move( ptr );
             title = _( "Table " );
             title += schemaName + L"." + tableName;
