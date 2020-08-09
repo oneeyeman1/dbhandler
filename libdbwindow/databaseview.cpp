@@ -38,9 +38,13 @@
 #include <mutex>
 #endif
 
+#include <memory>
 #include "wx/file.h"
 
 #include "wx/docview.h"
+#ifdef __WXGTK__
+#include "wx/nativewin.h"
+#endif
 #include "wx/fontenum.h"
 #include "wx/notebook.h"
 #include "wx/fdrepdlg.h"

@@ -20,6 +20,7 @@
     #include "wx/stockitem.h"
 #endif
 
+#include <memory>
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
 #include "wx/docmdi.h"

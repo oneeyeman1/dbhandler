@@ -17,6 +17,7 @@
 #include <map>
 #include <vector>
 #include <list>
+#include <memory>
 #include "wx/wizard.h"
 #include "wx/filepicker.h"
 #include "wx/dynlib.h"
