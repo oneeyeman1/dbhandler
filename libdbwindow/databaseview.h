@@ -148,4 +148,12 @@ wxDECLARE_EVENT(wxEVT_CHANGE_QUERY, wxCommandEvent);
 
 #define wxID_DATABASEWINDOW 2
 
+#if __cplusplus < 201300
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args)
+{
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
+#endif
+
 #endif

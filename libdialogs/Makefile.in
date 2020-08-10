@@ -137,7 +137,8 @@ am_libdialogs_la_OBJECTS = libdialogs_la-databasetype.lo \
 	libdialogs_la-odbccredentials.lo libdialogs_la-bitmappanel.lo \
 	libdialogs_la-newquery.lo libdialogs_la-quickselect.lo \
 	libdialogs_la-retrievalarguments.lo \
-	libdialogs_la-typecombobox.lo libdialogs_la-gotoline.lo
+	libdialogs_la-typecombobox.lo libdialogs_la-gotoline.lo \
+	libdialogs_la-propertieshandler.lo
 libdialogs_la_OBJECTS = $(am_libdialogs_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -416,7 +417,9 @@ libdialogs_la_SOURCES = \
 	typecombobox.cpp \
 	typecombobox.h \
 	gotoline.cpp \
-	gotoline.h
+	gotoline.h \
+	propertieshandler.cpp \
+	propertieshandler.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
@@ -537,6 +540,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-odbcconfigure.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-odbccredentials.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-properties.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-propertieshandler.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-quickselect.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-retrievalarguments.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdialogs_la-selecttables.Plo@am__quote@
@@ -681,6 +685,13 @@ libdialogs_la-gotoline.lo: gotoline.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gotoline.cpp' object='libdialogs_la-gotoline.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-gotoline.lo `test -f 'gotoline.cpp' || echo '$(srcdir)/'`gotoline.cpp
+
+libdialogs_la-propertieshandler.lo: propertieshandler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -MT libdialogs_la-propertieshandler.lo -MD -MP -MF $(DEPDIR)/libdialogs_la-propertieshandler.Tpo -c -o libdialogs_la-propertieshandler.lo `test -f 'propertieshandler.cpp' || echo '$(srcdir)/'`propertieshandler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdialogs_la-propertieshandler.Tpo $(DEPDIR)/libdialogs_la-propertieshandler.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='propertieshandler.cpp' object='libdialogs_la-propertieshandler.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdialogs_la_CXXFLAGS) $(CXXFLAGS) -c -o libdialogs_la-propertieshandler.lo `test -f 'propertieshandler.cpp' || echo '$(srcdir)/'`propertieshandler.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

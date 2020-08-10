@@ -1,5 +1,6 @@
 #include "wx/wx.h"
 
+#include <memory>
 #include "wx/docmdi.h"
 #include "wx/fontenum.h"
 #include "wx/notebook.h"

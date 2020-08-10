@@ -6,6 +6,7 @@
 #endif
 
 #include <vector>
+#include <memory>
 #include "wx/docview.h"
 #include "wx/fontenum.h"
 #include "wx/docmdi.h"

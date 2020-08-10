@@ -15,6 +15,7 @@
 
 #include <vector>
 #include <map>
+#include <memory>
 #if wxUSE_STD_IOSTREAM
     #include "wx/ioswrap.h"
 #else

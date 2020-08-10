@@ -17,6 +17,7 @@
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
 #include "wx/fontenum.h"
+#include "wx/nativewin.h"
 #include "propertypagebase.h"
 #include "tablegeneral.h"
 #include "fontpropertypagebase.h"
