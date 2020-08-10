@@ -31,13 +31,16 @@
 #include "wx/bmpcbox.h"
 #include "wx/fontenum.h"
 #endif
-#if defined __WXGTK__ || defined __WXOSX_COCOA__
+#if defined __WXGTK__
 #include "wx/nativewin.h"
+#endif
+#ifdef __WXOSX__
+#include "wx/fontpicker.h"
 #endif
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 
-CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, wxFont &font, int id, const wxPoint& pos, const wxSize& size, long style)
+CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, const wxFont &font, int id, const wxPoint& pos, const wxSize& size, long style)
  : PropertyPageBase(parent, id)
 {
     m_dirty = false;

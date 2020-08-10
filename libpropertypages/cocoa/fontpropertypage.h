@@ -24,10 +24,15 @@
 class WXEXPORT CFontPropertyPage: public CFontPropertyPageBase
 {
 public:
-    CFontPropertyPage(wxWindow* parent, wxFont font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
+    CFontPropertyPage(wxWindow* parent, const wxFont &font);
     ~CFontPropertyPage();
+    virtual void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough) wxOVERRIDE;
+    virtual wxFont &GetFont() wxOVERRIDE;
+    bool IsDirty();
+protected:
+    void OnFontChange(wxCommandEvent &event);
 private:
-    wxNativeWindow *m_holder;
+    wxFontPickerCtrl *m_holder;
 };
 
 #endif // FONTPROPERTYPAGE_H

@@ -29,6 +29,7 @@
 		E3B92D6E24CA0DF60035428C /* bandgeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B92D6C24CA0DF60035428C /* bandgeneral.h */; };
 		E3B92D7124CDC6DC0035428C /* pointerproperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B92D6F24CDC6DB0035428C /* pointerproperty.cpp */; };
 		E3B92D7224CDC6DC0035428C /* pointerproperty.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B92D7024CDC6DC0035428C /* pointerproperty.h */; };
+		E3B92D8B24E1AB860035428C /* fontpropertypage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B92D8A24E1AB860035428C /* fontpropertypage.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +56,7 @@
 		E3B92D6C24CA0DF60035428C /* bandgeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bandgeneral.h; sourceTree = "<group>"; };
 		E3B92D6F24CDC6DB0035428C /* pointerproperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pointerproperty.cpp; sourceTree = "<group>"; };
 		E3B92D7024CDC6DC0035428C /* pointerproperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pointerproperty.h; sourceTree = "<group>"; };
+		E3B92D8A24E1AB860035428C /* fontpropertypage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fontpropertypage.cpp; path = cocoa/fontpropertypage.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 		E39501CD1DF3BA080046E51B /* libpropertypages */ = {
 			isa = PBXGroup;
 			children = (
+				E3B92D8A24E1AB860035428C /* fontpropertypage.cpp */,
 				E3B92D6F24CDC6DB0035428C /* pointerproperty.cpp */,
 				E3B92D7024CDC6DC0035428C /* pointerproperty.h */,
 				E3B92D6B24CA0DF50035428C /* bandgeneral.cpp */,
@@ -194,6 +197,7 @@
 				E3607DD623C4427300267C14 /* sortgroupbypage.cpp in Sources */,
 				E3B92D6D24CA0DF60035428C /* bandgeneral.cpp in Sources */,
 				E39501D01DF3C2300046E51B /* tablegeneral.cpp in Sources */,
+				E3B92D8B24E1AB860035428C /* fontpropertypage.cpp in Sources */,
 				E32A502C22A3A71500A57BD1 /* designlabelgeneral.cpp in Sources */,
 				E3B92D7124CDC6DC0035428C /* pointerproperty.cpp in Sources */,
 			);
