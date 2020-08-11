@@ -50,6 +50,7 @@
 		E39B2DCC2353E59900F72DF2 /* fontcombobox.h in Headers */ = {isa = PBXBuildFile; fileRef = E39B2DCA2353E59900F72DF2 /* fontcombobox.h */; };
 		E3AC9DCF1DFD16EF0083DD62 /* GridTableShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3AC9DCD1DFD16EF0083DD62 /* GridTableShape.cpp */; };
 		E3AC9DD01DFD16EF0083DD62 /* GridTableShape.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AC9DCE1DFD16EF0083DD62 /* GridTableShape.h */; };
+		E3B8E3B824E2F92500346516 /* liblibpropertieshandlers.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3B8E3B724E2F92500346516 /* liblibpropertieshandlers.dylib */; };
 		E3E91D1E1D6D467C00675CF8 /* databasecanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D131D6D467C00675CF8 /* databasecanvas.cpp */; };
 		E3E91D1F1D6D467C00675CF8 /* databasecanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D141D6D467C00675CF8 /* databasecanvas.h */; };
 		E3E91D201D6D467C00675CF8 /* databasedoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D151D6D467C00675CF8 /* databasedoc.cpp */; };
@@ -112,6 +113,8 @@
 		E39B2DCA2353E59900F72DF2 /* fontcombobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontcombobox.h; sourceTree = "<group>"; };
 		E3AC9DCD1DFD16EF0083DD62 /* GridTableShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GridTableShape.cpp; sourceTree = "<group>"; };
 		E3AC9DCE1DFD16EF0083DD62 /* GridTableShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridTableShape.h; sourceTree = "<group>"; };
+		E3B8E3B724E2F92500346516 /* liblibpropertieshandlers.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = liblibpropertieshandlers.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3B92D8D24E27B570035428C /* liblibdialogs.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = liblibdialogs.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3E91D131D6D467C00675CF8 /* databasecanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasecanvas.cpp; sourceTree = "<group>"; };
 		E3E91D141D6D467C00675CF8 /* databasecanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasecanvas.h; sourceTree = "<group>"; };
 		E3E91D151D6D467C00675CF8 /* databasedoc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasedoc.cpp; sourceTree = "<group>"; };
@@ -134,6 +137,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3B8E3B824E2F92500346516 /* liblibpropertieshandlers.dylib in Frameworks */,
 				E33E6F8B1EAD3508003A0B92 /* liblibpropertypages.dylib in Frameworks */,
 				E33E6F891EAD3203003A0B92 /* liblibfieldswindow.dylib in Frameworks */,
 				E38709A41D43BA9C004EF478 /* liblibshapeframework.dylib in Frameworks */,
@@ -151,6 +155,7 @@
 				E38709A31D43BA9C004EF478 /* liblibshapeframework.dylib */,
 				E38708CB1D2B61E9004EF478 /* libdbwindow */,
 				E38708BF1D2B61D7004EF478 /* Products */,
+				E3B92D8C24E27B570035428C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -222,6 +227,15 @@
 				E38709B41D4CF564004EF478 /* table.h */,
 			);
 			name = libdbwindow;
+			sourceTree = "<group>";
+		};
+		E3B92D8C24E27B570035428C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E3B8E3B724E2F92500346516 /* liblibpropertieshandlers.dylib */,
+				E3B92D8D24E27B570035428C /* liblibdialogs.dylib */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -378,6 +392,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = /Users/igorkorot/dbhandler/dbhandler;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -440,6 +455,7 @@
 					../libfieldswindow,
 					../libpropertypages,
 					../libdialogs,
+					../libpropertieshandlers,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

@@ -32,8 +32,6 @@
 		E362C40220F475990089E44E /* odbccredentials.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E362C40020F475990089E44E /* odbccredentials.cpp */; };
 		E362C40320F475990089E44E /* odbccredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = E362C40120F475990089E44E /* odbccredentials.h */; };
 		E39501D31DF3C4730046E51B /* liblibpropertypages.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E39501D21DF3C4730046E51B /* liblibpropertypages.dylib */; };
-		E3B92D8224DF14C60035428C /* propertieshandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B92D8024DF14C50035428C /* propertieshandler.h */; };
-		E3B92D8324DF14C60035428C /* propertieshandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B92D8124DF14C60035428C /* propertieshandler.cpp */; };
 		E3D139511D0D0D7100A5A0F7 /* databasetype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D1394A1D0D0D7100A5A0F7 /* databasetype.cpp */; };
 		E3D139521D0D0D7100A5A0F7 /* databasetype.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D1394B1D0D0D7100A5A0F7 /* databasetype.h */; };
 		E3D139531D0D0D7100A5A0F7 /* dialogs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D1394C1D0D0D7100A5A0F7 /* dialogs.cpp */; };
@@ -77,8 +75,6 @@
 		E362C40020F475990089E44E /* odbccredentials.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = odbccredentials.cpp; sourceTree = "<group>"; };
 		E362C40120F475990089E44E /* odbccredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = odbccredentials.h; sourceTree = "<group>"; };
 		E39501D21DF3C4730046E51B /* liblibpropertypages.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibpropertypages.dylib; path = ../libpropertypages/build/Debug/liblibpropertypages.dylib; sourceTree = "<group>"; };
-		E3B92D8024DF14C50035428C /* propertieshandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = propertieshandler.h; sourceTree = "<group>"; };
-		E3B92D8124DF14C60035428C /* propertieshandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = propertieshandler.cpp; sourceTree = "<group>"; };
 		E3D1393C1D0D0CD100A5A0F7 /* liblibdialogs.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdialogs.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D1394A1D0D0D7100A5A0F7 /* databasetype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasetype.cpp; sourceTree = "<group>"; };
 		E3D1394B1D0D0D7100A5A0F7 /* databasetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasetype.h; sourceTree = "<group>"; };
@@ -137,8 +133,6 @@
 		E3D139491D0D0CDE00A5A0F7 /* libdialogs */ = {
 			isa = PBXGroup;
 			children = (
-				E3B92D8124DF14C60035428C /* propertieshandler.cpp */,
-				E3B92D8024DF14C50035428C /* propertieshandler.h */,
 				E3607DCC23C4417E00267C14 /* gotoline.cpp */,
 				E3607DCD23C4417E00267C14 /* gotoline.h */,
 				E3607DC823A6E19200267C14 /* typecombobox.cpp */,
@@ -202,7 +196,6 @@
 				E3607DCB23A6E19200267C14 /* typecombobox.h in Headers */,
 				E3607DCF23C4417F00267C14 /* gotoline.h in Headers */,
 				E32A5009223469AE00A57BD1 /* newquery.h in Headers */,
-				E3B92D8224DF14C60035428C /* propertieshandler.h in Headers */,
 				E3E91D3D1DC678C900675CF8 /* createindex.h in Headers */,
 				E3E91D891DEE520B00675CF8 /* properties.h in Headers */,
 				E362C40320F475990089E44E /* odbccredentials.h in Headers */,
@@ -273,7 +266,6 @@
 				E3607DCA23A6E19200267C14 /* typecombobox.cpp in Sources */,
 				E3607DCE23C4417E00267C14 /* gotoline.cpp in Sources */,
 				E32A5008223469AE00A57BD1 /* newquery.cpp in Sources */,
-				E3B92D8324DF14C60035428C /* propertieshandler.cpp in Sources */,
 				E32A5018223F243C00A57BD1 /* quickselect.cpp in Sources */,
 				E32A5014223F1AE600A57BD1 /* retrievalarguments.cpp in Sources */,
 				E3E91D881DEE520B00675CF8 /* properties.cpp in Sources */,
@@ -379,6 +371,7 @@
 					../libfieldswindow,
 					../libshapeframework,
 					../libpropertypages,
+					../libpropertieshandlers,
 				);
 				"HEADER_SEARCH_PATHS[arch=*]" = (
 					"$(inherited)",

@@ -42,8 +42,10 @@
 #include "wx/file.h"
 
 #include "wx/docview.h"
-#ifdef __WXGTK__
+#if defined __WXGTK__
 #include "wx/nativewin.h"
+#elif defined __WXOSX__
+#include "wx/fontpicker.h"
 #endif
 #include "wx/fontenum.h"
 #include "wx/notebook.h"

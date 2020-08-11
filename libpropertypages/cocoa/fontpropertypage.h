@@ -25,7 +25,7 @@ class WXEXPORT CFontPropertyPage: public CFontPropertyPageBase
 {
 public:
     CFontPropertyPage(wxWindow* parent, const wxFont &font);
-    ~CFontPropertyPage();
+    ~CFontPropertyPage() {};
     virtual void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough) wxOVERRIDE;
     virtual wxFont &GetFont() wxOVERRIDE;
     bool IsDirty();

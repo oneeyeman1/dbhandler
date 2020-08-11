@@ -13,11 +13,15 @@
 #include <vector>
 #include <map>
 #include"database.h"
+#if defined __WXGTK__
+#include "wx/nativewin.h"
+#elif defined __WXOSX__
+#include "wx/fontpicker.h"
+#endif
 #include "wx/font.h"
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
 #include "wx/fontenum.h"
-#include "wx/nativewin.h"
 #include "propertypagebase.h"
 #include "tablegeneral.h"
 #include "fontpropertypagebase.h"

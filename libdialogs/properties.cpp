@@ -30,8 +30,8 @@
 #include "gtk/gtk.h"
 #include "wx/nativewin.h"
 #endif
-#ifdef __WXOSX_COCOA__
-#include "wx/nativewin.h"
+#ifdef __WXOSX__
+#include "wx/fontpicker.h"
 #endif
 #include "database.h"
 #include "propertypagebase.h"

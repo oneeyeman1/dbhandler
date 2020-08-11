@@ -33,8 +33,8 @@
 #include "wx/generic/stattextg.h"
 #endif
 #endif
-#ifdef __WXOSX_COCOA__
-#include "wx/nativewin.h"
+#ifdef __WXOSX__
+#include "wx/fontpicker.h"
 #endif
 #ifndef __WXMSW__
 #include "odbccredentials.h"
