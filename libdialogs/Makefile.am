@@ -37,14 +37,13 @@ libdialogs_la_SOURCES =  \
 	typecombobox.cpp \
 	typecombobox.h \
 	gotoline.cpp \
-	gotoline.h \
-	propertieshandler.cpp \
-	propertieshandler.h
+	gotoline.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
 	-I../../libshapeframework \
 	-I../../libpropertypages \
+	-I../../libpropertieshandlers \
 	`pkg-config \
 	--cflags \
 	gtk+-3.0` \
