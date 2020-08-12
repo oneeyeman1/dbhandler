@@ -385,7 +385,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = dbinterface libsqlite libodbc libpostgres libmysql libshapeframework libdbloader libfieldswindow libpropertypages libdialogs libdbwindow libtablewindow po dbhandler
+SUBDIRS = dbinterface libsqlite libodbc libpostgres libmysql libshapeframework libdbloader libfieldswindow libpropertypages libdialogs libpropertieshandlers libdbwindow libtablewindow po dbhandler
 dist_doc_DATA = \
 	README \
 	COPYING \
@@ -915,6 +915,7 @@ uninstall-am: uninstall-dist_docDATA uninstall-local
 	uninstall-am uninstall-dist_docDATA uninstall-local
 
 .PRECIOUS: Makefile
+
 
 # Remove doc directory on uninstall
 uninstall-local:
