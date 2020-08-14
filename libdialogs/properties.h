@@ -20,8 +20,6 @@ public:
     void GetTableProperties();
 
 private:
-    TableGeneralProperty *m_page1;
-    CFontPropertyPage *m_page2, *m_page3, *m_page4;
     FieldGeneral *m_page5;
     FieldHeader *m_page6;
     DesignLabelGeneral *m_page7;
@@ -30,7 +28,8 @@ private:
     int m_type;
     std::wstring m_dbType, m_command;
     bool m_isApplied;
-    TableProperties m_tableProperties;
+//    TableProperties m_tableProperties;
+    std::unique_ptr<PropertiesHandler> m_handler;
     wxCriticalSection *pcs;
     // begin wxGlade: PropertiesDialog::methods
     void set_properties();

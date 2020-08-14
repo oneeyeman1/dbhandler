@@ -57,6 +57,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     std::vector<std::wstring> errors;
     pcs = &cs;
     m_isApplied = false;
+    m_handler = handler;
     // begin wxGlade: PropertiesDialog::PropertiesDialog
     m_properties = new wxNotebook( this, wxID_ANY );
 /*    if( type == 2 )
@@ -133,6 +134,7 @@ bool PropertiesDialog::ApplyProperties()
 {
     bool result = true;
     bool isModified = false;
+    m_handler->GetProperties();
     for( int i = 0; i < m_properties->GetPageCount(); ++i )
     {
         PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
@@ -150,7 +152,7 @@ bool PropertiesDialog::ApplyProperties()
     {
         if( !m_isApplied && isModified )
         {
-/*            static_cast<FieldProperties *>( m_object )->m_comment = m_page5->GetCommentCtrl()->GetValue().ToStdWstring();
+            static_cast<FieldProperties *>( m_object )->m_comment = m_page5->GetCommentCtrl()->GetValue().ToStdWstring();
             static_cast<FieldProperties *>( m_object )->m_label = m_page6->GetLabelCtrl()->GetValue().ToStdWstring();
             static_cast<FieldProperties *>( m_object )->m_heading = m_page6->GetHeadingCtrl()->GetValue().ToStdWstring();
             wxCommandEvent event( wxEVT_SET_FIELD_PROPERTY );
