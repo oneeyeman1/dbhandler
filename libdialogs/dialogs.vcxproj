@@ -271,11 +271,11 @@
       <AdditionalIncludeDirectories>.\..\..\lib\vc_dll\mswud;.\..\..\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>vld.lib;dbinterface.lib;fieldswindow.lib;shapeframework.lib;propertypages.lib;wxmsw31ud_adv.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vld.lib;dbinterface.lib;fieldswindow.lib;shapeframework.lib;propertieshandlers.lib;propertypages.lib;wxmsw31ud_adv.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>..\dbhandler\vc_mswuddll\dialogs.dll</OutputFile>
       <ImportLibrary>vc_mswuddll\dialogs.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;..\dbhandler\Debug;..\libfieldswindow\vc_mswuddll;..\libshapeframework\vc_mswuddll;..\libpropertypages\vc_mswuddll;c:\wxWidgets\lib\vc_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;..\dbhandler\Debug;..\libfieldswindow\vc_mswuddll;..\libshapeframework\vc_mswuddll;..\libpropertieshandlers\vc_mswuddll;..\libpropertypages\vc_mswuddll;c:\wxWidgets\lib\vc_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll\dialogs.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
@@ -511,7 +511,6 @@
     <ClCompile Include="odbcconfigure.cpp" />
     <ClCompile Include="odbccredentials.cpp" />
     <ClCompile Include="properties.cpp" />
-    <ClCompile Include="propertieshandler.cpp" />
     <ClCompile Include="quickselect.cpp" />
     <ClCompile Include="retrievalarguments.cpp" />
     <ClCompile Include="selecttables.cpp" />
@@ -530,7 +529,6 @@
     <ClInclude Include="odbcconfigure.h" />
     <ClInclude Include="odbccredentials.h" />
     <ClInclude Include="properties.h" />
-    <ClInclude Include="propertieshandler.h" />
     <ClInclude Include="quickselect.h" />
     <ClInclude Include="retrievalarguments.h" />
     <ClInclude Include="selecttables.h" />

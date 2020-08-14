@@ -64,9 +64,6 @@
     <ClCompile Include="gotoline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="propertieshandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="odbcconfigure.h">
@@ -115,9 +112,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gotoline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="propertieshandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
