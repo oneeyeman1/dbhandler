@@ -62,4 +62,5 @@ void CFontPropertyPage::SetFont(const std::wstring &name, int size, bool italic,
 void CFontPropertyPage::OnFontChange(wxCommandEvent &event)
 {
     m_dirty = true;
+    m_font = m_holder->GetFont();
 }
