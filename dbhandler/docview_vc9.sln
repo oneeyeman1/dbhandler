@@ -67,6 +67,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "postgres", "..\libpostgres\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mysql", "..\libmysql\mysql.vcxproj", "{33992568-0337-47DF-8C4D-05FB71CA4D1C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "propertieshanders", "..\libpropertieshandlers\propertieshandlers.vcxproj", "{0D6C16AE-8E63-445E-9A46-0D3524E0F184}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -283,6 +285,22 @@ Global
 		{33992568-0337-47DF-8C4D-05FB71CA4D1C}.Release|Win32.Build.0 = Release|Win32
 		{33992568-0337-47DF-8C4D-05FB71CA4D1C}.Release|x64.ActiveCfg = Release|x64
 		{33992568-0337-47DF-8C4D-05FB71CA4D1C}.Release|x64.Build.0 = Release|x64
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.Debug|Win32.Build.0 = Debug|Win32
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.Debug|x64.ActiveCfg = Debug|x64
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.Debug|x64.Build.0 = Debug|x64
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.DLL Debug|Win32.ActiveCfg = DLL Debug|Win32
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.DLL Debug|Win32.Build.0 = DLL Debug|Win32
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.DLL Debug|x64.ActiveCfg = DLL Debug|x64
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.DLL Debug|x64.Build.0 = DLL Debug|x64
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.DLL Release|Win32.ActiveCfg = DLL Release|Win32
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.DLL Release|Win32.Build.0 = DLL Release|Win32
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.DLL Release|x64.ActiveCfg = DLL Release|x64
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.DLL Release|x64.Build.0 = DLL Release|x64
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.Release|Win32.ActiveCfg = Release|Win32
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.Release|Win32.Build.0 = Release|Win32
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.Release|x64.ActiveCfg = Release|x64
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
