@@ -205,11 +205,8 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, std::unique_ptr
     res = dlg.ShowModal();
     if( res != wxID_CANCEL )
     {
-/*        if( type == DatabaseTableProperties || type == DatabaseFieldProperties )
-        {
-            command = dlg.GetCommand();
-            logOnly = dlg.IsLogOnly();
-        }*/
+        command = handler.get()->GetCommand();
+        logOnly = handler.get()->IsLogOnly();
     }
     return res;
 }
