@@ -32,6 +32,7 @@
 
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, const wxFont &font) : CFontPropertyPageBase( parent, font )
 {
+    m_font = font;
     m_dirty = false;
     m_holder = new wxFontPickerCtrl( this, wxID_ANY, font );
     auto *sizer = new wxBoxSizer( wxHORIZONTAL );
