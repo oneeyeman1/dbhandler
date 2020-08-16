@@ -113,3 +113,7 @@ libpg\src\interfaces\libpq
 *.xcuserstate
 project.xcworkspace/
 xcuserdata/
+compile
+depcomp
+ltmain.sh
+missing
