@@ -16,9 +16,9 @@
 #include <crtdbg.h>
 #endif
 
-//#if defined __WXMSW__ && defined __MEMORYLEAKS__
-//#include <vld.h>
-//#endif
+#if defined __WXMSW__ && defined __MEMORYLEAKS__
+#include <vld.h>
+#endif
 
 #include <map>
 #include <vector>
