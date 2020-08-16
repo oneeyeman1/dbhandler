@@ -513,16 +513,6 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
             if( type == 0 )
             {
                 dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) erdTable)->GetTable() );
-                Database *db = GetDocument()->GetDatabase();
-                {
-#if defined __WXMSW__ && _MSC_VER < 1900
-                    wxCriticalSectionLocker( *pcs );
-#else
-//#if _MSC_VER >= 1900 || !(defined __WXMSW__)
-                    std::lock_guard<std::mutex> lock( db->GetTableVector().my_mutex );
-#endif
-                    db->GetTableProperties( dbTable, errors );
-                }
                 erdTable->SetTableComment( dbTable->GetTableProperties().m_comment );
                 erdTable->Update();
                 erdTable->Refresh();
