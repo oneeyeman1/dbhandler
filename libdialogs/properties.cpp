@@ -51,7 +51,7 @@ std::mutex Database::Impl::my_mutex;
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
 
-PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, std::unique_ptr<PropertiesHandler> &handler, wxCriticalSection &cs):
+PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler, wxCriticalSection &cs):
     wxDialog(parent, id, title)
 {
     std::vector<std::wstring> errors;
@@ -91,7 +91,6 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
 void PropertiesDialog::set_properties()
 {
     // begin wxGlade: PropertiesDialog::set_properties
-//    SetTitle( _( "dialog_1" ) );
     // end wxGlade
 }
 
@@ -112,7 +111,6 @@ void PropertiesDialog::do_layout()
     sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizerAndFit( sizer_1 );
-//    sizer_1->Fit( this );
     Layout();
     // end wxGlade
 }
