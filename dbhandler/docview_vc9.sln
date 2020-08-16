@@ -56,6 +56,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "propertypages", "..\libpropertypages\propertypages.vcxproj", "{22017CA3-FB1B-44E4-AC21-E02576A36937}"
 	ProjectSection(ProjectDependencies) = postProject
 		{EF89C84B-B5ED-496F-A980-5C7071081A19} = {EF89C84B-B5ED-496F-A980-5C7071081A19}
+		{0D6C16AE-8E63-445E-9A46-0D3524E0F184} = {0D6C16AE-8E63-445E-9A46-0D3524E0F184}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tablewindow", "..\libtablewindow\tablewindow.vcxproj", "{D333C980-1282-4047-96AC-F7FD649C0512}"
