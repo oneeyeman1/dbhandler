@@ -56,19 +56,6 @@ public:
         m_headingFontCharacterSet = -1;
         m_labelFontCharacterSer = -1;
     }
-/*
-    TableProperties &operator=(const TableProperties &props)
-    {
-        if( this != &props )
-        {
-            m_comment = props.m_comment;
-            m_dataFontName = props.m_dataFontName;
-            m_headingFontName = props.m_headingFontName;
-            m_labelFontName = props.m_labelFontName;
-            m_dataFontWeight = props.m_dataFontWeight;
-        }
-        return *this;
-    }*/
     std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName, table_name, m_owner, schema_name;
     int m_dataFontSize, m_dataFontEncoding, m_headingFontSize, m_headingFontEncoding, m_labelFontSize, m_labelFontEncoding;
     int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;
@@ -77,12 +64,21 @@ public:
     bool m_dataFontItalic, m_headingFontItalic, m_labelFontItalic;
 };
 
+class FieldProperties
+{
+public:
+    FieldProperties()
+    {
+        m_comment = m_label = m_heading = m_labelPosition = m_headingPosition = L"";
+    }
+    std::wstring m_comment, m_label, m_heading, m_labelPosition, m_headingPosition;
+};
+
 class Field
 {
 public:
     Field()
     {
-        m_comment = L"";
         column_name = column_type = full_name = column_defaultValue = L"";
         field_size = -1;
         decimal_size = -1;
@@ -91,7 +87,6 @@ public:
 
     Field(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &fullName, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false, const bool columnFK = false)
     {
-        m_comment = L"";
         column_name = columnName;
         column_type = columnType;
         field_size = size;
@@ -101,37 +96,27 @@ public:
         autoIncrement = autoincrement;
         column_pk = columnPK;
         column_fk = columnFK;
-        label = columnName;
-        heading = columnName;
         full_name = fullName;
     }
-    const std::wstring &GetLabel() const { return label; }
-    const std::wstring &GetHeading() const { return heading; }
-    void SetLabel(const std::wstring &lbl) { label = lbl; }
-    void SetHeading(const std::wstring &hding) { heading = hding; }
     const std::wstring &GetFieldName() const { return column_name; }
     const std::wstring &GetFieldType() const { return column_type; }
     const std::wstring &GetDefaultValue() const { return column_defaultValue; }
-    const std::wstring &GetComment() const { return m_comment; }
     bool IsNullAllowed() const { return column_isNull; }
     int GetFieldSize() const { return field_size; }
     int GetPrecision() const { return decimal_size; }
     bool IsPrimaryKey() const { return column_pk; }
     bool IsForeignKey() const { return column_fk; }
     bool IsAutoIncrement() { return autoIncrement; }
-    void SetComment(const std::wstring &comment) { m_comment = comment; }
     void SetFullType(const std::wstring type) { full_type = type; }
     const std::wstring &GetFullType() const { return full_type; }
     const std::wstring &GetFullName() const { return full_name; }
+    FieldProperties &GetFieldProperties() { return m_props; }
+    void SetFieldProperties(const FieldProperties &props) { m_props = props; }
 private:
-    std::wstring column_name, column_type, column_defaultValue, m_comment, label, heading, full_type, full_name;
+    std::wstring column_name, column_type, column_defaultValue, full_type, full_name;
     bool autoIncrement, column_isNull, column_pk, column_fk;
     int field_size, decimal_size;
-};
-
-struct FieldProperties
-{
-    std::wstring m_comment, m_label, m_heading, m_labelPosition, m_headingPosition;
+    FieldProperties m_props;
 };
 
 class FKField

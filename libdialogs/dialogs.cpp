@@ -59,6 +59,7 @@
 #include "getobjectname.h"
 #include "jointype.h"
 #include "designlabelgeneral.h"
+#include "propertieshandlerbase.h"
 #include "propertieshandler.h"
 #include "properties.h"
 #include "addcolumnsdialog.h"

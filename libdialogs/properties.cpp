@@ -42,6 +42,7 @@
 #include "pointerproperty.h"
 #include "bandgeneral.h"
 #include "fieldheader.h"
+#include "propertieshandlerbase.h"
 #include "propertieshandler.h"
 #include "properties.h"
 
@@ -60,21 +61,6 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_handler = handler;
     // begin wxGlade: PropertiesDialog::PropertiesDialog
     m_properties = new wxNotebook( this, wxID_ANY );
-/*    if( type == 2 )
-    {
-        m_page7 = new DesignLabelGeneral( m_properties, prop );
-        m_page2 = new CFontPropertyPage( m_properties, prop->m_font );
-        m_properties->AddPage( m_page7, _( "General" ) );
-        m_properties->AddPage( m_page2, _( "Font" ) );
-//        m_properties->AddPage( m_page2, _( "Font" ) );
-    }
-    if( type == DividerProperties )
-    {
-        m_page8 = new BandGeneralProperties( m_properties, prop );
-        m_properties->AddPage( m_page8, _( "General" ) );
-        m_page9 = new PointerPropertiesPanel( m_properties, prop->m_cursorFile, prop->m_stockCursor );
-        m_properties->AddPage( m_page9, _( "Cursor" ) );
-    }*/
     handler->EditProperies( m_properties );
     set_properties();
     do_layout();

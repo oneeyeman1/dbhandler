@@ -318,7 +318,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
                 SetCommonProps( comment_shape );
                 comment_shape->SetField( field );
                 comment_shape->GetFont().SetPointSize( 8 );
-                comment_shape->SetText( field->GetComment() );
+                comment_shape->SetText( field->GetFieldProperties().m_comment );
             }
             else
                 delete comment_shape;
@@ -372,7 +372,7 @@ void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type
             {
                 SetCommonProps( comment_shape );
                 comment_shape->GetFont().SetPointSize( 8 );
-                comment_shape->SetText( field->GetComment() );
+                comment_shape->SetText( field->GetFieldProperties().m_comment );
             }
             else
                 delete comment_shape;
