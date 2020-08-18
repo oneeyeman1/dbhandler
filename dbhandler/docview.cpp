@@ -248,7 +248,7 @@ wxFrame *MyApp::CreateChildFrame(wxView *view, bool isCanvas)
 
 void MyApp::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-    const int docsCount = wxDocManager::GetDocumentManager()->GetDocumentsVector().size();
+    const unsigned long docsCount = wxDocManager::GetDocumentManager()->GetDocumentsVector().size();
 
     wxLogMessage( "This is the DB Handler Application\n%d open documents.\n\n", docsCount );
 }
