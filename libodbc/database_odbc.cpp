@@ -2405,7 +2405,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                                     {
                                                         std::wstring comment;
                                                         str_to_uc_cpy( comment, commentField );
-                                                        field->SetComment( comment );
+                                                        field->GetFieldProperties().m_comment = comment;
                                                     }
                                                     ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fieldProp );
                                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -2683,16 +2683,16 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::w
             command += tableName;
             command += L", " + ownerName;
             command += L", " + fieldName;
-            command += L", " + const_cast<Field *>( field )->GetLabel();
-            command += L", " + const_cast<Field *>( field )->GetHeading();
-            command += L", " + const_cast<Field *>( field )->GetComment() + L");";
+            command += L", " + const_cast<Field *>( field )->GetFieldProperties().m_label;
+            command += L", " + const_cast<Field *>( field )->GetFieldProperties().m_heading;
+            command += L", " + const_cast<Field *>( field )->GetFieldProperties().m_comment + L");";
         }
         else
         {
             command = L"UPDATE abcatcol SET abc_labl = ";
-            command += const_cast<Field *>( field )->GetLabel() + L", abc_hdr = ";
-            command += const_cast<Field *>( field )->GetHeading() + L", abc_cmnt = ";
-            command += const_cast<Field *>( field )->GetComment() + L"WHERE abc_tnam = ";
+            command += const_cast<Field *>( field )->GetFieldProperties().m_label + L", abc_hdr = ";
+            command += const_cast<Field *>( field )->GetFieldProperties().m_heading + L", abc_cmnt = ";
+            command += const_cast<Field *>( field )->GetFieldProperties().m_comment + L"WHERE abc_tnam = ";
             command += tableName + L" AND abc_ownr = ";
             command += ownerName + L" AND abc_cnam = ";
             command += fieldName + L";";

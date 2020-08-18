@@ -262,7 +262,7 @@ void QuickSelect::OnDisplayComment(wxMouseEvent &event)
             {
                 if( (*it)->GetFieldName() == stringClicked )
                 {
-                    m_comments->SetLabel( (*it)->GetComment() );
+                    m_comments->SetLabel( (*it)->GetFieldProperties().m_comment );
                     found = true;
                 }
             }

@@ -85,8 +85,13 @@
 #include "divider.h"
 #include "propertypagebase.h"
 #include "tablegeneral.h"
+#include "fieldgeneral.h"
 #include "fontpropertypagebase.h"
+#include "fieldheader.h"
+#include "propertieshandlerbase.h"
 #include "propertieshandler.h"
+#include "fieldpropertieshandler.h"
+#include "fieldpropertieshandler.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
@@ -959,11 +964,12 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
 #endif
                 res = GetDocument()->GetDatabase()->GetFieldProperties( tableName.ToStdWstring(), field, errors );
             }
-            FieldProperties prop;
-            prop.m_comment = field->GetComment();
-            prop.m_label = field->GetLabel();
-            prop.m_heading = field->GetHeading();
-//            properties = &prop;
+#if __cplusplus > 201300
+            auto ptr = std::make_unique<FieldPropertiesHandler>( GetDocument()->GetDatabase(), dbTable );
+#else
+            auto ptr = std::unique_ptr<FieldPropertiesHandler>( new FieldPropertiesHandler( GetDocument()->GetDatabase(), field ) );
+#endif
+            propertiesPtr = std::move( ptr );
             title = _( "Column " );
             title += tableName + ".";
 //            title += static_cast<Field *>( object )->GetFieldName();

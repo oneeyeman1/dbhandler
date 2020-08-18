@@ -32,6 +32,7 @@
 #include "propertypagebase.h"
 #include "tablegeneral.h"
 #include "fontpropertypagebase.h"
+#include "propertieshandlerbase.h"
 #include "propertieshandler.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)

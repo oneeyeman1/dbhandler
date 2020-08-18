@@ -1,14 +1,4 @@
 #pragma once
-class WXEXPORT PropertiesHandler
-{
-public:
-    PropertiesHandler() {}
-    virtual void EditProperies(wxNotebook *parent) = 0;
-    virtual int GetProperties(std::vector<std::wstring> &errors) = 0;
-    virtual bool IsLogOnly() const { return false; };
-    virtual const std::wstring &GetCommand() const { return L""; };
-};
-
 class WXEXPORT DatabasePropertiesHandler : public PropertiesHandler
 {
 public:
