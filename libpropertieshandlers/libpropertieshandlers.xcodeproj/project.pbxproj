@@ -10,6 +10,9 @@
 		E3B8E3B524E2EAED00346516 /* propertieshandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3B324E2EAEC00346516 /* propertieshandler.cpp */; };
 		E3B8E3B624E2EAED00346516 /* propertieshandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3B424E2EAEC00346516 /* propertieshandler.h */; };
 		E3B8E3BB24E2FB9C00346516 /* liblibpropertypages.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3B8E3BA24E2FB9C00346516 /* liblibpropertypages.dylib */; };
+		E3B8E3C424EC50A400346516 /* fieldpropertieshandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3C124EC50A300346516 /* fieldpropertieshandler.cpp */; };
+		E3B8E3C524EC50A400346516 /* fieldpropertieshandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3C224EC50A400346516 /* fieldpropertieshandler.h */; };
+		E3B8E3C624EC50A400346516 /* propertieshandlerbase.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3C324EC50A400346516 /* propertieshandlerbase.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -17,6 +20,9 @@
 		E3B8E3B324E2EAEC00346516 /* propertieshandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = propertieshandler.cpp; sourceTree = SOURCE_ROOT; };
 		E3B8E3B424E2EAEC00346516 /* propertieshandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = propertieshandler.h; sourceTree = SOURCE_ROOT; };
 		E3B8E3BA24E2FB9C00346516 /* liblibpropertypages.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = liblibpropertypages.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3B8E3C124EC50A300346516 /* fieldpropertieshandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fieldpropertieshandler.cpp; sourceTree = SOURCE_ROOT; };
+		E3B8E3C224EC50A400346516 /* fieldpropertieshandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fieldpropertieshandler.h; sourceTree = SOURCE_ROOT; };
+		E3B8E3C324EC50A400346516 /* propertieshandlerbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = propertieshandlerbase.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +57,9 @@
 		E3B8E3B224E2832200346516 /* libpropertieshandlers */ = {
 			isa = PBXGroup;
 			children = (
+				E3B8E3C124EC50A300346516 /* fieldpropertieshandler.cpp */,
+				E3B8E3C224EC50A400346516 /* fieldpropertieshandler.h */,
+				E3B8E3C324EC50A400346516 /* propertieshandlerbase.h */,
 				E3B8E3B324E2EAEC00346516 /* propertieshandler.cpp */,
 				E3B8E3B424E2EAEC00346516 /* propertieshandler.h */,
 			);
@@ -73,6 +82,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3B8E3B624E2EAED00346516 /* propertieshandler.h in Headers */,
+				E3B8E3C624EC50A400346516 /* propertieshandlerbase.h in Headers */,
+				E3B8E3C524EC50A400346516 /* fieldpropertieshandler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +143,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3B8E3C424EC50A400346516 /* fieldpropertieshandler.cpp in Sources */,
 				E3B8E3B524E2EAED00346516 /* propertieshandler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -286,6 +298,7 @@
 					System,
 					"-framework",
 					OpenGL,
+					"-pthread",
 					"-lwx_osx_cocoau_xrc-3.1",
 					"-lwx_osx_cocoau_html-3.1",
 					"-lwx_osx_cocoau_qa-3.1",
