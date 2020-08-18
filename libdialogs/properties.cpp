@@ -130,16 +130,29 @@ void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 
 bool PropertiesDialog::ApplyProperties()
 {
+    std::vector<std::wstring> errors;
     bool result = true;
     bool isModified = false;
-    m_handler->GetProperties();
-    for( int i = 0; i < m_properties->GetPageCount(); ++i )
+    int res = m_handler->GetProperties( errors );
+    if( !res )
     {
-        PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
-        if( page->IsModified() )
-            isModified = true;
+        for( int i = 0; i < m_properties->GetPageCount(); ++i )
+        {
+            PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
+            page->SetModified( false );
+        }
+        isModified = false;
+        m_isApplied = true;
     }
-    std::vector<std::wstring> errors;
+    else
+    {
+        wxMessageBox( "Error setting properties for the table" );
+        for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); ++it )
+        {
+            wxMessageBox( "Errors are " + (*it) );
+        }
+        result = false;
+    }
 /*    if( m_type == DatabaseTableProperties )
     {
         if( !m_isApplied && isModified )
@@ -162,8 +175,6 @@ bool PropertiesDialog::ApplyProperties()
                 result = false;
         }
     }*/
-    m_isApplied = true;
-    isModified = false;
     return result;
 }
 

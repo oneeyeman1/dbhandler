@@ -68,9 +68,9 @@ void DatabasePropertiesHandler::EditProperies(wxNotebook *parent)
     parent->AddPage( m_page4, _( "Label Font" ) );
 }
 
-void DatabasePropertiesHandler::GetProperties()
+int DatabasePropertiesHandler::GetProperties(std::vector<std::wstring> &errors)
 {
-    std::vector<std::wstring> errors;
+    int result = 0;
     m_prop.m_comment = m_page1->GetCommentCtrl()->GetValue();
     m_prop.m_dataFontItalic = m_page2->GetFont().GetNativeFontInfo()->GetStyle() == wxFONTSTYLE_ITALIC;
     m_prop.m_dataFontCharacterSet = m_page2->GetFont().GetNativeFontInfo()->GetEncoding();
@@ -107,8 +107,9 @@ void DatabasePropertiesHandler::GetProperties()
         //#if _MSC_VER >= 1900 || !(defined __WXMSW__)
         std::lock_guard<std::mutex> lock( const_cast<Database *>( m_db )->GetTableVector().my_mutex );
 #endif
-        int result = const_cast<Database *>( m_db )->SetTableProperties( m_table, m_prop, isLogOnly, m_command, errors );
+        result = const_cast<Database *>( m_db )->SetTableProperties( m_table, m_prop, isLogOnly, m_command, errors );
         if( !result && !isLogOnly )
             m_table->SetTableProperties( m_prop );
     }
+    return result;
 }

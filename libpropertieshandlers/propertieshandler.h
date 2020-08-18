@@ -4,7 +4,7 @@ class WXEXPORT PropertiesHandler
 public:
     PropertiesHandler() {}
     virtual void EditProperies(wxNotebook *parent) = 0;
-    virtual void GetProperties() = 0;
+    virtual int GetProperties(std::vector<std::wstring> &errors) = 0;
     virtual bool IsLogOnly() const { return false; };
     virtual const std::wstring &GetCommand() const { return L""; };
 };
@@ -14,7 +14,7 @@ class WXEXPORT DatabasePropertiesHandler : public PropertiesHandler
 public:
     DatabasePropertiesHandler(const Database *db, DatabaseTable *table);
     virtual void EditProperies(wxNotebook *parent) wxOVERRIDE;
-    virtual void GetProperties() wxOVERRIDE;
+    virtual int GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
     TableProperties &GetProperty() { return m_prop; }
     virtual const std::wstring &GetCommand() const wxOVERRIDE { return m_command; }
     virtual bool IsLogOnly() const wxOVERRIDE { return m_page1->IsLogOnly(); }
