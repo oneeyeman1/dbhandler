@@ -74,7 +74,7 @@ void DatabasePropertiesHandler::GetProperties()
     m_prop.m_dataFontName = m_page2->GetFont().GetNativeFontInfo()->GetFaceName();
     m_prop.m_dataFontWeight = m_page2->GetFont().GetNativeFontInfo()->GetNumericWeight();
     m_prop.m_dataFontEncoding = m_page2->GetFont().GetNativeFontInfo()->GetEncoding();
-    m_prop.m_dataFontPixelSize = m_page2->GetFont().GetNativeFontInfo()->GetPixelSize().GetWidth();
+//    m_prop.m_dataFontPixelSize = m_page2->GetFont().GetNativeFontInfo()->GetPixelSize().GetWidth();
     m_prop.m_dataFontUnderline = m_page2->GetFont().GetNativeFontInfo()->GetUnderlined();
     m_prop.m_dataFontStrikethrough = m_page2->GetFont().GetNativeFontInfo()->GetStrikethrough();
     m_prop.m_headingFontItalic = m_page3->GetFont().GetNativeFontInfo()->GetStyle() == wxFONTSTYLE_ITALIC;
@@ -83,7 +83,7 @@ void DatabasePropertiesHandler::GetProperties()
     m_prop.m_headingFontName = m_page3->GetFont().GetNativeFontInfo()->GetFaceName();
     m_prop.m_headingFontWeight = m_page3->GetFont().GetNativeFontInfo()->GetNumericWeight();
     m_prop.m_headingFontEncoding = m_page3->GetFont().GetNativeFontInfo()->GetEncoding();
-    m_prop.m_headingFontPixelSize = m_page3->GetFont().GetNativeFontInfo()->GetPixelSize().GetWidth();
+//    m_prop.m_headingFontPixelSize = m_page3->GetFont().GetNativeFontInfo()->GetPixelSize().GetWidth();
     m_prop.m_headingFontUnderline = m_page3->GetFont().GetNativeFontInfo()->GetUnderlined();
     m_prop.m_headingFontStrikethrough = m_page3->GetFont().GetNativeFontInfo()->GetStrikethrough();
     m_prop.m_labelFontItalic = m_page4->GetFont().GetNativeFontInfo()->GetStyle() == wxFONTSTYLE_ITALIC;
@@ -92,7 +92,7 @@ void DatabasePropertiesHandler::GetProperties()
     m_prop.m_labelFontName = m_page4->GetFont().GetNativeFontInfo()->GetFaceName();
     m_prop.m_labelFontWeight = m_page4->GetFont().GetNativeFontInfo()->GetNumericWeight();
     m_prop.m_labelFontEncoding = m_page4->GetFont().GetNativeFontInfo()->GetEncoding();
-    m_prop.m_labelFontPixelSize = m_page4->GetFont().GetNativeFontInfo()->GetPixelSize().GetWidth();
+//    m_prop.m_labelFontPixelSize = m_page4->GetFont().GetNativeFontInfo()->GetPixelSize().GetWidth();
     m_prop.m_labelFontUnderline = m_page4->GetFont().GetNativeFontInfo()->GetUnderlined();
     m_prop.m_labelFontStrikethrough = m_page4->GetFont().GetNativeFontInfo()->GetStrikethrough();
     bool isLogOnly = m_page1->IsLogOnly();
