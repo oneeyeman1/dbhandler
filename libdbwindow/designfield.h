@@ -4,7 +4,7 @@ class DesignField : public wxSFRectShape
 public:
     XS_DECLARE_CLONABLE_CLASS(DesignField);
     DesignField();
-    DesignField(const wxFont font, const wxString &label);
+    DesignField(const wxFont font, const wxString &label, int alignment);
     virtual ~DesignField();
 private:
     wxFont m_font;

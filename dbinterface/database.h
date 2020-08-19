@@ -69,9 +69,11 @@ class FieldProperties
 public:
     FieldProperties()
     {
-        m_comment = m_label = m_heading = m_labelPosition = m_headingPosition = L"";
+        m_comment = m_label = m_heading = L"";
+        m_labelPosition = m_headingPosition = 0;
     }
-    std::wstring m_comment, m_label, m_heading, m_labelPosition, m_headingPosition;
+    std::wstring m_comment, m_label, m_heading;
+    int m_labelPosition, m_headingPosition;
 };
 
 class Field

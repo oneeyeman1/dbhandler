@@ -647,7 +647,7 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
                 m_realSelectedShape = NULL;
                 ShapeList listShapes;
                 m_pManager.GetShapes( CLASSINFO( MyErdTable ), listShapes );
-                int size = listShapes.size();
+                unsigned long size = listShapes.size();
                 if( listShapes.size() == 1 )
                     m_realSelectedShape = NULL;
                 else

@@ -44,7 +44,7 @@ DesignField::DesignField() : wxSFRectShape()
     m_label = "";
 }
 
-DesignField::DesignField (const wxFont font, const wxString &label) : wxSFRectShape()
+DesignField::DesignField (const wxFont font, const wxString &label, int alignment) : wxSFRectShape()
 {
     m_font = font;
     m_label = label;

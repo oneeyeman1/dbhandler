@@ -14,7 +14,7 @@ class DesignLabel : public wxSFRectShape
 public:
     XS_DECLARE_CLONABLE_CLASS(DesignLabel);
     DesignLabel();
-    DesignLabel(const wxFont font, const wxString &label);
+    DesignLabel(const wxFont font, const wxString &label, int alignment);
     virtual ~DesignLabel();
     Properties GetProperties();
 protected:
