@@ -6,7 +6,10 @@ lib_LTLIBRARIES =  \
 
 libpropertieshandlers_la_SOURCES =  \
 	propertieshandler.cpp \
-	propertieshandler.h
+	propertieshandler.h \
+	fieldpropertieshandler.cpp \
+	fieldpropertieshandler.h \
+	propertieshandlerbase.h
 
 libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libpropertypages \
