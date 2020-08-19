@@ -22,7 +22,7 @@ FontComboBox::FontComboBox(wxWindow *parent) : wxBitmapComboBox(parent, wxID_ANY
     m_enumerator.EnumerateFacenames();
     if( m_enumerator.GotAny () )
     {
-        int count = m_enumerator.GetFacenames().GetCount();
+        unsigned long count = m_enumerator.GetFacenames().GetCount();
         for( int i = 0; i < count; ++i )
             Append( m_enumerator.GetFacenames().Item( i ) );
     }
