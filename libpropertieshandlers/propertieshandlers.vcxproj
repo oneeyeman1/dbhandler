@@ -35,9 +35,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fieldpropertieshandler.h" />
     <ClInclude Include="propertieshandler.h" />
+    <ClInclude Include="propertieshandlerbase.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="fieldpropertieshandler.cpp" />
     <ClCompile Include="propertieshandler.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

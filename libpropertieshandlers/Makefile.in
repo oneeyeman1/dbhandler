@@ -129,7 +129,8 @@ am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libpropertieshandlers_la_LIBADD =
 am_libpropertieshandlers_la_OBJECTS =  \
-	libpropertieshandlers_la-propertieshandler.lo
+	libpropertieshandlers_la-propertieshandler.lo \
+	libpropertieshandlers_la-fieldpropertieshandler.lo
 libpropertieshandlers_la_OBJECTS =  \
 	$(am_libpropertieshandlers_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -378,7 +379,10 @@ lib_LTLIBRARIES = \
 
 libpropertieshandlers_la_SOURCES = \
 	propertieshandler.cpp \
-	propertieshandler.h
+	propertieshandler.h \
+	fieldpropertieshandler.cpp \
+	fieldpropertieshandler.h \
+	propertieshandlerbase.h
 
 libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libpropertypages \
@@ -468,6 +472,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertieshandlers_la-fieldpropertieshandler.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertieshandlers_la-propertieshandler.Plo@am__quote@
 
 .cpp.o:
@@ -497,6 +502,13 @@ libpropertieshandlers_la-propertieshandler.lo: propertieshandler.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='propertieshandler.cpp' object='libpropertieshandlers_la-propertieshandler.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertieshandlers_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertieshandlers_la-propertieshandler.lo `test -f 'propertieshandler.cpp' || echo '$(srcdir)/'`propertieshandler.cpp
+
+libpropertieshandlers_la-fieldpropertieshandler.lo: fieldpropertieshandler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertieshandlers_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertieshandlers_la-fieldpropertieshandler.lo -MD -MP -MF $(DEPDIR)/libpropertieshandlers_la-fieldpropertieshandler.Tpo -c -o libpropertieshandlers_la-fieldpropertieshandler.lo `test -f 'fieldpropertieshandler.cpp' || echo '$(srcdir)/'`fieldpropertieshandler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertieshandlers_la-fieldpropertieshandler.Tpo $(DEPDIR)/libpropertieshandlers_la-fieldpropertieshandler.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fieldpropertieshandler.cpp' object='libpropertieshandlers_la-fieldpropertieshandler.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertieshandlers_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertieshandlers_la-fieldpropertieshandler.lo `test -f 'fieldpropertieshandler.cpp' || echo '$(srcdir)/'`fieldpropertieshandler.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

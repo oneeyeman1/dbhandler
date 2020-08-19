@@ -13,9 +13,14 @@
     <ClInclude Include="propertieshandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fieldpropertieshandler.h" />
+    <ClInclude Include="propertieshandlerbase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="propertieshandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fieldpropertieshandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
