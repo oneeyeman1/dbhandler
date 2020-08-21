@@ -37,8 +37,7 @@ void FieldPropertiesHandler::EditProperies(wxNotebook *parent)
 {
     wxString comment( m_prop.m_comment );
     m_page1 = new FieldGeneral( parent, comment );
-    parent->AddPage( m_page1, _( "General" ) );
-    m_page2 = new FieldHeader( parent, m_prop.m_label, m_prop.m_heading );
+    parent->AddPage( m_page1, _( "General" ) );    m_page2 = new FieldHeader( parent, m_prop.m_label, m_prop.m_heading, m_prop.m_labelPosition, m_prop.m_headingPosition );
     parent->AddPage( m_page2, _( "Data Font" ) );
 }
 

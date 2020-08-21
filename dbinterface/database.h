@@ -9,6 +9,8 @@
 #define DBMANAGER_DATABASE
 
 #define UNUSED(str)
+#define DEFAULTLABELALIGNMENT 0
+#define DEFAULTHEADINGALIGNMENT 2
 
 enum FK_ONUPDATE
 {
@@ -85,6 +87,8 @@ public:
         field_size = -1;
         decimal_size = -1;
         column_isNull = autoIncrement = column_pk = column_fk = false;
+        m_props.m_label = m_props.m_heading = L"";
+        m_props.m_labelPosition = m_props.m_headingPosition = 0;
     }
 
     Field(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &fullName, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false, const bool columnFK = false)
@@ -99,6 +103,14 @@ public:
         column_pk = columnPK;
         column_fk = columnFK;
         full_name = fullName;
+        std::wstring temp = columnName;
+        std::replace( temp.begin(), temp.end(), L'_', L'.' );
+        m_props.m_label = temp;
+        temp = columnName;
+        std::replace( temp.begin(), temp.end(), L'_', L'\n' );
+        m_props.m_heading = temp;
+        m_props.m_labelPosition = DEFAULTLABELALIGNMENT;
+        m_props.m_headingPosition = DEFAULTHEADINGALIGNMENT;
     }
     const std::wstring &GetFieldName() const { return column_name; }
     const std::wstring &GetFieldType() const { return column_type; }

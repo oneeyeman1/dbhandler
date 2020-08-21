@@ -11,18 +11,28 @@
 #include "propertypagebase.h"
 #include "fieldheader.h"
 
-FieldHeader::FieldHeader(wxWindow *parent, const wxString &label, const wxString &heading) : PropertyPageBase( parent, wxID_ANY )
+FieldHeader::FieldHeader(wxWindow *parent, const wxString &label, const wxString &heading, int labelAlignment, int headingAlignment) : PropertyPageBase( parent, wxID_ANY )
 {
     m_labelText = label;
     m_headingText = heading;
+    m_labelAlignment = labelAlignment;
+    m_headingAlignment = headingAlignment;
+    m_layout = parent->GetLayoutDirection();
     m_label1 = new wxStaticText( this, wxID_ANY, _( "&Label:" ) );
     m_label = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "&Position: " ) );
-    wxString choices1[] =
+    wxString choices[2];
+    if( m_layout == wxLayout_RightToLeft )
     {
-        _( "left" )
-    };
-    m_labelPos = new wxComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 1, choices1, wxCB_DROPDOWN | wxCB_READONLY );
+        choices[0] = _( "right" );
+        choices[0] = _( "left" );
+        m_labelPos = new wxComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 2, choices, wxCB_DROPDOWN | wxCB_READONLY );
+    }
+    else
+    {
+        choices[0] = _( "left" );
+        m_labelPos = new wxComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 1, choices, wxCB_DROPDOWN | wxCB_READONLY );
+    }
     m_label3 = new wxStaticText( this, wxID_ANY, _( "&Heading:" ) );
     m_heading = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
     m_label4 = new wxStaticText( this, wxID_ANY, wxEmptyString );
@@ -80,8 +90,10 @@ void FieldHeader::set_properties()
 {
     m_label->SetValue( m_labelText );
     m_heading->SetValue( m_headingText );
-    m_labelPos->SetSelection( 0 );
-    m_headingPos->SetSelection( 2 );
+    if( ( m_layout == wxLayout_LeftToRight || m_layout == wxLayout_Default ) && m_labelAlignment == 1 )
+        m_labelAlignment = 0;
+    m_labelPos->SetSelection( m_labelAlignment );
+    m_headingPos->SetSelection( m_headingAlignment );
     m_label4->Hide();
 }
 

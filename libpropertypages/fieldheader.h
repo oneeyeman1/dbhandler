@@ -2,7 +2,7 @@
 class WXEXPORT FieldHeader :	public PropertyPageBase
 {
 public:
-    FieldHeader(wxWindow *parent, const wxString &label, const wxString &heading);
+    FieldHeader(wxWindow *parent, const wxString &label, const wxString &heading, int labelAlignment, int headingAlignment);
     ~FieldHeader(void);
     wxTextCtrl *GetLabelCtrl();
     wxTextCtrl *GetHeadingCtrl();
@@ -14,5 +14,7 @@ private:
     wxTextCtrl *m_label, *m_heading;
     wxComboBox *m_labelPos, *m_headingPos;
     wxString m_labelText, m_headingText;
+    int m_labelAlignment, m_headingAlignment;
+    wxLayoutDirection m_layout;
 };
 
