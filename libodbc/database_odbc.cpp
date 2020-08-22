@@ -2284,7 +2284,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     int result = 0;
     SQLWCHAR *commentField, *label, *heading;
     SQLWCHAR *qry = NULL;
-    unsigned short labelAlignment, headingAlignment;
+    unsigned short labelAlignment = 0, headingAlignment = 0;
     SQLWCHAR *table = new SQLWCHAR[tableName.length() + 2], *owner = new SQLWCHAR[ownerName.length() + 2], *fieldNameReq = new SQLWCHAR[fieldName.length() + 2];
     memset( table, '\0', tableName.length() + 2 );
     memset( owner, '0', ownerName.length() + 2 );
@@ -2728,9 +2728,9 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::w
             command += L", " + ownerName;
             command += L", " + fieldName;
             command += L", " + prop.m_label;
-            command += L", " + prop.m_labelPosition;
+            command += L", " + std::to_wstring( prop.m_labelPosition );
             command += L", " + prop.m_heading;
-            command += L", " + prop.m_headingPosition;
+            command += L", " + std::to_wstring( prop.m_headingPosition );
             command += L", " + prop.m_comment + L");";
         }
         else
@@ -2740,9 +2740,9 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::w
             command += prop.m_heading + L", abc_cmnt = ";
             command += prop.m_comment + L", abc_labl = ";
             command += prop.m_label + L", abc_lpos = ";
-            command += prop.m_labelPosition + L", abc_hdr = ";
+            command += std::to_wstring( prop.m_labelPosition ) + L", abc_hdr = ";
             command += prop.m_heading + L", abc_hpos = ";
-            command += prop.m_headingPosition + L"WHERE abc_tnam = ";
+            command += std::to_wstring( prop.m_headingPosition ) + L"WHERE abc_tnam = ";
             command += tableName + L" AND abc_ownr = ";
             command += ownerName + L" AND abc_cnam = ";
             command += fieldName + L";";
