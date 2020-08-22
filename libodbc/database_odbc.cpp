@@ -1173,7 +1173,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         result = 1;
                         break;
                     }
-                    int tableId;
+                    long tableId;
                     if( GetTableId( cat, schema, table, tableId, errorMsg ) )
                     {
                         result = 1;
@@ -2937,7 +2937,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::w
 }
 */
 
-int ODBCDatabase::GetTableId(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, int &tableId, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetTableId(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, long &tableId, std::vector<std::wstring> &errorMsg)
 {
     SQLHSTMT stmt = 0;
     SQLHDBC hdbc;
@@ -3868,7 +3868,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                     if( ops == 0 )
                                                     {
                                                         std::wstring tableOwner;
-                                                        int tableId;
+                                                        long tableId;
                                                         if( GetTableOwner( catalogName, schemaName, tableName, tableOwner, errorMsg ) )
                                                             result = 1;
                                                         else if( GetTableId( catalogName, schemaName, tableName, tableId, errorMsg ) )
@@ -4040,7 +4040,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     qry = new SQLWCHAR[query.length() + 2];
                                     memset( qry, '\0', query.length() + 2 );
                                     uc_to_str_cpy( qry, query );
-                                    SQLWCHAR *table_schema, *table_name, *table_catalog;
+                                    SQLWCHAR *table_schema = nullptr, *table_name = nullptr, *table_catalog = nullptr;
                                     SQLLEN cbCountSchema, cbCountName;
                                     ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -4179,7 +4179,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, int tableId, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     SQLRETURN ret;
     SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + 2], *schema_name = new SQLWCHAR[schemaName.length() + 2], *catalog_name = new SQLWCHAR[catalog.size() + 2];

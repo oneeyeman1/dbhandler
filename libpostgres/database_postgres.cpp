@@ -1107,18 +1107,18 @@ int PostgresDatabase::SetFieldProperties(const std::wstring &tableName, const st
         command += L", " + ownerName;
         command += L", " + fieldName;
         command += L", " + prop.m_label;
-        command += L", " + prop.m_labelPosition;
+        command += L", " + std::to_wstring( prop.m_labelPosition );
         command += L", " + prop.m_heading;
-        command += L", " + prop.m_headingPosition;
+        command += L", " + std::to_wstring( prop.m_headingPosition );
         command += L", " + prop.m_comment + L");";
     }
     else
     {
         command = L"UPDATE abcatcol SET abc_labl = ";
         command += prop.m_label + L", abc_lpos = ";
-        command += prop.m_labelPosition + L", abc_hdr = ";
+        command += std::to_wstring( prop.m_labelPosition ) + L", abc_hdr = ";
         command += prop.m_heading + L", abc_hpos = ";
-        command += prop.m_headingPosition + L", abc_cmnt = ";
+        command += std::to_wstring( prop.m_headingPosition ) + L", abc_cmnt = ";
         command += prop.m_comment + L"WHERE abc_tnam = ";
         command += tableName + L" AND abc_ownr = ";
         command += ownerName + L" AND abc_cnam = ";
@@ -1313,7 +1313,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, int table_idd, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long table_idd, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     PGresult *res, *res1, *res2, *res3, *res4, *res5;
     int result = 0, fieldIsNull, fieldPK, fkReference, fkId, fkMatch;

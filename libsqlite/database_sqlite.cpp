@@ -1418,18 +1418,18 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
             command += L", " + ownerName;
             command += L", " + fieldName;
             command += L", " + props.m_label;
-            command += L", " + props.m_labelPosition;
+            command += L", " + std::to_wstring( props.m_labelPosition );
             command += L", " + props.m_heading;
-            command += L", " + props.m_headingPosition;
+            command += L", " + std::to_wstring( props.m_headingPosition );
             command += L", " + props.m_comment + L");";
         }
         else
         {
             command = L"UPDATE \"sys.abcatcol\" SET \"abc_labl\" = ";
             command += props.m_label + L", \"abc_lpos\" = ";
-            command += props.m_labelPosition + L", \"abc_hdr\" = ";
+            command += std::to_wstring( props.m_labelPosition ) + L", \"abc_hdr\" = ";
             command += props.m_heading + L", \"abc_hpos\" = ";
-            command += props.m_headingPosition + L", \"abc_cmnt\" = ";
+            command += std::to_wstring( props.m_headingPosition ) + L", \"abc_cmnt\" = ";
             command += props.m_comment + L"WHERE \"abc_tnam\" = ";
             command += tableName + L" AND \"abc_ownr\" = ";
             command += ownerName + L" AND \"abc_cnam\" = ";
@@ -1629,7 +1629,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, const std::wstring &tableName, const std::wstring &, int, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, const std::wstring &tableName, const std::wstring &, long, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     if( tableAdded )

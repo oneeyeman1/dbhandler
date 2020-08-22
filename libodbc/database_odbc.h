@@ -63,7 +63,7 @@ protected:
     virtual bool IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg) override;
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schema_name, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;
 //    int GetTableId(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
-    int GetTableId(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, int &tableId, std::vector<std::wstring> &errorMsg);
+    int GetTableId(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, long &tableId, std::vector<std::wstring> &errorMsg);
     int GetTableOwner(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg);
     void SetFullType(Field *field);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) override;
@@ -71,7 +71,7 @@ protected:
     int GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, const SQLWCHAR *fieldName, Field *field, std::vector<std::wstring> &errorMsg);
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) override;
-    virtual int AddDropTable(const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &tableOwner, int tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) override;
+    virtual int AddDropTable(const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &tableOwner, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) override;
 private:
     SQLHENV m_env;
     SQLHDBC m_hdbc;

@@ -1781,7 +1781,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                         my_bool is_null[17], error[17];
                         unsigned long length[17];
                         char *label, *comment, heading;
-                        int labelAlignment, headingAlignment;
+                        int labelAlignment = 0, headingAlignment = 0;
                         results[0].buffer_type = MYSQL_TYPE_STRING;
                         results[0].buffer = &table;
                         results[0].buffer_length = 129;
@@ -1817,7 +1817,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                         results[5].length = &length[5];
                         results[5].error = &error[5];
                         results[6].buffer_type = MYSQL_TYPE_LONG;
-                        results[6].buffer = (char *) labelAlignment;
+                        results[6].buffer = (char *) &labelAlignment;
                         results[6].is_null = &is_null[6];
                         results[6].length = &length[6];
                         results[6].error = &error[6];
@@ -1827,7 +1827,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                         results[7].length = &length[7];
                         results[7].error = &error[7];
                         results[8].buffer_type = MYSQL_TYPE_LONG;
-                        results[8].buffer = (char *) headingAlignment;
+                        results[8].buffer = (char *) &headingAlignment;
                         results[8].is_null = &is_null[8];
                         results[8].length = &length[8];
                         results[8].error = &error[8];
@@ -1837,7 +1837,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                         results[17].is_null = &is_null[17];
                         results[17].length = &length[17];
                         results[17].error = &error[17];
-                        if( mysql_stmt_bind_result (stmt, results) )
+                        if( mysql_stmt_bind_result( stmt, results) )
                         {
                             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
                             errorMsg.push_back( err );
@@ -2031,18 +2031,18 @@ int MySQLDatabase::SetFieldProperties(const std::wstring &tableName, const std::
         command += L", " + ownerName;
         command += L", " + fieldName;
         command += L", " + prop.m_label;
-        command += L", " + prop.m_labelPosition;
+        command += L", " + std::to_wstring( prop.m_labelPosition );
         command += L", " + prop.m_heading;
-        command += L", " + prop.m_headingPosition;
+        command += L", " + std::to_wstring( prop.m_headingPosition );
         command += L", " + prop.m_comment + L");";
     }
     else
     {
         command = L"UPDATE abcatcol SET abc_labl = ";
         command += prop.m_label + L", abc_lpos = ";
-        command += prop.m_labelPosition + L", abc_hdr = ";
+        command += std::to_wstring( prop.m_labelPosition ) + L", abc_hdr = ";
         command += prop.m_heading + L", abc_hpos = ";
-        command += prop.m_headingPosition + L", abc_cmnt = ";
+        command += std::to_wstring( prop.m_headingPosition ) + L", abc_cmnt = ";
         command += prop.m_comment + L"WHERE abc_tnam = ";
         command += tableName + L" AND abc_ownr = ";
         command += ownerName + L" AND abc_cnam = ";
@@ -2203,7 +2203,7 @@ int MySQLDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &tableOwner, int tableId, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &tableOwner, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     return result;

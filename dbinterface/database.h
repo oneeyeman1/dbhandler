@@ -249,7 +249,7 @@ protected:
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) = 0;
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, int tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) = 0;
 public:
     virtual ~Database() = 0;
     Impl &GetTableVector() { return *pimpl; };
