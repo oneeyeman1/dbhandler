@@ -2282,8 +2282,9 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLHDBC hdbc_fieldProp;
     SQLHSTMT stmt_fieldProp;
     int result = 0;
-    SQLWCHAR *commentField;
+    SQLWCHAR *commentField, *label, *heading;
     SQLWCHAR *qry = NULL;
+    unsigned short labelAlignment, headingAlignment;
     SQLWCHAR *table = new SQLWCHAR[tableName.length() + 2], *owner = new SQLWCHAR[ownerName.length() + 2], *fieldNameReq = new SQLWCHAR[fieldName.length() + 2];
     memset( table, '\0', tableName.length() + 2 );
     memset( owner, '0', ownerName.length() + 2 );
@@ -2291,7 +2292,8 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     uc_to_str_cpy( table, tableName );
     uc_to_str_cpy( owner, ownerName );
     uc_to_str_cpy( fieldNameReq, fieldName );
-    SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbDataFontItalic;
+    SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbCommentField = SQL_NTS, cbLabelField = SQL_NTS, cbHeadingField = SQL_NTS;
+    SQLLEN cbLabelAlignment = 0, cbHeadingAlignment = 0;
     SQLSMALLINT OutConnStrLen;
     std::wstring query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     qry = new SQLWCHAR[query.length() + 2];
@@ -2387,13 +2389,49 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                             }
                                             else
                                             {
-                                                ret = SQLBindCol( stmt_fieldProp, 18, SQL_C_WCHAR, &commentField, 3, &cbDataFontItalic );
+                                                ret = SQLBindCol( stmt_fieldProp, 18, SQL_C_WCHAR, &commentField, 3, &cbCommentField );
                                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                 {
                                                     GetErrorMessage( errorMsg, 1, stmt_fieldProp );
                                                     result = 1;
                                                 }
-                                                else
+                                                if( !ret )
+                                                {
+                                                    ret = SQLBindCol( stmt_fieldProp, 6, SQL_C_WCHAR, &label, 254, &cbLabelField );
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                    {
+                                                        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                                        result = 1;
+                                                    }
+                                                }
+                                                if( !ret )
+                                                {
+                                                    ret = SQLBindCol( stmt_fieldProp, 7, SQL_C_SSHORT, &labelAlignment, 0, &cbLabelAlignment );
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                    {
+                                                        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                                        result = 1;
+                                                    }
+                                                }
+                                                if( !ret )
+                                                {
+                                                    ret = SQLBindCol( stmt_fieldProp, 8, SQL_C_WCHAR, &heading, 254, &cbHeadingField );
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                    {
+                                                        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                                        result = 1;
+                                                    }
+                                                }
+                                                if( !ret )
+                                                {
+                                                    ret = SQLBindCol( stmt_fieldProp, 9, SQL_C_SSHORT, &headingAlignment, 0, &cbHeadingAlignment );
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                    {
+                                                        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                                        result = 1;
+                                                    }
+                                                }
+                                                if( !ret )
                                                 {
                                                     ret = SQLFetch( stmt_fieldProp );
                                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
@@ -2403,9 +2441,15 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                                     }
                                                     else if( ret != SQL_NO_DATA )
                                                     {
-                                                        std::wstring comment;
+                                                        std::wstring comment, lbl, head;
                                                         str_to_uc_cpy( comment, commentField );
+                                                        str_to_uc_cpy( lbl, label );
+                                                        str_to_uc_cpy( head, heading );
                                                         field->GetFieldProperties().m_comment = comment;
+                                                        field->GetFieldProperties().m_label = lbl;
+                                                        field->GetFieldProperties().m_heading = head;
+                                                        field->GetFieldProperties().m_labelPosition = labelAlignment;
+                                                        field->GetFieldProperties().m_headingPosition = headingAlignment;
                                                     }
                                                     ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fieldProp );
                                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -2679,12 +2723,14 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::w
         bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
         if( exist )
         {
-            command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_hdr, abc_cmnt) VALUES(";
+            command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_cmnt) VALUES(";
             command += tableName;
             command += L", " + ownerName;
             command += L", " + fieldName;
             command += L", " + prop.m_label;
+            command += L", " + prop.m_labelPosition;
             command += L", " + prop.m_heading;
+            command += L", " + prop.m_headingPosition;
             command += L", " + prop.m_comment + L");";
         }
         else
@@ -2692,7 +2738,11 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::w
             command = L"UPDATE abcatcol SET abc_labl = ";
             command += prop.m_label + L", abc_hdr = ";
             command += prop.m_heading + L", abc_cmnt = ";
-            command += prop.m_comment + L"WHERE abc_tnam = ";
+            command += prop.m_comment + L", abc_labl = ";
+            command += prop.m_label + L", abc_lpos = ";
+            command += prop.m_labelPosition + L", abc_hdr = ";
+            command += prop.m_heading + L", abc_hpos = ";
+            command += prop.m_headingPosition + L"WHERE abc_tnam = ";
             command += tableName + L" AND abc_ownr = ";
             command += ownerName + L" AND abc_cnam = ";
             command += fieldName + L";";

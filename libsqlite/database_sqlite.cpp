@@ -974,12 +974,20 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                     if( res == SQLITE_ROW )
                     {
                         const char *label = (const char *) sqlite3_column_text( stmt, 5 );
+                        int labelAlignment = sqlite3_column_int( stmt, 6 );
                         const char *heading = (const char *) sqlite3_column_text( stmt, 7 );
+                        int headingAlignment = sqlite3_column_int( stmt, 8 );
                         const char *comment = (const char *) sqlite3_column_text( stmt, 17 );
                         if( label )
+                        {
                             field->GetFieldProperties().m_label = sqlite_pimpl->m_myconv.from_bytes( label );
+                            field->GetFieldProperties().m_labelPosition = labelAlignment;
+                        }
                         if( heading )
+                        {
                             field->GetFieldProperties().m_heading = sqlite_pimpl->m_myconv.from_bytes( heading );
+                            field->GetFieldProperties().m_headingPosition = headingAlignment;
+                        }
                         if( comment )
                             field->GetFieldProperties().m_comment = sqlite_pimpl->m_myconv.from_bytes( comment );
                     }
@@ -1405,19 +1413,23 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
         bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
         if( exist )
         {
-            command = L"INSERT INTO \"sys.abcatcol\"(\"abc_tnam\", \"abc_ownr\", \"abc_cnam\", \"abc_labl\", \"abc_hdr\", \"abc_cmnt\") VALUES(";
+            command = L"INSERT INTO \"sys.abcatcol\"(\"abc_tnam\", \"abc_ownr\", \"abc_cnam\", \"abc_labl\", \"abc_lpos\", \"abc_hdr\", \"abc_hpos\", \"abc_cmnt\") VALUES(";
             command += tableName;
             command += L", " + ownerName;
             command += L", " + fieldName;
             command += L", " + props.m_label;
+            command += L", " + props.m_labelPosition;
             command += L", " + props.m_heading;
+            command += L", " + props.m_headingPosition;
             command += L", " + props.m_comment + L");";
         }
         else
         {
             command = L"UPDATE \"sys.abcatcol\" SET \"abc_labl\" = ";
-            command += props.m_label + L", \"abc_hdr\" = ";
-            command += props.m_heading + L", \"abc_cmnt\" = ";
+            command += props.m_label + L", \"abc_lpos\" = ";
+            command += props.m_labelPosition + L", \"abc_hdr\" = ";
+            command += props.m_heading + L", \"abc_hpos\" = ";
+            command += props.m_headingPosition + L", \"abc_cmnt\" = ";
             command += props.m_comment + L"WHERE \"abc_tnam\" = ";
             command += tableName + L" AND \"abc_ownr\" = ";
             command += ownerName + L" AND \"abc_cnam\" = ";

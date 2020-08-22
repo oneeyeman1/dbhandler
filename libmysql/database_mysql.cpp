@@ -1780,7 +1780,8 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                         int tableId, fieldId;
                         my_bool is_null[17], error[17];
                         unsigned long length[17];
-                        char *label, *comment;
+                        char *label, *comment, heading;
+                        int labelAlignment, headingAlignment;
                         results[0].buffer_type = MYSQL_TYPE_STRING;
                         results[0].buffer = &table;
                         results[0].buffer_length = 129;
@@ -1815,6 +1816,21 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                         results[5].is_null = &is_null[5];
                         results[5].length = &length[5];
                         results[5].error = &error[5];
+                        results[6].buffer_type = MYSQL_TYPE_LONG;
+                        results[6].buffer = (char *) labelAlignment;
+                        results[6].is_null = &is_null[6];
+                        results[6].length = &length[6];
+                        results[6].error = &error[6];
+                        results[7].buffer_type = MYSQL_TYPE_STRING;
+                        results[7].buffer = &heading;
+                        results[7].is_null = &is_null[7];
+                        results[7].length = &length[7];
+                        results[7].error = &error[7];
+                        results[8].buffer_type = MYSQL_TYPE_LONG;
+                        results[8].buffer = (char *) headingAlignment;
+                        results[8].is_null = &is_null[8];
+                        results[8].length = &length[8];
+                        results[8].error = &error[8];
                         results[17].buffer_type = MYSQL_TYPE_STRING;
                         results[17].buffer = &comment;
                         results[17].buffer_length = 256;
@@ -1838,6 +1854,10 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                             else
                             {
                                 field->GetFieldProperties().m_comment = m_pimpl->m_myconv.from_bytes( comment );
+                                field->GetFieldProperties().m_label = m_pimpl->m_myconv.from_bytes( label );
+                                field->GetFieldProperties().m_heading = m_pimpl->m_myconv.from_bytes( heading );
+                                field->GetFieldProperties().m_labelPosition = labelAlignment;
+                                field->GetFieldProperties().m_headingPosition = headingAlignment;
                             }
                         }
                     }
@@ -2006,19 +2026,23 @@ int MySQLDatabase::SetFieldProperties(const std::wstring &tableName, const std::
     bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
     if( exist )
     {
-        command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_hdr, abc_cmnt) VALUES(";
+        command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_cmnt) VALUES(";
         command += tableName;
         command += L", " + ownerName;
         command += L", " + fieldName;
         command += L", " + prop.m_label;
+        command += L", " + prop.m_labelPosition;
         command += L", " + prop.m_heading;
+        command += L", " + prop.m_headingPosition;
         command += L", " + prop.m_comment + L");";
     }
     else
     {
         command = L"UPDATE abcatcol SET abc_labl = ";
-        command += prop.m_label + L", abc_hdr = ";
-        command += prop.m_heading + L", abc_cmnt = ";
+        command += prop.m_label + L", abc_lpos = ";
+        command += prop.m_labelPosition + L", abc_hdr = ";
+        command += prop.m_heading + L", abc_hpos = ";
+        command += prop.m_headingPosition + L", abc_cmnt = ";
         command += prop.m_comment + L"WHERE abc_tnam = ";
         command += tableName + L" AND abc_ownr = ";
         command += ownerName + L" AND abc_cnam = ";

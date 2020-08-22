@@ -927,6 +927,11 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     {
         for( int i = 0; i < PQntuples( res ); i++ )
         {
+            field->GetFieldProperties().m_comment = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 18 ) );
+            field->GetFieldProperties().m_heading = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 8 ) );
+            field->GetFieldProperties().m_headingPosition = atoi( PQgetvalue( res, i, 9 ) );
+            field->GetFieldProperties().m_label = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 6 ) );
+            field->GetFieldProperties().m_labelPosition = atoi( PQgetvalue( res, i, 7 ) );
         }
     }
     delete values[0];
@@ -1097,19 +1102,23 @@ int PostgresDatabase::SetFieldProperties(const std::wstring &tableName, const st
     bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
     if( exist )
     {
-        command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_hdr, abc_cmnt) VALUES(";
+        command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_cmnt) VALUES(";
         command += tableName;
         command += L", " + ownerName;
         command += L", " + fieldName;
         command += L", " + prop.m_label;
+        command += L", " + prop.m_labelPosition;
         command += L", " + prop.m_heading;
+        command += L", " + prop.m_headingPosition;
         command += L", " + prop.m_comment + L");";
     }
     else
     {
         command = L"UPDATE abcatcol SET abc_labl = ";
-        command += prop.m_label + L", abc_hdr = ";
-        command += prop.m_heading + L", abc_cmnt = ";
+        command += prop.m_label + L", abc_lpos = ";
+        command += prop.m_labelPosition + L", abc_hdr = ";
+        command += prop.m_heading + L", abc_hpos = ";
+        command += prop.m_headingPosition + L", abc_cmnt = ";
         command += prop.m_comment + L"WHERE abc_tnam = ";
         command += tableName + L" AND abc_ownr = ";
         command += ownerName + L" AND abc_cnam = ";
