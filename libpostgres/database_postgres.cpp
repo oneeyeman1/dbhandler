@@ -1091,7 +1091,7 @@ int PostgresDatabase::DeleteTable(const std::wstring &tableName, std::vector<std
     return result;
 }
 
-int PostgresDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const Field *field, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &prop, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
     bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
@@ -1101,16 +1101,16 @@ int PostgresDatabase::SetFieldProperties(const std::wstring &tableName, const st
         command += tableName;
         command += L", " + ownerName;
         command += L", " + fieldName;
-        command += L", " + const_cast<Field *>( field )->GetFieldProperties().m_label;
-        command += L", " + const_cast<Field *>( field )->GetFieldProperties().m_heading;
-        command += L", " + const_cast<Field *>( field )->GetFieldProperties().m_comment + L");";
+        command += L", " + prop.m_label;
+        command += L", " + prop.m_heading;
+        command += L", " + prop.m_comment + L");";
     }
     else
     {
         command = L"UPDATE abcatcol SET abc_labl = ";
-        command += const_cast<Field *>( field )->GetFieldProperties().m_label + L", abc_hdr = ";
-        command += const_cast<Field *>( field )->GetFieldProperties().m_heading + L", abc_cmnt = ";
-        command += const_cast<Field *>( field )->GetFieldProperties().m_comment + L"WHERE abc_tnam = ";
+        command += prop.m_label + L", abc_hdr = ";
+        command += prop.m_heading + L", abc_cmnt = ";
+        command += prop.m_comment + L"WHERE abc_tnam = ";
         command += tableName + L" AND abc_ownr = ";
         command += ownerName + L" AND abc_cnam = ";
         command += fieldName + L";";

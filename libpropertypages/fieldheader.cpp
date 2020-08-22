@@ -106,3 +106,13 @@ wxTextCtrl *FieldHeader::GetHeadingCtrl()
 {
     return m_heading;
 }
+
+wxComboBox *FieldHeader::GetLabeAlignmentCtrl ()
+{
+    return m_labelPos;
+}
+
+wxComboBox *FieldHeader::GetHeaderAlignmentCtrl ()
+{
+    return m_headingPos;
+}

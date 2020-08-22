@@ -56,7 +56,6 @@ public:
     void OnViewSelectedTables(wxCommandEvent &event);
     void OnNewIndex(wxCommandEvent &event);
     void OnFieldDefinition(wxCommandEvent &event);
-    void OnFieldProperties(wxCommandEvent &event);
     void OnSetProperties(wxCommandEvent &event);
     void OnCloseLogWindow(wxCloseEvent &event);
     void OnForeignKey(wxCommandEvent &event);

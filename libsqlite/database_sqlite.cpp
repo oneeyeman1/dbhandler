@@ -1387,7 +1387,7 @@ int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::
     return res;
 }
 
-int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const Field *field, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &props, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
     char *error;
@@ -1409,16 +1409,16 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
             command += tableName;
             command += L", " + ownerName;
             command += L", " + fieldName;
-            command += L", " + const_cast<Field *>( field )->GetFieldProperties().m_label;
-            command += L", " + const_cast<Field *>( field )->GetFieldProperties().m_heading;
-            command += L", " + const_cast<Field *>( field )->GetFieldProperties().m_comment + L");";
+            command += L", " + props.m_label;
+            command += L", " + props.m_heading;
+            command += L", " + props.m_comment + L");";
         }
         else
         {
             command = L"UPDATE \"sys.abcatcol\" SET \"abc_labl\" = ";
-            command += const_cast<Field *>( field )->GetFieldProperties().m_label + L", \"abc_hdr\" = ";
-            command += const_cast<Field *>( field )->GetFieldProperties().m_heading + L", \"abc_cmnt\" = ";
-            command += const_cast<Field *>( field )->GetFieldProperties().m_comment + L"WHERE \"abc_tnam\" = ";
+            command += props.m_label + L", \"abc_hdr\" = ";
+            command += props.m_heading + L", \"abc_cmnt\" = ";
+            command += props.m_comment + L"WHERE \"abc_tnam\" = ";
             command += tableName + L" AND \"abc_ownr\" = ";
             command += ownerName + L" AND \"abc_cnam\" = ";
             command += fieldName + L";";

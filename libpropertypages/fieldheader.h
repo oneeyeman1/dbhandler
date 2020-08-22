@@ -6,6 +6,8 @@ public:
     ~FieldHeader(void);
     wxTextCtrl *GetLabelCtrl();
     wxTextCtrl *GetHeadingCtrl();
+    wxComboBox *GetLabeAlignmentCtrl();
+    wxComboBox *GetHeaderAlignmentCtrl();
 protected:
     void do_layout();
     void set_properties();

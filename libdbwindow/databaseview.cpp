@@ -124,7 +124,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(DrawingView, wxView);
 wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_SELECTTABLE, DrawingView::OnViewSelectedTables)
     EVT_MENU(wxID_OBJECTNEWINDEX, DrawingView::OnNewIndex)
-    EVT_MENU(wxID_PROPERTIES, DrawingView::OnFieldProperties)
+    EVT_MENU(wxID_PROPERTIES, DrawingView::OnSetProperties)
     EVT_MENU(wxID_OBJECTNEWFF, DrawingView::OnForeignKey)
     EVT_UPDATE_UI(wxID_STARTLOG, DrawingView::OnLogUpdateUI)
     EVT_UPDATE_UI(wxID_STOPLOG, DrawingView::OnLogUpdateUI)
@@ -453,77 +453,6 @@ void DrawingView::CreateViewToolBar()
 // screen.
 void DrawingView::OnDraw(wxDC *WXUNUSED(dc))
 {
-}
-
-void DrawingView::OnSetProperties(wxCommandEvent &event)
-{
-    std::vector<std::wstring> errors;
-    TableProperties *tableProperties = NULL;
-    DatabaseTable *dbTable;
-    int res = -1;
-    ShapeList shapes;
-    bool found = false;
-    wxString command;
-    m_canvas->GetDiagramManager().GetShapes( CLASSINFO( wxSFRectShape ), shapes );
-    wxString tableName, schemaName;
-    MyErdTable *erdTable = NULL;
-    FieldShape *field = NULL;
-    int isLogOnly = event.GetInt();
-    long type = event.GetExtraLong();
-    for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
-    {
-        if( (*it)->IsSelected() )
-        {
-            if( type == 0 )
-            {
-                tableProperties = (TableProperties *) event.GetClientData();
-                erdTable = (MyErdTable *)(*it);
-                found = true;
-            }
-            if( type == 1 )
-            {
-                MyErdTable *temp = (MyErdTable *)(*it);
-                if( temp )
-                {
-                    erdTable = temp;
-                    continue;
-                }
-                field = (FieldShape *)(*it);
-                found = true;
-            }
-        }
-    }
-    if( type == 0 )
-        res = GetDocument()->GetDatabase()->SetTableProperties( erdTable->GetTable(), *tableProperties, isLogOnly, const_cast<std::wstring &>( command.ToStdWstring() ), errors );
-    if( type == 1 )
-        res = GetDocument()->GetDatabase()->SetFieldProperties( const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName(), const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableOwner(), field->GetField()->GetFieldName(), field->GetField(), isLogOnly, const_cast<std::wstring &>( command.ToStdWstring() ), errors );
-    if( res )
-    {
-        for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
-            wxMessageBox( (*it) );
-        event.SetString( "Failed" );
-        return;
-    }
-    else
-    {
-        if( isLogOnly )
-        {
-            m_text->AppendText( command );
-            m_text->AppendText( "\n\r\n\r" );
-            if( !m_log->IsShown() )
-                m_log->Show();
-        }
-        else
-        {
-            if( type == 0 )
-            {
-                dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) erdTable)->GetTable() );
-                erdTable->SetTableComment( dbTable->GetTableProperties().m_comment );
-                erdTable->Update();
-                erdTable->Refresh();
-            }
-        }
-    }
 }
 
 void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
@@ -873,7 +802,7 @@ void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
     GetTablesForView( GetDocument()->GetDatabase(), false );
 }
 
-void DrawingView::OnFieldProperties(wxCommandEvent &event)
+void DrawingView::OnSetProperties(wxCommandEvent &event)
 {
     std::vector<std::wstring> errors;
     bool found = false;
@@ -965,15 +894,14 @@ void DrawingView::OnFieldProperties(wxCommandEvent &event)
                 res = GetDocument()->GetDatabase()->GetFieldProperties( tableName.ToStdWstring(), field, errors );
             }
 #if __cplusplus > 201300
-            auto ptr = std::make_unique<FieldPropertiesHandler>( GetDocument()->GetDatabase(), dbTable );
+            auto ptr = std::make_unique<FieldPropertiesHandler>( GetDocument()->GetDatabase(), tableName, ownerName, dbTable );
 #else
-            auto ptr = std::unique_ptr<FieldPropertiesHandler>( new FieldPropertiesHandler( GetDocument()->GetDatabase(), field ) );
+            auto ptr = std::unique_ptr<FieldPropertiesHandler>( new FieldPropertiesHandler( GetDocument()->GetDatabase(), tableName, ownerName, field ) );
 #endif
             propertiesPtr = std::move( ptr );
             title = _( "Column " );
             title += tableName + ".";
-//            title += static_cast<Field *>( object )->GetFieldName();
-            //            res = func( m_frame, GetDocument()->GetDatabase(), type, &prop, command, logOnly, tableName, schemaName, ownerName, *pcs );
+            title += field->GetFieldName();
         }
         if( type == DividerProperties )
         {
