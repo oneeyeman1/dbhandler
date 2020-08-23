@@ -19,8 +19,6 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-
-
 BandGeneralProperties::BandGeneralProperties(wxWindow* parent,  const BandProperties *props):
     PropertyPageBase(parent)
 {
@@ -85,13 +83,11 @@ BandGeneralProperties::BandGeneralProperties(wxWindow* parent,  const BandProper
     m_height->Bind( wxEVT_TEXT, &BandGeneralProperties::OnPageModified, this );
 }
 
-
 void BandGeneralProperties::set_properties()
 {
     // begin wxGlade: BandGeneralProperties::set_properties
     // end wxGlade
 }
-
 
 void BandGeneralProperties::do_layout()
 {
