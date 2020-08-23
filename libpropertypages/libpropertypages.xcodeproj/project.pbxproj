@@ -25,6 +25,9 @@
 		E3AC9DD81E176AB80083DD62 /* fontpropertypage.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AC9DD61E176AB80083DD62 /* fontpropertypage.h */; };
 		E3AC9DDB1E176C640083DD62 /* fontpropertypagebase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3AC9DD91E176C640083DD62 /* fontpropertypagebase.cpp */; };
 		E3AC9DDC1E176C640083DD62 /* fontpropertypagebase.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AC9DDA1E176C640083DD62 /* fontpropertypagebase.h */; };
+		E3B8E3C924F2DD6900346516 /* tableprimarykey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3C724F2DD6900346516 /* tableprimarykey.cpp */; };
+		E3B8E3CA24F2DD6900346516 /* tableprimarykey.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3C824F2DD6900346516 /* tableprimarykey.h */; };
+		E3B8E3CD24F2DE6400346516 /* liblibfieldswindow.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3B8E3CC24F2DE6400346516 /* liblibfieldswindow.dylib */; };
 		E3B92D6D24CA0DF60035428C /* bandgeneral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B92D6B24CA0DF50035428C /* bandgeneral.cpp */; };
 		E3B92D6E24CA0DF60035428C /* bandgeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B92D6C24CA0DF60035428C /* bandgeneral.h */; };
 		E3B92D7124CDC6DC0035428C /* pointerproperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B92D6F24CDC6DB0035428C /* pointerproperty.cpp */; };
@@ -52,6 +55,9 @@
 		E3AC9DD61E176AB80083DD62 /* fontpropertypage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fontpropertypage.h; path = cocoa/fontpropertypage.h; sourceTree = "<group>"; };
 		E3AC9DD91E176C640083DD62 /* fontpropertypagebase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fontpropertypagebase.cpp; sourceTree = "<group>"; };
 		E3AC9DDA1E176C640083DD62 /* fontpropertypagebase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontpropertypagebase.h; sourceTree = "<group>"; };
+		E3B8E3C724F2DD6900346516 /* tableprimarykey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tableprimarykey.cpp; sourceTree = "<group>"; };
+		E3B8E3C824F2DD6900346516 /* tableprimarykey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tableprimarykey.h; sourceTree = "<group>"; };
+		E3B8E3CC24F2DE6400346516 /* liblibfieldswindow.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = liblibfieldswindow.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3B92D6B24CA0DF50035428C /* bandgeneral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bandgeneral.cpp; sourceTree = "<group>"; };
 		E3B92D6C24CA0DF60035428C /* bandgeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bandgeneral.h; sourceTree = "<group>"; };
 		E3B92D6F24CDC6DB0035428C /* pointerproperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pointerproperty.cpp; sourceTree = "<group>"; };
@@ -64,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3B8E3CD24F2DE6400346516 /* liblibfieldswindow.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +82,7 @@
 			children = (
 				E39501CD1DF3BA080046E51B /* libpropertypages */,
 				E39501B91DF3B99C0046E51B /* Products */,
+				E3B8E3CB24F2DE6400346516 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -89,6 +97,8 @@
 		E39501CD1DF3BA080046E51B /* libpropertypages */ = {
 			isa = PBXGroup;
 			children = (
+				E3B8E3C724F2DD6900346516 /* tableprimarykey.cpp */,
+				E3B8E3C824F2DD6900346516 /* tableprimarykey.h */,
 				E3B92D8A24E1AB860035428C /* fontpropertypage.cpp */,
 				E3B92D6F24CDC6DB0035428C /* pointerproperty.cpp */,
 				E3B92D7024CDC6DC0035428C /* pointerproperty.h */,
@@ -116,6 +126,14 @@
 			name = libpropertypages;
 			sourceTree = "<group>";
 		};
+		E3B8E3CB24F2DE6400346516 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E3B8E3CC24F2DE6400346516 /* liblibfieldswindow.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -134,6 +152,7 @@
 				E30564402217CB5F00F5576C /* propertypagebase.h in Headers */,
 				E3B92D7224CDC6DC0035428C /* pointerproperty.h in Headers */,
 				E305643C2217CB4C00F5576C /* fieldheader.h in Headers */,
+				E3B8E3CA24F2DD6900346516 /* tableprimarykey.h in Headers */,
 				E33E6F7D1EAD3067003A0B92 /* syntaxproppage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -190,6 +209,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E305643E2217CB4C00F5576C /* fieldheader.cpp in Sources */,
+				E3B8E3C924F2DD6900346516 /* tableprimarykey.cpp in Sources */,
 				E33E6F7C1EAD3067003A0B92 /* syntaxproppage.cpp in Sources */,
 				E3AC9DDB1E176C640083DD62 /* fontpropertypagebase.cpp in Sources */,
 				E33E6F7E1EAD3067003A0B92 /* wherehavingpage.cpp in Sources */,
@@ -297,6 +317,8 @@
 					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.1",
 					/Users/igorkorot/wxWidgets/include,
 					../dbinterface,
+					../libshapeframework,
+					../libfieldswindow,
 				);
 				"HEADER_SEARCH_PATHS[arch=*]" = (
 					"$(inherited)",

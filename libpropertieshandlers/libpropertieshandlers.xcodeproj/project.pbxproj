@@ -283,6 +283,8 @@
 					/Users/igorkorot/wxWidgets/include,
 					../dbinterface,
 					../libpropertypages,
+					../libshapeframework,
+					../libfieldswindow,
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = (
