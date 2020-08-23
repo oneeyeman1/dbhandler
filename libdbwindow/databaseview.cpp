@@ -806,7 +806,6 @@ void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
 void DrawingView::OnSetProperties(wxCommandEvent &event)
 {
     std::vector<std::wstring> errors;
-    bool found = false;
     int type = 0;
     DatabaseTable *dbTable = nullptr;
     Divider *divider = nullptr;
@@ -847,6 +846,14 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
                     schemaName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetSchemaName();
                     ownerName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableOwner();
                     type = DatabaseFieldProperties;
+                }
+                else
+                {
+                    sign = wxDynamicCast( shape, ConstraintSign );
+                    if( sign )
+                    {
+                        type = SignProperties;
+                    }
                 }
             }
         }

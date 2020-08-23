@@ -190,7 +190,7 @@ void RetrievalArguments::OnInsertArgument(wxCommandEvent &WXUNUSED(event))
     fgs->Insert( pos + 3, type, 0, wxEXPAND | wxRIGHT, 8 );
     m_lines.insert( it, QueryLines( statBmp, number, name, type ) );
     name->SetFocus();
-    for( it; it != m_lines.end(); ++it )
+    for( ; it != m_lines.end(); ++it )
     {
         position++;
         (*it).m_number->SetLabel( wxString::Format( "%d", position ) );
@@ -221,7 +221,7 @@ void RetrievalArguments::OnRemoveArgument(wxCommandEvent &WXUNUSED(event))
             m_currentLine--;
         }
         (*it).m_pointer->SetBitmap( bmp );
-        for( it; it != m_lines.end(); ++it )
+        for( ; it != m_lines.end(); ++it )
         {
             (*it).m_number->SetLabel( wxString::Format( "%d", counter ) );
             counter++;
