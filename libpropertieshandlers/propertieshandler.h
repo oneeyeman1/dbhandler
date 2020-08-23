@@ -14,6 +14,7 @@ private:
     TableProperties m_prop;
     TableGeneralProperty *m_page1;
     CFontPropertyPage *m_page2, *m_page3, *m_page4;
+    TablePrimaryKey *m_page5;
     const Database *m_db;
     std::wstring m_command;
 };

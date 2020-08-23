@@ -46,6 +46,9 @@
     <ClInclude Include="pointerproperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tableprimarykey.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tablegeneral.cpp">
@@ -79,6 +82,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pointerproperty.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tableprimarykey.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

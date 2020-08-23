@@ -85,6 +85,7 @@
 #include "divider.h"
 #include "propertypagebase.h"
 #include "tablegeneral.h"
+#include "tableprimarykey.h"
 #include "fieldgeneral.h"
 #include "fontpropertypagebase.h"
 #include "fieldheader.h"

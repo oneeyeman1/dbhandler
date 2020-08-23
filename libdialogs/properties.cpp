@@ -33,10 +33,13 @@
 #ifdef __WXOSX__
 #include "wx/fontpicker.h"
 #endif
+#include "wxsf/ShapeCanvas.h"
 #include "database.h"
+#include "fieldwindow.h"
 #include "propertypagebase.h"
 #include "tablegeneral.h"
 #include "fontpropertypagebase.h"
+#include "tableprimarykey.h"
 #include "fieldgeneral.h"
 #include "designlabelgeneral.h"
 #include "pointerproperty.h"

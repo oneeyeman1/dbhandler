@@ -29,9 +29,12 @@
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
 #include "wx/fontenum.h"
+#include "wxsf/ShapeCanvas.h"
+#include "fieldwindow.h"
 #include "propertypagebase.h"
 #include "tablegeneral.h"
 #include "fontpropertypagebase.h"
+#include "tableprimarykey.h"
 #include "propertieshandlerbase.h"
 #include "propertieshandler.h"
 
@@ -64,9 +67,11 @@ void DatabasePropertiesHandler::EditProperies(wxNotebook *parent)
     m_page2 = new CFontPropertyPage( parent, data_font );
     m_page3 = new CFontPropertyPage( parent, heading_font );
     m_page4 = new CFontPropertyPage( parent, label_font );
+    m_page5 = new TablePrimaryKey( parent );
     parent->AddPage( m_page2, _( "Data Font" ) );
     parent->AddPage( m_page3, _( "Heading Font" ) );
     parent->AddPage( m_page4, _( "Label Font" ) );
+    parent->AddPage( m_page5, _( "Primary Key" ) );
 }
 
 int DatabasePropertiesHandler::GetProperties(std::vector<std::wstring> &errors)

@@ -46,6 +46,7 @@
     <ClInclude Include="sortgroupbypage.h" />
     <ClInclude Include="syntaxproppage.h" />
     <ClInclude Include="tablegeneral.h" />
+    <ClInclude Include="tableprimarykey.h" />
     <ClInclude Include="wherehavingpage.h" />
   </ItemGroup>
   <ItemGroup>
@@ -59,6 +60,7 @@
     <ClCompile Include="sortgroupbypage.cpp" />
     <ClCompile Include="syntaxproppage.cpp" />
     <ClCompile Include="tablegeneral.cpp" />
+    <ClCompile Include="tableprimarykey.cpp" />
     <ClCompile Include="wherehavingpage.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -275,7 +277,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Visual Leak Detector\include;..\dbinterface;..\libfieldswindow;..\libshapeframework;c:\wxWidgets\lib\vc_dll\mswud;c:\wxWidgets\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Visual Leak Detector\include;..\dbinterface;..\libfieldswindow;..\libshapeframework;..\ibfieldswindow;c:\wxWidgets\lib\vc_dll\mswud;c:\wxWidgets\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__MEMORYLEAKS__;WIN32;_USRDLL;DLL_EXPORTS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;MY_DLL_BUILDING;;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
