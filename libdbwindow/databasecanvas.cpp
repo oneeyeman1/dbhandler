@@ -54,7 +54,7 @@
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
-typedef int (*SELECTJOINTYPE)(wxWindow *parent, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField, int &type);
+typedef int (*SELECTJOINTYPE)(wxWindow *parent, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField, long &type);
 /*
 BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
     EVT_MENU(wxID_TABLEDROPTABLE, DatabaseCanvas::OnDropTable)
@@ -986,7 +986,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             lib.Load( "libdialogs" );
 #endif
             QueryConstraint *constraint = (QueryConstraint *) sign->GetConstraint();
-            int constraintSign = constraint->GetSign();
+            long constraintSign = constraint->GetSign();
             SELECTJOINTYPE func = (SELECTJOINTYPE) lib.GetSymbol( "SelectJoinType" );
             result = func( m_view->GetFrame(), const_cast<DatabaseTable *>( constraint->GetFKTable() )->GetTableName(), constraint->GetRefTable(), constraint->GetLocalColumn(), constraint->GetRefColumn(), constraintSign );
             if( constraintSign != constraint->GetSign () )

@@ -24,7 +24,7 @@
 #include "wx/listctrl.h"
 #include "jointype.h"
 
-JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField, int type, const wxPoint& pos, const wxSize& size, long style) :
+JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField, long type, const wxPoint& pos, const wxSize& size, long style) :
     wxDialog(parent, id, title, pos, size, style)
 {
     m_title = title;

@@ -198,7 +198,7 @@ void CODBCConfigure::OnEditDSN(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void CODBCConfigure::OnRemoveDSN(wxCommandEvent &WXUNUSED(event))
+void CODBCConfigure::OnRemoveDSN(wxCommandEvent &event)
 {
     std::vector<char *> errorMsg;
     wxString driver = m_drivers->GetStringSelection();
@@ -208,12 +208,12 @@ void CODBCConfigure::OnRemoveDSN(wxCommandEvent &WXUNUSED(event))
     {
         DELETEDSN func = (DELETEDSN) m_lib->GetSymbol( "RemoveDSN" );
         dsnStr = _T( "DSN=" ) + dsnStr + '\0';
-/*        if( !m_db->RemoveDSN( dsnStr, driver, (HWND ) this->GetHandle() ) )
+        if( !func( m_db, driver, dsnStr ) )
         {
             event.Skip();
             return;
         }
-        else*/
+        else
         {
             m_dsn->Delete( m_dsn->FindString( dsnStr ) );
             m_editdsn->Disable();
