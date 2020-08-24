@@ -1850,6 +1850,11 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
         {
             std::wstring comment = L"";
             DatabaseTable *table = new DatabaseTable( tableName, L"", fields, foreign_keys );
+            for( std::vector<Field *>::iterator it = fields.begin (); it < fields.end (); ++it )
+            {
+                if( (*it)->IsPrimaryKey() )
+                    table->GetTableProperties().m_pkFields.push_back( (*it)->GetFieldName() );
+            }
             table->SetNumberOfFields( count1 );
             table->SetNumberOfIndexes( count2 );
             table->SetTableId( 0 );

@@ -64,6 +64,7 @@ public:
     int m_dataFontWeight, m_headingFontWeight, m_labelFontWeight, m_dataFontCharacterSet, m_labelFontCharacterSer, m_headingFontCharacterSet;
     bool m_dataFontUnderline, m_dataFontStrikethrough, m_headingFontUnderline, m_headingFontStrikethrough, m_labelFontUnderline, m_labelFontStrikethrough;
     bool m_dataFontItalic, m_headingFontItalic, m_labelFontItalic;
+    std::vector<std::wstring> m_pkFields;
 };
 
 class FieldProperties

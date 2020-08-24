@@ -18,6 +18,7 @@
 #include <vector>
 #include <map>
 #include <mutex>
+#include "wx/listctrl.h"
 #include"database.h"
 #if defined __WXGTK__
 #include "wx/nativewin.h"
@@ -67,7 +68,7 @@ void DatabasePropertiesHandler::EditProperies(wxNotebook *parent)
     m_page2 = new CFontPropertyPage( parent, data_font );
     m_page3 = new CFontPropertyPage( parent, heading_font );
     m_page4 = new CFontPropertyPage( parent, label_font );
-    m_page5 = new TablePrimaryKey( parent );
+    m_page5 = new TablePrimaryKey( parent, m_table );
     parent->AddPage( m_page2, _( "Data Font" ) );
     parent->AddPage( m_page3, _( "Heading Font" ) );
     parent->AddPage( m_page4, _( "Label Font" ) );

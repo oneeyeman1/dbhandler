@@ -817,6 +817,11 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                         std::wstring tableName = m_pimpl->m_myconv.from_bytes( (const char *) table_name );
                                                                                         std::wstring schemaName = m_pimpl->m_myconv.from_bytes( (const char *) schema_name );
                                                                                         DatabaseTable *table = new DatabaseTable( tableName, schemaName, fields, foreign_keys );
+                                                                                        for( std::vector<Field *>::iterator it = fields.begin (); it < fields.end (); ++it )
+                                                                                        {
+                                                                                            if( (*it)->IsPrimaryKey() )
+                                                                                                table->GetTableProperties().m_pkFields.push_back( (*it)->GetFieldName() );
+                                                                                        }
                                                                                         table->SetTableId( table_id );
                                                                                         if( mysql_stmt_bind_param( res3, params ) )
                                                                                         {
