@@ -13,6 +13,8 @@ libpropertieshandlers_la_SOURCES =  \
 
 libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libpropertypages \
+	-I../../libshapeframework \
+	-I../../libfieldswindow \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
