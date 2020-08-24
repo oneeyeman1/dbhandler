@@ -27,9 +27,13 @@ libpropertypages_la_SOURCES =  \
 	bandgeneral.cpp \
 	bandgeneral.h \
 	pointerproperty.cpp \
-	pointerproperty.h
+	pointerproperty.h \
+	tableprimarykey.cpp \
+	tableprimarykey.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
+	-I../../libshapeframework \
+	-I../../libfieldswindow \
 	`pkg-config \
 	--cflags \
 	gtk+-3.0` \
