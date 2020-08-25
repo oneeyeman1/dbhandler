@@ -50,6 +50,7 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
     wxPoint pos = GetPosition();
     wxSize size = GetSize(), extent;
     wxFont font = GetFont();
+    dc.SetBackgroundMode( wxBRUSHSTYLE_TRANSPARENT );
     dc.SetPen( *wxBLACK_PEN );
     dc.SetBrush( *wxWHITE_BRUSH );
     dc.DrawRectangle( 0, 0, size.x, size.y );
@@ -70,6 +71,7 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
         dc.SetFont( wxNullFont );
     }
     dc.SetBrush( wxNullBrush );
+    dc.SetFont( wxNullFont );
     dc.SetPen( wxNullPen );
 }
 
