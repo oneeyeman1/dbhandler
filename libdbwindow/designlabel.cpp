@@ -47,7 +47,7 @@ DesignLabel::DesignLabel(const wxFont font, const wxString &label, int alignment
     m_prop.m_tag = "";
     m_prop.m_supressPrint = false;
     m_prop.m_border = 0;
-    m_prop.m_alignment = 2;
+    m_prop.m_alignment = alignment;
     m_prop.m_text = label;
     m_prop.m_text.Replace( "_", " " );
     m_prop.m_font = font;
@@ -68,7 +68,18 @@ DesignLabel::DesignLabel(const wxFont font, const wxString &label, int alignment
         SF_ADD_COMPONENT( m_grid, wxT( "grid" ) );
         if( m_grid->InsertToGrid( 0, 0, m_text ) )
         {
-            m_text->SetHAlign( wxSFShapeBase::halignCENTER );
+            switch( alignment )
+            {
+                case 2:
+                    m_text->SetHAlign( wxSFShapeBase::halignCENTER );
+                    break;
+                case 0:
+                    m_text->SetHAlign( wxSFShapeBase::halignLEFT );
+                    break;
+                case 1:
+                    m_text->SetHAlign( wxSFShapeBase::halignRIGHT );
+                    break;
+            }
             m_text->SetVAlign( wxSFShapeBase::valignMIDDLE );
             m_text->SetFont( font );
             m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN | sfsEMIT_EVENTS );
