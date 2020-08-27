@@ -79,7 +79,7 @@ void DesignCanvas::SetQuickQueryFields(const std::vector<wxString> &fields)
 void DesignCanvas::AddFieldLabelToCanvas(const wxFont labelFont, const Field *label)
 {
     wxRect rectLabel, rectField;
-    auto labelShape = new DesignLabel( labelFont, const_cast<Field *>( label )->GetFieldProperties().m_label, const_cast<Field *>( label )->GetFieldProperties().m_labelPosition );
+    auto labelShape = new DesignLabel( labelFont, const_cast<Field *>( label )->GetFieldProperties().m_heading, const_cast<Field *>( label )->GetFieldProperties().m_headingPosition );
     m_pManager.AddShape( labelShape, NULL, wxPoint( startPoint.x, startPoint.y ), sfINITIALIZE, sfDONT_SAVE_STATE );
     rectLabel = labelShape->GetBoundingBox();
     startPoint.x += rectLabel.GetWidth() + 2;
@@ -306,7 +306,7 @@ void DesignCanvas::InitialFieldSizing ()
     }
 }
 
-void DesignCanvas::PopulateQueryCanvas(const std::vector<Field *> &queryFields)
+void DesignCanvas::PopulateQueryCanvas(const std::vector<Field *> &queryFields, const std::vector<wxString> &groupByFields)
 {
     wxBeginBusyCursor();
     wxFont fontUsed;

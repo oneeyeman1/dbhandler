@@ -1957,5 +1957,5 @@ void DrawingView::OnShowDataTypes(wxCommandEvent &event)
 
 void DrawingView::PopuateQueryCanvas()
 {
-    m_designCanvas->PopulateQueryCanvas( m_queryFields );
+    m_designCanvas->PopulateQueryCanvas( m_queryFields, m_groupByFields );
 }
