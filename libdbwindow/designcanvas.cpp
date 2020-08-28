@@ -310,12 +310,35 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<Field *> &queryFields, 
 {
     wxBeginBusyCursor();
     wxFont fontUsed;
-    wxClientDC dc( this );;
+    wxClientDC dc( this );
+    std::vector<DatabaseTable *> tables = ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->GetTableVector().m_tables.begin()->second;
+    bool found = false;
+    for( std::vector<wxString>::const_iterator it = groupByFields.begin(); it < groupByFields.end(); ++it )
+    {
+        wxFont font;
+        wxString tableName = (*it).substr( 0, (*it).find( L'.' ) );
+        for( std::vector<DatabaseTable *>::iterator it1 = tables.begin(); it1 < tables.end() && !found; ++it1 )
+        {
+            if( (*it1)->GetTableName() == tableName )
+            {
+                found = true;
+            }
+            wxFontStyle dataStyle = (*it1)->GetTableProperties().m_dataFontItalic  == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
+            wxFontWeight dataWeight = (*it1)->GetTableProperties().m_dataFontWeight == 0 ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD;
+            font.SetPointSize( (*it1)->GetTableProperties().m_dataFontSize );
+            font.SetStyle( dataStyle );
+            font.SetWeight( dataWeight );
+            font.SetUnderlined( (*it1)->GetTableProperties().m_dataFontUnderline );
+            font.SetStrikethrough( (*it1)->GetTableProperties().m_dataFontStrikethrough );
+            font.SetFaceName( (*it1)->GetTableProperties().m_dataFontName );
+            font.SetFamily( wxFONTFAMILY_DEFAULT );
+        }
+        AddFieldToCanvas( font, (*it) );
+    }
+    found = false;
     for( std::vector<Field *>::const_iterator it = queryFields.begin(); it < queryFields.end(); ++it )
     {
         std::wstring tableName = (*it)->GetFullName().substr( 0, (*it)->GetFullName().find( '.' ) );
-        std::vector<DatabaseTable *> tables = ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->GetTableVector().m_tables.begin()->second;
-        bool found = false;
         for( std::vector<DatabaseTable *>::iterator it1 = tables.begin(); it1 < tables.end() && !found; ++it1 )
         {
             if( (*it1)->GetTableName() == tableName )
