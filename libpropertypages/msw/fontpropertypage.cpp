@@ -47,9 +47,11 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
     int cx, x, y;
     wxPaintDC dc( this );
+    wxRect rcText = GetRect();
     wxPoint pos = GetPosition();
     wxSize size = GetSize(), extent;
     wxFont font = GetFont();
+    ScreenToClient( pos );
     dc.SetBackgroundMode( wxBRUSHSTYLE_TRANSPARENT );
     dc.SetPen( *wxBLACK_PEN );
     dc.SetBrush( *wxWHITE_BRUSH );
@@ -61,17 +63,17 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
         extent = dc.GetTextExtent( m_text );
 		extent.SetHeight( metrics.ascent - metrics.internalLeading );
         cx = extent.GetX();
-        if( ( cx >= ( size.GetWidth() - pos.x  ) ) || cx <= 0 )
+        if( ( cx >= ( size.GetWidth() ) ) || cx <= 0 )
             x = pos.x;
 		else
-            x = pos.x + ( ( size.GetWidth() - pos.x ) - cx ) / 2;
-        y = wxMin( size.GetHeight(), size.GetHeight() - ( pos.y - extent.GetHeight() ) / 2 );
+            x = pos.x + ( size.GetWidth() - cx ) / 2;
+        int bottom = size.GetY() + size.GetHeight();
+        y = wxMin( bottom, bottom - ( ( bottom - pos.y ) - extent.GetHeight() ) / 2 );
         dc.SetTextForeground( *wxBLACK );
         dc.DrawText( m_text, x, y );
         dc.SetFont( wxNullFont );
     }
     dc.SetBrush( wxNullBrush );
-    dc.SetFont( wxNullFont );
     dc.SetPen( wxNullPen );
 }
 
@@ -306,8 +308,17 @@ CColorComboBox::CColorComboBox( wxWindow *parent, wxWindowID id, wxString select
 wxBitmapComboBox( parent, id, selection, pos, size, n, choices, style )
 {
     wxFont font;
-//    wxVector<colorEntries> m_colourDialogNames = font.GetColors();
-    for( unsigned i = 0; i < 27; i++ )
+    m_colors.push_back( ColorStruct( *wxBLACK, "Black" ) );
+    m_colors.push_back( ColorStruct( *wxWHITE, "White" ) );
+    m_colors.push_back( ColorStruct( *wxRED, "Red" ) );
+    m_colors.push_back( ColorStruct( 0xFF00FF, "Fuchsia" ) );
+    m_colors.push_back( ColorStruct( 0x32CC32, "Lime" ) );
+    m_colors.push_back( ColorStruct( *wxYELLOW, "Yellow" ) );
+    m_colors.push_back( ColorStruct( *wxBLUE, "Blue" ) );
+    m_colors.push_back( ColorStruct( 0x70DB93, "Aqua" ) );
+    m_colors.push_back( ColorStruct( 0x8E236B, "Maroon" ) );
+    m_colors.push_back( ColorStruct( 0x8000FF, "Purple" ) );
+    for( std::vector<ColorStruct>::iterator it = m_colors.begin(); it < m_colors.end(); ++it )
     {
         int w = 20, h = 10;
         wxMemoryDC dc;
@@ -318,12 +329,10 @@ wxBitmapComboBox( parent, id, selection, pos, size, n, choices, style )
         dc.SetBrush( magicBrush );
         dc.SetPen( *wxBLACK_PEN );
         dc.DrawRectangle( 0, 0, w, h );
-//        dc.SetBrush( wxBrush( m_colourDialogNames.at( i ).m_rgb ) );
+        dc.SetBrush( wxBrush( (*it).m_color ) );
         dc.DrawRectangle( 0, 0, w, h );
         dc.SelectObject( wxNullBitmap );
-//        wxMask *mask = new wxMask( bmp, magic );
-//        bmp.SetMask( mask );
-//        Append( m_colourDialogNames.at( i ).m_name, bmp, &m_colourDialogNames.at( i ).m_rgb );
+        Append( (*it).m_name, bmp, &(*it).m_color );
     }
 }
 
