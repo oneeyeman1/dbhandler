@@ -333,7 +333,7 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<Field *> &queryFields, 
             font.SetFaceName( (*it1)->GetTableProperties().m_dataFontName );
             font.SetFamily( wxFONTFAMILY_DEFAULT );
         }
-        AddFieldToCanvas( font, (*it) );
+ //       AddFieldToCanvas( font, (*it) );
     }
     found = false;
     for( std::vector<Field *>::const_iterator it = queryFields.begin(); it < queryFields.end(); ++it )
