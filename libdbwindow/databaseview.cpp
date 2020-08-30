@@ -623,7 +623,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 for( std::vector<Field *>::const_iterator it1 = dbTable->GetFields().begin(); it1 < dbTable->GetFields().end(); ++it1 )
                 {
                     long item = m_page3->GetSourceList()->InsertItem( i++, "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
-                    m_page3->SetItemPtrData( item, (it1) );
+                    m_page3->GetSourceList()->SetItemPtrData( item, wxPtrToUInt( *it1) );
                 }
             }
             m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
