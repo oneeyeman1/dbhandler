@@ -23,6 +23,7 @@
 #include "wx/listctrl.h"
 #include "wx/dataview.h"
 #include "wx/renderer.h"
+#include "database.h"
 #include "sortgroupbypage.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
@@ -302,6 +303,9 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
         if( m_dragSource != m_dragDest )
         {
             long position;
+            Field *field = nullptr;
+            if( m_dragDest == m_dest )
+                field = reinterpret_cast<Field *>( m_source->GetItemData( m_itemPos ) );
             m_dragSource->DeleteItem( m_dragDest == m_dest ? m_itemPos : m_sourcePos );
             if( m_dragDest == m_dest )
                 position = m_dragDest->GetItemCount();
@@ -309,13 +313,19 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
                 position = m_itemPos;
             long item = m_dragDest->InsertItem( position, m_item );
             if( m_dragDest == m_dest )
-                m_dragDest->SetItemData( item, m_itemPos );
+            {
+                GroupDestData data;
+                data.field = field;
+                data.pos = m_itemPos;
+                m_dragDest->SetItemPtrData( item, wxUIntPtr( &data ) );
+            }
+            wxCommandEvent event( wxEVT_CHANGE_QUERY );
+            event.SetEventObject( this );
+            event.SetInt( m_dragDest == m_dest ? ADDFIELD : REMOVEFIELD );
+            event.SetClientObject( m_dragDest == m_dest ? (wxClientData *) field : nullptr );
+            event.SetString( m_item );
+            GetParent()->GetParent()->GetEventHandler()->ProcessEvent( event );
         }
-        wxCommandEvent event( wxEVT_CHANGE_QUERY );
-        event.SetEventObject( this );
-        event.SetInt( m_dragDest == m_dest ? ADDFIELD : REMOVEFIELD );
-        event.SetString( m_item );
-        GetParent()->GetParent()->GetEventHandler()->ProcessEvent( event );
         this->ReleaseMouse();
         m_isDragging = false;
         m_dragDest = nullptr;
@@ -365,7 +375,7 @@ void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
     else if( item.IsOk() )
     {
         m_sourcePos = m_sortDragSource->ItemToRow( item );
-        m_itemPos = m_sortDragSource->GetItemData( item );
+        m_itemPos = reinterpret_cast<GroupDestData *>( m_sortDragSource->GetItemData( item ) )->pos;
     }
     m_item = m_sortDragSource->GetTextValue( m_sortDragSource->ItemToRow( item ), 0 );
     if( m_sortDragSource == m_sortDest )

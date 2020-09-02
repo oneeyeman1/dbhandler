@@ -97,7 +97,7 @@ public:
     DrawingDocument* GetDocument();
 protected:
     void SetQueryMenu(const int queryType);
-    void SortGroupByHandling(const int type, const wxString &field, const int queryType, wxString &query, long sortType = -1);
+    void SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const Field *field, long sortType = -1);
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);
     void CreateViewToolBar();
     int AddSize(int size, int lfHeight);
@@ -131,7 +131,8 @@ private:
     std::vector<Field *> m_queryFields;
     std::vector<DatabaseTable *> m_selectTableName;
 //    std::vector<wxString> m_selectFields;
-    std::vector<wxString> m_groupByFields, m_sortedFields;
+    std::vector<const Field *> m_groupByFields;
+    std::vector<wxString> m_sortedFields;
     std::vector<QueryArguments> m_arguments;
     DesignCanvas *m_designCanvas;
     wxStyledTextCtrl *m_edit;

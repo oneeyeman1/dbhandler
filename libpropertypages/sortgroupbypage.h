@@ -19,6 +19,12 @@
 #define ASCENDING 0
 #define DESCENDING 1
 
+struct GroupDestData
+{
+    Field *field;
+    long pos;
+};
+
 class MyListCtrl : public wxListCtrl
 {
 public:
@@ -90,7 +96,7 @@ private:
     wxDataViewListCtrl *m_sortSource, *m_sortDest, *m_sortDragSource, *m_sortDragDest;
     wxStaticText *m_label;
     wxString m_item;
-    int m_itemPos, m_sourcePos;
+    long m_itemPos, m_sourcePos;
     bool m_isDragging, m_isSorting;
 };
 

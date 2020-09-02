@@ -306,14 +306,14 @@ void DesignCanvas::InitialFieldSizing ()
     }
 }
 
-void DesignCanvas::PopulateQueryCanvas(const std::vector<Field *> &queryFields, const std::vector<wxString> &groupByFields)
+void DesignCanvas::PopulateQueryCanvas(const std::vector<Field *> &queryFields, const std::vector<const Field *> &groupByFields)
 {
     wxBeginBusyCursor();
     wxFont fontUsed;
     wxClientDC dc( this );
     std::vector<DatabaseTable *> tables = ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->GetTableVector().m_tables.begin()->second;
     bool found = false;
-    for( std::vector<wxString>::const_iterator it = groupByFields.begin(); it < groupByFields.end(); ++it )
+/*    for( std::vector<wxString>::const_iterator it = groupByFields.begin(); it < groupByFields.end(); ++it )
     {
         wxFont font;
         wxString tableName = (*it).substr( 0, (*it).find( L'.' ) );
@@ -334,7 +334,7 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<Field *> &queryFields, 
             font.SetFamily( wxFONTFAMILY_DEFAULT );
         }
  //       AddFieldToCanvas( font, (*it) );
-    }
+    }*/
     found = false;
     for( std::vector<Field *>::const_iterator it = queryFields.begin(); it < queryFields.end(); ++it )
     {

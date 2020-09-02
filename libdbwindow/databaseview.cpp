@@ -1354,7 +1354,7 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     }
     if( event.GetEventObject() == m_page1 || event.GetEventObject() == m_page3 )
     {
-        SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query, event.GetExtraLong() );
+        SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query, (Field *) event.GetClientObject(), event.GetExtraLong() );
 /*        int start = query.find( "GROUP BY" );
         int end = query.find( "HAVING" );
         if( start == wxNOT_FOUND )
@@ -1401,7 +1401,7 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     }
 }
 
-void DrawingView::SortGroupByHandling(const int type, const wxString &field, const int queryType, wxString &query, long sortType)
+void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const Field *field, long sortType)
 {
     int start, end;
     wxString queryString;
@@ -1430,17 +1430,17 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &field, con
         if( queryType == 2 )
             m_groupByFields.push_back( field );
         else
-            m_sortedFields.push_back( queryType == 2 ? field : field + " ASC" );
+            m_sortedFields.push_back( queryType == 2 ? fieldName : fieldName + " ASC" );
         if( str == ";" )
         {
-            replace = "\n" + queryString + field;
+            replace = "\n" + queryString + fieldName;
             if( queryType != 2 )
                 replace += " ASC";
             replace += ";";
         }
         else
         {
-            replace = str + ",\r         " + field;
+            replace = str + ",\r         " + fieldName;
             if( queryType != 2 )
                 replace += " ASC";
         }
@@ -1470,7 +1470,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &field, con
             }
             else
             {
-                wxString temp = field.substr( 0, field.find( ' ' ) );
+                wxString temp = fieldName.substr( 0, fieldName.find( ' ' ) );
                 replace = str.substr( 0, str.find( temp ) );
                 wxString temp1 = str.substr( str.find( temp ) );
                 int pos = str.find( ',' );
@@ -1495,9 +1495,9 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &field, con
     }
     else
     {
-        wxString temp = str.substr( str.find( field ) );
+        wxString temp = str.substr( str.find( fieldName ) );
         str = temp.substr( 0, temp.find( ',' ) );
-        replace = field + ( sortType == 0 ? " DESC" : " ASC" );
+        replace = fieldName + ( sortType == 0 ? " DESC" : " ASC" );
     }
     query.Replace( str, replace );
     const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
