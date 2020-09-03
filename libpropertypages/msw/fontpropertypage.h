@@ -119,7 +119,7 @@ private:
 class WXEXPORT CFontPropertyPage: public CFontPropertyPageBase
 {
 public:
-    CFontPropertyPage(wxWindow* parent, wxFont &font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
+    CFontPropertyPage(wxWindow* parent, wxFont &font, bool colorEnabled, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
     ~CFontPropertyPage();
     void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough);
     virtual wxFont &GetFont();

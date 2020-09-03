@@ -65,9 +65,9 @@ void DatabasePropertiesHandler::EditProperies(wxNotebook *parent)
         label_font.SetStrikethrough( true );
     m_page1 = new TableGeneralProperty( parent, m_prop.table_name, m_prop.m_owner, m_prop.m_comment, DatabaseTableProperties );
     parent->AddPage( m_page1, _( "General" ) );
-    m_page2 = new CFontPropertyPage( parent, data_font );
-    m_page3 = new CFontPropertyPage( parent, heading_font );
-    m_page4 = new CFontPropertyPage( parent, label_font );
+    m_page2 = new CFontPropertyPage( parent, data_font, false );
+    m_page3 = new CFontPropertyPage( parent, heading_font, false );
+    m_page4 = new CFontPropertyPage( parent, label_font, false );
     m_page5 = new TablePrimaryKey( parent, m_table );
     parent->AddPage( m_page2, _( "Data Font" ) );
     parent->AddPage( m_page3, _( "Heading Font" ) );
