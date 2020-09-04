@@ -336,7 +336,7 @@ wxBitmapComboBox( parent, id, selection, pos, size, n, choices, style )
     }
 }
 
-CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont &font, int id, const wxPoint& pos, const wxSize& size, long style)
+CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont &font, bool colorEnabled, int id, const wxPoint& pos, const wxSize& size, long style)
  : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
 {
     m_bUnderline = false;
@@ -372,8 +372,8 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont &font, int id, con
         m_bStrikethrough = false;
     }
     m_nActualStyle = m_nCurrentStyle;
-//    m_textStr = font.GetTextDescription();
-//    m_backgroundStr = font.GetBackgroundDescription();
+    m_textStr = "Black";
+    m_backgroundStr = "White";
     itemStaticText6 = new wxStaticText( this, wxID_STATIC, _T( "&Font:" ), wxDefaultPosition, wxDefaultSize, 0 );
     itemChoice7 = new CFontNamesComboBox( this, wxID_ANY );
     itemStaticText9 = new wxStaticText( this, wxID_ANY, _T("Font St&yles:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -393,6 +393,16 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont &font, int id, con
     itemStaticText30 = new wxStaticText( this, wxID_STATIC, _T( "" ), wxDefaultPosition, wxDefaultSize, 0 );
     do_layout();
     set_properties();
+    if( colorEnabled )
+    {
+        itemChoice16->Enable( true );
+        itemChoice17->Enable( true );
+    }
+    else
+    {
+        itemChoice16->Enable( false );
+        itemChoice17->Enable( false );
+    }
     m_dirty = false;
     itemWindow24->SetFont( m_font );
     itemWindow24->Refresh();

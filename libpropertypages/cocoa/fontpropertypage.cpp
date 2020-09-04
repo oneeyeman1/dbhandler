@@ -30,7 +30,7 @@
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 
-CFontPropertyPage::CFontPropertyPage(wxWindow* parent, const wxFont &font) : CFontPropertyPageBase( parent, font )
+CFontPropertyPage::CFontPropertyPage(wxWindow* parent, const wxFont &font, bool colorEnabled) : CFontPropertyPageBase( parent, font )
 {
     m_font = font;
     m_dirty = false;
