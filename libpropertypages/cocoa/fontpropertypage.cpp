@@ -27,6 +27,7 @@
 #endif
 
 #include "wx/fontpicker.h"
+#include "wx/bmpcbox.h"
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 
