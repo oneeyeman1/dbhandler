@@ -21,6 +21,31 @@
 #ifndef FONTPROPERTYPAGEBASE_H
 #define FONTPROPERTYPAGEBASE_H
 
+struct ColorStruct
+{
+    ColorStruct()
+    {
+#ifdef __WXMSW__
+        ::ZeroMemory( this, sizeof( ColorStruct ) );
+#endif
+    }
+    ColorStruct(wxColour color, wxString name)
+    {
+        m_color = color;
+        m_name = name;
+    }
+    wxColour m_color;
+    wxString m_name;
+};
+
+class WXEXPORT CColorComboBox : public wxBitmapComboBox
+{
+public:
+    CColorComboBox( wxWindow *parent, wxWindowID = wxID_ANY, wxString selection = wxEmptyString, const wxPoint &pos =  wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_READONLY );
+private:
+    std::vector<ColorStruct> m_colors;
+};
+
 class WXEXPORT CFontPropertyPageBase : public PropertyPageBase
 {
 public:
@@ -36,6 +61,7 @@ public:
     bool GetUnderline() const;
     bool GetStrikethrough() const;
     wxFontStyle GetStyle() const;
+    void SetFont(wxFont font) { m_font = font; }
 protected:
     wxString m_faceName;
     int m_ptSize;

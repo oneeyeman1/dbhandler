@@ -23,26 +23,6 @@
 
 #define MAX_COLORS 16
 
-class WXEXPORT wxFontPreviewer : public wxWindow
-{
-public:
-    wxFontPreviewer(wxWindow *parent, wxFont &font, wxString text, const wxSize& sz = wxDefaultSize) : wxWindow(parent, wxID_ANY, wxDefaultPosition, sz, wxBORDER_NONE)
-    {
-        m_text = text;
-    }
-    wxFontPreviewer(wxWindow *parent, const wxString text, wxWindowID id = wxID_ANY ) : wxWindow(parent, id, wxDefaultPosition, wxDefaultSize)
-    {
-        m_text = text;
-    }
-//    void SetForegroundColor(wxString name) { m_font.SetTextDescription( name ); };
-//    void SetBackgroundColor(wxString name) { m_font.SetBackgroundDescription( name ); };
-    void SetFont(wxFont &font) { m_font = font; Refresh(); };
-    DECLARE_EVENT_TABLE()
-private:
-    wxString m_text;
-    void OnPaint(wxPaintEvent& event);
-};
-
 class CFontNamesComboBox : public wxBitmapComboBox
 {
 public:
@@ -90,30 +70,6 @@ protected:
 
 private:
 	wxArrayString m_facenames;
-};
-
-
-struct ColorStruct
-{
-    ColorStruct()
-    {
-        ::ZeroMemory( this, sizeof( ColorStruct ) );
-    }
-    ColorStruct(wxColour color, wxString name)
-    {
-        m_color = color;
-        m_name = name;
-    }
-    wxColour m_color;
-    wxString m_name;
-};
-
-class WXEXPORT CColorComboBox : public wxBitmapComboBox
-{
-public:
-    CColorComboBox( wxWindow *parent, wxWindowID = wxID_ANY, wxString selection = wxEmptyString, const wxPoint &pos =  wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_READONLY );
-private:
-    std::vector<ColorStruct> m_colors;
 };
 
 class WXEXPORT CFontPropertyPage: public CFontPropertyPageBase

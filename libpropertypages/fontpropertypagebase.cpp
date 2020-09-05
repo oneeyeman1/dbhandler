@@ -27,8 +27,8 @@
 #endif
 
 #include "wx/font.h"
-#ifdef __WXMSW__
 #include "wx/bmpcbox.h"
+#ifdef __WXMSW__
 #include "wx/fontenum.h"
 #endif
 #if defined __WXGTK__
@@ -39,6 +39,38 @@
 #endif
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
+
+CColorComboBox::CColorComboBox( wxWindow *parent, wxWindowID id, wxString selection, const wxPoint &pos, const wxSize &size, int n, const wxString choices[], long style ) :
+wxBitmapComboBox( parent, id, selection, pos, size, n, choices, style )
+{
+    wxFont font;
+    m_colors.push_back( ColorStruct( *wxBLACK, "Black" ) );
+    m_colors.push_back( ColorStruct( *wxWHITE, "White" ) );
+    m_colors.push_back( ColorStruct( *wxRED, "Red" ) );
+    m_colors.push_back( ColorStruct( 0xFF00FF, "Fuchsia" ) );
+    m_colors.push_back( ColorStruct( 0x32CC32, "Lime" ) );
+    m_colors.push_back( ColorStruct( *wxYELLOW, "Yellow" ) );
+    m_colors.push_back( ColorStruct( *wxBLUE, "Blue" ) );
+    m_colors.push_back( ColorStruct( 0x70DB93, "Aqua" ) );
+    m_colors.push_back( ColorStruct( 0x8E236B, "Maroon" ) );
+    m_colors.push_back( ColorStruct( 0x8000FF, "Purple" ) );
+    for( std::vector<ColorStruct>::iterator it = m_colors.begin(); it < m_colors.end(); ++it )
+    {
+        int w = 20, h = 10;
+        wxMemoryDC dc;
+        wxBitmap bmp( w, h );
+        dc.SelectObject( bmp );
+        wxColour magic( 255, 0, 255 );
+        wxBrush magicBrush( magic );
+        dc.SetBrush( magicBrush );
+        dc.SetPen( *wxBLACK_PEN );
+        dc.DrawRectangle( 0, 0, w, h );
+        dc.SetBrush( wxBrush( (*it).m_color ) );
+        dc.DrawRectangle( 0, 0, w, h );
+        dc.SelectObject( wxNullBitmap );
+        Append( (*it).m_name, bmp, &(*it).m_color );
+    }
+}
 
 CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, const wxFont &font, int id, const wxPoint& pos, const wxSize& size, long style)
  : PropertyPageBase(parent, id)
