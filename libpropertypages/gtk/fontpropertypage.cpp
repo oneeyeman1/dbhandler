@@ -45,8 +45,8 @@ static void font_name_change(GtkFontChooser *view, CFontPropertyPage *page)
     GList *selRows = NULL;
     gchar *pangoFont = gtk_font_chooser_get_font( view );
     wxFont font/*( pangoFont )*/;
-	font.SetNativeFontInfo( pangoFont );
-	page->SetFont( font );
+    font.SetNativeFontInfo( pangoFont );
+    page->SetFont( font );
 /*    GtkTreeSelection *sel = gtk_tree_view_get_selection( view );
     GtkTreeModel *model = gtk_tree_view_get_model( view );
     selRows = gtk_tree_selection_get_selected_rows( sel, &model );
@@ -100,38 +100,54 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, cons
 #endif
     g_object_ref_sink( m_fontPanel );
     m_holder = new wxNativeWindow( this, wxID_ANY, m_fontPanel );
-	ResetFont( true );
-	m_underline = new wxCheckBox( this, wxID_ANY, _( "Underline" ) );
-	m_strikethrough = new wxCheckBox( this, wxID_ANY, _( "Strikethrough" ) );
+    ResetFont( true );
+    m_underline = new wxCheckBox( this, wxID_ANY, _( "Underline" ) );
+    m_strikethrough = new wxCheckBox( this, wxID_ANY, _( "Strikethrough" ) );
     m_textColor = new CColorComboBox( this, wxID_ANY );
     m_backColor = new CColorComboBox( this, wxID_ANY );
-    itemStaticBox1 = new wxStaticBox( this, wxID_ANY, _T( "Effects" ) );
-	if( m_font.GetUnderlined() )
+    itemStaticBox1 = new wxStaticBox( this, wxID_ANY, _( "Effects" ) );
+    itemStaticBox2 = new wxStaticBox( this, wxID_ANY, _( "Preview" ) );
+    m_label1 = new wxStaticText( this, wxID_ANY, _( "Text Color" ) );
+    m_label2 = new wxStaticText( this, wxID_ANY, _( "Background Color" ) );
+    m_preview = new wxFontPreviewer( this, font, "AaBbYyZz" );
+    if( m_font.GetUnderlined() )
         m_underline->SetValue( true );
     if( m_font.GetStrikethrough() )
         m_strikethrough->SetValue( true );
-    auto *sizer_4 = new wxStaticBoxSizer( itemStaticBox1, wxVERTICAL );
-	auto *main = new wxBoxSizer( wxVERTICAL );
-	auto sizer1 = new wxBoxSizer( wxHORIZONTAL );
+    auto sizer_4 = new wxStaticBoxSizer( itemStaticBox1, wxVERTICAL );
+    auto sizer_5 = new wxStaticBoxSizer( itemStaticBox2, wxHORIZONTAL );
+    auto main = new wxBoxSizer( wxVERTICAL );
+    auto sizer1 = new wxBoxSizer( wxHORIZONTAL );
     auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
-	main->Add( 5, 5, 0, wxEXPAND, 0 );
-	main->Add( m_holder, 0, wxEXPAND, 0 );
-	main->Add( 5, 5, 0, wxEXPAND, 0 );
-	sizer_4->Add( m_underline, 0, wxEXPAND, 0 );
-	sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
-	sizer_4->Add( m_strikethrough, 0, wxEXPAND, 0 );
-    sizer1->Add( sizer_4, 0, wxEXPAND, 0 );
+    auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
+    auto sizer4 = new wxBoxSizer( wxHORIZONTAL );
+    main->Add( 5, 5, 0, wxEXPAND, 0 );
+    main->Add( m_holder, 0, wxEXPAND, 0 );
+    main->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_4->Add( m_underline, 0, wxEXPAND, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_4->Add( m_strikethrough, 0, wxEXPAND, 0 );
+    sizer3->Add( sizer_4, 0, wxEXPAND, 0 );
+    sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_5->Add( m_preview, 0, wxEXPAND, 0 );
+    sizer3->Add( sizer_5, 0, wxEXPAND, 0 );
+    main->Add( sizer3, 1, wxEXPAND, 0 );
+    main->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer4->Add( m_label1, 0, wxEXPAND, 0 );
+    sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer4->Add( m_label2, 0, wxEXPAND, 0 );
+    sizer1->Add( sizer4, 0, wxEXPAND, 0 );
     sizer2->Add( m_textColor, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( m_backColor, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer1->Add( sizer2, 0, wxEXPAND, 0 );
-	main->Add( sizer1 );
-	main->Add( 5, 5, 0, wxEXPAND, 0 );
-	SetSizer( main );
-	Layout();
-	m_underline->Bind( wxEVT_CHECKBOX, &CFontPropertyPage::OnUnderline, this );
-	m_strikethrough->Bind( wxEVT_CHECKBOX, &CFontPropertyPage::OnStrikethrough, this );
+    main->Add( sizer2, 0, wxEXPAND, 0 );
+    main->Add( sizer1 );
+    main->Add( 5, 5, 0, wxEXPAND, 0 );
+    SetSizer( main );
+    Layout();
+    m_underline->Bind( wxEVT_CHECKBOX, &CFontPropertyPage::OnUnderline, this );
+    m_strikethrough->Bind( wxEVT_CHECKBOX, &CFontPropertyPage::OnStrikethrough, this );
 }
 
 CFontPropertyPage::~CFontPropertyPage()
@@ -151,8 +167,8 @@ void CFontPropertyPage::OnUnderline(wxCommandEvent &event)
         m_isUnderlined = false;
         m_font.SetUnderlined( false );
     }
-	ResetFont();
-	m_isModified = true;
+    ResetFont();
+    m_isModified = true;
 }
 
 void CFontPropertyPage::OnStrikethrough(wxCommandEvent &event)
@@ -167,8 +183,8 @@ void CFontPropertyPage::OnStrikethrough(wxCommandEvent &event)
         m_isStriken = false;
         m_font.SetStrikethrough( false );
     }
-	ResetFont();
-	m_isModified = true;
+    ResetFont();
+    m_isModified = true;
 }
 
 void CFontPropertyPage::ResetFont(bool init)

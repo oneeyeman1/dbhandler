@@ -27,16 +27,18 @@ public:
     CFontPropertyPage(wxWindow* parent, wxFont font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
     ~CFontPropertyPage();
 protected:
-	void OnUnderline(wxCommandEvent &event);
-	void OnStrikethrough(wxCommandEvent &event);
-	void ResetFont(bool init = false);
+    void OnUnderline(wxCommandEvent &event);
+    void OnStrikethrough(wxCommandEvent &event);
+    void ResetFont(bool init = false);
 private:
     wxNativeWindow *m_holder;
     GtkWidget *m_fontPanel;
     wxCheckBox *m_underline, *m_strikethrough;
     bool m_isUnderlined, m_isStriken;
-    wxStaticBox *itemStaticBox1;
+    wxStaticBox *itemStaticBox1, *itemStaticBox2;
+    wxFontPreviewer *m_preview;
     CColorComboBox *m_textColor, *m_backColor;
+    wxStaticText *m_label1, *m_label2;
 };
 
 #endif // FONTPROPERTYPAGE_H

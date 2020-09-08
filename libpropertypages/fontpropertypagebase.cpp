@@ -40,6 +40,10 @@
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 
+BEGIN_EVENT_TABLE(wxFontPreviewer, wxWindow)
+    EVT_PAINT(wxFontPreviewer::OnPaint)
+END_EVENT_TABLE()
+
 void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
     int cx, x, y;

@@ -39,10 +39,6 @@
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 
-BEGIN_EVENT_TABLE(wxFontPreviewer, wxWindow)
-    EVT_PAINT(wxFontPreviewer::OnPaint)
-END_EVENT_TABLE()
-
 CFontNamesComboBox::CFontNamesComboBox(wxWindow *parent, wxWindowID id, const wxString &value, const wxPoint &pos, const wxSize &size, int n, const wxString choices[], long style )
 	: wxBitmapComboBox( parent, id, value, pos, size, n, choices, style )
 {

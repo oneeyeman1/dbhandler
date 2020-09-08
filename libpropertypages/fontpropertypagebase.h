@@ -26,7 +26,7 @@ class WXEXPORT wxFontPreviewer : public wxWindow
 public:
     wxFontPreviewer(wxWindow *parent, wxFont &font, wxString text, const wxSize &sz = wxDefaultSize) : wxWindow(parent, wxID_ANY, wxDefaultPosition, sz, wxBORDER_NONE)
     {
-    m_text = text;
+        m_text = text;
     }
     wxFontPreviewer(wxWindow *parent, const wxString text, wxWindowID id = wxID_ANY ) : wxWindow(parent, id, wxDefaultPosition, wxDefaultSize)
     {
