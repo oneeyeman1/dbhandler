@@ -110,16 +110,22 @@ wxBitmapComboBox( parent, id, selection, pos, size, n, choices, style )
     }
 }
 
-CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, const wxFont &font, int id, const wxPoint& pos, const wxSize& size, long style)
+void CColorComboBox::SetColourValue(wxColour colour)
+{
+    std::vector<ColorStruct>::iterator it = std::find_if( m_colors.begin(), m_colors.end(), [&colour](const ColorStruct &x) { return x.m_color == colour; } );
+    SetValue( (*it).m_name );
+}
+
+CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, const FontPropertyPage &font, int id, const wxPoint& pos, const wxSize& size, long style)
  : PropertyPageBase(parent, id)
 {
     m_dirty = false;
-    m_faceName = font.GetFaceName();
-    m_weight = font.GetWeight();
-    m_underline = font.GetUnderlined();
-    m_striken = font.GetStrikethrough();
-    m_style = font.GetStyle();
-    m_ptSize = font.GetPointSize();
+    m_faceName = font.font.GetFaceName();
+    m_weight = font.font.GetWeight();
+    m_underline = font.font.GetUnderlined();
+    m_striken = font.font.GetStrikethrough();
+    m_style = font.font.GetStyle();
+    m_ptSize = font.font.GetPointSize();
 }
 
 CFontPropertyPageBase::~CFontPropertyPageBase()
@@ -130,7 +136,7 @@ void CFontPropertyPageBase::SetFont(const std::wstring &name, int size, bool ita
 {
 }
 
-wxFont &CFontPropertyPageBase::GetFont()
+FontPropertyPage &CFontPropertyPageBase::GetFont()
 {
     return m_font;
 }

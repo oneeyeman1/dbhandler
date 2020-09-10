@@ -266,7 +266,7 @@ void CSizeComboBox::DoSetSize( int x, int y, int width, int height, int sizeFlag
         m_pendingSize = wxSize( width, heightOrig );
 }
 
-CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont &font, bool colorEnabled, int id, const wxPoint& pos, const wxSize& size, long style)
+CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage &font, bool colorEnabled, int id, const wxPoint& pos, const wxSize& size, long style)
  : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
 {
     m_bUnderline = false;
@@ -275,22 +275,22 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont &font, bool colorE
     text = "AaBbYyZz";
     style = style;
     m_font = font;
-    if( m_font.IsOk() )
+    if( m_font.font.IsOk() )
     {
-        m_fontSize = wxString::Format( "%d", m_font.GetPointSize() );
-        if( m_font.GetStyle() == wxFONTSTYLE_ITALIC && m_font.GetWeight() == wxFONTWEIGHT_BOLD )
+        m_fontSize = wxString::Format( "%d", m_font.font.GetPointSize() );
+        if( m_font.font.GetStyle() == wxFONTSTYLE_ITALIC && m_font.font.GetWeight() == wxFONTWEIGHT_BOLD )
             m_nCurrentStyle = NTM_ITALIC | NTM_BOLD;
-        else if( m_font.GetStyle() == wxFONTSTYLE_ITALIC )
+        else if( m_font.font.GetStyle() == wxFONTSTYLE_ITALIC )
             m_nCurrentStyle = NTM_ITALIC;
-        else if( m_font.GetWeight() == wxFONTWEIGHT_BOLD )
+        else if( m_font.font.GetWeight() == wxFONTWEIGHT_BOLD )
             m_nCurrentStyle = NTM_BOLD;
         else
             m_nCurrentStyle = NTM_REGULAR;
-        if( m_font.GetUnderlined() )
+        if( m_font.font.GetUnderlined() )
             m_bUnderline = true;
         else
             m_bUnderline = false;
-        if( m_font.GetStrikethrough() )
+        if( m_font.font.GetStrikethrough() )
             m_bStrikethrough = true;
 		else
             m_bStrikethrough = false;
@@ -302,8 +302,8 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont &font, bool colorE
         m_bStrikethrough = false;
     }
     m_nActualStyle = m_nCurrentStyle;
-    m_textStr = "Black";
-    m_backgroundStr = "White";
+    m_textStr = m_font.text;
+    m_backgroundStr = m_font.back;
     itemStaticText6 = new wxStaticText( this, wxID_STATIC, _T( "&Font:" ), wxDefaultPosition, wxDefaultSize, 0 );
     itemChoice7 = new CFontNamesComboBox( this, wxID_ANY );
     itemStaticText9 = new wxStaticText( this, wxID_ANY, _T("Font St&yles:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -408,28 +408,28 @@ void CFontPropertyPage::set_properties()
     itemChoice10->AppendString( "Italic" );
     itemChoice10->AppendString( "Bold" );
     itemChoice10->AppendString( "Bold Italic" );
-    if( m_font.IsOk() )
+    if( m_font.font.IsOk() )
     {
-        int sel = itemChoice7->FindString( m_font.GetFaceName() );
+        int sel = itemChoice7->FindString( m_font.font.GetFaceName() );
         if( sel != wxNOT_FOUND )
         {
             itemChoice7->SetSelection( sel );
             FillSizeList();
         }
     }
-    itemChoice16->SetValue( m_textStr );
-    itemChoice17->SetValue( m_backgroundStr );
+    itemChoice16->SetColourValue( m_textStr );
+    itemChoice17->SetColourValue( m_backgroundStr );
     if( m_bUnderline )
         itemCheckBox1->Enable( true );
     if( m_bStrikethrough )
         itemCheckBox2->Enable( true );
-    if( m_font.IsOk() )
+    if( m_font.font.IsOk() )
     {
-        if( m_font.GetStyle() == wxFONTSTYLE_ITALIC && m_font.GetWeight() == wxFONTWEIGHT_BOLD )
+        if( m_font.font.GetStyle() == wxFONTSTYLE_ITALIC && m_font.font.GetWeight() == wxFONTWEIGHT_BOLD )
             itemChoice10->SetSelection( itemChoice10->FindString( "Bold Italic" ) );
-        else if( m_font.GetStyle() == wxFONTSTYLE_ITALIC )
+        else if( m_font.font.GetStyle() == wxFONTSTYLE_ITALIC )
             itemChoice10->SetSelection( itemChoice10->FindString( "Italic" ) );
-        else if( m_font.GetWeight() == wxFONTWEIGHT_BOLD )
+        else if( m_font.font.GetWeight() == wxFONTWEIGHT_BOLD )
             itemChoice10->SetSelection( itemChoice10->FindString( "Bold" ) );
         else
             itemChoice10->SetSelection( itemChoice10->FindString( "Regular" ) );
@@ -456,35 +456,35 @@ void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
         if( style == "Bold" || style == "Bold Italic" )
         {
             m_weight = wxFONTWEIGHT_BOLD;
-            m_font.MakeBold();
+            m_font.font.MakeBold();
         }
         if( style == "Italic" || style == "Bold Italic" )
         {
             m_style = wxFONTSTYLE_ITALIC;
-            m_font.MakeItalic();
+            m_font.font.MakeItalic();
         }
         if( style == "Regular" )
         {
             m_weight = wxFONTWEIGHT_NORMAL;
             m_style = wxFONTSTYLE_NORMAL;
-            m_font.SetStyle( wxFONTSTYLE_NORMAL );
-            m_font.SetWeight( wxFONTWEIGHT_NORMAL );
+            m_font.font.SetStyle( wxFONTSTYLE_NORMAL );
+            m_font.font.SetWeight( wxFONTWEIGHT_NORMAL );
         }
     }
     if( event.GetEventObject() == itemChoice19 )
     {
         m_ptSize = wxAtoi( itemChoice19->GetValue() );
-        m_font.SetPointSize( wxAtoi( itemChoice19->GetValue() ) );
+        m_font.font.SetPointSize( wxAtoi( itemChoice19->GetValue() ) );
     }
     if( event.GetEventObject() == itemCheckBox1 )
     {
         m_striken = itemCheckBox1->GetValue();
-        m_font.SetUnderlined( itemCheckBox1->GetValue() );
+        m_font.font.SetUnderlined( itemCheckBox1->GetValue() );
     }
     if( event.GetEventObject() == itemCheckBox2 )
     {
         m_underline = itemCheckBox2->GetValue();
-        m_font.SetStrikethrough( itemCheckBox2->GetValue() );
+        m_font.font.SetStrikethrough( itemCheckBox2->GetValue() );
     }
     itemWindow24->SetFont( m_font );
     itemWindow24->Refresh();
@@ -672,7 +672,7 @@ void CFontPropertyPage::SetFont(const std::wstring &name, int size, bool italic,
     }*/
 }
 
-wxFont &CFontPropertyPage::GetFont()
+FontPropertyPage &CFontPropertyPage::GetFont()
 {
     return m_font;
 }

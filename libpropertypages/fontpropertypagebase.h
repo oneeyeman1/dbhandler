@@ -21,10 +21,27 @@
 #ifndef FONTPROPERTYPAGEBASE_H
 #define FONTPROPERTYPAGEBASE_H
 
+struct FontPropertyPage
+{
+    wxFont font;
+    wxColour text, back;
+
+    FontPropertyPage &operator=(const FontPropertyPage &right)
+    {
+        if( this != &right )
+        {
+            font = right.font;
+            text = right.text;
+            back = right.back;
+        }
+        return *this;
+    }
+};
+
 class WXEXPORT wxFontPreviewer : public wxWindow
 {
 public:
-    wxFontPreviewer(wxWindow *parent, wxFont &font, wxString text, const wxSize &sz = wxDefaultSize) : wxWindow(parent, wxID_ANY, wxDefaultPosition, sz, wxBORDER_NONE)
+    wxFontPreviewer(wxWindow *parent, FontPropertyPage &font, wxString text, const wxSize &sz = wxDefaultSize) : wxWindow(parent, wxID_ANY, wxDefaultPosition, sz, wxBORDER_NONE)
     {
         m_text = text;
     }
@@ -34,7 +51,7 @@ public:
     }
 //    void SetForegroundColor(wxString name) { m_font.SetTextDescription( name ); };
 //    void SetBackgroundColor(wxString name) { m_font.SetBackgroundDescription( name ); };
-    void SetFont(wxFont &font) { m_font = font; Refresh(); };
+    void SetFont(FontPropertyPage &font) { m_font = font.font; Refresh(); };
     DECLARE_EVENT_TABLE()
 private:
     wxString m_text;
@@ -62,6 +79,7 @@ class WXEXPORT CColorComboBox : public wxBitmapComboBox
 {
 public:
     CColorComboBox( wxWindow *parent, wxWindowID = wxID_ANY, wxString selection = wxEmptyString, const wxPoint &pos =  wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_READONLY );
+    void SetColourValue(wxColour colour);
 private:
     std::vector<ColorStruct> m_colors;
 };
@@ -69,11 +87,11 @@ private:
 class WXEXPORT CFontPropertyPageBase : public PropertyPageBase
 {
 public:
-    CFontPropertyPageBase(wxWindow* parent, const wxFont &font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
+    CFontPropertyPageBase(wxWindow* parent, const FontPropertyPage &font, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
     ~CFontPropertyPageBase();
     bool IsDirty();
     virtual void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough);
-    virtual wxFont &GetFont();
+    virtual FontPropertyPage &GetFont();
     wxString &GetFaceName() const;
     void SetFaceName(const wxString &name);
     wxFontWeight &GetWeight() const;
@@ -81,13 +99,13 @@ public:
     bool GetUnderline() const;
     bool GetStrikethrough() const;
     wxFontStyle GetStyle() const;
-    void SetFont(wxFont font) { m_font = font; }
+    void SetFont(FontPropertyPage font) { m_font = font; }
 protected:
     wxString m_faceName;
     int m_ptSize;
     wxFontWeight m_weight;
     wxFontStyle m_style;
-    wxFont m_font;
+    FontPropertyPage m_font;
     bool m_dirty, m_underline, m_striken;
 };
 

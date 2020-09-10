@@ -75,10 +75,10 @@ private:
 class WXEXPORT CFontPropertyPage: public CFontPropertyPageBase
 {
 public:
-    CFontPropertyPage(wxWindow* parent, wxFont &font, bool colorEnabled, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
+    CFontPropertyPage(wxWindow* parent, FontPropertyPage &font, bool colorEnabled, int id=wxID_ANY, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
     ~CFontPropertyPage();
     void SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough);
-    virtual wxFont &GetFont();
+    virtual FontPropertyPage &GetFont() wxOVERRIDE;
     void GetData(void *data);
     void FillFacenameList();
     void FillSizeList();
@@ -119,7 +119,8 @@ private:
     unsigned long m_nActualStyle;
 //#endif
     bool m_bUnderline, m_bStrikethrough;
-    wxString m_fontSize, m_textStr, m_backgroundStr, m_fontName;
+    wxString m_fontSize, m_fontName;
+    wxColour m_textStr, m_backgroundStr;
     wxColour m_text, m_background;
 };
 
