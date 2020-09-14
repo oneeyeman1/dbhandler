@@ -635,7 +635,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             m_canvas->AddQuickQueryFields( m_selectTableName[0]->GetTableName(), m_queryFields, quickSelect );
         if( quickSelect && m_selectTableName.size() > 0 )
         {
-            PopuateQueryCanvas();
+            PopuateQueryCanvas( false );
         }
     }
 }
@@ -1583,26 +1583,39 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
         }
         else
         {
-            m_styleBar->Show( true );
-            if( framePosition.y == 0 )
+            bool emptyQuery = false;
+            if( !m_queryFields.empty() )
             {
-                parent->SetSize( parentPos.x, parentPos.y + heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() - heightStyleBar );
-                m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() - heightStyleBar - 2 );
+                int res = wxMessageBox( _( "Columns are required.\n\rDo you want to select them?" ), _( "Query - Untitled" ), wxYES_NO );
+                if( res == wxNO )
+                    emptyQuery = true;
+                m_styleBar->Show( true );
+                if( framePosition.y == 0 )
+                {
+                    parent->SetSize( parentPos.x, parentPos.y + heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() - heightStyleBar );
+                    m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() - heightStyleBar - 2 );
+                }
+                m_designCanvas->Show( true );
+                m_fields->Show( false );
+                m_canvas->Show( false );
+                m_queryBook->Show( false );
+                m_frame->Layout();
+                PopuateQueryCanvas( emptyQuery );
+                sizer->Layout();
             }
-            m_designCanvas->Show( true );
-            m_fields->Show( false );
-            m_canvas->Show( false );
-            m_queryBook->Show( false );
-            m_frame->Layout();
-            PopuateQueryCanvas();
-            sizer->Layout();
+            else
+            {
+            }
         }
     }
-    wxMenuItem *dataSourceMenu = m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE );
-    if( dataSourceMenu )
+    if( !m_queryFields.empty() )
     {
-        dataSourceMenu->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
-        m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
+        wxMenuItem *dataSourceMenu = m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE );
+        if( dataSourceMenu )
+        {
+            dataSourceMenu->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
+            m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
+        }
     }
 }
 
@@ -1956,7 +1969,7 @@ void DrawingView::OnShowDataTypes(wxCommandEvent &event)
     m_canvas->GetEventHandler()->ProcessEvent( event );
 }
 
-void DrawingView::PopuateQueryCanvas()
+void DrawingView::PopuateQueryCanvas(bool emptyQuery)
 {
     m_designCanvas->PopulateQueryCanvas( m_queryFields, m_groupByFields );
 }
