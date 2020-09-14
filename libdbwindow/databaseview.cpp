@@ -1555,6 +1555,7 @@ void DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &event)
 
 void DrawingView::OnDataSource(wxCommandEvent &event)
 {
+    bool emptyQuery = true;
     int heightStyleBar = m_styleBar->GetSize().y;
     wxPoint framePosition = m_frame->GetPosition();
     wxSize frameSize = m_frame->GetSize();
@@ -1583,26 +1584,47 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
         }
         else
         {
-            m_styleBar->Show( true );
-            if( framePosition.y == 0 )
+            if( m_queryFields.empty() )
             {
-                parent->SetSize( parentPos.x, parentPos.y + heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() - heightStyleBar );
-                m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() - heightStyleBar - 2 );
+                int res = wxMessageBox( _( "Columns are required.\n\rDo you want to select them?" ), _( "Query - Untitled" ), wxYES_NO );
+                if( res == wxYES )
+                    emptyQuery = false;
             }
-            m_designCanvas->Show( true );
-            m_fields->Show( false );
-            m_canvas->Show( false );
-            m_queryBook->Show( false );
-            m_frame->Layout();
-            PopuateQueryCanvas();
-            sizer->Layout();
+            if( emptyQuery )
+            {
+                m_styleBar->Show( true );
+                if( framePosition.y == 0 )
+                {
+                    parent->SetSize( parentPos.x, parentPos.y + heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() - heightStyleBar );
+                    m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() - heightStyleBar - 2 );
+                }
+                m_designCanvas->Show( true );
+                m_fields->Show( false );
+                m_canvas->Show( false );
+                m_queryBook->Show( false );
+                m_frame->Layout();
+                PopuateQueryCanvas();
+                sizer->Layout();
+            }
         }
     }
-    wxMenuItem *dataSourceMenu = m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE );
-    if( dataSourceMenu )
+    if( !m_queryFields.empty() )
     {
-        dataSourceMenu->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
-        m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
+        wxMenuItem *dataSourceMenu = m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE );
+        if( dataSourceMenu )
+        {
+            dataSourceMenu->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
+            m_tb->ToggleTool( wxID_DATASOURCE, event.IsChecked() );
+        }
+    }
+    if( !emptyQuery )
+    {
+        wxMenuItem *dataSourceMenu = m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE );
+        if( dataSourceMenu )
+        {
+            dataSourceMenu->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
+            m_tb->ToggleTool( wxID_DATASOURCE, true );
+        }
     }
 }
 

@@ -132,11 +132,20 @@ void DesignCanvas::AddDataDivider()
     int ypos = 1;
     ShapeList list;
     m_pManager.GetShapes( CLASSINFO( DesignField ), list );
-    for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
+    if( list.size() > 0 )
     {
-        int temp = (*it)->GetBoundingBox().GetHeight() + (*it)->GetBoundingBox().GetTop();
-        if( temp + 2 > ypos )
-            ypos = temp;
+        for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
+        {
+            int temp = (*it)->GetBoundingBox().GetHeight() + (*it)->GetBoundingBox().GetTop();
+            if( temp + 2 > ypos )
+                ypos = temp;
+        }
+    }
+    else
+    {
+        m_pManager.GetShapes( CLASSINFO( Divider ), list );
+        for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
+            ypos += (*it)->GetBoundingBox().GetHeight() + 2;
     }
     auto dividerShape = new Divider( _( "Data " ), "", -1, &m_pManager );
     m_pManager.AddShape( dividerShape, NULL, wxPoint( 1, ypos ), sfINITIALIZE, sfDONT_SAVE_STATE );
@@ -313,6 +322,8 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<Field *> &queryFields, 
     wxClientDC dc( this );
     std::vector<DatabaseTable *> tables = ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->GetTableVector().m_tables.begin()->second;
     bool found = false;
+    if( queryFields.size() > 0 )
+    {
 /*    for( std::vector<wxString>::const_iterator it = groupByFields.begin(); it < groupByFields.end(); ++it )
     {
         wxFont font;
@@ -335,70 +346,71 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<Field *> &queryFields, 
         }
  //       AddFieldToCanvas( font, (*it) );
     }*/
-    found = false;
-    for( std::vector<Field *>::const_iterator it = queryFields.begin(); it < queryFields.end(); ++it )
-    {
-        std::wstring tableName = (*it)->GetFullName().substr( 0, (*it)->GetFullName().find( '.' ) );
-        for( std::vector<DatabaseTable *>::iterator it1 = tables.begin(); it1 < tables.end() && !found; ++it1 )
+        found = false;
+        for( std::vector<Field *>::const_iterator it = queryFields.begin(); it < queryFields.end(); ++it )
         {
-            if( (*it1)->GetTableName() == tableName )
+            std::wstring tableName = (*it)->GetFullName().substr( 0, (*it)->GetFullName().find( '.' ) );
+            for( std::vector<DatabaseTable *>::iterator it1 = tables.begin(); it1 < tables.end() && !found; ++it1 )
             {
-                std::wstring headerStr;
-                found = true;
-                ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->GetFieldHeader( tableName, (*it)->GetFieldName(), headerStr );
-                wxString headerString( headerStr );
-                wxString dataString( (*it)->GetFieldName() );
-                headerString.Replace( "_", " " );
-                dataString.Replace( "_", " " );
-                size_t headerStringSize = headerString.Length();
-                size_t dataStringSize = dataString.Length();
-                if( headerStringSize > dataStringSize )
+                if( (*it1)->GetTableName() == tableName )
                 {
-                    size_t diff = headerStringSize - dataStringSize;
-                    for( size_t i = 0; i < diff; ++i )
+                    std::wstring headerStr;
+                    found = true;
+                    ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->GetFieldHeader( tableName, (*it)->GetFieldName(), headerStr );
+                    wxString headerString( headerStr );
+                    wxString dataString( (*it)->GetFieldName() );
+                    headerString.Replace( "_", " " );
+                    dataString.Replace( "_", " " );
+                    size_t headerStringSize = headerString.Length();
+                    size_t dataStringSize = dataString.Length();
+                    if( headerStringSize > dataStringSize )
                     {
-                        if( i % 2 == 0 )
-                            dataString = " " + dataString;
-                        else
-                            dataString = dataString + " ";
+                        size_t diff = headerStringSize - dataStringSize;
+                        for( size_t i = 0; i < diff; ++i )
+                        {
+                            if( i % 2 == 0 )
+                                dataString = " " + dataString;
+                            else
+                                dataString = dataString + " ";
+                        }
                     }
-                }
-                else if( dataStringSize > headerStringSize )
-                {
-                    size_t diff = dataStringSize - headerStringSize;
-                    for( size_t i = 0; i < diff; ++i )
+                    else if( dataStringSize > headerStringSize )
                     {
-                        if( i % 2 == 0 )
-                            headerString = " " + headerString;
-                        else
-                            headerString = headerString + " ";
+                        size_t diff = dataStringSize - headerStringSize;
+                        for( size_t i = 0; i < diff; ++i )
+                        {
+                            if( i % 2 == 0 )
+                                headerString = " " + headerString;
+                            else
+                                headerString = headerString + " ";
+                        }
                     }
+                    wxFontStyle labelStyle = (*it1)->GetTableProperties().m_labelFontItalic == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
+                    wxFontWeight labelWeight = ( ( (*it1)->GetTableProperties().m_labelFontWeight == 0 ) ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD );
+                    wxFontStyle dataStyle = (*it1)->GetTableProperties().m_dataFontItalic  == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
+                    wxFontWeight dataWeight = (*it1)->GetTableProperties().m_dataFontWeight == 0 ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD;
+                    wxFont labelFont( (*it1)->GetTableProperties().m_labelFontSize, wxFONTFAMILY_DEFAULT, labelStyle, labelWeight, (*it1)->GetTableProperties().m_labelFontUnderline, (*it1)->GetTableProperties().m_labelFontName );
+                    wxFont dataFont( (*it1)->GetTableProperties().m_dataFontSize, wxFONTFAMILY_DEFAULT, dataStyle, dataWeight, (*it1)->GetTableProperties().m_dataFontUnderline, (*it1)->GetTableProperties().m_dataFontName );
+                    dc.SetFont( labelFont );
+                    wxSize size1 = dc.GetTextExtent( headerStr );
+                    dc.SetFont( dataFont );
+                    wxSize size2 = dc.GetTextExtent( dataString );
+                    if( size1.GetWidth() > size2.GetWidth() && size1.GetHeight() > size2.GetHeight() )
+                        fontUsed = labelFont;
+                    else if( size1.GetWidth() < size2.GetWidth() && size2.GetHeight() < size2.GetHeight() )
+                        fontUsed = dataFont;
+                    else
+                        fontUsed = labelFont;
                 }
-                wxFontStyle labelStyle = (*it1)->GetTableProperties().m_labelFontItalic == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
-                wxFontWeight labelWeight = ( ( (*it1)->GetTableProperties().m_labelFontWeight == 0 ) ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD );
-                wxFontStyle dataStyle = (*it1)->GetTableProperties().m_dataFontItalic  == 0 ? wxFONTSTYLE_NORMAL : wxFONTSTYLE_ITALIC;
-                wxFontWeight dataWeight = (*it1)->GetTableProperties().m_dataFontWeight == 0 ? wxFONTWEIGHT_NORMAL : wxFONTWEIGHT_BOLD;
-                wxFont labelFont( (*it1)->GetTableProperties().m_labelFontSize, wxFONTFAMILY_DEFAULT, labelStyle, labelWeight, (*it1)->GetTableProperties().m_labelFontUnderline, (*it1)->GetTableProperties().m_labelFontName );
-                wxFont dataFont( (*it1)->GetTableProperties().m_dataFontSize, wxFONTFAMILY_DEFAULT, dataStyle, dataWeight, (*it1)->GetTableProperties().m_dataFontUnderline, (*it1)->GetTableProperties().m_dataFontName );
-                dc.SetFont( labelFont );
-                wxSize size1 = dc.GetTextExtent( headerStr );
-                dc.SetFont( dataFont );
-                wxSize size2 = dc.GetTextExtent( dataString );
-                if( size1.GetWidth() > size2.GetWidth() && size1.GetHeight() > size2.GetHeight() )
-                    fontUsed = labelFont;
-                else if( size1.GetWidth() < size2.GetWidth() && size2.GetHeight() < size2.GetHeight() )
-                    fontUsed = dataFont;
-                else
-                    fontUsed = labelFont;
             }
+            AddFieldLabelToCanvas( fontUsed, (*it) );
         }
-        AddFieldLabelToCanvas( fontUsed, (*it) );
+        AddHeaderDivider();
+        for( std::vector<Field *>::const_iterator it = queryFields.begin(); it < queryFields.end(); ++it )
+            AddFieldToCanvas( fontUsed, (*it) );
+        AddDataDivider();
+        Update();
+        Refresh();
     }
-    AddHeaderDivider();
-    for( std::vector<Field *>::const_iterator it = queryFields.begin(); it < queryFields.end(); ++it )
-        AddFieldToCanvas( fontUsed, (*it) );
-    AddDataDivider();
-    Update();
-    Refresh();
     wxEndBusyCursor();
 }

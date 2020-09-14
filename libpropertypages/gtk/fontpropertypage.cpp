@@ -46,7 +46,7 @@ static void font_name_change(GtkFontChooser *view, CFontPropertyPage *page)
     gchar *pangoFont = gtk_font_chooser_get_font( view );
     wxFont font/*( pangoFont )*/;
     font.SetNativeFontInfo( pangoFont );
-    page->SetFont( font );
+//    page->SetFont( font.font );
 /*    GtkTreeSelection *sel = gtk_tree_view_get_selection( view );
     GtkTreeModel *model = gtk_tree_view_get_model( view );
     selRows = gtk_tree_selection_get_selected_rows( sel, &model );
@@ -86,12 +86,12 @@ static void find_widgets(GtkWidget *view, CFontPropertyPage *page)
 }
 #endif
 
-CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, const wxPoint& pos, const wxSize& size, long style)
- : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
+CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bool colorEnabled)
+ : CFontPropertyPageBase(parent, font, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 {
     m_font = font;
-    m_isUnderlined = m_font.GetUnderlined();
-    m_isStriken = m_font.GetStrikethrough();
+    m_isUnderlined = m_font.font.GetUnderlined();
+    m_isStriken = m_font.font.GetStrikethrough();
 #if GTK_CHECK_VERSION(3, 2, 0 )
     m_fontPanel = gtk_font_chooser_widget_new();
     gtk_font_chooser_set_show_preview_entry( (GtkFontChooser *) m_fontPanel, false );
@@ -105,22 +105,23 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, cons
     m_strikethrough = new wxCheckBox( this, wxID_ANY, _( "Strikethrough" ) );
     m_textColor = new CColorComboBox( this, wxID_ANY );
     m_backColor = new CColorComboBox( this, wxID_ANY );
+    m_textColor->SetColourValue( font.text );
+    m_backColor->SetColourValue( font.back );
     itemStaticBox1 = new wxStaticBox( this, wxID_ANY, _( "Effects" ) );
     itemStaticBox2 = new wxStaticBox( this, wxID_ANY, _( "Preview" ) );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Text Color" ) );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Background Color" ) );
     m_preview = new wxFontPreviewer( this, font, "AaBbYyZz" );
-    if( m_font.GetUnderlined() )
+    if( m_font.font.GetUnderlined() )
         m_underline->SetValue( true );
-    if( m_font.GetStrikethrough() )
+    if( m_font.font.GetStrikethrough() )
         m_strikethrough->SetValue( true );
     auto sizer_4 = new wxStaticBoxSizer( itemStaticBox1, wxVERTICAL );
     auto sizer_5 = new wxStaticBoxSizer( itemStaticBox2, wxHORIZONTAL );
     auto main = new wxBoxSizer( wxVERTICAL );
     auto sizer1 = new wxBoxSizer( wxHORIZONTAL );
-    auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
+    auto sizer2 = new wxFlexGridSizer( 2, 2, 5, 5 );
     auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
-    auto sizer4 = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     main->Add( m_holder, 0, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -130,22 +131,29 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, wxFont font, int id, cons
     sizer3->Add( sizer_4, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_5->Add( m_preview, 0, wxEXPAND, 0 );
-    sizer3->Add( sizer_5, 0, wxEXPAND, 0 );
+    sizer3->Add( sizer_5, 1, wxEXPAND, 0 );
     main->Add( sizer3, 1, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer4->Add( m_label1, 0, wxEXPAND, 0 );
-    sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer4->Add( m_label2, 0, wxEXPAND, 0 );
-    sizer1->Add( sizer4, 0, wxEXPAND, 0 );
+    sizer2->Add( m_label1, 0, wxEXPAND, 0 );
+    sizer2->Add( m_label2, 0, wxEXPAND, 0 );
     sizer2->Add( m_textColor, 0, wxEXPAND, 0 );
-    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( m_backColor, 0, wxEXPAND, 0 );
-    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-    main->Add( sizer2, 0, wxEXPAND, 0 );
-    main->Add( sizer1 );
+    sizer2->AddGrowableCol( 0, 1 );
+    sizer2->AddGrowableCol( 1, 1 );
+    main->Add( sizer2, 1, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( main );
     Layout();
+    if( colorEnabled )
+    {
+        m_textColor->Enable( true );
+        m_backColor->Enable( true );
+    }
+    else
+    {
+        m_textColor->Enable( false );
+        m_backColor->Enable( false );
+    }
     m_underline->Bind( wxEVT_CHECKBOX, &CFontPropertyPage::OnUnderline, this );
     m_strikethrough->Bind( wxEVT_CHECKBOX, &CFontPropertyPage::OnStrikethrough, this );
 }
@@ -160,12 +168,12 @@ void CFontPropertyPage::OnUnderline(wxCommandEvent &event)
     if( event.IsChecked() )
     {
         m_isUnderlined = true;
-        m_font.SetUnderlined( true );
+        m_font.font.SetUnderlined( true );
     }
     else
     {
         m_isUnderlined = false;
-        m_font.SetUnderlined( false );
+        m_font.font.SetUnderlined( false );
     }
     ResetFont();
     m_isModified = true;
@@ -176,12 +184,12 @@ void CFontPropertyPage::OnStrikethrough(wxCommandEvent &event)
     if( event.IsChecked() )
     {
         m_isStriken = true;
-        m_font.SetStrikethrough( true );
+        m_font.font.SetStrikethrough( true );
     }
     else
     {
         m_isStriken = false;
-        m_font.SetStrikethrough( false );
+        m_font.font.SetStrikethrough( false );
     }
     ResetFont();
     m_isModified = true;
@@ -190,7 +198,7 @@ void CFontPropertyPage::OnStrikethrough(wxCommandEvent &event)
 void CFontPropertyPage::ResetFont(bool init)
 {
 #if GTK_CHECK_VERSION(3, 2, 0 )
-    gtk_font_chooser_set_font_desc( (GtkFontChooser *) m_fontPanel, m_font.GetNativeFontInfo()->description );
+    gtk_font_chooser_set_font_desc( (GtkFontChooser *) m_fontPanel, m_font.font.GetNativeFontInfo()->description );
     gtk_font_chooser_set_preview_text( (GtkFontChooser *) m_fontPanel, "AaBbYyZz" );
     if( init )
         g_signal_connect( m_fontPanel, "notify::font", G_CALLBACK( font_name_change ), this );
