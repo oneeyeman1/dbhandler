@@ -1567,6 +1567,7 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
     {
         if( event.IsChecked() )
         {
+            menuBar->Remove( 1 );
             if( framePosition.y == 0 )
             {
                 parent->SetSize( parentPos.x, parentPos.y - heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() + heightStyleBar );
@@ -1579,6 +1580,33 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
             m_queryBook->Show( true );
             m_frame->Layout();
             sizer->Layout();
+            if( queryType == SQLSelectMenu )
+            {
+                auto *designMenu = new wxMenu;
+                designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
+                designMenu->Append( wxID_PREVIEDWQUERY, _( "Preview" ), _( "Preview" ) );
+                designMenu->AppendSeparator();
+                designMenu->Append( wxID_SELECTTABLE, _( "Select Table..." ) );
+                designMenu->AppendSeparator();
+                designMenu->Append( wxID_RETRIEVEARGS, _( "Retieval Arguments..." ), _( "Define Retrieval Arguments" ) );
+                designMenu->Append( wxID_DISTINCT, _( "Distinct" ), _( "Return distinct rows only" ), wxITEM_CHECK );
+                designMenu->AppendSeparator();
+                designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert To Syntax" ), _( "Convert To Syntax" ) );
+                auto show = new wxMenu;
+                show->Append( wxID_SHOWDATATYPES, _( "Datatypes" ), _( "Show Datatypes" ), wxITEM_CHECK );
+                show->Append( wxID_SHOWLABELS, _( "Labels" ), _( "Show Labels" ), wxITEM_CHECK );
+                show->Append( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Show Comments" ), wxITEM_CHECK );
+                show->Append( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ), wxITEM_CHECK );
+                show->Append( wxID_SHOWJOINS, _( "Joins" ), _( "Show Joins" ), wxITEM_CHECK );
+                designMenu->AppendSubMenu( show, _( "Show" ) );
+                designMenu->Check( wxID_DATASOURCE, true );
+                show->Check( wxID_SHOWDATATYPES, true );
+                show->Check( wxID_SHOWLABELS, true );
+                show->Check( wxID_SHOWCOMMENTS, true );
+                show->Check( wxID_SHOWSQLTOOLBOX, true );
+                show->Check( wxID_SHOWJOINS, true );
+                menuBar->Insert( 1, designMenu, _( "Design" ) );
+            }
         }
         else
         {
