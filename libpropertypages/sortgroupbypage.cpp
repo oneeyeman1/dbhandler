@@ -306,19 +306,27 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             Field *field = nullptr;
             if( m_dragDest == m_dest )
                 field = reinterpret_cast<Field *>( m_source->GetItemData( m_itemPos ) );
+            else
+            {
+                GroupDestData *data = reinterpret_cast<GroupDestData *>( m_dragSource->GetItemData( m_sourcePos ) );
+                field = data->field;
+                position = data->pos;
+            }
             m_dragSource->DeleteItem( m_dragDest == m_dest ? m_itemPos : m_sourcePos );
             if( m_dragDest == m_dest )
                 position = m_dragDest->GetItemCount();
-            else
-                position = m_itemPos;
+//            else
+//                position = m_itemPos;
             long item = m_dragDest->InsertItem( position, m_item );
             if( m_dragDest == m_dest )
             {
-                GroupDestData data;
-                data.field = field;
-                data.pos = m_itemPos;
-                m_dragDest->SetItemPtrData( item, wxUIntPtr( &data ) );
+                auto data = new GroupDestData;
+                data->field = field;
+                data->pos = m_itemPos;
+                m_dragDest->SetItemPtrData( item, wxUIntPtr( data ) );
             }
+            else
+                m_dragDest->SetItemPtrData( item, wxUIntPtr( field ) );
             wxCommandEvent event( wxEVT_CHANGE_QUERY );
             event.SetEventObject( this );
             event.SetInt( m_dragDest == m_dest ? ADDFIELD : REMOVEFIELD );
