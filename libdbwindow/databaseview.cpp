@@ -510,6 +510,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
 //                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
 //                            m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
                         }
+                        m_queryType = SQLSelectMenu;
                         SetQueryMenu( SQLSelectMenu );
                         m_frame->Freeze();
                         m_styleBar->Show( false );
@@ -1580,7 +1581,7 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
             m_queryBook->Show( true );
             m_frame->Layout();
             sizer->Layout();
-            if( queryType == SQLSelectMenu )
+            if( m_queryType == SQLSelectMenu )
             {
                 auto *designMenu = new wxMenu;
                 designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
@@ -1878,7 +1879,8 @@ void DrawingView::OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event)
 
 void DrawingView::OnConvertToSyntax(wxCommandEvent &WXUNUSED(event))
 {
-    SetQueryMenu( QuerySyntaxMenu );
+    m_queryType = QuerySyntaxMenu;
+    SetQueryMenu( m_queryType );
     m_designCanvas->Show( false );
     m_fields->Show( false );
     m_canvas->Show( false );
@@ -1891,7 +1893,8 @@ void DrawingView::OnConvertToSyntax(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnConvertToGraphics(wxCommandEvent &WXUNUSED(event))
 {
-    SetQueryMenu( SQLSelectMenu );
+    m_queryType = SQLSelectMenu;
+    SetQueryMenu( m_queryType );
     m_designCanvas->Show( true );
     m_fields->Show( true );
     m_canvas->Show( true );

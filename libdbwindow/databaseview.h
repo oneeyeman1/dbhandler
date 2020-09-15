@@ -126,7 +126,7 @@ private:
     SortGroupByPage *m_page1, *m_page3;
     SyntaxPropPage *m_page6;
     wxCriticalSection *pcs;
-    int m_source, m_presentation, m_searchPos, m_start, m_end, m_searchFlags, m_searchDirection;
+    int m_source, m_presentation, m_searchPos, m_start, m_end, m_searchFlags, m_searchDirection, m_queryType;
     wxString m_stringToFind;
     std::vector<Field *> m_queryFields;
     std::vector<DatabaseTable *> m_selectTableName;
