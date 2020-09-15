@@ -1563,8 +1563,6 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
     wxSize parentSize = parent->GetSize();
     wxPoint parentPos = parent->GetPosition();
     wxMenuBar *menuBar = m_parent->GetMenuBar();
-    for( unsigned int i = menuBar->GetMenuCount() - 2; i < 0; --i )
-        menuBar->Remove( i );
     if( m_type == QueryView )
     {
         if( event.IsChecked() )
@@ -1584,6 +1582,7 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
         }
         else
         {
+            menuBar->Remove( 1 );
             if( m_queryFields.empty() )
             {
                 int res = wxMessageBox( _( "Columns are required.\n\rDo you want to select them?" ), _( "Query - Untitled" ), wxYES_NO );
@@ -1605,6 +1604,15 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
                 m_frame->Layout();
                 PopuateQueryCanvas();
                 sizer->Layout();
+                auto editManu = new wxMenu;
+                editManu->Append( wxID_UNDO, _( "Can't Undo\tCtrl+Z" ), _( "Undo" ) );
+                editManu->AppendSeparator();
+                editManu->Append( wxID_CUT, _( "Cut\tCtrl+X" ), _( "Cut" ) );
+                editManu->Append( wxID_COPY, _( "Copy\tCtrl+C" ), _( "Copy" ) );
+                editManu->Append( wxID_PASTE, _( "Paste\tCtrl+V" ), _( "Paste" ) );
+                editManu->Append( wxID_DELETE, _( "Clear\tDel" ), _( "Clear" ) );
+                editManu->AppendSeparator();
+                menuBar->Insert( 1, editManu, _( "Edit" ) );
             }
         }
     }
@@ -1980,5 +1988,10 @@ void DrawingView::OnShowDataTypes(wxCommandEvent &event)
 
 void DrawingView::PopuateQueryCanvas()
 {
+    wxMenuBar *menuBar = m_parent->GetMenuBar();
+    if( m_queryFields.empty () )
+    {
+        menuBar->Enable( 1, false );
+    }
     m_designCanvas->PopulateQueryCanvas( m_queryFields, m_groupByFields );
 }
