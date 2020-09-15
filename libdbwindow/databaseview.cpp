@@ -510,6 +510,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
 //                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
 //                            m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
                         }
+                        m_queryType = SQLSelectMenu;
                         SetQueryMenu( SQLSelectMenu );
                         m_frame->Freeze();
                         m_styleBar->Show( false );
@@ -1563,12 +1564,11 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
     wxSize parentSize = parent->GetSize();
     wxPoint parentPos = parent->GetPosition();
     wxMenuBar *menuBar = m_parent->GetMenuBar();
-    for( unsigned int i = menuBar->GetMenuCount() - 2; i < 0; --i )
-        menuBar->Remove( i );
     if( m_type == QueryView )
     {
         if( event.IsChecked() )
         {
+            menuBar->Remove( 1 );
             if( framePosition.y == 0 )
             {
                 parent->SetSize( parentPos.x, parentPos.y - heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() + heightStyleBar );
@@ -1581,9 +1581,37 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
             m_queryBook->Show( true );
             m_frame->Layout();
             sizer->Layout();
+            if( m_queryType == SQLSelectMenu )
+            {
+                auto *designMenu = new wxMenu;
+                designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
+                designMenu->Append( wxID_PREVIEDWQUERY, _( "Preview" ), _( "Preview" ) );
+                designMenu->AppendSeparator();
+                designMenu->Append( wxID_SELECTTABLE, _( "Select Table..." ) );
+                designMenu->AppendSeparator();
+                designMenu->Append( wxID_RETRIEVEARGS, _( "Retieval Arguments..." ), _( "Define Retrieval Arguments" ) );
+                designMenu->Append( wxID_DISTINCT, _( "Distinct" ), _( "Return distinct rows only" ), wxITEM_CHECK );
+                designMenu->AppendSeparator();
+                designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert To Syntax" ), _( "Convert To Syntax" ) );
+                auto show = new wxMenu;
+                show->Append( wxID_SHOWDATATYPES, _( "Datatypes" ), _( "Show Datatypes" ), wxITEM_CHECK );
+                show->Append( wxID_SHOWLABELS, _( "Labels" ), _( "Show Labels" ), wxITEM_CHECK );
+                show->Append( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Show Comments" ), wxITEM_CHECK );
+                show->Append( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ), wxITEM_CHECK );
+                show->Append( wxID_SHOWJOINS, _( "Joins" ), _( "Show Joins" ), wxITEM_CHECK );
+                designMenu->AppendSubMenu( show, _( "Show" ) );
+                designMenu->Check( wxID_DATASOURCE, true );
+                show->Check( wxID_SHOWDATATYPES, true );
+                show->Check( wxID_SHOWLABELS, true );
+                show->Check( wxID_SHOWCOMMENTS, true );
+                show->Check( wxID_SHOWSQLTOOLBOX, true );
+                show->Check( wxID_SHOWJOINS, true );
+                menuBar->Insert( 1, designMenu, _( "Design" ) );
+            }
         }
         else
         {
+            menuBar->Remove( 1 );
             if( m_queryFields.empty() )
             {
                 int res = wxMessageBox( _( "Columns are required.\n\rDo you want to select them?" ), _( "Query - Untitled" ), wxYES_NO );
@@ -1605,6 +1633,15 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
                 m_frame->Layout();
                 PopuateQueryCanvas();
                 sizer->Layout();
+                auto editManu = new wxMenu;
+                editManu->Append( wxID_UNDO, _( "Can't Undo\tCtrl+Z" ), _( "Undo" ) );
+                editManu->AppendSeparator();
+                editManu->Append( wxID_CUT, _( "Cut\tCtrl+X" ), _( "Cut" ) );
+                editManu->Append( wxID_COPY, _( "Copy\tCtrl+C" ), _( "Copy" ) );
+                editManu->Append( wxID_PASTE, _( "Paste\tCtrl+V" ), _( "Paste" ) );
+                editManu->Append( wxID_DELETE, _( "Clear\tDel" ), _( "Clear" ) );
+                editManu->AppendSeparator();
+                menuBar->Insert( 1, editManu, _( "Edit" ) );
             }
         }
     }
@@ -1842,7 +1879,8 @@ void DrawingView::OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event)
 
 void DrawingView::OnConvertToSyntax(wxCommandEvent &WXUNUSED(event))
 {
-    SetQueryMenu( QuerySyntaxMenu );
+    m_queryType = QuerySyntaxMenu;
+    SetQueryMenu( m_queryType );
     m_designCanvas->Show( false );
     m_fields->Show( false );
     m_canvas->Show( false );
@@ -1855,7 +1893,8 @@ void DrawingView::OnConvertToSyntax(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnConvertToGraphics(wxCommandEvent &WXUNUSED(event))
 {
-    SetQueryMenu( SQLSelectMenu );
+    m_queryType = SQLSelectMenu;
+    SetQueryMenu( m_queryType );
     m_designCanvas->Show( true );
     m_fields->Show( true );
     m_canvas->Show( true );
@@ -1980,5 +2019,10 @@ void DrawingView::OnShowDataTypes(wxCommandEvent &event)
 
 void DrawingView::PopuateQueryCanvas()
 {
+    wxMenuBar *menuBar = m_parent->GetMenuBar();
+    if( m_queryFields.empty () )
+    {
+        menuBar->Enable( 1, false );
+    }
     m_designCanvas->PopulateQueryCanvas( m_queryFields, m_groupByFields );
 }
