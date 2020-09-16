@@ -19,6 +19,7 @@ libfieldswindow/vc_mswuddll10/
 libpropertypages/vc_mswuddll
 libpropertypages/vc_mswuddll10/
 libtablewindow/vc_mswuddll
+libpropertieshandlers/vc_mswuddll/
 libsqlite/sqlite3.lib
 libpostgres/vc_mswuddll
 libpostgres/vc_mswuddll10/
