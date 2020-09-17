@@ -36,7 +36,7 @@ protected:
     // begin wxGlade: MyDialog::attributes
     wxComboBox* m_units, *m_display;
     wxTextCtrl* m_interval;
-    wxComboBox* m_color;
+    CColorComboBox* m_color;
     wxCheckBox *m_custommove, *m_mouseSelect, *m_rowresize;
     // end wxGlade
 }; // wxGlade: end class

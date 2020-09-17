@@ -1,4 +1,12 @@
 #pragma once
+
+struct DesignOptions
+{
+    int units, interval;
+    wxColour colorBackground;
+    bool customMove, mouseSelect, rowResize;
+};
+
 class DesignCanvas : public wxSFShapeCanvas
 {
 public:
@@ -24,5 +32,6 @@ private:
     wxView *m_view;
     std::vector<wxString> m_quickQueryFields;
     wxSFShapeBase *m_menuShape;
+    DesignOptions m_options;
 };
 

@@ -56,6 +56,12 @@ DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas
     m_view = view;
     startPoint.x = 1;
     startPoint.y = 1;
+    m_options.colorBackground = *wxWHITE;
+    m_options.customMove = true;
+    m_options.interval = 0;
+    m_options.mouseSelect = true;
+    m_options.rowResize = true;
+    m_options.units = 3;
     m_pManager.SetRootItem( new xsSerializable() );
     SetDiagramManager( &m_pManager );
     Create( view->GetFrame(), wxID_ANY, point, wxDefaultSize, wxHSCROLL | wxVSCROLL | wxALWAYS_SHOW_SB );

@@ -8,7 +8,16 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
 
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
+#endif
+
+#include "wx/bmpcbox.h"
+#include "colorcombobox.h"
 #include "designgeneral.h"
 
 // begin wxGlade: ::extracode
@@ -49,7 +58,7 @@ MyDialog::MyDialog(wxWindow* parent):
     auto m_label4 = new wxStaticText( this, wxID_ANY, _( "&Color:" ) );
     sizer_2->Add( m_label4, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_color = new wxComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_DROPDOWN );
+    m_color = new CColorComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_DROPDOWN );
     sizer_2->Add( m_color, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer_4 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( "Grid" ) ), wxHORIZONTAL );
