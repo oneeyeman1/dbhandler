@@ -811,6 +811,7 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
     int type = 0;
     DatabaseTable *dbTable = nullptr;
     Divider *divider = nullptr;
+    DesignLabel *label = nullptr;
     Field *field = NULL;
     wxString command = "";
     bool logOnly = false;
@@ -839,22 +840,31 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
             }
             else
             {
-                field = ((FieldShape *) shape)->GetField();
-                MyErdTable *my_table = dynamic_cast<MyErdTable *>( ((FieldShape *) shape)->GetParentShape()->GetParentShape() );
-                if( my_table )
+                label = wxDynamicCast( shape, DesignLabel );
+                if( label )
                 {
-                    erdTable = my_table;
-                    tableName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName();
-                    schemaName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetSchemaName();
-                    ownerName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableOwner();
-                    type = DatabaseFieldProperties;
+                    type = DesignLabelProperties;
+                    dbTable = nullptr;
                 }
                 else
                 {
-                    sign = wxDynamicCast( shape, ConstraintSign );
-                    if( sign )
+                    field = ((FieldShape *) shape)->GetField();
+                    MyErdTable *my_table = dynamic_cast<MyErdTable *>( ((FieldShape *) shape)->GetParentShape()->GetParentShape() );
+                    if( my_table )
                     {
-                        type = SignProperties;
+                        erdTable = my_table;
+                        tableName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName();
+                        schemaName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetSchemaName();
+                        ownerName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableOwner();
+                        type = DatabaseFieldProperties;
+                    }
+                    else
+                    {
+                        sign = wxDynamicCast( shape, ConstraintSign );
+                        if( sign )
+                        {
+                            type = SignProperties;
+                        }
                     }
                 }
             }
