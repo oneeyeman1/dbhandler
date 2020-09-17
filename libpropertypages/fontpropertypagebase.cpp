@@ -37,6 +37,7 @@
 #ifdef __WXOSX__
 #include "wx/fontpicker.h"
 #endif
+#include "colorcombobox.h"
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 

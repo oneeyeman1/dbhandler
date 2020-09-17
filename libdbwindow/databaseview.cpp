@@ -64,6 +64,7 @@
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "colorcombobox.h"
 #include "designlabel.h"
 #include "constraint.h"
 #include "constraintsign.h"
@@ -822,48 +823,56 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
     Constraint *constraint = NULL;
     if( event.GetId() == wxID_PROPERTIES )
     {
-        erdTable = wxDynamicCast( shape, MyErdTable );
-        if( erdTable )
+        if( !shape )
         {
-            dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) shape)->GetTable() );
-            tableName = dbTable->GetTableName();
-            schemaName = dbTable->GetSchemaName();
-            type = DatabaseTableProperties;
+            type = DesignProperties;
+            dbTable = nullptr;
         }
         else
         {
-            divider = wxDynamicCast( shape, Divider );
-            if( divider )
+            erdTable = wxDynamicCast( shape, MyErdTable );
+            if( erdTable )
             {
-                type = DividerProperties;
-                dbTable = nullptr;
+                dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) shape)->GetTable() );
+                tableName = dbTable->GetTableName();
+                schemaName = dbTable->GetSchemaName();
+                type = DatabaseTableProperties;
             }
             else
             {
-                label = wxDynamicCast( shape, DesignLabel );
-                if( label )
+                divider = wxDynamicCast( shape, Divider );
+                if( divider )
                 {
-                    type = DesignLabelProperties;
+                    type = DividerProperties;
                     dbTable = nullptr;
                 }
                 else
                 {
-                    field = ((FieldShape *) shape)->GetField();
-                    MyErdTable *my_table = dynamic_cast<MyErdTable *>( ((FieldShape *) shape)->GetParentShape()->GetParentShape() );
-                    if( my_table )
+                    label = wxDynamicCast( shape, DesignLabel );
+                    if( label )
                     {
-                        erdTable = my_table;
-                        tableName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName();
-                        schemaName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetSchemaName();
-                        ownerName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableOwner();
-                        type = DatabaseFieldProperties;
+                        type = DesignLabelProperties;
+                        dbTable = nullptr;
                     }
                     else
                     {
-                        sign = wxDynamicCast( shape, ConstraintSign );
-                        if( sign )
+                        field = ((FieldShape *) shape)->GetField();
+                        MyErdTable *my_table = dynamic_cast<MyErdTable *>( ((FieldShape *) shape)->GetParentShape()->GetParentShape() );
+                        if( my_table )
                         {
-                            type = SignProperties;
+                            erdTable = my_table;
+                            tableName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName();
+                            schemaName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetSchemaName();
+                            ownerName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableOwner();
+                            type = DatabaseFieldProperties;
+                        }
+                        else
+                        {
+                            sign = wxDynamicCast( shape, ConstraintSign );
+                            if( sign )
+                            {
+                                type = SignProperties;
+                            }
                         }
                     }
                 }
@@ -929,6 +938,10 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
 //            properties = &props;
             title = _( "Band Object" );
             //            res = func( m_frame, nullptr, type, &prop, command, false, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
+        }
+        if( type == DesignProperties )
+        {
+            title = _( "Query Object" );
         }
 //        TableProperties props = *static_cast<TableProperties *>( properties );
         res = func( m_frame, propertiesPtr, title, command, logOnly, *pcs );
@@ -1643,15 +1656,16 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
                 m_frame->Layout();
                 PopuateQueryCanvas();
                 sizer->Layout();
-                auto editManu = new wxMenu;
-                editManu->Append( wxID_UNDO, _( "Can't Undo\tCtrl+Z" ), _( "Undo" ) );
-                editManu->AppendSeparator();
-                editManu->Append( wxID_CUT, _( "Cut\tCtrl+X" ), _( "Cut" ) );
-                editManu->Append( wxID_COPY, _( "Copy\tCtrl+C" ), _( "Copy" ) );
-                editManu->Append( wxID_PASTE, _( "Paste\tCtrl+V" ), _( "Paste" ) );
-                editManu->Append( wxID_DELETE, _( "Clear\tDel" ), _( "Clear" ) );
-                editManu->AppendSeparator();
-                menuBar->Insert( 1, editManu, _( "Edit" ) );
+                auto editMenu = new wxMenu;
+                editMenu->Append( wxID_UNDO, _( "Can't Undo\tCtrl+Z" ), _( "Undo" ) );
+                editMenu->AppendSeparator();
+                editMenu->Append( wxID_CUT, _( "Cut\tCtrl+X" ), _( "Cut" ) );
+                editMenu->Append( wxID_COPY, _( "Copy\tCtrl+C" ), _( "Copy" ) );
+                editMenu->Append( wxID_PASTE, _( "Paste\tCtrl+V" ), _( "Paste" ) );
+                editMenu->Append( wxID_DELETE, _( "Clear\tDel" ), _( "Clear" ) );
+                editMenu->AppendSeparator();
+                editMenu->Append( wxID_PROPERTIES, _( "Properties" ), _( "Properties" ) );
+                menuBar->Insert( 1, editMenu, _( "Edit" ) );
             }
         }
     }

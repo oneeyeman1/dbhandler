@@ -23,7 +23,7 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-MyDialog::MyDialog(wxWindow* parent):
+DesignGeneral::DesignGeneral(wxWindow* parent):
     wxPanel(parent, wxID_ANY)
 {
     // begin wxGlade: MyDialog::MyDialog

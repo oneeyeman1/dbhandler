@@ -12,23 +12,13 @@
 #ifndef DESIGNGENERAL_H
 #define DESIGNGENERAL_H
 
-#include <wx/wx.h>
-#include <wx/image.h>
-
-// begin wxGlade: ::dependencies
-// end wxGlade
-
-// begin wxGlade: ::extracode
-// end wxGlade
-
-
-class MyDialog: public wxPanel
+class DesignGeneral: public wxPanel
 {
 public:
     // begin wxGlade: MyDialog::ids
     // end wxGlade
 
-    MyDialog(wxWindow* parent);
+    DesignGeneral(wxWindow* parent);
 
 private:
 
