@@ -64,6 +64,7 @@
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "objectproperties.h"
 #include "colorcombobox.h"
 #include "designlabel.h"
 #include "constraint.h"
@@ -94,6 +95,7 @@
 #include "propertieshandler.h"
 #include "fieldpropertieshandler.h"
 #include "fieldpropertieshandler.h"
+#include "designpropertieshandler.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
@@ -941,6 +943,12 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         }
         if( type == DesignProperties )
         {
+#if __cplusplus > 201300
+            auto ptr = std::make_unique<DesignPropertiesHander>( m_designCanvas->GetOptions() );
+#else
+            auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
+#endif
+            propertiesPtr = std::move( ptr );
             title = _( "Query Object" );
         }
 //        TableProperties props = *static_cast<TableProperties *>( properties );

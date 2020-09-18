@@ -28,6 +28,7 @@
 #include "wxsf/FlexGridShape.h"
 //#include "XmlSerializer.h"
 #include "database.h"
+#include "objectproperties.h"
 #include "constraint.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
@@ -62,6 +63,8 @@ DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas
     m_options.mouseSelect = true;
     m_options.rowResize = true;
     m_options.units = 3;
+    m_options.cursor = *wxSTANDARD_CURSOR;
+    m_options.cursorName = wxEmptyString;
     m_pManager.SetRootItem( new xsSerializable() );
     SetDiagramManager( &m_pManager );
     Create( view->GetFrame(), wxID_ANY, point, wxDefaultSize, wxHSCROLL | wxVSCROLL | wxALWAYS_SHOW_SB );

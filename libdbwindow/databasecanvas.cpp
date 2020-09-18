@@ -30,6 +30,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/ShapeCanvas.h"
+#include "objectproperties.h"
 #include "constraint.h"
 #include "constraintsign.h"
 #include "GridTableShape.h"
