@@ -1,12 +1,5 @@
 #pragma once
 
-struct DesignOptions
-{
-    int units, interval;
-    wxColour colorBackground;
-    bool customMove, mouseSelect, rowResize;
-};
-
 class DesignCanvas : public wxSFShapeCanvas
 {
 public:
@@ -22,6 +15,7 @@ public:
     virtual void OnRightDown(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnLeftDown(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnMouseMove(wxMouseEvent &event) wxOVERRIDE;
+    DesignOptions *GetOptions() { return &m_options; }
     void PopulateQueryCanvas(const std::vector<Field *> &queryFields, const std::vector<const Field *> &groupByFields);
 protected:
     void OnProperties(wxCommandEvent &event);
