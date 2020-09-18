@@ -33,6 +33,7 @@
 #include "wx/button.h"
 #include "wx/nativewin.h"
 #include "wx/bmpcbox.h"
+#include "colorcombobox.h"
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 #include "wx/gtk/private.h"
