@@ -1,9 +1,9 @@
 #pragma once
 struct DesignOptions
 {
-    int units, interval;
+    int units, interval, display;
     wxColour colorBackground;
     bool customMove, mouseSelect, rowResize;
-    wxCursor cursor;
+    int cursor;
     wxString cursorName;
 };

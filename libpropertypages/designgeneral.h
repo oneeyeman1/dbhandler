@@ -28,6 +28,7 @@ protected:
     wxTextCtrl* m_interval;
     CColorComboBox* m_color;
     wxCheckBox *m_custommove, *m_mouseSelect, *m_rowresize;
+    DesignOptions m_options;
     // end wxGlade
 }; // wxGlade: end class
 

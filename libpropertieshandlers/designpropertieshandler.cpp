@@ -11,7 +11,9 @@
 #endif
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
+#include "wx/filepicker.h"
 #include "propertypagebase.h"
+#include "pointerproperty.h"
 #include "objectproperties.h"
 #include "colorcombobox.h"
 #include "designgeneral.h"
@@ -27,6 +29,8 @@ void DesignPropertiesHander::EditProperies(wxNotebook *parent)
 {
     m_page1 = new DesignGeneral( parent, m_options );
     parent->AddPage( m_page1, _( "General" ) );
+    m_page2 = new PointerPropertiesPanel( parent, m_options->cursorName, m_options->cursor );
+    parent->AddPage( m_page2, _( "Pointer" ) );
 }
 
 int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &errors)

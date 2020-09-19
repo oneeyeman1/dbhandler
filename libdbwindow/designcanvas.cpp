@@ -63,7 +63,8 @@ DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas
     m_options.mouseSelect = true;
     m_options.rowResize = true;
     m_options.units = 3;
-    m_options.cursor = *wxSTANDARD_CURSOR;
+    m_options.cursor = -1;
+    m_options.display = 2;
     m_options.cursorName = wxEmptyString;
     m_pManager.SetRootItem( new xsSerializable() );
     SetDiagramManager( &m_pManager );
