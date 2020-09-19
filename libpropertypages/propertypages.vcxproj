@@ -43,6 +43,7 @@
     <ClInclude Include="fieldheader.h" />
     <ClInclude Include="fontpropertypagebase.h" />
     <ClInclude Include="msw\fontpropertypage.h" />
+    <ClInclude Include="objectproperties.h" />
     <ClInclude Include="pointerproperty.h" />
     <ClInclude Include="propertypagebase.h" />
     <ClInclude Include="sortgroupbypage.h" />

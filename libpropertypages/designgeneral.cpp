@@ -17,14 +17,16 @@
 #endif
 
 #include "wx/bmpcbox.h"
+#include "objectproperties.h"
+#include "propertypagebase.h"
 #include "colorcombobox.h"
 #include "designgeneral.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
-DesignGeneral::DesignGeneral(wxWindow* parent):
-    wxPanel(parent, wxID_ANY)
+DesignGeneral::DesignGeneral(wxWindow* parent, DesignOptions *options):
+    PropertyPageBase(parent, wxID_ANY)
 {
     // begin wxGlade: MyDialog::MyDialog
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );

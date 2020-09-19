@@ -89,6 +89,7 @@
 #include "tablegeneral.h"
 #include "tableprimarykey.h"
 #include "fieldgeneral.h"
+#include "designgeneral.h"
 #include "fontpropertypagebase.h"
 #include "fieldheader.h"
 #include "propertieshandlerbase.h"

@@ -9,4 +9,5 @@ public:
     virtual int GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
 private:
     DesignOptions *m_options;
+    DesignGeneral *m_page1;
 };

@@ -12,13 +12,13 @@
 #ifndef DESIGNGENERAL_H
 #define DESIGNGENERAL_H
 
-class DesignGeneral: public wxPanel
+class WXEXPORT DesignGeneral: public PropertyPageBase
 {
 public:
     // begin wxGlade: MyDialog::ids
     // end wxGlade
 
-    DesignGeneral(wxWindow* parent);
+    DesignGeneral(wxWindow* parent, DesignOptions *options);
 
 private:
 
