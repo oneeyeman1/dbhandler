@@ -141,7 +141,8 @@ am_libpropertypages_la_OBJECTS = libpropertypages_la-tablegeneral.lo \
 	libpropertypages_la-pointerproperty.lo \
 	libpropertypages_la-tableprimarykey.lo \
 	libpropertypages_la-designgeneral.lo \
-	libpropertypages_la-colorcombobox.lo
+	libpropertypages_la-colorcombobox.lo \
+	libpropertypages_la-printspec.lo
 libpropertypages_la_OBJECTS = $(am_libpropertypages_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -416,7 +417,9 @@ libpropertypages_la_SOURCES = \
 	designgeneral.cpp \
 	designgeneral.h \
 	colorcombobox.cpp \
-	colorcombobox.h
+	colorcombobox.h \
+	printspec.cpp \
+	printspec.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
@@ -520,6 +523,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fontpropertypage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fontpropertypagebase.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-pointerproperty.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-printspec.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-sortgroupbypage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-syntaxproppage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-tablegeneral.Plo@am__quote@
@@ -644,6 +648,13 @@ libpropertypages_la-colorcombobox.lo: colorcombobox.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='colorcombobox.cpp' object='libpropertypages_la-colorcombobox.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-colorcombobox.lo `test -f 'colorcombobox.cpp' || echo '$(srcdir)/'`colorcombobox.cpp
+
+libpropertypages_la-printspec.lo: printspec.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertypages_la-printspec.lo -MD -MP -MF $(DEPDIR)/libpropertypages_la-printspec.Tpo -c -o libpropertypages_la-printspec.lo `test -f 'printspec.cpp' || echo '$(srcdir)/'`printspec.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertypages_la-printspec.Tpo $(DEPDIR)/libpropertypages_la-printspec.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='printspec.cpp' object='libpropertypages_la-printspec.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-printspec.lo `test -f 'printspec.cpp' || echo '$(srcdir)/'`printspec.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
