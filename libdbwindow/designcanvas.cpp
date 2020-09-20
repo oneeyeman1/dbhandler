@@ -61,7 +61,7 @@ DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas
     m_options.customMove = true;
     m_options.interval = 0;
     m_options.mouseSelect = true;
-    m_options.rowResize = true;
+    m_options.rowResize = false;
     m_options.units = 3;
     m_options.cursor = -1;
     m_options.display = 2;

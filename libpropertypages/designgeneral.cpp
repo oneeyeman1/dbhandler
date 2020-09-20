@@ -28,6 +28,7 @@
 DesignGeneral::DesignGeneral(wxWindow* parent, DesignOptions *options):
     PropertyPageBase(parent, wxID_ANY)
 {
+    m_isModified = false;
     // begin wxGlade: MyDialog::MyDialog
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -78,7 +79,7 @@ DesignGeneral::DesignGeneral(wxWindow* parent, DesignOptions *options):
         _( "On" ),
         _( "Print Only" )
     };
-    m_display = new wxComboBox( this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0, m_display_choices, wxCB_DROPDOWN );
+    m_display = new wxComboBox( this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 4, m_display_choices, wxCB_DROPDOWN );
     sizer_5->Add( m_display, 0, wxEXPAND, 0 );
     m_custommove = new wxCheckBox( this, wxID_ANY, _( "Custom &Moving" ) );
     m_custommove->SetValue( 1 );
