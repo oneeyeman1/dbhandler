@@ -12,7 +12,8 @@
 class WXEXPORT PropertiesHandler
 {
 public:
-    PropertiesHandler() {}
+    PropertiesHandler() { }
+    virtual ~PropertiesHandler() { }
     virtual void EditProperies(wxNotebook *parent) = 0;
     virtual int GetProperties(std::vector<std::wstring> &errors) = 0;
     virtual bool IsLogOnly() const { return false; };

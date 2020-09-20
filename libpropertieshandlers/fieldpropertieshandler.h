@@ -13,6 +13,7 @@ class WXEXPORT FieldPropertiesHandler : public PropertiesHandler
 {
 public:
     FieldPropertiesHandler(const Database *db, const wxString &tableName, const wxString &ownerName, Field *field);
+    virtual ~FieldPropertiesHandler() { }
     virtual void EditProperies(wxNotebook *parent) wxOVERRIDE;
     virtual int GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
     FieldProperties &GetProperty() { return m_prop; }

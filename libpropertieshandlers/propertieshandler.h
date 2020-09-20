@@ -3,6 +3,7 @@ class WXEXPORT DatabasePropertiesHandler : public PropertiesHandler
 {
 public:
     DatabasePropertiesHandler(const Database *db, DatabaseTable *table);
+    virtual ~DatabasePropertiesHandler() { }
     virtual void EditProperies(wxNotebook *parent) wxOVERRIDE;
     virtual int GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
     TableProperties &GetProperty() { return m_prop; }
