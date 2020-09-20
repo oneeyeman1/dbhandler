@@ -11,4 +11,5 @@ private:
     DesignOptions *m_options;
     DesignGeneral *m_page1;
     PointerPropertiesPanel *m_page2;
+    PrintSpec *m_page3;
 };

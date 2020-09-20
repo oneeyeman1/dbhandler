@@ -17,6 +17,7 @@
 #include "objectproperties.h"
 #include "colorcombobox.h"
 #include "designgeneral.h"
+#include "printspec.h"
 #include "propertieshandlerbase.h"
 #include "designpropertieshandler.h"
 
@@ -31,6 +32,8 @@ void DesignPropertiesHander::EditProperies(wxNotebook *parent)
     parent->AddPage( m_page1, _( "General" ) );
     m_page2 = new PointerPropertiesPanel( parent, m_options->cursorName, m_options->cursor );
     parent->AddPage( m_page2, _( "Pointer" ) );
+    m_page3 = new PrintSpec( parent );
+    parent->AddPage( m_page3, _( "Print Specification" ) );
 }
 
 int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &errors)

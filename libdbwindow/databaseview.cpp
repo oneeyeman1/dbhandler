@@ -87,6 +87,7 @@
 #include "databaseview.h"
 #include "divider.h"
 #include "propertypagebase.h"
+#include "printspec.h"
 #include "tablegeneral.h"
 #include "pointerproperty.h"
 #include "tableprimarykey.h"
