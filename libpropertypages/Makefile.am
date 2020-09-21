@@ -33,7 +33,9 @@ libpropertypages_la_SOURCES =  \
 	designgeneral.cpp \
 	designgeneral.h \
 	colorcombobox.cpp \
-	colorcombobox.h
+	colorcombobox.h \
+	printspec.cpp \
+	printspec.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \

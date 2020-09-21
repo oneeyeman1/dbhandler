@@ -9,7 +9,9 @@ libpropertieshandlers_la_SOURCES =  \
 	propertieshandler.h \
 	fieldpropertieshandler.cpp \
 	fieldpropertieshandler.h \
-	propertieshandlerbase.h
+	propertieshandlerbase.h \
+	designpropertieshandler.cpp \
+	designpropertieshandler.h
 
 libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libpropertypages \
