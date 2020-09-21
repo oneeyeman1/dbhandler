@@ -18,7 +18,6 @@
 CColorComboBox::CColorComboBox( wxWindow *parent, wxWindowID id, wxString selection, const wxPoint &pos, const wxSize &size, int n, const wxString choices[], long style ) :
 wxBitmapComboBox( parent, id, selection, pos, size, n, choices, style )
 {
-    wxFont font;
     m_colors.push_back( ColorStruct( *wxBLACK, "Black" ) );
     m_colors.push_back( ColorStruct( *wxWHITE, "White" ) );
     m_colors.push_back( ColorStruct( *wxRED, "Red" ) );
@@ -53,3 +52,9 @@ void CColorComboBox::SetColourValue(wxColour colour)
     SetValue( (*it).m_name );
 }
 
+wxColour &CColorComboBox::GetColourValue()
+{
+    wxString sel = dynamic_cast<wxComboBox *>( this )->GetStringSelection();
+    std::vector<ColorStruct>::iterator it = std::find_if( m_colors.begin(), m_colors.end(), [&sel](const ColorStruct &x) { return x.m_name == sel; } );
+    return ( (*it).m_color );
+}

@@ -38,5 +38,7 @@ void DesignPropertiesHander::EditProperies(wxNotebook *parent)
 
 int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &errors)
 {
+    m_options->units = m_page1->GetUnitsCtrl()->GetSelection();
+    m_options->colorBackground = m_page1->GetColorCtrl()->GetColourValue();
     return 0;
 }
