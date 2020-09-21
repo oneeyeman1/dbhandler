@@ -31,6 +31,8 @@
 		E3B8E3D02513AF9600346516 /* designgeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3CE2513AF9500346516 /* designgeneral.h */; };
 		E3B8E3D12513AF9600346516 /* designgeneral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3CF2513AF9500346516 /* designgeneral.cpp */; };
 		E3B8E3D42513B64D00346516 /* colorcombobox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3D32513B64D00346516 /* colorcombobox.cpp */; };
+		E3B8E3DB2518E69000346516 /* printspec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3D92518E69000346516 /* printspec.cpp */; };
+		E3B8E3DC2518E69000346516 /* printspec.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3DA2518E69000346516 /* printspec.h */; };
 		E3B92D6D24CA0DF60035428C /* bandgeneral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B92D6B24CA0DF50035428C /* bandgeneral.cpp */; };
 		E3B92D6E24CA0DF60035428C /* bandgeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B92D6C24CA0DF60035428C /* bandgeneral.h */; };
 		E3B92D7124CDC6DC0035428C /* pointerproperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B92D6F24CDC6DB0035428C /* pointerproperty.cpp */; };
@@ -65,6 +67,8 @@
 		E3B8E3CF2513AF9500346516 /* designgeneral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = designgeneral.cpp; sourceTree = "<group>"; };
 		E3B8E3D22513B61800346516 /* colorcombobox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = colorcombobox.h; sourceTree = "<group>"; };
 		E3B8E3D32513B64D00346516 /* colorcombobox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = colorcombobox.cpp; sourceTree = "<group>"; };
+		E3B8E3D92518E69000346516 /* printspec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = printspec.cpp; sourceTree = "<group>"; };
+		E3B8E3DA2518E69000346516 /* printspec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = printspec.h; sourceTree = "<group>"; };
 		E3B92D6B24CA0DF50035428C /* bandgeneral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bandgeneral.cpp; sourceTree = "<group>"; };
 		E3B92D6C24CA0DF60035428C /* bandgeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bandgeneral.h; sourceTree = "<group>"; };
 		E3B92D6F24CDC6DB0035428C /* pointerproperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pointerproperty.cpp; sourceTree = "<group>"; };
@@ -104,6 +108,8 @@
 		E39501CD1DF3BA080046E51B /* libpropertypages */ = {
 			isa = PBXGroup;
 			children = (
+				E3B8E3D92518E69000346516 /* printspec.cpp */,
+				E3B8E3DA2518E69000346516 /* printspec.h */,
 				E3B8E3CF2513AF9500346516 /* designgeneral.cpp */,
 				E3B8E3CE2513AF9500346516 /* designgeneral.h */,
 				E3B8E3C724F2DD6900346516 /* tableprimarykey.cpp */,
@@ -165,6 +171,7 @@
 				E3B92D7224CDC6DC0035428C /* pointerproperty.h in Headers */,
 				E305643C2217CB4C00F5576C /* fieldheader.h in Headers */,
 				E3B8E3CA24F2DD6900346516 /* tableprimarykey.h in Headers */,
+				E3B8E3DC2518E69000346516 /* printspec.h in Headers */,
 				E33E6F7D1EAD3067003A0B92 /* syntaxproppage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -226,6 +233,7 @@
 				E3AC9DDB1E176C640083DD62 /* fontpropertypagebase.cpp in Sources */,
 				E33E6F7E1EAD3067003A0B92 /* wherehavingpage.cpp in Sources */,
 				E305643B2217CB4C00F5576C /* fieldgeneral.cpp in Sources */,
+				E3B8E3DB2518E69000346516 /* printspec.cpp in Sources */,
 				E3607DD623C4427300267C14 /* sortgroupbypage.cpp in Sources */,
 				E3B92D6D24CA0DF60035428C /* bandgeneral.cpp in Sources */,
 				E39501D01DF3C2300046E51B /* tablegeneral.cpp in Sources */,
