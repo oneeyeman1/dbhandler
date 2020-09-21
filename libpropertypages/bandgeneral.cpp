@@ -13,13 +13,14 @@
 
 #include "wx/bmpcbox.h"
 #include "wx/valnum.h"
+#include "objectproperties.h"
 #include "propertypagebase.h"
 #include "bandgeneral.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
-BandGeneralProperties::BandGeneralProperties(wxWindow* parent,  const BandProperties *props):
+BandGeneralProperties::BandGeneralProperties(wxWindow* parent,  const BandProperties &props):
     PropertyPageBase(parent)
 {
     BandColor m_colorNames[] =
@@ -52,7 +53,7 @@ BandGeneralProperties::BandGeneralProperties(wxWindow* parent,  const BandProper
         { wxColour( wxTransparentColour ), _( "Custom" ) },
         { wxColour( wxTransparentColour ), _( "Transparent" ) },
     };
-//    wxIntegerValidator<unsigned int> val( &m_heightValue );
+    wxIntegerValidator<unsigned int> val( &m_heightValue );
     // begin wxGlade: BandGeneralProperties::BandGeneralProperties
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Color" ) );
     m_colors = new wxBitmapComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_DROPDOWN );
@@ -74,7 +75,7 @@ BandGeneralProperties::BandGeneralProperties(wxWindow* parent,  const BandProper
     }
     m_colors->SetSelection( size - 1 );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Height" ) );
-    m_height = new wxTextCtrl( this, wxID_ANY, wxString::Format( "%d", props->m_height )/*, wxDefaultPosition, wxDefaultSize, 0, val*/ );
+    m_height = new wxTextCtrl( this, wxID_ANY, wxString::Format( "%d", props.m_height )/*, wxDefaultPosition, wxDefaultSize, 0, val*/ );
 
     set_properties();
     do_layout();

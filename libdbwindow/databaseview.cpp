@@ -88,6 +88,7 @@
 #include "divider.h"
 #include "propertypagebase.h"
 #include "printspec.h"
+#include "bandgeneral.h"
 #include "tablegeneral.h"
 #include "pointerproperty.h"
 #include "tableprimarykey.h"
@@ -100,6 +101,7 @@
 #include "fieldpropertieshandler.h"
 #include "fieldpropertieshandler.h"
 #include "designpropertieshandler.h"
+#include "dividerpropertieshandler.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
@@ -940,10 +942,13 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         }
         if( type == DividerProperties )
         {
-//            auto props = divider->GetDividerProperties();
-//            properties = &props;
+#if __cplusplus > 201300
+            auto ptr = std::make_unique<DividerPropertiesHander>( divider->GetDividerProperties() );
+#else
+            auto ptr = std::unique_ptr<DividerPropertiesHander>( new DividerPropertiesHander( divider->GetDividerProperties() ) );
+#endif
+            propertiesPtr = std::move( ptr );
             title = _( "Band Object" );
-            //            res = func( m_frame, nullptr, type, &prop, command, false, wxEmptyString, wxEmptyString, wxEmptyString, *pcs );
         }
         if( type == DesignProperties )
         {

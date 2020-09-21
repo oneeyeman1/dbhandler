@@ -19,6 +19,7 @@
 #include "wxsf/RectShape.h"
 #include "wxsf/DiagramManager.h"
 #include "wx/image.h"
+#include "objectproperties.h"
 #include "divider.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(Divider, wxSFRectShape);
@@ -200,7 +201,7 @@ const wxString &Divider::GetDividerType()
     return m_props.m_type;
 }
 
-DividerPropertiesType Divider::GetDividerProperties()
+BandProperties Divider::GetDividerProperties()
 {
     return m_props;
 }

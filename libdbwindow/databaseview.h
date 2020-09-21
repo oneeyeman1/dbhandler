@@ -18,14 +18,6 @@ enum DrawinViewMenu
     QuerySyntaxMenu
 };
 
-struct BandProperties
-{
-    wxString m_color;
-    wxString m_cursorFile;
-    wxString m_type;
-    int m_height, m_stockCursor;
-};
-
 // The view using MyCanvas to show its contents
 class DrawingView : public wxView
 {
