@@ -54,7 +54,12 @@ void CColorComboBox::SetColourValue(wxColour colour)
 
 wxColour &CColorComboBox::GetColourValue()
 {
-    wxString sel = dynamic_cast<wxComboBox *>( this )->GetStringSelection();
+    wxString sel;
+#ifdef __WXOSX__
+    sel = dynamic_cast<wxItemContainerImmutable *>( this )->GetStringSelection();
+#else
+    sel = GetStringSelection();
+#endif
     std::vector<ColorStruct>::iterator it = std::find_if( m_colors.begin(), m_colors.end(), [&sel](const ColorStruct &x) { return x.m_name == sel; } );
     return ( (*it).m_color );
 }
