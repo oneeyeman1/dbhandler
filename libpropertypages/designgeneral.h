@@ -22,7 +22,7 @@ public:
     wxComboBox *GetUnitsCtrl() { return m_units; }
     CColorComboBox *GetColorCtrl() { return m_color; }
 private:
-
+    void Modified(wxCommandEvent &);
 protected:
     // begin wxGlade: MyDialog::attributes
     wxComboBox* m_units, *m_display;

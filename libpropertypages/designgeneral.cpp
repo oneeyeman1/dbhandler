@@ -101,5 +101,10 @@ DesignGeneral::DesignGeneral(wxWindow* parent, DesignOptions *options):
     m_custommove->SetValue( options->customMove );
     m_mouseSelect->SetValue( options->mouseSelect );
     m_rowresize->SetValue( options->rowResize );
+    m_units->Bind( wxEVT_COMBOBOX, &DesignGeneral::Modified, this );
 }
 
+void DesignGeneral::Modified(wxCommandEvent &)
+{
+    m_isModified = true;
+}
