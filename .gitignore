@@ -72,3 +72,4 @@ compile
 depcomp
 ltmain.sh
 missing
+.anjuta/*
