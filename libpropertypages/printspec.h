@@ -19,6 +19,7 @@ public:
     // end wxGlade
 
     PrintSpec(wxWindow* parent);
+    ~PrintSpec() { }
 
 private:
 
