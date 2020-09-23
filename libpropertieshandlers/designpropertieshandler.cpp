@@ -27,14 +27,15 @@
 
 DesignPropertiesHander::DesignPropertiesHander(DesignCanvas *canvas)
 {
-    m_options = canvas;
+    m_canvas = canvas;
+    m_options = m_canvas->GetOptions();
 }
 
 void DesignPropertiesHander::EditProperies(wxNotebook *parent)
 {
-    m_page1 = new DesignGeneral( parent, m_options->GetOptions() );
+    m_page1 = new DesignGeneral( parent, m_options );
     parent->AddPage( m_page1, _( "General" ) );
-    m_page2 = new PointerPropertiesPanel( parent, m_options->GetOptions().cursorName, m_options->GetOptions().cursor );
+    m_page2 = new PointerPropertiesPanel( parent, m_options.cursorName, m_options.cursor );
     parent->AddPage( m_page2, _( "Pointer" ) );
     m_page3 = new PrintSpec( parent );
     parent->AddPage( m_page3, _( "Print Specification" ) );
@@ -43,6 +44,13 @@ void DesignPropertiesHander::EditProperies(wxNotebook *parent)
 int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &errors)
 {
 //    m_options->GetOptions().units = m_page1->GetUnitsCtrl()->GetSelection();
-    m_options->GetOptions().colorBackground = m_page1->GetColorCtrl()->GetColourValue();
+    wxColour color = m_page1->GetColorCtrl()->GetColourValue();
+    if( m_options.colorBackground != color )
+    {
+        m_options.colorBackground = color;
+        m_canvas->SetBackgroundColour( color );
+        m_canvas->Refresh();
+        m_canvas->Update();
+    }
     return 0;
 }

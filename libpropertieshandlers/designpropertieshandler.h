@@ -8,7 +8,8 @@ public:
     virtual void EditProperies(wxNotebook *parent) wxOVERRIDE;
     virtual int GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
 private:
-    DesignCanvas *m_options;
+    DesignCanvas *m_canvas;
+    DesignOptions m_options;
     DesignGeneral *m_page1;
     PointerPropertiesPanel *m_page2;
     PrintSpec *m_page3;
