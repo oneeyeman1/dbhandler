@@ -9,28 +9,32 @@
 #include "wx/wx.h"
 #include "wx/stockitem.h"
 #endif
+#include "database.h"
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
 #include "wx/filepicker.h"
+#include "wx/docview.h"
+#include "wxsf/ShapeCanvas.h"
+#include "objectproperties.h"
+#include "designcanvas.h"
 #include "propertypagebase.h"
 #include "pointerproperty.h"
-#include "objectproperties.h"
 #include "colorcombobox.h"
 #include "designgeneral.h"
 #include "printspec.h"
 #include "propertieshandlerbase.h"
 #include "designpropertieshandler.h"
 
-DesignPropertiesHander::DesignPropertiesHander(DesignOptions *options)
+DesignPropertiesHander::DesignPropertiesHander(DesignCanvas *canvas)
 {
-    m_options = options;
+    m_options = canvas;
 }
 
 void DesignPropertiesHander::EditProperies(wxNotebook *parent)
 {
-    m_page1 = new DesignGeneral( parent, m_options );
+    m_page1 = new DesignGeneral( parent, m_options->GetOptions() );
     parent->AddPage( m_page1, _( "General" ) );
-    m_page2 = new PointerPropertiesPanel( parent, m_options->cursorName, m_options->cursor );
+    m_page2 = new PointerPropertiesPanel( parent, m_options->GetOptions().cursorName, m_options->GetOptions().cursor );
     parent->AddPage( m_page2, _( "Pointer" ) );
     m_page3 = new PrintSpec( parent );
     parent->AddPage( m_page3, _( "Print Specification" ) );
@@ -38,7 +42,7 @@ void DesignPropertiesHander::EditProperies(wxNotebook *parent)
 
 int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &errors)
 {
-    m_options->units = m_page1->GetUnitsCtrl()->GetSelection();
-    m_options->colorBackground = m_page1->GetColorCtrl()->GetColourValue();
+//    m_options->GetOptions().units = m_page1->GetUnitsCtrl()->GetSelection();
+    m_options->GetOptions().colorBackground = m_page1->GetColorCtrl()->GetColourValue();
     return 0;
 }

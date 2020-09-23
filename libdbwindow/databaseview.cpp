@@ -953,9 +953,9 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         if( type == DesignProperties )
         {
 #if __cplusplus > 201300
-            auto ptr = std::make_unique<DesignPropertiesHander>( m_designCanvas->GetOptions() );
+            auto ptr = std::make_unique<DesignPropertiesHander>( m_designCanvas );
 #else
-            auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
+            auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas ) );
 #endif
             propertiesPtr = std::move( ptr );
             title = _( "Query Object" );

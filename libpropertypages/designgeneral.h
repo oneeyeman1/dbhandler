@@ -18,7 +18,7 @@ public:
     // begin wxGlade: MyDialog::ids
     // end wxGlade
 
-    DesignGeneral(wxWindow* parent, DesignOptions *options);
+    DesignGeneral(wxWindow* parent, DesignOptions options);
     wxComboBox *GetUnitsCtrl() { return m_units; }
     CColorComboBox *GetColorCtrl() { return m_color; }
 private:

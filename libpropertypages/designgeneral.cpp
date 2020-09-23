@@ -25,7 +25,7 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-DesignGeneral::DesignGeneral(wxWindow* parent, DesignOptions *options):
+DesignGeneral::DesignGeneral(wxWindow* parent, DesignOptions options):
     PropertyPageBase(parent, wxID_ANY)
 {
     m_isModified = false;
@@ -94,13 +94,13 @@ DesignGeneral::DesignGeneral(wxWindow* parent, DesignOptions *options):
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     // end wxGlade
-    m_units->SetSelection( options->units );
-    m_interval->SetValue( wxString::Format( "%d", options->interval ) );
-    m_color->SetColourValue( options->colorBackground );
-    m_display->SetSelection( options->display );
-    m_custommove->SetValue( options->customMove );
-    m_mouseSelect->SetValue( options->mouseSelect );
-    m_rowresize->SetValue( options->rowResize );
+    m_units->SetSelection( options.units );
+    m_interval->SetValue( wxString::Format( "%d", options.interval ) );
+    m_color->SetColourValue( options.colorBackground );
+    m_display->SetSelection( options.display );
+    m_custommove->SetValue( options.customMove );
+    m_mouseSelect->SetValue( options.mouseSelect );
+    m_rowresize->SetValue( options.rowResize );
     m_units->Bind( wxEVT_COMBOBOX, &DesignGeneral::Modified, this );
 }
 
