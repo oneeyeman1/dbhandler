@@ -207,11 +207,6 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, std::unique_ptr
     PropertiesDialog dlg( parent, wxID_ANY, title, handler.get(), cs );
 	dlg.Center();
     res = dlg.ShowModal();
-    if( res != wxID_CANCEL )
-    {
-        command = handler.get()->GetCommand();
-        logOnly = handler.get()->IsLogOnly();
-    }
     return res;
 }
 

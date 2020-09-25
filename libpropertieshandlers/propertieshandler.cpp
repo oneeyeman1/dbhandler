@@ -44,10 +44,11 @@
 std::mutex Database::Impl::my_mutex;
 #endif
 
-DatabasePropertiesHandler::DatabasePropertiesHandler(const Database *db, DatabaseTable *table) : PropertiesHandler()
+DatabasePropertiesHandler::DatabasePropertiesHandler(const Database *db, DatabaseTable *table, wxTextCtrl *log) : PropertiesHandler()
 {
     m_db = db;
     m_table = table;
+    m_log = log;
     m_page1 = nullptr;
     m_page2 = m_page3 = m_page4 = nullptr;
     m_prop = table->GetTableProperties();
@@ -130,6 +131,8 @@ int DatabasePropertiesHandler::GetProperties(std::vector<std::wstring> &errors)
         result = const_cast<Database *>( m_db )->SetTableProperties( m_table, m_prop, isLogOnly, m_command, errors );
         if( !result && !isLogOnly )
             m_table->SetTableProperties( m_prop );
+        if( isLogOnly )
+            m_log->AppendText( m_command );
     }
     return result;
 }

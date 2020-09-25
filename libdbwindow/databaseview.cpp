@@ -911,9 +911,9 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
 #endif
             res = GetDocument()->GetDatabase()->GetTableProperties( dbTable, errors );
 #if __cplusplus > 201300
-            auto ptr = std::make_unique<DatabasePropertiesHandler>( GetDocument()->GetDatabase(), dbTable );
+            auto ptr = std::make_unique<DatabasePropertiesHandler>( GetDocument()->GetDatabase(), dbTable, m_text );
 #else
-			auto ptr = std::unique_ptr<DatabasePropertiesHandler>( new DatabasePropertiesHandler( GetDocument()->GetDatabase(), dbTable ) );
+			auto ptr = std::unique_ptr<DatabasePropertiesHandler>( new DatabasePropertiesHandler( GetDocument()->GetDatabase(), dbTable, m_text ) );
 #endif
             propertiesPtr = std::move( ptr );
             title = _( "Table " );
@@ -931,9 +931,9 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
                 res = GetDocument()->GetDatabase()->GetFieldProperties( tableName.ToStdWstring(), field, errors );
             }
 #if __cplusplus > 201300
-            auto ptr = std::make_unique<FieldPropertiesHandler>( GetDocument()->GetDatabase(), tableName, ownerName, dbTable );
+            auto ptr = std::make_unique<FieldPropertiesHandler>( GetDocument()->GetDatabase(), tableName, ownerName, dbTable, m_text );
 #else
-            auto ptr = std::unique_ptr<FieldPropertiesHandler>( new FieldPropertiesHandler( GetDocument()->GetDatabase(), tableName, ownerName, field ) );
+            auto ptr = std::unique_ptr<FieldPropertiesHandler>( new FieldPropertiesHandler( GetDocument()->GetDatabase(), tableName, ownerName, field, m_text ) );
 #endif
             propertiesPtr = std::move( ptr );
             title = _( "Column " );
@@ -962,13 +962,6 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         }
 //        TableProperties props = *static_cast<TableProperties *>( properties );
         res = func( m_frame, propertiesPtr, title, command, logOnly, *pcs );
-        if( res != wxID_CANCEL && logOnly )
-        {
-            m_text->AppendText( command );
-            m_text->AppendText( "\n\r\n\r" );
-            if( !m_log->IsShown() )
-                m_log->Show();
-        }
     }
 }
 
