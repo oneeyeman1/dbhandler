@@ -16,6 +16,7 @@ public:
     virtual void OnLeftDown(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnMouseMove(wxMouseEvent &event) wxOVERRIDE;
     DesignOptions GetOptions() { return m_options; }
+    void SetOptions(DesignOptions options) { m_options = options; }
     void PopulateQueryCanvas(const std::vector<Field *> &queryFields, const std::vector<const Field *> &groupByFields);
 protected:
     void OnProperties(wxCommandEvent &event);

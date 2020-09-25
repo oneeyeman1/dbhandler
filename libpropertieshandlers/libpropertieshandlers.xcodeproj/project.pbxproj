@@ -301,6 +301,7 @@
 					../libpropertypages,
 					../libshapeframework,
 					../libfieldswindow,
+					../libdbwindow,
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = (

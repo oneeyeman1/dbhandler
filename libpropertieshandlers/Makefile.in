@@ -131,7 +131,8 @@ libpropertieshandlers_la_LIBADD =
 am_libpropertieshandlers_la_OBJECTS =  \
 	libpropertieshandlers_la-propertieshandler.lo \
 	libpropertieshandlers_la-fieldpropertieshandler.lo \
-	libpropertieshandlers_la-designpropertieshandler.lo
+	libpropertieshandlers_la-designpropertieshandler.lo \
+	libpropertieshandlers_la-dividerpropertieshandler.lo
 libpropertieshandlers_la_OBJECTS =  \
 	$(am_libpropertieshandlers_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -385,10 +386,13 @@ libpropertieshandlers_la_SOURCES = \
 	fieldpropertieshandler.h \
 	propertieshandlerbase.h \
 	designpropertieshandler.cpp \
-	designpropertieshandler.h
+	designpropertieshandler.h \
+	dividerpropertieshandler.cpp \
+	dividerpropertieshandler.h
 
 libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libpropertypages \
+	-I../../libdbwindow \
 	-I../../libshapeframework \
 	-I../../libfieldswindow \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
@@ -478,6 +482,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertieshandlers_la-designpropertieshandler.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertieshandlers_la-dividerpropertieshandler.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertieshandlers_la-fieldpropertieshandler.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertieshandlers_la-propertieshandler.Plo@am__quote@
 
@@ -522,6 +527,13 @@ libpropertieshandlers_la-designpropertieshandler.lo: designpropertieshandler.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='designpropertieshandler.cpp' object='libpropertieshandlers_la-designpropertieshandler.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertieshandlers_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertieshandlers_la-designpropertieshandler.lo `test -f 'designpropertieshandler.cpp' || echo '$(srcdir)/'`designpropertieshandler.cpp
+
+libpropertieshandlers_la-dividerpropertieshandler.lo: dividerpropertieshandler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertieshandlers_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertieshandlers_la-dividerpropertieshandler.lo -MD -MP -MF $(DEPDIR)/libpropertieshandlers_la-dividerpropertieshandler.Tpo -c -o libpropertieshandlers_la-dividerpropertieshandler.lo `test -f 'dividerpropertieshandler.cpp' || echo '$(srcdir)/'`dividerpropertieshandler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertieshandlers_la-dividerpropertieshandler.Tpo $(DEPDIR)/libpropertieshandlers_la-dividerpropertieshandler.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dividerpropertieshandler.cpp' object='libpropertieshandlers_la-dividerpropertieshandler.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertieshandlers_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertieshandlers_la-dividerpropertieshandler.lo `test -f 'dividerpropertieshandler.cpp' || echo '$(srcdir)/'`dividerpropertieshandler.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
