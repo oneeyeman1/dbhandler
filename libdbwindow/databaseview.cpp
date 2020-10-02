@@ -234,7 +234,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxPoint pt;
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
-    m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), /*parentRect.GetHeight() - parent->GetToolBar()->GetSize().GetHeight()*/parentClientSize.GetHeight() );
+    m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentClientSize.GetHeight() );
     m_tb = m_frame->CreateToolBar();
     if( m_type == QueryView )
     {
@@ -294,7 +294,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_styleBar->Realize();
         m_styleBar->SetSize( 0, offset, parentRect.GetWidth(), wxDefaultCoord );
         offset +=m_styleBar->GetSize().y;
-        m_frame->SetClientSize( frameClientSize.GetWidth(), frameClientSize.GetHeight() - offset );
+        m_frame->SetClientSize( frameClientSize.GetWidth(), frameClientSize.GetHeight() );
     }
     ptCanvas.x = 0;
     ptCanvas.y = offset;
