@@ -225,7 +225,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
     }
     wxPoint ptCanvas;
-    mainSizer = new wxBoxSizer( wxHORIZONTAL );
     sizer = new wxBoxSizer( wxVERTICAL );
 #ifdef __WXOSX__
     wxRect parentRect = m_parent->GetRect();
@@ -288,13 +287,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     m_tb->Realize();
     int offset = m_tb->GetSize().y;
-    auto frameClientSize = m_frame->GetClientSize();
     if( m_styleBar )
     {
         m_styleBar->Realize();
-        m_styleBar->SetSize( 0, offset, parentRect.GetWidth(), wxDefaultCoord );
-        offset +=m_styleBar->GetSize().y;
-        m_frame->SetClientSize( frameClientSize.GetWidth(), frameClientSize.GetHeight() );
+        sizer->Add( m_styleBar, 1, wxEXPAND, 0 );
     }
     ptCanvas.x = 0;
     ptCanvas.y = offset;
@@ -327,7 +323,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_queryBook->Show( false );
         m_queryBook->Bind( wxEVT_NOTEBOOK_PAGE_CHANGED, &DrawingView::OnSQLNotebookPageChanged, this );
         m_designCanvas = new DesignCanvas( this, ptCanvas );
-        mainSizer->Add( m_designCanvas, 1, wxEXPAND, 0 );
+        sizer->Add( m_designCanvas, 1, wxEXPAND, 0 );
         m_canvas->Show( false );
         m_edit = new wxStyledTextCtrl( m_frame );
         std::wstring type = GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType();
@@ -338,11 +334,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
             m_edit->SetLexer( wxSTC_LEX_MSSQL );
         if( type == "SQLite" )
             m_edit->SetLexer( wxSTC_LEX_SQL );
-        mainSizer->Add( m_edit, 1, wxEXPAND, 0 );
+        sizer->Add( m_edit, 1, wxEXPAND, 0 );
         m_edit->Show( false );
     }
-    mainSizer->Add( sizer, 1, wxEXPAND, 0 );
-    m_frame->SetSizer( mainSizer );
+    m_frame->SetSizer( sizer );
     if( m_log )
         m_log->Bind( wxEVT_CLOSE_WINDOW, &DrawingView::OnCloseLogWindow, this );
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
