@@ -210,7 +210,7 @@ public:
     TableProperties &GetTableProperties() { return m_props; }
     void SetTableProperties(const TableProperties &props) { m_props = props; }
     const std::vector<Field *> &GetFields() const { return table_fields; }
-    std::map<int,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
+    std::map<unsigned long,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
     const unsigned long GetTableId() const { return m_objectId; }
     void SetTableId(unsigned long id) { m_objectId = id; }
     const std::wstring &GetTableOwner() const { return m_props.m_owner; }
