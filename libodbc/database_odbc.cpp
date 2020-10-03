@@ -2646,8 +2646,8 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
                 }
                 else
                 {
-                    std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
-                    std::map<int, std::vector<FKField *> >::size_type size = fKeys.size();
+                    std::map<unsigned long, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+                    unsigned long size = fKeys.size();
                     for( unsigned int i = 0; i < foreignKeyFields.size(); i++ )
                         fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp ) );
                 }
@@ -3544,8 +3544,8 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tab
             else
             {
                 bool found = false;
-                std::map<int, std::vector<FKField *> > &fKeys = const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector();
-                for( std::map<int, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
+                std::map<unsigned long, std::vector<FKField *> > &fKeys = const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector();
+                for( std::map<unsigned long, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
                     for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found;  )
                     {
                         if( (*it1)->GetFKName() == keyName )
@@ -4192,7 +4192,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     std::vector<Field *> fields;
     std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol, cat;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
-    std::map<int,std::vector<FKField *> > foreign_keys;
+    std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0, stmt_ind = 0;
     SQLHDBC hdbc_col = 0, hdbc_pk = 0, hdbc_colattr = 0, hdbc_fk = 0, hdbc_ind = 0;
     SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1];

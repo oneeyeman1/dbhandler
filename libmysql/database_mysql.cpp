@@ -44,8 +44,8 @@ MySQLDatabase::~MySQLDatabase()
                 delete (*it1);
                 (*it1) = NULL;
             }
-            std::map<int,std::vector<FKField *> > fk_fields = (*it)->GetForeignKeyVector();
-            for( std::map<int, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
+            std::map<unsigned long,std::vector<FKField *> > fk_fields = (*it)->GetForeignKeyVector();
+            for( std::map<unsigned long, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
             {
                 for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
                 {
@@ -364,7 +364,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     MYSQL_RES *prepare_meta_result;
     std::vector<Field *> fields;
     std::vector<std::wstring> fk_names, indexes;
-    std::map<int,std::vector<FKField *> > foreign_keys;
+    std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
     std::wstring fieldName, fieldType, fieldDefaultValue, fkSchema, fkTable, fkFld, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
     int fkId, charLen, charOctet, numLen, numPrec, pk;
@@ -1998,7 +1998,7 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
         }
         else
         {
-            std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+            std::map<unsigned long, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
             size_t size = fKeys.size();
             size++;
             for( unsigned int i = 0; i < foreignKeyFields.size(); i++ )
@@ -2181,8 +2181,8 @@ int MySQLDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &ta
         else
         {
             bool found = false;
-            std::map<int, std::vector<FKField *> > &fKeys = const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector();
-            for( std::map<int, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
+            std::map<unsigned long, std::vector<FKField *> > &fKeys = const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector();
+            for( std::map<unsigned long, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
                 for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found; )
                 {
                     if( (*it1)->GetFKName() == keyName )

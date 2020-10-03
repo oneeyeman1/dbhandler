@@ -1067,8 +1067,8 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
         }
         else
         {
-            std::map<int, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
-            int size = fKeys.size();
+            std::map<unsigned long, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+            unsigned long size = fKeys.size();
             size++;
             for( int i = 0; i < foreignKeyFields.size(); i++ )
                 fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp, match ) );
@@ -1236,8 +1236,8 @@ int PostgresDatabase::DropForeignKey(std::wstring &command, const DatabaseTable 
         else
         {
             bool found = false;
-            std::map<int, std::vector<FKField *> > &fKeys = const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector();
-            for( std::map<int, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
+            std::map<unsigned long, std::vector<FKField *> > &fKeys = const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector();
+            for( std::map<unsigned long, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
                 for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found; )
                 {
                     if( (*it1)->GetFKName() == keyName )
@@ -1322,7 +1322,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
     std::wstring fieldName, fieldType, fieldDefaultValue, origSchema, origTable, origField, refSchema, refTable, refField, fkName, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
     ExecStatusType status;
     std::vector<Field *> fields;
-    std::map<int,std::vector<FKField *> > foreign_keys;
+    std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::string cat = m_pimpl->m_myconv.to_bytes( catalog.c_str() );

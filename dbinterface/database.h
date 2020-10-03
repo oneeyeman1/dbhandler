@@ -175,7 +175,7 @@ private:
 class DatabaseTable
 {
 public:
-    DatabaseTable(const std::wstring &tableName, const std::wstring &schemaName, const std::vector<Field *> &tableFields, const std::map<int,std::vector<FKField *> > &foreignKeys)
+    DatabaseTable(const std::wstring &tableName, const std::wstring &schemaName, const std::vector<Field *> &tableFields, const std::map<unsigned long,std::vector<FKField *> > &foreignKeys)
     {
         m_objectId = 0;
         m_props.m_owner = L"";
@@ -193,7 +193,7 @@ public:
             (*it) = NULL;
         }
         table_fields.clear();
-        for( std::map<int, std::vector< FKField *> >::iterator it1 = foreign_keys.begin(); it1 != foreign_keys.end(); ++it1 )
+        for( std::map<unsigned long, std::vector< FKField *> >::iterator it1 = foreign_keys.begin(); it1 != foreign_keys.end(); ++it1 )
         {
             for( std::vector<FKField *>::iterator it2 = (*it1).second.begin(); it2 < (*it1).second.end(); ++it2 )
             {
@@ -223,7 +223,7 @@ public:
     int GetNumberOfIndexes() const { return m_numIndex; }
 private:
     std::vector<Field *> table_fields;
-    std::map<int,std::vector<FKField *> > foreign_keys;
+    std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     int m_numFields, m_numIndex;
     unsigned long m_objectId;
     std::vector<std::wstring> m_indexes;

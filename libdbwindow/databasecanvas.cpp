@@ -136,8 +136,8 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
     bool found = false, secondIteration = false;
     for( std::vector<MyErdTable *>::iterator it2 = tables.begin(); it2 < tables.end(); it2++ )
     {
-        std::map<int, std::vector<FKField *> > foreignKeys = const_cast<DatabaseTable *>( (*it2)->GetTable() )->GetForeignKeyVector();
-        for( std::map<int, std::vector<FKField *> >::iterator it3 = foreignKeys.begin(); it3 != foreignKeys.end(); it3++ )
+        std::map<unsigned long, std::vector<FKField *> > foreignKeys = const_cast<DatabaseTable *>( (*it2)->GetTable() )->GetForeignKeyVector();
+        for( std::map<unsigned long, std::vector<FKField *> >::iterator it3 = foreignKeys.begin(); it3 != foreignKeys.end(); it3++ )
         {
 //            if( ((DrawingView *) m_view)->GetViewType() == DatabaseView )
 //                pConstr = new DatabaseConstraint( (*it3).second );

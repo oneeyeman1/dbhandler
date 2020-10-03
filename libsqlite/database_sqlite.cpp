@@ -1636,7 +1636,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
     {
         std::vector<Field *> fields;
         std::vector<std::wstring> fk_names, indexes;
-        std::map<int,std::vector<FKField *> > foreign_keys;
+        std::map<unsigned long,std::vector<FKField *> > foreign_keys;
         std::wstring errorMessage;
         sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL, *stmt4 = NULL;
         std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
