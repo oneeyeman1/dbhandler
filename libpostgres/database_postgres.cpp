@@ -470,7 +470,7 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
     int len3 = (int) indexName.length() * sizeof( wchar_t );
     int length[3] = { len1, len2, len3 };
     int formats[3] = { 1, 1, 1 };
-    res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL, values, length, formats, 1 );
+    res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL, values, length, formats, 0 );
     ExecStatusType status = PQresultStatus( res ); 
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
@@ -877,7 +877,7 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
 //    int len2 = strlen( values[1] );
 //    int length[2] = { len1, len2 };
 //    int formats[2] = { 1, 1 };
-    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, nullptr, nullptr, 1 );
+    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, nullptr, nullptr, 0 );
     ExecStatusType status = PQresultStatus( res ); 
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
@@ -904,7 +904,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     const char *schema = m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str();
     const char *owner = m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str();
     const char *fieldNameReq = m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
-    int len = (int) strlen( table ) + (int) strlen( schema ) + 2;
+    size_t len = tableName.length() + schemaName.length() + 2;
     char *tname = new char[len];
     memset( tname, '\0', len );
     strcpy( tname, schema );
@@ -921,12 +921,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     strcpy( values[0], tname );
     strcpy( values[1], owner );
     strcpy( values[2], fieldNameReq );
-    int len1 = (int) strlen( values[0] );
-    int len2 = (int) strlen( values[1] );
-    int len3 = (int) strlen( values[2] );
-    int length[3] = { len1, len2, len3 };
-    int formats[3] = { 1, 1, 1 };
-    PGresult *res = PQexecPrepared( m_db, "get_field_properties", 3, values, length, formats, 1 );
+    PGresult *res = PQexecPrepared( m_db, "get_field_properties", 3, values, nullptr, nullptr, 0 );
     ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
@@ -1536,7 +1531,7 @@ int PostgresDatabase::GetTableOwner(const std::wstring &schemaName, const std::w
     memset( values[1], '\0', tableName.length() * sizeof( wchar_t ) + 1 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
-    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, nullptr, nullptr, 1 );
+    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, nullptr, nullptr, 0 );
     ExecStatusType status = PQresultStatus( res ); 
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
@@ -1567,7 +1562,7 @@ bool PostgresDatabase::IsFieldPropertiesExist(const std::wstring &tableName, con
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
     strcpy( values[2], m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() );
-    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL, values, nullptr, nullptr, 1 );
+    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL, values, nullptr, nullptr, 0 );
     ExecStatusType status = PQresultStatus( res );
     if( status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK )
         exist = true;
@@ -1597,7 +1592,7 @@ int PostgresDatabase::GetFieldHeader(const std::wstring &tableName, const std::w
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() );
     std::wstring query = L"SEECT pbc_hdr FROM \"abcatcol\" WHERE \"abc_tnam\" = $1 AND \"abc_cnam\" = $2";
-    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, nullptr, nullptr, 1 );
+    PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, nullptr, nullptr, 0 );
     ExecStatusType status = PQresultStatus( res ); 
     if( status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK )
         headerStr = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, 0, 0 ) );
