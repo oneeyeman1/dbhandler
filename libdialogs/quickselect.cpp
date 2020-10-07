@@ -51,7 +51,7 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_label12 = new wxStaticText( m_panel, wxID_ANY, _( "Criteria:" ) );
     set_properties();
     do_layout();
-    for( size_t i = 0; i < m_sizer10->GetItemCount (); ++i )
+    for( int i = 0; i < m_sizer10->GetItemCount (); ++i )
     {
         m_sizer10->SetItemMinSize( i, -1, m_grid->GetRowSize( i ) );
     }
@@ -288,7 +288,7 @@ void QuickSelect::OnDisplayComment(wxMouseEvent &event)
 
 void QuickSelect::OnGridRowLines(wxGridSizeEvent &event)
 {
-    for( size_t i = 0; i < m_sizer10->GetItemCount (); ++i )
+    for( int i = 0; i < m_sizer10->GetItemCount (); ++i )
     {
         m_sizer10->SetItemMinSize( i, -1, m_grid->GetRowSize( i ) );
     }
