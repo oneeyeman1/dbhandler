@@ -225,7 +225,7 @@ void MainFrame::InitMenuBar(int id)
 void MainFrame::DatabaseMenu()
 {
 	int pos = 2;
-    m_menuFile->Insert( pos, wxID_CREATEDATABASE, _( "Create Database..." ), _( "Create Database" ) );
+    m_menuFile->Insert( pos++, wxID_CREATEDATABASE, _( "Create Database..." ), _( "Create Database" ) );
 	if( m_db->GetTableVector().GetDatabaseType() == L"SQLite" )
 		m_menuFile->Insert( pos++, wxID_ATTACHDATABASE, _( "Attach Database..." ), _( "Attach Database" ) );
     m_menuFile->Insert( pos++, wxID_DELETEDATABASE, _( "Delete Database..." ), _( "Delete Database" ) );
