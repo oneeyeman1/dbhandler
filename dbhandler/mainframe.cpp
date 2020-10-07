@@ -224,9 +224,14 @@ void MainFrame::InitMenuBar(int id)
 
 void MainFrame::DatabaseMenu()
 {
-    m_menuFile->Insert( 2, wxID_CREATEDATABASE, _( "Create Database..." ), _( "Create Database" ) );
-    m_menuFile->Insert( 3, wxID_DELETEDATABASE, _( "Delete Database..." ), _( "Delete Database" ) );
-    m_menuFile->InsertSeparator( 4 );
+	int pos = 2;
+    m_menuFile->Insert( pos, wxID_CREATEDATABASE, _( "Create Database..." ), _( "Create Database" ) );
+	if( m_db->GetTableVector().GetDatabaseType() == L"SQLite" )
+		m_menuFile->Insert( pos++, wxID_ATTACHDATABASE, _( "Attach Database..." ), _( "Attach Database" ) );
+    m_menuFile->Insert( pos++, wxID_DELETEDATABASE, _( "Delete Database..." ), _( "Delete Database" ) );
+	if( m_db->GetTableVector().GetDatabaseType() == L"SQLite" )
+		m_menuFile->Insert( pos++, wxID_DETACHDATABASE, _( "Detach Database" ), _( "Detach Database" ) );
+    m_menuFile->InsertSeparator( pos );
     wxMenu *menuObject = new wxMenu();
     menuObject->Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select tables" ) );
     wxMenu *menuNewObject = new wxMenu();

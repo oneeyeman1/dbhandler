@@ -72,6 +72,8 @@ private:
 #define wxID_FKDEFINITION         121
 #define wxID_FKOPENREFTABLE       122
 #define wxID_DROPOBJECT           123
+#define wxID_ATTACHDATABASE       124
+#define wxID_DETACHDATABASE       125
 #define WHEREPAGECOLUMNS          194
 #define WHEREPAGEFUNCTIONS        195
 #define WHEREPAGEARGUMENTS        196
