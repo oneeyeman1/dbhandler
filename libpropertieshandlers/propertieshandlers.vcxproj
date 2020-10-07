@@ -43,7 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="designpropertieshandler.cpp" />
-    <ClCompile Include="dividerpropertieshander.cpp" />
+    <ClCompile Include="dividerpropertieshandler.cpp" />
     <ClCompile Include="fieldpropertieshandler.cpp" />
     <ClCompile Include="propertieshandler.cpp" />
   </ItemGroup>

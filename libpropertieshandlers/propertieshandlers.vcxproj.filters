@@ -36,7 +36,7 @@
     <ClCompile Include="designpropertieshandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dividerpropertieshander.cpp">
+    <ClCompile Include="dividerpropertieshandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
