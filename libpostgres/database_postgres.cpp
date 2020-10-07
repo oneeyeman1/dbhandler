@@ -900,27 +900,31 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
 int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    const char *table = m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str();
-    const char *schema = m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str();
-    const char *owner = m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str();
-    const char *fieldNameReq = m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
-    size_t len = tableName.length() + schemaName.length() + 2;
+    std::string table = m_pimpl->m_myconv.to_bytes( tableName.c_str() );
+    std::string schema = m_pimpl->m_myconv.to_bytes( schemaName.c_str() );
+    std::string owner = m_pimpl->m_myconv.to_bytes( ownerName.c_str() );
+    std::string fieldNameReq = m_pimpl->m_myconv.to_bytes( fieldName.c_str() );
+    int len = strlen( schema.c_str() );
+    len++;
+    len += strlen( table.c_str() );
+    len++;
+//    size_t len = tableName.length() + schemaName.length() + 2;
     char *tname = new char[len];
     memset( tname, '\0', len );
-    strcpy( tname, schema );
+    strcpy( tname, schema.c_str() );
     strcat( tname, "." );
-    strcat( tname, table );
+    strcat( tname, table.c_str() );
     char *values[3];
     values[0] = NULL, values[1] = NULL, values[2] = NULL;
     values[0] = new char[strlen( tname ) + 1];
-    values[1] = new char[strlen( owner ) + 1];
-    values[2] = new char[strlen( fieldNameReq ) + 1];
+    values[1] = new char[strlen( owner.c_str() ) + 1];
+    values[2] = new char[strlen( fieldNameReq.c_str() ) + 1];
     memset( values[0], '\0', strlen( tname ) + 1 );
-    memset( values[1], '\0', strlen( owner ) + 1 );
-    memset( values[2], '\0', strlen( fieldNameReq ) + 1 );
+    memset( values[1], '\0', strlen( owner.c_str() ) + 1 );
+    memset( values[2], '\0', strlen( fieldNameReq.c_str() ) + 1 );
     strcpy( values[0], tname );
-    strcpy( values[1], owner );
-    strcpy( values[2], fieldNameReq );
+    strcpy( values[1], owner.c_str() );
+    strcpy( values[2], fieldNameReq.c_str() );
     PGresult *res = PQexecPrepared( m_db, "get_field_properties", 3, values, nullptr, nullptr, 0 );
     ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
@@ -1427,6 +1431,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
         }
         else if( status == PGRES_TUPLES_OK )
         {
+            int numFields = 0;
             for( int j = 0; j < PQntuples( res2 ); j++ )
             {
                 int size, precision;
@@ -1465,11 +1470,13 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                     break;
                 }
                 fields.push_back( field );
+                numFields++;
             }
             PQclear( res2 );
             if( !result )
             {
                 DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
+                table->SetNumberOfFields( numFields );
                 for( std::vector<Field *>::iterator it = fields.begin (); it < fields.end (); ++it )
                 {
                     if( (*it)->IsPrimaryKey() )
@@ -1486,6 +1493,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                 }
                 else
                 {
+                    int numIndexes = 0;
                     res4 = PQexecPrepared( m_db, "get_indexes", 2, values1, length1, formats1, 1 );
                     status = PQresultStatus( res4 );
                     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
@@ -1500,8 +1508,12 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                     else
                     {
                         for( int j = 0; j < PQntuples( res4 ); j++ )
+                        {
                             indexes.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res4, j, 0 ) ) );
+                            numIndexes++;
+                        }
                         table->SetIndexNames( indexes );
+                        table->SetNumberOfIndexes( numIndexes );
                         pimpl->m_tables[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( table );
                         fields.erase( fields.begin(), fields.end() );
                         foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
