@@ -19,7 +19,7 @@ public:
     // end wxGlade
 
     DesignGeneral(wxWindow* parent, DesignOptions options);
-    ~DesignGeneral() { }
+    virtual ~DesignGeneral() { }
     wxComboBox *GetUnitsCtrl() { return m_units; }
     CColorComboBox *GetColorCtrl() { return m_color; }
 private:

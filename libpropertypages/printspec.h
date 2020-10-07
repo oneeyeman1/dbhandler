@@ -19,7 +19,7 @@ public:
     // end wxGlade
 
     PrintSpec(wxWindow* parent);
-    ~PrintSpec() { }
+    virtual ~PrintSpec() { }
 
 private:
 
