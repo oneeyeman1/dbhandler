@@ -2158,6 +2158,7 @@ int MySQLDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg))
     unsigned long version;
     int result = 0;
     version = mysql_get_server_version( m_db );
+    pimpl->m_versionRevision = version % 100;
     pimpl->m_versionMajor = version / 10000;
     pimpl->m_versionRevision = ( version - pimpl->m_versionMajor ) / 100;
     return result;

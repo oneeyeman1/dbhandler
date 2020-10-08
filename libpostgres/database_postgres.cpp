@@ -904,7 +904,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     std::string schema = m_pimpl->m_myconv.to_bytes( schemaName.c_str() );
     std::string owner = m_pimpl->m_myconv.to_bytes( ownerName.c_str() );
     std::string fieldNameReq = m_pimpl->m_myconv.to_bytes( fieldName.c_str() );
-    int len = strlen( schema.c_str() );
+    size_t len = strlen( schema.c_str() );
     len++;
     len += strlen( table.c_str() );
     len++;
@@ -1163,6 +1163,7 @@ int PostgresDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         pimpl->m_serverVersion = m_pimpl->m_myconv.from_bytes( PQparameterStatus( m_db, "server_version" ) );
         pimpl->m_versionMajor = versionInt / 10000;
         pimpl->m_versionMinor = ( versionInt - pimpl->m_versionMajor * 10000 ) / 100;
+        pimpl->m_versionRevision = versionInt % 100;
     }
     return result;
 }
