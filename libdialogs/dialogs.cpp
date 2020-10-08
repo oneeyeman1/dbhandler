@@ -72,6 +72,7 @@
 #include "typecombobox.h"
 #include "retrievalarguments.h"
 #include "gotoline.h"
+#include "attachdb.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -366,5 +367,16 @@ extern "C" WXEXPORT int GotoLine(wxWindow *parent, int &lineNo)
     result = dlg.ShowModal();
     if( result == wxID_OK )
         lineNo = wxAtoi( dlg.GetLineNumberCtrl()->GetValue() );
+    return result;
+}
+
+extern "C" WXEXPORT int AttachToDatabase(wxWindow *parent)
+{
+    int result;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    AttachDB dlg( parent );
+    result = dlg.ShowModal();
     return result;
 }

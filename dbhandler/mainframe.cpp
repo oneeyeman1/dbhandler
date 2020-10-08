@@ -47,6 +47,7 @@ typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType);
 #endif
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
+typedef int (*ATTACHDATABASE)(wxWindow *);
 
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_CONFIGUREODBC, MainFrame::OnConfigureODBC)
@@ -54,6 +55,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_TABLE, MainFrame::OnTable)
     EVT_MENU(wxID_DATABASE, MainFrame::OnDatabase)
     EVT_MENU(wxID_QUERY, MainFrame::OnQuery)
+    EVT_MENU(wxID_ATTACHDATABASE, MainFrame::OnAttachDatabase)
     EVT_SIZE(MainFrame::OnSize)
     EVT_CLOSE(MainFrame::OnClose)
 END_EVENT_TABLE()
@@ -596,3 +598,16 @@ void MainFrame::OnSize(wxSizeEvent &event)
         event.Skip();
 }
 
+void MainFrame::OnAttachDatabase(wxCommandEvent &event)
+{
+    auto lib = new wxDynamicLibrary;
+#ifdef __WXMSW__
+    lib->Load( "dialogs" );
+#elif __WXOSX__
+    lib->Load( "liblibdialogs.dylib" );
+#else
+    lib->Load( "libdialogs" );
+#endif
+    ATTACHDATABASE func = (ATTACHDATABASE) lib->GetSymbol( "AttachToDatabase" );
+    func( this );
+}

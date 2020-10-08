@@ -33,6 +33,7 @@ private:
     void OnQuery(wxCommandEvent &event);
     void OnSize(wxSizeEvent &event);
     void OnClose(wxCloseEvent &event);
+    void OnAttachDatabase(wxCommandEvent &event);
     Database *m_db;
     wxMenu *m_menuFile;
     wxDocManager *m_manager;
