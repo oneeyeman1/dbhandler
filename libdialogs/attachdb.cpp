@@ -38,8 +38,8 @@ AttachDB::AttachDB(wxWindow *parent) : wxDialog( parent, wxID_ANY, "" )
     sizer->Add( m_label2, 0, wxEXPAND, 0 );
     sizer->Add( m_schemaName, 0, wxEXPAND, 0 );
     sizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer->Add( CreateStdDialogButtonSizer( wxOK | wxCANCEL | wxHELP ), 0, wxEXPAND, 0 );
     main->Add( sizer, 0, wxEXPAND, 0 );
-    main->Add( CreateStdDialogButtonSizer( wxOK | wxCANCEL | wxHELP ), 0, wxEXPAND, 0 );
     m_panel->SetSizer( main );
     mainSizer->Add( m_panel, 0, wxEXPAND, 0 );
     SetSizerAndFit( mainSizer );
