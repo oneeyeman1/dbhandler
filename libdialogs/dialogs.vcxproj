@@ -499,6 +499,7 @@
   <ItemGroup>
     <ClCompile Include="addcolumnsdialog.cpp" />
     <ClCompile Include="arguments.c" />
+    <ClCompile Include="attachdb.cpp" />
     <ClCompile Include="bitmappanel.cpp" />
     <ClCompile Include="createindex.cpp" />
     <ClCompile Include="databasetype.cpp" />
@@ -518,6 +519,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="addcolumnsdialog.h" />
+    <ClInclude Include="attachdb.h" />
     <ClInclude Include="bitmappanel.h" />
     <ClInclude Include="createindex.h" />
     <ClInclude Include="databasetype.h" />

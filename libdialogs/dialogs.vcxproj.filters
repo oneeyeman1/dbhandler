@@ -64,6 +64,9 @@
     <ClCompile Include="gotoline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="attachdb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="odbcconfigure.h">
@@ -112,6 +115,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gotoline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="attachdb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
