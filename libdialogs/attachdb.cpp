@@ -18,7 +18,7 @@
 #include "wx/filepicker.h"
 #include "attachdb.h"
 
-AttachDB::AttachDB(wxWindow *parent) : wxDialog( parent, wxID_ANY, "" )
+AttachDB::AttachDB(wxWindow *parent) : wxDialog( parent, wxID_ANY, "Attach the Database" )
 {
     auto mainSizer = new wxBoxSizer( wxHORIZONTAL );
     auto main = new wxBoxSizer( wxHORIZONTAL );
