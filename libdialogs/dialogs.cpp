@@ -20,6 +20,7 @@
 #include <memory>
 #include "wx/wizard.h"
 #include "wx/filepicker.h"
+#include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/listctrl.h"
 #include "wx/notebook.h"
@@ -191,7 +192,7 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    CreateIndex dlg( parent, wxID_ANY, "", table, table->GetSchemaName(), db );
+    CreateIndex dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), wxID_ANY, "", table, table->GetSchemaName(), db );
     dlg.Center();
     res = dlg.ShowModal();
     if( res != wxID_CANCEL )
@@ -218,7 +219,7 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
     wxTheApp->SetTopWindow( parent );
 #endif
     wxString refTblName = wxString( refTableName );
-    ForeignKeyDialog dlg( parent, wxID_ANY, _( "" ), table, db, keyName, foreignKeyFields, refTblName, isView, match );
+    ForeignKeyDialog dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), wxID_ANY, _( "" ), table, db, keyName, foreignKeyFields, refTblName, isView, match );
     dlg.Center();
     res = dlg.ShowModal();
     if( res != wxID_CANCEL || dlg.IsForeignKeyEdited() )
@@ -282,7 +283,7 @@ extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    QuickSelect dlg( parent, db );
+    QuickSelect dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), db );
     dlg.Center();
     int res = dlg.ShowModal();
     if( res == wxID_OK )
@@ -299,7 +300,7 @@ extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTab
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    JointType dlg( parent, wxID_ANY, _( "Join" ), origTable, refTable, origField, refField, type );
+    JointType dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), wxID_ANY, _( "Join" ), origTable, refTable, origField, refField, type );
     res = dlg.ShowModal();
     if( res == wxID_OK )
         type = dlg.GetTypeCtrl()->GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
@@ -309,7 +310,7 @@ extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTab
 extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type, const std::vector<std::wstring> &fields, wxString &selection, const wxString &dbType, const wxString &dbSubtype)
 {
     int res;
-    AddColumnsDialog dlg( parent, type, fields, dbType, dbSubtype );
+    AddColumnsDialog dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), type, fields, dbType, dbSubtype );
     res = dlg.ShowModal();
     if( res == wxID_OK )
     {
@@ -325,7 +326,7 @@ extern "C" WXEXPORT int GetODBCCredentails(wxWindow *parent, const wxString &dsn
 {
     int res = wxID_OK;
 #ifndef __WXMSW__
-    ODBCCredentials dlg( parent, wxID_ANY, L"", dsn, userID, password );
+    ODBCCredentials dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), wxID_ANY, L"", dsn, userID, password );
     res = dlg.ShowModal();
     if( res == wxID_OK )
     {
@@ -341,7 +342,7 @@ extern "C" WXEXPORT int GetQueryArguments(wxWindow *parent, std::vector<QueryArg
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    RetrievalArguments dlg( parent, arguments, dbType, subType );
+    RetrievalArguments dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), arguments, dbType, subType );
     dlg.Center();
     int result = dlg.ShowModal();
     if( result == wxID_OK )
@@ -363,7 +364,7 @@ extern "C" WXEXPORT int GotoLine(wxWindow *parent, int &lineNo)
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    GoToDialog dlg( parent );
+    GoToDialog dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild() );
     result = dlg.ShowModal();
     if( result == wxID_OK )
         lineNo = wxAtoi( dlg.GetLineNumberCtrl()->GetValue() );
@@ -376,7 +377,7 @@ extern "C" WXEXPORT int AttachToDatabase(wxWindow *parent)
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    AttachDB dlg( parent );
+    AttachDB dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild() );
     result = dlg.ShowModal();
     return result;
 }
