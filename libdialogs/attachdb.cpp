@@ -45,6 +45,7 @@ AttachDB::AttachDB(wxWindow *parent) : wxDialog( parent, wxID_ANY, "Attach the D
     SetSizerAndFit( mainSizer );
     FindWindowById( wxID_OK )->Enable( false );
     m_picker->Bind( wxEVT_FILEPICKER_CHANGED, &AttachDB::OnFileSelected, this );
+    FindWindowById( wxID_OK )->Bind( wxEVT_BUTTON, &AttachDB::OnOk, this );
 }
 
 void AttachDB::OnFileSelected(wxCommandEvent &event)
@@ -53,4 +54,13 @@ void AttachDB::OnFileSelected(wxCommandEvent &event)
     m_schemaName->Enable( true );
     m_schemaName->SetValue( name.GetName() );
     FindWindowById( wxID_OK )->Enable( true );
+}
+
+void AttachDB::OnOk(wxCommandEvent &event)
+{
+    wxString schema = m_schemaName->GetValue();
+    if( schema == "master" || schema == "temp" )
+        return;
+    else
+        EndModal( wxID_OK );
 }

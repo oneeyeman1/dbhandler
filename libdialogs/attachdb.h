@@ -15,6 +15,7 @@ public:
     AttachDB(wxWindow *parent);
 protected:
     void OnFileSelected(wxCommandEvent &event);
+    void OnOk(wxCommandEvent &event);
 private:
     wxPanel *m_panel;
     wxStaticText *m_label1, *m_label2;
