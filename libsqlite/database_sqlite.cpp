@@ -1849,7 +1849,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
         if( !result )
         {
             std::wstring comment = L"";
-            DatabaseTable *table = new DatabaseTable( tableName, L"", fields, foreign_keys );
+            DatabaseTable *table = new DatabaseTable( tableName, L"master", fields, foreign_keys );
             for( std::vector<Field *>::iterator it = fields.begin (); it < fields.end (); ++it )
             {
                 if( (*it)->IsPrimaryKey() )
