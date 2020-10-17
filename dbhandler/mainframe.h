@@ -35,6 +35,7 @@ private:
     void OnClose(wxCloseEvent &event);
     void OnAttachDatabase(wxCommandEvent &event);
     void OnDetachDatabase(wxCommandEvent &event);
+    void OnUpdateUIDetachDB(wxUpdateUIEvent &event);
     Database *m_db;
     wxMenu *m_menuFile;
     wxDocManager *m_manager;
@@ -42,6 +43,7 @@ private:
     wxToolBar *m_tb;
 #endif
     std::map<wxString, wxDynamicLibrary *> m_painters;
+    int m_countAttached;
     wxString m_pgLogfile;
     wxFileSystemWatcher *m_oldPGWatcher;
     wxDECLARE_EVENT_TABLE();
