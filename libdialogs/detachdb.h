@@ -12,22 +12,13 @@
 #ifndef DETACHDB_H
 #define DETACHDB_H
 
-#include <wx/wx.h>
-#include <wx/image.h>
-
-// begin wxGlade: ::dependencies
-// end wxGlade
-
-// begin wxGlade: ::extracode
-// end wxGlade
-
-
-class DetachDB: public wxDialog {
+class DetachDB: public wxDialog
+{
 public:
     // begin wxGlade: DetachDB::ids
     // end wxGlade
 
-    DetachDB(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    DetachDB(wxWindow* parent);
 
 private:
 

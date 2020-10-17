@@ -8,36 +8,31 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
+#include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
+
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
+#endif
 
 #include "detachdb.h"
 
-// begin wxGlade: ::extracode
-// end wxGlade
-
-
-
-DetachDB::DetachDB(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
-    wxDialog(parent, id, title, pos, size, wxDEFAULT_DIALOG_STYLE)
+DetachDB::DetachDB(wxWindow* parent):
+    wxDialog( parent, wxID_ANY, wxEmptyString )
 {
     // begin wxGlade: DetachDB::DetachDB
-    SetTitle(wxT("Detach Database"));
-    wxBoxSizer* sizer_1 = new wxBoxSizer(wxVERTICAL);
+    SetTitle( _( "Detach Database" ) );
+    auto sizer_1 = new wxBoxSizer( wxVERTICAL );
     const wxString m_dblist_choices[] = {
         wxT("choice 1"),
     };
-    m_dblist = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 1, m_dblist_choices, 0);
-    sizer_1->Add(m_dblist, 0, wxEXPAND, 0);
-    
-    // WARNING: Code for instance "sizer_2" of "wxStdDialogButtonSizer" not generated: no suitable writer found
-    
-    button_OK = new wxButton(this, wxID_OK, wxEmptyString);
-    button_CANCEL = new wxButton(this, wxID_CANCEL, wxEmptyString);
-    
-    SetSizer(sizer_1);
-    sizer_1->Fit(this);
-    SetAffirmativeId(button_OK->GetId())
-    SetEscapeId(button_CANCEL->GetId())
-    
+    m_dblist = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 1, m_dblist_choices, 0 );
+    sizer_1->Add( m_dblist, 0, wxEXPAND, 0 );
+    sizer_1->Add( CreateStdDialogButtonSizer( wxOK | wxCANCEL | wxHELP ), 0, wxEXPAND, 0 );    SetSizer(sizer_1);
+    sizer_1->Fit( this );
     Layout();
     // end wxGlade
 }

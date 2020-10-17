@@ -48,6 +48,7 @@ typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 typedef int (*ATTACHDATABASE)(wxWindow *);
+typedef int (*DETACHDATABASE)(wxWindow *);
 
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_CONFIGUREODBC, MainFrame::OnConfigureODBC)
@@ -56,6 +57,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_DATABASE, MainFrame::OnDatabase)
     EVT_MENU(wxID_QUERY, MainFrame::OnQuery)
     EVT_MENU(wxID_ATTACHDATABASE, MainFrame::OnAttachDatabase)
+    EVT_MENU(wxID_DETACHDATABASE, MainFrame::OnDetachDatabase)
     EVT_SIZE(MainFrame::OnSize)
     EVT_CLOSE(MainFrame::OnClose)
 END_EVENT_TABLE()
@@ -610,4 +612,22 @@ void MainFrame::OnAttachDatabase(wxCommandEvent &event)
 #endif
     ATTACHDATABASE func = (ATTACHDATABASE) lib->GetSymbol( "AttachToDatabase" );
     func( this );
+    delete lib;
+    lib = nullptr;
+}
+
+void MainFrame::OnDetachDatabase(wxCommandEvent &event)
+{
+    auto lib = new wxDynamicLibrary;
+#ifdef __WXMSW__
+    lib->Load( "dialogs" );
+#elif __WXOSX__
+    lib->Load( "liblibdialogs.dylib" );
+#else
+    lib->Load( "libdialogs" );
+#endif
+    DETACHDATABASE func = (DETACHDATABASE) lib->GetSymbol( "DetachDatabase" );
+    func( this );
+    delete lib;
+    lib = nullptr;
 }
