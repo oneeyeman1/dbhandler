@@ -45,7 +45,7 @@ public:
 private:
     std::vector<std::wstring> m_foreignKey, m_primaryKey;
     std::wstring m_refTableName;
-    std::vector<int> m_selectedForeignKeyField;
+    std::vector<long> m_selectedForeignKeyField;
     int m_delete, m_update;
     DatabaseTable *m_pkTable;
     bool m_isLogOnly, m_isView, m_edited;

@@ -24,7 +24,7 @@ public:
     const wxTextCtrl *GetIndexNameCtrl();
 
 private:
-    std::vector<int> m_selectedItems;
+    std::vector<long> m_selectedItems;
     std::vector<std::wstring> m_fields;
     std::wstring m_command, m_dbType, m_dbSubType;
     DatabaseTable *m_dbTable;
