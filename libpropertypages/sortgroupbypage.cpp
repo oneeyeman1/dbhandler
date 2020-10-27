@@ -129,7 +129,6 @@ bool SortColumnRenderer::ActivateCell (const wxRect& cell, wxDataViewModel *mode
     event.SetInt( CHANGEFIELD );
     event.SetExtraLong( m_toggle ? ASCENDING : DESCENDING );
     event.SetString( temp.GetString() );
-    wxWindow *win = GetView()->GetParent()->GetParent()->GetParent();
     GetView()->GetParent()->GetParent()->GetParent()->GetEventHandler()->ProcessEvent( event );
     return true;
 }
