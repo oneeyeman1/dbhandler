@@ -207,7 +207,7 @@ void CODBCConfigure::OnRemoveDSN(wxCommandEvent &event)
     if( res == wxOK )
     {
         DELETEDSN func = (DELETEDSN) m_lib->GetSymbol( "RemoveDSN" );
-        dsnStr = _T( "DSN=" ) + dsnStr + '\0';
+        dsnStr = "DSN=" + dsnStr + '\0';
         if( !func( m_db, driver, dsnStr ) )
         {
             event.Skip();

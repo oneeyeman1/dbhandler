@@ -37,7 +37,11 @@ libdialogs_la_SOURCES =  \
 	typecombobox.cpp \
 	typecombobox.h \
 	gotoline.cpp \
-	gotoline.h
+	gotoline.h \
+	attachdb.cpp \
+	attachdb.h \
+	detachdb.cpp \
+	detachdb.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \

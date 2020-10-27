@@ -67,6 +67,9 @@
     <ClCompile Include="attachdb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="detachdb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="odbcconfigure.h">
@@ -118,6 +121,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="attachdb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="detachdb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

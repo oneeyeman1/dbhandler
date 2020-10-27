@@ -48,6 +48,7 @@ typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 typedef int (*ATTACHDATABASE)(wxWindow *);
+typedef int (*DETACHDATABASE)(wxWindow *);
 
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_CONFIGUREODBC, MainFrame::OnConfigureODBC)
@@ -56,6 +57,8 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_DATABASE, MainFrame::OnDatabase)
     EVT_MENU(wxID_QUERY, MainFrame::OnQuery)
     EVT_MENU(wxID_ATTACHDATABASE, MainFrame::OnAttachDatabase)
+    EVT_MENU(wxID_DETACHDATABASE, MainFrame::OnDetachDatabase)
+    EVT_UPDATE_UI(wxID_DETACHDATABASE, MainFrame::OnUpdateUIDetachDB)
     EVT_SIZE(MainFrame::OnSize)
     EVT_CLOSE(MainFrame::OnClose)
 END_EVENT_TABLE()
@@ -63,6 +66,7 @@ END_EVENT_TABLE()
 MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL, wxID_ANY, "DB Handler" )
 {
     m_db = NULL;
+    m_countAttached = 0;
     m_handler = NULL;
     m_oldPGWatcher = NULL;
 #if defined __WXMSW__ || defined __WXGTK__
@@ -609,5 +613,35 @@ void MainFrame::OnAttachDatabase(wxCommandEvent &event)
     lib->Load( "libdialogs" );
 #endif
     ATTACHDATABASE func = (ATTACHDATABASE) lib->GetSymbol( "AttachToDatabase" );
-    func( this );
+    int result = func( this );
+    if( result == wxID_OK )
+        m_countAttached++;
+    delete lib;
+    lib = nullptr;
+}
+
+void MainFrame::OnDetachDatabase(wxCommandEvent &event)
+{
+    auto lib = new wxDynamicLibrary;
+#ifdef __WXMSW__
+    lib->Load( "dialogs" );
+#elif __WXOSX__
+    lib->Load( "liblibdialogs.dylib" );
+#else
+    lib->Load( "libdialogs" );
+#endif
+    DETACHDATABASE func = (DETACHDATABASE) lib->GetSymbol( "DetachDatabase" );
+    int result = func( this );
+    if( result == wxID_OK )
+        m_countAttached--;
+    delete lib;
+    lib = nullptr;
+}
+
+void MainFrame::OnUpdateUIDetachDB(wxUpdateUIEvent &event)
+{
+    if( m_countAttached > 0 )
+        event.Enable( true );
+    else
+        event.Enable( false );
 }
