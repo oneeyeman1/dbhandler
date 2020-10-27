@@ -25,6 +25,7 @@ public:
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg) override;
     virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) override;
     virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) override;
+    int GetAttachedDBList(std::vector<std::wstring> &dbNames, std::vector<std::wstring> &errorMsg);
 protected:
     struct SQLiteImpl;
     SQLiteImpl *sqlite_pimpl;

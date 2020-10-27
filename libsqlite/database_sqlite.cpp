@@ -1996,3 +1996,28 @@ int SQLiteDatabase::GetFieldHeader(const std::wstring &tableName, const std::wst
     }
     return result;
 }
+
+int SQLiteDatabase::GetAttachedDBList(std::vector<std::wstring> &dbNames, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0, res;
+    sqlite3_stmt *stmt;
+    std::wstring errorMessage;
+    std::wstring query = L"SELECT * FROM pragma_database_list;";
+    if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &stmt, NULL ) ) == 0 )
+    {
+        for( ; ; )
+        {
+            res = sqlite3_step( stmt );
+            if( res == SQLITE_ROW )
+                dbNames.push_back( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 1 ) ) );
+            else
+                break;
+        }
+    }
+    else
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    return result;
+}
