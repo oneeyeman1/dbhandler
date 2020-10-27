@@ -192,7 +192,7 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    CreateIndex dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), wxID_ANY, "", table, table->GetSchemaName(), db );
+    CreateIndex dlg( parent, wxID_ANY, "", table, table->GetSchemaName(), db );
     dlg.Center();
     res = dlg.ShowModal();
     if( res != wxID_CANCEL )
@@ -219,7 +219,7 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
     wxTheApp->SetTopWindow( parent );
 #endif
     wxString refTblName = wxString( refTableName );
-    ForeignKeyDialog dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), wxID_ANY, _( "" ), table, db, keyName, foreignKeyFields, refTblName, isView, match );
+    ForeignKeyDialog dlg( parent, wxID_ANY, _( "" ), table, db, keyName, foreignKeyFields, refTblName, isView, match );
     dlg.Center();
     res = dlg.ShowModal();
     if( res != wxID_CANCEL || dlg.IsForeignKeyEdited() )
@@ -283,7 +283,7 @@ extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    QuickSelect dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), db );
+    QuickSelect dlg( parent, db );
     dlg.Center();
     int res = dlg.ShowModal();
     if( res == wxID_OK )
