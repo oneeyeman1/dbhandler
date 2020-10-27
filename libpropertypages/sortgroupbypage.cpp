@@ -301,7 +301,7 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             m_dragDest = m_dest;
         if( m_dragSource != m_dragDest )
         {
-            long position;
+            long position = 0;
             Field *field = nullptr;
             if( m_dragDest == m_dest )
                 field = reinterpret_cast<Field *>( m_source->GetItemData( m_itemPos ) );
