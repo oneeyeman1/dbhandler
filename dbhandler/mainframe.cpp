@@ -342,15 +342,22 @@ void MainFrame::Connect()
     wxDynamicLibrary *lib = NULL;
     if( m_painters.find( "DBloader" ) == m_painters.end() )
     {
+        bool loaded;
         lib = new wxDynamicLibrary();
 #ifdef __WXMSW__
-        lib->Load( "dbloader" );
+        loaded = lib->Load( "dbloader" );
 #elif __WXMAC__
-        lib->Load( "liblibdbloader.dylib" );
+        loaded = lib->Load( "liblibdbloader.dylib" );
 #else
-        lib->Load( "libdbloader" );
+        loaded = lib->Load( "libdbloader" );
 #endif
-        m_painters["DBloader"] = lib;
+        if( loaded )
+            m_painters["DBloader"] = lib;
+        else
+        {
+            delete lib;
+            lib = nullptr;
+        }
     }
     else
         lib = m_painters ["DBloader"];
@@ -440,7 +447,13 @@ void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
 #else
         lib->Load( "libdialogs" );
 #endif
-        m_painters["dialogs"] = lib;
+        if( lib->IsLoaded() )
+            m_painters["dialogs"] = lib;
+        else
+        {
+            delete lib;
+            lib = nullptr;
+        }
     }
     else
         lib = m_painters ["dialogs"];
@@ -471,7 +484,13 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
 #else
             lib->Load( "libdbwindow" );
 #endif
-            m_painters["Database"] = lib;
+            if( lib->IsLoaded() )
+                m_painters["Database"] = lib;
+            else
+            {
+                delete lib;
+                lib = nullptr;
+            }
         }
         else
             lib = m_painters["Database"];
@@ -509,7 +528,13 @@ void MainFrame::OnQuery(wxCommandEvent &event)
 #else
             lib->Load("libdbwindow");
 #endif
-            m_painters["Query"] = lib;
+            if( lib->IsLoaded() )
+                m_painters["Query"] = lib;
+            else
+            {
+                delete lib;
+                lib = nullptr;
+            }
         }
         else
             lib = m_painters["Query"];
@@ -552,7 +577,13 @@ void MainFrame::OnTable(wxCommandEvent &event)
 #else
             lib->Load( "libtablewindow" );
 #endif
-            m_painters["TableView"] = lib;
+            if( lib->IsLoaded() )
+                m_painters["TableView"] = lib;
+            else
+            {
+                delete lib;
+                lib = nullptr;
+            }
         }
         else
             lib = m_painters["TableView"];
