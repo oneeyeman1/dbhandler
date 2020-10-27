@@ -34,6 +34,8 @@
 		E39501D31DF3C4730046E51B /* liblibpropertypages.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E39501D21DF3C4730046E51B /* liblibpropertypages.dylib */; };
 		E3B8E3E5252F769600346516 /* attachdb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3E3252F769600346516 /* attachdb.cpp */; };
 		E3B8E3E6252F769600346516 /* attachdb.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3E4252F769600346516 /* attachdb.h */; };
+		E3B8E3E925487B7800346516 /* detachdb.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3E725487B7800346516 /* detachdb.h */; };
+		E3B8E3EA25487B7800346516 /* detachdb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3E825487B7800346516 /* detachdb.cpp */; };
 		E3D139511D0D0D7100A5A0F7 /* databasetype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D1394A1D0D0D7100A5A0F7 /* databasetype.cpp */; };
 		E3D139521D0D0D7100A5A0F7 /* databasetype.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D1394B1D0D0D7100A5A0F7 /* databasetype.h */; };
 		E3D139531D0D0D7100A5A0F7 /* dialogs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D1394C1D0D0D7100A5A0F7 /* dialogs.cpp */; };
@@ -79,6 +81,8 @@
 		E39501D21DF3C4730046E51B /* liblibpropertypages.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibpropertypages.dylib; path = ../libpropertypages/build/Debug/liblibpropertypages.dylib; sourceTree = "<group>"; };
 		E3B8E3E3252F769600346516 /* attachdb.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = attachdb.cpp; sourceTree = "<group>"; };
 		E3B8E3E4252F769600346516 /* attachdb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = attachdb.h; sourceTree = "<group>"; };
+		E3B8E3E725487B7800346516 /* detachdb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = detachdb.h; sourceTree = "<group>"; };
+		E3B8E3E825487B7800346516 /* detachdb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = detachdb.cpp; sourceTree = "<group>"; };
 		E3D1393C1D0D0CD100A5A0F7 /* liblibdialogs.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibdialogs.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3D1394A1D0D0D7100A5A0F7 /* databasetype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasetype.cpp; sourceTree = "<group>"; };
 		E3D1394B1D0D0D7100A5A0F7 /* databasetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasetype.h; sourceTree = "<group>"; };
@@ -137,6 +141,8 @@
 		E3D139491D0D0CDE00A5A0F7 /* libdialogs */ = {
 			isa = PBXGroup;
 			children = (
+				E3B8E3E825487B7800346516 /* detachdb.cpp */,
+				E3B8E3E725487B7800346516 /* detachdb.h */,
 				E3607DCC23C4417E00267C14 /* gotoline.cpp */,
 				E3607DCD23C4417E00267C14 /* gotoline.h */,
 				E3607DC823A6E19200267C14 /* typecombobox.cpp */,
@@ -194,6 +200,7 @@
 				E3E62CCA1EF71830005BBB37 /* addcolumnsdialog.h in Headers */,
 				E3D139571D0D0D7100A5A0F7 /* selecttables.h in Headers */,
 				E32A5013223F1AE600A57BD1 /* queryoptions.h in Headers */,
+				E3B8E3E925487B7800346516 /* detachdb.h in Headers */,
 				E33E6F871EAD310A003A0B92 /* jointype.h in Headers */,
 				E33E6F851EAD310A003A0B92 /* getobjectname.h in Headers */,
 				E3D139551D0D0D7100A5A0F7 /* odbcconfigure.h in Headers */,
@@ -275,6 +282,7 @@
 				E3607DCE23C4417E00267C14 /* gotoline.cpp in Sources */,
 				E32A5008223469AE00A57BD1 /* newquery.cpp in Sources */,
 				E32A5018223F243C00A57BD1 /* quickselect.cpp in Sources */,
+				E3B8E3EA25487B7800346516 /* detachdb.cpp in Sources */,
 				E32A5014223F1AE600A57BD1 /* retrievalarguments.cpp in Sources */,
 				E3E91D881DEE520B00675CF8 /* properties.cpp in Sources */,
 				E3D139531D0D0D7100A5A0F7 /* dialogs.cpp in Sources */,
