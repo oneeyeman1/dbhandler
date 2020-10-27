@@ -38,6 +38,7 @@ struct FontPropertyPage
     }
 };
 
+#if defined __WXMSW__ || defined __WXGTK__
 class WXEXPORT wxFontPreviewer : public wxWindow
 {
 public:
@@ -57,6 +58,7 @@ private:
     wxString m_text;
     void OnPaint(wxPaintEvent& event);
 };
+#endif
 
 class WXEXPORT CFontPropertyPageBase : public PropertyPageBase
 {

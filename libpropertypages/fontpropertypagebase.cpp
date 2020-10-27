@@ -41,6 +41,8 @@
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 
+
+#if defined __WXMSW__ || defined __WXGTK__
 BEGIN_EVENT_TABLE(wxFontPreviewer, wxWindow)
     EVT_PAINT(wxFontPreviewer::OnPaint)
 END_EVENT_TABLE()
@@ -78,6 +80,7 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
     dc.SetBrush( wxNullBrush );
     dc.SetPen( wxNullPen );
 }
+#endif
 
 CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, const FontPropertyPage &font, int id, const wxPoint& pos, const wxSize& size, long style)
  : PropertyPageBase(parent, id)
