@@ -350,7 +350,7 @@ void SortGroupByPage::OnMouseMove(wxMouseEvent &event)
         list = m_dest;
     if( list && !m_isDragging )
     {
-        int pos = list->HitTest( pt, flags );
+        long pos = list->HitTest( pt, flags );
         if( pos != wxNOT_FOUND && list->GetItemState( pos, wxLIST_STATE_FOCUSED ) )
             list->SetItemState( pos, 0, wxLIST_STATE_FOCUSED );
     }
@@ -400,7 +400,6 @@ void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
 
 void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
 {
-    wxDataViewItem dvitem = event.GetItem();
     wxVariant value = event.GetValue();
     m_sortDragDest = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
     if( m_sortDragSource != m_sortDragDest )
