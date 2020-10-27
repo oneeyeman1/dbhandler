@@ -404,7 +404,7 @@ void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
     m_sortDragDest = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
     if( m_sortDragSource != m_sortDragDest )
     {
-        long position;
+        unsigned int position;
         if( m_sortDragSource == m_sortDest )
         {
             m_sortDest->GetValue( value, m_itemPos, 1 );
@@ -453,7 +453,6 @@ void SortGroupByPage::OnSortDropPossible(wxDataViewEvent &event)
 void SortGroupByPage::OnSortSelectionChanged(wxDataViewEvent &event)
 {
     wxDataViewListCtrl *object = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
-    wxDataViewItem item = event.GetItem();
     object->Unselect( event.GetItem() );
 }
 
