@@ -61,6 +61,6 @@ void TablePrimaryKey::set_properties()
     int row = 0;
     for( std::vector<Field *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
     {
-        long item = m_fields->InsertItem( row++, (*it)->GetFieldName() );
+        m_fields->InsertItem( row++, (*it)->GetFieldName() );
     }
 }
