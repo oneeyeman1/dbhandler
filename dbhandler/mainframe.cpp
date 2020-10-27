@@ -361,7 +361,7 @@ void MainFrame::Connect()
     }
     else
         lib = m_painters ["DBloader"];
-    if( lib->IsLoaded() )
+    if( lib && lib->IsLoaded() )
     {
         DBPROFILE func = (DBPROFILE) lib->GetSymbol( "ConnectToDb" );
         wxString name = wxGetApp().GetDBName();
@@ -457,7 +457,7 @@ void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
     }
     else
         lib = m_painters ["dialogs"];
-    if( lib->IsLoaded() )
+    if( lib && lib->IsLoaded() )
     {
         ODBCSETUP func = (ODBCSETUP) lib->GetSymbol( "ODBCSetup" );
         func( this );
