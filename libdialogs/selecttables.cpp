@@ -152,10 +152,12 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                 {
                     if( type == L"SQLite" )
                     {
+                        if( schemaName == L"" )
+                            schemaName = L"master";
                         if( !sysTableIncluded && ( ( tableName.substr( 0, 6 ) != L"sqlite" ) && ( tableName.substr( 0, 3 ) != L"sys" ) ) )
-                            m_tables->Append( tableName );
+                            m_tables->Append( tableName, &schemaName );
                         else if( sysTableIncluded )
-                            m_tables->Append( tableName );
+                            m_tables->Append( tableName, &schemaName );
                     }
                     else if( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
                     {
@@ -185,7 +187,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                             continue;
                         if( ( schemaName == L"information_schema" || schemaName == L"pg_catalog" ) && !sysTableIncluded )
                             continue;
-                        m_tables->Append( tableName );
+                        m_tables->Append( tableName, &schemaName );
                     }
                 }
             }
