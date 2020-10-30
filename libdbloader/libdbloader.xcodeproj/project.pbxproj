@@ -262,8 +262,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
-					/Users/igorkorot/dbhandler/dbhandler/libpostgres/build/Debug,
-					/Users/igorkorot/dbhandler/dbhandler/libmysql/build/Debug,
 				);
 				OTHER_LDFLAGS = (
 					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
@@ -305,8 +303,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
-					/Users/igorkorot/dbhandler/dbhandler/libpostgres/build/Debug,
-					/Users/igorkorot/dbhandler/dbhandler/libmysql/build/Debug,
 				);
 				OTHER_LDFLAGS = (
 					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
