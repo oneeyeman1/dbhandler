@@ -403,8 +403,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
-					/Users/igorkorot/dbhandler/dbhandler/libfieldswindow/build/Debug,
-					/Users/igorkorot/dbhandler/dbhandler/libpropertypages/build/Debug,
 				);
 				OTHER_LDFLAGS = (
 					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
@@ -437,8 +435,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug,
-					/Users/igorkorot/dbhandler/dbhandler/libfieldswindow/build/Debug,
-					/Users/igorkorot/dbhandler/dbhandler/libpropertypages/build/Debug,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx10.8;
