@@ -7,7 +7,6 @@
 
 #include <string>
 #include <algorithm>
-#include <database.h>
 #include "propertypagebase.h"
 #include "fieldgeneral.h"
 
