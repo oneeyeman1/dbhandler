@@ -42,16 +42,10 @@ struct FontPropertyPage
 class WXEXPORT wxFontPreviewer : public wxWindow
 {
 public:
-    wxFontPreviewer(wxWindow *parent, FontPropertyPage &font, wxString text, const wxSize &sz = wxDefaultSize) : wxWindow(parent, wxID_ANY, wxDefaultPosition, sz, wxBORDER_NONE)
+    wxFontPreviewer(wxWindow *parent, wxString text) : wxWindow( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE )
     {
         m_text = text;
     }
-    wxFontPreviewer(wxWindow *parent, const wxString text, wxWindowID id = wxID_ANY ) : wxWindow(parent, id, wxDefaultPosition, wxDefaultSize)
-    {
-        m_text = text;
-    }
-//    void SetForegroundColor(wxString name) { m_font.SetTextDescription( name ); };
-//    void SetBackgroundColor(wxString name) { m_font.SetBackgroundDescription( name ); };
     void SetFont(FontPropertyPage &font) { m_font = font.font; Refresh(); };
     DECLARE_EVENT_TABLE()
 private:

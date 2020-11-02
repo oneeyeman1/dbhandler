@@ -54,12 +54,13 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
     wxRect rcText = GetRect();
     wxPoint pos = GetPosition();
     wxSize size = GetSize(), extent;
-    wxFont font = GetFont();
+//    wxFont font = GetFont();
     ScreenToClient( pos );
     dc.SetBackgroundMode( wxBRUSHSTYLE_TRANSPARENT );
     dc.SetPen( *wxBLACK_PEN );
     dc.SetBrush( *wxWHITE_BRUSH );
     dc.DrawRectangle( 0, 0, size.x, size.y );
+    wxFont font = GetParent()->GetFont();
     if( font.IsOk() )
     {
         dc.SetFont( font );
