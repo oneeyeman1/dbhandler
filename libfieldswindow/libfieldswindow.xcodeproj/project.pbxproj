@@ -241,10 +241,7 @@
 					../dbinterface,
 					../libshapeframework,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/libshapeframework/build/Debug,
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
 					"-framework",
@@ -286,10 +283,7 @@
 					../dbinterface,
 					../libshapeframework,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/libshapeframework/build/Debug,
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
