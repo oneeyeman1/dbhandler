@@ -41,7 +41,7 @@ void DesignPropertiesHander::EditProperies(wxNotebook *parent)
     parent->AddPage( m_page3, _( "Print Specification" ) );
 }
 
-int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &errors)
+int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
 {
 //    m_options->GetOptions().units = m_page1->GetUnitsCtrl()->GetSelection();
     wxColour color = m_page1->GetColorCtrl()->GetColourValue();
