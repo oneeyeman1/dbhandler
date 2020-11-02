@@ -29,7 +29,7 @@ void DividerPropertiesHander::EditProperies(wxNotebook *parent)
     parent->AddPage( m_page1, _( "General" ) );
 }
 
-int DividerPropertiesHander::GetProperties(std::vector<std::wstring> &errors)
+int DividerPropertiesHander::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
 {
     return 0;
 }
