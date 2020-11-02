@@ -979,9 +979,11 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     return result;
 }
 
-int ODBCDatabase::ServerConnect(std::vector<std::wstring> &UNUSED(dbList), std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
 {
     std::wstring query;
+    SQLWCHAR *qry = nullptr, *dbName = nullptr;
+    int result = 0;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT name AS Database FROM master.dbo.sysdatabases;";
     if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
@@ -990,7 +992,60 @@ int ODBCDatabase::ServerConnect(std::vector<std::wstring> &UNUSED(dbList), std::
         query = L"SELECT schema_name AS Database FROM information_schema.schemata;";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT datname AS Database FROM pg_database;";
-    return 0;
+    RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        qry = new SQLWCHAR[query.length() + 2];
+        memset( qry, '\0', query.length() + 2 );
+        uc_to_str_cpy( qry, query );
+        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+        else
+        {
+            SQLSMALLINT nameBufLength, dataTypePtr, decimalDigitsPtr, isNullable;
+            SQLULEN columnSizePtr;
+            SQLLEN cbDatabaseName;
+            ret = SQLDescribeCol( m_hstmt, 1, NULL, 0, &nameBufLength, &dataTypePtr, &columnSizePtr, &decimalDigitsPtr, &isNullable );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+            else
+            {
+                dbName = new SQLWCHAR[columnSizePtr + 1];
+                ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, dbName, columnSizePtr, &cbDatabaseName );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, m_hstmt );
+                    result = 1;
+                }
+                else
+                {
+                    for( ret = SQLFetch (m_hstmt); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ); ret = SQLFetch (m_hstmt) )
+                    {
+                        std::wstring databaseName;
+                        str_to_uc_cpy( databaseName, dbName );
+                        dbList.push_back( databaseName );
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        GetErrorMessage( errorMsg, 2 );
+        result = 1;
+    }
+    delete qry;
+    qry = nullptr;
+    delete dbName;
+    dbName = nullptr;
+    return result;
 }
 
 int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
@@ -2282,7 +2337,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLHDBC hdbc_fieldProp;
     SQLHSTMT stmt_fieldProp;
     int result = 0;
-    SQLWCHAR *commentField, *label, *heading;
+    SQLWCHAR *commentField, *label = nullptr, *heading = nullptr;
     SQLWCHAR *qry = NULL;
     unsigned short labelAlignment = 0, headingAlignment = 0;
     SQLWCHAR *table = new SQLWCHAR[tableName.length() + 2], *owner = new SQLWCHAR[ownerName.length() + 2], *fieldNameReq = new SQLWCHAR[fieldName.length() + 2];
