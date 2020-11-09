@@ -68,7 +68,9 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_db = NULL;
     m_countAttached = 0;
     m_handler = NULL;
+#if !( defined( __sun ) && defined( __SVR4 ) )
     m_oldPGWatcher = NULL;
+#endif
 #if defined __WXMSW__ || defined __WXGTK__
     m_tb = NULL;
 #endif
@@ -133,8 +135,10 @@ MainFrame::~MainFrame()
         delete (*it).second;
         (*it).second = NULL;
     }
+#if !( defined( __sun ) && defined( __SVR4 ) )
     delete m_oldPGWatcher;
     m_oldPGWatcher = NULL;
+#endif
 }
 
 void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
@@ -397,8 +401,10 @@ void MainFrame::Connect()
                 }
                 wxThread::This()->Sleep( 1 );
             }
+#if !( defined( __sun ) && defined( __SVR4 ) )
             delete m_oldPGWatcher;
             m_oldPGWatcher = NULL;
+#endif
             delete m_db;
             m_db = NULL;
             wxGetApp().SetDBEngine( engine );

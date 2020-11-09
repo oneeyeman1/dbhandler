@@ -45,7 +45,9 @@ private:
     std::map<wxString, wxDynamicLibrary *> m_painters;
     int m_countAttached;
     wxString m_pgLogfile;
+#if !( defined( __sun ) && defined( __SVR4 ) )
     wxFileSystemWatcher *m_oldPGWatcher;
+#endif
     wxDECLARE_EVENT_TABLE();
 };
 
