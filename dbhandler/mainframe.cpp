@@ -415,13 +415,18 @@ void MainFrame::Connect()
         if( db && db != m_db )
         {
             m_db = db;
-            wxString major = wxString::Format( "%d", m_db->GetTableVector().m_versionMajor );
-            wxString minor = wxString::Format( "%d", m_db->GetTableVector().m_versionMinor );
-            wxString revision = wxString::Format( "%d", m_db->GetTableVector().m_versionRevision );
+            auto major = wxString::Format( "%d", m_db->GetTableVector().m_versionMajor );
+            auto minor = wxString::Format( "%d", m_db->GetTableVector().m_versionMinor );
+            auto revision = wxString::Format( "%d", m_db->GetTableVector().m_versionRevision );
+            auto clientMajor = wxString::Format( "%d", m_db->GetTableVector().m_clientVersionMajor );
+            auto clientMinor = wxString::Format( "%d", m_db->GetTableVector().m_clientVersionMinor );
+            auto clientRevision = wxString::Format( "%d", m_db->GetTableVector().m_clientVersionRevision );
             if( m_db && m_db->GetTableVector().m_type == L"ODBC" )
                 title = "Connected to " + m_db->GetTableVector().m_subtype + " version " + m_db->GetTableVector().m_serverVersion + " thru the ODBC";
-            else if( m_db )
+            else if( m_db && m_db->GetTableVector().m_type == L"SQLite" )
                 title = wxString::Format( "Connected to " + m_db->GetTableVector().m_type + " version " + major + "." + minor + "." + revision );
+            else if( m_db )
+                title = wxString::Format( "Connected to " + m_db->GetTableVector().m_type + " version " + major + "." + minor + "." + revision + " with the client library " + clientMajor + "." + clientMinor + "." + clientRevision );
             SetTitle( title );
             if( m_db )
             {
