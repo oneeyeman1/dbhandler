@@ -1470,6 +1470,8 @@ int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg)
     pimpl->m_versionMajor = 3;
     pimpl->m_versionMinor = 24;
     pimpl->m_versionRevision = 0;
+    pimpl->m_clientVersionMajor = 0;
+    pimpl->m_clientVersionMinor = 0;
     return 0;
 }
 

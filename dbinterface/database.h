@@ -282,6 +282,7 @@ struct Database::Impl
     std::wstring m_serverVersion;
     std::wstring m_pgLogFile, m_pgLogDir;
     int m_versionMajor, m_versionMinor, m_versionRevision;
+    int m_clientVersionMajor, m_clientVersionMinor, m_clientVersionRevision;
     const std::wstring &GetConnectedUser() const { return m_connectedUser; };
     void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
     const std::wstring &GetDatabaseType() const { return m_type; };

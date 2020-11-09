@@ -1166,7 +1166,8 @@ int PostgresDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         pimpl->m_versionRevision = versionInt % 100;
     }
     versionInt = PQlibVersion();
-    m_pimpl->m_clientVersionMajor = versionInt / 100;
+    pimpl->m_clientVersionMajor = versionInt % 10000;
+    pimpl->m_clientVersionMinor = ( versionInt - pimpl->m_clientVersionMajor ) % 100;
     return result;
 }
 

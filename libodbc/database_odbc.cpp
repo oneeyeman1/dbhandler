@@ -3456,6 +3456,8 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     }
     delete[] qry;
     qry = NULL;
+    pimpl->m_clientVersionMajor = 0;
+    pimpl->m_clientVersionMinor = 0;
     return result;
 }
 
