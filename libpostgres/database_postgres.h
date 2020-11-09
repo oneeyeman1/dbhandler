@@ -46,5 +46,6 @@ private:
 struct PostgresDatabase::PostgresImpl
 {
     std::wstring_convert<std::codecvt_utf8<wchar_t> > m_myconv;
+    int m_clientVersionMajor, m_clientVersionMinor, m_clientVersionRevision;
 };
 #endif
