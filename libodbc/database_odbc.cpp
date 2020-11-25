@@ -986,34 +986,52 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                 result = 1;
             }
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1 );
+                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                result = 1;
+            }
             if( !result )
             {
-                query = new SQLWCHAR[query3.length() + 2];
-                memset( query, '\0', query3.length() + 2 );
-                uc_to_str_cpy( query, query3 );
-                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                delete[] query;
-                query = nullptr;
-                if( ret == SQL_NO_DATA )
+                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                 {
-                    query = new SQLWCHAR[query4.length() + 2];
-                    memset( query, '\0', query4.length() + 2 );
-                    uc_to_str_cpy( query, query4 );
+                    query = new SQLWCHAR[query3.length() + 2];
+                    memset( query, '\0', query3.length() + 2 );
+                    uc_to_str_cpy( query, query3 );
                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                     delete[] query;
                     query = nullptr;
+                    if( ret == SQL_NO_DATA )
+                    {
+                        query = new SQLWCHAR[query4.length() + 2];
+                        memset( query, '\0', query4.length() + 2 );
+                        uc_to_str_cpy( query, query4 );
+                        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                        delete[] query;
+                        query = nullptr;
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1 );
+                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                            result = 1;
+                        }
+                    }
+                    else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1 );
+                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                        result = 1;
+                    }
+                    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 1 );
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                         result = 1;
                     }
-                }
-                else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    result = 1;
                 }
             }
             if( !result )
@@ -2594,10 +2612,12 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLWCHAR *commentField, *label = nullptr, *heading = nullptr;
     SQLWCHAR *qry = NULL;
     unsigned short labelAlignment = 0, headingAlignment = 0;
-    SQLWCHAR *table = new SQLWCHAR[tableName.length() + 2], *owner = new SQLWCHAR[ownerName.length() + 2], *fieldNameReq = new SQLWCHAR[fieldName.length() + 2];
-    memset( table, '\0', tableName.length() + 2 );
+    SQLWCHAR *table = new SQLWCHAR[schemaName.length() + tableName.length() + 3], *owner = new SQLWCHAR[ownerName.length() + 2], *fieldNameReq = new SQLWCHAR[fieldName.length() + 2];
+    memset( table, '\0', schemaName.length() + tableName.length() + 3 );
     memset( owner, '0', ownerName.length() + 2 );
     memset( fieldNameReq, '\0', fieldName.length() + 2);
+    uc_to_str_cpy( table, schemaName );
+    uc_to_str_cpy( table, L"." );
     uc_to_str_cpy( table, tableName );
     uc_to_str_cpy( owner, ownerName );
     uc_to_str_cpy( fieldNameReq, fieldName );
