@@ -3792,7 +3792,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
                 uc_to_str_cpy( schema_name, schemaName );
                 retcode = SQLPrepare( stmt, qry, SQL_NTS );
                 SQLSMALLINT dataType[2], decimalDigits[2], nullable[2];
-                SQLUINTEGER paramSize[2];
+                SQLULEN paramSize[2];
                 if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
                 {
                     retcode = SQLDescribeParam( stmt, 1, &dataType[0], &paramSize[0], &decimalDigits[0], &nullable[0] );
