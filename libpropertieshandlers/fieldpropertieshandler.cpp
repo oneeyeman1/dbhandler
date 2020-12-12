@@ -26,7 +26,7 @@
 #include "propertieshandlerbase.h"
 #include "fieldpropertieshandler.h"
 
-FieldPropertiesHandler::FieldPropertiesHandler(const Database *db, const wxString &tableName, const wxString &ownerName, Field *field, wxTextCtrl *log)
+FieldPropertiesHandler::FieldPropertiesHandler(const Database *db, const wxString &tableName, const wxString &ownerName, TableField *field, wxTextCtrl *log)
 {
     m_db = db;
     m_tableName = tableName;

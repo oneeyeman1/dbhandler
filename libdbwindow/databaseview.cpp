@@ -114,7 +114,7 @@ typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, s
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
-typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTable *> &, std::vector<Field *> &);
+typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTable *> &, std::vector<TableField *> &);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 typedef int (*RETRIEVEARGUMENTS)(wxWindow *, std::vector<QueryArguments> &arguments, const wxString &, const wxString &);
 typedef int (*GOTOLINE)(wxWindow *, int &);
@@ -344,6 +344,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     Bind( wxEVT_SET_FIELD_PROPERTY, &DrawingView::OnSetProperties, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, m_canvas, wxID_DROPOBJECT );
     m_frame->Bind( wxEVT_CHANGE_QUERY, &DrawingView::OnQueryChange, this );
+    m_frame->Bind( wxEVT_ICONIZE, &DrawingView::OnIconise, this );
 #if defined __WXMSW__ || defined __WXGTK__
     CreateViewToolBar();
 #endif
@@ -590,7 +591,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     }
                     else
                     {
-                        for( std::vector<Field *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
+                        for( std::vector<TableField *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
                         {
                             query += (*it)->GetFieldName();
                             if( it != m_queryFields.end() - 1 )
@@ -625,7 +626,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             for( std::vector<MyErdTable *>::iterator it = dbTables.begin(); it < dbTables.end(); ++it )
             {
                 const DatabaseTable *dbTable = (*it)->GetTable();
-                for( std::vector<Field *>::const_iterator it1 = dbTable->GetFields().begin(); it1 < dbTable->GetFields().end(); ++it1 )
+                for( std::vector<TableField *>::const_iterator it1 = dbTable->GetFields().begin(); it1 < dbTable->GetFields().end(); ++it1 )
                 {
                     long item = m_page3->GetSourceList()->InsertItem( i++, "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
                     m_page3->GetSourceList()->SetItemPtrData( item, wxPtrToUInt( *it1) );
@@ -816,7 +817,7 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
     DatabaseTable *dbTable = nullptr;
     Divider *divider = nullptr;
     DesignLabel *label = nullptr;
-    Field *field = NULL;
+    TableField *field = NULL;
     wxString command = "";
     bool logOnly = false;
     wxSFRectShape *shape = wxDynamicCast( event.GetEventObject(), wxSFRectShape );
@@ -1158,7 +1159,7 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName, bool quickSelect)
 {
-    Field *fld = const_cast<FieldShape &>( field ).GetField();
+    TableField *fld = const_cast<FieldShape &>( field ).GetField();
     wxString name = tableName + "." + fld->GetFieldName();
     name = "\"" + name;
     name = name + "\"";
@@ -1383,7 +1384,7 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     }
     if( event.GetEventObject() == m_page1 || event.GetEventObject() == m_page3 )
     {
-        SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query, (Field *) event.GetClientObject(), event.GetExtraLong() );
+        SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query, (TableField *) event.GetClientObject(), event.GetExtraLong() );
 /*        int start = query.find( "GROUP BY" );
         int end = query.find( "HAVING" );
         if( start == wxNOT_FOUND )
@@ -1430,7 +1431,7 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     }
 }
 
-void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const Field *field, long sortType)
+void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const TableField *field, long sortType)
 {
     int start, end;
     wxString queryString;
@@ -2054,4 +2055,19 @@ void DrawingView::PopuateQueryCanvas()
         menuBar->Enable( 1, false );
     }
     m_designCanvas->PopulateQueryCanvas( m_queryFields, m_groupByFields );
+}
+
+void DrawingView::OnIconise(wxIconizeEvent &event)
+{
+    if( event.IsIconized () )
+    {
+        m_tb->Hide();
+        (wxMDIClientWindow *) m_parent->GetClientWindow()->Hide();
+    }
+    else
+    {
+        m_tb->Show();
+        (wxMDIClientWindow *) m_parent->GetClientWindow()->Show();
+    }
+    event.Skip();
 }

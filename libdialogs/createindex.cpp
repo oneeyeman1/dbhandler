@@ -141,12 +141,12 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
 
 void CreateIndex::set_properties()
 {
-    std::vector<Field *> fields = m_dbTable->GetFields();
+    std::vector<TableField *> fields = m_dbTable->GetFields();
     std::wstring tableName = m_dbTable->GetTableName();
     m_tableName->SetLabel( tableName );
     m_table->AppendColumn( tableName );
     int row = 0;
-    for( std::vector<Field *>::iterator it = fields.begin(); it < fields.end(); it++ )
+    for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
         m_table->InsertItem( row++, (*it)->GetFieldName() );
     }

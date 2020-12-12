@@ -11,7 +11,7 @@ CommentFieldShape::CommentFieldShape() : wxSFTextShape()
     m_field = NULL;
 }
 
-CommentFieldShape::CommentFieldShape(Field *field) : wxSFTextShape()
+CommentFieldShape::CommentFieldShape(TableField *field) : wxSFTextShape()
 {
     m_field = field;
 }
@@ -25,12 +25,12 @@ CommentFieldShape::~CommentFieldShape(void)
 {
 }
 
-const Field *CommentFieldShape::GetFieldForComment()
+const TableField *CommentFieldShape::GetFieldForComment()
 {
     return m_field;
 }
 
-void CommentFieldShape::SetField(Field *field)
+void CommentFieldShape::SetField(TableField *field)
 {
     m_field = field;
 }

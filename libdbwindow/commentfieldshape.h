@@ -4,12 +4,12 @@ class CommentFieldShape : public wxSFTextShape
 public:
     XS_DECLARE_CLONABLE_CLASS(CommentFieldShape);
     CommentFieldShape();
-    CommentFieldShape(Field *field);
+    CommentFieldShape(TableField *field);
     CommentFieldShape(CommentFieldShape &shape);
     virtual ~CommentFieldShape(void);
-    const Field *GetFieldForComment();
-    void SetField(Field *field);
+    const TableField *GetFieldForComment();
+    void SetField(TableField *field);
 private:
-    Field *m_field;
+    TableField *m_field;
 };
 

@@ -295,7 +295,7 @@ int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     PGresult *res, *res1, *res2, *res3, *res4, *res5;
-    std::vector<Field *> fields;
+    std::vector<TableField *> fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
     std::wstring fieldName, fieldType, fieldDefaultValue, origSchema, origTable, origField, refSchema, refTable, refField, fkName, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
@@ -897,7 +897,7 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
     return result;
 }
 
-int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::string table = m_pimpl->m_myconv.to_bytes( tableName.c_str() );
@@ -955,7 +955,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     return result;
 }
 
-int PostgresDatabase::GetFieldProperties(const std::wstring &table, Field *field, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetFieldProperties(const std::wstring &table, TableField *field, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     bool found = false;
@@ -1333,7 +1333,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
     std::vector<std::wstring> fk_names, indexes;
     std::wstring fieldName, fieldType, fieldDefaultValue, origSchema, origTable, origField, refSchema, refTable, refField, fkName, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
     ExecStatusType status;
-    std::vector<Field *> fields;
+    std::vector<TableField *> fields;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
@@ -1462,7 +1462,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                 if( fieldType == L"serial" || fieldType == L"bigserial" )
                     autoinc = true;
                 std::wstring tableName = m_pimpl->m_myconv.from_bytes( table_name );
-                Field *field = new Field( fieldName, fieldType, size, precision, tableName + L"." + fieldName, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
+                TableField *field = new TableField( fieldName, fieldType, size, precision, tableName + L"." + fieldName, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
                 if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_owner ), m_pimpl->m_myconv.from_bytes( field_name ), field, errorMsg ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -1481,7 +1481,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
             {
                 DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
                 table->SetNumberOfFields( numFields );
-                for( std::vector<Field *>::iterator it = fields.begin (); it < fields.end (); ++it )
+                for( std::vector<TableField *>::iterator it = fields.begin (); it < fields.end (); ++it )
                 {
                     if( (*it)->IsPrimaryKey() )
                         table->GetTableProperties().m_pkFields.push_back( (*it)->GetFieldName() );

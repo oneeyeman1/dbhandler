@@ -21,7 +21,7 @@ public:
     void OnShowDataTypes(wxCommandEvent &event);
     inline wxSFDiagramManager &GetDiagramManager() { return m_pManager; }
     virtual void OnDraw(wxDC& dc) wxOVERRIDE;
-    void AddQuickQueryFields(const wxString &tbl, std::vector<Field *> &quickSelectFields, bool quickSelect);
+    void AddQuickQueryFields(const wxString &tbl, std::vector<TableField *> &quickSelectFields, bool quickSelect);
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:

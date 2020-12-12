@@ -93,7 +93,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
 {
     m_type = type;
     m_table = table;
-    std::vector<Field *> fields = m_table->GetFields();
+    std::vector<TableField *> fields = m_table->GetFields();
     SetBorder( wxPen( wxColour( 70, 125, 170 ), 1, wxPENSTYLE_SOLID ) );
     SetFill( wxBrush( wxColour( 210, 225, 245 ) ) );
     AcceptConnection( wxT( "All" ) );
@@ -170,7 +170,7 @@ MyErdTable::~MyErdTable()
 
 void MyErdTable::UpdateTable()
 {
-    std::vector<Field *> fields = m_table->GetFields();
+    std::vector<TableField *> fields = m_table->GetFields();
     int i = 0;
     ClearGrid();
     ClearConnections();
@@ -179,7 +179,7 @@ void MyErdTable::UpdateTable()
     wxSFDiagramManager *manager = GetShapeManager();
     if( manager )
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
-    for( std::vector<Field *>::iterator it = fields.begin(); it < fields.end(); it++ )
+    for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
         AddColumn( (*it), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : (*it)->IsForeignKey() ? Constraint::foreignKey : Constraint::noKey );
         i += 3;
@@ -241,7 +241,7 @@ void MyErdTable::DrawNormal(wxDC &dc)
     DrawDetail( dc );
 }
 
-void MyErdTable::AddColumn(Field *field, int id, Constraint::constraintType type)
+void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType type)
 {
     if( m_type == DatabaseView )
     {
