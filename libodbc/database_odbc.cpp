@@ -284,10 +284,15 @@ int ODBCDatabase::GetErrorMessage(std::vector<std::wstring> &errorMsg, int type,
     }
     while( ( ret = SQLGetDiagRec( option, handle, i, sqlstate, &native_error, msg, sizeof( msg ), &msglen ) ) == SQL_SUCCESS )
     {
-        std::wstring strMsg;
+        std::wstring state;
+        str_to_uc_cpy( state, sqlstate );
+        if( state != L"HYC00" )
+        {
+            std::wstring strMsg;
+            str_to_uc_cpy( strMsg, msg );
+            errorMsg.push_back( strMsg );
+        }
         i++;
-        str_to_uc_cpy( strMsg, msg );
-        errorMsg.push_back( strMsg );
     }
     return 0;
 }
@@ -1654,7 +1659,13 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     SQLINTEGER pcbValue;
     ret = SQLGetConnectAttr( m_hdbc, SQL_ATTR_CONNECTION_DEAD, (SQLPOINTER) &connectionAlive, 0, &pcbValue );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        GetErrorMessage( errorMsg, 1 );
+    {
+        GetErrorMessage( errorMsg, 2 );
+        if( errorMsg.empty() )
+            connectionAlive = SQL_CD_TRUE;
+    }
+    if( connectionAlive == SQL_CD_FALSE )
+        m_isConnected = false;
     if( pimpl->m_subtype == L"PostgreSQL" && connectionAlive != SQL_CD_TRUE )
     {
         ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
@@ -1712,7 +1723,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     }
     if( m_hdbc != 0 )
     {
-        if( m_isConnected && connectionAlive != SQL_CD_TRUE )
+        if( m_isConnected && connectionAlive == SQL_CD_TRUE )
         {
             ret = SQLDisconnect( m_hdbc );
             if( ret != SQL_SUCCESS )
