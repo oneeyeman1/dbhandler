@@ -1618,3 +1618,8 @@ int PostgresDatabase::GetFieldHeader(const std::wstring &tableName, const std::w
     values[1] = nullptr;
     return result;
 }
+
+int PostgresDatabase::EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+    std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName + L";";
+}

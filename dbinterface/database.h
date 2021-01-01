@@ -269,6 +269,8 @@ public:
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg) = 0;
     virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) = 0;
+    virtual int EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> 
+&errorMsg) = 0;
 };
 
 struct Database::Impl

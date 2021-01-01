@@ -26,6 +26,8 @@ public:
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg) override;
     int GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg);
     virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) override;
+    virtual int EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> 
+&errorMsg) override;
 protected:
     struct PostgresImpl;
     PostgresImpl *m_pimpl;

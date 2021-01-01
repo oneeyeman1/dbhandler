@@ -26,6 +26,8 @@ public:
     int CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg);
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg) override;
     virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) override;
+    virtual int EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> 
+&errorMsg) override;
 protected:
     struct MySQLImpl;
     MySQLImpl *m_pimpl;
