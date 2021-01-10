@@ -6222,5 +6222,7 @@ int ODBCDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstri
 
 int ODBCDatabase::EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
+    int result = 0;
     std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName + L";";
+    return result;
 }

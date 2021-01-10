@@ -2053,4 +2053,5 @@ int SQLiteDatabase::EditTableData(const std::wstring &schemaName, const std::wst
         errorMsg.push_back( errorMessage );
         result = 1;
     }
+    return result;
 }
