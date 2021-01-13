@@ -23,6 +23,7 @@
 #endif
 #include "wx/wfstream.h"
 #include "wx/docview.h"
+#include "wx/dynlib.h"
 #include "wx/fontenum.h"
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"

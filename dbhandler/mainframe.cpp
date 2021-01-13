@@ -40,11 +40,7 @@
 
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &);
-#if defined __WXMSW__ && _MSC_VER < 1900
-typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, wxCriticalSection &);
-#else
-typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType);
-#endif
+typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 typedef int (*ATTACHDATABASE)(wxWindow *);
@@ -114,11 +110,7 @@ MainFrame::~MainFrame()
             wxString temp3( m_db->GetTableVector().GetPostgreLogFile() );
             config->Write( "Logfile", temp3 );
         }
-#if defined __WXMSW__ && _MSC_VER < 1900
-        wxCriticalSectionLocker enter( m_threadCS );
-#else
         std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
-#endif
         result = m_db->Disconnect( errorMsg );
     }
     if( result )
@@ -149,11 +141,7 @@ void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
         printf( "Starting MainFrame::OnClose\n\r" );
 #endif
         {
-#if defined __WXMSW__ && _MSC_VER < 1900
-            wxCriticalSectionLocker enter( m_threadCS );
-#else
             std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
-#endif
             if( m_handler )
             {
 #if defined _DEBUG
@@ -170,11 +158,7 @@ void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
             printf( "Looping for thread deletionn\n\r" );
 #endif
             {
-#if defined __WXMSW__ && _MSC_VER < 1900
-                wxCriticalSectionLocker enter( m_threadCS );
-#else
                 std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
-#endif
                 if( !m_handler )
                     break;
             }
@@ -376,11 +360,7 @@ void MainFrame::Connect()
         if( db && m_db )
         {
             {
-#if defined __WXMSW__ && _MSC_VER < 1900
-                wxCriticalSectionLocker enter( m_threadCS );
-#else
                 std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
-#endif
                 if( m_handler )
                 {
                     if( m_handler->Delete() != wxTHREAD_NO_ERROR )
@@ -391,11 +371,7 @@ void MainFrame::Connect()
             while( 1 )
             {
                 {
-#if defined __WXMSW__ && _MSC_VER < 1900
-                    wxCriticalSectionLocker enter( m_threadCS );
-#else
                     std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
-#endif
                     if( !m_handler )
                         break;
                 }
@@ -479,7 +455,7 @@ void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
 
 void MainFrame::OnDatabase(wxCommandEvent &event)
 {
-    wxDynamicLibrary *lib = NULL;
+    wxDynamicLibrary *lib = nullptr, *lib1 = nullptr, *lib2 = nullptr;
     if( !m_db )
         Connect();
     if( m_db )
@@ -505,14 +481,50 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
         }
         else
             lib = m_painters["Database"];
+        if( m_painters.find( "EditData" ) == m_painters.end() )
+        {
+            lib1 = new wxDynamicLibrary;
+#ifdef __WXMSW__
+            lib1->Load( "tabledataedit" );
+#elif __WXOSX__
+            lib1->Load( "liblibtabledataedit.dylib" );
+#else
+            lib1->Load( "libtabledataedit" );
+#endif
+            if( lib1->IsLoaded() )
+                m_painters["EditData"] = lib1;
+            else
+            {
+                delete lib1;
+                lib1 = nullptr;
+            }
+        }
+        else
+            lib1 = m_painters["EditData"];
+        if( m_painters.find( "TableView" ) == m_painters.end() )
+        {
+            lib2 = new wxDynamicLibrary;
+#ifdef __WXMSW__
+            lib2->Load( "tablewindow" );
+#elif __WXOSX__
+            lib2->Load( "liblibtablewindow.dylib" );
+#else
+            lib2->Load( "libtablewindow" );
+#endif
+            if( lib2->IsLoaded() )
+                m_painters["TableView"] = lib;
+            else
+            {
+                delete lib2;
+                lib2 = nullptr;
+            }
+        }
+        else
+            lib2 = m_painters["TableView"];
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
-#if defined __WXMSW__ && _MSC_VER < 1900
-            func( this, m_manager, m_db, DatabaseView, m_threadCS );
-#else
-            func( this, m_manager, m_db, DatabaseView );
-#endif
+            func( this, m_manager, m_db, DatabaseView, m_painters );
         }
         else if( !lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
@@ -552,11 +564,7 @@ void MainFrame::OnQuery(wxCommandEvent &event)
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
-#if defined __WXMSW__ && _MSC_VER < 1900
-            func( this, m_manager, m_db, QueryView, m_threadCS );
-#else
-            func( this, m_manager, m_db, QueryView );
-#endif
+            func( this, m_manager, m_db, QueryView, m_painters );
         }
         else if( !lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
@@ -644,7 +652,7 @@ void MainFrame::OnSize(wxSizeEvent &event)
         event.Skip();
 }
 
-void MainFrame::OnAttachDatabase(wxCommandEvent &event)
+void MainFrame::OnAttachDatabase(wxCommandEvent &WXUNUSED(event))
 {
     auto lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
@@ -662,7 +670,7 @@ void MainFrame::OnAttachDatabase(wxCommandEvent &event)
     lib = nullptr;
 }
 
-void MainFrame::OnDetachDatabase(wxCommandEvent &event)
+void MainFrame::OnDetachDatabase(wxCommandEvent &WXUNUSED(event))
 {
     auto lib = new wxDynamicLibrary;
 #ifdef __WXMSW__

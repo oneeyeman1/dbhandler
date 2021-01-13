@@ -1286,9 +1286,9 @@ wxTextCtrl *DrawingView::GetTextLogger() const
     return m_text;
 }
 
-void DrawingView::SetSynchronisationObject(wxCriticalSection &cs)
+void DrawingView::SetPaintersMap(std::map<wxString, wxDynamicLibrary *> &painters)
 {
-    pcs = &cs;
+    m_painters = painters;
 }
 
 void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type)

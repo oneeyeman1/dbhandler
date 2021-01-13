@@ -25,6 +25,7 @@
 #include <string>
 #include <memory>
 #include "wx/docmdi.h"
+#include "wx/dynlib.h"
 #include "wx/fontenum.h"
 #include "wx/docview.h"
 #include "wx/cmdproc.h"
@@ -122,7 +123,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *docManager, Database *db, ViewType type, wxCriticalSection &cs)
+extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *docManager, Database *db, ViewType type, std::map<wxString, wxDynamicLibrary *> &painters)
 {
     DatabaseTemplate *docTemplate;
 #ifdef __WXMSW__
@@ -136,7 +137,7 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
         else
             docTemplate = new DatabaseTemplate( docManager, "Drawing", "*.qry", "", "qry", "Drawing Doc", "Drawing View", CLASSINFO( DrawingDocument ), CLASSINFO( DrawingView ) );
     }
-    docTemplate->CreateDatabaseDocument( "*.drw", type, db, cs, wxDOC_NEW | wxDOC_SILENT );
+    docTemplate->CreateDatabaseDocument( "*.drw", type, db, painters, wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<DrawingDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db, false );
 }
 

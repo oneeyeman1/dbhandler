@@ -36,7 +36,7 @@ public:
     WhereHavingPage *GetHavingPage();
     void AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName, bool quickSelect);
     void HideShowSQLBox(bool show);
-    void SetSynchronisationObject(wxCriticalSection &cs);
+    void SetPaintersMap(std::map<wxString, wxDynamicLibrary *> &painters);
     void ChangeFontEement();
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
@@ -127,6 +127,7 @@ private:
     std::vector<const TableField *> m_groupByFields;
     std::vector<wxString> m_sortedFields;
     std::vector<QueryArguments> m_arguments;
+    std::map<wxString, wxDynamicLibrary *> m_painters;
     DesignCanvas *m_designCanvas;
     wxStyledTextCtrl *m_edit;
     wxFindReplaceDialog *m_findDlg;
