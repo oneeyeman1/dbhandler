@@ -2098,7 +2098,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontName[20], headingFontName[20], labelFontName[20];
     SQLWCHAR comments[225];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = SQL_NTS, cbDataFontUnderline = SQL_NTS, cbDataFontStriken = SQL_NTS, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
-    SQLLEN cbTableName = SQL_NTS, cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontStriken = 0, cbHeadingFontName = 0, cbComment;
+    SQLLEN cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontStriken = 0, cbHeadingFontName = 0, cbComment;
     SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontStriken = 0, cbLabelFontName = 0;
     SQLLEN cbDataFontCharacterSet = 0, cbHeadingFontCharacterSet = 0, cbLabelFontCharacterSet = 0, cbDataFontPixelSize = 0, cbHeadingFontPixelSize = 0, cbLabelFontPixelSize = 0;
     std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fstr, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fstr, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fstr, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE rtrim(abt_tnam) = ";
@@ -2114,8 +2114,6 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     query += L"\'";
     query += ownerName;
     query += L"\';";
-    int tableNameLen = (int) t.length(), ownerNameLen = (int) ownerName.length();
-    SQLLEN cbOwnerName = ownerNameLen == 0 ? SQL_NULL_DATA : SQL_NTS;
     qry = new SQLWCHAR[query.length() + 2];
     memset( qry, '\0', query.size() + 2 );
     uc_to_str_cpy( qry, query );
@@ -3352,7 +3350,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::w
             SQLWCHAR *query = new SQLWCHAR[command.length() + 2];
             memset( query, '\0', command.length() + 2 );
             uc_to_str_cpy( query, command );
-            result = SQLExecDirect( m_hstmt, query, command.length() + 2 );
+            result = SQLExecDirect( m_hstmt, query, /*command.length() + 2*/SQL_NTS );
             if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -3954,7 +3952,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query;
-    long versionMajor, versionMinor;
+    unsigned long versionMajor = 0, versionMinor = 0;
     SQLLEN cbVersion = SQL_NTS;
     SQLWCHAR *qry = NULL, version[1024];
     if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
