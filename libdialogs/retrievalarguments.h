@@ -49,7 +49,8 @@ private:
     wxButton *m_ok, *m_cancel, *m_help, *m_add, *m_insert, *m_remove;
     wxStaticBoxSizer *box;
     wxString m_type, m_subType;
-    int numArgs, m_currentLine;
+    unsigned long m_currentLine;
+    unsigned long numArgs;
     std::list<QueryLines> m_lines;
 };
 

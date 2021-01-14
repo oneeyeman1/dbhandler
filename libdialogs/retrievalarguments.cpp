@@ -173,7 +173,8 @@ void RetrievalArguments::OnInsertArgument(wxCommandEvent &WXUNUSED(event))
 {
     Freeze();
     std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
-    int pos = m_currentLine * 4, position = wxAtoi( (*it).m_number->GetLabel() );
+    unsigned long pos = m_currentLine * 4;
+    int position = wxAtoi( (*it).m_number->GetLabel() );
     wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
     wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%d", m_currentLine ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
     wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
@@ -203,7 +204,7 @@ void RetrievalArguments::OnInsertArgument(wxCommandEvent &WXUNUSED(event))
 void RetrievalArguments::OnRemoveArgument(wxCommandEvent &WXUNUSED(event))
 {
     Freeze();
-    int counter = m_currentLine;
+    unsigned long counter = m_currentLine;
     std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
     (*it).m_pointer->Destroy();
     (*it).m_name->Destroy();
