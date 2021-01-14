@@ -32,6 +32,7 @@ private:
     wxDocMDIParentFrame *m_parent;
     wxDocMDIChildFrame *m_frame;
     wxToolBar *m_tb, *m_styleBar;
+    wxDECLARE_DYNAMIC_CLASS(TableEditView);
 };
 
 #endif // _TABLEEDITVIEW_H_

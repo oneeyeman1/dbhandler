@@ -28,6 +28,7 @@ protected:
 
 private:
     std::map<long,std::vector<int> > m_tableData;
+    wxDECLARE_DYNAMIC_CLASS(TableEditDocument);
 };
 
 #endif // _TABLEEDITDOCUMENT_H_

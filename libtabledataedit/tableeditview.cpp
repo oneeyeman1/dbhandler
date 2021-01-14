@@ -35,6 +35,8 @@
 #include "wx/docmdi.h"
 #include "tableeditview.h"
 
+wxIMPLEMENT_DYNAMIC_CLASS(TableEditView);
+
 bool TableEditView::OnCreate(wxDocument *doc, long flags)
 {
     wxToolBar *tb = nullptr;
