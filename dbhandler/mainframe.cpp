@@ -512,7 +512,7 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
             lib2->Load( "libtablewindow" );
 #endif
             if( lib2->IsLoaded() )
-                m_painters["TableView"] = lib;
+                m_painters["TableView"] = lib2;
             else
             {
                 delete lib2;
