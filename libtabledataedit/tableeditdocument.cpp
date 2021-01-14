@@ -35,7 +35,7 @@
 #include "wx/docview.h"
 #include "tableeditdocument.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(TableEditDocument);
+wxIMPLEMENT_DYNAMIC_CLASS(TableEditDocument, wxDocument);
 
 std::map<long,std::vector<int> > &TableEditDocument::GetData()
 {

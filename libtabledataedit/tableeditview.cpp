@@ -35,7 +35,7 @@
 #include "wx/docmdi.h"
 #include "tableeditview.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(TableEditView);
+wxIMPLEMENT_DYNAMIC_CLASS(TableEditView, wxView);
 
 bool TableEditView::OnCreate(wxDocument *doc, long flags)
 {
@@ -130,4 +130,9 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     ptCanvas = wxDefaultPosition;
 #endif
     return true;
+}
+
+void TableEditView::OnDraw(wxDC *dc)
+{
+
 }
