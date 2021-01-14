@@ -33,6 +33,7 @@
 
 #include <map>
 #include "wx/docview.h"
+#include "database.h"
 #include "tableeditdocument.h"
 
 wxIMPLEMENT_DYNAMIC_CLASS(TableEditDocument, wxDocument);
@@ -40,4 +41,10 @@ wxIMPLEMENT_DYNAMIC_CLASS(TableEditDocument, wxDocument);
 std::map<long,std::vector<int> > &TableEditDocument::GetData()
 {
     return m_tableData;
+}
+
+void TableEditDocument::SetDatabaseAndTableName(const Database *db, const wxString &tableName)
+{
+    m_db = db;
+    m_name = tableName;
 }
