@@ -87,7 +87,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT void CreateDataEditWindow(wxWindow *parent, wxDocManager *docManager, Database *db, wxCriticalSection &cs)
+extern "C" WXEXPORT void CreateDataEditWindow(wxWindow *parent, wxDocManager *docManager, Database *db, const wxString &tableName)
 {
     wxDocTemplate *docTemplate;
 #ifdef __WXMSW__
@@ -99,5 +99,5 @@ extern "C" WXEXPORT void CreateDataEditWindow(wxWindow *parent, wxDocManager *do
         docTemplate = new wxDocTemplate( docManager, "TableEdit", "*.edt", "", "edt", "TableEdit Doc", "TableEdit View", CLASSINFO( TableEditDocument ), CLASSINFO( TableEditView ) );
     }
     docTemplate->CreateDocument( "*.edt", wxDOC_NEW | wxDOC_SILENT );
-//    dynamic_cast<TableEditDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db, false );
+    dynamic_cast<TableEditDocument *>( docManager->GetCurrentDocument() )->SetDatabaseAndTableName( db, tableName  );
 }

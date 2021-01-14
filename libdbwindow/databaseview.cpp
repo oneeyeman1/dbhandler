@@ -118,7 +118,7 @@ typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTab
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 typedef int (*RETRIEVEARGUMENTS)(wxWindow *, std::vector<QueryArguments> &arguments, const wxString &, const wxString &);
 typedef int (*GOTOLINE)(wxWindow *, int &);
-typedef void (*DATAEDITWINDOW)(wxWindow *parent, wxDocManager *docManager, Database *db);
+typedef void (*DATAEDITWINDOW)(wxWindow *parent, wxDocManager *docManager, Database *db, const wxString &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
@@ -2074,8 +2074,9 @@ void DrawingView::OnIconise(wxIconizeEvent &event)
     event.Skip();
 }
 
-void DrawingView::OnTableDataEdit(wxCommandEvent &WXUNUSED(event))
+void DrawingView::OnTableDataEdit(wxCommandEvent &event)
 {
+    MyErdTable *erdTable = (MyErdTable *) event.GetEventObject();
     DATAEDITWINDOW func = (DATAEDITWINDOW) m_painters["EditData"]->GetSymbol( "CreateDataEditWindow" );
-    func( m_parent, GetDocumentManager(), GetDocument()->GetDatabase() );
+    func( m_parent, GetDocumentManager(), GetDocument()->GetDatabase(), erdTable->GetTableName() );
 }
