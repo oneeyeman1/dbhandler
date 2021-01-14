@@ -25,7 +25,7 @@ class TableEditView: public wxView
 public:
     TableEditView() : wxView() {}
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
-    virtual void OnDraw(wxDC *dc);
+    virtual void OnDraw(wxDC *dc) wxOVERRIDE;
 protected:
 
 private:
