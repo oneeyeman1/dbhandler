@@ -118,6 +118,7 @@ typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTab
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 typedef int (*RETRIEVEARGUMENTS)(wxWindow *, std::vector<QueryArguments> &arguments, const wxString &, const wxString &);
 typedef int (*GOTOLINE)(wxWindow *, int &);
+typedef void (*DATAEDITWINDOW)(wxWindow *parent, wxDocManager *docManager, Database *db);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
@@ -173,6 +174,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_FIND_REPLACE_ALL(wxID_ANY, DrawingView::OnFindReplaceText)
     EVT_MENU(wxID_GOTOLINE, DrawingView::OnGotoLine)
     EVT_MENU(wxID_CONVERTTOGRAPHICS, DrawingView::OnConvertToGraphics)
+    EVT_MENU(wxID_TABLEEDITDATA, DrawingView::OnTableDataEdit)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -2070,4 +2072,10 @@ void DrawingView::OnIconise(wxIconizeEvent &event)
         (wxMDIClientWindow *) m_parent->GetClientWindow()->Show();
     }
     event.Skip();
+}
+
+void DrawingView::OnTableDataEdit(wxCommandEvent &WXUNUSED(event))
+{
+    DATAEDITWINDOW func = (DATAEDITWINDOW) m_painters["EditData"]->GetSymbol( "CreateDataEditWindow" );
+    func( m_parent, GetDocumentManager(), GetDocument()->GetDatabase() );
 }
