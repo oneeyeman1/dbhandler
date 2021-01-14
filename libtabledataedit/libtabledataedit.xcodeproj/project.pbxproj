@@ -231,6 +231,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.1",
 					/Users/igorkorot/wxWidgets/include,
+					../dbinterface,
 				);
 				LIBRARY_SEARCH_PATHS = "/Users/igorkorot/wxWidgets/buildC11/lib ";
 				OTHER_LDFLAGS = (
@@ -287,6 +288,7 @@
 				E3F4767F25ABE9A30083800D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

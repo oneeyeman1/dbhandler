@@ -27,6 +27,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		E329057225B0D36500DD7070 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3F4768025ABE9A30083800D /* libtabledataedit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E3F4767825ABE9A30083800D;
+			remoteInfo = libtabledataedit;
+		};
 		E33E6F571E6A9A6B003A0B92 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E33E6F531E6A9A6A003A0B92 /* libtablewindow.xcodeproj */;
@@ -453,6 +460,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				E329057325B0D36500DD7070 /* PBXTargetDependency */,
 			);
 			name = dbhandler;
 			productName = dbhandler;
@@ -757,6 +765,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		E329057325B0D36500DD7070 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libtabledataedit;
+			targetProxy = E329057225B0D36500DD7070 /* PBXContainerItemProxy */;
+		};
 		E3D05D601CA4AB1E002CB677 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E3D05D391CA4AB1D002CB677 /* dbhandler */;
