@@ -38,8 +38,8 @@ MySQLDatabase::~MySQLDatabase()
         std::vector<DatabaseTable *> tableVec = pimpl->m_tables[m_pimpl->m_catalog];
         for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
         {
-            std::vector<Field *> fields = (*it)->GetFields();
-            for( std::vector<Field *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
+            std::vector<TableField *> fields = (*it)->GetFields();
+            for( std::vector<TableField *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
             {
                 delete (*it1);
                 (*it1) = NULL;
@@ -362,7 +362,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     char fkField[64], refTableSchema[64], refTableName[64], refTableField[64], updateCon[64], deleteCon[64];
     char colName[64], colType[64], defValue[64], nullable[3], autoInc[30], indexName[64];
     MYSQL_RES *prepare_meta_result;
-    std::vector<Field *> fields;
+    std::vector<TableField *> fields;
     std::vector<std::wstring> fk_names, indexes;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
@@ -772,7 +772,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                     else
                                                                                         autoincrement = false;
                                                                                     is_pk = pk == 1 ? true : false;
-                                                                                    Field *field = new Field( fieldName, fieldType, fieldSize, fieldPrec, m_pimpl->m_myconv.from_bytes( (const char *) table_name ) + L"." + fieldName, fieldDefaultValue, is_nullable, autoincrement, is_pk, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
+                                                                                    TableField *field = new TableField( fieldName, fieldType, fieldSize, fieldPrec, m_pimpl->m_myconv.from_bytes( (const char *) table_name ) + L"." + fieldName, fieldDefaultValue, is_nullable, autoincrement, is_pk, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
                                                                                     if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), L"", m_pimpl->m_myconv.from_bytes( colName ), field, errorMsg ) )
                                                                                     {
                                                                                         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
@@ -817,7 +817,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                         std::wstring tableName = m_pimpl->m_myconv.from_bytes( (const char *) table_name );
                                                                                         std::wstring schemaName = m_pimpl->m_myconv.from_bytes( (const char *) schema_name );
                                                                                         DatabaseTable *table = new DatabaseTable( tableName, schemaName, fields, foreign_keys );
-                                                                                        for( std::vector<Field *>::iterator it = fields.begin (); it < fields.end (); ++it )
+                                                                                        for( std::vector<TableField *>::iterator it = fields.begin (); it < fields.end (); ++it )
                                                                                         {
                                                                                             if( (*it)->IsPrimaryKey() )
                                                                                                 table->GetTableProperties().m_pkFields.push_back( (*it)->GetFieldName() );
@@ -1708,7 +1708,7 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
     return result;
 }
 
-int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg)
 {
     char /**str_data1 = NULL, *str_data2 = NULL, */*str_data3 = NULL;
     int result = 0;
@@ -1884,7 +1884,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
     return result;
 }
 
-int MySQLDatabase::GetFieldProperties(const std::wstring &table, Field *field, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetFieldProperties(const std::wstring &table, TableField *field, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     bool found = false;
@@ -2331,3 +2331,11 @@ int MySQLDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstr
     }
     return result;
 }
+
+int MySQLDatabase::EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName + L";";
+    return result;
+}
+

@@ -23,9 +23,17 @@
 		E3D05D7F1CA564F5002CB677 /* viewbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D05D791CA564F5002CB677 /* viewbase.cpp */; };
 		E3D1395C1D0D102B00A5A0F7 /* liblibdialogs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D139481D0D0CD200A5A0F7 /* liblibdialogs.dylib */; };
 		E3E91D291D6EA40F00675CF8 /* liblibdbwindow.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E38708CA1D2B61D7004EF478 /* liblibdbwindow.dylib */; };
+		E3F4769525ABF5170083800D /* liblibtabledataedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3F4768525ABE9A40083800D /* liblibtabledataedit.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		E329057225B0D36500DD7070 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3F4768025ABE9A30083800D /* libtabledataedit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E3F4767825ABE9A30083800D;
+			remoteInfo = libtabledataedit;
+		};
 		E33E6F571E6A9A6B003A0B92 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E33E6F531E6A9A6A003A0B92 /* libtablewindow.xcodeproj */;
@@ -124,6 +132,13 @@
 			remoteGlobalIDString = E3E91D641DCC2E8900675CF8;
 			remoteInfo = libfieldswindow;
 		};
+		E3F4768425ABE9A40083800D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3F4768025ABE9A30083800D /* libtabledataedit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3F4767925ABE9A30083800D;
+			remoteInfo = libtabledataedit;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -166,8 +181,10 @@
 		E3D139431D0D0CD100A5A0F7 /* libdialogs.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdialogs.xcodeproj; path = libdialogs/libdialogs.xcodeproj; sourceTree = "<group>"; };
 		E3D1396D1D0D110A00A5A0F7 /* libdbloader.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdbloader.xcodeproj; path = libdbloader/libdbloader.xcodeproj; sourceTree = "<group>"; };
 		E3D8595E1EEA09030093FB1C /* libmysql.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libmysql.xcodeproj; path = libmysql/libmysql.xcodeproj; sourceTree = "<group>"; };
+		E3E5BE9025ABDCF20037E70F /* liblibtabledataedit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibtabledataedit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3E6643924A47893008CA090 /* build_app */ = {isa = PBXFileReference; lastKnownFileType = text; path = build_app; sourceTree = "<group>"; };
 		E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libfieldswindow.xcodeproj; path = libfieldswindow/libfieldswindow.xcodeproj; sourceTree = "<group>"; };
+		E3F4768025ABE9A30083800D /* libtabledataedit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libtabledataedit.xcodeproj; path = libtabledataedit/libtabledataedit.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +192,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3F4769525ABF5170083800D /* liblibtabledataedit.dylib in Frameworks */,
 				E3E91D291D6EA40F00675CF8 /* liblibdbwindow.dylib in Frameworks */,
 				E3D1395C1D0D102B00A5A0F7 /* liblibdialogs.dylib in Frameworks */,
 				E3D05D3E1CA4AB1D002CB677 /* Cocoa.framework in Frameworks */,
@@ -187,6 +205,13 @@
 			files = (
 				E3D05D5E1CA4AB1E002CB677 /* Cocoa.framework in Frameworks */,
 				E3D05D5D1CA4AB1E002CB677 /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3E5BE8D25ABDCF20037E70F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,6 +269,7 @@
 		E3D05D311CA4AB1D002CB677 = {
 			isa = PBXGroup;
 			children = (
+				E3F4768025ABE9A30083800D /* libtabledataedit.xcodeproj */,
 				E3B8E39B24E2821600346516 /* libpropertieshandlers.xcodeproj */,
 				E3E6643924A47893008CA090 /* build_app */,
 				E3D8595E1EEA09030093FB1C /* libmysql.xcodeproj */,
@@ -270,6 +296,7 @@
 			children = (
 				E3D05D3A1CA4AB1D002CB677 /* dbhandler.app */,
 				E3D05D5B1CA4AB1E002CB677 /* dbhandlerTests.xctest */,
+				E3E5BE9025ABDCF20037E70F /* liblibtabledataedit.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -400,7 +427,25 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		E3F4768125ABE9A30083800D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3F4768525ABE9A40083800D /* liblibtabledataedit.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		E3E5BE8E25ABDCF20037E70F /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		E3D05D391CA4AB1D002CB677 /* dbhandler */ = {
@@ -415,6 +460,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				E329057325B0D36500DD7070 /* PBXTargetDependency */,
 			);
 			name = dbhandler;
 			productName = dbhandler;
@@ -438,6 +484,23 @@
 			productName = dbhandlerTests;
 			productReference = E3D05D5B1CA4AB1E002CB677 /* dbhandlerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E3E5BE8F25ABDCF20037E70F /* libtabledataedit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E3E5BEA025ABDCF20037E70F /* Build configuration list for PBXNativeTarget "libtabledataedit" */;
+			buildPhases = (
+				E3E5BE8C25ABDCF20037E70F /* Sources */,
+				E3E5BE8D25ABDCF20037E70F /* Frameworks */,
+				E3E5BE8E25ABDCF20037E70F /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libtabledataedit;
+			productName = libtabledataedit;
+			productReference = E3E5BE9025ABDCF20037E70F /* liblibtabledataedit.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
 
@@ -514,6 +577,10 @@
 					ProjectRef = E3D139011D05248A00A5A0F7 /* libsqlite.xcodeproj */;
 				},
 				{
+					ProductGroup = E3F4768125ABE9A30083800D /* Products */;
+					ProjectRef = E3F4768025ABE9A30083800D /* libtabledataedit.xcodeproj */;
+				},
+				{
 					ProductGroup = E33E6F541E6A9A6A003A0B92 /* Products */;
 					ProjectRef = E33E6F531E6A9A6A003A0B92 /* libtablewindow.xcodeproj */;
 				},
@@ -522,6 +589,7 @@
 			targets = (
 				E3D05D391CA4AB1D002CB677 /* dbhandler */,
 				E3D05D5A1CA4AB1E002CB677 /* dbhandlerTests */,
+				E3E5BE8F25ABDCF20037E70F /* libtabledataedit */,
 			);
 		};
 /* End PBXProject section */
@@ -618,6 +686,13 @@
 			remoteRef = E3E91D6F1DCC2E8A00675CF8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		E3F4768525ABE9A40083800D /* liblibtabledataedit.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibtabledataedit.dylib;
+			remoteRef = E3F4768425ABE9A40083800D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -680,9 +755,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E3E5BE8C25ABDCF20037E70F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		E329057325B0D36500DD7070 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libtabledataedit;
+			targetProxy = E329057225B0D36500DD7070 /* PBXContainerItemProxy */;
+		};
 		E3D05D601CA4AB1E002CB677 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E3D05D391CA4AB1D002CB677 /* dbhandler */;
@@ -922,6 +1009,26 @@
 			};
 			name = Release;
 		};
+		E3E5BE9125ABDCF20037E70F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E3E5BE9225ABDCF20037E70F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -948,6 +1055,15 @@
 			buildConfigurations = (
 				E3D05D6F1CA4AB1E002CB677 /* Debug */,
 				E3D05D701CA4AB1E002CB677 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E3E5BEA025ABDCF20037E70F /* Build configuration list for PBXNativeTarget "libtabledataedit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3E5BE9125ABDCF20037E70F /* Debug */,
+				E3E5BE9225ABDCF20037E70F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

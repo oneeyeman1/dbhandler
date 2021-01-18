@@ -16,8 +16,8 @@ public:
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) override;
     virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) override;
-    virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &UNUSED(schemaName), const std::wstring &ownerName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg) override;
-    virtual int GetFieldProperties(const std::wstring &table, Field *field, std::vector<std::wstring> &errorMsg) override;
+    virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &UNUSED(schemaName), const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg) override;
+    virtual int GetFieldProperties(const std::wstring &table, TableField *field, std::vector<std::wstring> &errorMsg) override;
     virtual int SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg) override;
     virtual int SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &field, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg) override;
     virtual int ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int UNUSED(match), std::vector<std::wstring> &errorMsg) override;
@@ -30,7 +30,7 @@ protected:
     struct SQLiteImpl;
     SQLiteImpl *sqlite_pimpl;
     void GetErrorMessage(int code, std::wstring &errorMsg);
-    void SetFullType(Field *field, const std::wstring &type);
+    void SetFullType(TableField *field, const std::wstring &type);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) override;
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) override;
     virtual bool IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg) override;
@@ -39,6 +39,8 @@ protected:
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     int DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName);
     virtual int AddDropTable(const std::wstring &UNUSED(catalog), const std::wstring &UNUSED(schemaName), const std::wstring &tableName, const std::wstring &UNUSED(ownerName), long UNUSED(tableId), bool tableAdded, std::vector<std::wstring> &errorMsg) override;
+    virtual int EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> 
+&errorMsg) override;
 private:
     sqlite3 *m_db;
     sqlite3_stmt *m_stmt1, *m_stmt2, *m_stmt3;

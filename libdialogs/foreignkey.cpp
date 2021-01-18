@@ -145,7 +145,7 @@ void ForeignKeyDialog::set_properties()
     }
     list_ctrl_1->AppendColumn( m_table->GetTableName() );
     int row = 0;
-    for( std::vector<Field *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
+    for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
     {
         list_ctrl_1->InsertItem( row++, (*it)->GetFieldName() );
     }
@@ -390,7 +390,7 @@ void ForeignKeyDialog::DoChangePrimaryKeyTableName()
             }
         }
     }
-    for( std::vector<Field *>::const_iterator it = m_pkTable->GetFields().begin(); it < m_pkTable->GetFields().end(); it++ )
+    for( std::vector<TableField *>::const_iterator it = m_pkTable->GetFields().begin(); it < m_pkTable->GetFields().end(); it++ )
     {
         if( (*it)->IsPrimaryKey() )
         {

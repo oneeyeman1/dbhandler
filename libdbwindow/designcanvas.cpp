@@ -86,17 +86,17 @@ void DesignCanvas::SetQuickQueryFields(const std::vector<wxString> &fields)
     m_quickQueryFields = fields;
 }
 
-void DesignCanvas::AddFieldLabelToCanvas(const wxFont labelFont, const Field *label)
+void DesignCanvas::AddFieldLabelToCanvas(const wxFont labelFont, const TableField *label)
 {
     wxRect rectLabel, rectField;
-    auto labelShape = new DesignLabel( labelFont, const_cast<Field *>( label )->GetFieldProperties().m_heading, const_cast<Field *>( label )->GetFieldProperties().m_headingPosition );
+    auto labelShape = new DesignLabel( labelFont, const_cast<TableField *>( label )->GetFieldProperties().m_heading, const_cast<TableField *>( label )->GetFieldProperties().m_headingPosition );
     m_pManager.AddShape( labelShape, NULL, wxPoint( startPoint.x, startPoint.y ), sfINITIALIZE, sfDONT_SAVE_STATE );
     rectLabel = labelShape->GetBoundingBox();
     startPoint.x += rectLabel.GetWidth() + 2;
     Refresh();
 }
 
-void DesignCanvas::AddFieldToCanvas(const wxFont dataFont, const Field *label)
+void DesignCanvas::AddFieldToCanvas(const wxFont dataFont, const TableField *label)
 {
     ShapeList list;
     int ypos = 0;
@@ -113,7 +113,7 @@ void DesignCanvas::AddFieldToCanvas(const wxFont dataFont, const Field *label)
     }
     startPoint.y = ypos;
     wxRect rectLabel, rectField;
-    auto labelShape = new DesignField( dataFont, const_cast<Field *>( label )->GetFieldProperties().m_label, const_cast<Field *>( label )->GetFieldProperties().m_labelPosition );
+    auto labelShape = new DesignField( dataFont, const_cast<TableField *>( label )->GetFieldProperties().m_label, const_cast<TableField *>( label )->GetFieldProperties().m_labelPosition );
     m_pManager.AddShape( labelShape, NULL, wxPoint( startPoint.x, startPoint.y ), sfINITIALIZE, sfDONT_SAVE_STATE );
     rectLabel = labelShape->GetBoundingBox();
     startPoint.x += rectLabel.GetWidth() + 2;
@@ -327,7 +327,7 @@ void DesignCanvas::InitialFieldSizing ()
     }
 }
 
-void DesignCanvas::PopulateQueryCanvas(const std::vector<Field *> &queryFields, const std::vector<const Field *> &groupByFields)
+void DesignCanvas::PopulateQueryCanvas(const std::vector<TableField *> &queryFields, const std::vector<const TableField *> &groupByFields)
 {
     wxBeginBusyCursor();
     wxFont fontUsed;
@@ -359,7 +359,7 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<Field *> &queryFields, 
  //       AddFieldToCanvas( font, (*it) );
     }*/
         found = false;
-        for( std::vector<Field *>::const_iterator it = queryFields.begin(); it < queryFields.end(); ++it )
+        for( std::vector<TableField *>::const_iterator it = queryFields.begin(); it < queryFields.end(); ++it )
         {
             std::wstring tableName = (*it)->GetFullName().substr( 0, (*it)->GetFullName().find( '.' ) );
             for( std::vector<DatabaseTable *>::iterator it1 = tables.begin(); it1 < tables.end() && !found; ++it1 )
@@ -418,7 +418,7 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<Field *> &queryFields, 
             AddFieldLabelToCanvas( fontUsed, (*it) );
         }
         AddHeaderDivider();
-        for( std::vector<Field *>::const_iterator it = queryFields.begin(); it < queryFields.end(); ++it )
+        for( std::vector<TableField *>::const_iterator it = queryFields.begin(); it < queryFields.end(); ++it )
             AddFieldToCanvas( fontUsed, (*it) );
         AddDataDivider();
         Update();

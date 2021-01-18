@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{22ed181d-cf8e-4031-9b52-8cb3e8b4346b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="odbcconfigure.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dialogs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="selecttables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="databasetype.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="createindex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="properties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="foreignkey.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="getobjectname.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jointype.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="retrievalarguments.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="addcolumnsdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="odbccredentials.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="newquery.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bitmappanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="quickselect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="typecombobox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="arguments.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gotoline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="attachdb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="detachdb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="odbcconfigure.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="selecttables.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="databasetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="createindex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="properties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="foreignkey.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="getobjectname.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="jointype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="retrievalarguments.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="addcolumnsdialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="odbccredentials.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="newquery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bitmappanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="quickselect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="typecombobox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gotoline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="attachdb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="detachdb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

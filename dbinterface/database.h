@@ -79,10 +79,10 @@ public:
     int m_labelPosition, m_headingPosition;
 };
 
-class Field
+class TableField
 {
 public:
-    Field()
+    TableField()
     {
         column_name = column_type = full_name = column_defaultValue = L"";
         field_size = -1;
@@ -92,7 +92,7 @@ public:
         m_props.m_labelPosition = m_props.m_headingPosition = 0;
     }
 
-    Field(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &fullName, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false, const bool columnFK = false)
+    TableField(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &fullName, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false, const bool columnFK = false)
     {
         column_name = columnName;
         column_type = columnType;
@@ -175,7 +175,7 @@ private:
 class DatabaseTable
 {
 public:
-    DatabaseTable(const std::wstring &tableName, const std::wstring &schemaName, const std::vector<Field *> &tableFields, const std::map<unsigned long,std::vector<FKField *> > &foreignKeys)
+    DatabaseTable(const std::wstring &tableName, const std::wstring &schemaName, const std::vector<TableField *> &tableFields, const std::map<unsigned long,std::vector<FKField *> > &foreignKeys)
     {
         m_objectId = 0;
         m_props.m_owner = L"";
@@ -187,7 +187,7 @@ public:
 
     ~DatabaseTable()
     {
-        for( std::vector<Field *>::iterator it = table_fields.begin(); it < table_fields.end(); ++it )
+        for( std::vector<TableField *>::iterator it = table_fields.begin(); it < table_fields.end(); ++it )
         {
             delete (*it);
             (*it) = NULL;
@@ -209,7 +209,7 @@ public:
     const std::wstring &GetSchemaName() const { return m_props.schema_name; }
     TableProperties &GetTableProperties() { return m_props; }
     void SetTableProperties(const TableProperties &props) { m_props = props; }
-    const std::vector<Field *> &GetFields() const { return table_fields; }
+    const std::vector<TableField *> &GetFields() const { return table_fields; }
     std::map<unsigned long,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
     const unsigned long GetTableId() const { return m_objectId; }
     void SetTableId(unsigned long id) { m_objectId = id; }
@@ -222,7 +222,7 @@ public:
     void SetNumberOfIndexes(int count) { m_numIndex = count; }
     int GetNumberOfIndexes() const { return m_numIndex; }
 private:
-    std::vector<Field *> table_fields;
+    std::vector<TableField *> table_fields;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     int m_numFields, m_numIndex;
     unsigned long m_objectId;
@@ -260,8 +260,8 @@ public:
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) = 0;
     virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, Field *field, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int GetFieldProperties(const std::wstring &table, Field *field, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int GetFieldProperties(const std::wstring &table, TableField *field, std::vector<std::wstring> &errorMsg) = 0;
     virtual int SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
     virtual int SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &properties, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
     virtual int ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int match, std::vector<std::wstring> &errorMsg) = 0;
@@ -269,6 +269,8 @@ public:
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg) = 0;
     virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) = 0;
+    virtual int EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> 
+&errorMsg) = 0;
 };
 
 struct Database::Impl
@@ -281,8 +283,8 @@ struct Database::Impl
     std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
     std::wstring m_serverVersion;
     std::wstring m_pgLogFile, m_pgLogDir;
-    int m_versionMajor, m_versionMinor, m_versionRevision;
-    int m_clientVersionMajor, m_clientVersionMinor, m_clientVersionRevision;
+    unsigned long m_versionMajor, m_versionMinor, m_versionRevision;
+    unsigned long m_clientVersionMajor, m_clientVersionMinor, m_clientVersionRevision;
     const std::wstring &GetConnectedUser() const { return m_connectedUser; };
     void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
     const std::wstring &GetDatabaseType() const { return m_type; };

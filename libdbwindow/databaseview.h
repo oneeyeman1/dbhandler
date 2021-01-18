@@ -36,7 +36,7 @@ public:
     WhereHavingPage *GetHavingPage();
     void AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName, bool quickSelect);
     void HideShowSQLBox(bool show);
-    void SetSynchronisationObject(wxCriticalSection &cs);
+    void SetPaintersMap(std::map<wxString, wxDynamicLibrary *> &painters);
     void ChangeFontEement();
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
@@ -83,13 +83,15 @@ public:
     void OnFindReplaceText(wxFindDialogEvent &event);
     void OnGotoLine(wxCommandEvent &event);
     void OnConvertToGraphics(wxCommandEvent &event);
+    void OnIconise(wxIconizeEvent &event);
+    void OnTableDataEdit(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
     DrawingDocument* GetDocument();
 protected:
     void SetQueryMenu(const int queryType);
-    void SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const Field *field, long sortType = -1);
+    void SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const TableField *field, long sortType = -1);
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);
     void CreateViewToolBar();
     int AddSize(int size, int lfHeight);
@@ -120,12 +122,13 @@ private:
     wxCriticalSection *pcs;
     int m_source, m_presentation, m_searchPos, m_start, m_end, m_searchFlags, m_searchDirection, m_queryType;
     wxString m_stringToFind;
-    std::vector<Field *> m_queryFields;
+    std::vector<TableField *> m_queryFields;
     std::vector<DatabaseTable *> m_selectTableName;
 //    std::vector<wxString> m_selectFields;
-    std::vector<const Field *> m_groupByFields;
+    std::vector<const TableField *> m_groupByFields;
     std::vector<wxString> m_sortedFields;
     std::vector<QueryArguments> m_arguments;
+    std::map<wxString, wxDynamicLibrary *> m_painters;
     DesignCanvas *m_designCanvas;
     wxStyledTextCtrl *m_edit;
     wxFindReplaceDialog *m_findDlg;

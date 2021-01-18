@@ -10,7 +10,6 @@
 		E33E6FA61EBC27AE003A0B92 /* database_postgres.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6FA31EBC27AE003A0B92 /* database_postgres.cpp */; };
 		E33E6FA71EBC27AE003A0B92 /* database_postgres.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6FA41EBC27AE003A0B92 /* database_postgres.h */; };
 		E33E6FA81EBC27AE003A0B92 /* postgres.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6FA51EBC27AE003A0B92 /* postgres.cpp */; };
-		E3F2B2E62182A88E00FBFF69 /* dbhandler in Frameworks */ = {isa = PBXBuildFile; fileRef = E3F2B2E52182A88E00FBFF69 /* dbhandler */; };
 		E3F2B2E82182A8D200FBFF69 /* libpq.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3F2B2E72182A8D200FBFF69 /* libpq.dylib */; };
 /* End PBXBuildFile section */
 
@@ -21,7 +20,6 @@
 		E33E6FA51EBC27AE003A0B92 /* postgres.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = postgres.cpp; sourceTree = "<group>"; };
 		E33E6FA91EBC295A003A0B92 /* libpq.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpq.dylib; path = usr/lib/libpq.dylib; sourceTree = SDKROOT; };
 		E33E6FAD1EBE086C003A0B92 /* libpq.5.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpq.5.5.dylib; path = usr/lib/libpq.5.5.dylib; sourceTree = SDKROOT; };
-		E3F2B2E52182A88E00FBFF69 /* dbhandler */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dbhandler; path = ../dbhandler; sourceTree = "<group>"; };
 		E3F2B2E72182A8D200FBFF69 /* libpq.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpq.dylib; path = ../libpg/src/interfaces/libpq/Debug/osx/libpq.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -31,7 +29,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3F2B2E82182A8D200FBFF69 /* libpq.dylib in Frameworks */,
-				E3F2B2E62182A88E00FBFF69 /* dbhandler in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,7 +68,6 @@
 			isa = PBXGroup;
 			children = (
 				E3F2B2E72182A8D200FBFF69 /* libpq.dylib */,
-				E3F2B2E52182A88E00FBFF69 /* dbhandler */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

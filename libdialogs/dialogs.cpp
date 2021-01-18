@@ -279,7 +279,7 @@ extern "C" WXEXPORT int NewQueryDlg(wxWindow *parent, int &source, int &presenta
     return res;
 }
 
-extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std::vector<DatabaseTable *> &tableName, std::vector<Field *> &queryFields)
+extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std::vector<DatabaseTable *> &tableName, std::vector<TableField *> &queryFields)
 {
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );

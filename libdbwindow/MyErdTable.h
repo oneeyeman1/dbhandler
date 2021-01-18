@@ -18,7 +18,7 @@ protected:
     void ClearGrid();
     void ClearConnections();
     void DrawDetail(wxDC &dc);
-    void AddColumn(Field *field, int id, Constraint::constraintType type);
+    void AddColumn(TableField *field, int id, Constraint::constraintType type);
     void SetCommonProps(wxSFShapeBase* shape);
 //    virtual void DrawHighlighted(wxDC &dc);
     virtual void DrawHover(wxDC &dc);

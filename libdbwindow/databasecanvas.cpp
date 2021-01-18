@@ -99,14 +99,14 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
     {
         if( !IsTableDisplayed( (*it)->GetTableName() ) )
         {
-            std::vector<Field *> fields = const_cast<DatabaseTable *>( (*it)->GetTable() )->GetFields();
+            std::vector<TableField *> fields = const_cast<DatabaseTable *>( (*it)->GetTable() )->GetFields();
             m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
             if( (*it) == tables.back() && dynamic_cast<DrawingView *>( m_view )->GetViewType() == DatabaseView )
                 (*it)->Select( true );
             (*it)->UpdateTable();
             if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
             {
-                for( std::vector<Field *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
+                for( std::vector<TableField *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
                 {
                     dynamic_cast<DrawingView *>( m_view )->GetWherePage()->AppendField( (*it)->GetTableName() + L"." + (*it1)->GetFieldName() );
                     dynamic_cast<DrawingView *>( m_view )->GetHavingPage()->AppendField( (*it)->GetTableName() + L"." + (*it1)->GetFieldName() );
@@ -732,7 +732,7 @@ void DatabaseCanvas::OnShowComments(wxCommandEvent &WXUNUSED(event))
         CommentFieldShape *shape = wxDynamicCast( (*it), CommentFieldShape );
         if( m_showComments )
         {
-            shape->SetText( const_cast<Field *>( shape->GetFieldForComment() )->GetFieldProperties().m_comment );
+            shape->SetText( const_cast<TableField *>( shape->GetFieldForComment() )->GetFieldProperties().m_comment );
         }
         else
         {
@@ -1022,7 +1022,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
     }
 }
 
-void DatabaseCanvas::AddQuickQueryFields(const wxString &tbl, std::vector<Field *> &quickSelectFields, bool quickSelect)
+void DatabaseCanvas::AddQuickQueryFields(const wxString &tbl, std::vector<TableField *> &quickSelectFields, bool quickSelect)
 {
     ShapeList shapes;
     m_pManager.GetShapes( CLASSINFO( FieldShape ), shapes );
@@ -1031,7 +1031,7 @@ void DatabaseCanvas::AddQuickQueryFields(const wxString &tbl, std::vector<Field 
         auto fld = wxDynamicCast( (*it), FieldShape );
         auto fieldName = wxDynamicCast( (*it), FieldShape )->GetField()->GetFieldName();
         auto found = false;
-        for( std::vector<Field *>::iterator it2 = quickSelectFields.begin(); it2 < quickSelectFields.end() && !false; ++it2 )
+        for( std::vector<TableField *>::iterator it2 = quickSelectFields.begin(); it2 < quickSelectFields.end() && !false; ++it2 )
         {
             if( (*it2)->GetFieldName() == fieldName )
             {
@@ -1054,7 +1054,7 @@ void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &WXUNUSED(event))
         FieldTypeShape *shape = wxDynamicCast( (*it), FieldTypeShape );
         if( m_showDataTypes )
         {
-            shape->SetText( const_cast<Field *>( shape->GetFieldForComment() )->GetFullType() );
+            shape->SetText( const_cast<TableField *>( shape->GetFieldForComment() )->GetFullType() );
         }
         else
         {

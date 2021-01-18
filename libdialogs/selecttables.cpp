@@ -159,13 +159,14 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                         else if( sysTableIncluded )
                             m_tables->Append( tableName, &schemaName );
                     }
-                    else if( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
+                    else if( ( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" ) ||
+                               ( type == L"ODBC" && subType == L"Sybase SQL Anywhere" ) || type == L"Sybase SQL Anywhere" )
                     {
                         if( tableName.substr( 0, 5 ) == L"abcat" && !sysTableIncluded )
                             continue;
                         if( !sysTableIncluded )
                         {
-                            if( ( ( schemaName != L"sys" ) && ( schemaName != L"INFORMATION_SCHEMA" ) ) )
+                            if( ( ( schemaName != L"sys" ) && ( schemaName != L"INFORMATION_SCHEMA" ) && schemaName != L"DBO" && schemaName != L"SYS" ) )
                                 m_tables->Append( tableName );
                         }
                         else

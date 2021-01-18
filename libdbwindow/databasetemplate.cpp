@@ -12,6 +12,7 @@
 
 #include <memory>
 #include "wx/docview.h"
+#include "wx/dynlib.h"
 #include "wx/fontenum.h"
 #include "wx/docmdi.h"
 #include "wx/notebook.h"
@@ -53,20 +54,20 @@ DatabaseTemplate::DatabaseTemplate(wxDocManager *manager, const wxString &descr,
 {
 }
 
-DrawingView *DatabaseTemplate::CreateDatabaseView(wxDocument *doc, ViewType type, wxCriticalSection &cs, long flags)
+DrawingView *DatabaseTemplate::CreateDatabaseView(wxDocument *doc, ViewType type, std::map<wxString, wxDynamicLibrary *> &painters, long flags)
 {
     wxScopedPtr<DrawingView> view( (DrawingView *) DoCreateView() );
     if( !view )
         return NULL;
     view->SetViewType( type );
     view->SetDocument( doc );
-    view->SetSynchronisationObject( cs );
+    view->SetPaintersMap( painters );
     if( !view->OnCreate( doc, flags ) )
         return NULL;
     return view.release();
 }
 
-bool DatabaseTemplate::CreateDatabaseDocument(const wxString &path, ViewType type, Database *db, wxCriticalSection &cs, long flags)
+bool DatabaseTemplate::CreateDatabaseDocument(const wxString &path, ViewType type, Database *db, std::map<wxString, wxDynamicLibrary *> &painters, long flags)
 {
     DrawingDocument * const doc = (DrawingDocument *) DoCreateDocument();
     wxTRY
@@ -76,7 +77,7 @@ bool DatabaseTemplate::CreateDatabaseDocument(const wxString &path, ViewType typ
         GetDocumentManager()->AddDocument( doc );
         doc->SetDatabase( db, true );
         doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
-        if( CreateDatabaseView( doc, type, cs, flags ) )
+        if( CreateDatabaseView( doc, type, painters, flags ) )
             return true;
         if( GetDocumentManager()->GetDocuments().Member( doc ) )
             doc->DeleteAllViews();
