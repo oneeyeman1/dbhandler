@@ -37,7 +37,7 @@
 #include "fontpropertypagebase.h"
 #include "wx/gtk/private.h"
 
-static void font_name_change(GtkFontChooser *view, CFontPropertyPage *page)
+/*static void font_name_change(GtkFontChooser *view, CFontPropertyPage *page)
 {
     page->SetModified( true );
     GtkTreeIter iter;
@@ -45,7 +45,7 @@ static void font_name_change(GtkFontChooser *view, CFontPropertyPage *page)
     GList *selRows = NULL;
     gchar *pangoFont = gtk_font_chooser_get_font( view );
     wxFont font/*( pangoFont )*/;
-    font.SetNativeFontInfo( pangoFont );
+//    font.font.SetNativeFontInfo( pangoFont );
 //    page->SetFont( font.font );
 /*    GtkTreeSelection *sel = gtk_tree_view_get_selection( view );
     GtkTreeModel *model = gtk_tree_view_get_model( view );
@@ -64,12 +64,12 @@ static void font_name_change(GtkFontChooser *view, CFontPropertyPage *page)
     const char *str = g_value_get_string( &value );
     wxString temp = wxGTK_CONV_BACK( g_value_get_string( &value ) );
     page->SetFaceName( temp );
-    g_list_free_full( selRows, (GDestroyNotify) gtk_tree_path_free );*/
-}
+    g_list_free_full( selRows, (GDestroyNotify) gtk_tree_path_free );
+}*/
 
 #if GTK_CHECK_VERSION(3, 2, 0)
 #else
-static void find_widgets(GtkWidget *view, CFontPropertyPage *page)
+/*static void find_widgets(GtkWidget *view, CFontPropertyPage *page)
 {
     if( GTK_IS_CONTAINER( view ) && !GTK_IS_TREE_VIEW( view ) && !GTK_IS_ENTRY( view ) )
         gtk_container_foreach( GTK_CONTAINER( view ), (GtkCallback) find_widgets, page );
@@ -83,7 +83,7 @@ static void find_widgets(GtkWidget *view, CFontPropertyPage *page)
         g_signal_connect( view, "changed", G_CALLBACK( font_name_change ), page );
         return;
     }
-}
+}*/
 #endif
 
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bool colorEnabled)
@@ -203,11 +203,11 @@ void CFontPropertyPage::ResetFont(bool init)
     if( init )
         g_signal_connect( m_fontPanel, "notify::font", G_CALLBACK( font_name_change ), this );
 #else
-    gtk_font_selection_set_font_name( (GtkFontSelection *) m_fontPanel, m_font.GetNativeFontInfo()->ToString().c_str() );
+    gtk_font_selection_set_font_name( (GtkFontSelection *) m_fontPanel, m_font.font.GetNativeFontInfo()->ToString().c_str() );
     gtk_font_selection_set_preview_text( (GtkFontSelection *) m_fontPanel, "AaBbYyZz" );
     GtkWidget *names = gtk_font_selection_get_family_list( (GtkFontSelection *) m_fontPanel );
     GtkWidget *sizes = gtk_font_selection_get_size_entry( (GtkFontSelection *) m_fontPanel );
-    gtk_container_forall( GTK_CONTAINER( m_fontPanel ), (GtkCallback) find_widgets, this );
+//    gtk_container_forall( GTK_CONTAINER( m_fontPanel ), (GtkCallback) find_widgets, this );
 #endif
     PangoAttrList* attrs = pango_attr_list_new();
     PangoAttribute* a;
