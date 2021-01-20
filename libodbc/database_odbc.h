@@ -36,8 +36,8 @@ public:
     bool GetDSNList(std::vector<std::wstring> &dsn, std::vector<std::wstring> &errorMsg);
     virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) override;
-	virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, Field *table, std::vector<std::wstring> &errorMsg) override;
-    virtual int GetFieldProperties(const std::wstring &table, Field *field, std::vector<std::wstring> &errorMsg) override;
+	virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, TableField *table, std::vector<std::wstring> &errorMsg) override;
+    virtual int GetFieldProperties(const std::wstring &table, TableField *field, std::vector<std::wstring> &errorMsg) override;
     virtual int SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg) override;
     virtual int SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &field, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg) override;
     virtual int ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int UNUSED(match), std::vector<std::wstring> &errorMsg) override;
@@ -65,13 +65,15 @@ protected:
 //    int GetTableId(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     int GetTableId(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, long &tableId, std::vector<std::wstring> &errorMsg);
     int GetTableOwner(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg);
-    void SetFullType(Field *field);
+    void SetFullType(TableField *field);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) override;
     int CreateIndexesOnPostgreConnection(std::vector<std::wstring> &errorMsg);
-    int GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, const SQLWCHAR *fieldName, Field *field, std::vector<std::wstring> &errorMsg);
+    int GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, const SQLWCHAR *fieldName, TableField *field, std::vector<std::wstring> &errorMsg);
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) override;
     virtual int AddDropTable(const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &tableOwner, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) override;
+    virtual int EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> 
+&errorMsg) override;
 private:
     SQLHENV m_env;
     SQLHDBC m_hdbc;

@@ -183,7 +183,7 @@ void TableView::OnFieldProperties(wxCommandEvent &WXUNUSED(event))
     bool found = false;
     int type = 0;
     DatabaseTable *table = NULL;
-    Field *field = NULL;
+    TableField *field = NULL;
     wxString command = "";
     bool logOnly = false;
     wxString tableName, schemaName;

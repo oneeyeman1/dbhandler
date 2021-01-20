@@ -70,6 +70,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mysql", "..\libmysql\mysql.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "propertieshanders", "..\libpropertieshandlers\propertieshandlers.vcxproj", "{0D6C16AE-8E63-445E-9A46-0D3524E0F184}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tabledataedit", "..\libtabledataedit\tabledataedit.vcxproj", "{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -302,6 +304,22 @@ Global
 		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.Release|Win32.Build.0 = Release|Win32
 		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.Release|x64.ActiveCfg = Release|x64
 		{0D6C16AE-8E63-445E-9A46-0D3524E0F184}.Release|x64.Build.0 = Release|x64
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.Debug|Win32.Build.0 = Debug|Win32
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.Debug|x64.ActiveCfg = Debug|x64
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.Debug|x64.Build.0 = Debug|x64
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.DLL Debug|Win32.ActiveCfg = DLL Debug|Win32
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.DLL Debug|Win32.Build.0 = DLL Debug|Win32
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.DLL Debug|x64.ActiveCfg = DLL Debug|x64
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.DLL Debug|x64.Build.0 = DLL Debug|x64
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.DLL Release|Win32.ActiveCfg = DLL Release|Win32
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.DLL Release|Win32.Build.0 = DLL Release|Win32
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.DLL Release|x64.ActiveCfg = DLL Release|x64
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.DLL Release|x64.Build.0 = DLL Release|x64
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.Release|Win32.ActiveCfg = Release|Win32
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.Release|Win32.Build.0 = Release|Win32
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.Release|x64.ActiveCfg = Release|x64
+		{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

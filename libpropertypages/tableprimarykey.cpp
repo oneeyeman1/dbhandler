@@ -29,7 +29,7 @@ TablePrimaryKey::TablePrimaryKey(wxWindow *parent, const DatabaseTable *table) :
     int width1 = temp->GetSize().GetWidth();
     temp->Hide();
     m_foreignKeyColumnsFields = new FieldWindow( this, 0, pt1, width1 );
-    for( std::vector<Field *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
+    for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
     {
         if( (*it)->IsPrimaryKey() )
         {
@@ -59,8 +59,8 @@ void TablePrimaryKey::set_properties()
 {
     m_fields->AppendColumn( m_table->GetTableName() );
     int row = 0;
-    for( std::vector<Field *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
+    for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
     {
-        long item = m_fields->InsertItem( row++, (*it)->GetFieldName() );
+        m_fields->InsertItem( row++, (*it)->GetFieldName() );
     }
 }

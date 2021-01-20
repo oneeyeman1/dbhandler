@@ -218,7 +218,6 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/dbinterface/build/Debug,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -231,7 +230,6 @@
 				EXECUTABLE_PREFIX = lib;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/igorkorot/dbhandler/dbhandler/dbinterface/build/Debug,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

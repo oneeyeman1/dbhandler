@@ -317,8 +317,10 @@ public:
     // NB: this function works with device coordinates, not the logical ones!
     virtual void DoSetDeviceClippingRegion(const wxRegion& region) { m_pOrig->DoSetDeviceClippingRegion( region ); }
 
-    virtual void DoGetClippingBox(wxCoord *x, wxCoord *y,
-                                  wxCoord *w, wxCoord *h) const { m_pOrig->DoGetClippingBox( x, y, w, h ); }
+/*    virtual void DoGetClippingBox(wxCoord *x, wxCoord *y,
+                                  wxCoord *w, wxCoord *h) const { m_pOrig->DoGetClippingBox( x, y, w, h ); }*/
+
+    virtual bool DoGetClippingRect(wxRect& rect) const { return m_pOrig->DoGetClippingRect( rect ); }
 
     virtual void DestroyClippingRegion() { m_pOrig->DestroyClippingRegion(); }
 

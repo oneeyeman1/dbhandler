@@ -36,6 +36,7 @@
 #include "wx/font.h"
 #include "wx/vector.h"
 #include "wx/bmpcbox.h"
+#include "colorcombobox.h"
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 
@@ -318,7 +319,7 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage &font, b
     itemChoice16 = new CColorComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize );
     itemStaticText23 = new wxStaticText( this, wxID_STATIC, _T("&Background:"), wxDefaultPosition, wxDefaultSize, 0 );
     itemChoice17 = new CColorComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize );
-    itemWindow24 = new wxFontPreviewer( this, font, text );
+    itemWindow24 = new wxFontPreviewer( this, text );
 //    itemWindow24->SetMinSize( wxSize( 130, 32 ) );
     itemStaticText30 = new wxStaticText( this, wxID_STATIC, _T( "" ), wxDefaultPosition, wxDefaultSize, 0 );
     do_layout();

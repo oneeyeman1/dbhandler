@@ -13,6 +13,10 @@
 		E3B8E3C424EC50A400346516 /* fieldpropertieshandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3C124EC50A300346516 /* fieldpropertieshandler.cpp */; };
 		E3B8E3C524EC50A400346516 /* fieldpropertieshandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3C224EC50A400346516 /* fieldpropertieshandler.h */; };
 		E3B8E3C624EC50A400346516 /* propertieshandlerbase.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3C324EC50A400346516 /* propertieshandlerbase.h */; };
+		E3B8E3D72515284200346516 /* designpropertieshandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3D52515284200346516 /* designpropertieshandler.cpp */; };
+		E3B8E3D82515284200346516 /* designpropertieshandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3D62515284200346516 /* designpropertieshandler.h */; };
+		E3B8E3E02518E71400346516 /* dividerpropertieshandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3DE2518E71300346516 /* dividerpropertieshandler.h */; };
+		E3B8E3E2251E349600346516 /* dividerpropertieshandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3E1251E349600346516 /* dividerpropertieshandler.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +27,10 @@
 		E3B8E3C124EC50A300346516 /* fieldpropertieshandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fieldpropertieshandler.cpp; sourceTree = SOURCE_ROOT; };
 		E3B8E3C224EC50A400346516 /* fieldpropertieshandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fieldpropertieshandler.h; sourceTree = SOURCE_ROOT; };
 		E3B8E3C324EC50A400346516 /* propertieshandlerbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = propertieshandlerbase.h; sourceTree = SOURCE_ROOT; };
+		E3B8E3D52515284200346516 /* designpropertieshandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = designpropertieshandler.cpp; sourceTree = SOURCE_ROOT; };
+		E3B8E3D62515284200346516 /* designpropertieshandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = designpropertieshandler.h; sourceTree = SOURCE_ROOT; };
+		E3B8E3DE2518E71300346516 /* dividerpropertieshandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dividerpropertieshandler.h; sourceTree = SOURCE_ROOT; };
+		E3B8E3E1251E349600346516 /* dividerpropertieshandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dividerpropertieshandler.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +65,10 @@
 		E3B8E3B224E2832200346516 /* libpropertieshandlers */ = {
 			isa = PBXGroup;
 			children = (
+				E3B8E3E1251E349600346516 /* dividerpropertieshandler.cpp */,
+				E3B8E3DE2518E71300346516 /* dividerpropertieshandler.h */,
+				E3B8E3D52515284200346516 /* designpropertieshandler.cpp */,
+				E3B8E3D62515284200346516 /* designpropertieshandler.h */,
 				E3B8E3C124EC50A300346516 /* fieldpropertieshandler.cpp */,
 				E3B8E3C224EC50A400346516 /* fieldpropertieshandler.h */,
 				E3B8E3C324EC50A400346516 /* propertieshandlerbase.h */,
@@ -81,9 +93,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3B8E3D82515284200346516 /* designpropertieshandler.h in Headers */,
 				E3B8E3B624E2EAED00346516 /* propertieshandler.h in Headers */,
 				E3B8E3C624EC50A400346516 /* propertieshandlerbase.h in Headers */,
 				E3B8E3C524EC50A400346516 /* fieldpropertieshandler.h in Headers */,
+				E3B8E3E02518E71400346516 /* dividerpropertieshandler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,8 +157,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3B8E3E2251E349600346516 /* dividerpropertieshandler.cpp in Sources */,
 				E3B8E3C424EC50A400346516 /* fieldpropertieshandler.cpp in Sources */,
 				E3B8E3B524E2EAED00346516 /* propertieshandler.cpp in Sources */,
+				E3B8E3D72515284200346516 /* designpropertieshandler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,6 +301,7 @@
 					../libpropertypages,
 					../libshapeframework,
 					../libfieldswindow,
+					../libdbwindow,
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = (

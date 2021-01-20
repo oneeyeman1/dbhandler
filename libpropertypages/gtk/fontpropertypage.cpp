@@ -33,6 +33,7 @@
 #include "wx/button.h"
 #include "wx/nativewin.h"
 #include "wx/bmpcbox.h"
+#include "colorcombobox.h"
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 #include "wx/gtk/private.h"
@@ -111,7 +112,7 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bo
     itemStaticBox2 = new wxStaticBox( this, wxID_ANY, _( "Preview" ) );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Text Color" ) );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Background Color" ) );
-    m_preview = new wxFontPreviewer( this, font, "AaBbYyZz" );
+    m_preview = new wxFontPreviewer( this, "AaBbYyZz" );
     if( m_font.font.GetUnderlined() )
         m_underline->SetValue( true );
     if( m_font.font.GetStrikethrough() )

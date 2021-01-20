@@ -9,10 +9,15 @@ libpropertieshandlers_la_SOURCES =  \
 	propertieshandler.h \
 	fieldpropertieshandler.cpp \
 	fieldpropertieshandler.h \
-	propertieshandlerbase.h
+	propertieshandlerbase.h \
+	designpropertieshandler.cpp \
+	designpropertieshandler.h \
+	dividerpropertieshandler.cpp \
+	dividerpropertieshandler.h
 
 libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libpropertypages \
+	-I../../libdbwindow \
 	-I../../libshapeframework \
 	-I../../libfieldswindow \
 	`/home/igor/wxWidgets/buildGTK/wx-config \

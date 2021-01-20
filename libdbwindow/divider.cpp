@@ -19,6 +19,7 @@
 #include "wxsf/RectShape.h"
 #include "wxsf/DiagramManager.h"
 #include "wx/image.h"
+#include "objectproperties.h"
 #include "divider.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(Divider, wxSFRectShape);
@@ -51,6 +52,8 @@ Divider::Divider() : wxSFRectShape()
             m_text->SetVAlign( wxSFShapeBase::valignMIDDLE );
             auto font = m_text->GetFont();
             font.SetWeight( wxFONTWEIGHT_BOLD );
+            font.SetFaceName( "SmallFont" );
+            font.SetPointSize( 8 );
             m_text->SetFont( font );
             m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
             if( m_grid->AppendToGrid( m_text ) )
@@ -97,6 +100,8 @@ Divider::Divider(const wxString &text, const wxString &cursorFile, int stockCurs
         m_arrow->SetVAlign( wxSFShapeBase::valignMIDDLE );
         auto font = m_text->GetFont();
         font.SetWeight( wxFONTWEIGHT_BOLD );
+        font.SetFaceName( "SmallFont" );
+        font.SetPointSize( 8 );
         m_text->SetFont( font );
         m_arrow->SetFont( font );
         m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
@@ -127,6 +132,8 @@ Divider::Divider(const wxString &text, const wxString &cursorFile, int stockCurs
     m_arrow->SetVAlign( wxSFShapeBase::valignMIDDLE );
     auto font = m_text->GetFont();
     font.SetWeight( wxFONTWEIGHT_BOLD );
+    font.SetFaceName( "SmallFont" );
+    font.SetPointSize( 8 );
     m_text->SetFont( font );
     m_arrow->SetFont( font );
     m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
@@ -194,7 +201,7 @@ const wxString &Divider::GetDividerType()
     return m_props.m_type;
 }
 
-DividerPropertiesType Divider::GetDividerProperties()
+BandProperties Divider::GetDividerProperties()
 {
     return m_props;
 }

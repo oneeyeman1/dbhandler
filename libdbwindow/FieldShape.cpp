@@ -80,12 +80,12 @@ void FieldShape::SetParentRect(const wxRect &rect)
     m_parentRect = rect;
 }
 
-void FieldShape::SetField(Field *field)
+void FieldShape::SetField(TableField *field)
 {
     m_field = field;
 }
 
-Field *FieldShape::GetField()
+TableField *FieldShape::GetField()
 {
     return m_field;
 }

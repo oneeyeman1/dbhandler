@@ -21,7 +21,7 @@ public:
     void OnShowDataTypes(wxCommandEvent &event);
     inline wxSFDiagramManager &GetDiagramManager() { return m_pManager; }
     virtual void OnDraw(wxDC& dc) wxOVERRIDE;
-    void AddQuickQueryFields(const wxString &tbl, std::vector<Field *> &quickSelectFields, bool quickSelect);
+    void AddQuickQueryFields(const wxString &tbl, std::vector<TableField *> &quickSelectFields, bool quickSelect);
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:
@@ -72,6 +72,8 @@ private:
 #define wxID_FKDEFINITION         121
 #define wxID_FKOPENREFTABLE       122
 #define wxID_DROPOBJECT           123
+#define wxID_ATTACHDATABASE       124
+#define wxID_DETACHDATABASE       125
 #define WHEREPAGECOLUMNS          194
 #define WHEREPAGEFUNCTIONS        195
 #define WHEREPAGEARGUMENTS        196

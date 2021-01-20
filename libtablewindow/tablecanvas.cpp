@@ -149,7 +149,7 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
     else
     {
         int i = 0;
-        for( std::vector<Field *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); it++)
+        for( std::vector<TableField *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); it++)
         {
             m_grid->AppendRows();
             m_grid->SetCellValue( i, 0, (*it)->GetFieldName() );

@@ -2,6 +2,7 @@
 
 #include <memory>
 #include "wx/docmdi.h"
+#include "wx/dynlib.h"
 #include "wx/fontenum.h"
 #include "wx/notebook.h"
 #include "wx/fdrepdlg.h"
@@ -21,6 +22,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/GridShape.h"
+#include "objectproperties.h"
 #include "constraint.h"
 #include "constraintsign.h"
 #include "GridTableShape.h"

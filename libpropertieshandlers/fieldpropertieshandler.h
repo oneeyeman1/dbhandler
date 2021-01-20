@@ -12,7 +12,8 @@
 class WXEXPORT FieldPropertiesHandler : public PropertiesHandler
 {
 public:
-    FieldPropertiesHandler(const Database *db, const wxString &tableName, const wxString &ownerName, Field *field);
+    FieldPropertiesHandler(const Database *db, const wxString &tableName, const wxString &ownerName, TableField *field, wxTextCtrl *log);
+    virtual ~FieldPropertiesHandler() { }
     virtual void EditProperies(wxNotebook *parent) wxOVERRIDE;
     virtual int GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
     FieldProperties &GetProperty() { return m_prop; }
@@ -20,13 +21,14 @@ public:
     virtual bool IsLogOnly() const wxOVERRIDE { return m_page1->IsLogOnly(); }
     
 private:
-    Field *m_field;
+    TableField *m_field;
     FieldProperties m_prop;
     FieldGeneral *m_page1;
     FieldHeader *m_page2;
     const Database *m_db;
     std::wstring m_command;
     wxString m_tableName, m_ownerName;
+    wxTextCtrl *m_log;
 };
 
 

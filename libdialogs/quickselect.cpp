@@ -51,7 +51,7 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_label12 = new wxStaticText( m_panel, wxID_ANY, _( "Criteria:" ) );
     set_properties();
     do_layout();
-    for( size_t i = 0; i < m_sizer10->GetItemCount (); ++i )
+    for( int i = 0; i < m_sizer10->GetItemCount (); ++i )
     {
         m_sizer10->SetItemMinSize( i, -1, m_grid->GetRowSize( i ) );
     }
@@ -221,7 +221,7 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
                     {
                         found = true;
                         m_tableFields = (*it1)->GetFields();
-                        for( std::vector<Field *>::iterator it2 = m_tableFields.begin(); it2 < m_tableFields.end(); ++it2 )
+                        for( std::vector<TableField *>::iterator it2 = m_tableFields.begin(); it2 < m_tableFields.end(); ++it2 )
                             m_fields->Append( (*it2)->GetFieldName() );
                     }
                 }
@@ -258,7 +258,7 @@ void QuickSelect::OnDisplayComment(wxMouseEvent &event)
         wxString stringClicked = object->GetString( item );
         if( object == m_fields )
         {
-            for( std::vector<Field *>::iterator it = m_tableFields.begin (); it < m_tableFields.end () && !found; ++it )
+            for( std::vector<TableField *>::iterator it = m_tableFields.begin (); it < m_tableFields.end () && !found; ++it )
             {
                 if( (*it)->GetFieldName() == stringClicked )
                 {
@@ -288,7 +288,7 @@ void QuickSelect::OnDisplayComment(wxMouseEvent &event)
 
 void QuickSelect::OnGridRowLines(wxGridSizeEvent &event)
 {
-    for( size_t i = 0; i < m_sizer10->GetItemCount (); ++i )
+    for( int i = 0; i < m_sizer10->GetItemCount (); ++i )
     {
         m_sizer10->SetItemMinSize( i, -1, m_grid->GetRowSize( i ) );
     }
@@ -308,7 +308,7 @@ void QuickSelect::OnAllFieldsSelected(wxCommandEvent &WXUNUSED(event))
 {
     m_grid->BeginBatch();
     auto i = 0;
-    for( std::vector<Field *>::iterator it = m_tableFields.begin(); it < m_tableFields.end(); ++it )
+    for( std::vector<TableField *>::iterator it = m_tableFields.begin(); it < m_tableFields.end(); ++it )
     {
         if( !m_fields->IsSelected( i ) )
         {
@@ -453,7 +453,7 @@ void QuickSelect::OnFieldsSetFocus(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-std::vector<Field *> &QuickSelect::GetQueryFields()
+std::vector<TableField *> &QuickSelect::GetQueryFields()
 {
     return m_queryFields;
 }

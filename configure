@@ -17251,7 +17251,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-ac_config_files="$ac_config_files Makefile po/Makefile.in dbinterface/Makefile libsqlite/Makefile libodbc/Makefile libshapeframework/Makefile libfieldswindow/Makefile libdialogs/Makefile libdbloader/Makefile libdbwindow/Makefile dbhandler/Makefile libpropertieshandlers/Makefile libmysql/Makefile libpostgres/Makefile libtablewindow/Makefile libpropertypages/Makefile"
+ac_config_files="$ac_config_files Makefile po/Makefile.in dbinterface/Makefile libsqlite/Makefile libodbc/Makefile libshapeframework/Makefile libfieldswindow/Makefile libdialogs/Makefile libdbloader/Makefile libdbwindow/Makefile dbhandler/Makefile libtabledataedit/Makefile libpropertieshandlers/Makefile libmysql/Makefile libpostgres/Makefile libtablewindow/Makefile libpropertypages/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -18383,6 +18383,7 @@ do
     "libdbloader/Makefile") CONFIG_FILES="$CONFIG_FILES libdbloader/Makefile" ;;
     "libdbwindow/Makefile") CONFIG_FILES="$CONFIG_FILES libdbwindow/Makefile" ;;
     "dbhandler/Makefile") CONFIG_FILES="$CONFIG_FILES dbhandler/Makefile" ;;
+    "libtabledataedit/Makefile") CONFIG_FILES="$CONFIG_FILES libtabledataedit/Makefile" ;;
     "libpropertieshandlers/Makefile") CONFIG_FILES="$CONFIG_FILES libpropertieshandlers/Makefile" ;;
     "libmysql/Makefile") CONFIG_FILES="$CONFIG_FILES libmysql/Makefile" ;;
     "libpostgres/Makefile") CONFIG_FILES="$CONFIG_FILES libpostgres/Makefile" ;;

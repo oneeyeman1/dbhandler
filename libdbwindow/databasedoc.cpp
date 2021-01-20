@@ -23,6 +23,7 @@
 #endif
 #include "wx/wfstream.h"
 #include "wx/docview.h"
+#include "wx/dynlib.h"
 #include "wx/fontenum.h"
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"
@@ -40,6 +41,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "objectproperties.h"
 #include "column.h"
 #include "constraint.h"
 #include "constraintsign.h"
@@ -167,7 +169,7 @@ std::vector<std::wstring> &DrawingDocument::GetTableNameVector()
     return m_tableNames;
 }
 
-std::vector<DatabaseTable *> &DrawingDocument::GetDBTables ()
+std::vector<DatabaseTable *> &DrawingDocument::GetDBTables()
 {
     return m_dbTables;
 }
@@ -202,9 +204,9 @@ void DrawingDocument::AppendFieldToQueryFields(const std::wstring &field)
     m_queryFields.push_back( field );
 }
 
-void DrawingDocument::SetQueryFields(const std::vector<Field *> &fields)
+void DrawingDocument::SetQueryFields(const std::vector<TableField *> &fields)
 {
-    for( std::vector<Field *>::const_iterator it = fields.begin(); it < fields.end(); ++it )
+    for( std::vector<TableField *>::const_iterator it = fields.begin(); it < fields.end(); ++it )
         m_queryFields.push_back( (*it)->GetFieldName() );
 }
 

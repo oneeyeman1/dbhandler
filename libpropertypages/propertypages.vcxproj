@@ -36,12 +36,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bandgeneral.h" />
+    <ClInclude Include="colorcombobox.h" />
+    <ClInclude Include="designgeneral.h" />
     <ClInclude Include="designlabelgeneral.h" />
     <ClInclude Include="fieldgeneral.h" />
     <ClInclude Include="fieldheader.h" />
     <ClInclude Include="fontpropertypagebase.h" />
     <ClInclude Include="msw\fontpropertypage.h" />
+    <ClInclude Include="objectproperties.h" />
     <ClInclude Include="pointerproperty.h" />
+    <ClInclude Include="printspec.h" />
     <ClInclude Include="propertypagebase.h" />
     <ClInclude Include="sortgroupbypage.h" />
     <ClInclude Include="syntaxproppage.h" />
@@ -51,12 +55,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bandgeneral.cpp" />
+    <ClCompile Include="colorcombobox.cpp" />
+    <ClCompile Include="designgeneral.cpp" />
     <ClCompile Include="designlabelgeneral.cpp" />
     <ClCompile Include="fieldgeneral.cpp" />
     <ClCompile Include="fieldheader.cpp" />
     <ClCompile Include="fontpropertypagebase.cpp" />
     <ClCompile Include="msw\fontpropertypage.cpp" />
     <ClCompile Include="pointerproperty.cpp" />
+    <ClCompile Include="printspec.cpp" />
     <ClCompile Include="sortgroupbypage.cpp" />
     <ClCompile Include="syntaxproppage.cpp" />
     <ClCompile Include="tablegeneral.cpp" />

@@ -129,7 +129,6 @@ bool SortColumnRenderer::ActivateCell (const wxRect& cell, wxDataViewModel *mode
     event.SetInt( CHANGEFIELD );
     event.SetExtraLong( m_toggle ? ASCENDING : DESCENDING );
     event.SetString( temp.GetString() );
-    wxWindow *win = GetView()->GetParent()->GetParent()->GetParent();
     GetView()->GetParent()->GetParent()->GetParent()->GetEventHandler()->ProcessEvent( event );
     return true;
 }
@@ -302,23 +301,31 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             m_dragDest = m_dest;
         if( m_dragSource != m_dragDest )
         {
-            long position;
-            Field *field = nullptr;
+            long position = 0;
+            TableField *field = nullptr;
             if( m_dragDest == m_dest )
-                field = reinterpret_cast<Field *>( m_source->GetItemData( m_itemPos ) );
+                field = reinterpret_cast<TableField *>( m_source->GetItemData( m_itemPos ) );
+            else
+            {
+                GroupDestData *data = reinterpret_cast<GroupDestData *>( m_dragSource->GetItemData( m_sourcePos ) );
+                field = data->field;
+                position = data->pos;
+            }
             m_dragSource->DeleteItem( m_dragDest == m_dest ? m_itemPos : m_sourcePos );
             if( m_dragDest == m_dest )
                 position = m_dragDest->GetItemCount();
-            else
-                position = m_itemPos;
+//            else
+//                position = m_itemPos;
             long item = m_dragDest->InsertItem( position, m_item );
             if( m_dragDest == m_dest )
             {
-                GroupDestData data;
-                data.field = field;
-                data.pos = m_itemPos;
-                m_dragDest->SetItemPtrData( item, wxUIntPtr( &data ) );
+                auto data = new GroupDestData;
+                data->field = field;
+                data->pos = m_itemPos;
+                m_dragDest->SetItemPtrData( item, wxUIntPtr( data ) );
             }
+            else
+                m_dragDest->SetItemPtrData( item, wxUIntPtr( field ) );
             wxCommandEvent event( wxEVT_CHANGE_QUERY );
             event.SetEventObject( this );
             event.SetInt( m_dragDest == m_dest ? ADDFIELD : REMOVEFIELD );
@@ -343,7 +350,7 @@ void SortGroupByPage::OnMouseMove(wxMouseEvent &event)
         list = m_dest;
     if( list && !m_isDragging )
     {
-        int pos = list->HitTest( pt, flags );
+        long pos = list->HitTest( pt, flags );
         if( pos != wxNOT_FOUND && list->GetItemState( pos, wxLIST_STATE_FOCUSED ) )
             list->SetItemState( pos, 0, wxLIST_STATE_FOCUSED );
     }
@@ -393,12 +400,11 @@ void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
 
 void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
 {
-    wxDataViewItem dvitem = event.GetItem();
     wxVariant value = event.GetValue();
     m_sortDragDest = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
     if( m_sortDragSource != m_sortDragDest )
     {
-        long position;
+        unsigned int position;
         if( m_sortDragSource == m_sortDest )
         {
             m_sortDest->GetValue( value, m_itemPos, 1 );
@@ -447,7 +453,6 @@ void SortGroupByPage::OnSortDropPossible(wxDataViewEvent &event)
 void SortGroupByPage::OnSortSelectionChanged(wxDataViewEvent &event)
 {
     wxDataViewListCtrl *object = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
-    wxDataViewItem item = event.GetItem();
     object->Unselect( event.GetItem() );
 }
 

@@ -26,12 +26,13 @@
 #include "propertieshandlerbase.h"
 #include "fieldpropertieshandler.h"
 
-FieldPropertiesHandler::FieldPropertiesHandler(const Database *db, const wxString &tableName, const wxString &ownerName, Field *field)
+FieldPropertiesHandler::FieldPropertiesHandler(const Database *db, const wxString &tableName, const wxString &ownerName, TableField *field, wxTextCtrl *log)
 {
     m_db = db;
     m_tableName = tableName;
     m_ownerName = ownerName;
     m_field = field;
+    m_log = log;
     m_prop = m_field->GetFieldProperties();
 }
 
@@ -61,6 +62,8 @@ int FieldPropertiesHandler::GetProperties(std::vector<std::wstring> &errors)
         int result = const_cast<Database *>( m_db )->SetFieldProperties( m_tableName.ToStdWstring(), m_ownerName.ToStdWstring(), m_field->GetFieldName(), m_prop, isLogOnly, m_command, errors );
         if( !result && !isLogOnly )
             m_field->SetFieldProperties( m_prop );
+        if( isLogOnly )
+            m_log->AppendText( m_command );
     }
     return 0;
 }

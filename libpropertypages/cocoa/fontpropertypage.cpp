@@ -31,38 +31,38 @@
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
 
-CFontPropertyPage::CFontPropertyPage(wxWindow* parent, const wxFont &font, bool colorEnabled) : CFontPropertyPageBase( parent, font )
+CFontPropertyPage::CFontPropertyPage(wxWindow* parent, const FontPropertyPage &font, bool colorEnabled) : CFontPropertyPageBase( parent, font )
 {
     m_font = font;
     m_dirty = false;
-    m_holder = new wxFontPickerCtrl( this, wxID_ANY, font );
+    m_holder = new wxFontPickerCtrl( this, wxID_ANY, font.font );
     auto *sizer = new wxBoxSizer( wxHORIZONTAL );
     sizer->Add( m_holder, 0, wxEXPAND, 0 );
     SetSizerAndFit( sizer );
     m_holder->Bind( wxEVT_FONTPICKER_CHANGED, &CFontPropertyPage::OnFontChange, this );
 }
 
-wxFont &CFontPropertyPage::GetFont()
+FontPropertyPage &CFontPropertyPage::GetFont()
 {
     return m_font;
 }
 
 void CFontPropertyPage::SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough)
 {
-    m_font.SetPointSize( size );
-    m_font.SetStyle( italic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL );
-    m_font.SetWeight( bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL );
-    m_font.SetUnderlined( underline );
-    m_font.SetFaceName( name );
-    m_font.SetFamily( wxFONTFAMILY_DEFAULT );
-    m_font.SetEncoding( wxFONTENCODING_DEFAULT );
+    m_font.font.SetPointSize( size );
+    m_font.font.SetStyle( italic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL );
+    m_font.font.SetWeight( bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL );
+    m_font.font.SetUnderlined( underline );
+    m_font.font.SetFaceName( name );
+    m_font.font.SetFamily( wxFONTFAMILY_DEFAULT );
+    m_font.font.SetEncoding( wxFONTENCODING_DEFAULT );
     if( strikethrough )
-        m_font.SetStrikethrough( true );
-    m_holder->SetFont( m_font );
+        m_font.font.SetStrikethrough( true );
+    m_holder->SetFont( m_font.font );
 }
 
 void CFontPropertyPage::OnFontChange(wxCommandEvent &event)
 {
     m_dirty = true;
-    m_font = m_holder->GetFont();
+    m_font.font = m_holder->GetFont();
 }

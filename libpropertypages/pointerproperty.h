@@ -19,6 +19,7 @@ public:
     // end wxGlade
 
     PointerPropertiesPanel(wxWindow* parent, const wxString &cursorFile, int stockCursor);
+    virtual ~PointerPropertiesPanel() { }
 
 private:
     // begin wxGlade: PointerPropertiesPanel::methods

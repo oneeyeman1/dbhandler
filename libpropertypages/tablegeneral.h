@@ -5,6 +5,7 @@ enum
 {
     DatabaseTableProperties,
     DatabaseFieldProperties,
+    DesignProperties,
     DesignLabelProperties,
     DesignFieldProperties,
     DividerProperties,

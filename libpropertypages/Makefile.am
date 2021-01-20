@@ -29,7 +29,13 @@ libpropertypages_la_SOURCES =  \
 	pointerproperty.cpp \
 	pointerproperty.h \
 	tableprimarykey.cpp \
-	tableprimarykey.h
+	tableprimarykey.h \
+	designgeneral.cpp \
+	designgeneral.h \
+	colorcombobox.cpp \
+	colorcombobox.h \
+	printspec.cpp \
+	printspec.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
