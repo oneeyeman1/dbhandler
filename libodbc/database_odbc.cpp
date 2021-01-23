@@ -3977,6 +3977,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     }
     if( pimpl->m_subtype == L"Oracle" )
     {
+		query = L"SELECT version FROM product_component_version WHERE product LIKE '%Database%'";
     }
     if( pimpl->m_subtype != L"ACCESS" )
     {
@@ -4007,7 +4008,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                 }
                 else
                 {
-                    if( pimpl->m_subtype != L"Sybase SQL Anywhere" )
+                    if( pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_subtype != L"Oracle" )
                     {
                         retcode = SQLBindCol( m_hstmt, 2, SQL_C_SLONG, &versionMajor, 0, 0 );
                         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
@@ -4035,7 +4036,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                         }
                         else
                         {
-                            if( pimpl->m_subtype != L"Sybase SQL Anywhere" )
+                            if( pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_subtype != L"Oracle" )
                             {
                                 str_to_uc_cpy( pimpl->m_serverVersion, version );
                                 pimpl->m_versionMajor = (int) versionMajor;
