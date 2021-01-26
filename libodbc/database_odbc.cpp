@@ -1924,13 +1924,59 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 else if( errorMsg.size() == 0 )
                 {
                     bufferSize = 1024;
-                    ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    if( pimpl->m_subtype != L"Oracle" )
                     {
-                        GetErrorMessage( errorMsg, 2 );
-                        result = 1;
+                        ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 2 );
+                            result = 1;
+                        }
                     }
                     else
+                    {
+                        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage(errorMsg, 2);
+                            result = 1;
+                        }
+                        else
+                        {
+                            std::wstring userQuery = L"SELECT user FROM dual";
+                            SQLWCHAR *qry = new SQLWCHAR[userQuery.length() + 2];
+                            memset( qry, '\0', userQuery.length() + 2 );
+                            uc_to_str_cpy( qry, userQuery );
+                            ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                            delete[] qry;
+                            qry = nullptr;
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage(errorMsg, 2);
+                                result = 1;
+                            }
+                            else
+                            {
+                                SQLLEN cbUserName;
+                                ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, userName, 1024, &cbUserName );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage(errorMsg, 2);
+                                    result = 1;
+                                }
+                                else
+                                {
+                                    ret = SQLFetch( m_hstmt );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage(errorMsg, 2);
+                                        result = 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if( !result )
                     {
                         str_to_uc_cpy( pimpl->m_connectedUser, userName );
                     }
