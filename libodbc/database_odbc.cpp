@@ -583,9 +583,19 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                             {
                                 str_to_uc_cpy( pimpl->m_subtype, dbType );
                                 bufferSize = 1024;
+                                SQLWCHAR *name = nullptr;
 								if( pimpl->m_subtype != L"Oracle" )
-                                    ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-								else
+                                {
+                                    name = new SQLWCHAR[1024];
+                                    memset( name, '\0', 1024 );
+                                    ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, name, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage(errorMsg, 1, m_hstmt);
+                                        result = 1;
+                                    }
+                                }
+                                else
 								{
 									std::wstring dbNameQuery = L"SELECT sys_context( 'userenv', 'current_schema' ) FROM dual";
 									SQLWCHAR *qry = new SQLWCHAR[dbNameQuery.length() + 2];
@@ -620,7 +630,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                             }
                                             else
                                             {
-                                                SQLWCHAR *name = new SQLWCHAR[columnSizePtr + 1];
+                                                name = new SQLWCHAR[columnSizePtr + 1];
                                                 ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, name, columnSizePtr, &cDatabaseName );
                                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                 {
@@ -639,59 +649,73 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                         name = nullptr;
                                                         result = 1;
                                                     }
-                                                    else
-                                                        str_to_uc_cpy( pimpl->m_dbName, name );
-                                                    delete[] name;
-                                                    name = nullptr;
                                                 }
                                             }
                                         }
 									}
 								}
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                if( m_hstmt )
                                 {
-                                    GetErrorMessage( errorMsg, 2 );
+                                    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 2 );
+                                        result = 1;
+                                    }
+                                }
+                                if( !result )
+                                   str_to_uc_cpy( pimpl->m_dbName, name );
+                                delete[] name;
+                                name = nullptr;
+                                if( pimpl->m_subtype == L"ACCESS" )
+                                {
+                                    pimpl->m_dbName = pimpl->m_dbName.substr( pimpl->m_dbName.find_last_of( L'\\' ) + 1 );
+                                    pimpl->m_dbName = pimpl->m_dbName.substr( 0, pimpl->m_dbName.find( L'.' ) );
+                                }
+                                if( !pimpl->m_dbName.empty() )
+                                    connectToDatabase = true;
+                                if( GetServerVersion( errorMsg ) )
+                                {
                                     result = 1;
                                 }
                                 else
                                 {
-                                    str_to_uc_cpy( pimpl->m_dbName, dbName );
-                                    if( pimpl->m_subtype == L"ACCESS" )
-                                    {
-                                        pimpl->m_dbName = pimpl->m_dbName.substr( pimpl->m_dbName.find_last_of( L'\\' ) + 1 );
-                                        pimpl->m_dbName = pimpl->m_dbName.substr( 0, pimpl->m_dbName.find( L'.' ) );
-                                    }
-                                    if( !pimpl->m_dbName.empty() )
-                                        connectToDatabase = true;
-                                    if( GetServerVersion( errorMsg ) )
-                                    {
-                                        result = 1;
-                                    }
-                                    else
-                                    {
 /**************************************/
-//                                        if( pimpl->m_subtype != L"ACCESS" )
-//                                        {
-                                            std::wstring query8, query9, query10, query11;
-                                            SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                                            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+//                                    if( pimpl->m_subtype != L"ACCESS" )
+//                                    {
+                                        std::wstring query8, query9, query10, query11;
+                                        SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                                        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 2, m_hdbc );
+                                            result = 1;
+                                        }
+                                        else
+                                        {
+                                            if( pimpl->m_subtype == L"Microsoft SQL Server" )
                                             {
-                                                GetErrorMessage( errorMsg, 2, m_hdbc );
-                                                result = 1;
-                                            }
-                                            else
-                                            {
-                                                if( pimpl->m_subtype == L"Microsoft SQL Server" )
+                                                query8 = L"IF EXISTS(SELECT * FROM sys.databases WHERE name = \'" +  pimpl->m_dbName + L"\' AND is_broker_enabled = 0) ALTER DATABASE " + pimpl->m_dbName + L" SET ENABLE_BROKER";
+                                                query9 = L"IF NOT EXISTS(SELECT * FROM sys.service_queues WHERE name = \'EventNotificationQueue\') CREATE QUEUE dbo.EventNotificationQueue";
+                                                query10 = L"IF NOT EXISTS(SELECT * FROM sys.services WHERE name = \'//" + pimpl->m_dbName + L"/EventNotificationService\') CREATE SERVICE [//" + pimpl->m_dbName +L"/EventNotificationService] ON QUEUE dbo.EventNotificationQueue([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])";
+                                                query11 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsTable\') CREATE EVENT NOTIFICATION SchemaChangeEventsTable ON DATABASE FOR DDL_TABLE_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
+                                                std::wstring query12 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsIndex\') CREATE EVENT NOTIFICATION SchemaChangeEventsIndex ON DATABASE FOR DDL_INDEX_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
+                                                std::wstring query13 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsView\') CREATE EVENT NOTIFICATION SchemaChangeEventsView ON DATABASE FOR DDL_VIEW_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
+                                                query = new SQLWCHAR[query8.size() + 2];
+                                                memset( query, '\0', query8.size() + 2 );
+                                                uc_to_str_cpy( query, query8 );
+                                                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                                delete[] query;
+                                                query = NULL;
+                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                 {
-                                                    query8 = L"IF EXISTS(SELECT * FROM sys.databases WHERE name = \'" +  pimpl->m_dbName + L"\' AND is_broker_enabled = 0) ALTER DATABASE " + pimpl->m_dbName + L" SET ENABLE_BROKER";
-                                                    query9 = L"IF NOT EXISTS(SELECT * FROM sys.service_queues WHERE name = \'EventNotificationQueue\') CREATE QUEUE dbo.EventNotificationQueue";
-                                                    query10 = L"IF NOT EXISTS(SELECT * FROM sys.services WHERE name = \'//" + pimpl->m_dbName + L"/EventNotificationService\') CREATE SERVICE [//" + pimpl->m_dbName +L"/EventNotificationService] ON QUEUE dbo.EventNotificationQueue([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])";
-                                                    query11 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsTable\') CREATE EVENT NOTIFICATION SchemaChangeEventsTable ON DATABASE FOR DDL_TABLE_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
-                                                    std::wstring query12 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsIndex\') CREATE EVENT NOTIFICATION SchemaChangeEventsIndex ON DATABASE FOR DDL_INDEX_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
-                                                    std::wstring query13 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsView\') CREATE EVENT NOTIFICATION SchemaChangeEventsView ON DATABASE FOR DDL_VIEW_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
-                                                    query = new SQLWCHAR[query8.size() + 2];
-                                                    memset( query, '\0', query8.size() + 2 );
-                                                    uc_to_str_cpy( query, query8 );
+                                                    GetErrorMessage( errorMsg, 1 );
+                                                    result = 1;
+                                                }
+                                                else
+                                                {
+                                                    query = new SQLWCHAR[query9.size() + 2];
+                                                    memset( query, '\0', query9.size() + 2 );
+                                                    uc_to_str_cpy( query, query9 );
                                                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                     delete[] query;
                                                     query = NULL;
@@ -702,9 +726,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                     }
                                                     else
                                                     {
-                                                        query = new SQLWCHAR[query9.size() + 2];
-                                                        memset( query, '\0', query9.size() + 2 );
-                                                        uc_to_str_cpy( query, query9 );
+                                                        query = new SQLWCHAR[query10.size() + 2];
+                                                        memset( query, '\0', query10.size() + 2 );
+                                                        uc_to_str_cpy( query, query10 );
                                                         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                         delete[] query;
                                                         query = NULL;
@@ -715,9 +739,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                         }
                                                         else
                                                         {
-                                                            query = new SQLWCHAR[query10.size() + 2];
-                                                            memset( query, '\0', query10.size() + 2 );
-                                                            uc_to_str_cpy( query, query10 );
+                                                            query = new SQLWCHAR[query11.size() + 2];
+                                                            memset( query, '\0', query11.size() + 2 );
+                                                            uc_to_str_cpy( query, query11 );
                                                             ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                             delete[] query;
                                                             query = NULL;
@@ -728,9 +752,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                             }
                                                             else
                                                             {
-                                                                query = new SQLWCHAR[query11.size() + 2];
-                                                                memset( query, '\0', query11.size() + 2 );
-                                                                uc_to_str_cpy( query, query11 );
+                                                                query = new SQLWCHAR[query12.size() + 2];
+                                                                memset( query, '\0', query12.size() + 2 );
+                                                                uc_to_str_cpy( query, query12 );
                                                                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                                 delete[] query;
                                                                 query = NULL;
@@ -741,9 +765,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                                 }
                                                                 else
                                                                 {
-                                                                    query = new SQLWCHAR[query12.size() + 2];
-                                                                    memset( query, '\0', query12.size() + 2 );
-                                                                    uc_to_str_cpy( query, query12 );
+                                                                    query = new SQLWCHAR[query13.size() + 2];
+                                                                    memset( query, '\0', query13.size() + 2 );
+                                                                    uc_to_str_cpy( query, query13 );
                                                                     ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                                     delete[] query;
                                                                     query = NULL;
@@ -752,119 +776,105 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                                                         GetErrorMessage( errorMsg, 1 );
                                                                         result = 1;
                                                                     }
-                                                                    else
-                                                                    {
-                                                                        query = new SQLWCHAR[query13.size() + 2];
-                                                                        memset( query, '\0', query13.size() + 2 );
-                                                                        uc_to_str_cpy( query, query13 );
-                                                                        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                                        delete[] query;
-                                                                        query = NULL;
-                                                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                                                        {
-                                                                            GetErrorMessage( errorMsg, 1 );
-                                                                            result = 1;
-                                                                        }
-                                                                    }
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 }
-                                                else if( pimpl->m_subtype == L"PostgreSQL" )
+                                            }
+                                            else if( pimpl->m_subtype == L"PostgreSQL" )
+                                            {
+                                                query8 = L"IF NOT EXIST(SELECT 1 FROM pg_proc AS proc, pg_namespace AS ns WHERE proc.pronamespace = ns.oid AND ns.nspname = \'public\' AND proname = \'watch_schema_changes\') CREATE FUNCTION watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
+                                                if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor > 3 )
                                                 {
-//                                                query8 = L"IF NOT EXIST(SELECT 1 FROM pg_proc AS proc, pg_namespace AS ns WHERE proc.pronamespace = ns.oid AND ns.nspname = \'public\' AND proname = \'watch_schema_changes\') CREATE FUNCTION watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
-                                                    if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor > 3 )
+                                                    query8 = L"CREATE FUNCTION __watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
+                                                    query9 = L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE __watch_schema_changes();";
+                                                    query = new SQLWCHAR[query8.length() + 2];
+                                                    memset( query, '\0', query8.length() + 2 );
+                                                    uc_to_str_cpy( query, query8 );
+                                                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                                    delete[] query;
+                                                    query = nullptr;
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                     {
-                                                        query8 = L"CREATE FUNCTION __watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
-                                                        query9 = L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE __watch_schema_changes();";
-                                                        query = new SQLWCHAR[query8.length() + 2];
-                                                        memset( query, '\0', query8.length() + 2 );
-                                                        uc_to_str_cpy( query, query8 );
+                                                        GetErrorMessage( errorMsg, 1 );
+                                                        result = 1;
+                                                    }
+                                                    else
+                                                    {
+                                                        query = new SQLWCHAR[query9.length() + 2];
+                                                        memset( query, '\0', query9.length() + 2 );
+                                                        uc_to_str_cpy( query, query9 );
                                                         ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                                                         delete[] query;
-                                                        query = NULL;
+                                                        query = nullptr;
                                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                         {
                                                             GetErrorMessage( errorMsg, 1 );
                                                             result = 1;
                                                         }
-                                                        else
-                                                        {
-                                                            query = new SQLWCHAR[query9.length() + 2];
-                                                            memset( query, '\0', query9.length() + 2 );
-                                                            uc_to_str_cpy( query, query9 );
-                                                            ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                            delete[] query;
-                                                            query = NULL;
-                                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                                            {
-                                                                GetErrorMessage( errorMsg, 1 );
-                                                                result = 1;
-                                                            }
-                                                        }
                                                     }
                                                 }
                                             }
-                                            if( pimpl->m_subtype == L"PostgreSQL" && ( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor <= 2 ) )
-                                            {
-                                            }
-                                            if( pimpl->m_subtype == L"ACCESS" )
-                                            {
-                                                query8 = L"GRANT SELECT ON MSysObjects TO Admin;";
-                                                query = new SQLWCHAR[query8.length() + 2];
-                                                memset( query, '\0', query8.length() + 2 );
-                                                uc_to_str_cpy( query, query8 );
-                                                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                                delete[] query;
-                                                query = NULL;
-                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                                {
-                                                    GetErrorMessage( errorMsg, 1 );
-                                                    result = 1;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                                {
-                                                    GetErrorMessage( errorMsg, 1 );
-                                                    result = 1;
-                                                }
-                                            }
                                         }
-//                                    }
-/*****************************************/
-                                    if( pimpl->m_subtype != L"Sybase" && pimpl->m_subtype != L"ASE" )
-                                    {
-                                        ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
-                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        if( pimpl->m_subtype == L"PostgreSQL" && ( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor <= 2 ) )
                                         {
-                                            GetErrorMessage( errorMsg, 2 );
-                                            result = 1;
-                                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                                         }
-                                    }
-                                    if( !result )
-                                    {
-                                        if( !connectToDatabase )
+                                        if( pimpl->m_subtype == L"ACCESS" )
                                         {
-											if( pimpl->m_subtype != L"Oracle" || pimpl->m_versionMajor > 11 )
-											{
-                                                if( ServerConnect( dbList, errorMsg ) )
-                                                {
-                                                    result = 1;
-                                                }
-											}
+                                            query8 = L"GRANT SELECT ON MSysObjects TO Admin;";
+                                            query = new SQLWCHAR[query8.length() + 2];
+                                            memset( query, '\0', query8.length() + 2 );
+                                            uc_to_str_cpy( query, query8 );
+                                            ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                                            delete[] query;
+                                            query = nullptr;
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1 );
+                                                result = 1;
+                                            }
                                         }
                                         else
                                         {
-                                            if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
+                                            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                            {
+                                                GetErrorMessage( errorMsg, 1 );
+                                                result = 1;
+                                            }
+                                        }
+                                    }
+//                                }
+/*****************************************/
+                                if( pimpl->m_subtype != L"Sybase" && pimpl->m_subtype != L"ASE" )
+                                {
+                                    ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 2 );
+                                        result = 1;
+                                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                    }
+                                }
+                                if( !result )
+                                {
+                                    if( !connectToDatabase )
+                                    {
+                                        if( pimpl->m_subtype != L"Oracle" || pimpl->m_versionMajor > 11 )
+                                        {
+                                            if( ServerConnect( dbList, errorMsg ) )
                                             {
                                                 result = 1;
-                                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                                             }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
+                                        {
+                                            result = 1;
+                                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                                         }
                                     }
                                 }
