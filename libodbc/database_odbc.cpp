@@ -1007,18 +1007,23 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     }
     if( pimpl->m_subtype == L"Oracle" )
     {
-        query1 = L"IF( SELECT count(*) FROM all_tables WHERE table_name = 'abcatcol' ) <= 0 CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
-        query2 = L"IF( SELECT count(*) FROM all_tables WHERE table_name = 'abcatedt' ) <= 0 CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));";
-        query3 = L"IF( SELECT count(*) FROM all_tables WHERE table_name = 'abcatfmt' ) <= 0 CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));";
-        query4 = L"IF( SELECT count(*) FROM all_tables WHERE table_name = 'abcattbl' ) <= 0 CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abl_tnam, abl_ownr ));";
-        query5 = L"IF( SELECT count(*) FROM all_tables WHERE table_name = 'abcatvld' ) <= 0 CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));";
-        query6 = L"IF( SELECT count(*) FROM user_indexes WHERE index_name = 'abcattbl_tnam_ownr' ) <= 0 CREATE INDEX \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"tnam\", \"ownr\");";
-        query7 = L"IF( SELECT count(*) FROM user_indexes WHERE index_name = 'abcatcol_tnam_ownr_cnam' ) <= 0 CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"tnam\", \"ownr\", \"cnam\");";
+        query1 = L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatcol' )";
+        query2 = L"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
+        query3 = L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatedt' )";
+        query4 = L"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));";
+        query5 = L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatfmt' )";
+        query6 = L"CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));";
+        query7 = L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcattbl' )";
+        query8 = L"CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
+        query9 = L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatvld' )";
+        query10 = L"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));";
+        query11 = L"SELECT 1 FROM all_indexes WHERE table_name = UPPER( 'abcattbl' ) AND index_name = UPPER( 'abcattbl_tnam_ownr' );";
+        query12 = L"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam, abt_ownr);";
     }
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        if( ( pimpl->m_subtype != L"ACCESS" && pimpl->m_subtype != L"Sybase SQL Anywhere" ) || ( pimpl->m_subtype == L"Sybase SQL Anywhere" && pimpl->m_versionMajor > 12 ) )
+        if( ( pimpl->m_subtype != L"ACCESS" && pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_subtype != L"Oracle" ) || ( pimpl->m_subtype == L"Sybase SQL Anywhere" && pimpl->m_versionMajor > 12 ) )
         {
             query = new SQLWCHAR[query1.length() + 2];
             memset( query, '\0', query1.size() + 2 );
@@ -1513,7 +1518,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 }
                 m_hstmt = 0;
             }
-            if( !result )
+            if( !result && pimpl->m_subtype != L"Oracle" )
             {
                 ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -1569,33 +1574,27 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                                 }
                             }
                         }
-                        else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1 );
-                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                            result = 1;
-                        }
                     }
-                    else
+                    else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 1 );
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                         result = 1;
                     }
+                    ret = SQLFreeHandle(SQL_HANDLE_STMT, m_hstmt);
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage(errorMsg, 1);
+                        ret = SQLEndTran(SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK);
+                        result = 1;
+                    }
+                    m_hstmt = 0;
                 }
-                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    result = 1;
-                }
-                m_hstmt = 0;
             }
         }
         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
         {
-            if( ( pimpl->m_subtype == L"PostgreSQL" && pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 5 ) || ( pimpl->m_subtype != L"PostgreSQL" && pimpl->m_subtype != L"Sybase SQL Anywhere" ) )
+            if( ( pimpl->m_subtype == L"PostgreSQL" && pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 5 ) || ( pimpl->m_subtype != L"PostgreSQL" && pimpl->m_subtype != L"Sybase SQL Anywhere" ) && pimpl->m_subtype != L"Oracle" )
             {
                 query = new SQLWCHAR[query6.length() + 2];
                 memset( query, '\0', query6.size() + 2 );
@@ -1619,7 +1618,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             }
             else
             {
-                if( pimpl->m_subtype != L"Sybase SQL Anywhere" && CreateIndexesOnPostgreConnection( errorMsg ) )
+                if( pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_subtype != L"Oracle" && CreateIndexesOnPostgreConnection( errorMsg ) )
                 {
                     errorMsg.push_back( L"" );
                     result = 1;
