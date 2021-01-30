@@ -3673,7 +3673,7 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
     if( pimpl->m_subtype == L"MySQL" )
         query = L"SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?;";
     if( pimpl->m_subtype == L"Oracle" )
-        query = L"SELECT object_id FROM all_objects WHERE object_name = ? AND subobject_name = ?";
+        query = L"SELECT object_id FROM all_objects WHERE object_name = UPPER(?) AND owner = UPPER(?)";
     if( pimpl->m_subtype == L"Sybase SQL Anywhere" )
         query = L"SELECT id FROM dbo.sysobjects WHERE name = ?";
 //    std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
@@ -3860,6 +3860,13 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
     if( pimpl->m_subtype == L"MySQL" )
     {
         odbc_pimpl->m_currentTableOwner = L"";
+        tableOwner = L"";
+        return result;
+    }
+    if( pimpl->m_subtype == L"Oracle" )
+    {
+        odbc_pimpl->m_currentTableOwner = schemaName;
+        tableOwner = schemaName;
         return result;
     }
     SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
