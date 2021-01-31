@@ -5149,7 +5149,10 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         }
                         if( !result )
                         {
-                            ret = SQLForeignKeys( stmt_fk, NULL, 0, NULL, 0, NULL, 0, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
+                            if( pimpl->m_subtype != L"Oracle" )
+                                ret = SQLForeignKeys( stmt_fk, NULL, 0, NULL, 0, NULL, 0, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
+                            else
+                                ret = SQLForeignKeys(stmt_fk, NULL, 0, NULL, 0, NULL, 0, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS);
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, stmt_fk );
@@ -5185,7 +5188,10 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     }
                                     else
                                     {
-                                        ret = SQLForeignKeys( stmt_fk, NULL, 0, NULL, 0, NULL, 0, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
+                                        if( pimpl->m_subtype != L"Oracle" )
+                                            ret = SQLForeignKeys( stmt_fk, NULL, 0, NULL, 0, NULL, 0, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
+                                        else
+                                            ret = SQLForeignKeys(stmt_fk, NULL, 0, NULL, 0, NULL, 0, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS);
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 1, stmt_fk );
@@ -5345,7 +5351,10 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             else
                             {
-                                ret = SQLPrimaryKeys( stmt_pk, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
+                                if( pimpl->m_subtype != L"Oracle" )
+                                    ret = SQLPrimaryKeys( stmt_pk, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
+                                else
+                                    ret = SQLPrimaryKeys(stmt_pk, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS);
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt_pk );
@@ -5610,7 +5619,10 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         else
                         {
                             SQLSMALLINT numColumns;
-                            ret = SQLColumns( stmt_col, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, NULL, 0);
+                            if( pimpl->m_subtype != L"Oracle" )
+                                ret = SQLColumns( stmt_col, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, NULL, 0);
+                            else
+                                ret = SQLColumns(stmt_col, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, NULL, 0);
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, stmt_col );
