@@ -5002,15 +5002,17 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     SQLSMALLINT DataType, DecimalDigits = 0, NumPrecRadix, Nullable = 0, SQLDataType, DatetimeSubtypeCode, numCols = 0;
     SQLINTEGER ColumnSize = 0, BufferLength, CharOctetLength, OrdinalPosition;
     if( pimpl->m_subtype == L"PostgreSQL" )
-        query4 = L"SELECT indexname FROM pg_indexes WHERE schemaname = ? AND tablename = ?";
+        query4 = L"SELECT indexname FROM pg_indexes WHERE tablename = ? AND schemaname = ?";
     if( pimpl->m_subtype == L"MySQL" )
-        query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_schema = ? AND table_name = ?;";
+        query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_name = ? AND table_schema = ?;";
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query4 = L"SELECT i.name FROM sys.indexes i, sys.tables t WHERE i.object_id = t.object_id AND SCHEMA_NAME(t.schema_id) = ? AND t.name = ?;";
     if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
         query4 = L"SELECT o.name, i.name FROM sysobjects o, sysindexes i, sysusers u WHERE o.id = i.id AND o.uid = u.uid AND u.name = ? AND o.name= ?";
     if( pimpl->m_subtype == L"Sybase SQL Anywhere" )
         query4 = L"SELECT iname FROM sysindexes WHERE tname = ?";
+    if( pimpl->m_subtype == L"Oracle" )
+        query4 = L"SELECT index_name FROM all_indexes WHERE table_name = UPPER(?)";
     memset( table_name, '\0', tableName.length() + 2 );
     memset( schema_name, '\0', schemaName.length() + 2 );
     memset( catalog_name, '\0', catalog.length() + 2 );
@@ -5977,7 +5979,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 }
                                 else
                                 {
-                                    ret = SQLBindParameter( stmt_ind, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, schema_name, 0, &cbSchemaName );
+                                    ret = SQLBindParameter( stmt_ind, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, table_name, 0, &cbSchemaName );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
                                         GetErrorMessage( errorMsg, 1, stmt_ind );
@@ -5989,32 +5991,35 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                         stmt_ind = 0;
                                     }
                                 }
-                                if( !result )
+                                if( pimpl->m_subtype != L"Oracle" )
                                 {
-                                    ret = SQLDescribeParam( stmt_ind, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    if( !result )
                                     {
-                                        GetErrorMessage( errorMsg, 1, stmt_ind );
-                                        result = 1;
-                                        SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
-                                        SQLDisconnect( hdbc_ind );
-                                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
-                                        hdbc_ind = 0;
-                                        stmt_ind = 0;
+                                        ret = SQLDescribeParam( stmt_ind, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, stmt_ind );
+                                            result = 1;
+                                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
+                                            SQLDisconnect( hdbc_ind );
+                                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
+                                            hdbc_ind = 0;
+                                            stmt_ind = 0;
+                                        }
                                     }
-                                }
-                                if( !result )
-                                {
-                                    ret = SQLBindParameter( stmt_ind, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, table_name, 0, &cbTableName );
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    if( !result )
                                     {
-                                        GetErrorMessage( errorMsg, 1, stmt_ind );
-                                        result = 1;
-                                        SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
-                                        SQLDisconnect( hdbc_ind );
-                                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
-                                        hdbc_ind = 0;
-                                        stmt_ind = 0;
+                                        ret = SQLBindParameter( stmt_ind, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, schema_name, 0, &cbTableName );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, stmt_ind );
+                                            result = 1;
+                                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_ind );
+                                            SQLDisconnect( hdbc_ind );
+                                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_ind );
+                                            hdbc_ind = 0;
+                                            stmt_ind = 0;
+                                        }
                                     }
                                 }
                                 if( !result )
