@@ -3733,15 +3733,27 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
                 {
                     SQLSMALLINT dataType[2], decimalDigit[2], nullable[2];
                     SQLULEN parameterSize[2];
-                    retcode = SQLDescribeParam( stmt, 1, &dataType[0], &parameterSize[0], &decimalDigit[0], &nullable[0] );
-                    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                    if( pimpl->m_subtype != L"Microsoft SQL Server" )
                     {
-                        GetErrorMessage( errorMsg, 1, stmt );
-                        result = 1;
+                        retcode = SQLDescribeParam( stmt, 1, &dataType[0], &parameterSize[0], &decimalDigit[0], &nullable[0] );
+                        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, stmt );
+                            result = 1;
+                        }
+                        else
+                        {
+                            retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_DEFAULT, dataType[0], parameterSize[0], decimalDigit[0], tname, 0, &cbTableName );
+                            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt );
+                                result = 1;
+                            }
+                        }
                     }
                     else
                     {
-                        retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_DEFAULT, dataType[0], parameterSize[0], decimalDigit[0], tname, 0, &cbTableName );
+                        retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_DEFAULT, SQL_WVARCHAR, 1024, NULL, tname, 0, &cbTableName );
                         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, 1, stmt );
@@ -5856,14 +5868,26 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             if( !result )
                             {
+                                SQLLEN autoincrement, numAttr = 0;
                                 int i = 0;
                                 for( ret = SQLFetch( stmt_col ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_col ) )
                                 {
+                                    autoincrement = 0;
                                     str_to_uc_cpy( fieldName, szColumnName );
                                     str_to_uc_cpy( fieldType, szTypeName );
                                     str_to_uc_cpy( defaultValue, szColumnDefault );
                                     std::wstring tempTableName;
                                     str_to_uc_cpy( tempTableName, table_name );
+                                    ret = SQLColAttribute( stmt_col, (SQLUSMALLINT ) i + 1, SQL_DESC_AUTO_UNIQUE_VALUE, NULL, 0, NULL, &autoincrement );
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    {
+                                        GetErrorMessage( errorMsg, 1, stmt_col );
+                                        result = 1;
+                                        SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                        stmt_col = 0;
+                                        SQLDisconnect( hdbc_col );
+                                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                    }
                                     TableField *field = new TableField( fieldName, fieldType, ColumnSize, DecimalDigits, tempTableName + L"." + fieldName, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) != autoinc_fields.end() ? true : false, std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
 /*                                    if( GetFieldProperties( fieldName.c_str(), schemaName, odbc_pimpl->m_currentTableOwner, szColumnName, field, errorMsg ) )
                                     {
