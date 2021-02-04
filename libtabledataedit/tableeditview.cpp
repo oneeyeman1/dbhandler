@@ -33,6 +33,7 @@
 
 #include "wx/docview.h"
 #include "wx/docmdi.h"
+#include "wx/artprov.h"
 #include "tableeditview.h"
 
 wxIMPLEMENT_DYNAMIC_CLASS(TableEditView, wxView);
@@ -67,6 +68,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     pt.y = parentRect.height - parentClientSize.GetHeight();
     m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentClientSize.GetHeight() );
     m_tb = m_frame->CreateToolBar();
+    m_tb->AddTool( wxID_TOP, _( "Top" ), wxArtProvider::GetBitmap( wxART_GOTO_FIRST ), _( "Top" ), wxITEM_NORMAL );
 /*    m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
     m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
     m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxBitmap( cut_xpm ), wxBitmap( cut_xpm ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
@@ -78,6 +80,12 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     ptCanvas.y = offset;
 #else
     ptCanvas = wxDefaultPosition;
+#endif
+#ifndef __WXOSX__
+    m_tb->ClearTools();
+    m_tb->AddTool( wxID_TOP, _( "Top" ), wxArtProvider::GetBitmap( wxART_GOTO_FIRST ), _( "Top" ), wxITEM_NORMAL );
+    m_tb->AddTool( wxID_BACK, _( "Back" ), wxArtProvider::GetBitmap( wxART_GO_BACK ), _( "Back" ), wxITEM_NORMAL );
+    m_tb->Realize();
 #endif
     return true;
 }

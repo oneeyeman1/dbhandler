@@ -20,6 +20,9 @@
 #ifndef _TABLEEDITVIEW_H_
 #define _TABLEEDITVIEW_H_
 
+#define wxID_TOP                  401
+#define wxID_BACK                 402
+
 class TableEditView: public wxView 
 {
 public:
