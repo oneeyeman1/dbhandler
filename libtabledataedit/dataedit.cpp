@@ -22,6 +22,7 @@
 
 #include "wx/docview.h"
 #include "wx/docmdi.h"
+#include "wx/grid.h"
 #include "database.h"
 #include "tableeditdocument.h"
 #include "tableeditview.h"

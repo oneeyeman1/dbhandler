@@ -33,6 +33,7 @@ private:
     wxDocMDIParentFrame *m_parent;
     wxDocMDIChildFrame *m_frame;
     wxToolBar *m_tb, *m_styleBar;
+    wxGrid *m_grid;
     wxDECLARE_DYNAMIC_CLASS(TableEditView);
 };
 
