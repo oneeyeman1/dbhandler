@@ -25,7 +25,7 @@ class WXEXPORT CFontPropertyPage: public CFontPropertyPageBase
 {
 public:
     CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bool colorEnabled);
-    ~CFontPropertyPage();
+    virtual ~CFontPropertyPage();
 protected:
     void OnUnderline(wxCommandEvent &event);
     void OnStrikethrough(wxCommandEvent &event);

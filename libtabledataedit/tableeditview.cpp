@@ -34,6 +34,7 @@
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/artprov.h"
+#include "wx/grid.h"
 #include "tableeditview.h"
 
 wxIMPLEMENT_DYNAMIC_CLASS(TableEditView, wxView);

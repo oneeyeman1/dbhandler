@@ -38,7 +38,9 @@
 #include "fontpropertypagebase.h"
 #include "wx/gtk/private.h"
 
-/*static void font_name_change(GtkFontChooser *view, CFontPropertyPage *page)
+extern "C"
+{
+static void font_name_change(GtkFontChooser *view, CFontPropertyPage *page)
 {
     page->SetModified( true );
     GtkTreeIter iter;
@@ -65,8 +67,9 @@
     const char *str = g_value_get_string( &value );
     wxString temp = wxGTK_CONV_BACK( g_value_get_string( &value ) );
     page->SetFaceName( temp );
-    g_list_free_full( selRows, (GDestroyNotify) gtk_tree_path_free );
-}*/
+    g_list_free_full( selRows, (GDestroyNotify) gtk_tree_path_free );*/
+}
+}
 
 #if GTK_CHECK_VERSION(3, 2, 0)
 #else
