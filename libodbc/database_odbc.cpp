@@ -541,7 +541,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     memset( temp, '\0', 13 );
                     uc_to_str_cpy( temp, L"PostgreSQL " );
                     uc_to_str_cpy( connectStrIn, L"DSN=" );
-                    uc_to_str_cpy( connectStrIn, selectedDSN.c_str() );
+                    uc_to_str_cpy( connectStrIn, connectingDSN.c_str() );
                     uc_to_str_cpy( connectStrIn, L";Driver=" );
                     copy_uc_to_uc( connectStrIn, driver );
                     if( equal( temp, driver ) )
