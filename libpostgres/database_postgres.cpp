@@ -379,7 +379,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 char *table_owner = PQgetvalue( res, i, 3 );
                                 char *tableId = PQgetvalue( res, i, 4 );
                                 table_id = strtol( tableId, NULL, 10 );
-                                if( AddDropTable (m_pimpl->m_myconv.from_bytes (catalog_name), m_pimpl->m_myconv.from_bytes (schema_name), m_pimpl->m_myconv.from_bytes (table_name), m_pimpl->m_myconv.from_bytes( table_owner ), table_id, true, errorMsg) )
+                                if( AddDropTable( m_pimpl->m_myconv.from_bytes (catalog_name), m_pimpl->m_myconv.from_bytes (schema_name), m_pimpl->m_myconv.from_bytes (table_name), m_pimpl->m_myconv.from_bytes( table_owner ), table_id, true, errorMsg ) )
                                 {
                                     result = 1;
                                     break;
@@ -966,7 +966,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &table, TableField *
         {
             for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() || !found; ++it1 )
             {
-                if( ( *it1 )->GetTableName () == table )
+                if( ( *it1 )->GetTableName() == table )
                 {
                     found = true;
                     schemaName = (*it1)->GetSchemaName();
@@ -1289,7 +1289,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         }
         else
         {
-            if( PQntuples (res) == 1 )
+            if( PQntuples( res ) == 1 )
             {
                 count = atoi( PQgetvalue( res, 0, 0 ) );
                 if( count > m_numOfTables || count < m_numOfTables )
@@ -1306,7 +1306,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     }
                     else
                     {
-                        for( int i = 0; i < PQntuples (res); i++ )
+                        for( int i = 0; i < PQntuples( res ); i++ )
                         {
                             schemaName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
                             tableName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
@@ -1481,7 +1481,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
             {
                 DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
                 table->SetNumberOfFields( numFields );
-                for( std::vector<TableField *>::iterator it = fields.begin (); it < fields.end (); ++it )
+                for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); ++it )
                 {
                     if( (*it)->IsPrimaryKey() )
                         table->GetTableProperties().m_pkFields.push_back( (*it)->GetFieldName() );
