@@ -541,7 +541,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     memset( temp, '\0', 13 );
                     uc_to_str_cpy( temp, L"PostgreSQL " );
                     uc_to_str_cpy( connectStrIn, L"DSN=" );
-                    uc_to_str_cpy( connectStrIn, selectedDSN.c_str() );
+                    uc_to_str_cpy( connectStrIn, connectingDSN.c_str() );
                     uc_to_str_cpy( connectStrIn, L";Driver=" );
                     copy_uc_to_uc( connectStrIn, driver );
                     if( equal( temp, driver ) )
@@ -5475,7 +5475,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             if( pimpl->m_subtype != L"Oracle" )
                                 ret = SQLColumns( stmt_col, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, NULL, 0);
                             else
-                                ret = SQLColumns(stmt_col, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, NULL, 0);
+                                ret = SQLColumns( stmt_col, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, NULL, 0 );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, stmt_col );
@@ -5719,18 +5719,6 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     str_to_uc_cpy( defaultValue, szColumnDefault );
                                     std::wstring tempTableName;
                                     str_to_uc_cpy( tempTableName, table_name );
-                                    ret = SQLColAttribute( stmt_col, (SQLUSMALLINT ) i + 1, SQL_DESC_AUTO_UNIQUE_VALUE, NULL, 0, NULL, &autoincrement );
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, 1, stmt_col );
-                                        result = 1;
-                                        SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
-                                        stmt_col = 0;
-                                        SQLDisconnect( hdbc_col );
-                                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
-                                    }
-                                    else
-                                        autoinc_fields.push_back( fieldName );
                                     TableField *field = new TableField( fieldName, fieldType, ColumnSize, DecimalDigits, tempTableName + L"." + fieldName, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) != autoinc_fields.end() ? true : false, std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
 /*                                    if( GetFieldProperties( fieldName.c_str(), schemaName, odbc_pimpl->m_currentTableOwner, szColumnName, field, errorMsg ) )
                                     {
@@ -5748,6 +5736,40 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt_col );
                                     result = 1;
+                                }
+                                else
+                                {
+                                    for( int count  = 0; count < i; count++ )
+                                    {
+                                        ret = SQLColAttribute( stmt_col, (SQLUSMALLINT ) count + 1, SQL_DESC_AUTO_UNIQUE_VALUE, NULL, 0, NULL, &autoincrement );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, stmt_col );
+                                            result = 1;
+                                            SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                            stmt_col = 0;
+                                            SQLDisconnect( hdbc_col );
+                                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                        }
+                                        else
+                                        {
+                                            if( autoincrement )
+                                            {
+                                                ret = SQLColAttribute( stmt_col, (SQLUSMALLINT ) count + 1, SQL_DESC_BASE_COLUMN_NAME, NULL, 0, NULL, &autoincrement );
+                                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                {
+                                                    GetErrorMessage( errorMsg, 1, stmt_col );
+                                                    result = 1;
+                                                    SQLFreeHandle( SQL_HANDLE_STMT, stmt_col );
+                                                    stmt_col = 0;
+                                                    SQLDisconnect( hdbc_col );
+                                                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_col );
+                                                }
+                                                else
+                                                    autoinc_fields.push_back( fieldName );
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
