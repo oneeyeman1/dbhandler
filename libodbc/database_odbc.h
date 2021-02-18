@@ -87,7 +87,7 @@ private:
 
 struct ODBCDatabase::ODBCImpl
 {
-    std::wstring m_currentTableOwner;
+    std::wstring m_currentTableOwner, m_driverName;
 };
 
 #endif
