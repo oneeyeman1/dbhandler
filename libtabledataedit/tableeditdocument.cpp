@@ -43,7 +43,7 @@ std::map<long,std::vector<int> > &TableEditDocument::GetData()
     return m_tableData;
 }
 
-void TableEditDocument::SetDatabaseAndTableName(const Database *db, const wxString &tableName)
+void TableEditDocument::SetDatabaseAndTableName(Database *db, const wxString &tableName)
 {
     m_db = db;
     m_name = tableName;

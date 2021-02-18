@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E36BCFBF25DCED440019E587 /* dataeditdoctemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E36BCFBD25DCED440019E587 /* dataeditdoctemplate.cpp */; };
+		E36BCFC025DCED440019E587 /* dataeditdoctemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = E36BCFBE25DCED440019E587 /* dataeditdoctemplate.h */; };
 		E3F4768E25ABF48F0083800D /* dataedit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3F4768725ABF48F0083800D /* dataedit.cpp */; };
 		E3F4768F25ABF48F0083800D /* dataretriever.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3F4768825ABF48F0083800D /* dataretriever.cpp */; };
 		E3F4769025ABF48F0083800D /* dataretriever.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F4768925ABF48F0083800D /* dataretriever.h */; };
@@ -17,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E36BCFBD25DCED440019E587 /* dataeditdoctemplate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = dataeditdoctemplate.cpp; sourceTree = "<group>"; };
+		E36BCFBE25DCED440019E587 /* dataeditdoctemplate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dataeditdoctemplate.h; sourceTree = "<group>"; };
 		E3F4767925ABE9A30083800D /* liblibtabledataedit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibtabledataedit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3F4768725ABF48F0083800D /* dataedit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dataedit.cpp; sourceTree = "<group>"; };
 		E3F4768825ABF48F0083800D /* dataretriever.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dataretriever.cpp; sourceTree = "<group>"; };
@@ -64,6 +68,8 @@
 				E3F4768B25ABF48F0083800D /* tableeditdocument.h */,
 				E3F4768C25ABF48F0083800D /* tableeditview.cpp */,
 				E3F4768D25ABF48F0083800D /* tableeditview.h */,
+				E36BCFBD25DCED440019E587 /* dataeditdoctemplate.cpp */,
+				E36BCFBE25DCED440019E587 /* dataeditdoctemplate.h */,
 			);
 			name = libtabledataedit;
 			sourceTree = "<group>";
@@ -78,6 +84,7 @@
 				E3F4769225ABF48F0083800D /* tableeditdocument.h in Headers */,
 				E3F4769025ABF48F0083800D /* dataretriever.h in Headers */,
 				E3F4769425ABF48F0083800D /* tableeditview.h in Headers */,
+				E36BCFC025DCED440019E587 /* dataeditdoctemplate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +139,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E36BCFBF25DCED440019E587 /* dataeditdoctemplate.cpp in Sources */,
 				E3F4768F25ABF48F0083800D /* dataretriever.cpp in Sources */,
 				E3F4769125ABF48F0083800D /* tableeditdocument.cpp in Sources */,
 				E3F4768E25ABF48F0083800D /* dataedit.cpp in Sources */,
