@@ -24,6 +24,7 @@
 #include "wx/docmdi.h"
 #include "wx/grid.h"
 #include "database.h"
+#include "dataeditdoctemplate.h"
 #include "tableeditdocument.h"
 #include "tableeditview.h"
 
@@ -90,14 +91,14 @@ IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
 extern "C" WXEXPORT void CreateDataEditWindow(wxWindow *parent, wxDocManager *docManager, Database *db, const wxString &tableName)
 {
-    wxDocTemplate *docTemplate;
+    DataEditDocTemplate *docTemplate;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    docTemplate = (wxDocTemplate *) docManager->FindTemplate( CLASSINFO( TableEditDocument ) );
+    docTemplate = (DataEditDocTemplate *) docManager->FindTemplate( CLASSINFO( TableEditDocument ) );
     if( !docTemplate )
     {
-        docTemplate = new wxDocTemplate( docManager, "TableEdit", "*.edt", "", "edt", "TableEdit Doc", "TableEdit View", CLASSINFO( TableEditDocument ), CLASSINFO( TableEditView ) );
+        docTemplate = new DataEditDocTemplate( docManager, "TableEdit", "*.edt", "", "edt", "TableEdit Doc", "TableEdit View", CLASSINFO( TableEditDocument ), CLASSINFO( TableEditView ) );
     }
     docTemplate->CreateDocument( "*.edt", wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<TableEditDocument *>( docManager->GetCurrentDocument() )->SetDatabaseAndTableName( db, tableName  );
