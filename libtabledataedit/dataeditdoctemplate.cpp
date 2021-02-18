@@ -47,6 +47,8 @@ bool DataEditDocTemplate::CreateDataEditDocument(const wxString &path, int flags
         if( !view )
             return nullptr;
         view->SetDocument( doc );
+        if( !view->OnCreate( doc, flags ) )
+            return nullptr;
         return false;
     }
     wxCATCH_ALL

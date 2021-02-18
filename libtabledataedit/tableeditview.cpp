@@ -100,7 +100,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
                 found = true;
             }
     wxASSERT( m_frame == GetFrame() );
-    m_grid = new wxGrid();
+    m_grid = new wxGrid( m_frame, wxID_ANY );
     m_grid->CreateGrid( 0, 0 );
     for( int i = 0; i < table->GetNumberOfFields(); i++ )
     {
