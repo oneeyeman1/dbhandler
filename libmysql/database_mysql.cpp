@@ -817,7 +817,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                         std::wstring tableName = m_pimpl->m_myconv.from_bytes( (const char *) table_name );
                                                                                         std::wstring schemaName = m_pimpl->m_myconv.from_bytes( (const char *) schema_name );
                                                                                         DatabaseTable *table = new DatabaseTable( tableName, schemaName, fields, foreign_keys );
-                                                                                        for( std::vector<TableField *>::iterator it = fields.begin (); it < fields.end (); ++it )
+                                                                                        for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); ++it )
                                                                                         {
                                                                                             if( (*it)->IsPrimaryKey() )
                                                                                                 table->GetTableProperties().m_pkFields.push_back( (*it)->GetFieldName() );
@@ -2219,7 +2219,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
     return result;
 }
 
-bool MySQLDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
+bool MySQLDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
 {
     bool exist = false;
     std::wstring query = L"SELECT 1 FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";

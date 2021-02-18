@@ -490,7 +490,8 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
 {
     int result = 0, bufferSize = 1024;
     std::vector<SQLWCHAR *> errorMessage;
-    SQLWCHAR connectStrIn[sizeof(SQLWCHAR) * 255], driver[1024], dsn[1024], dbType[1024], *query = NULL, dbName[1024];
+    SQLWCHAR connectStrIn[sizeof(SQLWCHAR) * 255], driver[1024], dsn[1024], dbType[1024], *query = NULL;
+    SQLWCHAR *dbName = nullptr;
     SQLSMALLINT OutConnStrLen;
     SQLRETURN ret;
     SQLUSMALLINT options;
@@ -589,9 +590,8 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                 SQLWCHAR *name = nullptr;
 								if( pimpl->m_subtype != L"Oracle" )
                                 {
-                                    name = new SQLWCHAR[1024];
-                                    memset( name, '\0', 1024 );
-                                    ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, name, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
+                                    dbName = new SQLWCHAR[1024];
+                                    ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
                                         GetErrorMessage(errorMsg, 1, m_hstmt);
@@ -633,7 +633,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                             }
                                             else
                                             {
-                                                name = new SQLWCHAR[columnSizePtr + 1];
+                                                dbName = new SQLWCHAR[columnSizePtr + 1];
                                                 ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, name, columnSizePtr, &cDatabaseName );
                                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                 {
@@ -667,9 +667,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                     }
                                 }
                                 if( !result )
-                                   str_to_uc_cpy( pimpl->m_dbName, name );
-                                delete[] name;
-                                name = nullptr;
+                                   str_to_uc_cpy( pimpl->m_dbName, dbName );
+                                delete[] dbName;
+                                dbName = nullptr;
                                 SQLWCHAR userName[1024];
                                 if( pimpl->m_subtype != L"Oracle" )
                                 {
@@ -1654,7 +1654,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         }
         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
         {
-            if( ( pimpl->m_subtype == L"PostgreSQL" && pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 5 ) || ( pimpl->m_subtype != L"PostgreSQL" && pimpl->m_subtype != L"Sybase SQL Anywhere" ) && pimpl->m_subtype != L"Oracle" )
+            if( ( pimpl->m_subtype == L"PostgreSQL" && pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 5 ) || ( pimpl->m_subtype != L"PostgreSQL" && pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_subtype != L"Oracle" ) )
             {
                 query = new SQLWCHAR[query6.length() + 2];
                 memset( query, '\0', query6.size() + 2 );
@@ -5709,7 +5709,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             if( !result )
                             {
-                                SQLLEN autoincrement, numAttr = 0;
+                                SQLLEN autoincrement;
                                 int i = 0;
                                 for( ret = SQLFetch( stmt_col ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_col ) )
                                 {
