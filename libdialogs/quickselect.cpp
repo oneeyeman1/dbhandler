@@ -51,7 +51,7 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_label12 = new wxStaticText( m_panel, wxID_ANY, _( "Criteria:" ) );
     set_properties();
     do_layout();
-    for( int i = 0; i < m_sizer10->GetItemCount (); ++i )
+    for( int i = 0; i < m_sizer10->GetItemCount(); ++i )
     {
         m_sizer10->SetItemMinSize( i, -1, m_grid->GetRowSize( i ) );
     }
@@ -75,7 +75,7 @@ QuickSelect::~QuickSelect()
 {
 }
 
-void QuickSelect::set_properties ()
+void QuickSelect::set_properties()
 {
     SetTitle( _( "Quick Select" ) );
     m_ok->Enable( false );
@@ -174,9 +174,9 @@ void QuickSelect::FillTableListBox()
 {
     std::wstring type = m_db->GetTableVector().m_type;
     std::wstring subType = m_db->GetTableVector().m_subtype;
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector ().m_tables.begin (); it != m_db->GetTableVector ().m_tables.end (); ++it )
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end(); ++it )
     {
-        for( std::vector<DatabaseTable *>::iterator it1 = ( *it ).second.begin (); it1 < ( *it ).second.end (); ++it1 )
+        for( std::vector<DatabaseTable *>::iterator it1 = ( *it ).second.begin(); it1 < ( *it ).second.end(); ++it1 )
         {
             std::wstring tableName = (*it1)->GetTableName();
             if( type == L"SQLite" && ( tableName.substr( 0, 6 ) == L"sqlite" || tableName.substr( 0, 3 ) == L"sys" ) )
@@ -258,7 +258,7 @@ void QuickSelect::OnDisplayComment(wxMouseEvent &event)
         wxString stringClicked = object->GetString( item );
         if( object == m_fields )
         {
-            for( std::vector<TableField *>::iterator it = m_tableFields.begin (); it < m_tableFields.end () && !found; ++it )
+            for( std::vector<TableField *>::iterator it = m_tableFields.begin(); it < m_tableFields.end() && !found; ++it )
             {
                 if( (*it)->GetFieldName() == stringClicked )
                 {
@@ -288,7 +288,7 @@ void QuickSelect::OnDisplayComment(wxMouseEvent &event)
 
 void QuickSelect::OnGridRowLines(wxGridSizeEvent &event)
 {
-    for( int i = 0; i < m_sizer10->GetItemCount (); ++i )
+    for( int i = 0; i < m_sizer10->GetItemCount(); ++i )
     {
         m_sizer10->SetItemMinSize( i, -1, m_grid->GetRowSize( i ) );
     }
@@ -349,7 +349,7 @@ void QuickSelect::AddFieldToGrid(const wxString &field, bool isAdded)
     }
     else
     {
-        for( auto i = 0; i < m_grid->GetNumberCols () && !found; ++i )
+        for( auto i = 0; i < m_grid->GetNumberCols() && !found; ++i )
         {
             if( m_grid->GetCellValue( 0, i ) == field )
             {

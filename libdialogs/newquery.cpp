@@ -161,7 +161,7 @@ void NewQuery::OnPanelSourceClicked(wxMouseEvent &event)
     bool found = false;
     for( int i = 0; i < 4 || !found; ++i )
     {
-        if( event.GetEventObject () == m_panels[i] )
+        if( event.GetEventObject() == m_panels[i] )
         {
             if( i + 1 != m_source )
             {
@@ -181,7 +181,7 @@ void NewQuery::OnPanelPresentationClicked(wxMouseEvent &event)
     bool found = false;
     for( int i = 4; i < 14 || !found; ++i )
     {
-        if( event.GetEventObject () == m_panels[i] )
+        if( event.GetEventObject() == m_panels[i] )
         {
             if( i + 1 != m_presentation + 4 )
             {

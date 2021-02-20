@@ -35,12 +35,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dataeditdoctemplate.h" />
     <ClInclude Include="dataretriever.h" />
     <ClInclude Include="tableeditdocument.h" />
     <ClInclude Include="tableeditview.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dataedit.cpp" />
+    <ClCompile Include="dataeditdoctemplate.cpp" />
     <ClCompile Include="dataretriever.cpp" />
     <ClCompile Include="tableeditdocument.cpp" />
     <ClCompile Include="tableeditview.cpp" />

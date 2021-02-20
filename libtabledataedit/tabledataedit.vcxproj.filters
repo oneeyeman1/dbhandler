@@ -18,6 +18,9 @@
     <ClInclude Include="tableeditview.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dataeditdoctemplate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dataedit.cpp">
@@ -30,6 +33,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tableeditview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dataeditdoctemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
