@@ -100,6 +100,5 @@ extern "C" WXEXPORT void CreateDataEditWindow(wxWindow *parent, wxDocManager *do
     {
         docTemplate = new DataEditDocTemplate( docManager, "TableEdit", "*.edt", "", "edt", "TableEdit Doc", "TableEdit View", CLASSINFO( TableEditDocument ), CLASSINFO( TableEditView ) );
     }
-    docTemplate->CreateDocument( "*.edt", wxDOC_NEW | wxDOC_SILENT );
-    dynamic_cast<TableEditDocument *>( docManager->GetCurrentDocument() )->SetDatabaseAndTableName( db, tableName  );
+    docTemplate->CreateDataEditDocument( "*.edt", wxDOC_NEW | wxDOC_SILENT, db, tableName );
 }
