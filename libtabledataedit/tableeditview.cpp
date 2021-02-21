@@ -102,6 +102,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
         wxString label( table->GetFields().at( i )->GetFieldName() );
         m_grid->SetColLabelValue( i, label );
     }
+    m_grid->HideRowLabels();
     sizer->Add( m_grid, 1, wxEXPAND, 0 );
     m_frame->SetSizer( sizer );
 #ifndef __WXOSX__
