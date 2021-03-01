@@ -6287,3 +6287,29 @@ int ODBCDatabase::EditTableData(const std::wstring &schemaName, const std::wstri
     qry = nullptr;
     return result;
 }
+
+int ODBCDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName + L";";
+    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
+    memset( qry, '\0', query.length() + 2 );
+    uc_to_str_cpy( qry, query );
+    SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+    }
+    else
+    {
+        GetErrorMessage( errorMsg, 2, m_hdbc );
+        result = 1;
+    }
+    return result;
+}
+

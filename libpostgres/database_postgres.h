@@ -28,6 +28,7 @@ public:
     virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) override;
     virtual int EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> 
 &errorMsg) override;
+    virtual int ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;
 protected:
     struct PostgresImpl;
     PostgresImpl *m_pimpl;
@@ -43,6 +44,7 @@ protected:
 private:
     PGconn *m_db;
     bool m_isConnected;
+    PGresult *queryRes;
 };
 
 struct PostgresDatabase::PostgresImpl

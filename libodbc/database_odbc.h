@@ -47,6 +47,7 @@ public:
     void GetConnectedUser(const std::wstring &dsn, std::wstring &connectedUser);
     void GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword);
     virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) override;
+    virtual int ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;

@@ -2055,3 +2055,15 @@ int SQLiteDatabase::EditTableData(const std::wstring &schemaName, const std::wst
     }
     return result;
 }
+
+int SQLiteDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+    int res;
+    std::wstring errorMessage, query = L"SELECT * FROM " + schemaName + L"." + tableName;
+    if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &m_stmt, NULL ) ) != 0 )
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    return res;
+}

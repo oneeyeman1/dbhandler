@@ -1622,6 +1622,20 @@ int PostgresDatabase::GetFieldHeader(const std::wstring &tableName, const std::w
 int PostgresDatabase::EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    return result;
+}
+
+int PostgresDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
     std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName + L";";
+    queryRes = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    ExecStatusType status = PQresultStatus( queryRes );
+    if( status != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
     return result;
 }

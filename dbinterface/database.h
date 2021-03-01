@@ -30,6 +30,12 @@ enum FK_ONDELETE
     CASCADE_DELETE
 };
 
+template <typename T> struct DataEditFiield
+{
+    int type;
+    T value;
+};
+
 class TableProperties
 {
 public:
@@ -271,6 +277,7 @@ public:
     virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) = 0;
     virtual int EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> 
 &errorMsg) = 0;
+    virtual int ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
 };
 
 struct Database::Impl

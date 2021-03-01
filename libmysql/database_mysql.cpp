@@ -2339,3 +2339,9 @@ int MySQLDatabase::EditTableData(const std::wstring &schemaName, const std::wstr
     return result;
 }
 
+int MySQLDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName + L";";
+    return result;
+}
