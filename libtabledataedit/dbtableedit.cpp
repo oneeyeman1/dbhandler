@@ -11,6 +11,10 @@
 #include "database.h"
 #include "dbtableedit.h"
 
+#if _MSC_VER >= 1900 || !(defined __WXMSW__)
+std::mutex Database::Impl::my_mutex;
+#endif
+
 DBTableEdit::DBTableEdit(Database *db, const wxString &schema, const wxString &name)
 {
     db = db;
