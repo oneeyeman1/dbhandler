@@ -37,6 +37,7 @@
 #include "wx/artprov.h"
 #include "wx/grid.h"
 #include "database.h"
+#include "dbtableedit.h"
 #include "tableeditdocument.h"
 #include "tableeditview.h"
 
@@ -86,8 +87,9 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     bool found = false;
     Database *db = dynamic_cast<TableEditDocument *>( doc )->GetDatabase();
     DatabaseTable *table = nullptr;
+    std::vector<DatabaseTable *>::iterator it1;
     for( std::map<std::wstring,std::vector<DatabaseTable *> >::iterator it = db->GetTableVector().m_tables.begin(); it != db->GetTableVector().m_tables.end(); ++ it )
-        for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); ++it1 )
+        for( it1 = (*it).second.begin(); it1 < (*it).second.end(); ++it1 )
             if( (*it1)->GetTableName() == tableName )
             {
                 table = (*it1);
@@ -120,6 +122,13 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
+    m_handler = new DBTableEdit( db, (*it1)->GetSchemaName(), (*it1)->GetTableName() );
+    if( m_handler->Run() != wxTHREAD_NO_ERROR )
+    {
+        wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
+        delete m_handler;
+        m_handler = NULL;
+    }
     return true;
 }
 

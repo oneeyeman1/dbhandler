@@ -33,6 +33,7 @@ protected:
 
 private:
     wxBoxSizer *sizer;
+    DBTableEdit *m_handler;
     wxDocMDIParentFrame *m_parent;
     wxDocMDIChildFrame *m_frame;
     wxToolBar *m_tb, *m_styleBar;

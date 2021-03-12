@@ -2056,7 +2056,7 @@ int SQLiteDatabase::EditTableData(const std::wstring &schemaName, const std::wst
     return result;
 }
 
-int SQLiteDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::vector<DataEditFiield> > &rows, std::vector<std::wstring> &errorMsg)
 {
     int res;
     std::wstring errorMessage, query = L"SELECT * FROM " + schemaName + L"." + tableName;
@@ -2064,6 +2064,34 @@ int SQLiteDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstr
     {
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
+    }
+    else
+    {
+        while( true )
+        {
+            res = sqlite3_step( m_stmt );
+            if( res == SQLITE_ROW )
+            {
+                std::vector<DataEditFiield> row;
+                int count = sqlite3_column_count( m_stmt );
+                for( int i = 0; i < count; ++i )
+                {
+                    res = sqlite3_column_type( m_stmt, i );
+                    switch( res )
+                    {
+                    case SQLITE_INTEGER:
+                        row.push_back( DataEditFiield( sqlite3_column_int64( m_stmt, i ) ) );
+                        break;
+                    case SQLITE_FLOAT:
+                        row.push_back( DataEditFiield( sqlite3_column_double( m_stmt, i ) ) );
+                        break;
+                    case SQLITE_TEXT:
+                        row.push_back( DataEditFiield( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( m_stmt, i ) ) ) ) );
+                        break;
+                    }
+                }
+            }
+        }
     }
     return res;
 }

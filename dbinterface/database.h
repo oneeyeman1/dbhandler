@@ -12,6 +12,8 @@
 #define DEFAULTLABELALIGNMENT 0
 #define DEFAULTHEADINGALIGNMENT 2
 
+#define NO_MORE_ROWS 100
+
 enum FK_ONUPDATE
 {
     NO_ACTION_UPDATE,
@@ -30,11 +32,43 @@ enum FK_ONDELETE
     CASCADE_DELETE
 };
 
-template <typename T> struct DataEditFiield
+struct DataEditFiield
 {
     int type;
-    T value;
+    union ValuueType
+    {
+        int intValue;
+        double doubleValue;
+        std::wstring stringValue;
+        ValuueType(int value) : intValue( value ) {}
+        ValuueType(double value) : doubleValue( value ) {}
+        ValuueType(std::wstring value) : stringValue( value ) {}
+        ValuueType(const ValuueType &myvalue) { stringValue = myvalue.stringValue; }
+#if defined _MSC_VER
+        __int64 longvalue;
+        ValuueType(__int64 value) : longvalue( value ) {}
+#endif
+        ~ValuueType() noexcept {}
+    } value;
+
+    DataEditFiield(int myvalue) : type( 1 ), value( myvalue ) { }
+
+    DataEditFiield(double myvalue) : type( 2 ), value( myvalue ) { }
+
+    DataEditFiield(std::wstring myvalue) : type( 3 ), value( myvalue ) {}
+
+#if defined _MSC_VER
+    DataEditFiield(__int64 myvalue) : type( 1 ), value( myvalue ) {}
+#endif
+    ~DataEditFiield()
+    {
+        using std::wstring;
+        if( type ==3 )
+            value.stringValue.~wstring();
+    }
 };
+
+//DataEditFiield::~DataEditFiield()
 
 class TableProperties
 {
@@ -277,7 +311,7 @@ public:
     virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) = 0;
     virtual int EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> 
 &errorMsg) = 0;
-    virtual int ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::vector<DataEditFiield> > &row, std::vector<std::wstring> &errorMsg) = 0;
 };
 
 struct Database::Impl

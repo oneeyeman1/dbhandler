@@ -1625,7 +1625,7 @@ int PostgresDatabase::EditTableData(const std::wstring &schemaName, const std::w
     return result;
 }
 
-int PostgresDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::vector<DataEditFiield> > &row, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName + L";";
