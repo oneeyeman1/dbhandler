@@ -368,7 +368,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 count++;
             }
-			else if( res == SQLITE_DONE )
+            else if( res == SQLITE_DONE )
                 break;
             else
             {
@@ -1852,7 +1852,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
         if( !result )
         {
             std::wstring comment = L"";
-            DatabaseTable *table = new DatabaseTable( tableName, L"master", fields, foreign_keys );
+            DatabaseTable *table = new DatabaseTable( tableName, L"main", fields, foreign_keys );
             for( std::vector<TableField *>::iterator it = fields.begin (); it < fields.end (); ++it )
             {
                 if( (*it)->IsPrimaryKey() )
