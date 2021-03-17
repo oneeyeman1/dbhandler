@@ -30,6 +30,7 @@ PostgresDatabase::PostgresDatabase() : Database()
     m_pimpl = NULL;
     connectToDatabase = false;
     m_isConnected = false;
+    m_fieldsInRecordSet = 0;
 }
 
 PostgresDatabase::~PostgresDatabase()
@@ -1619,19 +1620,12 @@ int PostgresDatabase::GetFieldHeader(const std::wstring &tableName, const std::w
     return result;
 }
 
-int PostgresDatabase::EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::PrepareStatement(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    return result;
-}
-
-int PostgresDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::vector<DataEditFiield> > &row, std::vector<std::wstring> &errorMsg)
-{
-    int result = 0;
-    std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName + L";";
-    queryRes = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
-    ExecStatusType status = PQresultStatus( queryRes );
-    if( status != PGRES_TUPLES_OK )
+    std::wstring query = L"DECLARE editdata CURSOR FOR SELECT * FROM " + schemaName + L"." + tableName + L";";
+    PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( err );
@@ -1639,3 +1633,36 @@ int PostgresDatabase::ExecuteQuery(const std::wstring &schemaName, const std::ws
     }
     return result;
 }
+
+int PostgresDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    PGresult *res = PQexec( m_db, "FETCH 1 in editdata" );
+    if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
+    else
+    {
+        if( !m_fieldsInRecordSet )
+            m_fieldsInRecordSet = PQnfields( res );
+    }
+    return result;
+}
+
+int PostgresDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    PGresult *res = PQexec( m_db, "CLOSE editdata" );
+    if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
+    m_fieldsInRecordSet = 0;
+    return result;
+}
+

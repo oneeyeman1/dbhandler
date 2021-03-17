@@ -14,6 +14,11 @@
 
 #define NO_MORE_ROWS 100
 
+#define INTEGER_TYPE 1
+#define DOUBLE_TYPE  2
+#define STRING_TYPE  3
+#define BLOB_TYPE    4
+
 enum FK_ONUPDATE
 {
     NO_ACTION_UPDATE,
@@ -34,15 +39,17 @@ enum FK_ONDELETE
 
 struct DataEditFiield
 {
-    int type;
+    int type, m_size, m_precision;
     union ValuueType
     {
+        void *blobValue;
         int intValue;
         double doubleValue;
         std::wstring stringValue;
         ValuueType(int value) : intValue( value ) {}
         ValuueType(double value) : doubleValue( value ) {}
         ValuueType(std::wstring value) : stringValue( value ) {}
+        ValuueType(const void *value) : blobValue( const_cast<void *>( value ) ) {}
         ValuueType(const ValuueType &myvalue) { stringValue = myvalue.stringValue; }
 #if defined _MSC_VER
         __int64 longvalue;
@@ -51,14 +58,16 @@ struct DataEditFiield
         ~ValuueType() noexcept {}
     } value;
 
-    DataEditFiield(int myvalue) : type( 1 ), value( myvalue ) { }
+    DataEditFiield(int myvalue) : type( INTEGER_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) { }
 
-    DataEditFiield(double myvalue) : type( 2 ), value( myvalue ) { }
+    DataEditFiield(double myvalue, int size, int precision) : type( DOUBLE_TYPE ), m_size( size ), m_precision( precision ), value( myvalue ) { }
 
-    DataEditFiield(std::wstring myvalue) : type( 3 ), value( myvalue ) {}
+    DataEditFiield(std::wstring myvalue) : type( STRING_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
+
+    DataEditFiield(const void *myvalue) : type( BLOB_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
 
 #if defined _MSC_VER
-    DataEditFiield(__int64 myvalue) : type( 1 ), value( myvalue ) {}
+    DataEditFiield(__int64 myvalue) : type( INTEGER_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
 #endif
     ~DataEditFiield()
     {
@@ -67,8 +76,6 @@ struct DataEditFiield
             value.stringValue.~wstring();
     }
 };
-
-//DataEditFiield::~DataEditFiield()
 
 class TableProperties
 {
@@ -280,7 +287,7 @@ protected:
     struct Impl;
     Impl *pimpl;
     bool connectToDatabase;
-    unsigned int m_numOfTables;
+    unsigned int m_numOfTables, m_fieldsInRecordSet;
     void ltrim(std::wstring &str) { str.erase( str.begin(), std::find_if( str.begin(), str.end(), [](int ch) { return !std::isspace( ch ); } ) ); };
     void rtrim(std::wstring &str) { str.erase( std::find_if( str.rbegin(), str.rend(), [](int ch) { return !std::isspace( ch ); } ).base(), str.end() ); };
     void trim(std::wstring str) { ltrim( str ); rtrim( str ); };
@@ -309,9 +316,9 @@ public:
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg) = 0;
     virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) = 0;
-    virtual int EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> 
-&errorMsg) = 0;
-    virtual int ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::vector<DataEditFiield> > &row, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int PrepareStatement(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int EditTableData(std::vector<DataEditFiield> &row, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int FinalizeStatement(std::vector<std::wstring> &errorMsg) = 0;
 };
 
 struct Database::Impl

@@ -38,10 +38,25 @@ wxThread::ExitCode DBTableEdit::Entry()
 #else
             std::lock_guard<std::mutex> locker( m_db->GetTableVector().my_mutex );
 #endif
-            std::vector<std::vector<DataEditFiield> > row;
-            res = m_db->ExecuteQuery( m_schemaName.ToStdWstring(), m_tableName.ToStdWstring(), row, errorMsg );
-            if( res )
+            std::vector<DataEditFiield> row;
+            std::vector<std::wstring> errors;
+            res = m_db->PrepareStatement( m_schemaName.ToStdWstring(), m_tableName.ToStdWstring(), errors );
+            if( !res )
+            {
+                res = m_db->EditTableData( row, errorMsg );
+                if( !res )
+                    m_db->FinalizeStatement( errorMsg );
+                else
+                {
+                    m_db->FinalizeStatement( errorMsg );
+                    Delete();
+                }
+            }
+            else
+            {
+                m_db->FinalizeStatement( errorMsg );
                 Delete();
+            }
         }
         Sleep( 5000 );
     }

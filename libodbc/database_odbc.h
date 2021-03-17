@@ -47,7 +47,9 @@ public:
     void GetConnectedUser(const std::wstring &dsn, std::wstring &connectedUser);
     void GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword);
     virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) override;
-    virtual int ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::vector<DataEditFiield> > &row, std::vector<std::wstring> &errorMsg) override;
+    virtual int PrepareStatement(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;
+    virtual int EditTableData(std::vector<DataEditFiield> &row, std::vector<std::wstring> &errorMsg) override;
+    virtual int FinalizeStatement(std::vector<std::wstring> &errorMsg) override;
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;
@@ -73,8 +75,6 @@ protected:
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) override;
     virtual int AddDropTable(const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &tableOwner, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) override;
-    virtual int EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> 
-&errorMsg) override;
 private:
     SQLHENV m_env;
     SQLHDBC m_hdbc;

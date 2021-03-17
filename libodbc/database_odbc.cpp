@@ -46,6 +46,7 @@ ODBCDatabase::ODBCDatabase() : Database()
     m_connectString = NULL;
     m_isConnected = false;
     connectToDatabase = false;
+    m_fieldsInRecordSet = 0;
 }
 
 ODBCDatabase::~ODBCDatabase()
@@ -543,8 +544,8 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     uc_to_str_cpy( temp, L"PostgreSQL " );
                     uc_to_str_cpy( connectStrIn, L"DSN=" );
                     uc_to_str_cpy( connectStrIn, connectingDSN.c_str() );
-                    uc_to_str_cpy( connectStrIn, L";Driver=" );
-                    copy_uc_to_uc( connectStrIn, driver );
+/*                    uc_to_str_cpy( connectStrIn, L";Driver=" );
+                    copy_uc_to_uc( connectStrIn, driver );*/
                     if( equal( temp, driver ) )
                         uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1;ShowSystemTables=1;" );
                     delete[] temp;
@@ -6262,7 +6263,7 @@ int ODBCDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstri
     }
     return result;
 }
-
+/*
 int ODBCDatabase::EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
@@ -6287,8 +6288,8 @@ int ODBCDatabase::EditTableData(const std::wstring &schemaName, const std::wstri
     qry = nullptr;
     return result;
 }
-
-int ODBCDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::vector<DataEditFiield> > &row, std::vector<std::wstring> &errorMsg)
+*/
+int ODBCDatabase::PrepareStatement(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName + L";";
@@ -6296,19 +6297,142 @@ int ODBCDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstrin
     memset( qry, '\0', query.length() + 2 );
     uc_to_str_cpy( qry, query );
     SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-    {
-        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, 1, m_hstmt );
-            result = 1;
-        }
-    }
-    else
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, 2, m_hdbc );
         result = 1;
     }
+    else
+    {
+        ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2, m_hdbc );
+            result = 1;
+        }
+    }
     return result;
 }
+
+int ODBCDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    SQLSMALLINT columnCount, *nameLen = nullptr, *dataType = nullptr, *decimal = nullptr, *nullable = nullptr;
+    SQLULEN  *columnSize = nullptr;
+    SQLRETURN ret;
+    if( m_fieldsInRecordSet > 0 )
+    {
+        ret = SQLNumResultCols( m_hstmt, &columnCount );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2, m_hdbc );
+            result = 1;
+        }
+        else
+            m_fieldsInRecordSet = columnCount;
+    }
+    if( !result )
+    {
+        nameLen = new SQLSMALLINT[m_fieldsInRecordSet];
+        dataType = new SQLSMALLINT[m_fieldsInRecordSet];
+        columnSize = new SQLULEN[m_fieldsInRecordSet];
+        decimal = new SQLSMALLINT[m_fieldsInRecordSet];
+        nullable = new SQLSMALLINT[m_fieldsInRecordSet];
+        ret = SQLFetch( m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2, m_hdbc );
+            result = 1;
+        }
+        else if( ret == SQL_NO_DATA )
+        {
+            result = NO_MORE_ROWS;
+        }
+        else
+        {
+            for( int i = 0; i < m_fieldsInRecordSet; i++ )
+            {
+                SQLSMALLINT ctype;
+                int valueType;
+                ret = SQLDescribeCol( m_hstmt, i + 1, NULL, 0, &nameLen[i], &dataType[i], &columnSize[i], &decimal[i], &nullable[i] );
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                {
+                    switch( dataType[i] )
+                    {
+                    case SQL_CHAR:
+                    case SQL_VARCHAR:
+                    case SQL_LONGVARCHAR:
+                        ctype = SQL_C_CHAR;
+                        valueType = 3;
+                        break;
+                    case SQL_WCHAR:
+                    case SQL_WVARCHAR:
+                    case SQL_WLONGVARCHAR:
+                        ctype = SQL_C_WCHAR;
+                        valueType = 3;
+                        break;
+                    case SQL_DECIMAL:
+                    case SQL_NUMERIC:
+                    case SQL_SMALLINT:
+                        ctype = SQL_C_SSHORT;
+                        valueType = 1;
+                        break;
+                    case SQL_INTEGER:
+                        ctype = SQL_C_SLONG;
+                        valueType = 1;
+                        break;
+                    case SQL_REAL:
+                        ctype = SQL_C_FLOAT;
+                        valueType = 2;
+                        break;
+                    case SQL_FLOAT:
+                    case SQL_DOUBLE:
+                        ctype = SQL_C_DOUBLE;
+                        valueType = 2;
+                    case SQL_BIT:
+                        ctype = SQL_C_BIT;
+                        valueType = 3;
+                        break;
+                    case SQL_TINYINT:
+                        ctype = SQL_C_STINYINT;
+                        valueType = 1;
+                        break;
+                    case SQL_BIGINT:
+                        ctype = SQL_C_SBIGINT;
+                        valueType = 1;
+                        break;
+                    case SQL_BINARY:
+                    case SQL_VARBINARY:
+                    case SQL_LONGVARBINARY:
+                        ctype = SQL_C_BINARY;
+                        valueType = 3;
+                        break;
+                    }
+//                    ret = SQLBindCol( m_hstmt, i + 1, ctype, );
+                }
+                else
+                {
+                    GetErrorMessage( errorMsg, 2, m_hdbc );
+                    result = 1;
+                }
+            }
+        }
+    }
+    delete nameLen;
+    delete dataType;
+    return result;
+}
+
+int ODBCDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    SQLRETURN ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 2, m_hdbc );
+        result = 1;
+    }
+    m_fieldsInRecordSet = 0;
+    return result;
+}
+

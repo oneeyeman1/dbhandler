@@ -2332,16 +2332,22 @@ int MySQLDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstr
     return result;
 }
 
-int MySQLDatabase::EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::PrepareStatement(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName + L";";
     return result;
 }
 
-int MySQLDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::vector<DataEditFiield> > &row, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName + L";";
     return result;
+
+}
+
+int MySQLDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+
 }

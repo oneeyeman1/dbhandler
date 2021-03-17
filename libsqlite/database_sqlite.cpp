@@ -28,6 +28,7 @@ SQLiteDatabase::SQLiteDatabase() : Database()
     m_db = NULL;
     connectToDatabase = false;
     m_stmt1 = m_stmt2 = m_stmt3 = NULL;
+    m_fieldsInRecordSet = 0;
 }
 
 SQLiteDatabase::~SQLiteDatabase()
@@ -2026,27 +2027,38 @@ int SQLiteDatabase::GetAttachedDBList(std::vector<std::wstring> &dbNames, std::v
     return result;
 }
 
-int SQLiteDatabase::EditTableData(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res;
-    std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName + L";";
-    sqlite3_stmt *stmt;
     std::wstring errorMessage;
-    if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &stmt, NULL ) ) == 0 )
+    if( m_fieldsInRecordSet == 0 )
+        m_fieldsInRecordSet = sqlite3_column_count( m_stmt );
+    res = sqlite3_step( m_stmt );
+    if( res == SQLITE_ROW )
     {
-        int columnCount = sqlite3_column_count( stmt );
-        for( ; ; )
+        int count = sqlite3_column_count( m_stmt );
+        for( int i = 0; i < count; ++i )
         {
-            res = sqlite3_step( stmt );
-            if( res == SQLITE_ROW )
+            res = sqlite3_column_type( m_stmt, i );
+            switch( res )
             {
-//                dbNames.push_back( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 1 ) ) );
-            }
-            else
+            case SQLITE_INTEGER:
+                row.push_back( DataEditFiield( sqlite3_column_int64( m_stmt, i ) ) );
                 break;
+            case SQLITE_FLOAT:
+                row.push_back( DataEditFiield( sqlite3_column_double( m_stmt, i ), 0, 0 ) );
+                break;
+            case SQLITE_TEXT:
+                row.push_back( DataEditFiield( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( m_stmt, i ) ) ) ) );
+                break;
+            case SQLITE_BLOB:
+                row.push_back( DataEditFiield( sqlite3_column_blob( m_stmt, i ) ) );
+                break;
+            }
         }
-        sqlite3_finalize( stmt );
     }
+    else if( res == SQLITE_DONE )
+        result = NO_MORE_ROWS;
     else
     {
         GetErrorMessage( res, errorMessage );
@@ -2056,42 +2068,29 @@ int SQLiteDatabase::EditTableData(const std::wstring &schemaName, const std::wst
     return result;
 }
 
-int SQLiteDatabase::ExecuteQuery(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::vector<DataEditFiield> > &rows, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::PrepareStatement(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
-    int res;
+    int result = 0, res;
     std::wstring errorMessage, query = L"SELECT * FROM " + schemaName + L"." + tableName;
     if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &m_stmt, NULL ) ) != 0 )
     {
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
+        result = 1;
     }
-    else
+    return result;
+}
+
+int SQLiteDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0, res;
+    std::wstring errorMessage;
+    if( ( res = sqlite3_finalize( m_stmt ) ) != 0 )
     {
-        while( true )
-        {
-            res = sqlite3_step( m_stmt );
-            if( res == SQLITE_ROW )
-            {
-                std::vector<DataEditFiield> row;
-                int count = sqlite3_column_count( m_stmt );
-                for( int i = 0; i < count; ++i )
-                {
-                    res = sqlite3_column_type( m_stmt, i );
-                    switch( res )
-                    {
-                    case SQLITE_INTEGER:
-                        row.push_back( DataEditFiield( sqlite3_column_int64( m_stmt, i ) ) );
-                        break;
-                    case SQLITE_FLOAT:
-                        row.push_back( DataEditFiield( sqlite3_column_double( m_stmt, i ) ) );
-                        break;
-                    case SQLITE_TEXT:
-                        row.push_back( DataEditFiield( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( m_stmt, i ) ) ) ) );
-                        break;
-                    }
-                }
-            }
-        }
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+        result = 1;
     }
-    return res;
+    m_fieldsInRecordSet = 0;
+    return result;
 }
