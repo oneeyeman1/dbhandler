@@ -54,6 +54,9 @@ struct DataEditFiield
 #if defined _MSC_VER
         __int64 longvalue;
         ValuueType(__int64 value) : longvalue( value ) {}
+#else
+		long long int longvalue;
+		ValuueType(long long int value) : longvalue( value ) {}
 #endif
         ~ValuueType() noexcept {}
     } value;
@@ -68,6 +71,8 @@ struct DataEditFiield
 
 #if defined _MSC_VER
     DataEditFiield(__int64 myvalue) : type( INTEGER_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
+#else
+	DataEditFiield(long long int myvalue) : type( 1 ), value( myvalue ) {}
 #endif
     ~DataEditFiield()
     {
