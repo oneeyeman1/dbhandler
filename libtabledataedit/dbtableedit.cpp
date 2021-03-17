@@ -17,7 +17,7 @@ std::mutex Database::Impl::my_mutex;
 
 DBTableEdit::DBTableEdit(Database *db, const wxString &schema, const wxString &name)
 {
-    db = db;
+    m_db = db;
     m_tableName = name;
     m_schemaName = schema;
 }
@@ -43,13 +43,16 @@ wxThread::ExitCode DBTableEdit::Entry()
             res = m_db->PrepareStatement( m_schemaName.ToStdWstring(), m_tableName.ToStdWstring(), errors );
             if( !res )
             {
-                res = m_db->EditTableData( row, errorMsg );
-                if( !res )
-                    m_db->FinalizeStatement( errorMsg );
-                else
+                while( !res )
                 {
-                    m_db->FinalizeStatement( errorMsg );
-                    Delete();
+                    res = m_db->EditTableData( row, errorMsg );
+                    if( !res )
+                        m_db->FinalizeStatement( errorMsg );
+                    else
+                    {
+                        m_db->FinalizeStatement( errorMsg );
+                        Delete();
+                    }
                 }
             }
             else
