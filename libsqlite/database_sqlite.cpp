@@ -1308,51 +1308,49 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
 				keyTemp += sUpper + L',';
                 isFK = true;
                 fkPos = keyTemp.find( ref );
-//                    temp1 = s.substr( s.find_first_not_of( L' ' ) );
                 keyTemp += sUpper;
             }
-                std::wstring temp1 = temp;
-                std::wstring tName = sUpper.substr( fkPos + ref.length()  );
-                tName = tName.substr( 0, tName.find( L'(' ) );
-                tName = tName.substr( tName.find_first_not_of( L' ' ) );
-                tName = tName.substr( 0, tName.find_last_not_of( L' ' ) + 1 );
-                std::wstring refTable;
-                if( newFK.size() > 0 )
-                    refTable = newFK[0]->GetReferencedTableName();
-                else
-                    refTable = refTableName;
-                if( tName == refTableName )
-                {
-                    isKeyAdded = false;
-                }
-                if( isFK )
-                {
-                    ref = L")";
-                    temp1 = sUpper.substr( sUpper.find( tName ) );
-                    while( ( fkPos = temp1.find( ref ) ) == std::wstring::npos )
-                    {
-                        std::getline( str, s, L',' );
-                        sUpper = s;
-                        std::transform( s.begin(), s.end(), s.begin(), [](wchar_t ch) { return static_cast<wchar_t>( std::towupper( ch ) ); } );
-						keyTemp += sUpper + L',';
-                        temp1 = s.substr( s.find_first_not_of( L' ' ) );
-                    }
-                }
-                isFK = false;
-                if( keyTemp.at( keyTemp.length() - 1 ) == L')' && keyTemp.at( keyTemp.length() - 2 ) != L')' && const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector().size() > 1 )
-                    keyTemp += L',';
-                if( keyTemp.at( keyTemp.length() - 2 ) == L')' )
-                {
-                    if( isKeyAdded )
-                    {
-                        newSQL += keyTemp;
-                    }
-                    keyTemp = L"";
-                }
-                isKeyAdded = true;
+            std::wstring temp1 = temp;
+            std::wstring tName = sUpper.substr( fkPos + ref.length()  );
+            tName = tName.substr( 0, tName.find( L'(' ) );
+            tName = tName.substr( tName.find_first_not_of( L' ' ) );
+            tName = tName.substr( 0, tName.find_last_not_of( L' ' ) + 1 );
+            std::wstring refTable;
+            if( newFK.size() > 0 )
+                refTable = newFK[0]->GetReferencedTableName();
+            else
+                refTable = refTableName;
+            if( tName == refTableName )
+            {
+                isKeyAdded = false;
             }
+            if( isFK )
+            {
+                ref = L")";
+                temp1 = sUpper.substr( sUpper.find( tName ) );
+                while( ( fkPos = temp1.find( ref ) ) == std::wstring::npos )
+                {
+                    std::getline( str, s, L',' );
+                    sUpper = s;
+                    std::transform( s.begin(), s.end(), s.begin(), [](wchar_t ch) { return static_cast<wchar_t>( std::towupper( ch ) ); } );
+                    keyTemp += sUpper + L',';
+                    temp1 = s.substr( s.find_first_not_of( L' ' ) );
+                }
+            }
+            isFK = false;
+            if( keyTemp.at( keyTemp.length() - 1 ) == L')' && keyTemp.at( keyTemp.length() - 2 ) != L')' && const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector().size() > 1 )
+                keyTemp += L',';
+            if( keyTemp.at( keyTemp.length() - 2 ) == L')' )
+            {
+                if( isKeyAdded )
+                {
+                    newSQL += keyTemp;
+                }
+                keyTemp = L"";
+            }
+            isKeyAdded = true;
         }
-//    }
+    }
     if( newSQL.back() == L',' )
         newSQL = newSQL.substr( 0, newSQL.length() - 1 ) + L")";
     bool found = false;
@@ -1517,7 +1515,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                     {
                                         temp.erase( std::remove( temp.begin(), temp.end(), tableName ), temp.end() );
                                     }
-									else if( count == m_numOfTables )
+                                    else if( count == m_numOfTables )
                                     {
                                         int num1 = 0, num2 = 0;
                                         std::string query3 = "SELECT count(*) FROM pragma_table_info(?)";
@@ -1541,7 +1539,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                 res = sqlite3_step( stmt1 );
                                                 if( res == SQLITE_ROW )
                                                     num1 = sqlite3_column_int( stmt1, 0 );
-											    else if( res != SQLITE_DONE )
+                                                else if( res != SQLITE_DONE )
                                                 {
                                                     result = 1;
                                                     break;
@@ -1566,7 +1564,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                                 res = sqlite3_step( stmt2 );
                                                 if( res == SQLITE_ROW )
                                                     num2 = sqlite3_column_int( stmt2, 0 );
-											    else if( res != SQLITE_DONE )
+                                                else if( res != SQLITE_DONE )
                                                 {
                                                     result = 1;
                                                     break;
@@ -1612,12 +1610,12 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         }
                         if( !result && count == m_numOfTables )
                         {
-							result = AddDropTable( L"", L"", temp.at( 0 ), L"", 0, true, errorMsg );
+                            result = AddDropTable( L"", L"", temp.at( 0 ), L"", 0, true, errorMsg );
                             if( res )
                                 errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
                         }
                     }
-					else
+                    else
                         result = 1;
                 }
                 else
@@ -1825,7 +1823,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
                     GetErrorMessage( res, errorMessage );
                     errorMsg.push_back( errorMessage );
                 }
-				else
+                else
                 {
                     for( ; ; )
                     {
