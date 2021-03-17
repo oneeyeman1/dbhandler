@@ -381,10 +381,10 @@ int ODBCDatabase::GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<s
     while( ( ret1 == SQL_SUCCESS || ret1 == SQL_SUCCESS_WITH_INFO ) )
     {
         if( equal( dsn, dsnRead ) )
-		{
+        {
             found = true;
-			break;
-		}
+            break;
+        }
         direct = SQL_FETCH_NEXT;
         ret1 = SQLDataSources( m_env, direct, dsnRead, SQL_MAX_DSN_LENGTH, &pcbDSN, dsnDescr, 254, &pcbDesc );
     }
@@ -4120,7 +4120,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     }
     if( pimpl->m_subtype == L"Oracle" )
     {
-		query = L"SELECT version FROM v$instance";
+        query = L"SELECT version FROM v$instance";
     }
     if( pimpl->m_subtype != L"ACCESS" )
     {
