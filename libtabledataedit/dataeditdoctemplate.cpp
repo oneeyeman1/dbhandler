@@ -46,10 +46,10 @@ bool DataEditDocTemplate::CreateDataEditDocument(const wxString &path, int flags
         doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
         wxScopedPtr<TableEditView> view( (TableEditView *) DoCreateView() );
         if( !view )
-            return nullptr;
+            return true;
         view->SetDocument( doc );
         if( !view->OnCreate( doc, flags ) )
-            return nullptr;
+            return true;
         if( view.release() )
             return true;
         return false;
