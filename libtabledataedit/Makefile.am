@@ -13,7 +13,9 @@ libtableedit_la_SOURCES =  \
 	dataretriever.cpp \
 	dataretriever.h \
 	dbtableedit.cpp \
-	dbtableedit.h
+	dbtableedit.h \
+	dataeditdoctemplate.cpp \
+	dataeditdoctemplate.h
 
 libtableedit_la_CXXFLAGS = -I../../dbinterface \
 	`/home/igor/wxWidgets/buildGTK/wx-config \

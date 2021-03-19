@@ -131,7 +131,8 @@ libtableedit_la_LIBADD =
 am_libtableedit_la_OBJECTS = libtableedit_la-tableeditview.lo \
 	libtableedit_la-tableeditdocument.lo \
 	libtableedit_la-dataedit.lo libtableedit_la-dataretriever.lo \
-	libtableedit_la-dbtableedit.lo
+	libtableedit_la-dbtableedit.lo \
+	libtableedit_la-dataeditdoctemplate.lo
 libtableedit_la_OBJECTS = $(am_libtableedit_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -386,7 +387,9 @@ libtableedit_la_SOURCES = \
 	dataretriever.cpp \
 	dataretriever.h \
 	dbtableedit.cpp \
-	dbtableedit.h
+	dbtableedit.h \
+	dataeditdoctemplate.cpp \
+	dataeditdoctemplate.h
 
 libtableedit_la_CXXFLAGS = -I../../dbinterface \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
@@ -474,6 +477,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtableedit_la-dataedit.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtableedit_la-dataeditdoctemplate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtableedit_la-dataretriever.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtableedit_la-dbtableedit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtableedit_la-tableeditdocument.Plo@am__quote@
@@ -534,6 +538,13 @@ libtableedit_la-dbtableedit.lo: dbtableedit.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dbtableedit.cpp' object='libtableedit_la-dbtableedit.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libtableedit_la_CXXFLAGS) $(CXXFLAGS) -c -o libtableedit_la-dbtableedit.lo `test -f 'dbtableedit.cpp' || echo '$(srcdir)/'`dbtableedit.cpp
+
+libtableedit_la-dataeditdoctemplate.lo: dataeditdoctemplate.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libtableedit_la_CXXFLAGS) $(CXXFLAGS) -MT libtableedit_la-dataeditdoctemplate.lo -MD -MP -MF $(DEPDIR)/libtableedit_la-dataeditdoctemplate.Tpo -c -o libtableedit_la-dataeditdoctemplate.lo `test -f 'dataeditdoctemplate.cpp' || echo '$(srcdir)/'`dataeditdoctemplate.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libtableedit_la-dataeditdoctemplate.Tpo $(DEPDIR)/libtableedit_la-dataeditdoctemplate.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dataeditdoctemplate.cpp' object='libtableedit_la-dataeditdoctemplate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libtableedit_la_CXXFLAGS) $(CXXFLAGS) -c -o libtableedit_la-dataeditdoctemplate.lo `test -f 'dataeditdoctemplate.cpp' || echo '$(srcdir)/'`dataeditdoctemplate.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
