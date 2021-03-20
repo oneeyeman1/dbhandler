@@ -131,7 +131,8 @@ libtablewindow_la_LIBADD =
 am_libtablewindow_la_OBJECTS = libtablewindow_la-tabledoc.lo \
 	libtablewindow_la-tableview.lo \
 	libtablewindow_la-tablewindow.lo \
-	libtablewindow_la-tablecanvas.lo
+	libtablewindow_la-tablecanvas.lo \
+	libtablewindow_la-typecombobox.lo
 libtablewindow_la_OBJECTS = $(am_libtablewindow_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -384,7 +385,9 @@ libtablewindow_la_SOURCES = \
 	tableview.h \
 	tablewindow.cpp \
 	tablecanvas.cpp \
-	tablecanvas.h
+	tablecanvas.h \
+	typecombobox.cpp \
+	typecombobox.h
 
 libtablewindow_la_CXXFLAGS = -I../../dbinterface \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
@@ -476,6 +479,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtablewindow_la-tabledoc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtablewindow_la-tableview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtablewindow_la-tablewindow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtablewindow_la-typecombobox.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -525,6 +529,13 @@ libtablewindow_la-tablecanvas.lo: tablecanvas.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tablecanvas.cpp' object='libtablewindow_la-tablecanvas.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libtablewindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libtablewindow_la-tablecanvas.lo `test -f 'tablecanvas.cpp' || echo '$(srcdir)/'`tablecanvas.cpp
+
+libtablewindow_la-typecombobox.lo: typecombobox.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libtablewindow_la_CXXFLAGS) $(CXXFLAGS) -MT libtablewindow_la-typecombobox.lo -MD -MP -MF $(DEPDIR)/libtablewindow_la-typecombobox.Tpo -c -o libtablewindow_la-typecombobox.lo `test -f 'typecombobox.cpp' || echo '$(srcdir)/'`typecombobox.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libtablewindow_la-typecombobox.Tpo $(DEPDIR)/libtablewindow_la-typecombobox.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='typecombobox.cpp' object='libtablewindow_la-typecombobox.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libtablewindow_la_CXXFLAGS) $(CXXFLAGS) -c -o libtablewindow_la-typecombobox.lo `test -f 'typecombobox.cpp' || echo '$(srcdir)/'`typecombobox.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
