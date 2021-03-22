@@ -2034,8 +2034,7 @@ int SQLiteDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<
     res = sqlite3_step( m_stmt );
     if( res == SQLITE_ROW )
     {
-        int count = sqlite3_column_count( m_stmt );
-        for( int i = 0; i < count; ++i )
+        for( int i = 0; i < m_fieldsInRecordSet; ++i )
         {
             res = sqlite3_column_type( m_stmt, i );
             switch( res )
