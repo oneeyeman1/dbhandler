@@ -9,13 +9,14 @@
 #include "wx/thread.h"
 #include "wx/msgdlg.h"
 #include "database.h"
+#include "dataretriever.h"
 #include "dbtableedit.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
 #endif
 
-DBTableEdit::DBTableEdit(Database *db, const wxString &schema, const wxString &name)
+DBTableEdit::DBTableEdit(Database *db, const wxString &schema, const wxString &name, DataRetriever *retriever)
 {
     m_db = db;
     m_tableName = name;
@@ -46,14 +47,8 @@ wxThread::ExitCode DBTableEdit::Entry()
                 while( !res )
                 {
                     res = m_db->EditTableData( row, errorMsg );
-                    if( !res )
-                        m_db->FinalizeStatement( errorMsg );
-                    else
-                    {
-                        m_db->FinalizeStatement( errorMsg );
-                        Delete();
-                    }
                 }
+                res = m_db->FinalizeStatement( errorMsg );
             }
             else
             {
