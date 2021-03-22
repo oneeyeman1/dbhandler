@@ -20,14 +20,20 @@
 #ifndef _DATARETRIEVER_H_
 #define _DATARETRIEVER_H_
 
-class DataRetriever: public wxThread 
+class TableEditView;
+
+class DataRetriever
 {
 public:
-    DataRetriever(const std::map<long,std::vector<int> > &dataHolder);
+    DataRetriever(TableEditView *handler);
+    void SetProcessed(bool processed) { m_processed = processed; }
+    bool GetProcessed() const { return m_processed; }
+    void DisplayData(const std::vector<DataEditFiield> &row);
 protected:
 
 private:
-    std::map<long,std::vector<int> > m_dataHolder;
+    TableEditView *m_handler;
+    bool m_processed;
 };
 
 #endif // _DATARETRIEVER_H_

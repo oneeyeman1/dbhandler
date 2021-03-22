@@ -37,6 +37,7 @@
 #include "wx/artprov.h"
 #include "wx/grid.h"
 #include "database.h"
+#include "dataretriever.h"
 #include "dbtableedit.h"
 #include "tableeditdocument.h"
 #include "tableeditview.h"
@@ -121,7 +122,8 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
-    m_handler = new DBTableEdit( db, table->GetSchemaName(), table->GetTableName() );
+    auto *retriever = new DataRetriever( this );
+    m_handler = new DBTableEdit( db, table->GetSchemaName(), table->GetTableName(), retriever );
     if( m_handler->Run() != wxTHREAD_NO_ERROR )
     {
         wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );

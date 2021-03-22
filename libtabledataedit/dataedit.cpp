@@ -24,6 +24,7 @@
 #include "wx/docmdi.h"
 #include "wx/grid.h"
 #include "database.h"
+#include "dataretriever.h"
 #include "dbtableedit.h"
 #include "dataeditdoctemplate.h"
 #include "tableeditdocument.h"

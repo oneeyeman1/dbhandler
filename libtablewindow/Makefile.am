@@ -11,7 +11,9 @@ libtablewindow_la_SOURCES =  \
 	tableview.h \
 	tablewindow.cpp \
 	tablecanvas.cpp \
-	tablecanvas.h
+	tablecanvas.h \
+	typecombobox.cpp \
+	typecombobox.h
 
 libtablewindow_la_CXXFLAGS = -I../../dbinterface \
 	`/home/igor/wxWidgets/buildGTK/wx-config \

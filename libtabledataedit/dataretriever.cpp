@@ -19,10 +19,17 @@
 
 #include <map>
 #include <vector>
+#include <algorithm>
 #include "wx/thread.h"
+#include "database.h"
 #include "dataretriever.h"
 
-DataRetriever::DataRetriever(const std::map<long,std::vector<int> > &dataHolder)
+DataRetriever::DataRetriever(TableEditView *handler)
 {
-    m_dataHolder = dataHolder;
+    m_handler = m_handler;
+    m_processed = false;
+}
+
+void DataRetriever::DisplayData(const std::vector<DataEditFiield> &row)
+{
 }

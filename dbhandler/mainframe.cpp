@@ -489,7 +489,7 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
 #elif __WXOSX__
             lib1->Load( "liblibtabledataedit.dylib" );
 #else
-            lib1->Load( "libtabledataedit" );
+            lib1->Load( "libtableedit" );
 #endif
             if( lib1->IsLoaded() )
                 m_painters["EditData"] = lib1;
