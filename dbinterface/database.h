@@ -46,11 +46,19 @@ struct DataEditFiield
         int intValue;
         double doubleValue;
         std::wstring stringValue;
+        ValuueType() : intValue( 0 ), doubleValue( 0.0 ), stringValue( L"" )  {}
         ValuueType(int value) : intValue( value ) {}
         ValuueType(double value) : doubleValue( value ) {}
         ValuueType(std::wstring value) : stringValue( value ) {}
         ValuueType(const void *value) : blobValue( const_cast<void *>( value ) ) {}
-        ValuueType(const ValuueType &myvalue) { stringValue = myvalue.stringValue; }
+        ValuueType(const ValuueType &myvalue)
+        {
+            stringValue = myvalue.stringValue;
+            intValue = myvalue.intValue;
+            doubleValue = myvalue.doubleValue;
+            blobValue = myvalue.blobValue;
+            longvalue = myvalue.longvalue;
+        }
 #if defined _MSC_VER
         __int64 longvalue;
         ValuueType(__int64 value) : longvalue( value ) {}
@@ -74,6 +82,20 @@ struct DataEditFiield
 #else
 	DataEditFiield(long long int myvalue) : type( 1 ), value( myvalue ) {}
 #endif
+
+    DataEditFiield(const DataEditFiield &field)
+    {
+        switch( field.type )
+        {
+        case INTEGER_TYPE:
+            value.intValue = field.value.intValue;
+            break;
+        }
+        type = field.type;
+        m_size = field.m_size;
+        m_precision = field.m_precision;
+    }
+
     ~DataEditFiield()
     {
         using std::wstring;
