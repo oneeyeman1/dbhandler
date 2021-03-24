@@ -29,6 +29,7 @@ public:
     TableEditView() : wxView() {}
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
+    void DisplayRecords(wxThreadEvent &event);
 protected:
 
 private:
@@ -38,6 +39,7 @@ private:
     wxDocMDIChildFrame *m_frame;
     wxToolBar *m_tb, *m_styleBar;
     wxGrid *m_grid;
+    long m_processed;
     wxDECLARE_DYNAMIC_CLASS(TableEditView);
 };
 
