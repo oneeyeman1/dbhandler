@@ -2053,10 +2053,10 @@ int SQLiteDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<
             switch( res )
             {
             case SQLITE_INTEGER:
-                row.push_back( DataEditFiield( sqlite3_column_int64( m_stmt, i ) ) );
+                row.push_back( DataEditFiield( std::to_wstring( sqlite3_column_int64( m_stmt, i ) ) ) );
                 break;
             case SQLITE_FLOAT:
-                row.push_back( DataEditFiield( sqlite3_column_double( m_stmt, i ), 0, 0 ) );
+                row.push_back( DataEditFiield( std::to_wstring( sqlite3_column_double( m_stmt, i ) ) ) );
                 break;
             case SQLITE_TEXT:
                 row.push_back( DataEditFiield( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( m_stmt, i ) ) ) ) );
