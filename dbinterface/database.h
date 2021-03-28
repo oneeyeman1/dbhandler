@@ -46,19 +46,14 @@ struct DataEditFiield
         int intValue;
         double doubleValue;
         std::wstring stringValue;
-        ValuueType() : intValue( 0 ), doubleValue( 0.0 ), stringValue( L"" )  {}
+        ValuueType() : stringValue()  {}
         ValuueType(int value) : intValue( value ) {}
         ValuueType(double value) : doubleValue( value ) {}
-        ValuueType(std::wstring value) : stringValue( value ) {}
+        ValuueType(const std::wstring &value) : stringValue( value ) {}
+        ValuueType(const wchar_t *value) : stringValue( value ) {}
         ValuueType(const void *value) : blobValue( const_cast<void *>( value ) ) {}
-        ValuueType(const ValuueType &myvalue)
-        {
-            stringValue = myvalue.stringValue;
-            intValue = myvalue.intValue;
-            doubleValue = myvalue.doubleValue;
-            blobValue = myvalue.blobValue;
-            longvalue = myvalue.longvalue;
-        }
+        ValuueType(const ValuueType &) = delete;
+        ValuueType& operator=(const ValuueType&) = delete;
 #if defined _MSC_VER
         __int64 longvalue;
         ValuueType(__int64 value) : longvalue( value ) {}
@@ -73,7 +68,7 @@ struct DataEditFiield
 
     DataEditFiield(double myvalue, int size, int precision) : type( DOUBLE_TYPE ), m_size( size ), m_precision( precision ), value( myvalue ) { }
 
-    DataEditFiield(std::wstring myvalue) : type( STRING_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
+    DataEditFiield(const std::wstring &myvalue) : type( STRING_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
 
     DataEditFiield(const void *myvalue) : type( BLOB_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
 
@@ -90,11 +85,22 @@ struct DataEditFiield
         case INTEGER_TYPE:
             value.intValue = field.value.intValue;
             break;
+        case DOUBLE_TYPE:
+            value.doubleValue = field.value.doubleValue;
+            break;
+        case STRING_TYPE:
+            value.stringValue = field.value.stringValue;
+            break;
+        case BLOB_TYPE:
+            value.blobValue = field.value.blobValue;
+            break;
         }
         type = field.type;
         m_size = field.m_size;
         m_precision = field.m_precision;
     }
+
+    DataEditFiield &operator=(const DataEditFiield &) = delete;
 
     ~DataEditFiield()
     {
