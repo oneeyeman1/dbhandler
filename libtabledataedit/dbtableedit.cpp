@@ -5,18 +5,20 @@
 #endif
 #include "wx/docmdi.h"
 #include "wx/fswatcher.h"
+#include "wx/grid.h"
 #include "wx/dynlib.h"
 #include "wx/thread.h"
 #include "wx/msgdlg.h"
 #include "database.h"
 #include "dataretriever.h"
+#include "tableeditview.h"
 #include "dbtableedit.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
 #endif
 
-DBTableEdit::DBTableEdit(Database *db, const wxString &schema, const wxString &name, DataRetriever *retriever)
+DBTableEdit::DBTableEdit(Database *db, const wxString &schema, const wxString &name, TableEditView *retriever) : wxThread()
 {
     m_db = db;
     m_tableName = name;

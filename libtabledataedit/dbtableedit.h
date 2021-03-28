@@ -3,7 +3,7 @@
 class DBTableEdit : public wxThread
 {
 public:
-    DBTableEdit(Database *db, const wxString &schema, const wxString &name, DataRetriever *retriever);
+    DBTableEdit(Database *db, const wxString &schema, const wxString &name, TableEditView *retriever);
     ~DBTableEdit();
 protected:
     virtual ExitCode Entry() wxOVERRIDE;
