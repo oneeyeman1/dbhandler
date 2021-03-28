@@ -23,10 +23,13 @@
 #define wxID_TOP                  401
 #define wxID_BACK                 402
 
+class DBTableEdit;
+
 class TableEditView: public wxView 
 {
 public:
     TableEditView() : wxView() {}
+    ~TableEditView();
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     void DisplayRecords(wxThreadEvent &event);
@@ -39,6 +42,7 @@ private:
     wxDocMDIChildFrame *m_frame;
     wxToolBar *m_tb, *m_styleBar;
     wxGrid *m_grid;
+    DataRetriever *m_retriever;
     long m_processed;
     wxDECLARE_DYNAMIC_CLASS(TableEditView);
 };

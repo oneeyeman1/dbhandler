@@ -124,8 +124,8 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     m_frame->Layout();
     m_frame->Show();
     Bind( wxEVT_THREAD, &TableEditView::DisplayRecords, this );
-    auto *retriever = new DataRetriever( this );
-    m_handler = new DBTableEdit( db, table->GetSchemaName(), table->GetTableName(), retriever );
+    m_retriever = new DataRetriever( this );
+    m_handler = new DBTableEdit( db, table->GetSchemaName(), table->GetTableName(), this );
     if( m_handler->Run() != wxTHREAD_NO_ERROR )
     {
         wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
@@ -133,6 +133,12 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
         m_handler = NULL;
     }
     return true;
+}
+
+TableEditView::~TableEditView()
+{
+    delete m_retriever;
+    m_retriever = nullptr;
 }
 
 void TableEditView::OnDraw(wxDC *dc)
@@ -143,4 +149,6 @@ void TableEditView::DisplayRecords(wxThreadEvent &event)
 {
     wxString temp = wxString::Format( "Press Cancel to stop retrieval. Rows retrieved: %ld", m_processed++ );
     m_parent->SetStatusText( temp, 0 );
+    m_grid->BeginBatch();
+    m_grid->EndBatch();
 }
