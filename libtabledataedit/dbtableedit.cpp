@@ -18,11 +18,12 @@
 std::mutex Database::Impl::my_mutex;
 #endif
 
-DBTableEdit::DBTableEdit(Database *db, const wxString &schema, const wxString &name, TableEditView *retriever) : wxThread()
+DBTableEdit::DBTableEdit(Database *db, const wxString &schema, const wxString &name, DataRetriever *retriever) : wxThread()
 {
     m_db = db;
     m_tableName = name;
     m_schemaName = schema;
+    m_retriever = retriever;
 }
 
 DBTableEdit::~DBTableEdit()
@@ -49,6 +50,14 @@ wxThread::ExitCode DBTableEdit::Entry()
                 while( !res )
                 {
                     res = m_db->EditTableData( row, errorMsg );
+                    m_retriever->SetProcessed( true );
+                    while( m_retriever->GetProcessed() )
+                        wxSleep( 2 );
+                    DataRetriever *retriever = m_retriever;
+/*                    wxTheApp->CallAfter( [row, retriever]
+                    {
+                        retriever->DisplayData( row );
+                    } );*/
                 }
                 res = m_db->FinalizeStatement( errorMsg );
             }
