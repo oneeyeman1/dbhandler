@@ -125,7 +125,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     m_frame->Show();
     Bind( wxEVT_THREAD, &TableEditView::DisplayRecords, this );
     m_retriever = new DataRetriever( this );
-    m_handler = new DBTableEdit( db, table->GetSchemaName(), table->GetTableName(), this );
+    m_handler = new DBTableEdit( db, table->GetSchemaName(), table->GetTableName(), m_retriever );
     if( m_handler->Run() != wxTHREAD_NO_ERROR )
     {
         wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
