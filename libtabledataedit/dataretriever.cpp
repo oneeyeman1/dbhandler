@@ -20,16 +20,28 @@
 #include <map>
 #include <vector>
 #include <algorithm>
-#include "wx/thread.h"
+#include "wx/docview.h"
+#include "wx/docmdi.h"
+#include "wx/grid.h"
+//#include "wx/thread.h"
 #include "database.h"
 #include "dataretriever.h"
+#include "tableeditview.h"
 
 DataRetriever::DataRetriever(TableEditView *handler)
 {
-    m_handler = m_handler;
+    m_handler = handler;
     m_processed = false;
 }
 
 void DataRetriever::DisplayData(const std::vector<DataEditFiield> &row)
 {
+    m_handler->DisplayRecords( row );
+//    row.clear();
+    m_processed = false;
+}
+
+void DataRetriever::CompleteDataRetrieval(const std::vector<std::wstring> &errorMessages)
+{
+    m_handler->CompleteRetrieval( errorMessages );
 }

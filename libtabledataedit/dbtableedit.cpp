@@ -1,3 +1,15 @@
+#ifdef __GNUC__
+#pragma implementation "dialogs.h"
+#endif
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
+
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
+#endif
+
 #include <string>
 #include <algorithm>
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -34,6 +46,7 @@ wxThread::ExitCode DBTableEdit::Entry()
 {
     std::vector<std::wstring> errorMsg;
     int res;
+    DataRetriever *retriever = m_retriever;
     while( !TestDestroy() )
     {
         {
@@ -43,22 +56,24 @@ wxThread::ExitCode DBTableEdit::Entry()
             std::lock_guard<std::mutex> locker( m_db->GetTableVector().my_mutex );
 #endif
             std::vector<DataEditFiield> row;
-            std::vector<std::wstring> errors;
-            res = m_db->PrepareStatement( m_schemaName.ToStdWstring(), m_tableName.ToStdWstring(), errors );
+            res = m_db->PrepareStatement( m_schemaName.ToStdWstring(), m_tableName.ToStdWstring(), errorMsg );
             if( !res )
             {
                 while( !res )
                 {
+                    row.clear();;
                     res = m_db->EditTableData( row, errorMsg );
+                    if( res )
+                        break;
                     m_retriever->SetProcessed( true );
-                    while( m_retriever->GetProcessed() )
-                        wxSleep( 2 );
-                    DataRetriever *retriever = m_retriever;
-/*                    wxTheApp->CallAfter( [row, retriever]
+                    wxTheApp->CallAfter( [row, retriever]
                     {
                         retriever->DisplayData( row );
-                    } );*/
+                    } );
+                    while( m_retriever->GetProcessed() )
+                        wxSleep( 2 );
                 }
+                m_retriever->SetProcessed( false );
                 res = m_db->FinalizeStatement( errorMsg );
             }
             else
@@ -67,9 +82,11 @@ wxThread::ExitCode DBTableEdit::Entry()
                 Delete();
             }
         }
-        Sleep( 5000 );
+        wxTheApp->CallAfter( [errorMsg, retriever] 
+        {
+            retriever->CompleteDataRetrieval( errorMsg );
+        } );
+        Delete();
     }
-    for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); ++it )
-        wxMessageBox( (*it) );
     return (wxThread::ExitCode) 0;
 }

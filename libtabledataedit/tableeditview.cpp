@@ -46,7 +46,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(TableEditView, wxView);
 
 bool TableEditView::OnCreate(wxDocument *doc, long flags)
 {
-    m_processed = 1;
+    m_processed = 0;
     wxToolBar *tb = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
@@ -123,9 +123,9 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
-    Bind( wxEVT_THREAD, &TableEditView::DisplayRecords, this );
     m_retriever = new DataRetriever( this );
     m_handler = new DBTableEdit( db, table->GetSchemaName(), table->GetTableName(), m_retriever );
+    m_grid->BeginBatch();
     if( m_handler->Run() != wxTHREAD_NO_ERROR )
     {
         wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
@@ -145,10 +145,25 @@ void TableEditView::OnDraw(wxDC *dc)
 {
 }
 
-void TableEditView::DisplayRecords(wxThreadEvent &event)
+void TableEditView::DisplayRecords(const std::vector<DataEditFiield> &row)
 {
+    int i = 0;
+    m_grid->AppendRows();
+    for( std::vector<DataEditFiield>::const_iterator it = row.begin(); it < row.end(); ++it )
+    {
+        if( (it)->type == STRING_TYPE )
+        {
+            wxString temp( (it)->value.stringValue );
+            m_grid->SetCellValue( m_processed, i++, temp );
+        }
+    }
     wxString temp = wxString::Format( "Press Cancel to stop retrieval. Rows retrieved: %ld", m_processed++ );
     m_parent->SetStatusText( temp, 0 );
-    m_grid->BeginBatch();
+}
+
+void TableEditView::CompleteRetrieval(const std::vector<std::wstring> &errorMessages)
+{
+    for( std::vector<std::wstring>::const_iterator it = errorMessages.begin(); it < errorMessages.end(); ++it )
+        wxMessageBox( (*it) );
     m_grid->EndBatch();
 }

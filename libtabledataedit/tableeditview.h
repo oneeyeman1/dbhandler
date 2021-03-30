@@ -32,7 +32,8 @@ public:
     ~TableEditView();
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
-    void DisplayRecords(wxThreadEvent &event);
+    void DisplayRecords(const std::vector<DataEditFiield> &row);
+    void CompleteRetrieval(const std::vector<std::wstring> &errorMessages);
 protected:
 
 private:

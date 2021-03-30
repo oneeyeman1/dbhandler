@@ -29,6 +29,7 @@ public:
     void SetProcessed(bool processed) { m_processed = processed; }
     bool GetProcessed() const { return m_processed; }
     void DisplayData(const std::vector<DataEditFiield> &row);
+    void CompleteDataRetrieval(const std::vector<std::wstring> &errorMessages);
 protected:
 
 private:
