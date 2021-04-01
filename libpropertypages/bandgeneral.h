@@ -25,6 +25,7 @@ public:
     // end wxGlade
 
     BandGeneralProperties(wxWindow* parent, const BandProperties &props);
+    virtual ~BandGeneralProperties() {};
 
 private:
     // begin wxGlade: BandGeneralProperties::methods
