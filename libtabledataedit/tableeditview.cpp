@@ -87,9 +87,9 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     ptCanvas = wxDefaultPosition;
 #endif
     bool found = false;
-    Database *db = dynamic_cast<TableEditDocument *>( doc )->GetDatabase();
+    m_db = dynamic_cast<TableEditDocument *>( doc )->GetDatabase();
     DatabaseTable *table = nullptr;
-    for( auto it = db->GetTableVector().m_tables.begin(); it != db->GetTableVector().m_tables.end() && !found; ++ it )
+    for( auto it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++ it )
         for( auto it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
             if( (*it1)->GetTableName() == tableName )
             {
@@ -124,7 +124,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     m_frame->Layout();
     m_frame->Show();
     m_retriever = new DataRetriever( this );
-    m_handler = new DBTableEdit( db, table->GetSchemaName(), table->GetTableName(), m_retriever );
+    m_handler = new DBTableEdit( m_db, table->GetSchemaName(), table->GetTableName(), m_retriever );
     m_grid->BeginBatch();
     if( m_handler->Run() != wxTHREAD_NO_ERROR )
     {
@@ -139,6 +139,11 @@ TableEditView::~TableEditView()
 {
     delete m_retriever;
     m_retriever = nullptr;
+    if( m_handler )
+    {
+        delete m_handler;
+        m_handler = nullptr;
+    }
 }
 
 void TableEditView::OnDraw(wxDC *dc)

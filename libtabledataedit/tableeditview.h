@@ -37,6 +37,7 @@ public:
 protected:
 
 private:
+    Database *m_db;
     wxBoxSizer *sizer;
     DBTableEdit *m_handler;
     wxDocMDIParentFrame *m_parent;
