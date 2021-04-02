@@ -34,12 +34,12 @@ public:
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     void DisplayRecords(const std::vector<DataEditFiield> &row);
     void CompleteRetrieval(const std::vector<std::wstring> &errorMessages);
+    DBTableEdit *m_handler;
 protected:
-
+    void ThreadEventHandler(wxThreadEvent &event);
 private:
     Database *m_db;
     wxBoxSizer *sizer;
-    DBTableEdit *m_handler;
     wxDocMDIParentFrame *m_parent;
     wxDocMDIChildFrame *m_frame;
     wxToolBar *m_tb, *m_styleBar;

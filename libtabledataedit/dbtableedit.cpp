@@ -40,6 +40,12 @@ DBTableEdit::DBTableEdit(Database *db, const wxString &schema, const wxString &n
 
 DBTableEdit::~DBTableEdit()
 {
+#if defined __WXMSW__ && _MSC_VER < 1900
+    wxCriticalSectionLocker( pCs->m_threadCS );
+#else
+    std::lock_guard<std::mutex> locker( m_db->GetTableVector().my_mutex );
+#endif
+    m_retriever->m_handler->m_handler = nullptr;
 }
 
 wxThread::ExitCode DBTableEdit::Entry()
@@ -86,7 +92,8 @@ wxThread::ExitCode DBTableEdit::Entry()
         {
             retriever->CompleteDataRetrieval( errorMsg );
         } );
-        Delete();
+        break;
     }
+    wxQueueEvent( m_retriever->m_handler, new wxThreadEvent );
     return (wxThread::ExitCode) 0;
 }

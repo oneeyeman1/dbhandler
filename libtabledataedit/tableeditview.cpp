@@ -123,6 +123,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
+    Bind( wxEVT_THREAD, &TableEditView::ThreadEventHandler, this );
     m_retriever = new DataRetriever( this );
     m_handler = new DBTableEdit( m_db, table->GetSchemaName(), table->GetTableName(), m_retriever );
     m_grid->BeginBatch();
@@ -150,6 +151,37 @@ void TableEditView::OnDraw(wxDC *dc)
 {
 }
 
+void TableEditView::ThreadEventHandler(wxThreadEvent &event)
+{
+    {
+#if defined __WXMSW__ && _MSC_VER < 1900
+        wxCriticalSectionLocker( pCs->m_threadCS );
+#else
+        std::lock_guard<std::mutex> locker( m_db->GetTableVector().my_mutex );
+#endif
+        if( m_handler )         // does the thread still exist?
+        {
+            if( m_handler->Delete() != wxTHREAD_NO_ERROR )
+                wxLogError( "Can't delete the thread!" );
+        }
+    }       // exit from the critical section to give the thread
+        // the possibility to enter its destructor
+        // (which is guarded with m_pThreadCS critical section!)
+    while( 1 )
+    {
+        { // was the ~MyThread() function executed?
+#if defined __WXMSW__ && _MSC_VER < 1900
+            wxCriticalSectionLocker( pCs->m_threadCS );
+#else
+            std::lock_guard<std::mutex> locker( m_db->GetTableVector().my_mutex );
+#endif
+            if( !m_handler ) break;
+        }
+    // wait for thread completion
+        wxThread::This()->Sleep( 1 );
+    }
+}
+
 void TableEditView::DisplayRecords(const std::vector<DataEditFiield> &row)
 {
     int i = 0;
@@ -162,7 +194,7 @@ void TableEditView::DisplayRecords(const std::vector<DataEditFiield> &row)
             m_grid->SetCellValue( m_processed, i++, temp );
         }
     }
-    wxString temp = wxString::Format( "Press Cancel to stop retrieval. Rows retrieved: %ld", m_processed++ );
+    wxString temp = wxString::Format( "Press Cancel to stop retrieval. Rows retrieved: %ld", ++m_processed );
     m_parent->SetStatusText( temp, 0 );
 }
 

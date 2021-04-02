@@ -30,10 +30,9 @@ public:
     bool GetProcessed() const { return m_processed; }
     void DisplayData(const std::vector<DataEditFiield> &row);
     void CompleteDataRetrieval(const std::vector<std::wstring> &errorMessages);
-protected:
-
-private:
     TableEditView *m_handler;
+protected:
+private:
     bool m_processed;
 };
 
