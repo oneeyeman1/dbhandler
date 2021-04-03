@@ -42,6 +42,8 @@
 #include "tableeditdocument.h"
 #include "tableeditview.h"
 
+#include "res/querycancel.xpm"
+
 wxIMPLEMENT_DYNAMIC_CLASS(TableEditView, wxView);
 
 bool TableEditView::OnCreate(wxDocument *doc, long flags)
@@ -77,6 +79,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     pt.y = parentRect.height - parentClientSize.GetHeight();
     m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentClientSize.GetHeight() );
     m_tb = m_frame->CreateToolBar();
+    m_tb->AddTool( wxID_TOP, _( "Cancel" ), wxBitmap( querycancel ), _( "Cancel the query" ), wxITEM_NORMAL );
     m_tb->AddTool( wxID_TOP, _( "Top" ), wxArtProvider::GetBitmap( wxART_GOTO_FIRST ), _( "Top" ), wxITEM_NORMAL );
     m_tb->AddTool( wxID_BACK, _( "Back" ), wxArtProvider::GetBitmap( wxART_GO_BACK ), _( "Back" ), wxITEM_NORMAL );
     m_tb->Realize();
@@ -111,6 +114,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
 #ifndef __WXOSX__
     wxSize size = m_parent->GetClientSize();
     m_tb->ClearTools();
+    m_tb->AddTool( wxID_QUERYCANCEL, _( "Cancel" ), wxBitmap( querycancel ), _( "Cancel the query" ), wxITEM_NORMAL );
     m_tb->AddTool( wxID_TOP, _( "Top" ), wxArtProvider::GetBitmap( wxART_GOTO_FIRST ), _( "Top" ), wxITEM_NORMAL );
     m_tb->AddTool( wxID_BACK, _( "Back" ), wxArtProvider::GetBitmap( wxART_GO_BACK ), _( "Back" ), wxITEM_NORMAL );
     m_tb->Realize();
@@ -203,4 +207,5 @@ void TableEditView::CompleteRetrieval(const std::vector<std::wstring> &errorMess
     for( std::vector<std::wstring>::const_iterator it = errorMessages.begin(); it < errorMessages.end(); ++it )
         wxMessageBox( (*it) );
     m_grid->EndBatch();
+    m_grid->SetFocus();
 }

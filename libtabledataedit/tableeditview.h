@@ -20,8 +20,9 @@
 #ifndef _TABLEEDITVIEW_H_
 #define _TABLEEDITVIEW_H_
 
-#define wxID_TOP                  401
-#define wxID_BACK                 402
+#define wxID_QUERYCANCEL          400
+#define wxID_TOP                  402
+#define wxID_BACK                 403
 
 class DBTableEdit;
 

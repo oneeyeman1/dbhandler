@@ -167,6 +167,7 @@ wxDECLARE_APP(MyApp);
 #define wxID_GOTOLINE             334
 #define wxID_CONVERTTOGRAPHICS    335
 #define wxID_UNDOALL              336
-#define wxID_TOP                  401
-#define wxID_BACK                 402
+#define wxID_QUERYCANCEL          400
+#define wxID_TOP                  402
+#define wxID_BACK                 403
 #endif // _WX_SAMPLES_DOCVIEW_DOCVIEW_H_
