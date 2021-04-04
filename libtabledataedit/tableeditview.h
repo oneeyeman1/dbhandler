@@ -38,6 +38,7 @@ public:
     DBTableEdit *m_handler;
 protected:
     void ThreadEventHandler(wxThreadEvent &event);
+    void OnCancelQuery(wxCommandEvent &event);
 private:
     Database *m_db;
     wxBoxSizer *sizer;
@@ -46,7 +47,9 @@ private:
     wxToolBar *m_tb, *m_styleBar;
     wxGrid *m_grid;
     DataRetriever *m_retriever;
+    DatabaseTable *m_table;
     long m_processed;
+    bool m_queryexecuting;
     wxDECLARE_DYNAMIC_CLASS(TableEditView);
 };
 

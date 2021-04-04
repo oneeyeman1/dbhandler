@@ -36,6 +36,7 @@ DBTableEdit::DBTableEdit(Database *db, const wxString &schema, const wxString &n
     m_tableName = name;
     m_schemaName = schema;
     m_retriever = retriever;
+    m_continueProcessing = true;
 }
 
 DBTableEdit::~DBTableEdit()
@@ -65,7 +66,7 @@ wxThread::ExitCode DBTableEdit::Entry()
             res = m_db->PrepareStatement( m_schemaName.ToStdWstring(), m_tableName.ToStdWstring(), errorMsg );
             if( !res )
             {
-                while( !res )
+                while( !res && m_continueProcessing )
                 {
                     row.clear();;
                     res = m_db->EditTableData( row, errorMsg );

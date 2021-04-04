@@ -42,6 +42,7 @@
 #include "tableeditdocument.h"
 #include "tableeditview.h"
 
+#include "res/queryexec.xpm"
 #include "res/querycancel.xpm"
 
 wxIMPLEMENT_DYNAMIC_CLASS(TableEditView, wxView);
@@ -49,6 +50,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(TableEditView, wxView);
 bool TableEditView::OnCreate(wxDocument *doc, long flags)
 {
     m_processed = 0;
+    m_queryexecuting = true;
     wxToolBar *tb = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
@@ -91,21 +93,20 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
 #endif
     bool found = false;
     m_db = dynamic_cast<TableEditDocument *>( doc )->GetDatabase();
-    DatabaseTable *table = nullptr;
     for( auto it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++ it )
         for( auto it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
             if( (*it1)->GetTableName() == tableName )
             {
-                table = (*it1);
+                m_table = (*it1);
                 found = true;
             }
     wxASSERT( m_frame == GetFrame() );
     m_grid = new wxGrid( m_frame, wxID_ANY );
     m_grid->CreateGrid( 0, 0 );
-    for( int i = 0; i < table->GetNumberOfFields(); i++ )
+    for( int i = 0; i < m_table->GetNumberOfFields(); i++ )
     {
         m_grid->AppendCols();
-        wxString label( table->GetFields().at( i )->GetFieldName() );
+        wxString label( m_table->GetFields().at( i )->GetFieldName() );
         m_grid->SetColLabelValue( i, label );
     }
     m_grid->HideRowLabels();
@@ -128,8 +129,9 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     m_frame->Layout();
     m_frame->Show();
     Bind( wxEVT_THREAD, &TableEditView::ThreadEventHandler, this );
+    Bind( wxEVT_MENU, &TableEditView::OnCancelQuery, this, wxID_QUERYCANCEL );
     m_retriever = new DataRetriever( this );
-    m_handler = new DBTableEdit( m_db, table->GetSchemaName(), table->GetTableName(), m_retriever );
+    m_handler = new DBTableEdit( m_db, m_table->GetSchemaName(), m_table->GetTableName(), m_retriever );
     m_grid->BeginBatch();
     if( m_handler->Run() != wxTHREAD_NO_ERROR )
     {
@@ -189,17 +191,20 @@ void TableEditView::ThreadEventHandler(wxThreadEvent &event)
 void TableEditView::DisplayRecords(const std::vector<DataEditFiield> &row)
 {
     int i = 0;
-    m_grid->AppendRows();
-    for( std::vector<DataEditFiield>::const_iterator it = row.begin(); it < row.end(); ++it )
+    bool succcess = m_grid->AppendRows();
+    if( succcess )
     {
-        if( (it)->type == STRING_TYPE )
+        for( std::vector<DataEditFiield>::const_iterator it = row.begin(); it < row.end(); ++it )
         {
-            wxString temp( (it)->value.stringValue );
-            m_grid->SetCellValue( m_processed, i++, temp );
+            if( (it)->type == STRING_TYPE )
+            {
+                wxString temp( (it)->value.stringValue );
+                m_grid->SetCellValue( m_processed, i++, temp );
+            }
         }
+        wxString temp = wxString::Format( "Press Cancel to stop retrieval. Rows retrieved: %ld", ++m_processed );
+        m_parent->SetStatusText( temp, 0 );
     }
-    wxString temp = wxString::Format( "Press Cancel to stop retrieval. Rows retrieved: %ld", ++m_processed );
-    m_parent->SetStatusText( temp, 0 );
 }
 
 void TableEditView::CompleteRetrieval(const std::vector<std::wstring> &errorMessages)
@@ -208,4 +213,30 @@ void TableEditView::CompleteRetrieval(const std::vector<std::wstring> &errorMess
         wxMessageBox( (*it) );
     m_grid->EndBatch();
     m_grid->SetFocus();
+    m_queryexecuting = false;
+    m_tb->SetToolNormalBitmap( wxID_QUERYCANCEL, wxBitmap( queryexec ) );
+}
+
+void TableEditView::OnCancelQuery(wxCommandEvent &event)
+{
+    if( m_queryexecuting )
+    {
+        m_handler->CancelProcessing();
+        m_tb->SetToolNormalBitmap( wxID_QUERYCANCEL, wxBitmap( queryexec ) );
+    }
+    else
+    {
+        m_grid->ClearGrid();
+        m_grid->BeginBatch();
+        m_processed = 0;
+        m_tb->SetToolNormalBitmap( wxID_QUERYCANCEL, wxBitmap( querycancel ) );
+        m_handler = new DBTableEdit( m_db, m_table->GetSchemaName(), m_table->GetTableName(), m_retriever );
+        if( m_handler->Run() != wxTHREAD_NO_ERROR )
+        {
+            wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
+            delete m_handler;
+            m_handler = NULL;
+        }
+    }
+    m_queryexecuting = !m_queryexecuting;
 }
