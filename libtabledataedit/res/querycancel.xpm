@@ -1,5 +1,5 @@
 /* XPM */
-static char *querycancel[] = {
+static const char *querycancel[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 13 1 ",
 "  c black",
