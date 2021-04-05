@@ -36,7 +36,9 @@
 #include "wx/docmdi.h"
 #include "wx/artprov.h"
 #include "wx/grid.h"
+#include "wx/mstream.h"
 #include "database.h"
+#include "imagecellrenderer.h"
 #include "dataretriever.h"
 #include "dbtableedit.h"
 #include "tableeditdocument.h"
@@ -200,6 +202,15 @@ void TableEditView::DisplayRecords(const std::vector<DataEditFiield> &row)
             {
                 wxString temp( (it)->value.stringValue );
                 m_grid->SetCellValue( m_processed, i++, temp );
+            }
+            if( ( it )->type == BLOB_TYPE )
+            {
+                wxMemoryInputStream stream( (it)->value.blobValue, (it)->m_size );
+                wxImage image(  stream );
+                if( image.IsOk () )
+                {
+//                    m_grid->SetCellRenderer( m_processed, i++, new ImageCellRenderer( image ) );
+                }
             }
         }
         wxString temp = wxString::Format( "Press Cancel to stop retrieval. Rows retrieved: %ld", ++m_processed );

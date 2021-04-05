@@ -38,6 +38,7 @@
     <ClInclude Include="dataeditdoctemplate.h" />
     <ClInclude Include="dataretriever.h" />
     <ClInclude Include="dbtableedit.h" />
+    <ClInclude Include="imagecellrenderer.h" />
     <ClInclude Include="tableeditdocument.h" />
     <ClInclude Include="tableeditview.h" />
   </ItemGroup>
@@ -46,6 +47,7 @@
     <ClCompile Include="dataeditdoctemplate.cpp" />
     <ClCompile Include="dataretriever.cpp" />
     <ClCompile Include="dbtableedit.cpp" />
+    <ClCompile Include="imagecellrenderer.cpp" />
     <ClCompile Include="tableeditdocument.cpp" />
     <ClCompile Include="tableeditview.cpp" />
   </ItemGroup>
