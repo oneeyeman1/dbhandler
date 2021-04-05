@@ -3,7 +3,7 @@
 #ifndef _IMAGECELLRENDERER
 #define _IMAGECELLRENDERER
 
-class ImageCellRenderer : wxGridCellStringRenderer
+class ImageCellRenderer : public wxGridCellStringRenderer
 {
 public:
     ImageCellRenderer(wxImage image);

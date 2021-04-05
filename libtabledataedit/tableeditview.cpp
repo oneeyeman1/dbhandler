@@ -209,7 +209,7 @@ void TableEditView::DisplayRecords(const std::vector<DataEditFiield> &row)
                 wxImage image(  stream );
                 if( image.IsOk () )
                 {
-//                    m_grid->SetCellRenderer( m_processed, i++, new ImageCellRenderer( image ) );
+                    m_grid->SetCellRenderer( m_processed, i++, new ImageCellRenderer( image ) );
                 }
             }
         }
