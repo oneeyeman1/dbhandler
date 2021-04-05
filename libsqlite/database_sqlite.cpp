@@ -2062,7 +2062,7 @@ int SQLiteDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<
                 row.push_back( DataEditFiield( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( m_stmt, i ) ) ) ) );
                 break;
             case SQLITE_BLOB:
-                row.push_back( DataEditFiield( sqlite3_column_blob( m_stmt, i ) ) );
+                row.push_back( DataEditFiield( sqlite3_column_blob( m_stmt, i ), sqlite3_column_bytes( m_stmt, i ) ) );
                 break;
             }
         }

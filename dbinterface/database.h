@@ -70,7 +70,7 @@ struct DataEditFiield
 
     DataEditFiield(const std::wstring &myvalue) : type( STRING_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
 
-    DataEditFiield(const void *myvalue) : type( BLOB_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
+    DataEditFiield(const void *myvalue, int size) : type( BLOB_TYPE ), m_size( size ), m_precision( 0 ), value( myvalue ) {}
 
 #if defined _MSC_VER
     DataEditFiield(__int64 myvalue) : type( INTEGER_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
