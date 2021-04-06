@@ -159,7 +159,7 @@ void TableEditView::OnDraw(wxDC *dc)
 {
 }
 
-void TableEditView::ThreadEventHandler(wxThreadEvent &event)
+void TableEditView::ThreadEventHandler(wxThreadEvent &WXUNUSED(event))
 {
     {
 #if defined __WXMSW__ && _MSC_VER < 1900
@@ -210,6 +210,7 @@ void TableEditView::DisplayRecords(const std::vector<DataEditFiield> &row)
                 if( image.IsOk () )
                 {
                     m_grid->SetCellRenderer( m_processed, i++, new ImageCellRenderer( image ) );
+                    m_grid->SetReadOnly( m_processed, i );
                 }
             }
         }
@@ -222,13 +223,14 @@ void TableEditView::CompleteRetrieval(const std::vector<std::wstring> &errorMess
 {
     for( std::vector<std::wstring>::const_iterator it = errorMessages.begin(); it < errorMessages.end(); ++it )
         wxMessageBox( (*it) );
+    m_grid->AutoSize();
     m_grid->EndBatch();
     m_grid->SetFocus();
     m_queryexecuting = false;
     m_tb->SetToolNormalBitmap( wxID_QUERYCANCEL, wxBitmap( queryexec ) );
 }
 
-void TableEditView::OnCancelQuery(wxCommandEvent &event)
+void TableEditView::OnCancelQuery(wxCommandEvent &WXUNUSED(event))
 {
     if( m_queryexecuting )
     {
