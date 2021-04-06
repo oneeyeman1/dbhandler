@@ -616,34 +616,37 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 tables.push_back( m_selectTableName[0]->GetTableName() );
         }
     }
-    ((DrawingDocument *) GetDocument())->AddTables( tables );
-    m_selectTableName = ((DrawingDocument *) GetDocument())->GetDBTables();
-    ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
-    if( m_type == QueryView )
+    if( tables.size() > 0 )
     {
-        if( query != L"\n" )
+        ((DrawingDocument *) GetDocument())->AddTables( tables );
+        m_selectTableName = ((DrawingDocument *) GetDocument())->GetDBTables();
+        ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
+        if( m_type == QueryView )
         {
-            int i = 0;
-            std::vector<MyErdTable *> dbTables = ((DrawingDocument *)GetDocument())->GetTables();
-            for( std::vector<MyErdTable *>::iterator it = dbTables.begin(); it < dbTables.end(); ++it )
+            if( query != L"\n" )
             {
-                const DatabaseTable *dbTable = (*it)->GetTable();
-                for( std::vector<TableField *>::const_iterator it1 = dbTable->GetFields().begin(); it1 < dbTable->GetFields().end(); ++it1 )
+                int i = 0;
+                std::vector<MyErdTable *> dbTables = ((DrawingDocument *)GetDocument())->GetTables();
+                for( std::vector<MyErdTable *>::iterator it = dbTables.begin(); it < dbTables.end(); ++it )
                 {
-                    long item = m_page3->GetSourceList()->InsertItem( i++, "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
-                    m_page3->GetSourceList()->SetItemPtrData( item, wxPtrToUInt( *it1) );
+                    const DatabaseTable *dbTable = (*it)->GetTable();
+                    for( std::vector<TableField *>::const_iterator it1 = dbTable->GetFields().begin(); it1 < dbTable->GetFields().end(); ++it1 )
+                    {
+                        long item = m_page3->GetSourceList()->InsertItem( i++, "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
+                        m_page3->GetSourceList()->SetItemPtrData( item, wxPtrToUInt( *it1) );
+                    }
                 }
+                m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
+                m_page3->GetDestList()->SetColumnWidth( 0, m_page3->GetDestList()->GetSize().GetWidth() );
+                m_page6->SetSyntaxText( query );
+                m_edit->SetText( query );
             }
-            m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
-            m_page3->GetDestList()->SetColumnWidth( 0, m_page3->GetDestList()->GetSize().GetWidth() );
-            m_page6->SetSyntaxText( query );
-            m_edit->SetText( query );
-        }
-        if( quickSelect && m_selectTableName.size() == 1 )
-            m_canvas->AddQuickQueryFields( m_selectTableName[0]->GetTableName(), m_queryFields, quickSelect );
-        if( quickSelect && m_selectTableName.size() > 0 )
-        {
-            PopuateQueryCanvas();
+            if( quickSelect && m_selectTableName.size() == 1 )
+                m_canvas->AddQuickQueryFields( m_selectTableName[0]->GetTableName(), m_queryFields, quickSelect );
+            if( quickSelect && m_selectTableName.size() > 0 )
+            {
+                PopuateQueryCanvas();
+            }
         }
     }
 }
