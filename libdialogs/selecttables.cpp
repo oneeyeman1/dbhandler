@@ -57,7 +57,10 @@ void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames)
     wxArrayInt selections;
     m_tables->GetSelections( selections );
     for( size_t i = 0; i < selections.GetCount(); i++ )
-        tableNames.push_back( m_tables->GetString( selections.Item( i ) ) );
+    {
+        wxString schema = dynamic_cast<wxStringClientData *>( m_tables->GetClientObject( i ) )->GetData();
+        tableNames.push_back( schema + L"." + m_tables->GetString( selections.Item( i ) ) );
+    }
 }
 
 void SelectTables::set_properties()
@@ -136,6 +139,7 @@ void SelectTables::OnOpenTables(wxCommandEvent &event)
 void SelectTables::FillTableList(bool sysTableIncluded)
 {
     m_tables->Clear();
+    bool insert = false;
     std::wstring type = m_db->GetTableVector().m_type;
     std::wstring subType = m_db->GetTableVector().m_subtype;
     std::map<std::wstring,std::vector<DatabaseTable *> > tables = m_db->GetTableVector().m_tables;
@@ -155,9 +159,9 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                         if( schemaName == L"" )
                             schemaName = L"master";
                         if( !sysTableIncluded && ( ( tableName.substr( 0, 6 ) != L"sqlite" ) && ( tableName.substr( 0, 3 ) != L"sys" ) ) )
-                            m_tables->Append( tableName, &schemaName );
+                            insert = true;
                         else if( sysTableIncluded )
-                            m_tables->Append( tableName, &schemaName );
+                            insert = true;
                     }
                     else if( ( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" ) ||
                                ( type == L"ODBC" && subType == L"Sybase SQL Anywhere" ) || type == L"Sybase SQL Anywhere" )
@@ -167,11 +171,11 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                         if( !sysTableIncluded )
                         {
                             if( ( ( schemaName != L"sys" ) && ( schemaName != L"INFORMATION_SCHEMA" ) && schemaName != L"DBO" && schemaName != L"SYS" ) )
-                                m_tables->Append( tableName );
+                                insert = true;
                         }
                         else
                         {
-                            m_tables->Append( tableName );
+                            insert = true;
                         }
                     }
                     else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
@@ -180,7 +184,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                             continue;
                         if( schemaName == L"information_schema" && !sysTableIncluded )
                             continue;
-                        m_tables->Append( tableName );
+                        insert = true;
                     }
                     else if( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" )
                     {
@@ -188,8 +192,11 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                             continue;
                         if( ( schemaName == L"information_schema" || schemaName == L"pg_catalog" ) && !sysTableIncluded )
                             continue;
-                        m_tables->Append( tableName, &schemaName );
+                        insert = true;
                     }
+                    if( insert )
+                        m_tables->Append( tableName, new wxStringClientData( schemaName ) );
+                    insert = false;
                 }
             }
         }
