@@ -5100,7 +5100,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         memset( szTableName, '\0', query.size() + 2 );
                         uc_to_str_cpy( szTableName, query );
                         ret = SQLExecDirect( stmt_colattr, szTableName, SQL_NTS );
-                        delete szTableName;
+                        delete[] szTableName;
                         szTableName = NULL;
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
