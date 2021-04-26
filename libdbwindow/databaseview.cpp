@@ -829,7 +829,6 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
     wxString tableName, schemaName, ownerName;
     MyErdTable *erdTable = NULL;
     ConstraintSign *sign = NULL;
-    Constraint *constraint = NULL;
     if( event.GetId() == wxID_PROPERTIES )
     {
         if( !shape )
@@ -1385,7 +1384,6 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
         wxString wherePart = query.substr( query.find( "WHERE" ) );
         wherePart = wherePart.substr( 0, wherePart.find( "HAVING" ) );
         WhereHavingLines line = *(WhereHavingLines *) event.GetClientData();
-        int pos = wherePart.find( line.m_old );
     }
     if( event.GetEventObject() == m_page1 || event.GetEventObject() == m_page3 )
     {
