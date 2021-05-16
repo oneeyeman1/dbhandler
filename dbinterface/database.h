@@ -18,6 +18,7 @@
 #define DOUBLE_TYPE  2
 #define STRING_TYPE  3
 #define BLOB_TYPE    4
+#define WSTRING_TYPE 5
 
 enum FK_ONUPDATE
 {
@@ -45,11 +46,13 @@ struct DataEditFiield
         void *blobValue;
         int intValue;
         double doubleValue;
+        std::string strValue;
         std::wstring stringValue;
         ValuueType() : stringValue()  {}
         ValuueType(int value) : intValue( value ) {}
         ValuueType(double value) : doubleValue( value ) {}
         ValuueType(const std::wstring &value) : stringValue( value ) {}
+        ValuueType(const std::string &value) : strValue( value ) {}
         ValuueType(const wchar_t *value) : stringValue( value ) {}
         ValuueType(const void *value) : blobValue( const_cast<void *>( value ) ) {}
         ValuueType(const ValuueType &) = delete;
@@ -68,9 +71,11 @@ struct DataEditFiield
 
     DataEditFiield(double myvalue, int size, int precision) : type( DOUBLE_TYPE ), m_size( size ), m_precision( precision ), value( myvalue ) { }
 
-    DataEditFiield(const std::wstring &myvalue) : type( STRING_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
+    DataEditFiield(const std::wstring &myvalue) : type( WSTRING_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
 
     DataEditFiield(const void *myvalue, int size) : type( BLOB_TYPE ), m_size( size ), m_precision( 0 ), value( myvalue ) {}
+
+    DataEditFiield(const std::string &myvalue) : type( STRING_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
 
 #if defined _MSC_VER
     DataEditFiield(__int64 myvalue) : type( INTEGER_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
@@ -88,11 +93,14 @@ struct DataEditFiield
         case DOUBLE_TYPE:
             value.doubleValue = field.value.doubleValue;
             break;
-        case STRING_TYPE:
+        case WSTRING_TYPE:
             value.stringValue = field.value.stringValue;
             break;
         case BLOB_TYPE:
             value.blobValue = field.value.blobValue;
+            break;
+        case STRING_TYPE:
+            value.strValue = field.value.strValue;
             break;
         }
         type = field.type;
@@ -105,7 +113,7 @@ struct DataEditFiield
     ~DataEditFiield()
     {
         using std::wstring;
-        if( type ==3 )
+        if( type == WSTRING_TYPE )
             value.stringValue.~wstring();
     }
 };
