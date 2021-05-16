@@ -198,9 +198,14 @@ void TableEditView::DisplayRecords(const std::vector<DataEditFiield> &row)
     {
         for( std::vector<DataEditFiield>::const_iterator it = row.begin(); it < row.end(); ++it )
         {
-            if( (it)->type == STRING_TYPE )
+            if( (it)->type == WSTRING_TYPE )
             {
                 wxString temp( (it)->value.stringValue );
+                m_grid->SetCellValue( m_processed, i++, temp );
+            }
+            if( (it) ->type == STRING_TYPE )
+            {
+                wxString temp( (it)->value.strValue );
                 m_grid->SetCellValue( m_processed, i++, temp );
             }
             if( ( it )->type == BLOB_TYPE )
