@@ -125,8 +125,7 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
     {
         for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end() && !found; it1++ )
         {
-            if( ( dbType != L"SQLite" && (*it).ToStdWstring() == (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() ) ||
-                ( dbType == L"SQLite" && (*it).ToStdWstring() == (*it1)->GetTableName() ) )
+            if( (*it).ToStdWstring() == (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() )
             {
                 m_dbTables.push_back( (*it1 ) );
                 DatabaseTable *dbTable = (*it1);
