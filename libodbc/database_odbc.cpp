@@ -3773,11 +3773,20 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
                     }
                     else
                     {
-                        retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_DEFAULT, SQL_WVARCHAR, 1024, NULL, tname, 0, &cbTableName );
+                        retcode = SQLDescribeParam( stmt, 1, &dataType[1], &parameterSize[1], &decimalDigit[1], &nullable[1] );
                         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, 1, stmt );
                             result = 1;
+                        }
+                        else
+                        {
+                            retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_DEFAULT, dataType[1], parameterSize[1], decimalDigit[1], tname, 0, &cbTableName );
+                            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt );
+                                result = 1;
+                            }
                         }
                     }
                     if( !result && pimpl->m_subtype != L"Microsoft SQL Server" && pimpl->m_subtype != L"Sybase" && pimpl->m_subtype != L"Sybase SQL Anywhere" )
@@ -5108,7 +5117,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         memset( szTableName, '\0', query.size() + 2 );
                         uc_to_str_cpy( szTableName, query );
                         ret = SQLExecDirect( stmt_colattr, szTableName, SQL_NTS );
-                        delete szTableName;
+                        delete[] szTableName;
                         szTableName = NULL;
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
