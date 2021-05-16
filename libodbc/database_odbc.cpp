@@ -343,6 +343,14 @@ void ODBCDatabase::str_to_uc_cpy(std::wstring &dest, const SQLWCHAR *src)
     }
 }
 
+void ODBCDatabase::str_to_c_cpy(std::string &dest, const SQLCHAR *src)
+{
+    while( src && *src )
+    {
+        dest += *src++;
+    }
+}
+
 bool ODBCDatabase::equal(SQLWCHAR *dest, SQLWCHAR *src)
 {
     bool eq = true;
@@ -6292,6 +6300,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 if( pimpl->m_subtype == L"Microsoft SQL Server" && tempSchemaName == L"sys" )
                     tempTableName = tempSchemaName + L"." + tempTableName;
                 DatabaseTable *new_table = new DatabaseTable( tempTableName, tempSchemaName, fields, foreign_keys );
+                new_table->SetNumberOfFields( fields.size() );
                 for( std::vector<TableField *>::iterator it = fields.begin (); it < fields.end (); ++it )
                 {
                     if( (*it)->IsPrimaryKey() )
@@ -6609,11 +6618,14 @@ int ODBCDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<st
     SQLSMALLINT columnCount, *nameLen = nullptr, *dataType = nullptr, *decimal = nullptr, *nullable = nullptr;
     SQLULEN  *columnSize = nullptr;
     SQLRETURN ret;
-    SQLWCHAR *fieldString = nullptr;
+    SQLCHAR *fieldString = nullptr;
+    SQLWCHAR *fieldStr = nullptr;
+    char *fieldBlob = nullptr;
     SQLINTEGER fieldInt;
     SQLFLOAT fieldFloat;
     SQLLEN *columnDataLen = nullptr;
     std::wstring strCol;
+    std::string stringCol;
     if( m_fieldsInRecordSet == 0 )
     {
         ret = SQLNumResultCols( m_hstmt, &columnCount );
@@ -6660,69 +6672,169 @@ int ODBCDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<st
                     case SQL_LONGVARCHAR:
                         ctype = SQL_C_CHAR;
                         valueType = 3;
-                        fieldString = new SQLWCHAR[columnSize[i] + 2];
+                        fieldString = new SQLCHAR[columnSize[i] + 2];
                         memset( fieldString, '\0', columnSize[i] + 2 );
                         ret = SQLGetData( m_hstmt, i + 1, ctype, fieldString, columnSize[i], &columnDataLen[i] );
-                        str_to_uc_cpy( strCol, fieldString );
-                        row.push_back( DataEditFiield( strCol ) );
-                        delete fieldString;
-                        fieldString = nullptr;
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            str_to_c_cpy( stringCol, fieldString );
+                            row.push_back( DataEditFiield( stringCol ) );
+                            delete fieldString;
+                            fieldString = nullptr;
+                        }
+                        else
+                            result = 1;
                         break;
                     case SQL_WCHAR:
                     case SQL_WVARCHAR:
                     case SQL_WLONGVARCHAR:
                         ctype = SQL_C_WCHAR;
                         valueType = 3;
-                        fieldString = new SQLWCHAR[columnSize[i] + 2];
-                        memset( fieldString, '\0', columnSize[i] + 2 );
+                        fieldStr = new SQLWCHAR[columnSize[i] + 2];
+                        memset( fieldStr, '\0', columnSize[i] + 2 );
                         ret = SQLGetData( m_hstmt, i + 1, ctype, fieldString, columnSize[i], &columnDataLen[i] );
-                        str_to_uc_cpy( strCol, fieldString );
-                        row.push_back( DataEditFiield( strCol ) );
-                        delete fieldString;
-                        fieldString = nullptr;
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            str_to_uc_cpy( strCol, fieldStr );
+                            row.push_back( DataEditFiield( strCol ) );
+                            delete fieldString;
+                            fieldString = nullptr;
+                        }
+                        else
+                            result = 1;
                         break;
                     case SQL_DECIMAL:
                     case SQL_NUMERIC:
                     case SQL_SMALLINT:
-                        ctype = SQL_C_SSHORT;
+                        if( dataType[i] == SQL_NUMERIC )
+                            ctype = SQL_C_NUMERIC;
+                        else
+                            ctype = SQL_C_SSHORT;
                         valueType = 1;
-                        ret = SQLBindCol( m_hstmt, i + 1, ctype, &fieldInt, 0, &columnDataLen[i] );
-                        row.push_back( DataEditFiield( std::to_wstring( fieldInt ) ) );
+                        ret = SQLGetData( m_hstmt, i + 1, ctype, &fieldInt, 0, &columnDataLen[i] );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            row.push_back( DataEditFiield( std::to_wstring( fieldInt ) ) );
+                        }
+                        else
+                            result = 1;
                         break;
                     case SQL_INTEGER:
                         ctype = SQL_C_SLONG;
                         valueType = 1;
                         ret = SQLGetData( m_hstmt, i + 1, ctype, &fieldInt, columnSize[i], &columnDataLen[i] );
-                        row.push_back( DataEditFiield( std::to_wstring( fieldInt ) ) );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            row.push_back( DataEditFiield( std::to_wstring( fieldInt ) ) );
+                        }
+                        else
+                            result = 1;
                         break;
                     case SQL_REAL:
                         ctype = SQL_C_FLOAT;
                         valueType = 2;
                         ret = SQLBindCol( m_hstmt, i + 1, ctype, &fieldFloat, columnSize[i], &columnDataLen[i] );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            row.push_back( DataEditFiield( fieldFloat, columnSize[i], decimal[i] ) );
+                        }
+                        else
+                            result = 1;
                         break;
                     case SQL_FLOAT:
                     case SQL_DOUBLE:
                         ctype = SQL_C_DOUBLE;
                         valueType = 2;
                         ret = SQLBindCol( m_hstmt, i + 1, ctype, &fieldFloat, columnSize[i], &columnDataLen[i] );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            row.push_back( DataEditFiield( fieldFloat, columnSize[i], decimal[i] ) );
+                        }
+                        else
+                            result = 1;
+                        break;
                     case SQL_BIT:
                         ctype = SQL_C_BIT;
                         valueType = 3;
+                        ret = SQLGetData( m_hstmt, i + 1, ctype, &fieldInt, columnSize[i], &columnDataLen[i] );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            row.push_back( DataEditFiield( std::to_wstring( fieldInt ) ) );
+                        }
+                        else
+                            result = 1;
                         break;
                     case SQL_TINYINT:
                         ctype = SQL_C_STINYINT;
                         valueType = 1;
+                        ret = SQLGetData( m_hstmt, i + 1, ctype, &fieldInt, columnSize[i], &columnDataLen[i] );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            row.push_back( DataEditFiield( std::to_wstring( fieldInt ) ) );
+                        }
+                        else
+                            result = 1;
                         break;
                     case SQL_BIGINT:
                         ctype = SQL_C_SBIGINT;
                         valueType = 1;
+                        ret = SQLGetData( m_hstmt, i + 1, ctype, &fieldInt, columnSize[i], &columnDataLen[i] );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            row.push_back( DataEditFiield( std::to_wstring( fieldInt ) ) );
+                        }
+                        else
+                            result = 1;
                         break;
                     case SQL_BINARY:
                     case SQL_VARBINARY:
                     case SQL_LONGVARBINARY:
                         ctype = SQL_C_BINARY;
                         valueType = 3;
+                        fieldBlob = new char[columnSize[i]];
+                        ret = SQLGetData( m_hstmt, i + 1, ctype, &fieldBlob, columnSize[i], &columnDataLen[i] );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                        }
+                        else
+                            result = 1;
                         break;
+                    case SQL_TYPE_DATE:
+                    case SQL_TYPE_TIME:
+                    case SQL_TYPE_TIMESTAMP:
+                    case SQL_INTERVAL_MONTH:
+                    case SQL_INTERVAL_YEAR:
+                    case SQL_INTERVAL_YEAR_TO_MONTH:
+                    case SQL_INTERVAL_DAY:
+                    case SQL_INTERVAL_HOUR:
+                    case SQL_INTERVAL_MINUTE:
+                    case SQL_INTERVAL_SECOND:
+                    case SQL_INTERVAL_DAY_TO_HOUR:
+                    case SQL_INTERVAL_DAY_TO_MINUTE:
+                    case SQL_INTERVAL_DAY_TO_SECOND:
+                    case SQL_INTERVAL_HOUR_TO_MINUTE:
+                    case SQL_INTERVAL_HOUR_TO_SECOND:
+                    case SQL_INTERVAL_MINUTE_TO_SECOND:
+                        ctype = SQL_C_WCHAR;
+                        valueType = 3;
+                        fieldStr = new SQLWCHAR[columnSize[i] + 2];
+                        memset( fieldStr, '\0', columnSize[i] + 2 );
+                        ret = SQLGetData( m_hstmt, i + 1, ctype, fieldString, columnSize[i], &columnDataLen[i] );
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            str_to_uc_cpy( strCol, fieldStr );
+                            row.push_back( DataEditFiield( strCol ) );
+                            delete fieldString;
+                            fieldString = nullptr;
+                        }
+                        else
+                            result = 1;
+                        break;
+                    }
+                    if( result )
+                    {
+                        GetErrorMessage( errorMsg, 1, m_hstmt );
+                       result = 1;
                     }
                 }
                 else
