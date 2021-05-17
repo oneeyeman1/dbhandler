@@ -5173,7 +5173,11 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                         break;
                                     }
                                     if( autoincrement == SQL_TRUE )
-                                        autoinc_fields.push_back( columnNames[i] );
+                                    {
+                                        std::wstring colName;
+                                        str_to_uc_cpy( colName, columnNames[i] );
+                                        autoinc_fields.push_back( colName );
+                                    }
                                 }
                             }
                         }
