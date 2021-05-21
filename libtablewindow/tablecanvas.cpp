@@ -34,6 +34,10 @@
 #include "typecombobox.h"
 #include "tablecanvas.h"
 
+TableCanvas::TableCanvas (wxView *view, const wxPoint &pt, Database *db, DatabaseTable *table, const wxString &fieldName, wxWindow *parent)
+{
+}
+/*
 TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, DatabaseTable *table, const wxString &fieldName, wxWindow *parent) : wxWindow(view->GetFrame(), wxID_ANY)
 {
     m_mainPanel = new wxPanel( this, wxID_ANY );
@@ -178,3 +182,4 @@ TableCanvas::TableCanvas(wxView *view, const wxPoint &pt, Database *db, Database
     mainSizer->Fit( this );
     Layout();
 }
+*/

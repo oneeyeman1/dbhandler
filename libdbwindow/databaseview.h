@@ -90,6 +90,8 @@ public:
 #endif*/
     DrawingDocument* GetDocument();
 protected:
+    void CreateDBMenu();
+    void CreateQueryMenu();
     void SetQueryMenu(const int queryType);
     void SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const TableField *field, long sortType = -1);
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);

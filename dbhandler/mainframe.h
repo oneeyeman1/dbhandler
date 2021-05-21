@@ -22,10 +22,6 @@ protected:
     void Connect();
 private:
     void InitToolBar(wxToolBar* toolBar);
-    void InitMenuBar(int id);
-    void DatabaseMenu();
-    void QueryMenu();
-    void TableMenu();
     void OnConfigureODBC(wxCommandEvent &event);
     void OnDatabaseProfile(wxCommandEvent &event);
     void OnTable(wxCommandEvent &event);
@@ -37,7 +33,6 @@ private:
     void OnDetachDatabase(wxCommandEvent &event);
     void OnUpdateUIDetachDB(wxUpdateUIEvent &event);
     Database *m_db;
-    wxMenu *m_menuFile;
     wxDocManager *m_manager;
 #if defined __WXMSW__ || defined __WXGTK__
     wxToolBar *m_tb;

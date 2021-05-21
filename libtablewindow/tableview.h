@@ -18,7 +18,8 @@ public:
     void OnLogUpdateUI(wxUpdateUIEvent &event);
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
     TableDocument* GetDocument();
-
+protected:
+    void CreateMenu();
 private:
     bool m_isCreated;
     wxToolBar *m_tb;

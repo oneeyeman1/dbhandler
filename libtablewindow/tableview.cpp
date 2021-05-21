@@ -21,10 +21,12 @@
 
 #include <string>
 #include "wx/docview.h"
+#include "wx/grid.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/cmdproc.h"
 #include "database.h"
+#include "tablecanvas.h"
 #include "tabledoc.h"
 #include "tableview.h"
 
@@ -269,4 +271,24 @@ void TableView::OnActivateView(bool activate, wxView *activeView, wxView *deacti
     else
     {
     }
+}
+
+void TableView::CreateMenu()
+{
+    auto bar = new wxMenuBar;
+    wxMenu *edit_menu = new wxMenu;
+    edit_menu->Append( wxID_UNDO, _( "&Undo\tCtrl+Z" ), _( "Undo operation" ) );
+    edit_menu->AppendSeparator();
+    edit_menu->Append( wxID_EDITCUTCOLUMN, _( "Cu&t Column" ), _( "Cut Column" ) );
+    edit_menu->Append( wxID_EDITCOPYCOLUMN, _( "&Copy Column" ), _( "Copy Column" ) );
+    edit_menu->Append( wxID_EDITPASTECOLUMN, _( "&Paste Column" ), _( "Paste Column" ) );
+    edit_menu->Append( wxID_EDITINSERTCOLUMN, _( "Insert Column" ), _( "Insert Column" ) );
+    edit_menu->Append( wxID_EDITDELETECOLUMN, _( "Delete Column" ), _( "Delete Column" ) );
+    edit_menu->AppendSeparator();
+    edit_menu->Append( wxID_EDITTABLEPROPERTY, _( "Table Property" ), _( "Table Property" ) );
+    bar->Insert( 1, edit_menu, _( "Edit" ) );
+    wxMenu *design_menu = new wxMenu;
+    design_menu->Append( wxID_DESIGNSYNTAX, _( "Syntax" ), _( "Syntax" ) );
+    bar->Insert( 2, design_menu, _( "Design" ) );
+    m_frame->SetMenuBar( bar );
 }

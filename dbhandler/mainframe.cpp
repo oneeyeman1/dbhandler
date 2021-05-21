@@ -76,13 +76,13 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_pgLogfile = config->Read( "Logfile", "" );
     config->SetPath( path );
     m_manager = manager;
-    m_menuFile = new wxMenu;
-    m_menuFile->Append( wxID_NEW );
-    m_menuFile->Append( wxID_OPEN );
-    m_menuFile->AppendSeparator();
-    m_menuFile->Append( wxID_EXIT );
+    auto menuFile = new wxMenu;
+    menuFile->Append( wxID_NEW );
+    menuFile->Append( wxID_OPEN );
+    menuFile->AppendSeparator();
+    menuFile->Append( wxID_EXIT );
     wxMenuBar *menubar = new wxMenuBar;
-    menubar->Append( m_menuFile, wxGetStockLabel( wxID_FILE ) );
+    menubar->Append( menuFile, wxGetStockLabel( wxID_FILE ) );
     wxMenu *help= new wxMenu;
     help->Append( wxID_ABOUT );
     menubar->Append( help, wxGetStockLabel( wxID_HELP ) );
@@ -188,138 +188,6 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), bitmaps[5], bitmaps[5], wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );
     toolBar->SetName( "PowerBar" );
     toolBar->Realize();
-}
-
-void MainFrame::InitMenuBar(int id)
-{
-    wxPoint pt;
-    wxSize size;
-    wxMenuBar *mbar = GetMenuBar();
-    for( size_t i = 1; i < mbar->GetMenuCount() - 1; i++ )
-        mbar->Remove( i );
-    if( m_menuFile->FindItem( wxID_NEW ) )
-        m_menuFile->Delete( wxID_NEW );
-    if( m_menuFile->FindItem( wxID_OPEN ) )
-        m_menuFile->Delete( wxID_OPEN );
-    m_menuFile->Insert( 0, wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
-    switch( id )
-    {
-        case wxID_DATABASE:
-            DatabaseMenu();
-            break;
-        case wxID_TABLE:
-            TableMenu();
-            break;
-        case wxID_QUERY:
-            QueryMenu();
-            break;
-    }
-}
-
-void MainFrame::DatabaseMenu()
-{
-	int pos = 2;
-    m_menuFile->Insert( pos++, wxID_CREATEDATABASE, _( "Create Database..." ), _( "Create Database" ) );
-	if( m_db->GetTableVector().GetDatabaseType() == L"SQLite" )
-		m_menuFile->Insert( pos++, wxID_ATTACHDATABASE, _( "Attach Database..." ), _( "Attach Database" ) );
-    m_menuFile->Insert( pos++, wxID_DELETEDATABASE, _( "Delete Database..." ), _( "Delete Database" ) );
-	if( m_db->GetTableVector().GetDatabaseType() == L"SQLite" )
-		m_menuFile->Insert( pos++, wxID_DETACHDATABASE, _( "Detach Database" ), _( "Detach Database" ) );
-    m_menuFile->InsertSeparator( pos );
-    wxMenu *menuObject = new wxMenu();
-    menuObject->Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select tables" ) );
-    wxMenu *menuNewObject = new wxMenu();
-    menuNewObject->Append( wxID_OBJECTNEWTABLE, _( "Table..." ), _( "New Table" ) );
-    menuNewObject->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );
-    menuNewObject->Append( wxID_OBJECTNEWVIEW, _( "View" ), _( "New View" ) );
-    menuNewObject->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
-    menuObject->AppendSubMenu( menuNewObject, _( "New" ), _( "New Object" ) );
-    menuObject->Append( wxID_DROPOBJECT, _( "Drop" ), _( "Drop database object" ) );
-    menuObject->AppendSeparator();
-    menuObject->Append( wxID_PROPERTIES, _( "Properties..." ), _( "Properties" ) );
-    GetMenuBar()->Insert( 1, menuObject, _( "&Object" ) );
-    wxMenu *menuDesign = new wxMenu();
-    menuDesign->Append( wxID_STARTLOG, _( "Start Log" ), _( "Start log" ) );
-    menuDesign->Append( wxID_STOPLOG, _( "Stop Log" ), _( "Stop log" ) );
-    menuDesign->Append( wxID_SAVELOG, _( "Save Log As..." ), _( "Save log to disk file" ) );
-    menuDesign->Append( wxID_CLEARLOG, _( "Clear Log" ), _( "Discard content of the log" ) );
-    menuDesign->AppendSeparator();
-    GetMenuBar()->Insert( 2, menuDesign, _( "&Design" ) );
-}
-
-void MainFrame::QueryMenu()
-{
-    m_menuFile->Insert( 2, wxID_NEW, _( "New...\tCtrl+N" ), _( "Create new query" ) );
-    m_menuFile->Insert( 3, wxID_OPEN, _( "Open...\tCtrl+O" ), _( "Open an existing query" ) );
-    m_menuFile->InsertSeparator( 4 );
-    auto editMenu = new wxMenu;
-    editMenu->Append( wxID_UNDOALL, _( "Undo All" ), _( "Undo All" ) );
-    editMenu->AppendSeparator();
-    editMenu->Append( wxID_CUT, _( "Cut" ), _( "Cut" ) );
-    editMenu->Append( wxID_COPY, _( "Copy" ), _( "Copy" ) );
-    editMenu->Append( wxID_PASTE, _( "Paste" ), _( "Paste" ) );
-    editMenu->Append( wxID_CLEAR, _( "Clear" ), _( "Clear" ) );
-    editMenu->AppendSeparator();
-    auto select = new wxMenu;
-    select->Append( wxID_SELECTALL, _( "Select All" ), _( "Select All" ) );
-    select->Append( wxID_SELECTABOVE, _( "Select Above" ), _( "Select Above" ) );
-    select->Append( wxID_SELECTBELOW, _( "Select Below" ), _( "Select Below" ) );
-    select->Append( wxID_SELECTLEFT, _( "Select Left" ), _( "Select Left" ) );
-    select->Append( wxID_SELECTRIGHT, _( "Select Right" ), _( "Select Right" ) );
-    select->Append( wxID_SELECTCOLUMNS, _( "Select Columns" ), _( "Select Columns" ) );
-    select->Append( wxID_SELECTTEXT, _( "Select Text" ), _( "Select Text" ) );
-    editMenu->AppendSubMenu( select, _( "Select" ), _( "Select" ) );
-    editMenu->Append( wxID_BRINGTOFRONT, _( "Bring to Front" ), _( "Bring to Front" ) );
-    editMenu->Append( wxID_SENDTOBACK, ( "Send to Back" ), ( "Send to Back" ) );
-    editMenu->AppendSeparator();
-    auto format = new wxMenu;
-    format->Append( wxID_FORMATCURRENCY, _( "Currency" ), _( "Currency" ) );
-    format->Append( wxID_FORMATFORMAT, _( "Format" ), _( "Format" ) );
-    editMenu->AppendSubMenu( format, _( "Format" ), _( "Format" ) );
-    editMenu->Append( wxID_PROPERTIES, _( "Properties" ), ( "Properties" ) );
-    editMenu->AppendCheckItem( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ) );
-    editMenu->Append( wxID_PREVIEW, _( "Preview" ), _( "Preview" ) );
-    editMenu->AppendSeparator();
-    editMenu->Append( wxID_SELECTTABLE, _( "Select Tables..." ), _( "Select additional tables for query" ) );
-    editMenu->Append( wxID_ARRANGETABLES, _( "Arrange Tables" ), _( "Arrange Tables" ) );
-    editMenu->Append( wxID_UNIONS, _( "Unions..." ), _( "Unions" ) );
-    editMenu->Append( wxID_RETRIEVEARGS, _( "Retrieval Arguments..." ), _( "Define Retrieval Arguments" ) );
-    editMenu->Append( wxID_CHECKOPTION, _( "Check Option" ), _( "Check Option" ) );
-    editMenu->AppendCheckItem( wxID_DISTINCT, _( "Distinct" ), _( "Use Distinct in query" ) );
-    editMenu->AppendSeparator();
-    editMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert to Syntax" ), _( "Convert to Syntax" ) );
-    editMenu->AppendSeparator();
-    wxMenu *objectMenu = new wxMenu;
-    objectMenu->Append( wxID_SELECTOBJECT, _( "Select Object" ), _( "Select Object" ) );
-    objectMenu->Append( wxID_TEXTOBJECT, _( "Text" ), _( "Text" ) );
-    objectMenu->Append( wxID_PICTUREOBJECT, _( "Picture" ), _( "Picture" ) );
-    objectMenu->Append( wxID_LINEOBJECT, _( "Line" ), _( "Line" ) );
-    auto designMenu = new wxMenu;
-    designMenu->Append( wxID_DESIGNTABORDER, _( "Tab order" ), _( "Tab order" ), wxITEM_CHECK );
-    auto rowsMenu = new wxMenu;
-    rowsMenu->Append( wxID_COLUMNSPEC, _( "Column Specification..." ), _( "Column Specification" ) );
-    GetMenuBar()->Insert( 1, editMenu, _( "Edit" ) );
-    GetMenuBar()->Insert( 2, objectMenu, _( "Object" ) );
-    GetMenuBar()->Insert( 3, designMenu, _( "Design" ) );
-    GetMenuBar()->Insert( 4, rowsMenu, _( "Rows" ) );
-}
-
-void MainFrame::TableMenu()
-{
-    wxMenu *edit_menu = new wxMenu;
-    edit_menu->Append( wxID_UNDO, _( "&Undo\tCtrl+Z" ), _( "Undo operation" ) );
-    edit_menu->AppendSeparator();
-    edit_menu->Append( wxID_EDITCUTCOLUMN, _( "Cu&t Column" ), _( "Cut Column" ) );
-    edit_menu->Append( wxID_EDITCOPYCOLUMN, _( "&Copy Column" ), _( "Copy Column" ) );
-    edit_menu->Append( wxID_EDITPASTECOLUMN, _( "&Paste Column" ), _( "Paste Column" ) );
-    edit_menu->Append( wxID_EDITINSERTCOLUMN, _( "Insert Column" ), _( "Insert Column" ) );
-    edit_menu->Append( wxID_EDITDELETECOLUMN, _( "Delete Column" ), _( "Delete Column" ) );
-    edit_menu->AppendSeparator();
-    edit_menu->Append( wxID_EDITTABLEPROPERTY, _( "Table Property" ), _( "Table Property" ) );
-    GetMenuBar()->Insert( 1, edit_menu, _( "Edit" ) );
-    wxMenu *design_menu = new wxMenu;
-    design_menu->Append( wxID_DESIGNSYNTAX, _( "Syntax" ), _( "Syntax" ) );
-    GetMenuBar()->Insert( 2, design_menu, _( "Design" ) );
 }
 
 void MainFrame::Connect()
@@ -460,7 +328,6 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
         Connect();
     if( m_db )
     {
-        InitMenuBar( event.GetId() );
         if( m_painters.find( "Database" ) == m_painters.end() )
         {
             lib = new wxDynamicLibrary;
@@ -540,7 +407,6 @@ void MainFrame::OnQuery(wxCommandEvent &event)
         Connect();
     if( m_db )
     {
-        InitMenuBar( event.GetId() );
         if( m_painters.find( "Query" ) == m_painters.end() )
         {
             lib = new wxDynamicLibrary;
@@ -585,7 +451,6 @@ void MainFrame::OnTable(wxCommandEvent &event)
         Connect();
     if( m_db )
     {
-        InitMenuBar( event.GetId() );
         if( m_painters.find( "TableView" ) == m_painters.end() )
         {
             lib = new wxDynamicLibrary;
