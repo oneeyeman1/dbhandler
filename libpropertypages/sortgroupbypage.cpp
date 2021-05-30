@@ -382,14 +382,15 @@ void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
     else if( item.IsOk() )
     {
         m_sourcePos = m_sortDragSource->ItemToRow( item );
-        m_itemPos = reinterpret_cast<GroupDestData *>( m_sortDragSource->GetItemData( item ) )->pos;
+//        m_itemPos = reinterpret_cast<GroupDestData *>( m_sortDragSource->GetItemData( item ) )->pos;
+        m_itemPos = m_sortDragSource->GetItemData( item );
     }
     m_item = m_sortDragSource->GetTextValue( m_sortDragSource->ItemToRow( item ), 0 );
     if( m_sortDragSource == m_sortDest )
     {
         wxVariant value;
         m_sortDest->GetValue( value, m_sortDest->ItemToRow( item), 1 );
-        m_item += value.GetBool() ? " ASC" : " DESC";
+//        m_item += value.GetBool() ? " ASC" : " DESC";
     }
     wxTextDataObject *obj = new wxTextDataObject;
     obj->SetText( m_item );
