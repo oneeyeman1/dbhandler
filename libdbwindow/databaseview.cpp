@@ -385,15 +385,16 @@ void DrawingView::CreateViewToolBar()
     int offset;
     long style = wxTB_HORIZONTAL | wxNO_BORDER | wxTB_FLAT;
     wxMDIParentFrame *parent = m_frame->GetMDIParent();
+    wxMDIClientWindow *frame = (wxMDIClientWindow *) parent->GetClientWindow();
     wxSize size = parent->GetClientSize();
     if( !m_tb )
-        m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
+        m_tb = new wxToolBar( frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
     else
         m_tb->ClearTools();
     if( m_type == QueryView )
     {
         if( !m_styleBar )
-            m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
+            m_styleBar = new wxToolBar( frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
         else
             m_styleBar->ClearTools();
     }
@@ -448,16 +449,16 @@ void DrawingView::CreateViewToolBar()
     m_tb->Realize();
     if( m_styleBar )
         m_styleBar->Realize();
-    wxMDIClientWindow *frame = (wxMDIClientWindow *) parent->GetClientWindow();
     m_tb->SetSize( 0, 0, size.x, wxDefaultCoord );
     offset = m_tb->GetSize().y;
+    auto height = size.y - offset;
     if( m_styleBar )
     {
         m_styleBar->SetSize( 0, offset, size.x, wxDefaultCoord );
         offset += m_styleBar->GetSize().y;
+        height -= m_styleBar->GetSize().y;
     }
-    frame->SetSize( 0, offset, size.x, size.y - offset );
-    m_frame->SetSize( 0, 0, size.x, size.y - offset - 2 );
+    m_frame->SetSize( 0, offset, size.x, height );
 }
 #endif
 
@@ -516,7 +517,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                         wxSize frameSize = m_frame->GetSize();
                         if( framePosition.y == 0 )
                         {
-                            parent->SetSize( parentPos.x, parentPos.y - heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() + heightStyleBar );
+//                            parent->SetSize( parentPos.x, parentPos.y - heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() + heightStyleBar );
                             m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
 //                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
 //                            m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
@@ -529,6 +530,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                         m_fields->Show( true );
                         m_canvas->Show( true );
                         m_queryBook->Show( true );
+                        m_frame->SetSize( framePosition.x, framePosition.y - heightStyleBar, frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
                         m_frame->Layout();
                         sizer->Layout();
                         m_frame->Thaw();
@@ -546,21 +548,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                         GetDocument()->SetQueryFields( m_queryFields );
                         quickSelect = true;
                     }
-/*                    if( quickSelect )
-                    {
-                        m_fields->Show( false );
-                        m_canvas->Show( false );
-                        m_queryBook->Show( false );
-                        m_designCanvas->Show( true );
-                    }*/
-/*
-#ifdef __WXGTK__
-                    wxDocMDIParentFrame *parent = wxDynamicCast( m_frame->GetMDIParent(), wxDocMDIParentFrame );
-                    wxSize size = parent->GetSize();
-                    parent->SetSize( size.GetWidth() - 5, size.GetHeight() - 5 );
-                    parent->SetSize( size.GetWidth() + 5, size.GetHeight() + 5 );
-#endif
-*/                }
+                }
             }
             else
             {
@@ -672,29 +660,21 @@ bool DrawingView::OnClose(bool deleteWindow)
 {
     wxDocMDIParentFrame *mainWin = (wxDocMDIParentFrame *) m_frame->GetMDIParent();
     m_isActive = false;
-    if( !wxView::OnClose( deleteWindow ) )
-        return false;
-
-    Activate( false );
-
-    if( deleteWindow )
+    wxMDIClientWindow *frame = (wxMDIClientWindow *) mainWin->GetClientWindow();
+    if( GetDocument()->GetViewsVector().size() == 1 )
     {
-        GetFrame()->Destroy();
-        SetFrame( NULL );
-    }
-    wxMDIClientWindow *parent = dynamic_cast<wxMDIClientWindow *>( mainWin->GetClientWindow() );
-    wxWindowList children = parent->GetChildren();
-    if( parent->GetChildren().size() == 0 )
-    {
-#if !defined( __WXOSX__ )
+//        int y = m_tb->GetHeight();
+        frame->SetPosition( wxPoint( 0, 0 ) );
         delete m_tb;
-        m_tb = NULL;
-#endif
-        wxSize clientSize = mainWin->GetClientSize();
-        parent->SetSize( 0, 0, clientSize.x, clientSize.y );
+        m_tb = nullptr;
     }
     else
         m_tb->ClearTools();
+    if( !wxView::OnClose( deleteWindow ) )
+        return false;
+
+//    Activate( false );
+
     return true;
 }
 
@@ -1045,11 +1025,6 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         }
         else
         {
-            if( m_tb )
-            {
-                m_tb->ClearTools();
-                m_tb->Hide();
-            }
         }
     }
 }
@@ -1392,49 +1367,6 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     if( event.GetEventObject() == m_page1 || event.GetEventObject() == m_page3 )
     {
         SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query, (TableField *) event.GetClientObject(), event.GetExtraLong() );
-/*        int start = query.find( "GROUP BY" );
-        int end = query.find( "HAVING" );
-        if( start == wxNOT_FOUND )
-        {
-            start = query.length() - 1;
-            end = start + 1;
-        }
-        if( end == wxNOT_FOUND )
-            end = query.length() - 1;
-        int type = event.GetInt();
-        wxString field = event.GetString();
-        wxString str = query.substr( start, end - start ), replace;
-        if( type == ADDFIELD )
-        {
-            m_groupByFields.push_back( field );
-            if( str == ";" )
-                replace = "\rGROUP BY " + field + ";";
-            else
-                replace = str + ",\r         " + field;
-        }
-        else
-        {
-            m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
-            if( m_groupByFields.size() == 0 )
-            {
-                str = "\n" + str;
-                replace = "";
-            }
-            else
-            {
-                replace = str.substr( 0, str.find( field ) );
-                wxString temp = str.substr( str.find( field ) );
-                int pos = temp.find( "," );
-                if( pos != wxNOT_FOUND )
-                {
-                    temp = temp.substr( pos + 1 );
-                    temp = temp.substr( temp.find( "\"" ) );
-                    replace += temp;
-                }
-            }
-        }
-        query.Replace( str, replace );
-        const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );*/
     }
 }
 
@@ -1517,18 +1449,6 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
                 replace += temp1;
             }
         }
-/*        else
-        {
-            replace = str.substr( 0, str.find( field ) );
-            wxString temp = str.substr( str.find( field ) );
-            int pos = temp.find( "," );
-            if( pos != wxNOT_FOUND )
-            {
-                temp = temp.substr( pos + 1 );
-                temp = temp.substr( temp.find( "\"" ) );
-                replace += temp;
-            }
-        }*/
     }
     else
     {
@@ -1823,13 +1743,8 @@ void DrawingView::ChangeFontEement()
 
 void DrawingView::SetQueryMenu(const int queryType)
 {
-    wxMenuBar *bar = m_parent->GetMenuBar();
-    for( int i = bar->GetMenuCount() - 2; i > 0; i-- )
-    {
-        auto *menu = bar->Remove( i );
-        delete menu;
-    }
-    if( queryType == SQLSelectMenu )
+    CreateQueryMenu();
+/*    if( queryType == SQLSelectMenu )
     {
         auto *designMenu = new wxMenu;
         designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
@@ -1890,7 +1805,7 @@ void DrawingView::SetQueryMenu(const int queryType)
         bar->Insert( 1, editMenu, _( "Edit" ) );
         bar->Insert( 2, searchMenu, _( "Search" ) );
         bar->Insert( 3, designMenu, _( "Design" ) );
-    }
+    }*/
 }
 
 void DrawingView::OnQueryPreviewUpdateUI(wxUpdateUIEvent &event)
@@ -2066,15 +1981,17 @@ void DrawingView::PopuateQueryCanvas()
 
 void DrawingView::OnIconise(wxIconizeEvent &event)
 {
+    wxView *iconizedView = GetDocumentManager()->GetCurrentView();
     if( event.IsIconized () )
     {
-        m_tb->Hide();
-        (wxMDIClientWindow *) m_parent->GetClientWindow()->Hide();
+        if( iconizedView == this )
+            m_tb->Hide();
+        else
+            m_tb->ClearTools();
     }
     else
     {
         m_tb->Show();
-        (wxMDIClientWindow *) m_parent->GetClientWindow()->Show();
     }
     event.Skip();
 }
