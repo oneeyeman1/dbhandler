@@ -226,81 +226,15 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
         m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
     }
+    CreateViewToolBar();
     wxPoint ptCanvas;
-    sizer = new wxBoxSizer( wxVERTICAL );
-#ifdef __WXOSX__
-    wxRect parentRect = m_parent->GetRect();
-    wxSize parentClientSize = m_parent->GetClientSize();
-    m_frame->Move( 0, parentRect.y - parentClientSize.y );
-    wxPoint pt;
-    pt.x = -1;
-    pt.y = parentRect.height - parentClientSize.GetHeight();
-    m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentClientSize.GetHeight() );
-    m_tb = m_frame->CreateToolBar();
-    if( m_type == QueryView )
-    {
-        m_styleBar = new wxToolBar( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "StyleBar" );
-    }
-    if( m_type == DatabaseView )
-    {
-        CreateDBMenu();
-        m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
-        m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxBitmap( cut_xpm ), wxBitmap( cut_xpm ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
-        m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
-        m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close Database View" ), _( "Close Database View" ) );
-    }
-    else
-    {
-        CreateQueryMenu();
-        m_tb->AddTool( wxID_NEW, _( "New" ), wxBitmap( new_xpm ), wxBitmap( new_xpm ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
-        m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
-        m_tb->AddTool( wxID_SAVE, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
-        m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
-        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxITEM_CHECK, _( "Data Source" ), _( "" ) );
-        m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
-        m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
-        m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER );
-        m_styleBar->AddControl( m_fieldText );
-        m_fontName = new FontComboBox( m_styleBar );
-        m_styleBar->AddControl( m_fontName );
-        const wxString fontSizes[] =
-        {
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "14",
-            "16",
-            "18",
-            "20",
-            "22",
-            "24",
-            "26",
-            "28",
-            "36",
-            "48",
-            "72"
-        };
-        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
-        m_styleBar->AddControl( m_fontSize );
-        m_styleBar->AddTool( 303, _( "Bold" ), wxBitmap::NewFromPNGData( bold_png,  WXSIZEOF( bold_png ) ), wxNullBitmap, wxITEM_NORMAL );
-        m_styleBar->AddTool( 303, _( "Italic" ), wxBitmap::NewFromPNGData( italic_png,  WXSIZEOF( italic_png ) ), wxNullBitmap, wxITEM_NORMAL );
-        m_styleBar->AddTool( 303, _( "Underline" ), wxBitmap::NewFromPNGData( underline_png,  WXSIZEOF( underline_png ) ), wxNullBitmap, wxITEM_NORMAL );
-    }
-    m_tb->Realize();
-    int offset = m_tb->GetSize().y;
-    if( m_styleBar )
-    {
-        m_styleBar->Realize();
-        sizer->Add( m_styleBar, 1, wxEXPAND, 0 );
-    }
-    ptCanvas.x = 0;
-    ptCanvas.y = offset;
-#else
+#ifndef __WXOSX__
     ptCanvas = wxDefaultPosition;
+#else
+    ptCanvas.x = 0;
+    ptCanvas.y = m_tb->GetSize().y + m_styleBar ? m_styleBar->GetSize().y : 0;
 #endif
+    sizer = new wxBoxSizer( wxVERTICAL );
     wxASSERT( m_frame == GetFrame() );
     if( m_type == QueryView )
     {
@@ -349,9 +283,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, m_canvas, wxID_DROPOBJECT );
     m_frame->Bind( wxEVT_CHANGE_QUERY, &DrawingView::OnQueryChange, this );
     m_frame->Bind( wxEVT_ICONIZE, &DrawingView::OnIconise, this );
-#if defined __WXMSW__ || defined __WXGTK__
-    CreateViewToolBar();
-#endif
     if( m_fieldText )
     {
         m_fieldText->Bind( wxEVT_UPDATE_UI, &DrawingView::FieldTextUpdateUI, this );
@@ -379,25 +310,38 @@ DrawingView::~DrawingView()
 #endif
 }
 
-#if defined __WXMSW__ || defined __WXGTK__
 void DrawingView::CreateViewToolBar()
 {
     int offset;
     long style = wxTB_HORIZONTAL | wxNO_BORDER | wxTB_FLAT;
-    wxMDIParentFrame *parent = m_frame->GetMDIParent();
-    wxMDIClientWindow *frame = (wxMDIClientWindow *) parent->GetClientWindow();
-    wxSize size = parent->GetClientSize();
+    wxWindow *parent = nullptr;
+#ifdef __WXMSW__
+    parent = (wxMDIClientWindow *) m_parent->GetClientWindow();
+#elif __WXGTK__
+    parent = m_parent;
+#elif __WXOSX__
+    parent = m_frame;
+#endif
+    wxSize size = m_parent->GetClientSize();
+#ifdef __WXSX__
+    m_tb = m_frame->CreateToolBar();
+    if( m_type == QueryView )
+    {
+        m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "StyleBar" );
+    }
+#else
     if( !m_tb )
-        m_tb = new wxToolBar( frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
+        m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
     else
         m_tb->ClearTools();
     if( m_type == QueryView )
     {
         if( !m_styleBar )
-            m_styleBar = new wxToolBar( frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
+            m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
         else
             m_styleBar->ClearTools();
     }
+#endif
     if( m_type == DatabaseView )
     {
         CreateDBMenu();
@@ -409,7 +353,7 @@ void DrawingView::CreateViewToolBar()
     }
     else
     {
-        CreateQueryMenu();
+        CreateQueryMenu( QuerySyntaxMenu );
         m_tb->AddTool( wxID_NEW, _( "New" ), wxBitmap( new_xpm ), wxBitmap( new_xpm ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
         m_tb->AddTool( wxID_SAVE, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
@@ -417,6 +361,9 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
+        m_tb->InsertTool( 3, wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+        m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( previewIcon, WXSIZEOF( previewIcon ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
+        m_tb->ToggleTool( wxID_DATASOURCE, true );
         m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
         m_styleBar->AddControl( m_fieldText );
         m_fontName = new FontComboBox( m_styleBar );
@@ -448,7 +395,12 @@ void DrawingView::CreateViewToolBar()
     }
     m_tb->Realize();
     if( m_styleBar )
+    {
         m_styleBar->Realize();
+#ifdef __WXOSX__
+        sizer->Add( m_styleBar, 1, wxEXPAND, 0 );
+#endif
+    }
     m_tb->SetSize( 0, 0, size.x, wxDefaultCoord );
     offset = m_tb->GetSize().y;
     auto height = size.y - offset;
@@ -458,9 +410,15 @@ void DrawingView::CreateViewToolBar()
         offset += m_styleBar->GetSize().y;
         height -= m_styleBar->GetSize().y;
     }
+#ifdef _WXOSX__
+    wxPoint pt;
+    pt.x = -1;
+    pt.y = parentRect.height - parentClientSize.GetHeight();
+    m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentClientSize.GetHeight() );
+#else
     m_frame->SetSize( 0, offset, size.x, height );
-}
 #endif
+}
 
 // Sneakily gets used for default print/preview as well as drawing on the
 // screen.
@@ -523,7 +481,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
 //                            m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
                         }
                         m_queryType = SQLSelectMenu;
-                        SetQueryMenu( SQLSelectMenu );
+                        CreateQueryMenu( SQLSelectMenu );
                         m_frame->Freeze();
                         m_styleBar->Show( false );
                         m_designCanvas->Show( false );
@@ -1741,73 +1699,6 @@ void DrawingView::ChangeFontEement()
 #endif
 }
 
-void DrawingView::SetQueryMenu(const int queryType)
-{
-    CreateQueryMenu();
-/*    if( queryType == SQLSelectMenu )
-    {
-        auto *designMenu = new wxMenu;
-        designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
-        m_tb->InsertTool( 3, wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
-        m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( previewIcon, WXSIZEOF( previewIcon ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
-        designMenu->Append( wxID_PREVIEDWQUERY, _( "Preview" ), _( "Preview" ) );
-        designMenu->AppendSeparator();
-        designMenu->Append( wxID_SELECTTABLE, _( "Select Table..." ) );
-        designMenu->AppendSeparator();
-        designMenu->Append( wxID_RETRIEVEARGS, _( "Retieval Arguments..." ), _( "Define Retrieval Arguments" ) );
-        designMenu->Append( wxID_DISTINCT, _( "Distinct" ), _( "Return distinct rows only" ), wxITEM_CHECK );
-        designMenu->AppendSeparator();
-        designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert To Syntax" ), _( "Convert To Syntax" ) );
-        auto show = new wxMenu;
-        show->Append( wxID_SHOWDATATYPES, _( "Datatypes" ), _( "Show Datatypes" ), wxITEM_CHECK );
-        show->Append( wxID_SHOWLABELS, _( "Labels" ), _( "Show Labels" ), wxITEM_CHECK );
-        show->Append( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Show Comments" ), wxITEM_CHECK );
-        show->Append( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ), wxITEM_CHECK );
-        show->Append( wxID_SHOWJOINS, _( "Joins" ), _( "Show Joins" ), wxITEM_CHECK );
-        designMenu->AppendSubMenu( show, _( "Show" ) );
-        designMenu->Check( wxID_DATASOURCE, true );
-        show->Check( wxID_SHOWDATATYPES, true );
-        show->Check( wxID_SHOWLABELS, true );
-        show->Check( wxID_SHOWCOMMENTS, true );
-        show->Check( wxID_SHOWSQLTOOLBOX, true );
-        show->Check( wxID_SHOWJOINS, true );
-        m_tb->ToggleTool( wxID_DATASOURCE, true );
-        bar->Insert( 1, designMenu, _( "Design" ) );
-        m_tb->Realize();
-    }
-    if( queryType == QuerySyntaxMenu )
-    {
-        auto editMenu = new wxMenu;
-        editMenu->Append( wxID_UNDO, _( "Undo\tCtrl+Z" ), _( "Undo" ) );
-        editMenu->AppendSeparator();
-        editMenu->Append( wxID_CUT, _( "Cut\tCtrl+X" ), _( "Cut" ) );
-        editMenu->Append( wxID_COPY, _( "Copy\tCtrl+C" ), _( "Copy" ) );
-        editMenu->Append( wxID_PASTE, _( "Paste\tCtrl+V" ), _( "Paste" ) );
-        editMenu->Append( wxID_CLEAR, _( "Clear\tDel" ), _( "Clear" ) );
-        editMenu->AppendSeparator();
-        editMenu->Append( wxID_SELECTALL, _( "Select all\tCtrl+A" ), _( "Select all" ) );
-        auto searchMenu = new wxMenu;
-        searchMenu->Append( wxID_FIND, _( "Find Text...\tCtrl+F" ), _( "Find text" ) );
-        searchMenu->Append( myID_FINDNEXT, _( "Find Next Text\tCtrl+N" ), _( "Find next text" ) );
-        searchMenu->Append( wxID_REPLACE, _( "Replace Text..." ), _( "Replace text" ) );
-        searchMenu->AppendSeparator();
-        searchMenu->Append( wxID_GOTOLINE, _( "Go to Line...\tCtrl+L" ), _( "Go to line" ) );
-        auto designMenu = new wxMenu;
-        designMenu->Append( wxID_UNDOALL, _( "Undo All" ), _( "Undo All" ) );
-        designMenu->AppendSeparator();
-        designMenu->AppendCheckItem( wxID_DATASOURCE, "Data Source", "Data Source" );
-        designMenu->Check( wxID_DATASOURCE, true );
-        designMenu->AppendSeparator();
-        designMenu->Append( wxID_RETRIEVEARGS, _( "Retrieval Arguments..." ), _( "Retrieval Arguments" ) );
-        designMenu->Append( wxID_CONVERTTOGRAPHICS, _( "Convert To Graphics" ), _( "Convert To Graphics" ) );
-        designMenu->AppendSeparator();
-        designMenu->Append( wxID_PROPERTIES, _( "Options..."), _( "Options" ) );
-        bar->Insert( 1, editMenu, _( "Edit" ) );
-        bar->Insert( 2, searchMenu, _( "Search" ) );
-        bar->Insert( 3, designMenu, _( "Design" ) );
-    }*/
-}
-
 void DrawingView::OnQueryPreviewUpdateUI(wxUpdateUIEvent &event)
 {
     if( m_queryFields.size() > 0 )
@@ -1832,7 +1723,7 @@ void DrawingView::OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event)
 void DrawingView::OnConvertToSyntax(wxCommandEvent &WXUNUSED(event))
 {
     m_queryType = QuerySyntaxMenu;
-    SetQueryMenu( m_queryType );
+//    CreQueryMenu( m_queryType );
     m_designCanvas->Show( false );
     m_fields->Show( false );
     m_canvas->Show( false );
@@ -1846,7 +1737,7 @@ void DrawingView::OnConvertToSyntax(wxCommandEvent &WXUNUSED(event))
 void DrawingView::OnConvertToGraphics(wxCommandEvent &WXUNUSED(event))
 {
     m_queryType = SQLSelectMenu;
-    SetQueryMenu( m_queryType );
+//    SetQueryMenu( m_queryType );
     m_designCanvas->Show( true );
     m_fields->Show( true );
     m_canvas->Show( true );
@@ -2018,9 +1909,9 @@ void DrawingView::CreateDBMenu()
     fileMenu->AppendSeparator();
     fileMenu->Append( wxID_EXIT );
     mbar->Insert( 0, fileMenu, _( "File" ) );
-    wxMenu *menuObject = new wxMenu();
+    auto menuObject = new wxMenu();
     menuObject->Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select tables" ) );
-    wxMenu *menuNewObject = new wxMenu();
+    auto menuNewObject = new wxMenu();
     menuNewObject->Append( wxID_OBJECTNEWTABLE, _( "Table..." ), _( "New Table" ) );
     menuNewObject->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );
     menuNewObject->Append( wxID_OBJECTNEWVIEW, _( "View" ), _( "New View" ) );
@@ -2030,75 +1921,109 @@ void DrawingView::CreateDBMenu()
     menuObject->AppendSeparator();
     menuObject->Append( wxID_PROPERTIES, _( "Properties..." ), _( "Properties" ) );
     mbar->Insert( 1, menuObject, _( "&Object" ) );
-    wxMenu *menuDesign = new wxMenu();
+    auto menuDesign = new wxMenu();
     menuDesign->Append( wxID_STARTLOG, _( "Start Log" ), _( "Start log" ) );
     menuDesign->Append( wxID_STOPLOG, _( "Stop Log" ), _( "Stop log" ) );
     menuDesign->Append( wxID_SAVELOG, _( "Save Log As..." ), _( "Save log to disk file" ) );
     menuDesign->Append( wxID_CLEARLOG, _( "Clear Log" ), _( "Discard content of the log" ) );
     menuDesign->AppendSeparator();
     mbar->Insert( 2, menuDesign, _( "&Design" ) );
+    auto helpMenu = new wxMenu;
+    helpMenu->Append( wxID_HELP, _( "Help" ), _( "Help" ) );
+    mbar->Append( helpMenu, _( "Help" ) );
     m_frame->SetMenuBar( mbar );
 }
 
-void DrawingView::CreateQueryMenu()
+void DrawingView::CreateQueryMenu(const int queryType)
 {
-    auto mbar = new wxMenuBar;
+    wxMenuBar *mbar = nullptr;
+    if( queryType == QuerySyntaxMenu )
+        mbar = new wxMenuBar;
+    else
+    {
+        mbar = m_frame->GetMenuBar();
+        for( int i = mbar->GetMenuCount() - 1; i >= 0; --i )
+        {
+            wxMenu *tmp = mbar->Remove( i );
+            delete tmp;
+            tmp = nullptr;
+        }
+    }
     auto fileMenu = new wxMenu;
     fileMenu->Append( wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
     fileMenu->AppendSeparator();
     fileMenu->Insert( 2, wxID_NEW, _( "New...\tCtrl+N" ), _( "Create new query" ) );
     fileMenu->Insert( 3, wxID_OPEN, _( "Open...\tCtrl+O" ), _( "Open an existing query" ) );
     fileMenu->InsertSeparator( 4 );
-    auto editMenu = new wxMenu;
-    editMenu->Append( wxID_UNDOALL, _( "Undo All" ), _( "Undo All" ) );
-    editMenu->AppendSeparator();
-    editMenu->Append( wxID_CUT, _( "Cut" ), _( "Cut" ) );
-    editMenu->Append( wxID_COPY, _( "Copy" ), _( "Copy" ) );
-    editMenu->Append( wxID_PASTE, _( "Paste" ), _( "Paste" ) );
-    editMenu->Append( wxID_CLEAR, _( "Clear" ), _( "Clear" ) );
-    editMenu->AppendSeparator();
-    auto select = new wxMenu;
-    select->Append( wxID_SELECTALL, _( "Select All" ), _( "Select All" ) );
-    select->Append( wxID_SELECTABOVE, _( "Select Above" ), _( "Select Above" ) );
-    select->Append( wxID_SELECTBELOW, _( "Select Below" ), _( "Select Below" ) );
-    select->Append( wxID_SELECTLEFT, _( "Select Left" ), _( "Select Left" ) );
-    select->Append( wxID_SELECTRIGHT, _( "Select Right" ), _( "Select Right" ) );
-    select->Append( wxID_SELECTCOLUMNS, _( "Select Columns" ), _( "Select Columns" ) );
-    select->Append( wxID_SELECTTEXT, _( "Select Text" ), _( "Select Text" ) );
-    editMenu->AppendSubMenu( select, _( "Select" ), _( "Select" ) );
-    editMenu->Append( wxID_BRINGTOFRONT, _( "Bring to Front" ), _( "Bring to Front" ) );
-    editMenu->Append( wxID_SENDTOBACK, ( "Send to Back" ), ( "Send to Back" ) );
-    editMenu->AppendSeparator();
-    auto format = new wxMenu;
-    format->Append( wxID_FORMATCURRENCY, _( "Currency" ), _( "Currency" ) );
-    format->Append( wxID_FORMATFORMAT, _( "Format" ), _( "Format" ) );
-    editMenu->AppendSubMenu( format, _( "Format" ), _( "Format" ) );
-    editMenu->Append( wxID_PROPERTIES, _( "Properties" ), ( "Properties" ) );
-    editMenu->AppendCheckItem( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ) );
-    editMenu->Append( wxID_PREVIEW, _( "Preview" ), _( "Preview" ) );
-    editMenu->AppendSeparator();
-    editMenu->Append( wxID_SELECTTABLE, _( "Select Tables..." ), _( "Select additional tables for query" ) );
-    editMenu->Append( wxID_ARRANGETABLES, _( "Arrange Tables" ), _( "Arrange Tables" ) );
-    editMenu->Append( wxID_UNIONS, _( "Unions..." ), _( "Unions" ) );
-    editMenu->Append( wxID_RETRIEVEARGS, _( "Retrieval Arguments..." ), _( "Define Retrieval Arguments" ) );
-    editMenu->Append( wxID_CHECKOPTION, _( "Check Option" ), _( "Check Option" ) );
-    editMenu->AppendCheckItem( wxID_DISTINCT, _( "Distinct" ), _( "Use Distinct in query" ) );
-    editMenu->AppendSeparator();
-    editMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert to Syntax" ), _( "Convert to Syntax" ) );
-    editMenu->AppendSeparator();
-    wxMenu *objectMenu = new wxMenu;
-    objectMenu->Append( wxID_SELECTOBJECT, _( "Select Object" ), _( "Select Object" ) );
-    objectMenu->Append( wxID_TEXTOBJECT, _( "Text" ), _( "Text" ) );
-    objectMenu->Append( wxID_PICTUREOBJECT, _( "Picture" ), _( "Picture" ) );
-    objectMenu->Append( wxID_LINEOBJECT, _( "Line" ), _( "Line" ) );
-    auto designMenu = new wxMenu;
-    designMenu->Append( wxID_DESIGNTABORDER, _( "Tab order" ), _( "Tab order" ), wxITEM_CHECK );
-    auto rowsMenu = new wxMenu;
-    rowsMenu->Append( wxID_COLUMNSPEC, _( "Column Specification..." ), _( "Column Specification" ) );
-    mbar->Append( fileMenu, _( "File" ) );
-    mbar->Append( editMenu, _( "Edit" ) );
-    mbar->Append( objectMenu, _( "Object" ) );
-    mbar->Append( designMenu, _( "Design" ) );
-    mbar->Append( rowsMenu, _( "Rows" ) );
-    m_frame->SetMenuBar( mbar );
+    auto helpMenu = new wxMenu;
+    helpMenu->Append( wxID_HELP, _( "Help" ) );
+    if( queryType == SQLSelectMenu )
+    {
+        auto *designMenu = new wxMenu;
+        designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
+        designMenu->Append( wxID_PREVIEDWQUERY, _( "Preview" ), _( "Preview" ) );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_SELECTTABLE, _( "Select Table..." ) );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_RETRIEVEARGS, _( "Retieval Arguments..." ), _( "Define Retrieval Arguments" ) );
+        designMenu->Append( wxID_DISTINCT, _( "Distinct" ), _( "Return distinct rows only" ), wxITEM_CHECK );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert To Syntax" ), _( "Convert To Syntax" ) );
+        auto show = new wxMenu;
+        show->Append( wxID_SHOWDATATYPES, _( "Datatypes" ), _( "Show Datatypes" ), wxITEM_CHECK );
+        show->Append( wxID_SHOWLABELS, _( "Labels" ), _( "Show Labels" ), wxITEM_CHECK );
+        show->Append( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Show Comments" ), wxITEM_CHECK );
+        show->Append( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ), wxITEM_CHECK );
+        show->Append( wxID_SHOWJOINS, _( "Joins" ), _( "Show Joins" ), wxITEM_CHECK );
+        designMenu->AppendSubMenu( show, _( "Show" ) );
+        designMenu->Check( wxID_DATASOURCE, true );
+        show->Check( wxID_SHOWDATATYPES, true );
+        show->Check( wxID_SHOWLABELS, true );
+        show->Check( wxID_SHOWCOMMENTS, true );
+        show->Check( wxID_SHOWSQLTOOLBOX, true );
+        show->Check( wxID_SHOWJOINS, true );
+        mbar->Append( designMenu, _( "Design" ) );
+    }
+    if( queryType == QuerySyntaxMenu )
+    {
+        auto editMenu = new wxMenu;
+        editMenu->Append( wxID_UNDO, _( "Undo\tCtrl+Z" ), _( "Undo" ) );
+        editMenu->AppendSeparator();
+        editMenu->Append( wxID_CUT, _( "Cut\tCtrl+X" ), _( "Cut" ) );
+        editMenu->Append( wxID_COPY, _( "Copy\tCtrl+C" ), _( "Copy" ) );
+        editMenu->Append( wxID_PASTE, _( "Paste\tCtrl+V" ), _( "Paste" ) );
+        editMenu->Append( wxID_CLEAR, _( "Clear\tDel" ), _( "Clear" ) );
+        editMenu->AppendSeparator();
+        editMenu->Append( wxID_SELECTALL, _( "Select all\tCtrl+A" ), _( "Select all" ) );
+        auto searchMenu = new wxMenu;
+        searchMenu->Append( wxID_FIND, _( "Find Text...\tCtrl+F" ), _( "Find text" ) );
+        searchMenu->Append( myID_FINDNEXT, _( "Find Next Text\tCtrl+N" ), _( "Find next text" ) );
+        searchMenu->Append( wxID_REPLACE, _( "Replace Text..." ), _( "Replace text" ) );
+        searchMenu->AppendSeparator();
+        searchMenu->Append( wxID_GOTOLINE, _( "Go to Line...\tCtrl+L" ), _( "Go to line" ) );
+        auto designMenu = new wxMenu;
+        designMenu->Append( wxID_UNDOALL, _( "Undo All" ), _( "Undo All" ) );
+        designMenu->AppendSeparator();
+        designMenu->AppendCheckItem( wxID_DATASOURCE, "Data Source", "Data Source" );
+        designMenu->Check( wxID_DATASOURCE, true );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_RETRIEVEARGS, _( "Retrieval Arguments..." ), _( "Retrieval Arguments" ) );
+        designMenu->Append( wxID_CONVERTTOGRAPHICS, _( "Convert To Graphics" ), _( "Convert To Graphics" ) );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_PROPERTIES, _( "Options..."), _( "Options" ) );
+        mbar->Append( editMenu, _( "Edit" ) );
+        mbar->Append( searchMenu, _( "Search" ) );
+        mbar->Append( designMenu, _( "Design" ) );
+    }
+    mbar->Insert( 0, fileMenu, _( "File" ) );
+    mbar->Append( helpMenu, _( "Help" ) );
+    if( queryType == QuerySyntaxMenu )
+    {
+        m_frame->SetMenuBar( mbar );
+        mbar->EnableTop( 0, false );
+        mbar->EnableTop( 1, false );
+        mbar->EnableTop( 2, false );
+        mbar->EnableTop( 3, false );
+        mbar->EnableTop( 4, false );
+    }
 }
