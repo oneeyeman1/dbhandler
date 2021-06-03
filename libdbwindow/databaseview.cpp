@@ -226,6 +226,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
         m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
     }
+    sizer = new wxBoxSizer( wxVERTICAL );
     CreateViewToolBar();
     wxPoint ptCanvas;
 #ifndef __WXOSX__
@@ -236,7 +237,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_styleBar )
         ptCanvas.y += m_styleBar->GetSize().y;
 #endif
-    sizer = new wxBoxSizer( wxVERTICAL );
     wxASSERT( m_frame == GetFrame() );
     if( m_type == QueryView )
     {
@@ -477,10 +477,9 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                         wxSize frameSize = m_frame->GetSize();
                         if( framePosition.y == 0 )
                         {
-//                            parent->SetSize( parentPos.x, parentPos.y - heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() + heightStyleBar );
+#ifndef __WXOSX__
                             m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
-//                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
-//                            m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
+#endif
                         }
                         m_queryType = SQLSelectMenu;
                         CreateQueryMenu( SQLSelectMenu );
@@ -490,7 +489,9 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                         m_fields->Show( true );
                         m_canvas->Show( true );
                         m_queryBook->Show( true );
+#ifndef __WXOSX__
                         m_frame->SetSize( framePosition.x, framePosition.y - heightStyleBar, frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
+#endif
                         m_frame->Layout();
                         sizer->Layout();
                         m_frame->Thaw();
