@@ -232,7 +232,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     ptCanvas = wxDefaultPosition;
 #else
     ptCanvas.x = 0;
-    ptCanvas.y = m_tb->GetSize().y + m_styleBar ? m_styleBar->GetSize().y : 0;
+    ptCanvas.y = m_tb->GetSize().y;
+    if( m_styleBar )
+        ptCanvas.y += m_styleBar->GetSize().y;
 #endif
     sizer = new wxBoxSizer( wxVERTICAL );
     wxASSERT( m_frame == GetFrame() );
@@ -410,11 +412,11 @@ void DrawingView::CreateViewToolBar()
         offset += m_styleBar->GetSize().y;
         height -= m_styleBar->GetSize().y;
     }
-#ifdef _WXOSX__
+#ifdef __WXOSX__
     wxPoint pt;
     pt.x = -1;
-    pt.y = parentRect.height - parentClientSize.GetHeight();
-    m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentClientSize.GetHeight() );
+    pt.y = m_parent->GetRect().GetHeight() - m_parent->GetClientSize().GetHeight();
+    m_frame->SetSize( pt.x, pt.y, m_parent->GetSize().GetWidth(), m_parent->GetClientSize().GetHeight() );
 #else
     m_frame->SetSize( 0, offset, size.x, height );
 #endif
