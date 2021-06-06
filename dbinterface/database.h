@@ -305,14 +305,15 @@ public:
     void SetTableOwner(const std::wstring &owner) { m_props.m_owner = owner; }
     void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
     const std::vector<std::wstring> &GetIndexNames() const { return m_indexes; }
-    void SetNumberOfFields(int count) { m_numFields = count; }
-    int GetNumberOfFields() const { return m_numFields; }
+    void SetNumberOfFields(size_t count) { m_numFields = count; }
+    size_t GetNumberOfFields() const { return m_numFields; }
     void SetNumberOfIndexes(int count) { m_numIndex = count; }
     int GetNumberOfIndexes() const { return m_numIndex; }
 private:
     std::vector<TableField *> table_fields;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
-    int m_numFields, m_numIndex;
+    size_t m_numFields;
+    int m_numIndex;
     unsigned long m_objectId;
     std::vector<std::wstring> m_indexes;
     TableProperties m_props;

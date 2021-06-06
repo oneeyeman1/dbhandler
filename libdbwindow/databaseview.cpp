@@ -226,15 +226,18 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
         m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
     }
+    sizer = new wxBoxSizer( wxVERTICAL );
     CreateViewToolBar();
     wxPoint ptCanvas;
 #ifndef __WXOSX__
     ptCanvas = wxDefaultPosition;
 #else
     ptCanvas.x = 0;
-    ptCanvas.y = m_tb->GetSize().y + m_styleBar ? m_styleBar->GetSize().y : 0;
+    ptCanvas.y = m_tb->GetSize().y;
+    if( m_styleBar )
+        ptCanvas.y += m_styleBar->GetSize().y;
+    ptCanvas.y = m_frame->GetSize().y - m_frame->GetClientSize().y;
 #endif
-    sizer = new wxBoxSizer( wxVERTICAL );
     wxASSERT( m_frame == GetFrame() );
     if( m_type == QueryView )
     {
@@ -397,6 +400,9 @@ void DrawingView::CreateViewToolBar()
         m_styleBar->AddTool( 303, _( "Underline" ), wxBitmap::NewFromPNGData( underline_png,  WXSIZEOF( underline_png ) ), wxNullBitmap, wxITEM_NORMAL );
     }
     m_tb->Realize();
+#ifdef __WXOSX__
+    sizer->Add( m_tb, 1, wxEXPAND, 0 );
+#endif
     if( m_styleBar )
     {
         m_styleBar->Realize();
@@ -413,11 +419,11 @@ void DrawingView::CreateViewToolBar()
         offset += m_styleBar->GetSize().y;
         height -= m_styleBar->GetSize().y;
     }
-#ifdef _WXOSX__
+#ifdef __WXOSX__
     wxPoint pt;
     pt.x = -1;
-    pt.y = parentRect.height - parentClientSize.GetHeight();
-    m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentClientSize.GetHeight() );
+    pt.y = m_parent->GetRect().GetHeight() - m_parent->GetClientSize().GetHeight();
+    m_frame->SetSize( pt.x, pt.y, m_parent->GetSize().GetWidth(), m_parent->GetClientSize().GetHeight() );
 #else
     m_frame->SetSize( 0, offset, size.x, height );
 #endif
@@ -478,10 +484,9 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                         wxSize frameSize = m_frame->GetSize();
                         if( framePosition.y == 0 )
                         {
-//                            parent->SetSize( parentPos.x, parentPos.y - heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() + heightStyleBar );
+#ifndef __WXOSX__
                             m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
-//                            m_frame->SetPosition( wxPoint( framePosition.x, framePosition.y - heightStyleBar ) );
-//                            m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
+#endif
                         }
                         m_queryType = SQLSelectMenu;
                         CreateQueryMenu( SQLSelectMenu );
@@ -491,7 +496,9 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                         m_fields->Show( true );
                         m_canvas->Show( true );
                         m_queryBook->Show( true );
+#ifndef __WXOSX__
                         m_frame->SetSize( framePosition.x, framePosition.y - heightStyleBar, frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
+#endif
                         m_frame->Layout();
                         sizer->Layout();
                         m_frame->Thaw();
