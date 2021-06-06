@@ -293,6 +293,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
+#ifdef __WXGTK__
+    Activate( true );
+#endif
     return true;
 }
 
