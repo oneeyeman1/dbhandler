@@ -1945,11 +1945,13 @@ void DrawingView::CreateQueryMenu(const int queryType)
     else
     {
         mbar = m_frame->GetMenuBar();
-        for( int i = mbar->GetMenuCount() - 1; i >= 0; --i )
+        for( size_t i = mbar->GetMenuCount() - 1; i >= 0; --i )
         {
             wxMenu *tmp = mbar->Remove( i );
             delete tmp;
             tmp = nullptr;
+            if( i == 0 )
+                break;
         }
     }
     auto fileMenu = new wxMenu;
