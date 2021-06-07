@@ -236,6 +236,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     ptCanvas.y = m_tb->GetSize().y;
     if( m_styleBar )
         ptCanvas.y += m_styleBar->GetSize().y;
+    ptCanvas.y = m_frame->GetSize().y - m_frame->GetClientSize().y;
 #endif
     wxASSERT( m_frame == GetFrame() );
     if( m_type == QueryView )
@@ -295,6 +296,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
+#ifdef __WXGTK__
+    Activate( true );
+#endif
     return true;
 }
 
@@ -396,6 +400,9 @@ void DrawingView::CreateViewToolBar()
         m_styleBar->AddTool( 303, _( "Underline" ), wxBitmap::NewFromPNGData( underline_png,  WXSIZEOF( underline_png ) ), wxNullBitmap, wxITEM_NORMAL );
     }
     m_tb->Realize();
+#ifdef __WXOSX__
+    sizer->Add( m_tb, 1, wxEXPAND, 0 );
+#endif
     if( m_styleBar )
     {
         m_styleBar->Realize();
