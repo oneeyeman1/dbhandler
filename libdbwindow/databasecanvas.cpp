@@ -78,7 +78,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent
     SetCanvasColour( *wxWHITE );
 //    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_DROPOBJECT );
-    Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_TABLECLOSE );
+    Bind( wxEVT_MENU, &DatabaseCanvas::OnCloseTable, this, wxID_TABLECLOSE );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnShowDataTypes, this, wxID_SHOWDATATYPES );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnShowSQLBox, this, wxID_SHOWSQLTOOLBOX );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnShowComments, this, wxID_VIEWSHOWCOMMENTS );
@@ -129,8 +129,6 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                 query += ",\r     ";
         }
     }
-    if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
-        query += "\n";
 //    Refresh();
     Constraint *pConstr = NULL;
     bool found = false, secondIteration = false;
@@ -150,7 +148,7 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                         secondIteration = true;
                     if( !found )
                     {
-                        query += "WHERE ";
+                        query += "\nWHERE ";
                         found = true;
                     }
                     if( ((DrawingView *) m_view)->GetViewType() == QueryView )
@@ -355,7 +353,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     wxMenu mnu;
     int allSelected = 0;
     mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_DROPOBJECT );
-    mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnDropTable, this, wxID_TABLECLOSE );
+    mnu.Bind( wxEVT_COMMAND_MENU_SELECTED, &DatabaseCanvas::OnCloseTable, this, wxID_TABLECLOSE );
     m_selectedShape = GetShapeUnderCursor();
     ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
     if( m_selectedShape )
@@ -1062,4 +1060,29 @@ void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &WXUNUSED(event))
         }
     }
     Refresh();
+}
+
+void DatabaseCanvas::OnCloseTable(wxCommandEvent &event)
+{
+    m_selectedShape = GetShapeUnderCursor();
+    wxString tbl = wxDynamicCast( m_selectedShape, MyErdTable )->GetTable()->GetTableName();
+    ShapeList selection, children;
+    m_selectedShape->GetChildShapes( CLASSINFO( FieldShape ), children, true );
+    GetSelectedShapes( selection );
+    for( ShapeList::iterator it = selection.begin(); it != selection.end(); it++ )
+    {
+        FieldShape *field = wxDynamicCast( (*it), FieldShape );
+        if( children.Find( field ) )
+            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *field, false, tbl.ToStdWstring(), true );
+    }
+    auto source = dynamic_cast<DrawingView *>( m_view )->GetSortPage()->GetSortSourceList();
+    for( auto item = source->GetItemCount() - 1; item >= 0 ; --item )
+    {
+        auto field = source->GetTextValue( item, 0 );
+        if( field.find( tbl ) != -1 )
+            source->DeleteItem( item );
+        if( item = 0 )
+            break;
+    }
+    m_pManager.RemoveShape( m_selectedShape );
 }

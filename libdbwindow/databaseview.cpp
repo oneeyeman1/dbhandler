@@ -1069,6 +1069,16 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
         wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
 }
 
+SortGroupByPage *DrawingView::GetSortPage()
+{
+    return m_page1;
+}
+
+SortGroupByPage *DrawingView::GetGroupByPage()
+{
+    return m_page3;
+}
+
 WhereHavingPage *DrawingView::GetWherePage()
 {
     return m_page2;
@@ -1994,7 +2004,7 @@ void DrawingView::CreateQueryMenu(const int queryType)
         show->Check( wxID_SHOWCOMMENTS, true );
         show->Check( wxID_SHOWSQLTOOLBOX, true );
         show->Check( wxID_SHOWJOINS, true );
-        mbar->Append( designMenu, _( "Design" ) );
+        mbar->Insert( 0, designMenu, _( "Design" ) );
     }
     if( queryType == QuerySyntaxMenu )
     {
