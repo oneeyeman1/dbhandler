@@ -46,3 +46,23 @@ const wxTextCtrl *SyntaxPropPage::GetSyntaxCtrl()
 {
     return m_syntax;
 }
+
+void SyntaxPropPage::RemoveTableSort(const wxString tbl)
+{
+    auto query = m_syntax->GetValue();
+    auto pos = query.find( "ORDER BY");
+    if( pos != wxNOT_FOUND )
+    {
+        auto stringToReplace = query.substr( pos );
+        auto tablePos = stringToReplace.find( tbl );
+        while( tablePos != wxNOT_FOUND )
+        {
+            auto replacer = stringToReplace.substr( tablePos );
+            auto newSorter = stringToReplace( 0, tablePos );
+            auto posRep = replacer.find( "\n" );
+            if( posRep == wxNOT_FOUND )
+            replacer = replacer.substr( 0, posRep );
+            break;
+        }
+    }
+}

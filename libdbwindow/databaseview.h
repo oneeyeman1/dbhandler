@@ -32,8 +32,11 @@ public:
     void GetTablesForView(Database *db, bool init);
     void SetViewType(ViewType type);
     ViewType GetViewType();
+    SortGroupByPage *GetSortPage();
+    SortGroupByPage *GetGroupByPage();
     WhereHavingPage *GetWherePage();
     WhereHavingPage *GetHavingPage();
+    SyntaxPropPage *GetSyntaxPage();
     void AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName, bool quickSelect);
     void HideShowSQLBox(bool show);
     void SetPaintersMap(std::map<wxString, wxDynamicLibrary *> &painters);

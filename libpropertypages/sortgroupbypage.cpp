@@ -461,3 +461,23 @@ void SortGroupByPage::OnSortListStartEditing(wxDataViewEvent &event)
 {
     event.Veto();
 }
+
+void SortGroupByPage::RemoveTable(const wxString tbl)
+{
+    auto itemSource = m_sortSource->GetItemCount();
+    while( itemSource > 0 )
+    {
+        auto field = m_sortSource->GetTextValue( itemSource - 1, 0 );
+        if( field.find( tbl ) != -1 )
+            m_sortSource->DeleteItem( itemSource - 1 );
+        itemSource--;
+    }
+    auto itemDest = m_sortDest->GetItemCount();
+    while( itemDest > 0 )
+    {
+        auto field = m_sortDest->GetTextValue( itemDest - 1, 0 );
+        if( field.find( tbl ) != -1 )
+            m_sortDest->DeleteItem( itemDest - 1 );
+        itemDest--;
+    }
+}

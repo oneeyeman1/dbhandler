@@ -75,6 +75,7 @@ public:
     wxDataViewListCtrl *GetSortSourceList();
     wxDataViewListCtrl *GetSourceDestList();
     void AddRemoveSortingField(bool isAdding, const wxString &field);
+    void RemoveTable(const wxString tbl);
 protected:
     void set_properties();
     void do_layout();

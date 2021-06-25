@@ -1089,6 +1089,11 @@ WhereHavingPage *DrawingView::GetHavingPage()
     return m_page4;
 }
 
+SyntaxPropPage *DrawingView::GetSyntaxPage()
+{
+    return m_page6;
+}
+
 void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
 {
     Database *db = NULL, *db1 = GetDocument()->GetDatabase();

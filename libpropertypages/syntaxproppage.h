@@ -6,6 +6,7 @@ public:
     ~SyntaxPropPage(void);
     void SetSyntaxText(const wxString &text);
     const wxTextCtrl *GetSyntaxCtrl();
+    void RemoveTableSort(const wxString tbl);
 protected:
     void do_layout();
 private:
