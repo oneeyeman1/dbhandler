@@ -1355,7 +1355,7 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
 
 void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const TableField *field, long sortType)
 {
-    int start, end;
+    size_t start, end;
     wxString queryString;
     if( queryType == 2 )
     {
@@ -1425,7 +1425,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
                 wxString temp = fieldName.substr( 0, fieldName.find( ' ' ) );
                 replace = str.substr( 0, str.find( temp ) );
                 wxString temp1 = str.substr( str.find( temp ) );
-                int pos = str.find( ',' );
+                auto pos = str.find( ',' );
                 if( pos == wxNOT_FOUND )
                     pos = str.find( ';' );
                 temp1 = str.substr( pos );
