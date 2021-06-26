@@ -25,7 +25,7 @@ public:
     DrawingView() : wxView(), m_canvas(NULL) {}
     ~DrawingView();
     void UpdateQueryFromSignChange(const QueryConstraint *type);
-//    std::vector<Table> &GetTablesForView(Database *db);
+    size_t GetSortedFieldCount() { return m_sortedFields.size(); };
     wxFrame *GetLogWindow() const;
     wxTextCtrl *GetFieldTextCtrl();
     wxTextCtrl *GetTextLogger() const;
@@ -156,3 +156,4 @@ std::unique_ptr<T> make_unique(Args&&... args)
 #endif
 
 #endif
+

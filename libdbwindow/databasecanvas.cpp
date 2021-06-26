@@ -1075,7 +1075,10 @@ void DatabaseCanvas::OnCloseTable(wxCommandEvent &event)
         if( children.Find( field ) )
             dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *field, false, tbl.ToStdWstring(), true );
     }
-    dynamic_cast<DrawingView *>( m_view )->GetSortPage()->RemoveTable( tbl );
-    dynamic_cast<DrawingView *>( m_view )->GetSyntaxPage()->RemoveTableSort( tbl );
+    if( dynamic_cast<DrawingView *>( m_view )->GetSortedFieldCount() > 0 )
+    {
+        dynamic_cast<DrawingView *>( m_view )->GetSortPage()->RemoveTable( tbl );
+        dynamic_cast<DrawingView *>( m_view )->GetSyntaxPage()->RemoveTableSort( tbl );
+    }
     m_pManager.RemoveShape( m_selectedShape );
 }
