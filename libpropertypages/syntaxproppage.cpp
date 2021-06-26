@@ -51,18 +51,31 @@ void SyntaxPropPage::RemoveTableSort(const wxString tbl)
 {
     auto query = m_syntax->GetValue();
     auto pos = query.find( "ORDER BY");
+    auto subp = query.substr( 0, pos );
     if( pos != wxNOT_FOUND )
     {
+        wxString replacer = "ORDER BY ";
         auto stringToReplace = query.substr( pos );
-        auto tablePos = stringToReplace.find( tbl );
+        auto tablePos = stringToReplace.find( "," );
         while( tablePos != wxNOT_FOUND )
         {
-            auto replacer = stringToReplace.substr( tablePos );
-            auto newSorter = stringToReplace( 0, tablePos );
-            auto posRep = replacer.find( "\n" );
-            if( posRep == wxNOT_FOUND )
-            replacer = replacer.substr( 0, posRep );
-            break;
+            auto str = stringToReplace.substr( 8, tablePos );
+            auto tablecheck = str.find( tbl );
+            if( tablecheck == wxNOT_FOUND )
+                replacer += str;
+            stringToReplace = stringToReplace.substr( tablePos + 1 );
+            tablePos = stringToReplace.find( "," );
         }
+        auto tablecheck = stringToReplace.find( tbl );
+        if( tablecheck == wxNOT_FOUND )
+            replacer += stringToReplace + ";";
+        else
+        {
+            auto coma = replacer.rfind( "," );
+            replacer = replacer.substr( 0, coma );
+            replacer += ";";
+        }
+        query = subp + replacer;
+        m_syntax->SetValue( query );
     }
 }
