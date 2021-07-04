@@ -186,7 +186,7 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
 #ifdef __WXMSW__
     lib->Load( "dialogs" );
 #elif __WXMAC__
-    lib->Load( "liblibdialog.dylib" );
+    lib->Load( "liblibdialogs.dylib" );
 #else
     lib->Load( "libdialogs" );
 #endif
