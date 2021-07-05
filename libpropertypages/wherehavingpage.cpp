@@ -194,7 +194,7 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
     {
         wxString selection;
         ADDCOLUMNSDIALOG func = (ADDCOLUMNSDIALOG) lib->GetSymbol( "AddColumnToQuery" );
-        func( GetParent()->GetParent(), type, fields, selection, m_type, m_subtype );
+        func( dynamic_cast<wxMDIChildFrame *>( GetParent()->GetParent() )->GetMDIParent(), type, fields, selection, m_type, m_subtype );
         if( selection != wxEmptyString )
         {
             m_grid->SetCellValue( m_row, m_col, selection );
