@@ -48,6 +48,7 @@ ErdLineShape::ErdLineShape()
     m_constraint = NULL;
     m_signConstraint = NULL;
     m_isEnabled = true;
+    RemoveStyle( sfsSHOW_HANDLES );
 }
 
 ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDiagramManager &pManager)
@@ -66,6 +67,7 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDia
         m_signConstraint->SetStyle( wxSFShapeBase::sfsEMIT_EVENTS | wxSFShapeBase::sfsALWAYS_INSIDE | wxSFShapeBase::sfsPROCESS_DEL | wxSFShapeBase::sfsPROPAGATE_DRAGGING | wxSFShapeBase::sfsPROPAGATE_SELECTION | wxSFShapeBase::sfsLOCK_CHILDREN );
         m_signConstraint->AcceptChild( wxT( "wxSFTextShape" ) );
         m_signConstraint->Activate( true );
+        RemoveStyle( sfsSHOW_HANDLES );
         SF_ADD_COMPONENT( m_signConstraint, wxT( "sign" ) );
     }
     const_cast<wxSFDiagramManager &>( pManager ).GetShapes( CLASSINFO( MyErdTable ), listShapes );
@@ -102,6 +104,7 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDia
             found = true;
         }
     }
+    RemoveStyle( sfsSHOW_HANDLES );
     m_isEnabled = true;
 }
 
@@ -545,4 +548,9 @@ bool ErdLineShape::GetLineSegment(size_t index, wxRealPoint& src, wxRealPoint& t
 void ErdLineShape::EnableDisableFK(bool enable)
 {
     m_isEnabled = enable;
+}
+
+void ErdLineShape::DrawSelected(wxDC &dc)
+{
+    DrawNormal( dc );
 }

@@ -15,6 +15,7 @@ public:
     void EnableDisableFK(bool enable);
 protected:
     virtual void DrawNormal(wxDC& dc);
+    virtual void DrawSelected(wxDC &dc) wxOVERRIDE;
     virtual void DrawCompleteLine(wxDC& dc);
     wxRealPoint GetSourcePoint();
     wxRealPoint GetTargetPoint();
