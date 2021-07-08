@@ -220,12 +220,12 @@ friend class wxSFShapeCanvas;
 	 * \brief Get line's bounding box. The function can be overrided if neccessary.
      * \return Bounding rectangle
      */
-	virtual wxRect GetBoundingBox();
+	virtual wxRect GetBoundingBox() wxOVERRIDE;
 	/*!
 	 * \brief Get the shape's absolute position in the canvas.
 	 * \return Shape's position
 	 */
-	virtual wxRealPoint GetAbsolutePosition();
+	virtual wxRealPoint GetAbsolutePosition() wxOVERRIDE;
 	/*!
 	 * \brief Get intersection point of the shape border and a line leading from
 	 * 'start' point to 'end' point. The function can be overrided if neccessary.
@@ -233,34 +233,34 @@ friend class wxSFShapeCanvas;
      * \param end Ending point of the virtual intersection line
 	 * \return Intersection point
 	 */
-	virtual wxRealPoint GetBorderPoint(const wxRealPoint& start, const wxRealPoint& end);
+	virtual wxRealPoint GetBorderPoint(const wxRealPoint& start, const wxRealPoint& end) wxOVERRIDE;
     /*!
 	 * \brief Test whether the given point is inside the shape. The function
      * can be overrided if neccessary.
      * \param pos Examined point
      * \return TRUE if the point is inside the shape area, otherwise FALSE
      */
-	virtual bool Contains(const wxPoint& pos);
+	virtual bool Contains(const wxPoint& pos) wxOVERRIDE;
 	/*!
 	 * \brief Move the shape to the given absolute position. The function
      * can be overrided if neccessary.
 	 * \param x X coordinate
 	 * \param y Y coordinate
 	 */
-	virtual void MoveTo(double x, double y);
+	virtual void MoveTo(double x, double y) wxOVERRIDE;
 	/*!
 	 * \brief Move the shape by the given offset. The function
      *  can be overrided if neccessary.
 	 * \param x X offset
 	 * \param y Y offset
 	 */
-	virtual void MoveBy(double x, double y);
+	virtual void MoveBy(double x, double y) wxOVERRIDE;
 
 	/*!
 	 * \brief Function called by the framework responsible for creation of shape handles
      * at the creation time. The function can be overrided if neccesary.
      */
-	virtual void CreateHandles();
+	virtual void CreateHandles() wxOVERRIDE;
 	/*!
 	 * \brief Event handler called during dragging of the shape handle.
 	 * The function can be overrided if necessary.
@@ -268,7 +268,7 @@ friend class wxSFShapeCanvas;
 	 * The function is called by the framework (by the shape canvas).
 	 * \param handle Reference to dragged handle
 	 */
-	virtual void OnHandle(wxSFShapeHandle& handle);
+	virtual void OnHandle(wxSFShapeHandle& handle) wxOVERRIDE;
 	/*!
 	 * \brief Event handler called when the user finished dragging of the shape handle.
 	 * The function can be overrided if necessary.
@@ -277,7 +277,7 @@ friend class wxSFShapeCanvas;
 	 * Default implementation does nothing.
 	 * \param handle Reference to dragged handle
 	 */
-	virtual void OnEndHandle(wxSFShapeHandle& handle);
+	virtual void OnEndHandle(wxSFShapeHandle& handle) wxOVERRIDE;
 	/*!
 	 * \brief Event handler called at the begining of the shape dragging process.
 	 * The function can be overrided if necessary.
@@ -285,7 +285,7 @@ friend class wxSFShapeCanvas;
 	 * The function is called by the framework (by the shape canvas).
 	 * \sa wxSFShapeCanvas
 	 */
-	virtual void OnBeginDrag(const wxPoint& pos);
+	virtual void OnBeginDrag(const wxPoint& pos) wxOVERRIDE;
 	/*!
 	 * \brief Event handler called when the shape is double-clicked by
 	 * the left mouse button. The function can be overrided if necessary.
@@ -294,7 +294,7 @@ friend class wxSFShapeCanvas;
 	 * \param pos Current mouse position
 	 * \sa wxSFShapeCanvas
 	 */
-	virtual void OnLeftDoubleClick(const wxPoint& pos);
+	virtual void OnLeftDoubleClick(const wxPoint& pos) wxOVERRIDE;
     /*!
 	 * \brief Scale the shape size by in both directions. The function can be overrided if necessary
      * (new implementation should call default one ore scale shape's children manualy if neccesary).
@@ -302,7 +302,7 @@ friend class wxSFShapeCanvas;
      * \param y Vertical scale factor
      * \param children TRUE if the shape's children shoould be scaled as well, otherwise the shape will be updated after scaling via Update() function.
      */
-	virtual void Scale(double x, double y, bool children = sfWITHCHILDREN);
+	virtual void Scale(double x, double y, bool children = sfWITHCHILDREN) wxOVERRIDE;
 
 protected:
 
@@ -346,20 +346,20 @@ protected:
 	 * \brief Draw the shape in the normal way. The function can be overrided if neccessary.
 	 * \param dc Reference to device context where the shape will be drawn to
 	 */
-	virtual void DrawNormal(wxDC& dc);
+	virtual void DrawNormal(wxDC& dc) wxOVERRIDE;
 	/*!
 	 * \brief Draw the shape in the hower mode (the mouse cursor is above the shape).
 	 * The function can be overrided if neccessary.
 	 * \param dc Reference to device context where the shape will be drawn to
 	 */
-	virtual void DrawHover(wxDC& dc);
+	virtual void DrawHover(wxDC& dc) wxOVERRIDE;
 	/*!
 	 * \brief Draw the shape in the highlighted mode (another shape is dragged over this
 	 * shape and this shape will accept the dragged one if it will be dropped on it).
 	 * The function can be overrided if neccessary.
 	 * \param dc Reference to device context where the shape will be drawn to
 	 */
-	virtual void DrawHighlighted(wxDC& dc);
+	virtual void DrawHighlighted(wxDC& dc) wxOVERRIDE;
 
     /*! \brief Draw completed line. */
 	virtual void DrawCompleteLine(wxDC& dc);
