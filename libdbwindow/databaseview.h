@@ -26,6 +26,7 @@ public:
     ~DrawingView();
     void UpdateQueryFromSignChange(const QueryConstraint *type);
     size_t GetSortedFieldCount() { return m_sortedFields.size(); };
+    size_t GetGroupByFieldCount() { return m_groupByFields.size(); };
     wxFrame *GetLogWindow() const;
     wxTextCtrl *GetFieldTextCtrl();
     wxTextCtrl *GetTextLogger() const;
@@ -41,6 +42,7 @@ public:
     void HideShowSQLBox(bool show);
     void SetPaintersMap(std::map<wxString, wxDynamicLibrary *> &painters);
     void ChangeFontEement();
+    void RemoveTableFromQuery(const wxString &table);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
