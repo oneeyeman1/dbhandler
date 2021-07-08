@@ -252,11 +252,11 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_queryBook = new wxNotebook( m_frame, wxID_ANY );
         m_page1 = new SortGroupByPage( m_queryBook, true );
         m_queryBook->AddPage( m_page1, _( "Sort" ) );
-        m_page2 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
+        m_page2 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype(), true );
         m_queryBook->AddPage( m_page2, _( "Where" ) );
         m_page3 = new SortGroupByPage( m_queryBook, false );
         m_queryBook->AddPage( m_page3, _( "Group" ) );
-        m_page4 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
+        m_page4 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype(), false );
         m_queryBook->AddPage( m_page4, _( "Having" ) );
         m_page6 = new SyntaxPropPage( m_queryBook );
         m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
