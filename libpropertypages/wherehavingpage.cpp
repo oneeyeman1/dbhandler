@@ -21,10 +21,11 @@ typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring>
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 
-WhereHavingPage::WhereHavingPage(wxWindow *parent, const wxString &type, const wxString &subtype) : wxPanel( parent )
+WhereHavingPage::WhereHavingPage(wxWindow *parent, const wxString &type, const wxString &subtype, bool isWhere) : wxPanel( parent )
 {
     m_type = type;
     m_subtype = subtype;
+    m_isWherePage = isWhere;
     m_operatorChoices[0] = "=";
     m_operatorChoices[1] = "<";
     m_operatorChoices[2] = ">";

@@ -23,7 +23,7 @@ public:
 class WXEXPORT WhereHavingPage :	public wxPanel
 {
 public:
-    WhereHavingPage(wxWindow *parent, const wxString &type, const wxString &subtype);
+    WhereHavingPage(wxWindow *parent, const wxString &type, const wxString &subtype, bool isWhere);
     ~WhereHavingPage(void);
     void AppendField(const std::wstring &field);
     wxGrid *GetGrid();
@@ -45,6 +45,7 @@ private:
     std::vector<std::wstring> m_fields;
     std::vector<WhereHavingLines> m_lines;
     std::vector<QueryArguments> m_arguments;
+    bool m_isWherePage;
 };
 
 #define WHEREPAGECOLUMNS          194
