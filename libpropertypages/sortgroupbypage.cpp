@@ -466,20 +466,42 @@ void SortGroupByPage::OnSortListStartEditing(wxDataViewEvent &event)
 
 void SortGroupByPage::RemoveTable(const wxString tbl)
 {
-    auto itemSource = m_sortSource->GetItemCount();
-    while( itemSource > 0 )
+    if( m_sortSource )
     {
-        auto field = m_sortSource->GetTextValue( itemSource - 1, 0 );
-        if( field.find( tbl ) != -1 )
-            m_sortSource->DeleteItem( itemSource - 1 );
-        itemSource--;
+        auto itemSource = m_sortSource->GetItemCount();
+        while( itemSource > 0 )
+        {
+            auto field = m_sortSource->GetTextValue( itemSource - 1, 0 );
+            if( field.find( tbl ) != -1 )
+                m_sortSource->DeleteItem( itemSource - 1 );
+            itemSource--;
+        }
+        auto itemDest = m_sortDest->GetItemCount();
+        while( itemDest > 0 )
+        {
+            auto field = m_sortDest->GetTextValue( itemDest - 1, 0 );
+            if( field.find( tbl ) != -1 )
+                m_sortDest->DeleteItem( itemDest - 1 );
+            itemDest--;
+        }
     }
-    auto itemDest = m_sortDest->GetItemCount();
-    while( itemDest > 0 )
+    if( m_source )
     {
-        auto field = m_sortDest->GetTextValue( itemDest - 1, 0 );
-        if( field.find( tbl ) != -1 )
-            m_sortDest->DeleteItem( itemDest - 1 );
-        itemDest--;
+        auto itemSource = m_source->GetItemCount();
+        while( itemSource > 0 )
+        {
+            auto field = m_source->GetItemText( itemSource - 1, 0 );
+            if( field.find( tbl ) != -1 )
+                m_source->DeleteItem( itemSource - 1 );
+            itemSource--;
+        }
+        auto itemDest = m_dest->GetItemCount();
+        while( itemDest > 0 )
+        {
+            auto field = m_dest->GetItemText( itemDest - 1, 0 );
+            if( field.find( tbl ) != -1 )
+                m_dest->DeleteItem( itemDest - 1 );
+            itemDest--;
+        }
     }
 }
