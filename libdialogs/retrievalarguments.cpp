@@ -165,7 +165,7 @@ void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
     m_lines.push_back( QueryLines( statBmp, number, name, type ) );
     m_lines.back().m_name->SetFocus();
     m_currentLine = numArgs;
-    sizer->Layout();
+    fgs->Layout();
     Thaw();
 }
 
