@@ -127,6 +127,9 @@ void WhereHavingPage::OnSize(wxSizeEvent &event)
 
 void WhereHavingPage::OnColumnName(wxGridEditorCreatedEvent &event)
 {
+    m_oldString = m_grid->GetCellValue( event.GetRow(), 0 );
+    m_oldString += " " + m_grid->GetCellValue( event.GetRow(), 1 );
+    m_oldString += " " + m_grid->GetCellValue( event.GetRow(), 2 );
     if( event.GetCol() == 0 )
     {
         wxComboBox *editor = dynamic_cast<wxComboBox *>( event.GetControl() );
@@ -216,11 +219,24 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
     lib = NULL;
 }
 
-void WhereHavingPage::OnCellChanged(wxCommandEvent &WXUNUSED(event))
+void WhereHavingPage::OnCellChanged(wxCommandEvent &event)
 {
+    wxString newString;
     if( m_grid->GetCellValue( m_row, 1 ) == wxEmptyString )
+    {
+        newString = event.GetString();
         m_grid->SetCellValue( m_row, 1, "=" );
-
+    }
+    else
+        newString = m_grid->GetCellValue( m_row, 0 );
+    newString += " " + m_grid->GetCellValue( m_row, 1 );
+    newString += " " + m_grid->GetCellValue( m_row, 2 );
+    wxCommandEvent evt( wxEVT_CHANGE_QUERY );
+    evt.SetEventObject( this );
+    evt.SetString( m_oldString );
+    evt.SetClientObject( (wxClientData *) &newString );
+    wxWindow *parent = GetParent()->GetParent();
+    parent->GetEventHandler()->ProcessEvent( evt );
 }
 
 void WhereHavingPage::OnGridCellChaqnged(wxGridEvent &event)

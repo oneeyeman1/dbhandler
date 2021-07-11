@@ -46,6 +46,7 @@ private:
     std::vector<WhereHavingLines> m_lines;
     std::vector<QueryArguments> m_arguments;
     bool m_isWherePage;
+    wxString m_oldString;
 };
 
 #define WHEREPAGECOLUMNS          194
