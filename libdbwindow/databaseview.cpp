@@ -1361,7 +1361,19 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     {
         start = query.find( "GROUP BY" );
         end = query.find( "HAVING" );
+        if( end == wxNOT_FOUND )
+            end = query.find( "ORDER BY" );
         queryString = "GROUP BY ";
+        if( start == wxNOT_FOUND && end != wxNOT_FOUND )
+        {
+            m_groupByFields.push_back( field );
+            auto subquery = query.substr( 0, end );
+            subquery += queryString;
+            subquery += field->GetFullName();
+            subquery += "\n\r";
+            subquery += query.substr( end );
+            const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( subquery );
+        }
     }
     else
     {
@@ -1369,78 +1381,83 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
         end = query.length() - 1;
         queryString = "ORDER BY ";
     }
-    if( start == wxNOT_FOUND )
+    if( ( start == wxNOT_FOUND && end == wxNOT_FOUND && queryType == 2 ) || ( start == wxNOT_FOUND && queryType == 4 ) )
     {
         start = query.length() - 1;
         end = start + 1;
     }
     if( end == wxNOT_FOUND )
         end = query.length() - 1;
-    wxString str = query.substr( start, end - start ), replace;
-    if( type == ADDFIELD )
+    if( start == wxNOT_FOUND && end != wxNOT_FOUND && queryType == 2 )
     {
-        if( queryType == 2 )
-            m_groupByFields.push_back( field );
-        else
-            m_sortedFields.push_back( queryType == 2 ? fieldName : fieldName + " ASC" );
-        if( str == ";" )
-        {
-            replace = "\n" + queryString + fieldName;
-            if( queryType != 2 )
-                replace += " ASC";
-            replace += ";";
-        }
-        else
-        {
-            replace = str + ",\r         " + fieldName;
-            if( queryType != 2 )
-                replace += " ASC";
-        }
-    }
-    else if( type == REMOVEFIELD )
-    {
-        if( queryType == 2 )
-        {
-            m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
-            if( m_groupByFields.size() == 0 )
-            {
-                str = "\n" + str;
-                replace = "";
-            }
-            else
-            {
-
-            }
-        }
-        else
-        {
-            m_sortedFields.erase( std::remove( m_sortedFields.begin(), m_sortedFields.end(), field ), m_sortedFields.end() );
-            if( m_sortedFields.size () == 0 )
-            {
-                str = "\n" + str + ";";
-                replace = ";";
-            }
-            else
-            {
-                wxString temp = fieldName.substr( 0, fieldName.find( ' ' ) );
-                replace = str.substr( 0, str.find( temp ) );
-                wxString temp1 = str.substr( str.find( temp ) );
-                auto pos = str.find( ',' );
-                if( pos == wxNOT_FOUND )
-                    pos = str.find( ';' );
-                temp1 = str.substr( pos );
-                replace += temp1;
-            }
-        }
     }
     else
     {
-        wxString temp = str.substr( str.find( fieldName ) );
-        str = temp.substr( 0, temp.find( ',' ) );
-        replace = fieldName + ( sortType == 0 ? " DESC" : " ASC" );
+        wxString str = query.substr( start, end - start ), replace;
+        if( type == ADDFIELD )
+        {
+            if( queryType == 2 )
+                m_groupByFields.push_back( field );
+            else
+                m_sortedFields.push_back( queryType == 2 ? fieldName : fieldName + " ASC" );
+            if( str == ";" )
+            {
+                replace = "\n" + queryString + fieldName;
+                if( queryType != 2 )
+                    replace += " ASC";
+                replace += ";";
+            }
+            else
+            {
+                replace = str + ",\r         " + fieldName;
+                if( queryType != 2 )
+                    replace += " ASC";
+            }
+        }
+        else if( type == REMOVEFIELD )
+        {
+            if( queryType == 2 )
+            {
+                m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
+                if( m_groupByFields.size() == 0 )
+                {
+                    str = "\n" + str;
+                    replace = "";
+                }
+                else
+                {
+                }
+            }
+            else
+            {
+                m_sortedFields.erase( std::remove( m_sortedFields.begin(), m_sortedFields.end(), field ), m_sortedFields.end() );
+                if( m_sortedFields.size () == 0 )
+                {
+                    str = "\n" + str + ";";
+                    replace = ";";
+                }
+                else
+                {
+                    wxString temp = fieldName.substr( 0, fieldName.find( ' ' ) );
+                    replace = str.substr( 0, str.find( temp ) );
+                    wxString temp1 = str.substr( str.find( temp ) );
+                    auto pos = str.find( ',' );
+                    if( pos == wxNOT_FOUND )
+                        pos = str.find( ';' );
+                    temp1 = str.substr( pos );
+                    replace += temp1;
+                }
+            }
+        }
+        else
+        {
+            wxString temp = str.substr( str.find( fieldName ) );
+            str = temp.substr( 0, temp.find( ',' ) );
+            replace = fieldName + ( sortType == 0 ? " DESC" : " ASC" );
+        }
+        query.Replace( str, replace );
+        const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
     }
-    query.Replace( str, replace );
-    const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
 }
 
 void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
@@ -1461,7 +1478,7 @@ void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
         else
             arguments = m_arguments;
         RETRIEVEARGUMENTS func = (RETRIEVEARGUMENTS) lib->GetSymbol( "GetQueryArguments" );
-        int res = func( m_frame, arguments, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
+        int res = func( m_parent, arguments, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
         if( res == wxID_OK )
             m_arguments = arguments;
     }
