@@ -150,7 +150,7 @@ void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
     (*it).m_pointer->SetBitmap( wxNullBitmap );
     numArgs++;
     wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
-    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%d", numArgs ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
+    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%lu", numArgs ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
     wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
     name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
     name->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
