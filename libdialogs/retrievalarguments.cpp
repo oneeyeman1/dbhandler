@@ -211,7 +211,7 @@ void RetrievalArguments::OnRemoveArgument(wxCommandEvent &WXUNUSED(event))
     (*it).m_number->Destroy();
     (*it).m_type->Destroy();
     m_lines.erase( it );
-    sizer->Layout();
+    fgs->Layout();
     it = std::next( m_lines.begin(), m_currentLine - 1 );
     if( m_lines.size() > 0 )
     {
@@ -224,7 +224,7 @@ void RetrievalArguments::OnRemoveArgument(wxCommandEvent &WXUNUSED(event))
         (*it).m_pointer->SetBitmap( bmp );
         for( ; it != m_lines.end(); ++it )
         {
-            (*it).m_number->SetLabel( wxString::Format( "%d", counter ) );
+            (*it).m_number->SetLabel( wxString::Format( "%lu", counter ) );
             counter++;
         }
     }
