@@ -147,7 +147,8 @@ void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
 {
     Freeze();
     std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
-    (*it).m_pointer->SetBitmap( wxNullBitmap );
+    if( !m_lines.empty() )
+        (*it).m_pointer->SetBitmap( wxNullBitmap );
     numArgs++;
     wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
     wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%lu", numArgs ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
