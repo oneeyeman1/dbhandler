@@ -222,6 +222,7 @@ void RetrievalArguments::OnRemoveArgument(wxCommandEvent &WXUNUSED(event))
             m_currentLine--;
         }
         (*it).m_pointer->SetBitmap( bmp );
+        (*it).m_name->SetFocus();
         for( ; it != m_lines.end(); ++it )
         {
             (*it).m_number->SetLabel( wxString::Format( "%lu", counter ) );
