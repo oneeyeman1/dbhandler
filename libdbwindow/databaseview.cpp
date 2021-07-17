@@ -1079,6 +1079,11 @@ SortGroupByPage *DrawingView::GetGroupByPage()
     return m_page3;
 }
 
+SortGroupByPage *DrawingView::GetSortPage()
+{
+    return m_page1;
+}
+
 WhereHavingPage *DrawingView::GetWherePage()
 {
     return m_page2;

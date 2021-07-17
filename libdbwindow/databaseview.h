@@ -32,6 +32,7 @@ public:
     void GetTablesForView(Database *db, bool init);
     void SetViewType(ViewType type);
     ViewType GetViewType();
+	SortGroupByPage *GetSortPage();
     WhereHavingPage *GetWherePage();
     WhereHavingPage *GetHavingPage();
     void AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName, bool quickSelect);
