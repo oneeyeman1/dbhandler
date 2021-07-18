@@ -321,10 +321,7 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             long item = m_dragDest->InsertItem( position, m_item );
             if( m_dragDest == m_dest )
             {
-                auto data = new GroupDestData;
-                data->field = field;
-                data->pos = m_itemPos;
-                m_dragDest->SetItemPtrData( item, wxUIntPtr( data ) );
+                m_dragDest->SetItemPtrData( item, wxUIntPtr( new GroupDestData( field, m_itemPos ) ) );
             }
             else
                 m_dragDest->SetItemPtrData( item, wxUIntPtr( field ) );

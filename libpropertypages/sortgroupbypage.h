@@ -21,6 +21,7 @@
 
 struct GroupDestData
 {
+    GroupDestData(TableField *f, long p ) : field( f ), pos( p ) {}
     TableField *field;
     long pos;
 };
