@@ -163,10 +163,6 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( p
         m_dest->Bind( wxEVT_LIST_ITEM_FOCUSED, &SortGroupByPage::OnItemFocused, this );
         Bind( wxEVT_LEFT_UP, &SortGroupByPage::OnLeftUp, this );
         Bind( wxEVT_RIGHT_DOWN, &SortGroupByPage::OnRightDown, this );
-#ifdef __WXMSW__
-        m_source->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
-        m_dest->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
-#endif
         Bind( wxEVT_MOUSE_CAPTURE_LOST, &SortGroupByPage::OnMouseCaptureLost, this );
     }
     else

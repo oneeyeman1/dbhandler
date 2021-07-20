@@ -21,7 +21,15 @@
 
 struct GroupDestData
 {
-    GroupDestData(TableField *f, long p ) : field( f ), pos( p ) {}
+    GroupDestData(TableField *f, long p ) : pos( p )
+    {
+        field = new TableField;
+        field = f;
+    }
+    ~GroupDestData ()
+    {
+        delete field;
+    }
     TableField *field;
     long pos;
 };
