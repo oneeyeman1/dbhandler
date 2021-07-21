@@ -304,9 +304,7 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
                 field = reinterpret_cast<TableField *>( m_source->GetItemData( m_itemPos ) );
             else
             {
-                GroupDestData *data = reinterpret_cast<GroupDestData *>( m_dragSource->GetItemData( m_sourcePos ) );
-                field = data->field;
-                position = data->pos;
+                long *position = reinterpret_cast<long *>( m_dragSource->GetItemData( m_sourcePos ) );
             }
             m_dragSource->DeleteItem( m_dragDest == m_dest ? m_itemPos : m_sourcePos );
             if( m_dragDest == m_dest )
@@ -316,7 +314,7 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             long item = m_dragDest->InsertItem( position, m_item );
             if( m_dragDest == m_dest )
             {
-                m_dragDest->SetItemPtrData( item, wxUIntPtr( new GroupDestData( field, m_itemPos ) ) );
+                m_dragDest->SetItemPtrData( item, wxUIntPtr( m_itemPos ) );
             }
             else
                 m_dragDest->SetItemPtrData( item, wxUIntPtr( field ) );
@@ -376,7 +374,6 @@ void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
     else if( item.IsOk() )
     {
         m_sourcePos = m_sortDragSource->ItemToRow( item );
-//        m_itemPos = reinterpret_cast<GroupDestData *>( m_sortDragSource->GetItemData( item ) )->pos;
         m_itemPos = m_sortDragSource->GetItemData( item );
     }
     m_item = m_sortDragSource->GetTextValue( m_sortDragSource->ItemToRow( item ), 0 );
