@@ -21,6 +21,15 @@
 
 struct GroupDestData
 {
+    GroupDestData(TableField *f, long p ) : pos( p )
+    {
+        field = new TableField;
+        field = f;
+    }
+    ~GroupDestData ()
+    {
+        delete field;
+    }
     TableField *field;
     long pos;
 };
@@ -84,7 +93,6 @@ protected:
     void OnItemSelected(wxListEvent &event);
     void OnItemFocused(wxListEvent &event);
     void OnLeftUp(wxMouseEvent &event);
-    void OnRightDown(wxMouseEvent &event);
     void OnMouseMove(wxMouseEvent &event);
     void OnMouseCaptureLost(wxMouseCaptureLostEvent &event);
     void OnSortBeginDrag(wxDataViewEvent &event);

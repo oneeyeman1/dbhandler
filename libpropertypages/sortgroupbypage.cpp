@@ -162,11 +162,6 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( p
         m_source->Bind( wxEVT_LIST_ITEM_FOCUSED, &SortGroupByPage::OnItemFocused, this );
         m_dest->Bind( wxEVT_LIST_ITEM_FOCUSED, &SortGroupByPage::OnItemFocused, this );
         Bind( wxEVT_LEFT_UP, &SortGroupByPage::OnLeftUp, this );
-        Bind( wxEVT_RIGHT_DOWN, &SortGroupByPage::OnRightDown, this );
-#ifdef __WXMSW__
-        m_source->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
-        m_dest->Bind( wxEVT_MOTION, &SortGroupByPage::OnMouseMove, this );
-#endif
         Bind( wxEVT_MOUSE_CAPTURE_LOST, &SortGroupByPage::OnMouseCaptureLost, this );
     }
     else
@@ -198,7 +193,9 @@ void SortGroupByPage::set_properties()
     if( !m_isSorting )
     {
         m_source->InsertColumn( 0, _( "" ), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
+        m_source->SetCursor( wxCURSOR_HAND );
         m_dest->InsertColumn( 0, _( "" ), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
+        m_dest->SetCursor( wxCURSOR_HAND );
     }
     else
     {
@@ -287,12 +284,6 @@ void SortGroupByPage::OnLeftUp(wxMouseEvent &event)
     event.Skip();
 }
 
-void SortGroupByPage::OnRightDown(wxMouseEvent &event)
-{
-    FinishDragging( event.GetPosition() );
-    event.Skip();
-}
-
 void SortGroupByPage::FinishDragging(const wxPoint &pt)
 {
     if( m_isDragging )
@@ -301,6 +292,10 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             m_dragDest = m_source;
         else if( m_dest->GetRect().Contains( pt ) )
             m_dragDest = m_dest;
+        if( m_dragDest != m_source && m_dragDest != m_dest && m_dragSource == m_source )
+            return;
+        if( m_dragDest != m_source && m_dragDest != m_dest && m_dragSource == m_dest )
+            m_dragDest = m_source;
         if( m_dragSource != m_dragDest )
         {
             long position = 0;
@@ -321,10 +316,7 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             long item = m_dragDest->InsertItem( position, m_item );
             if( m_dragDest == m_dest )
             {
-                auto data = new GroupDestData;
-                data->field = field;
-                data->pos = m_itemPos;
-                m_dragDest->SetItemPtrData( item, wxUIntPtr( data ) );
+                m_dragDest->SetItemPtrData( item, wxUIntPtr( new GroupDestData( field, m_itemPos ) ) );
             }
             else
                 m_dragDest->SetItemPtrData( item, wxUIntPtr( field ) );
