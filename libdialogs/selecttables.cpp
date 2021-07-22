@@ -56,7 +56,7 @@ void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames)
 {
     wxArrayInt selections;
     m_tables->GetSelections( selections );
-    for( size_t i = 0; i < selections.GetCount(); i++ )
+    for( int i = 0; i < selections.GetCount(); i++ )
     {
         wxString schema = dynamic_cast<wxStringClientData *>( m_tables->GetClientObject( i ) )->GetData();
         tableNames.push_back( schema + L"." + m_tables->GetString( selections.Item( i ) ) );

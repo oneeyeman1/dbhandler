@@ -147,10 +147,11 @@ void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
 {
     Freeze();
     std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
-    (*it).m_pointer->SetBitmap( wxNullBitmap );
+    if( !m_lines.empty() )
+        (*it).m_pointer->SetBitmap( wxNullBitmap );
     numArgs++;
     wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
-    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%d", numArgs ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
+    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%lu", numArgs ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
     wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
     name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
     name->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
@@ -165,7 +166,7 @@ void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
     m_lines.push_back( QueryLines( statBmp, number, name, type ) );
     m_lines.back().m_name->SetFocus();
     m_currentLine = numArgs;
-    sizer->Layout();
+    fgs->Layout();
     Thaw();
 }
 
@@ -176,7 +177,7 @@ void RetrievalArguments::OnInsertArgument(wxCommandEvent &WXUNUSED(event))
     unsigned long pos = m_currentLine * 4;
     int position = wxAtoi( (*it).m_number->GetLabel() );
     wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
-    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%d", m_currentLine ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
+    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%lu", m_currentLine ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
     wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
     name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
     name->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
@@ -197,7 +198,7 @@ void RetrievalArguments::OnInsertArgument(wxCommandEvent &WXUNUSED(event))
         (*it).m_number->SetLabel( wxString::Format( "%d", position ) );
     }
     numArgs++;
-    sizer->Layout();
+    fgs->Layout();
     Thaw();
 }
 
@@ -211,7 +212,7 @@ void RetrievalArguments::OnRemoveArgument(wxCommandEvent &WXUNUSED(event))
     (*it).m_number->Destroy();
     (*it).m_type->Destroy();
     m_lines.erase( it );
-    sizer->Layout();
+    fgs->Layout();
     it = std::next( m_lines.begin(), m_currentLine - 1 );
     if( m_lines.size() > 0 )
     {
@@ -222,9 +223,10 @@ void RetrievalArguments::OnRemoveArgument(wxCommandEvent &WXUNUSED(event))
             m_currentLine--;
         }
         (*it).m_pointer->SetBitmap( bmp );
+        (*it).m_name->SetFocus();
         for( ; it != m_lines.end(); ++it )
         {
-            (*it).m_number->SetLabel( wxString::Format( "%d", counter ) );
+            (*it).m_number->SetLabel( wxString::Format( "%lu", counter ) );
             counter++;
         }
     }

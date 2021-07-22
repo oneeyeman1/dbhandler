@@ -7,15 +7,16 @@ public:
     ErdLineShape();
     virtual ~ErdLineShape();
     ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDiagramManager &pManager);
-    virtual wxRect GetBoundingBox();
+    virtual wxRect GetBoundingBox() wxOVERRIDE;
     wxRealPoint GetModTrgPoint();
     wxRealPoint GetModSrcPoint();
     Constraint *GetConstraint();
     bool GetLineSegment(size_t index, wxRealPoint& src, wxRealPoint& trg);
     void EnableDisableFK(bool enable);
 protected:
-    virtual void DrawNormal(wxDC& dc);
-    virtual void DrawCompleteLine(wxDC& dc);
+    virtual void DrawNormal(wxDC& dc) wxOVERRIDE;
+    virtual void DrawSelected(wxDC &dc) wxOVERRIDE;
+    virtual void DrawCompleteLine(wxDC& dc) wxOVERRIDE;
     wxRealPoint GetSourcePoint();
     wxRealPoint GetTargetPoint();
     void GetDirectionalLine(wxRealPoint& src, wxRealPoint& trg);

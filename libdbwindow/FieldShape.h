@@ -6,15 +6,15 @@ public:
     FieldShape(void);
     FieldShape(const FieldShape &shape);
     virtual ~FieldShape(void);
-    virtual wxRect GetBoundingBox();
-    virtual bool Contains(const wxPoint& pos);
+    virtual wxRect GetBoundingBox() wxOVERRIDE;
+    virtual bool Contains(const wxPoint& pos) wxOVERRIDE;
     void SetParentRect(const wxRect &rect);
     void SetField(TableField *field);
     void Select(bool state);
     TableField *GetField();
 protected:    
-    virtual void DrawNormal(wxDC &dc);
-    virtual void DrawSelected(wxDC& dc);
+    virtual void DrawNormal(wxDC &dc) wxOVERRIDE;
+    virtual void DrawSelected(wxDC& dc) wxOVERRIDE;
 private:
     TableField *m_field;
     wxRect m_parentRect;

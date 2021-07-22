@@ -25,20 +25,24 @@ public:
     DrawingView() : wxView(), m_canvas(NULL) {}
     ~DrawingView();
     void UpdateQueryFromSignChange(const QueryConstraint *type);
-//    std::vector<Table> &GetTablesForView(Database *db);
+    size_t GetSortedFieldCount() { return m_sortedFields.size(); };
+    size_t GetGroupByFieldCount() { return m_groupByFields.size(); };
     wxFrame *GetLogWindow() const;
     wxTextCtrl *GetFieldTextCtrl();
     wxTextCtrl *GetTextLogger() const;
     void GetTablesForView(Database *db, bool init);
     void SetViewType(ViewType type);
     ViewType GetViewType();
-	SortGroupByPage *GetSortPage();
+    SortGroupByPage *GetSortPage();
+    SortGroupByPage *GetGroupByPage();
     WhereHavingPage *GetWherePage();
     WhereHavingPage *GetHavingPage();
+    SyntaxPropPage *GetSyntaxPage();
     void AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName, bool quickSelect);
     void HideShowSQLBox(bool show);
     void SetPaintersMap(std::map<wxString, wxDynamicLibrary *> &painters);
     void ChangeFontEement();
+    void RemoveTableFromQuery(const wxString &table);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
@@ -154,3 +158,4 @@ std::unique_ptr<T> make_unique(Args&&... args)
 #endif
 
 #endif
+

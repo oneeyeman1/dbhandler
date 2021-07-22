@@ -4,6 +4,7 @@
 #include "wxsf/ShapeBase.h"
 #include "database.h"
 #include "FieldShape.h"
+#include "fieldtypeshape.h"
 #include "commentfieldshape.h"
 #include "GridTableShape.h"
 
@@ -112,7 +113,7 @@ void GridTableShape::DoChildrenLayout()
             }
             else
             {
-                wxSFTextShape *temp2 = wxDynamicCast( pShape, wxSFTextShape );
+                FieldTypeShape *temp2 = wxDynamicCast( pShape, FieldTypeShape );
                 if( temp2 )
                 {
                     if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect.GetWidth() > maxRect1.GetWidth() ) )
@@ -156,8 +157,8 @@ void GridTableShape::DoChildrenLayout()
                 FitShapeToRect( pShape, wxRect( nCol * maxRect0.GetWidth() + (nCol + 1) * m_nCellSpace, nRow * maxRect0.GetHeight() + (nRow + 1) * m_nCellSpace,
                     maxRect1.GetWidth(), maxRect1.GetHeight() ) );
             if( nCol == 2 )
-                FitShapeToRect( pShape, wxRect( maxRect0.GetWidth() + maxRect1.GetWidth() + nCol * m_nCellSpace, nRow * maxRect1.GetHeight() + (nRow + 1) * m_nCellSpace,
-                    maxRect2.GetWidth(), maxRect2.GetHeight() ) );
+                FitShapeToRect( pShape, wxRect( nCol * maxRect0.GetWidth() + (nCol + 1) * m_nCellSpace, nRow * maxRect0.GetHeight() + (nRow + 1) * m_nCellSpace,
+                                               maxRect1.GetWidth(), maxRect1.GetHeight() ) );
 		}
 	}
 }

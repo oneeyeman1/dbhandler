@@ -21,10 +21,11 @@ typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring>
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 
-WhereHavingPage::WhereHavingPage(wxWindow *parent, const wxString &type, const wxString &subtype) : wxPanel( parent )
+WhereHavingPage::WhereHavingPage(wxWindow *parent, const wxString &type, const wxString &subtype, bool isWhere) : wxPanel( parent )
 {
     m_type = type;
     m_subtype = subtype;
+    m_isWherePage = isWhere;
     m_operatorChoices[0] = "=";
     m_operatorChoices[1] = "<";
     m_operatorChoices[2] = ">";
@@ -126,6 +127,9 @@ void WhereHavingPage::OnSize(wxSizeEvent &event)
 
 void WhereHavingPage::OnColumnName(wxGridEditorCreatedEvent &event)
 {
+    m_oldString = m_grid->GetCellValue( event.GetRow(), 0 );
+    m_oldString += " " + m_grid->GetCellValue( event.GetRow(), 1 );
+    m_oldString += " " + m_grid->GetCellValue( event.GetRow(), 2 );
     if( event.GetCol() == 0 )
     {
         wxComboBox *editor = dynamic_cast<wxComboBox *>( event.GetControl() );
@@ -186,7 +190,7 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
 #ifdef __WXMSW__
     lib->Load( "dialogs" );
 #elif __WXMAC__
-    lib->Load( "liblibdialog.dylib" );
+    lib->Load( "liblibdialogs.dylib" );
 #else
     lib->Load( "libdialogs" );
 #endif
@@ -194,7 +198,7 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
     {
         wxString selection;
         ADDCOLUMNSDIALOG func = (ADDCOLUMNSDIALOG) lib->GetSymbol( "AddColumnToQuery" );
-        func( GetParent()->GetParent(), type, fields, selection, m_type, m_subtype );
+        func( dynamic_cast<wxMDIChildFrame *>( GetParent()->GetParent() )->GetMDIParent(), type, fields, selection, m_type, m_subtype );
         if( selection != wxEmptyString )
         {
             m_grid->SetCellValue( m_row, m_col, selection );
@@ -215,11 +219,24 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
     lib = NULL;
 }
 
-void WhereHavingPage::OnCellChanged(wxCommandEvent &WXUNUSED(event))
+void WhereHavingPage::OnCellChanged(wxCommandEvent &event)
 {
+    wxString newString;
     if( m_grid->GetCellValue( m_row, 1 ) == wxEmptyString )
+    {
+        newString = event.GetString();
         m_grid->SetCellValue( m_row, 1, "=" );
-
+    }
+    else
+        newString = m_grid->GetCellValue( m_row, 0 );
+    newString += " " + m_grid->GetCellValue( m_row, 1 );
+    newString += " " + m_grid->GetCellValue( m_row, 2 );
+    wxCommandEvent evt( wxEVT_CHANGE_QUERY );
+    evt.SetEventObject( this );
+    evt.SetString( m_oldString );
+    evt.SetClientObject( (wxClientData *) &newString );
+    wxWindow *parent = GetParent()->GetParent();
+    parent->GetEventHandler()->ProcessEvent( evt );
 }
 
 void WhereHavingPage::OnGridCellChaqnged(wxGridEvent &event)
