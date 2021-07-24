@@ -116,7 +116,12 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     sizer_6->Add( m_remove, 0, wxEXPAND, 0 );
     sizer->Add( sizer_6, 0, wxEXPAND | wxRIGHT, 0 );
     m_panel->SetSizer( sizer );
-    sizer->SetSizeHints( this );
+
+    //sizer->SetSizeHints( this );
+    const wxSize size = sizer->ComputeFittingClientSize( this );
+    SetMinClientSize( size );
+    SetClientSize( size );
+
     Layout();
     m_panel->Bind( wxEVT_SIZE, &RetrievalArguments::OnSize, this );
     m_add->Bind( wxEVT_BUTTON, &RetrievalArguments::OnAddArgument, this );
