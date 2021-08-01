@@ -33,7 +33,8 @@ protected:
     void OnInsertArgument(wxCommandEvent &event);
     void OnRemoveArgument(wxCommandEvent &event);
     void OnKeyDown(wxKeyEvent &event);
-    void OnMouse(wxMouseEvent &event);
+    void OnSetFocus(wxFocusEvent &event);
+    void OnKillFocus(wxFocusEvent &event);
     void OnSize(wxSizeEvent &event);
     void OnRemoveUpdateUI(wxUpdateUIEvent &event);
     void UpdateHeader();

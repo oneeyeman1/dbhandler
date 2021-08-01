@@ -76,11 +76,12 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
         wxStaticText *number = new wxStaticText( args, wxID_ANY, pos, wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
         wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, (*it).m_name );
         name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
-        name->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
-        name->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+        name->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
+        if( (*it).m_pos == 1 )
+            name->Bind( wxEVT_KILL_FOCUS, &RetrievalArguments::OnKillFocus, this );
         TypeComboBox *type = new TypeComboBox( args, dbType.ToStdWstring(), subType.ToStdWstring(), (*it).m_type.ToStdString() );
-        type->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
-        type->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+        type->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
+        type->Bind( wxEVT_KILL_FOCUS, &RetrievalArguments::OnKillFocus, this );
         fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT, 8 );
         fgs->Add( number, 0, wxRIGHT, 8 );
         fgs->Add( name, 1, wxEXPAND | wxRIGHT, 8 );
@@ -116,7 +117,12 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     sizer_6->Add( m_remove, 0, wxEXPAND, 0 );
     sizer->Add( sizer_6, 0, wxEXPAND | wxRIGHT, 0 );
     m_panel->SetSizer( sizer );
-    sizer->SetSizeHints( this );
+
+    //sizer->SetSizeHints( this );
+    const wxSize size = sizer->ComputeFittingClientSize( this );
+    SetMinClientSize( size );
+    SetClientSize( size );
+
     Layout();
     m_panel->Bind( wxEVT_SIZE, &RetrievalArguments::OnSize, this );
     m_add->Bind( wxEVT_BUTTON, &RetrievalArguments::OnAddArgument, this );
@@ -124,6 +130,8 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     m_remove->Bind( wxEVT_BUTTON, &RetrievalArguments::OnRemoveArgument, this );
     m_remove->Bind( wxEVT_UPDATE_UI, &RetrievalArguments::OnRemoveUpdateUI, this );
     m_insert->Bind( wxEVT_UPDATE_UI, &RetrievalArguments::OnRemoveUpdateUI, this );
+    m_remove->Bind( wxEVT_KILL_FOCUS, &RetrievalArguments::OnKillFocus, this );
+    Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
     CallAfter( &RetrievalArguments::UpdateHeader );
     set_properties();
 }
@@ -154,11 +162,10 @@ void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
     wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%lu", numArgs ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
     wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
     name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
-    name->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
-    name->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+    name->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
     TypeComboBox *type = new TypeComboBox( args, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
-    type->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
-    type->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+    type->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
+    type->Bind( wxEVT_KILL_FOCUS, &RetrievalArguments::OnKillFocus, this );
     fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT, 8 );
     fgs->Add( number, 0, wxRIGHT, 8 );
     fgs->Add( name, 1, wxEXPAND | wxRIGHT, 8 );
@@ -180,11 +187,10 @@ void RetrievalArguments::OnInsertArgument(wxCommandEvent &WXUNUSED(event))
     wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%lu", m_currentLine ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
     wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
     name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
-    name->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
-    name->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+    name->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
     TypeComboBox *type = new TypeComboBox( args, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
-    type->Bind( wxEVT_LEFT_DOWN, &RetrievalArguments::OnMouse, this );
-    type->Bind( wxEVT_RIGHT_DOWN, &RetrievalArguments::OnMouse, this );
+    type->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
+    type->Bind( wxEVT_KILL_FOCUS, &RetrievalArguments::OnKillFocus, this );
     (*it).m_pointer->SetBitmap( wxNullBitmap );
     fgs->Insert( pos, statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT, 0 );
     fgs->Insert( pos + 1, number, 0, wxRIGHT, 8 );
@@ -242,64 +248,46 @@ void RetrievalArguments::UpdateHeader()
 
 void RetrievalArguments::OnKeyDown(wxKeyEvent &event)
 {
+    std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
     Freeze();
     if( event.GetKeyCode() == WXK_UP )
     {
         if( m_currentLine > 1 )
         {
-            std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
             (*it).m_pointer->SetBitmap( wxNullBitmap );
             m_currentLine--;
             it = std::next( m_lines.begin(), m_currentLine - 1 );
             (*it).m_pointer->SetBitmap( bmp );
             (*it).m_name->SetFocus();
         }
-        else
-            event.Skip();
     }
-    else if( event.GetKeyCode () == WXK_DOWN )
+    else if( event.GetKeyCode() == WXK_DOWN )
     {
         if( m_currentLine < numArgs )
         {
-            std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
             (*it).m_pointer->SetBitmap( wxNullBitmap );
             m_currentLine++;
             it = std::next( m_lines.begin(), m_currentLine - 1 );
             (*it).m_pointer->SetBitmap( bmp );
             (*it).m_name->SetFocus();
         }
-        else
-            event.Skip();
     }
-    event.Skip();
-    Thaw();
-}
-
-void RetrievalArguments::OnMouse(wxMouseEvent &event)
-{
-    Freeze();
-    wxTextCtrl *name = nullptr;
-    TypeComboBox *type = nullptr;
-    bool found = false;
-    name = dynamic_cast<wxTextCtrl *>( event.GetEventObject() );
-    type = dynamic_cast<TypeComboBox *>( event.GetEventObject() );
-    std::list<QueryLines>::iterator it;
-    for( it = m_lines.begin(); it != m_lines.end() && !found; ++it )
+    else if( event.GetKeyCode() == WXK_TAB )
     {
-        if( name && (*it).m_name == name )
-            found = true;
-        else if( type && (*it).m_type == type )
-            found = true;
-    }
-    if( found )
-        --it;
-    int newRow = wxAtoi( (*it).m_number->GetLabel() ) - 1;
-    if( newRow != m_currentLine )
-    {
-        std::list<QueryLines>::iterator oldit = std::next( m_lines.begin(), m_currentLine - 1 );
-        (*oldit).m_pointer->SetBitmap( wxNullBitmap );
-        (*it).m_pointer->SetBitmap( bmp );
-        m_currentLine = wxAtoi( (*it).m_number->GetLabel() );
+        wxWindow *win = FindFocus();
+        if( dynamic_cast<TypeComboBox *>( win ) )
+        {
+            if( m_currentLine < numArgs )
+            {
+                (*it).m_pointer->SetBitmap( wxNullBitmap );
+                m_currentLine++;
+                it = std::next( m_lines.begin(), m_currentLine - 1 );
+                (*it).m_pointer->SetBitmap( bmp );
+                (*it).m_name->SetFocus();
+            }
+            else
+                m_add->SetFocus();
+        }
     }
     event.Skip();
     Thaw();
@@ -316,4 +304,61 @@ void RetrievalArguments::OnRemoveUpdateUI(wxUpdateUIEvent &event)
 std::list<QueryLines> &RetrievalArguments::GetArgumentLines()
 {
     return m_lines;
+}
+
+void RetrievalArguments::OnSetFocus(wxFocusEvent &event)
+{
+    Freeze();
+    wxTextCtrl *name = nullptr;
+    int newRow;
+    TypeComboBox *type = nullptr;
+    bool found = false;
+    name = dynamic_cast<wxTextCtrl *>( event.GetEventObject() );
+    type = dynamic_cast<TypeComboBox *>( event.GetEventObject() );
+    std::list<QueryLines>::iterator it;
+    for( it = m_lines.begin(); it != m_lines.end() && !found; ++it )
+    {
+        if( name && (*it).m_name == name )
+            found = true;
+        else if( type && (*it).m_type == type )
+            found = true;
+    }
+    if( found )
+        --it;
+    if( it != m_lines.end() )
+    {
+        newRow = wxAtoi( (*it).m_number->GetLabel() ) - 1;
+        if( newRow != m_currentLine )
+        {
+            std::list<QueryLines>::iterator oldit = std::next( m_lines.begin(), m_currentLine - 1 );
+            (*oldit).m_pointer->SetBitmap( wxNullBitmap );
+            (*it).m_pointer->SetBitmap( bmp );
+            m_currentLine = wxAtoi( (*it).m_number->GetLabel() );
+        }
+    }
+    event.Skip();
+    Thaw();
+}
+
+void RetrievalArguments::OnKillFocus(wxFocusEvent &event)
+{
+    if( dynamic_cast<TypeComboBox *>( event.GetEventObject() ) )
+    {
+        if( m_currentLine == m_lines.size() && !dynamic_cast<wxTextCtrl *>( event.GetWindow() ) )
+            m_add->SetFocus();
+    }
+    if( dynamic_cast<wxButton *>( event.GetEventObject () ) && !( dynamic_cast<wxButton *>( event.GetWindow() ) ) )
+    {
+        std::list<QueryLines>::iterator oldit = std::next( m_lines.begin(), m_currentLine - 1 );
+        (*oldit).m_pointer->SetBitmap( wxNullBitmap );
+        m_currentLine = 1;
+        std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
+        (*it).m_pointer->SetBitmap( bmp );
+        (*it).m_name->SetFocus();
+    }
+    if( dynamic_cast<wxTextCtrl *>( event.GetEventObject () ) && dynamic_cast<wxPanel *>( event.GetWindow() ) )
+    {
+        m_remove->SetFocus();
+    }
+    event.Skip();
 }

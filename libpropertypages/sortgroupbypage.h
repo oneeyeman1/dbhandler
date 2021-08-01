@@ -19,21 +19,6 @@
 #define ASCENDING 0
 #define DESCENDING 1
 
-struct GroupDestData
-{
-    GroupDestData(TableField *f, long p ) : pos( p )
-    {
-        field = new TableField;
-        field = f;
-    }
-    ~GroupDestData ()
-    {
-        delete field;
-    }
-    TableField *field;
-    long pos;
-};
-
 class MyListCtrl : public wxListCtrl
 {
 public:
