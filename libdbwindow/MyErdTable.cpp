@@ -229,14 +229,14 @@ void MyErdTable::DrawHover(wxDC &dc)
 
 void MyErdTable::DrawNormal(wxDC &dc)
 {
-/*    if( this->m_fSelected )
+    if( this->m_fSelected )
     {
         m_header->SetFill( wxBrush( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) ) );
     }
     else
     {
         m_header->SetFill( wxBrush() );
-    }*/
+    }
     wxSFRoundRectShape::DrawNormal( dc );
     DrawDetail( dc );
 }
