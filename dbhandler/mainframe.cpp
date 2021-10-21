@@ -372,11 +372,11 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
         {
             lib2 = new wxDynamicLibrary;
 #ifdef __WXMSW__
-            lib2->Load( "tablewindow" );
+            lib2->Load( "tabledataedit" );
 #elif __WXOSX__
-            lib2->Load( "liblibtablewindow.dylib" );
+            lib2->Load( "liblibtabledataedit.dylib" );
 #else
-            lib2->Load( "libtablewindow" );
+            lib2->Load( "libtabledataedit" );
 #endif
             if( lib2->IsLoaded() )
                 m_painters["TableView"] = lib2;
@@ -455,11 +455,11 @@ void MainFrame::OnTable(wxCommandEvent &event)
         {
             lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-            lib->Load( "tablewindow" );
+            lib->Load( "tabledataedit" );
 #elif __WXOSX__
-            lib->Load( "liblibtablewindow.dylib" );
+            lib->Load( "liblibtabledataedit.dylib" );
 #else
-            lib->Load( "libtablewindow" );
+            lib->Load( "libtabledataedit" );
 #endif
             if( lib->IsLoaded() )
                 m_painters["TableView"] = lib;

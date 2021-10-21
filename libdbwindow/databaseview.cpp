@@ -1012,11 +1012,11 @@ void DrawingView::OnAlterTable(wxCommandEvent &WXUNUSED(event))
     }
     wxDynamicLibrary lib1;
 #ifdef __WXMSW__
-    lib1.Load( "tablewindow" );
+    lib1.Load( "tabledataedit" );
 #elif __WXOSX__
-    lib1.Load( "liblibtablewindow.dylib" );
+    lib1.Load( "liblibtabledataedit.dylib" );
 #else
-    lib1.Load( "libtablewindow" );
+    lib1.Load( "libtabledataedit" );
 #endif
     if( lib1.IsLoaded() )
     {
@@ -1051,11 +1051,11 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
     }
     wxDynamicLibrary lib1;
 #ifdef __WXMSW__
-    lib1.Load( "tablewindow" );
+    lib1.Load( "tabledataedit" );
 #elif __WXOSX__
-    lib1.Load( "liblibtablewindow.dylib" );
+    lib1.Load( "liblibtabledataedit.dylib" );
 #else
-    lib1.Load( "libtablewindow" );
+    lib1.Load( "libtabledataedit" );
 #endif
     if( lib1.IsLoaded() )
     {
