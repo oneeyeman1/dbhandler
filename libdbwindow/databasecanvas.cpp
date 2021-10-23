@@ -237,10 +237,11 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
 {
     ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
     wxSFShapeBase* pShape = NULL;
-    ShapeList shapes, list;
+    ShapeList shapes, list, allTableShapes;
     ConstraintSign *sign = NULL;
     GetSelectedShapes( shapes );
     GetShapesAtPosition( event.GetPosition(), list );
+    GetDiagramManager().GetShapes( CLASSINFO( MyErdTable), allTableShapes );
     int count = 0;
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); it++ )
     {
@@ -327,8 +328,8 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
                     }
                 }
             }
-            if( tbl )
-                tbl->Select( false );
+            for( ShapeList::iterator it = allTableShapes.begin(); it != allTableShapes.end(); it++ )
+                (*it)->Select( false );
             Refresh();
             if( fld )
                 dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), const_cast<DatabaseTable *>( tbl->GetTable() )->GetTableName(), false );
@@ -1075,10 +1076,16 @@ void DatabaseCanvas::OnCloseTable(wxCommandEvent &event)
         if( children.Find( field ) )
             dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *field, false, tbl.ToStdWstring(), true );
     }
+    dynamic_cast<DrawingView *>( m_view )->GetSortPage()->RemoveTable( tbl );
     if( dynamic_cast<DrawingView *>( m_view )->GetSortedFieldCount() > 0 )
     {
-        dynamic_cast<DrawingView *>( m_view )->GetSortPage()->RemoveTable( tbl );
         dynamic_cast<DrawingView *>( m_view )->GetSyntaxPage()->RemoveTableSort( tbl );
     }
+    dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->RemoveTable( tbl );
+    if( dynamic_cast<DrawingView *>( m_view )->GetGroupByFieldCount() > 0 )
+    {
+        
+    }
+    dynamic_cast<DrawingView *>( m_view )->RemoveTableFromQuery( tbl );
     m_pManager.RemoveShape( m_selectedShape );
 }
