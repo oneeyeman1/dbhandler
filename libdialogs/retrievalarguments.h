@@ -28,6 +28,7 @@ public:
     RetrievalArguments(wxWindow *parent, std::vector<QueryArguments> &arguments, const wxString &dbType, const wxString &subType);
     ~RetrievalArguments(void);
     std::list<QueryLines> &GetArgumentLines();
+
 protected:
     void OnAddArgument(wxCommandEvent &event);
     void OnInsertArgument(wxCommandEvent &event);
@@ -39,6 +40,11 @@ protected:
     void OnRemoveUpdateUI(wxUpdateUIEvent &event);
     void UpdateHeader();
     void set_properties();
+
+    int FindLineNumberFromControl( wxWindow *win );
+    void SetIndicatorLine( int line );
+    void SetActiveLine( int line );
+
 private:
     wxPanel *m_panel, *argPanel, *m_mainPanel, *dummy_1, *dummy_2, *dummy_3, *dummy_4;
     wxBoxSizer *sizer;
@@ -51,7 +57,6 @@ private:
     wxStaticBoxSizer *box;
     wxString m_type, m_subType;
     unsigned long m_currentLine;
-    unsigned long numArgs;
     std::list<QueryLines> m_lines;
 };
 
