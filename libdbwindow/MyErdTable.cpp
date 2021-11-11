@@ -233,10 +233,6 @@ void MyErdTable::DrawNormal(wxDC &dc)
     {
         m_header->SetFill( wxBrush( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) ) );
     }
-    else
-    {
-        m_header->SetFill( wxBrush() );
-    }
     wxSFRoundRectShape::DrawNormal( dc );
     DrawDetail( dc );
 }
