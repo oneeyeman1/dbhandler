@@ -17,6 +17,7 @@ protected:
     virtual void DrawNormal(wxDC& dc) wxOVERRIDE;
     virtual void DrawSelected(wxDC &dc) wxOVERRIDE;
     virtual void DrawCompleteLine(wxDC& dc) wxOVERRIDE;
+    virtual void OnLeftDoubleClick(const wxPoint& pos) wxOVERRIDE;
     wxRealPoint GetSourcePoint();
     wxRealPoint GetTargetPoint();
     void GetDirectionalLine(wxRealPoint& src, wxRealPoint& trg);
