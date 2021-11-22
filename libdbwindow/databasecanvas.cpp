@@ -328,8 +328,6 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
                     }
                 }
             }
-            for( ShapeList::iterator it = allTableShapes.begin(); it != allTableShapes.end(); it++ )
-                (*it)->Select( false );
             Refresh();
             if( fld )
                 dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), const_cast<DatabaseTable *>( tbl->GetTable() )->GetTableName(), false );
@@ -553,28 +551,37 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 void DatabaseCanvas::OnMouseMove(wxMouseEvent &event)
 {
     ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
-    wxSFShapeCanvas::OnMouseMove( event );
     if( type == QueryView )
     {
         wxSFShapeBase *shape = GetShapeUnderCursor();
         FieldShape *field = wxDynamicCast( shape, FieldShape );
         if( field )
+        {
             SetCursor( wxCURSOR_HAND );
+            return;
+        }
         else
         {
             FieldTypeShape *type = wxDynamicCast( shape, FieldTypeShape );
             if( type )
+            {
                 SetCursor( wxCURSOR_HAND );
+                return;
+            }
             else
             {
                 CommentFieldShape *comment = wxDynamicCast( shape, CommentFieldShape );
                 if( comment )
+                {
                     SetCursor( wxCURSOR_HAND );
+                    return;
+                }
                 else
                     SetCursor( *wxSTANDARD_CURSOR );
             }
         }
     }
+    wxSFShapeCanvas::OnMouseMove( event );
 }
 
 void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
