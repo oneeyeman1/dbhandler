@@ -31,6 +31,7 @@ FieldShape::FieldShape(const FieldShape &shape)
     m_field = shape.m_field;
     m_parentRect = shape.m_parentRect;
     m_backColour = shape.m_backColour;
+    RemoveStyle( sfsSHOW_HANDLES );
 }
 
 FieldShape::~FieldShape(void)

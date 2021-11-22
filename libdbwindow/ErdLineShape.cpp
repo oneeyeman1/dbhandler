@@ -554,3 +554,7 @@ void ErdLineShape::DrawSelected(wxDC &dc)
 {
     DrawNormal( dc );
 }
+
+void ErdLineShape::OnLeftDoubleClick (const wxPoint& WXUNUSED(pos))
+{
+}
