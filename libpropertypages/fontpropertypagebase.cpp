@@ -37,6 +37,9 @@
 #ifdef __WXOSX__
 #include "wx/fontpicker.h"
 #endif
+#ifdef __WXQT__
+#include <QtWidgets/QFontDialog>
+#endif
 #include "colorcombobox.h"
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
