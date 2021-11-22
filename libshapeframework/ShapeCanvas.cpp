@@ -3093,11 +3093,12 @@ wxDragResult wxSFShapeCanvas::DoDragDrop(ShapeList &shapes, const wxPoint& start
 		dndSrc.SetData(dataObj); 
 		#elif __WXMAC__ 
 		wxDropSource dndSrc(dataObj, this, wxDROP_ICON(page), wxDROP_ICON(page), wxDROP_ICON(page)); 
-		#else 
+		#elif __WXMSW__ 
 		wxDropSource dndSrc(dataObj); 
 		#endif 
-
+#ifndef __WXQT__
 		result = dndSrc.DoDragDrop(wxDrag_AllowMove);
+#endif
 		switch(result)
 		{
 		case wxDragMove:
