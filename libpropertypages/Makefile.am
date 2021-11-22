@@ -9,8 +9,6 @@ libpropertypages_la_SOURCES =  \
 	tablegeneral.h \
 	fontpropertypagebase.cpp \
 	fontpropertypagebase.h \
-	gtk/fontpropertypage.cpp \
-	gtk/fontpropertypage.h \
 	syntaxproppage.cpp \
 	syntaxproppage.h \
 	wherehavingpage.cpp \
@@ -35,7 +33,11 @@ libpropertypages_la_SOURCES =  \
 	colorcombobox.cpp \
 	colorcombobox.h \
 	printspec.cpp \
-	printspec.h
+	printspec.h \
+	qt/fontpropertypageQt.cpp \
+	qt/fontpropertypageQt.h \
+	gtk/fontpropertypageGTK.cpp \
+	gtk/fontpropertypageGTK.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \

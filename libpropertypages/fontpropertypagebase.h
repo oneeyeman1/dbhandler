@@ -82,9 +82,11 @@ protected:
 #if defined( __WXMSW__ )
 #include "msw/fontpropertypage.h"
 #elif defined( __WXGTK__ )
-#include "gtk/fontpropertypage.h"
+#include "gtk/fontpropertypageGTK.h"
 #elif defined( __WXMAC__ )
 #include "cocoa/fontpropertypage.h"
+#elif defined(__WXQT__)
+#include "qt/fontpropertypageQt.h"
 #endif
 
 #endif // FONTPROPERTYPAGE_H
