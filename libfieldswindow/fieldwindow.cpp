@@ -32,7 +32,7 @@ FieldWindow::FieldWindow(wxWindow *parent, int type, const wxPoint &pos, int wid
     m_manager.SetRootItem( new xsSerializable() );
     SetDiagramManager( &m_manager );
     SetVirtualSize( 1000, 30 );
-    SetScrollRate( 20, 20 );
+    SetScrollRate( 20, 0 );
     SetCanvasColour( *wxWHITE );
 //    m_win->SetStyle( 0 );
     Bind( wxEVT_LEFT_DOWN, &FieldWindow::OnLeftDown, this );
@@ -88,6 +88,22 @@ void FieldWindow::Clear()
     Refresh();
 }
 
-void FieldWindow::OnLeftDown(wxMouseEvent &WXUNUSED(event))
+void FieldWindow::OnLeftDown(wxMouseEvent &event)
 {
+    ShapeList shapes, allShapes;
+    GetSelectedShapes( allShapes );
+    GetShapesAtPosition( event.GetPosition(), shapes );
+    for( ShapeList::iterator it = allShapes.begin (); it != allShapes.end (); ++it )
+    {
+        FieldWin *field = wxDynamicCast( *it, FieldWin );
+        if( field )
+            field->Select( false );
+    }
+    Refresh();
+    for( ShapeList::iterator it = shapes.begin();  it != shapes.end(); ++it )
+    {
+        FieldWin *field = wxDynamicCast( *it, FieldWin );
+        if( field )
+            field->Select( true );
+    }
 }
