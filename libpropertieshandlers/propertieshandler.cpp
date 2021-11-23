@@ -32,6 +32,7 @@
 #include "wx/fontenum.h"
 #include "wxsf/ShapeCanvas.h"
 #include "colorcombobox.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "propertypagebase.h"
 #include "tablegeneral.h"

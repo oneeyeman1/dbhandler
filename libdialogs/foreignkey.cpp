@@ -22,6 +22,7 @@
 #include "wx/gbsizer.h"
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "foreignkey.h"
 

@@ -39,6 +39,7 @@
 #include "fieldtypeshape.h"
 #include "fontcombobox.h"
 #include "MyErdTable.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "FieldShape.h"
 #include "DiagramManager.h"

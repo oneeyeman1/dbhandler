@@ -22,6 +22,7 @@
 #include "wx/spinctrl.h"
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "createindex.h"
 

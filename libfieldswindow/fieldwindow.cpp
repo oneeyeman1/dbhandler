@@ -26,6 +26,7 @@
 
 FieldWindow::FieldWindow(wxWindow *parent, int type, const wxPoint &pos, int width) : wxSFShapeCanvas()
 {
+    m_isDragging = false;
     Create( parent, wxID_ANY, pos == wxDefaultPosition ? wxDefaultPosition : pos, wxSize( width == -1 ? parent->GetSize().GetWidth() : width, 55 ), wxBORDER_SIMPLE | wxHSCROLL | wxALWAYS_SHOW_SB );
     m_startPoint.x = 10;
     m_startPoint.y = 10;
@@ -106,4 +107,24 @@ void FieldWindow::OnLeftDown(wxMouseEvent &event)
         if( field )
             field->Select( true );
     }
+}
+
+void FieldWindow::OnMouseMove(wxMouseEvent &event)
+{
+    if( event.Dragging() )
+    {
+        m_draggingField = dynamic_cast<FieldWin *>( GetShapeAtPosition( event.GetPosition() ) );
+        if( m_draggingField )
+        {
+            m_initialDraggerPosition = m_draggingField->GetBoundingBox();
+            m_isDragging = true;
+            wxLogDebug( "Dragging" );
+        }
+    }
+}
+
+void FieldWindow::OnLeftUp(wxMouseEvent &event)
+{
+    FieldWin *field = dynamic_cast<FieldWin *>( GetShapeAtPosition( event.GetPosition() ) );
+    m_isDragging = false;
 }

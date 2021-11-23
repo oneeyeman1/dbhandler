@@ -27,6 +27,7 @@
 #include "constraintsign.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "commenttableshape.h"
 #include "fontcombobox.h"

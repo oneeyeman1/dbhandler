@@ -37,6 +37,7 @@
 #include "wxsf/ShapeCanvas.h"
 #include "database.h"
 #include "objectproperties.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "colorcombobox.h"
 #include "propertypagebase.h"

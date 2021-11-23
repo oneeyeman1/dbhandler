@@ -34,6 +34,7 @@
 #include "HeaderGrid.h"
 #include "commenttableshape.h"
 #include "fontcombobox.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "constraintsign.h"
 #include "FieldShape.h"

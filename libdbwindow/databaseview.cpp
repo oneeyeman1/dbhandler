@@ -77,6 +77,7 @@
 #include "commenttableshape.h"
 #include "fontcombobox.h"
 #include "MyErdTable.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "syntaxproppage.h"
 #include "sortgroupbypage.h"
