@@ -51,6 +51,7 @@
 #include "fontcombobox.h"
 #include "MyErdTable.h"
 #include "FieldShape.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "sortgroupbypage.h"
 #include "wherehavingpage.h"

@@ -39,6 +39,7 @@
 #include "fieldtypeshape.h"
 #include "fontcombobox.h"
 #include "MyErdTable.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "FieldShape.h"
 #include "DiagramManager.h"
@@ -237,10 +238,11 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
 {
     ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
     wxSFShapeBase* pShape = NULL;
-    ShapeList shapes, list;
+    ShapeList shapes, list, allTableShapes;
     ConstraintSign *sign = NULL;
     GetSelectedShapes( shapes );
     GetShapesAtPosition( event.GetPosition(), list );
+    GetDiagramManager().GetShapes( CLASSINFO( MyErdTable), allTableShapes );
     int count = 0;
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); it++ )
     {
@@ -327,8 +329,6 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
                     }
                 }
             }
-            if( tbl )
-                tbl->Select( false );
             Refresh();
             if( fld )
                 dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), const_cast<DatabaseTable *>( tbl->GetTable() )->GetTableName(), false );
@@ -552,28 +552,37 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 void DatabaseCanvas::OnMouseMove(wxMouseEvent &event)
 {
     ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
-    wxSFShapeCanvas::OnMouseMove( event );
     if( type == QueryView )
     {
         wxSFShapeBase *shape = GetShapeUnderCursor();
         FieldShape *field = wxDynamicCast( shape, FieldShape );
         if( field )
+        {
             SetCursor( wxCURSOR_HAND );
+            return;
+        }
         else
         {
             FieldTypeShape *type = wxDynamicCast( shape, FieldTypeShape );
             if( type )
+            {
                 SetCursor( wxCURSOR_HAND );
+                return;
+            }
             else
             {
                 CommentFieldShape *comment = wxDynamicCast( shape, CommentFieldShape );
                 if( comment )
+                {
                     SetCursor( wxCURSOR_HAND );
+                    return;
+                }
                 else
                     SetCursor( *wxSTANDARD_CURSOR );
             }
         }
     }
+    wxSFShapeCanvas::OnMouseMove( event );
 }
 
 void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
@@ -1075,10 +1084,16 @@ void DatabaseCanvas::OnCloseTable(wxCommandEvent &event)
         if( children.Find( field ) )
             dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *field, false, tbl.ToStdWstring(), true );
     }
+    dynamic_cast<DrawingView *>( m_view )->GetSortPage()->RemoveTable( tbl );
     if( dynamic_cast<DrawingView *>( m_view )->GetSortedFieldCount() > 0 )
     {
-        dynamic_cast<DrawingView *>( m_view )->GetSortPage()->RemoveTable( tbl );
         dynamic_cast<DrawingView *>( m_view )->GetSyntaxPage()->RemoveTableSort( tbl );
     }
+    dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->RemoveTable( tbl );
+    if( dynamic_cast<DrawingView *>( m_view )->GetGroupByFieldCount() > 0 )
+    {
+        
+    }
+    dynamic_cast<DrawingView *>( m_view )->RemoveTableFromQuery( tbl );
     m_pManager.RemoveShape( m_selectedShape );
 }

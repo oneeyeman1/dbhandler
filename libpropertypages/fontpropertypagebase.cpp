@@ -37,6 +37,9 @@
 #ifdef __WXOSX__
 #include "wx/fontpicker.h"
 #endif
+#ifdef __WXQT__
+#include <QtWidgets/QFontDialog>
+#endif
 #include "colorcombobox.h"
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
@@ -49,37 +52,10 @@ END_EVENT_TABLE()
 
 void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
-    int cx, x, y;
     wxPaintDC dc( this );
-    wxRect rcText = GetRect();
-    wxPoint pos = GetPosition();
-    wxSize size = GetSize(), extent;
-//    wxFont font = GetFont();
-    ScreenToClient( pos );
-    dc.SetBackgroundMode( wxBRUSHSTYLE_TRANSPARENT );
-    dc.SetPen( *wxBLACK_PEN );
-    dc.SetBrush( *wxWHITE_BRUSH );
-    dc.DrawRectangle( 0, 0, size.x, size.y );
-    wxFont font = GetParent()->GetFont();
-    if( font.IsOk() )
-    {
-        dc.SetFont( font );
-        wxFontMetrics metrics = dc.GetFontMetrics();
-        extent = dc.GetTextExtent( m_text );
-        extent.SetHeight( metrics.ascent - metrics.internalLeading );
-        cx = extent.GetX();
-        if( ( cx >= ( size.GetWidth() ) ) || cx <= 0 )
-            x = pos.x;
-        else
-            x = pos.x + ( size.GetWidth() - cx ) / 2;
-        int bottom = size.GetY() + size.GetHeight();
-        y = wxMin( bottom, bottom - ( ( bottom - pos.y ) - extent.GetHeight() ) / 2 );
-        dc.SetTextForeground( *wxBLACK );
-        dc.DrawText( m_text, x, y );
-        dc.SetFont( wxNullFont );
-    }
-    dc.SetBrush( wxNullBrush );
-    dc.SetPen( wxNullPen );
+    dc.SetBackground( *wxWHITE );
+    dc.Clear();
+    dc.DrawLabel( m_text, GetClientRect(), wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL );
 }
 #endif
 

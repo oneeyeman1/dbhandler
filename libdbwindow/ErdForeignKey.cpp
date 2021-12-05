@@ -23,6 +23,7 @@
 #include "constraintsign.h"
 #include "commenttableshape.h"
 #include "MyErdTable.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "ErdForeignKey.h"
 

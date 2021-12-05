@@ -229,14 +229,10 @@ void MyErdTable::DrawHover(wxDC &dc)
 
 void MyErdTable::DrawNormal(wxDC &dc)
 {
-/*    if( this->m_fSelected )
+    if( this->m_fSelected && m_type == DatabaseView )
     {
         m_header->SetFill( wxBrush( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) ) );
     }
-    else
-    {
-        m_header->SetFill( wxBrush() );
-    }*/
     wxSFRoundRectShape::DrawNormal( dc );
     DrawDetail( dc );
 }
@@ -295,7 +291,6 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             pCol->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
             pCol->SetId( id + 10000 + 1 );
             pCol->Activate( true );
-            pCol->RemoveStyle( sfsSHOW_HANDLES );
             if( m_pGrid->InsertToTableGrid( pCol ) )
             {
                 SetCommonProps( pCol );
@@ -312,7 +307,6 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
             comment_shape->SetId( id + 10000 + 2 );
             comment_shape->Activate( true );
-            comment_shape->RemoveStyle( sfsSHOW_HANDLES );
             if( m_pGrid->InsertToTableGrid( comment_shape ) )
             {
                 SetCommonProps( comment_shape );
@@ -333,7 +327,6 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             pCol->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
             pCol->SetId( id + 10000 );
             pCol->Activate( true );
-            pCol->RemoveStyle( sfsSHOW_HANDLES );
             if( m_pGrid->InsertToTableGrid( pCol ) )
             {
                 SetCommonProps( pCol );
@@ -350,7 +343,6 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             type_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
             type_shape->SetId( id + 10000 + 1 );
             type_shape->Activate( true );
-            type_shape->RemoveStyle( sfsSHOW_HANDLES );
             if( m_pGrid->InsertToTableGrid( type_shape ) )
             {
                 SetCommonProps( type_shape );
@@ -367,7 +359,6 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
             comment_shape->SetId( id + 10000 + 2 );
             comment_shape->Activate( true );
-            comment_shape->RemoveStyle( sfsSHOW_HANDLES );
             if( m_pGrid->InsertToTableGrid( comment_shape ) )
             {
                 SetCommonProps( comment_shape );

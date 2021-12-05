@@ -772,8 +772,8 @@ void wxSFShapeCanvas::OnLeftDown(wxMouseEvent& event)
 					{
 						if (m_lstSelection.GetCount() > 1)
 						{
-							m_shpMultiEdit.Show(true);
-							m_shpMultiEdit.ShowHandles(true);
+//							m_shpMultiEdit.Show(true);
+//							m_shpMultiEdit.ShowHandles(true);
 						}
 						else
 							m_shpMultiEdit.Show(false);
@@ -1012,8 +1012,8 @@ void wxSFShapeCanvas::OnLeftUp(wxMouseEvent &event)
 
 			if(m_lstSelection.GetCount()>1)
 			{
-				m_shpMultiEdit.Show(true);
-				m_shpMultiEdit.ShowHandles(true);
+//				m_shpMultiEdit.Show(true);
+//				m_shpMultiEdit.ShowHandles(true);
 			}
 			else
 				m_shpMultiEdit.Show(false);
@@ -1057,9 +1057,9 @@ void wxSFShapeCanvas::OnLeftUp(wxMouseEvent &event)
 
 			if( !m_lstSelection.IsEmpty() )
 			{
-				HideAllHandles();
-				m_shpMultiEdit.Show(true);
-				m_shpMultiEdit.ShowHandles(true);
+//				HideAllHandles();
+//				m_shpMultiEdit.Show(true);
+//				m_shpMultiEdit.ShowHandles(true);
 			}
 			else
 				m_shpMultiEdit.Show(false);
@@ -1715,9 +1715,9 @@ void wxSFShapeCanvas::_OnEnterWindow(wxMouseEvent& event)
 
             if(m_lstSelection.GetCount() > 1)
             {
-                UpdateMultieditSize();
-                m_shpMultiEdit.Show(true);
-                m_shpMultiEdit.ShowHandles(true);
+//                UpdateMultieditSize();
+//                m_shpMultiEdit.Show(true);
+//                m_shpMultiEdit.ShowHandles(true);
             }
 
             ShapeList::compatibility_iterator node = m_lstSelection.GetFirst();
@@ -2399,10 +2399,10 @@ void wxSFShapeCanvas::SelectAll()
 		GetSelectedShapes(lstSelection);
 		ValidateSelection(lstSelection);
 
-		HideAllHandles();
-		UpdateMultieditSize();
-		m_shpMultiEdit.Show(true);
-		m_shpMultiEdit.ShowHandles(true);
+//		HideAllHandles();
+//		UpdateMultieditSize();
+//		m_shpMultiEdit.Show(true);
+//		m_shpMultiEdit.ShowHandles(true);
 
 		Refresh(false);
 	}
@@ -3093,11 +3093,12 @@ wxDragResult wxSFShapeCanvas::DoDragDrop(ShapeList &shapes, const wxPoint& start
 		dndSrc.SetData(dataObj); 
 		#elif __WXMAC__ 
 		wxDropSource dndSrc(dataObj, this, wxDROP_ICON(page), wxDROP_ICON(page), wxDROP_ICON(page)); 
-		#else 
+		#elif __WXMSW__ 
 		wxDropSource dndSrc(dataObj); 
 		#endif 
-
+#ifndef __WXQT__
 		result = dndSrc.DoDragDrop(wxDrag_AllowMove);
+#endif
 		switch(result)
 		{
 		case wxDragMove:

@@ -27,6 +27,7 @@
 #include "constraintsign.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "commenttableshape.h"
 #include "fontcombobox.h"
@@ -553,4 +554,8 @@ void ErdLineShape::EnableDisableFK(bool enable)
 void ErdLineShape::DrawSelected(wxDC &dc)
 {
     DrawNormal( dc );
+}
+
+void ErdLineShape::OnLeftDoubleClick (const wxPoint& WXUNUSED(pos))
+{
 }

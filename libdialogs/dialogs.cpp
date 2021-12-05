@@ -45,8 +45,8 @@
 #include "wx/fontenum.h"
 #include "objectproperties.h"
 #include "colorcombobox.h"
-//#include "fontpropertypagebase.h"
 #include "databasetype.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "propertypagebase.h"
 #include "tablegeneral.h"
@@ -301,7 +301,7 @@ extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTab
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    JointType dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), wxID_ANY, _( "Join" ), origTable, refTable, origField, refField, type );
+    JointType dlg( dynamic_cast<wxDocMDIChildFrame *>( parent ), wxID_ANY, _( "Join" ), origTable, refTable, origField, refField, type );
     res = dlg.ShowModal();
     if( res == wxID_OK )
         type = dlg.GetTypeCtrl()->GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );

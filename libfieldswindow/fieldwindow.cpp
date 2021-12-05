@@ -26,13 +26,14 @@
 
 FieldWindow::FieldWindow(wxWindow *parent, int type, const wxPoint &pos, int width) : wxSFShapeCanvas()
 {
+    m_isDragging = false;
     Create( parent, wxID_ANY, pos == wxDefaultPosition ? wxDefaultPosition : pos, wxSize( width == -1 ? parent->GetSize().GetWidth() : width, 55 ), wxBORDER_SIMPLE | wxHSCROLL | wxALWAYS_SHOW_SB );
     m_startPoint.x = 10;
     m_startPoint.y = 10;
     m_manager.SetRootItem( new xsSerializable() );
     SetDiagramManager( &m_manager );
     SetVirtualSize( 1000, 30 );
-    SetScrollRate( 20, 20 );
+    SetScrollRate( 20, 0 );
     SetCanvasColour( *wxWHITE );
 //    m_win->SetStyle( 0 );
     Bind( wxEVT_LEFT_DOWN, &FieldWindow::OnLeftDown, this );
@@ -88,6 +89,42 @@ void FieldWindow::Clear()
     Refresh();
 }
 
-void FieldWindow::OnLeftDown(wxMouseEvent &WXUNUSED(event))
+void FieldWindow::OnLeftDown(wxMouseEvent &event)
 {
+    ShapeList shapes, allShapes;
+    GetSelectedShapes( allShapes );
+    GetShapesAtPosition( event.GetPosition(), shapes );
+    for( ShapeList::iterator it = allShapes.begin (); it != allShapes.end (); ++it )
+    {
+        FieldWin *field = wxDynamicCast( *it, FieldWin );
+        if( field )
+            field->Select( false );
+    }
+    Refresh();
+    for( ShapeList::iterator it = shapes.begin();  it != shapes.end(); ++it )
+    {
+        FieldWin *field = wxDynamicCast( *it, FieldWin );
+        if( field )
+            field->Select( true );
+    }
+}
+
+void FieldWindow::OnMouseMove(wxMouseEvent &event)
+{
+    if( event.Dragging() )
+    {
+        m_draggingField = dynamic_cast<FieldWin *>( GetShapeAtPosition( event.GetPosition() ) );
+        if( m_draggingField )
+        {
+            m_initialDraggerPosition = m_draggingField->GetBoundingBox();
+            m_isDragging = true;
+            wxLogDebug( "Dragging" );
+        }
+    }
+}
+
+void FieldWindow::OnLeftUp(wxMouseEvent &event)
+{
+    FieldWin *field = dynamic_cast<FieldWin *>( GetShapeAtPosition( event.GetPosition() ) );
+    m_isDragging = false;
 }

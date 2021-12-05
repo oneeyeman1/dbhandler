@@ -77,6 +77,7 @@
 #include "commenttableshape.h"
 #include "fontcombobox.h"
 #include "MyErdTable.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "syntaxproppage.h"
 #include "sortgroupbypage.h"
@@ -242,6 +243,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_type == QueryView )
     {
         m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
+        m_fields->SetCursor( wxCURSOR_HAND );
         sizer->Add( m_fields, 0, wxEXPAND, 0 );
         m_fields->Show( false );
     }
@@ -1012,11 +1014,11 @@ void DrawingView::OnAlterTable(wxCommandEvent &WXUNUSED(event))
     }
     wxDynamicLibrary lib1;
 #ifdef __WXMSW__
-    lib1.Load( "tablewindow" );
+    lib1.Load( "tabledataedit" );
 #elif __WXOSX__
-    lib1.Load( "liblibtablewindow.dylib" );
+    lib1.Load( "liblibtabledataedit.dylib" );
 #else
-    lib1.Load( "libtablewindow" );
+    lib1.Load( "libtabledataedit" );
 #endif
     if( lib1.IsLoaded() )
     {
@@ -1051,11 +1053,11 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
     }
     wxDynamicLibrary lib1;
 #ifdef __WXMSW__
-    lib1.Load( "tablewindow" );
+    lib1.Load( "tabledataedit" );
 #elif __WXOSX__
-    lib1.Load( "liblibtablewindow.dylib" );
+    lib1.Load( "liblibtabledataedit.dylib" );
 #else
-    lib1.Load( "libtablewindow" );
+    lib1.Load( "libtabledataedit" );
 #endif
     if( lib1.IsLoaded() )
     {
