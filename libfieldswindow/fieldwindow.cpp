@@ -118,16 +118,14 @@ void FieldWindow::OnMouseMove(wxMouseEvent &event)
 {
     if( event.Dragging() )
     {
-        m_draggingField = dynamic_cast<FieldWin *>( GetShapeAtPosition( event.GetPosition() ) );
-        if( m_draggingField )
+        FieldWin *shape = dynamic_cast<FieldWin *>( GetShapeAtPosition( event.GetPosition() ) );
+        if( shape && !m_draggingField )
         {
+            m_draggingField = shape;
             m_initialDraggerPosition = m_draggingField->GetBoundingBox();
-            m_isDragging = true;
-            if( m_draggingField  )
-                wxLogDebug( "In dragging - Field is not null" );
-            else
-                wxLogDebug( "In dragging - Field is null" );
         }
+        if( m_draggingField )
+            m_isDragging = true;
     }
 }
 
@@ -135,16 +133,22 @@ void FieldWindow::OnLeftUp(wxMouseEvent &event)
 {
     if( m_isDragging )
     {
-        if( m_draggingField  )
-            wxLogDebug( "Draaging stop - Field is not null" );
-        else
-            wxLogDebug( "Dragging stop - Field is null" );
         FieldWin *field = dynamic_cast<FieldWin *>( GetShapeAtPosition( event.GetPosition() ) );
         if( !field )
         {
             if( m_draggingField == m_selectedFields.at( m_selectedFields.size() - 1 ) )
                 return;
+            else
+            {
+                for( std::vector<FieldWin *>::iterator it = m_selectedFields.begin(); it < m_selectedFields.end(); ++it )
+                {
+                    if( (*it)->GetFieldName() == m_draggingField->GetFieldName() )
+                    {
+                    }
+                }
+            }
         }
         m_isDragging = false;
+        m_draggingField = nullptr;
     }
 }
