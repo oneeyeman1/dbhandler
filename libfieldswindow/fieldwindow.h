@@ -17,5 +17,6 @@ private:
     bool m_isDragging;
     FieldWin *m_draggingField;
     wxRect m_initialDraggerPosition;
+    std::vector<FieldWin *> m_selectedFields;
 };
 
