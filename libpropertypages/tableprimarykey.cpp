@@ -12,6 +12,7 @@
 #include "wx/listctrl.h"
 #include "wxsf/ShapeCanvas.h"
 #include "database.h"
+#include "field.h"
 #include "fieldwindow.h"
 #include "propertypagebase.h"
 #include "tableprimarykey.h"
