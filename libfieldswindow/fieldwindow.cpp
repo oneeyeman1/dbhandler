@@ -119,6 +119,7 @@ void FieldWindow::OnMouseMove(wxMouseEvent &event)
 {
     if( event.Dragging() )
     {
+        CaptureMouse();
         FieldWin *shape = dynamic_cast<FieldWin *>( GetShapeAtPosition( event.GetPosition() ) );
         if( shape && !m_draggingField )
         {
@@ -132,6 +133,7 @@ void FieldWindow::OnMouseMove(wxMouseEvent &event)
 
 void FieldWindow::OnLeftUp(wxMouseEvent &event)
 {
+    Direction dirs;
     wxPoint pos = event.GetPosition();
     FieldWin *shape = dynamic_cast<FieldWin *>( GetShapeAtPosition( pos ) );
     if( !m_draggingField && shape )
@@ -142,6 +144,7 @@ void FieldWindow::OnLeftUp(wxMouseEvent &event)
     }
     if( m_isDragging )
     {
+        ReleaseMouse();
         int offset;
         if( !shape )
         {
@@ -172,15 +175,36 @@ void FieldWindow::OnLeftUp(wxMouseEvent &event)
         else
         {
             wxRect shapeRect = shape->GetBoundingBox();
-            int shapeMiddle = ( shapeRect.GetRight() - shapeRect.GetLeft() ) / 2;
-            if( ( pos.x > shapeRect.GetLeft () && pos.x < shapeMiddle && m_initialDraggerPosition.GetRight () + 5 == shape->GetBoundingBox ().GetLeft () ) ||
-                ( pos.x < shapeRect.GetRight () && pos.x > shapeMiddle && shape->GetBoundingBox ().GetRight () + 5 == m_initialDraggerPosition.GetLeft () ) )
+            int shapeMiddle = ( ( shapeRect.GetRight() - shapeRect.GetLeft() ) / 2 ) + shape->GetBoundingBox().GetLeft();
+            if( ( pos.x > shapeRect.GetLeft() && pos.x < shapeMiddle && m_initialDraggerPosition.GetRight() + 6 == shapeRect.GetLeft() ) ||
+                ( pos.x < shapeRect.GetRight() && pos.x > shapeMiddle && shapeRect.GetRight() + 6 == m_initialDraggerPosition.GetLeft() ) )
             {
                 m_draggingField->Select( false );
                 Refresh();
                 return;
             }
-            shape->Select( false );
+            else
+            {
+                if( event.GetPosition().x > shapeMiddle && event.GetPosition().x < shapeRect.GetRight() + 5 )
+                    dirs = FieldWindow::AFTER;
+                if( event.GetPosition().x < shapeMiddle && event.GetPosition().x > shapeRect.GetLeft() - 5 )
+                    dirs = FieldWindow::BEFORE;
+                m_selectedFields.erase( std::remove( m_selectedFields.begin(), m_selectedFields.end(), m_draggingField->GetFieldName() ), m_selectedFields.end() );
+                std::vector<wxString>::iterator it = std::find( m_selectedFields.begin(), m_selectedFields.end(), shape->GetFieldName() );
+                if( dirs == FieldWindow::AFTER )
+                    m_selectedFields.insert( it + 1, m_draggingField->GetFieldName() );
+                if( dirs == FieldWindow::BEFORE )
+                    m_selectedFields.insert( it - 1, m_draggingField->GetFieldName() );
+                m_startPoint.x = 10;
+                m_manager.Clear();
+                for( std::vector<wxString>::iterator it = m_selectedFields.begin (); it < m_selectedFields.end (); ++it )
+                {
+                    FieldWin *field = new FieldWin( wxRealPoint( m_startPoint.x, m_startPoint.y ), (*it), m_manager );
+                    m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
+                    m_startPoint.x += field->GetBoundingBox().GetWidth() + 5;
+                }
+            }
+//            shape->Select( false );
         }
         m_isDragging = false;
         m_draggingField = nullptr;
