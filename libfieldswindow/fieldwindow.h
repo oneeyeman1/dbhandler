@@ -1,6 +1,11 @@
 #pragma once
 class WXEXPORT FieldWindow : public wxSFShapeCanvas
 {
+    enum Direction
+    {
+        BEFORE = 0,
+        AFTER = 1
+    };
 public:
     FieldWindow(wxWindow *parent, int type, const wxPoint &pos = wxDefaultPosition, int width = -1);
     virtual ~FieldWindow();
