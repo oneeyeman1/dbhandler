@@ -2078,11 +2078,11 @@ void DrawingView::CreateQueryMenu(const int queryType)
     }
 }
 
-void DrawingView::RemoveTableFromQuery(const wxString &table)
+void DrawingView::RemoveTableFromQuery(const wxString &tableName)
 {
     m_sortedFields.erase( std::remove_if( m_sortedFields.begin(), m_sortedFields.end(),
-                          [&table](const wxString &str)
+                          [&tableName](const wxString &str)
                           {
-                              return str.find( table ) != -1;
+                              return str.find( tableName ) != -1;
                           } ), m_sortedFields.end() );
 }
