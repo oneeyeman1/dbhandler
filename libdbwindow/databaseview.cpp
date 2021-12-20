@@ -1125,14 +1125,14 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
     delete lib;
 }
 
-void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName, bool quickSelect)
+void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAdding, const std::wstring &tableName, bool quickSelect)
 {
     TableField *fld = const_cast<FieldShape &>( field ).GetField();
     wxString name = tableName + "." + fld->GetFieldName();
     name = "\"" + name;
     name = name + "\"";
     wxString query = m_page6->GetSyntaxCtrl()->GetValue();
-    if( isAdding )
+    if( isAdding == ADD )
     {
         m_fields->AddField( name );
         m_page1->AddRemoveSortingField( true, name );
@@ -1152,7 +1152,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
         m_page6->SetSyntaxText( query );
         m_edit->SetText( query );
     }
-    else
+    else if( isAdding == REMOVE )
     {
         wxString temp1;
         m_page1->AddRemoveSortingField( false, name );
@@ -1180,6 +1180,10 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
         m_queryFields.erase( std::remove( m_queryFields.begin(), m_queryFields.end(), fld ), m_queryFields.end() );
         m_page6->SetSyntaxText( query );
         m_edit->SetText( query );
+    }
+    else if( isAdding == SHUFFLE )
+    {
+
     }
 }
 
@@ -1212,7 +1216,7 @@ void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstr
             if( field2add && isAdd ? !field2add->IsSelected() : field2add->IsSelected() )
             {
                 field2add->Select( isAdd );
-                AddFieldToQuery( *field2add, isAdd, tableName, false );
+                AddFieldToQuery( *field2add, isAdd ? ADD : REMOVE, tableName, false );
             }
             node = node->GetNext();
         }

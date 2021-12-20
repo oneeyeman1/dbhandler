@@ -18,6 +18,13 @@ enum DrawinViewMenu
     QuerySyntaxMenu
 };
 
+enum QueryFieldChange
+{
+    ADD,
+    REMOVE,
+    SHUFFLE
+};
+
 // The view using MyCanvas to show its contents
 class DrawingView : public wxView
 {
@@ -38,7 +45,7 @@ public:
     WhereHavingPage *GetWherePage();
     WhereHavingPage *GetHavingPage();
     SyntaxPropPage *GetSyntaxPage();
-    void AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName, bool quickSelect);
+    void AddFieldToQuery(const FieldShape &field, QueryFieldChange isAdding, const std::wstring &tableName, bool quickSelect);
     void HideShowSQLBox(bool show);
     void SetPaintersMap(std::map<wxString, wxDynamicLibrary *> &painters);
     void ChangeFontEement();
