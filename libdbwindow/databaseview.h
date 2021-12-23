@@ -97,6 +97,7 @@ public:
     void OnConvertToGraphics(wxCommandEvent &event);
     void OnIconise(wxIconizeEvent &event);
     void OnTableDataEdit(wxCommandEvent &event);
+    void OnFieldShuffle(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/

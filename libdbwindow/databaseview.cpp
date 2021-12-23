@@ -107,6 +107,7 @@
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
+const wxEventTypeTag<wxCommandEvent> wxEVT_FIELD_SHUFFLED( wxEVT_USER_FIRST + 4 );
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool, const int);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
@@ -286,6 +287,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
     Bind( wxEVT_SET_FIELD_PROPERTY, &DrawingView::OnSetProperties, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, m_canvas, wxID_DROPOBJECT );
+    Bind( wxEVT_FIELD_SHUFFLED, &DrawingView::OnFieldShuffle, this );
     m_frame->Bind( wxEVT_CHANGE_QUERY, &DrawingView::OnQueryChange, this );
     m_frame->Bind( wxEVT_ICONIZE, &DrawingView::OnIconise, this );
     if( m_fieldText )
@@ -2085,4 +2087,22 @@ void DrawingView::RemoveTableFromQuery(const wxString &tableName)
                           {
                               return str.find( tableName ) != -1;
                           } ), m_sortedFields.end() );
+}
+
+void DrawingView::OnFieldShuffle(wxCommandEvent &event)
+{
+    wxString replacement = " ";
+    std::vector<wxString> *fields = reinterpret_cast<std::vector<wxString> *>( event.GetClientObject() );
+    for( std::vector<wxString>::iterator it = fields->begin (); it < fields->end (); ++it )
+    {
+        replacement += (*it);
+        if( it != fields->end() - 1 )
+            replacement += ", ";
+        else
+            replacement += " \n\r";
+    }
+    wxString origQuery = m_page6->GetSyntaxCtrl()->GetValue();
+    wxString temp = origQuery.substr( origQuery.Find( " " ), origQuery.Find( "FROM" ) - 6 );
+    origQuery.Replace( temp, replacement, true );
+    m_page6->SetSyntaxText( origQuery );
 }
