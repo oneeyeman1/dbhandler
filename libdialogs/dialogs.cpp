@@ -311,7 +311,7 @@ extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTab
 extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type, const std::vector<std::wstring> &fields, wxString &selection, const wxString &dbType, const wxString &dbSubtype)
 {
     int res;
-    AddColumnsDialog dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), type, fields, dbType, dbSubtype );
+    AddColumnsDialog dlg( parent, type, fields, dbType, dbSubtype );
     res = dlg.ShowModal();
     if( res == wxID_OK )
     {

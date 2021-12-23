@@ -167,6 +167,8 @@ void WhereHavingPage::OnCellRightClick(wxGridEvent &event)
         contextMenu.Append( WHEREPAGECLEAR, _( "Clear" ) );
         if( m_arguments.size() == 0 )
             contextMenu.Enable( WHEREPAGEARGUMENTS, false );
+        else
+            contextMenu.Enable( WHEREPAGEARGUMENTS, true );
         PopupMenu( &contextMenu );
     }
 }
@@ -198,7 +200,7 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
     {
         wxString selection;
         ADDCOLUMNSDIALOG func = (ADDCOLUMNSDIALOG) lib->GetSymbol( "AddColumnToQuery" );
-        func( dynamic_cast<wxMDIChildFrame *>( GetParent()->GetParent() )->GetMDIParent(), type, fields, selection, m_type, m_subtype );
+        func( this, type, fields, selection, m_type, m_subtype );
         if( selection != wxEmptyString )
         {
             m_grid->SetCellValue( m_row, m_col, selection );
