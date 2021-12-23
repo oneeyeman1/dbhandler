@@ -2099,7 +2099,11 @@ void DrawingView::OnFieldShuffle(wxCommandEvent &event)
         if( it != fields->end() - 1 )
             replacement += ", ";
         else
+#ifdef __WXMSW__
             replacement += " \n\r";
+#else
+            replacement += "\n";
+#endif
     }
     wxString origQuery = m_page6->GetSyntaxCtrl()->GetValue();
     wxString temp = origQuery.substr( origQuery.Find( " " ), origQuery.Find( "FROM" ) - 6 );
