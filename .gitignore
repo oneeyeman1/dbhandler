@@ -74,3 +74,4 @@ ltmain.sh
 missing
 .anjuta/*
 libpropertieshandlers/propertoeshandlers.vcxproj.user
+libtabledataedit/vc_mswuddll/
