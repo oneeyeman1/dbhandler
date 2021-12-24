@@ -76,3 +76,4 @@ missing
 libpropertieshandlers/propertoeshandlers.vcxproj.user
 libtabledataedit/vc_mswuddll/
 dbhandler/.vs
+libdialogs/dialogs.vcxproj.filters
