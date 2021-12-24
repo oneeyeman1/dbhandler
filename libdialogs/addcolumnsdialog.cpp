@@ -11,14 +11,16 @@
 
 #include <vector>
 #include <string>
+#include "dialogs.h"
 #include "addcolumnsdialog.h"
 
-AddColumnsDialog::AddColumnsDialog(wxWindow *parent, int type, const std::vector<std::wstring> &fields, const wxString &dbType, const wxString &dbSubtype) : wxDialog( parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 )
+AddColumnsDialog::AddColumnsDialog(wxWindow *parent, int type, const std::vector<std::wstring> &fields, const wxString &dbType, const wxString &dbSubtype, const std::vector<QueryArguments> &args) : wxDialog( parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 )
 {
     m_dbType = dbType;
     m_dbSubtype = dbSubtype;
     m_type = type;
     m_allFields = fields;
+    m_args = args;
     // begin wxGlade: MyDialog::MyDialog
     m_panel = new wxPanel( this, wxID_ANY );
     m_fields = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );

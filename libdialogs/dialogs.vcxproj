@@ -525,6 +525,7 @@
     <ClInclude Include="createindex.h" />
     <ClInclude Include="databasetype.h" />
     <ClInclude Include="detachdb.h" />
+    <ClInclude Include="dialogs.h" />
     <ClInclude Include="foreignkey.h" />
     <ClInclude Include="getobjectname.h" />
     <ClInclude Include="gotoline.h" />
