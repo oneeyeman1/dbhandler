@@ -17,7 +17,7 @@
 #include "wx/headerctrl.h"
 #include "wherehavingpage.h"
 
-typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring> &, wxString &, const wxString &, const wxString &);
+typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring> &, wxString &, const wxString &, const wxString &, const std::vector<QueryArguments> &);
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 
@@ -200,7 +200,7 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
     {
         wxString selection;
         ADDCOLUMNSDIALOG func = (ADDCOLUMNSDIALOG) lib->GetSymbol( "AddColumnToQuery" );
-        func( this, type, fields, selection, m_type, m_subtype );
+        func( this, type, fields, selection, m_type, m_subtype, m_arguments );
         if( selection != wxEmptyString )
         {
             m_grid->SetCellValue( m_row, m_col, selection );
