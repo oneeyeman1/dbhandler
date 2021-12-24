@@ -1396,76 +1396,75 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     }
     if( end == wxNOT_FOUND )
         end = query.length() - 1;
-    if( start == wxNOT_FOUND && end != wxNOT_FOUND && queryType == 2 )
+    if( start == wxNOT_FOUND && end != wxNOT_FOUND && queryType == 0 )
     {
+        start = end;
+        end = start + 1;
     }
-    else
+    wxString str = query.substr( start, end - start ), replace;
+    if( type == ADDFIELD )
     {
-        wxString str = query.substr( start, end - start ), replace;
-        if( type == ADDFIELD )
+        if( queryType == 2 )
+            m_groupByFields.push_back( field );
+        else
+            m_sortedFields.push_back( queryType == 2 ? fieldName : fieldName + " ASC" );
+        if( str == ";" )
         {
-            if( queryType == 2 )
-                m_groupByFields.push_back( field );
-            else
-                m_sortedFields.push_back( queryType == 2 ? fieldName : fieldName + " ASC" );
-            if( str == ";" )
-            {
-                replace = "\n" + queryString + fieldName;
-                if( queryType != 2 )
-                    replace += " ASC";
-                replace += ";";
-            }
-            else
-            {
-                replace = str + ",\r         " + fieldName;
-                if( queryType != 2 )
-                    replace += " ASC";
-            }
+            replace = "\n" + queryString + fieldName;
+            if( queryType != 2 )
+                replace += " ASC";
+            replace += ";";
         }
-        else if( type == REMOVEFIELD )
+        else
         {
-            if( queryType == 2 )
+            replace = str + ",\r         " + fieldName;
+            if( queryType != 2 )
+                replace += " ASC";
+        }
+    }
+    else if( type == REMOVEFIELD )
+    {
+        if( queryType == 2 )
+        {
+            m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
+            if( m_groupByFields.size() == 0 )
             {
-                m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
-                if( m_groupByFields.size() == 0 )
-                {
-                    str = "\n" + str;
-                    replace = "";
-                }
-                else
-                {
-                }
+                str = "\n" + str;
+                replace = "";
             }
             else
             {
-                m_sortedFields.erase( std::remove( m_sortedFields.begin(), m_sortedFields.end(), field ), m_sortedFields.end() );
-                if( m_sortedFields.size () == 0 )
-                {
-                    str = "\n" + str + ";";
-                    replace = ";";
-                }
-                else
-                {
-                    wxString temp = fieldName.substr( 0, fieldName.find( ' ' ) );
-                    replace = str.substr( 0, str.find( temp ) );
-                    wxString temp1 = str.substr( str.find( temp ) );
-                    auto pos = str.find( ',' );
-                    if( pos == wxNOT_FOUND )
-                        pos = str.find( ';' );
-                    temp1 = str.substr( pos );
-                    replace += temp1;
-                }
             }
         }
         else
         {
-            wxString temp = str.substr( str.find( fieldName ) );
-            str = temp.substr( 0, temp.find( ',' ) );
-            replace = fieldName + ( sortType == 0 ? " DESC" : " ASC" );
+            m_sortedFields.erase( std::remove( m_sortedFields.begin(), m_sortedFields.end(), field ), m_sortedFields.end() );
+            if( m_sortedFields.size () == 0 )
+            {
+                str = "\n" + str + ";";
+                replace = ";";
+            }
+            else
+            {
+                auto temp = fieldName.substr( 0, fieldName.find( ' ' ) );
+                replace = str.substr( 0, str.find( temp ) );
+                auto temp1 = str.substr( str.find( temp ) );
+                auto pos = str.find( ',' );
+                if( pos == wxNOT_FOUND )
+                    pos = str.find( ';' );
+                temp1 = str.substr( pos );
+                replace += temp1;
+            }
         }
-        query.Replace( str, replace );
-        const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
     }
+    else
+    {
+        wxString temp = str.substr( str.find( fieldName ) );
+        str = temp.substr( 0, temp.find( ',' ) );
+        replace = fieldName + ( sortType == 0 ? " DESC" : " ASC" );
+    }
+    query.Replace( str, replace );
+    const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
 }
 
 void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
