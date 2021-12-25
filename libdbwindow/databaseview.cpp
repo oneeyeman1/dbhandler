@@ -1071,11 +1071,6 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
         wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
 }
 
-SortGroupByPage *DrawingView::GetSortPage()
-{
-    return m_page1;
-}
-
 SortGroupByPage *DrawingView::GetGroupByPage()
 {
     return m_page3;
