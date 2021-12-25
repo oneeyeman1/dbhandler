@@ -14,8 +14,9 @@
 #include "dialogs.h"
 #include "addcolumnsdialog.h"
 
-AddColumnsDialog::AddColumnsDialog(wxWindow *parent, int type, const std::vector<std::wstring> &fields, const wxString &dbType, const wxString &dbSubtype, const std::vector<QueryArguments> &args) : wxDialog( parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 )
+AddColumnsDialog::AddColumnsDialog(wxWindow *parent, int type, const wxPoint &pos, const std::vector<std::wstring> &fields, const wxString &dbType, const wxString &dbSubtype, const std::vector<QueryArguments> &args) : wxDialog( parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 )
 {
+    m_pos = pos;
     m_dbType = dbType;
     m_dbSubtype = dbSubtype;
     m_type = type;
@@ -1305,5 +1306,6 @@ void AddColumnsDialog::OnFieldsDoubleClick(wxCommandEvent &WXUNUSED(event))
 int AddColumnsDialog::ShowModal()
 {
     wxSize size = GetSize();
+    SetPosition( wxPoint( m_pos.x, m_pos.y - size.y ) );
     return wxDialog::ShowModal();
 }
