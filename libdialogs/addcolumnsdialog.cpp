@@ -1240,11 +1240,18 @@ void AddColumnsDialog::set_properties()
             m_fields->Append( "xmltransform" );
         }
     }
-    else
+    if( m_type == 1 )
     {
         for( std::vector<std::wstring>::iterator it = m_allFields.begin(); it < m_allFields.end(); it++ )
         {
             m_fields->Append( (*it) );
+        }
+    }
+    if( m_type == 3 )
+    {
+        for( std::vector<QueryArguments>::iterator it = m_args.begin (); it < m_args.end (); ++it )
+        {
+            m_fields->Append( ":" + (*it).m_name );
         }
     }
 }

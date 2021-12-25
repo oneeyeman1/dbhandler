@@ -67,8 +67,9 @@ WhereHavingPage::WhereHavingPage(wxWindow *parent, const wxString &type, const w
     m_grid->Bind( wxEVT_GRID_EDITOR_CREATED, &WhereHavingPage::OnColumnName, this );
     m_grid->Bind( wxEVT_GRID_CELL_RIGHT_CLICK, &WhereHavingPage::OnCellRightClick, this );
     m_grid->Bind( wxEVT_GRID_CELL_CHANGED, &WhereHavingPage::OnGridCellChaqnged, this );
-    Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGECOLUMNS);
-    Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGEFUNCTIONS);
+    Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGECOLUMNS );
+    Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGEFUNCTIONS );
+    Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGEARGUMENTS );
 }
 
 WhereHavingPage::~WhereHavingPage(void)
@@ -179,13 +180,17 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
     int type;
     std::vector<std::wstring> fields;
     fields = m_fields;
-    if( id == WHEREPAGECOLUMNS )
+    switch( id )
     {
+    case WHEREPAGECOLUMNS:
         type = 1;
-    }
-    else
-    {
-        type = 2;	
+        break;
+    case WHEREPAGEFUNCTIONS:
+        type = 2;
+        break;
+    case WHEREPAGEARGUMENTS:
+        type = 3;
+        break;
     }
     wxDynamicLibrary *lib;
     lib = new wxDynamicLibrary();
