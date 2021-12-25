@@ -8,6 +8,7 @@ public:
     wxListBox *GetFieldsControl() const;
     void OnPasteUpdateUI(wxUpdateUIEvent &event);
     void OnFieldsDoubleClick(wxCommandEvent &event);
+    virtual int ShowModal() wxOVERRIDE;
 protected:
     void set_properties();
     void do_layout();

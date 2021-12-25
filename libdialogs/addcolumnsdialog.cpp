@@ -1301,3 +1301,9 @@ void AddColumnsDialog::OnFieldsDoubleClick(wxCommandEvent &WXUNUSED(event))
 {
     EndModal( wxID_OK );
 }
+
+int AddColumnsDialog::ShowModal()
+{
+    wxSize size = GetSize();
+    return wxDialog::ShowModal();
+}
