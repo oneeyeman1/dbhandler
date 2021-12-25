@@ -43,6 +43,7 @@
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wx/fontenum.h"
+#include "dialogs.h"
 #include "objectproperties.h"
 #include "colorcombobox.h"
 #include "databasetype.h"
@@ -308,10 +309,10 @@ extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTab
     return res;
 }
 
-extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type, const std::vector<std::wstring> &fields, wxString &selection, const wxString &dbType, const wxString &dbSubtype)
+extern "C" WXEXPORT int AddColumnToQuery(wxWindow *parent, int type, const std::vector<std::wstring> &fields, wxString &selection, const wxString &dbType, const wxString &dbSubtype, const std::vector<QueryArguments> &args)
 {
     int res;
-    AddColumnsDialog dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), type, fields, dbType, dbSubtype );
+    AddColumnsDialog dlg( parent, type, fields, dbType, dbSubtype, args );
     res = dlg.ShowModal();
     if( res == wxID_OK )
     {

@@ -19,10 +19,13 @@
 
 #include "wx/window.h"
 #include "wx/sizer.h"
+#include "wx/docmdi.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/TextShape.h"
 #include "field.h"
 #include "fieldwindow.h"
+
+const wxEventTypeTag<wxCommandEvent> wxEVT_FIELD_SHUFFLED( wxEVT_USER_FIRST + 4 );
 
 FieldWindow::FieldWindow(wxWindow *parent, int type, const wxPoint &pos, int width) : wxSFShapeCanvas()
 {
@@ -119,7 +122,6 @@ void FieldWindow::OnMouseMove(wxMouseEvent &event)
 {
     if( event.Dragging() )
     {
-        CaptureMouse();
         FieldWin *shape = dynamic_cast<FieldWin *>( GetShapeAtPosition( event.GetPosition() ) );
         if( shape && !m_draggingField )
         {
@@ -144,7 +146,6 @@ void FieldWindow::OnLeftUp(wxMouseEvent &event)
     }
     if( m_isDragging )
     {
-        ReleaseMouse();
         int offset;
         if( !shape )
         {
@@ -206,6 +207,9 @@ void FieldWindow::OnLeftUp(wxMouseEvent &event)
             }
 //            shape->Select( false );
         }
+        wxCommandEvent event( wxEVT_FIELD_SHUFFLED );
+        event.SetClientObject( (wxClientData *) &m_selectedFields );
+        ProcessEvent( event );
         m_isDragging = false;
         m_draggingField = nullptr;
     }

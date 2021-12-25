@@ -107,6 +107,7 @@
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
+const wxEventTypeTag<wxCommandEvent> wxEVT_FIELD_SHUFFLED( wxEVT_USER_FIRST + 4 );
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &, std::vector<std::wstring> &, bool, const int);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
@@ -286,6 +287,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     Bind( wxEVT_SET_TABLE_PROPERTY, &DrawingView::OnSetProperties, this );
     Bind( wxEVT_SET_FIELD_PROPERTY, &DrawingView::OnSetProperties, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, m_canvas, wxID_DROPOBJECT );
+    Bind( wxEVT_FIELD_SHUFFLED, &DrawingView::OnFieldShuffle, this );
     m_frame->Bind( wxEVT_CHANGE_QUERY, &DrawingView::OnQueryChange, this );
     m_frame->Bind( wxEVT_ICONIZE, &DrawingView::OnIconise, this );
     if( m_fieldText )
@@ -1125,14 +1127,14 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
     delete lib;
 }
 
-void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const std::wstring &tableName, bool quickSelect)
+void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAdding, const std::wstring &tableName, bool quickSelect)
 {
     TableField *fld = const_cast<FieldShape &>( field ).GetField();
     wxString name = tableName + "." + fld->GetFieldName();
     name = "\"" + name;
     name = name + "\"";
     wxString query = m_page6->GetSyntaxCtrl()->GetValue();
-    if( isAdding )
+    if( isAdding == ADD )
     {
         m_fields->AddField( name );
         m_page1->AddRemoveSortingField( true, name );
@@ -1152,7 +1154,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
         m_page6->SetSyntaxText( query );
         m_edit->SetText( query );
     }
-    else
+    else if( isAdding == REMOVE )
     {
         wxString temp1;
         m_page1->AddRemoveSortingField( false, name );
@@ -1180,6 +1182,10 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, bool isAdding, const 
         m_queryFields.erase( std::remove( m_queryFields.begin(), m_queryFields.end(), fld ), m_queryFields.end() );
         m_page6->SetSyntaxText( query );
         m_edit->SetText( query );
+    }
+    else if( isAdding == SHUFFLE )
+    {
+
     }
 }
 
@@ -1212,7 +1218,7 @@ void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstr
             if( field2add && isAdd ? !field2add->IsSelected() : field2add->IsSelected() )
             {
                 field2add->Select( isAdd );
-                AddFieldToQuery( *field2add, isAdd, tableName, false );
+                AddFieldToQuery( *field2add, isAdd ? ADD : REMOVE, tableName, false );
             }
             node = node->GetNext();
         }
@@ -1390,76 +1396,75 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     }
     if( end == wxNOT_FOUND )
         end = query.length() - 1;
-    if( start == wxNOT_FOUND && end != wxNOT_FOUND && queryType == 2 )
+    if( start == wxNOT_FOUND && end != wxNOT_FOUND && queryType == 0 )
     {
+        start = end;
+        end = start + 1;
     }
-    else
+    wxString str = query.substr( start, end - start ), replace;
+    if( type == ADDFIELD )
     {
-        wxString str = query.substr( start, end - start ), replace;
-        if( type == ADDFIELD )
+        if( queryType == 2 )
+            m_groupByFields.push_back( field );
+        else
+            m_sortedFields.push_back( queryType == 2 ? fieldName : fieldName + " ASC" );
+        if( str == ";" )
         {
-            if( queryType == 2 )
-                m_groupByFields.push_back( field );
-            else
-                m_sortedFields.push_back( queryType == 2 ? fieldName : fieldName + " ASC" );
-            if( str == ";" )
-            {
-                replace = "\n" + queryString + fieldName;
-                if( queryType != 2 )
-                    replace += " ASC";
-                replace += ";";
-            }
-            else
-            {
-                replace = str + ",\r         " + fieldName;
-                if( queryType != 2 )
-                    replace += " ASC";
-            }
+            replace = "\n" + queryString + fieldName;
+            if( queryType != 2 )
+                replace += " ASC";
+            replace += ";";
         }
-        else if( type == REMOVEFIELD )
+        else
         {
-            if( queryType == 2 )
+            replace = str + ",\r         " + fieldName;
+            if( queryType != 2 )
+                replace += " ASC";
+        }
+    }
+    else if( type == REMOVEFIELD )
+    {
+        if( queryType == 2 )
+        {
+            m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
+            if( m_groupByFields.size() == 0 )
             {
-                m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
-                if( m_groupByFields.size() == 0 )
-                {
-                    str = "\n" + str;
-                    replace = "";
-                }
-                else
-                {
-                }
+                str = "\n" + str;
+                replace = "";
             }
             else
             {
-                m_sortedFields.erase( std::remove( m_sortedFields.begin(), m_sortedFields.end(), field ), m_sortedFields.end() );
-                if( m_sortedFields.size () == 0 )
-                {
-                    str = "\n" + str + ";";
-                    replace = ";";
-                }
-                else
-                {
-                    wxString temp = fieldName.substr( 0, fieldName.find( ' ' ) );
-                    replace = str.substr( 0, str.find( temp ) );
-                    wxString temp1 = str.substr( str.find( temp ) );
-                    auto pos = str.find( ',' );
-                    if( pos == wxNOT_FOUND )
-                        pos = str.find( ';' );
-                    temp1 = str.substr( pos );
-                    replace += temp1;
-                }
             }
         }
         else
         {
-            wxString temp = str.substr( str.find( fieldName ) );
-            str = temp.substr( 0, temp.find( ',' ) );
-            replace = fieldName + ( sortType == 0 ? " DESC" : " ASC" );
+            m_sortedFields.erase( std::remove( m_sortedFields.begin(), m_sortedFields.end(), field ), m_sortedFields.end() );
+            if( m_sortedFields.size () == 0 )
+            {
+                str = "\n" + str + ";";
+                replace = ";";
+            }
+            else
+            {
+                auto temp = fieldName.substr( 0, fieldName.find( ' ' ) );
+                replace = str.substr( 0, str.find( temp ) );
+                auto temp1 = str.substr( str.find( temp ) );
+                auto pos = str.find( ',' );
+                if( pos == wxNOT_FOUND )
+                    pos = str.find( ';' );
+                temp1 = str.substr( pos );
+                replace += temp1;
+            }
         }
-        query.Replace( str, replace );
-        const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
     }
+    else
+    {
+        wxString temp = str.substr( str.find( fieldName ) );
+        str = temp.substr( 0, temp.find( ',' ) );
+        replace = fieldName + ( sortType == 0 ? " DESC" : " ASC" );
+    }
+    query.Replace( str, replace );
+    const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
 }
 
 void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
@@ -1482,7 +1487,14 @@ void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
         RETRIEVEARGUMENTS func = (RETRIEVEARGUMENTS) lib->GetSymbol( "GetQueryArguments" );
         int res = func( m_parent, arguments, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype() );
         if( res == wxID_OK )
+        {
+            if( arguments.size() > 1 || arguments.size() == 1 && arguments[0].m_name != "" )
+            {
+                m_page2->SetQueryArguments( arguments );
+                m_page4->SetQueryArguments( arguments );
+            }
             m_arguments = arguments;
+        }
     }
     delete lib;
 }
@@ -2074,11 +2086,33 @@ void DrawingView::CreateQueryMenu(const int queryType)
     }
 }
 
-void DrawingView::RemoveTableFromQuery(const wxString &table)
+void DrawingView::RemoveTableFromQuery(const wxString &tableName)
 {
     m_sortedFields.erase( std::remove_if( m_sortedFields.begin(), m_sortedFields.end(),
-                          [&table](const wxString &str)
+                          [&tableName](const wxString &str)
                           {
-                              return str.find( table ) != -1;
+                              return str.find( tableName ) != -1;
                           } ), m_sortedFields.end() );
+}
+
+void DrawingView::OnFieldShuffle(wxCommandEvent &event)
+{
+    wxString replacement = " ";
+    std::vector<wxString> *fields = reinterpret_cast<std::vector<wxString> *>( event.GetClientObject() );
+    for( std::vector<wxString>::iterator it = fields->begin (); it < fields->end (); ++it )
+    {
+        replacement += (*it);
+        if( it != fields->end() - 1 )
+            replacement += ", ";
+        else
+#ifdef __WXMSW__
+            replacement += " \n\r";
+#else
+            replacement += "\n";
+#endif
+    }
+    wxString origQuery = m_page6->GetSyntaxCtrl()->GetValue();
+    wxString temp = origQuery.substr( origQuery.Find( " " ), origQuery.Find( "FROM" ) - 6 );
+    origQuery.Replace( temp, replacement, true );
+    m_page6->SetSyntaxText( origQuery );
 }

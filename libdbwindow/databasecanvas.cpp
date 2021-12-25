@@ -331,7 +331,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
             }
             Refresh();
             if( fld )
-                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), const_cast<DatabaseTable *>( tbl->GetTable() )->GetTableName(), false );
+                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, const_cast<DatabaseTable *>( tbl->GetTable() )->GetTableName(), false );
         }
     }
 }
@@ -551,8 +551,8 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 
 void DatabaseCanvas::OnMouseMove(wxMouseEvent &event)
 {
-    ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
-    if( type == QueryView )
+    ViewType viewType = dynamic_cast<DrawingView *>( m_view )->GetViewType();
+    if( viewType == QueryView )
     {
         wxSFShapeBase *shape = GetShapeUnderCursor();
         FieldShape *field = wxDynamicCast( shape, FieldShape );
@@ -1044,7 +1044,7 @@ void DatabaseCanvas::AddQuickQueryFields(const wxString &tbl, std::vector<TableF
             {
                 found = true;
                 (*it)->Select( true );
-                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected(), tbl.ToStdWstring(), quickSelect );
+                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, tbl.ToStdWstring(), quickSelect );
             }
         }
     }
@@ -1082,7 +1082,7 @@ void DatabaseCanvas::OnCloseTable(wxCommandEvent &event)
     {
         FieldShape *field = wxDynamicCast( (*it), FieldShape );
         if( children.Find( field ) )
-            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *field, false, tbl.ToStdWstring(), true );
+            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *field, REMOVE, tbl.ToStdWstring(), true );
     }
     dynamic_cast<DrawingView *>( m_view )->GetSortPage()->RemoveTable( tbl );
     if( dynamic_cast<DrawingView *>( m_view )->GetSortedFieldCount() > 0 )

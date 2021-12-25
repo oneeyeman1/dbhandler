@@ -26,6 +26,7 @@
 #endif
 
 #include <list>
+#include "dialogs.h"
 #include "arguments.c"
 #include "typecombobox.h"
 #include "retrievalarguments.h"

@@ -17,7 +17,7 @@
 #include "wx/headerctrl.h"
 #include "wherehavingpage.h"
 
-typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring> &, wxString &, const wxString &, const wxString &);
+typedef int (*ADDCOLUMNSDIALOG)(wxWindow *, int, const std::vector<std::wstring> &, wxString &, const wxString &, const wxString &, const std::vector<QueryArguments> &);
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 
@@ -67,8 +67,9 @@ WhereHavingPage::WhereHavingPage(wxWindow *parent, const wxString &type, const w
     m_grid->Bind( wxEVT_GRID_EDITOR_CREATED, &WhereHavingPage::OnColumnName, this );
     m_grid->Bind( wxEVT_GRID_CELL_RIGHT_CLICK, &WhereHavingPage::OnCellRightClick, this );
     m_grid->Bind( wxEVT_GRID_CELL_CHANGED, &WhereHavingPage::OnGridCellChaqnged, this );
-    Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGECOLUMNS);
-    Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGEFUNCTIONS);
+    Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGECOLUMNS );
+    Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGEFUNCTIONS );
+    Bind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGEARGUMENTS );
 }
 
 WhereHavingPage::~WhereHavingPage(void)
@@ -167,6 +168,8 @@ void WhereHavingPage::OnCellRightClick(wxGridEvent &event)
         contextMenu.Append( WHEREPAGECLEAR, _( "Clear" ) );
         if( m_arguments.size() == 0 )
             contextMenu.Enable( WHEREPAGEARGUMENTS, false );
+        else
+            contextMenu.Enable( WHEREPAGEARGUMENTS, true );
         PopupMenu( &contextMenu );
     }
 }
@@ -177,13 +180,17 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
     int type;
     std::vector<std::wstring> fields;
     fields = m_fields;
-    if( id == WHEREPAGECOLUMNS )
+    switch( id )
     {
+    case WHEREPAGECOLUMNS:
         type = 1;
-    }
-    else
-    {
-        type = 2;	
+        break;
+    case WHEREPAGEFUNCTIONS:
+        type = 2;
+        break;
+    case WHEREPAGEARGUMENTS:
+        type = 3;
+        break;
     }
     wxDynamicLibrary *lib;
     lib = new wxDynamicLibrary();
@@ -198,7 +205,7 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
     {
         wxString selection;
         ADDCOLUMNSDIALOG func = (ADDCOLUMNSDIALOG) lib->GetSymbol( "AddColumnToQuery" );
-        func( dynamic_cast<wxMDIChildFrame *>( GetParent()->GetParent() )->GetMDIParent(), type, fields, selection, m_type, m_subtype );
+        func( this, type, fields, selection, m_type, m_subtype, m_arguments );
         if( selection != wxEmptyString )
         {
             m_grid->SetCellValue( m_row, m_col, selection );

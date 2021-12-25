@@ -450,7 +450,8 @@ void SortGroupByPage::OnSortSelectionChanged(wxDataViewEvent &event)
 
 void SortGroupByPage::OnSortListStartEditing(wxDataViewEvent &event)
 {
-    event.Veto();
+    if( event.GetEventObject() == m_sortSource || event.GetEventObject() == m_sortDest && event.GetColumn() == 0 )
+        event.Veto();
 }
 
 void SortGroupByPage::RemoveTable(const wxString tbl)

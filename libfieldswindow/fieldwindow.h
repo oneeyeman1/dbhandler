@@ -25,3 +25,4 @@ private:
     std::vector<wxString> m_selectedFields;
 };
 
+wxDECLARE_EVENT(wxEVT_FIELD_SHUFFLED, wxCommandEvent);

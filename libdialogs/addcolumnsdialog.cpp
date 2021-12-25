@@ -11,14 +11,16 @@
 
 #include <vector>
 #include <string>
+#include "dialogs.h"
 #include "addcolumnsdialog.h"
 
-AddColumnsDialog::AddColumnsDialog(wxWindow *parent, int type, const std::vector<std::wstring> &fields, const wxString &dbType, const wxString &dbSubtype) : wxDialog( parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 )
+AddColumnsDialog::AddColumnsDialog(wxWindow *parent, int type, const std::vector<std::wstring> &fields, const wxString &dbType, const wxString &dbSubtype, const std::vector<QueryArguments> &args) : wxDialog( parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 )
 {
     m_dbType = dbType;
     m_dbSubtype = dbSubtype;
     m_type = type;
     m_allFields = fields;
+    m_args = args;
     // begin wxGlade: MyDialog::MyDialog
     m_panel = new wxPanel( this, wxID_ANY );
     m_fields = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
@@ -1238,11 +1240,18 @@ void AddColumnsDialog::set_properties()
             m_fields->Append( "xmltransform" );
         }
     }
-    else
+    if( m_type == 1 )
     {
         for( std::vector<std::wstring>::iterator it = m_allFields.begin(); it < m_allFields.end(); it++ )
         {
             m_fields->Append( (*it) );
+        }
+    }
+    if( m_type == 3 )
+    {
+        for( std::vector<QueryArguments>::iterator it = m_args.begin (); it < m_args.end (); ++it )
+        {
+            m_fields->Append( ":" + (*it).m_name );
         }
     }
 }
@@ -1291,4 +1300,10 @@ wxListBox *AddColumnsDialog::GetFieldsControl() const
 void AddColumnsDialog::OnFieldsDoubleClick(wxCommandEvent &WXUNUSED(event))
 {
     EndModal( wxID_OK );
+}
+
+int AddColumnsDialog::ShowModal()
+{
+    wxSize size = GetSize();
+    return wxDialog::ShowModal();
 }

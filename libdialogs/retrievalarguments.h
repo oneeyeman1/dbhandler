@@ -1,14 +1,6 @@
 #ifndef __RETRIEVALARGUMENTS__H
 #define __RETRIEVALARGUMENTS__H
 
-class QueryArguments
-{
-public:
-    int m_pos;
-    wxString m_name, m_type;
-    QueryArguments(int pos, const wxString &name, const wxString type) : m_pos(pos), m_name(name), m_type(type) {}
-};
-
 class QueryLines
 {
 public:
