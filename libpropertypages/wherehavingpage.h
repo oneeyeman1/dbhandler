@@ -34,6 +34,7 @@ public:
     void OnColumnName(wxGridEditorCreatedEvent &event);
     void OnCellRightClick(wxGridEvent &event);
     void OnMenuSelection(wxCommandEvent &event);
+    void OnGridLeftClick(wxGridEvent &event);
     void OnSelection();
 protected:
     void do_layout();
