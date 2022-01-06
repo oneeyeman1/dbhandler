@@ -1252,7 +1252,10 @@ void AddColumnsDialog::set_properties()
     {
         for( std::vector<QueryArguments>::iterator it = m_args.begin (); it < m_args.end (); ++it )
         {
-            m_fields->Append( ":" + (*it).m_name );
+            if( ( m_dbType == "ODBC" && m_dbSubtype == "Microsft SQL Sertver" ) || m_dbType == "Microsoft SQL Server" )
+                m_fields->Append( "@" + (*it).m_name );
+            else
+                m_fields->Append( ":" + (*it).m_name );
         }
     }
 }
