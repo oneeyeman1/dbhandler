@@ -88,6 +88,7 @@ WhereHavingPage::~WhereHavingPage(void)
 void WhereHavingPage::set_properties()
 {
     m_grid->CreateGrid( 10, 4 );
+    m_grid->SetGridLineColour( *wxBLACK );
     m_grid->HideRowLabels();
     m_grid->SetColLabelValue( 0, _( "Column" ) );
     m_grid->SetColLabelValue( 1, _( "Operator" ) );
