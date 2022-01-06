@@ -188,7 +188,7 @@ void WhereHavingPage::OnCellRightClick(wxGridEvent &event)
 void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
 {
     int id = event.GetId();
-    int type;
+    int type = 0;
     std::vector<std::wstring> fields;
     fields = m_fields;
     switch( id )
@@ -225,18 +225,30 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
             m_grid->SetGridCursor( m_row, m_col );
             m_grid->MakeCellVisible( m_row, m_col );
             m_grid->EnableCellEditControl();
-            m_grid->ShowCellEditControl();
             if( m_col )
             {
-                wxComboBox *combo = dynamic_cast<wxComboBox *>( m_grid->GetCellEditor( m_row, m_col )->GetControl() );
+                wxGridCellEditor *editor = m_grid->GetCellEditor( m_row, m_col );
+                wxComboBox *combo = dynamic_cast<wxComboBox *>( editor->GetControl() );
                 if( combo )
-                    combo->SetSelection( selection.size(), selection.size() );
+                {
+                    if( type == 2 )
+                        combo->SetSelection( selection.size() - 1, selection.size() - 1 );
+                    else
+                        combo->SetSelection( selection.size(), selection.size() );
+                    m_grid->GetCellEditor( m_row, m_col )->DecRef();
+                }
                 else
                 {
-                    wxTextCtrl *text = dynamic_cast<wxTextCtrl *>( m_grid->GetCellEditor( m_row, m_col )->GetControl() );
+                    wxTextCtrl *text = dynamic_cast<wxTextCtrl *>( editor->GetControl() );
                     if( text )
-                        text->SetSelection( selection.size(), selection.size() );
+                    {
+                        if( type == 2 )
+                            text->SetSelection( selection.size() - 1, selection.size() - 1 );
+                        else
+                            text->SetSelection( selection.size(), selection.size() );
+                    }
                 }
+                editor->DecRef();
             }
         }
     }
