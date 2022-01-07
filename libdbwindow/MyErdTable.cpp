@@ -353,7 +353,7 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             else
                 delete type_shape;
         }
-        CommentFieldShape *comment_shape = new CommentFieldShape();
+        CommentFieldShape *comment_shape = new CommentFieldShape( field );
         if( comment_shape )
         {
             comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
