@@ -75,14 +75,6 @@ WhereHavingPage::WhereHavingPage(wxWindow *parent, const wxString &type, const w
 
 WhereHavingPage::~WhereHavingPage(void)
 {
-    Unbind( wxEVT_SIZE, &WhereHavingPage::OnSize, this );
-    m_grid->Bind( wxEVT_GRID_CELL_LEFT_CLICK, &WhereHavingPage::OnGridLeftClick, this );
-    m_grid->Unbind( wxEVT_GRID_EDITOR_CREATED, &WhereHavingPage::OnColumnName, this );
-    m_grid->Unbind( wxEVT_GRID_CELL_RIGHT_CLICK, &WhereHavingPage::OnCellRightClick, this );
-    m_grid->Unbind( wxEVT_GRID_CELL_CHANGED, &WhereHavingPage::OnGridCellChaqnged, this );
-    Unbind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGECOLUMNS );
-    Unbind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGEFUNCTIONS );
-    Unbind( wxEVT_MENU, &WhereHavingPage::OnMenuSelection, this, WHEREPAGEARGUMENTS );
 }
 
 void WhereHavingPage::set_properties()
@@ -327,7 +319,7 @@ void WhereHavingPage::SetQueryArguments (const std::vector<QueryArguments> &argu
 
 void WhereHavingPage::OnGridLeftClick(wxGridEvent &event)
 {
-    if( m_row == event.GetRow() && m_col == event.GetCol() )
+    if( m_row == event.GetRow() && m_col == event.GetCol() && m_grid->IsCellEditControlShown() )
         return;
     m_grid->SetGridCursor( event.GetRow(), event.GetCol() );
     m_grid->MakeCellVisible( event.GetRow(), event.GetCol() );
