@@ -1351,9 +1351,13 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     wxString query = m_page6->GetSyntaxCtrl()->GetValue();
     if( event.GetEventObject() == m_page2 )
     {
-        wxString wherePart = query.substr( query.find( "WHERE" ) );
-        wherePart = wherePart.substr( 0, wherePart.find( "HAVING" ) );
-        WhereHavingLines line = *(WhereHavingLines *) event.GetClientData();
+        size_t pos = query.find( "WHERE" );
+        if( pos != wxNOT_FOUND )
+        {
+            wxString wherePart = query.substr(  );
+            wherePart = wherePart.substr( 0, wherePart.find( "HAVING" ) );
+            WhereHavingLines line = *(WhereHavingLines *) event.GetClientData();
+        }
     }
     if( event.GetEventObject() == m_page1 || event.GetEventObject() == m_page3 )
     {
