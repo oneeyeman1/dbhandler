@@ -77,3 +77,4 @@ libpropertieshandlers/propertoeshandlers.vcxproj.user
 libtabledataedit/vc_mswuddll/
 dbhandler/.vs
 libdialogs/dialogs.vcxproj.filters
+dbhandler/memory_leak_report.txt

@@ -64,6 +64,7 @@ WhereHavingPage::WhereHavingPage(wxWindow *parent, const wxString &type, const w
     m_operatorSize = m_grid->GetColSize( 1 );
     m_logicalSize = m_grid->GetColSize( 3 );
     Bind( wxEVT_SIZE, &WhereHavingPage::OnSize, this );
+    m_grid->Bind( wxEVT_GRID_CELL_LEFT_CLICK, &WhereHavingPage::OnGridLeftClick, this );
     m_grid->Bind( wxEVT_GRID_EDITOR_CREATED, &WhereHavingPage::OnColumnName, this );
     m_grid->Bind( wxEVT_GRID_CELL_RIGHT_CLICK, &WhereHavingPage::OnCellRightClick, this );
     m_grid->Bind( wxEVT_GRID_CELL_CHANGED, &WhereHavingPage::OnGridCellChaqnged, this );
@@ -79,6 +80,7 @@ WhereHavingPage::~WhereHavingPage(void)
 void WhereHavingPage::set_properties()
 {
     m_grid->CreateGrid( 10, 4 );
+    m_grid->SetGridLineColour( *wxBLACK );
     m_grid->HideRowLabels();
     m_grid->SetColLabelValue( 0, _( "Column" ) );
     m_grid->SetColLabelValue( 1, _( "Operator" ) );
@@ -179,7 +181,7 @@ void WhereHavingPage::OnCellRightClick(wxGridEvent &event)
 void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
 {
     int id = event.GetId();
-    int type;
+    int type = 0;
     std::vector<std::wstring> fields;
     fields = m_fields;
     switch( id )
@@ -214,13 +216,32 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
             if( m_col == 0 && m_grid->GetCellValue( m_row, 1 ) == wxEmptyString )
                 m_grid->SetCellValue( m_row, 1, "=" );
             m_grid->SetGridCursor( m_row, m_col );
-            m_grid->EnableCellEditControl( true );
-            m_grid->ShowCellEditControl();
+            m_grid->MakeCellVisible( m_row, m_col );
+            m_grid->EnableCellEditControl();
             if( m_col )
             {
-                wxComboBox *combo = dynamic_cast<wxComboBox *>( m_grid->GetCellEditor( m_row, m_col )->GetControl() );
+                wxGridCellEditor *editor = m_grid->GetCellEditor( m_row, m_col );
+                wxComboBox *combo = dynamic_cast<wxComboBox *>( editor->GetControl() );
                 if( combo )
-                    combo->SetSelection( selection.size() - 1, selection.size() - 1 );
+                {
+                    if( type == 2 )
+                        combo->SetSelection( selection.size() - 1, selection.size() - 1 );
+                    else
+                        combo->SetSelection( selection.size(), selection.size() );
+                    m_grid->GetCellEditor( m_row, m_col )->DecRef();
+                }
+                else
+                {
+                    wxTextCtrl *text = dynamic_cast<wxTextCtrl *>( editor->GetControl() );
+                    if( text )
+                    {
+                        if( type == 2 )
+                            text->SetSelection( selection.size() - 1, selection.size() - 1 );
+                        else
+                            text->SetSelection( selection.size(), selection.size() );
+                    }
+                }
+                editor->DecRef();
             }
         }
     }
@@ -294,4 +315,15 @@ void WhereHavingPage::OnGridCellChaqnged(wxGridEvent &event)
 void WhereHavingPage::SetQueryArguments (const std::vector<QueryArguments> &arguments)
 {
     m_arguments = arguments;
+}
+
+void WhereHavingPage::OnGridLeftClick(wxGridEvent &event)
+{
+    if( m_row == event.GetRow() && m_col == event.GetCol() && m_grid->IsCellEditControlShown() )
+        return;
+    m_grid->SetGridCursor( event.GetRow(), event.GetCol() );
+    m_grid->MakeCellVisible( event.GetRow(), event.GetCol() );
+    m_grid->EnableCellEditControl();
+    m_row = event.GetRow();
+    m_col = event.GetCol();
 }
