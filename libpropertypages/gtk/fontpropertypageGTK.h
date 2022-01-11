@@ -21,6 +21,7 @@
 #ifndef FONTPROPERTYPAGE_H
 #define FONTPROPERTYPAGE_H
 
+#ifdef __WXGTK__
 class WXEXPORT CFontPropertyPage: public CFontPropertyPageBase
 {
 public:
@@ -40,5 +41,6 @@ private:
     CColorComboBox *m_textColor, *m_backColor;
     wxStaticText *m_label1, *m_label2;
 };
+#endif
 
 #endif // FONTPROPERTYPAGE_H

@@ -21,6 +21,7 @@
 #ifndef FONTPROPERTYPAGE_H
 #define FONTPROPERTYPAGE_H
 
+#ifdef __WXQT__
 class WXEXPORT CFontPropertyPage: public CFontPropertyPageBase
 {
 public:
@@ -30,5 +31,6 @@ private:
     QFontDialog *m_panel;
     FontPropertyPage fontInfo;
 };
+#endif
 
 #endif // FONTPROPERTYPAGE_H
