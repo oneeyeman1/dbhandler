@@ -1411,7 +1411,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
         if( queryType == 2 )
             m_groupByFields.push_back( field );
         else
-            m_sortedFields.push_back( queryType == 2 ? fieldName : fieldName + " ASC" );
+            m_sortedFields.push_back( fieldName );
         if( str == ";" )
         {
             replace = "\n" + queryString + fieldName;
@@ -1442,7 +1442,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
         }
         else
         {
-            m_sortedFields.erase( std::remove( m_sortedFields.begin(), m_sortedFields.end(), field ), m_sortedFields.end() );
+            m_sortedFields.erase( std::remove( m_sortedFields.begin(), m_sortedFields.end(), fieldName ), m_sortedFields.end() );
             if( m_sortedFields.size () == 0 )
             {
                 str = "\n" + str + ";";
