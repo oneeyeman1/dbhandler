@@ -55,3 +55,5 @@ FontPropertyPage &CFontPropertyPage::GetFont()
     fontInfo.font = m_panel->getFont();
     return fontInfo;
 }
+
+#endif
