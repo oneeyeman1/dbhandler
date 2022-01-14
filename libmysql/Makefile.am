@@ -8,11 +8,12 @@ libmysql_lib_la_SOURCES =  \
 	database_mysql.cpp \
 	database_mysql.h
 
-libmysql_lib_la_CXXFLAGS = -I../../mysql-connector/include \
+libmysql_lib_la_CXXFLAGS = `mysql_config \
+	--cflags` \
 	-I../../dbinterface \
 	-DUNICODE 
 
-libmysql_lib_la_LDFLAGS = -L../../mysql-connector/lib \
-	-lmysqlclient 
+libmysql_lib_la_LDFLAGS = `mysql_config \
+	--libs` 
 
 AM_CXXFLAGS = -I../../mysql-connector 
