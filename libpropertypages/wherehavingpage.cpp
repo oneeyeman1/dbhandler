@@ -91,7 +91,7 @@ void WhereHavingPage::set_properties()
     for( int i = 0; i < 9; ++i )
     {
         m_grid->AppendRows();
-        m_grid->SetRowSize( i, m_grid->GetRowSize( i ) + 4 );
+        m_grid->SetRowSize( i, m_grid->GetRowSize( i ) + GRIDROW_ADJUSTMENT );
     }
     m_grid->DisableDragColMove();
     m_grid->DisableDragColSize();
