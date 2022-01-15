@@ -88,7 +88,11 @@ void WhereHavingPage::set_properties()
     m_grid->SetColLabelValue( 3, _( "Logical" ) );
     for (int i = 0; i < 4; i++ )
         m_grid->DisableColResize( i );
-    m_grid->AppendRows( 10 );
+    for( int i = 0; i < 9; ++i )
+    {
+        m_grid->AppendRows();
+        m_grid->SetRowSize( i, m_grid->GetRowSize( i ) + 4 );
+    }
     m_grid->DisableDragColMove();
     m_grid->DisableDragColSize();
     m_grid->DisableDragGridSize();
