@@ -1585,12 +1585,20 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
         }
         else
         {
-            menuBar->Remove( 1 );
             if( m_queryFields.empty() )
             {
                 int res = wxMessageBox( _( "Columns are required.\n\rDo you want to select them?" ), _( "Query - Untitled" ), wxYES_NO );
-                if( res == wxYES )
-                    emptyQuery = false;
+                if( res == wxYES || res == wxNO )
+                {
+                    wxMenuItem *dataSourceMenu = m_frame->GetMenuBar()->FindItem( wxID_DATASOURCE );
+                    if( dataSourceMenu )
+                    {
+                        dataSourceMenu->GetMenu()->Check( wxID_DATASOURCE, true );
+                        m_tb->ToggleTool( wxID_DATASOURCE, true );
+                    }
+                }
+                return;
+//                    emptyQuery = false;
             }
             if( emptyQuery )
             {
@@ -1622,7 +1630,7 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
     }
     if( !m_queryFields.empty() )
     {
-        wxMenuItem *dataSourceMenu = m_parent->GetMenuBar()->FindItem( wxID_DATASOURCE );
+        wxMenuItem *dataSourceMenu = m_frame->GetMenuBar()->FindItem( wxID_DATASOURCE );
         if( dataSourceMenu )
         {
             dataSourceMenu->GetMenu()->Check( wxID_DATASOURCE, event.IsChecked() );
@@ -2079,9 +2087,9 @@ void DrawingView::CreateQueryMenu(const int queryType)
     }
     mbar->Insert( 0, fileMenu, _( "File" ) );
     mbar->Append( helpMenu, _( "Help" ) );
+    m_frame->SetMenuBar( mbar );
     if( queryType == QuerySyntaxMenu )
     {
-        m_frame->SetMenuBar( mbar );
         mbar->EnableTop( 0, false );
         mbar->EnableTop( 1, false );
         mbar->EnableTop( 2, false );
