@@ -1071,29 +1071,43 @@ void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &WXUNUSED(event))
     Refresh();
 }
 
-void DatabaseCanvas::OnCloseTable(wxCommandEvent &event)
+void DatabaseCanvas::OnCloseTable(wxCommandEvent &WXUNUSED(event))
 {
-    m_selectedShape = GetShapeUnderCursor();
-    wxString tbl = wxDynamicCast( m_selectedShape, MyErdTable )->GetTable()->GetTableName();
-    ShapeList selection, children;
-    m_selectedShape->GetChildShapes( CLASSINFO( FieldShape ), children, true );
-    GetSelectedShapes( selection );
-    for( ShapeList::iterator it = selection.begin(); it != selection.end(); it++ )
+    if( m_displayedTables.size () == 1 )
     {
-        FieldShape *field = wxDynamicCast( (*it), FieldShape );
-        if( children.Find( field ) )
-            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *field, REMOVE, tbl.ToStdWstring(), true );
+        dynamic_cast<DrawingView *>( m_view )->GetSortPage()->GetSortSourceList()->DeleteAllItems();
+        dynamic_cast<DrawingView *>( m_view )->GetSortPage()->GetSourceDestList()->DeleteAllItems();
+        dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->GetSourceList()->DeleteAllItems();
+        dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->GetDestList()->DeleteAllItems();
+        dynamic_cast<DrawingView *>( m_view )->GetWherePage()->GetGrid()->ClearGrid();
+        dynamic_cast<DrawingView *>( m_view )->GetHavingPage()->GetGrid()->ClearGrid();
+        dynamic_cast<DrawingView *>( m_view )->GetSyntaxPage()->ClearQuery();
     }
-    dynamic_cast<DrawingView *>( m_view )->GetSortPage()->RemoveTable( tbl );
-    if( dynamic_cast<DrawingView *>( m_view )->GetSortedFieldCount() > 0 )
+    else
     {
-        dynamic_cast<DrawingView *>( m_view )->GetSyntaxPage()->RemoveTableSort( tbl );
-    }
-    dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->RemoveTable( tbl );
-    if( dynamic_cast<DrawingView *>( m_view )->GetGroupByFieldCount() > 0 )
-    {
+        m_selectedShape = GetShapeUnderCursor();
+        wxString tbl = wxDynamicCast( m_selectedShape, MyErdTable )->GetTable()->GetTableName();
+        ShapeList selection, children;
+        m_selectedShape->GetChildShapes( CLASSINFO( FieldShape ), children, true );
+        GetSelectedShapes( selection );
+        for( ShapeList::iterator it = selection.begin(); it != selection.end(); it++ )
+        {
+            FieldShape *field = wxDynamicCast( (*it), FieldShape );
+            if( children.Find( field ) )
+                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *field, REMOVE, tbl.ToStdWstring(), true );
+        }
+        dynamic_cast<DrawingView *>( m_view )->GetSortPage()->RemoveTable( tbl );
+        if( dynamic_cast<DrawingView *>( m_view )->GetSortedFieldCount() > 0 )
+        {
+            dynamic_cast<DrawingView *>( m_view )->GetSyntaxPage()->RemoveTableSort( tbl );
+        }
+        dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->RemoveTable( tbl );
+        if( dynamic_cast<DrawingView *>( m_view )->GetGroupByFieldCount() > 0 )
+        {
         
+        }
+        dynamic_cast<DrawingView *>( m_view )->RemoveTableFromQuery( tbl );
+        dynamic_cast<DrawingView *>( m_view )->GetSyntaxPage()->RemoveTableFromQuery( tbl );
     }
-    dynamic_cast<DrawingView *>( m_view )->RemoveTableFromQuery( tbl );
     m_pManager.RemoveShape( m_selectedShape );
 }
