@@ -1376,16 +1376,6 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
         if( end == wxNOT_FOUND )
             end = query.find( "ORDER BY" );
         queryString = "GROUP BY ";
-        if( start == wxNOT_FOUND && end != wxNOT_FOUND )
-        {
-            m_groupByFields.push_back( field );
-            auto subquery = query.substr( 0, end );
-            subquery += queryString;
-            subquery += field->GetFullName();
-            subquery += "\n\r";
-            subquery += query.substr( end );
-            const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( subquery );
-        }
     }
     else
     {
@@ -1409,21 +1399,38 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     if( type == ADDFIELD )
     {
         if( queryType == 2 )
-            m_groupByFields.push_back( field );
-        else
-            m_sortedFields.push_back( fieldName );
-        if( str == ";" )
         {
-            replace = "\n" + queryString + fieldName;
-            if( queryType != 2 )
-                replace += " ASC";
-            replace += ";";
+            m_groupByFields.push_back( field );
+            auto subquery = queryString;
+            subquery += field->GetFullName();
+            if( str == ";" )
+            {
+                subquery += L";";
+                replace = "\n" + subquery;
+            }
+            else
+            {
+                replace = str;
+                replace += ",\n";
+                replace += "         " + field->GetFullName();
+            }
         }
         else
         {
-            replace = str + ",\r         " + fieldName;
-            if( queryType != 2 )
-                replace += " ASC";
+            m_sortedFields.push_back( FieldSorter( fieldName, true ) );
+            if( str == ";" )
+            {
+                replace = "\n" + queryString + fieldName;
+                if( queryType != 2 )
+                    replace += " ASC";
+                replace += ";";
+            }
+            else
+            {
+                replace = str + ",\r         " + fieldName;
+                if( queryType != 2 )
+                    replace += " ASC";
+            }
         }
     }
     else if( type == REMOVEFIELD )
@@ -1442,7 +1449,11 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
         }
         else
         {
-            m_sortedFields.erase( std::remove( m_sortedFields.begin(), m_sortedFields.end(), fieldName ), m_sortedFields.end() );
+            m_sortedFields.erase( std::remove_if( m_sortedFields.begin(), m_sortedFields.end(),
+            [fieldName](FieldSorter sorter )
+            {
+                return sorter.m_name == fieldName;
+            } ), m_sortedFields.end() );
             if( m_sortedFields.size () == 0 )
             {
                 str = "\n" + str + ";";
@@ -1466,6 +1477,11 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
         wxString temp = str.substr( str.find( fieldName ) );
         str = temp.substr( 0, temp.find( ',' ) );
         replace = fieldName + ( sortType == 0 ? " DESC" : " ASC" );
+        for( FieldSorter &sorter : m_sortedFields )
+        {
+            if( sorter.m_name == fieldName )
+                sorter.m_isAscending = !sorter.m_isAscending;
+        }
     }
     query.Replace( str, replace );
     const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
@@ -2098,15 +2114,6 @@ void DrawingView::CreateQueryMenu(const int queryType)
     }
 }
 
-void DrawingView::RemoveTableFromQuery(const wxString &tableName)
-{
-    m_sortedFields.erase( std::remove_if( m_sortedFields.begin(), m_sortedFields.end(),
-                          [&tableName](const wxString &str)
-                          {
-                              return str.find( tableName ) != -1;
-                          } ), m_sortedFields.end() );
-}
-
 void DrawingView::OnFieldShuffle(wxCommandEvent &event)
 {
     wxString replacement = " ";
@@ -2127,4 +2134,46 @@ void DrawingView::OnFieldShuffle(wxCommandEvent &event)
     wxString temp = origQuery.substr( origQuery.Find( " " ), origQuery.Find( "FROM" ) - 6 );
     origQuery.Replace( temp, replacement, true );
     m_page6->SetSyntaxText( origQuery );
+}
+
+void DrawingView::DropTableFromQeury(const wxString &name)
+{
+    if( name.IsEmpty() )
+    {
+        DrawingDocument *doc = wxDynamicCast( GetDocument(), DrawingDocument );
+        GetSortPage()->GetSortSourceList()->DeleteAllItems();
+        GetSortPage()->GetSourceDestList()->DeleteAllItems();
+        GetGroupByPage()->GetSourceList()->DeleteAllItems();
+        GetGroupByPage()->GetDestList()->DeleteAllItems();
+        GetWherePage()->GetGrid()->ClearGrid();
+        GetHavingPage()->GetGrid()->ClearGrid();
+        GetSyntaxPage()->ClearQuery();
+        m_fields->GetDiagramManager()->Clear();
+        m_queryFields.clear();
+        m_selectTableName.clear();
+        m_groupByFields.clear();
+        m_sortedFields.clear();
+        m_arguments.clear();
+        GetTablesForView( doc->GetDatabase(), false );
+    }
+    else
+    {
+        m_queryFields.erase( std::remove( m_queryFields.begin(), m_queryFields.end(), name ), m_queryFields.end() );
+        m_selectTableName.erase( std::remove_if( m_selectTableName.begin(), m_selectTableName.end(), 
+        [&name](DatabaseTable *tbl)
+        {
+            return tbl->GetTableName() == name;
+        } ), m_selectTableName.end() );
+        m_groupByFields.erase( std::remove_if( m_groupByFields.begin(), m_groupByFields.end(),
+        [&name](const TableField *field)
+        {
+            size_t pos = field->GetFieldName().find( L"." );
+            return field->GetFieldName().substr( 0, pos ) == name;
+        } ), m_groupByFields.end() );
+        m_sortedFields.erase( std::remove_if( m_sortedFields.begin(), m_sortedFields.end(),
+        [name](FieldSorter sorter )
+        {
+            return sorter.m_name == name;
+        } ), m_sortedFields.end() );
+    }
 }
