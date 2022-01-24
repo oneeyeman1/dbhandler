@@ -313,8 +313,6 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             m_dragSource->DeleteItem( m_dragDest == m_dest ? m_itemPos : m_sourcePos );
             if( m_dragDest == m_dest )
                 position = m_dragDest->GetItemCount();
-//            else
-//                position = m_itemPos;
             long item = m_dragDest->InsertItem( position, m_item );
             if( m_dragDest == m_dest )
             {

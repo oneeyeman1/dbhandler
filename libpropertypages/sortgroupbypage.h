@@ -19,6 +19,13 @@
 #define ASCENDING 0
 #define DESCENDING 1
 
+struct FieldSorter
+{
+    wxString m_name;
+    bool m_isAscending;
+    FieldSorter(wxString name, bool isAscending) : m_name(name), m_isAscending(isAscending) {};
+};
+
 class MyListCtrl : public wxListCtrl
 {
 public:
