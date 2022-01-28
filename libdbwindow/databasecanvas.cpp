@@ -1071,29 +1071,40 @@ void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &WXUNUSED(event))
     Refresh();
 }
 
-void DatabaseCanvas::OnCloseTable(wxCommandEvent &event)
+void DatabaseCanvas::OnCloseTable(wxCommandEvent &WXUNUSED(event))
 {
-    m_selectedShape = GetShapeUnderCursor();
-    wxString tbl = wxDynamicCast( m_selectedShape, MyErdTable )->GetTable()->GetTableName();
-    ShapeList selection, children;
-    m_selectedShape->GetChildShapes( CLASSINFO( FieldShape ), children, true );
-    GetSelectedShapes( selection );
-    for( ShapeList::iterator it = selection.begin(); it != selection.end(); it++ )
+    DrawingView *view = dynamic_cast<DrawingView *>( m_view );
+    if( m_displayedTables.size () == 1 )
     {
-        FieldShape *field = wxDynamicCast( (*it), FieldShape );
-        if( children.Find( field ) )
-            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *field, REMOVE, tbl.ToStdWstring(), true );
+        m_pManager.RemoveShape( m_selectedShape );
+        m_displayedTables.clear();
+        view->DropTableFromQeury();
     }
-    dynamic_cast<DrawingView *>( m_view )->GetSortPage()->RemoveTable( tbl );
-    if( dynamic_cast<DrawingView *>( m_view )->GetSortedFieldCount() > 0 )
+    else
     {
-        dynamic_cast<DrawingView *>( m_view )->GetSyntaxPage()->RemoveTableSort( tbl );
-    }
-    dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->RemoveTable( tbl );
-    if( dynamic_cast<DrawingView *>( m_view )->GetGroupByFieldCount() > 0 )
-    {
+        m_selectedShape = GetShapeUnderCursor();
+        wxString tbl = wxDynamicCast( m_selectedShape, MyErdTable )->GetTable()->GetTableName();
+        ShapeList selection, children;
+        m_selectedShape->GetChildShapes( CLASSINFO( FieldShape ), children, true );
+        GetSelectedShapes( selection );
+        for( ShapeList::iterator it = selection.begin(); it != selection.end(); it++ )
+        {
+            FieldShape *field = wxDynamicCast( (*it), FieldShape );
+            if( children.Find( field ) )
+                view->AddFieldToQuery( *field, REMOVE, tbl.ToStdWstring(), true );
+        }
+        view->GetSortPage()->RemoveTable( tbl );
+        if( view->GetSortedFieldCount() > 0 )
+        {
+            view->GetSyntaxPage()->RemoveTableSort( tbl );
+        }
+        view->GetGroupByPage()->RemoveTable( tbl );
+        if( view->GetGroupByFieldCount() > 0 )
+        {
         
+        }
+        view->GetSyntaxPage()->RemoveTableFromQuery( tbl );
+        m_pManager.RemoveShape( m_selectedShape );
+        view->DropTableFromQeury( tbl );
     }
-    dynamic_cast<DrawingView *>( m_view )->RemoveTableFromQuery( tbl );
-    m_pManager.RemoveShape( m_selectedShape );
 }

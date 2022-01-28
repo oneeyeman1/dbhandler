@@ -145,11 +145,15 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( p
     {
         m_sortSource = new wxDataViewListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER );
         m_sortDest = new wxDataViewListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_NO_HEADER );
+        m_source = nullptr;
+        m_dest = nullptr;
     }
     else
     {
         m_source = new MyListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
         m_dest = new MyListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
+        m_sortSource = nullptr;
+        m_sortDest = nullptr;
     }
     set_properties();
     do_layout();
@@ -309,8 +313,6 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             m_dragSource->DeleteItem( m_dragDest == m_dest ? m_itemPos : m_sourcePos );
             if( m_dragDest == m_dest )
                 position = m_dragDest->GetItemCount();
-//            else
-//                position = m_itemPos;
             long item = m_dragDest->InsertItem( position, m_item );
             if( m_dragDest == m_dest )
             {

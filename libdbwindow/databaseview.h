@@ -34,6 +34,7 @@ public:
     void UpdateQueryFromSignChange(const QueryConstraint *type);
     size_t GetSortedFieldCount() { return m_sortedFields.size(); };
     size_t GetGroupByFieldCount() { return m_groupByFields.size(); };
+    void DropTableFromQeury(const wxString &name = "" );
     wxFrame *GetLogWindow() const;
     wxTextCtrl *GetFieldTextCtrl();
     wxTextCtrl *GetTextLogger() const;
@@ -49,7 +50,6 @@ public:
     void HideShowSQLBox(bool show);
     void SetPaintersMap(std::map<wxString, wxDynamicLibrary *> &painters);
     void ChangeFontEement();
-    void RemoveTableFromQuery(const wxString &table);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
@@ -140,7 +140,7 @@ private:
     std::vector<DatabaseTable *> m_selectTableName;
 //    std::vector<wxString> m_selectFields;
     std::vector<const TableField *> m_groupByFields;
-    std::vector<wxString> m_sortedFields;
+    std::vector<FieldSorter> m_sortedFields;
     std::vector<QueryArguments> m_arguments;
     std::map<wxString, wxDynamicLibrary *> m_painters;
     DesignCanvas *m_designCanvas;

@@ -12,6 +12,14 @@ public:
     }
 };
 
+#ifdef __WXMSW__
+#define GRIDROW_ADJUSTMENT 4
+#elif __WXOSX__
+#define GRIDROW_ADJUSTMENT 6
+#elif __WXGTK__
+#define GRIDROW_ADJUSTMENT 8
+#endif
+
 class QueryArguments
 {
 public:
