@@ -1368,6 +1368,7 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
 void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const TableField *field, long sortType)
 {
     size_t start, end;
+    bool isInserting = false;
     wxString queryString;
     if( queryType == 2 )
     {
@@ -1395,6 +1396,12 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
         start = end;
         end = start + 1;
     }
+    else if( start == wxNOT_FOUND && end != wxNOT_FOUND && queryType == 2 )
+    {
+        start = end;
+        end = query.length();
+        isInserting = true;
+    }
     wxString str = query.substr( start, end - start ), replace;
     if( type == ADDFIELD )
     {
@@ -1402,7 +1409,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
         {
             m_groupByFields.push_back( field );
             auto subquery = queryString;
-            subquery += field->GetFullName();
+            subquery += "\"" + field->GetFullName() + "\"";
             if( str == ";" )
             {
                 subquery += L";";
@@ -1411,8 +1418,23 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
             else
             {
                 replace = str;
-                replace += ",\n";
-                replace += "         " + field->GetFullName();
+                if( !isInserting )
+                {
+                    if( m_groupByFields.size() == 1 )
+                    {
+                        replace += ",\n";
+                        replace += "         ";
+                        replace += "\"" + field->GetFullName() + "\"";
+                    }
+                    else
+                    {
+                        replace = replace.substr( 0, replace.rfind( '\n' ) ) + "," + "\n" + "         " + "\"" + field->GetFullName() + "\"" + "\n";
+                    }
+                }
+                else
+                {
+                    replace = subquery + "\n" + replace;
+                }
             }
         }
         else
