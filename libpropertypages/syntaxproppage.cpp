@@ -79,3 +79,17 @@ void SyntaxPropPage::RemoveTableSort(const wxString tbl)
         m_syntax->SetValue( query );
     }
 }
+
+void SyntaxPropPage::RemoveTableFromQuery(const wxString &tbl)
+{
+    wxString query = m_syntax->GetValue();
+    size_t ret = query.Replace( ",\n     \"" + tbl + "\"" + "", "", false );
+    if( ret == 0 )
+        ret = query.Replace( ",\n     \"" + tbl + "\"" + "", "", false );
+    m_syntax->SetValue( query );
+}
+
+void SyntaxPropPage::ClearQuery()
+{
+    m_syntax->Clear();
+}
