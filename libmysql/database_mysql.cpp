@@ -509,7 +509,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                 else
                                                 {
                                                     MYSQL_BIND results1[7];
-                                                    bool is_null[7], error[7];
+                                                    char is_null[7], error[7];
                                                     unsigned long length[7];
                                                     memset( results1, 0, sizeof( results1 ) );
                                                     results1[0].buffer_type = results1[2].buffer_type = results1[3].buffer_type = results1[4].buffer_type = results1[5].buffer_type = results1[6].buffer_type = MYSQL_TYPE_STRING;
@@ -648,7 +648,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                     else
                                                                     {
                                                                         MYSQL_BIND results2[10];
-                                                                        bool is_null1[10], error1[10];
+                                                                        char is_null1[10], error1[10];
                                                                         long unsigned int length1[10];
      
                                                                         length1[0] = 64;
@@ -852,7 +852,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                                                                 else
                                                                                                 {
                                                                                                     MYSQL_BIND results3[1];
-                                                                                                    bool is_null3[1], error3[1];
+                                                                                                    char is_null3[1], error3[1];
                                                                                                     unsigned long length3[1];
                                                                                                     memset( results3, 0, sizeof( results ) );
                                                                                                     results3[0].buffer_type = MYSQL_TYPE_STRING;
@@ -1168,7 +1168,7 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                 else
                 {
                     MYSQL_BIND results[28];
-                    bool is_null[28], error[28];
+                    char is_null[28], error[28];
                     unsigned long length[28];
                     memset( results, 0, sizeof( results ) );
                     results[0].buffer_type = MYSQL_TYPE_STRING;
@@ -1783,7 +1783,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                     {
                         MYSQL_BIND results[17];
                         int tableId, fieldId;
-                        bool is_null[17], error[17];
+                        char is_null[17], error[17];
                         unsigned long length[17];
                         char *label, *comment, heading;
                         int labelAlignment = 0, headingAlignment = 0;
@@ -2308,7 +2308,7 @@ int MySQLDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstr
                     if( ( mysql_store_result( m_db ) ) )
                     {
                         MYSQL_BIND results;
-                        bool is_null, error;
+                        char is_null, error;
                         unsigned long length;
                         char *comment;
                         results.buffer_type = MYSQL_TYPE_STRING;
