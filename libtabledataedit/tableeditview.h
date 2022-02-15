@@ -48,7 +48,7 @@ private:
     wxGrid *m_grid;
     DataRetriever *m_retriever;
     DatabaseTable *m_table;
-    long m_processed;
+    int m_processed;
     bool m_queryexecuting;
     wxDECLARE_DYNAMIC_CLASS(TableEditView);
 };
