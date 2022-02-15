@@ -602,6 +602,24 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 }
                 m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
                 m_page3->GetDestList()->SetColumnWidth( 0, m_page3->GetDestList()->GetSize().GetWidth() );
+                for( std::vector<const TableField *>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
+                {
+                    if( it == m_groupByFields.begin () )
+                    {
+                        query.Replace( ";", "" );
+                        query += "\n";
+                        query += "GROUP BY ";
+                        query += (*it)->GetFieldName();
+                    }
+                    else
+                    {
+                        query += ",\n";
+                        query += "      ";
+                        query += (*it)->GetFieldName();
+                    }
+                    if( it == m_groupByFields.end() - 1 )
+                        query += ";";
+                }
                 m_page6->SetSyntaxText( query );
                 m_edit->SetText( query );
             }
@@ -1354,9 +1372,20 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
         size_t pos = query.find( "WHERE" );
         if( pos != wxNOT_FOUND )
         {
-            wxString wherePart = query.substr(  );
+            wxString wherePart = query.substr( pos + 6 );
             wherePart = wherePart.substr( 0, wherePart.find( "HAVING" ) );
+            m_whereCondition[event.GetInt() + 1] = event.GetString();
             WhereHavingLines line = *(WhereHavingLines *) event.GetClientData();
+        }
+    }
+    if( event.GetEventObject () == m_page4 )
+    {
+        size_t pos = query.find( "HAVING" );
+        if( pos != wxNOT_FOUND )
+        {
+            wxString havingPart = query.substr( pos + 7 );
+            havingPart = havingPart.substr( 0, ( pos = havingPart.find( "ORDER BY" ) ) == wxNOT_FOUND ? havingPart.length() - 1 : pos );
+            m_havingCondition[event.GetInt()] = event.GetString();
         }
     }
     if( event.GetEventObject() == m_page1 || event.GetEventObject() == m_page3 )

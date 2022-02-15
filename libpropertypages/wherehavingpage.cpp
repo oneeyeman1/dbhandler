@@ -267,7 +267,8 @@ void WhereHavingPage::OnCellChanged(wxCommandEvent &event)
     newString += " " + m_grid->GetCellValue( m_row, 2 );
     wxCommandEvent evt( wxEVT_CHANGE_QUERY );
     evt.SetEventObject( this );
-    evt.SetString( m_oldString );
+    evt.SetString( newString );
+    evt.SetInt( m_row );
     evt.SetClientObject( (wxClientData *) &newString );
     wxWindow *parent = GetParent()->GetParent();
     parent->GetEventHandler()->ProcessEvent( evt );

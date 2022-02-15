@@ -141,6 +141,7 @@ private:
 //    std::vector<wxString> m_selectFields;
     std::vector<const TableField *> m_groupByFields;
     std::vector<FieldSorter> m_sortedFields;
+    std::map<int, wxString> m_whereCondition, m_havingCondition;
     std::vector<QueryArguments> m_arguments;
     std::map<wxString, wxDynamicLibrary *> m_painters;
     DesignCanvas *m_designCanvas;
