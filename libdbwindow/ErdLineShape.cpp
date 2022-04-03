@@ -60,7 +60,7 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDia
     m_type = type;
     AcceptChild( "ConstraintSign" );
     m_constraint = pConstraint;
-    m_signConstraint = new ConstraintSign( type );
+    m_signConstraint = new ConstraintSign( type, 0 );
     if( m_signConstraint )
     {
         m_signConstraint->SetConstraint( pConstraint );

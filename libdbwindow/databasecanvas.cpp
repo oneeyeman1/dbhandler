@@ -6,6 +6,7 @@
 #endif
 #include <memory>
 #include <string>
+#include <vector>
 #if wxUSE_STD_IOSTREAM
     #include "wx/ioswrap.h"
 #else
@@ -93,7 +94,7 @@ void DatabaseCanvas::OnDraw(wxDC &WXUNUSED(dc))
 {
 }
 
-void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &query)
+void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &query, std::vector<wxString> &relations)
 {
     std::vector<MyErdTable *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
     for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
@@ -178,7 +179,8 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                     {
                         if( secondIteration )
                             query += " AND\r      ";
-                        query += wxString::Format( "\"%s\".\"%s\" = \"%s\".\"%s\"", (*it2)->GetTableName(), (*it4)->GetOriginalFieldName(), referencedTableName, (*it4)->GetReferencedFieldName() );
+                        query += wxString::Format( "\"%s\".\"%s\" = \"%s\".\"%s\"", referencedTableName, (*it4)->GetReferencedFieldName(), (*it2)->GetTableName(), (*it4)->GetOriginalFieldName() );
+                        relations.push_back( wxString::Format( "\"%s\".\"%s\" = \"%s\".\"%s\"", referencedTableName, (*it4)->GetReferencedFieldName(), (*it2)->GetTableName(), (*it4)->GetOriginalFieldName() ) );
                     }
                     switch( (*it4)->GetOnUpdateConstraint() )
                     {
@@ -994,7 +996,8 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             lib.Load( "libdialogs" );
 #endif
             QueryConstraint *constraint = (QueryConstraint *) sign->GetConstraint();
-            long constraintSign = constraint->GetSign();
+            long oldSign = 0;
+            long constraintSign = oldSign = constraint->GetSign();
             SELECTJOINTYPE func = (SELECTJOINTYPE) lib.GetSymbol( "SelectJoinType" );
             result = func( m_view->GetFrame(), const_cast<DatabaseTable *>( constraint->GetFKTable() )->GetTableName(), constraint->GetRefTable(), constraint->GetLocalColumn(), constraint->GetRefColumn(), constraintSign );
             if( constraintSign != constraint->GetSign () )
@@ -1020,7 +1023,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                     break;
                 }
                 constraint->SetSign( constraintSign );
-                ((DrawingView *) m_view)->UpdateQueryFromSignChange( constraint );
+                ((DrawingView *) m_view)->UpdateQueryFromSignChange( constraint, oldSign );
             }
             sign->Select( false );
             Refresh();
