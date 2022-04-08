@@ -1,17 +1,17 @@
 #ifdef __GNUC__
 #pragma implementation "dialogs.h"
 #endif
-#ifdef WIN32
-#include <windows.h>
-#include "wx/msw/winundef.h"
-#endif
-
 #ifdef __BORLANDC__
 #pragma hdrstop
 #endif
 
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
+#endif
+
+#ifdef WIN32
+#include <windows.h>
+#include "wx/msw/winundef.h"
 #endif
 
 #if defined __WXMSW__ && defined __MEMORYLEAKS__
