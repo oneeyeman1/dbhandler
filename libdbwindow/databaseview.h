@@ -31,7 +31,7 @@ class DrawingView : public wxView
 public:
     DrawingView() : wxView(), m_canvas(NULL) {}
     ~DrawingView();
-    void UpdateQueryFromSignChange(const QueryConstraint *type);
+    void UpdateQueryFromSignChange(const QueryConstraint *type, const long oldSign);
     size_t GetSortedFieldCount() { return m_sortedFields.size(); };
     size_t GetGroupByFieldCount() { return m_groupByFields.size(); };
     void DropTableFromQeury(const wxString &name = "" );
@@ -142,6 +142,7 @@ private:
     std::vector<const TableField *> m_groupByFields;
     std::vector<FieldSorter> m_sortedFields;
     std::map<int, wxString> m_whereCondition, m_havingCondition;
+    std::vector<wxString> m_whereRelatons;
     std::vector<QueryArguments> m_arguments;
     std::map<wxString, wxDynamicLibrary *> m_painters;
     DesignCanvas *m_designCanvas;
