@@ -6,7 +6,7 @@ public:
     ~SyntaxPropPage(void);
     void ClearQuery();
     void SetSyntaxText(const wxString &text);
-    const wxTextCtrl *GetSyntaxCtrl();
+    wxTextCtrl *GetSyntaxCtrl() const;
     void RemoveTableSort(const wxString tbl);
     void RemoveTableFromQuery(const wxString &tbl);
 protected:

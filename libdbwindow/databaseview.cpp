@@ -584,7 +584,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
     {
         ((DrawingDocument *) GetDocument())->AddTables( tables );
         m_selectTableName = ((DrawingDocument *) GetDocument())->GetDBTables();
-        ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query );
+        ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query, m_whereRelatons );
         if( m_type == QueryView )
         {
             if( query != L"\n" )
@@ -1255,7 +1255,7 @@ void DrawingView::OnDistinct(wxCommandEvent &event)
 {
     wxString qry;
     wxString query = m_page6->GetSyntaxCtrl()->GetValue();
-    wxTextCtrl *queryText = const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() );
+    wxTextCtrl *queryText = m_page6->GetSyntaxCtrl();
     if( !dynamic_cast<wxMenu *>( event.GetEventObject() )->IsChecked( wxID_DISTINCT ) )
     {
         query.Replace( "SELECT ", "SELECT DISTINCT " );
@@ -1283,83 +1283,146 @@ void DrawingView::SetPaintersMap(std::map<wxString, wxDynamicLibrary *> &painter
     m_painters = painters;
 }
 
-void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type)
+void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type, const long oldSign)
 {
     auto res = true;
     auto sign = type->GetSign();
     auto query = m_page6->GetSyntaxCtrl()->GetValue();
-    if( sign == 1 || sign == 2 )
+    wxString orig, result, newSign, temp;
+    auto it = std::find_if( m_whereRelatons.begin(), m_whereRelatons.end(), [type](wxString iter)
     {
-        auto result = query.substr( 0, query.find( "\n" ) + 1 );
+        return( iter.Find( type->GetRefTable() ) && iter.Find( type->GetFKTable()->GetTableName() ) );
+    } );
+    orig = (*it);
+    switch( sign )
+    {
+    case 0:
+    case 1:
+    case 2:
+        newSign = "=";
+        break;
+    case 3:
+        newSign = "<";
+        break;
+    case 4:
+        newSign = ">";
+        break;
+    case 5:
+        newSign = "<=";
+        break;
+    case 6:
+        newSign = ">=";
+        break;
+    }
+    if( sign != 1 && sign != 2 && oldSign != 1 && oldSign != 2 )
+    {
+        wxString old = orig.substr( orig.Find( ' ' ) + 1 );
+        old = old.substr( 0, old.Find( ' ' ) );
+        temp = orig;
+        temp.Replace( old, newSign );
+        query.Replace( orig, temp );
+        result = query;
+    }
+    else if( ( sign == 1 || sign == 2 ) && oldSign != 1 && oldSign != 2 )
+    {
+        result = query.substr( 0, query.find( "\n" ) + 1 );
         query = query.substr( query.find( "\n" ) + 1 );
-        result += "FROM(";
+        result += "FROM ";
         if( sign == 1 )
             result += const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + " LEFT OUTER JOIN " + type->GetRefTable() + " ON " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn() + " = " + type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn();
         else
             result += type->GetRefTable() + " LEFT OUTER JOIN " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + " ON " + type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn() + " = " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn();
-        auto temp1 = query.substr( 0, query.find( "\n" ) + 1 );
-        temp1 = temp1.substr( temp1.find( ' ' ) + 1 );
-        while( temp1 != wxEmptyString )
+        query = query.substr( query.find( "WHERE" ) );
+        if( m_whereRelatons.size() == 1 && m_whereCondition.size() == 0 )
         {
-            auto temp2 = temp1.substr( 0, temp1.find( ',' ) + 1 );
-            if( temp2 != const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() && temp2 != type->GetRefTable() )
-                result += ", " + temp2;
-            temp1 = temp1.substr( temp1.find( ',' ) );
-        }
-    }
-    auto result = query.substr( 0, query.find( " WHERE " ) + 7 );
-    query = query.substr( query.find( " WHERE " ) + 7 );
-    while( res )
-    {
-        auto temp = query.substr( 0, query.find( ' ' ) );
-        res = ( temp == const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn() ) ||
-              ( temp == type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn() );
-        if( res )
-        {
-            result += temp;
-            switch( type->GetSign() )
+            size_t pos;
+            pos = query.find( "GROUP BY" );
+            if( pos == wxNOT_FOUND )
             {
-            case 3:
-                result += " < ";
-                break;
-            case 4:
-                result += " > ";
-                break;
-            case 5:
-                result += " <= ";
-                break;
-            case 6:
-                result += " >= ";
-                break;
-            case 7:
-                result += " <> ";
-                break;
-            case 0:
-                result += " = ";
-                break;
+                pos = query.find( "HAVING" );
+                if( pos == wxNOT_FOUND )
+                {
+                    pos = query.find( "ORDER BY" );
+                    if( pos == wxNOT_FOUND )
+                        pos = query.length() - 1;
+                }
             }
-            query = query.substr( query.find( ' ' ) + 1 );
-            query = query.substr( query.find( ' ' ) + 1 );
-            result += query;
-            res = false;
+            query = query.substr( pos );
+            if( query.Length() == 1 )
+                result += ";";
+            temp = result;
         }
         else
         {
-            int pos = query.Find( " AND " );
-            if( pos != wxNOT_FOUND )
+            auto temp1 = query.substr( 0, query.find( "\n" ) + 1 );
+            temp1 = temp1.substr( temp1.find( ' ' ) + 1 );
+            while( temp1 != wxEmptyString )
             {
-                result += query.substr( 0, pos + 5 );
-                query = query.substr( pos + 5 );
+                auto temp2 = temp1.substr( 0, temp1.find( ',' ) + 1 );
+                if( temp2 != const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() && temp2 != type->GetRefTable() )
+                    result += ", " + temp2;
+                temp1 = temp1.substr( temp1.find( ',' ) );
+            }
+        }
+    }
+    else if( sign != 1 && sign != 2 && ( oldSign == 1 || oldSign == 2 ) )
+    {
+        result = query.substr( 0, query.find( "WHERE " ) + 7 );
+        query = query.substr( query.find( " WHERE " ) + 7 );
+        while( res )
+        {
+            auto temp = query.substr( 0, query.find( ' ' ) );
+            res = ( temp == const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn() ) ||
+                  ( temp == type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn() );
+            if( res )
+            {
+                result += temp;
+                switch( type->GetSign() )
+                {
+                    case 3:
+                        result += " < ";
+                        break;
+                    case 4:
+                        result += " > ";
+                        break;
+                    case 5:
+                        result += " <= ";
+                        break;
+                    case 6:
+                        result += " >= ";
+                        break;
+                    case 7:
+                        result += " <> ";
+                        break;
+                    case 0:
+                        result += " = ";
+                        break;
+                }
+                query = query.substr( query.find( ' ' ) + 1 );
+                query = query.substr( query.find( ' ' ) + 1 );
+                result += query;
+                res = false;
             }
             else
             {
-                pos = query.Find( " OR " );
-                result += query.substr( 0, pos + 4 );
-                query = query.substr( pos + 4 );
+                int pos = query.Find( " AND " );
+                if( pos != wxNOT_FOUND )
+                {
+                    result += query.substr( 0, pos + 5 );
+                    query = query.substr( pos + 5 );
+                }
+                else
+                {
+                    pos = query.Find( " OR " );
+                    result += query.substr( 0, pos + 4 );
+                    query = query.substr( pos + 4 );
+                }
+                res = true;
             }
-            res = true;
         }
     }
+    m_whereRelatons.erase( it );
+    m_whereRelatons.push_back( temp );
     m_page6->SetSyntaxText( result );
     m_edit->SetText( result );
 }
@@ -1369,23 +1432,65 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     wxString query = m_page6->GetSyntaxCtrl()->GetValue();
     if( event.GetEventObject() == m_page2 )
     {
+        wxString wherePart;
         size_t pos = query.find( "WHERE" );
         if( pos != wxNOT_FOUND )
         {
-            wxString wherePart = query.substr( pos + 6 );
-            wherePart = wherePart.substr( 0, wherePart.find( "HAVING" ) );
+            wherePart = query.substr( pos + 6 );
+            pos = wherePart.find( "GROUP BY" );
+            if( pos == wxNOT_FOUND )
+            {
+                pos = wherePart.find( "HAVING " );
+                if( pos == wxNOT_FOUND )
+                {
+                    pos = wherePart.find( "ORDER BY" );
+                    if( pos == wxNOT_FOUND )
+                        pos = wherePart.length() - 1;
+                }
+            }
+            wherePart = wherePart.substr( 0, pos );
             m_whereCondition[event.GetInt() + 1] = event.GetString();
-            WhereHavingLines line = *(WhereHavingLines *) event.GetClientData();
+            ///WhereHavingLines line = *(WhereHavingLines *) event.GetClientData();
         }
+        else
+        {
+            pos = query.find( "GROUP BY" );
+            if( pos == wxNOT_FOUND )
+            {
+                pos = query.find( "HAVING " );
+                if( pos == wxNOT_FOUND )
+                {
+                    pos = query.find( "ORDER BY" );
+                    if( pos == wxNOT_FOUND )
+                        wherePart = ";";
+                }
+            }
+        }
+        wxString newWherePart;
+        if( wherePart.Length() > 1 && wherePart.Last() == '\n' )
+        {
+            wxString rep = " AND\n";
+            newWherePart = wherePart;
+            newWherePart.Replace( "\n", rep );
+        }
+        else
+            newWherePart = wherePart + "\n";
+        newWherePart += "       " + event.GetString();
+        query.Replace( wherePart, newWherePart );
+        m_page6->GetSyntaxCtrl()->SetValue( query );
     }
     if( event.GetEventObject () == m_page4 )
     {
-        size_t pos = query.find( "HAVING" );
+        size_t pos = query.find( "HAVING " );
         if( pos != wxNOT_FOUND )
         {
             wxString havingPart = query.substr( pos + 7 );
             havingPart = havingPart.substr( 0, ( pos = havingPart.find( "ORDER BY" ) ) == wxNOT_FOUND ? havingPart.length() - 1 : pos );
             m_havingCondition[event.GetInt()] = event.GetString();
+        }
+        else
+        {
+
         }
     }
     if( event.GetEventObject() == m_page1 || event.GetEventObject() == m_page3 )
@@ -1535,7 +1640,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
         }
     }
     query.Replace( str, replace );
-    const_cast<wxTextCtrl *>( m_page6->GetSyntaxCtrl() )->SetValue( query );
+    m_page6->GetSyntaxCtrl()->SetValue( query );
 }
 
 void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))

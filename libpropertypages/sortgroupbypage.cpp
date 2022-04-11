@@ -452,7 +452,7 @@ void SortGroupByPage::OnSortSelectionChanged(wxDataViewEvent &event)
 
 void SortGroupByPage::OnSortListStartEditing(wxDataViewEvent &event)
 {
-    if( event.GetEventObject() == m_sortSource || event.GetEventObject() == m_sortDest && event.GetColumn() == 0 )
+    if( ( event.GetEventObject() == m_sortSource || event.GetEventObject() == m_sortDest ) && event.GetColumn() == 0 )
         event.Veto();
 }
 

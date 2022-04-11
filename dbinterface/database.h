@@ -40,7 +40,8 @@ enum FK_ONDELETE
 
 struct DataEditFiield
 {
-    int type, m_size, m_precision;
+    int type, m_precision;
+    unsigned long m_size;
     union ValuueType
     {
         void *blobValue;
@@ -69,7 +70,7 @@ struct DataEditFiield
 
     DataEditFiield(int myvalue) : type( INTEGER_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) { }
 
-    DataEditFiield(double myvalue, int size, int precision) : type( DOUBLE_TYPE ), m_size( size ), m_precision( precision ), value( myvalue ) { }
+    DataEditFiield(double myvalue, unsigned long size, int precision) : type( DOUBLE_TYPE ), m_size( size ), m_precision( precision ), value( myvalue ) { }
 
     DataEditFiield(const std::wstring &myvalue) : type( WSTRING_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
 

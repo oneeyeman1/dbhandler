@@ -31,13 +31,15 @@ XS_IMPLEMENT_CLONABLE_CLASS(ConstraintSign, wxSFRectShape);
 
 ConstraintSign::ConstraintSign() : wxSFRectShape()
 {
+    m_joinType = 0;
 }
 
-ConstraintSign::ConstraintSign(ViewType type) : wxSFRectShape()
+ConstraintSign::ConstraintSign(ViewType type, int joinType) : wxSFRectShape()
 {
     m_type = type;
     m_sign = NULL;
     m_fKey = NULL;
+    m_joinType = joinType;
     m_nRectSize = wxRealPoint( 20, 20 );
 //    SetRectSize( 20, 20 );
     AcceptChild( "GridShape" );
@@ -92,6 +94,11 @@ ConstraintSign::~ConstraintSign()
 {
     delete m_constraint;
     m_constraint = NULL;
+}
+
+void ConstraintSign::initSerializable()
+{
+    XS_SERIALIZE_INT( m_joinType, wxT( "m_joinType" ) );
 }
 
 void ConstraintSign::SetSign(const wxString &sign)
