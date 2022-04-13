@@ -2259,7 +2259,8 @@ void DrawingView::CreateQueryMenu(const int queryType)
     }
     mbar->Insert( 0, fileMenu, _( "File" ) );
     mbar->Append( helpMenu, _( "Help" ) );
-    m_frame->SetMenuBar( mbar );
+    if( queryType == QuerySyntaxMenu )
+        m_frame->SetMenuBar( mbar );
     if( queryType == QuerySyntaxMenu )
     {
         mbar->EnableTop( 0, false );
