@@ -53,10 +53,98 @@
     <ClInclude Include="newtablehandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="svgs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="docview.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\rt_rcdat.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\hand.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\bullseye.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\pencil.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\magnif1.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\roller.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\pbrush.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\pntleft.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\pntright.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\blank.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\cross.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\sample.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\std.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\folder1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\folder2.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\file1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\computer.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\drive.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\cdrom.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\floppy.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\removble.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="doc.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="chart.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="notepad.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\csquery.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\colours.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

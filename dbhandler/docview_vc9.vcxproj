@@ -505,11 +505,43 @@
     <ClInclude Include="docview.h" />
     <ClInclude Include="mainframe.h" />
     <ClInclude Include="newtablehandler.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="svgs.h" />
     <ClInclude Include="view.h" />
     <ClInclude Include="viewbase.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="docview.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\blank.cur" />
+    <None Include="res\bullseye.cur" />
+    <None Include="res\cross.cur" />
+    <None Include="res\hand.cur" />
+    <None Include="res\magnif1.cur" />
+    <None Include="res\pbrush.cur" />
+    <None Include="res\pencil.cur" />
+    <None Include="res\pntleft.cur" />
+    <None Include="res\pntright.cur" />
+    <None Include="res\roller.cur" />
+    <None Include="res\rt_rcdat.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="chart.ico" />
+    <Image Include="doc.ico" />
+    <Image Include="notepad.ico" />
+    <Image Include="res\cdrom.ico" />
+    <Image Include="res\colours.bmp" />
+    <Image Include="res\computer.ico" />
+    <Image Include="res\csquery.bmp" />
+    <Image Include="res\drive.ico" />
+    <Image Include="res\file1.ico" />
+    <Image Include="res\floppy.ico" />
+    <Image Include="res\folder1.ico" />
+    <Image Include="res\folder2.ico" />
+    <Image Include="res\removble.ico" />
+    <Image Include="res\sample.ico" />
+    <Image Include="res\std.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
