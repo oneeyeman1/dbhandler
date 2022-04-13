@@ -1,0 +1,22 @@
+#pragma once
+
+const char query[] = R"foo(<?xml version="1.0" standalone="no"?> \
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" \
+ "http://w...content-available-to-author-only...3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"> \
+<svg version="1.0" xmlns="http://w...content-available-to-author-only...3.org/2000/svg" \
+ width="15.000000pt" height="16.000000pt" viewBox="0 0 15.000000 16.000000" \
+ preserveAspectRatio="xMidYMid meet"> \
+\
+<g transform="translate(0.000000,16.000000) \
+scale(0.100000,-0.100000)" \
+fill="#000000" stroke="none"> \
+<path d="M12 138 c-7 -7 -12 -34 -12 -60 0 -42 3 -48 24 -54 14 -3 33 -4 43 \
+    -1 10 3 5 5 -14 6 -17 0 -35 6 -39 12 -4 8 4 9 27 5 l34 -5 -32 11 c-49 16 \
+    -40 25 17 18 28 -4 50 -3 50 1 0 4 -21 9 -47 11 -65 4 -66 23 -1 22 l53 -2 \
+    -48 7 c-26 3 -47 11 -47 16 0 6 21 13 47 16 l48 6 -45 1 c-26 1 -51 -3 -58 \
+    -10z"/> \
+    <path d="M122 88 c-2 -44 -6 -58 -19 -61 -15 -4 -14 -5 2 -6 12 0 27 -7 35 \
+    -14 12 -10 12 -9 3 3 -7 9 -14 43 -16 75 l-3 60 -2 -57z"/> \
+    </g> \
+    </svg> \
+    )foo";

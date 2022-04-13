@@ -29,13 +29,14 @@
 #include "docview.h"
 #include "newtablehandler.h"
 
+#include "svgs.h"
 #include "res/odbc1.xpm"
 #include "res/database_profile.xpm"
 #include "res/database.xpm"
 #include "res/table.xpm"
 #include "res/properties.xpm"
 #include "key-f1.xpm"
-#include "res/query.xpm"
+//#include "res/query.xpm"
 #include "quit.xpm"
 
 typedef void (*ODBCSETUP)(wxWindow *);
@@ -173,8 +174,9 @@ void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
 
 void MainFrame::InitToolBar(wxToolBar* toolBar)
 {
-    wxBitmap bitmaps[9];
-    bitmaps[0] = wxBitmap( query );
+    wxBitmapBundle bitmaps[9];
+//    bitmaps[0] = wxBitmap( query );;
+    bitmaps[0] = wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ) );
     bitmaps[1] = wxBitmap( odbc1 );
     bitmaps[2] = wxBitmap( database_profile );
     bitmaps[3] = wxBitmap( table );
