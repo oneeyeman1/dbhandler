@@ -37,7 +37,7 @@ DesignField::DesignField() : wxSFRectShape()
         m_grid->SetFill( *wxTRANSPARENT_BRUSH );
         m_grid->SetBorder( *wxTRANSPARENT_PEN );
         m_grid->AcceptChild( wxT( "wxSFTextShape" ) );
-        m_grid->Activate( false );
+        m_grid->Activate( true );
         SF_ADD_COMPONENT( m_grid, wxT( "grid" ) );
     }
     m_font = wxNullFont;
@@ -60,7 +60,7 @@ DesignField::DesignField (const wxFont font, const wxString &label, int alignmen
         m_grid->SetFill( *wxTRANSPARENT_BRUSH );
         m_grid->SetBorder( *wxTRANSPARENT_PEN );
         m_grid->AcceptChild( wxT( "wxSFTextShape" ) );
-        m_grid->Activate( false );
+        m_grid->Activate( true );
         SF_ADD_COMPONENT( m_grid, wxT( "grid" ) );
         if( m_grid->InsertToGrid( 0, 0, m_text ) )
         {
