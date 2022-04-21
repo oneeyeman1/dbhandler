@@ -45,6 +45,7 @@ JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, con
     set_properties();
     do_layout();
     m_joinType->Bind( wxEVT_LIST_ITEM_ACTIVATED, &JointType::OnListItemActivated, this );
+    m_joinType->Bind( wxEVT_LISTBOX_DCLICK, [&](wxCommandEvent &event) { EndModal( wxID_OK ); });
     // end wxGlade
 }
 
@@ -59,35 +60,35 @@ void JointType::set_properties()
     wxString buf;
     long temp = m_joinType->InsertItem( 0, "=" );
     m_joinType->SetItemData( temp, 0 );
-    buf.Printf( "%s.%s = %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    buf.Printf( "%s.%s = %s.%s", m_refTable, m_refField, m_origTable, m_origField );
     m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 1, "=" );
     m_joinType->SetItemData( temp, 1 );
-    buf.Printf( "%s.%s = %s.%s and rows from %s that have no %s", m_origTable, m_origField, m_refTable, m_refField, m_origTable, m_refTable );
+    buf.Printf( "%s.%s = %s.%s and rows from %s that have no %s", m_refTable, m_refField, m_origTable, m_origField, m_refTable, m_origTable );
     m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 2, "=" );
     m_joinType->SetItemData( temp, 2 );
-    buf.Printf( "%s.%s = %s.%s and rows from %s that have no %s", m_origTable, m_origField, m_refTable, m_refField, m_refTable, m_origTable );
+    buf.Printf( "%s.%s = %s.%s and rows from %s that have no %s", m_refTable, m_refField, m_origTable, m_origField, m_origTable, m_refTable );
     m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 3, "<" );
     m_joinType->SetItemData( temp, 3 );
-    buf.Printf( "%s.%s < %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    buf.Printf( "%s.%s < %s.%s", m_refTable, m_refField, m_origTable, m_origField );
     m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 4, ">" );
     m_joinType->SetItemData( temp, 4 );
-    buf.Printf( "%s.%s > %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    buf.Printf( "%s.%s > %s.%s", m_refTable, m_refField, m_origTable, m_origField );
     m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 5, "<=" );
     m_joinType->SetItemData( temp, 5 );
-    buf.Printf( "%s.%s <= %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    buf.Printf( "%s.%s <= %s.%s", m_refTable, m_refField, m_origTable, m_origField );
     m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 6, ">=" );
     m_joinType->SetItemData( temp, 6 );
-    buf.Printf( "%s.%s >= %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    buf.Printf( "%s.%s >= %s.%s", m_refTable, m_refField, m_origTable, m_origField );
     m_joinType->SetItem( temp, 1, buf );
     temp = m_joinType->InsertItem( 7, "<>" );
     m_joinType->SetItemData( temp, 7 );
-    buf.Printf( "%s.%s <> %s.%s", m_origTable, m_origField, m_refTable, m_refField );
+    buf.Printf( "%s.%s <> %s.%s", m_refTable, m_refField, m_origTable, m_origField );
     m_joinType->SetItem( temp, 1, buf );
     m_joinType->SetItemState( m_type,  wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
     m_joinType->SetItemState( m_type, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED );
