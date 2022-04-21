@@ -506,7 +506,6 @@
     <ClInclude Include="mainframe.h" />
     <ClInclude Include="newtablehandler.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="svgs.h" />
     <ClInclude Include="view.h" />
     <ClInclude Include="viewbase.h" />
   </ItemGroup>
