@@ -4,3 +4,6 @@ doc                 ICON    "doc.ico"
 chrt                ICON    "chart.ico"
 notepad             ICON    "notepad.ico"
 
+query_16x16         RCDATA  "res/query_16x16.png"
+query_32x32         RCDATA  "res/query_32x32.png"
+query_64x64         RCDATA  "res/query_64x64.png" 
