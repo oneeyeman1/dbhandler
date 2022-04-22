@@ -173,23 +173,21 @@ void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
 
 void MainFrame::InitToolBar(wxToolBar* toolBar)
 {
-//    wxBitmapBundle bitmaps[9];
     wxVector<wxBitmap> bitmaps[9];
     bitmaps[0].push_back( wxBITMAP_PNG( query_16x16 ) );
     bitmaps[0].push_back( wxBITMAP_PNG( query_32x32 ) );
     bitmaps[0].push_back( wxBITMAP_PNG( query_64x64 ) );
 
-//    bitmaps[0] = wxBitmapBundle::FromBitmap( query );
-/*    bitmaps[1] = wxBitmapBundle::FromBitmap(  odbc1 );
-    bitmaps[2] = wxBitmap( database_profile );
+    bitmaps[1].push_back( wxBITMAP_PNG( odbc_16x16 ) );
+    bitmaps[1].push_back( wxBITMAP_PNG( odbc_32x32 ) );
+    bitmaps[1].push_back( wxBITMAP_PNG( odbc_64x64 ) );
+    /*    bitmaps[2] = wxBitmap( database_profile );
     bitmaps[3] = wxBitmap( table );
     bitmaps[4] = wxBitmap( database );
     bitmaps[5] = wxBitmap( quit_xpm );*/
     toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromBitmaps( bitmaps[0] ) );
-//    bitmaps[0] = wxBitmap( query );;
-//    toolBar->AddTool( wxID_QUERY, _( "Query" ), bitmaps[0], bitmaps[0], wxITEM_NORMAL, _( "Run Query" ), _( "Run Query Wizard" ) );
-/*    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), bitmaps[1], bitmaps[1], wxITEM_NORMAL, _( "Configure ODBC" ), _( "Configure ODBC data source" ) );
-    toolBar->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), bitmaps[2], bitmaps[2], wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
+    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[1] ) );
+/*    toolBar->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), bitmaps[2], bitmaps[2], wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
     toolBar->AddTool( wxID_TABLE, _( "Table" ), bitmaps[3], bitmaps[3], wxITEM_NORMAL, _( "Table" ), _( "Run Table View" ) );
     toolBar->AddTool( wxID_DATABASE, _( "Database" ), bitmaps[4], bitmaps[4], wxITEM_NORMAL, _( "Database" ), _( "Database" ) );
     toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), bitmaps[5], bitmaps[5], wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );*/
