@@ -174,10 +174,10 @@ void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
 void MainFrame::InitToolBar(wxToolBar* toolBar)
 {
     wxVector<wxBitmap> bitmaps[9];
-    bitmaps[0].push_back( wxBITMAP_PNG( query_16x16 ) );
+/*    bitmaps[0].push_back( wxBITMAP_PNG( query_16x16 ) );
     bitmaps[0].push_back( wxBITMAP_PNG( query_32x32 ) );
     bitmaps[0].push_back( wxBITMAP_PNG( query_64x64 ) );
-
+*/
     bitmaps[1].push_back( wxBITMAP_PNG( odbc_16x16 ) );
     bitmaps[1].push_back( wxBITMAP_PNG( odbc_32x32 ) );
     bitmaps[1].push_back( wxBITMAP_PNG( odbc_64x64 ) );
@@ -189,14 +189,20 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[3].push_back( wxBITMAP_PNG( table_16x16 ) );
     bitmaps[3].push_back( wxBITMAP_PNG( table_32x32 ) );
     bitmaps[3].push_back( wxBITMAP_PNG( table_64x64 ) );
-/*    bitmaps[4] = wxBitmap( database );
-    bitmaps[5] = wxBitmap( quit_xpm );*/
-    toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromBitmaps( bitmaps[0] ) );
+
+    bitmaps[4].push_back( wxBITMAP_PNG( database_16x16 ) );
+    bitmaps[4].push_back( wxBITMAP_PNG( database_32x32 ) );
+    bitmaps[4].push_back( wxBITMAP_PNG( database_64x64 ) );
+/*    bitmaps[5] = wxBitmap( quit_xpm );*/
+#ifdef wxHAS_IMAGE_RESOURCES
+    toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ) );
+#else
+#endif
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[1] ) );
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[3] ) );
-/*    toolBar->AddTool( wxID_DATABASE, _( "Database" ), bitmaps[4], bitmaps[4], wxITEM_NORMAL, _( "Database" ), _( "Database" ) );
-    toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), bitmaps[5], bitmaps[5], wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );*/
+    toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
+/*-    toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), bitmaps[5], bitmaps[5], wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );*/
     toolBar->SetName( "PowerBar" );
     toolBar->Realize();
 }
