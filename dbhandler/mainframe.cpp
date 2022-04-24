@@ -31,10 +31,11 @@
 
 #ifdef __WXGTK__
 #include "res/query.c"
+#include "res/odbc.c"
+#include "res/profile.c"
+#include "res/database.c"
 #endif
-/*#include "res/odbc1.xpm"
-#include "res/database_profile.xpm"
-#include "res/database.xpm"
+/*
 #include "res/table.xpm"
 #include "res/properties.xpm"
 #include "key-f1.xpm"
@@ -177,10 +178,6 @@ void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
 void MainFrame::InitToolBar(wxToolBar* toolBar)
 {
     wxVector<wxBitmap> bitmaps[9];
-/*    bitmaps[0].push_back( wxBITMAP_PNG( query_16x16 ) );
-    bitmaps[0].push_back( wxBITMAP_PNG( query_32x32 ) );
-    bitmaps[0].push_back( wxBITMAP_PNG( query_64x64 ) );
-
     bitmaps[1].push_back( wxBITMAP_PNG( odbc_16x16 ) );
     bitmaps[1].push_back( wxBITMAP_PNG( odbc_32x32 ) );
     bitmaps[1].push_back( wxBITMAP_PNG( odbc_64x64 ) );
@@ -189,22 +186,22 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[2].push_back( wxBITMAP_PNG( profile_32x32 ) );
     bitmaps[2].push_back( wxBITMAP_PNG( profile_64x64 ) );
 
-    bitmaps[3].push_back( wxBITMAP_PNG( table_16x16 ) );
-    bitmaps[3].push_back( wxBITMAP_PNG( table_32x32 ) );
-    bitmaps[3].push_back( wxBITMAP_PNG( table_64x64 ) );
-
     bitmaps[4].push_back( wxBITMAP_PNG( database_16x16 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_32x32 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_64x64 ) );
-    bitmaps[5] = wxBitmap( quit_xpm );*/
+//    bitmaps[5] = wxBitmap( quit_xpm );*/
 #ifdef wxHAS_IMAGE_RESOURCES
     toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ) );
 #else
 	toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVG	( query, wxSize( 16, 16 ) ) );
 #endif
-/*    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[1] ) );
-    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
-    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[3] ) );
+    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[1] ) );
+    toolBar->AddTool( wxID_DATABASEWINDOW, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
+#ifdef wxHAS_IMAGE_RESOURCES
+    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ) );
+#else
+	toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVG	( query, wxSize( 16, 16 ) ) );
+#endif
     toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
 /*-    toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), bitmaps[5], bitmaps[5], wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );*/
     toolBar->SetName( "PowerBar" );
