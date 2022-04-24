@@ -29,7 +29,10 @@
 #include "docview.h"
 #include "newtablehandler.h"
 
-#include "res/odbc1.xpm"
+#ifdef __WXGTK__
+#include "res/query.c"
+#endif
+/*#include "res/odbc1.xpm"
 #include "res/database_profile.xpm"
 #include "res/database.xpm"
 #include "res/table.xpm"
@@ -37,7 +40,7 @@
 #include "key-f1.xpm"
 #include "res/query.xpm"
 #include "quit.xpm"
-
+*/
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &);
 typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &);
@@ -177,7 +180,7 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 /*    bitmaps[0].push_back( wxBITMAP_PNG( query_16x16 ) );
     bitmaps[0].push_back( wxBITMAP_PNG( query_32x32 ) );
     bitmaps[0].push_back( wxBITMAP_PNG( query_64x64 ) );
-*/
+
     bitmaps[1].push_back( wxBITMAP_PNG( odbc_16x16 ) );
     bitmaps[1].push_back( wxBITMAP_PNG( odbc_32x32 ) );
     bitmaps[1].push_back( wxBITMAP_PNG( odbc_64x64 ) );
@@ -193,12 +196,13 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[4].push_back( wxBITMAP_PNG( database_16x16 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_32x32 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_64x64 ) );
-/*    bitmaps[5] = wxBitmap( quit_xpm );*/
+    bitmaps[5] = wxBitmap( quit_xpm );*/
 #ifdef wxHAS_IMAGE_RESOURCES
     toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ) );
 #else
+	toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVG	( query, wxSize( 16, 16 ) ) );
 #endif
-    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[1] ) );
+/*    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[1] ) );
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[3] ) );
     toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
