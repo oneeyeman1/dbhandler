@@ -8,6 +8,9 @@
     <Filter Include="Header Files">
       <UniqueIdentifier>{22ed181d-cf8e-4031-9b52-8cb3e8b4346b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resorce Files">
+      <UniqueIdentifier>{e5854c7a-e5ed-45fe-a5fe-6685546f371c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tablegeneral.h">
@@ -61,6 +64,7 @@
     <ClInclude Include="printspec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tablegeneral.cpp">
@@ -108,5 +112,8 @@
     <ClCompile Include="printspec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="propertypages.rc" />
   </ItemGroup>
 </Project>
