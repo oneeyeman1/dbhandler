@@ -179,9 +179,9 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 {
     wxVector<wxBitmap> bitmaps[9];
 
-    bitmaps[0].push_back( wxBITMAP_PNG( quer_16x16 ) );
-    bitmaps[0].push_back( wxBITMAP_PNG( quer_32x32 ) );
-    bitmaps[0].push_back( wxBITMAP_PNG( quer_64x64 ) );
+    bitmaps[0].push_back( wxBITMAP_PNG( query_16x16 ) );
+    bitmaps[0].push_back( wxBITMAP_PNG( query_32x32 ) );
+    bitmaps[0].push_back( wxBITMAP_PNG( query_64x64 ) );
 
     bitmaps[1].push_back( wxBITMAP_PNG( odbc_16x16 ) );
     bitmaps[1].push_back( wxBITMAP_PNG( odbc_32x32 ) );
@@ -190,6 +190,10 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[2].push_back( wxBITMAP_PNG( profile_16x16 ) );
     bitmaps[2].push_back( wxBITMAP_PNG( profile_32x32 ) );
     bitmaps[2].push_back( wxBITMAP_PNG( profile_64x64 ) );
+
+    bitmaps[3].push_back( wxBITMAP_PNG( table_16x16 ) );
+    bitmaps[3].push_back( wxBITMAP_PNG( table_32x32 ) );
+    bitmaps[3].push_back( wxBITMAP_PNG( table_64x64 ) );
 
     bitmaps[4].push_back( wxBITMAP_PNG( database_16x16 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_32x32 ) );
@@ -202,13 +206,14 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 #endif*/
     toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromBitmaps( bitmaps[0] ) );
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[1] ) );
-    toolBar->AddTool( wxID_DATABASEWINDOW, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
-#ifdef wxHAS_IMAGE_RESOURCES
+    toolBar->AddTool( wxID_DATABASE, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
+/*#ifdef wxHAS_IMAGE_RESOURCES
     toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ) );
 #else
 	toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVG	( query, wxSize( 16, 16 ) ) );
-#endif
-    toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
+#endif*/
+    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromBitmaps( bitmaps[3] ) );
+    toolBar->AddTool( wxID_DATABASEWINDOW, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
 /*-    toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), bitmaps[5], bitmaps[5], wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );*/
     toolBar->SetName( "PowerBar" );
     toolBar->Realize();
