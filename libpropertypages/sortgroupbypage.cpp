@@ -29,7 +29,7 @@
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 
 /* handdrag.cur - 326 bytes */
-static const unsigned char handdrag_cur_data[] = {
+static const unsigned char handdrag_cur[] = {
 
     0x00, 0x00, 0x02, 0x00, 0x01, 0x00, 0x20, 0x20, 0x00, 0x00, 0x0b, 0x00, 0x00, 0x00, 0x30, 0x01,
     0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x40, 0x00,
@@ -280,6 +280,10 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
     int flags;
     const wxPoint& pt = event.m_pointDrag;
     m_dragSource = dynamic_cast<MyListCtrl *>( event.GetEventObject() );
+    wxImage handdrag( 32, 32, handdrag_cur );
+    if( handdrag.IsOk() )
+        wxMessageBox( "Good" );
+    m_dragSource->SetCursor( wxCursor( handdrag ) );
     if( m_dragSource == m_source )
         m_itemPos = m_dragSource->HitTest( pt, flags );
     else
