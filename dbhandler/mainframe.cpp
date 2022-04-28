@@ -30,7 +30,7 @@
 #include "newtablehandler.h"
 
 #ifdef __WXGTK__
-#include "res/query.c"
+#include "query.c"
 #include "res/odbc.c"
 #include "res/profile.c"
 #include "res/database.c"
