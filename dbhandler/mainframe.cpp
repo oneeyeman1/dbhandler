@@ -114,6 +114,8 @@ MainFrame::~MainFrame()
             wxString temp3( m_db->GetTableVector().GetPostgreLogFile() );
             config->Write( "Logfile", temp3 );
         }
+        temp1 = m_db->GetTableVector().m_dbName;
+        config->Write( "DatabaseName", temp1 );
         std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
         result = m_db->Disconnect( errorMsg );
     }

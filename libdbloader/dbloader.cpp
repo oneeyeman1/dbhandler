@@ -106,6 +106,8 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
     bool ask = false;
     Database *pdb = NULL;
     wxDynamicLibrary lib;
+    if( engine == "SQLite" && !name.IsEmpty() )
+        connectStr = name;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXOSX__

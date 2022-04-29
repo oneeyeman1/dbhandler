@@ -108,7 +108,7 @@ bool MyApp::OnInit()
     wxConfigBase *config = wxConfigBase::Get( "DBManager" );
     wxString path = config->GetPath();
     config->SetPath( "CurrentDB" );
-    m_dbName = config->Read( "Database Name", "" );
+    m_dbName = config->Read( "DatabaseName", "" );
     m_dbEngine = config->Read( "Engine", "" );
     m_subtype = config->Read( "Subtype", "" );
     config->SetPath( path );
