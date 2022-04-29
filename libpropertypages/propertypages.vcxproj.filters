@@ -112,6 +112,9 @@
     <ClCompile Include="printspec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="propertypages.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="propertypages.rc" />

@@ -65,6 +65,7 @@
     <ClCompile Include="msw\fontpropertypage.cpp" />
     <ClCompile Include="pointerproperty.cpp" />
     <ClCompile Include="printspec.cpp" />
+    <ClCompile Include="propertypages.cpp" />
     <ClCompile Include="sortgroupbypage.cpp" />
     <ClCompile Include="syntaxproppage.cpp" />
     <ClCompile Include="tablegeneral.cpp" />
