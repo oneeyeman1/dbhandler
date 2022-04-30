@@ -307,7 +307,7 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
     int flags;
     const wxPoint& pt = event.m_pointDrag;
     m_dragSource = dynamic_cast<MyListCtrl *>( event.GetEventObject() );
-    m_dragSource->SetCursor( wxCursor( "HANDDRAG_CUR" ) );
+    m_dragSource->SetCursor( wxCursor( "handdrag_cur" ) );
     if( m_dragSource == m_source )
         m_itemPos = m_dragSource->HitTest( pt, flags );
     else
