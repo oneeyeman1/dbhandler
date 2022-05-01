@@ -30,7 +30,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 
 #ifdef __WXGTK__
 /* handdrag.cur - 326 bytes */
-static const signed char handdrag_cur[] = {
+static const unsigned char handdrag_cur[] = {
 
     0x00, 0x00, 0x02, 0x00, 0x01, 0x00, 0x20, 0x20, 0x00, 0x00, 0x0b, 0x00, 0x00, 0x00, 0x30, 0x01,
     0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x40, 0x00,
@@ -89,7 +89,7 @@ bool MyListCtrl::MSWOnNotify (int idCtrl, WXLPARAM lParam, WXLPARAM *result)
     {
         case LVN_HOTTRACK:
         {
-            NMLISTVIEW *l = ../dbhandler/res/query_new1.svg(NMLISTVIEW *)lParam;
+            NMLISTVIEW *l = (NMLISTVIEW *)lParam;
             l->iItem = -1;
             return 0;
         }
