@@ -34,6 +34,7 @@
 #include "res/odbc.c"
 #include "res/profile.c"
 #include "res/database.c"
+#include "res/table.c"
 #endif
 /*
 #include "res/table.xpm"
