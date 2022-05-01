@@ -426,6 +426,7 @@ void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
     wxDataViewItem item = event.GetItem();
     wxVariant value = event.GetValue();
     m_sortDragSource = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
+    m_sortDragSource->SetCursor( wxCursor( "handdrag_cur" ) );
     if( m_sortDragSource == m_sortSource && item.IsOk())
         m_itemPos = m_sortDragSource->ItemToRow( item );
     else if( item.IsOk() )
@@ -451,6 +452,7 @@ void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
 {
     wxVariant value = event.GetValue();
     m_sortDragDest = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
+    m_sortDragSource->SetCursor( wxCURSOR_HAND );
     if( m_sortDragSource != m_sortDragDest )
     {
         unsigned int position;
