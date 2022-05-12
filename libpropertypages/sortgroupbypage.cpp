@@ -342,43 +342,55 @@ void SortGroupByPage::OnItemFocused(wxListEvent &event)
 
 void SortGroupByPage::OnLeftUp(wxMouseEvent &event)
 {
+    const wxPoint pt = event.GetPosition();
     m_dragSource->SetCursor( wxCURSOR_HAND );
-    FinishDragging( event.GetPosition() );
+    if( m_source->GetRect().Contains( pt ) )
+        m_dragDest = m_source;
+    else if( m_dest->GetRect().Contains( pt ) )
+        m_dragDest = m_dest;
+    if( m_dragSource == m_dragDest )
+    {
+        event.Skip();
+        return;
+    }
+    FinishDragging( pt );
     event.Skip();
 }
 
 void SortGroupByPage::FinishDragging(const wxPoint &pt)
 {
+    long position;
     if( m_isDragging )
     {
-        if( m_source->GetRect().Contains( pt ) )
-            m_dragDest = m_source;
-        else if( m_dest->GetRect().Contains( pt ) )
-            m_dragDest = m_dest;
         if( m_dragDest != m_source && m_dragDest != m_dest && m_dragSource == m_source )
             return;
         if( m_dragDest != m_source && m_dragDest != m_dest && m_dragSource == m_dest )
             m_dragDest = m_source;
         if( m_dragSource != m_dragDest )
         {
+            int flags;
             long position = 0;
             TableField *field = nullptr;
             if( m_dragDest == m_dest )
-                field = reinterpret_cast<TableField *>( m_source->GetItemData( m_itemPos ) );
+                position = m_source->GetItemData( m_itemPos );
             else
             {
-                long *position = reinterpret_cast<long *>( m_dragSource->GetItemData( m_sourcePos ) );
+                position = m_dragSource->GetItemData( m_sourcePos );
             }
             m_dragSource->DeleteItem( m_dragDest == m_dest ? m_itemPos : m_sourcePos );
             if( m_dragDest == m_dest )
-                position = m_dragDest->GetItemCount();
-            long item = m_dragDest->InsertItem( position, m_item );
-            if( m_dragDest == m_dest )
             {
-                m_dragDest->SetItemPtrData( item, wxUIntPtr( m_itemPos ) );
+                position = m_dragDest->HitTest( pt, flags );
+                if( position == wxNOT_FOUND )
+                    position = m_dragDest->GetItemCount();
             }
-            else
-                m_dragDest->SetItemPtrData( item, wxUIntPtr( field ) );
+            long item = m_dragDest->InsertItem( position, m_item );
+//            if( m_dragDest == m_dest )
+            {
+                m_dragDest->SetItemData( item, position );
+            }
+//            else
+//                m_dragDest->SetItemPtrData( item, wxUIntPtr( field ) );
             wxCommandEvent event( wxEVT_CHANGE_QUERY );
             event.SetEventObject( this );
             event.SetInt( m_dragDest == m_dest ? ADDFIELD : REMOVEFIELD );
