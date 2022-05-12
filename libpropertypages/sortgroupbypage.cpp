@@ -321,6 +321,11 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
     list->SetCursor( wxCursor( "handdrag" ) );
 #else
 	m_dragSource->SetCursor( wxCursor( (const char *) handdrag_cur, 32, 32, 16, 0, nullptr, wxWHITE, wxBLACK ) );
+    if( m_dragSource == m_source )
+        list = m_dest;
+    else
+        list = m_source;
+    list->SetCursor( wxCursor( (const char *) handdrag_cur, 32, 32, 16, 0, nullptr, wxWHITE, wxBLACK ) );
 #endif
     if( m_dragSource == m_source )
         m_itemPos = m_dragSource->HitTest( pt, flags );
@@ -354,12 +359,21 @@ void SortGroupByPage::OnLeftUp(wxMouseEvent &event)
 {
     const wxPoint pt = event.GetPosition();
     m_dragSource->SetCursor( wxCURSOR_HAND );
+#ifndef __WXMSW__
+    wxListCtrl *list = nullptr;
+    if( m_dragSource == m_source )
+        list = m_dest;
+    else
+        list = m_source;
+    list->SetCursor( wxCursor( wxCURSOR_HAND ) );
+#endif
     if( m_source->GetRect().Contains( pt ) )
         m_dragDest = m_source;
     else if( m_dest->GetRect().Contains( pt ) )
         m_dragDest = m_dest;
     if( m_dragSource == m_dragDest )
     {
+        ReleaseMouse();
         event.Skip();
         return;
     }
