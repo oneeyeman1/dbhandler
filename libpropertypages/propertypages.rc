@@ -1,4 +1,4 @@
 #include <windows.h>
 
-HANDDRAG_CUR    CURSOR  DISCARDABLE     "res/handdrag.cur"
+HANDDRAG    CURSOR  DISCARDABLE     "res/handdrag.cur"
  
