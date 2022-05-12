@@ -257,8 +257,10 @@ void SortGroupByPage::set_properties()
     else
     {
         m_sortSource->AppendTextColumn( "" );
+        m_sortSource->SetCursor( wxCURSOR_HAND );
         m_sortDest->AppendTextColumn( "", wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT );
         m_sortDest->AppendColumn( new wxDataViewColumn( "", new SortColumnRenderer, 1, wxDVC_DEFAULT_WIDTH, wxALIGN_RIGHT ) );
+        m_sortDest->SetCursor( wxCURSOR_HAND );
     }
 }
 
@@ -306,9 +308,17 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
 {
     int flags;
     const wxPoint& pt = event.m_pointDrag;
+    wxListCtrl *list = nullptr;
     m_dragSource = dynamic_cast<MyListCtrl *>( event.GetEventObject() );
 #ifdef __WXMSW__
-    m_dragSource->SetCursor( wxCursor( "handdrag_cur" ) );
+    m_dragSource->SetCursor( wxCursor( "handdrag" ) );
+#elif __WXOSX__
+    m_dragSource->SetCursor( wxCursor( "handdrag" ) );
+    if( m_dragSource == m_source )
+        list = m_dest;
+    else
+        list = m_source;
+    list->SetCursor( wxCursor( "handdrag" ) );
 #else
 	m_dragSource->SetCursor( wxCursor( handdrag_cur, 32, 32, 16, 0, nullptr, wxWHITE, wxBLACK ) );
 #endif
@@ -359,6 +369,7 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             return;
         if( m_dragDest != m_source && m_dragDest != m_dest && m_dragSource == m_dest )
             m_dragDest = m_source;
+        m_dragDest->SetCursor( wxCURSOR_HAND );
         if( m_dragSource != m_dragDest )
         {
             long position = 0;
