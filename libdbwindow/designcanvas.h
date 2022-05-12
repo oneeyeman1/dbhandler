@@ -14,10 +14,10 @@ public:
     void AddDataDivider();
     virtual void OnRightDown(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnLeftDown(wxMouseEvent &event) wxOVERRIDE;
-    virtual void OnMouseMove(wxMouseEvent &event) wxOVERRIDE;
+//    virtual void OnMouseMove(wxMouseEvent &event) wxOVERRIDE;
     DesignOptions GetOptions() { return m_options; }
     void SetOptions(DesignOptions options) { m_options = options; }
-    void PopulateQueryCanvas(const std::vector<TableField *> &queryFields, const std::vector<const TableField *> &groupByFields);
+    void PopulateQueryCanvas(const std::vector<TableField *> &queryFields, const std::vector<wxString> &groupByFields);
 protected:
     void OnProperties(wxCommandEvent &event);
 private:

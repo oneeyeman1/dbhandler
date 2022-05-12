@@ -209,7 +209,7 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
         m_view->ProcessEvent( evt );
     }
 }
-
+/**
 void DesignCanvas::OnMouseMove(wxMouseEvent &event)
 {
     wxSFShapeBase *shape = GetShapeUnderCursor();
@@ -218,8 +218,9 @@ void DesignCanvas::OnMouseMove(wxMouseEvent &event)
         SetCursor( wxCURSOR_SIZENS );
     else
         SetCursor( *wxSTANDARD_CURSOR );
+    wxSFShapeCanvas::OnMouseMove( event );
 }
-
+*/
 void DesignCanvas::OnProperties(wxCommandEvent &WXUNUSED(event))
 {
     wxCriticalSection pcs;
@@ -301,7 +302,7 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
             label->Select( true );
             dynamic_cast<DrawingView *>( m_view )->ChangeFontEement();
         }
-    }
+    }Refresh();
 }
 
 void DesignCanvas::InitialFieldSizing ()
@@ -328,7 +329,7 @@ void DesignCanvas::InitialFieldSizing ()
     }
 }
 
-void DesignCanvas::PopulateQueryCanvas(const std::vector<TableField *> &queryFields, const std::vector<const TableField *> &groupByFields)
+void DesignCanvas::PopulateQueryCanvas(const std::vector<TableField *> &queryFields, const std::vector<wxString> &groupByFields)
 {
     wxBeginBusyCursor();
     wxFont fontUsed;
