@@ -308,9 +308,11 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
     const wxPoint& pt = event.m_pointDrag;
     m_dragSource = dynamic_cast<MyListCtrl *>( event.GetEventObject() );
 #ifdef __WXMSW__
-    m_dragSource->SetCursor( wxCursor( "handdrag_cur" ) );
+    m_dragSource->SetCursor( wxCursor( "handdrag" ) );
+#elif defined __WXOSX__
+	m_dragSource-SetCursor( wxCursor( "handdrag" ) );
 #else
-	m_dragSource->SetCursor( wxCursor( handdrag_cur, 32, 32, 16, 0, nullptr, wxWHITE, wxBLACK ) );
+	m_dragSource->SetCursor( wxCursor( (const char *) handdrag_cur, 32, 32, 16, 0, nullptr, wxWHITE, wxBLACK ) );
 #endif
     if( m_dragSource == m_source )
         m_itemPos = m_dragSource->HitTest( pt, flags );
