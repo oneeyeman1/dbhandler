@@ -597,25 +597,25 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     for( std::vector<TableField *>::const_iterator it1 = dbTable->GetFields().begin(); it1 < dbTable->GetFields().end(); ++it1 )
                     {
                         long item = m_page3->GetSourceList()->InsertItem( i++, "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
-                        m_page3->GetSourceList()->SetItemPtrData( item, wxPtrToUInt( *it1) );
+                        m_page3->GetSourceList()->SetItemData( item, item );
                     }
                 }
                 m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
                 m_page3->GetDestList()->SetColumnWidth( 0, m_page3->GetDestList()->GetSize().GetWidth() );
-                for( std::vector<const TableField *>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
+                for( std::vector<wxString>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
                 {
                     if( it == m_groupByFields.begin () )
                     {
                         query.Replace( ";", "" );
                         query += "\n";
                         query += "GROUP BY ";
-                        query += (*it)->GetFieldName();
+                        query += (*it);
                     }
                     else
                     {
                         query += ",\n";
                         query += "      ";
-                        query += (*it)->GetFieldName();
+                        query += (*it);
                     }
                     if( it == m_groupByFields.end() - 1 )
                         query += ";";
@@ -1541,9 +1541,9 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     {
         if( queryType == 2 )
         {
-            m_groupByFields.push_back( field );
+            m_groupByFields.push_back( fieldName );
             auto subquery = queryString;
-            subquery += "\"" + field->GetFullName() + "\"";
+            subquery += "\"" + fieldName + "\"";
             if( str == ";" )
             {
                 subquery += L";";
@@ -1593,7 +1593,8 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     {
         if( queryType == 2 )
         {
-            m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), field ), m_groupByFields.end() );
+            TableField *refField = const_cast<TableField *>( field );
+            m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), fieldName ),  m_groupByFields.end() );
             if( m_groupByFields.size() == 0 )
             {
                 str = "\n" + str;
@@ -1606,7 +1607,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
         else
         {
             m_sortedFields.erase( std::remove_if( m_sortedFields.begin(), m_sortedFields.end(),
-            [fieldName](FieldSorter sorter )
+            [fieldName](FieldSorter sorter)
             {
                 return sorter.m_name == fieldName;
             } ), m_sortedFields.end() );
@@ -2321,12 +2322,7 @@ void DrawingView::DropTableFromQeury(const wxString &name)
         {
             return tbl->GetTableName() == name;
         } ), m_selectTableName.end() );
-        m_groupByFields.erase( std::remove_if( m_groupByFields.begin(), m_groupByFields.end(),
-        [&name](const TableField *field)
-        {
-            size_t pos = field->GetFieldName().find( L"." );
-            return field->GetFieldName().substr( 0, pos ) == name;
-        } ), m_groupByFields.end() );
+        m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), name ), m_groupByFields.end() );
         m_sortedFields.erase( std::remove_if( m_sortedFields.begin(), m_sortedFields.end(),
         [name](FieldSorter sorter )
         {
