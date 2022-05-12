@@ -139,7 +139,7 @@ private:
     std::vector<TableField *> m_queryFields;
     std::vector<DatabaseTable *> m_selectTableName;
 //    std::vector<wxString> m_selectFields;
-    std::vector<const TableField *> m_groupByFields;
+    std::vector<wxString> m_groupByFields;
     std::vector<FieldSorter> m_sortedFields;
     std::map<int, wxString> m_whereCondition, m_havingCondition;
     std::vector<wxString> m_whereRelatons;
