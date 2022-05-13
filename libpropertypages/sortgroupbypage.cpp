@@ -394,28 +394,28 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
         if( m_dragSource != m_dragDest )
         {
             int flags;
-            long position = 0;
+            long position = 0, pos = 0;
             TableField *field = nullptr;
             if( m_dragDest == m_dest )
                 position = m_source->GetItemData( m_itemPos );
             else
             {
-                position = m_dragSource->GetItemData( m_sourcePos );
+                pos = m_dragSource->GetItemData( m_sourcePos );
             }
             m_dragSource->DeleteItem( m_dragDest == m_dest ? m_itemPos : m_sourcePos );
             if( m_dragDest == m_dest )
             {
-                position = m_dragDest->HitTest( pt, flags );
-                if( position == wxNOT_FOUND )
-                    position = m_dragDest->GetItemCount();
+                pos = m_dragDest->HitTest( m_dragDest->ScreenToClient( ClientToScreen( pt ) ), flags );
+                if( pos == wxNOT_FOUND )
+                    pos = m_dragDest->GetItemCount();
             }
-            long item = m_dragDest->InsertItem( position, m_item );
-//            if( m_dragDest == m_dest )
+            long item = m_dragDest->InsertItem( pos, m_item );
+            if( m_dragDest == m_dest )
             {
                 m_dragDest->SetItemData( item, position );
             }
-//            else
-//                m_dragDest->SetItemPtrData( item, wxUIntPtr( field ) );
+            else
+                m_dragDest->SetItemData( item, pos );
             wxCommandEvent event( wxEVT_CHANGE_QUERY );
             event.SetEventObject( this );
             event.SetInt( m_dragDest == m_dest ? ADDFIELD : REMOVEFIELD );
