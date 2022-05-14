@@ -395,7 +395,6 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
         {
             int flags;
             long position = 0, pos = 0;
-            TableField *field = nullptr;
             if( m_dragDest == m_dest )
                 position = m_source->GetItemData( m_itemPos );
             else
@@ -419,7 +418,7 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             wxCommandEvent event( wxEVT_CHANGE_QUERY );
             event.SetEventObject( this );
             event.SetInt( m_dragDest == m_dest ? ADDFIELD : REMOVEFIELD );
-            event.SetClientObject( m_dragDest == m_dest ? (wxClientData *) field : nullptr );
+            event.SetExtraLong( pos );
             event.SetString( m_item );
             GetParent()->GetParent()->GetEventHandler()->ProcessEvent( event );
         }

@@ -1495,11 +1495,11 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     }
     if( event.GetEventObject() == m_page1 || event.GetEventObject() == m_page3 )
     {
-        SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query, (TableField *) event.GetClientObject(), event.GetExtraLong() );
+        SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query, event.GetExtraLong() );
     }
 }
 
-void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const TableField *field, long sortType)
+void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const long pos)
 {
     size_t start, end;
     bool isInserting = false;
@@ -1541,7 +1541,10 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     {
         if( queryType == 2 )
         {
-            m_groupByFields.push_back( fieldName );
+            if( pos == m_groupByFields.size() )
+                m_groupByFields.push_back( fieldName );
+            else
+                m_groupByFields.insert( m_groupByFields.begin() + pos, fieldName );
             auto subquery = queryString;
             subquery += "\"" + fieldName + "\"";
             if( str == ";" )
@@ -1558,11 +1561,11 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
                     {
                         replace += ",\n";
                         replace += "         ";
-                        replace += "\"" + field->GetFullName() + "\"";
+                        replace += "\"" + fieldName + "\"";
                     }
                     else
                     {
-                        replace = replace.substr( 0, replace.rfind( '\n' ) ) + "," + "\n" + "         " + "\"" + field->GetFullName() + "\"" + "\n";
+                        replace = replace.substr( 0, replace.rfind( '\n' ) ) + "," + "\n" + "         " + "\"" + fieldName + "\"" + "\n";
                     }
                 }
                 else
@@ -1593,7 +1596,6 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     {
         if( queryType == 2 )
         {
-            TableField *refField = const_cast<TableField *>( field );
             m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), fieldName ),  m_groupByFields.end() );
             if( m_groupByFields.size() == 0 )
             {
@@ -1633,7 +1635,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     {
         wxString temp = str.substr( str.find( fieldName ) );
         str = temp.substr( 0, temp.find( ',' ) );
-        replace = fieldName + ( sortType == 0 ? " DESC" : " ASC" );
+        replace = fieldName + ( pos == 0 ? " DESC" : " ASC" );
         for( FieldSorter &sorter : m_sortedFields )
         {
             if( sorter.m_name == fieldName )
