@@ -202,20 +202,9 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[4].push_back( wxBITMAP_PNG( database_16x16 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_32x32 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_64x64 ) );
-//    bitmaps[5] = wxBitmap( quit_xpm );*/
-/*#ifdef wxHAS_IMAGE_RESOURCES
-    toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ) );
-#else
-	toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVG	( query, wxSize( 16, 16 ) ) );
-#endif*/
     toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromBitmaps( bitmaps[0] ) );
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[1] ) );
     toolBar->AddTool( wxID_DATABASE, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
-/*#ifdef wxHAS_IMAGE_RESOURCES
-    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ) );
-#else
-	toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVG	( query, wxSize( 16, 16 ) ) );
-#endif*/
     toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromBitmaps( bitmaps[3] ) );
     toolBar->AddTool( wxID_DATABASEWINDOW, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
     toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxBitmapBundle(), wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );
