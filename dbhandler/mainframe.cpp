@@ -343,7 +343,7 @@ void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
         wxMessageBox( _( "Error loading the DLL/so" ) );
 }
 
-void MainFrame::OnDatabase(wxCommandEvent &event)
+void MainFrame::OnDatabase(wxCommandEvent &WXUNUSED(event))
 {
     wxDynamicLibrary *lib = nullptr, *lib1 = nullptr, *lib2 = nullptr;
     if( !m_db )
@@ -422,7 +422,7 @@ void MainFrame::OnDatabase(wxCommandEvent &event)
     }
 }
 
-void MainFrame::OnQuery(wxCommandEvent &event)
+void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
 {
     wxDynamicLibrary *lib = NULL;
     if( !m_db )
@@ -466,7 +466,7 @@ void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
     Connect();
 }
 
-void MainFrame::OnTable(wxCommandEvent &event)
+void MainFrame::OnTable(wxCommandEvent &WXUNUSED(event))
 {
     wxDynamicLibrary *lib = NULL;
     if( !m_db )
