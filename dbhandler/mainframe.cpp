@@ -20,6 +20,7 @@
 
 #include <vector>
 #include <map>
+#include <wx/artprov.h>
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/config.h"
@@ -217,7 +218,7 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 #endif*/
     toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromBitmaps( bitmaps[3] ) );
     toolBar->AddTool( wxID_DATABASEWINDOW, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
-/*-    toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), bitmaps[5], bitmaps[5], wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );*/
+    toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxBitmapBundle(), wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );
     toolBar->SetName( "PowerBar" );
     toolBar->Realize();
 }
