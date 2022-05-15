@@ -1546,32 +1546,22 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
             else
                 m_groupByFields.insert( m_groupByFields.begin() + pos, fieldName );
             auto subquery = queryString;
-            subquery += "\"" + fieldName + "\"";
+            for( std::vector<wxString>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
+            {
+                if( it == m_groupByFields.begin() )
+                    subquery += (*it);
+                else
+                {
+                    subquery += ",\n";
+                    subquery += "         ";
+                    subquery += (*it);
+                }
+            }
+            replace = subquery;
             if( str == ";" )
             {
                 subquery += L";";
                 replace = "\n" + subquery;
-            }
-            else
-            {
-                replace = str;
-                if( !isInserting )
-                {
-                    if( m_groupByFields.size() == 1 )
-                    {
-                        replace += ",\n";
-                        replace += "         ";
-                        replace += "\"" + fieldName + "\"";
-                    }
-                    else
-                    {
-                        replace = replace.substr( 0, replace.rfind( '\n' ) ) + "," + "\n" + "         " + "\"" + fieldName + "\"" + "\n";
-                    }
-                }
-                else
-                {
-                    replace = subquery + "\n" + replace;
-                }
             }
         }
         else
