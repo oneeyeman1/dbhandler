@@ -301,6 +301,14 @@
 					../libpropertypages,
 					../libshapeframework,
 					../libfieldswindow,
+				);
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.1",
+					/Users/igorkorot/wxWidgets/include,
+					../dbinterface,
+					../libpropertypages,
+					../libshapeframework,
+					../libfieldswindow,
 					../libdbwindow,
 				);
 				LIBRARY_SEARCH_PATHS = "";
