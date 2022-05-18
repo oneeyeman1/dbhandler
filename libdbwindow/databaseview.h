@@ -33,7 +33,6 @@ public:
     ~DrawingView();
     void UpdateQueryFromSignChange(const QueryConstraint *type, const long oldSign);
     size_t GetSortedFieldCount() { return m_sortedFields.size(); };
-    size_t GetGroupByFieldCount() { return m_groupByFields.size(); };
     void DropTableFromQeury(const wxString &name = "" );
     wxFrame *GetLogWindow() const;
     wxTextCtrl *GetFieldTextCtrl();
@@ -105,7 +104,7 @@ public:
 protected:
     void CreateDBMenu();
     void CreateQueryMenu(const int queryType);
-    void SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const long sortType);
+    void SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const Positions *sortType);
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);
     void CreateViewToolBar();
     int AddSize(int size, int lfHeight);
@@ -139,7 +138,6 @@ private:
     std::vector<TableField *> m_queryFields;
     std::vector<DatabaseTable *> m_selectTableName;
 //    std::vector<wxString> m_selectFields;
-    std::vector<wxString> m_groupByFields;
     std::vector<FieldSorter> m_sortedFields;
     std::map<int, wxString> m_whereCondition, m_havingCondition;
     std::vector<wxString> m_whereRelatons;

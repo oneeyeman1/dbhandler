@@ -26,6 +26,11 @@ struct FieldSorter
     FieldSorter(wxString name, bool isAscending) : m_name(name), m_isAscending(isAscending) {};
 };
 
+struct Positions
+{
+    long position, originalPosition;
+};
+
 class MyListCtrl : public wxListCtrl
 {
 public:

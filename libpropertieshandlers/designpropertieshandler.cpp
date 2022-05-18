@@ -16,7 +16,6 @@
 #include "wx/docview.h"
 #include "wxsf/ShapeCanvas.h"
 #include "objectproperties.h"
-#include "designcanvas.h"
 #include "propertypagebase.h"
 #include "pointerproperty.h"
 #include "colorcombobox.h"
@@ -25,10 +24,9 @@
 #include "propertieshandlerbase.h"
 #include "designpropertieshandler.h"
 
-DesignPropertiesHander::DesignPropertiesHander(DesignCanvas *canvas)
+DesignPropertiesHander::DesignPropertiesHander(DesignOptions canvas)
 {
-    m_canvas = canvas;
-    m_options = m_canvas->GetOptions();
+    m_options = canvas;
 }
 
 void DesignPropertiesHander::EditProperies(wxNotebook *parent)
@@ -48,9 +46,6 @@ int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &WXUNUSED(er
     if( m_options.colorBackground != color )
     {
         m_options.colorBackground = color;
-        m_canvas->SetBackgroundColour( color );
-        m_canvas->Refresh();
-        m_canvas->Update();
     }
     return 0;
 }

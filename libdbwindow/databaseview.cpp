@@ -598,13 +598,14 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     {
                         long item = m_page3->GetSourceList()->InsertItem( i++, "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
                         m_page3->GetSourceList()->SetItemData( item, item );
+                        GetDocument()->AddGroupByAvailableField( "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"", item );
                     }
                 }
                 m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
                 m_page3->GetDestList()->SetColumnWidth( 0, m_page3->GetDestList()->GetSize().GetWidth() );
-                for( std::vector<wxString>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
+/*                for( std::vector<wxString>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
                 {
-                    if( it == m_groupByFields.begin () )
+                    if( it == m_groupByFields.begin() )
                     {
                         query.Replace( ";", "" );
                         query += "\n";
@@ -619,7 +620,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     }
                     if( it == m_groupByFields.end() - 1 )
                         query += ";";
-                }
+                }*/
                 m_page6->SetSyntaxText( query );
                 m_edit->SetText( query );
             }
@@ -927,9 +928,9 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         if( type == DesignProperties )
         {
 #if __cplusplus > 201300
-            auto ptr = std::make_unique<DesignPropertiesHander>( m_designCanvas );
+            auto ptr = std::make_unique<DesignPropertiesHander>( m_designCanvas->GetOptions() );
 #else
-            auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas ) );
+            auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
 #endif
             propertiesPtr = std::move( ptr );
             title = _( "Query Object" );
@@ -1495,11 +1496,11 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     }
     if( event.GetEventObject() == m_page1 || event.GetEventObject() == m_page3 )
     {
-        SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query, event.GetExtraLong() );
+        SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query, (Positions *)( event.GetClientData() ) );
     }
 }
 
-void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const long pos)
+void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const Positions *pos)
 {
     size_t start, end;
     bool isInserting = false;
@@ -1541,28 +1542,9 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     {
         if( queryType == 2 )
         {
-            if( pos == m_groupByFields.size() )
-                m_groupByFields.push_back( fieldName );
-            else
-                m_groupByFields.insert( m_groupByFields.begin() + pos, fieldName );
-            auto subquery = queryString;
-            for( std::vector<wxString>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
-            {
-                if( it == m_groupByFields.begin() )
-                    subquery += (*it);
-                else
-                {
-                    subquery += ",\n";
-                    subquery += "         ";
-                    subquery += (*it);
-                }
-            }
-            replace = subquery;
+            GetDocument()->AddGroupByFieldToQuery( fieldName, pos->position, pos->originalPosition, replace );
             if( str == ";" )
-            {
-                subquery += L";";
-                replace = "\n" + subquery;
-            }
+                replace = "\n" + replace + ";";
         }
         else
         {
@@ -1586,15 +1568,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     {
         if( queryType == 2 )
         {
-            m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), fieldName ),  m_groupByFields.end() );
-            if( m_groupByFields.size() == 0 )
-            {
-                str = "\n" + str;
-                replace = "";
-            }
-            else
-            {
-            }
+            GetDocument()->DeleteGroupByField( fieldName, pos->originalPosition );
         }
         else
         {
@@ -2100,7 +2074,7 @@ void DrawingView::PopuateQueryCanvas()
     {
         menuBar->Enable( 1, false );
     }
-    m_designCanvas->PopulateQueryCanvas( m_queryFields, m_groupByFields );
+    m_designCanvas->PopulateQueryCanvas( m_queryFields, GetDocument()->GetGroupFields() );
 }
 
 void DrawingView::OnIconise(wxIconizeEvent &event)
@@ -2301,7 +2275,7 @@ void DrawingView::DropTableFromQeury(const wxString &name)
         m_fields->GetDiagramManager()->Clear();
         m_queryFields.clear();
         m_selectTableName.clear();
-        m_groupByFields.clear();
+        GetDocument()->ClearGroupByVector();
         m_sortedFields.clear();
         m_arguments.clear();
         GetTablesForView( doc->GetDatabase(), false );
@@ -2314,7 +2288,7 @@ void DrawingView::DropTableFromQeury(const wxString &name)
         {
             return tbl->GetTableName() == name;
         } ), m_selectTableName.end() );
-        m_groupByFields.erase( std::remove( m_groupByFields.begin(), m_groupByFields.end(), name ), m_groupByFields.end() );
+        GetDocument()->DeleteGroupByTable( name );
         m_sortedFields.erase( std::remove_if( m_sortedFields.begin(), m_sortedFields.end(),
         [name](FieldSorter sorter )
         {

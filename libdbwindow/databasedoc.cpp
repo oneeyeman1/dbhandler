@@ -138,30 +138,6 @@ void DrawingDocument::AddTables(const std::vector<wxString> &selections)
         }
         found = false;
     }
-/*    for( std::vector<MyErdTable *>::iterator it2 = m_tables.begin(); it2 < m_tables.end(); it2++ )
-    {
-        std::map<int, std::vector<FKField> > foreignKeys = const_cast<DatabaseTable &>( (*it2)->GetTable() ).GetForeignKeyVector();
-        for( std::map<int, std::vector<FKField> >::iterator it3 = foreignKeys.begin(); it3 != foreignKeys.end(); it3++ )
-        {
-            for( std::vector<FKField>::iterator it4 = (*it3).second.begin(); it4 < (*it3).second.end(); it4++ )
-            {
-                wxString referencedTableName = (*it4).GetReferencedTableName();
-                Constraint* pConstr = new Constraint();
-				pConstr->SetLocalColumn( (*it4).GetOriginalFieldName() );
-				pConstr->SetRefCol( (*it4).GetReferencedFieldName() );
-				pConstr->SetRefTable( referencedTableName );
-                pConstr->SetType( Constraint::foreignKey );
-//                pConstr->SetOnDelete( (Constraint::constraintAction) m_radioOnDelete->GetSelection() );
-//                pConstr->SetOnUpdate( (Constraint::constraintAction) m_radioOnUpdate->GetSelection() );
-                if( std::find( selections.begin(), selections.end(), referencedTableName ) != selections.end() )
-                {
-                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetColumnId( (*it4).GetOriginalFieldName() ),
-                                                                  GetReferencedTable( referencedTableName )->GetColumnId( (*it4).GetReferencedFieldName() ),
-                                                                  new ErdForeignKey( pConstr ), sfDONT_SAVE_STATE );
-                }
-            }
-        }
-    }*/
 }
 
 std::vector<std::wstring> &DrawingDocument::GetTableNameVector()
@@ -221,4 +197,63 @@ void DrawingDocument::AddRemoveField(const std::wstring &fieldName, bool isAdded
         m_queryFields.push_back( fieldName );
     else
         m_queryFields.erase( std::remove( m_queryFields.begin(), m_queryFields.end(), fieldName ), m_queryFields.end() );
+    Modify( true );
+}
+
+void DrawingDocument::AddGroupByAvailableField(const wxString &name, long position)
+{
+    m_groupByFieldsAll.push_back( GroupFields( name, position, position ) );
+}
+
+void DrawingDocument::AddGroupByFieldToQuery(const wxString &name, long position, long original, wxString &replace)
+{
+    m_groupByFieldsAll.erase( std::remove_if( m_groupByFieldsAll.begin(), m_groupByFieldsAll.end(), 
+    [name](GroupFields field)
+    {
+        return field.fieldName == name;
+    }), m_groupByFieldsAll.end() );
+    if( position == m_groupByFields.size() )
+        m_groupByFields.push_back( GroupFields( name, position, original ) );
+    else
+        m_groupByFields.insert( m_groupByFields.begin() + position, GroupFields( name, position, original ) );
+    replace = "GROUP BY ";
+    for( std::vector<GroupFields>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
+    {
+        if( it == m_groupByFields.begin() )
+            replace += (*it).fieldName;
+        else
+        {
+            replace += ",\n";
+            replace += "         ";
+            replace += (*it).fieldName;
+        }
+    }
+    Modify( true );
+}
+
+void DrawingDocument::DeleteGroupByTable(const wxString &tableName)
+{
+    for( std::vector<GroupFields>::iterator it = m_groupByFieldsAll.begin(); it < m_groupByFieldsAll.end(); ++it )
+        m_groupByFieldsAll.erase( std::remove_if( m_groupByFieldsAll.begin(), m_groupByFieldsAll.end(), 
+        [tableName](GroupFields field)
+        {
+            return field.fieldName.StartsWith( "\"" + tableName );
+        }), m_groupByFieldsAll.end() );
+    for( std::vector<GroupFields>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
+        m_groupByFieldsAll.erase( std::remove_if( m_groupByFields.begin(), m_groupByFields.end(), 
+        [tableName](GroupFields field)
+        {
+            return field.fieldName.StartsWith( "\"" + tableName );
+        } ), m_groupByFields.end() );
+    Modify( true );
+}
+
+void DrawingDocument::DeleteGroupByField(const wxString &name, long original)
+{
+    m_groupByFields.erase( std::remove_if( m_groupByFields.begin(), m_groupByFields.end(), 
+                              [name](GroupFields field)
+                              {
+                                  return field.fieldName.StartsWith( "\"" + name );
+                              }), m_groupByFields.end() );
+    m_groupByFieldsAll.insert( m_groupByFieldsAll.begin() + original, GroupFields( name, original, original ) );
 }

@@ -415,10 +415,13 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             }
             else
                 m_dragDest->SetItemData( item, pos );
+            Positions positions;
+            positions.position = pos;
+            positions.originalPosition = pos;
             wxCommandEvent event( wxEVT_CHANGE_QUERY );
             event.SetEventObject( this );
             event.SetInt( m_dragDest == m_dest ? ADDFIELD : REMOVEFIELD );
-            event.SetExtraLong( pos );
+            event.SetClientData( &positions );
             event.SetString( m_item );
             GetParent()->GetParent()->GetEventHandler()->ProcessEvent( event );
         }
