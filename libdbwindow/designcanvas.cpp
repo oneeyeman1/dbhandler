@@ -329,7 +329,7 @@ void DesignCanvas::InitialFieldSizing ()
     }
 }
 
-void DesignCanvas::PopulateQueryCanvas(const std::vector<TableField *> &queryFields, const std::vector<wxString> &groupByFields)
+void DesignCanvas::PopulateQueryCanvas(const std::vector<TableField *> &queryFields, const std::vector<GroupFields> &groupByFields)
 {
     wxBeginBusyCursor();
     wxFont fontUsed;

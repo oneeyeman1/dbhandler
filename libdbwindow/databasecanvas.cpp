@@ -1102,10 +1102,9 @@ void DatabaseCanvas::OnCloseTable(wxCommandEvent &WXUNUSED(event))
             view->GetSyntaxPage()->RemoveTableSort( tbl );
         }
         view->GetGroupByPage()->RemoveTable( tbl );
-        if( view->GetGroupByFieldCount() > 0 )
-        {
-        
-        }
+
+        view->GetDocument()->DeleteGroupByTable( tbl );
+
         view->GetSyntaxPage()->RemoveTableFromQuery( tbl );
         m_pManager.RemoveShape( m_selectedShape );
         view->DropTableFromQeury( tbl );

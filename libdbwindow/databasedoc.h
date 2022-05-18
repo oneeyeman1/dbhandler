@@ -12,6 +12,14 @@
     typedef wxOutputStream DocumentOstream;
 #endif // wxUSE_STD_IOSTREAM/!wxUSE_STD_IOSTREAM
 
+struct GroupFields
+{
+    wxString fieldName;
+    long position, internal_position;
+
+    GroupFields(const wxString &name, long pos, long internal_pos) : fieldName(name), position(pos), internal_position(internal_pos) {}
+};
+
 // The drawing document (model) class itself
 class DrawingDocument : public wxDocument
 {
@@ -20,10 +28,9 @@ public:
     ~DrawingDocument();
     DocumentOstream& SaveObject(DocumentOstream& stream) wxOVERRIDE;
     DocumentIstream& LoadObject(DocumentIstream& stream) wxOVERRIDE;
-
     void SetDatabase(Database *db, bool isInit);
     Database *GetDatabase();
-
+    size_t GetGroupByFieldCount() { return m_groupByFields.size(); };
     void AddTables(const std::vector<wxString> &selections);
     std::vector<MyErdTable *> &GetTables();
     std::vector<std::wstring> &GetTableNameVector();
@@ -34,6 +41,12 @@ public:
     void AddRemoveField(const std::wstring &fieldName, bool isAdded);
     const std::vector<std::wstring> &GetQueryFields();
     void SetQueryFields(const std::vector<TableField *> &fields);
+    void AddGroupByAvailableField(const wxString &name, long position);
+    void AddGroupByFieldToQuery(const wxString &name, long position, long original, wxString &replace);
+    void DeleteGroupByField(const wxString &name, long original);
+    void DeleteGroupByTable(const wxString &tableName);
+    void ClearGroupByVector() { m_groupByFields.clear(); }
+    std::vector<GroupFields> &GetGroupFields() { return m_groupByFields; }
 private:
     void DoUpdate();
 
@@ -42,5 +55,6 @@ private:
     std::vector<std::wstring> m_tableNames;
     std::vector<std::wstring> m_queryFields;
     std::vector<DatabaseTable *> m_dbTables;
+    std::vector<GroupFields> m_groupByFields, m_groupByFieldsAll;
     wxDECLARE_DYNAMIC_CLASS(DrawingDocument);
 };
