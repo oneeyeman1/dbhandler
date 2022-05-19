@@ -1568,7 +1568,9 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     {
         if( queryType == 2 )
         {
-            GetDocument()->DeleteGroupByField( fieldName, pos->originalPosition );
+            GetDocument()->DeleteGroupByField( fieldName, pos->originalPosition, replace );
+            if( replace.IsEmpty() )
+                str = "\r" + str;
         }
         else
         {

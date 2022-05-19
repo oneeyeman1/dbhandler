@@ -43,7 +43,7 @@ public:
     void SetQueryFields(const std::vector<TableField *> &fields);
     void AddGroupByAvailableField(const wxString &name, long position);
     void AddGroupByFieldToQuery(const wxString &name, long position, long original, wxString &replace);
-    void DeleteGroupByField(const wxString &name, long original);
+    void DeleteGroupByField(const wxString &name, long original, wxString &replace);
     void DeleteGroupByTable(const wxString &tableName);
     void ClearGroupByVector() { m_groupByFields.clear(); }
     std::vector<GroupFields> &GetGroupFields() { return m_groupByFields; }

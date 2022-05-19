@@ -248,12 +248,29 @@ void DrawingDocument::DeleteGroupByTable(const wxString &tableName)
     Modify( true );
 }
 
-void DrawingDocument::DeleteGroupByField(const wxString &name, long original)
+void DrawingDocument::DeleteGroupByField(const wxString &name, long original, wxString &replace)
 {
     m_groupByFields.erase( std::remove_if( m_groupByFields.begin(), m_groupByFields.end(), 
                               [name](GroupFields field)
                               {
-                                  return field.fieldName.StartsWith( "\"" + name );
+                                  return field.fieldName == name;
                               }), m_groupByFields.end() );
     m_groupByFieldsAll.insert( m_groupByFieldsAll.begin() + original, GroupFields( name, original, original ) );
+    if( m_groupByFields.size() == 0 )
+        replace = "";
+    else
+    {
+        replace = "GROUP BY ";
+        for( std::vector<GroupFields>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
+        {
+            if( it == m_groupByFields.begin() )
+                replace += (*it).fieldName;
+            else
+            {
+                replace += ",\n";
+                replace += "         ";
+                replace += (*it).fieldName;
+            }
+        }
+    }
 }

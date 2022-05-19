@@ -371,7 +371,7 @@ void SortGroupByPage::OnLeftUp(wxMouseEvent &event)
         m_dragDest = m_source;
     else if( m_dest->GetRect().Contains( pt ) )
         m_dragDest = m_dest;
-    if( m_dragSource == m_dragDest )
+    if( m_dragSource == m_dragDest && ( m_dragSource == m_source && m_dragDest == m_source ) || ( m_dragSource == m_dest && m_dragDest == m_dest  && m_dest->GetItemCount() == 1 ) )
     {
         ReleaseMouse();
         event.Skip();
@@ -391,7 +391,7 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
         if( m_dragDest != m_source && m_dragDest != m_dest && m_dragSource == m_dest )
             m_dragDest = m_source;
         m_dragDest->SetCursor( wxCURSOR_HAND );
-        if( m_dragSource != m_dragDest )
+//        if( m_dragSource != m_dragDest )
         {
             int flags;
             long position = 0, pos = 0;
@@ -420,7 +420,7 @@ void SortGroupByPage::FinishDragging(const wxPoint &pt)
             positions.originalPosition = pos;
             wxCommandEvent event( wxEVT_CHANGE_QUERY );
             event.SetEventObject( this );
-            event.SetInt( m_dragDest == m_dest ? ADDFIELD : REMOVEFIELD );
+            event.SetInt( m_dragDest == m_source ? REMOVEFIELD : m_dragSource == m_source ? ADDFIELD : CHANGEFIELD );
             event.SetClientData( &positions );
             event.SetString( m_item );
             GetParent()->GetParent()->GetEventHandler()->ProcessEvent( event );
