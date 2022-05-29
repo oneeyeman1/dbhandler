@@ -20,6 +20,14 @@ struct GroupFields
     GroupFields(const wxString &name, long pos, long internal_pos) : fieldName(name), position(pos), internal_position(internal_pos) {}
 };
 
+struct FieldSorter
+{
+    wxString m_name;
+    bool m_isAscending;
+    long m_originalPosition;
+    FieldSorter(wxString name, bool isAscending, long original_position) : m_name(name), m_isAscending(isAscending), m_originalPosition(original_position) {};
+};
+
 // The drawing document (model) class itself
 class DrawingDocument : public wxDocument
 {
@@ -44,9 +52,15 @@ public:
     void AddGroupByAvailableField(const wxString &name, long position);
     void AddGroupByFieldToQuery(const wxString &name, long position, long original, wxString &replace);
     void DeleteGroupByField(const wxString &name, long original, wxString &replace);
-    void DeleteGroupByTable(const wxString &tableName);
+    void DeleteGroupByTable(const wxString &tableName, wxString &replace);
     void ClearGroupByVector() { m_groupByFields.clear(); }
     std::vector<GroupFields> &GetGroupFields() { return m_groupByFields; }
+    void AddAllSortedFeld(const wxString &name, long original_position);
+    void AddSortedField(const wxString &name, long position, long original_position, wxString &replace);
+    void DeleteSortedField(const wxString &name, long original, wxString &replace);
+    void DeleteSortedTable(const wxString &tableName, wxString &replace);
+    void ClearSortedVector() { m_sortedFields.clear(); }
+    void ChangeSortOrder(const wxString &fieldName);
 private:
     void DoUpdate();
 
@@ -56,5 +70,6 @@ private:
     std::vector<std::wstring> m_queryFields;
     std::vector<DatabaseTable *> m_dbTables;
     std::vector<GroupFields> m_groupByFields, m_groupByFieldsAll;
+    std::vector<FieldSorter> m_sortedFields, m_sortedFieldsAll;
     wxDECLARE_DYNAMIC_CLASS(DrawingDocument);
 };

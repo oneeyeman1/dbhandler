@@ -231,7 +231,7 @@ void DrawingDocument::AddGroupByFieldToQuery(const wxString &name, long position
     Modify( true );
 }
 
-void DrawingDocument::DeleteGroupByTable(const wxString &tableName)
+void DrawingDocument::DeleteGroupByTable(const wxString &tableName, wxString &replace)
 {
     for( std::vector<GroupFields>::iterator it = m_groupByFieldsAll.begin(); it < m_groupByFieldsAll.end(); ++it )
         m_groupByFieldsAll.erase( std::remove_if( m_groupByFieldsAll.begin(), m_groupByFieldsAll.end(), 
@@ -245,6 +245,23 @@ void DrawingDocument::DeleteGroupByTable(const wxString &tableName)
         {
             return field.fieldName.StartsWith( "\"" + tableName );
         } ), m_groupByFields.end() );
+    if( m_groupByFields.size() == 0 )
+        replace = "";
+    else
+    {
+        replace = "GROUP BY ";
+        for( std::vector<GroupFields>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
+        {
+            if( it == m_groupByFields.begin() )
+                replace += (*it).fieldName;
+            else
+            {
+                replace += ",\n";
+                replace += "         ";
+                replace += (*it).fieldName;
+            }
+        }
+    }
     Modify( true );
 }
 
@@ -273,4 +290,101 @@ void DrawingDocument::DeleteGroupByField(const wxString &name, long original, wx
             }
         }
     }
+}
+
+void DrawingDocument::AddAllSortedFeld(const wxString &name, long original_position)
+{
+    m_sortedFieldsAll.push_back( FieldSorter( name, true, original_position ) );
+}
+
+void DrawingDocument::DeleteSortedTable(const wxString &tableName, wxString &replace)
+{
+    for( std::vector<FieldSorter>::iterator it = m_sortedFieldsAll.begin(); it < m_sortedFieldsAll.end(); ++it )
+        m_sortedFieldsAll.erase( std::remove_if( m_sortedFieldsAll.begin(), m_sortedFieldsAll.end(), 
+                                 [tableName](FieldSorter field)
+    {
+        return field.m_name.StartsWith( "\"" + tableName );
+    }), m_sortedFieldsAll.end() );
+    for( std::vector<FieldSorter>::iterator it = m_sortedFields.begin(); it < m_sortedFields.end(); ++it )
+        m_sortedFields.erase( std::remove_if( m_sortedFields.begin(), m_sortedFields.end(), 
+                                 [tableName](FieldSorter field)
+    {
+        return field.m_name.StartsWith( "\"" + tableName );
+    } ), m_sortedFields.end() );
+    if( m_sortedFields.size() == 0 )
+        replace = "";
+    else
+    {
+        replace = "GROUP BY ";
+        for( std::vector<FieldSorter>::iterator it = m_sortedFields.begin(); it < m_sortedFields.end(); ++it )
+        {
+            if( it == m_sortedFields.begin() )
+                replace += (*it).m_name;
+            else
+            {
+                replace += ",\n";
+                replace += "         ";
+                replace += (*it).m_name;
+            }
+        }
+    }
+    Modify( true );
+}
+
+void DrawingDocument::AddSortedField(const wxString &name, long original_position, long position, wxString &replace)
+{
+    m_sortedFieldsAll.erase( std::remove_if( m_sortedFieldsAll.begin(), m_sortedFieldsAll.end(), 
+                             [name](FieldSorter field)
+    {
+        return field.m_name == name;
+    }), m_sortedFieldsAll.end() );
+    if( position == m_sortedFields.size() )
+        m_sortedFields.push_back( FieldSorter( name, position, original_position ) );
+    else
+        m_sortedFields.insert( m_sortedFields.begin() + position, FieldSorter( name, position, original_position ) );
+    replace = "ORDER BY ";
+    for( std::vector<FieldSorter>::iterator it = m_sortedFields.begin(); it < m_sortedFields.end(); ++it )
+    {
+        if( it == m_sortedFields.begin() )
+            replace += (*it).m_name;
+        else
+        {
+            replace += ",\n";
+            replace += "         ";
+            replace += (*it).m_name;
+        }
+    }
+    Modify( true );
+}
+
+void DrawingDocument::DeleteSortedField(const wxString &name, long original, wxString &replace)
+{
+    m_sortedFields.erase( std::remove_if( m_sortedFields.begin(), m_sortedFields.end(), 
+                          [name](FieldSorter field)
+    {
+        return field.m_name == name;
+    }), m_sortedFields.end() );
+    m_sortedFieldsAll.insert( m_sortedFieldsAll.begin() + original, FieldSorter( name, original, original ) );
+    if( m_sortedFields.size() == 0 )
+        replace = "";
+    else
+    {
+        replace = "GROUP BY ";
+        for( std::vector<FieldSorter>::iterator it = m_sortedFields.begin(); it < m_sortedFields.end(); ++it )
+        {
+            if( it == m_sortedFields.begin() )
+                replace += (*it).m_name;
+            else
+            {
+                replace += ",\n";
+                replace += "         ";
+                replace += (*it).m_name;
+            }
+        }
+    }
+}
+
+void DrawingDocument::ChangeSortOrder(const wxString &fieldName)
+{
+    for_each( m_sortedFields.begin(), m_sortedFields.end(), [fieldName](FieldSorter field) { if( field.m_name == fieldName ) field.m_isAscending = !field.m_isAscending; } );
 }
