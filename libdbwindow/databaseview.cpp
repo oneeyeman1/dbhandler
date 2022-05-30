@@ -1548,20 +1548,9 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
         }
         else
         {
-            m_sortedFields.push_back( FieldSorter( fieldName, true ) );
+            GetDocument()->AddSortedField( fieldName, pos->originalPosition, pos->position, replace );
             if( str == ";" )
-            {
-                replace = "\n" + queryString + fieldName;
-                if( queryType != 2 )
-                    replace += " ASC";
-                replace += ";";
-            }
-            else
-            {
-                replace = str + ",\r         " + fieldName;
-                if( queryType != 2 )
-                    replace += " ASC";
-            }
+                replace = "\n" + replace + ";";
         }
     }
     else if( type == REMOVEFIELD )
@@ -1574,27 +1563,9 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
         }
         else
         {
-            m_sortedFields.erase( std::remove_if( m_sortedFields.begin(), m_sortedFields.end(),
-            [fieldName](FieldSorter sorter)
-            {
-                return sorter.m_name == fieldName;
-            } ), m_sortedFields.end() );
-            if( m_sortedFields.size () == 0 )
-            {
-                str = "\n" + str + ";";
-                replace = ";";
-            }
-            else
-            {
-                auto temp = fieldName.substr( 0, fieldName.find( ' ' ) );
-                replace = str.substr( 0, str.find( temp ) );
-                auto temp1 = str.substr( str.find( temp ) );
-                auto pos = str.find( ',' );
-                if( pos == wxNOT_FOUND )
-                    pos = str.find( ';' );
-                temp1 = str.substr( pos );
-                replace += temp1;
-            }
+            GetDocument()->DeleteSortedField( fieldName, pos->originalPosition, replace );
+            if( replace.IsEmpty() )
+                str = "\n" + str;
         }
     }
     else
@@ -1602,11 +1573,11 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
         wxString temp = str.substr( str.find( fieldName ) );
         str = temp.substr( 0, temp.find( ',' ) );
         replace = fieldName + ( pos == 0 ? " DESC" : " ASC" );
-        for( FieldSorter &sorter : m_sortedFields )
+/*        for( FieldSorter &sorter : m_sortedFields )
         {
             if( sorter.m_name == fieldName )
                 sorter.m_isAscending = !sorter.m_isAscending;
-        }
+        }*/
     }
     query.Replace( str, replace );
     m_page6->GetSyntaxCtrl()->SetValue( query );
@@ -2264,6 +2235,7 @@ void DrawingView::OnFieldShuffle(wxCommandEvent &event)
 
 void DrawingView::DropTableFromQeury(const wxString &name)
 {
+    wxString replace;
     if( name.IsEmpty() )
     {
         DrawingDocument *doc = wxDynamicCast( GetDocument(), DrawingDocument );
@@ -2278,7 +2250,7 @@ void DrawingView::DropTableFromQeury(const wxString &name)
         m_queryFields.clear();
         m_selectTableName.clear();
         GetDocument()->ClearGroupByVector();
-        m_sortedFields.clear();
+        GetDocument()->ClearSortedVector();
         m_arguments.clear();
         GetTablesForView( doc->GetDatabase(), false );
     }
@@ -2290,11 +2262,7 @@ void DrawingView::DropTableFromQeury(const wxString &name)
         {
             return tbl->GetTableName() == name;
         } ), m_selectTableName.end() );
-        GetDocument()->DeleteGroupByTable( name );
-        m_sortedFields.erase( std::remove_if( m_sortedFields.begin(), m_sortedFields.end(),
-        [name](FieldSorter sorter )
-        {
-            return sorter.m_name == name;
-        } ), m_sortedFields.end() );
+        GetDocument()->DeleteGroupByTable( name, replace );
+        GetDocument()->DeleteSortedTable( name, replace );
     }
 }

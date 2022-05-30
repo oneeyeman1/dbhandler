@@ -1076,6 +1076,7 @@ void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &WXUNUSED(event))
 
 void DatabaseCanvas::OnCloseTable(wxCommandEvent &WXUNUSED(event))
 {
+    wxString replace;
     DrawingView *view = dynamic_cast<DrawingView *>( m_view );
     if( m_displayedTables.size () == 1 )
     {
@@ -1097,13 +1098,12 @@ void DatabaseCanvas::OnCloseTable(wxCommandEvent &WXUNUSED(event))
                 view->AddFieldToQuery( *field, REMOVE, tbl.ToStdWstring(), true );
         }
         view->GetSortPage()->RemoveTable( tbl );
-        if( view->GetSortedFieldCount() > 0 )
-        {
-            view->GetSyntaxPage()->RemoveTableSort( tbl );
-        }
+
+        view->GetDocument()->DeleteSortedTable( tbl, replace );
+
         view->GetGroupByPage()->RemoveTable( tbl );
 
-        view->GetDocument()->DeleteGroupByTable( tbl );
+        view->GetDocument()->DeleteGroupByTable( tbl, replace );
 
         view->GetSyntaxPage()->RemoveTableFromQuery( tbl );
         m_pManager.RemoveShape( m_selectedShape );
