@@ -193,10 +193,22 @@ const std::vector<std::wstring> &DrawingDocument::GetQueryFields()
 
 void DrawingDocument::AddRemoveField(const std::wstring &fieldName, bool isAdded)
 {
+    int position = m_sortedFieldsAll.size();
+    int original_position = m_queryFields.size();
     if( isAdded )
+    {
         m_queryFields.push_back( fieldName );
+        m_sortedFieldsAll.push_back( FieldSorter( fieldName, position, original_position ) );
+    }
     else
+    {
         m_queryFields.erase( std::remove( m_queryFields.begin(), m_queryFields.end(), fieldName ), m_queryFields.end() );
+        m_sortedFieldsAll.erase( std::remove_if( m_sortedFieldsAll.begin(), m_sortedFieldsAll.end(), 
+                                [fieldName](FieldSorter field)
+        {
+            return field.m_name == fieldName;
+        }), m_sortedFieldsAll.end() );
+    }
     Modify( true );
 }
 
