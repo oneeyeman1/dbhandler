@@ -1570,14 +1570,8 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     }
     else
     {
-        wxString temp = str.substr( str.find( fieldName ) );
-        str = temp.substr( 0, temp.find( ',' ) );
-        replace = fieldName + ( pos == 0 ? " DESC" : " ASC" );
-/*        for( FieldSorter &sorter : m_sortedFields )
-        {
-            if( sorter.m_name == fieldName )
-                sorter.m_isAscending = !sorter.m_isAscending;
-        }*/
+        if( queryType == 2 )
+            GetDocument()->ShuffleGroupByFields( fieldName, pos->position, replace );
     }
     query.Replace( str, replace );
     m_page6->GetSyntaxCtrl()->SetValue( query );

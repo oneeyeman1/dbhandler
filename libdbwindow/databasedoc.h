@@ -18,6 +18,19 @@ struct GroupFields
     long position, internal_position;
 
     GroupFields(const wxString &name, long pos, long internal_pos) : fieldName(name), position(pos), internal_position(internal_pos) {}
+    GroupFields() : fieldName( "" ), position( -1 ), internal_position( -1 ) {}
+    GroupFields &operator=(const GroupFields group)
+    {
+        if( fieldName == group.fieldName )
+            return *this;
+        else
+        {
+            fieldName = group.fieldName;
+            position = group.position;
+            internal_position = group.internal_position;
+            return *this;
+        }
+    }
 };
 
 struct FieldSorter
@@ -26,6 +39,18 @@ struct FieldSorter
     bool m_isAscending;
     long m_originalPosition;
     FieldSorter(wxString name, bool isAscending, long original_position) : m_name(name), m_isAscending(isAscending), m_originalPosition(original_position) {};
+    FieldSorter &operator=(const FieldSorter &sorter)
+    {
+        if( m_name == sorter.m_name )
+            return *this;
+        else
+        {
+            m_name = sorter.m_name;
+            m_isAscending = sorter.m_isAscending;
+            m_originalPosition = sorter.m_originalPosition;
+            return *this;
+        }
+    }
 };
 
 // The drawing document (model) class itself
@@ -60,7 +85,8 @@ public:
     void DeleteSortedField(const wxString &name, long original, wxString &replace);
     void DeleteSortedTable(const wxString &tableName, wxString &replace);
     void ClearSortedVector() { m_sortedFields.clear(); }
-    void ChangeSortOrder(const wxString &fieldName);
+    void ChangeSortOrder(const wxString &fieldName, long newPosition);
+    void ShuffleGroupByFields(const wxString &fieldName, long newPosition, wxString &replace);
 private:
     void DoUpdate();
 

@@ -396,7 +396,36 @@ void DrawingDocument::DeleteSortedField(const wxString &name, long original, wxS
     }
 }
 
-void DrawingDocument::ChangeSortOrder(const wxString &fieldName)
+void DrawingDocument::ChangeSortOrder(const wxString &fieldName, long newPosition)
 {
     for_each( m_sortedFields.begin(), m_sortedFields.end(), [fieldName](FieldSorter field) { if( field.m_name == fieldName ) field.m_isAscending = !field.m_isAscending; } );
+}
+
+void DrawingDocument::ShuffleGroupByFields(const wxString &fieldName, long newPosition, wxString &replace)
+{
+    GroupFields fieldToRemove;
+    m_groupByFields.erase( std::remove_if( m_groupByFields.begin(), m_groupByFields.end(), 
+                          [fieldName, &fieldToRemove](GroupFields field) mutable
+    {
+        if( field.fieldName == fieldName )
+            fieldToRemove = field;
+        return field.fieldName == fieldName;
+    }), m_groupByFields.end() );
+    fieldToRemove.position = newPosition;
+    if( newPosition == m_groupByFields.size() )
+        m_groupByFields.push_back( fieldToRemove );
+    else
+        m_groupByFields.insert( m_groupByFields.begin() + newPosition, fieldToRemove );
+    for( std::vector<GroupFields>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
+    {
+        if( it == m_groupByFields.begin() )
+            replace += (*it).fieldName;
+        else
+        {
+            replace += ",\n";
+            replace += "         ";
+            replace += (*it).fieldName;
+        }
+    }
+    Modify( true );
 }
