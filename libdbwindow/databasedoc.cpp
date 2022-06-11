@@ -175,39 +175,27 @@ std::vector<std::wstring> &DrawingDocument::GetTableNames()
     return m_tableNames;
 }
 
-void DrawingDocument::AppendFieldToQueryFields(const std::wstring &field)
-{
-    m_queryFields.push_back( field );
-}
-
-void DrawingDocument::SetQueryFields(const std::vector<TableField *> &fields)
-{
-    for( std::vector<TableField *>::const_iterator it = fields.begin(); it < fields.end(); ++it )
-        m_queryFields.push_back( (*it)->GetFieldName() );
-}
-
-const std::vector<std::wstring> &DrawingDocument::GetQueryFields()
-{
-    return m_queryFields;
-}
-
-void DrawingDocument::AddRemoveField(const std::wstring &fieldName, bool isAdded)
+void DrawingDocument::AddRemoveField(const TableField *tableField, QueryFieldChange isAdded)
 {
     int position = m_sortedFieldsAll.size();
     int original_position = m_queryFields.size();
-    if( isAdded )
+    if( isAdded == ADD )
     {
-        m_queryFields.push_back( fieldName );
-        m_sortedFieldsAll.push_back( FieldSorter( fieldName, position, original_position ) );
+        m_queryFields.push_back( const_cast<TableField *>( tableField ) );
+        m_sortedFieldsAll.push_back( FieldSorter( tableField->GetFieldName(), position, original_position ) );
+    }
+    else if( isAdded == REMOVE )
+    {
+        m_queryFields.erase( std::remove( m_queryFields.begin(), m_queryFields.end(), tableField ), m_queryFields.end() );
+        m_sortedFieldsAll.erase( std::remove_if( m_sortedFieldsAll.begin(), m_sortedFieldsAll.end(), 
+                                [tableField](FieldSorter field)
+        {
+            return field.m_name == tableField->GetFieldName();
+        }), m_sortedFieldsAll.end() );
     }
     else
     {
-        m_queryFields.erase( std::remove( m_queryFields.begin(), m_queryFields.end(), fieldName ), m_queryFields.end() );
-        m_sortedFieldsAll.erase( std::remove_if( m_sortedFieldsAll.begin(), m_sortedFieldsAll.end(), 
-                                [fieldName](FieldSorter field)
-        {
-            return field.m_name == fieldName;
-        }), m_sortedFieldsAll.end() );
+
     }
     Modify( true );
 }
@@ -428,4 +416,23 @@ void DrawingDocument::ShuffleGroupByFields(const wxString &fieldName, long newPo
         }
     }
     Modify( true );
+}
+
+void DrawingDocument::DeleteQueryFieldForTable(const wxString &tableName, wxString &replace)
+{
+    m_queryFields.erase( std::remove_if( m_queryFields.begin(), m_queryFields.end(), 
+                        [tableName](TableField *field)
+                        {
+                            return field->GetFullName().find( tableName ) == 0;
+                        } ) );
+    if( m_queryFields.size() == 0 )
+        replace = "";
+    else
+    {
+        replace = "SELECT ";
+        for( std::vector<TableField *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
+        {
+            replace += (*it)->GetFullName();
+        }
+    }
 }

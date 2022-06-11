@@ -12,6 +12,13 @@
     typedef wxOutputStream DocumentOstream;
 #endif // wxUSE_STD_IOSTREAM/!wxUSE_STD_IOSTREAM
 
+enum QueryFieldChange
+{
+    ADD,
+    REMOVE,
+    SHUFFLE
+};
+
 struct GroupFields
 {
     wxString fieldName;
@@ -63,37 +70,41 @@ public:
     DocumentIstream& LoadObject(DocumentIstream& stream) wxOVERRIDE;
     void SetDatabase(Database *db, bool isInit);
     Database *GetDatabase();
-    size_t GetGroupByFieldCount() { return m_groupByFields.size(); };
-    void AddTables(const std::vector<wxString> &selections);
-    std::vector<MyErdTable *> &GetTables();
-    std::vector<std::wstring> &GetTableNameVector();
-    std::vector<DatabaseTable *> &GetDBTables();
-    MyErdTable *GetReferencedTable(const wxString &tableName);
-    std::vector<std::wstring> &GetTableNames();
-    void AppendFieldToQueryFields(const std::wstring &field);
-    void AddRemoveField(const std::wstring &fieldName, bool isAdded);
-    const std::vector<std::wstring> &GetQueryFields();
-    void SetQueryFields(const std::vector<TableField *> &fields);
+
+    void AddRemoveField(const TableField *field, QueryFieldChange isAdded);
+    void ClearQueryFields() { m_queryFields.clear(); }
+    void DeleteQueryFieldForTable(const wxString &tableName, wxString &replace);
+    const std::vector<TableField *> &GetQueryFields() const { return m_queryFields; }
+
     void AddGroupByAvailableField(const wxString &name, long position);
     void AddGroupByFieldToQuery(const wxString &name, long position, long original, wxString &replace);
     void DeleteGroupByField(const wxString &name, long original, wxString &replace);
     void DeleteGroupByTable(const wxString &tableName, wxString &replace);
     void ClearGroupByVector() { m_groupByFields.clear(); }
+    void ShuffleGroupByFields(const wxString &fieldName, long newPosition, wxString &replace);
     std::vector<GroupFields> &GetGroupFields() { return m_groupByFields; }
+    size_t GetGroupByFieldCount() { return m_groupByFields.size(); };
+
     void AddAllSortedFeld(const wxString &name, long original_position);
     void AddSortedField(const wxString &name, long position, long original_position, wxString &replace);
     void DeleteSortedField(const wxString &name, long original, wxString &replace);
     void DeleteSortedTable(const wxString &tableName, wxString &replace);
     void ClearSortedVector() { m_sortedFields.clear(); }
     void ChangeSortOrder(const wxString &fieldName, long newPosition);
-    void ShuffleGroupByFields(const wxString &fieldName, long newPosition, wxString &replace);
+
+    void AddTables(const std::vector<wxString> &selections);
+    std::vector<MyErdTable *> &GetTables();
+    std::vector<std::wstring> &GetTableNameVector();
+    std::vector<DatabaseTable *> &GetDBTables();
+    MyErdTable *GetReferencedTable(const wxString &tableName);
+    std::vector<std::wstring> &GetTableNames();
 private:
     void DoUpdate();
 
     Database *m_db;
     std::vector<MyErdTable *> m_tables;
     std::vector<std::wstring> m_tableNames;
-    std::vector<std::wstring> m_queryFields;
+    std::vector<TableField *> m_queryFields;
     std::vector<DatabaseTable *> m_dbTables;
     std::vector<GroupFields> m_groupByFields, m_groupByFieldsAll;
     std::vector<FieldSorter> m_sortedFields, m_sortedFieldsAll;

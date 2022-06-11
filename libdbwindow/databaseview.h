@@ -18,13 +18,6 @@ enum DrawinViewMenu
     QuerySyntaxMenu
 };
 
-enum QueryFieldChange
-{
-    ADD,
-    REMOVE,
-    SHUFFLE
-};
-
 // The view using MyCanvas to show its contents
 class DrawingView : public wxView
 {
@@ -134,9 +127,7 @@ private:
     wxCriticalSection *pcs;
     int m_source, m_presentation, m_searchPos, m_start, m_end, m_searchFlags, m_searchDirection, m_queryType;
     wxString m_stringToFind;
-    std::vector<TableField *> m_queryFields;
     std::vector<DatabaseTable *> m_selectTableName;
-//    std::vector<wxString> m_selectFields;
     std::map<int, wxString> m_whereCondition, m_havingCondition;
     std::vector<wxString> m_whereRelatons;
     std::vector<QueryArguments> m_arguments;
