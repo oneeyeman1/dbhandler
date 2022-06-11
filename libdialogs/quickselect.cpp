@@ -220,8 +220,8 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
                     if( selectedTable == (*it1)->GetTableName() )
                     {
                         found = true;
-                        m_tableFields = (*it1)->GetFields();
-                        for( std::vector<TableField *>::iterator it2 = m_tableFields.begin(); it2 < m_tableFields.end(); ++it2 )
+                        m_queryFields = (*it1)->GetFields();
+                        for( std::vector<TableField *>::iterator it2 = m_queryFields.begin(); it2 < m_queryFields.end(); ++it2 )
                             m_fields->Append( (*it2)->GetFieldName() );
                     }
                 }
@@ -241,7 +241,7 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
                 m_grid->DeleteCols();
                 countGrid = m_grid->GetNumberCols();
             }
-            m_tableFields.clear();
+            m_queryFields.clear();
             FillTableListBox();
             m_tables->SetStringSelection( m_tables->GetString( 0 ), false );
         }
@@ -258,7 +258,7 @@ void QuickSelect::OnDisplayComment(wxMouseEvent &event)
         wxString stringClicked = object->GetString( item );
         if( object == m_fields )
         {
-            for( std::vector<TableField *>::iterator it = m_tableFields.begin(); it < m_tableFields.end() && !found; ++it )
+            for( std::vector<TableField *>::iterator it = m_queryFields.begin(); it < m_queryFields.end() && !found; ++it )
             {
                 if( (*it)->GetFieldName() == stringClicked )
                 {
@@ -308,7 +308,7 @@ void QuickSelect::OnAllFieldsSelected(wxCommandEvent &WXUNUSED(event))
 {
     m_grid->BeginBatch();
     auto i = 0;
-    for( std::vector<TableField *>::iterator it = m_tableFields.begin(); it < m_tableFields.end(); ++it )
+    for( std::vector<TableField *>::iterator it = m_queryFields.begin(); it < m_queryFields.end(); ++it )
     {
         if( !m_fields->IsSelected( i ) )
         {

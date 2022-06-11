@@ -33,7 +33,7 @@ private:
     wxButton *m_ok, *m_cancel, *m_addAll, *m_help;
     Database *m_db;
     DatabaseTable *m_table;
-    std::vector<TableField *> m_tableFields, m_queryFields;
+    std::vector<TableField *> m_queryFields;
     wxBoxSizer *m_sizer10;
     int m_cols, m_column, m_oldColumn;
 };
