@@ -179,8 +179,13 @@ void QuickSelect::FillTableListBox()
         for( std::vector<DatabaseTable *>::iterator it1 = ( *it ).second.begin(); it1 < ( *it ).second.end(); ++it1 )
         {
             std::wstring tableName = (*it1)->GetTableName();
+            auto schemaName = (*it1)->GetSchemaName();
             if( type == L"SQLite" && ( tableName.substr( 0, 6 ) == L"sqlite" || tableName.substr( 0, 3 ) == L"sys" ) )
+            {
+                if( schemaName == L"" )
+                    schemaName = L"master";
                 continue;
+            }
             if( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
             {
                 if( tableName.substr( 0, 5 ) == L"abcat" || ( (*it1)->GetSchemaName() == L"sys" || (*it1)->GetSchemaName() == L"INFORMATION_SCHEMA" ) )
@@ -196,7 +201,7 @@ void QuickSelect::FillTableListBox()
                 if( tableName.substr( 0, 5 ) == L"abcat" || ( (*it1)->GetSchemaName() == L"information_schema" || (*it1)->GetSchemaName() == L"pg_catalog" ) )
                     continue;
             }
-            m_tables->Append( tableName );
+            m_tables->Append( schemaName + "." + tableName );
         }
     }
 }
@@ -217,7 +222,7 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
             {
                 for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
                 {
-                    if( selectedTable == (*it1)->GetTableName() )
+                    if( selectedTable == (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() )
                     {
                         found = true;
                         m_queryFields = (*it1)->GetFields();
@@ -462,9 +467,10 @@ void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
 {
     auto found = false;
     auto it1 = m_db->GetTableVector().m_tables[m_db->GetTableVector().m_dbName];
+    m_queryFields.clear();
     for( auto it2 = it1.begin(); it2 < it1.end() && !found; ++it2 )
     {
-        if( ( *it2 )->GetTableName () == m_tables->GetStringSelection () )
+        if( (*it2)->GetSchemaName() + "." + (*it2)->GetTableName() == m_tables->GetStringSelection() )
         {
             m_table = (*it2);
             found = true;
