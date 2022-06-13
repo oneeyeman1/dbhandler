@@ -477,6 +477,7 @@ void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
         }
     }
     found = false;
+    long pos = 0;
     for( auto i = 0; i < m_grid->GetNumberCols(); ++i )
     {
         for( auto it3 = m_table->GetFields().begin(); it3 < m_table->GetFields().end() && !found; ++it3 )
@@ -484,7 +485,13 @@ void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
             if( m_grid->GetCellValue( 0, i ) == (*it3)->GetFieldName() )
             {
                 m_queryFields.push_back( (*it3) );
+                m_all.push_back( FieldSorter( (*it3)->GetFieldName(), true, pos ) );
+                if( m_grid->GetCellValue( 1, i ) == _( "Ascending" ) )
+                    m_query.push_back( FieldSorter( (*it3)->GetFieldName(), true, pos ) );
+                else if( m_grid->GetCellValue( 1, i ) == _( "Descending" ) )
+                    m_query.push_back( FieldSorter( (*it3)->GetFieldName(), false, pos ) );
                 found = true;
+                pos++;
             }
         }
         found = false;
