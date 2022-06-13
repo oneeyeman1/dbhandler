@@ -623,12 +623,10 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 m_page6->SetSyntaxText( query );
                 m_edit->SetText( query );
             }
-//            if( quickSelect && m_selectTableName.size() == 1 )
-//                m_canvas->AddQuickQueryFields( m_selectTableName[0]->GetTableName(), GetDocument()->GetQueryFields(), quickSelect );
-//            if( quickSelect && m_selectTableName.size() > 0 )
-//            {
-//                PopuateQueryCanvas();
-//            }
+            if( quickSelect )
+            {
+                PopuateQueryCanvas();
+            }
         }
     }
 }
@@ -1158,7 +1156,6 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAd
         m_page1->AddRemoveSortingField( true, name );
         GetDocument()->AddRemoveField( fld, QueryFieldChange::ADD );
         std::vector<TableField *> queryFields = GetDocument()->GetQueryFields();
-//        queryFields.push_back( name.ToStdWstring() );
         if( queryFields.size() == 1 )
             query.Replace( "<unknown fields>", name + " " );
         else
@@ -1176,7 +1173,6 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAd
         m_page1->AddRemoveSortingField( false, name );
         GetDocument()->AddRemoveField( fld, QueryFieldChange::REMOVE );
         std::vector<TableField *> queryFields = GetDocument()->GetQueryFields();
-//        m_fields->RemoveField( queryFields );
         if( queryFields.size() == 0 )
         {
             query.Replace( name, "<unknown fields>" );
