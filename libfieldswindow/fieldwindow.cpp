@@ -135,7 +135,7 @@ void FieldWindow::OnMouseMove(wxMouseEvent &event)
 
 void FieldWindow::OnLeftUp(wxMouseEvent &event)
 {
-    Direction dirs;
+    Direction dirs = FieldWindow::UNINITIALIZED;
     wxPoint pos = event.GetPosition();
     FieldWin *shape = dynamic_cast<FieldWin *>( GetShapeAtPosition( pos ) );
     if( !m_draggingField && shape )
@@ -146,7 +146,6 @@ void FieldWindow::OnLeftUp(wxMouseEvent &event)
     }
     if( m_isDragging )
     {
-        int offset;
         if( !shape )
         {
             if( m_draggingField->GetFieldName() == m_selectedFields.at( m_selectedFields.size() - 1 ) )

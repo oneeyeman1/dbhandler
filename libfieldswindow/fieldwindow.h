@@ -3,6 +3,7 @@ class WXEXPORT FieldWindow : public wxSFShapeCanvas
 {
     enum Direction
     {
+        UNINITIALIZED = -1,
         BEFORE = 0,
         AFTER = 1
     };
