@@ -1987,7 +1987,7 @@ void DrawingView::OnFindReplaceText(wxFindDialogEvent &event)
 void DrawingView::OnFindNext(wxCommandEvent &WXUNUSED(event))
 {
     if( m_searchDirection )
-        m_start = m_start++;
+        m_start += 1;
     FindTextInEditor();
 }
 

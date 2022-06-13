@@ -347,7 +347,7 @@ void SortGroupByPage::OnLeftUp(wxMouseEvent &event)
         m_dragDest = m_source;
     else if( m_dest->GetRect().Contains( pt ) )
         m_dragDest = m_dest;
-    if( m_dragSource == m_dragDest && ( m_dragSource == m_source && m_dragDest == m_source ) || ( m_dragSource == m_dest && m_dragDest == m_dest  && m_dest->GetItemCount() == 1 ) )
+    if( ( m_dragSource == m_dragDest && ( m_dragSource == m_source && m_dragDest == m_source ) ) || ( ( m_dragSource == m_dest && m_dragDest == m_dest  && m_dest->GetItemCount() == 1 ) ) )
     {
         ReleaseMouse();
         event.Skip();
