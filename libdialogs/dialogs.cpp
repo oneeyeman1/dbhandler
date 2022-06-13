@@ -280,7 +280,7 @@ extern "C" WXEXPORT int NewQueryDlg(wxWindow *parent, int &source, int &presenta
     return res;
 }
 
-extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std::vector<DatabaseTable *> &tableName, std::vector<TableField *> &queryFields)
+extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std::vector<DatabaseTable *> &tableName, std::vector<TableField *> &queryFields, std::vector<FieldSorter> &allSorted, std::vector<FieldSorter> querySorted)
 {
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
@@ -292,6 +292,8 @@ extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std
     {
         tableName.push_back( dlg.GetDatabaseTable() );
         queryFields = dlg.GetQueryFields();
+        allSorted = dlg.GetAllSorted();
+        querySorted = dlg.GetQuerySorted();
     }
     return res;
 }

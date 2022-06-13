@@ -91,6 +91,8 @@ public:
     void DeleteSortedTable(const wxString &tableName, wxString &replace);
     void ClearSortedVector() { m_sortedFields.clear(); }
     void ChangeSortOrder(const wxString &fieldName, long newPosition);
+    std::vector<FieldSorter> &GetAllSorted() { return m_sortedFieldsAll; }
+    std::vector<FieldSorter> &GetQuerySorted() { return m_sortedFields; }
 
     void AddTables(const std::vector<wxString> &selections);
     std::vector<MyErdTable *> &GetTables();

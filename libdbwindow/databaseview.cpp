@@ -116,7 +116,7 @@ typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, s
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
-typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTable *> &, const std::vector<TableField *> &);
+typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTable *> &, const std::vector<TableField *> &, std::vector<FieldSorter> &allSorted, std::vector<FieldSorter> &qerySorted);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
 typedef int (*RETRIEVEARGUMENTS)(wxWindow *, std::vector<QueryArguments> &arguments, const wxString &, const wxString &);
 typedef int (*GOTOLINE)(wxWindow *, int &);
@@ -516,7 +516,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     else
                     {
                         QUICKSELECT func2 = (QUICKSELECT) lib.GetSymbol( "QuickSelectDlg" );
-                        res = func2( m_frame, db, m_selectTableName, GetDocument()->GetQueryFields() );
+                        res = func2( m_frame, db, m_selectTableName, GetDocument()->GetQueryFields(), GetDocument()->GetAllSorted(), GetDocument()->GetQuerySorted() );
                         quickSelect = true;
                     }
                 }
