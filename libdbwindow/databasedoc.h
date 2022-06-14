@@ -40,26 +40,6 @@ struct GroupFields
     }
 };
 
-struct FieldSorter
-{
-    wxString m_name;
-    bool m_isAscending;
-    long m_originalPosition;
-    FieldSorter(wxString name, bool isAscending, long original_position) : m_name(name), m_isAscending(isAscending), m_originalPosition(original_position) {};
-    FieldSorter &operator=(const FieldSorter &sorter)
-    {
-        if( m_name == sorter.m_name )
-            return *this;
-        else
-        {
-            m_name = sorter.m_name;
-            m_isAscending = sorter.m_isAscending;
-            m_originalPosition = sorter.m_originalPosition;
-            return *this;
-        }
-    }
-};
-
 // The drawing document (model) class itself
 class DrawingDocument : public wxDocument
 {

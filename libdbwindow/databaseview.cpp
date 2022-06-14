@@ -602,6 +602,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 }
                 m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
                 m_page3->GetDestList()->SetColumnWidth( 0, m_page3->GetDestList()->GetSize().GetWidth() );
+                m_page1->AddQuickSelectSortingFields( GetDocument()->GetAllSorted(), GetDocument()->GetQuerySorted() );
 /*                for( std::vector<wxString>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
                 {
                     if( it == m_groupByFields.begin() )
@@ -626,6 +627,10 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             if( quickSelect )
             {
                 PopuateQueryCanvas();
+                auto position = m_frame->GetMenuBar()->FindMenu( _( "Design" ) );
+                auto designMenu = m_frame->GetMenuBar()->GetMenu( position );
+                designMenu->Check( wxID_DATASOURCE, true );
+                m_tb->ToggleTool( wxID_DATASOURCE, false );
             }
         }
     }

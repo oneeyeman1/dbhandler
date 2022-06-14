@@ -24,6 +24,26 @@ struct Positions
     long position, originalPosition;
 };
 
+struct FieldSorter
+{
+    wxString m_name;
+    bool m_isAscending;
+    long m_originalPosition;
+    FieldSorter(wxString name, bool isAscending, long original_position) : m_name(name), m_isAscending(isAscending), m_originalPosition(original_position) {};
+    FieldSorter &operator=(const FieldSorter &sorter)
+    {
+        if( m_name == sorter.m_name )
+            return *this;
+        else
+        {
+            m_name = sorter.m_name;
+            m_isAscending = sorter.m_isAscending;
+            m_originalPosition = sorter.m_originalPosition;
+            return *this;
+        }
+    }
+};
+
 class MyListCtrl : public wxListCtrl
 {
 public:
@@ -75,6 +95,7 @@ public:
     wxDataViewListCtrl *GetSourceDestList();
     void AddRemoveSortingField(bool isAdding, const wxString &field);
     void RemoveTable(const wxString tbl);
+    void AddQuickSelectSortingFields(const std::vector<FieldSorter> &allSorted, const std::vector<FieldSorter> &querySorted);
 protected:
     void set_properties();
     void do_layout();

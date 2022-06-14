@@ -595,3 +595,20 @@ void SortGroupByPage::RemoveTable(const wxString tbl)
         }
     }
 }
+
+void SortGroupByPage::AddQuickSelectSortingFields(const std::vector<FieldSorter> &allSorted, const std::vector<FieldSorter> &querySorted)
+{
+    for( std::vector<FieldSorter>::const_iterator it = allSorted.begin(); it < allSorted.end(); ++it )
+    {
+        wxVector<wxVariant> data;
+        data.push_back( (*it).m_name );
+        m_sortSource->InsertItem( (*it).m_originalPosition, data );
+    }
+    for( std::vector<FieldSorter>::const_iterator it = querySorted.begin(); it < querySorted.end(); ++it )
+    {
+        wxVector<wxVariant> data;
+        data.push_back( (*it).m_name );
+        data.push_back( (*it).m_isAscending );
+        m_sortDest->InsertItem( (*it).m_originalPosition, data );
+    }
+}
