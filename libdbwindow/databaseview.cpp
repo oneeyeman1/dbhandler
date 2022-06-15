@@ -603,24 +603,6 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
                 m_page3->GetDestList()->SetColumnWidth( 0, m_page3->GetDestList()->GetSize().GetWidth() );
                 m_page1->AddQuickSelectSortingFields( GetDocument()->GetAllSorted(), GetDocument()->GetQuerySorted() );
-/*                for( std::vector<wxString>::iterator it = m_groupByFields.begin(); it < m_groupByFields.end(); ++it )
-                {
-                    if( it == m_groupByFields.begin() )
-                    {
-                        query.Replace( ";", "" );
-                        query += "\n";
-                        query += "GROUP BY ";
-                        query += (*it);
-                    }
-                    else
-                    {
-                        query += ",\n";
-                        query += "      ";
-                        query += (*it);
-                    }
-                    if( it == m_groupByFields.end() - 1 )
-                        query += ";";
-                }*/
                 m_page6->SetSyntaxText( query );
                 m_edit->SetText( query );
             }
