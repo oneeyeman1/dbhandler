@@ -561,6 +561,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                             query += (*it)->GetFullName();
                             if( it != queryFields.end() - 1 )
                                 query += ",";
+                            m_fields->AddField( (*it)->GetFullName() );
                         }
                         query += "\n";
                     }
@@ -568,7 +569,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 query += "FROM ";
             }
         }
-        if( quickSelect && m_selectTableName.size() > 0 )
+        if( quickSelect && m_selectTableName.size()  > 0 )
         {
             if( db->GetTableVector().GetDatabaseType() == L"SQLite" )
             {
