@@ -558,7 +558,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     {
                         for( std::vector<TableField *>::iterator it = queryFields.begin(); it < queryFields.end(); ++it )
                         {
-                            query += (*it)->GetFieldName();
+                            query += (*it)->GetFullName();
                             if( it != queryFields.end() - 1 )
                                 query += ",";
                         }
@@ -583,7 +583,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
     {
         ((DrawingDocument *) GetDocument())->AddTables( tables );
         m_selectTableName = ((DrawingDocument *) GetDocument())->GetDBTables();
-        ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, query, m_whereRelatons );
+        ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
         if( m_type == QueryView )
         {
             if( query != L"\n" )

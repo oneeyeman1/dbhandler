@@ -94,7 +94,7 @@ void DatabaseCanvas::OnDraw(wxDC &WXUNUSED(dc))
 {
 }
 
-void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &query, std::vector<wxString> &relations)
+void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, const std::vector<TableField *> &queryFields, wxString &query, std::vector<wxString> &relations)
 {
     std::vector<MyErdTable *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
     for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
@@ -119,6 +119,8 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
             m_displayedTables.push_back( (*it) );
         }
     }
+    ShapeList listShapes;
+    m_pManager.GetShapes( CLASSINFO( FieldShape ), listShapes );
     for( std::vector<MyErdTable *>::iterator it1 = m_displayedTables.begin(); it1 < m_displayedTables.end(); it1++ )
     {
         wxString name = const_cast<DatabaseTable *>( (*it1)->GetTable() )->GetTableName();
@@ -131,9 +133,23 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, wxString &
                 query += ",\r     ";
         }
     }
+    bool found = false;
+    for( std::vector<TableField *>::const_iterator it = queryFields.begin(); it < queryFields.end() && !found; ++it )
+    {
+        for( ShapeList::iterator it1 = listShapes.begin(); it1 != listShapes.end() && !found; ++it1 )
+        {
+            if( dynamic_cast<FieldShape *>( (*it1) )->GetField()->GetFieldName() == (*it)->GetFieldName() )
+            {
+                (*it1)->Select( true );
+                found = true;
+            }
+        }
+        found = false;
+    }
 //    Refresh();
     Constraint *pConstr = NULL;
-    bool found = false, secondIteration = false;
+    found = false;
+    bool secondIteration = false;
     for( std::vector<MyErdTable *>::iterator it2 = tables.begin(); it2 < tables.end(); it2++ )
     {
         std::map<unsigned long, std::vector<FKField *> > foreignKeys = const_cast<DatabaseTable *>( (*it2)->GetTable() )->GetForeignKeyVector();
