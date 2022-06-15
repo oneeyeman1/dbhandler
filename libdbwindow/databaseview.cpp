@@ -572,8 +572,8 @@ void DrawingView::GetTablesForView(Database *db, bool init)
         {
             if( db->GetTableVector().GetDatabaseType() == L"SQLite" )
             {
-                wxString name = m_selectTableName[0]->GetTableName();
-                tables.push_back( name.substr( name.find_last_of( '.' ) + 1 ) );
+                wxString name = m_selectTableName[0]->GetSchemaName() + "." + m_selectTableName[0]->GetTableName();
+                tables.push_back( name );
             }
             else
                 tables.push_back( m_selectTableName[0]->GetTableName() );
@@ -629,7 +629,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 PopuateQueryCanvas();
                 auto position = m_frame->GetMenuBar()->FindMenu( _( "Design" ) );
                 auto designMenu = m_frame->GetMenuBar()->GetMenu( position );
-                designMenu->Check( wxID_DATASOURCE, true );
+                designMenu->Check( wxID_DATASOURCE, false );
                 m_tb->ToggleTool( wxID_DATASOURCE, false );
             }
         }
