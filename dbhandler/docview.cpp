@@ -105,6 +105,9 @@ bool MyApp::OnInit()
     ::wxInitAllImageHandlers();
 
     // Fill in the application information fields before creating wxConfig.
+    SetVendorName( "wxWidgets" );
+    SetAppName( "dbhandler" );
+    SetAppDisplayName( "DB Handler" );
     wxConfigBase *config = wxConfigBase::Get( "DBManager" );
     wxString path = config->GetPath();
     config->SetPath( "CurrentDB" );
@@ -112,9 +115,6 @@ bool MyApp::OnInit()
     m_dbEngine = config->Read( "Engine", "" );
     m_subtype = config->Read( "Subtype", "" );
     config->SetPath( path );
-    SetVendorName( "wxWidgets" );
-    SetAppName( "dbhandler" );
-    SetAppDisplayName( "DB Handler" );
 
     //// Create a document manager
     m_docManager = new wxDocManager;
