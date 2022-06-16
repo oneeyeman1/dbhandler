@@ -34,9 +34,10 @@
 #include "bitmappanel.h"
 #include "newquery.h"
 
-NewQuery::NewQuery(wxWindow *parent, const wxString &title) : wxDialog(parent, wxID_ANY, title)
+NewQuery::NewQuery(wxWindow *parent, const wxString &title, int source, int presentation) : wxDialog(parent, wxID_ANY, title)
 {
-    m_source = m_presentation = -1;
+    m_source = source;
+    m_presentation = presentation;
     m_title = title;
     m_panel = new wxPanel( this );
     m_panels[0] = new BitmapPanel( m_panel, wxBitmap( Quick_Select ), _( "Quick Select" ) );
@@ -61,10 +62,8 @@ NewQuery::NewQuery(wxWindow *parent, const wxString &title) : wxDialog(parent, w
     m_preview = new wxCheckBox( m_panel, wxID_ANY, _( "&Preview when built" ) );
     SetTitle( title );
     do_layout();
-    m_panels[1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-    m_source = 2;
-    m_panels[8]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-    m_presentation = 4;
+    m_panels[m_source -1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+    m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
     for( int i = 0; i < 4; ++i )
     {
         m_panels[i]->Bind( wxEVT_LEFT_DOWN, &NewQuery::OnPanelSourceClicked, this );

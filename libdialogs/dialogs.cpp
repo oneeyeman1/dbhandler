@@ -269,7 +269,7 @@ extern "C" WXEXPORT int NewQueryDlg(wxWindow *parent, int &source, int &presenta
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    NewQuery dlg( parent, _( "New Query" ) );
+    NewQuery dlg( parent, _( "New Query" ), source, presentation );
     dlg.Center();
     res = dlg.ShowModal();
     if( res == wxID_OK )

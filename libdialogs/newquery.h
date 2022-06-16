@@ -2,7 +2,7 @@
 class NewQuery : public wxDialog
 {
 public:
-    NewQuery(wxWindow *parent, const wxString &title);
+    NewQuery(wxWindow *parent, const wxString &title, int source, int presentation);
     ~NewQuery();
     const int GetSource();
     const int GetPresentation();

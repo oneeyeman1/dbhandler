@@ -59,6 +59,7 @@
 #include "wx/listctrl.h"
 #include "wx/dataview.h"
 #include "wx/renderer.h"
+#include "wx/config.h"
 #include "wx/filepicker.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/BitmapShape.h"
@@ -199,6 +200,12 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_fontSize = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
+    wxConfigBase *config = wxConfigBase::Get( false );
+    wxString path = config->GetPath();
+    config->SetPath( "Query" );
+    m_source = config->ReadLong( "QuerySource", 2 );
+    m_presentation = config->ReadLong( "QueryPresentation", 4 );
+    config->SetPath( path );
     m_parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     wxRect clientRect = m_parent->GetClientRect();
     wxWindowList children = m_parent->GetChildren();
@@ -475,6 +482,12 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 {
                     NEWQUERY func1 = (NEWQUERY) lib.GetSymbol( "NewQueryDlg" );
                     res = func1( m_frame, m_source, m_presentation );
+                    wxConfigBase *config = wxConfigBase::Get( false );
+                    wxString path = config->GetPath();
+                    config->SetPath( "Query" );
+                    m_source = config->Write( "QuerySource", m_source );
+                    m_presentation = config->Write( "QueryPresentation", m_presentation );
+                    config->SetPath( path );
                 }
                 if( res != wxID_CANCEL )
                 {
