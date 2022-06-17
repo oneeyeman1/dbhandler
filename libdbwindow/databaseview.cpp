@@ -485,8 +485,8 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                     wxConfigBase *config = wxConfigBase::Get( false );
                     wxString path = config->GetPath();
                     config->SetPath( "Query" );
-                    m_source = config->Write( "QuerySource", m_source );
-                    m_presentation = config->Write( "QueryPresentation", m_presentation );
+                    config->Write( "QuerySource", m_source );
+                    config->Write( "QueryPresentation", m_presentation );
                     config->SetPath( path );
                 }
                 if( res != wxID_CANCEL )
