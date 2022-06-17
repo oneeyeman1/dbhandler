@@ -131,7 +131,6 @@ wxDECLARE_APP(MyApp);
 #define wxID_EDITDELETECOLUMN     204
 #define wxID_EDITTABLEPROPERTY    205
 #define wxID_DESIGNSYNTAX         206
-#define wxID_UNDOALL              300
 #define wxID_DATASOURCE           301
 #define wxID_PREVIEW              302
 #define wxID_UNIONS               303
