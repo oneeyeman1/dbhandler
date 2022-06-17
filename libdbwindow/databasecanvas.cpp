@@ -751,32 +751,19 @@ void DatabaseCanvas::OnShowComments(wxCommandEvent &WXUNUSED(event))
 {
     ShapeList list;
     m_showComments = !m_showComments;
-    m_pManager.GetShapes( CLASSINFO( CommentFieldShape ), list );
+    m_pManager.GetShapes( CLASSINFO( MyErdTable ), list );
     for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
     {
-        CommentFieldShape *shape = wxDynamicCast( (*it), CommentFieldShape );
+        MyErdTable *shape = wxDynamicCast( (*it), MyErdTable );
         if( m_showComments )
         {
-            shape->SetText( const_cast<TableField *>( shape->GetFieldForComment() )->GetFieldProperties().m_comment );
+            shape->DisplayComments( true );
         }
         else
         {
-            shape->SetText( wxEmptyString );
+            shape->DisplayComments( false );
         }
-    }
-    list.clear();
-    m_pManager.GetShapes( CLASSINFO( CommentTableShape ), list );
-    for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
-    {
-        CommentTableShape *shape = wxDynamicCast( (*it), CommentTableShape );
-        if( m_showComments )
-        {
-            shape->SetText( const_cast<DatabaseTable *>( shape->GetDatabaseTable() )->GetTableProperties().m_comment );
-        }
-        else
-        {
-            shape->SetText( wxEmptyString );
-        }
+        shape->UpdateTable();
     }
     Refresh();
 }
