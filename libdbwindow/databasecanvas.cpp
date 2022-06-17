@@ -1074,18 +1074,19 @@ void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &WXUNUSED(event))
 {
     ShapeList list;
     m_showDataTypes = !m_showDataTypes;
-    m_pManager.GetShapes( CLASSINFO( FieldTypeShape ), list );
+    m_pManager.GetShapes( CLASSINFO( MyErdTable ), list );
     for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
     {
-        FieldTypeShape *shape = wxDynamicCast( (*it), FieldTypeShape );
+        MyErdTable *shape = wxDynamicCast( (*it), MyErdTable );
         if( m_showDataTypes )
         {
-            shape->SetText( const_cast<TableField *>( shape->GetFieldForComment() )->GetFullType() );
+            shape->DisplayComments( true );
         }
         else
         {
-            shape->SetText( wxEmptyString );
+            shape->DisplayComments( false );
         }
+        shape->UpdateTable();
     }
     Refresh();
 }

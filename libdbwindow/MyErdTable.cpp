@@ -25,6 +25,16 @@ XS_IMPLEMENT_CLONABLE_CLASS(MyErdTable, wxSFRoundRectShape);
 
 MyErdTable::MyErdTable() : wxSFRoundRectShape()
 {
+    m_displayTypes = m_displayComments = true;
+    m_columns = 3; 
+    m_headerColumns = 2;
+    if( !m_displayTypes )
+        m_columns--;
+    if( !m_displayComments )
+    {
+        m_columns--;
+        m_headerColumns--;
+    }
     SetFill( wxBrush( wxColour( 254, 253, 211 ) ) );
     AcceptConnection( wxT( "All" ) );
     AcceptTrgNeighbour( wxT( "All" ) );
@@ -36,16 +46,19 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
     SetRadius( 15 );
     m_header = new HeaderGrid();
     m_pLabel = new wxSFTextShape();
-    m_comment = new CommentTableShape();
+    if( m_displayComments )
+    {
+        m_comment = new CommentTableShape();
+        m_comment->SetId( 1001 );
+    }
     m_pGrid = new GridTableShape( DatabaseView );
     m_pLabel->SetId( 1000 );
-    m_comment->SetId( 1001 );
-    if( m_header && m_pLabel && m_comment && m_pGrid )
+    if( m_header && m_pLabel && m_pGrid )
     {
         // set table header
         m_header->SetRelativePosition( 0, 1 );
         m_header->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-        m_header->SetDimensions( 1, 2 );
+        m_header->SetDimensions( 1, m_headerColumns );
         m_header->SetFill( *wxTRANSPARENT_BRUSH );
         m_header->SetBorder( *wxTRANSPARENT_PEN );
         m_header->AcceptChild( wxT( "wxSFTextShape" ) );
@@ -61,7 +74,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
 //            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         }
         // table comment
-        if( m_header->InsertToGrid( 0, 1, m_comment ) )
+        if( m_displayComments && m_header->InsertToGrid( 0, 1, m_comment ) )
         {
             m_comment->SetVAlign( wxSFShapeBase::valignTOP );
             m_comment->SetHAlign( wxSFShapeBase::halignRIGHT );
@@ -73,7 +86,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
         m_pGrid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-        m_pGrid->SetDimensions( 1, 3 );
+        m_pGrid->SetDimensions( 1, m_columns );
         m_pGrid->SetFill( *wxTRANSPARENT_BRUSH );
         m_pGrid->SetBorder( *wxTRANSPARENT_PEN );
         m_pGrid->SetHAlign( wxSFShapeBase::halignLEFT );
@@ -91,6 +104,16 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
 
 MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape()
 {
+    m_displayTypes = m_displayComments = true;
+    m_columns = 3; 
+    m_headerColumns = 2;
+    if( !m_displayTypes )
+        m_columns--;
+    if( !m_displayComments )
+    {
+        m_columns--;
+        m_headerColumns--;
+    }
     m_type = type;
     m_table = table;
     std::vector<TableField *> fields = m_table->GetFields();
@@ -103,17 +126,20 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
     SetRadius(15);
     m_header = new HeaderGrid();
     m_pLabel = new wxSFTextShape();
-    m_comment = new CommentTableShape( table );
+    if( m_displayComments )
+    {
+        m_comment = new CommentTableShape( table );
+        m_comment->SetId( 1001 );
+    }
     m_pGrid = new GridTableShape( type );
     m_pLabel->SetId( 1000 );
-    m_comment->SetId( 1001 );
-    if( m_header && m_pLabel && m_comment && m_pGrid )
+    if( m_header && m_pLabel && m_pGrid )
     {
         // set table header
         m_header->SetRelativePosition( 0, 1 );
         m_header->SetVAlign( wxSFShapeBase::valignTOP );
         m_header->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-        m_header->SetDimensions( 1, 2 );
+        m_header->SetDimensions( 1, m_headerColumns );
         m_header->SetFill( *wxTRANSPARENT_BRUSH );
         m_header->SetBorder( *wxTRANSPARENT_PEN);
         m_header->AcceptChild( wxT( "wxSFTextShape" ) );
@@ -132,7 +158,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
 //            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         }
         // table comment
-        if( m_header->InsertToGrid( 0, 1, m_comment ) )
+        if( m_displayComments && m_header->InsertToGrid( 0, 1, m_comment ) )
         {
             m_comment->SetVAlign( wxSFShapeBase::valignTOP );
             m_comment->SetHAlign( wxSFShapeBase::halignLEFT );
@@ -147,7 +173,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         m_pGrid->SetRelativePosition( 0, 17 );
         m_pGrid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
         m_pGrid->SetCellSpace( 8 );
-        m_pGrid->SetDimensions( 1, 3 );
+        m_pGrid->SetDimensions( 1, m_columns );
         m_pGrid->SetFill( *wxTRANSPARENT_BRUSH );
         m_pGrid->SetBorder( *wxTRANSPARENT_PEN);
         m_pGrid->SetHAlign( wxSFShapeBase::halignLEFT );
@@ -196,11 +222,15 @@ void MyErdTable::SetTableComment(const wxString &comment)
 
 void MyErdTable::ClearGrid()
 {
+/*    m_header->RemoveChildren();
+    m_header->ClearGrid();
+    m_header->SetDimensions( 1, m_headerColumns );
+    m_header->SetCellSpace( 1 );*/
     m_pGrid->RemoveChildren();
     // re-initialize grid control
     m_pGrid->ClearGrid();
-    m_pGrid->SetDimensions( 1, 3 );
-    m_pGrid->SetCellSpace( 2 );
+    m_pGrid->SetDimensions( 1, m_columns );
+    m_pGrid->SetCellSpace( 1 );
     Refresh();
 }
 
@@ -337,36 +367,42 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             else
                 delete pCol;
         }
-        FieldTypeShape *type_shape = new FieldTypeShape();
-        if( type_shape )
+        if( m_displayTypes )
         {
-            type_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-            type_shape->SetId( id + 10000 + 1 );
-            type_shape->Activate( true );
-            if( m_pGrid->InsertToTableGrid( type_shape ) )
+            FieldTypeShape *type_shape = new FieldTypeShape();
+            if( type_shape )
             {
-                SetCommonProps( type_shape );
-                type_shape->GetFont().SetPointSize( 8 );
-                type_shape->SetText( field->GetFullType() );
-                type_shape->SetField( field );
+                type_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+                type_shape->SetId( id + 10000 + 1 );
+                type_shape->Activate( true );
+                if( m_pGrid->InsertToTableGrid( type_shape ) )
+                {
+                    SetCommonProps( type_shape );
+                    type_shape->GetFont().SetPointSize( 8 );
+                    type_shape->SetText( field->GetFullType() );
+                    type_shape->SetField( field );
+                }
+                else
+                    delete type_shape;
             }
-            else
-                delete type_shape;
         }
-        CommentFieldShape *comment_shape = new CommentFieldShape( field );
-        if( comment_shape )
+        if( m_displayComments )
         {
-            comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-            comment_shape->SetId( id + 10000 + 2 );
-            comment_shape->Activate( true );
-            if( m_pGrid->InsertToTableGrid( comment_shape ) )
+            CommentFieldShape *comment_shape = new CommentFieldShape( field );
+            if( comment_shape )
             {
-                SetCommonProps( comment_shape );
-                comment_shape->GetFont().SetPointSize( 8 );
-                comment_shape->SetText( field->GetFieldProperties().m_comment );
+                comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+                comment_shape->SetId( id + 10000 + 2 );
+                comment_shape->Activate( true );
+                if( m_pGrid->InsertToTableGrid( comment_shape ) )
+                {
+                    SetCommonProps( comment_shape );
+                    comment_shape->GetFont().SetPointSize( 8 );
+                    comment_shape->SetText( field->GetFieldProperties().m_comment );
+                }
+                else
+                    delete comment_shape;
             }
-            else
-                delete comment_shape;
         }
     }
 }

@@ -14,6 +14,8 @@ public:
     wxSFTextShape *GetLabel();
     GridTableShape *GetFieldGrid();
     std::wstring &GetTableName();
+    void DisplayTypes(bool display) { m_displayTypes = display; if( display ) m_columns++; else m_columns--;  }
+    void DisplayComments(bool display) { m_displayComments = display; if( display ) { m_columns++; m_headerColumns++; } else { m_columns--; m_headerColumns--; } }
 protected:
     void ClearGrid();
     void ClearConnections();
@@ -31,6 +33,8 @@ private:
     CommentTableShape *m_comment;
     GridTableShape* m_pGrid;
     DatabaseTable *m_table;
+    bool m_displayTypes, m_displayComments;
+    int m_columns, m_headerColumns;
 };
 
 #endif
