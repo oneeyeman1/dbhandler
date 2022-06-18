@@ -1067,11 +1067,11 @@ void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &WXUNUSED(event))
         MyErdTable *shape = wxDynamicCast( (*it), MyErdTable );
         if( m_showDataTypes )
         {
-            shape->DisplayComments( true );
+            shape->DisplayTypes( true );
         }
         else
         {
-            shape->DisplayComments( false );
+            shape->DisplayTypes( false );
         }
         shape->UpdateTable();
     }

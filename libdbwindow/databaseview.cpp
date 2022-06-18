@@ -160,6 +160,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_UPDATE_UI(wxID_PREVIEDWQUERY, DrawingView::OnQueryPreviewUpdateUI)
     EVT_MENU(wxID_SHOWSQLTOOLBOX, DrawingView::OnShowSQLBox)
     EVT_MENU(wxID_SHOWDATATYPES, DrawingView::OnShowDataTypes)
+    EVT_MENU(wxID_SHOWCOMMENTS, DrawingView::OnShowComments)
     EVT_UPDATE_UI(wxID_CONVERTTOSYNTAX, DrawingView::OnConvertToSyntaxUpdateUI)
     EVT_MENU(wxID_CONVERTTOSYNTAX, DrawingView::OnConvertToSyntax)
     EVT_MENU(wxID_UNDO, DrawingView::OnUndo)
@@ -2023,6 +2024,11 @@ void DrawingView::OnGotoLine(wxCommandEvent &WXUNUSED(event))
 }
 
 void DrawingView::OnShowDataTypes(wxCommandEvent &event)
+{
+    m_canvas->GetEventHandler()->ProcessEvent( event );
+}
+
+void DrawingView::OnShowComments(wxCommandEvent &event)
 {
     m_canvas->GetEventHandler()->ProcessEvent( event );
 }
