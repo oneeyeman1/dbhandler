@@ -269,6 +269,7 @@ void MyErdTable::DrawNormal(wxDC &dc)
 
 void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType type)
 {
+    int connter = 2;
     if( m_type == DatabaseView )
     {
         if( type != Constraint::noKey )
@@ -386,13 +387,15 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
                     delete type_shape;
             }
         }
+        else
+            connter = 1;
         if( m_displayComments )
         {
             CommentFieldShape *comment_shape = new CommentFieldShape();
             if( comment_shape )
             {
                 comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-                comment_shape->SetId( id + 10000 + 2 );
+                comment_shape->SetId( id + 10000 + connter );
                 comment_shape->Activate( true );
                 if( m_pGrid->InsertToTableGrid( comment_shape ) )
                 {
