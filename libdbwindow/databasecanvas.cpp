@@ -70,7 +70,6 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent
     m_oldSelectedSign = NULL;
     startPoint.x = 10;
     startPoint.y = 10;
-    m_showComments = m_showIndexKeys = m_showIntegrity = true;
     m_pManager.SetRootItem( new xsSerializable() );
     SetDiagramManager( &m_pManager );
     Create( view->GetFrame(), wxID_ANY, pt, wxDefaultSize, wxHSCROLL | wxVSCROLL | wxALWAYS_SHOW_SB );
@@ -512,10 +511,16 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             mnu.AppendCheckItem( wxID_VIEWSHOWINTEGRITY, _( "Show Referential Integrity" ), _( "Show Referential Integrity" ) );
             if( m_showComments )
                 mnu.Check( wxID_SHOWCOMMENTS, true );
+            else
+                mnu.Check( wxID_SHOWCOMMENTS, false );
             if( m_showIndexKeys )
                 mnu.Check( wxID_VIEWSHOWINDEXKEYS, true );
+            else
+                mnu.Check( wxID_VIEWSHOWINDEXKEYS, false );
             if( m_showIntegrity )
                 mnu.Check( wxID_VIEWSHOWINTEGRITY, true );
+            else
+                mnu.Check( wxID_VIEWSHOWINTEGRITY, false );
         }
         else
         {
@@ -529,12 +534,20 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             mnu.AppendSubMenu( showMenu, _( "Show" ) );
             if( m_showDataTypes )
                 showMenu->Check( wxID_SHOWDATATYPES, true );
+            else
+                showMenu->Check( wxID_SHOWDATATYPES, false );
             if( m_showLabels )
                 showMenu->Check( wxID_SHOWLABELS, true );
+            else
+                showMenu->Check( wxID_SHOWLABELS, false );
             if( m_showComments )
                 showMenu->Check( wxID_SHOWCOMMENTS, true );
+            else
+                showMenu->Check( wxID_SHOWCOMMENTS, false );
             if( m_showToolBox )
                 showMenu->Check( wxID_SHOWSQLTOOLBOX, true );
+            else
+                showMenu->Check( wxID_SHOWSQLTOOLBOX, false );
         }
     }
     int rc = GetPopupMenuSelectionFromUser( mnu, pt );
@@ -1056,12 +1069,14 @@ void DatabaseCanvas::ShowHideTablePart(int part, bool show)
         switch( part )
         {
             case 1:
+                m_showDataTypes = !m_showDataTypes;
                 if( show )
                     shape->DisplayTypes( true );
                 else
                     shape->DisplayTypes( false );
                 break;
             case 4:
+                m_showComments = !m_showComments;
                 if( show )
                     shape->DisplayComments( true );
                 else
