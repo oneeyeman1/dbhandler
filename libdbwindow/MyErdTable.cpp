@@ -208,7 +208,7 @@ void MyErdTable::UpdateTable()
     for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
         AddColumn( (*it), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : (*it)->IsForeignKey() ? Constraint::foreignKey : Constraint::noKey );
-        i += 3;
+        i += m_columns;
     }
     m_pGrid->Update();
     Update();
@@ -388,7 +388,7 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
         }
         if( m_displayComments )
         {
-            CommentFieldShape *comment_shape = new CommentFieldShape( field );
+            CommentFieldShape *comment_shape = new CommentFieldShape();
             if( comment_shape )
             {
                 comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
@@ -398,6 +398,7 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
                 {
                     SetCommonProps( comment_shape );
                     comment_shape->GetFont().SetPointSize( 8 );
+                    comment_shape->SetField( field );
                     comment_shape->SetText( field->GetFieldProperties().m_comment );
                 }
                 else

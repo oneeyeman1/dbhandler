@@ -23,6 +23,7 @@ public:
     inline wxSFDiagramManager &GetDiagramManager() { return m_pManager; }
     virtual void OnDraw(wxDC& dc) wxOVERRIDE;
     void AddQuickQueryFields(const wxString &tbl, std::vector<TableField *> &quickSelectFields, bool quickSelect);
+    void ShowHideTablePart(int part, bool show);
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:
@@ -46,7 +47,6 @@ private:
 #define wxID_TABLEDATATRANSFER     26
 #define wxID_TABLEPRINTDEFINITION  27
 #define wxID_VIEWARRANGETABLES     31
-#define wxID_VIEWSHOWCOMMENTS      32
 #define wxID_VIEWSHOWINDEXKEYS     33
 #define wxID_VIEWSHOWINTEGRITY     34
 #define wxID_PROPERTIES            50

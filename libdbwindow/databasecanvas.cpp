@@ -83,7 +83,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent
     Bind( wxEVT_MENU, &DatabaseCanvas::OnCloseTable, this, wxID_TABLECLOSE );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnShowDataTypes, this, wxID_SHOWDATATYPES );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnShowSQLBox, this, wxID_SHOWSQLTOOLBOX );
-    Bind( wxEVT_MENU, &DatabaseCanvas::OnShowComments, this, wxID_VIEWSHOWCOMMENTS );
+    Bind( wxEVT_MENU, &DatabaseCanvas::OnShowComments, this, wxID_SHOWCOMMENTS );
 }
 
 DatabaseCanvas::~DatabaseCanvas()
@@ -507,11 +507,11 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         {
             mnu.Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select Table" ), false );
             mnu.Append( wxID_VIEWARRANGETABLES, _( "Arramge Tables..." ), _( "Arrange Tables" ), false );
-            mnu.AppendCheckItem( wxID_VIEWSHOWCOMMENTS, _( "Show Comments" ), _( "Show Comments" ) );
+            mnu.AppendCheckItem( wxID_SHOWCOMMENTS, _( "Show Comments" ), _( "Show Comments" ) );
             mnu.AppendCheckItem( wxID_VIEWSHOWINDEXKEYS, _( "Show Index Keys" ), _( "Show Index Keys" ) );
             mnu.AppendCheckItem( wxID_VIEWSHOWINTEGRITY, _( "Show Referential Integrity" ), _( "Show Referential Integrity" ) );
             if( m_showComments )
-                mnu.Check( wxID_VIEWSHOWCOMMENTS, true );
+                mnu.Check( wxID_SHOWCOMMENTS, true );
             if( m_showIndexKeys )
                 mnu.Check( wxID_VIEWSHOWINDEXKEYS, true );
             if( m_showIntegrity )
@@ -524,7 +524,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             wxMenu *showMenu = new wxMenu();
             showMenu->AppendCheckItem( wxID_SHOWDATATYPES, _( "Datatypes" ), _( "Datatypes" ) );
             showMenu->AppendCheckItem( wxID_SHOWLABELS, _( "Labels" ), _( "Labels" ) );
-            showMenu->AppendCheckItem( wxID_VIEWSHOWCOMMENTS, _( "Comments" ), _( "Comments" ) );
+            showMenu->AppendCheckItem( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Comments" ) );
             showMenu->AppendCheckItem( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ) );
             mnu.AppendSubMenu( showMenu, _( "Show" ) );
             if( m_showDataTypes )
@@ -532,7 +532,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             if( m_showLabels )
                 showMenu->Check( wxID_SHOWLABELS, true );
             if( m_showComments )
-                showMenu->Check( wxID_VIEWSHOWCOMMENTS, true );
+                showMenu->Check( wxID_SHOWCOMMENTS, true );
             if( m_showToolBox )
                 showMenu->Check( wxID_SHOWSQLTOOLBOX, true );
         }
@@ -560,7 +560,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             evt.SetEventObject( erdField );
         else
             evt.SetEventObject( erdTable );
-        if( rc == wxID_SHOWSQLTOOLBOX || rc == wxID_VIEWSHOWCOMMENTS )
+        if( rc == wxID_SHOWSQLTOOLBOX || rc == wxID_SHOWCOMMENTS )
             GetEventHandler()->ProcessEvent( evt );
         else
             m_view->ProcessEvent( evt );
@@ -747,25 +747,9 @@ void DatabaseCanvas::OnShowSQLBox(wxCommandEvent &WXUNUSED(event))
     ((DrawingView *) m_view)->HideShowSQLBox( m_showToolBox );
 }
 
-void DatabaseCanvas::OnShowComments(wxCommandEvent &WXUNUSED(event))
+void DatabaseCanvas::OnShowComments(wxCommandEvent &event)
 {
-    ShapeList list;
-    m_showComments = !m_showComments;
-    m_pManager.GetShapes( CLASSINFO( MyErdTable ), list );
-    for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
-    {
-        MyErdTable *shape = wxDynamicCast( (*it), MyErdTable );
-        if( m_showComments )
-        {
-            shape->DisplayComments( true );
-        }
-        else
-        {
-            shape->DisplayComments( false );
-        }
-        shape->UpdateTable();
-    }
-    Refresh();
+    ShowHideTablePart( 4, event.IsChecked() );
 }
 
 void DatabaseCanvas::CreateFKConstraint(const DatabaseTable *fkTable, const std::vector<FKField *> &foreignKeyField)
@@ -1057,21 +1041,32 @@ void DatabaseCanvas::AddQuickQueryFields(const wxString &tbl, std::vector<TableF
     Refresh();
 }
 
-void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &WXUNUSED(event))
+void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &event)
+{
+    ShowHideTablePart( 1, event.IsChecked() );
+}
+
+void DatabaseCanvas::ShowHideTablePart(int part, bool show)
 {
     ShapeList list;
-    m_showDataTypes = !m_showDataTypes;
     m_pManager.GetShapes( CLASSINFO( MyErdTable ), list );
     for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
     {
         MyErdTable *shape = wxDynamicCast( (*it), MyErdTable );
-        if( m_showDataTypes )
+        switch( part )
         {
-            shape->DisplayTypes( true );
-        }
-        else
-        {
-            shape->DisplayTypes( false );
+            case 1:
+                if( show )
+                    shape->DisplayTypes( true );
+                else
+                    shape->DisplayTypes( false );
+                break;
+            case 4:
+                if( show )
+                    shape->DisplayComments( true );
+                else
+                    shape->DisplayComments( false );
+                break;
         }
         shape->UpdateTable();
     }

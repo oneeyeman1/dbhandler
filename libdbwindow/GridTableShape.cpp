@@ -11,6 +11,7 @@
 GridTableShape::GridTableShape(ViewType type) : wxSFGridShape()
 {
     m_type = type;
+    m_showdatatypes = m_showcomments = true;
 }
 
 GridTableShape::~GridTableShape(void)
@@ -33,7 +34,12 @@ bool GridTableShape::InsertToTableGrid(wxSFShapeBase *shape)
     else
     {
         if( wxDynamicCast( shape, CommentFieldShape ) )
-            col = 2;
+        {
+            if( m_showdatatypes )
+                col = 2;
+            else
+                col = 1;
+        }
         else if( wxDynamicCast( shape, FieldShape ) )
             col = 0;
 		else
