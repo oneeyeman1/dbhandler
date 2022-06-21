@@ -100,6 +100,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         m_pGrid->Activate( true );
         SF_ADD_COMPONENT( m_pGrid, wxT( "main_grid" ) );
     }
+    MarkSerializableDataMembers();
 }
 
 MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape()
@@ -188,10 +189,17 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         m_pGrid->Activate( false );
         SF_ADD_COMPONENT( m_pGrid, wxT( "main_grid" ) );
     }
+    MarkSerializableDataMembers();
 }
 
 MyErdTable::~MyErdTable()
 {
+}
+
+void MyErdTable::MarkSerializableDataMembers()
+{
+    XS_SERIALIZE_BOOL( m_displayTypes, wxT( "display_types" ) );
+    XS_SERIALIZE_BOOL( m_displayComments, wxT( "display_comments" ) );
 }
 
 void MyErdTable::UpdateTable()

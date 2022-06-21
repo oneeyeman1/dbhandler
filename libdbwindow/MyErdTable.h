@@ -27,6 +27,7 @@ protected:
     virtual void DrawNormal(wxDC &dc);
     virtual void DrawSelected(wxDC& dc);
 private:
+    void MarkSerializableDataMembers();
     ViewType m_type;
     HeaderGrid *m_header;
     wxSFTextShape *m_pLabel;
