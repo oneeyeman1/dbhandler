@@ -80,9 +80,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent
 //    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_DROPOBJECT );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnCloseTable, this, wxID_TABLECLOSE );
-    Bind( wxEVT_MENU, &DatabaseCanvas::OnShowDataTypes, this, wxID_SHOWDATATYPES );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnShowSQLBox, this, wxID_SHOWSQLTOOLBOX );
-    Bind( wxEVT_MENU, &DatabaseCanvas::OnShowComments, this, wxID_SHOWCOMMENTS );
 }
 
 DatabaseCanvas::~DatabaseCanvas()
@@ -551,7 +549,24 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         }
     }
     int rc = GetPopupMenuSelectionFromUser( mnu, pt );
-    if( rc == wxID_NONE && erdField )
+    switch( rc )
+    {
+        case wxID_NONE:
+            if( erdField )
+            {
+                erdField->Select( false );
+                erdTable->GetFieldGrid()->Refresh();
+                erdTable->Refresh();
+            }
+            break;
+        case wxID_SHOWCOMMENTS:
+            ShowHideTablePart( 4, !m_showComments );
+            break;
+        case wxID_SHOWDATATYPES:
+            ShowHideTablePart( 1, !m_showDataTypes );
+            break;
+    }
+/*    if( rc == wxID_NONE && erdField )
     {
 //        if( field )
         {
@@ -577,7 +592,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             GetEventHandler()->ProcessEvent( evt );
         else
             m_view->ProcessEvent( evt );
-    }
+    }*/
 }
 
 void DatabaseCanvas::OnMouseMove(wxMouseEvent &event)
@@ -758,11 +773,6 @@ void DatabaseCanvas::OnShowSQLBox(wxCommandEvent &WXUNUSED(event))
 {
     m_showToolBox = !m_showToolBox;
     ((DrawingView *) m_view)->HideShowSQLBox( m_showToolBox );
-}
-
-void DatabaseCanvas::OnShowComments(wxCommandEvent &event)
-{
-    ShowHideTablePart( 4, event.IsChecked() );
 }
 
 void DatabaseCanvas::CreateFKConstraint(const DatabaseTable *fkTable, const std::vector<FKField *> &foreignKeyField)
@@ -1054,11 +1064,6 @@ void DatabaseCanvas::AddQuickQueryFields(const wxString &tbl, std::vector<TableF
     Refresh();
 }
 
-void DatabaseCanvas::OnShowDataTypes(wxCommandEvent &event)
-{
-    ShowHideTablePart( 1, event.IsChecked() );
-}
-
 void DatabaseCanvas::ShowHideTablePart(int part, bool show)
 {
     ShapeList list;
@@ -1074,6 +1079,7 @@ void DatabaseCanvas::ShowHideTablePart(int part, bool show)
                     shape->DisplayTypes( true );
                 else
                     shape->DisplayTypes( false );
+                dynamic_cast<DrawingView *>( m_view )->ChangeTableTypeMMenu();
                 break;
             case 4:
                 m_showComments = !m_showComments;
@@ -1081,6 +1087,7 @@ void DatabaseCanvas::ShowHideTablePart(int part, bool show)
                     shape->DisplayComments( true );
                 else
                     shape->DisplayComments( false );
+                dynamic_cast<DrawingView *>( m_view )->ChangeTableCommentsMenu();
                 break;
         }
         shape->UpdateTable();

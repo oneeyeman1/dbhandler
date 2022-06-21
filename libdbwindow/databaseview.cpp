@@ -2025,12 +2025,18 @@ void DrawingView::OnGotoLine(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnShowDataTypes(wxCommandEvent &event)
 {
-    m_canvas->GetEventHandler()->ProcessEvent( event );
+    m_canvas->ShowHideTablePart( 1, event.IsChecked() );
+    auto item = m_frame->GetMenuBar()->FindItem( wxID_SHOWDATATYPES );
+    item->Toggle();
+    ChangeTableTypeMMenu();
 }
 
 void DrawingView::OnShowComments(wxCommandEvent &event)
 {
-    m_canvas->GetEventHandler()->ProcessEvent( event );
+    m_canvas->ShowHideTablePart( 4, event.IsChecked() );
+    auto item = m_frame->GetMenuBar()->FindItem( wxID_SHOWCOMMENTS );
+    item->Toggle();
+    ChangeTableCommentsMenu();
 }
 
 void DrawingView::PopuateQueryCanvas()
@@ -2261,4 +2267,16 @@ void DrawingView::DropTableFromQeury(const wxString &name)
             GetDocument()->DeleteSortedTable( name, replace );
         }
     }
+}
+
+void DrawingView::ChangeTableTypeMMenu()
+{
+    auto showTypes = m_frame->GetMenuBar()->FindItem( wxID_SHOWDATATYPES );
+    showTypes->Check( !showTypes->IsChecked() );
+}
+
+void DrawingView::ChangeTableCommentsMenu()
+{
+    auto showComments = m_frame->GetMenuBar()->FindItem( wxID_SHOWCOMMENTS );
+    showComments->Check( !showComments->IsChecked() );
 }

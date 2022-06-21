@@ -41,6 +41,8 @@ public:
     void HideShowSQLBox(bool show);
     void SetPaintersMap(std::map<wxString, wxDynamicLibrary *> &painters);
     void ChangeFontEement();
+    void ChangeTableTypeMMenu();
+    void ChangeTableCommentsMenu();
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
