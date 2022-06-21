@@ -80,7 +80,6 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent
 //    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_DROPOBJECT );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnCloseTable, this, wxID_TABLECLOSE );
-    Bind( wxEVT_MENU, &DatabaseCanvas::OnShowSQLBox, this, wxID_SHOWSQLTOOLBOX );
 }
 
 DatabaseCanvas::~DatabaseCanvas()
@@ -565,6 +564,10 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         case wxID_SHOWDATATYPES:
             ShowHideTablePart( 1, !m_showDataTypes );
             break;
+        case wxID_SHOWSQLTOOLBOX:
+            dynamic_cast<DrawingView *>( m_view )->ShowHideSQLToolbox( !m_showToolBox );
+            m_showToolBox = !m_showToolBox;
+            break;
     }
 /*    if( rc == wxID_NONE && erdField )
     {
@@ -767,12 +770,6 @@ void DatabaseCanvas::OnDropTable(wxCommandEvent &event)
         }
     }
     Refresh();
-}
-
-void DatabaseCanvas::OnShowSQLBox(wxCommandEvent &WXUNUSED(event))
-{
-    m_showToolBox = !m_showToolBox;
-    ((DrawingView *) m_view)->HideShowSQLBox( m_showToolBox );
 }
 
 void DatabaseCanvas::CreateFKConstraint(const DatabaseTable *fkTable, const std::vector<FKField *> &foreignKeyField)
@@ -1130,4 +1127,9 @@ void DatabaseCanvas::OnCloseTable(wxCommandEvent &WXUNUSED(event))
         m_pManager.RemoveShape( m_selectedShape );
         view->DropTableFromQeury( tbl );
     }
+}
+
+void DatabaseCanvas::CheckSQLToolbox()
+{
+    m_showToolBox = !m_showToolBox;
 }

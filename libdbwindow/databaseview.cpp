@@ -1880,6 +1880,31 @@ void DrawingView::OnShowSQLBox (wxCommandEvent &event)
     HideShowSQLBox( event.IsChecked() );
 }
 
+void DrawingView::OnShowDataTypes(wxCommandEvent &event)
+{
+    m_canvas->ShowHideTablePart( 1, event.IsChecked() );
+    auto item = m_frame->GetMenuBar()->FindItem( wxID_SHOWDATATYPES );
+    item->Toggle();
+    ChangeTableTypeMMenu();
+}
+
+void DrawingView::OnShowComments(wxCommandEvent &event)
+{
+    m_canvas->ShowHideTablePart( 4, event.IsChecked() );
+    auto item = m_frame->GetMenuBar()->FindItem( wxID_SHOWCOMMENTS );
+    item->Toggle();
+    ChangeTableCommentsMenu();
+}
+
+void DrawingView::ShowHideSQLToolbox(bool show)
+{
+    m_queryBook->Show( show );
+    m_frame->Layout();
+    auto item = m_frame->GetMenuBar()->FindItem( wxID_SHOWSQLTOOLBOX );
+    item->Toggle();
+    m_canvas->CheckSQLToolbox();
+}
+
 void DrawingView::OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event)
 {
     if( GetDocument()->GetQueryFields().size() > 0 )
@@ -2021,22 +2046,6 @@ void DrawingView::OnGotoLine(wxCommandEvent &WXUNUSED(event))
         if( res == wxID_OK && lineNo <= m_edit->GetLineCount() )
             m_edit->GotoLine( lineNo );
     }
-}
-
-void DrawingView::OnShowDataTypes(wxCommandEvent &event)
-{
-    m_canvas->ShowHideTablePart( 1, event.IsChecked() );
-    auto item = m_frame->GetMenuBar()->FindItem( wxID_SHOWDATATYPES );
-    item->Toggle();
-    ChangeTableTypeMMenu();
-}
-
-void DrawingView::OnShowComments(wxCommandEvent &event)
-{
-    m_canvas->ShowHideTablePart( 4, event.IsChecked() );
-    auto item = m_frame->GetMenuBar()->FindItem( wxID_SHOWCOMMENTS );
-    item->Toggle();
-    ChangeTableCommentsMenu();
 }
 
 void DrawingView::PopuateQueryCanvas()

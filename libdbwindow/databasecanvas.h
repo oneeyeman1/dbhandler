@@ -17,11 +17,11 @@ public:
     virtual void OnMouseMove(wxMouseEvent &event) wxOVERRIDE;
     void OnCloseTable(wxCommandEvent &event);
     void OnDropTable(wxCommandEvent &event);
-    void OnShowSQLBox(wxCommandEvent &event);
     inline wxSFDiagramManager &GetDiagramManager() { return m_pManager; }
     virtual void OnDraw(wxDC& dc) wxOVERRIDE;
     void AddQuickQueryFields(const wxString &tbl, std::vector<TableField *> &quickSelectFields, bool quickSelect);
     void ShowHideTablePart(int part, bool show);
+    void CheckSQLToolbox();
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:
