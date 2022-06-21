@@ -43,7 +43,6 @@ public:
     void ChangeFontEement();
     void ChangeTableTypeMMenu();
     void ChangeTableCommentsMenu();
-    void ShowHideSQLToolbox(bool show);
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;

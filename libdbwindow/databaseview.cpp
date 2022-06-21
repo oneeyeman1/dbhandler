@@ -1244,6 +1244,9 @@ void DrawingView::HideShowSQLBox(bool show)
     m_queryBook->Show( show );
     m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, show );
     m_frame->Layout();
+    auto item = m_frame->GetMenuBar()->FindItem( wxID_SHOWSQLTOOLBOX );
+    item->Check( show );
+    m_canvas->CheckSQLToolbox();
 }
 
 void DrawingView::OnDistinct(wxCommandEvent &event)
@@ -1894,15 +1897,6 @@ void DrawingView::OnShowComments(wxCommandEvent &event)
     auto item = m_frame->GetMenuBar()->FindItem( wxID_SHOWCOMMENTS );
     item->Toggle();
     ChangeTableCommentsMenu();
-}
-
-void DrawingView::ShowHideSQLToolbox(bool show)
-{
-    m_queryBook->Show( show );
-    m_frame->Layout();
-    auto item = m_frame->GetMenuBar()->FindItem( wxID_SHOWSQLTOOLBOX );
-    item->Toggle();
-    m_canvas->CheckSQLToolbox();
 }
 
 void DrawingView::OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event)

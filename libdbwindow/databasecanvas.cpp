@@ -565,8 +565,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             ShowHideTablePart( 1, !m_showDataTypes );
             break;
         case wxID_SHOWSQLTOOLBOX:
-            dynamic_cast<DrawingView *>( m_view )->ShowHideSQLToolbox( !m_showToolBox );
-            m_showToolBox = !m_showToolBox;
+            dynamic_cast<DrawingView *>( m_view )->HideShowSQLBox( !m_showToolBox );
             break;
     }
 /*    if( rc == wxID_NONE && erdField )
