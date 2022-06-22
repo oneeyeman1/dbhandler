@@ -796,18 +796,30 @@ void DrawingView::SelectTable()
 
 void DrawingView::OnSetProperties(wxCommandEvent &event)
 {
+    ShapeList selections;
     std::vector<std::wstring> errors;
     int type = 0;
     DatabaseTable *dbTable = nullptr;
     Divider *divider = nullptr;
     DesignLabel *label = nullptr;
+    MyErdTable *erdTable = NULL;
+    ConstraintSign *sign = NULL;
     TableField *field = NULL;
     wxString command = "";
     bool logOnly = false;
     wxSFRectShape *shape = wxDynamicCast( event.GetEventObject(), wxSFRectShape );
+    if( !shape )
+    {
+        m_canvas->GetAllSelectedShapes( selections );
+        bool found = false;
+        for( ShapeList::iterator it = selections.begin(); it != selections.end() && !found; ++it )
+        {
+            shape = wxDynamicCast( (*it), wxSFRectShape );
+            if( shape )
+                found = true;
+        }
+    }
     wxString tableName, schemaName, ownerName;
-    MyErdTable *erdTable = NULL;
-    ConstraintSign *sign = NULL;
     if( event.GetId() == wxID_PROPERTIES )
     {
         if( !shape )

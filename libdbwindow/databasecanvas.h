@@ -22,6 +22,7 @@ public:
     void AddQuickQueryFields(const wxString &tbl, std::vector<TableField *> &quickSelectFields, bool quickSelect);
     void ShowHideTablePart(int part, bool show);
     void CheckSQLToolbox();
+    void GetAllSelectedShapes(ShapeList &shapes);
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:

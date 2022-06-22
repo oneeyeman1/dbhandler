@@ -1135,3 +1135,8 @@ void DatabaseCanvas::CheckSQLToolbox()
 {
     m_showToolBox = !m_showToolBox;
 }
+
+void DatabaseCanvas::GetAllSelectedShapes(ShapeList &shapes)
+{
+    GetSelectedShapes( shapes );
+}
