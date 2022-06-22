@@ -213,11 +213,40 @@ void MyErdTable::UpdateTable()
     wxSFDiagramManager *manager = GetShapeManager();
     if( manager )
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
+    m_pLabel = new wxSFTextShape();
+    if( m_displayComments )
+    {
+        m_comment = new CommentTableShape();
+        m_comment->SetId( 1001 );
+    }
+    if( m_header->InsertToGrid( 0, 0, m_pLabel ) )
+    {
+        m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
+        m_pLabel->GetFont().SetPointSize( 8 );
+        m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
+        m_pLabel->SetText( m_table->GetTableName() );
+        m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+        m_pLabel->Activate( false );
+        //            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
+    }
+    if( m_displayComments && m_header->InsertToGrid( 0, 1, m_comment ) )
+    {
+        m_comment->SetVAlign( wxSFShapeBase::valignTOP );
+        m_comment->SetHAlign( wxSFShapeBase::halignLEFT );
+        m_comment->GetFont().SetPointSize( 8 );
+        m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
+        m_comment->SetText( m_table->GetTableProperties().m_comment );
+        m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+        m_comment->Activate( false );
+        //            SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
+    }
     for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
         AddColumn( (*it), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : (*it)->IsForeignKey() ? Constraint::foreignKey : Constraint::noKey );
         i += m_columns;
     }
+    if( m_displayComments )
+        m_header->Update();
     m_pGrid->Update();
     Update();
 }
@@ -230,10 +259,10 @@ void MyErdTable::SetTableComment(const wxString &comment)
 
 void MyErdTable::ClearGrid()
 {
-/*    m_header->RemoveChildren();
+    m_header->RemoveChildren();
     m_header->ClearGrid();
     m_header->SetDimensions( 1, m_headerColumns );
-    m_header->SetCellSpace( 1 );*/
+    m_header->SetCellSpace( 1 );
     m_pGrid->RemoveChildren();
     // re-initialize grid control
     m_pGrid->ClearGrid();
