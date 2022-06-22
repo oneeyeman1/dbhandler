@@ -30,6 +30,7 @@ public:
     wxTextCtrl *GetFieldTextCtrl();
     wxTextCtrl *GetTextLogger() const;
     void GetTablesForView(Database *db, bool init);
+    void SelectTable();
     void SetViewType(ViewType type);
     ViewType GetViewType();
     SortGroupByPage *GetSortPage();

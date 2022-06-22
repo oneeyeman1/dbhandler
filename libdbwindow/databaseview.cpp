@@ -786,6 +786,11 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
 {
+    SelectTable();
+}
+
+void DrawingView::SelectTable()
+{
     GetTablesForView( GetDocument()->GetDatabase(), false );
 }
 
