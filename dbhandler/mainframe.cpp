@@ -204,9 +204,9 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[4].push_back( wxBITMAP_PNG( database_64x64 ) );
     toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromBitmaps( bitmaps[0] ) );
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[1] ) );
-    toolBar->AddTool( wxID_DATABASE, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
+    toolBar->AddTool( wxID_DATABASEWINDOW, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
     toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromBitmaps( bitmaps[3] ) );
-    toolBar->AddTool( wxID_DATABASEWINDOW, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
+    toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
     toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxBitmapBundle(), wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );
     toolBar->SetName( "PowerBar" );
     toolBar->Realize();
