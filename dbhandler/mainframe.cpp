@@ -146,14 +146,14 @@ void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
     if( m_db )
     {
 #if defined _DEBUG
-        printf( "Starting MainFrame::OnClose\n\r" );
+        wxLogDebug( "Starting MainFrame::OnClose\n\r" );
 #endif
         {
             std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
             if( m_handler )
             {
 #if defined _DEBUG
-                printf( "Deleting the thread...\n\r" );
+                wxLogDebug( "Deleting the thread...\n\r" );
 #endif
                 if( m_handler->Delete() != wxTHREAD_NO_ERROR )
                 {
@@ -163,7 +163,7 @@ void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
         while( 1 )
         {
 #if defined _DEBUG
-            printf( "Looping for thread deletionn\n\r" );
+            wxLogDebug( "Looping for thread deletionn\n\r" );
 #endif
             {
                 std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
@@ -173,7 +173,7 @@ void MainFrame::OnClose(wxCloseEvent &WXUNUSED(event))
             wxThread::This()->Sleep( 1 );
         }
 #if defined _DEBUG
-        printf( "Thread destroyed. Deleting application....\n\r" );
+        wxLogDebug( "Thread destroyed. Deleting application....\n\r" );
 #endif
     }
     Destroy();

@@ -24,7 +24,7 @@ NewTableHandler::NewTableHandler(MainFrame *frame, Database *db)
 NewTableHandler::~NewTableHandler(void)
 {
 #if defined _DEBUG
-    printf( "Starting thread destructor...\n\r" );
+    wxLogDebug( "Starting thread destructor...\n\r" );
 #endif
 #if defined __WXMSW__ && _MSC_VER < 1900
     wxCriticalSectionLocker enter( pCs->m_threadCS );
@@ -33,7 +33,7 @@ NewTableHandler::~NewTableHandler(void)
 #endif
     pCs->m_handler = NULL;
 #if defined _DEBUG
-    printf( "Thread deleted\n\r" );
+    wxLogDebug( "Thread deleted\n\r" );
 #endif
 }
 
