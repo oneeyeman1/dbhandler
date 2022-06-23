@@ -8,6 +8,17 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
+// For compilers that support precompilation, includes "wx/wx.h".
+#include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
+
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
+#endif
+
 
 #include "datasource.h"
 
@@ -20,23 +31,23 @@ DataSorces::DataSorces(wxWindow* parent, wxWindowID id, const wxString& title, c
     wxDialog(parent, id, title, pos, size, style)
 {
     // begin wxGlade: DataSorces::DataSorces
-    panel_1 = new wxPanel(this, wxID_ANY);
-    m_label = new wxStaticText(panel_1, wxID_ANY, _("Select Data Source"));
-    m_OK = new wxButton(panel_1, wxID_OK, wxEmptyString);
-    const wxString m_dataSources_choices[] = {};
-    m_dataSources = new wxComboBox(panel_1, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0, m_dataSources_choices, wxCB_DROPDOWN);
-    m_cancel = new wxButton(panel_1, wxID_CANCEL, wxEmptyString);
+    m_panel = new wxPanel( this, wxID_ANY );
+    m_label = new wxStaticText( m_panel, wxID_ANY, _( "Select Data Source" ) );
+    m_OK = new wxButton( m_panel, wxID_OK, wxEmptyString );
+    m_dataSources = new wxComboBox( m_panel, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_DROPDOWN );
+    m_cancel = new wxButton( m_panel, wxID_CANCEL, wxEmptyString );
 
     set_properties();
     do_layout();
     // end wxGlade
+    m_OK->Bind( wxEVT_BUTTON, &DataSorces::OnOK, this );
 }
 
 
 void DataSorces::set_properties()
 {
     // begin wxGlade: DataSorces::set_properties
-    SetTitle(_("dialog_1"));
+    SetTitle( _( "dialog_1" ) );
     m_OK->SetDefault();
     // end wxGlade
 }
@@ -45,25 +56,30 @@ void DataSorces::set_properties()
 void DataSorces::do_layout()
 {
     // begin wxGlade: DataSorces::do_layout
-    wxBoxSizer* sizer_1 = new wxBoxSizer(wxHORIZONTAL);
-    wxBoxSizer* sizer_2 = new wxBoxSizer(wxHORIZONTAL);
-    wxBoxSizer* sizer_3 = new wxBoxSizer(wxVERTICAL);
-    wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer(2, 2, 5, 5);
-    sizer_2->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_3->Add(5, 5, 0, wxEXPAND, 0);
-    grid_sizer_1->Add(m_label, 0, wxALIGN_CENTER, 0);
-    grid_sizer_1->Add(m_OK, 0, wxEXPAND, 0);
-    grid_sizer_1->Add(m_dataSources, 0, 0, 0);
-    grid_sizer_1->Add(m_cancel, 0, 0, 0);
-    sizer_3->Add(grid_sizer_1, 0, 0, 0);
-    sizer_3->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_2->Add(sizer_3, 1, 0, 0);
-    sizer_2->Add(5, 5, 0, wxEXPAND, 0);
-    panel_1->SetSizer(sizer_2);
-    sizer_1->Add(panel_1, 1, 0, 0);
-    SetSizer(sizer_1);
-    sizer_1->Fit(this);
+    wxBoxSizer* sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* sizer_2 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* sizer_3 = new wxBoxSizer( wxVERTICAL );
+    wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer( 2, 2, 5, 5 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+    grid_sizer_1->Add( m_label, 0, wxALIGN_CENTER, 0 );
+    grid_sizer_1->Add( m_OK, 0, wxEXPAND, 0 );
+    grid_sizer_1->Add( m_dataSources, 0, 0, 0 );
+    grid_sizer_1->Add( m_cancel, 0, 0, 0 );
+    sizer_3->Add( grid_sizer_1, 0, 0, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_2->Add( sizer_3, 1, 0, 0 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_panel->SetSizer( sizer_2 );
+    sizer_1->Add( m_panel, 1, 0, 0 );
+    SetSizer( sizer_1 );
+    sizer_1->Fit( this );
     Layout();
     // end wxGlade
 }
 
+void DataSorces::OnOK(wxCommandEvent &event)
+{
+    m_dataSource = m_dataSources->GetValue();
+    EndModal( wxID_OK );
+}

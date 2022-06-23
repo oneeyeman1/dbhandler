@@ -12,15 +12,6 @@
 #ifndef DATASOURCE_H
 #define DATASOURCE_H
 
-#include <wx/wx.h>
-#include <wx/image.h>
-#include <wx/intl.h>
-
-#ifndef APP_CATALOG
-#define APP_CATALOG "app"  // replace with the appropriate catalog name
-#endif
-
-
 // begin wxGlade: ::dependencies
 // end wxGlade
 
@@ -28,26 +19,29 @@
 // end wxGlade
 
 
-class DataSorces: public wxDialog {
+class DataSorces: public wxDialog
+{
 public:
     // begin wxGlade: DataSorces::ids
     // end wxGlade
 
     DataSorces(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
-
+    wxString &GetDataSource() { return m_dataSource; }
 private:
     // begin wxGlade: DataSorces::methods
     void set_properties();
     void do_layout();
     // end wxGlade
+    wxString m_dataSource;
 
 protected:
+    void OnOK(wxCommandEvent &event);
     // begin wxGlade: DataSorces::attributes
     wxStaticText* m_label;
     wxButton* m_OK;
     wxComboBox* m_dataSources;
     wxButton* m_cancel;
-    wxPanel* panel_1;
+    wxPanel* m_panel;
     // end wxGlade
 }; // wxGlade: end class
 

@@ -503,6 +503,7 @@
     <ClCompile Include="bitmappanel.cpp" />
     <ClCompile Include="createindex.cpp" />
     <ClCompile Include="databasetype.cpp" />
+    <ClCompile Include="datasource.cpp" />
     <ClCompile Include="detachdb.cpp" />
     <ClCompile Include="dialogs.cpp" />
     <ClCompile Include="foreignkey.cpp" />
@@ -524,6 +525,7 @@
     <ClInclude Include="bitmappanel.h" />
     <ClInclude Include="createindex.h" />
     <ClInclude Include="databasetype.h" />
+    <ClInclude Include="datasource.h" />
     <ClInclude Include="detachdb.h" />
     <ClInclude Include="dialogs.h" />
     <ClInclude Include="foreignkey.h" />

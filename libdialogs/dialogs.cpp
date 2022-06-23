@@ -76,6 +76,7 @@
 #include "gotoline.h"
 #include "attachdb.h"
 #include "detachdb.h"
+#include "datasource.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -395,4 +396,16 @@ extern "C" WXEXPORT int DetachDatabase(wxWindow *parent)
     DetachDB dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild() );
     result = dlg.ShowModal();
     return result;
+}
+
+extern "C" WXEXPORT int GetDataSource(wxWindow *parent, wxString &dataSource)
+{
+    int res;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    DataSorces dlg( parent, wxID_ANY, "" );
+    if( ( res = dlg.ShowModal() ) == wxID_OK )
+        dataSource = dlg.GetDataSource();
+    return res;
 }

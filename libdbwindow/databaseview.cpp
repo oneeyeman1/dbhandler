@@ -122,6 +122,7 @@ typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const s
 typedef int (*RETRIEVEARGUMENTS)(wxWindow *, std::vector<QueryArguments> &arguments, const wxString &, const wxString &);
 typedef int (*GOTOLINE)(wxWindow *, int &);
 typedef void (*DATAEDITWINDOW)(wxWindow *parent, wxDocManager *docManager, Database *db, const wxString &);
+typedef int (*GETDATASOURCE)(wxWindow *parent, wxString &sorce);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
@@ -179,6 +180,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_GOTOLINE, DrawingView::OnGotoLine)
     EVT_MENU(wxID_CONVERTTOGRAPHICS, DrawingView::OnConvertToGraphics)
     EVT_MENU(wxID_TABLEEDITDATA, DrawingView::OnTableDataEdit)
+    EVT_MENU(wxID_EXPORTSYNTAX, DrawingView::OnExportSyntax)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -2299,4 +2301,22 @@ void DrawingView::ChangeTableCommentsMenu()
 {
     auto showComments = m_frame->GetMenuBar()->FindItem( wxID_SHOWCOMMENTS );
     showComments->Check( !showComments->IsChecked() );
+}
+
+void DrawingView::OnExportSyntax(wxCommandEvent &event)
+{
+    wxString source;
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        GETDATASOURCE func = (GETDATASOURCE) lib.GetSymbol( "GetDataSource" );
+        int res = func( m_frame, source );
+    }
 }
