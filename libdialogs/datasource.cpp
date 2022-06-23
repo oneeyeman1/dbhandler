@@ -47,7 +47,7 @@ DataSorces::DataSorces(wxWindow* parent, wxWindowID id, const wxString& title, c
 void DataSorces::set_properties()
 {
     // begin wxGlade: DataSorces::set_properties
-    SetTitle( _( "dialog_1" ) );
+    SetTitle( _( "Data Sources" ) );
     m_OK->SetDefault();
     // end wxGlade
 }
