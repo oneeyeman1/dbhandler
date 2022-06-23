@@ -2120,6 +2120,7 @@ void DrawingView::CreateDBMenu()
     menuObject->AppendSubMenu( menuNewObject, _( "New" ), _( "New Object" ) );
     menuObject->Append( wxID_DROPOBJECT, _( "Drop" ), _( "Drop database object" ) );
     menuObject->AppendSeparator();
+    menuObject->Append( wxID_EXPORTSYNTAX, _( "Export Syntax to Log..." ), _( "Export" ) );
     menuObject->Append( wxID_PROPERTIES, _( "Properties..." ), _( "Properties" ) );
     mbar->Insert( 1, menuObject, _( "&Object" ) );
     auto menuDesign = new wxMenu();
