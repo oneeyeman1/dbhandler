@@ -58,6 +58,7 @@ private:
 #define wxID_OBJECTNEWVIEW        105
 #define wxID_OBJECTNEWFF          106
 #define wxID_FIELDDEFINITION      107
+#define wxID_EXPORTSYNTAX         108
 #define wxID_OBJECTNEWPK          109
 #define wxID_STARTLOG             110
 #define wxID_STOPLOG              111
