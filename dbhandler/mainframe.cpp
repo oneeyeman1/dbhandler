@@ -120,7 +120,11 @@ MainFrame::~MainFrame()
         temp1 = m_db->GetTableVector().m_dbName;
         config->Write( "DatabaseName", temp1 );
         if( m_db->GetTableVector().m_type == "SQLite" )
+#ifdef __WXMSW__
             currentProfile = temp1.Mid( temp1.find_last_of( '\\' ) + 1 );
+#else
+            currentProfile = temp1.Mid( temp1.find_last_of( '\/' ) + 1 );
+#endif
         config->SetPath( "Profiles" );
         auto found = false;
         long counter;
