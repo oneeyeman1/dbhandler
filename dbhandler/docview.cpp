@@ -108,8 +108,8 @@ bool MyApp::OnInit()
     SetVendorName( "wxWidgets" );
     SetAppName( "dbhandler" );
     SetAppDisplayName( "DB Handler" );
-    wxConfigBase *config = wxConfigBase::Get( "DBManager" );
-    wxString path = config->GetPath();
+    auto config = wxConfigBase::Get( "DBManager" );
+    auto path = config->GetPath();
     config->SetPath( "CurrentDB" );
     m_dbName = config->Read( "DatabaseName", "" );
     m_dbEngine = config->Read( "Engine", "" );
