@@ -116,8 +116,27 @@ MainFrame::~MainFrame()
             wxString temp3( m_db->GetTableVector().GetPostgreLogFile() );
             config->Write( "Logfile", temp3 );
         }
+        wxString currentProfile;
         temp1 = m_db->GetTableVector().m_dbName;
         config->Write( "DatabaseName", temp1 );
+        if( m_db->GetTableVector().m_type == "SQLite" )
+            currentProfile = temp1.Mid( temp1.find_last_of( '\\' ) + 1 );
+        config->SetPath( "Profiles" );
+        auto found = false;
+        long counter;
+        wxString profile;
+        auto res = config->GetFirstEntry( profile, counter );
+        while( res && !found )
+        {
+            wxString prof;
+            config->Read( profile, prof );
+            if( prof == currentProfile )
+                found = true;
+            res = config->GetNextEntry( profile, counter );
+        }
+        if( !found )
+            config->Write( wxString::Format( "Profile%d", counter ), currentProfile );
+        config->SetPath( path );
         std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
         result = m_db->Disconnect( errorMsg );
     }
