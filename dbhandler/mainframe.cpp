@@ -139,7 +139,7 @@ MainFrame::~MainFrame()
             res = config->GetNextEntry( profile, counter );
         }
         if( !found )
-            config->Write( wxString::Format( "Profile%d", counter ), currentProfile );
+            config->Write( wxString::Format( "Profile%ld", counter ), currentProfile );
         config->SetPath( path );
         std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
         result = m_db->Disconnect( errorMsg );
