@@ -125,6 +125,7 @@ MainFrame::~MainFrame()
 #else
             currentProfile = temp1.Mid( temp1.find_last_of( '/' ) + 1 );
 #endif
+        config->SetPath( path );
         config->SetPath( "Profiles" );
         auto found = false;
         long counter;
