@@ -19,7 +19,7 @@
 #include "wx/wx.h"
 #endif
 
-
+#include"wx/config.h"
 #include "datasource.h"
 
 // begin wxGlade: ::extracode
@@ -46,6 +46,20 @@ DataSorces::DataSorces(wxWindow* parent, wxWindowID id, const wxString& title, c
 
 void DataSorces::set_properties()
 {
+    long counter;
+    wxString profile;
+    auto config = wxConfigBase::Get( "DBManager" );
+    auto path = config->GetPath();
+    config->SetPath( "Profiles" );
+    auto res = config->GetFirstEntry( profile, counter );
+    while( res )
+    {
+        wxString prof;
+        config->Read( profile, prof );
+        m_dataSources->Append( prof );
+        res = config->GetNextEntry( profile, counter );
+    }
+    config->SetPath( path );
     // begin wxGlade: DataSorces::set_properties
     SetTitle( _( "Data Sources" ) );
     m_OK->SetDefault();
