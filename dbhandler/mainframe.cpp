@@ -123,7 +123,7 @@ MainFrame::~MainFrame()
 #ifdef __WXMSW__
             currentProfile = temp1.Mid( temp1.find_last_of( '\\' ) + 1 );
 #else
-            currentProfile = temp1.Mid( temp1.find_last_of( '\/' ) + 1 );
+            currentProfile = temp1.Mid( temp1.find_last_of( '/' ) + 1 );
 #endif
         config->SetPath( path );
         config->SetPath( "Profiles" );
@@ -140,7 +140,7 @@ MainFrame::~MainFrame()
             res = config->GetNextEntry( profile, counter );
         }
         if( !found )
-            config->Write( wxString::Format( "Profile%d", counter ), currentProfile );
+            config->Write( wxString::Format( "Profile%ld", counter ), currentProfile );
         config->SetPath( path );
         std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
         result = m_db->Disconnect( errorMsg );

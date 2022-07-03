@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E3132ECC28654B2A00AD669F /* datasource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3132ECA28654B2A00AD669F /* datasource.cpp */; };
+		E3132ECD28654B2A00AD669F /* datasource.h in Headers */ = {isa = PBXBuildFile; fileRef = E3132ECB28654B2A00AD669F /* datasource.h */; };
 		E32A5006223469AE00A57BD1 /* bitmappanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A5002223469AE00A57BD1 /* bitmappanel.cpp */; };
 		E32A5007223469AE00A57BD1 /* bitmappanel.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A5003223469AE00A57BD1 /* bitmappanel.h */; };
 		E32A5008223469AE00A57BD1 /* newquery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A5004223469AE00A57BD1 /* newquery.cpp */; };
@@ -56,6 +58,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E3132ECA28654B2A00AD669F /* datasource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = datasource.cpp; sourceTree = "<group>"; };
+		E3132ECB28654B2A00AD669F /* datasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = datasource.h; sourceTree = "<group>"; };
 		E32A5002223469AE00A57BD1 /* bitmappanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bitmappanel.cpp; sourceTree = "<group>"; };
 		E32A5003223469AE00A57BD1 /* bitmappanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitmappanel.h; sourceTree = "<group>"; };
 		E32A5004223469AE00A57BD1 /* newquery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = newquery.cpp; sourceTree = "<group>"; };
@@ -145,6 +149,8 @@
 		E3D139491D0D0CDE00A5A0F7 /* libdialogs */ = {
 			isa = PBXGroup;
 			children = (
+				E3132ECA28654B2A00AD669F /* datasource.cpp */,
+				E3132ECB28654B2A00AD669F /* datasource.h */,
 				E3B8E3E825487B7800346516 /* detachdb.cpp */,
 				E3B8E3E725487B7800346516 /* detachdb.h */,
 				E3607DCC23C4417E00267C14 /* gotoline.cpp */,
@@ -208,6 +214,7 @@
 				E3D139571D0D0D7100A5A0F7 /* selecttables.h in Headers */,
 				E32A5013223F1AE600A57BD1 /* queryoptions.h in Headers */,
 				E3B8E3E925487B7800346516 /* detachdb.h in Headers */,
+				E3132ECD28654B2A00AD669F /* datasource.h in Headers */,
 				E33E6F871EAD310A003A0B92 /* jointype.h in Headers */,
 				E33E6F851EAD310A003A0B92 /* getobjectname.h in Headers */,
 				E3D139551D0D0D7100A5A0F7 /* odbcconfigure.h in Headers */,
@@ -282,6 +289,7 @@
 				E3B8E3E5252F769600346516 /* attachdb.cpp in Sources */,
 				E33E6F381E46EE1C003A0B92 /* foreignkey.cpp in Sources */,
 				E33E6F841EAD310A003A0B92 /* getobjectname.cpp in Sources */,
+				E3132ECC28654B2A00AD669F /* datasource.cpp in Sources */,
 				E3E62CC91EF71830005BBB37 /* addcolumnsdialog.cpp in Sources */,
 				E3D139541D0D0D7100A5A0F7 /* odbcconfigure.cpp in Sources */,
 				E3E91D3C1DC678C900675CF8 /* createindex.cpp in Sources */,
