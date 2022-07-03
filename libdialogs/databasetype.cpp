@@ -62,6 +62,13 @@ DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxStri
 
 void DatabaseType::OnButtonUpdateUI(wxUpdateUIEvent &event)
 {
+    if( GetCurrentPage() == page1 )
+    {
+        if( page1->GetProfilesCtrl()->GetValue() == "" && page1->GetComboBoxTypes()->GetValue() != _( "ODBC" ) )
+            event.Enable( false );
+        else
+            event.Enable( true );
+    }
     if( GetCurrentPage() == page2 )
     {
         if( page2->GetFileCtrl()->GetFileName() == wxEmptyString )
@@ -270,23 +277,25 @@ wxTextCtrl *DatabaseType::GetUserControl() const
 
 DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
 {
-    wxSizer *main = new wxBoxSizer( wxHORIZONTAL );
-    wxSizer *sizer1 = new wxBoxSizer( wxVERTICAL );
+    auto main = new wxBoxSizer( wxHORIZONTAL );
+    auto sizer1 = new wxFlexGridSizer( 2, 2, 5, 5 );
     const wxString choices[] = { "SQLite", "ODBC", "MS SQL Server", "mySQL", "PostgreSQL", "Sybase", "Oracle" };
-    wxStaticText *label = new wxStaticText( this, wxID_ANY, _( "Please select the database type" ) );
+    auto label0 = new wxStaticText( this, wxID_ANY, _( "Profile" ) );
+    profile = new wxTextCtrl( this, wxID_ANY );
+    auto label = new wxStaticText( this, wxID_ANY, _( "Please select the database type" ) );
     m_types = new wxComboBox( this, wxID_ANY, "SQLite", wxDefaultPosition, wxDefaultSize, 7, choices, wxCB_READONLY );
     wxFont font = label->GetFont();
     font.MakeBold();
     label->SetFont( font );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer1->Add( label0, 0, wxEXPAND, 0 );
+    sizer1->Add( profile, 0, wxEXPAND, 0 );
     sizer1->Add( label, 0, wxEXPAND, 0 );
-    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( m_types, 0, wxEXPAND, 0 );
-    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     main->Add( sizer1, 0, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizerAndFit( main );
+    m_types->Bind( wxEVT_COMBOBOX, &DBType::OnComboSelecton, this );
 }
 
 wxWizardPage *DBType::GetPrev() const
@@ -323,6 +332,14 @@ wxWizardPage *DBType::GetNext() const
 wxComboBox *DBType::GetComboBoxTypes() const
 {
     return m_types;
+}
+
+void DBType::OnComboSelecton(wxCommandEvent &event)
+{
+    if( m_types->GetValue() == _( "ODBC" ) )
+        profile->Disable();
+    else
+        profile->Enable();
 }
 
 SQLiteConnect::SQLiteConnect(wxWizard *parent) : wxWizardPage( parent )

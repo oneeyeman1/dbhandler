@@ -10,7 +10,10 @@ public:
     virtual wxWizardPage *GetPrev() const;
     virtual wxWizardPage *GetNext() const;
     wxComboBox *GetComboBoxTypes() const;
+    wxTextCtrl *GetProfilesCtrl() const { return profile; }
 private:
+    void OnComboSelecton(wxCommandEvent &event);
+    wxTextCtrl *profile;
     wxComboBox *m_types;
 };
 
