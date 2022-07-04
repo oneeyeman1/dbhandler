@@ -38,7 +38,7 @@
 #include "database_postgres.h"
 #include "database_mysql.h"
 
-typedef int (*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, bool, const std::vector<std::wstring> &);
+typedef int (*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, bool, const std::vector<std::wstring> &, const std::vector<wxString> &);
 typedef int (*GETODBCCREDENTIALS)(wxWindow *, const wxString &, wxString &, wxString &);
 
 #ifdef __WXMSW__
@@ -99,7 +99,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine, wxString &connectStr, wxString &connectedUser)
+extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine, wxString &connectStr, wxString &connectedUser, const std::vector<wxString> &profiles)
 {
     std::vector<std::wstring> errorMsg, dsn;
     int result = wxID_OK;
@@ -131,7 +131,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
         if( connectStr == "" )
         {
             DBPROFILE func = (DBPROFILE) lib.GetSymbol( "DatabaseProfile" );
-            result = func( parent, _( "Select Database Profile" ), name, engine, connectedUser, ask, dsn );
+            result = func( parent, _( "Select Database Profile" ), name, engine, connectedUser, ask, dsn, profiles );
         }
         if( result != wxID_CANCEL )
         {

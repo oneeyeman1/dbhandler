@@ -13,6 +13,7 @@ public:
     wxTextCtrl *GetProfilesCtrl() const { return profile; }
 private:
     void OnComboSelecton(wxCommandEvent &event);
+    wxStaticText *label1;
     wxTextCtrl *profile;
     wxComboBox *m_types;
 };
@@ -117,7 +118,7 @@ public:
 class DatabaseType : public wxWizard
 {
 public:
-    DatabaseType(wxWindow *parent, const wxString &title, const wxString &name, const wxString &engine, const std::vector<std::wstring> &dsn);
+    DatabaseType(wxWindow *parent, const wxString &title, const wxString &name, const wxString &engine, const std::vector<std::wstring> &dsn, const std::vector<wxString> &profiles);
     wxWizardPage *GetFirstPage() const { return page1; }
     SQLiteConnect *GetSQLitePage() { return page2; }
     ODBCConnect *GetODBCPage() { return page3; }
@@ -131,6 +132,7 @@ public:
     wxTextCtrl *GetUserControl() const;
 protected:
     void OnPageChanged(wxWizardEvent &event);
+    void OnPageChanging(wxWizardEvent &event);
     void OnConnect(wxWizardEvent &event);
     void OnButtonUpdateUI(wxUpdateUIEvent &event);
 private:
@@ -142,6 +144,7 @@ private:
     wxWindow *button;
     wxString m_dbName, m_dbEngine, m_connStr;
     bool m_askForConnectParameter;
+    std::vector<wxString> m_profiles;
 };
 
 #endif

@@ -45,7 +45,7 @@
 #include "quit.xpm"
 */
 typedef void (*ODBCSETUP)(wxWindow *);
-typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &);
+typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, const std::vector<wxString> &);
 typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
@@ -81,6 +81,15 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     config->SetPath( "CurrentDB" );
     m_pgLogfile = config->Read( "Logfile", "" );
     config->SetPath( path );
+    config->SetPath( "Profiles" );
+    long counter;
+    wxString profile;
+    auto res = config->GetFirstEntry( profile, counter );
+    while( res )
+    {
+        m_profiles.push_back( config->Read( profile, "" ) );
+        res = config->GetNextEntry( profile, counter );
+    }
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );
@@ -270,7 +279,7 @@ void MainFrame::Connect()
         wxString engine = wxGetApp().GetDBEngine();
         wxString connectStr = wxGetApp().GetConnectString();
         wxString connectedUser = wxGetApp().GetConnectedUser();
-        db = func( this, name, engine, connectStr, connectedUser );
+        db = func( this, name, engine, connectStr, connectedUser, m_profiles );
         if( db && m_db )
         {
             {

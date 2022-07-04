@@ -145,13 +145,13 @@ extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
     dlg.ShowModal();
 }
 
-extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title, wxString &name, wxString &dbEngine, wxString &connectedUser, bool ask, const std::vector<std::wstring> &dsn, wxString &password)
+extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title, wxString &name, wxString &dbEngine, wxString &connectedUser, bool ask, const std::vector<std::wstring> &dsn, wxString &password, const std::vector<wxString> &&profiles)
 {
     int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    DatabaseType dlg( parent, title, name, dbEngine, dsn );
+    DatabaseType dlg( parent, title, name, dbEngine, dsn, profiles );
     bool result = dlg.RunWizard( dlg.GetFirstPage() );
     if( result )
     {
