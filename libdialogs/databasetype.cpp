@@ -28,8 +28,9 @@
 //typedef void (*CONNECTTODB)(const wxString &, const wxString &, void *&db, wxString &, WXHWND);
 typedef Database *(*CONNECTTODB)(const wxString &, const wxString &, Database *db, wxString &, WXWidget, bool);
 
-DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxString &name, const wxString &engine, const std::vector<std::wstring> &dsn) : wxWizard(parent, wxID_ANY, title, wxNullBitmap, wxDefaultPosition, wxWIZARD_EX_HELPBUTTON | wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX )
+DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxString &name, const wxString &engine, const std::vector<std::wstring> &dsn, const std::vector<wxString> &profiles) : wxWizard(parent, wxID_ANY, title, wxNullBitmap, wxDefaultPosition, wxWIZARD_EX_HELPBUTTON | wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX )
 {
+    m_profiles = profiles;
     button = FindWindowById( wxID_FORWARD );
     page1 = new DBType( this );
     page2 = new SQLiteConnect( this );
@@ -56,12 +57,20 @@ DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxStri
 
     }
     Bind( wxEVT_WIZARD_PAGE_CHANGED, &DatabaseType::OnPageChanged, this );
+    Bind( wxEVT_WIZARD_PAGE_CHANGING, &DatabaseType::OnPageChanging, this );
     Bind( wxEVT_WIZARD_FINISHED, &DatabaseType::OnConnect, this );
     button->Bind( wxEVT_UPDATE_UI, &DatabaseType::OnButtonUpdateUI, this );
 }
 
 void DatabaseType::OnButtonUpdateUI(wxUpdateUIEvent &event)
 {
+    if( GetCurrentPage() == page1 )
+    {
+        if( page1->GetProfilesCtrl()->GetValue() == "" && page1->GetComboBoxTypes()->GetValue() != _( "ODBC" ) )
+            event.Enable( false );
+        else
+            event.Enable( true );
+    }
     if( GetCurrentPage() == page2 )
     {
         if( page2->GetFileCtrl()->GetFileName() == wxEmptyString )
@@ -89,6 +98,18 @@ void DatabaseType::OnButtonUpdateUI(wxUpdateUIEvent &event)
             event.Enable( false );
         else
             event.Enable( true );
+    }
+}
+
+void DatabaseType::OnPageChanging(wxWizardEvent &event)
+{
+    if( event.GetPage() == page1 )
+    {
+        auto profile = page1->GetProfilesCtrl()->GetValue();
+        if( std::find(m_profiles.begin(), m_profiles.end(), profile) == m_profiles.end() )
+        {
+            event.Veto();
+        }
     }
 }
 
@@ -270,23 +291,28 @@ wxTextCtrl *DatabaseType::GetUserControl() const
 
 DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
 {
-    wxSizer *main = new wxBoxSizer( wxHORIZONTAL );
-    wxSizer *sizer1 = new wxBoxSizer( wxVERTICAL );
+    auto main = new wxBoxSizer( wxHORIZONTAL );
+    auto sizer1 = new wxFlexGridSizer( 3, 2, 5, 5 );
     const wxString choices[] = { "SQLite", "ODBC", "MS SQL Server", "mySQL", "PostgreSQL", "Sybase", "Oracle" };
-    wxStaticText *label = new wxStaticText( this, wxID_ANY, _( "Please select the database type" ) );
+    auto label0 = new wxStaticText( this, wxID_ANY, _( "Profile" ) );
+    profile = new wxTextCtrl( this, wxID_ANY );
+    auto label = new wxStaticText( this, wxID_ANY, _( "Please select the database type" ) );
     m_types = new wxComboBox( this, wxID_ANY, "SQLite", wxDefaultPosition, wxDefaultSize, 7, choices, wxCB_READONLY );
+    label1 = new wxStaticText( this, wxID_ANY, _( "This profile already exist!" ) );
     wxFont font = label->GetFont();
     font.MakeBold();
     label->SetFont( font );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer1->Add( label0, 0, wxEXPAND, 0 );
+    sizer1->Add( profile, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer1->Add( label1, 0, wxEXPAND, 0 );
     sizer1->Add( label, 0, wxEXPAND, 0 );
-    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( m_types, 0, wxEXPAND, 0 );
-    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     main->Add( sizer1, 0, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizerAndFit( main );
+    m_types->Bind( wxEVT_COMBOBOX, &DBType::OnComboSelecton, this );
 }
 
 wxWizardPage *DBType::GetPrev() const
@@ -323,6 +349,14 @@ wxWizardPage *DBType::GetNext() const
 wxComboBox *DBType::GetComboBoxTypes() const
 {
     return m_types;
+}
+
+void DBType::OnComboSelecton(wxCommandEvent &event)
+{
+    if( m_types->GetValue() == _( "ODBC" ) )
+        profile->Disable();
+    else
+        profile->Enable();
 }
 
 SQLiteConnect::SQLiteConnect(wxWizard *parent) : wxWizardPage( parent )

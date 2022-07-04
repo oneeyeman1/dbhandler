@@ -38,6 +38,7 @@ private:
     wxToolBar *m_tb;
 #endif
     std::map<wxString, wxDynamicLibrary *> m_painters;
+    std::vector<wxString> m_profiles;
     int m_countAttached;
     wxString m_pgLogfile;
 #if !( defined( __sun ) && defined( __SVR4 ) )
