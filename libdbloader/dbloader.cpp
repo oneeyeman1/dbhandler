@@ -99,7 +99,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine, wxString &connectStr, wxString &connectedUser, const std::vector<wxString> &profiles)
+extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine, wxString &connectStr, wxString &connectedUser, std::vector<wxString> &profiles)
 {
     std::vector<std::wstring> errorMsg, dsn;
     int result = wxID_OK;
@@ -127,6 +127,11 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             {
                 wxMessageBox( (*it) );
             }
+        }
+        for( std::vector<std::wstring>::iterator it = dsn.begin(); it < dsn.end(); ++it )
+        {
+            wxString temp( (*it) );
+            profiles.push_back( temp );
         }
         if( connectStr == "" )
         {

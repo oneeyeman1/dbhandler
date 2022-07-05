@@ -45,7 +45,7 @@
 #include "quit.xpm"
 */
 typedef void (*ODBCSETUP)(wxWindow *);
-typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, const std::vector<wxString> &);
+typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, std::vector<wxString> &);
 typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);

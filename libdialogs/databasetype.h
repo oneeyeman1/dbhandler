@@ -11,6 +11,7 @@ public:
     virtual wxWizardPage *GetNext() const;
     wxComboBox *GetComboBoxTypes() const;
     wxTextCtrl *GetProfilesCtrl() const { return profile; }
+    wxStaticText *GetErrorCtrl() { return label1; }
 private:
     void OnComboSelecton(wxCommandEvent &event);
     wxStaticText *label1;

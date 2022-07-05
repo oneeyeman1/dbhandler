@@ -106,8 +106,11 @@ void DatabaseType::OnPageChanging(wxWizardEvent &event)
     if( event.GetPage() == page1 )
     {
         auto profile = page1->GetProfilesCtrl()->GetValue();
-        if( std::find(m_profiles.begin(), m_profiles.end(), profile) == m_profiles.end() )
+        if( std::find(m_profiles.begin(), m_profiles.end(), profile) != m_profiles.end() )
         {
+            page1->GetErrorCtrl()->Show( true );
+            page1->Layout();
+            Layout();
             event.Veto();
         }
     }
@@ -302,11 +305,13 @@ DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
     wxFont font = label->GetFont();
     font.MakeBold();
     label->SetFont( font );
+    label1->SetForegroundColour( *wxRED );
+    label1->Show( false );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( label0, 0, wxEXPAND, 0 );
-    sizer1->Add( profile, 0, wxEXPAND, 0 );
+    sizer1->Add( profile, 1, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer1->Add( label1, 0, wxEXPAND, 0 );
+    sizer1->Add( label1, 1, wxEXPAND | wxRESERVE_SPACE_EVEN_IF_HIDDEN, 0 );
     sizer1->Add( label, 0, wxEXPAND, 0 );
     sizer1->Add( m_types, 0, wxEXPAND, 0 );
     main->Add( sizer1, 0, wxEXPAND, 0 );
