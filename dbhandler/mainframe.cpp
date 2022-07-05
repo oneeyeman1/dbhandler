@@ -37,13 +37,7 @@
 #include "res/database.c"
 #include "res/table.c"
 #endif
-/*
-#include "res/table.xpm"
-#include "res/properties.xpm"
-#include "key-f1.xpm"
-#include "res/query.xpm"
-#include "quit.xpm"
-*/
+
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, std::vector<wxString> &);
 typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &);
