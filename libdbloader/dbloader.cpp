@@ -38,7 +38,15 @@
 #include "database_postgres.h"
 #include "database_mysql.h"
 
-typedef int (*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, bool, const std::vector<std::wstring> &, const std::vector<wxString> &);
+struct Profile
+{
+    wxString m_name;
+    bool m_isCurrent;
+
+    Profile(wxString name, bool isCurrent) : m_name( name ), m_isCurrent( isCurrent ) {}
+};
+
+typedef int (*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, bool, const std::vector<std::wstring> &, std::vector<Profile> &);
 typedef int (*GETODBCCREDENTIALS)(wxWindow *, const wxString &, wxString &, wxString &);
 
 #ifdef __WXMSW__
@@ -99,7 +107,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine, wxString &connectStr, wxString &connectedUser, std::vector<wxString> &profiles)
+extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine, wxString &connectStr, wxString &connectedUser, std::vector<Profile> &profiles)
 {
     std::vector<std::wstring> errorMsg, dsn;
     int result = wxID_OK;
@@ -131,7 +139,12 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
         for( std::vector<std::wstring>::iterator it = dsn.begin(); it < dsn.end(); ++it )
         {
             wxString temp( (*it) );
-            profiles.push_back( temp );
+            if( std::find_if( profiles.begin(), profiles.end(), 
+                               [temp](Profile prof)
+                               {
+                                   return prof.m_name == temp;
+                               } ) == profiles.end() )
+                profiles.push_back( Profile( temp, false ) );
         }
         if( connectStr == "" )
         {
