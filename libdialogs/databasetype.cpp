@@ -28,9 +28,10 @@
 //typedef void (*CONNECTTODB)(const wxString &, const wxString &, void *&db, wxString &, WXHWND);
 typedef Database *(*CONNECTTODB)(const wxString &, const wxString &, Database *db, wxString &, WXWidget, bool);
 
-DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxString &name, const wxString &engine, const std::vector<std::wstring> &dsn, const std::vector<wxString> &profiles) : wxWizard(parent, wxID_ANY, title, wxNullBitmap, wxDefaultPosition, wxWIZARD_EX_HELPBUTTON | wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX )
+DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxString &name, const wxString &engine, const std::vector<std::wstring> &dsn, const std::vector<Profile> &profiles) : wxWizard(parent, wxID_ANY, title, wxNullBitmap, wxDefaultPosition, wxWIZARD_EX_HELPBUTTON | wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX )
 {
     m_profiles = profiles;
+    m_newCurrent = "";
     button = FindWindowById( wxID_FORWARD );
     page1 = new DBType( this );
     page2 = new SQLiteConnect( this );
@@ -106,8 +107,17 @@ void DatabaseType::OnPageChanging(wxWizardEvent &event)
     if( event.GetPage() == page1 )
     {
         auto profile = page1->GetProfilesCtrl()->GetValue();
-        if( std::find(m_profiles.begin(), m_profiles.end(), profile) == m_profiles.end() )
+        if( std::find_if( m_profiles.begin(), m_profiles.end(), 
+           [profile](Profile prof)
+           {
+               return prof.m_name == profile;
+           } ) != m_profiles.end() )
         {
+            page1->GetErrorCtrl()->Show( true );
+            page1->GetProfilesCtrl()->SetFocus();
+            page1->GetProfilesCtrl()->SetSelection( -1, -1 );
+            page1->Layout();
+            Layout();
             event.Veto();
         }
     }
@@ -133,22 +143,8 @@ void DatabaseType::OnPageChanged(wxWizardEvent &event)
             dynamic_cast<wxButton *>( button )->SetDefault();
             button->Enable( false );
         }
+        m_newCurrent = page1->GetProfilesCtrl()->GetValue();
     }
-/*    if( event.GetPage() == page3 )
-    {
-        std::vector<std::string> dsns;
-        std::vector<SQLWCHAR *> errorMsg;
-        if( static_cast<ODBCDatabase *>( m_db )->GetDsnList( dsns, errorMsg ) )
-        {
-            for( std::vector<SQLWCHAR *>::iterator it = errorMsg.begin(); it != errorMsg.end(); it++ )
-            {
-                wxString temp = wxMBConvUTF16().cMB2WC( (const char *) (*it) );
-                wxMessageBox( temp, "Error!" );
-            }
-        }
-        else
-            dynamic_cast<ODBCConnect *>( page3 )->AppendDSNsToList( dsns );
-    }*/
     event.Skip();
 }
 
@@ -217,40 +213,6 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         if( !options.IsEmpty() )
             m_connStr += options;
     }
-/*    WXWidget hwnd = 0;
-    wxString driver;
-    bool askForConnectParameter = false;
-    if( m_dbEngine == "SQLite" )
-    wxDynamicLibrary lib;
-#ifdef __WXMSW__
-    lib.Load( "dbloader" );
-#else
-    lib.Load( "libdbloader" );
-#endif
-    if( lib.IsLoaded() )
-    {
-        CONNECTTODB func = (CONNECTTODB) lib.GetSymbol( "ConnectToDb" );
-        m_db = func( m_dbName, m_dbEngine, m_db, driver, hwnd, askForConnectParameter );
-    }*/
-/*    wxString dbName;
-	std::vector<std::wstring> errorMsg;
-    if( event.GetPage() == page2 )
-    {
-        dbName = dynamic_cast<SQLiteConnect *>( page2 )->GetFileCtrl()->GetPath();
-    }
-    if( event.GetPage() == page3 )
-    {
-        dbName = dynamic_cast<ODBCConnect *>( page3 )->GetDSNTypesCtrl().GetStringSelection();
-        wxWindow *parent = GetParent();
-        dynamic_cast<ODBCDatabase *>( m_db )->SetWindowHandle( parent->GetHandle() );
-    }
-    if( !m_db->Connect( dbName, errorMsg ) )
-    {
-        for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it != errorMsg.end(); it++ )
-        {
-            wxMessageBox( (*it) );
-        }
-    }*/
 }
 
 void DatabaseType::SetDbEngine(const wxString &engine)
@@ -302,11 +264,13 @@ DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
     wxFont font = label->GetFont();
     font.MakeBold();
     label->SetFont( font );
+    label1->SetForegroundColour( *wxRED );
+    label1->Show( false );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( label0, 0, wxEXPAND, 0 );
-    sizer1->Add( profile, 0, wxEXPAND, 0 );
+    sizer1->Add( profile, 1, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer1->Add( label1, 0, wxEXPAND, 0 );
+    sizer1->Add( label1, 1, wxEXPAND | wxRESERVE_SPACE_EVEN_IF_HIDDEN, 0 );
     sizer1->Add( label, 0, wxEXPAND, 0 );
     sizer1->Add( m_types, 0, wxEXPAND, 0 );
     main->Add( sizer1, 0, wxEXPAND, 0 );
@@ -351,7 +315,7 @@ wxComboBox *DBType::GetComboBoxTypes() const
     return m_types;
 }
 
-void DBType::OnComboSelecton(wxCommandEvent &event)
+void DBType::OnComboSelecton(wxCommandEvent &WXUNUSED(event))
 {
     if( m_types->GetValue() == _( "ODBC" ) )
         profile->Disable();

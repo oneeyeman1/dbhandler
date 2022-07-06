@@ -3,6 +3,14 @@
 
 //typedef template<typename T, typename T2> Database<T, T2> *(*CONNECTTODB)(const wxString &, const wxString &, Database<T, T2> *db, wxString &, WXWidget);
 
+struct Profile
+{
+    wxString m_name;
+    bool m_isCurrent;
+
+    Profile(wxString name, bool isCurrent) : m_name( name ), m_isCurrent( isCurrent ) {}
+};
+
 class DBType : public wxWizardPage
 {
 public:
@@ -11,6 +19,7 @@ public:
     virtual wxWizardPage *GetNext() const;
     wxComboBox *GetComboBoxTypes() const;
     wxTextCtrl *GetProfilesCtrl() const { return profile; }
+    wxStaticText *GetErrorCtrl() { return label1; }
 private:
     void OnComboSelecton(wxCommandEvent &event);
     wxStaticText *label1;
@@ -118,7 +127,7 @@ public:
 class DatabaseType : public wxWizard
 {
 public:
-    DatabaseType(wxWindow *parent, const wxString &title, const wxString &name, const wxString &engine, const std::vector<std::wstring> &dsn, const std::vector<wxString> &profiles);
+    DatabaseType(wxWindow *parent, const wxString &title, const wxString &name, const wxString &engine, const std::vector<std::wstring> &dsn, const std::vector<Profile> &profiles);
     wxWizardPage *GetFirstPage() const { return page1; }
     SQLiteConnect *GetSQLitePage() { return page2; }
     ODBCConnect *GetODBCPage() { return page3; }
@@ -130,6 +139,7 @@ public:
     void SetDbEngine(const wxString &engine);
     wxString &GetConnectString() const;
     wxTextCtrl *GetUserControl() const;
+    const wxString &GetSelectedProfile() const { return m_newCurrent; }
 protected:
     void OnPageChanged(wxWizardEvent &event);
     void OnPageChanging(wxWizardEvent &event);
@@ -142,9 +152,9 @@ private:
     PostgresConnect *page4;
     mySQLConnect *page5;
     wxWindow *button;
-    wxString m_dbName, m_dbEngine, m_connStr;
+    wxString m_dbName, m_dbEngine, m_connStr, m_newCurrent;
     bool m_askForConnectParameter;
-    std::vector<wxString> m_profiles;
+    std::vector<Profile> m_profiles;
 };
 
 #endif

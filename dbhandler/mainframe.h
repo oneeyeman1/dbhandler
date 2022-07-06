@@ -11,6 +11,14 @@
 
 class NewTableHandler;
 
+struct Profile
+{
+    wxString m_name;
+    bool m_isCurrent;
+
+    Profile(wxString name, bool isCurrent) : m_name( name ), m_isCurrent( isCurrent ) {}
+};
+
 class MainFrame : public wxDocMDIParentFrame
 {
 public:
@@ -38,7 +46,7 @@ private:
     wxToolBar *m_tb;
 #endif
     std::map<wxString, wxDynamicLibrary *> m_painters;
-    std::vector<wxString> m_profiles;
+    std::vector<Profile> m_profiles;
     int m_countAttached;
     wxString m_pgLogfile;
 #if !( defined( __sun ) && defined( __SVR4 ) )
