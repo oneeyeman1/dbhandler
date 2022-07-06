@@ -145,7 +145,7 @@ extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
     dlg.ShowModal();
 }
 
-extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title, wxString &name, wxString &dbEngine, wxString &connectedUser, bool ask, const std::vector<std::wstring> &dsn, const std::vector<wxString> &profiles)
+extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title, wxString &name, wxString &dbEngine, wxString &connectedUser, bool ask, const std::vector<std::wstring> &dsn, std::vector<Profile> &profiles)
 {
     int res;
 #ifdef __WXMSW__
@@ -167,6 +167,7 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
         ask = dlg.GetODBCConnectionParam();
         if( name.empty() )
             name = dlg.GetConnectString();
+        profiles.push_back( Profile( dlg.GetSelectedProfile(), true ) );
         res = wxID_OK;
     }
 	else
