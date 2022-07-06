@@ -39,7 +39,7 @@
 #endif
 
 typedef void (*ODBCSETUP)(wxWindow *);
-typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, std::vector<wxString> &);
+typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, std::vector<Profile> &);
 typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
@@ -78,12 +78,23 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     config->SetPath( "Profiles" );
     long counter;
     wxString profile;
+    auto currentProfile = config->Read( "CurrentProfile", "" );
     auto res = config->GetFirstEntry( profile, counter );
+    auto found = false;
     while( res )
     {
-        m_profiles.push_back( config->Read( profile, "" ) );
+        auto prof = config->Read( profile, "" );
+        if( prof == currentProfile )
+        {
+            m_profiles.push_back( Profile( prof, true ) );
+            found = true;
+        }
+        else
+            m_profiles.push_back( Profile( prof, false ) );
         res = config->GetNextEntry( profile, counter );
     }
+    if( !found && !currentProfile.IsEmpty() )
+        m_profiles.push_back( Profile( currentProfile, true ) );
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );
