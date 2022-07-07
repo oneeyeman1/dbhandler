@@ -148,8 +148,7 @@ MainFrame::~MainFrame()
         auto res = config->GetFirstEntry( profile, counter );
         while( res && !found )
         {
-            wxString prof;
-            config->Read( profile, prof );
+            auto prof = config->Read( profile, "" );
             if( prof == currentProfile )
                 found = true;
             res = config->GetNextEntry( profile, counter );
