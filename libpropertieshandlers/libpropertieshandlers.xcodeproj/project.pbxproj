@@ -295,7 +295,7 @@
 					__WXOSX_COCOA__,
 				);
 				HEADER_SEARCH_PATHS = (
-					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.1",
+					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.2",
 					/Users/igorkorot/wxWidgets/include,
 					../dbinterface,
 					../libpropertypages,
@@ -303,7 +303,7 @@
 					../libfieldswindow,
 				);
 				"HEADER_SEARCH_PATHS[arch=*]" = (
-					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.1",
+					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.2",
 					/Users/igorkorot/wxWidgets/include,
 					../dbinterface,
 					../libpropertypages,
@@ -327,13 +327,13 @@
 					"-framework",
 					OpenGL,
 					"-pthread",
-					"-lwx_osx_cocoau_xrc-3.1",
-					"-lwx_osx_cocoau_html-3.1",
-					"-lwx_osx_cocoau_qa-3.1",
-					"-lwx_osx_cocoau_core-3.1",
-					"-lwx_baseu_xml-3.1",
-					"-lwx_baseu_net-3.1",
-					"-lwx_baseu-3.1",
+					"-lwx_osx_cocoau_xrc-3.2",
+					"-lwx_osx_cocoau_html-3.2",
+					"-lwx_osx_cocoau_qa-3.2",
+					"-lwx_osx_cocoau_core-3.2",
+					"-lwx_baseu_xml-3.2",
+					"-lwx_baseu_net-3.2",
+					"-lwx_baseu-3.2",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
