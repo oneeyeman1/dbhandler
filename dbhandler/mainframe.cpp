@@ -95,6 +95,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     }
     if( !found && !currentProfile.IsEmpty() )
         m_profiles.push_back( Profile( currentProfile, true ) );
+    config->SetPath( path );
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );
