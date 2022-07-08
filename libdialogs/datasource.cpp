@@ -19,11 +19,7 @@
 #include "wx/wx.h"
 #endif
 
-<<<<<<< HEAD
-#include "wx/config.h"
-=======
 #include"wx/config.h"
->>>>>>> 4ac08621cd683bbedbb2054ac3f7c2600008772e
 #include "datasource.h"
 
 // begin wxGlade: ::extracode
