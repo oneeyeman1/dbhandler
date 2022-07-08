@@ -95,6 +95,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     }
     if( !found && !currentProfile.IsEmpty() )
         m_profiles.push_back( Profile( currentProfile, true ) );
+    config->SetPath( path );
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );
@@ -147,8 +148,7 @@ MainFrame::~MainFrame()
         auto res = config->GetFirstEntry( profile, counter );
         while( res && !found )
         {
-            wxString prof;
-            config->Read( profile, prof );
+            auto prof = config->Read( profile, "" );
             if( prof == currentProfile )
                 found = true;
             res = config->GetNextEntry( profile, counter );

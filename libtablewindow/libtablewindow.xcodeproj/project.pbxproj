@@ -220,7 +220,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"/Users/igorkorot/wxWidgets/buildMac/lib/wx/include/osx_cocoa-unicode-3.1",
+					"/Users/igorkorot/wxWidgets/buildMac/lib/wx/include/osx_cocoa-unicode-3.2",
 					/Users/igorkorot/wxWidgets/include,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -254,6 +254,7 @@
 				E33E6F521E6A9A6A003A0B92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
