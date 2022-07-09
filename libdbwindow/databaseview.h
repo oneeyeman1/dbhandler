@@ -18,6 +18,14 @@ enum DrawinViewMenu
     QuerySyntaxMenu
 };
 
+struct Profile
+{
+    wxString m_name;
+    bool m_isActive;
+    
+    Profile(wxString name, bool isActive) : m_name(name), m_isActive(isActive) {}
+};
+
 // The view using MyCanvas to show its contents
 class DrawingView : public wxView
 {
@@ -44,6 +52,7 @@ public:
     void ChangeFontEement();
     void ChangeTableTypeMMenu();
     void ChangeTableCommentsMenu();
+    void SetProfiles(const std::vector<Profile> &profiles) { m_profiles = profiles; }
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
@@ -141,6 +150,7 @@ private:
     wxStyledTextCtrl *m_edit;
     wxFindReplaceDialog *m_findDlg;
     wxFindReplaceData m_data;
+    std::vector<Profile> m_profiles;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };

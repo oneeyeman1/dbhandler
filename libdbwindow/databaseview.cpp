@@ -122,7 +122,7 @@ typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const s
 typedef int (*RETRIEVEARGUMENTS)(wxWindow *, std::vector<QueryArguments> &arguments, const wxString &, const wxString &);
 typedef int (*GOTOLINE)(wxWindow *, int &);
 typedef void (*DATAEDITWINDOW)(wxWindow *parent, wxDocManager *docManager, Database *db, const wxString &);
-typedef int (*GETDATASOURCE)(wxWindow *parent, wxString &sorce);
+typedef int (*GETDATASOURCE)(wxWindow *parent, wxString &sorce, const std::vector<Profile> &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
@@ -2318,6 +2318,6 @@ void DrawingView::OnExportSyntax(wxCommandEvent &event)
     if( lib.IsLoaded() )
     {
         GETDATASOURCE func = (GETDATASOURCE) lib.GetSymbol( "GetDataSource" );
-        int res = func( m_frame, source );
+        int res = func( m_frame, source, m_profiles );
     }
 }

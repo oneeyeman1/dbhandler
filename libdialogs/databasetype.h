@@ -3,14 +3,6 @@
 
 //typedef template<typename T, typename T2> Database<T, T2> *(*CONNECTTODB)(const wxString &, const wxString &, Database<T, T2> *db, wxString &, WXWidget);
 
-struct Profile
-{
-    wxString m_name;
-    bool m_isCurrent;
-
-    Profile(wxString name, bool isCurrent) : m_name( name ), m_isCurrent( isCurrent ) {}
-};
-
 class DBType : public wxWizardPage
 {
 public:

@@ -18,14 +18,13 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-
 class DataSorces: public wxDialog
 {
 public:
     // begin wxGlade: DataSorces::ids
     // end wxGlade
 
-    DataSorces(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    DataSorces(wxWindow* parent, wxWindowID id, const wxString& title, const std::vector<Profile> &profiles);
     wxString &GetDataSource() { return m_dataSource; }
 private:
     // begin wxGlade: DataSorces::methods
@@ -33,7 +32,7 @@ private:
     void do_layout();
     // end wxGlade
     wxString m_dataSource;
-
+    std::vector<Profile> m_profiles;
 protected:
     void OnOK(wxCommandEvent &event);
     // begin wxGlade: DataSorces::attributes
