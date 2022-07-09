@@ -316,7 +316,7 @@
       <OutputFile>..\dbhandler\vc_mswuddll\propertypages.dll</OutputFile>
       <ImportLibrary>vc_mswuddll\propertypages.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;..\dbhandler\Debug;..\libfieldswindow\vc_mswuddll;..\libshapeframework\vc_mswuddll;c:\wxWidgets\lib\vc_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;..\dbhandler\Debug;..\libfieldswindow\vc_mswuddll;..\libshapeframework\vc_mswuddll;$(WXWIN)\lib\vc_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll\propertypages.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>

@@ -302,7 +302,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Visual Leak Detector\include;..\libshapeframework;..\dbinterface;..\libfieldswindow;..\libpropertieshandlers;..\libpropertypages;c:\wxWidgets\lib\vc_dll\mswud;c:\wxWidgets\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Visual Leak Detector\include;..\libshapeframework;..\dbinterface;..\libfieldswindow;..\libpropertieshandlers;..\libpropertypages;$(WXWIN)\lib\vc_dll\mswud;$(WXWIN)\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__MEMORYLEAKS__,WIN32;_USRDLL;DLL_EXPORTS;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXUSINGDLL;MY_DLL_BUILDING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -327,7 +327,7 @@
       <OutputFile>..\dbhandler\vc_mswuddll\dbwindow.dll</OutputFile>
       <ImportLibrary>vc_mswuddll\dbwindow.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;..\libpropertypages\vc_mswuddll;..\libshapeframework\vc_mswuddll;..\libfieldswindow\vc_mswuddll;..\libpropertieshandlers\vc_mswuddll;c:\wxWidgets\lib\vc_dll;%(AdditionalLibraryDirectories) </AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;..\libpropertypages\vc_mswuddll;..\libshapeframework\vc_mswuddll;..\libfieldswindow\vc_mswuddll;..\libpropertieshandlers\vc_mswuddll;$(WXWIN)\lib\vc_dll;%(AdditionalLibraryDirectories) </AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll\dbwindowl.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
