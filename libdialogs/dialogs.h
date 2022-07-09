@@ -1,5 +1,13 @@
 #pragma once
 
+struct Profile
+{
+    wxString m_name;
+    bool m_isCurrent;
+    
+    Profile(wxString name, bool isCurrent) : m_name( name ), m_isCurrent( isCurrent ) {}
+};
+
 class QueryArguments
 {
 public:

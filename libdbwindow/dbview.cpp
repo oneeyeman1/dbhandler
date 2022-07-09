@@ -124,7 +124,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *docManager, Database *db, ViewType type, std::map<wxString, wxDynamicLibrary *> &painters)
+extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *docManager, Database *db, ViewType type, std::map<wxString, wxDynamicLibrary *> &painters, const std::vector<Profile> &profiles)
 {
     DatabaseTemplate *docTemplate;
 #ifdef __WXMSW__
@@ -143,6 +143,7 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
     else
         docTemplate->CreateDatabaseDocument( "*.qry", type, db, painters, wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<DrawingDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db, false );
+    dynamic_cast<DrawingView *>( docManager->GetCurrentView() )->SetProfiles( profiles );
 }
 
 /*

@@ -19,7 +19,9 @@
 #include "wx/wx.h"
 #endif
 
+#include <vector>
 #include"wx/config.h"
+#include "dialogs.h"
 #include "datasource.h"
 
 // begin wxGlade: ::extracode
@@ -27,9 +29,10 @@
 
 
 
-DataSorces::DataSorces(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
-    wxDialog(parent, id, title, pos, size, style)
+DataSorces::DataSorces(wxWindow* parent, wxWindowID id, const wxString& title, const std::vector<Profile> &profiles):
+    wxDialog(parent, id, title)
 {
+    m_profiles = profiles;
     // begin wxGlade: DataSorces::DataSorces
     m_panel = new wxPanel( this, wxID_ANY );
     m_label = new wxStaticText( m_panel, wxID_ANY, _( "Select Data Source" ) );
@@ -46,24 +49,16 @@ DataSorces::DataSorces(wxWindow* parent, wxWindowID id, const wxString& title, c
 
 void DataSorces::set_properties()
 {
-    long counter;
-    wxString profile;
-    auto config = wxConfigBase::Get( "DBManager" );
-    auto path = config->GetPath();
-    config->SetPath( "Profiles" );
-    auto res = config->GetFirstEntry( profile, counter );
-    while( res )
+    for( std::vector<Profile>::iterator it = m_profiles.begin(); it < m_profiles.end(); ++it )
     {
-        auto prof = config->Read( profile, "" );
-        m_dataSources->Append( prof );
-        res = config->GetNextEntry( profile, counter );
+        m_dataSources->Append( (*it).m_name );
+        if( (*it).m_isCurrent )
+            m_dataSources->SetStringSelection( (*it).m_name );
     }
-    config->SetPath( path );
     // begin wxGlade: DataSorces::set_properties
     SetTitle( _( "Data Sources" ) );
     m_OK->SetDefault();
     // end wxGlade
-    config->SetPath( path );
 }
 
 

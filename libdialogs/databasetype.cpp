@@ -23,6 +23,7 @@
 #include "wx/dynlib.h"
 #include "wx/statline.h"
 #include "database.h"
+#include "dialogs.h"
 #include "databasetype.h"
 
 //typedef void (*CONNECTTODB)(const wxString &, const wxString &, void *&db, wxString &, WXHWND);

@@ -167,6 +167,14 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
         ask = dlg.GetODBCConnectionParam();
         if( name.empty() )
             name = dlg.GetConnectString();
+        for( auto profile : profiles )
+        {
+            if( profile.m_isCurrent )
+            {
+                profile.m_isCurrent = !profile.m_isCurrent;
+                break;
+            }
+        }
         profiles.push_back( Profile( dlg.GetSelectedProfile(), true ) );
         res = wxID_OK;
     }
@@ -399,13 +407,13 @@ extern "C" WXEXPORT int DetachDatabase(wxWindow *parent)
     return result;
 }
 
-extern "C" WXEXPORT int GetDataSource(wxWindow *parent, wxString &dataSource)
+extern "C" WXEXPORT int GetDataSource(wxWindow *parent, wxString &dataSource, const std::vector<Profile> &profiles)
 {
     int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    DataSorces dlg( parent, wxID_ANY, "" );
+    DataSorces dlg( parent, wxID_ANY, "", profiles );
     if( ( res = dlg.ShowModal() ) == wxID_OK )
         dataSource = dlg.GetDataSource();
     return res;
