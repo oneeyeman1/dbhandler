@@ -177,8 +177,8 @@ std::vector<std::wstring> &DrawingDocument::GetTableNames()
 
 void DrawingDocument::AddRemoveField(const TableField *tableField, QueryFieldChange isAdded)
 {
-    int position = m_sortedFieldsAll.size();
-    int original_position = m_queryFields.size();
+    auto position = m_sortedFieldsAll.size();
+    auto original_position = m_queryFields.size();
     if( isAdded == ADD )
     {
         m_queryFields.push_back( const_cast<TableField *>( tableField ) );
