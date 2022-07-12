@@ -499,9 +499,9 @@ void DrawingView::GetTablesForView(Database *db, bool init)
 //                        wxMDIClientWindow *parent = (wxMDIClientWindow *) m_parent->GetClientWindow();
 //                        wxSize parentSize = parent->GetSize();
 //                        wxPoint parentPos = parent->GetPosition();
-//                        int heightStyleBar = m_styleBar->GetSize().y;
+                        int heightStyleBar = m_styleBar->GetSize().y;
                         wxPoint framePosition = m_frame->GetPosition();
-//                        wxSize frameSize = m_frame->GetSize();
+                        wxSize frameSize = m_frame->GetSize();
                         if( framePosition.y == 0 )
                         {
 #ifndef __WXOSX__

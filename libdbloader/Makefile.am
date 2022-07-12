@@ -27,12 +27,16 @@ libdbloader_la_LDFLAGS = -L../libsqlite \
 	-L`pg_config \
 	--libdir` \
 	-lpq \
+	-L`pg_config --libdir`
+	 \
+	`mysql_config \
+	--libs` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` \
 	-lsqlite_lib \
 	-lodbc_lib \
 	-lpostgres \
-	`mysql_config \
-	--libs`
+	-lpq \
+	-lmysql_lib
 	 
 	 
