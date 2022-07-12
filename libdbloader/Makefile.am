@@ -13,6 +13,8 @@ libdbloader_la_CXXFLAGS = -I/usr/include \
 	-I../../libodbc \
 	-I../../libpostgres \
 	-I../../libmysql \
+	-I`pg_config \
+	--includedir` \
 	`mysql_config \
 	--cflags` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
@@ -22,14 +24,15 @@ libdbloader_la_LDFLAGS = -L../libsqlite \
 	-L../libodbc \
 	-L../libpostgres \
 	-L../libmysql \
-	 \
-	`mysql_config \
-	--libs` \
+	-L`pg_config \
+	--libdir` \
+	-lpq \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` \
 	-lsqlite_lib \
 	-lodbc_lib \
 	-lpostgres \
-	-lmysql_lib
+	`mysql_config \
+	--libs`
 	 
 	 
