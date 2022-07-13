@@ -19,7 +19,7 @@
 #include <arpa/inet.h>
 #endif
 #include <sstream>
-#include "libpq-fe.h"
+#include <libpq-fe.h>
 #include "database.h"
 #include "database_postgres.h"
 

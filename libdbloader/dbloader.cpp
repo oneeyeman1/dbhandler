@@ -30,8 +30,8 @@
 #endif
 #include "wx/dynlib.h"
 #include "sqlite3.h"
-#include "libpq-fe.h"
-#include "mysql.h"
+#include <libpq-fe.h>
+#include <mysql.h>
 #include "database.h"
 #include "database_sqlite.h"
 #include "database_odbc.h"
