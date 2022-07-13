@@ -3687,7 +3687,7 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
     std::wstring query;
     SQLWCHAR *qry = NULL, *tname = NULL, *sname = NULL;;
     if( pimpl->m_subtype == L"Microsoft SQL Server" || pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
-        query = L"SELECT OBJECT_ID(?);";
+        query = L"SELECT object_id FROM sys.tables WHERE name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?;";
     if( pimpl->m_subtype == L"MySQL" )
@@ -6883,6 +6883,105 @@ int ODBCDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
         result = 1;
     }
     m_fieldsInRecordSet = 0;
+    return result;
+}
+
+int ODBCDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg)
+{
+    std::wstring query;
+    SQLHDBC hdbc;
+    SQLHSTMT stmt;
+    SQLSMALLINT OutConnStrLen;
+    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        query = L"SELECT  'CREATE TABLE [' + so.name + '] (' + o.list + ')' + CASE WHEN tc.Constraint_Name IS NULL THEN '' ELSE 'ALTER TABLE ' + so.Name + ' ADD CONSTRAINT ' + tc.Constraint_Name  + ' PRIMARY KEY ' + ' (' + LEFT(j.List, Len(j.List)-1) + ')' END " \
+        "from    sysobjects so" \
+        "cross apply" \
+        " (SELECT '  ['+column_name+'] ' + "\
+         "data_type + case data_type" \
+         "when 'sql_variant' then ''" \
+         "when 'text' then ''" \
+         "when 'ntext' then ''" \
+         "when 'xml' then ''"  \
+         "when 'decimal' then '(' + cast(numeric_precision as varchar) + ', ' + cast(numeric_scale as varchar) + ')'" \
+            "else coalesce('('+case when character_maximum_length = -1 then 'MAX' else cast(character_maximum_length as varchar) end +')','') end + ' ' +" \
+            "case when exists ( " \
+            "select id from syscolumns" \
+            "where object_name(id)=so.name" \
+            "and name=column_name" \
+                "and columnproperty(id,name,'IsIdentity') = 1 " \
+                ") then" \
+                "'IDENTITY(' + " \
+                "cast(ident_seed(so.name) as varchar) + ',' + " \
+                "cast(ident_incr(so.name) as varchar) + ')'" \
+        "else ''" \
+        "end + ' ' +" \
+        "(case when UPPER(IS_NULLABLE) = 'NO' then 'NOT ' else '' end ) + 'NULL ' + " \
+        "case when information_schema.columns.COLUMN_DEFAULT IS NOT NULL THEN 'DEFAULT '+ information_schema.columns.COLUMN_DEFAULT ELSE '' END + ', ' " \
+        "from information_schema.columns where table_name = so.name "
+        "order by ordinal_position" \
+        "FOR XML PATH('')) o (list)" \
+        "left join information_schema.table_constraints tc " \
+        "on  tc.Table_name       = so.Name AND tc.Constraint_Type  = 'PRIMARY KEY'" \
+        "cross apply" \
+        "(select '[' + Column_Name + '], '" \
+        "FROM   information_schema.key_column_usage kcu" \
+        "WHERE  kcu.Constraint_Name = tc.Constraint_Name" \
+        "ORDER BY" \
+        "ORDINAL_POSITION  FOR XML PATH('')) j (list)" \
+        "where   xtype = 'U'" \
+            "AND name    NOT IN ('dtproperties')";
+    if( pimpl->m_subtype == L"MySQL" )
+        query = L"SHOW CREATE TABLE " + tableName;
+    int result = 0;
+    auto qry = new SQLWCHAR[query.length() + 2];
+    memset( qry, '\0', query.size() + 2 );
+    uc_to_str_cpy( qry, query );
+    SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 0, m_env );
+        result = 1;
+    }
+    else
+    {
+        ret = SQLDriverConnect( hdbc, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2, m_env );
+            result = 1;
+        }
+        else
+        {
+            ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc, &stmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 2, hdbc );
+                result = 1;
+            }
+            else
+            {
+                ret = SQLExecDirect( stmt, qry, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, stmt );
+                    result = 1;
+                }
+                else
+                {
+                }
+            }
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 2 );
+                result = 1;
+            }
+            else
+                m_hstmt = 0;
+        }
+    }
+    delete[] qry;
+    qry = NULL;
     return result;
 }
 

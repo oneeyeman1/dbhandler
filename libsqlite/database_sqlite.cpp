@@ -2091,3 +2091,48 @@ int SQLiteDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
     m_fieldsInRecordSet = 0;
     return result;
 }
+
+int SQLiteDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg)
+{
+    std::string query = "SELECT sql FROM sqlite_master WHERE type = 'table' OR type = 'view' AND name = ?;";
+    std::wstring errorMessage;
+    int result = 0, res;
+    if( ( res = sqlite3_prepare_v2( m_db, query.c_str(), -1, &m_stmt, NULL ) ) != 0 )
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+        result = 1;
+    }
+    else
+    {
+        res = sqlite3_bind_text( m_stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+        else
+        {
+            auto found = false;
+            for( ; !found; )
+            {
+                res = sqlite3_step( m_stmt );
+                if( res != SQLITE_ROW )
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                    found = true;
+                }
+                else
+                {
+                    syntax = sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( m_stmt, 0 ) ) );
+                    found = true;
+                }
+            }
+            sqlite3_finalize( m_stmt );
+        }
+    }
+    return result;
+}

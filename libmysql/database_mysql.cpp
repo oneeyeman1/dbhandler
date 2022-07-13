@@ -2375,3 +2375,10 @@ int MySQLDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
     return result;
 
 }
+
+int MySQLDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+}
+
