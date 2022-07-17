@@ -41,7 +41,9 @@ libdialogs_la_SOURCES =  \
 	attachdb.cpp \
 	attachdb.h \
 	detachdb.cpp \
-	detachdb.h
+	detachdb.h \
+	datasource.cpp \
+	datasource.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
