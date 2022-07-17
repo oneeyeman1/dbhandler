@@ -331,8 +331,8 @@ void ODBCDatabase::uc_to_str_cpy(SQLWCHAR *dest, const std::wstring &src)
         dest++;
         temp++;
     }
-    *dest++ = 0;
-    *dest = 0;
+    *dest++ = '\0';
+    *dest = '\0';
 }
 
 void ODBCDatabase::str_to_uc_cpy(std::wstring &dest, const SQLWCHAR *src)
@@ -3690,7 +3690,7 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
     std::wstring query;
     SQLWCHAR *qry = NULL, *tname = NULL, *sname = NULL;;
     if( pimpl->m_subtype == L"Microsoft SQL Server" || pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
-        query = L"SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?";
+        query = L"SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?;";
     if( pimpl->m_subtype == L"MySQL" )
@@ -3802,27 +3802,23 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
                             }
                             else
                             {
-                                retcode = SQLFetch( stmt );
-                                if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO && retcode != SQL_NO_DATA )
+                                retcode = SQLBindCol( stmt, 1, SQL_C_SLONG, &id, 100, &cbName );
+                                if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt );
                                     result = 1;
                                 }
-                                else if( retcode != SQL_NO_DATA )
+                                else
                                 {
-                                    retcode = SQLGetData( stmt, 1, SQL_C_SLONG, &id, 0, &cbName );
-                                    if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        tableId = id;
-                                    }
-                                    else
+                                    retcode = SQLFetch( stmt );
+                                    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO && retcode != SQL_NO_DATA )
                                     {
                                         GetErrorMessage( errorMsg, 1, stmt );
                                         result = 1;
                                     }
+                                    else if( retcode == SQL_NO_DATA )
+                                        tableId = 0;
                                 }
-                                else
-                                    tableId = 0;
                             }
                         }
                     }
