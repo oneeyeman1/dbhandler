@@ -65,6 +65,7 @@ libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \
 	-I../../dbinterface \
 	-I../../libpropertypages \
+	-I../../libpropertieshandlers \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 

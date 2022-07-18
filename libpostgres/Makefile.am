@@ -11,11 +11,11 @@ libpostgres_la_SOURCES =  \
 
 libpostgres_la_CXXFLAGS = -D__WXGTK__ \
 	-I../../dbinterface \
-	`pg_config \
+	-I`pg_config \
 	--includedir` 
 
 libpostgres_la_LDFLAGS = -L../dbinterface \
 	-ldbinterface \
-	`pg_config \
+	-L`pg_config \
 	--libdir` \
 	-lpq 

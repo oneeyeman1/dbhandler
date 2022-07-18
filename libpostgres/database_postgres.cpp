@@ -19,7 +19,7 @@
 #include <arpa/inet.h>
 #endif
 #include <sstream>
-#include "libpq-fe.h"
+#include <libpq-fe.h>
 #include "database.h"
 #include "database_postgres.h"
 
@@ -1663,6 +1663,12 @@ int PostgresDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
         result = 1;
     }
     m_fieldsInRecordSet = 0;
+    return result;
+}
+
+int PostgresDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
     return result;
 }
 

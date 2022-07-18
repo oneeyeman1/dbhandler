@@ -30,8 +30,8 @@
 #endif
 #include "wx/dynlib.h"
 #include "sqlite3.h"
-#include "libpq-fe.h"
-#include "mysql.h"
+#include <libpq-fe.h>
+#include <mysql.h>
 #include "database.h"
 #include "database_sqlite.h"
 #include "database_odbc.h"
@@ -146,11 +146,8 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
                                } ) == profiles.end() )
                 profiles.push_back( Profile( temp, false ) );
         }
-        if( connectStr == "" )
-        {
-            DBPROFILE func = (DBPROFILE) lib.GetSymbol( "DatabaseProfile" );
-            result = func( parent, _( "Select Database Profile" ), name, engine, connectedUser, ask, dsn, profiles );
-        }
+        DBPROFILE func = (DBPROFILE) lib.GetSymbol( "DatabaseProfile" );
+        result = func( parent, _( "Select Database Profile" ), name, engine, connectedUser, ask, dsn, profiles );
         if( result != wxID_CANCEL )
         {
             if( engine == "SQLite" )

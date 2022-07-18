@@ -197,6 +197,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_fields = nullptr;
     m_queryBook = nullptr;
     m_page2 = m_page4 = nullptr;
+    m_page1 = m_page3 = nullptr;
     m_page6 = nullptr;
     m_fieldText = nullptr;
     m_fontName = nullptr;
@@ -2306,6 +2307,7 @@ void DrawingView::ChangeTableCommentsMenu()
 
 void DrawingView::OnExportSyntax(wxCommandEvent &event)
 {
+    auto tables = dynamic_cast<DrawingDocument *>( GetDocument() )->GetDBTables();
     wxString source;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -2319,5 +2321,15 @@ void DrawingView::OnExportSyntax(wxCommandEvent &event)
     {
         GETDATASOURCE func = (GETDATASOURCE) lib.GetSymbol( "GetDataSource" );
         int res = func( m_frame, source, m_profiles );
+        if( res == wxID_OK )
+        {
+            std::vector<std::wstring> errors;
+            for( std::vector<DatabaseTable *>::iterator it = tables.begin(); it < tables.end(); ++it )
+            {
+                std::wstring syntax;
+                dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->GetTableCreationSyntax( (*it)->GetSchemaName() + L"." + (*it)->GetTableName(), syntax, errors );
+
+            }
+        }
     }
 }
