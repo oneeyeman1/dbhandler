@@ -17,10 +17,10 @@ ODBCCredentials::ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString
     m_dsn = dsn;
     // begin wxGlade: ODBCCredentials::ODBCCredentials
     m_panel = new wxPanel( this, wxID_ANY );
-    label_1 = new wxStaticText( this, wxID_ANY, _( "User ID" ) );
-    m_userID = new wxTextCtrl( this, wxID_ANY, userID );
-    label_2 = new wxStaticText( this, wxID_ANY, _( "Password" ) );
-    m_password = new wxTextCtrl( this, wxID_ANY, password, wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
+    label_1 = new wxStaticText( m_panel, wxID_ANY, _( "User ID" ) );
+    m_userID = new wxTextCtrl( m_panel, wxID_ANY, userID );
+    label_2 = new wxStaticText( m_panel, wxID_ANY, _( "Password" ) );
+    m_password = new wxTextCtrl( m_panel, wxID_ANY, password, wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
     set_properties();
     do_layout();
     // end wxGlade
