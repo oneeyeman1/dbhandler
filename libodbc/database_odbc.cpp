@@ -3685,11 +3685,10 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
     SQLHSTMT stmt = 0;
     SQLHDBC hdbc;
     SQLLEN cbName, cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
-    long id;
     int result = 0;
     std::wstring query;
     if( pimpl->m_subtype == L"Microsoft SQL Server" || pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
-        query = L"SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?;";
+        query = L"SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?";
 //        query = L"SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = 'abcatcol' AND s.name = 'dbo';";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?;";
@@ -3765,7 +3764,7 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
                         }
                         else
                         {
-                            retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_DEFAULT, dataType[0], parameterSize[0], decimalDigit[0], tname, 0, &cbTableName );
+                            retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType[0], parameterSize[0], decimalDigit[0], tname, 0, &cbTableName );
                             if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, stmt );
@@ -3782,7 +3781,7 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
                             }
                             else
                             {
-                                retcode = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_DEFAULT, dataType[1], parameterSize[1], decimalDigit[1], sname, 0, &cbSchemaName );
+                                retcode = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType[1], parameterSize[1], decimalDigit[1], sname, 0, &cbSchemaName );
                                 if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt );
@@ -3800,7 +3799,7 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
                             }
                             else
                             {
-                                retcode = SQLBindCol( stmt, 1, SQL_C_SLONG, &id, 100, &cbName );
+                                retcode = SQLBindCol( stmt, 1, SQL_C_SLONG, &tableId, 100, &cbName );
                                 if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errorMsg, 1, stmt );
