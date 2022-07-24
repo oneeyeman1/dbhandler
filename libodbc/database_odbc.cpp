@@ -3688,9 +3688,9 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
     long id;
     int result = 0;
     std::wstring query;
-    SQLWCHAR *qry = NULL, *tname = NULL, *sname = NULL;;
     if( pimpl->m_subtype == L"Microsoft SQL Server" || pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
         query = L"SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?;";
+//        query = L"SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = 'abcatcol' AND s.name = 'dbo';";
     if( pimpl->m_subtype == L"PostgreSQL" )
         query = L"SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?;";
     if( pimpl->m_subtype == L"MySQL" )
@@ -3699,17 +3699,15 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
         query = L"SELECT object_id FROM all_objects WHERE object_name = UPPER(?) AND owner = UPPER(?)";
     if( pimpl->m_subtype == L"Sybase SQL Anywhere" )
         query = L"SELECT id FROM dbo.sysobjects WHERE name = ?";
-//    std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
-//    std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
-    qry = new SQLWCHAR[query.length() + 2];
-    tname = new SQLWCHAR[tableName.length() + 2];
-    sname = new SQLWCHAR[schemaName.length() + 2];
+    auto qry = new SQLWCHAR[query.length() + 2];
+    auto tname = new SQLWCHAR[tableName.length() + 2];
+    auto sname = new SQLWCHAR[schemaName.length() + 2];
+    memset( qry, '\0', query.length() + 2 );
     memset( tname, '\0', tableName.length() + 2 );
     memset( sname, '\0', schemaName.length() + 2);
+    uc_to_str_cpy( qry, query );
     uc_to_str_cpy( sname, schemaName );
     uc_to_str_cpy( tname, tableName );
-    memset( qry, '\0', query.length() + 2 );
-    uc_to_str_cpy( qry, query );
     SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
     if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
     {
