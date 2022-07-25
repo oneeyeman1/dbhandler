@@ -3936,7 +3936,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
                     }
                     else
                     {
-                        retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_DEFAULT, dataType[0], paramSize[0], decimalDigits[0], table_name, 0, &cbTableName );
+                        retcode = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType[0], paramSize[0], decimalDigits[0], table_name, 0, &cbTableName );
                         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, 2, hdbc );
@@ -3953,7 +3953,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
                         }
                         else
                         {
-                            retcode = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_DEFAULT, dataType[1], paramSize[1], decimalDigits[1], schema_name, 0, &cbSchemaName );
+                            retcode = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType[1], paramSize[1], decimalDigits[1], schema_name, 0, &cbSchemaName );
                             if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 2, hdbc );
