@@ -20,10 +20,8 @@ dbhandler_SOURCES =  \
 
 dbhandler_CXXFLAGS = -I../../dbinterface \
 	-I../../libdbwindow/res/gui \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+	`wx-config \
 	--cxxflags` 
 
-dbhandler_LDFLAGS = -Wl,-rpath \
-	-Wl,/home/igor/dbhandler/Debug/libdialogs \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+dbhandler_LDFLAGS = `wx-config \
 	--libs` 
