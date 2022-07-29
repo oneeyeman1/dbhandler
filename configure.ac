@@ -1,15 +1,27 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl Created by Anjuta application wizard.
 
-AC_INIT(dbhandler, 0.1)
+AC_INIT([dbhandler],[0.1])
 
 AC_CONFIG_HEADERS([config.h])
 
-AM_INIT_AUTOMAKE([1.11])
+AM_INIT_AUTOMAKE([1.11 subdir-objects])
 
 AM_SILENT_RULES([yes])
 
 AC_PROG_CC
+
+AC_CHECK_PROG(ODBC,odbc_config,yes)
+if test x"${ODBC}" == x"yes" ; then
+    ODBC_CFLAGS = `odbc_config --cflags`
+    ODBC_LIBS = `odbc_config --libs` -lodbcinst
+else
+    ODBC_CFLAGS = `pkg-config odbc --cflags`
+    ODBC_LIBS = `pkg-config odbc --libs` -lodbcinst
+fi
+
+AC_SUBST(ODBC_CFLAGS)
+AC_SUBST(ODBC_LIBS)
 
 WXCONFIG=wx-config
 AC_ARG_WITH(wx-config,
@@ -58,7 +70,7 @@ LT_INIT
 
 
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 po/Makefile.in
 dbinterface/Makefile
@@ -77,3 +89,4 @@ libpostgres/Makefile
 libtablewindow/Makefile
 libpropertypages/Makefile
 ])
+AC_OUTPUT
