@@ -60,16 +60,19 @@ AC_PROG_CXX
 dnl ***************************************************************************
 dnl Internationalization
 dnl ***************************************************************************
+m4_pattern_forbid([^IT_PROG_INTLTOOL])dnl
 IT_PROG_INTLTOOL([0.35.0])
 
 GETTEXT_PACKAGE=dbhandler
 AC_SUBST([GETTEXT_PACKAGE])
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"],
                    [GETTEXT package name])
+m4_pattern_forbid([^AM_GLIB_GNU_GETTEXT])
 AM_GLIB_GNU_GETTEXT
 
 
 
+m4_pattern_forbid([^LT_INIT])dnl
 LT_INIT
 
 
