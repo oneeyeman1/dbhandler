@@ -6,7 +6,10 @@ AC_INIT([dbhandler], [0.1])
 
 AC_CONFIG_HEADERS([config.h])
 
-AM_INIT_AUTOMAKE([1.11 subdir-objects])
+AM_INIT_AUTOMAKE([
+  1.11
+  subdir-objects
+])
 
 AM_SILENT_RULES([yes])
 
@@ -73,22 +76,22 @@ LT_INIT
 
 
 AC_CONFIG_FILES([
-Makefile
-po/Makefile.in
-dbinterface/Makefile
-libsqlite/Makefile
-libodbc/Makefile
-libshapeframework/Makefile
-libfieldswindow/Makefile
-libdialogs/Makefile
-libdbloader/Makefile
-libdbwindow/Makefile
-dbhandler/Makefile
-libtabledataedit/Makefile
-libpropertieshandlers/Makefile
-libmysql/Makefile
-libpostgres/Makefile
-libtablewindow/Makefile
-libpropertypages/Makefile
+  Makefile
+  dbhandler/Makefile
+  dbinterface/Makefile
+  libdbloader/Makefile
+  libdbwindow/Makefile
+  libdialogs/Makefile
+  libfieldswindow/Makefile
+  libmysql/Makefile
+  libodbc/Makefile
+  libpostgres/Makefile
+  libpropertieshandlers/Makefile
+  libpropertypages/Makefile
+  libshapeframework/Makefile
+  libsqlite/Makefile
+  libtabledataedit/Makefile
+  libtablewindow/Makefile
+  po/Makefile.in
 ])
 AC_OUTPUT
