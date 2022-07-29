@@ -15,13 +15,20 @@ AM_SILENT_RULES([yes])
 
 AC_PROG_CC
 
-AC_CHECK_PROG([dbh_have_odbc_config], [odbc_config], [yes], [no])
-AS_IF([test "x$dbh_have_odbc_config" = xyes], [dnl
-    ODBC_CFLAGS="`odbc_config --cflags`"
-    ODBC_LIBS="`odbc_config --libs` -lodbcinst"
-], [dnl
-    ODBC_CFLAGS="`pkg-config odbc --cflags` `pkg-config odbcinst --cflags`"
-    ODBC_LIBS="`pkg-config odbc --libs` `pkg-config odbcinst --libs`"
+AC_ARG_VAR([ODBC_CONFIG], [odbc_config tool to use])
+AS_VAR_IF([ODBC_CONFIG], [], [dnl
+    AC_PATH_PROG([ODBC_CONFIG], [odbc_config], [no])
+])
+AC_ARG_VAR([PKG_CONFIG], [pkg-config tool to use])
+AS_VAR_IF([PKG_CONFIG], [], [dnl
+    AC_PATH_TOOL([PKG_CONFIG], [pkg-config], [no])
+])
+AS_IF([test "x$ODBC_CONFIG" != xno], [dnl
+    ODBC_CFLAGS="`$ODBC_CONFIG --cflags`"
+    ODBC_LIBS="`$ODBC_CONFIG --libs` -lodbcinst"
+], [test "x$PKG_CONFIG" != xno], [dnl
+    ODBC_CFLAGS="`$PKG_CONFIG odbc --cflags` `$PKG_CONFIG odbcinst --cflags`"
+    ODBC_LIBS="`$PKG_CONFIG odbc --libs` `$PKG_CONFIG odbcinst --libs`"
 ])
 AC_SUBST([ODBC_CFLAGS])
 AC_SUBST([ODBC_LIBS])
