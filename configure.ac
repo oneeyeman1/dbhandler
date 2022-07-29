@@ -15,6 +15,8 @@ AM_INIT_AUTOMAKE([
 AM_SILENT_RULES([yes])
 
 AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_CXX
 
 AC_ARG_VAR([ODBC_CONFIG], [odbc_config tool to use])
 AS_VAR_IF([ODBC_CONFIG], [], [dnl
@@ -59,9 +61,6 @@ WX_LIBS="`$WXCONFIG --libs`"
 AC_SUBST([WX_CPPFLAGS])
 AC_SUBST([WX_CXXFLAGS])
 AC_SUBST([WX_LIBS])
-
-AC_PROG_CPP
-AC_PROG_CXX
 
 
 dnl ***************************************************************************
