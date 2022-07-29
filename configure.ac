@@ -28,13 +28,13 @@ AC_SUBST([ODBC_LIBS])
 
 WXCONFIG=wx-config
 AC_ARG_WITH([wx-config],
-[[  --with-wx-config=FILE
-    Use the given path to wx-config when determining
-    wxWidgets configuration; defaults to "wx-config"]],
-[
-    if test "$withval" != "yes" -a "$withval" != ""; then
-        WXCONFIG=$withval
-    fi
+    [AS_HELP_STRING([--with-wx-config=FILE],
+        [Use the given path to wx-config when determining
+         wxWidgets configuration; defaults to "wx-config"])],
+    [dnl
+        AS_IF([test "x$withval" != xyes && test "x$withval" != x], [dnl
+            WXCONFIG="$withval"
+        ])
 ])
 AC_MSG_CHECKING([wxWidgets version])
 if wxversion=`$WXCONFIG --version`; then
