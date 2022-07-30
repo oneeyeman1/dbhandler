@@ -18,6 +18,7 @@ AM_SILENT_RULES([yes])
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_CXX
+AM_PROG_AR
 
 m4_pattern_forbid([^PKG_CHECK_MODULES])dnl
 PKG_CHECK_MODULES([GTK3],     [gtk+-3.0])
