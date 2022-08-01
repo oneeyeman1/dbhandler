@@ -56,7 +56,7 @@ void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames)
 {
     wxArrayInt selections;
     m_tables->GetSelections( selections );
-    for( int i = 0; i < selections.GetCount(); i++ )
+    for( auto i = 0; i < selections.GetCount(); i++ )
     {
         wxString schema = dynamic_cast<wxStringClientData *>( m_tables->GetClientObject( i ) )->GetData();
         tableNames.push_back( schema + L"." + m_tables->GetString( selections.Item( i ) ) );
@@ -142,16 +142,16 @@ void SelectTables::FillTableList(bool sysTableIncluded)
     bool insert = false;
     std::wstring type = m_db->GetTableVector().m_type;
     std::wstring subType = m_db->GetTableVector().m_subtype;
-    std::map<std::wstring,std::vector<DatabaseTable *> > tables = m_db->GetTableVector().m_tables;
+    std::map<std::wstring,std::vector<TableDefinition> > tables = m_db->GetTableVector().m_tableDefinitions;
     std::wstring dbName = m_db->GetTableVector().m_dbName;
-    for( std::map<std::wstring,std::vector<DatabaseTable *> >::iterator it = tables.begin(); it != tables.end(); it++ )
+    for( std::map<std::wstring,std::vector<TableDefinition> >::iterator it = tables.begin(); it != tables.end(); it++ )
     {
         if( (*it).first == dbName )
         {
-            for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+            for( std::vector<TableDefinition>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
             {
-                std::wstring tableName = (*it1)->GetTableName();
-                std::wstring schemaName = (*it1)->GetSchemaName();
+                std::wstring tableName = (*it1).tableName;
+                std::wstring schemaName = (*it1).schemaName;
                 if( std::find( m_names.begin(), m_names.end(), tableName ) == m_names.end() )
                 {
                     if( type == L"SQLite" )
@@ -166,13 +166,8 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                     else if( ( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" ) ||
                                ( type == L"ODBC" && subType == L"Sybase SQL Anywhere" ) || type == L"Sybase SQL Anywhere" )
                     {
-                        if( tableName.substr( 0, 5 ) == L"abcat" && !sysTableIncluded )
+                        if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"sys" || schemaName == L"INFORMATION_SCHEMA" || schemaName == L"SYS" ) )
                             continue;
-                        if( !sysTableIncluded )
-                        {
-                            if( ( ( schemaName != L"sys" ) && ( schemaName != L"INFORMATION_SCHEMA" ) && schemaName != L"DBO" && schemaName != L"SYS" ) )
-                                insert = true;
-                        }
                         else
                         {
                             insert = true;
@@ -180,19 +175,17 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                     }
                     else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
                     {
-                        if( tableName.substr( 0, 5 ) == L"abcat" && !sysTableIncluded )
+                        if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"information_schema" ) )
                             continue;
-                        if( schemaName == L"information_schema" && !sysTableIncluded )
-                            continue;
-                        insert = true;
+                        else
+                            insert = true;
                     }
                     else if( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" )
                     {
-                        if( tableName.substr( 0, 5 ) == L"abcat" && !sysTableIncluded )
+                        if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || ( schemaName == L"information_schema" || schemaName == L"pg_catalog" ) ) )
                             continue;
-                        if( ( schemaName == L"information_schema" || schemaName == L"pg_catalog" ) && !sysTableIncluded )
-                            continue;
-                        insert = true;
+                        else
+                            insert = true;
                     }
                     if( insert )
                         m_tables->Append( tableName, new wxStringClientData( schemaName ) );
