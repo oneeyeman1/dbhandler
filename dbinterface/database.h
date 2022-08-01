@@ -40,8 +40,8 @@ enum FK_ONDELETE
 
 struct TableDefinition
 {
-    std::wstring schemaName, tanleName;
-    TableDefinition(const std::wstring &schema, const std::wstring &table) : schemaName(schema), tanleName(table) {}
+    std::wstring schemaName, tableName;
+    TableDefinition(const std::wstring &schema, const std::wstring &table) : schemaName(schema), tableName(table) {}
 };
 
 struct DataEditFiield
