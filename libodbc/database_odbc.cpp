@@ -1987,7 +1987,10 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         schema = cat;
                         copy_uc_to_uc( schemaName, catalogName );
                     }
-                    long tableId;
+                    pimpl->m_tableDefinitions[cat].push_back( TableDefinition( schema, table ) );
+                    count++;
+                }
+/*                    long tableId;
                     if( GetTableId( cat, schema, table, tableId, errorMsg ) )
                     {
                         result = 1;
@@ -1996,9 +1999,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     result = AddDropTable( cat, schema, table, owner, tableId, true, errorMsg );
                     if( result )
                         break;
-                    count++;
                     pimpl->m_tableNames.push_back( schema + L"." + table );
-                }
+                }*/
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                 {
                     fields.erase( fields.begin(), fields.end() );
@@ -5059,48 +5061,33 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
         }
         else
         {
-            ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_colattr );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            if( schemaName != L"sys" )
             {
-                GetErrorMessage( errorMsg, 0 );
-                result = 1;
-                fields.clear();
-                pk_fields.clear();
-            }
-            else
-            {
-                SQLSMALLINT OutConnStrLen;
-                ret = SQLDriverConnect( hdbc_colattr, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+                ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_colattr );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, 2, hdbc_colattr );
+                    GetErrorMessage( errorMsg, 0 );
                     result = 1;
-                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                    hdbc_colattr = 0;
+                    fields.clear();
+                    pk_fields.clear();
                 }
                 else
                 {
-                    ret = SQLAllocHandle(  SQL_HANDLE_STMT, hdbc_colattr, &stmt_colattr );
+                    SQLSMALLINT OutConnStrLen;
+                    ret = SQLDriverConnect( hdbc_colattr, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 2, hdbc_colattr );
                         result = 1;
-                        SQLDisconnect( hdbc_colattr );
                         SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
                         hdbc_colattr = 0;
                     }
                     else
                     {
-                        std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName;
-                        SQLWCHAR *szTableName = new SQLWCHAR[query.size() + 2];
-                        memset( szTableName, '\0', query.size() + 2 );
-                        uc_to_str_cpy( szTableName, query );
-                        ret = SQLExecDirect( stmt_colattr, szTableName, SQL_NTS );
-                        delete[] szTableName;
-                        szTableName = NULL;
+                        ret = SQLAllocHandle(  SQL_HANDLE_STMT, hdbc_colattr, &stmt_colattr );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, 1, stmt_colattr );
+                            GetErrorMessage( errorMsg, 2, hdbc_colattr );
                             result = 1;
                             SQLDisconnect( hdbc_colattr );
                             SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
@@ -5108,9 +5095,13 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         }
                         else
                         {
-                            SQLSMALLINT lenUsed;
-                            int bufferSize = 1024;
-                            ret = SQLNumResultCols( stmt_colattr, &numCols );
+                            std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName;
+                            SQLWCHAR *szTableName = new SQLWCHAR[query.size() + 2];
+                            memset( szTableName, '\0', query.size() + 2 );
+                            uc_to_str_cpy( szTableName, query );
+                            ret = SQLExecDirect( stmt_colattr, szTableName, SQL_NTS );
+                            delete[] szTableName;
+                            szTableName = NULL;
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, stmt_colattr );
@@ -5121,74 +5112,88 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             else
                             {
-                                columnNames = new SQLWCHAR *[numCols];
-                                SQLLEN autoincrement;
-                                for( int i = 0; i < numCols; i++ )
+                                SQLSMALLINT lenUsed;
+                                int bufferSize = 1024;
+                                ret = SQLNumResultCols( stmt_colattr, &numCols );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
-                                    autoincrement = 0;
-                                    columnNames[i] = new SQLWCHAR[sizeof( SQLWCHAR ) * SQL_MAX_COLUMN_NAME_LEN + 1];
-                                    ret = SQLColAttribute( stmt_colattr, (SQLUSMALLINT) i + 1, SQL_DESC_LABEL, columnNames[i], bufferSize, &lenUsed, NULL );
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                    GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                    result = 1;
+                                    SQLDisconnect( hdbc_colattr );
+                                    SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                    hdbc_colattr = 0;
+                                }
+                                else
+                                {
+                                    columnNames = new SQLWCHAR *[numCols];
+                                    SQLLEN autoincrement;
+                                    for( int i = 0; i < numCols; i++ )
                                     {
-                                        GetErrorMessage( errorMsg, 1, stmt_colattr );
-                                        result = 1;
-                                        autoinc_fields.clear();
-                                        SQLDisconnect( hdbc_colattr );
-                                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                                        hdbc_colattr = 0;
-                                        break;
-                                    }
-                                    if( result )
-                                        break;
-                                    ret = SQLColAttribute( stmt_colattr, (SQLUSMALLINT) i + 1, SQL_DESC_AUTO_UNIQUE_VALUE, NULL, 0, NULL, &autoincrement );
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, 1, stmt_colattr );
-                                        result = 1;
-                                        autoinc_fields.clear();
-                                        SQLDisconnect( hdbc_colattr );
-                                        SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                                        hdbc_colattr = 0;
-                                        break;
-                                    }
-                                    if( autoincrement == SQL_TRUE )
-                                    {
-                                        std::wstring colName;
-                                        str_to_uc_cpy( colName, columnNames[i] );
-                                        autoinc_fields.push_back( colName );
+                                        autoincrement = 0;
+                                        columnNames[i] = new SQLWCHAR[sizeof( SQLWCHAR ) * SQL_MAX_COLUMN_NAME_LEN + 1];
+                                        ret = SQLColAttribute( stmt_colattr, (SQLUSMALLINT) i + 1, SQL_DESC_LABEL, columnNames[i], bufferSize, &lenUsed, NULL );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                            result = 1;
+                                            autoinc_fields.clear();
+                                            SQLDisconnect( hdbc_colattr );
+                                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                            hdbc_colattr = 0;
+                                            break;
+                                        }
+                                        if( result )
+                                            break;
+                                        ret = SQLColAttribute( stmt_colattr, (SQLUSMALLINT) i + 1, SQL_DESC_AUTO_UNIQUE_VALUE, NULL, 0, NULL, &autoincrement );
+                                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                        {
+                                            GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                            result = 1;
+                                            autoinc_fields.clear();
+                                            SQLDisconnect( hdbc_colattr );
+                                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                            hdbc_colattr = 0;
+                                            break;
+                                        }
+                                        if( autoincrement == SQL_TRUE )
+                                        {
+                                            std::wstring colName;
+                                            str_to_uc_cpy( colName, columnNames[i] );
+                                            autoinc_fields.push_back( colName );
+                                        }
                                     }
                                 }
                             }
-                        }
-                        ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1, stmt_colattr );
-                            result = 1;
-                            autoinc_fields.clear();
-                            SQLDisconnect( hdbc_colattr );
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                            ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_colattr );
+                                result = 1;
+                                autoinc_fields.clear();
+                                SQLDisconnect( hdbc_colattr );
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                stmt_colattr = 0;
+                            }
                             stmt_colattr = 0;
-                        }
-                        stmt_colattr = 0;
-                        ret = SQLDisconnect( hdbc_colattr );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 2, hdbc_colattr );
-                            result = 1;
-                            autoinc_fields.clear();
-                            SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                            hdbc_colattr = 0;
-                        }
-                        ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 2, hdbc_colattr );
-                            result = 1;
-                            fields.clear();
-                            pk_fields.clear();
-                            autoinc_fields.clear();
-                            hdbc_colattr = 0;
+                            ret = SQLDisconnect( hdbc_colattr );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 2, hdbc_colattr );
+                                result = 1;
+                                autoinc_fields.clear();
+                                SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                                hdbc_colattr = 0;
+                            }
+                            ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc_colattr );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 2, hdbc_colattr );
+                                result = 1;
+                                fields.clear();
+                                pk_fields.clear();
+                                autoinc_fields.clear();
+                                hdbc_colattr = 0;
+                            }
                         }
                     }
                 }

@@ -356,7 +356,7 @@ int MySQLDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 
 int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
-    int res, result = 0;
+    int res, result = 0, count = 0;
     MYSQL_STMT *res1 = NULL, *res2 = NULL, *res3 = NULL;
     char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
     char fkField[64], refTableSchema[64], refTableName[64], refTableField[64], updateCon[64], deleteCon[64];
@@ -451,7 +451,9 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         char *catalog_name = row[0] ? row[0] : NULL;
                                         char *schema_name = row[1] ? row[1] : NULL;
                                         char *table_name = row[2] ? row[2] : NULL;
-                                        long table_id = row[4] ? strtol( row[4], &end, 10 ) : 0;
+                                        pimpl->m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
+                                        count++;
+/*                                        long table_id = row[4] ? strtol( row[4], &end, 10 ) : 0;
                                         MYSQL_BIND params[3];
                                         unsigned long str_length1, str_length2, str_length3;
                                         str_length1 = strlen( catalog_name ) * 2;
@@ -911,7 +913,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                                     }
                                                 }
                                             }
-                                        }
+                                        }*/
                                     }
                                 }
                             }
@@ -921,6 +923,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             }
         }
     }
+    m_numOfTables = count;
     delete str_data1;
     str_data1 = NULL;
     delete str_data2;

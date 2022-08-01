@@ -38,6 +38,12 @@ enum FK_ONDELETE
     CASCADE_DELETE
 };
 
+struct TableDefinition
+{
+    std::wstring schemaName, tanleName;
+    TableDefinition(const std::wstring &schema, const std::wstring &table) : schemaName(schema), tanleName(table) {}
+};
+
 struct DataEditFiield
 {
     int type, m_precision;
@@ -371,6 +377,7 @@ struct Database::Impl
     static std::mutex my_mutex;
 #endif
     std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
+    std::map<std::wstring, std::vector<TableDefinition> > m_tableDefinitions;
     std::vector<std::wstring> m_tableNames;
     std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
     std::wstring m_serverVersion;
