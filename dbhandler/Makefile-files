@@ -12,8 +12,7 @@ EXTRA_DIST += %D%/res/quit.xpm
 EXTRA_DIST += %D%/res/save.xpm
 EXTRA_DIST += %D%/res/table.xpm
 
-bin_PROGRAMS += \
-	%D%/dbhandler
+bin_PROGRAMS += %D%/dbhandler
 
 %C%_dbhandler_SOURCES = \
 	%D%/doc.cpp \
@@ -39,13 +38,9 @@ EXTRA_%C%_dbhandler_SOURCES += %D%/res/odbc.c
 EXTRA_%C%_dbhandler_SOURCES += %D%/res/profile.c
 EXTRA_%C%_dbhandler_SOURCES += %D%/res/table.c
 
-%C%_dbhandler_CPPFLAGS = \
-	-I$(top_srcdir)/dbinterface \
-	-I$(top_srcdir)/libdbwindow/res/gui \
-	$(WX_CPPFLAGS)
+%C%_dbhandler_CPPFLAGS = $(WX_CPPFLAGS)
+%C%_dbhandler_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
+%C%_dbhandler_LDFLAGS  = $(WX_LIBS)
 
-%C%_dbhandler_CXXFLAGS = \
-	$(WX_CXXFLAGS_ONLY)
-
-%C%_dbhandler_LDFLAGS = \
-	$(WX_LIBS)
+%C%_dbhandler_CPPFLAGS += -I$(top_srcdir)/dbinterface
+%C%_dbhandler_CPPFLAGS += -I$(top_srcdir)/libdbwindow/res/gui
