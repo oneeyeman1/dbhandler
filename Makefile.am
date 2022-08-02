@@ -3,14 +3,7 @@
 
 SUBDIRS = dbinterface libsqlite libodbc libpostgres libmysql libshapeframework libdbloader libfieldswindow libpropertypages libdialogs libpropertieshandlers libtabledataedit libdbwindow libtablewindow po dbhandler
 
-dist_doc_DATA = \
-	README \
-	COPYING \
-	AUTHORS \
-	ChangeLog \
-	INSTALL \
-	NEWS
-
+dist_doc_DATA = COPYING
 
 INTLTOOL_FILES = intltool-extract.in \
 	intltool-merge.in \

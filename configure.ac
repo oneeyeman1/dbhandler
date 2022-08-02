@@ -8,6 +8,7 @@ AC_CONFIG_HEADERS([config.h])
 
 AM_INIT_AUTOMAKE([
   1.11
+  foreign
   subdir-objects
 ])
 
