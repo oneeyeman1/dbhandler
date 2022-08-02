@@ -45,32 +45,24 @@ libdialogs_la_SOURCES =  \
 	datasource.cpp \
 	datasource.h
 
-libdialogs_la_CXXFLAGS = -I../../dbinterface \
-	-I../../libfieldswindow \
-	-I../../libshapeframework \
-	-I../../libpropertypages \
-	-I../../libpropertieshandlers \
-	`pkg-config \
-	--cflags \
-	gtk+-3.0` \
-	`wx-config \
-	--cxxflags` 
+libdialogs_la_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface \
+	-I$(top_srcdir)/libfieldswindow \
+	-I$(top_srcdir)/libshapeframework \
+	-I$(top_srcdir)/libpropertypages \
+	-I$(top_srcdir)/libpropertieshandlers \
+	$(GTK3_CFLAGS) \
+	$(WX_CPPFLAGS)
 
-libdialogs_la_LDFLAGS = -L../libsqlite \
-	-L../libshapeframework \
-	-L../dbinterface \
-	-L../libfieldswindow \
-	-L../libodbc \
-	-L../libpostgres \
-	-L../libpropertypages \
-	-ldbinterface \
-	-lsqlite_lib \
-	-lodbc_lib \
-	-lshapeframework \
-	-lfieldswindow \
-	-lpropertypages \
-	-lpostgres \
-	`wx-config \
-	--libs`
-	
-	 
+libdialogs_la_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+libdialogs_la_LIBADD = \
+	$(top_builddir)/dbinterface/libdbinterface.la \
+	$(top_builddir)/libsqlite/libsqlite_lib.la \
+	$(top_builddir)/libodbc/libodbc_lib.la \
+	$(top_builddir)/libshapeframework/libshapeframework.la \
+	$(top_builddir)/libfieldswindow/libfieldswindow.la \
+	$(top_builddir)/libpropertypages/libpropertypages.la \
+	$(top_builddir)/libpostgres/libpostgres.la \
+	$(WX_LIBS)

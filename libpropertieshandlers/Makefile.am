@@ -15,15 +15,17 @@ libpropertieshandlers_la_SOURCES =  \
 	dividerpropertieshandler.cpp \
 	dividerpropertieshandler.h
 
-libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
-	-I../../libpropertypages \
-	-I../../libdbwindow \
-	-I../../libshapeframework \
-	-I../../libfieldswindow \
-	`wx-config \
-	--cxxflags` 
+libpropertieshandlers_la_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface \
+	-I$(top_srcdir)/libpropertypages \
+	-I$(top_srcdir)/libdbwindow \
+	-I$(top_srcdir)/libshapeframework \
+	-I$(top_srcdir)/libfieldswindow \
+	$(WX_CPPFLAGS)
 
-libpropertieshandlers_la_LDFLAGS = -L../libpropertypages \
-	-lpropertypages \
-	`wx-config \
-	--libs` 
+libpropertieshandlers_la_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+libpropertieshandlers_la_LIBADD = \
+	$(top_builddir)/libpropertypages/libpropertypages.la \
+	$(WX_LIBS)

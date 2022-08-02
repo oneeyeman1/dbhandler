@@ -39,17 +39,16 @@ libpropertypages_la_SOURCES =  \
 	gtk/fontpropertypageGTK.cpp \
 	gtk/fontpropertypageGTK.h
 
-libpropertypages_la_CXXFLAGS = -I../../dbinterface \
-	-I../../libshapeframework \
-	-I../../libfieldswindow \
-	`pkg-config \
-	--cflags \
-	gtk+-3.0` \
-	`wx-config \
-	--cxxflags` 
+libpropertypages_la_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface \
+	-I$(top_srcdir)/libshapeframework \
+	-I$(top_srcdir)/libfieldswindow \
+	$(GTK3_CFLAGS) \
+	$(WX_CPPFLAGS)
 
-libpropertypages_la_LDFLAGS = `pkg-config \
-	--libs \
-	gtk+-3.0` \
-	`wx-config \
-	--libs` 
+libpropertypages_la_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+libpropertypages_la_LIBADD = \
+	$(GTK3_LIBS) \
+	$(WX_LIBS)

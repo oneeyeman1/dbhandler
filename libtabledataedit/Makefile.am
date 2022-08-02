@@ -19,9 +19,12 @@ libtableedit_la_SOURCES =  \
 	imagecellrenderer.cpp \
 	imagecellrenderer.h
 
-libtableedit_la_CXXFLAGS = -I../../dbinterface \
-	`wx-config \
-	--cxxflags` 
+libtableedit_la_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface \
+	$(WX_CPPFLAGS)
 
-libtableedit_la_LDFLAGS = `wx-config \
-	--libs` 
+libtableedit_la_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+libtableedit_la_LIBADD = \
+	$(WX_LIBS)

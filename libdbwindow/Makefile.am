@@ -61,22 +61,19 @@ libdbwindow_la_SOURCES =  \
 	fieldtypeshape.cpp \
 	fieldtypeshape.h
 
-libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
-	-I../../libfieldswindow \
-	-I../../dbinterface \
-	-I../../libpropertypages \
-	-I../../libpropertieshandlers \
-	`wx-config \
-	--cxxflags` 
+libdbwindow_la_CPPFLAGS = \
+	-I$(top_srcdir)/libshapeframework \
+	-I$(top_srcdir)/libfieldswindow \
+	-I$(top_srcdir)/dbinterface \
+	-I$(top_srcdir)/libpropertypages \
+	-I$(top_srcdir)/libpropertieshandlers \
+	$(WX_CPPFLAGS)
 
-libdbwindow_la_LDFLAGS = -L../libpropertypages \
-	-lpropertypages \
-	-L../libshapeframework \
-	-L../libfieldswindow \
-	-lfieldswindow \
-	-lshapeframework \
-	`wx-config \
-	--libs \
-	stc`
-	
+libdbwindow_la_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
 
+libdbwindow_la_LIBADD = \
+	$(top_builddir)/libpropertypages/libpropertypages.la \
+	$(top_builddir)/libfieldswindow/libfieldswindow.la \
+	$(top_builddir)/libshapeframework/libshapeframework.la \
+	$(WX_LIBS_STC)

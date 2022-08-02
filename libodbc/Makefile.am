@@ -8,12 +8,12 @@ libodbc_lib_la_SOURCES =  \
 	database_odbc.cpp \
 	database_odbc.h
 
-libodbc_lib_la_CXXFLAGS = \
+libodbc_lib_la_CPPFLAGS = \
 	-I$(top_srcdir)/dbinterface \
 	-DUNICODE \
 	-DUNIXODBC \
-	@ODBC_CFLAGS@ @ODBCINST_CFLAGS@
+	$(ODBC_CFLAGS) $(ODBCINST_CFLAGS)
 
 libodbc_lib_la_LIBADD = \
 	$(top_builddir)/dbinterface/libdbinterface.la \
-	@ODBC_LIBS@ @ODBCINST_LIBS@
+	$(ODBC_LIBS) $(ODBCINST_LIBS)

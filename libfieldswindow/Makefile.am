@@ -11,11 +11,13 @@ libfieldswindow_la_SOURCES =  \
 	fieldwindow.cpp \
 	fieldwindow.h
 
-libfieldswindow_la_CXXFLAGS = -I../../libshapeframework \
-	`wx-config \
-	--cxxflags` 
+libfieldswindow_la_CXXFLAGS = \
+	$(WX_CXXFLAGS)
 
-libfieldswindow_la_LDFLAGS = -L../libshapeframework \
-	-lshapeframework \
-	`wx-config \
-	--libs` 
+libfieldswindow_la_CPPFLAGS = \
+	-I$(top_srcdir)/libshapeframework \
+	$(WX_CPPFLAGS)
+
+libfieldswindow_la_LIBADD = \
+	$(top_builddir)/libshapeframework/libshapeframework.la \
+	$(WX_LIBS)

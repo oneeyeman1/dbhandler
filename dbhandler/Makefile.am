@@ -18,10 +18,13 @@ dbhandler_SOURCES =  \
 	newtablehandler.cpp \
 	newtablehandler.h
 
-dbhandler_CXXFLAGS = -I../../dbinterface \
-	-I../../libdbwindow/res/gui \
-	`wx-config \
-	--cxxflags` 
+dbhandler_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface \
+	-I$(top_srcdir)/libdbwindow/res/gui \
+	$(WX_CPPFLAGS)
 
-dbhandler_LDFLAGS = `wx-config \
-	--libs` 
+dbhandler_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+dbhandler_LDFLAGS = \
+	$(WX_LIBS)

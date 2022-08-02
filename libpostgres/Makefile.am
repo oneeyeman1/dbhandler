@@ -9,13 +9,11 @@ libpostgres_la_SOURCES =  \
 	database_postgres.h \
 	postgres.cpp
 
-libpostgres_la_CXXFLAGS = -D__WXGTK__ \
+libpostgres_la_CPPFLAGS = \
+	-D__WXGTK__ \
 	-I$(top_srcdir)/dbinterface \
-	-I`pg_config \
-	--includedir` 
+	$(LIBPQ_CFLAGS)
 
-libpostgres_la_LDFLAGS = \
+libpostgres_la_LIBADD = \
 	$(top_builddir)/dbinterface/libdbinterface.la \
-	-L`pg_config \
-	--libdir` \
-	-lpq 
+	$(LIBPQ_LIBS)

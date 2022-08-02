@@ -15,10 +15,13 @@ libtablewindow_la_SOURCES =  \
 	typecombobox.cpp \
 	typecombobox.h
 
-libtablewindow_la_CXXFLAGS = -I../../dbinterface \
-	`wx-config \
-	--cxxflags` 
+libtablewindow_la_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface \
+	$(WX_CPPFLAGS)
 
-libtablewindow_la_LDFLAGS = -L../dbinterface \
-	`wx-config \
-	--libs` 
+libtablewindow_la_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+libtablewindow_la_LIBADD = \
+	$(top_builddir)/dbinterface/libdbinterface.la \
+	$(WX_LIBS)
