@@ -22,6 +22,7 @@ AM_PROG_AR
 
 m4_pattern_forbid([^PKG_CHECK_MODULES])dnl
 PKG_CHECK_MODULES([GTK3],     [gtk+-3.0])
+PKG_CHECK_MODULES([LIBPQ],    [libpq])
 PKG_CHECK_MODULES([ODBC],     [odbc])
 PKG_CHECK_MODULES([ODBCINST], [odbcinst])
 
@@ -40,7 +41,6 @@ AC_SUBST([WX_LIBS_STC], ["`$WX_CONFIG_PATH --libs stc`"])
 dnl ***************************************************************************
 dnl Check for ttt_config tools and define variables with them:
 dnl   * mysql_config: MYSQL_CFLAGS and MYSQL_LIBS (standard names)
-dnl   * pg_config:    LIBPQ_CFLAGS and LIBPQ_LIBS (standard names)
 dnl ***************************************************************************
 
 AC_DEFUN([DBH_CONFIG_TOOL], [dnl
@@ -58,10 +58,6 @@ m4_pattern_forbid([^DBH_CONFIG_TOOL])dnl
 DBH_CONFIG_TOOL([MYSQL_CONFIG], [mysql_config])
 AC_SUBST([MYSQL_CFLAGS],        ["`$MYSQL_CONFIG --cflags`"])
 AC_SUBST([MYSQL_LIBS],          ["`$MYSQL_CONFIG --libs`"])
-
-DBH_CONFIG_TOOL([PG_CONFIG],    [pg_config])
-AC_SUBST([LIBPQ_CFLAGS],        ["-I`$PG_CONFIG --includedir`"])
-AC_SUBST([LIBPQ_LIBS],          ["-L`$PG_CONFIG --libdir` -lpq"])
 
 
 dnl ***************************************************************************
