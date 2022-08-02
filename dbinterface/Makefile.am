@@ -1,10 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
 
-lib_LIBRARIES =  \
-	libdbinterface.a
+noinst_LTLIBRARIES =  \
+	libdbinterface.la
 
-libdbinterface_a_SOURCES =  \
+libdbinterface_la_SOURCES =  \
 	database.h
-
-libdbinterface_a_CXXFLAGS = -fPIC 

@@ -11,9 +11,8 @@ libsqlite_lib_la_SOURCES =  \
 	sqlite3.h \
 	sqlite3ext.h
 
-libsqlite_lib_la_CXXFLAGS = -I../../dbinterface 
+libsqlite_lib_la_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface
 
-libsqlite_lib_la_LDFLAGS = -L../dbinterface \
-	-ldbinterface 
-
-AM_CXXFLAGS = -I../../dbinterface 
+libsqlite_lib_la_LIBADD = \
+	$(top_builddir)/dbinterface/libdbinterface.la
