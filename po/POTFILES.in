@@ -1,3 +1,9 @@
 # List of source files containing translatable strings.
 
-src/main.c
+dbhandler/mainframe.cpp
+libdbwindow/databasecanvas.cpp
+libdbwindow/designcanvas.cpp
+libdialogs/databasetype.cpp
+libdialogs/quickselect.cpp
+libpropertypages/sortgroupbypage.cpp
+libshapeframework/wxsf/EditTextShape.h

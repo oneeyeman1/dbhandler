@@ -1,9 +1,12 @@
 # Process this file with autoreconf              -*- Makefile-automake -*-
 
+EXTRA_DIST += %D%/res/querycancel.xpm
+EXTRA_DIST += %D%/res/queryexec.xpm
+
 lib_LTLIBRARIES += \
 	%D%/libtableedit.la
 
-%C%_libtableedit_la_SOURCES =  \
+%C%_libtableedit_la_SOURCES = \
 	%D%/tableeditview.h \
 	%D%/tableeditview.cpp \
 	%D%/tableeditdocument.cpp \
@@ -26,4 +29,5 @@ lib_LTLIBRARIES += \
 	$(WX_CXXFLAGS_ONLY)
 
 %C%_libtableedit_la_LIBADD = \
+	$(top_builddir)/dbinterface/libdbinterface.la \
 	$(WX_LIBS)

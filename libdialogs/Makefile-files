@@ -1,5 +1,21 @@
 # Process this file with autoreconf              -*- Makefile-automake -*-
 
+EXTRA_DIST += %D%/res/Quick_Select.xpm
+EXTRA_DIST += %D%/res/SQL_Select.xpm
+EXTRA_DIST += %D%/res/composite.xpm
+EXTRA_DIST += %D%/res/crosstab.xpm
+EXTRA_DIST += %D%/res/external.xpm
+EXTRA_DIST += %D%/res/freeform.xpm
+EXTRA_DIST += %D%/res/graph.xpm
+EXTRA_DIST += %D%/res/grid.xpm
+EXTRA_DIST += %D%/res/group.xpm
+EXTRA_DIST += %D%/res/label.xpm
+EXTRA_DIST += %D%/res/n_up.xpm
+EXTRA_DIST += %D%/res/ole.xpm
+EXTRA_DIST += %D%/res/query.xpm
+EXTRA_DIST += %D%/res/richtext.xpm
+EXTRA_DIST += %D%/res/tabular.xpm
+
 lib_LTLIBRARIES += \
 	%D%/libdialogs.la
 
@@ -7,6 +23,7 @@ lib_LTLIBRARIES += \
 	%D%/databasetype.cpp \
 	%D%/databasetype.h \
 	%D%/dialogs.cpp \
+	%D%/dialogs.h \
 	%D%/odbcconfigure.cpp \
 	%D%/odbcconfigure.h \
 	%D%/selecttables.cpp \
@@ -43,6 +60,9 @@ lib_LTLIBRARIES += \
 	%D%/detachdb.h \
 	%D%/datasource.cpp \
 	%D%/datasource.h
+
+EXTRA_%C%_libdialogs_la_SOURCES = \
+	%D%/arguments.c
 
 %C%_libdialogs_la_CPPFLAGS = \
 	-I$(top_srcdir)/dbinterface \

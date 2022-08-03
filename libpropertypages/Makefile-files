@@ -38,6 +38,9 @@ lib_LTLIBRARIES += \
 	%D%/gtk/fontpropertypageGTK.cpp \
 	%D%/gtk/fontpropertypageGTK.h
 
+EXTRA_%C%_libpropertypages_la_SOURCES = \
+	%D%/objectproperties.h
+
 %C%_libpropertypages_la_CPPFLAGS = \
 	-I$(srcdir)/%D% \
 	-I$(top_srcdir)/dbinterface \

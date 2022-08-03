@@ -60,6 +60,20 @@ lib_LTLIBRARIES += \
 	%D%/fieldtypeshape.cpp \
 	%D%/fieldtypeshape.h
 
+EXTRA_%C%_libdbwindow_la_SOURCES = \
+	%D%/res/gui/bold.c \
+	%D%/res/gui/italic.c \
+	%D%/res/gui/opentype.h \
+	%D%/res/gui/preview.c \
+	%D%/res/gui/sql.h \
+	%D%/res/gui/underline.c
+
+EXTRA_DIST += \
+	%D%/res/gui/key-f.xpm \
+	%D%/res/gui/key-f1.xpm \
+	%D%/res/gui/key-p.xpm \
+	%D%/res/gui/toolbox.xpm
+
 %C%_libdbwindow_la_CPPFLAGS = \
 	-I$(top_srcdir)/libshapeframework \
 	-I$(top_srcdir)/libfieldswindow \

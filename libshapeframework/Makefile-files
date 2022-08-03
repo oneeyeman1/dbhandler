@@ -1,9 +1,14 @@
 # Process this file with autoreconf              -*- Makefile-automake -*-
 
+EXTRA_DIST += \
+	%D%/res/NoSource.xpm
+
 lib_LTLIBRARIES += \
 	%D%/libshapeframework.la
 
 %C%_libshapeframework_la_SOURCES = \
+	%D%/wx_pch.cpp \
+	%D%/wx_pch.h \
 	%D%/ArrowBase.cpp \
 	%D%/AutoLayout.cpp \
 	%D%/BitmapShape.cpp \
