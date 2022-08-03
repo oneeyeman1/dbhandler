@@ -1,0 +1,30 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+lib_LTLIBRARIES += \
+	%D%/libpropertieshandlers.la
+
+%C%_libpropertieshandlers_la_SOURCES = \
+	%D%/propertieshandler.cpp \
+	%D%/propertieshandler.h \
+	%D%/fieldpropertieshandler.cpp \
+	%D%/fieldpropertieshandler.h \
+	%D%/propertieshandlerbase.h \
+	%D%/designpropertieshandler.cpp \
+	%D%/designpropertieshandler.h \
+	%D%/dividerpropertieshandler.cpp \
+	%D%/dividerpropertieshandler.h
+
+%C%_libpropertieshandlers_la_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface \
+	-I$(top_srcdir)/libpropertypages \
+	-I$(top_srcdir)/libdbwindow \
+	-I$(top_srcdir)/libshapeframework \
+	-I$(top_srcdir)/libfieldswindow \
+	$(WX_CPPFLAGS)
+
+%C%_libpropertieshandlers_la_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+%C%_libpropertieshandlers_la_LIBADD = \
+	$(top_builddir)/libpropertypages/libpropertypages.la \
+	$(WX_LIBS)

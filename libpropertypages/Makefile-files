@@ -1,0 +1,54 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+lib_LTLIBRARIES += \
+	%D%/libpropertypages.la
+
+%C%_libpropertypages_la_SOURCES = \
+	%D%/tablegeneral.cpp \
+	%D%/tablegeneral.h \
+	%D%/fontpropertypagebase.cpp \
+	%D%/fontpropertypagebase.h \
+	%D%/syntaxproppage.cpp \
+	%D%/syntaxproppage.h \
+	%D%/wherehavingpage.cpp \
+	%D%/wherehavingpage.h \
+	%D%/fieldgeneral.cpp \
+	%D%/fieldgeneral.h \
+	%D%/fieldheader.cpp \
+	%D%/fieldheader.h \
+	%D%/propertypagebase.h \
+	%D%/designlabelgeneral.cpp \
+	%D%/designlabelgeneral.h \
+	%D%/sortgroupbypage.cpp \
+	%D%/sortgroupbypage.h \
+	%D%/bandgeneral.cpp \
+	%D%/bandgeneral.h \
+	%D%/pointerproperty.cpp \
+	%D%/pointerproperty.h \
+	%D%/tableprimarykey.cpp \
+	%D%/tableprimarykey.h \
+	%D%/designgeneral.cpp \
+	%D%/designgeneral.h \
+	%D%/colorcombobox.cpp \
+	%D%/colorcombobox.h \
+	%D%/printspec.cpp \
+	%D%/printspec.h \
+	%D%/qt/fontpropertypageQt.cpp \
+	%D%/qt/fontpropertypageQt.h \
+	%D%/gtk/fontpropertypageGTK.cpp \
+	%D%/gtk/fontpropertypageGTK.h
+
+%C%_libpropertypages_la_CPPFLAGS = \
+	-I$(srcdir)/%D% \
+	-I$(top_srcdir)/dbinterface \
+	-I$(top_srcdir)/libshapeframework \
+	-I$(top_srcdir)/libfieldswindow \
+	$(GTK3_CFLAGS) \
+	$(WX_CPPFLAGS)
+
+%C%_libpropertypages_la_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+%C%_libpropertypages_la_LIBADD = \
+	$(GTK3_LIBS) \
+	$(WX_LIBS)

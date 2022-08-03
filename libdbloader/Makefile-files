@@ -1,13 +1,12 @@
-## Process this file with automake to produce Makefile.in
+# Process this file with autoreconf              -*- Makefile-automake -*-
 
+lib_LTLIBRARIES += \
+	%D%/libdbloader.la
 
-lib_LTLIBRARIES =  \
-	libdbloader.la
+%C%_libdbloader_la_SOURCES = \
+	%D%/dbloader.cpp
 
-libdbloader_la_SOURCES =  \
-	dbloader.cpp
-
-libdbloader_la_CPPFLAGS = \
+%C%_libdbloader_la_CPPFLAGS = \
 	-I$(top_srcdir)/dbinterface \
 	-I$(top_srcdir)/libsqlite \
 	-I$(top_srcdir)/libodbc \
@@ -19,10 +18,10 @@ libdbloader_la_CPPFLAGS = \
 	$(MYSQL_CFLAGS) \
 	$(WX_CPPFLAGS)
 
-libdbloader_la_CXXFLAGS = \
+%C%_libdbloader_la_CXXFLAGS = \
 	$(WX_CXXFLAGS_ONLY)
 
-libdbloader_la_LIBADD = \
+%C%_libdbloader_la_LIBADD = \
 	$(top_builddir)/dbinterface/libdbinterface.la \
 	$(top_builddir)/libsqlite/libsqlite_lib.la \
 	$(top_builddir)/libodbc/libodbc_lib.la \

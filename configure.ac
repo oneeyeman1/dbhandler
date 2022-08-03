@@ -1,5 +1,4 @@
-dnl Process this file with autoconf to produce a configure script.
-dnl Created by Anjuta application wizard.
+dnl Process this file with autoreconf to produce a configure script
 
 AC_PREREQ([2.69])
 AC_INIT([dbhandler], [0.1])
@@ -9,7 +8,7 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([auto-m4])
 
 AM_INIT_AUTOMAKE([
-  1.11
+  1.14
   foreign
   subdir-objects
 ])
@@ -87,21 +86,6 @@ LT_INIT
 
 AC_CONFIG_FILES([
   Makefile
-  dbhandler/Makefile
-  dbinterface/Makefile
-  libdbloader/Makefile
-  libdbwindow/Makefile
-  libdialogs/Makefile
-  libfieldswindow/Makefile
-  libmysql/Makefile
-  libodbc/Makefile
-  libpostgres/Makefile
-  libpropertieshandlers/Makefile
-  libpropertypages/Makefile
-  libshapeframework/Makefile
-  libsqlite/Makefile
-  libtabledataedit/Makefile
-  libtablewindow/Makefile
   po/Makefile.in
 ])
 AC_OUTPUT

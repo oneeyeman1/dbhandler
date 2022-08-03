@@ -1,0 +1,67 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+lib_LTLIBRARIES += \
+	%D%/libdialogs.la
+
+%C%_libdialogs_la_SOURCES = \
+	%D%/databasetype.cpp \
+	%D%/databasetype.h \
+	%D%/dialogs.cpp \
+	%D%/odbcconfigure.cpp \
+	%D%/odbcconfigure.h \
+	%D%/selecttables.cpp \
+	%D%/selecttables.h \
+	%D%/createindex.cpp \
+	%D%/createindex.h \
+	%D%/properties.cpp \
+	%D%/properties.h \
+	%D%/foreignkey.cpp \
+	%D%/foreignkey.h \
+	%D%/getobjectname.cpp \
+	%D%/getobjectname.h \
+	%D%/jointype.cpp \
+	%D%/jointype.h \
+	%D%/addcolumnsdialog.cpp \
+	%D%/addcolumnsdialog.h \
+	%D%/odbccredentials.cpp \
+	%D%/odbccredentials.h \
+	%D%/bitmappanel.cpp \
+	%D%/bitmappanel.h \
+	%D%/newquery.cpp \
+	%D%/newquery.h \
+	%D%/quickselect.cpp \
+	%D%/quickselect.h \
+	%D%/retrievalarguments.cpp \
+	%D%/retrievalarguments.h \
+	%D%/typecombobox.cpp \
+	%D%/typecombobox.h \
+	%D%/gotoline.cpp \
+	%D%/gotoline.h \
+	%D%/attachdb.cpp \
+	%D%/attachdb.h \
+	%D%/detachdb.cpp \
+	%D%/detachdb.h \
+	%D%/datasource.cpp \
+	%D%/datasource.h
+
+%C%_libdialogs_la_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface \
+	-I$(top_srcdir)/libfieldswindow \
+	-I$(top_srcdir)/libshapeframework \
+	-I$(top_srcdir)/libpropertypages \
+	-I$(top_srcdir)/libpropertieshandlers \
+	$(GTK3_CFLAGS) \
+	$(WX_CPPFLAGS)
+
+%C%_libdialogs_la_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+%C%_libdialogs_la_LIBADD = \
+	$(top_builddir)/dbinterface/libdbinterface.la \
+	$(top_builddir)/libsqlite/libsqlite_lib.la \
+	$(top_builddir)/libodbc/libodbc_lib.la \
+	$(top_builddir)/libshapeframework/libshapeframework.la \
+	$(top_builddir)/libfieldswindow/libfieldswindow.la \
+	$(top_builddir)/libpropertypages/libpropertypages.la \
+	$(top_builddir)/libpostgres/libpostgres.la \
+	$(WX_LIBS)

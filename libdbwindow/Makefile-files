@@ -1,0 +1,78 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+lib_LTLIBRARIES += \
+	%D%/libdbwindow.la
+
+%C%_libdbwindow_la_SOURCES = \
+	%D%/ErdForeignKey.cpp \
+	%D%/ErdForeignKey.h \
+	%D%/IDbAdapter.h \
+	%D%/IDbType.h \
+	%D%/NArrow.cpp \
+	%D%/NArrow.h \
+	%D%/OneArrow.cpp \
+	%D%/OneArrow.h \
+	%D%/column.cpp \
+	%D%/column.h \
+	%D%/constraint.cpp \
+	%D%/constraint.h \
+	%D%/table.cpp \
+	%D%/table.h \
+	%D%/GUIDatabaseTable.cpp \
+	%D%/GUIDatabaseTable.h \
+	%D%/databasecanvas.cpp \
+	%D%/databasecanvas.h \
+	%D%/databasedoc.cpp \
+	%D%/databasedoc.h \
+	%D%/databaseview.cpp \
+	%D%/databaseview.h \
+	%D%/dbview.cpp \
+	%D%/MyErdTable.cpp \
+	%D%/MyErdTable.h \
+	%D%/ErdLineShape.cpp \
+	%D%/ErdLineShape.h \
+	%D%/FieldShape.cpp \
+	%D%/FieldShape.h \
+	%D%/GridTableShape.cpp \
+	%D%/GridTableShape.h \
+	%D%/HeaderGrid.cpp \
+	%D%/HeaderGrid.h \
+	%D%/databasetemplate.cpp \
+	%D%/databasetemplate.h \
+	%D%/constraintsign.cpp \
+	%D%/constraintsign.h \
+	%D%/commentfieldshape.h \
+	%D%/commentfieldshape.cpp \
+	%D%/commenttableshape.cpp \
+	%D%/commenttableshape.h \
+	%D%/designcanvas.cpp \
+	%D%/designcanvas.h \
+	%D%/designfield.cpp \
+	%D%/designfield.h \
+	%D%/designlabel.cpp \
+	%D%/designlabel.h \
+	%D%/divider.cpp \
+	%D%/divider.h \
+	%D%/fontcombobox.cpp \
+	%D%/fontcombobox.h \
+	%D%/taborder.cpp \
+	%D%/taborder.h \
+	%D%/fieldtypeshape.cpp \
+	%D%/fieldtypeshape.h
+
+%C%_libdbwindow_la_CPPFLAGS = \
+	-I$(top_srcdir)/libshapeframework \
+	-I$(top_srcdir)/libfieldswindow \
+	-I$(top_srcdir)/dbinterface \
+	-I$(top_srcdir)/libpropertypages \
+	-I$(top_srcdir)/libpropertieshandlers \
+	$(WX_CPPFLAGS)
+
+%C%_libdbwindow_la_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+%C%_libdbwindow_la_LIBADD = \
+	$(top_builddir)/libpropertypages/libpropertypages.la \
+	$(top_builddir)/libfieldswindow/libfieldswindow.la \
+	$(top_builddir)/libshapeframework/libshapeframework.la \
+	$(WX_LIBS_STC)

@@ -1,0 +1,22 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+lib_LTLIBRARIES += \
+	%D%/libfieldswindow.la
+
+%C%_libfieldswindow_la_SOURCES = \
+	%D%/field.cpp \
+	%D%/field.h \
+	%D%/fieldswindow.cpp \
+	%D%/fieldwindow.cpp \
+	%D%/fieldwindow.h
+
+%C%_libfieldswindow_la_CXXFLAGS = \
+	$(WX_CXXFLAGS)
+
+%C%_libfieldswindow_la_CPPFLAGS = \
+	-I$(top_srcdir)/libshapeframework \
+	$(WX_CPPFLAGS)
+
+%C%_libfieldswindow_la_LIBADD = \
+	$(top_builddir)/libshapeframework/libshapeframework.la \
+	$(WX_LIBS)

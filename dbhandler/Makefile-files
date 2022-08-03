@@ -1,0 +1,29 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+bin_PROGRAMS += \
+	%D%/dbhandler
+
+%C%_dbhandler_SOURCES = \
+	%D%/doc.cpp \
+	%D%/doc.h \
+	%D%/docview.cpp \
+	%D%/docview.h \
+	%D%/mainframe.cpp \
+	%D%/mainframe.h \
+	%D%/view.cpp \
+	%D%/view.h \
+	%D%/viewbase.cpp \
+	%D%/viewbase.h \
+	%D%/newtablehandler.cpp \
+	%D%/newtablehandler.h
+
+%C%_dbhandler_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface \
+	-I$(top_srcdir)/libdbwindow/res/gui \
+	$(WX_CPPFLAGS)
+
+%C%_dbhandler_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+%C%_dbhandler_LDFLAGS = \
+	$(WX_LIBS)

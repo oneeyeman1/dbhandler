@@ -1,0 +1,17 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+lib_LTLIBRARIES += \
+	%D%/libsqlite_lib.la
+
+%C%_libsqlite_lib_la_SOURCES =  \
+	%D%/database_sqlite.cpp \
+	%D%/database_sqlite.h \
+	%D%/sqlite3.c \
+	%D%/sqlite3.h \
+	%D%/sqlite3ext.h
+
+%C%_libsqlite_lib_la_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface
+
+%C%_libsqlite_lib_la_LIBADD = \
+	$(top_builddir)/dbinterface/libdbinterface.la

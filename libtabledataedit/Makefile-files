@@ -1,0 +1,29 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+lib_LTLIBRARIES += \
+	%D%/libtableedit.la
+
+%C%_libtableedit_la_SOURCES =  \
+	%D%/tableeditview.h \
+	%D%/tableeditview.cpp \
+	%D%/tableeditdocument.cpp \
+	%D%/tableeditdocument.h \
+	%D%/dataedit.cpp \
+	%D%/dataretriever.cpp \
+	%D%/dataretriever.h \
+	%D%/dbtableedit.cpp \
+	%D%/dbtableedit.h \
+	%D%/dataeditdoctemplate.cpp \
+	%D%/dataeditdoctemplate.h \
+	%D%/imagecellrenderer.cpp \
+	%D%/imagecellrenderer.h
+
+%C%_libtableedit_la_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface \
+	$(WX_CPPFLAGS)
+
+%C%_libtableedit_la_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+%C%_libtableedit_la_LIBADD = \
+	$(WX_LIBS)

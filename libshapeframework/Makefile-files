@@ -1,0 +1,108 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+lib_LTLIBRARIES += \
+	%D%/libshapeframework.la
+
+%C%_libshapeframework_la_SOURCES = \
+	%D%/ArrowBase.cpp \
+	%D%/AutoLayout.cpp \
+	%D%/BitmapShape.cpp \
+	%D%/BitmapShapeXml.cpp \
+	%D%/CanvasHistory.cpp \
+	%D%/CanvasState.cpp \
+	%D%/CircleArrow.cpp \
+	%D%/CircleShape.cpp \
+	%D%/CommonFcn.cpp \
+	%D%/ControlShape.cpp \
+	%D%/CurveShape.cpp \
+	%D%/Defs.h \
+	%D%/DiagramManager.cpp \
+	%D%/DiagramManager.h \
+	%D%/DiamondArrow.cpp \
+	%D%/DiamondShape.cpp \
+	%D%/EditTextShape.cpp \
+	%D%/EllipseShape.cpp \
+	%D%/FixedRectShape.cpp \
+	%D%/FlexGridShape.cpp \
+	%D%/GridShape.cpp \
+	%D%/LineShape.cpp \
+	%D%/MultiSelRect.cpp \
+	%D%/OpenArrow.cpp \
+	%D%/OrthoShape.cpp \
+	%D%/PolygonShape.cpp \
+	%D%/PolygonShapeXml.cpp \
+	%D%/Printout.cpp \
+	%D%/PropertyIO.h \
+	%D%/RectShape.cpp \
+	%D%/RoundOrthoShape.cpp \
+	%D%/RoundRectShape.cpp \
+	%D%/SFEvents.cpp \
+	%D%/ScaledDC.cpp \
+	%D%/ShapeBase.cpp \
+	%D%/ShapeBaseXml.cpp \
+	%D%/ShapeCanvas.cpp \
+	%D%/ShapeDataObject.cpp \
+	%D%/ShapeDockpoint.cpp \
+	%D%/ShapeHandle.cpp \
+	%D%/SolidArrow.cpp \
+	%D%/TextShape.cpp \
+	%D%/TextShapeXml.cpp \
+	%D%/Thumbnail.cpp \
+	%D%/XmlSerializer.h \
+	%D%/wxxmlserializer/Defs.h \
+	%D%/wxxmlserializer/PropertyIO.cpp \
+	%D%/wxxmlserializer/PropertyIO.h \
+	%D%/wxxmlserializer/XmlSerializer.cpp \
+	%D%/wxxmlserializer/XmlSerializer.h \
+	%D%/wxsf/ArrowBase.h \
+	%D%/wxsf/AutoLayout.h \
+	%D%/wxsf/BitmapShape.h \
+	%D%/wxsf/CanvasHistory.h \
+	%D%/wxsf/CanvasState.h \
+	%D%/wxsf/CircleArrow.h \
+	%D%/wxsf/CircleShape.h \
+	%D%/wxsf/CommonFcn.h \
+	%D%/wxsf/ControlShape.h \
+	%D%/wxsf/CurveShape.h \
+	%D%/wxsf/Defs.h \
+	%D%/wxsf/DiagramManager.h \
+	%D%/wxsf/DiamondArrow.h \
+	%D%/wxsf/DiamondShape.h \
+	%D%/wxsf/EditTextShape.h \
+	%D%/wxsf/EllipseShape.h \
+	%D%/wxsf/FixedRectShape.h \
+	%D%/wxsf/FlexGridShape.h \
+	%D%/wxsf/GridShape.h \
+	%D%/wxsf/LineShape.h \
+	%D%/wxsf/MultiSelRect.h \
+	%D%/wxsf/OpenArrow.h \
+	%D%/wxsf/OrthoShape.h \
+	%D%/wxsf/PolygonShape.h \
+	%D%/wxsf/Printout.h \
+	%D%/wxsf/RectShape.h \
+	%D%/wxsf/RoundOrthoShape.h \
+	%D%/wxsf/RoundRectShape.h \
+	%D%/wxsf/SFEvents.h \
+	%D%/wxsf/ScaledDC.h \
+	%D%/wxsf/ShapeBase.h \
+	%D%/wxsf/ShapeCanvas.h \
+	%D%/wxsf/ShapeDataObject.h \
+	%D%/wxsf/ShapeDockpoint.h \
+	%D%/wxsf/ShapeHandle.h \
+	%D%/wxsf/SolidArrow.h \
+	%D%/wxsf/TextShape.h \
+	%D%/wxsf/Thumbnail.h \
+	%D%/wxsf/wxShapeFramework.h
+
+%C%_libshapeframework_la_CPPFLAGS = \
+	-I$(srcdir)/%D% \
+	$(WX_CPPFLAGS) \
+	-DWXUSINGDLL \
+	-DWXUSINGDLL_CL \
+	-DWXUSINGDLL_SDK
+
+%C%_libshapeframework_la_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+%C%_libshapeframework_la_LIBADD = \
+	$(WX_LIBS)
