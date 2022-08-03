@@ -12,8 +12,4 @@ dist_doc_DATA = COPYING
 DISTCLEANFILES = \
 	po/.intltool-merge-cache
 
-# Remove doc directory on uninstall
-uninstall-local:
-	-rm -r $(docdir)
-
 include m4/Makefile-files
