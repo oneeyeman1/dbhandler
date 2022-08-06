@@ -6,6 +6,7 @@ AC_INIT([dbhandler], [0.1])
 AC_CONFIG_SRCDIR([dbhandler/mainframe.cpp])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([auto-m4])
+AC_CONFIG_AUX_DIR([auto-aux])
 
 AM_INIT_AUTOMAKE([
   1.14
