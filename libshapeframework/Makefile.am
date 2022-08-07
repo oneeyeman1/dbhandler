@@ -95,11 +95,11 @@ libshapeframework_la_SOURCES =  \
 	wxsf/Thumbnail.h \
 	wxsf/wxShapeFramework.h
 
-libshapeframework_la_CXXFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
+libshapeframework_la_CXXFLAGS = `wx-config \
 	--cxxflags` \
 	-DWXUSINGDLL \
 	-DWXUSINGDLL_CL \
 	-DWXUSINGDLL_SDK 
 
-libshapeframework_la_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
+libshapeframework_la_LDFLAGS = `wx-config \
 	--libs` 
