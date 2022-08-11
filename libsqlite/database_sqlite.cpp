@@ -21,6 +21,8 @@
 #include "database.h"
 #include "database_sqlite.h"
 
+std::mutex Database::Impl::my_mutex;
+
 SQLiteDatabase::SQLiteDatabase() : Database()
 {
     pimpl = NULL;
@@ -360,7 +362,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             if( res == SQLITE_ROW  )
             {
                 const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
-                pimpl->m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( L"master", sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
+                pimpl->m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( L"main", sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
 //                res = AddDropTable( L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), L"", 0, true, errorMsg );
 /*                if( res )
                 {
@@ -1484,146 +1486,55 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> tableNames = pimpl->GetTableNames();
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
     std::string query2 = "SELECT count(name) FROM sqlite_master WHERE type = 'table' OR type = 'view';";
-    std::vector<std::wstring> temp = pimpl->m_tableNames;
+    std::vector<TableDefinition> temp;
     if( sqlite3_prepare_v2( m_db, "PRAGMA schema_version", -1, &m_stmt1, NULL ) == SQLITE_OK )
     {
         if( ( res = sqlite3_step( m_stmt1 ) ) == SQLITE_ROW )
         {
             schema = sqlite3_column_int( m_stmt1, 0 );
-            if( schema != m_schema )
+            if( schema == m_schema )
             {
-                if( sqlite3_prepare_v2( m_db, query2.c_str(), -1, &m_stmt3, NULL ) == SQLITE_OK )
+                sqlite3_finalize( m_stmt1 );
+                m_stmt1 = nullptr;
+                return result;
+            }
+            if( sqlite3_prepare_v2( m_db, query2.c_str(), -1, &m_stmt3, NULL ) == SQLITE_OK )
+            {
+                if( ( res = sqlite3_step( m_stmt3 ) ) == SQLITE_ROW )
                 {
-                    if( ( res = sqlite3_step( m_stmt3 ) ) == SQLITE_ROW )
+                    count = sqlite3_column_int( m_stmt3, 0 );
+                    if( count == m_numOfTables  )
                     {
-						count = sqlite3_column_int( m_stmt3, 0 );
-                        if( sqlite3_prepare_v2( m_db, query1.c_str(), -1, &m_stmt2, NULL ) == SQLITE_OK )
+                        sqlite3_finalize( m_stmt3 );
+                        m_stmt3 = nullptr;
+                        return result;
+                    }
+                    if( sqlite3_prepare_v2( m_db, query1.c_str(), -1, &m_stmt2, NULL ) == SQLITE_OK )
+                    {
+                        for( ; ; )
                         {
-                            for( ; ; )
+                            if( ( res = sqlite3_step( m_stmt2 ) ) == SQLITE_ROW )
                             {
-                                if( ( res = sqlite3_step( m_stmt2 ) ) == SQLITE_ROW )
-                                {
-                                    std::wstring tableName = sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt2, 0 ) );
-                                    if( count > m_numOfTables )
-                                    {
-                                        if( std::find( tableNames.begin(), tableNames.end(), tableName ) != tableNames.end() )
-                                            continue;
-                                        res = AddDropTable( L"", L"", tableName, L"", 0, true, errorMsg );
-                                        if( res )
-                                            errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
-                                    }
-                                    else if( count < m_numOfTables )
-                                    {
-                                        temp.erase( std::remove( temp.begin(), temp.end(), tableName ), temp.end() );
-                                    }
-                                    else if( count == m_numOfTables )
-                                    {
-                                        int num1 = 0, num2 = 0;
-                                        std::string query3 = "SELECT count(*) FROM pragma_table_info(?)";
-                                        std::string query4 = "SELECT count(*) FROM pragma_index_list(?)";
-                                        std::vector<DatabaseTable *> &tables = pimpl->m_tables.at( pimpl->m_dbName );
-                                        bool found = false;
-                                        DatabaseTable *table = NULL;
-                                        for( std::vector<DatabaseTable *>::iterator it = tables.begin(); it < tables.end() && !found; ++it )
-                                        {
-                                            if( (*it)->GetTableName() == tableName )
-                                            {
-                                                table = (*it);
-                                                found = true;
-                                            }
-                                        }
-                                        if( sqlite3_prepare_v2( m_db, query3.c_str(), -1, &stmt1, NULL ) == SQLITE_OK )
-                                        {
-                                            res = sqlite3_bind_text( stmt1, 1, sqlite_pimpl->m_myconv.to_bytes( tableName ).c_str(), -1, SQLITE_TRANSIENT );
-                                            if( res == SQLITE_OK )
-											{
-                                                res = sqlite3_step( stmt1 );
-                                                if( res == SQLITE_ROW )
-                                                    num1 = sqlite3_column_int( stmt1, 0 );
-                                                else if( res != SQLITE_DONE )
-                                                {
-                                                    result = 1;
-                                                    break;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                result = 1;
-                                                break;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            result = 1;
-                                            break;
-                                        }
-                                        if( sqlite3_prepare_v2( m_db, query4.c_str(), -1, &stmt2, NULL ) == SQLITE_OK )
-                                        {
-                                            res = sqlite3_bind_text( stmt2, 1, sqlite_pimpl->m_myconv.to_bytes( tableName ).c_str(), -1, SQLITE_TRANSIENT );
-                                            if( res == SQLITE_OK )
-											{
-                                                res = sqlite3_step( stmt2 );
-                                                if( res == SQLITE_ROW )
-                                                    num2 = sqlite3_column_int( stmt2, 0 );
-                                                else if( res != SQLITE_DONE )
-                                                {
-                                                    result = 1;
-                                                    break;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                result = 1;
-                                                break;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            result = 1;
-                                            break;
-                                        }
-                                        if( num1 != table->GetNumberOfFields() || num2 != table->GetNumberOfIndexes() )
-                                        {
-                                            delete table;
-                                            AddDropTable( L"", L"", tableName, L"", 0, true, errorMsg );
-                                        }
-                                    }
-                                    m_schema = schema;
-                                }
-                                else if( res == SQLITE_DONE )
-                                    break;
-                                else
-                                {
-                                    result = 1;
-                                    break;
-                                }
+                                temp.push_back( TableDefinition( L"Main", sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt2, 0 ) ) ) );
                             }
-                        }
-                        else
-                            result = 1;
-                        sqlite3_finalize( m_stmt2 );
-                        m_stmt2 = NULL;
-                        if( count < m_numOfTables )
-                        {
-                            result = AddDropTable( L"", L"", temp.at( 0 ), L"", 0, false, errorMsg );
-                            if( res )
-                                errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
-                        }
-                        if( !result && count == m_numOfTables )
-                        {
-                            result = AddDropTable( L"", L"", temp.at( 0 ), L"", 0, true, errorMsg );
-                            if( res )
-                                errorMsg.push_back( L"Internaql database error!! Try to restart an applicaton and see if it will be fixed" );
+                            else if( res != SQLITE_DONE )
+                                result = 1;
                         }
                     }
-                    else
-                        result = 1;
-                }
+                    sqlite3_finalize( m_stmt2 );
+                    {
+                        std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
+                        pimpl->m_tableDefinitions[pimpl->m_dbName] = temp;
+                    }
+                    m_numOfTables = count;
+                } 
                 else
                     result = 1;
                 sqlite3_finalize( m_stmt3 );
                 m_stmt3 = NULL;
             }
+            sqlite3_finalize( m_stmt3 );
+            m_stmt3 = nullptr; 
         }
     }
     sqlite3_finalize( m_stmt1 );

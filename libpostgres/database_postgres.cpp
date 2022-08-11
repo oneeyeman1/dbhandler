@@ -23,6 +23,8 @@
 #include "database.h"
 #include "database_postgres.h"
 
+std::mutex Database::Impl::my_mutex;
+
 PostgresDatabase::PostgresDatabase() : Database()
 {
     m_db = NULL;
@@ -264,7 +266,7 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
         Disconnect( errorMsg );
     else
     {
-        pimpl->m_dbName = pimpl->m_tables.begin()->first;
+        pimpl->m_dbName = pimpl->m_tableDefinitions.begin()->first;
     }
     return result;
 }
@@ -1298,6 +1300,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 count = atoi( PQgetvalue( res, 0, 0 ) );
                 if( count > m_numOfTables || count < m_numOfTables )
                 {
+                    std::vector<TableDefinition> temp;
                     query = L"SELECT table_schema, table_name FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
                     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
                     status = PQresultStatus( res );
@@ -1305,7 +1308,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     {
                         PQclear( res );
                         err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                        errorMsg.push_back( L"Adding foreign key failed: " + err );
+                        errorMsg.push_back( L"Retrieving new database info failed " + err );
                         result = 1;
                     }
                     else
@@ -1314,13 +1317,13 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         {
                             schemaName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
                             tableName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
-                            if( count > m_numOfTables )
-                            {
-                                if( std::find( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ) != pimpl->m_tableNames.end() )
-                                    continue;
-                                AddDropTable( L"", schemaName, tableName, L"", 0, true, errorMsg );
-                            }
+                            temp.push_back( TableDefinition( schemaName, tableName ) );;
                         }
+                        {
+                            std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
+                            pimpl->m_tableDefinitions[pimpl->m_dbName] = temp;
+                        }
+                        m_numOfTables = count;
                     }
                 }
             }
