@@ -1811,6 +1811,7 @@ int ODBCDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<s
 
 int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 {
+    std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
     int result = 0;
     RETCODE ret;
     long connectionAlive;

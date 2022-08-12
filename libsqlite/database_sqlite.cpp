@@ -218,6 +218,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
 
 int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 {
+    std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
     int result = 0, res;
     const char *query = NULL;
     std::wstring errorMessage;

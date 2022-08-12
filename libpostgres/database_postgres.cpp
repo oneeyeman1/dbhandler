@@ -273,6 +273,7 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
 	
 int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 {
+    std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
     int result = 0;
     if( m_isConnected )
     {
