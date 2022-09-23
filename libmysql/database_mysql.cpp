@@ -20,6 +20,8 @@
 #include "database.h"
 #include "database_mysql.h"
 
+std::mutex Database::Impl::my_mutex;
+
 MySQLDatabase::MySQLDatabase() : Database()
 {
     m_db = NULL;
