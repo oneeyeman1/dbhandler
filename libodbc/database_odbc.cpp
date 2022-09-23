@@ -4413,6 +4413,8 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tab
 
 int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
+    if( !m_isConnected )
+        return 0;
     SQLHSTMT stmt = 0;
     std::wstring query, query1;
     long count;
@@ -4524,15 +4526,26 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 }
             }
             std::vector<TableDefinition> temp;
+            int count = 0;
             for( ret = SQLFetch(stmt); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch(stmt) )
             {
                 str_to_uc_cpy( schemaName, schema );
                 str_to_uc_cpy( tableName, table );
                 temp.push_back( TableDefinition( schemaName, tableName ) );
+                memset( schema, '\0', 256 );;
+                memset( table, '\0', 256 );;
+                schemaName = L"";
+                tableName = L"";
+                count++;
             }
+            delete[] schema;
+            delete[] table;
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
                 std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
+                pimpl->m_tableDefinitions[pimpl->m_dbName].clear();
                 pimpl->m_tableDefinitions[pimpl->m_dbName] = temp;
+                m_numOfTables = count;
             }
         }
     }
