@@ -52,6 +52,7 @@ DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxStri
     else if( engine == "ODBC" )
     {
         page1->GetComboBoxTypes()->SetValue( "ODBC" );
+        page1->GetProfilesCtrl()->Enable( false );
         page3->GetDSNTypesCtrl()->SetStringSelection( name );
     }
     else
@@ -107,19 +108,22 @@ void DatabaseType::OnPageChanging(wxWizardEvent &event)
 {
     if( event.GetPage() == page1 )
     {
-        auto profile = page1->GetProfilesCtrl()->GetValue();
-        if( std::find_if( m_profiles.begin(), m_profiles.end(), 
-           [profile](Profile prof)
-           {
-               return prof.m_name == profile;
-           } ) != m_profiles.end() )
+        if( page1->GetComboBoxTypes()->GetValue() != "ODBC" )
         {
-            page1->GetErrorCtrl()->Show( true );
-            page1->GetProfilesCtrl()->SetFocus();
-            page1->GetProfilesCtrl()->SetSelection( -1, -1 );
-            page1->Layout();
-            Layout();
-            event.Veto();
+            auto profile = page1->GetProfilesCtrl()->GetValue();
+            if( std::find_if( m_profiles.begin(), m_profiles.end(), 
+               [profile](Profile prof)
+               {
+                   return prof.m_name == profile;
+               } ) != m_profiles.end() )
+            {
+                page1->GetErrorCtrl()->Show( true );
+                page1->GetProfilesCtrl()->SetFocus();
+                page1->GetProfilesCtrl()->SetSelection( -1, -1 );
+                page1->Layout();
+                Layout();
+                event.Veto();
+            }
         }
     }
 }
