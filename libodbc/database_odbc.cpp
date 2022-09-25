@@ -4547,6 +4547,13 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 pimpl->m_tableDefinitions[pimpl->m_dbName] = temp;
                 m_numOfTables = count;
             }
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, stmt );
+                result = 1;
+            }
+            stmt = 0;
         }
     }
     return result;
