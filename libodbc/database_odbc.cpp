@@ -4457,7 +4457,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         }
         if( !result )
         {
-            SQLINTEGER indicator;
+            SQLLEN indicator;
             ret = SQLBindCol( stmt, 1, /*columnDataType*/SQL_C_LONG, &count, 0, &indicator );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
@@ -4488,7 +4488,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             SQLWCHAR *schema = new SQLWCHAR[256], *table = new SQLWCHAR[256];
             memset( schema, '\0', 256 );
             memset( table, '\0', 256 );
-            SQLINTEGER indschema, indtable;
+            SQLLEN indschema, indtable;
             qry = new SQLWCHAR[query1.length() + 2];
             memset( qry, '\0', query1.length() + 2 );
             uc_to_str_cpy( qry, query1 );
