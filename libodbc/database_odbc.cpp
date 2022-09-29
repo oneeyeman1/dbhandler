@@ -4147,6 +4147,8 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
             memset( qry, '\0', query.length() + 2 );
             uc_to_str_cpy( qry, query );
             retcode = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+            delete[] qry;
+            qry = NULL;
             if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -4219,8 +4221,6 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
             }
             m_hstmt = 0;
         }
-        delete[] qry;
-        qry = NULL;
         int bufferSize = 1024;
         std::wstring clientVersion;
         SQLRETURN ret = SQLGetInfo( m_hdbc, SQL_DRIVER_VER, version, 1024, (SQLSMALLINT *) &bufferSize );
@@ -4457,13 +4457,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         }
         if( !result )
         {
-<<<<<<< HEAD
-            SQLINTEGER indicator;
-            ret = SQLBindCol( stmt, 1, /*columnDataType*/ SQL_C_LONG, &count, 0, &indicator );
-=======
             SQLLEN indicator;
             ret = SQLBindCol( stmt, 1, /*columnDataType*/SQL_C_LONG, &count, 0, &indicator );
->>>>>>> ac38e997636382998acd5b5f5088e8d6a6a32df2
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, stmt );
@@ -4480,6 +4475,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             }
         }
         delete[] qry;
+        qry = nullptr;
         ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -4506,6 +4502,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             if( !result )
             {
                 ret = SQLExecDirect( stmt, qry, SQL_NTS );
+                delete[] qry;
+                qry = nullptr;
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, 1, stmt );
