@@ -1824,7 +1824,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
             connectionAlive = SQL_CD_TRUE;
     }
     if( connectionAlive == SQL_CD_FALSE )
-        m_isConnected = false;
+        m_isConnected = true;
     if( pimpl->m_subtype == L"PostgreSQL" && connectionAlive != SQL_CD_TRUE )
     {
         ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
@@ -1882,7 +1882,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     }
     if( m_hdbc != 0 )
     {
-        if( m_isConnected && connectionAlive == SQL_CD_TRUE )
+        if( m_isConnected )
         {
             ret = SQLDisconnect( m_hdbc );
             if( ret != SQL_SUCCESS )
@@ -4413,12 +4413,12 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tab
 
 int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
+    int result = 0, ret, ops = 0, bufferSize = 1024;
     if( !m_isConnected )
-        return 0;
+        return result;
     SQLHSTMT stmt = 0;
     std::wstring query, query1;
     long count;
-    int result = 0, ret, ops = 0, bufferSize = 1024;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
     {
         query = L"SELECT count(*) table_cont FROM (SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.system_views UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.tables UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.views UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.objects WHERE type = \'S\' ) d";
@@ -4458,7 +4458,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         if( !result )
         {
             SQLINTEGER indicator;
-            ret = SQLBindCol( stmt, 1, /*columnDataType*/SQL_C_LONG, &count, 0, &indicator );
+            ret = SQLBindCol( stmt, 1, /*columnDataType*/ SQL_C_LONG, &count, 0, &indicator );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1, stmt );
