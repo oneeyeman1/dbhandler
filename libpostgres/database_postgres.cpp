@@ -23,6 +23,8 @@
 #include "database.h"
 #include "database_postgres.h"
 
+std::mutex Database::Impl::my_mutex;
+
 PostgresDatabase::PostgresDatabase() : Database()
 {
     m_db = NULL;
@@ -264,13 +266,14 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
         Disconnect( errorMsg );
     else
     {
-        pimpl->m_dbName = pimpl->m_tables.begin()->first;
+        pimpl->m_dbName = pimpl->m_tableDefinitions.begin()->first;
     }
     return result;
 }
 	
 int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 {
+    std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
     int result = 0;
     if( m_isConnected )
     {
@@ -300,7 +303,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
     std::wstring fieldName, fieldType, fieldDefaultValue, origSchema, origTable, origField, refSchema, refTable, refField, fkName, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    int result = 0;
+    int result = 0, count = 0;
     std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS table, u.usename AS owner, c.oid AS table_id FROM information_schema.tables t, pg_catalog.pg_class c, pg_catalog.pg_user u WHERE t.table_name = c.relname AND c.relowner = usesysid AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
     std::wstring query2 = L"SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = 'leagues') THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = $1 AND col.table_name = $2 ORDER BY ordinal_position;";
     std::wstring query3 = L"SELECT (SELECT con.oid FROM pg_constraint con WHERE con.conname = c.constraint_name) AS id, x.ordinal_position AS pos, c.constraint_name AS name, x.table_schema as schema, x.table_name AS table, x.column_name AS column, y.table_schema as ref_schema, y.table_name as ref_table, y.column_name as ref_column, c.update_rule, c.delete_rule, c.match_option FROM information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y WHERE x.constraint_name = c.constraint_name AND y.ordinal_position = x.position_in_unique_constraint AND y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 ORDER BY c.constraint_name, x.ordinal_position;";
@@ -377,14 +380,16 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 char *catalog_name = PQgetvalue( res, i, 0 );
                                 char *schema_name = PQgetvalue( res, i, 1 );
                                 char *table_name = PQgetvalue( res, i, 2 );
-                                char *table_owner = PQgetvalue( res, i, 3 );
+                                pimpl->m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
+                                count++;
+/*                                char *table_owner = PQgetvalue( res, i, 3 );
                                 char *tableId = PQgetvalue( res, i, 4 );
                                 table_id = strtol( tableId, NULL, 10 );
                                 if( AddDropTable( m_pimpl->m_myconv.from_bytes (catalog_name), m_pimpl->m_myconv.from_bytes (schema_name), m_pimpl->m_myconv.from_bytes (table_name), m_pimpl->m_myconv.from_bytes( table_owner ), table_id, true, errorMsg ) )
                                 {
                                     result = 1;
                                     break;
-                                }
+                                }*/
                             }
                         }
                     }
@@ -392,6 +397,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             }
         }
     }
+    m_numOfTables = count;
     PQclear( res );
     return result;
 }
@@ -1295,6 +1301,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 count = atoi( PQgetvalue( res, 0, 0 ) );
                 if( count > m_numOfTables || count < m_numOfTables )
                 {
+                    std::vector<TableDefinition> temp;
                     query = L"SELECT table_schema, table_name FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
                     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
                     status = PQresultStatus( res );
@@ -1302,7 +1309,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     {
                         PQclear( res );
                         err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                        errorMsg.push_back( L"Adding foreign key failed: " + err );
+                        errorMsg.push_back( L"Retrieving new database info failed " + err );
                         result = 1;
                     }
                     else
@@ -1311,13 +1318,13 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         {
                             schemaName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
                             tableName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
-                            if( count > m_numOfTables )
-                            {
-                                if( std::find( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ) != pimpl->m_tableNames.end() )
-                                    continue;
-                                AddDropTable( L"", schemaName, tableName, L"", 0, true, errorMsg );
-                            }
+                            temp.push_back( TableDefinition( schemaName, tableName ) );;
                         }
+                        {
+                            std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
+                            pimpl->m_tableDefinitions[pimpl->m_dbName] = temp;
+                        }
+                        m_numOfTables = count;
                     }
                 }
             }

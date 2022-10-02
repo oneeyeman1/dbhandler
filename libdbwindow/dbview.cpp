@@ -143,7 +143,9 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
     else
         docTemplate->CreateDatabaseDocument( "*.qry", type, db, painters, wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<DrawingDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db, false );
-    dynamic_cast<DrawingView *>( docManager->GetCurrentView() )->SetProfiles( profiles );
+    auto view = docManager->GetCurrentView();
+    if( view )
+        dynamic_cast<DrawingView *>( view )->SetProfiles( profiles );
 }
 
 /*

@@ -67,7 +67,6 @@ protected:
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) override;
     virtual bool IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg) override;
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schema_name, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;
-//    int GetTableId(DatabaseTable *table, std::vector<std::wstring> &errorMsg);
     int GetTableId(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, long &tableId, std::vector<std::wstring> &errorMsg);
     int GetTableOwner(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg);
     void SetFullType(TableField *field);
