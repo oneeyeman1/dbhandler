@@ -6357,3 +6357,21 @@ int ODBCDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstr
     return result;
 }
 
+int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errors)
+{
+    int result = 0;
+    long tableId;
+    std::wstring owner;
+    if( GetTableId( catalog, schemaName, tableName, tableId, errors ) )
+    {
+        result = 1;
+    }
+    else
+    {
+        if( GetTableOwner( catalog, schemaName, tableName, owner, errors ) )
+            result = 1;
+        else
+            result = AddDropTable( catalog, schemaName, tableName, owner, tableId, true, errors );
+    }
+    return result;
+}

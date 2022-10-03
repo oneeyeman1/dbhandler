@@ -2387,3 +2387,8 @@ int MySQLDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wst
     return result;
 }
 
+int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errors)
+{
+    int result = 0;
+    return result;
+}

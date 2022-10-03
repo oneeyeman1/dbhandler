@@ -1679,3 +1679,16 @@ int PostgresDatabase::GetTableCreationSyntax(const std::wstring tableName, std::
     return result;
 }
 
+int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errors)
+{
+    int result = 0;
+    std::wstring table_owner;
+    long table_id;
+    if( GetTableOwner( schemaName, tableName, table_owner, errors ) )
+        result = 1;
+    else
+    {
+        result = AddDropTable( catalog, schemaName, tableName, table_owner, table_id, true, errors );
+    }
+    return result;
+}
