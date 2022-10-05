@@ -4265,6 +4265,11 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         query = L"SELECT count(*) FROM information_schema.tables";
         query1 = L"SELECT table_schema, table_name FROM information_schema.table ;";
     }
+    if( pimpl->m_subtype == L"Oracle" )
+    {
+        query = L"SELECT count(*) FROM all_tables;";
+        query1 = L"SELECT owner, table_name FROM all_tables;";
+    }
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &stmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
