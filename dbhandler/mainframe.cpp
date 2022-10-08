@@ -242,7 +242,7 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 #ifdef __WXGTK__
     toolBar->AddTool( wxID_QUERY, _( "Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ) );
 #else
-    toolBar->AddTool( wxID_QUERY, _( "Table" ), wxBitmapBundle::FromSVGResource( table, wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_QUERY, _( "Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ) );
 #endif
     toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
     toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxBitmapBundle(), wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );
