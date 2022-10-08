@@ -35,7 +35,7 @@
 #include "res/odbc.c"
 #include "res/profile.c"
 #include "res/database.c"
-#include "res/table.c"
+#include "table.h"
 #endif
 
 typedef void (*ODBCSETUP)(wxWindow *);
@@ -229,10 +229,6 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[2].push_back( wxBITMAP_PNG( profile_32x32 ) );
     bitmaps[2].push_back( wxBITMAP_PNG( profile_64x64 ) );
 
-    bitmaps[3].push_back( wxBITMAP_PNG( table_16x16 ) );
-    bitmaps[3].push_back( wxBITMAP_PNG( table_32x32 ) );
-    bitmaps[3].push_back( wxBITMAP_PNG( table_64x64 ) );
-
     bitmaps[4].push_back( wxBITMAP_PNG( database_16x16 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_32x32 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_64x64 ) );
@@ -243,7 +239,11 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 #endif
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[1] ) );
     toolBar->AddTool( wxID_DATABASEWINDOW, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
-    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromBitmaps( bitmaps[3] ) );
+#ifdef __WXGTK__
+    toolBar->AddTool( wxID_QUERY, _( "Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ) );
+#else
+    toolBar->AddTool( wxID_QUERY, _( "Table" ), wxBitmapBundle::FromSVGResource( table, wxSize( 16, 16 ) ) );
+#endif
     toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
     toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxBitmapBundle(), wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );
     toolBar->SetName( "PowerBar" );
