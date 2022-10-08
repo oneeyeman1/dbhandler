@@ -186,6 +186,8 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
 extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std::vector<wxString> &tableNames, std::vector<std::wstring> &names, bool isTableView, const int type)
 {
     int res;
+    std::map<wxString, std::vector<wxString> > schemaNames;
+    std::vector<std::wstring> errors;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
@@ -193,8 +195,20 @@ extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std:
     if( isTableView )
         dlg.Center();
 	res = dlg.ShowModal();
+    std::wstring catalog;
+    if( db->GetTableVector().GetDatabaseType() == L"SQLite" )
+        catalog = L"";;
     if( res != wxID_CANCEL )
-        dlg.GetSelectedTableNames( tableNames );
+    {
+        dlg.GetSelectedTableNames( tableNames, schemaNames );
+        for( auto schema : schemaNames )
+        {
+            for( auto table : tableNames )
+            {
+                db->AddDropTable( catalog, schema.first.ToStdWstring(), table.ToStdWstring(), errors );
+            }
+        }
+    }
     return res;
 }
 

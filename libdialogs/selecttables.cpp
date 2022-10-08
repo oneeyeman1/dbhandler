@@ -52,7 +52,7 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
     m_showSystem->Bind( wxEVT_CHECKBOX, &SelectTables::OnShowSystemTables, this );
 }
 
-void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames)
+void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames, std::map<wxString, std::vector<wxString> >&schemaNames)
 {
     wxArrayInt selections;
     m_tables->GetSelections( selections );
@@ -60,6 +60,7 @@ void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames)
     {
         wxString schema = dynamic_cast<wxStringClientData *>( m_tables->GetClientObject( i ) )->GetData();
         tableNames.push_back( schema + L"." + m_tables->GetString( selections.Item( i ) ) );
+        schemaNames[schema].push_back( m_tables->GetString( selections.Item( i ) ) );
     }
 }
 

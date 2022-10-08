@@ -30,6 +30,7 @@ public:
     virtual int EditTableData(std::vector<DataEditFiield> &row, std::vector<std::wstring> &errorMsg) override;
     virtual int FinalizeStatement(std::vector<std::wstring> &errorMsg) override;
     virtual int GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg) override;
+    virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errors) override;
 protected:
     struct PostgresImpl;
     PostgresImpl *m_pimpl;

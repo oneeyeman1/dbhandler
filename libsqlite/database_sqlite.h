@@ -30,6 +30,7 @@ public:
     virtual int FinalizeStatement(std::vector<std::wstring> &errorMsg) override;
     int GetAttachedDBList(std::vector<std::wstring> &dbNames, std::vector<std::wstring> &errorMsg);
     virtual int GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg) override;
+    virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errors) override;
 protected:
     struct SQLiteImpl;
     SQLiteImpl *sqlite_pimpl;

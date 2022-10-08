@@ -2049,3 +2049,8 @@ int SQLiteDatabase::GetTableCreationSyntax(const std::wstring tableName, std::ws
     }
     return result;
 }
+
+int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errors)
+{
+    return AddDropTable( catalog, schemaName, tableName, L"", 0, true, errors );
+}
