@@ -4557,7 +4557,9 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                             str_to_uc_cpy( colName, columnNames[i] );
                                             autoinc_fields.push_back( colName );
                                         }
+                                        delete[] columnNames[i];
                                     }
+                                    delete[] columnNames;
                                 }
                             }
                             ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_colattr );
