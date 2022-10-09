@@ -59,7 +59,7 @@ void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames, std:
     for( auto i = 0; i < selections.GetCount(); i++ )
     {
         wxString schema = dynamic_cast<wxStringClientData *>( m_tables->GetClientObject( i ) )->GetData();
-        tableNames.push_back( schema + L"." + m_tables->GetString( selections.Item( i ) ) );
+        tableNames.push_back( m_tables->GetString( selections.Item( i ) ) );
         schemaNames[schema].push_back( m_tables->GetString( selections.Item( i ) ) );
     }
 }
@@ -168,7 +168,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                     else if( ( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" ) ||
                                ( type == L"ODBC" && subType == L"Sybase SQL Anywhere" ) || type == L"Sybase SQL Anywhere" )
                     {
-                        if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"sys" || schemaName == L"INFORMATION_SCHEMA" || schemaName == L"SYS" ) )
+                        if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || schemaName.find( L"sys" ) != std::wstring::npos || schemaName.find( L"INFORMATION_SCHEMA" ) != std::wstring::npos || schemaName.find( L"SYS" ) != std::wstring::npos ) )
                             continue;
                         else
                         {

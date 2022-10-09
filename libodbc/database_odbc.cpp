@@ -1990,7 +1990,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         schema = cat;
                         copy_uc_to_uc( schemaName, catalogName );
                     }
-                    pimpl->m_tableDefinitions[pimpl->m_dbName].push_back( TableDefinition( schema, table ) );
+                    schema = L"\"" + cat + L"\".\"" + schema + L"\"";
+                    pimpl->m_tableDefinitions[cat].push_back( TableDefinition( schema, table ) );
                     count++;
                 }
 /*                    long tableId;
@@ -4405,8 +4406,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 
 int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
+    std::wstring cat = pimpl->m_dbName;
     SQLRETURN ret;
-    SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + 2], *schema_name = new SQLWCHAR[schemaName.length() + 2], *catalog_name = new SQLWCHAR[catalog.size() + 2];
+    SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + 2], *schema_name = new SQLWCHAR[schemaName.length() + 2], *catalog_name = new SQLWCHAR[cat.size() + 2];
     std::wstring owner;
     std::vector<std::wstring> autoinc_fields, indexes;
     SQLWCHAR *qry = NULL;
@@ -4414,7 +4416,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     std::wstring query4;
     int result = 0;
     std::vector<TableField *> fields;
-    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol, cat;
+    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0, stmt_ind = 0;
@@ -4488,7 +4490,8 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         }
                         else
                         {
-                            std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName;
+                            std::wstring query = L"SELECT * FROM ";
+                            query += schemaName + L".\"" + tableName + L"\"";
                             SQLWCHAR *szTableName = new SQLWCHAR[query.size() + 2];
                             memset( szTableName, '\0', query.size() + 2 );
                             uc_to_str_cpy( szTableName, query );
