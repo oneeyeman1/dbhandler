@@ -199,6 +199,7 @@ extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std:
         catalog = L"";;
     if( res != wxID_CANCEL )
     {
+        wxBusyCursor wait;
         dlg.GetSelectedTableNames( tableNames );
         for( auto cat : tableNames )
         {
