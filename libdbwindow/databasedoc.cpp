@@ -116,27 +116,30 @@ Database *DrawingDocument::GetDatabase()
     return m_db;
 }
 
-void DrawingDocument::AddTables(const std::vector<wxString> &selections)
+void DrawingDocument::AddTables(const std::map<wxString,std::vector<TableDefinition> > &selections)
 {
     bool found = false;
     std::wstring dbType = m_db->GetTableVector().m_type;
     std::map<std::wstring, std::vector<DatabaseTable *> > tables = m_db->GetTableVector().m_tables;
     std::vector<DatabaseTable *> tableVec = tables.at( m_db->GetTableVector().m_dbName );
-    for( std::vector<wxString>::const_iterator it = selections.begin(); it < selections.end(); it++ )
+    for( auto sel : selections )
     {
-        for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end() && !found; it1++ )
+        for( auto def : sel.second )
         {
-            if( (*it).ToStdWstring() == (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() )
+            for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end() && !found; it1++ )
             {
-                m_dbTables.push_back( (*it1 ) );
-                DatabaseTable *dbTable = (*it1);
-                MyErdTable *table = new MyErdTable( dbTable, dynamic_cast<DrawingView *>( GetFirstView() )->GetViewType() );
-                m_tables.push_back( table );
-                m_tableNames.push_back( table->GetTableName() );
-                found = true;
+                if( def.schemaName + L"." + def.tableName == (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() )
+                {
+                    m_dbTables.push_back( (*it1 ) );
+                    DatabaseTable *dbTable = (*it1);
+                    MyErdTable *table = new MyErdTable( dbTable, dynamic_cast<DrawingView *>( GetFirstView() )->GetViewType() );
+                    m_tables.push_back( table );
+                    m_tableNames.push_back( table->GetTableName() );
+                    found = true;
+                }
             }
+            found = false;
         }
-        found = false;
     }
 }
 

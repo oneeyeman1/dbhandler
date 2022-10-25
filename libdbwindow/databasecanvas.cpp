@@ -90,7 +90,7 @@ void DatabaseCanvas::OnDraw(wxDC &WXUNUSED(dc))
 {
 }
 
-void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, const std::vector<TableField *> &queryFields, wxString &query, std::vector<wxString> &relations)
+void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition> > &selections, const std::vector<TableField *> &queryFields, wxString &query, std::vector<wxString> &relations)
 {
     std::vector<MyErdTable *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
     for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
@@ -120,11 +120,9 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, const std:
     for( std::vector<MyErdTable *>::iterator it1 = m_displayedTables.begin(); it1 < m_displayedTables.end(); it1++ )
     {
         wxString name = const_cast<DatabaseTable *>( (*it1)->GetTable() )->GetTableName();
-        if( std::find( selections.begin(), selections.end(), name ) == selections.end() )
-            selections.push_back( name );
         if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
         {
-            query += "\"" + (*it1)->GetTableName() + "\"";
+            query += "\"" + (*it1)->GetTable()->GetSchemaName() + L"." + (*it1)->GetTableName() + "\"";
             if( it1 != m_displayedTables.end() - 1 )
                 query += ",\r     ";
         }
@@ -142,7 +140,6 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, const std:
         }
         found = false;
     }
-//    Refresh();
     Constraint *pConstr = NULL;
     found = false;
     bool secondIteration = false;
@@ -156,77 +153,84 @@ void DatabaseCanvas::DisplayTables(std::vector<wxString> &selections, const std:
             for( std::vector<FKField *>::iterator it4 = (*it3).second.begin(); it4 < (*it3).second.end(); it4++ )
             {
                 wxString referencedTableName = (*it4)->GetReferencedTableName();
-                if( std::find( selections.begin(), selections.end(), referencedTableName ) != selections.end() )
+                wxString referentialSchemaName = (*it4)->GetReferentialSchemaName();
+                for( auto sel : selections )
                 {
-                    if( found )
-                        secondIteration = true;
-                    if( !found )
+                    for( auto table : sel.second )
                     {
-                        query += "\nWHERE ";
-                        found = true;
+                        if( table.schemaName == referentialSchemaName && table.tableName == referencedTableName )
+                        {
+                            if( found )
+                                secondIteration = true;
+                            if( !found )
+                            {
+                                query += "\nWHERE ";
+                                found = true;
+                            }
+                            if( ((DrawingView *) m_view)->GetViewType() == QueryView )
+                            {
+                                pConstr = new QueryConstraint( ((DrawingView *) m_view)->GetViewType() );
+                                pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
+                                pConstr->SetRefColumn( (*it4)->GetReferencedFieldName() );
+                                pConstr->SetRefTable( referencedTableName );
+                                pConstr->SetType( QueryConstraint::foreignKey );
+                                pConstr->SetFKDatabaseTable( (*it2)->GetTable() );
+                                dynamic_cast<QueryConstraint *>( pConstr )->SetSign( 0 );
+                            }
+                            if( ((DrawingView *) m_view)->GetViewType() == DatabaseView )
+                            {
+                                pConstr = new DatabaseConstraint( (*it4)->GetFKName() );
+                                pConstr->SetLocalColumns( (*it4)->GetOriginalFields() );
+                                pConstr->SetRefColumns( (*it4)->GetReferencedFields() );
+                                pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
+                                pConstr->SetRefColumn( (*it4)->GetReferencedFieldName() );
+                                pConstr->SetRefTable( referencedTableName );
+                                pConstr->SetType( QueryConstraint::foreignKey );
+                                pConstr->SetFKDatabaseTable( (*it2)->GetTable() );
+                                pConstr->SetPGMatch( (*it4)->GetMatchOPtion() );
+                            }
+                            if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
+                            {
+                                if( secondIteration )
+                                    query += " AND\r      ";
+                                query += wxString::Format( "\"%s\".\"%s\" = \"%s\".\"%s\"", referencedTableName, (*it4)->GetReferencedFieldName(), (*it2)->GetTableName(), (*it4)->GetOriginalFieldName() );
+                                relations.push_back( wxString::Format( "\"%s\".\"%s\" = \"%s\".\"%s\"", referencedTableName, (*it4)->GetReferencedFieldName(), (*it2)->GetTableName(), (*it4)->GetOriginalFieldName() ) );
+                            }
+                            switch( (*it4)->GetOnUpdateConstraint() )
+                            {
+                                case RESTRICT_UPDATE:
+                                    pConstr->SetOnUpdate( Constraint::restrict );
+                                    break;
+                                case SET_NULL_UPDATE:
+                                    pConstr->SetOnUpdate( Constraint::setNull );
+                                    break;
+                                case SET_DEFAULT_UPDATE:
+                                case CASCADE_UPDATE:
+                                    pConstr->SetOnUpdate( Constraint::cascade );
+                                    break;
+                                case NO_ACTION_UPDATE:
+                                    pConstr->SetOnUpdate( Constraint::noAction );
+                                    break;
+                            }
+                            switch( (*it4)->GetOnDeleteConstraint() )
+                            {
+                                case RESTRICT_DELETE:
+                                    pConstr->SetOnUpdate( Constraint::restrict );
+                                    break;
+                                case SET_NULL_DELETE:
+                                    pConstr->SetOnUpdate( Constraint::setNull );
+                                    break;
+                                case SET_DEFAULT_DELETE:
+                                case CASCADE_DELETE:
+                                    pConstr->SetOnUpdate( Constraint::cascade );
+                                    break;
+                                case NO_ACTION_DELETE:
+                                    pConstr->SetOnUpdate( Constraint::noAction );
+                                    break;
+                            }
+                            (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( referencedTableName )->GetId(), new ErdForeignKey( pConstr, ((DrawingView *) m_view)->GetViewType(), m_pManager ), sfDONT_SAVE_STATE );
+                        }
                     }
-                    if( ((DrawingView *) m_view)->GetViewType() == QueryView )
-                    {
-                        pConstr = new QueryConstraint( ((DrawingView *) m_view)->GetViewType() );
-                        pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
-                        pConstr->SetRefColumn( (*it4)->GetReferencedFieldName() );
-                        pConstr->SetRefTable( referencedTableName );
-                        pConstr->SetType( QueryConstraint::foreignKey );
-                        pConstr->SetFKDatabaseTable( (*it2)->GetTable() );
-                        dynamic_cast<QueryConstraint *>( pConstr )->SetSign( 0 );
-                    }
-                    if( ((DrawingView *) m_view)->GetViewType() == DatabaseView )
-                    {
-                        pConstr = new DatabaseConstraint( (*it4)->GetFKName() );
-                        pConstr->SetLocalColumns( (*it4)->GetOriginalFields() );
-                        pConstr->SetRefColumns( (*it4)->GetReferencedFields() );
-                        pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
-                        pConstr->SetRefColumn( (*it4)->GetReferencedFieldName() );
-                        pConstr->SetRefTable( referencedTableName );
-                        pConstr->SetType( QueryConstraint::foreignKey );
-                        pConstr->SetFKDatabaseTable( (*it2)->GetTable() );
-                        pConstr->SetPGMatch( (*it4)->GetMatchOPtion() );
-                    }
-                    if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
-                    {
-                        if( secondIteration )
-                            query += " AND\r      ";
-                        query += wxString::Format( "\"%s\".\"%s\" = \"%s\".\"%s\"", referencedTableName, (*it4)->GetReferencedFieldName(), (*it2)->GetTableName(), (*it4)->GetOriginalFieldName() );
-                        relations.push_back( wxString::Format( "\"%s\".\"%s\" = \"%s\".\"%s\"", referencedTableName, (*it4)->GetReferencedFieldName(), (*it2)->GetTableName(), (*it4)->GetOriginalFieldName() ) );
-                    }
-                    switch( (*it4)->GetOnUpdateConstraint() )
-                    {
-                        case RESTRICT_UPDATE:
-                            pConstr->SetOnUpdate( Constraint::restrict );
-                            break;
-                        case SET_NULL_UPDATE:
-                            pConstr->SetOnUpdate( Constraint::setNull );
-                            break;
-                        case SET_DEFAULT_UPDATE:
-                        case CASCADE_UPDATE:
-                            pConstr->SetOnUpdate( Constraint::cascade );
-                            break;
-                        case NO_ACTION_UPDATE:
-                            pConstr->SetOnUpdate( Constraint::noAction );
-                            break;
-                    }
-                    switch( (*it4)->GetOnDeleteConstraint() )
-                    {
-                        case RESTRICT_DELETE:
-                            pConstr->SetOnUpdate( Constraint::restrict );
-                            break;
-                        case SET_NULL_DELETE:
-                            pConstr->SetOnUpdate( Constraint::setNull );
-                            break;
-                        case SET_DEFAULT_DELETE:
-                        case CASCADE_DELETE:
-                            pConstr->SetOnUpdate( Constraint::cascade );
-                            break;
-                        case NO_ACTION_DELETE:
-                            pConstr->SetOnUpdate( Constraint::noAction );
-                            break;
-                    }
-                    (*it2)->GetShapeManager()->CreateConnection( (*it2)->GetId(), dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetReferencedTable( referencedTableName )->GetId(), new ErdForeignKey( pConstr, ((DrawingView *) m_view)->GetViewType(), m_pManager ), sfDONT_SAVE_STATE );
                 }
             }
         }

@@ -12,11 +12,17 @@
 #ifndef SELECTTABLES_H
 #define SELECTTABLES_H
 
+struct ClientData : public wxClientData
+{
+    std::wstring catalog, schema;
+    ClientData(const std::wstring &catalogName, const std::wstring &schemaName) : catalog( catalogName ), schema( schemaName ) {}
+};
+
 class SelectTables: public wxDialog
 {
 public:
     SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, bool isTableView, const int type, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
-    void GetSelectedTableNames(std::vector<wxString> &tableNames, std::map<wxString, std::vector<wxString> >&schemaNames);
+    void GetSelectedTableNames(std::map<wxString, std::vector<TableDefinition> > &tableNames);
 private:
     wxBoxSizer* sizer_1;
     Database *m_db;

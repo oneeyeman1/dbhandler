@@ -183,10 +183,9 @@ extern "C" WXEXPORT int DatabaseProfile(wxWindow *parent, const wxString &title,
     return res;
 }
 
-extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std::vector<wxString> &tableNames, std::vector<std::wstring> &names, bool isTableView, const int type)
+extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std::map<wxString, std::vector<TableDefinition> >&tableNames, std::vector<std::wstring> &names, bool isTableView, const int type)
 {
     int res;
-    std::map<wxString, std::vector<wxString> > schemaNames;
     std::vector<std::wstring> errors;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
@@ -200,12 +199,12 @@ extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std:
         catalog = L"";;
     if( res != wxID_CANCEL )
     {
-        dlg.GetSelectedTableNames( tableNames, schemaNames );
-        for( auto schema : schemaNames )
+        dlg.GetSelectedTableNames( tableNames );
+        for( auto cat : tableNames )
         {
-            for( auto table : tableNames )
+            for( auto def : cat.second )
             {
-                db->AddDropTable( catalog, schema.first.ToStdWstring(), table.ToStdWstring(), errors );
+                db->AddDropTable( cat.first.ToStdWstring(), def.schemaName, def.tableName, errors );
             }
         }
     }

@@ -52,15 +52,14 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
     m_showSystem->Bind( wxEVT_CHECKBOX, &SelectTables::OnShowSystemTables, this );
 }
 
-void SelectTables::GetSelectedTableNames(std::vector<wxString> &tableNames, std::map<wxString, std::vector<wxString> >&schemaNames)
+void SelectTables::GetSelectedTableNames(std::map<wxString, std::vector<TableDefinition> > &tableNames)
 {
     wxArrayInt selections;
     m_tables->GetSelections( selections );
     for( auto i = 0; i < selections.GetCount(); i++ )
     {
-        wxString schema = dynamic_cast<wxStringClientData *>( m_tables->GetClientObject( i ) )->GetData();
-        tableNames.push_back( m_tables->GetString( selections.Item( i ) ) );
-        schemaNames[schema].push_back( m_tables->GetString( selections.Item( i ) ) );
+        ClientData *data = dynamic_cast<ClientData *>( m_tables->GetClientObject( i ) );
+        tableNames[data->catalog].push_back( TableDefinition( data->catalog, data->schema, m_tables->GetString( selections.Item( i ) ).ToStdWstring() ) );
     }
 }
 
@@ -154,6 +153,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
             {
                 std::wstring tableName = (*it1).tableName;
                 std::wstring schemaName = (*it1).schemaName;
+                std::wstring catalogName = (*it1).catalogName;
                 if( std::find( m_names.begin(), m_names.end(), tableName ) == m_names.end() )
                 {
                     if( type == L"SQLite" )
@@ -190,7 +190,9 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                             insert = true;
                     }
                     if( insert )
-                        m_tables->Append( tableName, new wxStringClientData( schemaName ) );
+                    {
+                        m_tables->Append( tableName, new ClientData( catalogName, schemaName ) );
+                    }
                     insert = false;
                 }
             }

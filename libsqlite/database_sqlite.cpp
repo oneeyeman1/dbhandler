@@ -363,7 +363,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             if( res == SQLITE_ROW  )
             {
                 const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
-                pimpl->m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( L"main", sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
+                pimpl->m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( sqlite_pimpl->m_catalog, L"main", sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
 //                res = AddDropTable( L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), L"", 0, true, errorMsg );
 /*                if( res )
                 {
@@ -1516,7 +1516,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         {
                             if( ( res = sqlite3_step( m_stmt2 ) ) == SQLITE_ROW )
                             {
-                                temp.push_back( TableDefinition( L"Main", sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt2, 0 ) ) ) );
+                                temp.push_back( TableDefinition( sqlite_pimpl->m_catalog, L"Main", sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt2, 0 ) ) ) );
                             }
                             else if( res != SQLITE_DONE )
                                 result = 1;
@@ -1630,7 +1630,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &, con
                             if( !strcmp( fkDeleteConstraint.c_str(), "CASCADE" ) )
                                 delete_constraint = CASCADE_DELETE;
                                                                        //id, name, orig_schema,         table_name,                                  original_field,                      ref_schema,           ref_table,                              referenced_field,                          update_constraint, delete_constraint
-                            foreign_keys[fkId].push_back( new FKField( fkReference, L"", L"", tableName, sqlite_pimpl->m_myconv.from_bytes( fkField ), L"", sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), origFields[fkId], refFields[fkId], update_constraint, delete_constraint ) );
+                            foreign_keys[fkId].push_back( new FKField( fkReference, L"", L"main", tableName, sqlite_pimpl->m_myconv.from_bytes( fkField ), L"main", sqlite_pimpl->m_myconv.from_bytes( fkTable ), sqlite_pimpl->m_myconv.from_bytes( fkTableField ), origFields[fkId], refFields[fkId], update_constraint, delete_constraint ) );
                             fk_names.push_back( sqlite_pimpl->m_myconv.from_bytes( fkField ) );
                         }
                         else if( res3 == SQLITE_DONE )

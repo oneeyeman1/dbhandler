@@ -453,7 +453,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         char *catalog_name = row[0] ? row[0] : NULL;
                                         char *schema_name = row[1] ? row[1] : NULL;
                                         char *table_name = row[2] ? row[2] : NULL;
-                                        pimpl->m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
+                                        pimpl->m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
                                         count++;
 /*                                        long table_id = row[4] ? strtol( row[4], &end, 10 ) : 0;
                                         MYSQL_BIND params[3];

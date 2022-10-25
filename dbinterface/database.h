@@ -40,15 +40,15 @@ enum FK_ONDELETE
 
 struct TableDefinition
 {
-    std::wstring schemaName, tableName;
-    TableDefinition(const std::wstring &schema, const std::wstring &table) : schemaName(schema), tableName(table) {}
-/*    bool operator==(const TableDefinition &def) const
+    std::wstring schemaName, tableName, catalogName;
+    TableDefinition(const std::wstring &cat, const std::wstring &schema, const std::wstring &table) : schemaName(schema), tableName(table), catalogName(cat) {}
+    bool operator==(const TableDefinition &def) const
     {
-        if( def.schemaName == schemaName && def.tableName == tableName )
+        if( def.schemaName == schemaName && def.tableName == tableName && def.catalogName == catalogName )
             return true;
         else
             return false;
-    };*/
+    };
 };
 
 struct DataEditFiield
@@ -160,7 +160,7 @@ public:
         m_headingFontCharacterSet = -1;
         m_labelFontCharacterSer = -1;
     }
-    std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName, table_name, m_owner, schema_name;
+    std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName, table_name, m_owner, schema_name, catalog;
     int m_dataFontSize, m_dataFontEncoding, m_headingFontSize, m_headingFontEncoding, m_labelFontSize, m_labelFontEncoding;
     int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;
     int m_dataFontWeight, m_headingFontWeight, m_labelFontWeight, m_dataFontCharacterSet, m_labelFontCharacterSer, m_headingFontCharacterSet;
@@ -258,6 +258,7 @@ public:
     const int GetForeignKeyId() const { return fkId; }
     const std::wstring &GetFKName() const { return fkName; }
     const std::wstring &GetReferencedTableName() const { return refTable; }
+    const std::wstring &GetReferentialSchemaName() const { return refSchema; }
     const std::wstring &GetOriginalFieldName() const { return originalField; }
     const std::vector<std::wstring> &GetOriginalFields() const { return origFields; }
     const std::wstring &GetReferencedFieldName() const { return referencedField; }

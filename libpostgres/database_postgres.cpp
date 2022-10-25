@@ -380,7 +380,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 char *catalog_name = PQgetvalue( res, i, 0 );
                                 char *schema_name = PQgetvalue( res, i, 1 );
                                 char *table_name = PQgetvalue( res, i, 2 );
-                                pimpl->m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
+                                pimpl->m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
                                 count++;
 /*                                char *table_owner = PQgetvalue( res, i, 3 );
                                 char *tableId = PQgetvalue( res, i, 4 );
@@ -1281,7 +1281,7 @@ int PostgresDatabase::DropForeignKey(std::wstring &command, const DatabaseTable 
 int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     int result = 0, count;
-    std::wstring err, schemaName, tableName;
+    std::wstring err, schemaName, tableName, catalogName;
     if( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor < 3 )
     {
         std::wstring query = L"SELECT count(*) FROM information_schema.tables";
@@ -1302,7 +1302,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 if( count > m_numOfTables || count < m_numOfTables )
                 {
                     std::vector<TableDefinition> temp;
-                    query = L"SELECT table_schema, table_name FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
+                    query = L"SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
                     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
                     status = PQresultStatus( res );
                     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
@@ -1316,9 +1316,10 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     {
                         for( int i = 0; i < PQntuples( res ); i++ )
                         {
-                            schemaName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
-                            tableName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
-                            temp.push_back( TableDefinition( schemaName, tableName ) );;
+                            catalogName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
+                            schemaName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
+                            tableName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 2 ) );
+                            temp.push_back( TableDefinition( catalogName, schemaName, tableName ) );;
                         }
                         {
                             std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
