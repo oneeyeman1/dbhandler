@@ -41,7 +41,8 @@ wxThread::ExitCode NewTableHandler::Entry()
 {
     std::vector<std::wstring> errorMsg;
     int res;
-    while( !TestDestroy() )
+    bool loop = true;
+    while( !TestDestroy() && loop )
     {
         {
 #if defined __WXMSW__ && _MSC_VER < 1900
@@ -51,7 +52,8 @@ wxThread::ExitCode NewTableHandler::Entry()
 #endif
             res = m_db->NewTableCreation( errorMsg );
             if( res )
-                Delete();
+                loop = false;
+//                Delete();
         }
         Sleep( 5000 );
     }
