@@ -93,7 +93,6 @@ BOOL APIENTRY DllMain( HANDLE hModule, DWORD fdwReason, LPVOID lpReserved)
     case DLL_PROCESS_ATTACH:
 #ifdef WXUSINGDLL
         wxInitialize();
-///        wxSetInstance( (HINSTANCE) hModule );
 #else
         wxSetInstance( (HINSTANCE) hModule );
         wxEntryStart( argc, argv );

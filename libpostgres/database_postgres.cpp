@@ -376,7 +376,6 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         {
                             for( int i = 0; i < PQntuples( res ); i++ )
                             {
-                                long table_id;
                                 char *catalog_name = PQgetvalue( res, i, 0 );
                                 char *schema_name = PQgetvalue( res, i, 1 );
                                 char *table_name = PQgetvalue( res, i, 2 );
@@ -1684,7 +1683,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
 {
     int result = 0;
     std::wstring table_owner;
-    long table_id;
+    long table_id = 0;
     if( GetTableOwner( schemaName, tableName, table_owner, errors ) )
         result = 1;
     else
