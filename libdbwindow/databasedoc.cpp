@@ -121,7 +121,9 @@ void DrawingDocument::AddTables(const std::map<wxString,std::vector<TableDefinit
     bool found = false;
     std::wstring dbType = m_db->GetTableVector().m_type;
     std::map<std::wstring, std::vector<DatabaseTable *> > tables = m_db->GetTableVector().m_tables;
-    std::vector<DatabaseTable *> tableVec = tables.at( m_db->GetTableVector().m_dbName );
+    std::vector<DatabaseTable *> tableVec;
+    if( tables.count( m_db->GetTableVector().m_dbName ) > 0 )
+        tableVec = tables.at(m_db->GetTableVector().m_dbName);
     for( auto sel : selections )
     {
         for( auto def : sel.second )
