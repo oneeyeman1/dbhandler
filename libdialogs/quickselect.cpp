@@ -23,6 +23,7 @@
 #include "wx/grid.h"
 #include "wx/gdicmn.h"
 #include "database.h"
+#include "dialogs.h"
 #include "quickselect.h"
 
 QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent, wxID_ANY, _(""))
@@ -33,8 +34,8 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_panel = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( m_panel, wxID_ANY, _( "1. Click on the table to select or deselect" ) );
     m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "2. Select one or more column" ) );
-    m_label3 = new wxStaticText( m_panel, wxID_ANY, _( "3. (Optional) Enter sorting and selection criteria below" ) );
-    m_label4 = new wxStaticText( m_panel, wxID_ANY, _( "To display a comment for a table or column, click the right mouse button" ) );
+    m_label3 = new wxStaticText( m_panel, wxID_ANY, _( "3. (Optional) Enter sorting and\n\r selection criteria below" ) );
+    m_label4 = new wxStaticText( m_panel, wxID_ANY, _( "To display a comment for a\n\r table or column, click\n\r the right mouse button" ) );
     m_label5 = new wxStaticText( m_panel, wxID_ANY, _( "Tables:" ) );
     m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL );
     m_label6 = new wxStaticText( m_panel, wxID_ANY, _( "Columns:" ) );
@@ -174,40 +175,48 @@ void QuickSelect::FillTableListBox()
 {
     std::wstring type = m_db->GetTableVector().m_type;
     std::wstring subType = m_db->GetTableVector().m_subtype;
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end(); ++it )
+    std::map<std::wstring,std::vector<TableDefinition> > tables = m_db->GetTableVector().m_tableDefinitions;
+    std::wstring dbName = m_db->GetTableVector().m_dbName;
+    for( std::map<std::wstring,std::vector<TableDefinition> >::iterator it = tables.begin(); it != tables.end(); it++ )
     {
-        for( std::vector<DatabaseTable *>::iterator it1 = ( *it ).second.begin(); it1 < ( *it ).second.end(); ++it1 )
+        if( (*it).first == dbName )
         {
-            std::wstring tableName = (*it1)->GetTableName();
-            auto schemaName = (*it1)->GetSchemaName();
-            if( type == L"SQLite" && ( tableName.substr( 0, 6 ) == L"sqlite" || tableName.substr( 0, 3 ) == L"sys" ) )
+            for( std::vector<TableDefinition>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
             {
-                if( schemaName == L"" )
-                    schemaName = L"master";
-                continue;
-            }
-            if( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
-            {
-                if( tableName.substr( 0, 5 ) == L"abcat" || ( (*it1)->GetSchemaName() == L"sys" || (*it1)->GetSchemaName() == L"INFORMATION_SCHEMA" ) )
+                std::wstring tableName = (*it1).tableName;
+                std::wstring schemaName = (*it1).schemaName;
+                std::wstring catalogName = (*it1).catalogName;
+                if( type == L"SQLite" && ( tableName.substr( 0, 6 ) == L"sqlite" || tableName.substr( 0, 3 ) == L"sys" ) )
+                {
+                    if( schemaName == L"" )
+                        schemaName = L"main";
                     continue;
+                }
+                else if( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
+                {
+                    if( tableName.substr( 0, 5 ) == L"abcat" || ( schemaName == L"sys" || schemaName == L"INFORMATION_SCHEMA" ) )
+                        continue;
+                }
+                else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
+                {
+                    if( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"information_schema" )
+                        continue;
+                }
+                else if( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" )
+                {
+                    if( tableName.substr( 0, 5 ) == L"abcat" || ( schemaName == L"information_schema" || schemaName == L"pg_catalog" ) )
+                        continue;
+                }
+                m_tables->Append( tableName, new ClientData( catalogName, schemaName ) );
             }
-            else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
-            {
-                if( tableName.substr( 0, 5 ) == L"abcat" || (*it1)->GetSchemaName() == L"information_schema" )
-                    continue;
-            }
-            else if( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" )
-            {
-                if( tableName.substr( 0, 5 ) == L"abcat" || ( (*it1)->GetSchemaName() == L"information_schema" || (*it1)->GetSchemaName() == L"pg_catalog" ) )
-                    continue;
-            }
-            m_tables->Append( schemaName + "." + tableName );
         }
     }
 }
 
 void QuickSelect::OnSelectingTable(wxMouseEvent &event)
 {
+    std::wstring type = m_db->GetTableVector().m_type;
+    std::vector<std::wstring> errors;
     auto count = m_tables->GetCount();
     auto found = false;
     auto item = m_tables->HitTest( event.GetPosition() );
@@ -218,11 +227,17 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
         wxString selectedTable = m_tables->GetString( item );
         if( count > 1 )
         {
+            ClientData *data = dynamic_cast<ClientData *>( m_tables->GetClientObject( item ) );
+            {
+                wxBusyCursor wait;
+                m_db->AddDropTable( data->catalog, data->schema, selectedTable.ToStdWstring(), errors );
+            }
             for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++it )
             {
                 for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
                 {
-                    if( selectedTable == (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() )
+                    if( ( type == L"SQLite" && data->schema + "." + selectedTable == (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() ) ||
+                        ( type != L"SQLite" && data->catalog + "." + data->schema + "." + selectedTable == (*it).first + "." + (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() ) )
                     {
                         found = true;
                         m_queryFields = (*it1)->GetFields();
