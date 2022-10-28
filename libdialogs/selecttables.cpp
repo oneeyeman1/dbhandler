@@ -22,6 +22,7 @@
 
 #include <string>
 #include "database.h"
+#include "dialogs.h"
 #include "selecttables.h"
 
 SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, bool isTableView, const int type, const wxPoint& pos, const wxSize& size, long style):

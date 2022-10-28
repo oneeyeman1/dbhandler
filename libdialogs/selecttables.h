@@ -12,12 +12,6 @@
 #ifndef SELECTTABLES_H
 #define SELECTTABLES_H
 
-struct ClientData : public wxClientData
-{
-    std::wstring catalog, schema;
-    ClientData(const std::wstring &catalogName, const std::wstring &schemaName) : catalog( catalogName ), schema( schemaName ) {}
-};
-
 class SelectTables: public wxDialog
 {
 public:
