@@ -1985,7 +1985,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     str_to_uc_cpy( cat, catalogName );
                     str_to_uc_cpy( schema, schemaName );
                     str_to_uc_cpy( table, tableName );
-                    if( schema == L"" && cat != L"" )
+                    if( schema == L"" && cat != L"" && schemaName != NULL )
                     {
                         schema = cat;
                         copy_uc_to_uc( schemaName, catalogName );
@@ -4326,73 +4326,89 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         ret = 0;
         if( count != m_numOfTables )
         {
-            SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
-            SQLWCHAR *catalogName, *schemaName, *tableName;
-            std::wstring cat, schema, table;
-            for( int i = 0; i < 5; i++ )
+            ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &stmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
-                catalog[i].TargetType = SQL_C_WCHAR;
-                catalog[i].BufferLength = ( bufferSize + 1 );
-                catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
-                ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                GetErrorMessage( errorMsg, 2, m_hdbc );
+                result = 1;
+            }
+            else
+            {
+                SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
+                SQLWCHAR *catalogName, *schemaName, *tableName;
+                std::wstring cat, schema, table;
+                for( int i = 0; i < 5; i++ )
                 {
-                    GetErrorMessage( errorMsg, 1 );
-                    result = 1;
-                    break;
+                    catalog[i].TargetType = SQL_C_WCHAR;
+                    catalog[i].BufferLength = ( bufferSize + 1 );
+                    catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
+                    ret = SQLBindCol( stmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1 );
+                        result = 1;
+                        break;
+                    }
+                }
+                if( !result )
+                {
+                    std::map<std::wstring, std::vector<TableDefinition> > temp;
+                    ret = SQLTables( stmt, NULL, 0, NULL, 0, NULL, 0, NULL, 0 );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1 );
+                        result = 1;
+                    }
+                    else
+                    {
+                        for( ret = SQLFetch( stmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt ) )
+                        {
+                            if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
+                                catalogName = (SQLWCHAR *) catalog[0].TargetValuePtr;
+                            if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
+                                schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
+                            if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
+                                tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
+                            cat = L"";
+                            schema = L"";
+                            table = L"";
+                            str_to_uc_cpy( cat, catalogName );
+                            str_to_uc_cpy( schema, schemaName );
+                            str_to_uc_cpy( table, tableName );
+                            if( schema == L"" && cat != L"" )
+                            {
+                                schema = cat;
+                                copy_uc_to_uc( schemaName, catalogName );
+                            }
+                            schema = cat + L"." + schema;
+                            if( pimpl->m_tableDefinitions.find( cat ) != pimpl->m_tableDefinitions.end() )
+                                temp[cat].push_back( TableDefinition( cat, schema, table ) );
+                            count++;
+                        }
+                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
+                            pimpl->m_tableDefinitions.clear();
+                            pimpl->m_tableDefinitions = temp;
+                            m_numOfTables = count;
+                        }
+                        ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, stmt );
+                            result = 1;
+                        }
+                        stmt = 0;
+                    }
+                    for( int i = 0; i < 5; i++ )
+                    {
+                        free( catalog[i].TargetValuePtr );
+                         catalog[i].TargetValuePtr = NULL;
+                    }
+                    free( catalog );
+                    catalog = nullptr;
                 }
             }
-            if( !result )
-            {
-                std::map<std::wstring, std::vector<TableDefinition> > temp;
-                ret = SQLTables( m_hstmt, NULL, 0, NULL, 0, NULL, 0, NULL, 0 );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    result = 1;
-                }
-                else
-                {
-                    for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
-                    {
-                        if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
-                            catalogName = (SQLWCHAR *) catalog[0].TargetValuePtr;
-                        if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
-                            schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
-                        if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
-                            tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
-                        cat = L"";
-                        schema = L"";
-                        table = L"";
-                        str_to_uc_cpy( cat, catalogName );
-                        str_to_uc_cpy( schema, schemaName );
-                        str_to_uc_cpy( table, tableName );
-                        if( schema == L"" && cat != L"" )
-                        {
-                            schema = cat;
-                            copy_uc_to_uc( schemaName, catalogName );
-                        }
-                        schema = cat + L"." + schema;
-                        if( pimpl->m_tableDefinitions.find( cat ) != pimpl->m_tableDefinitions.end() )
-                            temp[cat].push_back( TableDefinition( cat, schema, table ) );
-                        count++;
-                    }
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
-                        pimpl->m_tableDefinitions.clear();
-                        pimpl->m_tableDefinitions = temp;
-                        m_numOfTables = count;
-                     }
-                     ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
-                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                     {
-                         GetErrorMessage( errorMsg, 1, stmt );
-                         result = 1;
-                     }
-                     stmt = 0;
-                 }
-             }
         }
     }
     return result;
