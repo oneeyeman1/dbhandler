@@ -9,6 +9,7 @@ public:
     void OnPanelSourceClicked(wxMouseEvent &event);
     void OnPanelPresentationClicked(wxMouseEvent &event);
     void OnOptionsUpdateUI(wxUpdateUIEvent &event);
+    void OnDataSorceUpdateUI(wxUpdateUIEvent &event);
 protected:
     void do_layout();
     void set_properties();
