@@ -41,13 +41,9 @@ NewQuery::NewQuery(wxWindow *parent, const wxString &title, int source, int pres
     m_title = title;
     m_panel = new wxPanel( this );
     m_panels[0] = new BitmapPanel( m_panel, wxBitmap( Quick_Select ), _( "Quick Select" ) );
-    m_panels[0]->SetExtraStyle( wxWS_EX_PROCESS_UI_UPDATES );
     m_panels[1] = new BitmapPanel( m_panel, wxBitmap( SQL_Select ), _( "SQL Select" ) );
-    m_panels[1]->SetExtraStyle( wxWS_EX_PROCESS_UI_UPDATES );
     m_panels[2] = new BitmapPanel( m_panel, wxBitmap( query ), _( "Query" ) );
-    m_panels[2]->SetExtraStyle( wxWS_EX_PROCESS_UI_UPDATES );
     m_panels[3] = new BitmapPanel( m_panel, wxBitmap( external ), _( "External" ) );
-    m_panels[3]->SetExtraStyle( wxWS_EX_PROCESS_UI_UPDATES );
     m_panels[4] = new BitmapPanel( m_panel, wxBitmap( composite ), _( "Composite" ) );
     m_panels[5] = new BitmapPanel( m_panel, wxBitmap( crosstab ), _( "Crosstab" ) );
     m_panels[6] = new BitmapPanel( m_panel, wxBitmap( freeform ), _( "Freeform" ) );
@@ -59,7 +55,6 @@ NewQuery::NewQuery(wxWindow *parent, const wxString &title, int source, int pres
     m_panels[12] = new BitmapPanel( m_panel, wxBitmap( ole ), _( "Ole 2.0" ) );
     m_panels[13] = new BitmapPanel( m_panel, wxBitmap( richtext ), _( "RichText" ) );
     m_panels[14] = new BitmapPanel( m_panel, wxBitmap( tabular ), _( "Tabular" ) );
-    wxUpdateUIEvent::SetMode( wxUPDATE_UI_PROCESS_SPECIFIED );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
     m_help = new wxButton( m_panel, wxID_HELP, _( "Help" ) );
@@ -67,11 +62,11 @@ NewQuery::NewQuery(wxWindow *parent, const wxString &title, int source, int pres
     m_preview = new wxCheckBox( m_panel, wxID_ANY, _( "&Preview when built" ) );
     SetTitle( title );
     do_layout();
+    m_panels[m_source]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
     m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
     for( int i = 0; i < 4; ++i )
     {
         m_panels[i]->Bind( wxEVT_LEFT_DOWN, &NewQuery::OnPanelSourceClicked, this );
-        m_panels[i]->Bind( wxEVT_UPDATE_UI, &NewQuery::OnDataSorceUpdateUI, this );
     }
     for( int i = 4; i < 15; ++i )
     {
@@ -167,11 +162,11 @@ void NewQuery::OnPanelSourceClicked(wxMouseEvent &event)
     {
         if( event.GetEventObject() == m_panels[i] )
         {
-            if( i + 1 != m_source )
+            if( i != m_source )
             {
-                m_panels[m_source - 1]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
-                m_source = i + 1;
-                m_panels[m_source - 1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                m_panels[m_source]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                m_source = i;
+                m_panels[m_source]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
             }
             found = true;
         }
@@ -194,6 +189,40 @@ void NewQuery::OnPanelPresentationClicked(wxMouseEvent &event)
                 m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
             }
             found = true;
+            if( m_presentation == 0 )
+            {
+                m_panels[0]->Enable( false );
+                m_panels[0]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                m_panels[1]->Enable( false );
+                m_panels[1]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                m_panels[2]->Enable( false );
+                m_panels[2]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                m_panels[3]->Enable( false );
+                m_panels[3]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+            }
+            else
+            {
+                m_panels[0]->Enable();
+                if( m_source == 0 )
+                    m_panels[0]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                else
+                    m_panels[0]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                m_panels[1]->Enable();
+                if( m_source == 1 )
+                    m_panels[1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                else
+                    m_panels[1]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                m_panels[2]->Enable();
+                if( m_source == 2 )
+                    m_panels[2]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                else
+                    m_panels[2]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                m_panels[3]->Enable();
+                if( m_source == 3 )
+                    m_panels[3]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                else
+                    m_panels[3]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+            }
         }
     }
     Refresh();
@@ -216,26 +245,4 @@ const int NewQuery::GetSource()
 const int NewQuery::GetPresentation()
 {
     return m_presentation;
-}
-
-void NewQuery::OnDataSorceUpdateUI(wxUpdateUIEvent &event)
-{
-    auto object = event.GetEventObject();
-    if( m_presentation == 0 )
-    {
-        event.Enable( false );
-        dynamic_cast<BitmapPanel *>( object )->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
-    }
-    else
-    {
-        event.Enable( true );
-        if( m_source == 0 && object == m_panels[0] )
-            m_panels[0]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-        if( m_source == 1 && object == m_panels[1] )
-            m_panels[1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-        if( m_source == 2 && object == m_panels[2] )
-            m_panels[2]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-        if( m_source == 3 && object == m_panels[3] )
-            m_panels[3]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-    }
 }
