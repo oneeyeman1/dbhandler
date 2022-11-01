@@ -182,12 +182,9 @@ void NewQuery::OnPanelPresentationClicked(wxMouseEvent &event)
     {
         if( event.GetEventObject() == m_panels[i] )
         {
-            if( i + 1 != m_presentation + 4 )
-            {
-                m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
-                m_presentation = i - 4;
-                m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-            }
+            m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+            m_presentation = i - 4;
+            m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
             found = true;
             if( m_presentation == 0 )
             {
