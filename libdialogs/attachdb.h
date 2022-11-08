@@ -9,18 +9,25 @@
 #ifndef attachdb_hpp
 #define attachdb_hpp
 
+#define DBTYPE_SQLITE 0
+#define DBTYPE_OTHER  1
+
 class AttachDB : public wxDialog
 {
 public:
-    AttachDB(wxWindow *parent);
+    AttachDB(wxWindow *parent, short dbtype);
 protected:
     void OnFileSelected(wxCommandEvent &event);
+    void OnOUpdate(wxUpdateUIEvent &event);
     void OnOk(wxCommandEvent &event);
 private:
     wxPanel *m_panel;
     wxStaticText *m_label1, *m_label2;
     wxFilePickerCtrl *m_picker;
     wxTextCtrl *m_schemaName;
+    wxListBox *m_dbList;
+    short m_dbtype;
+    wxButton *m_ok, *m_cancel, *m_help;
 };
 
 #endif /* attachdb_hpp */
