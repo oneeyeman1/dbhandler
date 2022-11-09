@@ -1948,6 +1948,9 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     else
     {
+        auto catalogDB = new SQLWCHAR[pimpl->m_dbName.length() + 2];
+        memset( catalogDB, '\0', pimpl->m_dbName.length() + 2 );
+        uc_to_str_cpy( catalogDB, pimpl->m_dbName );
         for( int i = 0; i < 5; i++ )
         {
             catalog[i].TargetType = SQL_C_WCHAR;
@@ -1963,7 +1966,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         if( !result )
         {
-            ret = SQLTables( m_hstmt, NULL, 0, NULL, 0, NULL, 0, NULL, 0 );
+            ret = SQLTables( m_hstmt, catalogDB, SQL_NTS, NULL, 0, NULL, 0, NULL, 0 );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, 1 );
@@ -4337,6 +4340,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
                 SQLWCHAR *catalogName, *schemaName, *tableName;
                 std::wstring cat, schema, table;
+                auto catalogDB = new SQLWCHAR[pimpl->m_dbName.length() + 2];
+                memset( catalogDB, '\0', pimpl->m_dbName.length() + 2 );
+                uc_to_str_cpy( catalogDB, pimpl->m_dbName );
                 for( int i = 0; i < 5; i++ )
                 {
                     catalog[i].TargetType = SQL_C_WCHAR;
@@ -4353,7 +4359,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 if( !result )
                 {
                     std::map<std::wstring, std::vector<TableDefinition> > temp;
-                    ret = SQLTables( stmt, NULL, 0, NULL, 0, NULL, 0, NULL, 0 );
+                    ret = SQLTables( stmt, catalogDB, SQL_NTS, NULL, 0, NULL, 0, NULL, 0 );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, 1 );
