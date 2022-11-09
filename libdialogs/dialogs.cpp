@@ -399,13 +399,14 @@ extern "C" WXEXPORT int GotoLine(wxWindow *parent, int &lineNo)
     return result;
 }
 
-extern "C" WXEXPORT int AttachToDatabase(wxWindow *parent)
+extern "C" WXEXPORT int AttachToDatabase(wxWindow *parent, Database *db)
 {
     int result;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    AttachDB dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild() );
+    AttachDB dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), db );
+    dlg.Center();
     result = dlg.ShowModal();
     return result;
 }

@@ -16,11 +16,11 @@
 #endif
 
 #include "wx/filepicker.h"
+#include "database.h"
 #include "attachdb.h"
 
-AttachDB::AttachDB(wxWindow *parent, short dbtype) : wxDialog( parent, wxID_ANY, "Attach the Database" )
+AttachDB::AttachDB(wxWindow *parent, Database *db) : wxDialog( parent, wxID_ANY, "Attach the Database" )
 {
-    m_dbtype = dbtype;
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     m_panel = new wxPanel( this, wxID_ANY );
     sizer_1->Add( m_panel, 0, wxEXPAND, 0 );
@@ -65,7 +65,7 @@ AttachDB::AttachDB(wxWindow *parent, short dbtype) : wxDialog( parent, wxID_ANY,
 
     m_panel->SetSizer( sizer_2 );
     SetSizer( sizer_1 );
-    if( dbtype == DBTYPE_SQLITE )
+    if( db->GetTableVector().m_type == L"SQLite" )
         m_dbList->Hide();
     else
     {
@@ -73,6 +73,7 @@ AttachDB::AttachDB(wxWindow *parent, short dbtype) : wxDialog( parent, wxID_ANY,
         m_label2->Hide();
         m_schemaName->Hide();
     }
+    m_db = db;
     sizer_1->Fit( this );
     Layout();
     m_ok->Disable();

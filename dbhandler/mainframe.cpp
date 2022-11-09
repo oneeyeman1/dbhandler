@@ -43,7 +43,7 @@ typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxStrin
 typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &, const std::vector<Profile> &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
-typedef int (*ATTACHDATABASE)(wxWindow *);
+typedef int (*ATTACHDATABASE)(wxWindow *, Database *);
 typedef int (*DETACHDATABASE)(wxWindow *);
 
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
@@ -588,7 +588,7 @@ void MainFrame::OnAttachDatabase(wxCommandEvent &WXUNUSED(event))
     lib->Load( "libdialogs" );
 #endif
     ATTACHDATABASE func = (ATTACHDATABASE) lib->GetSymbol( "AttachToDatabase" );
-    int result = func( this );
+    int result = func( this, m_db );
     if( result == wxID_OK )
         m_countAttached++;
     delete lib;
