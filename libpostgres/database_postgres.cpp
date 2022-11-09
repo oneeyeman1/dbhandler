@@ -1692,3 +1692,8 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
     }
     return result;
 }
+
+int PostgresDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg)
+{
+    return 0;;
+}

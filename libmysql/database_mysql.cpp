@@ -2392,3 +2392,8 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
     int result = 0;
     return result;
 }
+
+int MySQLDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg)
+{
+    return 0;
+}
