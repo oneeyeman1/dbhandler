@@ -1,0 +1,6 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+dist_doc_DATA  += COPYING
+dist_doc_DATA  += README.md
+
+DISTCLEANFILES += po/.intltool-merge-cache

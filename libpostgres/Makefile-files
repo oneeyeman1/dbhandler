@@ -1,0 +1,18 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+lib_LTLIBRARIES += \
+	%D%/libpostgres.la
+
+%C%_libpostgres_la_SOURCES = \
+	%D%/database_postgres.cpp \
+	%D%/database_postgres.h \
+	%D%/postgres.cpp
+
+%C%_libpostgres_la_CPPFLAGS = \
+	-D__WXGTK__ \
+	-I$(top_srcdir)/dbinterface \
+	$(LIBPQ_CFLAGS)
+
+%C%_libpostgres_la_LIBADD = \
+	$(top_builddir)/dbinterface/libdbinterface.la \
+	$(LIBPQ_LIBS)

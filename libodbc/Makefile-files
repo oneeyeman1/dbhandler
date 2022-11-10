@@ -1,0 +1,18 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+lib_LTLIBRARIES += \
+	%D%/libodbc_lib.la
+
+%C%_libodbc_lib_la_SOURCES = \
+	%D%/database_odbc.cpp \
+	%D%/database_odbc.h
+
+%C%_libodbc_lib_la_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface \
+	-DUNICODE \
+	-DUNIXODBC \
+	$(ODBC_CFLAGS) $(ODBCINST_CFLAGS)
+
+%C%_libodbc_lib_la_LIBADD = \
+	$(top_builddir)/dbinterface/libdbinterface.la \
+	$(ODBC_LIBS) $(ODBCINST_LIBS)

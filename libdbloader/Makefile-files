@@ -1,0 +1,44 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+noinst_LTLIBRARIES          += %D%/libdbloader.la
+
+%C%_libdbloader_la_SOURCES   = %D%/dbloader.cpp
+
+%C%_libdbloader_la_CPPFLAGS  =
+%C%_libdbloader_la_CXXFLAGS  =
+%C%_libdbloader_la_LIBADD    =
+
+%C%_libdbloader_la_CPPFLAGS += -I$(top_srcdir)/dbinterface
+%C%_libdbloader_la_LIBADD   += $(top_builddir)/dbinterface/libdbinterface.la
+
+%C%_libdbloader_la_CPPFLAGS += -I$(top_srcdir)/libsqlite
+%C%_libdbloader_la_LIBADD   += $(top_builddir)/libsqlite/libsqlite_lib.la
+
+
+%C%_libdbloader_la_CPPFLAGS += $(WX_CPPFLAGS)
+%C%_libdbloader_la_CXXFLAGS += $(WX_CXXFLAGS_ONLY)
+%C%_libdbloader_la_LIBADD   += $(WX_LIBS)
+
+
+%C%_libdbloader_la_CPPFLAGS += -I$(top_srcdir)/libodbc
+%C%_libdbloader_la_LIBADD   += $(top_builddir)/libodbc/libodbc_lib.la
+
+%C%_libdbloader_la_CPPFLAGS += $(ODBC_CFLAGS)
+%C%_libdbloader_la_LIBADD   += $(ODBC_LIBS)
+
+%C%_libdbloader_la_CPPFLAGS += $(ODBCINST_CFLAGS)
+%C%_libdbloader_la_LIBADD   += $(ODBCINST_LIBS)
+
+
+%C%_libdbloader_la_CPPFLAGS += -I$(top_srcdir)/libpostgres
+%C%_libdbloader_la_LIBADD   += $(top_builddir)/libpostgres/libpostgres.la
+
+%C%_libdbloader_la_CPPFLAGS += $(LIBPQ_CFLAGS)
+%C%_libdbloader_la_LIBADD   += $(LIBPQ_LIBS)
+
+
+%C%_libdbloader_la_CPPFLAGS += -I$(top_srcdir)/libmysql
+%C%_libdbloader_la_LIBADD   += $(top_builddir)/libmysql/libmysql_lib.la
+
+%C%_libdbloader_la_CPPFLAGS += $(MYSQL_CFLAGS)
+%C%_libdbloader_la_LIBADD   += $(MYSQL_LIBS)

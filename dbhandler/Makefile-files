@@ -1,0 +1,46 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+EXTRA_DIST += %D%/chart.xpm
+EXTRA_DIST += %D%/doc.xpm
+EXTRA_DIST += %D%/notepad.xpm
+EXTRA_DIST += %D%/res/cut.xpm
+EXTRA_DIST += %D%/res/database_profile.xpm
+EXTRA_DIST += %D%/res/new.xpm
+EXTRA_DIST += %D%/res/open.xpm
+EXTRA_DIST += %D%/res/properties.xpm
+EXTRA_DIST += %D%/res/quit.xpm
+EXTRA_DIST += %D%/res/save.xpm
+EXTRA_DIST += %D%/res/table.xpm
+
+bin_PROGRAMS += %D%/dbhandler
+
+%C%_dbhandler_SOURCES = \
+	%D%/doc.cpp \
+	%D%/doc.h \
+	%D%/docview.cpp \
+	%D%/docview.h \
+	%D%/mainframe.cpp \
+	%D%/mainframe.h \
+	%D%/view.cpp \
+	%D%/view.h \
+	%D%/viewbase.cpp \
+	%D%/viewbase.h \
+	%D%/newtablehandler.cpp \
+	%D%/newtablehandler.h
+
+EXTRA_%C%_dbhandler_SOURCES  =
+
+# query.c is an include file, but called *.c
+EXTRA_%C%_dbhandler_SOURCES += %D%/query.c
+
+EXTRA_%C%_dbhandler_SOURCES += %D%/res/database.c
+EXTRA_%C%_dbhandler_SOURCES += %D%/res/odbc.c
+EXTRA_%C%_dbhandler_SOURCES += %D%/res/profile.c
+EXTRA_%C%_dbhandler_SOURCES += %D%/res/table.c
+
+%C%_dbhandler_CPPFLAGS = $(WX_CPPFLAGS)
+%C%_dbhandler_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
+%C%_dbhandler_LDFLAGS  = $(WX_LIBS)
+
+%C%_dbhandler_CPPFLAGS += -I$(top_srcdir)/dbinterface
+%C%_dbhandler_CPPFLAGS += -I$(top_srcdir)/libdbwindow/res/gui

@@ -1,0 +1,26 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+lib_LTLIBRARIES += \
+	%D%/libtablewindow.la
+
+%C%_libtablewindow_la_SOURCES = \
+	%D%/tabledoc.cpp \
+	%D%/tabledoc.h \
+	%D%/tableview.cpp \
+	%D%/tableview.h \
+	%D%/tablewindow.cpp \
+	%D%/tablecanvas.cpp \
+	%D%/tablecanvas.h \
+	%D%/typecombobox.cpp \
+	%D%/typecombobox.h
+
+%C%_libtablewindow_la_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface \
+	$(WX_CPPFLAGS)
+
+%C%_libtablewindow_la_CXXFLAGS = \
+	$(WX_CXXFLAGS_ONLY)
+
+%C%_libtablewindow_la_LIBADD = \
+	$(top_builddir)/dbinterface/libdbinterface.la \
+	$(WX_LIBS)

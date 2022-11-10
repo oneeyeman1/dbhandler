@@ -1,0 +1,3 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+EXTRA_DIST += %D%/wxwin.m4

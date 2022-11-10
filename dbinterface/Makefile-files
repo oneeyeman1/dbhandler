@@ -1,0 +1,7 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+noinst_LTLIBRARIES += \
+	%D%/libdbinterface.la
+
+%C%_libdbinterface_la_SOURCES = \
+	%D%/database.h

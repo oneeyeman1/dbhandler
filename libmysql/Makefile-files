@@ -1,0 +1,18 @@
+# Process this file with autoreconf              -*- Makefile-automake -*-
+
+lib_LTLIBRARIES += \
+	%D%/libmysql_lib.la
+
+%C%_libmysql_lib_la_SOURCES = \
+	%D%/database_mysql.cpp \
+	%D%/database_mysql.h
+
+%C%_libmysql_lib_la_CPPFLAGS = \
+	-I$(top_srcdir)/dbinterface \
+	$(MYSQL_CFLAGS)
+
+%C%_libmysql_lib_la_CXXFLAGS = \
+	-DUNICODE
+
+%C%_libmysql_lib_la_LIBADD = \
+	$(MYSQL_LIBS)
