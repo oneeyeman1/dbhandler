@@ -6413,6 +6413,46 @@ int ODBCDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring
 int ODBCDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg)
 {
     std::wstring query;
+    int result = 0;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT name FROM sys.databases;";
+    if( pimpl->m_subtype == L"PostgreSQL" )
+        query = L"SELECT datname FRPM pg_database;";
+    if( pimpl->m_subtype == L"mySQL" )
+        query = L"SELECT schema_name FROM information_schema.schemata;";
+    RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    {
+        auto qry = new SQLWCHAR[query.length() + 2];
+        memset( qry, '\0', query.size() + 2 );
+        uc_to_str_cpy( qry, query );
+        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+        {
+            SQLSMALLINT nameBufLength, dataTypePtr, decimalDigitsPtr, isNullable;
+            SQLULEN columnSizePtr;
+            SQLLEN cDatabaseName;
+            ret = SQLDescribeCol( m_hstmt, 1, NULL, 0, &nameBufLength, &dataTypePtr, &columnSizePtr, &decimalDigitsPtr, &isNullable );
+            auto dbName = new SQLWCHAR[columnSizePtr + 1];
+            ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, dbName, columnSizePtr, &cDatabaseName );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage(errorMsg, 1, m_hstmt);
+                result = 1;
+            }
+        }
+        else
+        {
+            GetErrorMessage( errorMsg, 1 );
+            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+            result = 1;
+        }
+    }
+    else
+    {
+        GetErrorMessage( errorMsg, 1 );
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+        result = 1;
+    }
+    return result;
 }
