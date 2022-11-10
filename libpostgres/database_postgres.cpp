@@ -1697,3 +1697,8 @@ int PostgresDatabase::AttachDatabase(const std::wstring &catalog, const std::wst
 {
     return 0;;
 }
+
+int PostgresDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg)
+{
+
+}

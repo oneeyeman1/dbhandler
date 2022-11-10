@@ -2107,3 +2107,8 @@ int SQLiteDatabase::AttachDatabase(const std::wstring &catalog, const std::wstri
     }
     return result;
 }
+
+int SQLiteDatabase::GetDatabaseNameList(std::vector<std::wstring> &, std::vector<std::wstring> &)
+{
+    return 0;
+}

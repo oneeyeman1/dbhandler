@@ -6410,3 +6410,9 @@ int ODBCDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring
     return 0;
 }
 
+int ODBCDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg)
+{
+    std::wstring query;
+    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        query = L"SELECT name FROM sys.databases;";
+}

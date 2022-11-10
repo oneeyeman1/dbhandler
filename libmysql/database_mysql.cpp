@@ -2397,3 +2397,8 @@ int MySQLDatabase::AttachDatabase(const std::wstring &catalog, const std::wstrin
 {
     return 0;
 }
+
+int MySQLDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg)
+{
+    return 0;
+}
