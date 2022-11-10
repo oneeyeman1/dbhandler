@@ -406,6 +406,8 @@ extern "C" WXEXPORT int AttachToDatabase(wxWindow *parent, Database *db)
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
+    std::vector<std::wstring> names;
+    db->GetDatabaseNameList( names, errorMsg );
     AttachDB dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), db );
     dlg.Center();
     result = dlg.ShowModal();
