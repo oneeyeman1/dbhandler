@@ -407,17 +407,27 @@ extern "C" WXEXPORT int AttachToDatabase(wxWindow *parent, Database *db)
     wxTheApp->SetTopWindow( parent );
 #endif
     std::vector<std::wstring> names;
-    db->GetDatabaseNameList( names, errorMsg );
-    AttachDB dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), db );
-    dlg.Center();
-    result = dlg.ShowModal();
-    if( result == wxID_OK )
+    if( db->GetDatabaseNameList(names, errorMsg) )
     {
-        wxBusyCursor cursor;
-        if( db->AttachDatabase(dlg.GetCatalog().ToStdWstring(), dlg.GetSchea().ToStdWstring(), errorMsg) )
+        for( auto msg : errorMsg )
         {
-            for( auto error : errorMsg )
-                wxMessageBox( error, _( "Attaching DB error" ), wxICON_ERROR );
+            wxMessageBox( msg );
+            result = wxID_CANCEL;
+        }
+    }
+    else
+    {
+        AttachDB dlg( dynamic_cast<wxDocMDIParentFrame *>( parent )->GetActiveChild(), db, names );
+        dlg.Center();
+        result = dlg.ShowModal();
+        if( result == wxID_OK )
+        {
+            wxBusyCursor cursor;
+            if( db->AttachDatabase(dlg.GetCatalog().ToStdWstring(), dlg.GetSchea().ToStdWstring(), errorMsg) )
+            {
+                for( auto error : errorMsg )
+                    wxMessageBox( error, _( "Attaching DB error" ), wxICON_ERROR );
+            }
         }
     }
     return result;
