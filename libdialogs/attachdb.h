@@ -12,7 +12,7 @@
 class AttachDB : public wxDialog
 {
 public:
-    AttachDB(wxWindow *parent, Database *db);
+    AttachDB(wxWindow *parent, Database *db, const std::vector<std::wstring> &names);
     auto &GetCatalog() const { return m_catalog; }
     auto &GetSchea() const { return m_schema;; }
 protected:

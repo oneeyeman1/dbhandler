@@ -19,7 +19,7 @@
 #include "database.h"
 #include "attachdb.h"
 
-AttachDB::AttachDB(wxWindow *parent, Database *db) : wxDialog( parent, wxID_ANY, "Attach the Database" )
+AttachDB::AttachDB(wxWindow *parent, Database *db, const std::vector<std::wstring> &names) : wxDialog( parent, wxID_ANY, "Attach the Database" )
 {
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     m_panel = new wxPanel( this, wxID_ANY );
@@ -72,6 +72,10 @@ AttachDB::AttachDB(wxWindow *parent, Database *db) : wxDialog( parent, wxID_ANY,
         m_picker->Hide();
         m_label2->Hide();
         m_schemaName->Hide();
+        for( auto name : names )
+        {
+            m_dbList->Append( name );
+        }
     }
     m_db = db;
     sizer_1->Fit( this );
