@@ -1702,5 +1702,22 @@ int PostgresDatabase::AttachDatabase(const std::wstring &catalog, const std::wst
 int PostgresDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    std::wstring query = L"SELECT datname FROM pg_database;";
+    auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    ExecStatusType status = PQresultStatus( res );
+    if( status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK )
+    {
+        auto err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Retrieve database list: " + err );
+        result = 1;
+    }
+    else if( status == PGRES_TUPLES_OK )
+    {
+        for( int i = 0; i < PQntuples( res ); i++ )
+        {
+            names.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
+        }
+    }
+    PQclear( res );
     return result;
 }

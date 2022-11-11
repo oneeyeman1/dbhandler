@@ -6409,7 +6409,51 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
 
 int ODBCDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg)
 {
-    return 0;
+    int result = 0;
+    SQLHDBC hdbc;
+    SQLSMALLINT OutConnStrLen;
+    RETCODE ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 0, m_env );
+        result = 1;
+    }
+    else
+    {
+        ret = SQLDriverConnect( hdbc, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2, hdbc );
+            result = 1;
+        }
+        else
+        {
+            ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc, &m_hstmt );
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+            {
+            }
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 1, m_hstmt );
+                result = 1;
+            }
+            m_hstmt = 0;
+            ret = SQLDisconnect( hdbc );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 2, hdbc );
+                result = 1;
+            }
+            ret = SQLFreeHandle( SQL_HANDLE_DBC, hdbc );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 2, hdbc );
+                result = 1;
+            }
+        }
+    }
+    return result;
 }
 
 int ODBCDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg)
@@ -6421,7 +6465,7 @@ int ODBCDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vec
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT name FROM sys.databases;";
     if( pimpl->m_subtype == L"PostgreSQL" )
-        query = L"SELECT datname FRPM pg_database;";
+        query = L"SELECT datname FROM pg_database;";
     if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
         query = L"SELECT name FROM sp_helpdb";
     if( pimpl->m_subtype == L"mySQL" )
