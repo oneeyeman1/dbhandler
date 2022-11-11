@@ -2061,7 +2061,7 @@ int SQLiteDatabase::AttachDatabase(const std::wstring &catalog, const std::wstri
     char *err;
     sqlite3_stmt *stmt;
     std::wstring errorMessage;
-    auto query = sqlite3_mprintf( "ATTACH %Q AS %w", catalog, schema );
+    auto query = sqlite3_mprintf( "ATTACH %Q AS %w", catalog.c_str(), schema.c_str() );
     auto res = sqlite3_exec( m_db, query, NULL, NULL, &err );
     if( res != SQLITE_OK )
     {
