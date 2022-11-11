@@ -1695,10 +1695,12 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
 
 int PostgresDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg)
 {
-    return 0;;
+    int result = 0;
+    return result;
 }
 
 int PostgresDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg)
 {
-
+    int result = 0;
+    return result;
 }
