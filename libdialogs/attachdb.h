@@ -13,6 +13,8 @@ class AttachDB : public wxDialog
 {
 public:
     AttachDB(wxWindow *parent, Database *db);
+    auto &GetCatalog() const { return m_catalog; }
+    auto &GetSchea() const { return m_schema;; }
 protected:
     void OnFileSelected(wxCommandEvent &event);
     void OnOUpdate(wxUpdateUIEvent &event);
@@ -26,6 +28,7 @@ private:
     wxListBox *m_dbList;
     short m_dbtype;
     wxButton *m_ok, *m_cancel, *m_help;
+    wxString m_catalog, m_schema;
 };
 
 #endif /* attachdb_hpp */

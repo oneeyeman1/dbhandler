@@ -96,7 +96,19 @@ void AttachDB::OnOk(wxCommandEvent &event)
     if( schema == "master" || schema == "temp" )
         return;
     else
+    {
+        if( m_dbList->GetSelection() == wxNOT_FOUND )
+        {
+            m_catalog = m_picker->GetPath();
+            m_schema = m_schemaName->GetValue();
+        }
+        else
+        {
+            m_catalog = m_dbList->GetStringSelection();
+            m_schema = L"";
+        }
         EndModal( wxID_OK );
+    }
 }
 
 void AttachDB::OnOUpdate(wxUpdateUIEvent &event)
