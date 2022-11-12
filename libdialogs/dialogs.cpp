@@ -411,7 +411,7 @@ extern "C" WXEXPORT int AttachToDatabase(wxWindow *parent, Database *db)
     {
         for( auto msg : errorMsg )
         {
-            wxMessageBox( msg );
+            wxMessageBox( msg, _( "Retrieving database list" ), wxICON_ERROR );
             result = wxID_CANCEL;
         }
     }
