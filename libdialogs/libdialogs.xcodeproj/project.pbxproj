@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		E3132ECC28654B2A00AD669F /* datasource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3132ECA28654B2A00AD669F /* datasource.cpp */; };
 		E3132ECD28654B2A00AD669F /* datasource.h in Headers */ = {isa = PBXBuildFile; fileRef = E3132ECB28654B2A00AD669F /* datasource.h */; };
+		E3132EDC2879084C00AD669F /* dialogs.h in Headers */ = {isa = PBXBuildFile; fileRef = E3132EDB2879084B00AD669F /* dialogs.h */; };
 		E32A5006223469AE00A57BD1 /* bitmappanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A5002223469AE00A57BD1 /* bitmappanel.cpp */; };
 		E32A5007223469AE00A57BD1 /* bitmappanel.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A5003223469AE00A57BD1 /* bitmappanel.h */; };
 		E32A5008223469AE00A57BD1 /* newquery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A5004223469AE00A57BD1 /* newquery.cpp */; };
@@ -60,6 +61,7 @@
 /* Begin PBXFileReference section */
 		E3132ECA28654B2A00AD669F /* datasource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = datasource.cpp; sourceTree = "<group>"; };
 		E3132ECB28654B2A00AD669F /* datasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = datasource.h; sourceTree = "<group>"; };
+		E3132EDB2879084B00AD669F /* dialogs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dialogs.h; sourceTree = "<group>"; };
 		E32A5002223469AE00A57BD1 /* bitmappanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bitmappanel.cpp; sourceTree = "<group>"; };
 		E32A5003223469AE00A57BD1 /* bitmappanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitmappanel.h; sourceTree = "<group>"; };
 		E32A5004223469AE00A57BD1 /* newquery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = newquery.cpp; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 		E3D139491D0D0CDE00A5A0F7 /* libdialogs */ = {
 			isa = PBXGroup;
 			children = (
+				E3132EDB2879084B00AD669F /* dialogs.h */,
 				E3132ECA28654B2A00AD669F /* datasource.cpp */,
 				E3132ECB28654B2A00AD669F /* datasource.h */,
 				E3B8E3E825487B7800346516 /* detachdb.cpp */,
@@ -222,6 +225,7 @@
 				E32A5011223F1AE600A57BD1 /* createdatabase.h in Headers */,
 				E3607DCB23A6E19200267C14 /* typecombobox.h in Headers */,
 				E3607DCF23C4417F00267C14 /* gotoline.h in Headers */,
+				E3132EDC2879084C00AD669F /* dialogs.h in Headers */,
 				E32A5009223469AE00A57BD1 /* newquery.h in Headers */,
 				E3E91D3D1DC678C900675CF8 /* createindex.h in Headers */,
 				E3E91D891DEE520B00675CF8 /* properties.h in Headers */,
