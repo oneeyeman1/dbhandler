@@ -1976,6 +1976,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             }
             else
             {
+                delete[] catalogDB;
+                catalogDB = nullptr;
                 for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
                 {
                     if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
@@ -1998,17 +2000,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     pimpl->m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
                     count++;
                 }
-/*                    long tableId;
-                    if( GetTableId( cat, schema, table, tableId, errorMsg ) )
-                    {
-                        result = 1;
-                        break;
-                    }
-                    result = AddDropTable( cat, schema, table, owner, tableId, true, errorMsg );
-                    if( result )
-                        break;
-                    pimpl->m_tableNames.push_back( schema + L"." + table );
-                }*/
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                 {
                     fields.erase( fields.begin(), fields.end() );
@@ -6407,11 +6398,14 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     return result;
 }
 
-int ODBCDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring &, std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
+    int result = 0, bufferSize = 1024;
     SQLHDBC hdbc;
     SQLSMALLINT OutConnStrLen;
+    SQLWCHAR *catalogName = nullptr, *schemaName = nullptr, *tableName = nullptr;
+    std::wstring cat, schema, table;
+    SQLTablesDataBinding *catalogSQL = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -6431,7 +6425,63 @@ int ODBCDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring
             ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc, &m_hstmt );
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
+                auto catalogDB = new SQLWCHAR[pimpl->m_dbName.length() + 2];
+                memset( catalogDB, '\0', pimpl->m_dbName.length() + 2 );
+                uc_to_str_cpy( catalogDB, catalog );
+                for( int i = 0; i < 5; i++ )
+                {
+                    catalogSQL[i].TargetType = SQL_C_WCHAR;
+                    catalogSQL[i].BufferLength = ( bufferSize + 1 );
+                    catalogSQL[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalogSQL[i].BufferLength );
+                    ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalogSQL[i].TargetType, catalogSQL[i].TargetValuePtr, catalogSQL[i].BufferLength, &( catalogSQL[i].StrLen_or_Ind ) );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1 );
+                        result = 1;
+                        break;
+                    }
+                }
+                if( !result )
+                {
+                    ret = SQLTables( m_hstmt, catalogDB, SQL_NTS, NULL, 0, NULL, 0, NULL, 0 );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1 );
+                        result = 1;
+                    }
+                    else
+                    {
+                        for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
+                        {
+                            if( catalogSQL[0].StrLen_or_Ind != SQL_NULL_DATA )
+                                catalogName = (SQLWCHAR *) catalogSQL[0].TargetValuePtr;
+                            if( catalogSQL[1].StrLen_or_Ind != SQL_NULL_DATA )
+                                schemaName = (SQLWCHAR *) catalogSQL[1].TargetValuePtr;
+                            if( catalogSQL[2].StrLen_or_Ind != SQL_NULL_DATA )
+                                tableName = (SQLWCHAR *) catalogSQL[2].TargetValuePtr;
+                            cat = L"";
+                            schema = L"";
+                            table = L"";
+                            str_to_uc_cpy( cat, catalogName );
+                            str_to_uc_cpy( schema, schemaName );
+                            str_to_uc_cpy( table, tableName );
+                            if( schema == L"" && cat != L"" && schemaName != NULL )
+                            {
+                                schema = cat;
+                                copy_uc_to_uc( schemaName, catalogName );
+                            }
+                            pimpl->m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
+                        }
+                    }
+                }
             }
+            for( int i = 0; i < 5; i++ )
+            {
+                free( catalogSQL[i].TargetValuePtr );
+                catalogSQL[i].TargetValuePtr = NULL;
+            }
+            free( catalogSQL );
+            catalogSQL = nullptr;
             ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
