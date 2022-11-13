@@ -43,7 +43,7 @@ typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxStrin
 typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &, const std::vector<Profile> &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
-typedef int (*ATTACHDATABASE)(wxWindow *);
+typedef int (*ATTACHDATABASE)(wxWindow *, Database *);
 typedef int (*DETACHDATABASE)(wxWindow *);
 
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
@@ -221,10 +221,6 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 {
     wxVector<wxBitmap> bitmaps[9];
 
-    bitmaps[1].push_back( wxBITMAP_PNG( odbc_16x16 ) );
-    bitmaps[1].push_back( wxBITMAP_PNG( odbc_32x32 ) );
-    bitmaps[1].push_back( wxBITMAP_PNG( odbc_64x64 ) );
-
     bitmaps[2].push_back( wxBITMAP_PNG( profile_16x16 ) );
     bitmaps[2].push_back( wxBITMAP_PNG( profile_32x32 ) );
     bitmaps[2].push_back( wxBITMAP_PNG( profile_64x64 ) );
@@ -234,15 +230,16 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[4].push_back( wxBITMAP_PNG( database_64x64 ) );
 #ifdef __WXGTK__
     toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVG( odbc, wxSize( 16, 16 ) ) );
 #else
     toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVGResource( "odbc", wxSize( 16, 16 ) ) );
 #endif
-    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[1] ) );
     toolBar->AddTool( wxID_DATABASEWINDOW, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
 #ifdef __WXGTK__
-    toolBar->AddTool( wxID_QUERY, _( "Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ) );
 #else
-    toolBar->AddTool( wxID_QUERY, _( "Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ) );
 #endif
     toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
     toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxBitmapBundle(), wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );
@@ -588,7 +585,7 @@ void MainFrame::OnAttachDatabase(wxCommandEvent &WXUNUSED(event))
     lib->Load( "libdialogs" );
 #endif
     ATTACHDATABASE func = (ATTACHDATABASE) lib->GetSymbol( "AttachToDatabase" );
-    int result = func( this );
+    int result = func( this, m_db );
     if( result == wxID_OK )
         m_countAttached++;
     delete lib;

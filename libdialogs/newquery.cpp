@@ -62,7 +62,7 @@ NewQuery::NewQuery(wxWindow *parent, const wxString &title, int source, int pres
     m_preview = new wxCheckBox( m_panel, wxID_ANY, _( "&Preview when built" ) );
     SetTitle( title );
     do_layout();
-    m_panels[m_source -1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+    m_panels[m_source]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
     m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
     for( int i = 0; i < 4; ++i )
     {
@@ -158,15 +158,15 @@ void NewQuery::do_layout()
 void NewQuery::OnPanelSourceClicked(wxMouseEvent &event)
 {
     bool found = false;
-    for( int i = 0; i < 4 || !found; ++i )
+    for( int i = 0; i < 4 && !found; ++i )
     {
         if( event.GetEventObject() == m_panels[i] )
         {
-            if( i + 1 != m_source )
+            if( i != m_source )
             {
-                m_panels[m_source - 1]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
-                m_source = i + 1;
-                m_panels[m_source - 1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                m_panels[m_source]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                m_source = i;
+                m_panels[m_source]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
             }
             found = true;
         }
@@ -178,17 +178,71 @@ void NewQuery::OnPanelSourceClicked(wxMouseEvent &event)
 void NewQuery::OnPanelPresentationClicked(wxMouseEvent &event)
 {
     bool found = false;
-    for( int i = 4; i < 14 || !found; ++i )
+    for( int i = 4; i < 14 && !found; ++i )
     {
         if( event.GetEventObject() == m_panels[i] )
         {
-            if( i + 1 != m_presentation + 4 )
-            {
-                m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
-                m_presentation = i - 4;
-                m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-            }
+            m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+            m_presentation = i - 4;
+            m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
             found = true;
+            if( m_presentation == 0 )
+            {
+                m_panels[0]->Enable( false );
+                m_panels[0]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                m_panels[1]->Enable( false );
+                m_panels[1]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                m_panels[2]->Enable( false );
+                m_panels[2]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                m_panels[3]->Enable( false );
+                m_panels[3]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+            }
+            else
+            {
+                if( m_presentation == 1 )
+                {
+                    m_panels[0]->Enable();
+                    if( m_source == 0 )
+                        m_panels[0]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                    else
+                        m_panels[0]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                    m_panels[1]->Enable();
+                    if( m_source == 1 )
+                        m_panels[1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                    else
+                        m_panels[1]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                    m_panels[2]->Enable();
+                    if( m_source == 2 )
+                        m_panels[2]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                    else
+                        m_panels[2]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                    m_panels[3]->Enable( false );
+                    m_panels[3]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                }
+                else
+                {
+                    m_panels[0]->Enable();
+                    if( m_source == 0 )
+                        m_panels[0]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                    else
+                        m_panels[0]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                    m_panels[1]->Enable();
+                    if( m_source == 1 )
+                        m_panels[1]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                    else
+                        m_panels[1]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                    m_panels[2]->Enable();
+                    if( m_source == 2 )
+                        m_panels[2]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                    else
+                        m_panels[2]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                    m_panels[3]->Enable();
+                    if( m_source == 3 )
+                        m_panels[3]->GetLabel()->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+                    else
+                        m_panels[3]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+                }
+            }
         }
     }
     Refresh();

@@ -1692,3 +1692,57 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
     }
     return result;
 }
+
+int PostgresDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    char *param[1];
+    param[0] = new char[catalog.length() * sizeof( wchar_t ) + 1];
+    memset( param[0], '\0', catalog.length() * sizeof( wchar_t ) + 1 );
+    strcpy( param[0], m_pimpl->m_myconv.to_bytes( catalog.c_str() ).c_str() );
+    std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS table FROM information_schema.tables t WHERE t.table_catalog = $1 AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
+    auto res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), 1, NULL, param, NULL, NULL, 0 );
+    ExecStatusType status = PQresultStatus( res ); 
+    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( err );
+        PQclear( res );
+        result = 1;
+    }
+    else
+    {
+        for( int i = 0; i < PQntuples( res ); i++ )
+        {
+            char *catalog_name = PQgetvalue( res, i, 0 );
+            char *schema_name = PQgetvalue( res, i, 1 );
+            char *table_name = PQgetvalue( res, i, 2 );
+            pimpl->m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
+        }
+    }
+    PQclear( res );
+    return result;
+}
+
+int PostgresDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT datname FROM pg_database;";
+    auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    ExecStatusType status = PQresultStatus( res );
+    if( status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK )
+    {
+        auto err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Retrieve database list: " + err );
+        result = 1;
+    }
+    else if( status == PGRES_TUPLES_OK )
+    {
+        for( int i = 0; i < PQntuples( res ); i++ )
+        {
+            names.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
+        }
+    }
+    PQclear( res );
+    return result;
+}

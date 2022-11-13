@@ -12,15 +12,23 @@
 class AttachDB : public wxDialog
 {
 public:
-    AttachDB(wxWindow *parent);
+    AttachDB(wxWindow *parent, Database *db, const std::vector<std::wstring> &names);
+    wxString &GetCatalog() { return m_catalog; }
+    wxString &GetSchea() { return m_schema;; }
 protected:
     void OnFileSelected(wxCommandEvent &event);
+    void OnOUpdate(wxUpdateUIEvent &event);
     void OnOk(wxCommandEvent &event);
 private:
+    Database *m_db;
     wxPanel *m_panel;
     wxStaticText *m_label1, *m_label2;
     wxFilePickerCtrl *m_picker;
     wxTextCtrl *m_schemaName;
+    wxListBox *m_dbList;
+    short m_dbtype;
+    wxButton *m_ok, *m_cancel, *m_help;
+    wxString m_catalog, m_schema;
 };
 
 #endif /* attachdb_hpp */

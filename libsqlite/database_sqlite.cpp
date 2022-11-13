@@ -2054,3 +2054,61 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
 {
     return AddDropTable( catalog, schemaName, tableName, L"", 0, true, errors );
 }
+
+int SQLiteDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    char *err;
+    sqlite3_stmt *stmt;
+    std::wstring errorMessage;
+    auto query = sqlite3_mprintf( "ATTACH %Q AS %w", catalog.c_str(), schema.c_str() );
+    auto res = sqlite3_exec( m_db, query, NULL, NULL, &err );
+    if( res != SQLITE_OK )
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+        result = 1;
+        sqlite3_free( err );
+    }
+    else
+    {
+        sqlite3_free( query );
+        std::wstring query1 = L"SELECT name FROM ";
+        query1 += schema;
+        query1 += L".sqlite_master WHERE type = 'table' OR type = 'view';";
+        if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), (int) query1.length(), &stmt, 0 ) ) == SQLITE_OK )
+        {
+            for( ; ; )
+            {
+                res = sqlite3_step( stmt );
+                if( res == SQLITE_ROW  )
+                {
+                    const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
+                    pimpl->m_tableDefinitions[catalog].push_back( TableDefinition( catalog, schema, sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
+                }
+                else if( res == SQLITE_DONE )
+                    break;
+                else
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                    break;
+                }
+            }
+        }
+        else
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+        sqlite3_finalize( stmt );
+    }
+    return result;
+}
+
+int SQLiteDatabase::GetDatabaseNameList(std::vector<std::wstring> &, std::vector<std::wstring> &)
+{
+    return 0;
+}

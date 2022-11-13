@@ -16,7 +16,7 @@ public:
     QueryArguments(int pos, const wxString &name, const wxString type) : m_pos(pos), m_name(name), m_type(type) {}
 };
 
-struct ClientData : public wxClientData
+struct ClientData
 {
     std::wstring catalog, schema;
     ClientData(const std::wstring &catalogName, const std::wstring &schemaName) : catalog( catalogName ), schema( schemaName ) {}
