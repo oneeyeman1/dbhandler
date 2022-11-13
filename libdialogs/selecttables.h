@@ -42,9 +42,9 @@ protected:
 
     DECLARE_EVENT_TABLE();
 
-public:
     void OnSelectingLBItem(wxCommandEvent &event); // wxGlade: <event_handler>
     void OnOpenTables(wxCommandEvent &event);
+    void OnCancel(wxCommandEvent &event);
     void OnShowSystemTables(wxCommandEvent &event);
 }; // wxGlade: end class
 

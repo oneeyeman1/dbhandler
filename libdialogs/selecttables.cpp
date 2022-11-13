@@ -50,6 +50,7 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
     do_layout();
     // end wxGlade
     m_open->Bind( wxEVT_BUTTON, &SelectTables::OnOpenTables, this );
+    m_cancel->Bind( wxEVT_BUTTON, &SelectTables::OnCancel, this );
     m_showSystem->Bind( wxEVT_CHECKBOX, &SelectTables::OnShowSystemTables, this );
 }
 
@@ -59,8 +60,13 @@ void SelectTables::GetSelectedTableNames(std::map<wxString, std::vector<TableDef
     m_tables->GetSelections( selections );
     for( auto i = 0; i < selections.GetCount(); i++ )
     {
-        ClientData *data = dynamic_cast<ClientData *>( m_tables->GetClientObject( i ) );
+//        ClientData *data = dynamic_cast<ClientData *>( m_tables->GetClientObject( i ) );
+        ClientData *data = (ClientData *) m_tables->GetClientData( i );
         tableNames[data->catalog].push_back( TableDefinition( data->catalog, data->schema, m_tables->GetString( selections.Item( i ) ).ToStdWstring() ) );
+    }
+    for( auto i = 0; i < m_tables->GetCount(); ++i )
+    {
+        delete (ClientData *) m_tables->GetClientData( i );
     }
 }
 
@@ -145,57 +151,59 @@ void SelectTables::FillTableList(bool sysTableIncluded)
     std::wstring subType = m_db->GetTableVector().m_subtype;
     std::lock_guard<std::mutex> locker( m_db->GetTableVector().my_mutex );
     std::map<std::wstring,std::vector<TableDefinition> > tables = m_db->GetTableVector().m_tableDefinitions;
+    auto size = tables.size();
     std::wstring dbName = m_db->GetTableVector().m_dbName;
     for( std::map<std::wstring,std::vector<TableDefinition> >::iterator it = tables.begin(); it != tables.end(); it++ )
     {
-        if( (*it).first == dbName )
+        for( std::vector<TableDefinition>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
         {
-            for( std::vector<TableDefinition>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+            std::wstring tableName = (*it1).tableName;
+            std::wstring schemaName = (*it1).schemaName;
+            std::wstring catalogName = (*it1).catalogName;
+            if( std::find( m_names.begin(), m_names.end(), tableName ) == m_names.end() )
             {
-                std::wstring tableName = (*it1).tableName;
-                std::wstring schemaName = (*it1).schemaName;
-                std::wstring catalogName = (*it1).catalogName;
-                if( std::find( m_names.begin(), m_names.end(), tableName ) == m_names.end() )
+                if( type == L"SQLite" )
                 {
-                    if( type == L"SQLite" )
-                    {
-                        if( schemaName == L"" )
-                            schemaName = L"master";
-                        if( !sysTableIncluded && ( ( tableName.substr( 0, 6 ) != L"sqlite" ) && ( tableName.substr( 0, 3 ) != L"sys" ) ) )
-                            insert = true;
-                        else if( sysTableIncluded )
-                            insert = true;
-                    }
-                    else if( ( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" ) ||
-                               ( type == L"ODBC" && subType == L"Sybase SQL Anywhere" ) || type == L"Sybase SQL Anywhere" )
-                    {
-                        if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || schemaName.find( L"sys" ) != std::wstring::npos || schemaName.find( L"INFORMATION_SCHEMA" ) != std::wstring::npos || schemaName.find( L"SYS" ) != std::wstring::npos ) )
-                            continue;
-                        else
-                        {
-                            insert = true;
-                        }
-                    }
-                    else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
-                    {
-                        if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"information_schema" ) )
-                            continue;
-                        else
-                            insert = true;
-                    }
-                    else if( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" )
-                    {
-                        if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || ( schemaName == L"information_schema" || schemaName == L"pg_catalog" ) ) )
-                            continue;
-                        else
-                            insert = true;
-                    }
-                    if( insert )
-                    {
-                        m_tables->Append( tableName, new ClientData( catalogName, schemaName ) );
-                    }
-                    insert = false;
+                    if( schemaName == L"" )
+                        schemaName = L"master";
+                    if( !sysTableIncluded && ( ( tableName.substr( 0, 6 ) != L"sqlite" ) && ( tableName.substr( 0, 3 ) != L"sys" ) ) )
+                        insert = true;
+                    else if( sysTableIncluded )
+                        insert = true;
+                    if( size > 1 )
+                        tableName = schemaName + tableName;
                 }
+                else if( ( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" ) ||
+                           ( type == L"ODBC" && subType == L"Sybase SQL Anywhere" ) || type == L"Sybase SQL Anywhere" )
+                {
+                    if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || schemaName.find( L"sys" ) != std::wstring::npos || schemaName.find( L"INFORMATION_SCHEMA" ) != std::wstring::npos || schemaName.find( L"SYS" ) != std::wstring::npos ) )
+                        continue;
+                    else
+                    {
+                        insert = true;
+                    }
+                    if( size > 1 )
+                        tableName = catalogName + "." + schemaName + "." + tableName;
+                }
+                else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
+                {
+                    if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"information_schema" ) )
+                        continue;
+                    else
+                        insert = true;
+                }
+                else if( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" )
+                {
+                    if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || ( schemaName == L"information_schema" || schemaName == L"pg_catalog" ) ) )
+                        continue;
+                    else
+                        insert = true;
+                }
+                if( insert )
+                {
+                    m_tables->Append( tableName, new ClientData( catalogName, schemaName ) );
+                }
+                insert = false;
             }
         }
     }
@@ -203,8 +211,17 @@ void SelectTables::FillTableList(bool sysTableIncluded)
 
 void SelectTables::OnShowSystemTables(wxCommandEvent &WXUNUSED(event))
 {
+    for( auto i = 0; i < m_tables->GetCount(); ++i )
+        delete m_tables->GetClientData( i );
     if( m_showSystem->IsChecked() )
         FillTableList( true );
     else
         FillTableList( false );
+}
+
+void SelectTables::OnCancel(wxCommandEvent &WXUNUSED(event))
+{
+    for( auto i = 0; i < m_tables->GetCount(); ++i )
+        delete m_tables->GetClientData( i );
+    EndModal( wxID_CANCEL );
 }
