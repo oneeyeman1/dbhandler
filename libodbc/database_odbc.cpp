@@ -4407,6 +4407,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     free( catalog );
                     catalog = nullptr;
                 }
+                delete[] catalogDB;
+                catalogDB = nullptr;
             }
         }
     }
