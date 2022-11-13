@@ -27,7 +27,9 @@
 //#include "./res/gui/bold_png.c"
 //#endif
 
-#include "res/gui/bold.c"
+#ifdef __WXGTK__
+#include "bold.h"
+#endif
 #include "res/gui/italic.c"
 #include "res/gui/underline.c"
 #include "res/gui/preview.c"
@@ -410,7 +412,11 @@ void DrawingView::CreateViewToolBar()
         };
         m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
         m_styleBar->AddControl( m_fontSize );
-        m_styleBar->AddTool( 303, _( "Bold" ), wxBitmap::NewFromPNGData( bold_png,  WXSIZEOF( bold_png ) ), wxNullBitmap, wxITEM_NORMAL );
+#ifdef __WXGTK__
+        m_styleBar->AddTool( 303, _( "Bold" ), wxBitmapBundle::FromSVG( bold, wxSize( 16, 16 ) ) );
+#else
+        m_styleBar->AddTool( 303, _( "Bold" ), wxBitmapBundle::FromSVGResource( "bold", wxSize( 16, 16 ) ) );
+#endif
         m_styleBar->AddTool( 303, _( "Italic" ), wxBitmap::NewFromPNGData( italic_png,  WXSIZEOF( italic_png ) ), wxNullBitmap, wxITEM_NORMAL );
         m_styleBar->AddTool( 303, _( "Underline" ), wxBitmap::NewFromPNGData( underline_png,  WXSIZEOF( underline_png ) ), wxNullBitmap, wxITEM_NORMAL );
     }
