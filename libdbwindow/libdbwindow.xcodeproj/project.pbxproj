@@ -484,6 +484,7 @@
 					"-lwx_baseu_xml-3.2",
 					"-lwx_baseu_net-3.2",
 					"-lwx_baseu-3.2",
+					"-headerpad_max_install_names",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
