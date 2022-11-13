@@ -221,10 +221,6 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 {
     wxVector<wxBitmap> bitmaps[9];
 
-    bitmaps[1].push_back( wxBITMAP_PNG( odbc_16x16 ) );
-    bitmaps[1].push_back( wxBITMAP_PNG( odbc_32x32 ) );
-    bitmaps[1].push_back( wxBITMAP_PNG( odbc_64x64 ) );
-
     bitmaps[2].push_back( wxBITMAP_PNG( profile_16x16 ) );
     bitmaps[2].push_back( wxBITMAP_PNG( profile_32x32 ) );
     bitmaps[2].push_back( wxBITMAP_PNG( profile_64x64 ) );
@@ -234,10 +230,11 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[4].push_back( wxBITMAP_PNG( database_64x64 ) );
 #ifdef __WXGTK__
     toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVG( odbc, wxSize( 16, 16 ) ) );
 #else
     toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVGResource( "odbc", wxSize( 16, 16 ) ) );
 #endif
-    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromBitmaps( bitmaps[1] ) );
     toolBar->AddTool( wxID_DATABASEWINDOW, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
 #ifdef __WXGTK__
     toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ) );
