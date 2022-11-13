@@ -32,7 +32,7 @@
 
 #ifdef __WXGTK__
 #include "query.h"
-#include "res/odbc.c"
+#include "odbc.h"
 #include "res/profile.c"
 #include "res/database.c"
 #include "table.h"
