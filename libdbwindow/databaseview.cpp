@@ -29,8 +29,8 @@
 
 #ifdef __WXGTK__
 #include "bold.h"
+#include "italic.h"
 #endif
-#include "res/gui/italic.c"
 #include "res/gui/underline.c"
 #include "res/gui/preview.c"
 #include "res/gui/sql.h"
@@ -414,10 +414,11 @@ void DrawingView::CreateViewToolBar()
         m_styleBar->AddControl( m_fontSize );
 #ifdef __WXGTK__
         m_styleBar->AddTool( 303, _( "Bold" ), wxBitmapBundle::FromSVG( bold, wxSize( 16, 16 ) ) );
+        m_styleBar->AddTool( 303, _( "Italic" ), wxBitmapBundle::FromSVG( italic, wxSize( 16, 16 ) ) );
 #else
         m_styleBar->AddTool( 303, _( "Bold" ), wxBitmapBundle::FromSVGResource( "bold", wxSize( 16, 16 ) ) );
+        m_styleBar->AddTool( 303, _( "Italic" ), wxBitmapBundle::FromSVGResource( "italic", wxSize( 16, 16 ) ) );
 #endif
-        m_styleBar->AddTool( 303, _( "Italic" ), wxBitmap::NewFromPNGData( italic_png,  WXSIZEOF( italic_png ) ), wxNullBitmap, wxITEM_NORMAL );
         m_styleBar->AddTool( 303, _( "Underline" ), wxBitmap::NewFromPNGData( underline_png,  WXSIZEOF( underline_png ) ), wxNullBitmap, wxITEM_NORMAL );
     }
     m_tb->Realize();
