@@ -61,7 +61,8 @@ libdbwindow_la_SOURCES =  \
 	fieldtypeshape.cpp \
 	fieldtypeshape.h \
 	bold.h \
-	italic.h
+	italic.h \
+	underline.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \
