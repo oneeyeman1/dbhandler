@@ -213,6 +213,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
         }
     }
     GetServerVersion( errorMsg );
+    sqlite3_extended_result_codes( m_db, 1 );
     return result;
 }
 
@@ -255,6 +256,8 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 
 void SQLiteDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
 {
+    auto msg = sqlite3_errmsg( m_db );
+    auto error = sqlite3_extended_errcode( m_db );
     code = sqlite3_errcode( m_db );
     switch( code )
     {
@@ -2061,7 +2064,7 @@ int SQLiteDatabase::AttachDatabase(const std::wstring &catalog, const std::wstri
     char *err;
     sqlite3_stmt *stmt;
     std::wstring errorMessage;
-    auto query = sqlite3_mprintf( "ATTACH %Q AS %w", catalog.c_str(), schema.c_str() );
+    auto query = sqlite3_mprintf( "ATTACH %Q AS %w", sqlite_pimpl->m_myconv.to_bytes( catalog.c_str() ).c_str(), sqlite_pimpl->m_myconv.to_bytes( schema.c_str() ).c_str() );
     auto res = sqlite3_exec( m_db, query, NULL, NULL, &err );
     if( res != SQLITE_OK )
     {
