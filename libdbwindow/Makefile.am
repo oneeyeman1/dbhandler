@@ -59,14 +59,16 @@ libdbwindow_la_SOURCES =  \
 	taborder.cpp \
 	taborder.h \
 	fieldtypeshape.cpp \
-	fieldtypeshape.h
+	fieldtypeshape.h \
+	bold.h \
+	italic.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \
 	-I../../dbinterface \
 	-I../../libpropertypages \
 	-I../../libpropertieshandlers \
-	`wx-config \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
 libdbwindow_la_LDFLAGS = -L../libpropertypages \
@@ -75,7 +77,7 @@ libdbwindow_la_LDFLAGS = -L../libpropertypages \
 	-L../libfieldswindow \
 	-lfieldswindow \
 	-lshapeframework \
-	`wx-config \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs \
 	stc`
 	
