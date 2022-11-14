@@ -61,6 +61,7 @@
     <ClInclude Include="MyErdTable.h" />
     <ClInclude Include="NArrow.h" />
     <ClInclude Include="OneArrow.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="table.h" />
     <ClInclude Include="taborder.h" />
   </ItemGroup>
@@ -92,6 +93,9 @@
     <ClCompile Include="OneArrow.cpp" />
     <ClCompile Include="table.cpp" />
     <ClCompile Include="taborder.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="libdbwindow.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>dbwindow</ProjectName>

@@ -8,6 +8,9 @@
     <Filter Include="Header Files">
       <UniqueIdentifier>{596a52e3-f23d-4a2b-a0c9-981888d0868a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{8b6634b6-8d38-4b83-961a-e5fe9cee06e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="constraint.h">
@@ -94,6 +97,7 @@
     <ClInclude Include="fieldtypeshape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="constraint.cpp">
@@ -177,5 +181,10 @@
     <ClCompile Include="fieldtypeshape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="libdbwindow.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
