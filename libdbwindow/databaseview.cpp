@@ -534,8 +534,8 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
                         res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
 #ifdef __WXGTK__
-						m_parent->SendSizeEvent();
-						wxYield();
+                        m_parent->SendSizeEvent();
+                        wxYield();
 #endif
                     }
                     else
@@ -915,7 +915,7 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
 #if __cplusplus > 201300
             auto ptr = std::make_unique<DatabasePropertiesHandler>( GetDocument()->GetDatabase(), dbTable, m_text );
 #else
-			auto ptr = std::unique_ptr<DatabasePropertiesHandler>( new DatabasePropertiesHandler( GetDocument()->GetDatabase(), dbTable, m_text ) );
+            auto ptr = std::unique_ptr<DatabasePropertiesHandler>( new DatabasePropertiesHandler( GetDocument()->GetDatabase(), dbTable, m_text ) );
 #endif
             propertiesPtr = std::move( ptr );
             title = _( "Table " );
