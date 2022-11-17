@@ -66,7 +66,7 @@ ConstraintSign::ConstraintSign(ViewType type, int joinType) : wxSFRectShape()
                 m_fKey->SetVAlign( wxSFShapeBase::valignMIDDLE );
                 m_fKey->SetHAlign( wxSFShapeBase::halignCENTER );
                 m_fKey->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-				if( m_grid->InsertToGrid( 1, 0, m_fKey ) )
+                if( m_grid->InsertToGrid( 1, 0, m_fKey ) )
                     m_fKey->CreateFromXPM( key_f_xpm );
                 else
                     delete m_fKey;
@@ -83,7 +83,7 @@ ConstraintSign::ConstraintSign(ViewType type, int joinType) : wxSFRectShape()
                 m_sign->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
                 if( m_grid->InsertToGrid( 1, 0, m_sign ) )
                     m_sign->SetText( "=" );
-				else
+                else
                     delete m_sign;
             }
         }
@@ -125,7 +125,7 @@ void ConstraintSign::DrawNormal(wxDC &dc)
             m_sign->SetTextColour( *wxWHITE );
         SetFill( *wxBLACK_BRUSH );
     }
-	else
+    else
     {
         if( m_sign )
             m_sign->SetTextColour( *wxBLACK );
