@@ -412,7 +412,46 @@ void DrawingView::CreateViewToolBar()
         };
         m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
         m_styleBar->AddControl( m_fontSize );
-#ifdef __WXGTK__
+#ifdef __WXMSW__
+        wxBitmapBundle bold, italic, underline;
+        HANDLE gs_wxMainThread = NULL;
+        const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
+        const void* data1 = nullptr, *data2 = nullptr, *data3 = nullptr;
+        size_t size1 = 0, size2 = 0, size3 = 0;
+        if( !wxLoadUserResource( &data1, &size1, "bold", wxT( "RT_RCDATA" ), inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            bold = wxBitmapBundle::FromSVG( (const char *) data1, wxSize( 16, 16 ) );
+            wxMessageBox( "Success!!" );
+        }
+        if( !wxLoadUserResource( &data2, &size2, "italic", wxT( "RT_RCDATA" ), inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            italic = wxBitmapBundle::FromSVG( (const char *) data2, wxSize( 16, 16 ) );
+            wxMessageBox( "Success!!" );
+        }
+        if( !wxLoadUserResource( &data3, &size3, "underline", wxT( "RT_RCDATA" ), inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            underline = wxBitmapBundle::FromSVG( (const char *) data3, wxSize( 16, 16 ) );
+            wxMessageBox( "Success!!" );
+        }
+        m_styleBar->AddTool( 303, _( "Bold" ), bold );
+        m_styleBar->AddTool( 303, _( "Italic" ), italic );
+        m_styleBar->AddTool( 303, _( "Underline" ), underline );
+#elif __WXGTK__
         m_styleBar->AddTool( 303, _( "Bold" ), wxBitmapBundle::FromSVG( bold, wxSize( 16, 16 ) ) );
         m_styleBar->AddTool( 303, _( "Italic" ), wxBitmapBundle::FromSVG( italic, wxSize( 16, 16 ) ) );
         m_styleBar->AddTool( 303, _( "Underline" ), wxBitmapBundle::FromSVG( underline, wxSize( 16, 16 ) ) );
