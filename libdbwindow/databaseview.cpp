@@ -418,7 +418,7 @@ void DrawingView::CreateViewToolBar()
         const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
         const void* data1 = nullptr, *data2 = nullptr, *data3 = nullptr;
         size_t size1 = 0, size2 = 0, size3 = 0;
-        if( !wxLoadUserResource( &data1, &size1, "bold", wxT( "RT_RCDATA" ), inst ) )
+        if( !wxLoadUserResource( &data1, &size1, "bold", RT_RCDATA, inst ) )
         {
             auto err = ::GetLastError();
             wxMessageBox( wxString::Format( "Error: %d!!", err ) );
@@ -426,9 +426,8 @@ void DrawingView::CreateViewToolBar()
         else
         {
             bold = wxBitmapBundle::FromSVG( (const char *) data1, wxSize( 16, 16 ) );
-            wxMessageBox( "Success!!" );
         }
-        if( !wxLoadUserResource( &data2, &size2, "italic", wxT( "RT_RCDATA" ), inst ) )
+        if( !wxLoadUserResource( &data2, &size2, "italic", RT_RCDATA, inst ) )
         {
             auto err = ::GetLastError();
             wxMessageBox( wxString::Format( "Error: %d!!", err ) );
@@ -436,9 +435,8 @@ void DrawingView::CreateViewToolBar()
         else
         {
             italic = wxBitmapBundle::FromSVG( (const char *) data2, wxSize( 16, 16 ) );
-            wxMessageBox( "Success!!" );
         }
-        if( !wxLoadUserResource( &data3, &size3, "underline", wxT( "RT_RCDATA" ), inst ) )
+        if( !wxLoadUserResource( &data3, &size3, "underline", RT_RCDATA, inst ) )
         {
             auto err = ::GetLastError();
             wxMessageBox( wxString::Format( "Error: %d!!", err ) );
@@ -446,7 +444,6 @@ void DrawingView::CreateViewToolBar()
         else
         {
             underline = wxBitmapBundle::FromSVG( (const char *) data3, wxSize( 16, 16 ) );
-            wxMessageBox( "Success!!" );
         }
         m_styleBar->AddTool( 303, _( "Bold" ), bold );
         m_styleBar->AddTool( 303, _( "Italic" ), italic );
@@ -638,7 +635,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             if( db->GetTableVector().GetDatabaseType() == L"SQLite" )
             {
                 wxString name = m_selectTableName[0]->GetSchemaName() + "." + m_selectTableName[0]->GetTableName();
-//                tables[].push_back( TableDefinition( m_selectTableName[0]->GetSchemaName().ToStdWstring(), m_selectTableName[0]->GetTableName().ToStdWstring() ) );
+                tables[m_selectTableName[0]->GetSchemaName()].push_back( TableDefinition( L"", m_selectTableName[0]->GetSchemaName(), m_selectTableName[0]->GetTableName() ) );
             }
 //            else
 //                tables[m_selectTableName[0]->].push_back( TableDefinition( m_selectTableName[0]->GetSchemaName().ToStdWstring(), m_selectTableName[0]->GetTableName() ) );
