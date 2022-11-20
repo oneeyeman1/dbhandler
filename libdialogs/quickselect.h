@@ -46,6 +46,7 @@ protected:
     void OnFieldsSetFocus(wxCommandEvent &event);
     void OnOkButton(wxCommandEvent &event);
     void OnSortClosing(wxCommandEvent &event);
+    void OnCancelQuickSelect(wxCommandEvent &event);
 //    void OnSortClosing(wxGridEvent &event);
 private:
     wxPanel *m_panel;
@@ -60,4 +61,5 @@ private:
     std::vector<FieldSorter> m_all, m_query;
     wxBoxSizer *m_sizer10;
     int m_cols, m_column, m_oldColumn;
+    ClientData data;
 };

@@ -52,7 +52,7 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_label12 = new wxStaticText( m_panel, wxID_ANY, _( "Criteria:" ) );
     set_properties();
     do_layout();
-    for( int i = 0; i < m_sizer10->GetItemCount(); ++i )
+    for( size_t i = 0; i < m_sizer10->GetItemCount(); ++i )
     {
         m_sizer10->SetItemMinSize( i, -1, m_grid->GetRowSize( i ) );
     }
@@ -67,6 +67,7 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_grid->Bind( wxEVT_GRID_ROW_SIZE, &QuickSelect::OnGridRowLines, this );
     m_grid->Bind( wxEVT_GRID_CELL_LEFT_CLICK, &QuickSelect::OnCellLeftClicked, this );
     m_ok->Bind( wxEVT_BUTTON, &QuickSelect::OnOkButton, this );
+    m_cancel->Bind( wxEVT_BUTTON, &QuickSelect::OnCancelQuickSelect, this );
 //
 //    m_grid->Bind( wxEVT_GRID_EDITOR_HIDDEN, &QuickSelect::OnSortClosing, this );
 //
@@ -192,6 +193,10 @@ void QuickSelect::FillTableListBox()
                         schemaName = L"main";
                     continue;
                 }
+                else if( type == L"SQLite"  && tables.size() > 1 )
+                {
+                    tableName = schemaName + L"." + tableName;
+                }
                 else if( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
                 {
                     if( tableName.substr( 0, 5 ) == L"abcat" || ( schemaName == L"sys" || schemaName == L"INFORMATION_SCHEMA" ) )
@@ -207,6 +212,8 @@ void QuickSelect::FillTableListBox()
                     if( tableName.substr( 0, 5 ) == L"abcat" || ( schemaName == L"information_schema" || schemaName == L"pg_catalog" ) )
                         continue;
                 }
+                else if( tables.size() > 1 )
+                    tableName = catalogName + L"." + schemaName + L"." + tableName;
                 m_tables->Append( tableName, new ClientData( catalogName, schemaName ) );
             }
         }
@@ -227,17 +234,19 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
         wxString selectedTable = m_tables->GetString( item );
         if( count > 1 )
         {
-            ClientData *data = dynamic_cast<ClientData *>( m_tables->GetClientObject( item ) );
+            ClientData *dataItem = (ClientData *) m_tables->GetClientData( item );
+            data.catalog = dataItem->catalog;
+            data.schema = dataItem->schema;
             {
                 wxBusyCursor wait;
-                m_db->AddDropTable( data->catalog, data->schema, selectedTable.ToStdWstring(), errors );
+                m_db->AddDropTable( dataItem->catalog, dataItem->schema, selectedTable.ToStdWstring(), errors );
             }
             for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++it )
             {
                 for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
                 {
-                    if( ( type == L"SQLite" && data->schema + "." + selectedTable == (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() ) ||
-                        ( type != L"SQLite" && data->catalog + "." + data->schema + "." + selectedTable == (*it).first + "." + (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() ) )
+                    if( ( type == L"SQLite" && dataItem->schema + "." + selectedTable == (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() ) ||
+                        ( type != L"SQLite" && dataItem->catalog + "." + dataItem->schema + "." + selectedTable == (*it).first + "." + (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() ) )
                     {
                         found = true;
                         m_queryFields = (*it1)->GetFields();
@@ -245,6 +254,10 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
                             m_fields->Append( (*it2)->GetFieldName() );
                     }
                 }
+            }
+            for( size_t i = 0; i < m_tables->GetCount(); ++i )
+            {
+                delete (ClientData *) m_tables->GetClientData( i );
             }
             m_tables->Clear();
             m_tables->Append( selectedTable );
@@ -308,7 +321,7 @@ void QuickSelect::OnDisplayComment(wxMouseEvent &event)
 
 void QuickSelect::OnGridRowLines(wxGridSizeEvent &event)
 {
-    for( int i = 0; i < m_sizer10->GetItemCount(); ++i )
+    for( size_t i = 0; i < m_sizer10->GetItemCount(); ++i )
     {
         m_sizer10->SetItemMinSize( i, -1, m_grid->GetRowSize( i ) );
     }
@@ -481,11 +494,12 @@ std::vector<TableField *> &QuickSelect::GetQueryFields()
 void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
 {
     auto found = false;
+    auto type = m_db->GetTableVector().m_type;
     auto it1 = m_db->GetTableVector().m_tables[m_db->GetTableVector().m_dbName];
     m_queryFields.clear();
     for( auto it2 = it1.begin(); it2 < it1.end() && !found; ++it2 )
     {
-        if( (*it2)->GetSchemaName() + "." + (*it2)->GetTableName() == m_tables->GetStringSelection() )
+        if( type == L"SQLite" && (*it2)->GetSchemaName() + "." + (*it2)->GetTableName() == data.schema + "." + m_tables->GetStringSelection() )
         {
             m_table = (*it2);
             found = true;
@@ -522,4 +536,16 @@ const wxListBox *QuickSelect::GetQueryTable()
 DatabaseTable *QuickSelect::GetDatabaseTable()
 {
     return m_table;
+}
+
+void QuickSelect::OnCancelQuickSelect(wxCommandEvent &WXUNUSED(event))
+{
+    if( m_tables->GetCount() > 1 )
+    {
+        for( size_t i = 0; i < m_tables->GetCount(); ++i )
+        {
+            delete (ClientData *) m_tables->GetClientData( i );
+        }
+    }
+    EndModal( wxID_CANCEL );
 }
