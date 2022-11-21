@@ -177,45 +177,48 @@ void QuickSelect::FillTableListBox()
     std::wstring type = m_db->GetTableVector().m_type;
     std::wstring subType = m_db->GetTableVector().m_subtype;
     std::map<std::wstring,std::vector<TableDefinition> > tables = m_db->GetTableVector().m_tableDefinitions;
+    auto size = tables.size();
     std::wstring dbName = m_db->GetTableVector().m_dbName;
     for( std::map<std::wstring,std::vector<TableDefinition> >::iterator it = tables.begin(); it != tables.end(); it++ )
     {
-        if( (*it).first == dbName )
+        for( std::vector<TableDefinition>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
         {
-            for( std::vector<TableDefinition>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+            std::wstring tableName = (*it1).tableName;
+            std::wstring schemaName = (*it1).schemaName;
+            std::wstring catalogName = (*it1).catalogName;
+            if( ( type == L"SQLite" && ( tableName.substr( 0, 6 ) == L"sqlite" || tableName.substr( 0, 3 ) == L"sys" ) ) ||
+                ( ( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" ) ) &&
+                  ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"sys" || schemaName == L"INFORMATION_SCHEMA" ) ||
+                ( ( (  type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" ) ) &&
+                  ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"information_schema" ) ||
+                ( ( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" ) ) &&
+                  ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"information_schema" || schemaName == L"pg_catalog" ) )
             {
-                std::wstring tableName = (*it1).tableName;
-                std::wstring schemaName = (*it1).schemaName;
-                std::wstring catalogName = (*it1).catalogName;
-                if( type == L"SQLite" && ( tableName.substr( 0, 6 ) == L"sqlite" || tableName.substr( 0, 3 ) == L"sys" ) )
-                {
-                    if( schemaName == L"" )
-                        schemaName = L"main";
-                    continue;
-                }
-                else if( type == L"SQLite"  && tables.size() > 1 )
-                {
-                    tableName = schemaName + L"." + tableName;
-                }
-                else if( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
-                {
-                    if( tableName.substr( 0, 5 ) == L"abcat" || ( schemaName == L"sys" || schemaName == L"INFORMATION_SCHEMA" ) )
-                        continue;
-                }
-                else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
-                {
-                    if( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"information_schema" )
-                        continue;
-                }
-                else if( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" )
-                {
-                    if( tableName.substr( 0, 5 ) == L"abcat" || ( schemaName == L"information_schema" || schemaName == L"pg_catalog" ) )
-                        continue;
-                }
-                else if( tables.size() > 1 )
-                    tableName = catalogName + L"." + schemaName + L"." + tableName;
-                m_tables->Append( tableName, new ClientData( catalogName, schemaName ) );
+                continue;
             }
+            else if( type == L"SQLite" )
+            {
+                if( schemaName == L"" )
+                    schemaName = L"main";
+                if( size > 1 )
+                    tableName = schemaName + L"." + tableName;
+            }
+            else if( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
+            {
+                if( size > 1 )
+                    tableName = catalogName + L"." + schemaName + L"." + tableName;
+            }
+            else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
+            {
+                if( size > 1 )
+                    tableName = catalogName + L"." + schemaName + L"." + tableName;
+            }
+            else if( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" )
+            {
+               if( size > 1 )
+                    tableName = catalogName + L"." + schemaName + L"." + tableName;
+            }
+            m_tables->Append( tableName, new ClientData( catalogName, schemaName ) );
         }
     }
 }
