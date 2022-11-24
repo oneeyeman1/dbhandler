@@ -244,12 +244,18 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
                 wxBusyCursor wait;
                 m_db->AddDropTable( dataItem->catalog, dataItem->schema, selectedTable.ToStdWstring(), errors );
             }
+            wxString name;
+            auto pos = selectedTable.Find( '.', true );
+            if( pos  == wxNOT_FOUND )
+                name = selectedTable;
+            else
+                name = selectedTable.substr( pos + 1 );
             for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++it )
             {
                 for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
                 {
-                    if( ( type == L"SQLite" && dataItem->schema + "." + selectedTable == (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() ) ||
-                        ( type != L"SQLite" && dataItem->catalog + "." + dataItem->schema + "." + selectedTable == (*it).first + "." + (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() ) )
+                    if( ( type == L"SQLite" && dataItem->schema + "." + name == (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() ) ||
+                        ( type != L"SQLite" && dataItem->catalog + "." + dataItem->schema + "." + name == (*it).first + "." + (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() ) )
                     {
                         found = true;
                         m_queryFields = (*it1)->GetFields();
