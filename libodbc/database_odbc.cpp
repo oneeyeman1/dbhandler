@@ -2037,7 +2037,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     SQLRETURN ret;
     int result = 0;
@@ -2062,7 +2062,7 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
             query = new SQLWCHAR[command.length() + 2];
             memset( query, '\0', command.length() + 2 );
             uc_to_str_cpy( query, command );
-            bool exists = IsIndexExists( index_name, schemaName, tableName, errorMsg );
+            bool exists = IsIndexExists( index_name, catalogName, schemaName, tableName, errorMsg );
             if( exists )
             {
                 std::wstring temp1 = L"Index ";
@@ -2117,7 +2117,7 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
     return result;
 }
 
-bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     SQLRETURN ret;
     SQLWCHAR *query = NULL;
@@ -2126,11 +2126,11 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
     SQLWCHAR *index_name = NULL, *table_name = NULL, *schema_name = NULL;
     SQLLEN cbIndexName = SQL_NTS, cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
-        query1 = L"SELECT 1 FROM sys.indexes WHERE name = ? AND object_id = OBJECT_ID( ? ) );";
+        query1 = L"SELECT 1 FROM " + catalogName + L".sys.indexes WHERE name = ? AND object_id = OBJECT_ID( ? ) );";
     if( pimpl->m_subtype == L"MySQL" )
-        query1 = L"SELECT 1 FROM information_schema.statistics WHERE index_name = ? AND table_name = ? AND schema_name = ?;";
+        query1 = L"SELECT 1 FROM information_schema.statistics WHERE index_name = ? AND table_name = ? AND schema_name = ? AND table_catalog = ?;";
     if( pimpl->m_subtype == L"PostgreSQL" )
-        query1 = L"SELECT 1 FROM pg_indexes WHERE indexname = $1 AND tablename = $2 AND schemaname = $3;";
+        query1 = L"SELECT 1 FROM " + catalogName + L".pg_catalog.pg_indexes WHERE indexname = $1 AND tablename = $2 AND schemaname = $3;";
     if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
         query1 = L"SELECT 1 FROM sysindexes ind, sysobjects obj WHERE obj.id = ind.id AND ind.name = ? AND obj.name = ?";
     index_name = new SQLWCHAR[indexName.length() + 2];
@@ -4427,7 +4427,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     std::wstring query4;
     int result = 0;
     std::vector<TableField *> fields;
-    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol;
+    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, origSchema, origTable, origCol, refSchema, refTable, refCol;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     SQLHSTMT stmt_col = 0, stmt_pk = 0, stmt_colattr = 0, stmt_fk = 0, stmt_ind = 0;
@@ -4452,8 +4452,19 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
         query4 = L"SELECT iname FROM sysindexes WHERE tname = ?";
     if( pimpl->m_subtype == L"Oracle" )
         query4 = L"SELECT index_name FROM all_indexes WHERE table_name = UPPER(?)";
-    memset( table_name, '\0', tableName.length() + 2 );
-    memset( schema_name, '\0', schemaName.length() + 2 );
+    std::wstring schema, table;
+    auto pos = schemaName.rfind( '.' );
+    if( pos != std::wstring::npos )
+        schema = schemaName.substr( pos + 1 );
+    else
+        schema = schemaName;
+    pos = tableName.rfind( '.' );
+    if( pos != std::wstring::npos )
+        table = L"\"" + tableName.substr( pos + 1 ) + L"\"";
+    else
+        table = tableName;
+    memset( table_name, '\0', table.length() + 2 );
+    memset( schema_name, '\0', schema.length() + 2 );
     memset( catalog_name, '\0', catalog.length() + 2 );
     uc_to_str_cpy( table_name, tableName );
     uc_to_str_cpy( schema_name, schemaName );
@@ -4501,10 +4512,24 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         }
                         else
                         {
+                            std::wstring name;
                             std::wstring query = L"SELECT * FROM ";
-                            query += catalog.find( ' ' ) != std::wstring::npos ? L"\"" + catalog + L"\'" : catalog + L".";
-                            query += schemaName.find( ' ' ) != std::wstring::npos ? L"\"" + schemaName + L"\'" : schemaName + L".";
-                            query += tableName.find( ' ' ) != std::wstring::npos ? L"\"" + tableName + L"\"" : tableName;
+                            if( catalog.rfind( '.' ) == std::wstring::npos )
+                                name = catalog;
+                            else
+                                name = L"\"" + catalog + L"\'";
+                            query += name + L".";
+                            if( schemaName.rfind( '.' ) == std::wstring::npos )
+                                name = schemaName;
+                            else
+                                name = L"\"" + schemaName + L"\'";
+                            query += name + L".";
+                            pos = tableName.rfind( '.' );
+                            if( pos != std::wstring::npos )
+                                name = L"\"" + tableName.substr( pos + 1 ) + L"\"";
+                            else
+                                name = tableName;
+                            query += name;
                             SQLWCHAR *szTableName = new SQLWCHAR[query.size() + 2];
                             memset( szTableName, '\0', query.size() + 2 );
                             uc_to_str_cpy( szTableName, query );

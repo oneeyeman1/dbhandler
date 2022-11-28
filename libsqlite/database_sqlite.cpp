@@ -397,7 +397,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     std::wstring errorMessage, query;
     int res = SQLITE_OK, result = 0;
@@ -405,7 +405,7 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring 
     res = sqlite3_exec( m_db, "BEGIN TRANSACTION", NULL, NULL, 0 );
     if( res == SQLITE_OK )
     {
-        bool exists = IsIndexExists( index_name, schemaName, tableName, errorMsg );
+        bool exists = IsIndexExists( index_name, L"", schemaName, tableName, errorMsg );
         if( exists )
         {
             std::wstring temp = L"Index ";
@@ -457,7 +457,7 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring 
     return result;
 }
 
-bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &UNUSED(schemaName), const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &catalogName, const std::wstring &UNUSED(schemaName), const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     bool exists = false;
     int res = SQLITE_OK, result = 0;

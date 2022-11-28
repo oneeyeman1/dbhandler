@@ -310,6 +310,7 @@ public:
 
     const std::wstring &GetTableName() const { return m_props.table_name; }
     const std::wstring &GetSchemaName() const { return m_props.schema_name; }
+    const std::wstring &GetCatalog() const { return m_props.catalog; }
     TableProperties &GetTableProperties() { return m_props; }
     void SetTableProperties(const TableProperties &props) { m_props = props; }
     const std::vector<TableField *> &GetFields() const { return table_fields; }
@@ -350,7 +351,7 @@ protected:
     void trim(std::wstring str) { ltrim( str ); rtrim( str ); };
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
     virtual bool IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg) = 0;
-    virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
+    virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) = 0;
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
@@ -362,7 +363,7 @@ public:
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) = 0;
-    virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetFieldProperties(const std::wstring &table, TableField *field, std::vector<std::wstring> &errorMsg) = 0;

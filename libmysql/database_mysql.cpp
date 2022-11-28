@@ -937,10 +937,10 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int MySQLDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    bool exists = IsIndexExists( index_name, schemaName, tableName, errorMsg );
+    bool exists = IsIndexExists( index_name, catalogName, schemaName, tableName, errorMsg );
     if( exists )
     {
         std::wstring temp1 = L"Index ";
@@ -1028,7 +1028,7 @@ bool MySQLDatabase::IsSystemIndexExists(MYSQL_STMT *res, const std::wstring &ind
     return exists;
 }
 
-bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     MYSQL_STMT *res;
     bool exists = false;

@@ -757,7 +757,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
 //#if _MSC_VER >= 1900 || !(defined __WXMSW__)
                 std::lock_guard<std::mutex> locker( db->GetTableVector().my_mutex );
 #endif
-                db->CreateIndex( command.ToStdWstring(), indexName.ToStdWstring(), dbTable->GetSchemaName(), dbTable->GetTableName(), errors );
+                db->CreateIndex( command.ToStdWstring(), indexName.ToStdWstring(), dbTable->GetCatalog(), dbTable->GetSchemaName(), dbTable->GetTableName(), errors );
             }
             for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
                 wxMessageBox( (*it) );

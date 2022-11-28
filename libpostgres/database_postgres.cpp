@@ -401,7 +401,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int PostgresDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     PGresult *res;
     std::wstring query;
@@ -417,7 +417,7 @@ int PostgresDatabase::CreateIndex(const std::wstring &command, const std::wstrin
     }
     else
     {
-        bool exists = IsIndexExists( index_name, schemaName, tableName, errorMsg );
+        bool exists = IsIndexExists( index_name, catalogName, schemaName, tableName, errorMsg );
         if( exists )
         {
             std::wstring temp = L"Index ";
@@ -455,11 +455,11 @@ int PostgresDatabase::CreateIndex(const std::wstring &command, const std::wstrin
     return result;
 }
 
-bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     PGresult *res;
     bool exists = false;
-    std::wstring query = L"SELECT 1 FROM pg_indexes WHERE schemaname = $1 AND tablename = $2 AND indexname = $3;";
+    std::wstring query = L"SELECT 1 FROM " + catalogName + L".pg_catalog.pg_indexes WHERE schemaname = $1 AND tablename = $2 AND indexname = $3;";
     char *values[3];
     values[0] = NULL, values[1] = NULL, values[2] = NULL;
     values[0] = new char[schemaName.length() * sizeof( wchar_t ) + 1];
