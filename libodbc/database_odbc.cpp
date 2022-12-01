@@ -4331,7 +4331,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             else
             {
                 SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
-                SQLWCHAR *catalogName, *schemaName, *tableName;
+                SQLWCHAR *catalogName = nullptr, *schemaName = nullptr, *tableName = nullptr;
                 std::wstring cat, schema, table;
                 auto catalogDB = new SQLWCHAR[pimpl->m_dbName.length() + 2];
                 memset( catalogDB, '\0', pimpl->m_dbName.length() + 2 );
@@ -4417,9 +4417,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 
 int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
-    std::wstring cat = pimpl->m_dbName;
     SQLRETURN ret;
-    SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + 2], *schema_name = new SQLWCHAR[schemaName.length() + 2], *catalog_name = new SQLWCHAR[cat.size() + 2];
+    SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + 2], *schema_name = new SQLWCHAR[schemaName.length() + 2], *catalog_name = new SQLWCHAR[catalog.size() + 2];
     std::wstring owner;
     std::vector<std::wstring> autoinc_fields, indexes;
     SQLWCHAR *qry = NULL;
@@ -4441,11 +4440,11 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     SQLSMALLINT DataType, DecimalDigits = 0, NumPrecRadix, Nullable = 0, SQLDataType, DatetimeSubtypeCode, numCols = 0;
     SQLINTEGER ColumnSize = 0, BufferLength, CharOctetLength, OrdinalPosition;
     if( pimpl->m_subtype == L"PostgreSQL" )
-        query4 = L"SELECT indexname FROM pg_indexes WHERE tablename = ? AND schemaname = ?";
+        query4 = L"SELECT indexname FROM " + catalog + L".pg_catalog.pg_indexes WHERE tablename = ? AND schemaname = ?";
     if( pimpl->m_subtype == L"MySQL" )
-        query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_name = ? AND table_schema = ?;";
+        query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_name = ? AND table_schema = ? AND table_catalog = ?;";
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
-        query4 = L"SELECT i.name FROM sys.indexes i, sys.tables t WHERE i.object_id = t.object_id AND SCHEMA_NAME(t.schema_id) = ? AND t.name = ?;";
+        query4 = L"SELECT i.name FROM " + catalog + L".sys.indexes i, " + catalog + L".sys.tables t WHERE i.object_id = t.object_id AND SCHEMA_NAME(t.schema_id) = ? AND t.name = ?;";
     if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
         query4 = L"SELECT o.name, i.name FROM sysobjects o, sysindexes i, sysusers u WHERE o.id = i.id AND o.uid = u.uid AND u.name = ? AND o.name= ?";
     if( pimpl->m_subtype == L"Sybase SQL Anywhere" )
@@ -4460,13 +4459,13 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
         schema = schemaName;
     pos = tableName.rfind( '.' );
     if( pos != std::wstring::npos )
-        table = L"\"" + tableName.substr( pos + 1 ) + L"\"";
+        table = tableName.substr( pos + 1 );
     else
         table = tableName;
     memset( table_name, '\0', table.length() + 2 );
     memset( schema_name, '\0', schema.length() + 2 );
     memset( catalog_name, '\0', catalog.length() + 2 );
-    uc_to_str_cpy( table_name, tableName );
+    uc_to_str_cpy( table_name, table );
     uc_to_str_cpy( schema_name, schemaName );
     uc_to_str_cpy( catalog_name, catalog );
     if( tableAdded )
@@ -4526,7 +4525,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             query += name + L".";
                             pos = tableName.rfind( '.' );
                             if( pos != std::wstring::npos )
-                                name = L"\"" + tableName.substr( pos + 1 ) + L"\"";
+                                name = tableName.substr( pos + 1 );
                             else
                                 name = tableName;
                             query += name;
@@ -5385,11 +5384,9 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             if( !result )
                             {
-                                SQLLEN autoincrement;
                                 int i = 0;
                                 for( ret = SQLFetch( stmt_col ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt_col ) )
                                 {
-                                    autoincrement = 0;
                                     str_to_uc_cpy( fieldName, szColumnName );
                                     str_to_uc_cpy( fieldType, szTypeName );
                                     str_to_uc_cpy( defaultValue, szColumnDefault );
@@ -5588,7 +5585,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 {
                                     if( !result )
                                     {
-                                        ret = SQLDescribeParam( stmt_ind, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
+                                        ret = SQLDescribeParam( stmt_ind, 2, &DataType, &ParamSize, &DecimalDigits, &Nullable);
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 1, stmt_ind );
@@ -5725,10 +5722,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
             }
             if( !result )
             {
-                std::wstring tempCatalogName, tempSchemaName, tempTableName;
-                str_to_uc_cpy( tempCatalogName, catalog_name );
-                if( tempCatalogName == L"" )
-                    tempCatalogName = pimpl->m_dbName;
+                std::wstring tempSchemaName, tempTableName;
                 str_to_uc_cpy( tempSchemaName, schema_name );
                 str_to_uc_cpy( tempTableName, table_name );
                 if( pimpl->m_subtype == L"Microsoft SQL Server" && tempSchemaName == L"sys" )
@@ -5753,7 +5747,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     else
                     {
                         new_table->SetIndexNames( indexes );
-                        pimpl->m_tables[tempCatalogName].push_back( new_table );
+                        pimpl->m_tables[catalog].push_back( new_table );
                         fields.erase( fields.begin(), fields.end() );
                         foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                         fields.clear();
