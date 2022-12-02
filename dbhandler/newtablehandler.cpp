@@ -23,18 +23,12 @@ NewTableHandler::NewTableHandler(MainFrame *frame, Database *db)
 
 NewTableHandler::~NewTableHandler(void)
 {
-#if defined _DEBUG
-    wxLogDebug( "Starting thread destructor...\n\r" );
-#endif
 #if defined __WXMSW__ && _MSC_VER < 1900
     wxCriticalSectionLocker enter( pCs->m_threadCS );
 #else
     std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
 #endif
     pCs->m_handler = NULL;
-#if defined _DEBUG
-    wxLogDebug( "Thread deleted\n\r" );
-#endif
 }
 
 wxThread::ExitCode NewTableHandler::Entry()
@@ -53,7 +47,6 @@ wxThread::ExitCode NewTableHandler::Entry()
             res = m_db->NewTableCreation( errorMsg );
             if( res )
                 loop = false;
-//                Delete();
         }
         Sleep( 5000 );
     }
