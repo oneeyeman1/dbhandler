@@ -1546,7 +1546,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &schemaNamme, const std::wstring &tableName, const std::wstring &, long, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaNamme, const std::wstring &tableName, const std::wstring &, long, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     if( tableAdded )
@@ -1812,7 +1812,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &, const std::wstring &schem
             else
             {
                 table->SetIndexNames( indexes );
-                pimpl->m_tables[sqlite_pimpl->m_catalog].push_back( table );
+                pimpl->m_tables[catalog].push_back( table );
                 fields.erase( fields.begin(), fields.end() );
                 foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                 fk_names.clear();
