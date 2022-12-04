@@ -1034,7 +1034,7 @@ bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstr
     bool exists = false;
     char *str_data[3];
     unsigned long *str_length[3];
-    std::wstring query = L"SELECT 1 FROM information_schema.statistics WHERE table_schema = ? AND table_name = ? AND index_name = ?;";
+    std::wstring query = L"SELECT 1 FROM information_schema.statistics WHERE table_schema = ? AND table_name = ? AND index_name = ? AND table_catalog = ?";
     res = mysql_stmt_init( m_db );
     if( !res )
     {
