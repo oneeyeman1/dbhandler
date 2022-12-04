@@ -31,6 +31,7 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_oldColumn = -1;
     m_db = const_cast<Database *>( db );
     m_cols = 0;
+    m_table = nullptr;
     m_panel = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( m_panel, wxID_ANY, _( "1. Click on the table to select or deselect" ) );
     m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "2. Select one or more column" ) );
@@ -504,18 +505,52 @@ void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
 {
     auto found = false;
     auto type = m_db->GetTableVector().m_type;
-    auto it1 = m_db->GetTableVector().m_tables[m_db->GetTableVector().m_dbName];
     m_queryFields.clear();
-    for( auto it2 = it1.begin(); it2 < it1.end() && !found; ++it2 )
+    auto catalogFound = false, schemaFound = false;
+    auto name =  m_tables->GetStringSelection();
+    auto pos = name.Find( '.', true );
+    if( pos != wxNOT_FOUND )
+        name = name.substr( pos + 1 );
+    std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it;
+    std::vector<DatabaseTable *> schema;
+    for( it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !catalogFound; ++it )
+    {
+        for( auto it1 = (*it).second.begin(); it1 < (*it).second.end() && !schemaFound; ++it1 )
+        {
+            if( type == L"SQLite" )
+            {
+                if( (*it1)->GetSchemaName() == data.schema )
+                {
+                    catalogFound = true;
+                    if( (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() == data.schema + "." + name )
+                    {
+                        m_table = (*it1);
+                        schemaFound = true;
+                    }
+                }
+                else
+                    break;
+            }
+            else
+            {
+                if( (*it1)->GetCatalog() == data.catalog )
+                {
+                    catalogFound = true;
+                }
+                else
+                    break;
+            }
+        }
+    }
+/*   for( auto it2 = schema.begin(); it2 < schema.end() && !found; ++it2 )
     {
         if( type == L"SQLite" && (*it2)->GetSchemaName() + "." + (*it2)->GetTableName() == data.schema + "." + m_tables->GetStringSelection() )
         {
             m_table = (*it2);
             found = true;
         }
-    }
+    }*/
     found = false;
-    long pos = 0;
     for( auto i = 0; i < m_grid->GetNumberCols(); ++i )
     {
         for( auto it3 = m_table->GetFields().begin(); it3 < m_table->GetFields().end() && !found; ++it3 )
