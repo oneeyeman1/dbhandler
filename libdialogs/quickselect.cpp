@@ -503,14 +503,15 @@ std::vector<TableField *> &QuickSelect::GetQueryFields()
 
 void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
 {
+    auto pos = 0;
     auto found = false;
     auto type = m_db->GetTableVector().m_type;
     m_queryFields.clear();
     auto catalogFound = false, schemaFound = false;
     auto name =  m_tables->GetStringSelection();
-    auto pos = name.Find( '.', true );
-    if( pos != wxNOT_FOUND )
-        name = name.substr( pos + 1 );
+    auto position = name.Find( '.', true );
+    if( position != wxNOT_FOUND )
+        name = name.substr( position + 1 );
     std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it;
     std::vector<DatabaseTable *> schema;
     for( it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !catalogFound; ++it )

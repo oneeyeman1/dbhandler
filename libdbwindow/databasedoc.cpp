@@ -121,23 +121,34 @@ void DrawingDocument::AddTables(const std::map<wxString,std::vector<TableDefinit
     bool found = false;
     std::wstring dbType = m_db->GetTableVector().m_type;
     std::map<std::wstring, std::vector<DatabaseTable *> > tables = m_db->GetTableVector().m_tables;
-    std::vector<DatabaseTable *> tableVec;
-    if( tables.count( m_db->GetTableVector().m_dbName ) > 0 )
-        tableVec = tables.at(m_db->GetTableVector().m_dbName);
     for( auto sel : selections )
     {
         for( auto def : sel.second )
         {
-            for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end() && !found; it1++ )
+            for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it1 = tables.begin(); it1 != tables.end() && !found; it1++ )
             {
-                if( def.schemaName + L"." + def.tableName == (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() )
+                for( auto it2 = (*it1).second.begin(); it2 < (*it1).second.end() && !found; ++it2 )
                 {
-                    m_dbTables.push_back( (*it1 ) );
-                    DatabaseTable *dbTable = (*it1);
-                    MyErdTable *table = new MyErdTable( dbTable, dynamic_cast<DrawingView *>( GetFirstView() )->GetViewType() );
-                    m_tables.push_back( table );
-                    m_tableNames.push_back( table->GetTableName() );
-                    found = true;
+                    wxString name, name1;
+                    if( dbType == L"SQLite" )
+                    {
+                        name = def.schemaName + L"." + def.tableName;
+                        name1 = (*it2)->GetSchemaName() + L"." + (*it2)->GetTableName();
+                    }
+                    else
+                    {
+                        name = def.catalogName + L"." + def.schemaName + L"." + def.tableName;
+                        name1 = (*it2)->GetCatalog() + L"." + (*it2)->GetSchemaName() + L"." + (*it2)->GetTableName();
+                    }
+                    if( name == name1 )
+                    {
+                        m_dbTables.push_back( (*it2 ) );
+                        DatabaseTable *dbTable = (*it2);
+                        MyErdTable *table = new MyErdTable( dbTable, dynamic_cast<DrawingView *>( GetFirstView() )->GetViewType() );
+                        m_tables.push_back( table );
+                        m_tableNames.push_back( table->GetTableName() );
+                        found = true;
+                    }
                 }
             }
             found = false;
