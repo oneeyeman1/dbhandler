@@ -156,12 +156,78 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
                                 {
                                     res = sqlite3_exec( m_db, query7.c_str(), NULL, NULL, &err );
                                     if( res == SQLITE_OK )
-                                        sqlite3_exec( m_db, "COMMIT", NULL, NULL, &err );
+                                    {
+                                        res = sqlite3_exec( m_db, "COMMIT", NULL, NULL, &err );
+                                        if( res != SQLITE_OK )
+                                        {
+                                            GetErrorMessage( res, errorMessage );
+                                            errorMsg.push_back( errorMessage );
+                                            res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
+                                            result = 1;
+                                            sqlite3_free( err );
+                                        }
+                                    }
+                                    else
+                                    {
+                                        GetErrorMessage( res, errorMessage );
+                                        errorMsg.push_back( errorMessage );
+                                        res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
+                                        result = 1;
+                                        sqlite3_free( err );
+                                    }
+                                }
+                                else
+                                {
+                                    GetErrorMessage( res, errorMessage );
+                                    errorMsg.push_back( errorMessage );
+                                    res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
+                                    result = 1;
+                                    sqlite3_free( err );
                                 }
                             }
+                            else
+                            {
+                                GetErrorMessage( res, errorMessage );
+                                errorMsg.push_back( errorMessage );
+                                res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
+                                result = 1;
+                                sqlite3_free( err );
+                            }
+                        }
+                        else
+                        {
+                            GetErrorMessage( res, errorMessage );
+                            errorMsg.push_back( errorMessage );
+                            res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
+                            result = 1;
+                            sqlite3_free( err );
                         }
                     }
+                    else
+                    {
+                        GetErrorMessage( res, errorMessage );
+                        errorMsg.push_back( errorMessage );
+                        res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
+                        result = 1;
+                        sqlite3_free( err );
+                    }
                 }
+                else
+                {
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                    res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
+                    result = 1;
+                    sqlite3_free( err );
+                }
+            }
+            else
+            {
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+                res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
+                result = 1;
+                sqlite3_free( err );
             }
         }
         if( res != SQLITE_OK )
@@ -243,11 +309,28 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
             query = sqlite3_sql( statement );
 //  For debugging purposes - helps find non-closed statements
     }
-    std::vector<DatabaseTable *> tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
-    for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
+    for( auto iter = pimpl->m_tables.begin(); iter != pimpl->m_tables.end(); ++iter )
     {
-        delete (*it);
-        (*it) = NULL;
+        for( std::vector<DatabaseTable *>::iterator it = (*iter).second.begin(); it < (*iter).second.end(); it++ )
+        {
+            std::vector<TableField *> fields = (*it)->GetFields();
+            for( std::vector<TableField *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
+            {
+                delete (*it1);
+                (*it1) = NULL;
+            }
+            std::map<unsigned long,std::vector<FKField *> > fk_fields = (*it)->GetForeignKeyVector();
+            for( std::map<unsigned long, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
+            {
+                for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
+                {
+                    delete (*it3);
+                    (*it3) = NULL;
+                }
+            }
+            delete (*it);
+            (*it) = NULL;
+        }
     }
     delete pimpl;
     pimpl = NULL;
@@ -1062,6 +1145,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
             result = 1;
             GetErrorMessage( res, errorMessage );
             errorMsg.push_back( errorMessage );
+            sqlite3_free( error );
         }
     }
     // start transacion
@@ -1073,6 +1157,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
             result = 1;
             GetErrorMessage( res, errorMessage );
             errorMsg.push_back( errorMessage );
+            sqlite3_free( error );
         }
     }
     if( !result )
@@ -1246,6 +1331,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                         result = 1;
                         GetErrorMessage( res, errorMessage );
                         errorMsg.push_back( errorMessage );
+                        sqlite3_free( error );
                     }
                 }
                 else
@@ -1262,6 +1348,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                         result = 1;
                         GetErrorMessage( res, errorMessage );
                         errorMsg.push_back( errorMessage );
+                        sqlite3_free( error );
                     }
                     else
                     {
@@ -1399,6 +1486,7 @@ int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::
         GetErrorMessage( result, err );
         errorMsg.push_back( err );
         res = 1;
+        sqlite3_free( error );
     }
     return res;
 }
@@ -1415,6 +1503,7 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
         GetErrorMessage( result, err );
         errorMsg.push_back( err );
         res = 1;
+        sqlite3_free( error );
     }
     else
     {
@@ -1451,6 +1540,7 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
                 GetErrorMessage( result, err );
                 errorMsg.push_back( err );
                 res = 1;
+                sqlite3_free( error );
             }
         }
         if( res )
@@ -1462,6 +1552,7 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
             GetErrorMessage( result, err );
             errorMsg.push_back( err );
             res = 1;
+            sqlite3_free( error );
         }
     }
     return res;
