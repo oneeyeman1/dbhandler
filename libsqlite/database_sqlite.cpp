@@ -1886,6 +1886,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
         {
             std::wstring comment = L"";
             DatabaseTable *table = new DatabaseTable( tableName, schemaNamme, fields, foreign_keys );
+            table->SetCatalog( catalog );
             for( std::vector<TableField *>::iterator it = fields.begin (); it < fields.end (); ++it )
             {
                 if( (*it)->IsPrimaryKey() )

@@ -1488,6 +1488,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
             if( !result )
             {
                 DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
+                table->SetCatalog( m_pimpl->m_myconv.from_bytes( catalog_name ) );
                 table->SetNumberOfFields( numFields );
                 for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); ++it )
                 {

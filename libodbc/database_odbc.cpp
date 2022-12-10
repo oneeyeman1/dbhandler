@@ -5728,6 +5728,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 if( pimpl->m_subtype == L"Microsoft SQL Server" && tempSchemaName == L"sys" )
                     tempTableName = tempSchemaName + L"." + tempTableName;
                 DatabaseTable *new_table = new DatabaseTable( tempTableName, tempSchemaName, fields, foreign_keys );
+                new_table->SetCatalog( catalog );
                 new_table->SetNumberOfFields( fields.size() );
                 for( std::vector<TableField *>::iterator it = fields.begin (); it < fields.end (); ++it )
                 {

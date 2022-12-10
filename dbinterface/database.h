@@ -290,11 +290,6 @@ public:
 
     ~DatabaseTable()
     {
-        for( std::vector<TableField *>::iterator it = table_fields.begin(); it < table_fields.end(); ++it )
-        {
-            delete (*it);
-            (*it) = NULL;
-        }
         table_fields.clear();
         for( std::map<unsigned long, std::vector< FKField *> >::iterator it1 = foreign_keys.begin(); it1 != foreign_keys.end(); ++it1 )
         {
@@ -311,6 +306,7 @@ public:
     const std::wstring &GetTableName() const { return m_props.table_name; }
     const std::wstring &GetSchemaName() const { return m_props.schema_name; }
     const std::wstring &GetCatalog() const { return m_props.catalog; }
+    void SetCatalog(const std::wstring &catalog) { m_props.catalog = catalog; }
     TableProperties &GetTableProperties() { return m_props; }
     void SetTableProperties(const TableProperties &props) { m_props = props; }
     const std::vector<TableField *> &GetFields() const { return table_fields; }

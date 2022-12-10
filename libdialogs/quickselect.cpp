@@ -537,6 +537,8 @@ void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
                 if( (*it1)->GetCatalog() == data.catalog )
                 {
                     catalogFound = true;
+                    if( (*it1)->GetSchemaName() == data.schema && (*it1)->GetTableName() == name )
+                        m_table = (*it1);
                 }
                 else
                     break;
