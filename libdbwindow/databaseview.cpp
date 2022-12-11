@@ -637,8 +637,8 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 wxString name = m_selectTableName[0]->GetSchemaName() + "." + m_selectTableName[0]->GetTableName();
                 tables[m_selectTableName[0]->GetSchemaName()].push_back( TableDefinition( L"", m_selectTableName[0]->GetSchemaName(), m_selectTableName[0]->GetTableName() ) );
             }
-//            else
-//                tables[m_selectTableName[0]->].push_back( TableDefinition( m_selectTableName[0]->GetSchemaName().ToStdWstring(), m_selectTableName[0]->GetTableName() ) );
+            else
+                tables[m_selectTableName[0]->GetCatalog()].push_back( TableDefinition( m_selectTableName[0]->GetCatalog(), m_selectTableName[0]->GetSchemaName(), m_selectTableName[0]->GetTableName() ) );
         }
     }
     if( tables.size() > 0 )
