@@ -290,6 +290,11 @@ public:
 
     ~DatabaseTable()
     {
+        for( std::vector<TableField *>::iterator it = table_fields.begin(); it < table_fields.end(); ++it )
+        {
+            delete (*it);
+            (*it) = nullptr;
+        }
         table_fields.clear();
         for( std::map<unsigned long, std::vector< FKField *> >::iterator it1 = foreign_keys.begin(); it1 != foreign_keys.end(); ++it1 )
         {
