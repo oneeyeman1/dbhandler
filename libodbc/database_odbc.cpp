@@ -5978,6 +5978,8 @@ int ODBCDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstri
         table_name = NULL;
         delete[] field_name;
         field_name = NULL;
+        delete[] qry;
+        qry = nullptr;
     }
     return result;
 }
