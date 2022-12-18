@@ -1186,7 +1186,7 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                 else
                 {
                     MYSQL_BIND results[28];
-#if !defined __WXMSW__ && !defined __WXOSX__
+#if !defined __WXMSW__
                     bool is_null[28], error[28];
 #else
                     char is_null[28], error[28];
@@ -1805,7 +1805,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                     {
                         MYSQL_BIND results[17];
                         int tableId, fieldId;
-#if !defined __WXMSW__ && !defined __WXOSX__
+#if !defined __WXMSW__
                         bool is_null[17], error[17];
 #else
                         char is_null[17], error[17];
@@ -2334,7 +2334,7 @@ int MySQLDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstr
                     if( ( mysql_store_result( m_db ) ) )
                     {
                         MYSQL_BIND results;
-#if !defined __WXMSW__ && !defined __WXOSX__
+#if !defined __WXMSW__
                         bool is_null, error;
 #else
                         char is_null, error;
