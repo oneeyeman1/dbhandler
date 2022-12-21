@@ -217,19 +217,19 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[4].push_back( wxBITMAP_PNG( database_32x32 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_64x64 ) );
 #ifdef __WXGTK__
-    toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ) ) );
-    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVG( odbc, wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ),  wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ), wxITEM_NORMAL,_( "Query" ), __( "Run the query" ) ) );
+    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVG( odbc, wxSize( 16, 16 ), wxBitmapBundle::FromSVG( odbc, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Configre ODBC" ), _( "Configre ODBC" )) );
 #else
-    toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ) );
-    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVGResource( "odbc", wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Query" ), _( "Run uqery" ) );
+    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVGResource( "odbc", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "odbc", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Configure ODBC" ), _( "Configure ODBC" ) );
 #endif
-    toolBar->AddTool( wxID_DATABASEWINDOW, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
+    toolBar->AddTool( wxID_DATABASEWINDOW, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ), wxBitmapBundle::FromBitmaps( bitmaps[2] ), wxITEM_NORMAL, _( "DB Profile" ), _( "DB Profile" ) );
 #ifdef __WXGTK__
-    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Table" ), _( "Add/Modify Table definition" ) );
 #else
-    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Table" ), _( "Add/Modify Table definition" ) );
 #endif
-    toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
+    toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ), wxBitmapBundle::FromBitmaps( bitmaps[4] ), wxITEM_NORMAL, _( "Database" ), _( "Perform database operations") );
     toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxBitmapBundle(), wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );
     toolBar->SetName( "PowerBar" );
     toolBar->Realize();
