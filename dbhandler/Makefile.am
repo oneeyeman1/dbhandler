@@ -16,12 +16,14 @@ dbhandler_SOURCES =  \
 	viewbase.cpp \
 	viewbase.h \
 	newtablehandler.cpp \
-	newtablehandler.h
+	newtablehandler.h \
+	query.h \
+	table.h
 
 dbhandler_CXXFLAGS = -I../../dbinterface \
 	-I../../libdbwindow/res/gui \
-	`wx-config \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
-dbhandler_LDFLAGS = `wx-config \
+dbhandler_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 
