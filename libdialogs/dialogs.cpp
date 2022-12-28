@@ -278,6 +278,9 @@ extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId)
     case 1:
         title = _( "Query" );
         break;
+    case -1:
+        title = _( "Save Query" );
+        break;
     default:
         break;
     }
