@@ -183,6 +183,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_CONVERTTOGRAPHICS, DrawingView::OnConvertToGraphics)
     EVT_MENU(wxID_TABLEEDITDATA, DrawingView::OnTableDataEdit)
     EVT_MENU(wxID_EXPORTSYNTAX, DrawingView::OnExportSyntax)
+    EVT_MENU(wxID_SAVE, DrawingView::OnQuerySave)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -2374,5 +2375,22 @@ void DrawingView::OnExportSyntax(wxCommandEvent &event)
 
             }
         }
+    }
+}
+
+void DrawingView::OnQuerySave(wxCommandEvent &event)
+{
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
+        int res = func( m_frame, -1 );
     }
 }
