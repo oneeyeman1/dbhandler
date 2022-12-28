@@ -7,14 +7,16 @@ class GetObjectName : public wxDialog
 {
 public:
     GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId);
-    void OnButtonNew(wxCommandEvent &event);
-    void OnButtonBrowse(wxCommandEvent &event);
     const wxString &GetFileName();
     const int GetSource();
     const int GetPresentation();
 protected:
     void set_properties();
     void do_layout();
+    void OnButtonNew(wxCommandEvent &event);
+    void OnButtonBrowse(wxCommandEvent &event);
+    void OnOKButton(wxCommandEvent &event);
+    void OnOKButtonUpdateUI(wxUpdateUIEvent &event);
 private:
     wxPanel *m_panel;
     wxStaticText *m_painterNameLabel, *m_comments;

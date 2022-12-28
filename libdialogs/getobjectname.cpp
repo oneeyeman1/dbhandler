@@ -23,10 +23,14 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     m_id = objectId;
     m_panel = new wxPanel( this );
     m_painterNameLabel = new wxStaticText( m_panel, wxID_ANY, "" );
+    SetTitle( title );
     if( objectId == 1 )
     {
-        SetTitle( _( "Query" ) );
         m_painterNameLabel->SetLabel( _( "Query Name:" ) );
+    }
+    else if( objectId == -1 )
+    {
+        m_painterNameLabel->SetLabel( _( "Save Query As:" ) );
     }
     m_painterName = new wxTextCtrl( m_panel, wxID_ANY, "" );
     m_objectList = new wxListCtrl( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_SINGLE | wxLB_ALWAYS_SB );
@@ -34,13 +38,21 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     m_commentsText = new wxTextCtrl( m_panel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
-    m_new = new wxButton( m_panel, wxID_NEWOBJECT, _( "&New" ) );
-    m_browse = new wxButton( m_panel, wxID_ANY, _( "&Browse" ) );
+    if( m_id > 0 )
+    {
+        m_new = new wxButton( m_panel, wxID_NEWOBJECT, _( "&New" ) );
+        m_browse = new wxButton( m_panel, wxID_ANY, _( "&Browse" ) );
+    }
     m_help = new wxButton( m_panel, wxID_HELP, _( "&Help" ) );
     set_properties();
     do_layout();
-    m_new->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonNew, this );
-    m_browse->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonBrowse, this );
+    if( m_id > 0 )
+    {
+        m_new->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonNew, this );
+        m_browse->Bind( wxEVT_BUTTON, &GetObjectName::OnButtonBrowse, this );
+    }
+    m_ok->Bind( wxEVT_BUTTON, &GetObjectName::OnOKButton, this );
+    m_ok->Bind( wxEVT_UPDATE_UI, &GetObjectName::OnOKButtonUpdateUI, this );
 }
 
 void GetObjectName::set_properties()
@@ -82,10 +94,13 @@ void GetObjectName::do_layout()
     sizer_4->Add( 20, 5, 0, wxEXPAND, 0 );
     sizer_4->Add( m_cancel, 0, wxEXPAND, 0 );
     sizer_4->Add( 20, 5, 0, wxEXPAND, 0 );
-    sizer_4->Add( m_new, 0, wxEXPAND, 0 );
-    sizer_4->Add( 20, 5, 0, wxEXPAND, 0 );
-    sizer_4->Add( m_browse, 0, wxEXPAND, 0 );
-    sizer_4->Add( 20, 5, 0, wxEXPAND, 0 );
+    if( m_id > 0 )
+    {
+        sizer_4->Add( m_new, 0, wxEXPAND, 0 );
+        sizer_4->Add( 20, 5, 0, wxEXPAND, 0 );
+        sizer_4->Add( m_browse, 0, wxEXPAND, 0 );
+        sizer_4->Add( 20, 5, 0, wxEXPAND, 0 );
+    }
     sizer_4->Add( m_help, 0, wxEXPAND, 0 );
     sizer_4->Add( 20, 5, 0, wxEXPAND, 0 );
     sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
@@ -131,4 +146,26 @@ const int GetObjectName::GetSource()
 const int GetObjectName::GetPresentation()
 {
     return m_presentation;
+}
+
+void GetObjectName::OnOKButton(wxCommandEvent &event)
+{
+    if( m_id > 0 )
+    {
+        auto name = m_painterName->GetValue();
+        if( m_objectList->FindItem( -1, name ) == wxNOT_FOUND )
+        {
+            wxMessageBox( _( "Specified object is not found. Did you mean to create one with clicing 'New'?" ), _( "Error" ), wxICON_ERROR );
+            return;;
+        }
+    }
+    EndModal( wxID_OK );
+}
+
+void GetObjectName::OnOKButtonUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_painterName->GetValue().Length() > 0 )
+        event.Enable( true );
+    else
+        event.Enable( false );
 }
