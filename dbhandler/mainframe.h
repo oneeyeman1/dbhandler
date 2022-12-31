@@ -40,6 +40,7 @@ private:
     void OnAttachDatabase(wxCommandEvent &event);
     void OnDetachDatabase(wxCommandEvent &event);
     void OnUpdateUIDetachDB(wxUpdateUIEvent &event);
+    void OnLibrary(wxCommandEvent &event);
     Database *m_db;
     wxDocManager *m_manager;
 #if defined __WXMSW__ || defined __WXGTK__

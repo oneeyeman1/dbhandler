@@ -25,6 +25,7 @@
 #include "wx/docmdi.h"
 #include "wx/config.h"
 #include "wx/dynlib.h"
+#include "wx/xml/xml.h"
 #include "wx/fswatcher.h"
 #include "database.h"
 #include "docview.h"
@@ -45,6 +46,7 @@ typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, c
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 typedef int (*ATTACHDATABASE)(wxWindow *, Database *);
 typedef int (*DETACHDATABASE)(wxWindow *);
+typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_CONFIGUREODBC, MainFrame::OnConfigureODBC)
@@ -54,6 +56,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_QUERY, MainFrame::OnQuery)
     EVT_MENU(wxID_ATTACHDATABASE, MainFrame::OnAttachDatabase)
     EVT_MENU(wxID_DETACHDATABASE, MainFrame::OnDetachDatabase)
+    EVT_MENU(wxID_LIBRARY, MainFrame::OnLibrary)
     EVT_UPDATE_UI(wxID_DETACHDATABASE, MainFrame::OnUpdateUIDetachDB)
     EVT_SIZE(MainFrame::OnSize)
     EVT_CLOSE(MainFrame::OnClose)
@@ -477,6 +480,13 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
         }
         else
             lib = m_painters["Query"];
+        wxXmlDocument doc;
+        auto path = wxGetCwd() + wxFileName::GetPathSeparator() + "test library.abl";
+        if( !doc.Load( path ) )
+        {
+            wxMessageBox( _( "Loading failure" ) );
+            return;
+        }
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
@@ -527,9 +537,9 @@ void MainFrame::OnTable(wxCommandEvent &WXUNUSED(event))
             func( this, m_manager, m_db, NULL, wxEmptyString );                 // create with possible alteration table
         }
         else if( !lib->IsLoaded() )
-            wxMessageBox( "Error loading the library. Please re-install the software and try again." );
+        wxMessageBox("Error loading the library. Please re-install the software and try again.");
         else
-            wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
+        wxMessageBox("Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again.");
     }
 }
 
@@ -557,11 +567,11 @@ void MainFrame::OnSize(wxSizeEvent &event)
     if( foundTb )
     {
         child = (wxMDIClientWindow *) GetClientWindow();
-        tb->SetSize( 0, 0, size.x, wxDefaultCoord );
+        tb->SetSize(0, 0, size.x, wxDefaultCoord);
         offset = tb->GetSize().y;
-        child->SetSize( 0, offset, size.x, size.y - offset );
+        child->SetSize(0, offset, size.x, size.y - offset);
         if( frame )
-            frame->SetSize( 0, 0, size.x, size.y - offset - 2 );
+            frame->SetSize(0, 0, size.x, size.y - offset - 2);
     }
     else if( !tb || tb->GetName() == "PowerBar" )
         event.Skip();
@@ -571,14 +581,14 @@ void MainFrame::OnAttachDatabase(wxCommandEvent &WXUNUSED(event))
 {
     auto lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-    lib->Load( "dialogs" );
+    lib->Load("dialogs");
 #elif __WXOSX__
-    lib->Load( "liblibdialogs.dylib" );
+    lib->Load("liblibdialogs.dylib");
 #else
-    lib->Load( "libdialogs" );
+    lib->Load("libdialogs");
 #endif
-    ATTACHDATABASE func = (ATTACHDATABASE) lib->GetSymbol( "AttachToDatabase" );
-    int result = func( this, m_db );
+    ATTACHDATABASE func = (ATTACHDATABASE) lib->GetSymbol("AttachToDatabase");
+    int result = func(this, m_db);
     if( result == wxID_OK )
         m_countAttached++;
     delete lib;
@@ -589,14 +599,14 @@ void MainFrame::OnDetachDatabase(wxCommandEvent &WXUNUSED(event))
 {
     auto lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-    lib->Load( "dialogs" );
+    lib->Load("dialogs");
 #elif __WXOSX__
-    lib->Load( "liblibdialogs.dylib" );
+    lib->Load("liblibdialogs.dylib");
 #else
-    lib->Load( "libdialogs" );
+    lib->Load("libdialogs");
 #endif
-    DETACHDATABASE func = (DETACHDATABASE) lib->GetSymbol( "DetachDatabase" );
-    int result = func( this );
+    DETACHDATABASE func = (DETACHDATABASE) lib->GetSymbol("DetachDatabase");
+    int result = func(this);
     if( result == wxID_OK )
         m_countAttached--;
     delete lib;
@@ -606,7 +616,28 @@ void MainFrame::OnDetachDatabase(wxCommandEvent &WXUNUSED(event))
 void MainFrame::OnUpdateUIDetachDB(wxUpdateUIEvent &event)
 {
     if( m_countAttached > 0 )
-        event.Enable( true );
+        event.Enable(true);
     else
-        event.Enable( false );
+        event.Enable(false);
+}
+
+void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
+{
+    auto lib = new wxDynamicLibrary;
+#ifdef __WXMSW__
+    lib->Load("dialogs");
+#elif __WXOSX__
+    lib->Load("liblibdialogs.dylib");
+#else
+    lib->Load("libdialogs");
+#endif
+    if( lib->IsLoaded() )
+    {
+        CHOOSEOBJECT func = (CHOOSEOBJECT) lib->GetSymbol("ChooseObject");
+        int res = func(m_frame, 0 );
+        if( res == wxID_OK )
+        {
+            wxXmlDocument doc;
+        }
+    }
 }
