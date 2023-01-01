@@ -56,8 +56,8 @@
 #include "sortgroupbypage.h"
 #include "wherehavingpage.h"
 #include "syntaxproppage.h"
-#include "databasecanvas.h"
 #include "databasedoc.h"
+#include "databasecanvas.h"
 #include "designcanvas.h"
 #include "databaseview.h"
 #include "ErdForeignKey.h"
@@ -104,11 +104,11 @@ void DrawingDocument::DoUpdate()
     UpdateAllViews();
 }
 
-void DrawingDocument::SetDatabase(Database *db, bool isInit)
+void DrawingDocument::SetDatabase(Database *db, bool isInit, const std::vector<QueryInfo> &queries)
 {
     m_db = db;
     if( !isInit )
-        dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db, true );
+        dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db, true, queries );
 }
 
 Database *DrawingDocument::GetDatabase()

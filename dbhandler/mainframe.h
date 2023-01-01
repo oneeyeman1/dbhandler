@@ -19,6 +19,16 @@ struct Profile
     Profile(wxString name, bool isCurrent) : m_name( name ), m_isCurrent( isCurrent ) {}
 };
 
+struct QueryInfo
+{
+    wxString name, comment;
+    void operator=(const QueryInfo &info)
+    {
+        name = info.name;
+        comment = info.comment;
+    }
+};
+
 class MainFrame : public wxDocMDIParentFrame
 {
 public:
@@ -27,6 +37,7 @@ public:
     wxCriticalSection m_threadCS;
     NewTableHandler *m_handler;
 protected:
+    void LoadApplication();
     void Connect();
 private:
     void InitToolBar(wxToolBar* toolBar);
@@ -53,6 +64,7 @@ private:
 #if !( defined( __sun ) && defined( __SVR4 ) )
     wxFileSystemWatcher *m_oldPGWatcher;
 #endif
+    std::vector<QueryInfo> queries;
     wxDECLARE_EVENT_TABLE();
 };
 

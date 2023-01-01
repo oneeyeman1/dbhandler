@@ -41,7 +41,7 @@
 
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, std::vector<Profile> &);
-typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &, const std::vector<Profile> &);
+typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &, const std::vector<Profile> &, const std::vector<QueryInfo> &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 typedef int (*ATTACHDATABASE)(wxWindow *, Database *);
@@ -444,7 +444,7 @@ void MainFrame::OnDatabase(wxCommandEvent &WXUNUSED(event))
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
-            func( this, m_manager, m_db, DatabaseView, m_painters, m_profiles );
+            func( this, m_manager, m_db, DatabaseView, m_painters, m_profiles, queries );
         }
         else if( !lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
@@ -480,17 +480,11 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
         }
         else
             lib = m_painters["Query"];
-        wxXmlDocument doc;
-        auto path = wxGetCwd() + wxFileName::GetPathSeparator() + "test library.abl";
-        if( !doc.Load( path ) )
-        {
-            wxMessageBox( _( "Loading failure" ) );
-            return;
-        }
+        LoadApplication();
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
-            func( this, m_manager, m_db, QueryView, m_painters, m_profiles );
+            func( this, m_manager, m_db, QueryView, m_painters, m_profiles, queries );
         }
         else if( !lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
@@ -537,9 +531,9 @@ void MainFrame::OnTable(wxCommandEvent &WXUNUSED(event))
             func( this, m_manager, m_db, NULL, wxEmptyString );                 // create with possible alteration table
         }
         else if( !lib->IsLoaded() )
-        wxMessageBox("Error loading the library. Please re-install the software and try again.");
+            wxMessageBox("Error loading the library. Please re-install the software and try again.");
         else
-        wxMessageBox("Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again.");
+            wxMessageBox("Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again.");
     }
 }
 
@@ -638,6 +632,53 @@ void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
         if( res == wxID_OK )
         {
             wxXmlDocument doc;
+        }
+    }
+}
+
+void MainFrame::LoadApplication()
+{
+    wxXmlDocument doc;
+    auto path = wxGetCwd() + wxFileName::GetPathSeparator() + "test library.abl";
+    if( !doc.Load( path ) )
+    {
+        wxMessageBox( _( "Loading failure" ) );
+        return;
+    }
+    if( doc.GetRoot() == nullptr )
+    {
+        wxMessageBox( _( "XNK file error:" ) );
+        return;
+    }
+    if( !doc.GetRoot()->GetName().IsSameAs( "Library" ) )
+    {
+        wxMessageBox( _( "XML formatting rtot"));
+        return;
+    }
+    QueryInfo query;
+    wxXmlNode *children = doc.GetRoot()->GetChildren();
+    bool isQuery = false;
+    while( children )
+    {
+        if( children->GetName().IsSameAs("name") )
+        {
+            wxString widthStr = children->GetNodeContent();
+            if( widthStr.substr( widthStr.size() - 3 ) == "qry" )
+            {
+                isQuery = true;
+                query.name = widthStr.substr( 0, widthStr.length() - 4 );
+            }
+        }
+        if( children->GetName().IsSameAs("comment") )
+        {
+            wxString widthStr = children->GetNodeContent();
+            query.comment = widthStr;
+        }
+        children = children->GetNext();
+        if( query.name != "" && query.comment != "" && isQuery )
+        {
+            queries.push_back( query );
+            isQuery = false;
         }
     }
 }

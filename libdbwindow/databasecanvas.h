@@ -23,6 +23,7 @@ public:
     void ShowHideTablePart(int part, bool show);
     void CheckSQLToolbox();
     void GetAllSelectedShapes(ShapeList &shapes);
+    void SetQueryInfo(const std::vector<QueryInfo> &queries) { m_queries = queries; }
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:
@@ -35,6 +36,7 @@ private:
     MODE m_mode;
     wxPoint startPoint;
     ConstraintSign *m_oldSelectedSign;
+    std::vector<QueryInfo> m_queries;
 };
 
 #define wxID_TABLECLOSE            20

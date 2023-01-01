@@ -3,10 +3,20 @@
 
 #define wxID_NEWOBJECT 1000
 
+struct QueryInfo
+{
+    wxString name, comment;
+    void operator=(const QueryInfo &info)
+    {
+        name = info.name;
+        comment = info.comment;
+    }
+};
+
 class GetObjectName : public wxDialog
 {
 public:
-    GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId);
+    GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId, const std::vector<QueryInfo> &queries);
     const wxString &GetFileName();
     const int GetSource();
     const int GetPresentation();

@@ -85,8 +85,8 @@
 #include "syntaxproppage.h"
 #include "sortgroupbypage.h"
 #include "wherehavingpage.h"
-#include "databasecanvas.h"
 #include "databasedoc.h"
+#include "databasecanvas.h"
 #include "designcanvas.h"
 #include "databaseview.h"
 #include "divider.h"
@@ -117,7 +117,7 @@ typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, 
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
-typedef int (*CHOOSEOBJECT)(wxWindow *, int);
+typedef int (*CHOOSEOBJECT)(wxWindow *, int, const std::vector<QueryInfo> &);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
 typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTable *> &, const std::vector<TableField *> &, std::vector<FieldSorter> &allSorted, std::vector<FieldSorter> &qerySorted);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
@@ -500,13 +500,15 @@ void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
     m_log->Hide();
 }
 
-void DrawingView::GetTablesForView(Database *db, bool init)
+void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries)
 {
     int res = -1;
     wxString query;
     std::map<wxString, std::vector<TableDefinition> > tables;
     wxDynamicLibrary lib;
     bool quickSelect = false;
+    m_queries = queries;
+    m_canvas->SetQueryInfo( queries );
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
@@ -521,7 +523,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             if( init )
             {
                 CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-                res = func( m_frame, 1 );
+                res = func( m_frame, 1, m_queries );
                 if( res == wxID_CANCEL )
                 {
                     m_frame->Close();
@@ -834,12 +836,12 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
 {
-    SelectTable();
+    SelectTable( m_queries );
 }
 
-void DrawingView::SelectTable()
+void DrawingView::SelectTable(const std::vector<QueryInfo> &queries)
 {
-    GetTablesForView( GetDocument()->GetDatabase(), false );
+    GetTablesForView( GetDocument()->GetDatabase(), false, queries );
 }
 
 void DrawingView::OnSetProperties(wxCommandEvent &event)
@@ -2319,7 +2321,7 @@ void DrawingView::DropTableFromQeury(const wxString &name)
         GetDocument()->ClearGroupByVector();
         GetDocument()->ClearSortedVector();
         m_arguments.clear();
-        GetTablesForView( doc->GetDatabase(), false );
+        GetTablesForView( doc->GetDatabase(), false, m_queries );
     }
     else
     {
@@ -2391,6 +2393,6 @@ void DrawingView::OnQuerySave(wxCommandEvent &event)
     if( lib.IsLoaded() )
     {
         CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-        int res = func( m_frame, -1 );
+        int res = func( m_frame, -1, m_queries );
     }
 }

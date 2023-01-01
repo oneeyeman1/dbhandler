@@ -19,6 +19,16 @@ enum QueryFieldChange
     SHUFFLE
 };
 
+struct QueryInfo
+{
+    wxString name, comment;
+    void operator=(const QueryInfo &info)
+    {
+        name = info.name;
+        comment = info.comment;
+    }
+};
+
 struct GroupFields
 {
     wxString fieldName;
@@ -48,7 +58,7 @@ public:
     ~DrawingDocument();
     DocumentOstream& SaveObject(DocumentOstream& stream) wxOVERRIDE;
     DocumentIstream& LoadObject(DocumentIstream& stream) wxOVERRIDE;
-    void SetDatabase(Database *db, bool isInit);
+    void SetDatabase(Database *db, bool isInit, const std::vector<QueryInfo> &queries);
     Database *GetDatabase();
 
     void AddRemoveField(const TableField *field, QueryFieldChange isAdded);

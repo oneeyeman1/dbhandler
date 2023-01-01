@@ -19,7 +19,7 @@
 #include "newquery.h"
 #include "getobjectname.h"
 
-GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId) : wxDialog( parent, id, title )
+GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId, const std::vector<QueryInfo> &queries) : wxDialog( parent, id, title )
 {
     wxVector<wxBitmapBundle> images;
 #ifdef __WXMSW__
