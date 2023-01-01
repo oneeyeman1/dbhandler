@@ -8,6 +8,7 @@
 
 #include "wx/dir.h"
 #include "wx/listctrl.h"
+#include "wx/dynlib.h"
 #ifdef __WXGTK__
 #include "gtk/gtk.h"
 #if !GTK_CHECK_VERSION(3,6,0)
@@ -20,6 +21,28 @@
 
 GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId) : wxDialog( parent, id, title )
 {
+    wxVector<wxBitmapBundle> images;
+#ifdef __WXMSW__
+    wxBitmapBundle library;
+    HANDLE gs_wxMainThread = NULL;
+    const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "diakigs", &gs_wxMainThread );
+    const void* data1 = nullptr, *data2 = nullptr, *data3 = nullptr;
+    size_t size1 = 0, size2 = 0, size3 = 0;
+    if( !wxLoadUserResource( &data1, &size1, "library", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+    }
+    else
+    {
+        library = wxBitmapBundle::FromSVG( (const char *) data1, wxSize( 16, 16 ) );
+    }
+    images.push_back( library );
+#elif __WXGTK__
+    images.push_back( wxBitmapBundle::FromSVG( library, wxSize( 16, 16 ) ) );
+#else
+    images.push_back( wxBitmapBundle::FromSVGResource( "library", wxSize( 16, 16 ) ) );
+#endif
     m_id = objectId;
     m_title = title;
     auto sizer1 = new wxBoxSizer( wxHORIZONTAL );
@@ -78,12 +101,11 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     m_help = new wxButton( m_panel, wxID_HELP, _( "&Help" ) );
     sizer5->Add( m_help, 0, wxEXPAND, 0 );
     m_librariesList = new wxListCtrl( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
-// TODO assign the SVG of the library and use it, when th wxListCtrl will adapt
-/*    m_librariesList-SetImages(  wxBitmapBundle() );
+    m_librariesList->SetSmallImages(  images );
     wxListItem item;
     item.SetMask( wxLIST_MASK_IMAGE );
-    item.SetImage();
-    m_librariesList-*/
+    item.SetImage( 0 );
+    m_librariesList->InsertColumn( 0, item );
     m_librariesList->AppendColumn( "" );
     grid->Add( m_librariesList, 0, wxEXPAND, 0 );
     m_browseLibs = new wxButton( m_panel, wxID_ANY, _( "&Browse,,," ) );
