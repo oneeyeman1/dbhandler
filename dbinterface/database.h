@@ -51,6 +51,12 @@ struct TableDefinition
     };
 };
 
+struct FieldVisualAttributes
+{
+    std::wstring format, edit, validator, header, label;
+    int justify, height, width, initial;
+};
+
 struct DataEditFiield
 {
     int type, m_precision;
@@ -192,6 +198,11 @@ public:
         column_isNull = autoIncrement = column_pk = column_fk = false;
         m_props.m_label = m_props.m_heading = L"";
         m_props.m_labelPosition = m_props.m_headingPosition = 0;
+        m_visual.edit = L"None";
+        m_visual.format = L"None";
+        m_visual.justify = 2;
+        m_visual.validator = L"None";
+        m_visual.initial = 0;
     }
 
     TableField(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &fullName, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false, const bool columnFK = false)
@@ -234,6 +245,7 @@ private:
     bool autoIncrement, column_isNull, column_pk, column_fk;
     int field_size, decimal_size;
     FieldProperties m_props;
+    FieldVisualAttributes m_visual;
 };
 
 class FKField
