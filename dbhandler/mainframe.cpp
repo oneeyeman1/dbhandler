@@ -678,6 +678,8 @@ void MainFrame::LoadApplication()
         if( query.name != "" && query.comment != "" && isQuery )
         {
             queries.push_back( query );
+            query.name = "";
+            query.comment = "";
             isQuery = false;
         }
     }
