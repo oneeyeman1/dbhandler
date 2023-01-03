@@ -73,6 +73,12 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
     m_objectList = new wxListCtrl( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
     m_objectList->AppendColumn( "" );
+    long row = 0;
+    for( std::vector<QueryInfo>::const_iterator it = queries.begin(); it < queries.end(); ++it )
+    {
+        m_objectList->InsertItem( row, (*it).name );
+        m_objectList->SetItemPtrData( row++, wxUIntPtr( &(*it).comment ) );
+    }
     sizer4->Add( m_objectList, 0, wxEXPAND, 0 );
     sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
     m_comments = new wxStaticText( m_panel, wxID_ANY, _( "&Comments" ) );
@@ -203,10 +209,14 @@ void GetObjectName::OnOKButtonUpdateUI(wxUpdateUIEvent &event)
 
 void GetObjectName::OnNameSelected(wxListEvent &event)
 {
-
+    auto item = event.GetIndex();
+    auto data = reinterpret_cast<wxString *>( ((wxListCtrl *) event.GetEventObject() )->GetItemData( item ) );
+    m_painterName->SetValue( event.GetText() );
+    m_commentsText->SetValue( *data );
 }
 
 void GetObjectName::OnNameActivated(wxListEvent &event)
 {
-
+    m_painterName->SetValue( event.GetText() );
+    EndModal( wxID_OK );
 }
