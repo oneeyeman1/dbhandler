@@ -18,8 +18,9 @@ class GetObjectName : public wxDialog
 public:
     GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId, const std::vector<QueryInfo> &queries);
     const wxString &GetFileName();
-    const int GetSource();
-    const int GetPresentation();
+    const int GetSource() const;
+    const int GetPresentation() const;
+    const wxTextCtrl *GetDocumentName() const;
 protected:
     void set_properties();
     void OnButtonNew(wxCommandEvent &event);

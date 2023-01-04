@@ -71,8 +71,14 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     m_painterName = new wxTextCtrl( m_panel, wxID_ANY, "" );
     sizer4->Add( m_painterName, 0, wxEXPAND, 0 );
     sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
+    long index = 0;
     m_objectList = new wxListCtrl( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
     m_objectList->AppendColumn( "" );
+    for( std::vector<QueryInfo>::const_iterator it = queries.begin(); it < queries.end(); ++it )
+    {
+        m_objectList->InsertItem( index, (*it).name );
+        m_objectList->SetItemPtrData( index++, wxUIntPtr( &(*it).comment ) );
+    }
     sizer4->Add( m_objectList, 0, wxEXPAND, 0 );
     sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
     m_comments = new wxStaticText( m_panel, wxID_ANY, _( "&Comments" ) );
@@ -116,6 +122,7 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     SetSizer( sizer1 );
     sizer1->Fit( this );
     Layout();
+    m_objectList->SetColumnWidth( 0, m_objectList->GetSize().GetWidth() );
     set_properties();
     if( m_id > 0 )
     {
@@ -169,12 +176,12 @@ const wxString &GetObjectName::GetFileName()
     return m_fileName;
 }
 
-const int GetObjectName::GetSource()
+const int GetObjectName::GetSource() const
 {
     return m_source;
 }
 
-const int GetObjectName::GetPresentation()
+const int GetObjectName::GetPresentation() const
 {
     return m_presentation;
 }
@@ -203,10 +210,19 @@ void GetObjectName::OnOKButtonUpdateUI(wxUpdateUIEvent &event)
 
 void GetObjectName::OnNameSelected(wxListEvent &event)
 {
-
+    m_painterName->SetValue( event.GetText() );
+    auto item = event.GetIndex();
+    auto data = reinterpret_cast<wxString *>( ((wxListCtrl *) event.GetEventObject() )->GetItemData( item ) );
+    m_commentsText->SetValue( *data );
 }
 
 void GetObjectName::OnNameActivated(wxListEvent &event)
 {
+    m_painterName->SetValue( event.GetText() );
+    EndModal( wxID_OK );
+}
 
+const wxTextCtrl *GetObjectName::GetDocumentName() const
+{
+    return m_painterName;
 }
