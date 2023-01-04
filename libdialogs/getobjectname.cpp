@@ -74,18 +74,10 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     long index = 0;
     m_objectList = new wxListCtrl( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
     m_objectList->AppendColumn( "" );
-<<<<<<< HEAD
     for( std::vector<QueryInfo>::const_iterator it = queries.begin(); it < queries.end(); ++it )
     {
         m_objectList->InsertItem( index, (*it).name );
         m_objectList->SetItemPtrData( index++, wxUIntPtr( &(*it).comment ) );
-=======
-    long row = 0;
-    for( std::vector<QueryInfo>::const_iterator it = queries.begin(); it < queries.end(); ++it )
-    {
-        m_objectList->InsertItem( row, (*it).name );
-        m_objectList->SetItemPtrData( row++, wxUIntPtr( &(*it).comment ) );
->>>>>>> f24f507a6b1c185c015ae9cdac5a549c350749a2
     }
     sizer4->Add( m_objectList, 0, wxEXPAND, 0 );
     sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
