@@ -53,6 +53,7 @@ public:
     void ChangeTableTypeMMenu();
     void ChangeTableCommentsMenu();
     void SetProfiles(const std::vector<Profile> &profiles) { m_profiles = profiles; }
+    DatabaseCanvas *GetDatabaseCanvas() const { return m_canvas; }
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;

@@ -117,7 +117,7 @@ typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, 
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
-typedef int (*CHOOSEOBJECT)(wxWindow *, int, const std::vector<QueryInfo> &);
+typedef int (*CHOOSEOBJECT)(wxWindow *, int, const std::vector<QueryInfo> &, wxString &);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
 typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTable *> &, const std::vector<TableField *> &, std::vector<FieldSorter> &allSorted, std::vector<FieldSorter> &qerySorted);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
@@ -262,7 +262,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         sizer->Add( m_fields, 0, wxEXPAND, 0 );
         m_fields->Show( false );
     }
-    m_canvas = new DatabaseCanvas( this, ptCanvas );
+    auto db = ((DrawingDocument *) GetDocument() )->GetDatabase();
+    m_canvas = new DatabaseCanvas( this, ptCanvas, db->GetTableVector().m_dbName, db->GetTableVector().m_type );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
     if( m_type == QueryView )
     {
@@ -503,7 +504,7 @@ void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
 void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries)
 {
     int res = -1;
-    wxString query;
+    wxString query, name = "";
     std::map<wxString, std::vector<TableDefinition> > tables;
     wxDynamicLibrary lib;
     bool quickSelect = false;
@@ -523,7 +524,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
             if( init )
             {
                 CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-                res = func( m_frame, 1, m_queries );
+                res = func( m_frame, 1, m_queries, name );
                 if( res == wxID_CANCEL )
                 {
                     m_frame->Close();
@@ -2380,9 +2381,10 @@ void DrawingView::OnExportSyntax(wxCommandEvent &event)
     }
 }
 
-void DrawingView::OnQuerySave(wxCommandEvent &event)
+void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
 {
     wxDynamicLibrary lib;
+    wxString documentName = "";
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
@@ -2393,6 +2395,11 @@ void DrawingView::OnQuerySave(wxCommandEvent &event)
     if( lib.IsLoaded() )
     {
         CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-        int res = func( m_frame, -1, m_queries );
+        int res = func( m_frame, -1, m_queries, documentName );
+        if( res == wxID_OK )
+        {
+            GetDocument()->SetFilename( documentName + ".qry" );
+            GetDocument()->OnSaveDocument( documentName + ".qry" );
+        }
     }
 }

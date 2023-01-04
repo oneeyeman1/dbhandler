@@ -63,14 +63,38 @@ BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
     EVT_MENU(wxID_TABLEDROPTABLE, DatabaseCanvas::OnDropTable)
 END_EVENT_TABLE()
 */
-DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent) : wxSFShapeCanvas()
+
+XS_IMPLEMENT_CLONABLE_CLASS(QueryRoot, xsSerializable)
+
+QueryRoot::QueryRoot()
+{
+    m_dbName = "";
+    m_dbType = "";
+
+    XS_SERIALIZE_STRING( m_dbName, "database_name" );
+    XS_SERIALIZE_STRING( m_dbType, "database_type" );
+}
+
+QueryRoot::QueryRoot(const QueryRoot &root)
+{
+    m_dbName = root.m_dbName;
+    m_dbType = root.m_dbType;
+
+    XS_SERIALIZE_STRING( m_dbName, "database_name" );
+    XS_SERIALIZE_STRING( m_dbType, "database_type" );
+}
+
+DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, wxWindow *parent) : wxSFShapeCanvas()
 {
     m_view = view;
     m_showDataTypes = m_showLabels = m_showToolBox = m_showComments = m_showIndexKeys = m_showIntegrity = true;
     m_oldSelectedSign = NULL;
     startPoint.x = 10;
     startPoint.y = 10;
-    m_pManager.SetRootItem( new xsSerializable() );
+    auto root = new QueryRoot();
+    root->SetDbName( dbName );
+    root->SetDbType( dbType );
+    m_pManager.SetRootItem( root );
     SetDiagramManager( &m_pManager );
     Create( view->GetFrame(), wxID_ANY, pt, wxDefaultSize, wxHSCROLL | wxVSCROLL | wxALWAYS_SHOW_SB );
     SetVirtualSize( 1000, 1000 );

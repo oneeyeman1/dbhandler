@@ -3,11 +3,26 @@
 
 #define sfDONT_SAVE_STATE false
 
+class QueryRoot : public xsSerializable
+{
+public:
+    XS_DECLARE_CLONABLE_CLASS(QueryRoot);
+    QueryRoot();
+    QueryRoot(const QueryRoot &root);
+    ~QueryRoot() {}
+    void SetDbName(const wxString &name) { m_dbName = name; }
+    void SetDbType(const wxString &type) { m_dbType = type; }
+    const wxString &GetDbName() const { return m_dbName; }
+    const wxString &GetDbType() const { return m_dbType; }
+private:
+    wxString m_dbName, m_dbType;
+};
+
 class WXEXPORT DatabaseCanvas : public wxSFShapeCanvas
 {
 public:
     enum MODE { modeDESIGN, modeTABLE, modeVIEW, modeLine };
-    DatabaseCanvas(wxView *view, const wxPoint &pt, wxWindow *parent = NULL);
+    DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, wxWindow *parent = NULL);
     void DisplayTables(std::map<wxString,std::vector<TableDefinition> > &selections, const std::vector<TableField *> &queryFields, wxString &query, std::vector<wxString> &relations);
     virtual ~DatabaseCanvas();
     void CreateFKConstraint(const DatabaseTable *fkTable, const std::vector<FKField *> &foreignKeyField);
