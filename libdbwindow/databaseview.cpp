@@ -117,7 +117,7 @@ typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, 
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
-typedef int (*CHOOSEOBJECT)(wxWindow *, int, const std::vector<QueryInfo> &, wxString &);
+typedef int (*CHOOSEOBJECT)(wxWindow *, int, const std::vector<QueryInfo> &, wxString &, wxString &);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
 typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTable *> &, const std::vector<TableField *> &, std::vector<FieldSorter> &allSorted, std::vector<FieldSorter> &qerySorted);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
@@ -504,7 +504,7 @@ void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
 void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries)
 {
     int res = -1;
-    wxString query, name = "";
+    wxString query, name = "", comment = "";
     std::map<wxString, std::vector<TableDefinition> > tables;
     wxDynamicLibrary lib;
     bool quickSelect = false;
@@ -524,7 +524,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
             if( init )
             {
                 CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-                res = func( m_frame, 1, m_queries, name );
+                res = func( m_frame, 1, m_queries, name, comment );
                 if( res == wxID_CANCEL )
                 {
                     m_frame->Close();
@@ -2384,7 +2384,7 @@ void DrawingView::OnExportSyntax(wxCommandEvent &event)
 void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
 {
     wxDynamicLibrary lib;
-    wxString documentName = "";
+    wxString documentName = "", comment = "";
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
@@ -2395,11 +2395,14 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-        int res = func( m_frame, -1, m_queries, documentName );
+        int res = func( m_frame, -1, m_queries, documentName, comment );
         if( res == wxID_OK )
         {
             GetDocument()->SetFilename( documentName + ".qry" );
-            GetDocument()->OnSaveDocument( documentName + ".qry" );
+            if( GetDocument()->OnSaveDocument(documentName + ".qry") )
+            {
+
+            }
         }
     }
 }

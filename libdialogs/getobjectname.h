@@ -21,6 +21,7 @@ public:
     const int GetSource() const;
     const int GetPresentation() const;
     const wxTextCtrl *GetDocumentName() const;
+    const wxTextCtrl *GetCommentObject() const;
 protected:
     void set_properties();
     void OnButtonNew(wxCommandEvent &event);

@@ -226,3 +226,8 @@ const wxTextCtrl *GetObjectName::GetDocumentName() const
 {
     return m_painterName;
 }
+
+const wxTextCtrl *GetObjectName::GetCommentObject() const
+{
+    return m_commentsText;
+}

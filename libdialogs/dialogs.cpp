@@ -266,7 +266,7 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
     return res;
 }
 
-extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId, const std::vector<QueryInfo> &queries, wxString &docuentName)
+extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId, const std::vector<QueryInfo> &queries, wxString &documentName, wxString comments)
 {
     int res;
     wxString title;
@@ -288,7 +288,10 @@ extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId, const std::
     dlg.Center();
     res = dlg.ShowModal();
     if( res == wxID_OK )
-        docuentName = dlg.GetDocumentName()->GetValue();
+    {
+        documentName = dlg.GetDocumentName()->GetValue();
+        comments = dlg.GetCommentObject()->GetValue();
+    }
     return res;
 }
 
