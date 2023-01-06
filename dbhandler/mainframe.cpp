@@ -99,6 +99,11 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     if( !found && !currentProfile.IsEmpty() )
         m_profiles.push_back( Profile( currentProfile, true ) );
     config->SetPath( path );
+    config->SetPath( "CurrentLibraries" );
+    auto libpath = config->Read( "Active", "" );
+    if( !libpath.IsEmpty() )
+        m_path.push_back( LibrariesInfo( libpath, true ) );
+    config->SetPath( path );
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );
@@ -480,7 +485,7 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
         }
         else
             lib = m_painters["Query"];
-        LoadApplication();
+        LoadApplication( m_path );
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
@@ -636,14 +641,19 @@ void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void MainFrame::LoadApplication()
+void MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
 {
     wxXmlDocument doc;
-    auto path = wxGetCwd() + wxFileName::GetPathSeparator() + "test library.abl";
-    if( !doc.Load( path ) )
+    for( std::vector<LibrariesInfo>::const_iterator it = path.begin(); it < path.end(); ++it )
     {
-        wxMessageBox( _( "Loading failure" ) );
-        return;
+        if( (*it).m_isActive )
+        {
+            if( !doc.Load( (*it).m_path ) )
+            {
+                wxMessageBox( _( "Loading failure" ) );
+                return;
+            }
+        }
     }
     if( doc.GetRoot() == nullptr )
     {

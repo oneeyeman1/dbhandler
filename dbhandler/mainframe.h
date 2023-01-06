@@ -29,6 +29,13 @@ struct QueryInfo
     }
 };
 
+struct LibrariesInfo
+{
+    wxString m_path;
+    bool m_isActive;
+    LibrariesInfo(const wxString &path, bool active) : m_path(path), m_isActive(active) {}
+};
+
 class MainFrame : public wxDocMDIParentFrame
 {
 public:
@@ -37,7 +44,7 @@ public:
     wxCriticalSection m_threadCS;
     NewTableHandler *m_handler;
 protected:
-    void LoadApplication();
+    void LoadApplication(const std::vector<LibrariesInfo> &path);
     void Connect();
 private:
     void InitToolBar(wxToolBar* toolBar);
@@ -59,6 +66,7 @@ private:
 #endif
     std::map<wxString, wxDynamicLibrary *> m_painters;
     std::vector<Profile> m_profiles;
+    std::vector<LibrariesInfo> m_path;
     int m_countAttached;
     wxString m_pgLogfile;
 #if !( defined( __sun ) && defined( __SVR4 ) )
