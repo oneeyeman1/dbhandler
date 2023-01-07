@@ -13,15 +13,23 @@ struct QueryInfo
     }
 };
 
+struct LibrariesInfo
+{
+    wxString m_path;
+    bool m_isActive;
+    LibrariesInfo(const wxString &path, bool active) : m_path(path), m_isActive(active) {}
+};
+
 class GetObjectName : public wxDialog
 {
 public:
-    GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId, const std::vector<QueryInfo> &queries);
+    GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId, const std::vector<QueryInfo> &queries, const std::vector<LibrariesInfo> &path);
     const wxString &GetFileName();
     const int GetSource() const;
     const int GetPresentation() const;
     const wxTextCtrl *GetDocumentName() const;
     const wxTextCtrl *GetCommentObject() const;
+    std::vector<LibrariesInfo> &GetLibrariesVector() { return m_path; }
 protected:
     void set_properties();
     void OnButtonNew(wxCommandEvent &event);
@@ -38,5 +46,6 @@ private:
     wxButton *m_ok, *m_cancel, *m_new, *m_browse, *m_help, *m_browseLibs;
     int m_id, m_source, m_presentation;
     wxString m_fileName, m_title;
+    std::vector<LibrariesInfo> m_path;
 };
 #endif

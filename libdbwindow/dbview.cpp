@@ -124,7 +124,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *docManager, Database *db, ViewType type, std::map<wxString, wxDynamicLibrary *> &painters, const std::vector<Profile> &profiles, const std::vector<QueryInfo> &queries)
+extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *docManager, Database *db, ViewType type, std::map<wxString, wxDynamicLibrary *> &painters, const std::vector<Profile> &profiles, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path)
 {
     DatabaseTemplate *docTemplate;
 #ifdef __WXMSW__
@@ -139,10 +139,10 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
             docTemplate = new DatabaseTemplate( docManager, "Drawing", "*.qry", "", "qry", "Drawing Doc", "Drawing View", CLASSINFO( DrawingDocument ), CLASSINFO( DrawingView ) );
     }
     if( type == DatabaseView )
-        docTemplate->CreateDatabaseDocument( "*.drw", type, db, painters, queries, wxDOC_NEW | wxDOC_SILENT );
+        docTemplate->CreateDatabaseDocument( "*.drw", type, db, painters, queries, path, wxDOC_NEW | wxDOC_SILENT );
     else
-        docTemplate->CreateDatabaseDocument( "*.qry", type, db, painters, queries, wxDOC_NEW | wxDOC_SILENT );
-    dynamic_cast<DrawingDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db, false, queries );
+        docTemplate->CreateDatabaseDocument( "*.qry", type, db, painters, queries, path, wxDOC_NEW | wxDOC_SILENT );
+    dynamic_cast<DrawingDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db, false, queries, path );
     auto view = docManager->GetCurrentView();
     if( view )
         dynamic_cast<DrawingView *>( view )->SetProfiles( profiles );
