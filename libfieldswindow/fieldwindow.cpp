@@ -96,16 +96,16 @@ void FieldWindow::RemoveField(const wxString &name)
     // hopefully someone can make it work and improve this algorythm
     m_startPoint.x = 10;
     m_manager.Clear();
-    m_selectedFields.clear();
-    for( std::vector<wxString>::iterator it = m_selectedFields.begin(); it < m_selectedFields.end(); it++ )
+    m_selectedFields.erase( std::remove_if( m_selectedFields.begin(), m_selectedFields.end(), 
+                           [name](wxString element)
+                           {
+                               return element == name;
+                           } ) );
+    for( auto it = 0; it < m_selectedFields.size(); ++it )
     {
-        if( (*it) != name )
-        {
-            FieldWin *field = new FieldWin( wxRealPoint( m_startPoint.x, m_startPoint.y ), (*it), m_manager );
-            m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
-            m_startPoint.x += field->GetBoundingBox().GetWidth() + 5;
-            m_selectedFields.push_back( field->GetFieldName() );
-        }
+        FieldWin *field = new FieldWin( wxRealPoint( m_startPoint.x, m_startPoint.y ), ( m_selectedFields.at( it ) ), m_manager );
+        m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
+        m_startPoint.x += field->GetBoundingBox().GetWidth() + 5;
     }
     Refresh();
 }
