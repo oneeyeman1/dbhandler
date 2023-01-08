@@ -409,7 +409,7 @@ extern "C" WXEXPORT int GotoLine(wxWindow *parent, int &lineNo)
 
 extern "C" WXEXPORT int AttachToDatabase(wxWindow *parent, Database *db)
 {
-    int result;
+    int result = 0;
     std::vector<std::wstring> errorMsg;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
