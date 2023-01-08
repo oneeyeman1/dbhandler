@@ -25,6 +25,7 @@
 #include "wx/docmdi.h"
 #include "wx/config.h"
 #include "wx/dynlib.h"
+#include "wx/xml/xml.h"
 #include "wx/fswatcher.h"
 #include "database.h"
 #include "docview.h"
@@ -40,20 +41,22 @@
 
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, std::vector<Profile> &);
-typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &, const std::vector<Profile> &);
+typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &, const std::vector<Profile> &, const std::vector<QueryInfo> &, const std::vector<LibrariesInfo> &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 typedef int (*ATTACHDATABASE)(wxWindow *, Database *);
 typedef int (*DETACHDATABASE)(wxWindow *);
+typedef int (*CHOOSEOBJECT)(wxWindow *, int);
 
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_CONFIGUREODBC, MainFrame::OnConfigureODBC)
-    EVT_MENU(wxID_DATABASEWINDOW, MainFrame::OnDatabaseProfile)
+    EVT_MENU(wxID_DATABASEWINDOWPROFILE, MainFrame::OnDatabaseProfile)
     EVT_MENU(wxID_TABLE, MainFrame::OnTable)
     EVT_MENU(wxID_DATABASE, MainFrame::OnDatabase)
     EVT_MENU(wxID_QUERY, MainFrame::OnQuery)
     EVT_MENU(wxID_ATTACHDATABASE, MainFrame::OnAttachDatabase)
     EVT_MENU(wxID_DETACHDATABASE, MainFrame::OnDetachDatabase)
+    EVT_MENU(wxID_LIBRARY, MainFrame::OnLibrary)
     EVT_UPDATE_UI(wxID_DETACHDATABASE, MainFrame::OnUpdateUIDetachDB)
     EVT_SIZE(MainFrame::OnSize)
     EVT_CLOSE(MainFrame::OnClose)
@@ -95,6 +98,11 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     }
     if( !found && !currentProfile.IsEmpty() )
         m_profiles.push_back( Profile( currentProfile, true ) );
+    config->SetPath( path );
+    config->SetPath( "CurrentLibraries" );
+    auto libpath = config->Read( "Active", "" );
+    if( !libpath.IsEmpty() )
+        m_path.push_back( LibrariesInfo( libpath, true ) );
     config->SetPath( path );
     m_manager = manager;
     auto menuFile = new wxMenu;
@@ -217,19 +225,24 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[4].push_back( wxBITMAP_PNG( database_32x32 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_64x64 ) );
 #ifdef __WXGTK__
-    toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ) ) );
-    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVG( odbc, wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ),  wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ), wxITEM_NORMAL,_( "Query" ), __( "Run the query" ) ) );
+    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVG( odbc, wxSize( 16, 16 ), wxBitmapBundle::FromSVG( odbc, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Configre ODBC" ), _( "Configre ODBC" )) );
 #else
-    toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ) );
-    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVGResource( "odbc", wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "query", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Query" ), _( "Run uqery" ) );
+    toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVGResource( "odbc", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "odbc", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Configure ODBC" ), _( "Configure ODBC" ) );
 #endif
-    toolBar->AddTool( wxID_DATABASEWINDOW, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ) );
+    toolBar->AddTool( wxID_DATABASEWINDOWPROFILE, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ), wxBitmapBundle::FromBitmaps( bitmaps[2] ), wxITEM_NORMAL, _( "DB Profile" ), _( "DB Profile" ) );
 #ifdef __WXGTK__
-    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Table" ), _( "Add/Modify Table definition" ) );
 #else
-    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ) );
+    toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Table" ), _( "Add/Modify Table definition" ) );
 #endif
-    toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ) );
+    toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ), wxBitmapBundle::FromBitmaps( bitmaps[4] ), wxITEM_NORMAL, _( "Database" ), _( "Perform database operations") );
+#ifdef __WXGTK__
+    toolBar->AddTool( wxID_LIBRARY, _( "Library" ), wxBitmapBundle::FromSVG( "library", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( "library", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Library selector" ) );
+#else
+    toolBar->AddTool( wxID_LIBRARY, _( "Library" ), wxBitmapBundle::FromSVGResource( "library", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "library", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Library selector" ) );
+#endif
     toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxBitmapBundle(), wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );
     toolBar->SetName( "PowerBar" );
     toolBar->Realize();
@@ -436,7 +449,7 @@ void MainFrame::OnDatabase(wxCommandEvent &WXUNUSED(event))
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
-            func( this, m_manager, m_db, DatabaseView, m_painters, m_profiles );
+            func( this, m_manager, m_db, DatabaseView, m_painters, m_profiles, queries, m_path );
         }
         else if( !lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
@@ -472,10 +485,11 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
         }
         else
             lib = m_painters["Query"];
+        LoadApplication( m_path );
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
-            func( this, m_manager, m_db, QueryView, m_painters, m_profiles );
+            func( this, m_manager, m_db, QueryView, m_painters, m_profiles, queries, m_path );
         }
         else if( !lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
@@ -522,9 +536,9 @@ void MainFrame::OnTable(wxCommandEvent &WXUNUSED(event))
             func( this, m_manager, m_db, NULL, wxEmptyString );                 // create with possible alteration table
         }
         else if( !lib->IsLoaded() )
-            wxMessageBox( "Error loading the library. Please re-install the software and try again." );
+            wxMessageBox("Error loading the library. Please re-install the software and try again.");
         else
-            wxMessageBox( "Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again." );
+            wxMessageBox("Error connecting to the database. Please check the database is accessible and you can get a good connection, then try again.");
     }
 }
 
@@ -552,11 +566,11 @@ void MainFrame::OnSize(wxSizeEvent &event)
     if( foundTb )
     {
         child = (wxMDIClientWindow *) GetClientWindow();
-        tb->SetSize( 0, 0, size.x, wxDefaultCoord );
+        tb->SetSize(0, 0, size.x, wxDefaultCoord);
         offset = tb->GetSize().y;
-        child->SetSize( 0, offset, size.x, size.y - offset );
+        child->SetSize(0, offset, size.x, size.y - offset);
         if( frame )
-            frame->SetSize( 0, 0, size.x, size.y - offset - 2 );
+            frame->SetSize(0, 0, size.x, size.y - offset - 2);
     }
     else if( !tb || tb->GetName() == "PowerBar" )
         event.Skip();
@@ -566,14 +580,14 @@ void MainFrame::OnAttachDatabase(wxCommandEvent &WXUNUSED(event))
 {
     auto lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-    lib->Load( "dialogs" );
+    lib->Load("dialogs");
 #elif __WXOSX__
-    lib->Load( "liblibdialogs.dylib" );
+    lib->Load("liblibdialogs.dylib");
 #else
-    lib->Load( "libdialogs" );
+    lib->Load("libdialogs");
 #endif
-    ATTACHDATABASE func = (ATTACHDATABASE) lib->GetSymbol( "AttachToDatabase" );
-    int result = func( this, m_db );
+    ATTACHDATABASE func = (ATTACHDATABASE) lib->GetSymbol("AttachToDatabase");
+    int result = func(this, m_db);
     if( result == wxID_OK )
         m_countAttached++;
     delete lib;
@@ -584,14 +598,14 @@ void MainFrame::OnDetachDatabase(wxCommandEvent &WXUNUSED(event))
 {
     auto lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-    lib->Load( "dialogs" );
+    lib->Load("dialogs");
 #elif __WXOSX__
-    lib->Load( "liblibdialogs.dylib" );
+    lib->Load("liblibdialogs.dylib");
 #else
-    lib->Load( "libdialogs" );
+    lib->Load("libdialogs");
 #endif
-    DETACHDATABASE func = (DETACHDATABASE) lib->GetSymbol( "DetachDatabase" );
-    int result = func( this );
+    DETACHDATABASE func = (DETACHDATABASE) lib->GetSymbol("DetachDatabase");
+    int result = func(this);
     if( result == wxID_OK )
         m_countAttached--;
     delete lib;
@@ -601,7 +615,82 @@ void MainFrame::OnDetachDatabase(wxCommandEvent &WXUNUSED(event))
 void MainFrame::OnUpdateUIDetachDB(wxUpdateUIEvent &event)
 {
     if( m_countAttached > 0 )
-        event.Enable( true );
+        event.Enable(true);
     else
-        event.Enable( false );
+        event.Enable(false);
+}
+
+void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
+{
+    auto lib = new wxDynamicLibrary;
+#ifdef __WXMSW__
+    lib->Load("dialogs");
+#elif __WXOSX__
+    lib->Load("liblibdialogs.dylib");
+#else
+    lib->Load("libdialogs");
+#endif
+    if( lib->IsLoaded() )
+    {
+        CHOOSEOBJECT func = (CHOOSEOBJECT) lib->GetSymbol("ChooseObject");
+        int res = func(m_frame, 0 );
+        if( res == wxID_OK )
+        {
+            wxXmlDocument doc;
+        }
+    }
+}
+
+void MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
+{
+    wxXmlDocument doc;
+    for( std::vector<LibrariesInfo>::const_iterator it = path.begin(); it < path.end(); ++it )
+    {
+        if( (*it).m_isActive )
+        {
+            if( !doc.Load( (*it).m_path ) )
+            {
+                wxMessageBox( _( "Loading failure" ) );
+                return;
+            }
+        }
+    }
+    if( doc.GetRoot() == nullptr )
+    {
+        wxMessageBox( _( "XNK file error:" ) );
+        return;
+    }
+    if( !doc.GetRoot()->GetName().IsSameAs( "Library" ) )
+    {
+        wxMessageBox( _( "XML formatting rtot"));
+        return;
+    }
+    QueryInfo query;
+    wxXmlNode *children = doc.GetRoot()->GetChildren();
+    bool isQuery = false;
+    while( children )
+    {
+        if( children->GetName().IsSameAs("name") )
+        {
+            wxString widthStr = children->GetNodeContent();
+            if( widthStr.substr( widthStr.size() - 3 ) == "qry" )
+            {
+                isQuery = true;
+                query.name = widthStr.substr( 0, widthStr.length() - 4 );
+            }
+        }
+        if( children->GetName().IsSameAs("comment") )
+        {
+            wxString widthStr = children->GetNodeContent();
+            query.comment = widthStr;
+        }
+        children = children->GetNext();
+        if( query.name != "" && query.comment != "" && isQuery )
+        {
+            queries.push_back( query );
+            query.name = "";
+            query.comment = "";
+            isQuery = false;
+        }
+    }
 }

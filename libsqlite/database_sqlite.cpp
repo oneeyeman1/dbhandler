@@ -37,28 +37,15 @@ SQLiteDatabase::~SQLiteDatabase()
 {
     if( pimpl )
     {
-        for( auto iter = pimpl->m_tables.begin(); iter != pimpl->m_tables.end(); ++iter )
+        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
         {
-            for( std::vector<DatabaseTable *>::iterator it = (*iter).second.begin(); it < (*iter).second.end(); it++ )
+            std::vector<DatabaseTable *> tableVec = (*it).second;
+            for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
             {
-                std::vector<TableField *> fields = (*it)->GetFields();
-                for( std::vector<TableField *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
-                {
-                    delete (*it1);
-                    (*it1) = NULL;
-                }
-                std::map<unsigned long,std::vector<FKField *> > fk_fields = (*it)->GetForeignKeyVector();
-                for( std::map<unsigned long, std::vector<FKField *> >::iterator it2 = fk_fields.begin(); it2 != fk_fields.end(); it2++ )
-                {
-                    for( std::vector<FKField *>::iterator it3 = (*it2).second.begin(); it3 < (*it2).second.end(); it3++ )
-                    {
-                        delete (*it3);
-                        (*it3) = NULL;
-                    }
-                }
-                delete (*it);
-                (*it) = NULL;
+                delete (*it1);
+                (*it1) = NULL;
             }
+            (*it).second.clear();
         }
     }
     delete pimpl;
@@ -309,8 +296,6 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
             query = sqlite3_sql( statement );
 //  For debugging purposes - helps find non-closed statements
     }
-    delete pimpl;
-    pimpl = NULL;
     delete sqlite_pimpl;
     sqlite_pimpl = NULL;
     return result;
@@ -429,12 +414,6 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             {
                 const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
                 pimpl->m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( sqlite_pimpl->m_catalog, L"main", sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
-//                res = AddDropTable( L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), L"", 0, true, errorMsg );
-/*                if( res )
-                {
-                    result = 1;
-                    break;
-                }*/
                 count++;
             }
             else if( res == SQLITE_DONE )
@@ -1977,6 +1956,7 @@ bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
     }
+    sqlite3_finalize( m_stmt1 );
     return exist;
 }
 
@@ -2008,6 +1988,7 @@ int SQLiteDatabase::GetFieldHeader(const std::wstring &tableName, const std::wst
             }
         }
     }
+    sqlite3_finalize( stmt );
     return result;
 }
 

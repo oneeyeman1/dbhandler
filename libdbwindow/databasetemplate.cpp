@@ -44,8 +44,8 @@
 #include "sortgroupbypage.h"
 #include "wherehavingpage.h"
 #include "syntaxproppage.h"
-#include "databasecanvas.h"
 #include "databasedoc.h"
+#include "databasecanvas.h"
 #include "designcanvas.h"
 #include "databaseview.h"
 #include "databasetemplate.h"
@@ -68,7 +68,7 @@ DrawingView *DatabaseTemplate::CreateDatabaseView(wxDocument *doc, ViewType type
     return view.release();
 }
 
-bool DatabaseTemplate::CreateDatabaseDocument(const wxString &path, ViewType type, Database *db, std::map<wxString, wxDynamicLibrary *> &painters, long flags)
+bool DatabaseTemplate::CreateDatabaseDocument(const wxString &path, ViewType type, Database *db, std::map<wxString, wxDynamicLibrary *> &painters, const std::vector<QueryInfo> &queriess, std::vector<LibrariesInfo> &libPath, long flags)
 {
     DrawingDocument * const doc = (DrawingDocument *) DoCreateDocument();
     wxTRY
@@ -76,7 +76,7 @@ bool DatabaseTemplate::CreateDatabaseDocument(const wxString &path, ViewType typ
         doc->SetFilename( path );
         doc->SetDocumentTemplate( this );
         GetDocumentManager()->AddDocument( doc );
-        doc->SetDatabase( db, true );
+        doc->SetDatabase( db, true, queriess, libPath );
         doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
         if( CreateDatabaseView( doc, type, painters, flags ) )
             return true;

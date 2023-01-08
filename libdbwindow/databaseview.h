@@ -37,8 +37,8 @@ public:
     wxFrame *GetLogWindow() const;
     wxTextCtrl *GetFieldTextCtrl();
     wxTextCtrl *GetTextLogger() const;
-    void GetTablesForView(Database *db, bool init);
-    void SelectTable();
+    void GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path);
+    void SelectTable(const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path);
     void SetViewType(ViewType type);
     ViewType GetViewType();
     SortGroupByPage *GetSortPage();
@@ -53,6 +53,7 @@ public:
     void ChangeTableTypeMMenu();
     void ChangeTableCommentsMenu();
     void SetProfiles(const std::vector<Profile> &profiles) { m_profiles = profiles; }
+    DatabaseCanvas *GetDatabaseCanvas() const { return m_canvas; }
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
@@ -103,6 +104,7 @@ public:
     void OnTableDataEdit(wxCommandEvent &event);
     void OnFieldShuffle(wxCommandEvent &event);
     void OnExportSyntax(wxCommandEvent &event);
+    void OnQuerySave(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
@@ -151,6 +153,8 @@ private:
     wxFindReplaceDialog *m_findDlg;
     wxFindReplaceData m_data;
     std::vector<Profile> m_profiles;
+    std::vector<QueryInfo> m_queries;
+    std::vector<LibrariesInfo> m_path;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };

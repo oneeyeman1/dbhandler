@@ -187,7 +187,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                 }
                 else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
                 {
-                    if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"information_schema" ) )
+                    if( !sysTableIncluded && ( schemaName != dbName || tableName.substr( 0, 5 ) == L"abcat" ) )
                         continue;
                     else
                         insert = true;

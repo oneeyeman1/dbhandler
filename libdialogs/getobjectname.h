@@ -3,25 +3,49 @@
 
 #define wxID_NEWOBJECT 1000
 
+struct QueryInfo
+{
+    wxString name, comment;
+    void operator=(const QueryInfo &info)
+    {
+        name = info.name;
+        comment = info.comment;
+    }
+};
+
+struct LibrariesInfo
+{
+    wxString m_path;
+    bool m_isActive;
+    LibrariesInfo(const wxString &path, bool active) : m_path(path), m_isActive(active) {}
+};
+
 class GetObjectName : public wxDialog
 {
 public:
-    GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId);
-    void OnButtonNew(wxCommandEvent &event);
-    void OnButtonBrowse(wxCommandEvent &event);
+    GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId, const std::vector<QueryInfo> &queries, const std::vector<LibrariesInfo> &path);
     const wxString &GetFileName();
-    const int GetSource();
-    const int GetPresentation();
+    const int GetSource() const;
+    const int GetPresentation() const;
+    const wxTextCtrl *GetDocumentName() const;
+    const wxTextCtrl *GetCommentObject() const;
+    std::vector<LibrariesInfo> &GetLibrariesVector() { return m_path; }
 protected:
     void set_properties();
-    void do_layout();
+    void OnButtonNew(wxCommandEvent &event);
+    void OnButtonBrowse(wxCommandEvent &event);
+    void OnOKButton(wxCommandEvent &event);
+    void OnOKButtonUpdateUI(wxUpdateUIEvent &event);
+    void OnNameSelected(wxListEvent &event);
+    void OnNameActivated(wxListEvent &event);
 private:
     wxPanel *m_panel;
     wxStaticText *m_painterNameLabel, *m_comments;
     wxTextCtrl *m_painterName, *m_commentsText;
-    wxListCtrl *m_objectList;
-    wxButton *m_ok, *m_cancel, *m_new, *m_browse, *m_help;
+    wxListCtrl *m_objectList, *m_librariesList;
+    wxButton *m_ok, *m_cancel, *m_new, *m_browse, *m_help, *m_browseLibs;
     int m_id, m_source, m_presentation;
-    wxString m_fileName;
+    wxString m_fileName, m_title;
+    std::vector<LibrariesInfo> m_path;
 };
 #endif

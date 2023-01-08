@@ -85,8 +85,8 @@
 #include "syntaxproppage.h"
 #include "sortgroupbypage.h"
 #include "wherehavingpage.h"
-#include "databasecanvas.h"
 #include "databasedoc.h"
+#include "databasecanvas.h"
 #include "designcanvas.h"
 #include "databaseview.h"
 #include "divider.h"
@@ -117,7 +117,7 @@ typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, 
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
-typedef int (*CHOOSEOBJECT)(wxWindow *, int);
+typedef int (*CHOOSEOBJECT)(wxWindow *, int, std::vector<QueryInfo> &, wxString &, std::vector<LibrariesInfo> &path);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
 typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTable *> &, const std::vector<TableField *> &, std::vector<FieldSorter> &allSorted, std::vector<FieldSorter> &qerySorted);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
@@ -183,6 +183,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_CONVERTTOGRAPHICS, DrawingView::OnConvertToGraphics)
     EVT_MENU(wxID_TABLEEDITDATA, DrawingView::OnTableDataEdit)
     EVT_MENU(wxID_EXPORTSYNTAX, DrawingView::OnExportSyntax)
+    EVT_MENU(wxID_SAVE, DrawingView::OnQuerySave)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -261,7 +262,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         sizer->Add( m_fields, 0, wxEXPAND, 0 );
         m_fields->Show( false );
     }
-    m_canvas = new DatabaseCanvas( this, ptCanvas );
+    auto db = ((DrawingDocument *) GetDocument() )->GetDatabase();
+    m_canvas = new DatabaseCanvas( this, ptCanvas, db->GetTableVector().m_dbName, db->GetTableVector().m_type );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
     if( m_type == QueryView )
     {
@@ -499,13 +501,17 @@ void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
     m_log->Hide();
 }
 
-void DrawingView::GetTablesForView(Database *db, bool init)
+void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path)
 {
     int res = -1;
-    wxString query;
+    wxString query, documentName = "";
     std::map<wxString, std::vector<TableDefinition> > tables;
     wxDynamicLibrary lib;
     bool quickSelect = false;
+    m_queries = queries;
+    m_path = path;
+    m_canvas->SetQueryInfo( queries );
+    m_canvas->SetObjectPath( path );
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
@@ -520,7 +526,7 @@ void DrawingView::GetTablesForView(Database *db, bool init)
             if( init )
             {
                 CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-                res = func( m_frame, 1 );
+                res = func( m_frame, 1, m_queries, documentName, m_path );
                 if( res == wxID_CANCEL )
                 {
                     m_frame->Close();
@@ -637,8 +643,8 @@ void DrawingView::GetTablesForView(Database *db, bool init)
                 wxString name = m_selectTableName[0]->GetSchemaName() + "." + m_selectTableName[0]->GetTableName();
                 tables[m_selectTableName[0]->GetSchemaName()].push_back( TableDefinition( L"", m_selectTableName[0]->GetSchemaName(), m_selectTableName[0]->GetTableName() ) );
             }
-//            else
-//                tables[m_selectTableName[0]->].push_back( TableDefinition( m_selectTableName[0]->GetSchemaName().ToStdWstring(), m_selectTableName[0]->GetTableName() ) );
+            else
+                tables[m_selectTableName[0]->GetCatalog()].push_back( TableDefinition( m_selectTableName[0]->GetCatalog(), m_selectTableName[0]->GetSchemaName(), m_selectTableName[0]->GetTableName() ) );
         }
     }
     if( tables.size() > 0 )
@@ -833,12 +839,12 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
 {
-    SelectTable();
+    SelectTable( m_queries, m_path );
 }
 
-void DrawingView::SelectTable()
+void DrawingView::SelectTable(const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path)
 {
-    GetTablesForView( GetDocument()->GetDatabase(), false );
+    GetTablesForView( GetDocument()->GetDatabase(), false, queries, path );
 }
 
 void DrawingView::OnSetProperties(wxCommandEvent &event)
@@ -2318,7 +2324,7 @@ void DrawingView::DropTableFromQeury(const wxString &name)
         GetDocument()->ClearGroupByVector();
         GetDocument()->ClearSortedVector();
         m_arguments.clear();
-        GetTablesForView( doc->GetDatabase(), false );
+        GetTablesForView( doc->GetDatabase(), false, m_queries, m_path );
     }
     else
     {
@@ -2371,6 +2377,32 @@ void DrawingView::OnExportSyntax(wxCommandEvent &event)
             {
                 std::wstring syntax;
                 dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->GetTableCreationSyntax( (*it)->GetSchemaName() + L"." + (*it)->GetTableName(), syntax, errors );
+
+            }
+        }
+    }
+}
+
+void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
+{
+    wxDynamicLibrary lib;
+    wxString documentName = "";
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
+        int res = func( m_frame, -1, m_queries, documentName, m_path );
+        if( res == wxID_OK )
+        {
+            GetDocument()->SetFilename( documentName + ".qry" );
+            if( GetDocument()->OnSaveDocument(documentName + ".qry") )
+            {
 
             }
         }

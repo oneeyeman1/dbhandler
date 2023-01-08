@@ -19,6 +19,23 @@ struct Profile
     Profile(wxString name, bool isCurrent) : m_name( name ), m_isCurrent( isCurrent ) {}
 };
 
+struct QueryInfo
+{
+    wxString name, comment;
+    void operator=(const QueryInfo &info)
+    {
+        name = info.name;
+        comment = info.comment;
+    }
+};
+
+struct LibrariesInfo
+{
+    wxString m_path;
+    bool m_isActive;
+    LibrariesInfo(const wxString &path, bool active) : m_path(path), m_isActive(active) {}
+};
+
 class MainFrame : public wxDocMDIParentFrame
 {
 public:
@@ -27,6 +44,7 @@ public:
     wxCriticalSection m_threadCS;
     NewTableHandler *m_handler;
 protected:
+    void LoadApplication(const std::vector<LibrariesInfo> &path);
     void Connect();
 private:
     void InitToolBar(wxToolBar* toolBar);
@@ -40,6 +58,7 @@ private:
     void OnAttachDatabase(wxCommandEvent &event);
     void OnDetachDatabase(wxCommandEvent &event);
     void OnUpdateUIDetachDB(wxUpdateUIEvent &event);
+    void OnLibrary(wxCommandEvent &event);
     Database *m_db;
     wxDocManager *m_manager;
 #if defined __WXMSW__ || defined __WXGTK__
@@ -47,11 +66,13 @@ private:
 #endif
     std::map<wxString, wxDynamicLibrary *> m_painters;
     std::vector<Profile> m_profiles;
+    std::vector<LibrariesInfo> m_path;
     int m_countAttached;
     wxString m_pgLogfile;
 #if !( defined( __sun ) && defined( __SVR4 ) )
     wxFileSystemWatcher *m_oldPGWatcher;
 #endif
+    std::vector<QueryInfo> queries;
     wxDECLARE_EVENT_TABLE();
 };
 
