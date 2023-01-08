@@ -1242,6 +1242,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAd
     else if( isAdding == REMOVE )
     {
         wxString temp1;
+        m_fields->RemoveField( name );
         m_page1->AddRemoveSortingField( false, name );
         GetDocument()->AddRemoveField( fld, QueryFieldChange::REMOVE );
         std::vector<TableField *> queryFields = GetDocument()->GetQueryFields();
