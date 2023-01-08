@@ -53,7 +53,7 @@ void FieldWindow::AddField(const wxString &fieldName)
     m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
     Refresh();
     m_startPoint.x += field->GetBoundingBox().GetWidth() + 5;
-    m_selectedFields.push_back( field->GetFieldName() );
+    m_selectedFields.push_back( fieldName );
 }
 
 void FieldWindow::RemoveField(const std::vector<std::wstring> &names)
