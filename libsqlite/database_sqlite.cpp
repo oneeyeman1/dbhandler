@@ -414,12 +414,6 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             {
                 const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
                 pimpl->m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( sqlite_pimpl->m_catalog, L"main", sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
-//                res = AddDropTable( L"", L"", sqlite_pimpl->m_myconv.from_bytes( tableName ), L"", 0, true, errorMsg );
-/*                if( res )
-                {
-                    result = 1;
-                    break;
-                }*/
                 count++;
             }
             else if( res == SQLITE_DONE )
@@ -1962,6 +1956,7 @@ bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
     }
+    sqlite3_finalize( m_stmt1 );
     return exist;
 }
 
@@ -1993,6 +1988,7 @@ int SQLiteDatabase::GetFieldHeader(const std::wstring &tableName, const std::wst
             }
         }
     }
+    sqlite3_finalize( stmt );
     return result;
 }
 
