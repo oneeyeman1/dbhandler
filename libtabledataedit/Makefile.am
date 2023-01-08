@@ -20,8 +20,8 @@ libtableedit_la_SOURCES =  \
 	imagecellrenderer.h
 
 libtableedit_la_CXXFLAGS = -I../../dbinterface \
-	`wx-config \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
-libtableedit_la_LDFLAGS = `wx-config \
+libtableedit_la_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 

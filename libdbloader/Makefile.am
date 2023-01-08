@@ -19,7 +19,7 @@ libdbloader_la_CXXFLAGS = -I/usr/include \
 	--includedir` \
 	`mysql_config \
 	--cflags` \
-	`wx-config \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags`
 
 libdbloader_la_LDFLAGS = -L../dbinterface \
@@ -40,5 +40,5 @@ libdbloader_la_LDFLAGS = -L../dbinterface \
 	-lpq \
 	`mysql_config \
 	--libs` \
-	`wx-config \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs`

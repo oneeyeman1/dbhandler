@@ -2440,8 +2440,8 @@ int MySQLDatabase::GetTableId(const std::wstring &catalog, const std::wstring &s
         {
             MYSQL_BIND params[2];
             unsigned long str_length1, str_length2;
-            str_length1 = strlen( m_pimpl->m_myconv.to_bytes( schema.c_str() ) .c_str() ) + 2;
-            str_length2 = strlen( m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() ) + 2;
+            str_length1 = strlen( m_pimpl->m_myconv.to_bytes( schema.c_str() ) .c_str() ) + 1;
+            str_length2 = strlen( m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() ) + 1;
             char *str_data1 = new char[str_length1], *str_data2 = new char[str_length2];
             memset( str_data1, '\0', str_length1 );
             memset( str_data2, '\0', str_length2 );

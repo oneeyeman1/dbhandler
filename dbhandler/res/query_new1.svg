@@ -1,5 +1,4 @@
-static const char query[] = 
-R"xxx(<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <svg id="SVGRoot" width="16px" height="16px" version="1.1" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
  <metadata>
   <rdf:RDF>
@@ -46,4 +45,4 @@ R"xxx(<?xml version="1.0" encoding="UTF-8"?>
   <circle cx="12.793" cy="12.772" rx="1.7931" ry="1.7716" fill="#fff" fill-rule="evenodd"/>
   <path d="m12.433 13.978c-0.21352-0.06358-0.34961-0.14325-0.51992-0.30436-0.2697-0.25514-0.39732-0.54801-0.39563-0.90792 2e-3 -0.42979 0.19932-0.79202 0.56439-1.0362 0.22634-0.15138 0.42328-0.20927 0.71388-0.20984 0.20112-3.9e-4 0.25301 0.0069 0.39275 0.055 0.66471 0.22892 1.0162 0.87713 0.83696 1.5437-0.07893 0.29358-0.36149 0.63089-0.64533 0.77038-0.08312 0.04085-0.21008 0.08812-0.28212 0.10505-0.19463 0.04573-0.48123 0.03893-0.66499-0.01579z" fill-opacity="0" stroke-width=".54"/>
  </g>
-</svg>)xxx";
+</svg>

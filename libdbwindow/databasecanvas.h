@@ -39,6 +39,7 @@ public:
     void CheckSQLToolbox();
     void GetAllSelectedShapes(ShapeList &shapes);
     void SetQueryInfo(const std::vector<QueryInfo> &queries) { m_queries = queries; }
+    void SetObjectPath(const std::vector<LibrariesInfo> path) { m_path = path; }
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:
@@ -52,6 +53,7 @@ private:
     wxPoint startPoint;
     ConstraintSign *m_oldSelectedSign;
     std::vector<QueryInfo> m_queries;
+    std::vector<LibrariesInfo> m_path;
 };
 
 #define wxID_TABLECLOSE            20

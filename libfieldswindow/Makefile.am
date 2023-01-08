@@ -12,10 +12,10 @@ libfieldswindow_la_SOURCES =  \
 	fieldwindow.h
 
 libfieldswindow_la_CXXFLAGS = -I../../libshapeframework \
-	`wx-config \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
 libfieldswindow_la_LDFLAGS = -L../libshapeframework \
 	-lshapeframework \
-	`wx-config \
+	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 

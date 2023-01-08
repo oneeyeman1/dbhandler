@@ -37,8 +37,8 @@ public:
     wxFrame *GetLogWindow() const;
     wxTextCtrl *GetFieldTextCtrl();
     wxTextCtrl *GetTextLogger() const;
-    void GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries);
-    void SelectTable(const std::vector<QueryInfo> &queries);
+    void GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path);
+    void SelectTable(const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path);
     void SetViewType(ViewType type);
     ViewType GetViewType();
     SortGroupByPage *GetSortPage();
@@ -154,6 +154,7 @@ private:
     wxFindReplaceData m_data;
     std::vector<Profile> m_profiles;
     std::vector<QueryInfo> m_queries;
+    std::vector<LibrariesInfo> m_path;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };

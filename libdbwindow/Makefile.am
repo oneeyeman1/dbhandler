@@ -74,6 +74,8 @@ libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 
 libdbwindow_la_LDFLAGS = -L../libpropertypages \
 	-lpropertypages \
+	-L../libpropertieshandlers \
+	-lpropertieshandlers \
 	-L../libshapeframework \
 	-L../libfieldswindow \
 	-lfieldswindow \

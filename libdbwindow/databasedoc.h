@@ -29,6 +29,13 @@ struct QueryInfo
     }
 };
 
+struct LibrariesInfo
+{
+    wxString m_path;
+    bool m_isActive;
+    LibrariesInfo(const wxString &path, bool active) : m_path(path), m_isActive(active) {}
+};
+
 struct GroupFields
 {
     wxString fieldName;
@@ -58,7 +65,7 @@ public:
     ~DrawingDocument();
     DocumentOstream& SaveObject(DocumentOstream& stream) wxOVERRIDE;
     DocumentIstream& LoadObject(DocumentIstream& stream) wxOVERRIDE;
-    void SetDatabase(Database *db, bool isInit, const std::vector<QueryInfo> &queries);
+    void SetDatabase(Database *db, bool isInit, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &libPath);
     Database *GetDatabase();
 
     void AddRemoveField(const TableField *field, QueryFieldChange isAdded);

@@ -19,8 +19,9 @@
 #include "newquery.h"
 #include "getobjectname.h"
 
-GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId, const std::vector<QueryInfo> &queries) : wxDialog( parent, id, title )
+GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId, const std::vector<QueryInfo> &queries, const std::vector<LibrariesInfo> &path) : wxDialog( parent, id, title )
 {
+    m_path = path;
     wxVector<wxBitmapBundle> images;
 #ifdef __WXMSW__
     wxBitmapBundle library;
@@ -112,7 +113,10 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     item.SetMask( wxLIST_MASK_IMAGE );
     item.SetImage( 0 );
     m_librariesList->InsertColumn( 0, item );
-    m_librariesList->AppendColumn( "" );
+    for( std::vector<LibrariesInfo>::const_iterator it = path.begin(); it < path.end(); ++it )
+    {
+        m_librariesList->InsertItem( 0, (*it).m_path, (*it).m_isActive ? 0 : -1 );
+    }
     grid->Add( m_librariesList, 0, wxEXPAND, 0 );
     m_browseLibs = new wxButton( m_panel, wxID_ANY, _( "&Browse,,," ) );
     grid->Add( m_browseLibs, 0, wxALIGN_CENTER_VERTICAL, 0 );
@@ -123,6 +127,7 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     sizer1->Fit( this );
     Layout();
     m_objectList->SetColumnWidth( 0, m_objectList->GetSize().GetWidth() );
+    m_librariesList->SetColumnWidth( 0, m_librariesList->GetSize().GetWidth() );
     set_properties();
     if( m_id > 0 )
     {

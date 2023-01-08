@@ -117,7 +117,7 @@ typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, 
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
-typedef int (*CHOOSEOBJECT)(wxWindow *, int, const std::vector<QueryInfo> &, wxString &, wxString &);
+typedef int (*CHOOSEOBJECT)(wxWindow *, int, std::vector<QueryInfo> &, wxString &, std::vector<LibrariesInfo> &path);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
 typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTable *> &, const std::vector<TableField *> &, std::vector<FieldSorter> &allSorted, std::vector<FieldSorter> &qerySorted);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
@@ -501,15 +501,17 @@ void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
     m_log->Hide();
 }
 
-void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries)
+void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path)
 {
     int res = -1;
-    wxString query, name = "", comment = "";
+    wxString query, documentName = "";
     std::map<wxString, std::vector<TableDefinition> > tables;
     wxDynamicLibrary lib;
     bool quickSelect = false;
     m_queries = queries;
+    m_path = path;
     m_canvas->SetQueryInfo( queries );
+    m_canvas->SetObjectPath( path );
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
@@ -524,7 +526,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
             if( init )
             {
                 CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-                res = func( m_frame, 1, m_queries, name, comment );
+                res = func( m_frame, 1, m_queries, documentName, m_path );
                 if( res == wxID_CANCEL )
                 {
                     m_frame->Close();
@@ -837,12 +839,12 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
 {
-    SelectTable( m_queries );
+    SelectTable( m_queries, m_path );
 }
 
-void DrawingView::SelectTable(const std::vector<QueryInfo> &queries)
+void DrawingView::SelectTable(const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path)
 {
-    GetTablesForView( GetDocument()->GetDatabase(), false, queries );
+    GetTablesForView( GetDocument()->GetDatabase(), false, queries, path );
 }
 
 void DrawingView::OnSetProperties(wxCommandEvent &event)
@@ -2322,7 +2324,7 @@ void DrawingView::DropTableFromQeury(const wxString &name)
         GetDocument()->ClearGroupByVector();
         GetDocument()->ClearSortedVector();
         m_arguments.clear();
-        GetTablesForView( doc->GetDatabase(), false, m_queries );
+        GetTablesForView( doc->GetDatabase(), false, m_queries, m_path );
     }
     else
     {
@@ -2384,7 +2386,7 @@ void DrawingView::OnExportSyntax(wxCommandEvent &event)
 void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
 {
     wxDynamicLibrary lib;
-    wxString documentName = "", comment = "";
+    wxString documentName = "";
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
@@ -2395,7 +2397,7 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-        int res = func( m_frame, -1, m_queries, documentName, comment );
+        int res = func( m_frame, -1, m_queries, documentName, m_path );
         if( res == wxID_OK )
         {
             GetDocument()->SetFilename( documentName + ".qry" );
