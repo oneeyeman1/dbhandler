@@ -183,7 +183,8 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_CONVERTTOGRAPHICS, DrawingView::OnConvertToGraphics)
     EVT_MENU(wxID_TABLEEDITDATA, DrawingView::OnTableDataEdit)
     EVT_MENU(wxID_EXPORTSYNTAX, DrawingView::OnExportSyntax)
-    EVT_MENU(wxID_SAVE, DrawingView::OnQuerySave)
+    EVT_MENU(wxID_SAVEQUERY, DrawingView::OnQuerySave)
+    EVT_UPDATE_UI(wxID_SAVEQUERY, DrawingView::OnQuerySaveUpdateUI)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -381,7 +382,7 @@ void DrawingView::CreateViewToolBar()
         CreateQueryMenu( QuerySyntaxMenu );
         m_tb->AddTool( wxID_NEW, _( "New" ), wxBitmap( new_xpm ), wxBitmap( new_xpm ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
-        m_tb->AddTool( wxID_SAVE, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
+        m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
         m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
@@ -2407,4 +2408,12 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
             }
         }
     }
+}
+
+void DrawingView::OnQuerySaveUpdateUI(wxUpdateUIEvent &event)
+{
+    if( GetDocument()->GetQueryFields().size() > 0 )
+        event.Enable( true );
+    else
+        event.Enable( false );
 }
