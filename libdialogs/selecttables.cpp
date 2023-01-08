@@ -212,7 +212,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
 void SelectTables::OnShowSystemTables(wxCommandEvent &WXUNUSED(event))
 {
     for( auto i = 0; i < m_tables->GetCount(); ++i )
-        delete m_tables->GetClientData( i );
+        delete (ClientData *) m_tables->GetClientData( i );
     if( m_showSystem->IsChecked() )
         FillTableList( true );
     else
