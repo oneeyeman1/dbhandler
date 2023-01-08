@@ -131,4 +131,5 @@ private:
 #define wxID_GOTOLINE             334
 #define wxID_CONVERTTOGRAPHICS    335
 #define wxID_UNDOALL              336
+#define wxID_SAVEQUERY            404
 #endif
