@@ -598,10 +598,42 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         case wxID_SELECTTABLE:
             dynamic_cast<DrawingView *>( m_view )->SelectTable( m_queries, m_path );
             break;
+        case wxID_SELECTALLFIELDS:
+            {
+                ShapeList shapes;
+                m_pManager.GetShapes( CLASSINFO( FieldShape ), shapes );
+                for( ShapeList::iterator it = shapes.begin (); it != shapes.end (); ++it )
+                {
+                    FieldShape *fld = wxDynamicCast( (*it), FieldShape );
+                    if( fld )
+                    {
+                        fld->Select( true );
+                        dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, ADD, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName(), false );
+                    }
+                    Refresh();
+                }
+            }
+            break;
+        case wxID_DESELECTALLFIELDS:
+        {
+            ShapeList shapes;
+            m_pManager.GetShapes( CLASSINFO( FieldShape ), shapes );
+            for( ShapeList::iterator it = shapes.begin (); it != shapes.end (); ++it )
+            {
+                FieldShape *fld = wxDynamicCast( (*it), FieldShape );
+                if( fld )
+                {
+                    fld->Select( false );
+                    dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, REMOVE, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName(), false );
+                }
+                Refresh();
+            }
+        }
+        break;
     }
 /*    if( rc == wxID_NONE && erdField )
     {
-//        if( field )
+        if( field )
         {
             erdField->Select( false );
             erdTable->GetFieldGrid()->Refresh();
