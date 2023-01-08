@@ -211,6 +211,7 @@
 		E3D8595C1EEA09030093FB1C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					__WXOSX__,
@@ -236,6 +237,7 @@
 		E3D8595D1EEA09030093FB1C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				EXECUTABLE_PREFIX = lib;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
