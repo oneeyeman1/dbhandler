@@ -53,7 +53,7 @@ void FieldWindow::AddField(const wxString &fieldName)
     m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
     Refresh();
     m_startPoint.x += field->GetBoundingBox().GetWidth() + 5;
-    m_selectedFields.push_back( field->GetFieldName() );
+    m_selectedFields.push_back( fieldName );
 }
 
 void FieldWindow::RemoveField(const std::vector<std::wstring> &names)
@@ -86,6 +86,26 @@ void FieldWindow::RemoveField(const std::vector<wxString> &names)
         m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
         m_startPoint.x += field->GetBoundingBox().GetWidth() + 5;
         m_selectedFields.push_back( field->GetFieldName() );
+    }
+    Refresh();
+}
+
+void FieldWindow::RemoveField(const wxString &name)
+{
+    // tried to implement this with shifting the fields but it didn't work
+    // hopefully someone can make it work and improve this algorythm
+    m_startPoint.x = 10;
+    m_manager.Clear();
+    m_selectedFields.clear();
+    for( std::vector<wxString>::iterator it = m_selectedFields.begin(); it < m_selectedFields.end(); it++ )
+    {
+        if( (*it) != name )
+        {
+            FieldWin *field = new FieldWin( wxRealPoint( m_startPoint.x, m_startPoint.y ), (*it), m_manager );
+            m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
+            m_startPoint.x += field->GetBoundingBox().GetWidth() + 5;
+            m_selectedFields.push_back( field->GetFieldName() );
+        }
     }
     Refresh();
 }
