@@ -300,7 +300,8 @@ void ForeignKeyDialog::OnFieldsDeselection(wxListEvent &event)
     wxString item = event.GetLabel();
     m_foreignKey.erase( std::remove_if( m_foreignKey.begin(), m_foreignKey.end(), 
         [&item](const wxString &e1) { return e1.find( item ) != e1.npos; } ), m_foreignKey.end() );
-    m_foreignKeyColumnsFields->RemoveField( m_foreignKey );
+    for( int i = 0; i < m_foreignKey.size(); ++i )
+        m_foreignKeyColumnsFields->RemoveField( m_foreignKey.at( i ) );
     m_edited = true;
 }
 

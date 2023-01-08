@@ -427,7 +427,8 @@ void CreateIndex::OnFieldsDeselection(wxListEvent &event)
     wxString item = event.GetLabel();
     m_fields.erase( std::remove_if( m_fields.begin(), m_fields.end(), 
         [&item](const std::wstring &e1) { return e1.find( item + " " ) != e1.npos; } ), m_fields.end() );
-    m_indexColumns->RemoveField( m_fields );
+    for( int i = 0; i < m_fields.size(); ++i )
+        m_indexColumns->RemoveField( m_fields.at( i ) );
 }
 
 void CreateIndex::OnOkShowLog(wxCommandEvent &event)
