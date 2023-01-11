@@ -172,4 +172,5 @@ wxDECLARE_APP(MyApp);
 #define wxID_TOP                  402
 #define wxID_BACK                 403
 #define wxID_SAVEQUERY            404
+#define wx_SAVEQUERYAS            405
 #endif // _WX_SAMPLES_DOCVIEW_DOCVIEW_H_

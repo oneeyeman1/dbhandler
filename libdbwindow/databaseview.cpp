@@ -20,10 +20,6 @@
 #include "res/gui/key-f1.xpm"
 #include "../dbhandler/res/quit.xpm"
 #include "res/gui/toolbox.xpm"
-#include "../dbhandler/res/new.xpm"
-#include "../dbhandler/res/open.xpm"
-#include "../dbhandler/res/save.xpm"
-#include "../dbhandler/res/cut.xpm"
 //#include "./res/gui/bold_png.c"
 //#endif
 
@@ -49,6 +45,7 @@
 #elif defined __WXOSX__
 #include "wx/fontpicker.h"
 #endif
+#include "wx/artprov.h"
 #include "wx/fontenum.h"
 #include "wx/notebook.h"
 #include "wx/fdrepdlg.h"
@@ -185,6 +182,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_EXPORTSYNTAX, DrawingView::OnExportSyntax)
     EVT_MENU(wxID_SAVEQUERY, DrawingView::OnQuerySave)
     EVT_UPDATE_UI(wxID_SAVEQUERY, DrawingView::OnQuerySaveUpdateUI)
+    EVT_UPDATE_UI(wxID_SAVEQUERYAS, DrawingView::OnQuerySaveAsUpdateUI)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -373,16 +371,16 @@ void DrawingView::CreateViewToolBar()
         CreateDBMenu();
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
-        m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxBitmap( cut_xpm ), wxBitmap( cut_xpm ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
+        m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Database View" ) );
     }
     else
     {
         CreateQueryMenu( QuerySyntaxMenu );
-        m_tb->AddTool( wxID_NEW, _( "New" ), wxBitmap( new_xpm ), wxBitmap( new_xpm ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
-        m_tb->AddTool( wxID_OPEN, _( "Open" ), wxBitmap( open_xpm ), wxBitmap( open_xpm ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
-        m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), wxBitmap( save_xpm ), wxBitmap( save_xpm ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
+        m_tb->AddTool( wxID_NEW, _( "New" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
+        m_tb->AddTool( wxID_OPEN, _( "Open" ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
+        m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
         m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
@@ -2208,9 +2206,11 @@ void DrawingView::CreateQueryMenu(const int queryType)
     auto fileMenu = new wxMenu;
     fileMenu->Append( wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
     fileMenu->AppendSeparator();
-    fileMenu->Insert( 2, wxID_NEW, _( "New...\tCtrl+N" ), _( "Create new query" ) );
-    fileMenu->Insert( 3, wxID_OPEN, _( "Open...\tCtrl+O" ), _( "Open an existing query" ) );
-    fileMenu->InsertSeparator( 4 );
+    fileMenu->Insert( 0, wxID_NEW, _( "New...\tCtrl+N" ), _( "Create new query" ) );
+    fileMenu->Insert( 1, wxID_OPEN, _( "Open...\tCtrl+O" ), _( "Open an existing query" ) );
+    fileMenu->Append( wxID_SAVEQUERY, _( "Save\tCtrl+S" ), _( "Save the query" ) );
+    fileMenu->Append( wxID_SAVEQUERYAS, _( "Save Query As..." ), _( "Save Query As" ) );
+    fileMenu->AppendSeparator();
     auto helpMenu = new wxMenu;
     helpMenu->Append( wxID_HELP, _( "Help" ) );
     if( queryType == SQLSelectMenu )
@@ -2412,6 +2412,14 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
 }
 
 void DrawingView::OnQuerySaveUpdateUI(wxUpdateUIEvent &event)
+{
+    if( GetDocument()->GetQueryFields().size() > 0 )
+        event.Enable( true );
+    else
+        event.Enable( false );
+}
+
+void DrawingView::OnQuerySaveAsUpdateUI(wxUpdateUIEvent &event)
 {
     if( GetDocument()->GetQueryFields().size() > 0 )
         event.Enable( true );

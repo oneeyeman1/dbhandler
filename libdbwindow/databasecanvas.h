@@ -132,4 +132,5 @@ private:
 #define wxID_CONVERTTOGRAPHICS    335
 #define wxID_UNDOALL              336
 #define wxID_SAVEQUERY            404
+#define wxID_SAVEQUERYAS          405
 #endif
