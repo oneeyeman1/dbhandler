@@ -12,10 +12,12 @@ public:
     ~QueryRoot() {}
     void SetDbName(const wxString &name) { m_dbName = name; }
     void SetDbType(const wxString &type) { m_dbType = type; }
+    void SetQuery(const wxString &query) { m_query = query; }
     const wxString &GetDbName() const { return m_dbName; }
     const wxString &GetDbType() const { return m_dbType; }
+    const wxString &GetQuery() const { return m_query; }
 private:
-    wxString m_dbName, m_dbType;
+    wxString m_dbName, m_dbType, m_query;
 };
 
 class WXEXPORT DatabaseCanvas : public wxSFShapeCanvas
@@ -40,6 +42,7 @@ public:
     void GetAllSelectedShapes(ShapeList &shapes);
     void SetQueryInfo(const std::vector<QueryInfo> &queries) { m_queries = queries; }
     void SetObjectPath(const std::vector<LibrariesInfo> path) { m_path = path; }
+    void SetQueryFields(const std::vector<TableField *> queryFields) { m_queryFields = queryFields; }
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:
@@ -54,6 +57,7 @@ private:
     ConstraintSign *m_oldSelectedSign;
     std::vector<QueryInfo> m_queries;
     std::vector<LibrariesInfo> m_path;
+    std::vector<TableField *> m_queryFields;
 };
 
 #define wxID_TABLECLOSE            20
