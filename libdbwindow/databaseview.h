@@ -106,6 +106,7 @@ public:
     void OnExportSyntax(wxCommandEvent &event);
     void OnQuerySave(wxCommandEvent &event);
     void OnQuerySaveUpdateUI(wxUpdateUIEvent &event);
+    void OnQuerySaveAsUpdateUI(wxUpdateUIEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
