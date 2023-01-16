@@ -80,7 +80,7 @@ DocumentOstream& DrawingDocument::SaveObject(DocumentOstream& ostream)
     wxTextOutputStream stream( ostream );
 #endif
     ((DrawingView *) GetFirstView() )->GetDatabaseCanvas()->GetDiagramManager().SerializeToXml( GetFilename(), xsWITH_ROOT );
-    wxDocument::SaveObject( ostream );
+    wxDocument::SaveObject( stream );
 
     return ostream;
 }
@@ -93,7 +93,7 @@ DocumentIstream& DrawingDocument::LoadObject(DocumentIstream& istream)
     wxTextInputStream stream( istream );
 #endif
 
-    wxDocument::LoadObject( istream );
+    wxDocument::LoadObject( stream );
 
     return istream;
 }
