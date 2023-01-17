@@ -62,10 +62,10 @@ Divider::Divider() : wxSFRectShape()
                 delete m_text;
         }
     }
-    XS_SERIALIZE_STRING( m_props.m_color, "color" );
-    XS_SERIALIZE_STRING( m_props.m_cursorFile, "cursor-file" );
-    XS_SERIALIZE_INT( m_props.m_height, "height" );
-    XS_SERIALIZE_INT( m_props.m_stockCursor, "stock-cursor" );
+    XS_SERIALIZE( m_props.m_color, "color" );
+    XS_SERIALIZE( m_props.m_cursorFile, "cursor-file" );
+    XS_SERIALIZE( m_props.m_height, "height" );
+    XS_SERIALIZE( m_props.m_stockCursor, "stock-cursor" );
 }
 
 Divider::Divider(const wxString &text, const wxString &cursorFile, int stockCursor, wxSFDiagramManager *manager) : wxSFRectShape( wxRealPoint( 1, 1 ), wxRealPoint( 5000, -1 ), manager )
@@ -156,10 +156,10 @@ Divider::Divider(const wxString &text, const wxString &cursorFile, int stockCurs
     m_nRectSize.y = GetBoundingBox().GetHeight();
     m_nRectSize.x = 5000;
     m_Fill = *wxGREY_BRUSH;
-    XS_SERIALIZE_STRING( m_props.m_color, "color" );
-    XS_SERIALIZE_STRING( m_props.m_cursorFile, "cursor-file" );
-    XS_SERIALIZE_INT( m_props.m_height, "height" );
-    XS_SERIALIZE_INT( m_props.m_stockCursor, "stock-cursor" );
+    XS_SERIALIZE( m_props.m_color, "color" );
+    XS_SERIALIZE( m_props.m_cursorFile, "cursor-file" );
+    XS_SERIALIZE( m_props.m_height, "height" );
+    XS_SERIALIZE( m_props.m_stockCursor, "stock-cursor" );
 }
 
 Divider::~Divider()

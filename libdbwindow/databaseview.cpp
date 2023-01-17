@@ -209,8 +209,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxConfigBase *config = wxConfigBase::Get( false );
     wxString path = config->GetPath();
     config->SetPath( "Query" );
-    m_source = config->Read( "QuerySource", 2 );
-    m_presentation = config->ReadLong( "QueryPresentation", 4 );
+    m_source = config->Read( "QuerySource", &m_source, 2 );
+    m_presentation = config->Read( "QueryPresentation", &m_presentation, 4 );
     config->SetPath( path );
     m_parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     wxRect clientRect = m_parent->GetClientRect();
@@ -563,9 +563,11 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
 //                        wxMDIClientWindow *parent = (wxMDIClientWindow *) m_parent->GetClientWindow();
 //                        wxSize parentSize = parent->GetSize();
 //                        wxPoint parentPos = parent->GetPosition();
+#ifndef __WXOSX__
                         int heightStyleBar = m_styleBar->GetSize().y;
-                        wxPoint framePosition = m_frame->GetPosition();
                         wxSize frameSize = m_frame->GetSize();
+#endif
+                        wxPoint framePosition = m_frame->GetPosition();
                         if( framePosition.y == 0 )
                         {
 #ifndef __WXOSX__
@@ -1345,8 +1347,6 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAd
             temp = temp.substr( 0, temp.Find( "FROM" ) - 1 );
             query.Replace( temp, temp + ", " + name + " " );
         }
-        m_page6->SetSyntaxText( query );
-        m_edit->SetText( query );
     }
     else if( isAdding == REMOVE )
     {
@@ -1373,13 +1373,14 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAd
             }
             query = temp + temp1;
         }
-        m_page6->SetSyntaxText( query );
-        m_edit->SetText( query );
     }
     else if( isAdding == SHUFFLE )
     {
 
     }
+    m_page6->SetSyntaxText( query );
+    m_edit->SetText( query );
+    dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->SetQuery( query );
 }
 
 void DrawingView::OnSQLNotebookPageChanged(wxBookCtrlEvent &event)
@@ -1444,6 +1445,7 @@ void DrawingView::OnDistinct(wxCommandEvent &event)
     }
     queryText->SetValue( query );
     m_edit->SetText( query );
+    dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->SetQuery( query );
 }
 
 wxFrame *DrawingView::GetLogWindow() const
@@ -1603,6 +1605,7 @@ void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type, const l
     m_whereRelatons.push_back( temp );
     m_page6->SetSyntaxText( result );
     m_edit->SetText( result );
+    dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->SetQuery( query );
 }
 
 void DrawingView::OnQueryChange(wxCommandEvent &event)
@@ -1656,6 +1659,7 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
         newWherePart += "       " + event.GetString();
         query.Replace( wherePart, newWherePart );
         m_page6->GetSyntaxCtrl()->SetValue( query );
+        dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->SetQuery( query );
     }
     if( event.GetEventObject () == m_page4 )
     {
@@ -1752,6 +1756,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     }
     query.Replace( str, replace );
     m_page6->GetSyntaxCtrl()->SetValue( query );
+    dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->SetQuery( query );
 }
 
 void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
@@ -2415,6 +2420,7 @@ void DrawingView::OnFieldShuffle(wxCommandEvent &event)
     wxString temp = origQuery.substr( origQuery.Find( " " ), origQuery.Find( "FROM" ) - 6 );
     origQuery.Replace( temp, replacement, true );
     m_page6->SetSyntaxText( origQuery );
+    dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->SetQuery( origQuery );
 }
 
 void DrawingView::DropTableFromQeury(const wxString &name)
@@ -2437,6 +2443,7 @@ void DrawingView::DropTableFromQeury(const wxString &name)
         GetDocument()->ClearSortedVector();
         m_arguments.clear();
         GetTablesForView( doc->GetDatabase(), false, m_queries, m_path );
+        dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->SetQuery( "" );
     }
     else
     {

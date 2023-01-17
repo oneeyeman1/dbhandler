@@ -121,15 +121,15 @@ DesignLabel::~DesignLabel()
 
 void DesignLabel::InitSerializable()
 {
-    XS_SERIALIZE_STRING( m_prop.m_name, "LabelName" );
-    XS_SERIALIZE_STRING( m_prop.m_tag, "Tag" );
-    XS_SERIALIZE_BOOL( m_prop.m_supressPrint, "SuppressPrint" );
-    XS_SERIALIZE_INT( m_prop.m_border, "Border" );
-    XS_SERIALIZE_INT( m_prop.m_alignment, "Alignment" );
-    XS_SERIALIZE_STRING( m_prop.m_text, "Text" );
-    XS_SERIALIZE_FONT( m_prop.m_font, "LabelFont" );
-    XS_SERIALIZE_POINT( m_prop.m_position, "LabelPosition" );
-    XS_SERIALIZE_SIZE( m_prop.m_size, "LabelSize" );
+    XS_SERIALIZE( m_prop.m_name, "LabelName" );
+    XS_SERIALIZE( m_prop.m_tag, "Tag" );
+    XS_SERIALIZE( m_prop.m_supressPrint, "SuppressPrint" );
+    XS_SERIALIZE( m_prop.m_border, "Border" );
+    XS_SERIALIZE( m_prop.m_alignment, "Alignment" );
+    XS_SERIALIZE( m_prop.m_text, "Text" );
+    XS_SERIALIZE( m_prop.m_font, "LabelFont" );
+    XS_SERIALIZE( m_prop.m_position, "LabelPosition" );
+    XS_SERIALIZE( m_prop.m_size, "LabelSize" );
 }
 
 Properties DesignLabel::GetProperties()

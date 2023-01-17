@@ -70,18 +70,22 @@ QueryRoot::QueryRoot()
 {
     m_dbName = "";
     m_dbType = "";
+    m_query = "";
 
     XS_SERIALIZE( m_dbName, "database_name" );
     XS_SERIALIZE( m_dbType, "database_type" );
+    XS_SERIALIZE( m_query, "query" );
 }
 
 QueryRoot::QueryRoot(const QueryRoot &root)
 {
     m_dbName = root.m_dbName;
     m_dbType = root.m_dbType;
+    m_query = root.m_query;
 
     XS_SERIALIZE( m_dbName, "database_name" );
     XS_SERIALIZE( m_dbType, "database_type" );
+    XS_SERIALIZE( m_query, "query" );
 }
 
 DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, wxWindow *parent) : wxSFShapeCanvas()
