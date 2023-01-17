@@ -40,6 +40,7 @@ public:
     void GetAllSelectedShapes(ShapeList &shapes);
     void SetQueryInfo(const std::vector<QueryInfo> &queries) { m_queries = queries; }
     void SetObjectPath(const std::vector<LibrariesInfo> path) { m_path = path; }
+    bool UpdateCanvasWithQuery();
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:
@@ -54,6 +55,7 @@ private:
     ConstraintSign *m_oldSelectedSign;
     std::vector<QueryInfo> m_queries;
     std::vector<LibrariesInfo> m_path;
+    wxString m_dbName, m_dbType;
 };
 
 #define wxID_TABLECLOSE            20
