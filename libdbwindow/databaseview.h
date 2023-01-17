@@ -38,7 +38,8 @@ public:
     wxTextCtrl *GetFieldTextCtrl();
     wxTextCtrl *GetTextLogger() const;
     void GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path);
-    void SelectTable(const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path);
+    int SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect);
+    std::map<wxString, std::vector<TableDefinition> > &GetTablesMap();
     void SetViewType(ViewType type);
     ViewType GetViewType();
     SortGroupByPage *GetSortPage();
@@ -157,6 +158,7 @@ private:
     std::vector<Profile> m_profiles;
     std::vector<QueryInfo> m_queries;
     std::vector<LibrariesInfo> m_path;
+    std::map<wxString, std::vector<TableDefinition> > m_tables;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
