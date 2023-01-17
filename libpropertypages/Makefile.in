@@ -128,6 +128,7 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libpropertypages_la_LIBADD =
+am__dirstamp = $(am__leading_dot)dirstamp
 am_libpropertypages_la_OBJECTS = libpropertypages_la-tablegeneral.lo \
 	libpropertypages_la-fontpropertypagebase.lo \
 	libpropertypages_la-syntaxproppage.lo \
@@ -142,8 +143,8 @@ am_libpropertypages_la_OBJECTS = libpropertypages_la-tablegeneral.lo \
 	libpropertypages_la-designgeneral.lo \
 	libpropertypages_la-colorcombobox.lo \
 	libpropertypages_la-printspec.lo \
-	libpropertypages_la-fontpropertypageQt.lo \
-	libpropertypages_la-fontpropertypageGTK.lo
+	qt/libpropertypages_la-fontpropertypageQt.lo \
+	gtk/libpropertypages_la-fontpropertypageGTK.lo
 libpropertypages_la_OBJECTS = $(am_libpropertypages_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -174,8 +175,6 @@ am__depfiles_remade = ./$(DEPDIR)/libpropertypages_la-bandgeneral.Plo \
 	./$(DEPDIR)/libpropertypages_la-designlabelgeneral.Plo \
 	./$(DEPDIR)/libpropertypages_la-fieldgeneral.Plo \
 	./$(DEPDIR)/libpropertypages_la-fieldheader.Plo \
-	./$(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Plo \
-	./$(DEPDIR)/libpropertypages_la-fontpropertypageQt.Plo \
 	./$(DEPDIR)/libpropertypages_la-fontpropertypagebase.Plo \
 	./$(DEPDIR)/libpropertypages_la-pointerproperty.Plo \
 	./$(DEPDIR)/libpropertypages_la-printspec.Plo \
@@ -183,7 +182,9 @@ am__depfiles_remade = ./$(DEPDIR)/libpropertypages_la-bandgeneral.Plo \
 	./$(DEPDIR)/libpropertypages_la-syntaxproppage.Plo \
 	./$(DEPDIR)/libpropertypages_la-tablegeneral.Plo \
 	./$(DEPDIR)/libpropertypages_la-tableprimarykey.Plo \
-	./$(DEPDIR)/libpropertypages_la-wherehavingpage.Plo
+	./$(DEPDIR)/libpropertypages_la-wherehavingpage.Plo \
+	gtk/$(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Plo \
+	qt/$(DEPDIR)/libpropertypages_la-fontpropertypageQt.Plo
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -322,6 +323,9 @@ NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+ODBC = @ODBC@
+ODBC_CFLAGS = @ODBC_CFLAGS@
+ODBC_LIBS = @ODBC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -524,12 +528,32 @@ clean-libLTLIBRARIES:
 	  echo rm -f $${locs}; \
 	  rm -f $${locs}; \
 	}
+qt/$(am__dirstamp):
+	@$(MKDIR_P) qt
+	@: > qt/$(am__dirstamp)
+qt/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) qt/$(DEPDIR)
+	@: > qt/$(DEPDIR)/$(am__dirstamp)
+qt/libpropertypages_la-fontpropertypageQt.lo: qt/$(am__dirstamp) \
+	qt/$(DEPDIR)/$(am__dirstamp)
+gtk/$(am__dirstamp):
+	@$(MKDIR_P) gtk
+	@: > gtk/$(am__dirstamp)
+gtk/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) gtk/$(DEPDIR)
+	@: > gtk/$(DEPDIR)/$(am__dirstamp)
+gtk/libpropertypages_la-fontpropertypageGTK.lo: gtk/$(am__dirstamp) \
+	gtk/$(DEPDIR)/$(am__dirstamp)
 
 libpropertypages.la: $(libpropertypages_la_OBJECTS) $(libpropertypages_la_DEPENDENCIES) $(EXTRA_libpropertypages_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(libpropertypages_la_LINK) -rpath $(libdir) $(libpropertypages_la_OBJECTS) $(libpropertypages_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f gtk/*.$(OBJEXT)
+	-rm -f gtk/*.lo
+	-rm -f qt/*.$(OBJEXT)
+	-rm -f qt/*.lo
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -540,8 +564,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-designlabelgeneral.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fieldgeneral.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fieldheader.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fontpropertypageQt.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fontpropertypagebase.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-pointerproperty.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-printspec.Plo@am__quote@ # am--include-marker
@@ -550,6 +572,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-tablegeneral.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-tableprimarykey.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-wherehavingpage.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@gtk/$(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@qt/$(DEPDIR)/libpropertypages_la-fontpropertypageQt.Plo@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -558,22 +582,25 @@ $(am__depfiles_remade):
 am--depfiles: $(am__depfiles_remade)
 
 .cpp.o:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cpp.lo:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
@@ -676,25 +703,27 @@ libpropertypages_la-printspec.lo: printspec.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-printspec.lo `test -f 'printspec.cpp' || echo '$(srcdir)/'`printspec.cpp
 
-libpropertypages_la-fontpropertypageQt.lo: qt/fontpropertypageQt.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertypages_la-fontpropertypageQt.lo -MD -MP -MF $(DEPDIR)/libpropertypages_la-fontpropertypageQt.Tpo -c -o libpropertypages_la-fontpropertypageQt.lo `test -f 'qt/fontpropertypageQt.cpp' || echo '$(srcdir)/'`qt/fontpropertypageQt.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertypages_la-fontpropertypageQt.Tpo $(DEPDIR)/libpropertypages_la-fontpropertypageQt.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='qt/fontpropertypageQt.cpp' object='libpropertypages_la-fontpropertypageQt.lo' libtool=yes @AMDEPBACKSLASH@
+qt/libpropertypages_la-fontpropertypageQt.lo: qt/fontpropertypageQt.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT qt/libpropertypages_la-fontpropertypageQt.lo -MD -MP -MF qt/$(DEPDIR)/libpropertypages_la-fontpropertypageQt.Tpo -c -o qt/libpropertypages_la-fontpropertypageQt.lo `test -f 'qt/fontpropertypageQt.cpp' || echo '$(srcdir)/'`qt/fontpropertypageQt.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) qt/$(DEPDIR)/libpropertypages_la-fontpropertypageQt.Tpo qt/$(DEPDIR)/libpropertypages_la-fontpropertypageQt.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='qt/fontpropertypageQt.cpp' object='qt/libpropertypages_la-fontpropertypageQt.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-fontpropertypageQt.lo `test -f 'qt/fontpropertypageQt.cpp' || echo '$(srcdir)/'`qt/fontpropertypageQt.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o qt/libpropertypages_la-fontpropertypageQt.lo `test -f 'qt/fontpropertypageQt.cpp' || echo '$(srcdir)/'`qt/fontpropertypageQt.cpp
 
-libpropertypages_la-fontpropertypageGTK.lo: gtk/fontpropertypageGTK.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertypages_la-fontpropertypageGTK.lo -MD -MP -MF $(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Tpo -c -o libpropertypages_la-fontpropertypageGTK.lo `test -f 'gtk/fontpropertypageGTK.cpp' || echo '$(srcdir)/'`gtk/fontpropertypageGTK.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Tpo $(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtk/fontpropertypageGTK.cpp' object='libpropertypages_la-fontpropertypageGTK.lo' libtool=yes @AMDEPBACKSLASH@
+gtk/libpropertypages_la-fontpropertypageGTK.lo: gtk/fontpropertypageGTK.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT gtk/libpropertypages_la-fontpropertypageGTK.lo -MD -MP -MF gtk/$(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Tpo -c -o gtk/libpropertypages_la-fontpropertypageGTK.lo `test -f 'gtk/fontpropertypageGTK.cpp' || echo '$(srcdir)/'`gtk/fontpropertypageGTK.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gtk/$(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Tpo gtk/$(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gtk/fontpropertypageGTK.cpp' object='gtk/libpropertypages_la-fontpropertypageGTK.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-fontpropertypageGTK.lo `test -f 'gtk/fontpropertypageGTK.cpp' || echo '$(srcdir)/'`gtk/fontpropertypageGTK.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o gtk/libpropertypages_la-fontpropertypageGTK.lo `test -f 'gtk/fontpropertypageGTK.cpp' || echo '$(srcdir)/'`gtk/fontpropertypageGTK.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf gtk/.libs gtk/_libs
+	-rm -rf qt/.libs qt/_libs
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -814,6 +843,10 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f gtk/$(DEPDIR)/$(am__dirstamp)
+	-rm -f gtk/$(am__dirstamp)
+	-rm -f qt/$(DEPDIR)/$(am__dirstamp)
+	-rm -f qt/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -830,8 +863,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libpropertypages_la-designlabelgeneral.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-fieldgeneral.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-fieldheader.Plo
-	-rm -f ./$(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Plo
-	-rm -f ./$(DEPDIR)/libpropertypages_la-fontpropertypageQt.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-fontpropertypagebase.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-pointerproperty.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-printspec.Plo
@@ -840,6 +871,8 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libpropertypages_la-tablegeneral.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-tableprimarykey.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-wherehavingpage.Plo
+	-rm -f gtk/$(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Plo
+	-rm -f qt/$(DEPDIR)/libpropertypages_la-fontpropertypageQt.Plo
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -891,8 +924,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libpropertypages_la-designlabelgeneral.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-fieldgeneral.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-fieldheader.Plo
-	-rm -f ./$(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Plo
-	-rm -f ./$(DEPDIR)/libpropertypages_la-fontpropertypageQt.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-fontpropertypagebase.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-pointerproperty.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-printspec.Plo
@@ -901,6 +932,8 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libpropertypages_la-tablegeneral.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-tableprimarykey.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-wherehavingpage.Plo
+	-rm -f gtk/$(DEPDIR)/libpropertypages_la-fontpropertypageGTK.Plo
+	-rm -f qt/$(DEPDIR)/libpropertypages_la-fontpropertypageQt.Plo
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
