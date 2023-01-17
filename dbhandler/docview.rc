@@ -4,7 +4,7 @@ doc                 ICON    "doc.ico"
 chrt                ICON    "chart.ico"
 notepad             ICON    "notepad.ico"
 
-query               RCDATA  "res/query_new1_transparent.svg"
+query               RCDATA  "res/query.svg"
 odbc                RCDATA  "res/odbc.svg"
 profile_16x16       RCDATA  "res/profile_16x16.png"
 profile_32x32       RCDATA  "res/profile_32x32.png"
