@@ -522,7 +522,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 mnu.Append( wxID_SELECTALLFIELDS, _( "Select All" ), _( "Select all columns for display" ) );
                 mnu.Append( wxID_DESELECTALLFIELDS, _("Deselect All" ), _( "Deselect all columns for display" ) );
                 mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
-                if( !allSelected )
+                if( allSelected == -1 )
                     mnu.FindItem( wxID_DESELECTALLFIELDS )->Enable( false );
                 else if( allSelected == 1 )
                     mnu.FindItem( wxID_SELECTALLFIELDS )->Enable( false );
