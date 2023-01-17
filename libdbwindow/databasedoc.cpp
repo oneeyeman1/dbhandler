@@ -92,7 +92,11 @@ DocumentIstream& DrawingDocument::LoadObject(DocumentIstream& istream)
 #else
     wxTextInputStream stream( istream );
 #endif
-
+    auto result = ((DrawingView *) GetFirstView() )->GetDatabaseCanvas()->GetDiagramManager().DeserializeFromXml( GetFilename() );
+    if( result )
+    {
+        result = ((DrawingView *) GetFirstView() )->GetDatabaseCanvas()->UpdateCanvasWithQuery();
+    }
     wxDocument::LoadObject( istream );
 
     return istream;
