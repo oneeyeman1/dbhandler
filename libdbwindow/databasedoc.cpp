@@ -79,7 +79,7 @@ DocumentOstream& DrawingDocument::SaveObject(DocumentOstream& ostream)
 #else
     wxTextOutputStream stream( ostream );
 #endif
-    ((DrawingView *) GetFirstView() )->GetDatabaseCanvas()->GetDiagramManager().SerializeToXml( GetFilename(), xsWITH_ROOT );
+    m_querySaveSuccessfl = ((DrawingView *) GetFirstView() )->GetDatabaseCanvas()->GetDiagramManager().SerializeToXml( GetFilename(), xsWITH_ROOT );
     wxDocument::SaveObject( stream );
 
     return ostream;
@@ -454,4 +454,28 @@ void DrawingDocument::DeleteQueryFieldForTable(const wxString &tableName, wxStri
             replace += (*it)->GetFullName();
         }
     }
+}
+
+bool DrawingDocument::UpdateLibraryWithNewQuery(const wxString &libraryName, const std::vector<QueryInfo> &queries, const wxString &newQuery)
+{
+    wxXmlDocument doc;
+    auto root = new wxXmlNode( nullptr, wxXML_ELEMENT_NODE, "Library" );
+    doc.SetRoot( root );
+    for( std::vector<QueryInfo>::const_iterator it = queries.begin(); it < queries.end(); ++it )
+    {
+        auto comment = new wxXmlNode( root, wxXML_ELEMENT_NODE, "comment" );
+        comment->AddChild( new wxXmlNode( wxXML_TEXT_NODE, "", (*it).comment ) );
+        auto name = new wxXmlNode( root, wxXML_ELEMENT_NODE, "name" );
+        name->AddChild( new wxXmlNode( wxXML_TEXT_NODE, "", (*it).name ) );
+    }
+    m_querySaveSuccessfl = doc.Save( libraryName, 4 );
+    return m_querySaveSuccessfl;
+}
+
+bool DrawingDocument::SaveNewQuery(const wxString &libraryName, const std::vector<QueryInfo> &queries, const wxString &fileName)
+{
+    m_querySaveSuccessfl = OnSaveDocument( fileName );
+    if( m_querySaveSuccessfl )
+        m_querySaveSuccessfl = UpdateLibraryWithNewQuery( libraryName, queries, fileName.substr( 0, fileName.rfind( "." ) ) );
+    return m_querySaveSuccessfl;
 }

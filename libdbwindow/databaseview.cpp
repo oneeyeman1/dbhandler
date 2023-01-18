@@ -487,6 +487,7 @@ void DrawingView::CreateViewToolBar()
 #else
     m_frame->SetSize( 0, offset, size.x, height );
 #endif
+    m_frame->SetToolBar( m_tb );
 }
 
 // Sneakily gets used for default print/preview as well as drawing on the
@@ -582,7 +583,6 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                         m_fields->Show( true );
                         m_canvas->Show( true );
                         m_queryBook->Show( true );
-                        wxMessageBox( "2" );
 #ifndef __WXOSX__
                         m_frame->SetSize( framePosition.x, framePosition.y - heightStyleBar, frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
 #endif
@@ -2519,8 +2519,18 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
         int res = func( m_frame, -1, m_queries, documentName, m_path );
         if( res == wxID_OK )
         {
+            wxString libName;
+            auto found = false;
+            for( std::vector<LibrariesInfo>::iterator it = m_path.begin(); it < m_path.end() && !found; ++it )
+            {
+                if( (*it).m_isActive )
+                {
+                    libName = (*it).m_path;
+                    found = true;
+                }
+            }
             GetDocument()->SetFilename( documentName + ".qry" );
-            if( GetDocument()->OnSaveDocument(documentName + ".qry") )
+            if( GetDocument()->SaveNewQuery( libName, m_queries, documentName + ".qry" ) ) 
             {
 
             }
