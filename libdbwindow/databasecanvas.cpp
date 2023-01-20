@@ -75,6 +75,7 @@ QueryRoot::QueryRoot()
     XS_SERIALIZE( m_dbName, "database_name" );
     XS_SERIALIZE( m_dbType, "database_type" );
     XS_SERIALIZE( m_query, "query" );
+    XS_SERIALIZE( m_fields, "query_fields" );
 }
 
 QueryRoot::QueryRoot(const QueryRoot &root)
@@ -82,10 +83,12 @@ QueryRoot::QueryRoot(const QueryRoot &root)
     m_dbName = root.m_dbName;
     m_dbType = root.m_dbType;
     m_query = root.m_query;
+    m_fields = root.m_fields;
 
     XS_SERIALIZE( m_dbName, "database_name" );
     XS_SERIALIZE( m_dbType, "database_type" );
     XS_SERIALIZE( m_query, "query" );
+    XS_SERIALIZE( m_fields, "query_fields" );
 }
 
 DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, wxWindow *parent) : wxSFShapeCanvas()
@@ -379,7 +382,13 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
             }
             Refresh();
             if( fld )
+            {
                 dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, const_cast<DatabaseTable *>( tbl->GetTable() )->GetTableName(), false );
+                if( fld->IsSelected() )
+                    dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->AddQueryField( fld->GetField()->GetFullName() );
+                else
+                    dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->DeleteQuieryField( fld->GetField()->GetFullName() );
+            }
         }
     }
 }
@@ -617,10 +626,17 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 for( ShapeList::iterator it = shapes.begin (); it != shapes.end (); ++it )
                 {
                     FieldShape *fld = wxDynamicCast( (*it), FieldShape );
+                    wxString tableName;
                     if( fld )
                     {
-                        fld->Select( true );
-                        dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, ADD, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName(), false );
+                        tableName = fld->GetField()->GetFullName();
+                        tableName = tableName.substr( 0, tableName.find( '.' ) );
+                        if( tableName == erdTable->GetTable()->GetTableName() )
+                        {
+                            fld->Select( true );
+                            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, ADD, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName(), false );
+                            dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->AddQueryField( fld->GetField()->GetFullName() );
+                        }
                     }
                     Refresh();
                 }
