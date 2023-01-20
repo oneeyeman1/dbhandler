@@ -466,7 +466,7 @@ bool DrawingDocument::UpdateLibraryWithNewQuery(const wxString &libraryName, con
         auto comment = new wxXmlNode( root, wxXML_ELEMENT_NODE, "comment" );
         comment->AddChild( new wxXmlNode( wxXML_TEXT_NODE, "", (*it).comment ) );
         auto name = new wxXmlNode( root, wxXML_ELEMENT_NODE, "name" );
-        name->AddChild( new wxXmlNode( wxXML_TEXT_NODE, "", (*it).name ) );
+        name->AddChild( new wxXmlNode( wxXML_TEXT_NODE, "", (*it).name + ".qry" ) );
     }
     m_querySaveSuccessfl = doc.Save( libraryName, 4 );
     return m_querySaveSuccessfl;
