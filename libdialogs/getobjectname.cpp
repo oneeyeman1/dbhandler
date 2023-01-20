@@ -118,8 +118,11 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
         m_librariesList->InsertItem( 0, (*it).m_path, (*it).m_isActive ? 0 : -1 );
     }
     grid->Add( m_librariesList, 0, wxEXPAND, 0 );
-    m_browseLibs = new wxButton( m_panel, wxID_ANY, _( "&Browse,,," ) );
-    grid->Add( m_browseLibs, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    if( m_id > 0 )
+    {
+        m_browseLibs = new wxButton( m_panel, wxID_ANY, _( "&Browse,,," ) );
+        grid->Add( m_browseLibs, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    }
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     m_panel->SetSizer( sizer2 );
