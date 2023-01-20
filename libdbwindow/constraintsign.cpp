@@ -98,7 +98,7 @@ ConstraintSign::~ConstraintSign()
 
 void ConstraintSign::initSerializable()
 {
-    XS_SERIALIZE_INT( m_joinType, wxT( "m_joinType" ) );
+    XS_SERIALIZE( m_joinType, "m_joinType" );
 }
 
 void ConstraintSign::SetSign(const wxString &sign)

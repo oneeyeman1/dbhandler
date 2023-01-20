@@ -67,7 +67,7 @@ public:
     DocumentIstream& LoadObject(DocumentIstream& stream) wxOVERRIDE;
     void SetDatabase(Database *db, bool isInit, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &libPath);
     Database *GetDatabase();
-
+    bool SaveNewQuery(const wxString &libraryName, const std::vector<QueryInfo> &queries, const wxString &fileName);
     void AddRemoveField(const TableField *field, QueryFieldChange isAdded);
     void ClearQueryFields() { m_queryFields.clear(); }
     void DeleteQueryFieldForTable(const wxString &tableName, wxString &replace);
@@ -99,8 +99,10 @@ public:
     std::vector<std::wstring> &GetTableNames();
 private:
     void DoUpdate();
+    bool UpdateLibraryWithNewQuery(const wxString &libraryName, const std::vector<QueryInfo> &queries, const wxString &newQuery);
 
     Database *m_db;
+    bool m_querySaveSuccessfl;
     std::vector<MyErdTable *> m_tables;
     std::vector<std::wstring> m_tableNames;
     std::vector<TableField *> m_queryFields;

@@ -198,8 +198,8 @@ MyErdTable::~MyErdTable()
 
 void MyErdTable::MarkSerializableDataMembers()
 {
-    XS_SERIALIZE_BOOL( m_displayTypes, wxT( "display_types" ) );
-    XS_SERIALIZE_BOOL( m_displayComments, wxT( "display_comments" ) );
+    XS_SERIALIZE( m_displayTypes, "display_types" );
+    XS_SERIALIZE( m_displayComments, "display_comments" );
 }
 
 void MyErdTable::UpdateTable()

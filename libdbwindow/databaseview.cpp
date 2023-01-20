@@ -487,6 +487,7 @@ void DrawingView::CreateViewToolBar()
 #else
     m_frame->SetSize( 0, offset, size.x, height );
 #endif
+    m_frame->SetToolBar( m_tb );
 }
 
 // Sneakily gets used for default print/preview as well as drawing on the
@@ -502,9 +503,9 @@ void DrawingView::OnCloseLogWindow(wxCloseEvent &WXUNUSED(event))
 
 void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path)
 {
+    std::map<wxString, std::vector<TableDefinition> > tables;
     int res = -1;
     wxString query, documentName = "";
-    std::map<wxString, std::vector<TableDefinition> > tables;
     wxDynamicLibrary lib;
     bool quickSelect = false;
     m_queries = queries;
@@ -534,13 +535,27 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 if( res == wxID_NEWOBJECT )
                 {
                     NEWQUERY func1 = (NEWQUERY) lib.GetSymbol( "NewQueryDlg" );
-                    res = func1( m_frame, m_source, m_presentation );
-                    wxConfigBase *config = wxConfigBase::Get( false );
-                    wxString path = config->GetPath();
-                    config->SetPath( "Query" );
-                    config->Write( "QuerySource", m_source );
-                    config->Write( "QueryPresentation", m_presentation );
-                    config->SetPath( path );
+                    auto res1 = func1( m_frame, m_source, m_presentation );
+                    if( res1 != wxID_CANCEL )
+                    {
+                        wxConfigBase *config = wxConfigBase::Get( false );
+                        wxString path = config->GetPath();
+                        config->SetPath( "Query" );
+                        config->Write( "QuerySource", m_source );
+                        config->Write( "QueryPresentation", m_presentation );
+                        config->SetPath( path );
+                        auto res2 = SelectTable( false, m_tables, query, quickSelect );
+                        if( res2 == wxID_CANCEL )
+                            return;
+                    }
+                }
+                if( res == wxID_OK )
+                {
+                    GetDocument()->SetFilename( documentName + ".qry" );
+                    if( GetDocument()->OnOpenDocument( documentName + ".qry" ) )
+                    {
+
+                    }
                 }
                 if( res != wxID_CANCEL )
                 {
@@ -574,8 +589,6 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                         m_frame->Layout();
                         sizer->Layout();
                         m_frame->Thaw();
-                        TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-                        res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
 #ifdef __WXGTK__
                         m_parent->SendSizeEvent();
                         wxYield();
@@ -591,18 +604,16 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
             }
             else
             {
-                TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-                res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
+                SelectTable( false, m_tables, query, quickSelect );
             }
         }
         else
         {
-            TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-            res = func2( m_frame, db, tables, GetDocument()->GetTableNames(), false, m_type );
-            m_canvas->Show( true );
+            SelectTable( false, m_tables, query, false );
             sizer->Layout();
+            m_canvas->Show( true );
         }
-        if( m_type == QueryView )
+/*        if( m_type == QueryView )
         {
             if( res != wxID_CANCEL )
             {
@@ -648,11 +659,11 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 tables[m_selectTableName[0]->GetCatalog()].push_back( TableDefinition( m_selectTableName[0]->GetCatalog(), m_selectTableName[0]->GetSchemaName(), m_selectTableName[0]->GetTableName() ) );
         }
     }
-    if( tables.size() > 0 )
+    if( m_tables.size() > 0 )
     {
-        ((DrawingDocument *) GetDocument())->AddTables( tables );
+        ((DrawingDocument *) GetDocument())->AddTables( m_tables );
         m_selectTableName = ((DrawingDocument *) GetDocument())->GetDBTables();
-        ((DatabaseCanvas *) m_canvas)->DisplayTables( tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
+        ((DatabaseCanvas *) m_canvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
         if( m_type == QueryView )
         {
             if( query != L"\n" )
@@ -683,7 +694,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 designMenu->Check( wxID_DATASOURCE, false );
                 m_tb->ToggleTool( wxID_DATASOURCE, false );
             }
-        }
+        }*/
     }
 }
 
@@ -840,12 +851,111 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
 {
-    SelectTable( m_queries, m_path );
+    wxString query = "";
+    if( m_page6 )
+        query = m_page6->GetSyntaxCtrl()->GetValue();
+    SelectTable( false, m_tables, query, false );
 }
 
-void DrawingView::SelectTable(const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path)
+int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect)
 {
-    GetTablesForView( GetDocument()->GetDatabase(), false, queries, path );
+    wxDynamicLibrary lib;
+    int res;
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
+        res = func2( m_frame, GetDocument()->GetDatabase(), tables, GetDocument()->GetTableNames(), isTableView, m_type );
+    }
+    if( m_type == QueryView )
+    {
+        if( res != wxID_CANCEL )
+        {
+            std::vector<TableField *> queryFields = GetDocument()->GetQueryFields();
+            query = "SELECT ";
+            if( !quickSelect && queryFields.size() == 0 )
+                query += "<unknown fields>\n";
+            else
+            {
+                if( !quickSelect )
+                {
+                    for( std::vector<TableField *>::iterator it = queryFields.begin(); it < queryFields.end(); it++ )
+                    {
+                        query += (*it)->GetFieldName();
+                        if( it != queryFields.end() - 1 )
+                            query += ",";
+                    }
+                    query += "\n";
+                }
+                else
+                {
+                    for( std::vector<TableField *>::iterator it = queryFields.begin(); it < queryFields.end(); ++it )
+                    {
+                        query += (*it)->GetFullName();
+                        if( it != queryFields.end() - 1 )
+                            query += ",";
+                        m_fields->AddField( (*it)->GetFullName() );
+                    }
+                    query += "\n";
+                }
+            }
+            query += "FROM ";
+        }
+    }
+    if( quickSelect && m_selectTableName.size()  > 0 )
+    {
+        if( GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType() == L"SQLite" )
+        {
+            wxString name = m_selectTableName[0]->GetSchemaName() + "." + m_selectTableName[0]->GetTableName();
+            tables[m_selectTableName[0]->GetSchemaName()].push_back( TableDefinition( L"", m_selectTableName[0]->GetSchemaName(), m_selectTableName[0]->GetTableName() ) );
+        }
+        else
+            tables[m_selectTableName[0]->GetCatalog()].push_back( TableDefinition( m_selectTableName[0]->GetCatalog(), m_selectTableName[0]->GetSchemaName(), m_selectTableName[0]->GetTableName() ) );
+    }
+    if( res != wxID_CANCEL && m_tables.size() > 0 )
+    {
+        ((DrawingDocument *) GetDocument())->AddTables( m_tables );
+        m_selectTableName = ((DrawingDocument *) GetDocument())->GetDBTables();
+        ((DatabaseCanvas *) m_canvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
+        if( m_type == QueryView )
+        {
+            if( query != L"\n" )
+            {
+                int i = 0;
+                std::vector<MyErdTable *> dbTables = ((DrawingDocument *)GetDocument())->GetTables();
+                for( std::vector<MyErdTable *>::iterator it = dbTables.begin(); it < dbTables.end(); ++it )
+                {
+                    const DatabaseTable *dbTable = (*it)->GetTable();
+                    for( std::vector<TableField *>::const_iterator it1 = dbTable->GetFields().begin(); it1 < dbTable->GetFields().end(); ++it1 )
+                    {
+                        long item = m_page3->GetSourceList()->InsertItem( i++, "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
+                        m_page3->GetSourceList()->SetItemData( item, item );
+                        GetDocument()->AddGroupByAvailableField( "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"", item );
+                    }
+                }
+                m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
+                m_page3->GetDestList()->SetColumnWidth( 0, m_page3->GetDestList()->GetSize().GetWidth() );
+                m_page1->AddQuickSelectSortingFields( GetDocument()->GetAllSorted(), GetDocument()->GetQuerySorted() );
+                m_page6->SetSyntaxText( query );
+                m_edit->SetText( query );
+            }
+            if( quickSelect )
+            {
+                PopuateQueryCanvas();
+                auto position = m_frame->GetMenuBar()->FindMenu( _( "Design" ) );
+                auto designMenu = m_frame->GetMenuBar()->GetMenu( position );
+                designMenu->Check( wxID_DATASOURCE, false );
+                m_tb->ToggleTool( wxID_DATASOURCE, false );
+            }
+        }
+    }
+    return res;
 }
 
 void DrawingView::OnSetProperties(wxCommandEvent &event)
@@ -2409,8 +2519,18 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
         int res = func( m_frame, -1, m_queries, documentName, m_path );
         if( res == wxID_OK )
         {
+            wxString libName;
+            auto found = false;
+            for( std::vector<LibrariesInfo>::iterator it = m_path.begin(); it < m_path.end() && !found; ++it )
+            {
+                if( (*it).m_isActive )
+                {
+                    libName = (*it).m_path;
+                    found = true;
+                }
+            }
             GetDocument()->SetFilename( documentName + ".qry" );
-            if( GetDocument()->OnSaveDocument(documentName + ".qry") )
+            if( GetDocument()->SaveNewQuery( libName, m_queries, documentName + ".qry" ) ) 
             {
 
             }
@@ -2432,4 +2552,9 @@ void DrawingView::OnQuerySaveAsUpdateUI(wxUpdateUIEvent &event)
         event.Enable( true );
     else
         event.Enable( false );
+}
+
+std::map<wxString, std::vector<TableDefinition> > &DrawingView::GetTablesMap() 
+{
+    return m_tables;
 }

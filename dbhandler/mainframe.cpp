@@ -686,7 +686,7 @@ void MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
             query.comment = widthStr;
         }
         children = children->GetNext();
-        if( query.name != "" && query.comment != "" && isQuery )
+        if( query.name != "" && isQuery )
         {
             queries.push_back( query );
             query.name = "";

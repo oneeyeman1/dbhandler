@@ -72,9 +72,9 @@ QueryRoot::QueryRoot()
     m_dbType = "";
     m_query = "";
 
-    XS_SERIALIZE_STRING( m_dbName, "database_name" );
-    XS_SERIALIZE_STRING( m_dbType, "database_type" );
-    XS_SERIALIZE_STRING( m_query, "query" );
+    XS_SERIALIZE( m_dbName, "database_name" );
+    XS_SERIALIZE( m_dbType, "database_type" );
+    XS_SERIALIZE( m_query, "query" );
 }
 
 QueryRoot::QueryRoot(const QueryRoot &root)
@@ -83,14 +83,16 @@ QueryRoot::QueryRoot(const QueryRoot &root)
     m_dbType = root.m_dbType;
     m_query = root.m_query;
 
-    XS_SERIALIZE_STRING( m_dbName, "database_name" );
-    XS_SERIALIZE_STRING( m_dbType, "database_type" );
-    XS_SERIALIZE_STRING( m_query, "query" );
+    XS_SERIALIZE( m_dbName, "database_name" );
+    XS_SERIALIZE( m_dbType, "database_type" );
+    XS_SERIALIZE( m_query, "query" );
 }
 
 DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, wxWindow *parent) : wxSFShapeCanvas()
 {
     m_view = view;
+    m_dbName = dbName;
+    m_dbType = dbType;
     m_showDataTypes = m_showLabels = m_showToolBox = m_showComments = m_showIndexKeys = m_showIntegrity = true;
     m_oldSelectedSign = NULL;
     startPoint.x = 10;
@@ -390,6 +392,12 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     wxPoint pt = event.GetPosition();
     ShapeList selection;
     GetSelectedShapes( selection );
+    wxString query;
+    auto page = dynamic_cast<DrawingView *>( m_view )->GetSyntaxPage();
+    if( page )
+        query = page->GetSyntaxCtrl()->GetValue();
+    else
+        query = "";
     for( ShapeList::iterator it = selection.begin(); it != selection.end(); ++it )
     {
         MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
@@ -522,7 +530,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 mnu.Append( wxID_SELECTALLFIELDS, _( "Select All" ), _( "Select all columns for display" ) );
                 mnu.Append( wxID_DESELECTALLFIELDS, _("Deselect All" ), _( "Deselect all columns for display" ) );
                 mnu.Append( wxID_TABLECLOSE, _( "Close" ), _( "Close Table" ), false );
-                if( !allSelected )
+                if( allSelected == -1 )
                     mnu.FindItem( wxID_DESELECTALLFIELDS )->Enable( false );
                 else if( allSelected == 1 )
                     mnu.FindItem( wxID_SELECTALLFIELDS )->Enable( false );
@@ -600,7 +608,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             dynamic_cast<DrawingView *>( m_view )->HideShowSQLBox( !m_showToolBox );
             break;
         case wxID_SELECTTABLE:
-            dynamic_cast<DrawingView *>( m_view )->SelectTable( m_queries, m_path );
+            dynamic_cast<DrawingView *>( m_view )->SelectTable( false, dynamic_cast<DrawingView *>( m_view )->GetTablesMap(), query, false );
             break;
         case wxID_SELECTALLFIELDS:
             {
@@ -1203,4 +1211,26 @@ void DatabaseCanvas::CheckSQLToolbox()
 void DatabaseCanvas::GetAllSelectedShapes(ShapeList &shapes)
 {
     GetSelectedShapes( shapes );
+}
+
+bool DatabaseCanvas::UpdateCanvasWithQuery()
+{
+    auto success = true;
+    auto root = wxDynamicCast( m_pManager.GetRootItem(), QueryRoot );
+    if( root )
+    {
+        if( root->GetDbType() != m_dbType )
+            wxMessageBox( _( wxString::Format( "The database type you are connected to does not match the database type of the qery you are loading. Connected to %s, loading %s", m_dbType, root->GetDbType() ) ) );
+        if( root->GetDbName() != m_dbName )
+            wxMessageBox( _( wxString::Format( "The name of the database you are connected to does not match the name of the database of the qery you are loading. Connected to %s, loading %s", m_dbName, root->GetDbName() ) ) );
+        ShapeList lstShapes;
+        GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), lstShapes );
+        for( ShapeList::iterator it = lstShapes.begin(); it != lstShapes.end(); ++it )
+        {
+            (( MyErdTable*) *it )->UpdateTable();
+        }
+        Refresh( false );
+    }
+    Refresh();
+    return success;
 }

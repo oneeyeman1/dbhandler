@@ -42,6 +42,7 @@ public:
     void GetAllSelectedShapes(ShapeList &shapes);
     void SetQueryInfo(const std::vector<QueryInfo> &queries) { m_queries = queries; }
     void SetObjectPath(const std::vector<LibrariesInfo> path) { m_path = path; }
+    bool UpdateCanvasWithQuery();
     void SetQueryFields(const std::vector<TableField *> queryFields) { m_queryFields = queryFields; }
 protected:
     bool IsTableDisplayed(const std::wstring &name);
@@ -57,6 +58,7 @@ private:
     ConstraintSign *m_oldSelectedSign;
     std::vector<QueryInfo> m_queries;
     std::vector<LibrariesInfo> m_path;
+    wxString m_dbName, m_dbType;
     std::vector<TableField *> m_queryFields;
 };
 
