@@ -25,12 +25,15 @@ void HeaderGrid::DoChildrenLayout()
     if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect1.GetHeight() > maxRect0.GetHeight() ) )
         maxRect0.SetHeight( currRect1.GetHeight() );
     node = node->GetNext();
-    pShape = (wxSFShapeBase*) node->GetData();
-    currRect2 = pShape->GetBoundingBox();
-    if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect2.GetWidth() > maxRect1.GetWidth() ) )
-        maxRect1.SetWidth( currRect2.GetWidth() );
-    if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect2.GetHeight() > maxRect1.GetHeight() ) )
-        maxRect1.SetHeight( currRect2.GetHeight() );
+    if( node )
+    {
+        pShape = (wxSFShapeBase*) node->GetData();
+        currRect2 = pShape->GetBoundingBox();
+        if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect2.GetWidth() > maxRect1.GetWidth() ) )
+            maxRect1.SetWidth( currRect2.GetWidth() );
+        if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect2.GetHeight() > maxRect1.GetHeight() ) )
+            maxRect1.SetHeight( currRect2.GetHeight() );
+    }
     for( size_t i = 0; i < m_arrCells.GetCount(); i++ )
     {
         pShape = (wxSFShapeBase*) GetChild( m_arrCells[i] );
