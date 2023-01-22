@@ -14,6 +14,7 @@
 #include "FieldShape.h"
 #include "fieldtypeshape.h"
 #include "commentfieldshape.h"
+#include "nametableshape.h"
 #include "commenttableshape.h"
 #include "MyErdTable.h"
 #include "res/gui/key-p.xpm"
@@ -25,7 +26,7 @@ XS_IMPLEMENT_CLONABLE_CLASS(MyErdTable, wxSFRoundRectShape);
 
 MyErdTable::MyErdTable() : wxSFRoundRectShape()
 {
-    m_displayTypes = m_displayComments = true;
+    m_table = nullptr;
     m_columns = 3; 
     m_headerColumns = 2;
     if( !m_displayTypes )
@@ -45,7 +46,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
     SetFill( wxBrush( wxColour( 210, 225, 245 ) ) );
     SetRadius( 15 );
     m_header = new HeaderGrid();
-    m_pLabel = new wxSFTextShape();
+    m_pLabel = new NameTableShape();
     if( m_displayComments )
     {
         m_comment = new CommentTableShape();
@@ -61,7 +62,8 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         m_header->SetDimensions( 1, m_headerColumns );
         m_header->SetFill( *wxTRANSPARENT_BRUSH );
         m_header->SetBorder( *wxTRANSPARENT_PEN );
-        m_header->AcceptChild( wxT( "wxSFTextShape" ) );
+        m_header->AcceptChild( wxT( "NameTableShape" ) );
+        m_header->AcceptChild( wxT( "CommentTableShape" ) );
         m_header->Activate( false );
         SF_ADD_COMPONENT( m_header, wxT( "header" ) );
         //table name
@@ -126,7 +128,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
     AddStyle( sfsLOCK_CHILDREN );
     SetRadius(15);
     m_header = new HeaderGrid();
-    m_pLabel = new wxSFTextShape();
+    m_pLabel = new NameTableShape();
     if( m_displayComments )
     {
         m_comment = new CommentTableShape( table );
@@ -143,7 +145,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         m_header->SetDimensions( 1, m_headerColumns );
         m_header->SetFill( *wxTRANSPARENT_BRUSH );
         m_header->SetBorder( *wxTRANSPARENT_PEN);
-        m_header->AcceptChild( wxT( "wxSFTextShape" ) );
+        m_header->AcceptChild( wxT( "NameTableShape" ) );
         m_header->AcceptChild( wxT( "CommentTableShape" ) );
         m_header->Activate( false );
         SF_ADD_COMPONENT( m_header, wxT( "header" ) );
@@ -198,6 +200,12 @@ MyErdTable::~MyErdTable()
 
 void MyErdTable::MarkSerializableDataMembers()
 {
+/*    wxString temp( m_table->GetCatalog() );
+    XS_SERIALIZE( temp, "table_catalog" );
+    wxString temp1( m_table->GetSchemaName() );
+    XS_SERIALIZE( temp1, "table_schema" );
+    wxString temp2( m_table->GetTableName() );
+    XS_SERIALIZE( temp2, "table_name" );*/
     XS_SERIALIZE( m_displayTypes, "display_types" );
     XS_SERIALIZE( m_displayComments, "display_comments" );
 }
@@ -213,7 +221,7 @@ void MyErdTable::UpdateTable()
     wxSFDiagramManager *manager = GetShapeManager();
     if( manager )
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
-    m_pLabel = new wxSFTextShape();
+    m_pLabel = new NameTableShape();
     if( m_displayComments )
     {
         m_comment = new CommentTableShape();

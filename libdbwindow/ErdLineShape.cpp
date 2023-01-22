@@ -29,6 +29,7 @@
 #include "HeaderGrid.h"
 #include "field.h"
 #include "fieldwindow.h"
+#include "nametableshape.h"
 #include "commenttableshape.h"
 #include "fontcombobox.h"
 #include "MyErdTable.h"

@@ -7,11 +7,13 @@ XS_IMPLEMENT_CLONABLE_CLASS(CommentTableShape, wxSFTextShape);
 CommentTableShape::CommentTableShape(void) : wxSFTextShape()
 {
     m_table = NULL;
+    XS_SERIALIZE( GetText(), "table_comment" );
 }
 
 CommentTableShape::CommentTableShape(DatabaseTable *table) : wxSFTextShape()
 {
     m_table = table;
+    XS_SERIALIZE( GetText(), "table_comment" );
 }
 
 CommentTableShape::~CommentTableShape(void)

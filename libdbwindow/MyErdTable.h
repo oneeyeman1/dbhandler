@@ -30,7 +30,7 @@ private:
     void MarkSerializableDataMembers();
     ViewType m_type;
     HeaderGrid *m_header;
-    wxSFTextShape *m_pLabel;
+    NameTableShape *m_pLabel;
     CommentTableShape *m_comment;
     GridTableShape* m_pGrid;
     DatabaseTable *m_table;

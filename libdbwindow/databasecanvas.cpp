@@ -36,6 +36,7 @@
 #include "constraintsign.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
+#include "nametableshape.h"
 #include "commenttableshape.h"
 #include "fieldtypeshape.h"
 #include "fontcombobox.h"

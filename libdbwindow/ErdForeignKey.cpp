@@ -21,6 +21,7 @@
 #include "HeaderGrid.h"
 #include "constraint.h"
 #include "constraintsign.h"
+#include "nametableshape.h"
 #include "commenttableshape.h"
 #include "MyErdTable.h"
 #include "field.h"

@@ -59,6 +59,7 @@
     <ClInclude Include="IDbAdapter.h" />
     <ClInclude Include="IDbType.h" />
     <ClInclude Include="MyErdTable.h" />
+    <ClInclude Include="nametableshape.h" />
     <ClInclude Include="NArrow.h" />
     <ClInclude Include="OneArrow.h" />
     <ClInclude Include="resource.h" />
@@ -89,6 +90,7 @@
     <ClCompile Include="GUIDatabaseTable.cpp" />
     <ClCompile Include="HeaderGrid.cpp" />
     <ClCompile Include="MyErdTable.cpp" />
+    <ClCompile Include="nametableshape.cpp" />
     <ClCompile Include="NArrow.cpp" />
     <ClCompile Include="OneArrow.cpp" />
     <ClCompile Include="table.cpp" />
