@@ -16,6 +16,7 @@ public:
     std::wstring &GetTableName();
     void DisplayTypes(bool display) { m_displayTypes = display; m_pGrid->ShowDataTypes( display ); if( display ) m_columns++; else m_columns--;  }
     void DisplayComments(bool display) { m_displayComments = display; m_pGrid->ShowComments( display ); if( display ) { m_columns++; m_headerColumns++; } else { m_columns--; m_headerColumns--; } }
+    void SetDataaseTable(const DatabaseTable *table) { m_table = const_cast<DatabaseTable *>( table ); }
 protected:
     void ClearGrid();
     void ClearConnections();
@@ -36,6 +37,7 @@ private:
     DatabaseTable *m_table;
     bool m_displayTypes, m_displayComments;
     int m_columns, m_headerColumns;
+    wxString m_catalogName, m_schemaName, m_tableName;
 };
 
 #endif

@@ -107,6 +107,9 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
 
 MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape()
 {
+    m_catalogName = table->GetCatalog();
+    m_schemaName = table->GetSchemaName();
+    m_tableName = table->GetTableName();
     m_displayTypes = m_displayComments = true;
     m_columns = 3; 
     m_headerColumns = 2;
@@ -200,12 +203,9 @@ MyErdTable::~MyErdTable()
 
 void MyErdTable::MarkSerializableDataMembers()
 {
-/*    wxString temp( m_table->GetCatalog() );
-    XS_SERIALIZE( temp, "table_catalog" );
-    wxString temp1( m_table->GetSchemaName() );
-    XS_SERIALIZE( temp1, "table_schema" );
-    wxString temp2( m_table->GetTableName() );
-    XS_SERIALIZE( temp2, "table_name" );*/
+    XS_SERIALIZE( m_catalogName, "table_catalog" );
+    XS_SERIALIZE( m_schemaName, "table_schema" );
+    XS_SERIALIZE( m_tableName, "table_name" );
     XS_SERIALIZE( m_displayTypes, "display_types" );
     XS_SERIALIZE( m_displayComments, "display_comments" );
 }
