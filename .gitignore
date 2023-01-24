@@ -81,3 +81,4 @@ libdialogs/dialogs.vcxproj.filters
 dbhandler/memory_leak_report.txt
 aclocal*
 Makefile.in
+*.abl
