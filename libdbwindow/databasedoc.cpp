@@ -71,6 +71,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(DrawingDocument, wxDocument);
 
 DrawingDocument::~DrawingDocument()
 {
+    m_successfulLoad = false;
 }
 
 DocumentOstream& DrawingDocument::SaveObject(DocumentOstream& ostream)
@@ -96,7 +97,7 @@ DocumentIstream& DrawingDocument::LoadObject(DocumentIstream& istream)
     auto result = ((DrawingView *) GetFirstView() )->GetDatabaseCanvas()->GetDiagramManager().DeserializeFromXml( GetFilename() );
     if( result )
     {
-        result = ((DrawingView *) GetFirstView() )->GetDatabaseCanvas()->UpdateCanvasWithQuery();
+        m_successfulLoad = true;
     }
 
     return istream;

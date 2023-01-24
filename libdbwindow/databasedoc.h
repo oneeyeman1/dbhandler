@@ -97,6 +97,7 @@ public:
     std::vector<DatabaseTable *> &GetDBTables();
     MyErdTable *GetReferencedTable(const wxString &tableName);
     std::vector<std::wstring> &GetTableNames();
+    bool IsLoadSuccessful() { return m_successfulLoad; }
 private:
     void DoUpdate();
     bool UpdateLibraryWithNewQuery(const wxString &libraryName, const std::vector<QueryInfo> &queries, const wxString &newQuery);
@@ -109,5 +110,6 @@ private:
     std::vector<DatabaseTable *> m_dbTables;
     std::vector<GroupFields> m_groupByFields, m_groupByFieldsAll;
     std::vector<FieldSorter> m_sortedFields, m_sortedFieldsAll;
+    bool m_successfulLoad;
     wxDECLARE_DYNAMIC_CLASS(DrawingDocument);
 };
