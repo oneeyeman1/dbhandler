@@ -1263,6 +1263,6 @@ void DatabaseCanvas::LoadQuery()
         wxString catalog( table->GetCatalogName() );
         wxString schema( table->GetSchemaName() );
         wxString tbl( table->GetTableName() );
-        ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->AddDropTable( catalog, schema, tbl, errors );
+        ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->AddDropTable( catalog.ToStdWstring(), schema.ToStdWstring(), tbl.ToStdWstring(), errors );
     }
 }
