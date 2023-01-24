@@ -49,6 +49,7 @@ public:
     void SetObjectPath(const std::vector<LibrariesInfo> path) { m_path = path; }
     bool UpdateCanvasWithQuery();
     void SetQueryFields(const std::vector<TableField *> queryFields) { m_queryFields = queryFields; }
+    void LoadQuery();
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:

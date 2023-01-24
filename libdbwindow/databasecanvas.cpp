@@ -1251,3 +1251,18 @@ bool DatabaseCanvas::UpdateCanvasWithQuery()
     Refresh();
     return success;
 }
+
+void DatabaseCanvas::LoadQuery()
+{
+    ShapeList listShapes;
+    std::vector<std::wstring> errors;
+    m_pManager.GetShapes( CLASSINFO( MyErdTable ), listShapes );
+    for( ShapeList::iterator it = listShapes.begin(); it != listShapes.end(); it++ )
+    {
+        MyErdTable *table = ((MyErdTable*) *it );
+        wxString catalog( table->GetCatalogName() );
+        wxString schema( table->GetSchemaName() );
+        wxString tbl( table->GetTableName() );
+        ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->AddDropTable( catalog, schema, tbl, errors );
+    }
+}
