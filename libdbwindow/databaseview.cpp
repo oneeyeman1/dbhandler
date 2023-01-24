@@ -553,9 +553,15 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 if( res == wxID_OK )
                 {
                     GetDocument()->SetFilename( documentName + ".qry" );
-                    if( GetDocument()->OnOpenDocument( documentName + ".qry" ) )
+                    if( GetDocument()->OnOpenDocument( documentName + ".qry" ) && ((DrawingDocument *) GetDocument() )->IsLoadSuccessful() )
                     {
-
+                        GetDatabaseCanvas()->LoadQuery();
+//                        result = GetDatabaseCanvas()->UpdateCanvasWithQuery();
+                    }
+                    else
+                    {
+                        wxMessageBox( "Error loading the query from the disk" );
+                        return;
                     }
                 }
                 if( res != wxID_CANCEL )
