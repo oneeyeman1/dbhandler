@@ -488,7 +488,9 @@ void DrawingView::CreateViewToolBar()
 #else
     m_frame->SetSize( 0, offset, size.x, height );
 #endif
+#ifdef __WXMSW__
     m_frame->SetToolBar( m_tb );
+#endif
 }
 
 // Sneakily gets used for default print/preview as well as drawing on the
