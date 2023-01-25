@@ -6,9 +6,9 @@ public:
     CommentTableShape(void);
     CommentTableShape(DatabaseTable *table);
     virtual ~CommentTableShape(void);
-    const DatabaseTable *GetDatabaseTable();
-    void SetDatabaseTable(const DatabaseTable *table);
+    const wxString &GetDatabaseComment();
+    void SetDatabaseComment(const wxString &table);
 private:
-    DatabaseTable *m_table;
+    wxString m_comment;
 };
 
