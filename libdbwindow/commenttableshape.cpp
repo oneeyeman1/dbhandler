@@ -20,7 +20,7 @@ CommentTableShape::~CommentTableShape(void)
 {
 }
 
-const wxString &CommentTableShape::GetDatabaseComment()
+const wxString &CommentTableShape::GetDatabaseComment() const
 {
     return m_comment;
 }

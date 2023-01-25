@@ -6,13 +6,24 @@ XS_IMPLEMENT_CLONABLE_CLASS(NameTableShape, wxSFTextShape);
 
 NameTableShape::NameTableShape() : wxSFTextShape()
 {
-    m_table = nullptr;
-    XS_SERIALIZE( GetText(), "table_name" );
+    m_table = wxEmptyString;
+    XS_SERIALIZE( m_table, "table_name" );
 }
 
 NameTableShape::NameTableShape(DatabaseTable *table) : wxSFTextShape()
 {
+    m_table = table->GetTableName();
+    XS_SERIALIZE( m_table, "table_name" );
+}
+
+const wxString &NameTableShape::GetTableName() const
+{
+    return m_table;
+}
+
+void NameTableShape::SetTableName(const wxString &table)
+{
     m_table = table;
-    XS_SERIALIZE( GetText(), "table_name" );
+    SetText( m_table );
 }
 
