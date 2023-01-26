@@ -558,7 +558,6 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                     if( GetDocument()->OnOpenDocument( documentName + ".qry" ) && ((DrawingDocument *) GetDocument() )->IsLoadSuccessful() )
                     {
                         GetDatabaseCanvas()->LoadQuery();
-//                        result = GetDatabaseCanvas()->UpdateCanvasWithQuery();
                     }
                     else
                     {
