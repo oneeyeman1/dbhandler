@@ -76,6 +76,7 @@ QueryRoot::QueryRoot()
     XS_SERIALIZE( m_dbName, "database_name" );
     XS_SERIALIZE( m_dbType, "database_type" );
     XS_SERIALIZE( m_query, "query" );
+    XS_SERIALIZE( m_tables, "query_tables" );
     XS_SERIALIZE( m_fields, "query_fields" );
 }
 
@@ -84,11 +85,13 @@ QueryRoot::QueryRoot(const QueryRoot &root)
     m_dbName = root.m_dbName;
     m_dbType = root.m_dbType;
     m_query = root.m_query;
+    m_tables = root.m_tables;
     m_fields = root.m_fields;
 
     XS_SERIALIZE( m_dbName, "database_name" );
     XS_SERIALIZE( m_dbType, "database_type" );
     XS_SERIALIZE( m_query, "query" );
+    XS_SERIALIZE( m_tables, "query_tables" );
     XS_SERIALIZE( m_fields, "query_fields" );
 }
 
@@ -1265,4 +1268,5 @@ void DatabaseCanvas::LoadQuery()
         wxString tbl( table->GetTableName() );
         ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->AddDropTable( catalog.ToStdWstring(), schema.ToStdWstring(), tbl.ToStdWstring(), errors );
     }
+    UpdateCanvasWithQuery();
 }
