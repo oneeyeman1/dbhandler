@@ -13,16 +13,20 @@ public:
     void SetDbName(const wxString &name) { m_dbName = name; }
     void SetDbType(const wxString &type) { m_dbType = type; }
     void SetQuery(const wxString &query) { m_query = query; }
+    void AddQeryTable(const std::wstring &tables) { m_tables.Add( tables ); }
     void AddQueryField(const std::wstring &fullName) { m_fields.Add( fullName ); }
     void DeleteQuieryField(const std::wstring &fullName) { m_fields.Remove( fullName ); }
+    void DeleteAllTables() { m_tablesClear();  }
     void DeleteAllQueryFields() { m_fields.Clear(); }
     const wxString &GetDbName() const { return m_dbName; }
     const wxString &GetDbType() const { return m_dbType; }
     const wxString &GetQuery() const { return m_query; }
+    const wxArrayString &GetTables() const { return m_tables; }
     const wxArrayString &GetFields() const { return m_fields; }
 private:
     wxString m_dbName, m_dbType, m_query;
     wxArrayString m_fields;
+    wxArrayString m_tables;
 };
 
 class WXEXPORT DatabaseCanvas : public wxSFShapeCanvas
