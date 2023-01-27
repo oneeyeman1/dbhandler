@@ -6,7 +6,9 @@ public:
     NameTableShape();
     NameTableShape(DatabaseTable *table);
     virtual ~NameTableShape() {};
+    void SetTableName(const wxString &table);
+    const wxString &GetTableName() const;
 private:
-    DatabaseTable *m_table;
+    wxString m_table;
 };
 

@@ -51,6 +51,8 @@
 		E3AC9DCF1DFD16EF0083DD62 /* GridTableShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3AC9DCD1DFD16EF0083DD62 /* GridTableShape.cpp */; };
 		E3AC9DD01DFD16EF0083DD62 /* GridTableShape.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AC9DCE1DFD16EF0083DD62 /* GridTableShape.h */; };
 		E3B8E3B824E2F92500346516 /* liblibpropertieshandlers.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3B8E3B724E2F92500346516 /* liblibpropertieshandlers.dylib */; };
+		E3DCD33B29811A99007CD2A3 /* nametableshape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DCD33929811A99007CD2A3 /* nametableshape.cpp */; };
+		E3DCD33C29811A99007CD2A3 /* nametableshape.h in Headers */ = {isa = PBXBuildFile; fileRef = E3DCD33A29811A99007CD2A3 /* nametableshape.h */; };
 		E3E91D1E1D6D467C00675CF8 /* databasecanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D131D6D467C00675CF8 /* databasecanvas.cpp */; };
 		E3E91D1F1D6D467C00675CF8 /* databasecanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D141D6D467C00675CF8 /* databasecanvas.h */; };
 		E3E91D201D6D467C00675CF8 /* databasedoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D151D6D467C00675CF8 /* databasedoc.cpp */; };
@@ -115,6 +117,8 @@
 		E3AC9DCE1DFD16EF0083DD62 /* GridTableShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridTableShape.h; sourceTree = "<group>"; };
 		E3B8E3B724E2F92500346516 /* liblibpropertieshandlers.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = liblibpropertieshandlers.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3B92D8D24E27B570035428C /* liblibdialogs.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = liblibdialogs.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3DCD33929811A99007CD2A3 /* nametableshape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nametableshape.cpp; sourceTree = "<group>"; };
+		E3DCD33A29811A99007CD2A3 /* nametableshape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nametableshape.h; sourceTree = "<group>"; };
 		E3E91D131D6D467C00675CF8 /* databasecanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasecanvas.cpp; sourceTree = "<group>"; };
 		E3E91D141D6D467C00675CF8 /* databasecanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasecanvas.h; sourceTree = "<group>"; };
 		E3E91D151D6D467C00675CF8 /* databasedoc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasedoc.cpp; sourceTree = "<group>"; };
@@ -170,6 +174,8 @@
 		E38708CB1D2B61E9004EF478 /* libdbwindow */ = {
 			isa = PBXGroup;
 			children = (
+				E3DCD33929811A99007CD2A3 /* nametableshape.cpp */,
+				E3DCD33A29811A99007CD2A3 /* nametableshape.h */,
 				E3607DD023C4422900267C14 /* fieldtypeshape.cpp */,
 				E3607DD123C4422900267C14 /* fieldtypeshape.h */,
 				E3607DC42379285A00267C14 /* taborder.cpp */,
@@ -245,6 +251,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3DCD33C29811A99007CD2A3 /* nametableshape.h in Headers */,
 				E38709B61D4CF564004EF478 /* column.h in Headers */,
 				E3E91D211D6D467C00675CF8 /* databasedoc.h in Headers */,
 				E3E91D281D6D467C00675CF8 /* GUIDatabaseTable.h in Headers */,
@@ -332,6 +339,7 @@
 				E39573F11F004F2F00FA817A /* commenttableshape.cpp in Sources */,
 				E3AC9DCF1DFD16EF0083DD62 /* GridTableShape.cpp in Sources */,
 				E3607DC62379285A00267C14 /* taborder.cpp in Sources */,
+				E3DCD33B29811A99007CD2A3 /* nametableshape.cpp in Sources */,
 				E32A501C2260236300A57BD1 /* designcanvas.cpp in Sources */,
 				E3E91D2C1D821A5600675CF8 /* MyErdTable.cpp in Sources */,
 				E32A502422A3A4B200A57BD1 /* designfield.cpp in Sources */,
