@@ -94,9 +94,29 @@ DocumentIstream& DrawingDocument::LoadObject(DocumentIstream& istream)
 #else
     wxTextInputStream stream( istream );
 #endif
+    std::vector<std::wstring> errors;
     auto result = ((DrawingView *) GetFirstView() )->GetDatabaseCanvas()->GetDiagramManager().DeserializeFromXml( GetFilename() );
     if( result )
     {
+        auto tables = dynamic_cast<QueryRoot *>( ((DrawingView *) GetFirstView() )->GetDatabaseCanvas()->GetDiagramManager().GetRootItem() )->GetTables();
+        for( auto name : tables )
+        {
+            wxString catalog, schema, table;
+            if( m_db->GetTableVector().m_type == L"SQLite" )
+            {
+                catalog = "";
+                schema = name.substr( 0, name.find( '.' ) );
+                table = name.substr( name.find( '.' ) + 1 );
+            }
+            else
+            {
+                catalog = name.substr( 0, name.find( '.' ) );
+                schema = name.substr( name.find( '.' ) + 1, name.rfind( '.' ) );
+                table = name.substr( name.rfind( '.' ) );
+            }
+            m_tableNames.push_back( table.ToStdWstring() );
+            m_db->AddDropTable( catalog.ToStdWstring(), schema.ToStdWstring(), table.ToStdWstring(), errors );
+        }
         m_successfulLoad = true;
     }
 
@@ -152,6 +172,7 @@ void DrawingDocument::AddTables(const std::map<wxString,std::vector<TableDefinit
                         MyErdTable *table = new MyErdTable( dbTable, dynamic_cast<DrawingView *>( GetFirstView() )->GetViewType() );
                         m_tables.push_back( table );
                         m_tableNames.push_back( table->GetTableName() );
+                        dynamic_cast<QueryRoot *>( dynamic_cast<DrawingView *>( GetFirstView() )->GetDatabaseCanvas()->GetDiagramManager().GetRootItem() )->AddQueryTable( name.ToStdWstring() );
                         found = true;
                     }
                 }

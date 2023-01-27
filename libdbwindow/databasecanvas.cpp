@@ -1255,18 +1255,40 @@ bool DatabaseCanvas::UpdateCanvasWithQuery()
     return success;
 }
 
-void DatabaseCanvas::LoadQuery()
+void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<DatabaseTable *> > &tables)
 {
     ShapeList listShapes;
     std::vector<std::wstring> errors;
+    dynamic_cast<DrawingView *>( m_view )->GetSyntaxPage()->GetSyntaxCtrl()->SetValue( dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->GetQuery() );
     m_pManager.GetShapes( CLASSINFO( MyErdTable ), listShapes );
     for( ShapeList::iterator it = listShapes.begin(); it != listShapes.end(); it++ )
     {
+        auto found = false;
         MyErdTable *table = ((MyErdTable*) *it );
-        wxString catalog( table->GetCatalogName() );
-        wxString schema( table->GetSchemaName() );
-        wxString tbl( table->GetTableName() );
-        ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->AddDropTable( catalog.ToStdWstring(), schema.ToStdWstring(), tbl.ToStdWstring(), errors );
+        for( auto it1 = tables.begin(); it1 != tables.end() && !found; ++it1 )
+        {
+            for( auto it2 = (*it1).second.begin(); it2 < (*it1).second.end() && !found; ++it2 )
+            {
+                auto dbTable = table->GetTable();
+                if( m_dbType == L"SQLite" )
+                {
+                    if( table->GetSchemaName() == ( *it2 )->GetSchemaName() && table->GetTableName() == ( *it2 )->GetTableName() )
+                    {
+                        found = true;
+                        table->SetDataaseTable( (*it2) );
+                    }
+                }
+                else
+                {
+                    if( table->GetCatalogName() == (*it2)->GetCatalog() && table->GetSchemaName() == ( *it2 )->GetSchemaName() && table->GetTableName() == ( *it2 )->GetTableName() )
+                    {
+                        found = true;
+                        table->SetDataaseTable( (*it2) );
+                    }
+                }
+            }
+        }
+        found = false;
     }
     UpdateCanvasWithQuery();
 }

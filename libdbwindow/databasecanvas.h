@@ -13,10 +13,10 @@ public:
     void SetDbName(const wxString &name) { m_dbName = name; }
     void SetDbType(const wxString &type) { m_dbType = type; }
     void SetQuery(const wxString &query) { m_query = query; }
-    void AddQeryTable(const std::wstring &tables) { m_tables.Add( tables ); }
+    void AddQueryTable(const std::wstring &tables) { m_tables.Add( tables ); }
     void AddQueryField(const std::wstring &fullName) { m_fields.Add( fullName ); }
     void DeleteQuieryField(const std::wstring &fullName) { m_fields.Remove( fullName ); }
-    void DeleteAllTables() { m_tablesClear();  }
+    void DeleteAllTables() { m_tables.Clear();  }
     void DeleteAllQueryFields() { m_fields.Clear(); }
     const wxString &GetDbName() const { return m_dbName; }
     const wxString &GetDbType() const { return m_dbType; }
@@ -53,7 +53,7 @@ public:
     void SetObjectPath(const std::vector<LibrariesInfo> path) { m_path = path; }
     bool UpdateCanvasWithQuery();
     void SetQueryFields(const std::vector<TableField *> queryFields) { m_queryFields = queryFields; }
-    void LoadQuery();
+    void LoadQuery(const std::map<std::wstring, std::vector<DatabaseTable *> >&tables);
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:
