@@ -554,6 +554,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 }
                 if( res == wxID_OK )
                 {
+                    wxBusyCursor wait;
                     GetDocument()->SetFilename( documentName + ".qry" );
                     if( GetDocument()->OnOpenDocument( documentName + ".qry" ) && ((DrawingDocument *) GetDocument() )->IsLoadSuccessful() )
                     {

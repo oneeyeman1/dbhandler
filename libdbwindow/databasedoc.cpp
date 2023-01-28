@@ -115,7 +115,9 @@ DocumentIstream& DrawingDocument::LoadObject(DocumentIstream& istream)
                 table = name.substr( name.rfind( '.' ) );
             }
             m_tableNames.push_back( table.ToStdWstring() );
-            m_db->AddDropTable( catalog.ToStdWstring(), schema.ToStdWstring(), table.ToStdWstring(), errors );
+            if( m_db->AddDropTable( catalog.ToStdWstring(), schema.ToStdWstring(), table.ToStdWstring(), errors ) )
+                for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); ++it )
+                    wxMessageBox( (*it) );
         }
         m_successfulLoad = true;
     }
@@ -171,7 +173,7 @@ void DrawingDocument::AddTables(const std::map<wxString,std::vector<TableDefinit
                         DatabaseTable *dbTable = (*it2);
                         MyErdTable *table = new MyErdTable( dbTable, dynamic_cast<DrawingView *>( GetFirstView() )->GetViewType() );
                         m_tables.push_back( table );
-                        m_tableNames.push_back( table->GetTableName() );
+                        m_tableNames.push_back( table->GetTableName().ToStdWstring() );
                         dynamic_cast<QueryRoot *>( dynamic_cast<DrawingView *>( GetFirstView() )->GetDatabaseCanvas()->GetDiagramManager().GetRootItem() )->AddQueryTable( name.ToStdWstring() );
                         found = true;
                     }

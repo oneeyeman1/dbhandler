@@ -132,7 +132,7 @@ void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition
     std::vector<MyErdTable *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
     for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
     {
-        if( !IsTableDisplayed( (*it)->GetTableName() ) )
+        if( !IsTableDisplayed( (*it)->GetTableName().ToStdWstring() ) )
         {
             std::vector<TableField *> fields = const_cast<DatabaseTable *>( (*it)->GetTable() )->GetFields();
             m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
@@ -143,8 +143,8 @@ void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition
             {
                 for( std::vector<TableField *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
                 {
-                    dynamic_cast<DrawingView *>( m_view )->GetWherePage()->AppendField( (*it)->GetTableName() + L"." + (*it1)->GetFieldName() );
-                    dynamic_cast<DrawingView *>( m_view )->GetHavingPage()->AppendField( (*it)->GetTableName() + L"." + (*it1)->GetFieldName() );
+                    dynamic_cast<DrawingView *>( m_view )->GetWherePage()->AppendField( (*it)->GetTableName().ToStdWstring() + L"." + (*it1)->GetFieldName() );
+                    dynamic_cast<DrawingView *>( m_view )->GetHavingPage()->AppendField( (*it)->GetTableName().ToStdWstring() + L"." + (*it1)->GetFieldName() );
                 }
             }
             wxRect rect = (*it)->GetBoundingBox();
@@ -1272,7 +1272,7 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
                 auto dbTable = table->GetTable();
                 if( m_dbType == L"SQLite" )
                 {
-                    if( table->GetSchemaName() == ( *it2 )->GetSchemaName() && table->GetTableName() == ( *it2 )->GetTableName() )
+                    if( table->GetSchemaName() == (*it2)->GetSchemaName() && table->GetTableName() == (*it2)->GetTableName() )
                     {
                         found = true;
                         table->SetDataaseTable( (*it2) );
@@ -1280,7 +1280,7 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
                 }
                 else
                 {
-                    if( table->GetCatalogName() == (*it2)->GetCatalog() && table->GetSchemaName() == ( *it2 )->GetSchemaName() && table->GetTableName() == ( *it2 )->GetTableName() )
+                    if( table->GetCatalogName() == (*it2)->GetCatalog() && table->GetSchemaName() == (*it2)->GetSchemaName() && table->GetTableName() == (*it2)->GetTableName() )
                     {
                         found = true;
                         table->SetDataaseTable( (*it2) );
