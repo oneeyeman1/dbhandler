@@ -240,3 +240,12 @@ const wxTextCtrl *GetObjectName::GetCommentObject() const
 {
     return m_commentsText;
 }
+
+bool GetObjectName::isUpdating()
+{
+    if( m_objectList->FindItem( -1, m_painterName->GetValue() ) != wxNOT_FOUND )
+        return true;
+    else
+        return false;
+}
+

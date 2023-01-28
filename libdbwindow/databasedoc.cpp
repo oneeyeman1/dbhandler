@@ -497,10 +497,10 @@ bool DrawingDocument::UpdateLibraryWithNewQuery(const wxString &libraryName, con
     return m_querySaveSuccessfl;
 }
 
-bool DrawingDocument::SaveNewQuery(const wxString &libraryName, const std::vector<QueryInfo> &queries, const wxString &fileName)
+bool DrawingDocument::SaveNewQuery(const wxString &libraryName, const std::vector<QueryInfo> &queries, const wxString &fileName, bool update)
 {
     m_querySaveSuccessfl = OnSaveDocument( fileName );
-    if( m_querySaveSuccessfl )
+    if( m_querySaveSuccessfl && !update )
         m_querySaveSuccessfl = UpdateLibraryWithNewQuery( libraryName, queries, fileName.substr( 0, fileName.rfind( "." ) ) );
     return m_querySaveSuccessfl;
 }

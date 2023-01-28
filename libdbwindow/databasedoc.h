@@ -67,7 +67,7 @@ public:
     DocumentIstream& LoadObject(DocumentIstream& stream) wxOVERRIDE;
     void SetDatabase(Database *db, bool isInit, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &libPath);
     Database *GetDatabase();
-    bool SaveNewQuery(const wxString &libraryName, const std::vector<QueryInfo> &queries, const wxString &fileName);
+    bool SaveNewQuery(const wxString &libraryName, const std::vector<QueryInfo> &queries, const wxString &fileName, bool update);
     void AddRemoveField(const TableField *field, QueryFieldChange isAdded);
     void ClearQueryFields() { m_queryFields.clear(); }
     void DeleteQueryFieldForTable(const wxString &tableName, wxString &replace);

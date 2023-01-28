@@ -115,7 +115,7 @@ typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, 
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
-typedef int (*CHOOSEOBJECT)(wxWindow *, int, std::vector<QueryInfo> &, wxString &, std::vector<LibrariesInfo> &path);
+typedef int (*CHOOSEOBJECT)(wxWindow *, int, std::vector<QueryInfo> &, wxString &, std::vector<LibrariesInfo> &path, bool &update);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
 typedef int (*QUICKSELECT)(wxWindow *, const Database *, std::vector<DatabaseTable *> &, const std::vector<TableField *> &, std::vector<FieldSorter> &allSorted, std::vector<FieldSorter> &qerySorted);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, const std::wstring &);
@@ -528,8 +528,9 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
         {
             if( init )
             {
+                bool update;
                 CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-                res = func( m_frame, 1, m_queries, documentName, m_path );
+                res = func( m_frame, 1, m_queries, documentName, m_path, update );
                 if( res == wxID_CANCEL )
                 {
                     m_frame->Close();
@@ -2524,8 +2525,9 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
 #endif
     if( lib.IsLoaded() )
     {
+        bool update;
         CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
-        int res = func( m_frame, -1, m_queries, documentName, m_path );
+        int res = func( m_frame, -1, m_queries, documentName, m_path, update );
         if( res == wxID_OK )
         {
             wxString libName;
@@ -2539,7 +2541,7 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
                 }
             }
             GetDocument()->SetFilename( documentName + ".qry" );
-            if( GetDocument()->SaveNewQuery( libName, m_queries, documentName + ".qry" ) ) 
+            if( GetDocument()->SaveNewQuery( libName, m_queries, documentName + ".qry", update ) ) 
             {
 
             }

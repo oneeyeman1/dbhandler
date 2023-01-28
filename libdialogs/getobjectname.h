@@ -30,6 +30,7 @@ public:
     const wxTextCtrl *GetDocumentName() const;
     const wxTextCtrl *GetCommentObject() const;
     std::vector<LibrariesInfo> &GetLibrariesVector() { return m_path; }
+    bool isUpdating();
 protected:
     void set_properties();
     void OnButtonNew(wxCommandEvent &event);
