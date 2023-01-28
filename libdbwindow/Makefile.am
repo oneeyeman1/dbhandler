@@ -45,7 +45,6 @@ libdbwindow_la_SOURCES =  \
 	commentfieldshape.h \
 	commentfieldshape.cpp \
 	commenttableshape.cpp \
-	commenttableshape.h \
 	designcanvas.cpp \
 	designcanvas.h \
 	designfield.cpp \
@@ -58,11 +57,14 @@ libdbwindow_la_SOURCES =  \
 	fontcombobox.h \
 	taborder.cpp \
 	taborder.h \
+	commenttableshape.h \
 	fieldtypeshape.cpp \
 	fieldtypeshape.h \
 	bold.h \
 	italic.h \
-	underline.h
+	underline.h \
+	nametableshape.cpp \
+	nametableshape.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \
