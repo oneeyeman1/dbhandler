@@ -8,6 +8,7 @@
 #include "wx/dynlib.h"
 #include "wx/thread.h"
 #include "wx/msgdlg.h"
+#include "wx/xml/xml.h"
 #include "database.h"
 #include "newtablehandler.h"
 

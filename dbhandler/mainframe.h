@@ -73,6 +73,7 @@ private:
     wxFileSystemWatcher *m_oldPGWatcher;
 #endif
     std::vector<QueryInfo> queries;
+    wxXmlDocument doc;
     wxDECLARE_EVENT_TABLE();
 };
 

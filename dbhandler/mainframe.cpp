@@ -644,7 +644,8 @@ void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
 
 void MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
 {
-    wxXmlDocument doc;
+    if( doc.GetRoot() )
+        return;
     for( std::vector<LibrariesInfo>::const_iterator it = path.begin(); it < path.end(); ++it )
     {
         if( (*it).m_isActive )
