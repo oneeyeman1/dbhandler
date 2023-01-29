@@ -381,7 +381,25 @@ void DrawingView::CreateViewToolBar()
         CreateQueryMenu( QuerySyntaxMenu );
         m_tb->AddTool( wxID_NEW, _( "New" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
+#ifdef __WXMSW__
+        wxBitmapBundle save;
+        HANDLE gs_wxMainThread = NULL;
+        const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
+        const void* data = nullptr;
+        size_t size = 0;
+        if( !wxLoadUserResource( &data, &size, "save", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            save = wxBitmapBundle::FromSVG( (const char *) data1, wxSize( 16, 16 ) );
+        }
+        m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), save );
+#else
         m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
+##endif
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
         m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
