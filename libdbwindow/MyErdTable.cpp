@@ -52,7 +52,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         m_comment = new CommentTableShape();
         m_comment->SetId( 1001 );
     }
-    m_pGrid = new GridTableShape( DatabaseView );
+    m_pGrid = new GridTableShape( m_type );
     m_pLabel->SetId( 1000 );
     if( m_header && m_pLabel && m_pGrid )
     {
