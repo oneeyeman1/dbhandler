@@ -32,6 +32,62 @@ XS_IMPLEMENT_CLONABLE_CLASS(ConstraintSign, wxSFRectShape);
 ConstraintSign::ConstraintSign() : wxSFRectShape()
 {
     m_joinType = 0;
+    AcceptChild( "GridShape" );
+    m_grid = new wxSFFlexGridShape;
+    if( m_grid )
+    {
+        m_grid->SetRectSize( 20, 20 );
+        m_grid->SetRelativePosition( 0, 1 );
+        m_grid->SetVAlign( wxSFShapeBase::valignTOP );
+        m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        m_grid->SetDimensions( 1, 1 );
+        m_grid->SetFill( *wxTRANSPARENT_BRUSH );
+        m_grid->SetBorder( *wxTRANSPARENT_PEN);
+        m_grid->SetHAlign( wxSFShapeBase::halignLEFT );
+        m_grid->AcceptChild( "wxSFBitmapShape" );
+        m_grid->AcceptChild( "wxSFTextShape" );
+        SF_ADD_COMPONENT( m_grid, wxT( "main_grid" ) );
+        if( m_type == DatabaseView )
+        {
+            m_fKey = new wxSFBitmapShape;
+            if( m_fKey )
+            {
+                m_fKey->SetId( 1000 );
+                m_fKey->SetVAlign( wxSFShapeBase::valignMIDDLE );
+                m_fKey->SetHAlign( wxSFShapeBase::halignCENTER );
+                m_fKey->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+                if( m_grid->InsertToGrid( 1, 0, m_fKey ) )
+                    m_fKey->CreateFromXPM( key_f_xpm );
+                else
+                    delete m_fKey;
+            }
+        }
+        else
+        {
+            m_sign = new wxSFTextShape;
+            if( m_sign )
+            {
+                m_sign->SetId( 1000 );
+                m_sign->SetVAlign( wxSFShapeBase::valignMIDDLE );
+                m_sign->SetHAlign( wxSFShapeBase::halignCENTER );
+                m_sign->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+                if( m_grid->InsertToGrid( 1, 0, m_sign ) )
+                {
+                    switch( m_joinType )
+                    {
+                        case 0:
+                        case 1:
+                        case 2:
+                            m_sign->SetText( "=" );
+                            break;
+                    }
+                }
+                else
+                    delete m_sign;
+            }
+        }
+    }
+    initSerializable();
 }
 
 ConstraintSign::ConstraintSign(ViewType type, int joinType) : wxSFRectShape()
@@ -88,6 +144,7 @@ ConstraintSign::ConstraintSign(ViewType type, int joinType) : wxSFRectShape()
             }
         }
     }
+    initSerializable();
 }
 
 ConstraintSign::~ConstraintSign()

@@ -45,15 +45,18 @@
 
 using namespace wxSFCommonFcn;
 
-ErdLineShape::ErdLineShape()
+ErdLineShape::ErdLineShape() : wxSFRoundOrthoLineShape()
 {
     m_constraint = NULL;
     m_signConstraint = NULL;
     m_isEnabled = true;
     RemoveStyle( sfsSHOW_HANDLES );
+    AcceptChild( "ConstraintSign" );
+//    XS_SERIALIZE();
+//    XS_SERIALIZE();
 }
 
-ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDiagramManager &pManager)
+ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDiagramManager &pManager) : wxSFRoundOrthoLineShape()
 {
     ShapeList listShapes;
     SerializableList sourceFields, targetFields;
@@ -108,6 +111,8 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDia
     }
     RemoveStyle( sfsSHOW_HANDLES );
     m_isEnabled = true;
+//    XS_SERIALIZE();
+//    XS_SERIALIZE();
 }
 
 ErdLineShape::~ErdLineShape()
