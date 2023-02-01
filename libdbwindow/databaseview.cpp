@@ -397,6 +397,8 @@ void DrawingView::CreateViewToolBar()
             save = wxBitmapBundle::FromSVG( (const char *) data, wxSize( 16, 16 ) );
         }
         m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), save );
+#elif __WXOSX__
+        m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), wxBitmapBundle::FromSVGResource( "save", wxSize( 16, 16 ) ) );
 #else
         m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
 #endif
