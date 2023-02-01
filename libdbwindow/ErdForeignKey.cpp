@@ -33,8 +33,6 @@ XS_IMPLEMENT_CLONABLE_CLASS(ErdForeignKey,wxSFRoundOrthoLineShape);
 ErdForeignKey::ErdForeignKey():ErdLineShape()
 {
     m_pConstraint = NULL;
-	
-    EnableSerialization( false );
 }
 
 ErdForeignKey::ErdForeignKey(Constraint* pConstraint, ViewType type, const wxSFDiagramManager &pManager):ErdLineShape( pConstraint, type, pManager )
@@ -57,7 +55,6 @@ ErdForeignKey::ErdForeignKey(Constraint* pConstraint, ViewType type, const wxSFD
     SetTrgArrow( CLASSINFO( OneArrow ) );
     SetSrcArrow( CLASSINFO( NArrow ) );
     SetDockPoint( sfdvLINESHAPE_DOCKPOINT_CENTER );
-    EnableSerialization( false );
 }
 
 ErdForeignKey::ErdForeignKey(const ErdForeignKey& obj):ErdLineShape(obj)
