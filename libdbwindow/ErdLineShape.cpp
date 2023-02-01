@@ -47,13 +47,14 @@ using namespace wxSFCommonFcn;
 
 ErdLineShape::ErdLineShape() : wxSFRoundOrthoLineShape()
 {
-    m_constraint = NULL;
-    m_signConstraint = NULL;
+    m_constraint = nullptr;
+    m_signConstraint = nullptr;
+    m_targetFld = nullptr;
     m_isEnabled = true;
     RemoveStyle( sfsSHOW_HANDLES );
     AcceptChild( "ConstraintSign" );
-//    XS_SERIALIZE();
-//    XS_SERIALIZE();
+    XS_SERIALIZE( m_source, "source_name" );
+    XS_SERIALIZE( m_target, "target_name" );
 }
 
 ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDiagramManager &pManager) : wxSFRoundOrthoLineShape()
@@ -80,9 +81,15 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDia
     for( ShapeList::iterator it = listShapes.begin(); it != listShapes.end() && !found; ++it )
     {
         if( dynamic_cast<MyErdTable *>( (*it) )->GetTableName() == const_cast<DatabaseTable *>( m_constraint->GetFKTable() )->GetTableName() )
+        {
             m_sourceTbl = dynamic_cast<MyErdTable *>( (*it) );
+            m_source = m_sourceTbl->GetTable()->GetSchemaName() + "." + m_sourceTbl->GetTable()->GetTableName();
+        }
         if( dynamic_cast<MyErdTable *>( (*it) )->GetTableName() == m_constraint->GetRefTable() )
+        {
             m_targetTbl = dynamic_cast<MyErdTable *>( (*it) );
+            m_target = m_targetTbl->GetTable()->GetSchemaName() + "." + m_targetTbl->GetTable()->GetTableName();
+        }
         if( m_sourceTbl && m_targetTbl )
             found = true;
     }
@@ -111,8 +118,8 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDia
     }
     RemoveStyle( sfsSHOW_HANDLES );
     m_isEnabled = true;
-//    XS_SERIALIZE();
-//    XS_SERIALIZE();
+    XS_SERIALIZE( m_source, "source_name" );
+    XS_SERIALIZE( m_target, "target_name" );
 }
 
 ErdLineShape::~ErdLineShape()
@@ -185,7 +192,9 @@ wxRealPoint ErdLineShape::GetModTrgPoint()
     }
     else
     {
-        wxRect shpBB = pTrgShape->GetBoundingBox();
+        wxRect shpBB;
+        if( pTrgShape )
+            shpBB = pTrgShape->GetBoundingBox();
 //        if( m_type == DatabaseView )
 //        {
             y = m_targetFld->GetBoundingBox().GetHeight() / 2;

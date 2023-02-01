@@ -28,6 +28,7 @@ private:
     MyErdTable *m_sourceTbl, *m_targetTbl;
     FieldShape *m_sourceFld, *m_targetFld;
     bool m_isEnabled;
+    wxString m_source, m_target;
 };
 
 #endif
