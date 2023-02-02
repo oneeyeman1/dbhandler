@@ -386,7 +386,7 @@ void DrawingView::CreateViewToolBar()
         {
             table = wxBitmapBundle::FromSVG( (const char *) dataTable, wxSize( 16, 16 ) );
         }
-        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), save );
+        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), table );
 #elif __WXOSX__
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ) );
 #else
@@ -426,7 +426,25 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
-        m_tb->InsertTool( 3, wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+#ifdef __WXMSW__
+        wxBitmapBundle table;
+        const void* dataTable = nullptr;
+        size_t sizeTable = 0;
+        if( !wxLoadUserResource( &dataTable, &sizeTable, "table", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            table = wxBitmapBundle::FromSVG( (const char *) dataTable, wxSize( 16, 16 ) );
+        }
+        m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), table, table, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
+#elif __WXOSX__
+        m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
+#else
+        m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+#endif
         m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( previewIcon, WXSIZEOF( previewIcon ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
         m_tb->ToggleTool( wxID_DATASOURCE, true );
         m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
