@@ -441,7 +441,7 @@ void DrawingView::CreateViewToolBar()
         }
         m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), table, table, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
 #elif __WXOSX__
-        m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
+        m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( "table", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
 #else
         m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
 #endif
