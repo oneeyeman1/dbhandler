@@ -15,7 +15,6 @@
 
 //#ifdef __WXOSX__
 #include "../dbhandler/res/database_profile.xpm"
-#include "../dbhandler/res/table.xpm"
 #include "../dbhandler/res/properties.xpm"
 #include "res/gui/key-f1.xpm"
 #include "../dbhandler/res/quit.xpm"
@@ -27,6 +26,7 @@
 #include "bold.h"
 #include "italic.h"
 #include "underline.h"
+#include "table_svg.h"
 #endif
 #include "res/gui/preview.c"
 #include "res/gui/sql.h"
@@ -371,7 +371,27 @@ void DrawingView::CreateViewToolBar()
     {
         CreateDBMenu();
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmap( table ), wxBitmap( table ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+#ifdef __WXMSW__
+        wxBitmapBundle table;
+        HANDLE gs_wxMainThread = NULL;
+        const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
+        const void* dataTable = nullptr;
+        size_t sizeTable = 0;
+        if( !wxLoadUserResource( &dataTable, &sizeTable, "table", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            table = wxBitmapBundle::FromSVG( (const char *) dataTable, wxSize( 16, 16 ) );
+        }
+        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), save );
+#elif __WXOSX__
+        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ) );
+#else
+        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+#endif
         m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Database View" ) );
