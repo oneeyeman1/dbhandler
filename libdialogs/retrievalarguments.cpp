@@ -271,7 +271,6 @@ void RetrievalArguments::UpdateHeader()
 
 void RetrievalArguments::OnKeyDown(wxKeyEvent &event)
 {
-    wxLogDebug( "OnKeyDown %d", m_lines.size() );
     if( event.GetKeyCode() == WXK_UP )
     {
         // range check happens inside method anyway
