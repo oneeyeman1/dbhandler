@@ -38,6 +38,7 @@ protected:
     void SetActiveLine( int line );
 
 private:
+    void AddArgumentsLine();
     wxPanel *m_panel, *argPanel, *m_mainPanel, *dummy_1, *dummy_2, *dummy_3, *dummy_4;
     wxBoxSizer *sizer;
     wxBitmap bmp;

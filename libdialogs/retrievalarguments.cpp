@@ -92,6 +92,8 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     wxString pos;
     for( std::vector<QueryArguments>::iterator it = arguments.begin(); it < arguments.end(); ++it )
     {
+        if( it != arguments.begin() )
+            AddArgumentsLine();
         pos.Printf("%d", (*it).m_pos );
         wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
         statBmp->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
@@ -177,26 +179,7 @@ void RetrievalArguments::OnSize(wxSizeEvent &event)
 
 void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
 {
-    Freeze();
-    // if( !m_lines.empty() )
-        // (*it).m_pointer->SetBitmap( wxNullBitmap );
-    wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
-    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%lu", m_lines.size() + 1 ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
-    wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
-    name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
-    name->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    TypeComboBox *type = new TypeComboBox( args, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
-    type->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    type->Bind( wxEVT_KILL_FOCUS, &RetrievalArguments::OnKillFocus, this );
-    fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT | wxRESERVE_SPACE_EVEN_IF_HIDDEN, 8 );
-    fgs->Add( number, 0, wxRIGHT, 8 );
-    fgs->Add( name, 1, wxEXPAND | wxRIGHT, 8 );
-    fgs->Add( type, 0, wxEXPAND | wxRIGHT, 8 );
-    m_lines.push_back( QueryLines( statBmp, number, name, type ) );
-    m_lines.back().m_name->SetFocus();
-    // m_currentLine = numArgs;   // Let SetFocus handle that
-    fgs->Layout();
-    Thaw();
+    AddArgumentsLine();
 }
 
 void RetrievalArguments::OnInsertArgument(wxCommandEvent &WXUNUSED(event))
@@ -368,3 +351,28 @@ void RetrievalArguments::OnKillFocus(wxFocusEvent &event)
     }
     event.Skip();
 }
+
+void RetrievalArguments::AddArgumentsLine()
+{
+    Freeze();
+    // if( !m_lines.empty() )
+    // (*it).m_pointer->SetBitmap( wxNullBitmap );
+    wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
+    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%lu", m_lines.size() + 1 ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
+    wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
+    name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
+    name->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
+    TypeComboBox *type = new TypeComboBox( args, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
+    type->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
+    type->Bind( wxEVT_KILL_FOCUS, &RetrievalArguments::OnKillFocus, this );
+    fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT | wxRESERVE_SPACE_EVEN_IF_HIDDEN, 8 );
+    fgs->Add( number, 0, wxRIGHT, 8 );
+    fgs->Add( name, 1, wxEXPAND | wxRIGHT, 8 );
+    fgs->Add( type, 0, wxEXPAND | wxRIGHT, 8 );
+    m_lines.push_back( QueryLines( statBmp, number, name, type ) );
+    m_lines.back().m_name->SetFocus();
+    // m_currentLine = numArgs;   // Let SetFocus handle that
+    fgs->Layout();
+    Thaw();
+}
+
