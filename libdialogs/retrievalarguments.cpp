@@ -122,6 +122,7 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     m_remove->Bind( wxEVT_UPDATE_UI, &RetrievalArguments::OnRemoveUpdateUI, this );
     m_insert->Bind( wxEVT_UPDATE_UI, &RetrievalArguments::OnRemoveUpdateUI, this );
     m_remove->Bind( wxEVT_KILL_FOCUS, &RetrievalArguments::OnKillFocus, this );
+    m_ok->Bind( wxEVT_BUTTON, &RetrievalArguments::OnOkVerify, this );
     Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
     CallAfter( &RetrievalArguments::UpdateHeader );
     set_properties();
@@ -341,4 +342,21 @@ void RetrievalArguments::OnTextEntered(wxCommandEvent &event)
     auto object = dynamic_cast<wxTextCtrl *>( event.GetEventObject() );
     if( object->GetValue().IsEmpty() && m_lines.size() == 1 )
         m_lines.clear();
+}
+
+void RetrievalArguments::OnOkVerify(wxCommandEvent &event)
+{
+    auto success = true;
+    auto line = 1;
+    for( std::list<QueryLines>::iterator it = m_lines.begin(); it != m_lines.end(); ++it, line++ )
+    {
+        if( it->m_name->GetValue().IsEmpty() )
+        {
+            wxMessageBox( _( wxString::Format( "Line %d has an invalid name and/or length", line ) ), _( "Query" ), wxICON_ERROR );
+            success = false;
+            break;
+        }
+    }
+    if( success )
+        EndModal( wxID_OK );
 }

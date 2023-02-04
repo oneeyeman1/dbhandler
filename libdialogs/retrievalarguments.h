@@ -29,6 +29,7 @@ protected:
     void OnSetFocus(wxFocusEvent &event);
     void OnKillFocus(wxFocusEvent &event);
     void OnSize(wxSizeEvent &event);
+    void OnOkVerify(wxCommandEvent &event);
     void OnTextEntered(wxCommandEvent &event);
     void OnRemoveUpdateUI(wxUpdateUIEvent &event);
     void UpdateHeader();
