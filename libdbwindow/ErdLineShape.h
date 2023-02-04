@@ -12,7 +12,11 @@ public:
     wxRealPoint GetModSrcPoint();
     Constraint *GetConstraint();
     bool GetLineSegment(size_t index, wxRealPoint& src, wxRealPoint& trg);
+    void SetSourceTable(const MyErdTable *table) { m_sourceTbl = const_cast<MyErdTable *>( table ); }
+    void SetTargetTable(const MyErdTable *table) { m_targetTbl = const_cast<MyErdTable *>( table ); }
     void EnableDisableFK(bool enable);
+    const wxString &GetSourceName() const { return m_source; }
+    const wxString &GetTargetName() const { return m_target; }
 protected:
     virtual void DrawNormal(wxDC& dc) wxOVERRIDE;
     virtual void DrawSelected(wxDC &dc) wxOVERRIDE;

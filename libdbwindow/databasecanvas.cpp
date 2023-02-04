@@ -1257,11 +1257,12 @@ bool DatabaseCanvas::UpdateCanvasWithQuery()
 
 void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<DatabaseTable *> > &tables)
 {
-    ShapeList listShapes;
+    ShapeList listTables, listConnections;
     std::vector<std::wstring> errors;
     dynamic_cast<DrawingView *>( m_view )->GetSyntaxPage()->GetSyntaxCtrl()->SetValue( dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->GetQuery() );
-    m_pManager.GetShapes( CLASSINFO( MyErdTable ), listShapes );
-    for( ShapeList::iterator it = listShapes.begin(); it != listShapes.end(); it++ )
+    m_pManager.GetShapes( CLASSINFO( MyErdTable ), listTables );
+    m_pManager.GetShapes( CLASSINFO( ErdLineShape ), listConnections );
+    for( ShapeList::iterator it = listTables.begin(); it != listTables.end(); it++ )
     {
         auto found = false;
         MyErdTable *table = ((MyErdTable*) *it );
@@ -1289,6 +1290,21 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
             }
         }
         found = false;
+        for( ShapeList::iterator it = listConnections.begin(); it != listConnections.end() && !found; it++ )
+        {
+            ErdLineShape *connection = ((ErdLineShape *) *it);
+            if( m_dbType == L"SQLite" )
+            {
+                if( connection->GetSourceName() == table->GetTable()->GetSchemaName() + "." + table->GetTable()->GetTableName() )
+                    connection->SetSourceTable( table );
+                if( connection->GetTargetName() == table->GetTable()->GetSchemaName() + "." + table->GetTable()->GetTableName() )
+                    connection->SetTargetTable( table );
+            }
+            else
+            {
+
+            }
+        }
     }
     UpdateCanvasWithQuery();
 }
