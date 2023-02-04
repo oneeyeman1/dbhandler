@@ -67,16 +67,12 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     fgs = new wxFlexGridSizer( 4, 0, 0 );
     dummy_1 = new wxPanel( scroller, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
     dummy_1->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    wxLogDebug( "dummy_1 is %p", dummy_1 );
     dummy_2 = new wxPanel( scroller, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
     dummy_2->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    wxLogDebug( "dummy_2 is %p", dummy_2 );
     dummy_3 = new wxPanel( scroller, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
     dummy_3->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    wxLogDebug( "dummy_3 is %p", dummy_3 );
     dummy_4 = new wxPanel( scroller, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
     dummy_4->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    wxLogDebug( "dummy_4 is %p", dummy_4 );
     fgs->Add( dummy_1 );
     fgs->Add( dummy_2 );
     fgs->Add( dummy_3 );
@@ -260,7 +256,6 @@ int RetrievalArguments::FindLineNumberFromControl( wxWindow *win )
         const QueryLines &line = (*it);
         if( line.m_name == win || line.m_type == win )
         {
-            wxLogDebug( "FindLineNumberFromControl: %d", lineNumber );
             return lineNumber + 1;
         }
     }
@@ -294,8 +289,6 @@ void RetrievalArguments::SetIndicatorLine( int activeLine )
 
 void RetrievalArguments::OnSetFocus(wxFocusEvent &event)
 {
-    wxLogDebug( "OnSetFocus %p", event.GetEventObject() );
-
     int focus_line = FindLineNumberFromControl( wxDynamicCast( event.GetEventObject(), wxWindow ) );
     if( focus_line >= 1 && focus_line <= m_lines.size() )
     {
@@ -307,8 +300,6 @@ void RetrievalArguments::OnSetFocus(wxFocusEvent &event)
 
 void RetrievalArguments::OnKillFocus(wxFocusEvent &event)
 {
-    wxLogDebug( "OnKillFocus %p", event.GetEventObject() );
-
     if( dynamic_cast<wxTextCtrl *>( event.GetEventObject () ) && dynamic_cast<wxPanel *>( event.GetWindow() ) )
     {
         m_remove->SetFocus();
