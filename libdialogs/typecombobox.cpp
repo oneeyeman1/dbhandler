@@ -29,6 +29,7 @@
 
 TypeComboBox::TypeComboBox(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, const std::string &argType) : wxComboBox(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY | wxCB_SORT)
 {
+    wxString selString;
     if( type == "SQLite" )
     {
         Append( "NULL" );
@@ -36,6 +37,10 @@ TypeComboBox::TypeComboBox(wxWindow *parent, const std::wstring &type, const std
         Append( "Integer" );
         Append( "Real" );
         Append( "BLOB" );
+        if( argType == "" )
+            selString = "Integer";
+        else
+            selString = argType;
     }
     if( ( type == "ODBC" && subtype == "Microsoft SQL Server" ) || type == "Microsoft SQL Server" )
     {
@@ -72,6 +77,63 @@ TypeComboBox::TypeComboBox(wxWindow *parent, const std::wstring &type, const std
         Append( "varbinary" );
         Append( "varchar" );
         Append( "xml" );
+        if( argType == "" )
+            selString = "numerc";
+        else
+            selString = argType;
     }
-    SetValue( argType );
+    if( ( type == "ODBC" && subtype == "PostgreSQL" ) || type == "PostgreSQL" )
+    {
+        Append( "JSON" );
+        Append( "UUID" );
+        Append( "XML" );
+        Append( "bigint" );
+        Append( "bigserial" );
+        Append( "bit" );
+        Append( "boolean" );
+        Append( "box" );
+        Append( "bytea" );
+        Append( "char" );
+        Append( "character varying" );
+        Append( "character" );
+        Append( "cidr" );
+        Append( "circle" );
+        Append( "date" );
+        Append( "daterange" );
+        Append( "decimal" );
+        Append( "double precison" );
+        Append( "enum" );
+        Append( "inet" );
+        Append( "int4range" );
+        Append( "int8range" );
+        Append( "integer" );
+        Append( "interval" );
+        Append( "line" );
+        Append( "lseg" );
+        Append( "macaddr" );
+        Append( "macaddr8" );
+        Append( "money" );
+        Append( "numeric" );
+        Append( "numrange" );
+        Append( "path" );
+        Append( "point" );
+        Append( "polygon" );
+        Append( "real" );
+        Append( "serial" );
+        Append( "smallint" );
+        Append( "smallserial" );
+        Append( "text" );
+        Append( "time" );
+        Append( "timestamp" );
+        Append( "tsrange" );
+        Append( "tstzrange " );
+        Append( "tsvector" );
+        Append( "tsquery" );
+        Append( "varchar" );
+        if( argType == "" )
+            selString = "numerc";
+        else
+            selString = argType;
+    }
+    SetValue( selString );
 }

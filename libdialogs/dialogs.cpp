@@ -387,13 +387,10 @@ extern "C" WXEXPORT int GetQueryArguments(wxWindow *parent, std::vector<QueryArg
     int result = dlg.ShowModal();
     if( result == wxID_OK )
     {
-        std::list<QueryLines> lines = dlg.GetArgumentLines();
+        auto lines = dlg.GetArgumentLines();
         arguments.clear();
         for( std::list<QueryLines>::iterator it = lines.begin(); it != lines.end(); ++it )
-        {
-            arguments.clear();
             arguments.push_back( QueryArguments( wxAtoi( (*it).m_number->GetLabel() ), (*it).m_name->GetValue(), (*it).m_type->GetValue() ) );
-        }
     }
     return result;
 }

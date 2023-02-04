@@ -322,7 +322,7 @@ void RetrievalArguments::AddArgumentsLine(const QueryArguments &args)
     wxTextCtrl *name = new wxTextCtrl( scroller, wxID_ANY, args.m_name );
     name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
     name->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    TypeComboBox *type = new TypeComboBox( scroller, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
+    TypeComboBox *type = new TypeComboBox( scroller, m_type.ToStdWstring(), m_subType.ToStdWstring(), args.m_type.ToStdString() );
     type->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
     type->Bind( wxEVT_KILL_FOCUS, &RetrievalArguments::OnKillFocus, this );
     fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT | wxRESERVE_SPACE_EVEN_IF_HIDDEN, 8 );
