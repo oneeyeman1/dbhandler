@@ -29,6 +29,7 @@ protected:
     void OnSetFocus(wxFocusEvent &event);
     void OnKillFocus(wxFocusEvent &event);
     void OnSize(wxSizeEvent &event);
+    void OnTextEntered(wxCommandEvent &event);
     void OnRemoveUpdateUI(wxUpdateUIEvent &event);
     void UpdateHeader();
     void set_properties();
@@ -38,11 +39,11 @@ protected:
     void SetActiveLine( int line );
 
 private:
-    void AddArgumentsLine();
+    void AddArgumentsLine(const QueryArguments &args);
     wxPanel *m_panel, *argPanel, *m_mainPanel, *dummy_1, *dummy_2, *dummy_3, *dummy_4;
     wxBoxSizer *sizer;
     wxBitmap bmp;
-    wxScrolledWindow *args;
+    wxScrolledWindow *scroller;
     wxFlexGridSizer *fgs;
 ///    MySubScrolledWindow *m_arguments;
     wxStaticText *m_labe11, *m_label2, *m_label3;

@@ -33,7 +33,6 @@
 
 RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArguments> &arguments, const wxString &dbType, const wxString &subType) : wxDialog( parent, wxID_ANY, _( "" ) )
 {
-    wxLogDebug( "Dialog is %p", this );
     m_currentLine = 0;
     m_type = dbType;
     m_subType = subType;
@@ -41,7 +40,6 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     wxBoxSizer *sizer_6 = new wxBoxSizer( wxVERTICAL );
     m_panel = new wxPanel( this, wxID_ANY );
     m_panel->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    wxLogDebug( "Panel is %p", m_panel );
     m_ok = new wxButton( m_panel, wxID_OK, _( "OK" ) );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
     m_help = new wxButton( m_panel, wxID_HELP, _( "Help" ) );
@@ -52,36 +50,31 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
 
     argPanel = new wxPanel( main_sizer->GetStaticBox(), wxID_ANY );
     argPanel->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    wxLogDebug( "argpanel is %p", argPanel );
     m_labe11 = new wxStaticText( argPanel, wxID_ANY, _( "Position" ), wxPoint( 4, 4 )  );
     m_labe11->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    wxLogDebug( "m_label1 is %p", m_labe11 );
     m_label2 = new wxStaticText( argPanel, wxID_ANY, _( "Name" ), wxPoint( 40, 4 ) );
     m_label2->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    wxLogDebug( "m_label2 is %p", m_label2 );
     m_label3 = new wxStaticText( argPanel, wxID_ANY, _( "Type" ), wxPoint( 48, 4 ) );
     m_label3->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    wxLogDebug( "m_label3 is %p", m_label3 );
 
     main_sizer->Add( argPanel, 0, wxEXPAND | wxBOTTOM, 4 );
 
-    args = new wxScrolledWindow( main_sizer->GetStaticBox(), wxID_ANY );
-    args->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    wxLogDebug( "Scrolled window is %p", args );
+    scroller = new wxScrolledWindow( main_sizer->GetStaticBox(), wxID_ANY );
+    scroller->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
 
     bmp = wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) );
 
     fgs = new wxFlexGridSizer( 4, 0, 0 );
-    dummy_1 = new wxPanel( args, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
+    dummy_1 = new wxPanel( scroller, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
     dummy_1->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
     wxLogDebug( "dummy_1 is %p", dummy_1 );
-    dummy_2 = new wxPanel( args, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
+    dummy_2 = new wxPanel( scroller, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
     dummy_2->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
     wxLogDebug( "dummy_2 is %p", dummy_2 );
-    dummy_3 = new wxPanel( args, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
+    dummy_3 = new wxPanel( scroller, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
     dummy_3->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
     wxLogDebug( "dummy_3 is %p", dummy_3 );
-    dummy_4 = new wxPanel( args, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
+    dummy_4 = new wxPanel( scroller, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
     dummy_4->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
     wxLogDebug( "dummy_4 is %p", dummy_4 );
     fgs->Add( dummy_1 );
@@ -89,45 +82,21 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     fgs->Add( dummy_3 );
     fgs->Add( dummy_4 );
 
-    wxString pos;
     for( std::vector<QueryArguments>::iterator it = arguments.begin(); it < arguments.end(); ++it )
     {
-        if( it != arguments.begin() )
-            AddArgumentsLine();
-        pos.Printf("%d", (*it).m_pos );
-        wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
-        statBmp->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-        wxLogDebug( "static bitmap is %p", statBmp );
-        wxStaticText *number = new wxStaticText( args, wxID_ANY, pos, wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
-        wxLogDebug( "number is %p", number );
-        wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, (*it).m_name );
-        wxLogDebug( "name is %p", name );
-        name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
-        name->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-        if( (*it).m_pos == 1 )
-            name->Bind( wxEVT_KILL_FOCUS, &RetrievalArguments::OnKillFocus, this );
-        TypeComboBox *type = new TypeComboBox( args, dbType.ToStdWstring(), subType.ToStdWstring(), (*it).m_type.ToStdString() );
-        type->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-        type->Bind( wxEVT_KILL_FOCUS, &RetrievalArguments::OnKillFocus, this );
-        fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT | wxRESERVE_SPACE_EVEN_IF_HIDDEN, 8 );
-        fgs->Add( number, 0, wxRIGHT, 8 );
-        fgs->Add( name, 1, wxEXPAND | wxRIGHT, 8 );
-        fgs->Add( type, 0, wxEXPAND | wxRIGHT, 8 );
-        m_lines.push_back( QueryLines( statBmp, number, name, type ) );
-        m_lines.back().m_name->SetFocus();
-        // m_currentLine++;
+        AddArgumentsLine( (*it) );
     }
     fgs->AddGrowableCol( 2 );
 
-    args->SetSizer( fgs );
-    args->SetScrollRate( 15, 15 );
+    scroller->SetSizer( fgs );
+    scroller->SetScrollRate( 15, 15 );
 
     wxSize minsize = fgs->CalcMin();
     minsize.x += wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y );
     minsize.y = -1;
-    args->SetMinClientSize( minsize );;
+    scroller->SetMinClientSize( minsize );;
 
-    main_sizer->Add( args, 1, wxEXPAND, 0 );
+    main_sizer->Add( scroller, 1, wxEXPAND, 0 );
     sizer->Add( main_sizer, 1, wxEXPAND, 0 );
     sizer->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_6->Add( m_ok, 0, wxEXPAND, 0 );
@@ -179,7 +148,7 @@ void RetrievalArguments::OnSize(wxSizeEvent &event)
 
 void RetrievalArguments::OnAddArgument(wxCommandEvent &WXUNUSED(event))
 {
-    AddArgumentsLine();
+    AddArgumentsLine( QueryArguments( m_lines.size() + 1, "", "" ) );
 }
 
 void RetrievalArguments::OnInsertArgument(wxCommandEvent &WXUNUSED(event))
@@ -188,12 +157,12 @@ void RetrievalArguments::OnInsertArgument(wxCommandEvent &WXUNUSED(event))
     std::list<QueryLines>::iterator it = std::next( m_lines.begin(), m_currentLine - 1 );
     unsigned long pos = m_currentLine * 4;
     int position = wxAtoi( (*it).m_number->GetLabel() );
-    wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
-    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%lu", m_currentLine ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
-    wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
+    wxStaticBitmap *statBmp = new wxStaticBitmap( scroller, wxID_ANY, bmp );
+    wxStaticText *number = new wxStaticText( scroller, wxID_ANY, wxString::Format( "%lu", m_currentLine ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
+    wxTextCtrl *name = new wxTextCtrl( scroller, wxID_ANY, "" );
     name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
     name->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    TypeComboBox *type = new TypeComboBox( args, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
+    TypeComboBox *type = new TypeComboBox( scroller, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
     type->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
     type->Bind( wxEVT_KILL_FOCUS, &RetrievalArguments::OnKillFocus, this );
     // (*it).m_pointer->SetBitmap( wxNullBitmap );
@@ -352,17 +321,17 @@ void RetrievalArguments::OnKillFocus(wxFocusEvent &event)
     event.Skip();
 }
 
-void RetrievalArguments::AddArgumentsLine()
+void RetrievalArguments::AddArgumentsLine(const QueryArguments &args)
 {
     Freeze();
     // if( !m_lines.empty() )
     // (*it).m_pointer->SetBitmap( wxNullBitmap );
-    wxStaticBitmap *statBmp = new wxStaticBitmap( args, wxID_ANY, bmp );
-    wxStaticText *number = new wxStaticText( args, wxID_ANY, wxString::Format( "%lu", m_lines.size() + 1 ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
-    wxTextCtrl *name = new wxTextCtrl( args, wxID_ANY, "" );
+    wxStaticBitmap *statBmp = new wxStaticBitmap( scroller, wxID_ANY, bmp );
+    wxStaticText *number = new wxStaticText( scroller, wxID_ANY, wxString::Format( "%lu", args.m_pos ), wxDefaultPosition, wxSize( 30, -1 ), wxALIGN_CENTRE_HORIZONTAL | wxBORDER_SUNKEN );
+    wxTextCtrl *name = new wxTextCtrl( scroller, wxID_ANY, args.m_name );
     name->Bind( wxEVT_KEY_DOWN, &RetrievalArguments::OnKeyDown, this );
     name->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
-    TypeComboBox *type = new TypeComboBox( args, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
+    TypeComboBox *type = new TypeComboBox( scroller, m_type.ToStdWstring(), m_subType.ToStdWstring(), "" );
     type->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
     type->Bind( wxEVT_KILL_FOCUS, &RetrievalArguments::OnKillFocus, this );
     fgs->Add( statBmp, 0, wxEXPAND | wxRIGHT | wxLEFT | wxRESERVE_SPACE_EVEN_IF_HIDDEN, 8 );
@@ -376,3 +345,9 @@ void RetrievalArguments::AddArgumentsLine()
     Thaw();
 }
 
+void RetrievalArguments::OnTextEntered(wxCommandEvent &event)
+{
+    auto object = dynamic_cast<wxTextCtrl *>( event.GetEventObject() );
+    if( object->GetValue().IsEmpty() && m_lines.size() == 1 )
+        m_lines.clear();
+}
