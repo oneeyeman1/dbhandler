@@ -1503,11 +1503,11 @@ void DrawingView::OnDistinct(wxCommandEvent &event)
     wxTextCtrl *queryText = m_page6->GetSyntaxCtrl();
     if( !dynamic_cast<wxMenu *>( event.GetEventObject() )->IsChecked( wxID_DISTINCT ) )
     {
-        query.Replace( "SELECT ", "SELECT DISTINCT " );
+        query.Replace( "SELECT DISTINCT ", "SELECT " );
     }
     else
     {
-        query.Replace( "SELECT DISTINCT ", "SELECT " );
+        query.Replace( "SELECT ", "SELECT DISTINCT " );
     }
     queryText->SetValue( query );
     m_edit->SetText( query );
