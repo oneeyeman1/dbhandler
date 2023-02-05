@@ -15,6 +15,14 @@ public:
     void SetQuery(const wxString &query) { m_query = query; }
     void AddQueryTable(const std::wstring &tables) { m_tables.Add( tables ); }
     void AddQueryField(const std::wstring &fullName) { m_fields.Add( fullName ); }
+    void AddQueryArgument(const std::vector<QueryArguments> &args)
+    {
+        m_arguments.Clear();
+        for( std::vector<QueryArguments>::const_iterator it = args.begin(); it < args.end(); ++it)
+        {
+            m_arguments.Add( wxString::Format( "%d", (*it).m_pos ) );
+        }
+    }
     void DeleteQuieryField(const std::wstring &fullName) { m_fields.Remove( fullName ); }
     void DeleteAllTables() { m_tables.Clear();  }
     void DeleteAllQueryFields() { m_fields.Clear(); }
@@ -23,10 +31,12 @@ public:
     const wxString &GetQuery() const { return m_query; }
     const wxArrayString &GetTables() const { return m_tables; }
     const wxArrayString &GetFields() const { return m_fields; }
+    const wxArrayString &GetQueryArguments() const {return m_arguments; }
 private:
     wxString m_dbName, m_dbType, m_query;
     wxArrayString m_fields;
     wxArrayString m_tables;
+    wxArrayString m_arguments;
 };
 
 class WXEXPORT DatabaseCanvas : public wxSFShapeCanvas
