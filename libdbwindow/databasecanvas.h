@@ -20,7 +20,7 @@ public:
         m_arguments.Clear();
         for( std::vector<QueryArguments>::const_iterator it = args.begin(); it < args.end(); ++it)
         {
-            m_arguments.Add( wxString::Format( "%d", (*it).m_pos ) );
+            m_arguments.Add( wxString::Format( "%d %s %s", (*it).m_pos, (*it).m_name, (*it).m_type ) );
         }
     }
     void DeleteQuieryField(const std::wstring &fullName) { m_fields.Remove( fullName ); }
@@ -31,7 +31,7 @@ public:
     const wxString &GetQuery() const { return m_query; }
     const wxArrayString &GetTables() const { return m_tables; }
     const wxArrayString &GetFields() const { return m_fields; }
-    const wxArrayString &GetQueryArguments() const {return m_arguments; }
+    const wxArrayString &GetQueryArguments() const { return m_arguments; }
 private:
     wxString m_dbName, m_dbType, m_query;
     wxArrayString m_fields;
@@ -64,6 +64,7 @@ public:
     bool UpdateCanvasWithQuery();
     void SetQueryFields(const std::vector<TableField *> queryFields) { m_queryFields = queryFields; }
     void LoadQuery(const std::map<std::wstring, std::vector<DatabaseTable *> >&tables);
+    void SetQueryArguments(const std::vector<QueryArguments> arguments);
 protected:
     bool IsTableDisplayed(const std::wstring &name);
 private:
