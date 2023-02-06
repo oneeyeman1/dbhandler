@@ -1265,6 +1265,7 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
     dynamic_cast<DrawingView *>( m_view )->GetSyntaxPage()->GetSyntaxCtrl()->SetValue( dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->GetQuery() );
     m_pManager.GetShapes( CLASSINFO( MyErdTable ), listTables );
     m_pManager.GetShapes( CLASSINFO( ErdLineShape ), listConnections );
+    auto fields = dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->GetFields();
     for( ShapeList::iterator it = listTables.begin(); it != listTables.end(); it++ )
     {
         auto found = false;
@@ -1289,6 +1290,26 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
                         found = true;
                         table->SetDataaseTable( (*it2) );
                     }
+                }
+            }
+            for( auto field : fields )
+            {
+                ShapeList guiFields;
+                if( m_dbType == L"SQLite" )
+                {
+                    if( field.substr( 0, field.find( "." ) ) == table->GetTable()->GetSchemaName() && field.substr( field.find( "." ) + 1 ) == table->GetTable()->GetTableName() )
+                    {
+                        table->GetChildShapes( CLASSINFO( FieldShape ), guiFields );
+                        for( ShapeList::iterator it6 = guiFields.begin(); it6 != guiFields.end(); ++it6 )
+                        {
+                            if( dynamic_cast<FieldShape *>( (*it6) )->GetField()->GetFullName() == field )
+                                (*it6)->Select( true );
+                        }
+                    }
+                }
+                else
+                {
+                    
                 }
             }
         }
