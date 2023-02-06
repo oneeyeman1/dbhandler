@@ -1850,6 +1850,7 @@ void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
             {
                 m_page2->SetQueryArguments( arguments );
                 m_page4->SetQueryArguments( arguments );
+                GetDatabaseCanvas()->SetQueryArguments( arguments );
             }
             m_arguments = arguments;
         }

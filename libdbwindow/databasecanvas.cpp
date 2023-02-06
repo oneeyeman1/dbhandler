@@ -78,7 +78,7 @@ QueryRoot::QueryRoot()
     XS_SERIALIZE( m_query, "query" );
     XS_SERIALIZE( m_tables, "query_tables" );
     XS_SERIALIZE( m_fields, "query_fields" );
-    XS_SERIALIZE_STRING( m_arguments, "query_arguments" );
+    XS_SERIALIZE( m_arguments, "query_arguments" );
 }
 
 QueryRoot::QueryRoot(const QueryRoot &root)
@@ -95,7 +95,7 @@ QueryRoot::QueryRoot(const QueryRoot &root)
     XS_SERIALIZE( m_query, "query" );
     XS_SERIALIZE( m_tables, "query_tables" );
     XS_SERIALIZE( m_fields, "query_fields" );
-    XS_SERIALIZE_STRING( m_arguments, "query_arguments" );
+    XS_SERIALIZE( m_arguments, "query_arguments" );
 }
 
 DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, wxWindow *parent) : wxSFShapeCanvas()
@@ -1314,9 +1314,9 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
             }
         }
         found = false;
-        for( ShapeList::iterator it = listConnections.begin(); it != listConnections.end() && !found; it++ )
+        for( ShapeList::iterator it0 = listConnections.begin(); it0 != listConnections.end() && !found; it0++ )
         {
-            ErdLineShape *connection = ((ErdLineShape *) *it);
+            ErdLineShape *connection = ((ErdLineShape *) *it0);
             if( m_dbType == L"SQLite" )
             {
                 if( connection->GetSourceName() == table->GetTable()->GetSchemaName() + "." + table->GetTable()->GetTableName() )
@@ -1330,5 +1330,19 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
             }
         }
     }
+    auto args = dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->GetQueryArguments();
+    for( wxArrayString::iterator it4 = args.begin(); it4 < args.end(); ++it4 )
+    {
+        wxStringTokenizer tokens( (*it4) );
+        auto pos = wxAtoi( tokens.GetNextToken() );
+        auto name = tokens.GetNextToken();
+        auto type = tokens.GetNextToken();
+        dynamic_cast<DrawingView * >( m_view )->SetQueryArguments( QueryArguments( pos, name, type ) );
+    }
     UpdateCanvasWithQuery();
+}
+
+void DatabaseCanvas::SetQueryArguments(const std::vector<QueryArguments> arguments)
+{
+    dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->AddQueryArgument( arguments );
 }

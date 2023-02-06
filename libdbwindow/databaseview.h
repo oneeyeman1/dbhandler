@@ -40,6 +40,7 @@ public:
     void GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path);
     int SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect);
     std::map<wxString, std::vector<TableDefinition> > &GetTablesMap();
+    void SetQueryArguments(const QueryArguments &args) { m_arguments.push_back( args ); }
     void SetViewType(ViewType type);
     ViewType GetViewType();
     SortGroupByPage *GetSortPage();
