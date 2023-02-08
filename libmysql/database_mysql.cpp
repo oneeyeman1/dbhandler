@@ -1383,7 +1383,6 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                                 table->GetTableProperties().m_labelFontPixelSize = labelfontptc;
                                 table->GetTableProperties().m_labelFontName = m_pimpl->m_myconv.from_bytes( labelfontname );
                                 table->GetTableProperties().m_comment = m_pimpl->m_myconv.from_bytes( comments );
-                                table->GetTableProperties().fullName = table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName();
                             }
                         }
                     }
@@ -1400,6 +1399,7 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
             result = 1;
         }
     }
+    table->GetTableProperties().fullName = table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName();
     delete str_data1;
     delete str_data2;
     str_data1 = NULL;

@@ -551,10 +551,10 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
             table->GetTableProperties().m_labelFontPixelSize = atoi( PQgetvalue( res, i, 25 ) );
             table->GetTableProperties().m_labelFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 26 ) );
             table->GetTableProperties().m_comment = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 27 ) );
-            table->GetTableProperties().fullName = table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName();
         }
     }
     PQclear( res );
+    table->GetTableProperties().fullName = table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName();
     delete values[0];
     values[0] = NULL;
     delete values[1];
