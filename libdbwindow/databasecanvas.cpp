@@ -390,7 +390,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
             Refresh();
             if( fld )
             {
-                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, const_cast<DatabaseTable *>( tbl->GetTable() )->GetTableName(), false );
+                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, const_cast<DatabaseTable *>( tbl->GetTable() )->GetFullName(), false );
                 if( fld->IsSelected() )
                     dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->AddQueryField( fld->GetField()->GetFullName() );
                 else
@@ -1294,6 +1294,10 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
             }
             for( auto field : fields )
             {
+                auto temp1 = field.substr( 0, field.find( "." ) );
+                auto temp2 = table->GetTable()->GetSchemaName();
+                auto temp3 = field.substr( field.find( "." ) + 1 );
+                auto temp4 = table->GetTable()->GetTableName();
                 ShapeList guiFields;
                 if( m_dbType == L"SQLite" )
                 {
