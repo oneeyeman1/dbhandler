@@ -2556,6 +2556,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                             str_to_uc_cpy( name, comments );
                             table->GetTableProperties().m_comment = name;
                             name = L"";
+                            table->GetTableProperties().fullName = table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName();
                         }
                         else if( ret != SQL_NO_DATA )
                         {

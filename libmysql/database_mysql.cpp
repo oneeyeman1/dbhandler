@@ -1383,6 +1383,7 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                                 table->GetTableProperties().m_labelFontPixelSize = labelfontptc;
                                 table->GetTableProperties().m_labelFontName = m_pimpl->m_myconv.from_bytes( labelfontname );
                                 table->GetTableProperties().m_comment = m_pimpl->m_myconv.from_bytes( comments );
+                                table->GetTableProperties().fullName = table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName();
                             }
                         }
                     }

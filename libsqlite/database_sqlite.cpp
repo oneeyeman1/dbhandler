@@ -613,6 +613,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         if( labelFontName )
                             table->GetTableProperties().m_labelFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) labelFontName );
                         table->GetTableProperties().m_comment = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 27 ) );
+                        table->GetTableProperties().fullName = table->GetSchemaName() + L"." + table->GetTableName();
                     }
                     else if( res == SQLITE_DONE )
                         break;

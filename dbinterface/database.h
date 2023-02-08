@@ -166,7 +166,7 @@ public:
         m_headingFontCharacterSet = -1;
         m_labelFontCharacterSer = -1;
     }
-    std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName, table_name, m_owner, schema_name, catalog;
+    std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName, table_name, m_owner, schema_name, catalog, fullName;
     int m_dataFontSize, m_dataFontEncoding, m_headingFontSize, m_headingFontEncoding, m_labelFontSize, m_labelFontEncoding;
     int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;
     int m_dataFontWeight, m_headingFontWeight, m_labelFontWeight, m_dataFontCharacterSet, m_labelFontCharacterSer, m_headingFontCharacterSet;
@@ -319,7 +319,7 @@ public:
         }
         foreign_keys.clear();
     }
-
+    const std::wstring &GetFullName() {return m_props.fullName; }
     const std::wstring &GetTableName() const { return m_props.table_name; }
     const std::wstring &GetSchemaName() const { return m_props.schema_name; }
     const std::wstring &GetCatalog() const { return m_props.catalog; }
