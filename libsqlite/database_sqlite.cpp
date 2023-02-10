@@ -1763,7 +1763,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                                 {
                                     std::wstring type = sqlite_pimpl->m_myconv.from_bytes( fieldType );
                                     std::wstring name = sqlite_pimpl->m_myconv.from_bytes( fieldName );
-                                    TableField *field = new TableField( name, type, 0, 0, tableName + L"." + name, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK >= 1 ? true : false, std::find( fk_names.begin(), fk_names.end(), sqlite_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
+                                    TableField *field = new TableField( name, type, 0, 0, schemaNamme + L"." + tableName + L"." + name, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK >= 1 ? true : false, std::find( fk_names.begin(), fk_names.end(), sqlite_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
                                     if( GetFieldProperties( tableName, L"", L"", sqlite_pimpl->m_myconv.from_bytes( fieldName ), field, errorMsg ) )
                                     {
                                         result = 1;
