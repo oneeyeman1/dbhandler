@@ -78,6 +78,7 @@ QueryRoot::QueryRoot()
     XS_SERIALIZE( m_query, "query" );
     XS_SERIALIZE( m_tables, "query_tables" );
     XS_SERIALIZE( m_fields, "query_fields" );
+    XS_SERIALIZE( m_sortSource, "sort_source" );
     XS_SERIALIZE( m_arguments, "query_arguments" );
 }
 
@@ -89,12 +90,14 @@ QueryRoot::QueryRoot(const QueryRoot &root)
     m_tables = root.m_tables;
     m_fields = root.m_fields;
     m_arguments = root.m_arguments;
+    m_sortSource = root.m_sortSource;
     
     XS_SERIALIZE( m_dbName, "database_name" );
     XS_SERIALIZE( m_dbType, "database_type" );
     XS_SERIALIZE( m_query, "query" );
     XS_SERIALIZE( m_tables, "query_tables" );
     XS_SERIALIZE( m_fields, "query_fields" );
+    XS_SERIALIZE( m_sortSource, "sort_source" );
     XS_SERIALIZE( m_arguments, "query_arguments" );
 }
 

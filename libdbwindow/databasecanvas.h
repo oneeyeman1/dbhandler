@@ -23,9 +23,11 @@ public:
             m_arguments.Add( wxString::Format( "%d %s %s", (*it).m_pos, (*it).m_name, (*it).m_type ) );
         }
     }
+    void AddSortSorce(const wxString &source) { m_sortSource.Add( source ); }
     void DeleteQuieryField(const std::wstring &fullName) { m_fields.Remove( fullName ); }
     void DeleteAllTables() { m_tables.Clear();  }
     void DeleteAllQueryFields() { m_fields.Clear(); }
+    void DeleteSortSourceItems() { m_sortSource.Clear(); }
     const wxString &GetDbName() const { return m_dbName; }
     const wxString &GetDbType() const { return m_dbType; }
     const wxString &GetQuery() const { return m_query; }
@@ -37,6 +39,7 @@ private:
     wxArrayString m_fields;
     wxArrayString m_tables;
     wxArrayString m_arguments;
+    wxArrayString m_sortSource;
 };
 
 class WXEXPORT DatabaseCanvas : public wxSFShapeCanvas
