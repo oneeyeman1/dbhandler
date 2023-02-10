@@ -23,7 +23,7 @@ public:
             m_arguments.Add( wxString::Format( "%d %s %s", (*it).m_pos, (*it).m_name, (*it).m_type ) );
         }
     }
-    void AddSortSorce(const wxString &source) { m_sortSource.Add( source ); }
+    void AddSortSource(const wxString &source) { m_sortSource.Add( source ); }
     void DeleteQuieryField(const std::wstring &fullName) { m_fields.Remove( fullName ); }
     void DeleteAllTables() { m_tables.Clear();  }
     void DeleteAllQueryFields() { m_fields.Clear(); }
