@@ -303,8 +303,6 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 
 void SQLiteDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
 {
-    auto msg = sqlite3_errmsg( m_db );
-    auto error = sqlite3_extended_errcode( m_db );
     code = sqlite3_errcode( m_db );
     switch( code )
     {
@@ -1534,7 +1532,6 @@ int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg)
 int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res, schema;
-    sqlite3_stmt *stmt1, *stmt2;
     unsigned int count;
     std::wstring errorMessage;
     std::vector<std::wstring> tableNames = pimpl->GetTableNames();
