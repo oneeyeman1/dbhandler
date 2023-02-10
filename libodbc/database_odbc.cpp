@@ -5393,7 +5393,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     str_to_uc_cpy( defaultValue, szColumnDefault );
                                     std::wstring tempTableName;
                                     str_to_uc_cpy( tempTableName, table_name );
-                                    TableField *field = new TableField( fieldName, fieldType, ColumnSize, DecimalDigits, tempTableName + L"." + fieldName, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) != autoinc_fields.end() ? true : false, std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
+                                    TableField *field = new TableField( fieldName, fieldType, ColumnSize, DecimalDigits, catalog + L"." + schemaName + L"" + tempTableName + L"." + fieldName, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) != autoinc_fields.end() ? true : false, std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
 /*                                    if( GetFieldProperties( fieldName.c_str(), schemaName, odbc_pimpl->m_currentTableOwner, szColumnName, field, errorMsg ) )
                                     {
                                         GetErrorMessage( errorMsg, 2 );

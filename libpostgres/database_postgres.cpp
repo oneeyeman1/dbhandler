@@ -1471,7 +1471,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                 if( fieldType == L"serial" || fieldType == L"bigserial" )
                     autoinc = true;
                 std::wstring tableName = m_pimpl->m_myconv.from_bytes( table_name );
-                TableField *field = new TableField( fieldName, fieldType, size, precision, tableName + L"." + fieldName, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
+                TableField *field = new TableField( fieldName, fieldType, size, precision, catalog + L"." + schemaName + L"." + tableName + L"." + fieldName, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
                 if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_owner ), m_pimpl->m_myconv.from_bytes( field_name ), field, errorMsg ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
