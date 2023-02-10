@@ -1292,30 +1292,6 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
                     }
                 }
             }
-            for( auto field : fields )
-            {
-                auto temp1 = field.substr( 0, field.find( "." ) );
-                auto temp2 = table->GetTable()->GetSchemaName();
-                auto temp3 = field.substr( field.find( "." ) + 1 );
-                auto temp4 = table->GetTable()->GetTableName();
-                ShapeList guiFields;
-                if( m_dbType == L"SQLite" )
-                {
-                    if( field.substr( 0, field.find( "." ) ) == table->GetTable()->GetSchemaName() && field.substr( field.find( "." ) + 1 ) == table->GetTable()->GetTableName() )
-                    {
-                        table->GetChildShapes( CLASSINFO( FieldShape ), guiFields );
-                        for( ShapeList::iterator it6 = guiFields.begin(); it6 != guiFields.end(); ++it6 )
-                        {
-                            if( dynamic_cast<FieldShape *>( (*it6) )->GetField()->GetFullName() == field )
-                                (*it6)->Select( true );
-                        }
-                    }
-                }
-                else
-                {
-                    
-                }
-            }
         }
         found = false;
         for( ShapeList::iterator it0 = listConnections.begin(); it0 != listConnections.end() && !found; it0++ )
@@ -1344,7 +1320,61 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
         dynamic_cast<DrawingView * >( m_view )->SetQueryArguments( QueryArguments( pos, name, type ) );
     }
     UpdateCanvasWithQuery();
-}
+    for( ShapeList::iterator it = listTables.begin(); it != listTables.end(); it++ )
+    {
+        auto found = false;
+        MyErdTable *table = ((MyErdTable*) *it );
+        for( auto it1 = tables.begin(); it1 != tables.end() && !found; ++it1 )
+        {
+            for( auto it2 = (*it1).second.begin(); it2 < (*it1).second.end() && !found; ++it2 )
+            {
+                auto dbTable = table->GetTable();
+                if( m_dbType == L"SQLite" )
+                {
+                    if( table->GetSchemaName() == (*it2)->GetSchemaName() && table->GetTableName() == (*it2)->GetTableName() )
+                    {
+                        found = true;
+                        table->SetDataaseTable( (*it2) );
+                    }
+                }
+                else
+                {
+                    if( table->GetCatalogName() == (*it2)->GetCatalog() && table->GetSchemaName() == (*it2)->GetSchemaName() && table->GetTableName() == (*it2)->GetTableName() )
+                    {
+                        found = true;
+                        table->SetDataaseTable( (*it2) );
+                    }
+                }
+            }
+            for( auto field : fields )
+            {
+                auto temp3 = field.substr( field.find( "." ) + 1 );
+                temp3 = temp3.substr( 0, temp3.find( "." ) );
+                auto temp4 = table->GetTable()->GetTableName();
+                ShapeList guiFields;
+                if( m_dbType == L"SQLite" )
+                {
+                    if( field.substr( 0, field.find( "." ) ) == table->GetTable()->GetSchemaName() && temp3 == table->GetTable()->GetTableName() )
+                    {
+                        table->GetChildShapes( CLASSINFO( FieldShape ), guiFields, true );
+                        for( ShapeList::iterator it6 = guiFields.begin(); it6 != guiFields.end(); ++it6 )
+                        {
+                            if( dynamic_cast<FieldShape *>( (*it6) )->GetField()->GetFullName() == field )
+                            {
+                                (*it6)->Select( true );
+                                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *( dynamic_cast<FieldShape *>( (*it6) ) ), ADD, const_cast<DatabaseTable *>( table->GetTable() )->GetFullName(), false );
+                            }
+                        }
+                    }
+                }
+                else
+                {
+
+                }
+            }
+        }
+    }
+    }
 
 void DatabaseCanvas::SetQueryArguments(const std::vector<QueryArguments> arguments)
 {
