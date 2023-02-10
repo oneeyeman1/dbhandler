@@ -371,7 +371,7 @@ void DrawingView::CreateViewToolBar()
     {
         CreateDBMenu();
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-        wxBitmapBundle table;
+        wxBitmapBundle tableSVG;
 #ifdef __WXMSW__
         HANDLE gs_wxMainThread = NULL;
         const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
@@ -384,14 +384,14 @@ void DrawingView::CreateViewToolBar()
         }
         else
         {
-            table = wxBitmapBundle::FromSVG( (const char *) dataTable, wxSize( 16, 16 ) );
+            tableSVG = wxBitmapBundle::FromSVG( (const char *) dataTable, wxSize( 16, 16 ) );
         }
 #elif __WXOSX__
-        table = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
+        tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
 #else
-        table = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
+        tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
 #endif
-        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), table, table, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), tableSVG, tableSVG, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Database View" ) );
@@ -401,7 +401,7 @@ void DrawingView::CreateViewToolBar()
         CreateQueryMenu( QuerySyntaxMenu );
         m_tb->AddTool( wxID_NEW, _( "New" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
-        wxBitmapBundle save, table, bold, italic, underline;
+        wxBitmapBundle save, tableSVG, boldSVG, italicSVG, underlineSVG;
 #ifdef __WXMSW__
         HANDLE gs_wxMainThread = NULL;
         const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
@@ -423,7 +423,7 @@ void DrawingView::CreateViewToolBar()
         }
         else
         {
-            table = wxBitmapBundle::FromSVG( (const char *) dataTable, wxSize( 16, 16 ) );
+            tableSVG = wxBitmapBundle::FromSVG( (const char *) dataTable, wxSize( 16, 16 ) );
         }
         if( !wxLoadUserResource( &data1, &size1, "bold", RT_RCDATA, inst ) )
         {
@@ -432,7 +432,7 @@ void DrawingView::CreateViewToolBar()
         }
         else
         {
-            bold = wxBitmapBundle::FromSVG( (const char *) data1, wxSize( 16, 16 ) );
+            boldSVG = wxBitmapBundle::FromSVG( (const char *) data1, wxSize( 16, 16 ) );
         }
         if( !wxLoadUserResource( &data2, &size2, "italic", RT_RCDATA, inst ) )
         {
@@ -441,7 +441,7 @@ void DrawingView::CreateViewToolBar()
         }
         else
         {
-            italic = wxBitmapBundle::FromSVG( (const char *) data2, wxSize( 16, 16 ) );
+            italicSVG = wxBitmapBundle::FromSVG( (const char *) data2, wxSize( 16, 16 ) );
         }
         if( !wxLoadUserResource( &data3, &size3, "underline", RT_RCDATA, inst ) )
         {
@@ -450,27 +450,27 @@ void DrawingView::CreateViewToolBar()
         }
         else
         {
-            underline = wxBitmapBundle::FromSVG( (const char *) data3, wxSize( 16, 16 ) );
+            underlineSVG = wxBitmapBundle::FromSVG( (const char *) data3, wxSize( 16, 16 ) );
         }
 #elif __WXOSX__
         save = wxBitmapBundle::FromSVGResource( "save", wxSize( 16, 16 ) );
-        table = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
-        bold = wxBitmapBundle::FromSVGResource( "bold", wxSize( 16, 16 ) );
-        italic = wxBitmapBundle::FromSVGResource( "italic", wxSize( 16, 16 ) );
-        underline = wxBitmapBundle::FromSVGResource( "underline", wxSize( 16, 16 ) );
+        tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
+        boldSVG = wxBitmapBundle::FromSVGResource( "bold", wxSize( 16, 16 ) );
+        italicSVG = wxBitmapBundle::FromSVGResource( "italic", wxSize( 16, 16 ) );
+        underlineSVG = wxBitmapBundle::FromSVGResource( "underline", wxSize( 16, 16 ) );
 #else
         save = wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR );
-        table = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
-        bold = wxBitmapBundle::FromSVG( bold, wxSize( 16, 16 ) );
-        italic = wxBitmapBundle::FromSVG( italic, wxSize( 16, 16 ) );
-        underline = wxBitmapBundle::FromSVG( underline, wxSize( 16, 16 ) );
+        tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
+        boldSVG = wxBitmapBundle::FromSVG( bold, wxSize( 16, 16 ) );
+        italicSVG = wxBitmapBundle::FromSVG( italic, wxSize( 16, 16 ) );
+        underlineSVG = wxBitmapBundle::FromSVG( underline, wxSize( 16, 16 ) );
 #endif
         m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), save, save, wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
         m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
         m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
         m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
-        m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), table, table, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
+        m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), tableSVG, tableSVG, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
         m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( previewIcon, WXSIZEOF( previewIcon ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
         m_tb->ToggleTool( wxID_DATASOURCE, true );
         m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
@@ -498,9 +498,9 @@ void DrawingView::CreateViewToolBar()
         };
         m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
         m_styleBar->AddControl( m_fontSize );
-        m_styleBar->AddTool( 303, _( "Bold" ), bold, bold, wxITEM_NORMAL, _( "Bold" ), _( "Make the font bold" ) );
-        m_styleBar->AddTool( 303, _( "Italic" ), italic, italic,wxITEM_NORMAL, _( "Italic" ), _( "Make the font italic" ) );
-        m_styleBar->AddTool( 303, _( "Underline" ), underline, underline,wxITEM_NORMAL, _( "Make the font underlined" ), _( "Make the font underlined" ) );
+        m_styleBar->AddTool( 303, _( "Bold" ), boldSVG, boldSVG, wxITEM_NORMAL, _( "Bold" ), _( "Make the font bold" ) );
+        m_styleBar->AddTool( 303, _( "Italic" ), italicSVG, italicSVG, wxITEM_NORMAL, _( "Italic" ), _( "Make the font italic" ) );
+        m_styleBar->AddTool( 303, _( "Underline" ), underlineSVG, underlineSVG, wxITEM_NORMAL, _( "Make the font underlined" ), _( "Make the font underlined" ) );
     }
     m_tb->Realize();
 #ifdef __WXOSX__
