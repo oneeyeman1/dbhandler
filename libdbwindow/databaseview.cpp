@@ -371,8 +371,8 @@ void DrawingView::CreateViewToolBar()
     {
         CreateDBMenu();
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-#ifdef __WXMSW__
         wxBitmapBundle table;
+#ifdef __WXMSW__
         HANDLE gs_wxMainThread = NULL;
         const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
         const void* dataTable = nullptr;
@@ -386,12 +386,12 @@ void DrawingView::CreateViewToolBar()
         {
             table = wxBitmapBundle::FromSVG( (const char *) dataTable, wxSize( 16, 16 ) );
         }
-        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), table );
 #elif __WXOSX__
-        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ) );
+        table = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
 #else
-        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+        table = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
 #endif
+        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), table, table, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Database View" ) );
@@ -401,12 +401,12 @@ void DrawingView::CreateViewToolBar()
         CreateQueryMenu( QuerySyntaxMenu );
         m_tb->AddTool( wxID_NEW, _( "New" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
+        wxBitmapBundle save, table, bold, italic, underline;
 #ifdef __WXMSW__
-        wxBitmapBundle save;
         HANDLE gs_wxMainThread = NULL;
         const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
-        const void* data = nullptr;
-        size_t size = 0;
+        const void* data = nullptr, * dataTable = nullptr, * data1 = nullptr, *data2 = nullptr, *data3 = nullptr;;
+        size_t size = 0, sizeTable = 0, size1 = 0, size2 = 0, size3 = 0;
         if( !wxLoadUserResource( &data, &size, "save", RT_RCDATA, inst ) )
         {
             auto err = ::GetLastError();
@@ -416,20 +416,6 @@ void DrawingView::CreateViewToolBar()
         {
             save = wxBitmapBundle::FromSVG( (const char *) data, wxSize( 16, 16 ) );
         }
-        m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), save );
-#elif __WXOSX__
-        m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), wxBitmapBundle::FromSVGResource( "save", wxSize( 16, 16 ) ) );
-#else
-        m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
-#endif
-        m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
-        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
-        m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
-        m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
-#ifdef __WXMSW__
-        wxBitmapBundle table;
-        const void* dataTable = nullptr;
-        size_t sizeTable = 0;
         if( !wxLoadUserResource( &dataTable, &sizeTable, "table", RT_RCDATA, inst ) )
         {
             auto err = ::GetLastError();
@@ -439,43 +425,6 @@ void DrawingView::CreateViewToolBar()
         {
             table = wxBitmapBundle::FromSVG( (const char *) dataTable, wxSize( 16, 16 ) );
         }
-        m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), table, table, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
-#elif __WXOSX__
-        m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( "table", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
-#else
-        m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
-#endif
-        m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( previewIcon, WXSIZEOF( previewIcon ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
-        m_tb->ToggleTool( wxID_DATASOURCE, true );
-        m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
-        m_styleBar->AddControl( m_fieldText );
-        m_fontName = new FontComboBox( m_styleBar );
-        m_styleBar->AddControl( m_fontName );
-        const wxString fontSizes[] = 
-        {
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "14",
-            "16",
-            "18",
-            "20",
-            "22",
-            "24",
-            "26",
-            "28",
-            "36",
-            "48",
-            "72"
-        };
-        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
-        m_styleBar->AddControl( m_fontSize );
-#ifdef __WXMSW__
-        wxBitmapBundle bold, italic, underline;
-        const void* data1 = nullptr, *data2 = nullptr, *data3 = nullptr;
-        size_t size1 = 0, size2 = 0, size3 = 0;
         if( !wxLoadUserResource( &data1, &size1, "bold", RT_RCDATA, inst ) )
         {
             auto err = ::GetLastError();
@@ -503,18 +452,55 @@ void DrawingView::CreateViewToolBar()
         {
             underline = wxBitmapBundle::FromSVG( (const char *) data3, wxSize( 16, 16 ) );
         }
-        m_styleBar->AddTool( 303, _( "Bold" ), bold );
-        m_styleBar->AddTool( 303, _( "Italic" ), italic );
-        m_styleBar->AddTool( 303, _( "Underline" ), underline );
-#elif __WXGTK__
-        m_styleBar->AddTool( 303, _( "Bold" ), wxBitmapBundle::FromSVG( bold, wxSize( 16, 16 ) ) );
-        m_styleBar->AddTool( 303, _( "Italic" ), wxBitmapBundle::FromSVG( italic, wxSize( 16, 16 ) ) );
-        m_styleBar->AddTool( 303, _( "Underline" ), wxBitmapBundle::FromSVG( underline, wxSize( 16, 16 ) ) );
+#elif __WXOSX__
+        save = wxBitmapBundle::FromSVGResource( "save", wxSize( 16, 16 ) );
+        table = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
+        bold = wxBitmapBundle::FromSVGResource( "bold", wxSize( 16, 16 ) );
+        italic = wxBitmapBundle::FromSVGResource( "italic", wxSize( 16, 16 ) );
+        underline = wxBitmapBundle::FromSVGResource( "underline", wxSize( 16, 16 ) );
 #else
-        m_styleBar->AddTool( 303, _( "Bold" ), wxBitmapBundle::FromSVGResource( "bold", wxSize( 16, 16 ) ) );
-        m_styleBar->AddTool( 303, _( "Italic" ), wxBitmapBundle::FromSVGResource( "italic", wxSize( 16, 16 ) ) );
-        m_styleBar->AddTool( 303, _( "Underline" ), wxBitmapBundle::FromSVGResource( "underline", wxSize( 16, 16 ) ) );
+        save = wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR );
+        table = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
+        bold = wxBitmapBundle::FromSVG( bold, wxSize( 16, 16 ) );
+        italic = wxBitmapBundle::FromSVG( italic, wxSize( 16, 16 ) );
+        underline = wxBitmapBundle::FromSVG( underline, wxSize( 16, 16 ) );
 #endif
+        m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), save, save, wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
+        m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
+        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
+        m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
+        m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
+        m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), table, table, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
+        m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( previewIcon, WXSIZEOF( previewIcon ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
+        m_tb->ToggleTool( wxID_DATASOURCE, true );
+        m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
+        m_styleBar->AddControl( m_fieldText );
+        m_fontName = new FontComboBox( m_styleBar );
+        m_styleBar->AddControl( m_fontName );
+        const wxString fontSizes[] = 
+        {
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "14",
+            "16",
+            "18",
+            "20",
+            "22",
+            "24",
+            "26",
+            "28",
+            "36",
+            "48",
+            "72"
+        };
+        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
+        m_styleBar->AddControl( m_fontSize );
+        m_styleBar->AddTool( 303, _( "Bold" ), bold, bold, wxITEM_NORMAL, _( "Bold" ), _( "Make the font bold" ) );
+        m_styleBar->AddTool( 303, _( "Italic" ), italic, italic,wxITEM_NORMAL, _( "Italic" ), _( "Make the font italic" ) );
+        m_styleBar->AddTool( 303, _( "Underline" ), underline, underline,wxITEM_NORMAL, _( "Make the font underlined" ), _( "Make the font underlined" ) );
     }
     m_tb->Realize();
 #ifdef __WXOSX__
