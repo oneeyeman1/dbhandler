@@ -144,9 +144,15 @@ public:
     TableProperties()
     {
         m_comment = L"";
+#ifdef WIN32
         m_dataFontName = L"MS Sans Serif";
         m_headingFontName = L"MS Sans Serif";
         m_labelFontName = L"MS Sans Serif";
+#else
+        m_dataFontName = L"Microsoft Sans Serif";
+        m_headingFontName = L"Microsoft Sans Serif";
+        m_labelFontName = L"Microsoft Sans Serif";
+#endif
         m_dataFontWeight = 0;
         m_headingFontWeight = 1;
         m_labelFontWeight = 1;
