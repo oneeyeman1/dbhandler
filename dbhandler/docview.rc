@@ -14,4 +14,3 @@ database_16x16      RCDATA  "res/database_16x16.png"
 database_32x32      RCDATA  "res/database_32x32.png"
 database_64x64      RCDATA  "res/database_64x64.png"
 library             RCDATA  "res/library.svg"
- 
