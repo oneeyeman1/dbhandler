@@ -439,7 +439,8 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         wxRect tableRect;
         bool fieldSelected = false;
         bool signSelected = false;
-        for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
+        auto found = false;
+        for( ShapeList::iterator it = list.begin(); it != list.end() && !found; ++it )
         {
             MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
             if( table )
@@ -448,6 +449,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                     table->Select( true );
                 tableRect = table->GetBoundingBox();
                 erdTable = table;
+                found = true;
             }
             else
             {
@@ -459,6 +461,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                     field->SetParentRect( tableRect );
                     fieldSelected = true;
                     erdField = field;
+                    found = true;
                 }
                 else
                 {
@@ -469,6 +472,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                             sign->Select( true );
                         signSelected = true;
                         erdSign = sign;
+                        found = true;
                     }
                 }
             }
@@ -653,21 +657,29 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             }
             break;
         case wxID_DESELECTALLFIELDS:
-        {
-            ShapeList shapes;
-            m_pManager.GetShapes( CLASSINFO( FieldShape ), shapes );
-            for( ShapeList::iterator it = shapes.begin (); it != shapes.end (); ++it )
             {
-                FieldShape *fld = wxDynamicCast( (*it), FieldShape );
-                if( fld )
+                ShapeList shapes;
+                m_pManager.GetShapes( CLASSINFO( FieldShape ), shapes );
+                for( ShapeList::iterator it = shapes.begin (); it != shapes.end (); ++it )
                 {
-                    fld->Select( false );
-                    dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, REMOVE, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName(), false );
+                    FieldShape *fld = wxDynamicCast( (*it), FieldShape );
+                    if( fld )
+                    {
+                        fld->Select( false );
+                        dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, REMOVE, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName(), false );
+                    }
+                    Refresh();
                 }
-                Refresh();
             }
-        }
-        break;
+            break;
+        case wxID_PROPERTIES:
+            {
+                if( erdTable )
+                    dynamic_cast<DrawingView *>( m_view )->SetProperties( erdTable );
+                else
+                    dynamic_cast<DrawingView *>( m_view )->SetProperties( erdField );
+            }
+            break;
     }
 /*    if( rc == wxID_NONE && erdField )
     {

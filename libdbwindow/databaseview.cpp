@@ -1012,6 +1012,11 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
 
 void DrawingView::OnSetProperties(wxCommandEvent &event)
 {
+//    SetProperties();
+}
+
+void DrawingView::SetProperties(const wxSFRectShape *shape)
+{
     ShapeList selections;
     std::vector<std::wstring> errors;
     int type = 0;
@@ -1023,7 +1028,6 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
     TableField *field = NULL;
     wxString command = "";
     bool logOnly = false;
-    wxSFRectShape *shape = wxDynamicCast( event.GetEventObject(), wxSFRectShape );
     if( !shape )
     {
         m_canvas->GetAllSelectedShapes( selections );
@@ -1036,8 +1040,6 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
         }
     }
     wxString tableName, schemaName, ownerName;
-    if( event.GetId() == wxID_PROPERTIES )
-    {
         if( !shape )
         {
             type = DesignProperties;
@@ -1093,7 +1095,6 @@ void DrawingView::OnSetProperties(wxCommandEvent &event)
                 }
             }
         }
-    }
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );

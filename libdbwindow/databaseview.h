@@ -54,6 +54,7 @@ public:
     void ChangeFontEement();
     void ChangeTableTypeMMenu();
     void ChangeTableCommentsMenu();
+    void SetProperties(const wxSFRectShape *shape);
     void SetProfiles(const std::vector<Profile> &profiles) { m_profiles = profiles; }
     DatabaseCanvas *GetDatabaseCanvas() const { return m_canvas; }
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
