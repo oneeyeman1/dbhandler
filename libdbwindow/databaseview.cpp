@@ -2586,9 +2586,14 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
                     found = true;
                 }
             }
-            dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->DeleteSortSourceItems();
-            for( auto i = 0; i < m_page1->GetSortSourceList()->GetItemCount(); ++i )
-                dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->AddSortSource( m_page1->GetSortSourceList()->GetTextValue( i, 0 ) );
+            dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->DeleteSortDestItems();
+            for( auto i = 0; i < m_page1->GetSourceDestList()->GetItemCount(); ++i )
+            {
+                auto name = m_page1->GetSourceDestList()->GetTextValue( i, 0 );
+                auto direction = m_page1->GetSourceDestList()->GetToggleValue( i, 1 );
+                auto sourcePos = m_page1->GetSourceDestList()->GetItemData( m_page1->GetSourceDestList()->RowToItem( i ) );
+                dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->AddSortDest( wxString::Format( "%s %d %d", name, direction, sourcePos ) );
+            }
             GetDocument()->SetFilename( documentName + ".qry" );
             if( GetDocument()->SaveNewQuery( libName, m_queries, documentName + ".qry", update ) ) 
             {

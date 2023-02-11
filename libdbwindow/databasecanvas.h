@@ -23,23 +23,24 @@ public:
             m_arguments.Add( wxString::Format( "%d %s %s", (*it).m_pos, (*it).m_name, (*it).m_type ) );
         }
     }
-    void AddSortSource(const wxString &source) { m_sortSource.Add( source ); }
+    void AddSortDest(const wxString &dest) { m_sortDest.Add( dest ); }
     void DeleteQuieryField(const std::wstring &fullName) { m_fields.Remove( fullName ); }
     void DeleteAllTables() { m_tables.Clear();  }
     void DeleteAllQueryFields() { m_fields.Clear(); }
-    void DeleteSortSourceItems() { m_sortSource.Clear(); }
+    void DeleteSortDestItems() { m_sortDest.Clear(); }
     const wxString &GetDbName() const { return m_dbName; }
     const wxString &GetDbType() const { return m_dbType; }
     const wxString &GetQuery() const { return m_query; }
     const wxArrayString &GetTables() const { return m_tables; }
     const wxArrayString &GetFields() const { return m_fields; }
     const wxArrayString &GetQueryArguments() const { return m_arguments; }
+    const wxArrayString &GetSortDest() const { return m_sortDest; }
 private:
     wxString m_dbName, m_dbType, m_query;
     wxArrayString m_fields;
     wxArrayString m_tables;
     wxArrayString m_arguments;
-    wxArrayString m_sortSource;
+    wxArrayString m_sortDest;
 };
 
 class WXEXPORT DatabaseCanvas : public wxSFShapeCanvas
