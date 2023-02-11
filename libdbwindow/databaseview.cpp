@@ -912,7 +912,7 @@ void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
 int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect)
 {
     wxDynamicLibrary lib;
-    int res;
+    int res = 0;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
