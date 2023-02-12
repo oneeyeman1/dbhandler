@@ -4251,7 +4251,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         return result;
     SQLHSTMT stmt = 0;
     std::wstring query, query1;
-    long count = 0, bufferSize = 1024;
+    auto count = 0, bufferSize = 1024;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
     {
         query = L"SELECT count(*) table_cont FROM (SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.system_views UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.tables UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.views UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.objects WHERE type = \'S\' ) d";
