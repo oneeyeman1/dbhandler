@@ -11,9 +11,9 @@ struct Profile
 class QueryArguments
 {
 public:
-    int m_pos;
+    unsigned long m_pos;
     wxString m_name, m_type;
-    QueryArguments(int pos, const wxString &name, const wxString type) : m_pos(pos), m_name(name), m_type(type) {}
+    QueryArguments(unsigned long pos, const wxString &name, const wxString type) : m_pos(pos), m_name(name), m_type(type) {}
 };
 
 struct ClientData
