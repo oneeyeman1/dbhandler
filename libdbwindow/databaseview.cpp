@@ -2594,6 +2594,15 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
                 auto sourcePos = m_page1->GetSourceDestList()->GetItemData( m_page1->GetSourceDestList()->RowToItem( i ) );
                 dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->AddSortDest( wxString::Format( "%s %d %d", name, direction, sourcePos ) );
             }
+            dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->DeleteAllWhereLines();
+            for( auto i = 0; i < m_page2->GetGrid()->GetNumberRows(); ++i )
+            {
+                auto var = m_page2->GetGrid()->GetCellValue( i, 0 );
+                auto sign = m_page2->GetGrid()->GetCellValue( i, 1 );
+                auto value = m_page2->GetGrid()->GetCellValue( i, 2 );
+                auto condition = m_page2->GetGrid()->GetCellValue( i, 3 );
+                dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->AddWhereLines( wxString::Format( "%d,%s,%s,%s,%s", i, var, sign, value, condition ) );
+            }
             GetDocument()->SetFilename( documentName + ".qry" );
             if( GetDocument()->SaveNewQuery( libName, m_queries, documentName + ".qry", update ) ) 
             {

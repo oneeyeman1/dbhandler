@@ -117,6 +117,18 @@ void WhereHavingPage::AppendField(const std::wstring &field)
     m_fields.push_back( field );
 }
 
+void WhereHavingPage::AppendRowsToGrid(int count)
+{
+    auto numRows = m_grid->GetNumberRows();
+    for( auto i = 0; i < count; ++i )
+    {
+        m_grid->AppendRows();
+        m_grid->SetCellEditor( numRows + i, 0, new wxGridCellChoiceEditor( 0, NULL, true ) );
+        m_grid->SetCellEditor( numRows + i, 1, new wxGridCellChoiceEditor( 28, m_operatorChoices ) );
+        m_grid->SetCellEditor( numRows + i, 3, new wxGridCellChoiceEditor( 2, m_logicalChoices ) );
+    }
+}
+
 void WhereHavingPage::OnSize(wxSizeEvent &event)
 {
     int width = GetClientRect().GetWidth();

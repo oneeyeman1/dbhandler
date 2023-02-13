@@ -36,6 +36,7 @@ public:
     void AppendField(const std::wstring &field);
     wxGrid *GetGrid();
     void SetQueryArguments(const std::vector<QueryArguments> &arguments);
+    void AppendRowsToGrid(int count);
     void OnSize(wxSizeEvent &event);
     void OnCellChanged(wxCommandEvent &event);
     void OnGridCellChaqnged(wxGridEvent &event);
