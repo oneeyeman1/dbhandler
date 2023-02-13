@@ -81,6 +81,8 @@ QueryRoot::QueryRoot()
     XS_SERIALIZE( m_sortDest, "sort_dest" );
     XS_SERIALIZE( m_wheres, "query_where" );
     XS_SERIALIZE( m_arguments, "query_arguments" );
+    XS_SERIALIZE( m_groupbySource, "groupby_source" );
+    XS_SERIALIZE( m_groupbyDest, "groupby_dest" );
 }
 
 QueryRoot::QueryRoot(const QueryRoot &root)
@@ -93,6 +95,8 @@ QueryRoot::QueryRoot(const QueryRoot &root)
     m_arguments = root.m_arguments;
     m_sortDest = root.m_sortDest;
     m_wheres = root.m_wheres;
+    m_groupbySource = root.m_groupbySource;
+    m_groupbyDest = root.m_groupbyDest;
     
     XS_SERIALIZE( m_dbName, "database_name" );
     XS_SERIALIZE( m_dbType, "database_type" );
@@ -102,6 +106,8 @@ QueryRoot::QueryRoot(const QueryRoot &root)
     XS_SERIALIZE( m_sortDest, "sort_dest" );
     XS_SERIALIZE( m_wheres, "query_where" );
     XS_SERIALIZE( m_arguments, "query_arguments" );
+    XS_SERIALIZE( m_groupbySource, "groupby_source" );
+    XS_SERIALIZE( m_groupbyDest, "groupby_dest" );
 }
 
 DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, wxWindow *parent) : wxSFShapeCanvas()
