@@ -114,6 +114,7 @@ protected:
 private:
     MyListCtrl *m_source, *m_dest, *m_dragSource, *m_dragDest;
     wxDataViewListCtrl *m_sortSource, *m_sortDest, *m_sortDragSource, *m_sortDragDest;
+    wxDataViewItem m_draggedItem;
     wxStaticText *m_label;
     wxString m_item;
     long m_itemPos, m_sourcePos;
