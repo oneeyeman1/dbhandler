@@ -42,8 +42,8 @@ public:
     const wxArrayString &GetQueryArguments() const { return m_arguments; }
     const wxArrayString &GetSortDest() const { return m_sortDest; }
     const wxArrayString &GetWhereLines() const { return m_wheres; }
-    const wxArrayString &GetGropBySource() const { return m_groupbSource; }
-    const wxArrayString &GetGropByDest() const { return m_groupbDest; }
+    const wxArrayString &GetGropBySource() const { return m_groupbySource; }
+    const wxArrayString &GetGropByDest() const { return m_groupbyDest; }
 private:
     wxString m_dbName, m_dbType, m_query;
     wxArrayString m_fields;

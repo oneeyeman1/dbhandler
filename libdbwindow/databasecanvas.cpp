@@ -144,6 +144,7 @@ void DatabaseCanvas::OnDraw(wxDC &WXUNUSED(dc))
 
 void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition> > &selections, const std::vector<TableField *> &queryFields, wxString &query, std::vector<wxString> &relations)
 {
+    auto index = 0;
     std::vector<MyErdTable *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
     for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
     {
@@ -160,6 +161,7 @@ void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition
                 {
                     dynamic_cast<DrawingView *>( m_view )->GetWherePage()->AppendField( (*it)->GetTableName().ToStdWstring() + L"." + (*it1)->GetFieldName() );
                     dynamic_cast<DrawingView *>( m_view )->GetHavingPage()->AppendField( (*it)->GetTableName().ToStdWstring() + L"." + (*it1)->GetFieldName() );
+                    dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->GetSourceList()->InsertItem( index++, (*it)->GetTableName().ToStdWstring() + L"." + (*it1)->GetFieldName() );
                 }
             }
             wxRect rect = (*it)->GetBoundingBox();
@@ -1335,6 +1337,7 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
         }
     }
     auto args = dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->GetQueryArguments();
+    std::vector<QueryArguments> arguments;
     for( wxArrayString::iterator it4 = args.begin(); it4 < args.end(); ++it4 )
     {
         wxStringTokenizer tokens( (*it4) );
@@ -1342,7 +1345,10 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
         auto name = tokens.GetNextToken();
         auto type = tokens.GetNextToken();
         dynamic_cast<DrawingView * >( m_view )->SetQueryArguments( QueryArguments( pos, name, type ) );
+        arguments.push_back( QueryArguments( pos, name, type ) );
     }
+    dynamic_cast<DrawingView *>( m_view )->GetWherePage()->SetQueryArguments( arguments );
+    dynamic_cast<DrawingView *>( m_view )->GetHavingPage()->SetQueryArguments( arguments );
     UpdateCanvasWithQuery();
     for( ShapeList::iterator it = listTables.begin(); it != listTables.end(); it++ )
     {
@@ -1435,6 +1441,10 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
         dynamic_cast<DrawingView *>( m_view )->GetWherePage()->GetGrid()->SetCellValue( row, 1, sign );
         dynamic_cast<DrawingView *>( m_view )->GetWherePage()->GetGrid()->SetCellValue( row, 2, value );
         dynamic_cast<DrawingView *>( m_view )->GetWherePage()->GetGrid()->SetCellValue( row, 3, condition );
+    }
+    for( auto str : dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->GetGropByDest() )
+    {
+//        dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->GetDestList()->AppendString( str );
     }
 }
 
