@@ -445,21 +445,21 @@ void SortGroupByPage::AddRemoveSortingField(bool isAdding, const wxString &field
 
 void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
 {
-    wxDataViewItem item = event.GetItem();
+    m_draggedItem = event.GetItem();
     wxVariant value = event.GetValue();
     m_sortDragSource = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
     m_sortDragSource->SetCursor( wxCursor( "handdrag" ) );
-    if( m_sortDragSource == m_sortSource && item.IsOk())
-        m_itemPos = m_sortDragSource->ItemToRow( item );
-    else if( item.IsOk() )
+    if( m_sortDragSource == m_sortSource && m_draggedItem.IsOk())
+        m_itemPos = m_sortDragSource->ItemToRow( m_draggedItem );
+    else if( m_draggedItem.IsOk() )
     {
-        m_sourcePos = m_sortDragSource->ItemToRow( item );
-        m_itemPos = m_sortDragSource->GetItemData( item );
+        m_sourcePos = m_sortDragSource->ItemToRow( m_draggedItem );
+        m_itemPos = m_sortDragSource->GetItemData( m_draggedItem );
     }
-    m_item = m_sortDragSource->GetTextValue( m_sortDragSource->ItemToRow( item ), 0 );
+    m_item = m_sortDragSource->GetTextValue( m_sortDragSource->ItemToRow( m_draggedItem ), 0 );
     if( m_sortDragSource == m_sortDest )
     {
-        m_sortDest->GetValue( value, m_sortDest->ItemToRow( item), 1 );
+        m_sortDest->GetValue( value, m_sortDest->ItemToRow( m_draggedItem), 1 );
 //        m_item += value.GetBool() ? " ASC" : " DESC";
     }
     wxTextDataObject *obj = new wxTextDataObject;
@@ -485,7 +485,7 @@ void SortGroupByPage::OnSortDrop(wxDataViewEvent &event)
         }
         else
         {
-            pos = m_sortDragSource->GetItemData( event.GetItem() );
+            pos = m_sortDragSource->GetItemData( m_draggedItem );
             positions.originalPosition = pos;
         }
         m_sortDragSource->DeleteItem( m_sortDragDest == m_sortDest ? m_itemPos : m_sourcePos );

@@ -2592,7 +2592,7 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
                 auto name = m_page1->GetSourceDestList()->GetTextValue( i, 0 );
                 auto direction = m_page1->GetSourceDestList()->GetToggleValue( i, 1 );
                 auto sourcePos = m_page1->GetSourceDestList()->GetItemData( m_page1->GetSourceDestList()->RowToItem( i ) );
-                dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->AddSortDest( wxString::Format( "%s %d %d", name, direction, sourcePos ) );
+                dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->AddSortDest( wxString::Format( "%s %d %ld", name, direction ? 1 : 0, sourcePos ) );
             }
             dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->DeleteAllWhereLines();
             for( auto i = 0; i < m_page2->GetGrid()->GetNumberRows(); ++i )
