@@ -1299,7 +1299,6 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
         {
             for( auto it2 = (*it1).second.begin(); it2 < (*it1).second.end() && !found; ++it2 )
             {
-                auto dbTable = table->GetTable();
                 auto index = 0;
                 if( m_dbType == L"SQLite" )
                 {
@@ -1366,7 +1365,6 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
         {
             for( auto it2 = (*it1).second.begin(); it2 < (*it1).second.end() && !found; ++it2 )
             {
-                auto dbTable = table->GetTable();
                 if( m_dbType == L"SQLite" )
                 {
                     if( table->GetSchemaName() == (*it2)->GetSchemaName() && table->GetTableName() == (*it2)->GetTableName() )
