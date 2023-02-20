@@ -186,6 +186,10 @@ SortGroupByPage::SortGroupByPage(wxWindow *parent, bool isSortPage) : wxPanel( p
     }
     set_properties();
     do_layout();
+    if( m_source )
+        m_source->SetColumnWidth( 0, m_source->GetClientSize().GetWidth() );
+    if( m_dest )
+        m_dest->SetColumnWidth( 0, m_dest->GetClientSize().GetWidth() );
     if( !isSortPage )
     {
         m_source->Bind( wxEVT_LIST_BEGIN_DRAG, &SortGroupByPage::OnBeginDrag, this );

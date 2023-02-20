@@ -1300,12 +1300,17 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
             for( auto it2 = (*it1).second.begin(); it2 < (*it1).second.end() && !found; ++it2 )
             {
                 auto dbTable = table->GetTable();
+                auto index = 0;
                 if( m_dbType == L"SQLite" )
                 {
                     if( table->GetSchemaName() == (*it2)->GetSchemaName() && table->GetTableName() == (*it2)->GetTableName() )
                     {
                         found = true;
                         table->SetDataaseTable( (*it2) );
+                        for( auto field : (*it2)->GetFields() )
+                        {
+                            dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->GetSourceList()->InsertItem( index++, table->GetSchemaName() + "." + table->GetTableName() + "." + field->GetFieldName() );
+                        }
                     }
                 }
                 else
@@ -1314,6 +1319,10 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
                     {
                         found = true;
                         table->SetDataaseTable( (*it2) );
+                        for( auto field : (*it2)->GetFields() )
+                        {
+                            dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->GetSourceList()->InsertItem( index++, table->GetCatalogName() + "." + table->GetSchemaName() + "." + table->GetTableName() + "." + field->GetFieldName() );
+                        }
                     }
                 }
             }
