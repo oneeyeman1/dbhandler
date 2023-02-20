@@ -161,7 +161,6 @@ void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition
                 {
                     dynamic_cast<DrawingView *>( m_view )->GetWherePage()->AppendField( (*it)->GetTableName().ToStdWstring() + L"." + (*it1)->GetFieldName() );
                     dynamic_cast<DrawingView *>( m_view )->GetHavingPage()->AppendField( (*it)->GetTableName().ToStdWstring() + L"." + (*it1)->GetFieldName() );
-                    dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->GetSourceList()->InsertItem( index++, (*it)->GetTableName().ToStdWstring() + L"." + (*it1)->GetFieldName() );
                 }
             }
             wxRect rect = (*it)->GetBoundingBox();

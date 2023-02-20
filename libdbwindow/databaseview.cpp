@@ -665,57 +665,9 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
             sizer->Layout();
             m_canvas->Show( true );
         }
-/*        if( m_type == QueryView )
-        {
-            if( res != wxID_CANCEL )
-            {
-                std::vector<TableField *> queryFields = GetDocument()->GetQueryFields();
-                query = "SELECT ";
-                if( !quickSelect && queryFields.size() == 0 )
-                    query += "<unknown fields>\n";
-                else
-                {
-                    if( !quickSelect )
-                    {
-                        for( std::vector<TableField *>::iterator it = queryFields.begin(); it < queryFields.end(); it++ )
-                        {
-                            query += (*it)->GetFieldName();
-                            if( it != queryFields.end() - 1 )
-                                query += ",";
-                        }
-                        query += "\n";
-                    }
-                    else
-                    {
-                        for( std::vector<TableField *>::iterator it = queryFields.begin(); it < queryFields.end(); ++it )
-                        {
-                            query += (*it)->GetFullName();
-                            if( it != queryFields.end() - 1 )
-                                query += ",";
-                            m_fields->AddField( (*it)->GetFullName() );
-                        }
-                        query += "\n";
-                    }
-                }
-                query += "FROM ";
-            }
-        }
-        if( quickSelect && m_selectTableName.size()  > 0 )
-        {
-            if( db->GetTableVector().GetDatabaseType() == L"SQLite" )
-            {
-                wxString name = m_selectTableName[0]->GetSchemaName() + "." + m_selectTableName[0]->GetTableName();
-                tables[m_selectTableName[0]->GetSchemaName()].push_back( TableDefinition( L"", m_selectTableName[0]->GetSchemaName(), m_selectTableName[0]->GetTableName() ) );
-            }
-            else
-                tables[m_selectTableName[0]->GetCatalog()].push_back( TableDefinition( m_selectTableName[0]->GetCatalog(), m_selectTableName[0]->GetSchemaName(), m_selectTableName[0]->GetTableName() ) );
-        }
     }
     if( m_tables.size() > 0 )
     {
-        ((DrawingDocument *) GetDocument())->AddTables( m_tables );
-        m_selectTableName = ((DrawingDocument *) GetDocument())->GetDBTables();
-        ((DatabaseCanvas *) m_canvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
         if( m_type == QueryView )
         {
             if( query != L"\n" )
@@ -746,7 +698,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 designMenu->Check( wxID_DATASOURCE, false );
                 m_tb->ToggleTool( wxID_DATASOURCE, false );
             }
-        }*/
+        }
     }
 }
 
