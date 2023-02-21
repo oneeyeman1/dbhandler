@@ -593,5 +593,14 @@ void QuickSelect::OnCancelQuickSelect(wxCommandEvent &WXUNUSED(event))
             delete (ClientData *) m_tables->GetClientData( i );
         }
     }
+    for( auto iter = m_db->GetTableVector().m_tables.begin(); iter != m_db->GetTableVector().m_tables.end(); ++iter )
+    {
+        for( auto it = (*iter).second.begin(); it < (*iter).second.end(); ++it )
+        {
+            delete (*it);
+            (*it) = nullptr;
+        }
+    }
+    m_db->GetTableVector().m_tables.clear();
     EndModal( wxID_CANCEL );
 }
