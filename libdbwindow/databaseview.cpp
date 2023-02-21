@@ -406,8 +406,8 @@ void DrawingView::CreateViewToolBar()
         HANDLE gs_wxMainThread = NULL;
         const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
         const void* data = nullptr, * dataTable = nullptr, * data1 = nullptr, *data2 = nullptr, *data3 = nullptr;;
-        size_t size = 0, sizeTable = 0, size1 = 0, size2 = 0, size3 = 0;
-        if( !wxLoadUserResource( &data, &size, "save", RT_RCDATA, inst ) )
+        size_t sizeSave = 0, sizeTable = 0, size1 = 0, size2 = 0, size3 = 0;
+        if( !wxLoadUserResource( &data, &sizeSave, "save", RT_RCDATA, inst ) )
         {
             auto err = ::GetLastError();
             wxMessageBox( wxString::Format( "Error: %d!!", err ) );
@@ -585,11 +585,11 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                     if( res1 != wxID_CANCEL )
                     {
                         wxConfigBase *config = wxConfigBase::Get( false );
-                        wxString path = config->GetPath();
+                        wxString configPath = config->GetPath();
                         config->SetPath( "Query" );
                         config->Write( "QuerySource", m_source );
                         config->Write( "QueryPresentation", m_presentation );
-                        config->SetPath( path );
+                        config->SetPath( configPath );
                         if( m_source != 0 )
                         {
                             auto res2 = SelectTable( false, m_tables, query, quickSelect );
@@ -655,6 +655,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                         QUICKSELECT func2 = (QUICKSELECT) lib.GetSymbol( "QuickSelectDlg" );
                         res = func2( m_frame, db, m_selectTableName, GetDocument()->GetQueryFields(), GetDocument()->GetAllSorted(), GetDocument()->GetQuerySorted() );
                         quickSelect = true;
+//                        m_tables = db->GetTableVector().m_tableDefinitions;
                     }
                 }
             }
@@ -1548,12 +1549,12 @@ void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type, const l
         query = query.substr( query.find( " WHERE " ) + 7 );
         while( res )
         {
-            auto temp = query.substr( 0, query.find( ' ' ) );
-            res = ( temp == const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn() ) ||
-                  ( temp == type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn() );
+            auto temp1 = query.substr( 0, query.find( ' ' ) );
+            res = ( temp1 == const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn() ) ||
+                  ( temp1 == type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn() );
             if( res )
             {
-                result += temp;
+                result += temp1;
                 switch( type->GetSign() )
                 {
                     case 3:
