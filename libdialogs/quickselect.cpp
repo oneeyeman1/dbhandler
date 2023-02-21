@@ -201,23 +201,11 @@ void QuickSelect::FillTableListBox()
             {
                 if( schemaName == L"" )
                     schemaName = L"main";
-                if( size > 1 )
-                    tableName = schemaName + L"." + tableName;
+                tableName = schemaName + L"." + tableName;
             }
-            else if( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
+            else
             {
-                if( size > 1 )
-                    tableName = catalogName + L"." + schemaName + L"." + tableName;
-            }
-            else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
-            {
-                if( size > 1 )
-                    tableName = catalogName + L"." + schemaName + L"." + tableName;
-            }
-            else if( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" )
-            {
-               if( size > 1 )
-                    tableName = catalogName + L"." + schemaName + L"." + tableName;
+                tableName = catalogName + L"." + schemaName + L"." + tableName;
             }
             m_tables->Append( tableName, new ClientData( catalogName, schemaName ) );
         }
@@ -261,7 +249,14 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
                         found = true;
                         m_queryFields = (*it1)->GetFields();
                         for( std::vector<TableField *>::iterator it2 = m_queryFields.begin(); it2 < m_queryFields.end(); ++it2 )
-                            m_fields->Append( (*it2)->GetFieldName() );
+                            m_fields->Append( (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() + "." + (*it2)->GetFieldName() );
+                    }
+                    else
+                    {
+                        found = true;
+                        m_queryFields = (*it1)->GetFields();
+                        for( std::vector<TableField *>::iterator it2 = m_queryFields.begin(); it2 < m_queryFields.end(); ++it2 )
+                            m_fields->Append( (*it1)->GetCatalog() + "." + (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() + "." + (*it2)->GetFieldName() );
                     }
                 }
             }
@@ -341,10 +336,11 @@ void QuickSelect::OnGridRowLines(wxGridSizeEvent &event)
 
 void QuickSelect::OnFieldSelected(wxCommandEvent &event)
 {
+    auto field = event.GetString().AfterLast( '.' );
     if( event.IsSelection() )
-        AddFieldToGrid( event.GetString(), true );
+        AddFieldToGrid( field, true );
     else
-        AddFieldToGrid( event.GetString(), false );
+        AddFieldToGrid( field, false );
 }
 
 void QuickSelect::OnAllFieldsSelected(wxCommandEvent &WXUNUSED(event))
