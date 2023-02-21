@@ -590,9 +590,12 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                         config->Write( "QuerySource", m_source );
                         config->Write( "QueryPresentation", m_presentation );
                         config->SetPath( path );
-                        auto res2 = SelectTable( false, m_tables, query, quickSelect );
-                        if( res2 == wxID_CANCEL )
-                            return;
+                        if( m_source != 0 )
+                        {
+                            auto res2 = SelectTable( false, m_tables, query, quickSelect );
+                            if( res2 == wxID_CANCEL )
+                                return;
+                        }
                     }
                 }
                 if( res == wxID_OK )
@@ -602,6 +605,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                     if( GetDocument()->OnOpenDocument( documentName + ".qry" ) && ((DrawingDocument *) GetDocument() )->IsLoadSuccessful() )
                     {
                         GetDatabaseCanvas()->LoadQuery( GetDocument()->GetDatabase()->GetTableVector().m_tables );
+                        m_frame->SetTitle( "Query - " + documentName );
                     }
                     else
                     {
@@ -933,18 +937,6 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
             {
                 int i = 0;
                 std::vector<MyErdTable *> dbTables = ((DrawingDocument *)GetDocument())->GetTables();
-                for( std::vector<MyErdTable *>::iterator it = dbTables.begin(); it < dbTables.end(); ++it )
-                {
-                    const DatabaseTable *dbTable = (*it)->GetTable();
-                    for( std::vector<TableField *>::const_iterator it1 = dbTable->GetFields().begin(); it1 < dbTable->GetFields().end(); ++it1 )
-                    {
-                        long item = m_page3->GetSourceList()->InsertItem( i++, "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
-                        m_page3->GetSourceList()->SetItemData( item, item );
-                        GetDocument()->AddGroupByAvailableField( "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"", item );
-                    }
-                }
-                m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
-                m_page3->GetDestList()->SetColumnWidth( 0, m_page3->GetDestList()->GetSize().GetWidth() );
                 m_page1->AddQuickSelectSortingFields( GetDocument()->GetAllSorted(), GetDocument()->GetQuerySorted() );
                 m_page6->SetSyntaxText( query );
                 m_edit->SetText( query );
