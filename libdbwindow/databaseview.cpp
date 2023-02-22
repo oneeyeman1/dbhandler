@@ -210,8 +210,8 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxConfigBase *config = wxConfigBase::Get( false );
     wxString path = config->GetPath();
     config->SetPath( "Query" );
-    m_source = config->Read( "QuerySource", &m_source, 2 );
-    m_presentation = config->Read( "QueryPresentation", &m_presentation, 4 );
+    config->Read( "QuerySource", &m_source, 2 );
+    config->Read( "QueryPresentation", &m_presentation, 4 );
     config->SetPath( path );
     m_parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     wxRect clientRect = m_parent->GetClientRect();
