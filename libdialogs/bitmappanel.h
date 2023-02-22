@@ -2,7 +2,7 @@
 class BitmapPanel : public wxPanel
 {
 public:
-    BitmapPanel(wxWindow *parent, const wxBitmap &bitmap, const wxString &label);
+    BitmapPanel(wxWindow *parent, const wxBitmap &bitmap, const wxString &label, int index);
 #ifdef __WXGTK__
 #if GTK_CHECK_VERSION(3,6,0)
     wxStaticText *GetLabel();
@@ -12,11 +12,13 @@ public:
 #else
     wxStaticText *GetLabel();
 #endif
+    int GetIndex();
     void OnBitmapClicked(wxMouseEvent &event);
     void OnLabelClicked(wxMouseEvent &event);
 protected:
     void do_layout();
 private:
+    int m_index;
     wxStaticBitmap *m_bitmap;
 #ifdef __WXGTK__
 #if GTK_CHECK_VERSION( 3, 6, 0 )

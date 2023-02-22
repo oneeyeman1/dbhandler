@@ -25,7 +25,7 @@
 #endif
 #include "bitmappanel.h"
 
-BitmapPanel::BitmapPanel(wxWindow *parent, const wxBitmap &bitmap, const wxString &label) : wxPanel(parent)
+BitmapPanel::BitmapPanel(wxWindow *parent, const wxBitmap &bitmap, const wxString &label, int index) : wxPanel(parent), m_index(index)
 {
     m_bitmap = new wxStaticBitmap( this, wxID_ANY, bitmap );
 #ifdef __WXGTK__
@@ -84,4 +84,9 @@ void BitmapPanel::OnLabelClicked(wxMouseEvent &event)
     event.ResumePropagation( wxEVENT_PROPAGATE_MAX );
     event.SetEventObject( this );
     event.Skip();
+}
+
+int BitmapPanel::GetIndex()
+{
+    return m_index;
 }
