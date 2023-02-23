@@ -23,6 +23,8 @@ XS_IMPLEMENT_CLONABLE_CLASS(DesignField, wxSFRectShape);
 
 DesignField::DesignField() : wxSFRectShape()
 {
+    SetHAlign( wxSFShapeBase::halignCENTER );
+    SetVAlign( wxSFShapeBase::valignMIDDLE );
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );
     AcceptChild( "TabOrder" );

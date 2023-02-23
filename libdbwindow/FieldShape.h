@@ -16,8 +16,11 @@ protected:
     virtual void DrawNormal(wxDC &dc) wxOVERRIDE;
     virtual void DrawSelected(wxDC& dc) wxOVERRIDE;
 private:
+    bool m_isNotNull, m_isPK, m_isAutoInc;
     TableField *m_field;
     wxRect m_parentRect;
+    int m_size, m_decimal;
+    wxString m_name, m_type;
     wxColour m_backColour;
 };
 

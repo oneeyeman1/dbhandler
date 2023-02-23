@@ -23,6 +23,8 @@ XS_IMPLEMENT_CLONABLE_CLASS(DesignLabel, wxSFRectShape);
 
 DesignLabel::DesignLabel() : wxSFRectShape()
 {
+    SetHAlign( wxSFShapeBase::halignCENTER );
+    SetVAlign( wxSFShapeBase::valignMIDDLE );
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );
     m_grid = new wxSFGridShape;

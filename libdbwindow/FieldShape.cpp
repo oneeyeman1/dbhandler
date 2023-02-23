@@ -8,7 +8,9 @@ XS_IMPLEMENT_CLONABLE_CLASS(FieldShape,wxSFTextShape);
 
 FieldShape::FieldShape()
 {
-/*    m_name = wxEmptyString;
+    SetHAlign(wxSFShapeBase::halignCENTER );
+    SetVAlign(wxSFShapeBase::valignMIDDLE );
+    m_name = wxEmptyString;
     m_type = wxEmptyString;
     m_size = 0;
     m_decimal = 0;
@@ -23,7 +25,7 @@ FieldShape::FieldShape()
     XS_SERIALIZE( m_isPK, wxT( "m_isPK" ) );
     XS_SERIALIZE( m_isNotNull, wxT( "m_notNull" ) );
     XS_SERIALIZE( m_isAutoInc, wxT( "m_isAutoInc" ) );
-    XS_SERIALIZE( m_backColour, wxT( "m_backColour" ) );*/
+    XS_SERIALIZE( m_backColour, wxT( "m_backColour" ) );
 }
 
 FieldShape::FieldShape(const FieldShape &shape)
@@ -31,6 +33,13 @@ FieldShape::FieldShape(const FieldShape &shape)
     m_field = shape.m_field;
     m_parentRect = shape.m_parentRect;
     m_backColour = shape.m_backColour;
+    m_isNotNull = shape.m_isNotNull;
+    m_isPK = shape.m_isPK;
+    m_isAutoInc = shape.m_isAutoInc;
+    m_size = shape.m_size;
+    m_decimal = shape.m_decimal;
+    m_name = shape.m_name;
+    m_type = shape.m_type;
     RemoveStyle( sfsSHOW_HANDLES );
 }
 
