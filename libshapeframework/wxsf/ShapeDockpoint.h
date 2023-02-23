@@ -75,7 +75,7 @@ public:
 	 * \param relpos Relative position in percentages
 	 * \param id Connection point ID
 	 */
-	wxSFConnectionPoint(wxSFShapeBase *parent, const wxRealPoint& relpos, long id = -1);
+	wxSFConnectionPoint(wxSFShapeBase *parent, const wxRealPoint& relpos, int id = -1);
 	/*!
 	 * \brief Copy constructor.
 	 * \param obj Reference to source object

@@ -914,7 +914,7 @@ wxSFConnectionPoint* wxSFShapeBase::AddConnectionPoint(wxSFConnectionPoint::CPTY
 	}
 }
 
-wxSFConnectionPoint* wxSFShapeBase::AddConnectionPoint(const wxRealPoint& relpos, long id, bool persistent)
+wxSFConnectionPoint* wxSFShapeBase::AddConnectionPoint(const wxRealPoint& relpos, int id, bool persistent)
 {
 	wxSFConnectionPoint *cp = new wxSFConnectionPoint( this, relpos, id );
 	cp->EnableSerialization( persistent );

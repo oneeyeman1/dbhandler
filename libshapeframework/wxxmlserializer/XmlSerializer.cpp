@@ -89,7 +89,7 @@ xsSerializable::~xsSerializable()
 
 // public functions /////////////////////////////////////////////////////////////////
 
-void xsSerializable::SetId(long id)
+void xsSerializable::SetId(int id)
 {
 	m_nId = id;
 	
@@ -953,7 +953,7 @@ int wxXmlSerializer::GetIDCount(long id)
 	return nCount;
 }
 
-long wxXmlSerializer::GetNewId()
+int wxXmlSerializer::GetNewId()
 {
 /*	long nId = 1;
 	
@@ -964,7 +964,7 @@ long wxXmlSerializer::GetNewId()
 	
 	return nId;*/
 	
-	long nId = 1;
+	int nId = 1;
 	
 	while( m_mapUsedIDs.find( nId ) != m_mapUsedIDs.end() ) nId++;
 	

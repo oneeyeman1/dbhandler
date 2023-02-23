@@ -28,9 +28,9 @@ class IDPair : public wxObject
 {
 public:
     /*! \brief Constructor */
-	IDPair(long oldId, long newId){m_nOldID = oldId; m_nNewID = newId;}
-	long m_nNewID;
-	long m_nOldID;
+	IDPair(int oldId, int newId){m_nOldID = oldId; m_nNewID = newId;}
+	int m_nNewID;
+	int m_nOldID;
 };
 
 WX_DECLARE_LIST(IDPair, IDList);

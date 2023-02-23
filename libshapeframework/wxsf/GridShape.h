@@ -135,7 +135,7 @@ class WXDLLIMPEXP_SF wxSFGridShape : public wxSFRectShape
 		 * \brief Remove shape with given ID from the grid.
 		 * \param id ID of shape which should be removed
 		 */
-		void RemoveFromGrid(long id);
+		void RemoveFromGrid(int id);
 
         // public virtual functions
         /*! \brief Upate shape (align all child shapes an resize it to fit them) */

@@ -389,7 +389,7 @@ wxPen xsPenPropIO::FromString(const wxString& value)
 
 	wxStringTokenizer tokens(value, wxT(" "), wxTOKEN_STRTOK);
 	pen.SetColour(xsColourPropIO::FromString(tokens.GetNextToken()));
-	pen.SetWidth(xsLongPropIO::FromString(tokens.GetNextToken()));
+	pen.SetWidth(xsIntPropIO::FromString(tokens.GetNextToken()));
 	pen.SetStyle((wxPenStyle)xsLongPropIO::FromString(tokens.GetNextToken()));
 
 	return pen;

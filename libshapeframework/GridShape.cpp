@@ -186,7 +186,7 @@ wxSFShapeBase* wxSFGridShape::GetManagedShape(int row, int col)
 		return NULL;
 }
 
-void wxSFGridShape::RemoveFromGrid(long id)
+void wxSFGridShape::RemoveFromGrid(int id)
 {
 	if( m_arrCells.Index( id ) != wxNOT_FOUND )
 	{

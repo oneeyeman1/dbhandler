@@ -743,7 +743,7 @@ public:
 	 * \param persistent TRUE if the connection point should be serialized
 	 * \return Pointer to the new connection point
 	 */
-	wxSFConnectionPoint* AddConnectionPoint(const wxRealPoint& relpos, long id = -1, bool persistent = true);
+	wxSFConnectionPoint* AddConnectionPoint(const wxRealPoint& relpos, int id = -1, bool persistent = true);
 	/*!
 	 * \brief Remove connection point of given type from the shape (if pressent).
 	 * \param type Connection point type

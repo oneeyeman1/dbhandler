@@ -338,12 +338,12 @@ public:
      * serializable object is attached to another one (or directly to root node of wxXmlSerializer) by
      * wxXmlSerializer::AddItem() member function.
      */
-    void SetId(long id);
+    void SetId(int id);
     /*!
      * \brief Get object ID.
      * \return ID value or -1 if the ID hasn't been set yet
      */
-    inline long GetId() const { return m_nId; }
+    inline int GetId() const { return m_nId; }
 
     /*!
      * \brief Create new 'object' XML node and serialize all marked class data members (properties) into it.
@@ -508,7 +508,7 @@ protected:
 	
 private:
     /*! \brief Object ID */
-    long m_nId;
+    int m_nId;
 };
 
 /*!
@@ -712,7 +712,7 @@ public:
 	/*!
 	 * \brief Get the lowest free object ID
 	 */
-	long GetNewId();
+	int GetNewId();
 	/*!
 	 * \brief Find out whether given object ID is already used.
 	 * \param id Object ID

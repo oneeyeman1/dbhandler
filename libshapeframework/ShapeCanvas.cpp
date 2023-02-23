@@ -1526,7 +1526,7 @@ void wxSFShapeCanvas::OnConnectionFinished(wxSFLineShape* connection)
 	// HINT: override to perform user-defined actions...
 
 	// ... standard implementation generates the wxEVT_SF_LINE_DONE event.
-	long id = -1;
+	int id = -1;
 	if( connection ) id = connection->GetId();
 
     wxSFShapeEvent event( wxEVT_SF_LINE_DONE, id);
@@ -1539,7 +1539,7 @@ wxSFShapeCanvas::PRECONNECTIONFINISHEDSTATE wxSFShapeCanvas::OnPreConnectionFini
 	// HINT: override to perform user-defined actions...
 
 	// ... standard implementation generates the wxEVT_SF_LINE_DONE event.
-	long id = -1;
+	int id = -1;
 	if( connection ) id = connection->GetId();
 
     wxSFShapeEvent event( wxEVT_SF_LINE_BEFORE_DONE, id);
@@ -1557,7 +1557,7 @@ void wxSFShapeCanvas::OnTextChange(wxSFEditTextShape* shape)
     // HINT: override it for custom actions...
 
 	// ... standard implementation generates the wxEVT_SF_TEXT_CHANGE event.
-	long id = -1;
+	int id = -1;
 	if( shape ) id = shape->GetId();
 
     wxSFShapeTextEvent event( wxEVT_SF_TEXT_CHANGE, id);
@@ -2166,7 +2166,7 @@ void wxSFShapeCanvas::SaveCanvasToImage(const wxString& file, wxBitmapType type,
 		
 		outdc.SetDeviceOrigin( -bmpBB.GetLeft(), -bmpBB.GetTop() );
 		
-		int prevStyle = GetStyle();
+		long prevStyle = GetStyle();
 		wxColour prevColour = GetCanvasColour();
 		
 		if( !background )

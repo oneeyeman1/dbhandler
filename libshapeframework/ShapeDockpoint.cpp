@@ -50,7 +50,7 @@ wxSFConnectionPoint::wxSFConnectionPoint(wxSFShapeBase* parent, CPTYPE type)
 	MarkSerializableDataMembers();
 }
 
-wxSFConnectionPoint::wxSFConnectionPoint(wxSFShapeBase* parent, const wxRealPoint& relpos, long id)
+wxSFConnectionPoint::wxSFConnectionPoint(wxSFShapeBase* parent, const wxRealPoint& relpos, int id)
 {
 	wxASSERT( parent );
 	
