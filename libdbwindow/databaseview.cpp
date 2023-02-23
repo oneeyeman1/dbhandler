@@ -655,7 +655,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                         QUICKSELECT func2 = (QUICKSELECT) lib.GetSymbol( "QuickSelectDlg" );
                         res = func2( m_frame, db, m_selectTableName, GetDocument()->GetQueryFields(), GetDocument()->GetAllSorted(), GetDocument()->GetQuerySorted() );
                         quickSelect = true;
-//                        m_tables = db->GetTableVector().m_tableDefinitions;
+                        SelectTable( false, m_tables, query, quickSelect );
                     }
                 }
             }
@@ -791,7 +791,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         }
     }
     else
-        wxMessageBox( _( "Error loading the DLL/so" ) );
+        wxMessageBox( _( "Error loading the library" ) );
 }
 
 void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
@@ -855,7 +855,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
         newFK.clear();
     }
     else
-        wxMessageBox( _( "Error loading the DLL/so" ) );
+        wxMessageBox( _( "Error loading the library" ) );
 }
 
 void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
@@ -877,7 +877,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
 #else
     lib.Load( "libdialogs" );
 #endif
-    if( lib.IsLoaded() )
+    if( lib.IsLoaded() && !quickSelect )
     {
         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
         res = func2( m_frame, GetDocument()->GetDatabase(), tables, GetDocument()->GetTableNames(), isTableView, m_type );
@@ -936,7 +936,6 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
         {
             if( query != L"\n" )
             {
-                int i = 0;
                 std::vector<MyErdTable *> dbTables = ((DrawingDocument *)GetDocument())->GetTables();
                 m_page1->AddQuickSelectSortingFields( GetDocument()->GetAllSorted(), GetDocument()->GetQuerySorted() );
                 m_page6->SetSyntaxText( query );
