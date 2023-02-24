@@ -243,7 +243,11 @@ wxSize wxSFTextShape::GetTextExtent()
         h = (int)m_nRectSize.y;
 
         wxStringTokenizer tokens(m_sText, wxT("\n\r"), wxTOKEN_RET_EMPTY);
-        m_nLineHeight = int(m_nRectSize.y/tokens.CountTokens());
+        auto count = tokens.CountTokens();
+        if( count > 0 )
+            m_nLineHeight = int(m_nRectSize.y/count);
+        else
+            m_nLineHeight = 0;
     }
 
     /*if( wxSFShapeCanvas::IsGCEnabled() )
