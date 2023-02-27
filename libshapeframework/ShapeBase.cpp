@@ -195,8 +195,8 @@ void wxSFShapeBase::MarkSerializableDataMembers()
     XS_SERIALIZE(m_arrAcceptedTrgNeighbours, wxT("accepted_trg_neighbours"));
     XS_SERIALIZE_EX(m_nHoverColor, wxT("hover_color"), sfdvBASESHAPE_HOVERCOLOUR);
     XS_SERIALIZE(m_nRelativePosition, wxT("relative_position"));
-    XS_SERIALIZE_LONG_EX(m_nHAlign, wxT("halign"), sfdvBASESHAPE_HALIGN);
-    XS_SERIALIZE_LONG_EX(m_nVAlign, wxT("valign"), (long)sfdvBASESHAPE_VALIGN);
+    XS_SERIALIZE_INT_EX(m_nHAlign, wxT("halign"), sfdvBASESHAPE_HALIGN);
+    XS_SERIALIZE_INT_EX(m_nVAlign, wxT("valign"), (long)sfdvBASESHAPE_VALIGN);
     XS_SERIALIZE_EX(m_nHBorder, wxT("hborder"), sfdvBASESHAPE_HBORDER);
     XS_SERIALIZE_EX(m_nVBorder, wxT("vborder"), sfdvBASESHAPE_VBORDER);
 	XS_SERIALIZE_EX(m_nCustomDockPoint, wxT("custom_dock_point"), sfdvBASESHAPE_DOCK_POINT);
