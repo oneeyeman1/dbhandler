@@ -169,7 +169,7 @@ void NewQuery::OnPanelSourceClicked(wxMouseEvent &event)
 
 void NewQuery::OnPanelPresentationClicked(wxMouseEvent &event)
 {
-    if( event.GetEventObject() == m_panels[m_presentation + 4] )
+    if( event.GetEventObject() != m_panels[m_presentation + 4] )
     {
         m_panels[m_presentation + 4]->GetLabel()->SetBackgroundColour( m_panel->GetBackgroundColour() );
         m_presentation = dynamic_cast<BitmapPanel *>( event.GetEventObject() )->GetIndex();
