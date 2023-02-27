@@ -148,7 +148,8 @@ public:
         m_dataFontName = L"MS Sans Serif";
         m_headingFontName = L"MS Sans Serif";
         m_labelFontName = L"MS Sans Serif";
-#else
+#endif
+#ifdef COCOA
         m_dataFontName = L"Microsoft Sans Serif";
         m_headingFontName = L"Microsoft Sans Serif";
         m_labelFontName = L"Microsoft Sans Serif";
