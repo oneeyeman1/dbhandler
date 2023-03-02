@@ -335,7 +335,8 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<TableField *> &queryFie
     wxBeginBusyCursor();
     wxFont fontUsed;
     wxClientDC dc( this );
-    std::vector<DatabaseTable *> tables = ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->GetTableVector().m_tables.begin()->second;
+    auto tables = ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->GetTableVector().m_tables.begin()->second;
+    auto type = ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->GetTableVector().m_type;
     bool found = false;
     if( queryFields.size() > 0 )
     {
@@ -364,10 +365,23 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<TableField *> &queryFie
         found = false;
         for( std::vector<TableField *>::const_iterator it = queryFields.begin(); it < queryFields.end(); ++it )
         {
-            std::wstring tableName = (*it)->GetFullName().substr( 0, (*it)->GetFullName().find( '.' ) );
+            auto tableName = (*it)->GetFullName().substr( 0, (*it)->GetFullName().rfind( '.' ) );
             for( std::vector<DatabaseTable *>::iterator it1 = tables.begin(); it1 < tables.end() && !found; ++it1 )
             {
-                if( (*it1)->GetTableName() == tableName )
+                std::wstring dbTableName = L"";
+                if( type != L"SQLite" )
+                {
+                    dbTableName = (*it1)->GetCatalog() + L".";
+                    dbTableName += (*it1)->GetSchemaName();
+                    dbTableName += L".";
+                    dbTableName += (*it1)->GetTableName();
+                }
+                else
+                {
+                    dbTableName = (*it1)->GetSchemaName() + L".";
+                    dbTableName += (*it1)->GetTableName();
+                }
+                if( dbTableName == tableName )
                 {
                     std::wstring headerStr;
                     found = true;
