@@ -6,6 +6,7 @@ public:
     enum MODE { modeDESIGN, modeTABLE, modeVIEW, modeLine };
     DesignCanvas (wxView *view, const wxPoint &point);
     virtual ~DesignCanvas ();
+    void ClearDesignCanvas();
     void SetQuickQueryFields(const std::vector<wxString> &fields);
     void AddFieldLabelToCanvas(const wxFont labelFont, const TableField *label);
     void AddFieldToCanvas(const wxFont dataFont, const TableField *label);

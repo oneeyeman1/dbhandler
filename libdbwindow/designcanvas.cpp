@@ -332,6 +332,8 @@ void DesignCanvas::InitialFieldSizing ()
 
 void DesignCanvas::PopulateQueryCanvas(const std::vector<TableField *> &queryFields, const std::vector<GroupFields> &groupByFields)
 {
+    startPoint.x = 1;
+    startPoint.y = 1;
     wxBeginBusyCursor();
     wxFont fontUsed;
     wxClientDC dc( this );
@@ -442,4 +444,14 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<TableField *> &queryFie
         Refresh();
     }
     wxEndBusyCursor();
+}
+
+void DesignCanvas::ClearDesignCanvas()
+{
+    ShapeList list;
+    m_pManager.GetShapes( CLASSINFO( wxSFShapeBase ), list );
+    for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
+    {
+        m_pManager.RemoveShape( (*it), true );
+    }
 }

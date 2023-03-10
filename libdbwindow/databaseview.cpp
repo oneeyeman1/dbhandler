@@ -1835,6 +1835,8 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
                 m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
             }
             m_styleBar->Show( false );
+            m_designCanvas->GetDiagramManager()->Clear();
+            m_designCanvas->ClearDesignCanvas();
             m_designCanvas->Show( false );
             m_fields->Show( true );
             m_canvas->Show( true );
