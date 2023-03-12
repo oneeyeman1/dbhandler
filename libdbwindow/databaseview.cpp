@@ -305,11 +305,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     Bind( wxEVT_FIELD_SHUFFLED, &DrawingView::OnFieldShuffle, this );
     m_frame->Bind( wxEVT_CHANGE_QUERY, &DrawingView::OnQueryChange, this );
     m_frame->Bind( wxEVT_ICONIZE, &DrawingView::OnIconise, this );
-    if( m_fieldText )
-    {
-        m_fieldText->Bind( wxEVT_UPDATE_UI, &DrawingView::FieldTextUpdateUI, this );
-        m_fieldText->Disable();
-    }
     if( m_fontName )
         m_fontName->Bind( wxEVT_COMBOBOX, &DrawingView::OnFontSeectionChange, this );
     sizer->Layout();
@@ -474,6 +469,7 @@ void DrawingView::CreateViewToolBar()
         m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( previewIcon, WXSIZEOF( previewIcon ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
         m_tb->ToggleTool( wxID_DATASOURCE, true );
         m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
+        m_fieldText->Disable();
         m_styleBar->AddControl( m_fieldText );
         m_fontName = new FontComboBox( m_styleBar );
         m_styleBar->AddControl( m_fontName );
@@ -943,7 +939,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
             }
             if( quickSelect )
             {
-                PopuateQueryCanvas();
+//                PopuateQueryCanvas();
                 auto position = m_frame->GetMenuBar()->FindMenu( _( "Design" ) );
                 auto designMenu = m_frame->GetMenuBar()->GetMenu( position );
                 designMenu->Check( wxID_DATASOURCE, false );
@@ -1792,26 +1788,6 @@ void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
 wxTextCtrl *DrawingView::GetFieldTextCtrl()
 {
     return m_fieldText;
-}
-
-void DrawingView::FieldTextUpdateUI (wxUpdateUIEvent &event)
-{
-    ShapeList shapes;
-    m_designCanvas->GetSelectedShapes( shapes );
-    if( shapes.size() == 1 && wxDynamicCast( shapes[0], DesignLabel ) )
-    {
-        event.Enable( true );
-        m_fieldText->SetValue( dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_text );
-//        m_fontName->SetSelection( m_fontName->FindString( dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetFaceName() ) );
-//        m_fontSize->SetSelection( m_fontSize->FindString( wxString::Format( "%d", dynamic_cast<DesignLabel *>( shapes[0] )->GetProperties().m_font.GetPointSize() ) ) );
-    }
-    else
-    {
-        m_fieldText->SetValue( "" );
-        event.Enable( false );
-//        m_fontName->SetSelection( 0 );
-//        m_fontSize->SetSelection( 0 );
-    }
 }
 
 void DrawingView::OnDataSource(wxCommandEvent &event)
