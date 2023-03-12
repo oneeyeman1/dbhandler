@@ -29,5 +29,6 @@ private:
     std::vector<wxString> m_quickQueryFields;
     wxSFShapeBase *m_menuShape;
     DesignOptions m_options;
+    wxFont m_selectedFont;
 };
 

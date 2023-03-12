@@ -266,7 +266,9 @@ void DesignCanvas::OnProperties(wxCommandEvent &WXUNUSED(event))
 void DesignCanvas::OnLeftDown(wxMouseEvent &event)
 {
     wxPoint pt = event.GetPosition();
+    auto multiple = false;
     ShapeList list;
+    wxSFShapeBase *shape;
     GetShapesAtPosition( pt, list );
     DesignLabel *label = nullptr;
     DesignField *field = nullptr;
@@ -280,30 +282,45 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
             (*it)->Select( false );
         }
     }
+    else
+        multiple = true;
     for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
     {
-        label = wxDynamicCast( (*it), DesignLabel );
-        if( !label )
+        shape = wxDynamicCast( (*it), DesignLabel );
+        if( !shape )
         {
-            field = wxDynamicCast( (*it), DesignField );
-            if( !field )
+            shape = wxDynamicCast( (*it), DesignField );
+            if( !shape )
             {
-                divider = wxDynamicCast( (*it), Divider );
-                if( !divider )
+                shape = wxDynamicCast( (*it), Divider );
+                if( !shape )
                     continue;
+                else
+                    divider = wxDynamicCast( shape, Divider );
             }
             else
             {
+                field = wxDynamicCast( shape, DesignField );
                 field->Select( true );
                 dynamic_cast<DrawingView *>( m_view )->ChangeFontEement();
             }
         }
         else
         {
+            label = wxDynamicCast( shape, DesignLabel );
             label->Select( true );
             dynamic_cast<DrawingView *>( m_view )->ChangeFontEement();
         }
-    }Refresh();
+    }
+    if( !multiple )
+    {
+        if( label )
+        {
+            dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->Enable();
+            dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->SetValue( label->GetProperties().m_name );
+        }
+    }
+    Refresh();
 }
 
 void DesignCanvas::InitialFieldSizing ()
