@@ -6,7 +6,7 @@
 
 XS_IMPLEMENT_CLONABLE_CLASS(FieldShape,wxSFTextShape);
 
-FieldShape::FieldShape()
+FieldShape::FieldShape() : wxSFTextShape()
 {
     SetHAlign(wxSFShapeBase::halignCENTER );
     SetVAlign(wxSFShapeBase::valignMIDDLE );
@@ -18,6 +18,27 @@ FieldShape::FieldShape()
     m_isPK = false;
     m_isAutoInc = false;
     m_backColour = wxColour( 210, 225, 245 );
+    XS_SERIALIZE( m_name, wxT( "m_name" ) );
+    XS_SERIALIZE( m_type, wxT( "m_type" ) );
+    XS_SERIALIZE_LONG( m_size, wxT( "m_size" ) );
+    XS_SERIALIZE_LONG( m_decimal, wxT( "m_decimal" ) );
+    XS_SERIALIZE( m_isPK, wxT( "m_isPK" ) );
+    XS_SERIALIZE( m_isNotNull, wxT( "m_notNull" ) );
+    XS_SERIALIZE( m_isAutoInc, wxT( "m_isAutoInc" ) );
+    XS_SERIALIZE( m_backColour, wxT( "m_backColour" ) );
+}
+
+FieldShape::FieldShape(const TableField *field) : wxSFTextShape()
+{
+    SetHAlign(wxSFShapeBase::halignCENTER );
+    SetVAlign(wxSFShapeBase::valignMIDDLE );
+    m_name = field->GetFieldName();
+    m_type = field->GetFieldType();
+    m_size = field->GetFieldSize();
+    m_decimal = field->GetPrecision();
+    m_isPK = field->IsPrimaryKey();
+    m_isNotNull = field->IsNullAllowed();
+//    m_isAutoInc = field->Is
     XS_SERIALIZE( m_name, wxT( "m_name" ) );
     XS_SERIALIZE( m_type, wxT( "m_type" ) );
     XS_SERIALIZE_LONG( m_size, wxT( "m_size" ) );

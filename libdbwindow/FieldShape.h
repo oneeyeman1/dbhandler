@@ -4,6 +4,7 @@ class FieldShape :	public wxSFTextShape
 public:
     XS_DECLARE_CLONABLE_CLASS(FieldShape);
     FieldShape(void);
+    FieldShape(const TableField *field);
     FieldShape(const FieldShape &shape);
     virtual ~FieldShape(void);
     virtual wxRect GetBoundingBox() wxOVERRIDE;
