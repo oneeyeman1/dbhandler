@@ -322,7 +322,13 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
                 dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->Enable();
                 dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->SetValue( label->GetProperties().m_name );
             }
+            else
+            {
+                dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->Disable();
+                dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->SetValue( "" );
+            }
             m_selectedFont = label ? label->GetProperties().m_font : field->GetProperties().m_font;
+            dynamic_cast<DrawingView *>( m_view )->GetFontName()->SetValue( m_selectedFont.GetFaceName() );
         }
     }
     Refresh();
