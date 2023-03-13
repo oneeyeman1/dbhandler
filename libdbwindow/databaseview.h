@@ -36,6 +36,7 @@ public:
     void DropTableFromQeury(const wxString &name = "" );
     wxFrame *GetLogWindow() const;
     wxTextCtrl *GetFieldTextCtrl();
+    FontComboBox *GetFontName() const;
     wxTextCtrl *GetTextLogger() const;
     void GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path);
     int SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect);

@@ -2555,3 +2555,8 @@ std::map<wxString, std::vector<TableDefinition> > &DrawingView::GetTablesMap()
 {
     return m_tables;
 }
+
+FontComboBox *DrawingView::GetFontName() const
+{
+    return m_fontName;
+}
