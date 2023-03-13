@@ -17,6 +17,7 @@
 #include "wxsf/RectShape.h"
 #include "wxsf/GridShape.h"
 #include "XmlSerializer.h"
+#include "dbview.h"
 #include "designlabel.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(DesignLabel, wxSFRectShape);
@@ -61,7 +62,7 @@ DesignLabel::DesignLabel(const wxFont font, const wxString &label, int alignment
     if( m_grid && m_text )
     {
         m_grid->SetRelativePosition( 0, 1 );
-        m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_DRAGGING /*| sfsPROPAGATE_SELECTION */| sfsLOCK_CHILDREN );
         m_grid->SetDimensions( 1, 1 );
         m_grid->SetFill( *wxTRANSPARENT_BRUSH );
 //        m_grid->SetBorder( *wxTRANSPARENT_PEN );
@@ -84,7 +85,7 @@ DesignLabel::DesignLabel(const wxFont font, const wxString &label, int alignment
             }
             m_text->SetVAlign( wxSFShapeBase::valignMIDDLE );
             m_text->SetFont( font );
-            m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN | sfsEMIT_EVENTS );
+            m_text->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsPROPAGATE_DRAGGING /*| sfsPROPAGATE_SELECTION */| sfsLOCK_CHILDREN | sfsEMIT_EVENTS );
             m_text->SetText( m_label );
         }
         else
@@ -134,7 +135,7 @@ void DesignLabel::InitSerializable()
     XS_SERIALIZE( m_prop.m_size, "LabelSize" );
 }
 
-Properties DesignLabel::GetProperties()
+DesignLabelProperties DesignLabel::GetProperties()
 {
     return m_prop;
 }

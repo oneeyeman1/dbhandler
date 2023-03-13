@@ -16,6 +16,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/RectShape.h"
 #include "wxsf/GridShape.h"
+#include "dbview.h"
 #include "taborder.h"
 #include "designfield.h"
 
@@ -100,4 +101,9 @@ DesignField::DesignField (const wxFont font, const wxString &label, int alignmen
 
 DesignField::~DesignField()
 {
+}
+
+DesignFieldProperties DesignField::GetProperties()
+{
+    return m_properties;
 }

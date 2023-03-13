@@ -1,5 +1,4 @@
 #pragma once
-
 class DesignCanvas : public wxSFShapeCanvas
 {
 public:

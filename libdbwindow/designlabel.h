@@ -1,5 +1,5 @@
 #pragma once
-struct Properties
+/*struct Properties
 {
     wxString m_name, m_tag, m_text, m_cursor;
     bool m_supressPrint;
@@ -8,7 +8,7 @@ struct Properties
     wxPoint m_position;
     wxSize m_size;
 };
-
+*/
 class DesignLabel : public wxSFRectShape
 {
 public:
@@ -16,13 +16,13 @@ public:
     DesignLabel();
     DesignLabel(const wxFont font, const wxString &label, int alignment);
     virtual ~DesignLabel();
-    Properties GetProperties();
+    DesignLabelProperties GetProperties();
 protected:
     void InitSerializable();
 private:
     wxString m_label;
     wxSFTextShape *m_text;
     wxSFGridShape *m_grid;
-    Properties m_prop;
+    DesignLabelProperties m_prop;
 };
 

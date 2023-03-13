@@ -28,6 +28,7 @@
 #include "wxsf/FlexGridShape.h"
 //#include "XmlSerializer.h"
 #include "database.h"
+#include "dbview.h"
 #include "objectproperties.h"
 #include "constraint.h"
 #include "GridTableShape.h"
@@ -314,10 +315,14 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
     }
     if( !multiple )
     {
-        if( label )
+        if( label || field )
         {
-            dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->Enable();
-            dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->SetValue( label->GetProperties().m_name );
+            if( label )
+            {
+                dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->Enable();
+                dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->SetValue( label->GetProperties().m_name );
+            }
+            m_selectedFont = label ? label->GetProperties().m_font : field->GetProperties().m_font;
         }
     }
     Refresh();
