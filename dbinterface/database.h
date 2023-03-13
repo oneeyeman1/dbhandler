@@ -149,7 +149,7 @@ public:
         m_headingFontName = L"MS Sans Serif";
         m_labelFontName = L"MS Sans Serif";
 #endif
-#ifdef COCOA
+#ifdef __APPLE__
         m_dataFontName = L"Microsoft Sans Serif";
         m_headingFontName = L"Microsoft Sans Serif";
         m_labelFontName = L"Microsoft Sans Serif";
