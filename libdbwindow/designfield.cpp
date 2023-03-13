@@ -43,13 +43,12 @@ DesignField::DesignField() : wxSFRectShape()
         m_grid->Activate( true );
         SF_ADD_COMPONENT( m_grid, wxT( "grid" ) );
     }
-    m_font = wxNullFont;
     m_label = "";
 }
 
-DesignField::DesignField (const wxFont font, const wxString &label, int alignment) : wxSFRectShape()
+DesignField::DesignField(const wxFont font, const wxString &label, int alignment) : wxSFRectShape()
 {
-    m_font = font;
+    m_properties.m_font = font;
     m_label = label;
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );
