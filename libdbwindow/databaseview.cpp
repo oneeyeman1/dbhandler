@@ -495,9 +495,9 @@ void DrawingView::CreateViewToolBar()
         };
         m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
         m_styleBar->AddControl( m_fontSize );
-        m_styleBar->AddTool( 303, _( "Bold" ), boldSVG, boldSVG, wxITEM_NORMAL, _( "Bold" ), _( "Make the font bold" ) );
-        m_styleBar->AddTool( 303, _( "Italic" ), italicSVG, italicSVG, wxITEM_NORMAL, _( "Italic" ), _( "Make the font italic" ) );
-        m_styleBar->AddTool( 303, _( "Underline" ), underlineSVG, underlineSVG, wxITEM_NORMAL, _( "Make the font underlined" ), _( "Make the font underlined" ) );
+        m_styleBar->AddTool( 303, _( "Bold" ), boldSVG, boldSVG, wxITEM_CHECK, _( "Bold" ), _( "Make the font bold" ) );
+        m_styleBar->AddTool( 303, _( "Italic" ), italicSVG, italicSVG, wxITEM_CHECK, _( "Italic" ), _( "Make the font italic" ) );
+        m_styleBar->AddTool( 303, _( "Underline" ), underlineSVG, underlineSVG, wxITEM_CHECK, _( "Make the font underlined" ), _( "Make the font underlined" ) );
     }
     m_tb->Realize();
 #ifdef __WXOSX__
@@ -2559,4 +2559,24 @@ std::map<wxString, std::vector<TableDefinition> > &DrawingView::GetTablesMap()
 FontComboBox *DrawingView::GetFontName() const
 {
     return m_fontName;
+}
+
+wxComboBox *DrawingView::GetFontSize()
+{
+    return m_fontSize;
+}
+
+void DrawingView::SetFontBold(bool bold)
+{
+    m_styleBar->FindById( 303 )->Toggle( bold );
+}
+
+void DrawingView::SetFontItalic(bool italic)
+{
+    m_styleBar->FindById( 304 )->Toggle( italic );
+}
+
+void DrawingView::SetFontUnderline(bool underline)
+{
+    m_styleBar->FindById( 305 )->Toggle( underline );
 }

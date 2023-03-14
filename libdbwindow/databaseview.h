@@ -37,6 +37,7 @@ public:
     wxFrame *GetLogWindow() const;
     wxTextCtrl *GetFieldTextCtrl();
     FontComboBox *GetFontName() const;
+    wxComboBox *GetFontSize();
     wxTextCtrl *GetTextLogger() const;
     void GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path);
     int SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect);
@@ -44,6 +45,9 @@ public:
     void SetQueryArguments(const QueryArguments &args) { m_arguments.push_back( args ); }
     void SetViewType(ViewType type);
     ViewType GetViewType();
+    void SetFontBold(bool bold);
+    void SetFontItalic(bool italic);
+    void SetFontUnderline(bool underline);
     SortGroupByPage *GetSortPage();
     SortGroupByPage *GetGroupByPage();
     WhereHavingPage *GetWherePage();

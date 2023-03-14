@@ -329,6 +329,18 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
             }
             m_selectedFont = label ? label->GetProperties().m_font : field->GetProperties().m_font;
             dynamic_cast<DrawingView *>( m_view )->GetFontName()->SetValue( m_selectedFont.GetFaceName() );
+            dynamic_cast<DrawingView *>( m_view )->GetFontSize()->SetValue( wxString::Format( "%d", m_selectedFont.GetPointSize() ) );
+            if( m_selectedFont.GetStyle() <= wxFONTSTYLE_NORMAL )
+                dynamic_cast<DrawingView *>( m_view )->SetFontBold( false );
+            else
+                dynamic_cast<DrawingView *>( m_view )->SetFontBold( true );
+            if( m_selectedFont.GetStyle() == wxFONTSTYLE_ITALIC )
+                dynamic_cast<DrawingView *>( m_view )->SetFontItalic( true );
+            else
+                dynamic_cast<DrawingView *>( m_view )->SetFontItalic( false );
+#ifndef __OSXCOCOA__
+            dynamic_cast<DrawingView *>( m_view )->SetFontUnderline( m_selectedFont.wxFontBase::GetUnderlined() );
+#endif
         }
     }
     Refresh();
