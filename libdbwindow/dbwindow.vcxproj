@@ -44,6 +44,7 @@
     <ClInclude Include="databasedoc.h" />
     <ClInclude Include="databasetemplate.h" />
     <ClInclude Include="databaseview.h" />
+    <ClInclude Include="dbview.h" />
     <ClInclude Include="designcanvas.h" />
     <ClInclude Include="designfield.h" />
     <ClInclude Include="designlabel.h" />
