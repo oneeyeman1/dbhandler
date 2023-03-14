@@ -111,6 +111,7 @@ public:
     void OnQuerySave(wxCommandEvent &event);
     void OnQuerySaveUpdateUI(wxUpdateUIEvent &event);
     void OnQuerySaveAsUpdateUI(wxUpdateUIEvent &event);
+    void OnLabelTextChanged(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/

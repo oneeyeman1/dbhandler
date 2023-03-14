@@ -469,7 +469,8 @@ void DrawingView::CreateViewToolBar()
         m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), tableSVG, tableSVG, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
         m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( previewIcon, WXSIZEOF( previewIcon ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
         m_tb->ToggleTool( wxID_DATASOURCE, true );
-        m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "" );
+        m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER | wxTE_PROCESS_TAB );
+        m_fieldText->Bind( wxEVT_TEXT_ENTER, &DrawingView::OnLabelTextChanged, this );
         m_fieldText->Disable();
         m_styleBar->AddControl( m_fieldText );
         m_fontName = new FontComboBox( m_styleBar );
@@ -2559,4 +2560,9 @@ std::map<wxString, std::vector<TableDefinition> > &DrawingView::GetTablesMap()
 FontComboBox *DrawingView::GetFontName() const
 {
     return m_fontName;
+}
+
+void DrawingView::OnLabelTextChanged(wxCommandEvent &event)
+{
+
 }
