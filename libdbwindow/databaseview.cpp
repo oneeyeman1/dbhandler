@@ -469,8 +469,8 @@ void DrawingView::CreateViewToolBar()
         m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), tableSVG, tableSVG, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
         m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( previewIcon, WXSIZEOF( previewIcon ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
         m_tb->ToggleTool( wxID_DATASOURCE, true );
-        m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER | wxTE_PROCESS_TAB );
-        m_fieldText->Bind( wxEVT_TEXT_ENTER, &DrawingView::OnLabelTextChanged, this );
+        m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
+        m_fieldText->Bind( wxEVT_KILL_FOCUS, &DrawingView::OnLabelTextChanged, this );
         m_fieldText->Disable();
         m_styleBar->AddControl( m_fieldText );
         m_fontName = new FontComboBox( m_styleBar );
@@ -2569,20 +2569,28 @@ wxComboBox *DrawingView::GetFontSize()
 
 void DrawingView::SetFontBold(bool bold)
 {
-    m_styleBar->FindById( 303 )->Toggle( bold );
+    auto tool = m_styleBar->FindById( 303 );
+    if( tool )
+        tool->Toggle( bold );
 }
 
 void DrawingView::SetFontItalic(bool italic)
 {
-    m_styleBar->FindById( 304 )->Toggle( italic );
+    auto tool = m_styleBar->FindById( 304 );
+    if( tool )
+        tool->Toggle( italic );
 }
 
 void DrawingView::SetFontUnderline(bool underline)
 {
-    m_styleBar->FindById( 305 )->Toggle( underline );
+    auto tool = m_styleBar->FindById( 305 );
+    if( tool )
+        tool->Toggle( underline );
 }
 
-void DrawingView::OnLabelTextChanged(wxCommandEvent &event)
+void DrawingView::OnLabelTextChanged(wxFocusEvent &event)
 {
-
+    m_designCanvas->ChangeLabel( m_fieldText->GetValue() );
+    m_fieldText->SetValue( "" );
+    m_fieldText->Disable();
 }

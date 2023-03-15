@@ -338,7 +338,7 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
                 dynamic_cast<DrawingView *>( m_view )->SetFontItalic( true );
             else
                 dynamic_cast<DrawingView *>( m_view )->SetFontItalic( false );
-#ifndef __OSXCOCOA__
+#ifndef __WXOSX_COCOA__
             dynamic_cast<DrawingView *>( m_view )->SetFontUnderline( m_selectedFont.wxFontBase::GetUnderlined() );
 #endif
         }
@@ -493,5 +493,30 @@ void DesignCanvas::ClearDesignCanvas()
     for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
     {
         m_pManager.RemoveShape( (*it), true );
+    }
+}
+
+void DesignCanvas::ChangeLabel(const wxString &label)
+{
+    wxSFTextShape *shape;
+    DesignLabel *labelShape;
+    ShapeList shapes;
+    GetSelectedShapes( shapes );
+    auto found = false;
+    for( ShapeList::iterator it = shapes.begin(); it != shapes.end() && !found; ++it )
+    {
+        labelShape = wxDynamicCast( (*it), DesignLabel );
+        if( labelShape )
+        {
+            labelShape->GetProperties().m_text = label;
+        }
+        shape = wxDynamicCast( (*it), wxSFTextShape );
+        if( shape )
+        {
+            found = true;
+            shape->SetText( label );
+            Refresh();
+            Update();
+        }
     }
 }
