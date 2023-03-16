@@ -13,6 +13,7 @@ public:
     void AddHeaderDivider();
     void AddDataDivider();
     void ChangeLabel(const wxString &label);
+    void ChangeFontName(const wxString &name);
     virtual void OnRightDown(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnLeftDown(wxMouseEvent &event) wxOVERRIDE;
 //    virtual void OnMouseMove(wxMouseEvent &event) wxOVERRIDE;

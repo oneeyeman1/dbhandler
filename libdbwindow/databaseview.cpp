@@ -474,6 +474,7 @@ void DrawingView::CreateViewToolBar()
         m_fieldText->Disable();
         m_styleBar->AddControl( m_fieldText );
         m_fontName = new FontComboBox( m_styleBar );
+        m_fontName->Bind( wxEVT_KILL_FOCUS, &DrawingView::OnFontNameChange, this );
         m_styleBar->AddControl( m_fontName );
         const wxString fontSizes[] = 
         {
@@ -2593,4 +2594,9 @@ void DrawingView::OnLabelTextChanged(wxFocusEvent &event)
     m_designCanvas->ChangeLabel( m_fieldText->GetValue() );
     m_fieldText->SetValue( "" );
     m_fieldText->Disable();
+}
+
+void DrawingView::OnFontNameChange(wxFocusEvent &event)
+{
+    m_designCanvas->ChangeFontName( m_fontName->GetValue() );
 }

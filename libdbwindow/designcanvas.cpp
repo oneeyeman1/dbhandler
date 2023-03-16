@@ -429,6 +429,7 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<TableField *> &queryFie
                     found = true;
                     ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->GetFieldHeader( tableName, (*it)->GetFieldName(), headerStr );
                     wxString headerString( headerStr );
+                    headerString += "_t";
                     wxString dataString( (*it)->GetFieldName() );
                     headerString.Replace( "_", " " );
                     dataString.Replace( "_", " " );
@@ -516,7 +517,44 @@ void DesignCanvas::ChangeLabel(const wxString &label)
             found = true;
             shape->SetText( label );
             Refresh();
-            Update();
+        }
+    }
+}
+
+void DesignCanvas::ChangeFontName(const wxString &name)
+{
+    DesignLabel *labelShape = nullptr;
+    DesignField *fieldShape = nullptr;
+    wxSFTextShape *shape = nullptr;
+    wxFont shapeFont;
+    ShapeList shapes;
+    GetSelectedShapes( shapes );
+    for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); ++it )
+    {
+        labelShape = wxDynamicCast( (*it), DesignLabel );
+        if( labelShape )
+        {
+            shapeFont = labelShape->GetProperties().m_font;
+            labelShape->GetProperties().m_font.SetFaceName( name );
+        }
+        else
+        {
+            fieldShape = wxDynamicCast( (*it), DesignField );
+            if( fieldShape )
+            {
+                shapeFont = fieldShape->GetProperties().m_font;
+                labelShape->GetProperties().m_font.SetFaceName( name );
+            }
+            else
+            {
+                shape = wxDynamicCast( (*it), wxSFTextShape );
+                if( shape )
+                {
+                    shapeFont.SetFaceName( name );
+                    shape->SetFont( shapeFont );
+                    Refresh();
+                }
+            }
         }
     }
 }
