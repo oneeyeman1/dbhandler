@@ -338,9 +338,7 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
                 dynamic_cast<DrawingView *>( m_view )->SetFontItalic( true );
             else
                 dynamic_cast<DrawingView *>( m_view )->SetFontItalic( false );
-#ifndef __WXOSX_COCOA__
-            dynamic_cast<DrawingView *>( m_view )->SetFontUnderline( m_selectedFont.wxFontBase::GetUnderlined() );
-#endif
+            dynamic_cast<DrawingView *>( m_view )->SetFontUnderline( m_selectedFont.GetUnderlined() );
         }
     }
     Refresh();
