@@ -134,7 +134,7 @@ protected:
     static int CALLBACK EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam);
 #endif
 private:
-    bool m_isActive;
+    bool m_isActive, m_snitialized;
     wxDocMDIParentFrame *m_parent;
     wxToolBar *m_tb, *m_styleBar;
     wxTextCtrl *m_fieldText;

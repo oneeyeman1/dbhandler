@@ -206,6 +206,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_fieldText = nullptr;
     m_fontName = nullptr;
     m_fontSize = nullptr;
+    m_snitialized = false;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxConfigBase *config = wxConfigBase::Get( false );
@@ -394,7 +395,7 @@ void DrawingView::CreateViewToolBar()
     }
     else
     {
-        CreateQueryMenu( QuerySyntaxMenu );
+        CreateQueryMenu( QuickQueryMenu );
         m_tb->AddTool( wxID_NEW, _( "New" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
         wxBitmapBundle save, tableSVG, boldSVG, italicSVG, underlineSVG;
@@ -2282,10 +2283,17 @@ void DrawingView::CreateDBMenu()
 
 void DrawingView::CreateQueryMenu(const int queryType)
 {
+    wxMenu *edit = nullptr, *object = nullptr, *design = nullptr, *rows = nullptr;
     wxMenuBar *mbar = nullptr;
-    if( queryType == QuerySyntaxMenu )
+    if( m_snitialized )
+    {
+        mbar = m_frame->GetMenuBar();
+        delete mbar;
+        mbar = nullptr;
+    }
+//    if( queryType == QuerySyntaxMenu )
         mbar = new wxMenuBar;
-    else
+/*    else
     {
         mbar = m_frame->GetMenuBar();
         for( size_t i = mbar->GetMenuCount() - 1; i >= 0; --i )
@@ -2296,7 +2304,7 @@ void DrawingView::CreateQueryMenu(const int queryType)
             if( i == 0 )
                 break;
         }
-    }
+    }*/
     auto fileMenu = new wxMenu;
     fileMenu->Append( wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
     fileMenu->AppendSeparator();
@@ -2307,34 +2315,61 @@ void DrawingView::CreateQueryMenu(const int queryType)
     fileMenu->AppendSeparator();
     auto helpMenu = new wxMenu;
     helpMenu->Append( wxID_HELP, _( "Help" ) );
+    if( queryType == QuickQueryMenu )
+    {
+        edit = new wxMenu;
+        edit->Append( wxID_UNDO, _( "Undo" ), _( "Perform undo operation" ) );
+        edit->AppendSeparator();
+        edit->Append( wxID_CUT, _( "Cut" ), _( "Perform cut operation" ) );
+        edit->Append( wxID_COPY, _( "Copy" ), _( "Perform copy operation" ) );
+        edit->Append( wxID_PASTE, _( "Paste" ), _( "Perform paste operation" ) );
+        edit->AppendSeparator();
+        auto select = new wxMenu;
+        select->Append( wxID_SELECTALL, _( "Select All" ), _( "Perform Select All operation" ) );
+        edit->AppendSubMenu( select, _( "Select" ) );
+        object = new wxMenu;
+        object->Append( wxID_SELECTOBJECT, _( "Select Object" ), _( "Select Object" ) );
+        object->Append( wxID_TEXTOBJECT, _( "Text" ), _( "Creates a text object" ) );
+        design = new wxMenu;
+        design->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Modify SQL Select syntax" ), wxITEM_CHECK );
+        design->Append( wxID_PREVIEW, _( "Preview" ), _( "Show data" ) );
+        design->AppendSeparator();
+        rows = new wxMenu;
+        rows->Append( wxID_COLUMNSPEC, _( "Column Specification..." ), _( "Ready" ) );
+//        rows->Append( );
+        mbar->Insert( 0, edit, _( "Edit" ) );
+        mbar->Insert( 1, object, _( "Object" ) );
+        mbar->Insert( 2, design, _( "Design" ) );
+        mbar->Insert( 3, rows, _( "Rows" ) );
+    }
     if( queryType == SQLSelectMenu )
     {
-        auto *designMenu = new wxMenu;
-        designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
-        designMenu->Append( wxID_PREVIEDWQUERY, _( "Preview" ), _( "Preview" ) );
-        designMenu->AppendSeparator();
-        designMenu->Append( wxID_SELECTTABLE, _( "Select Table..." ) );
-        designMenu->AppendSeparator();
-        designMenu->Append( wxID_RETRIEVEARGS, _( "Retieval Arguments..." ), _( "Define Retrieval Arguments" ) );
-        designMenu->Append( wxID_DISTINCT, _( "Distinct" ), _( "Return distinct rows only" ), wxITEM_CHECK );
-        designMenu->AppendSeparator();
-        designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert To Syntax" ), _( "Convert To Syntax" ) );
+        design = new wxMenu;
+        design->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
+        design->Append( wxID_PREVIEDWQUERY, _( "Preview" ), _( "Preview" ) );
+        design->AppendSeparator();
+        design->Append( wxID_SELECTTABLE, _( "Select Table..." ) );
+        design->AppendSeparator();
+        design->Append( wxID_RETRIEVEARGS, _( "Retieval Arguments..." ), _( "Define Retrieval Arguments" ) );
+        design->Append( wxID_DISTINCT, _( "Distinct" ), _( "Return distinct rows only" ), wxITEM_CHECK );
+        design->AppendSeparator();
+        design->Append( wxID_CONVERTTOSYNTAX, _( "Convert To Syntax" ), _( "Convert To Syntax" ) );
         auto show = new wxMenu;
         show->Append( wxID_SHOWDATATYPES, _( "Datatypes" ), _( "Show Datatypes" ), wxITEM_CHECK );
         show->Append( wxID_SHOWLABELS, _( "Labels" ), _( "Show Labels" ), wxITEM_CHECK );
         show->Append( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Show Comments" ), wxITEM_CHECK );
         show->Append( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ), wxITEM_CHECK );
         show->Append( wxID_SHOWJOINS, _( "Joins" ), _( "Show Joins" ), wxITEM_CHECK );
-        designMenu->AppendSubMenu( show, _( "Show" ) );
-        designMenu->Check( wxID_DATASOURCE, true );
+        design->AppendSubMenu( show, _( "Show" ) );
+        design->Check( wxID_DATASOURCE, true );
         show->Check( wxID_SHOWDATATYPES, true );
         show->Check( wxID_SHOWLABELS, true );
         show->Check( wxID_SHOWCOMMENTS, true );
         show->Check( wxID_SHOWSQLTOOLBOX, true );
         show->Check( wxID_SHOWJOINS, true );
         if( GetSyntaxPage()->GetSyntaxCtrl()->GetValue().find( "DISTNCT" ) != wxNOT_FOUND )
-            designMenu->Check( wxID_DISTINCT, true );
-        mbar->Insert( 0, designMenu, _( "Design" ) );
+            design->Check( wxID_DISTINCT, true );
+        mbar->Insert( 0, design, _( "Design" ) );
     }
     if( queryType == QuerySyntaxMenu )
     {
@@ -2369,7 +2404,7 @@ void DrawingView::CreateQueryMenu(const int queryType)
     }
     mbar->Insert( 0, fileMenu, _( "File" ) );
     mbar->Append( helpMenu, _( "Help" ) );
-    if( queryType == QuerySyntaxMenu )
+//    if( queryType == QuerySyntaxMenu )
         m_frame->SetMenuBar( mbar );
     if( queryType == QuerySyntaxMenu )
     {
