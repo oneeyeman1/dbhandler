@@ -144,6 +144,7 @@ private:
 #define WHEREPAGESELECT           198
 #define WHEREPAGECLEAR            199
 #define wxID_DATASOURCE           301
+#define wxID_PREVIEW              302
 #define wxID_UNIONS               303
 #define wxID_RETRIEVEARGS         304
 #define wxID_CHECKOPTION          305
