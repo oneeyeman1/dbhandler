@@ -2285,15 +2285,9 @@ void DrawingView::CreateQueryMenu(const int queryType)
 {
     wxMenu *edit = nullptr, *object = nullptr, *design = nullptr, *rows = nullptr;
     wxMenuBar *mbar = nullptr;
-    if( m_snitialized )
-    {
-        mbar = m_frame->GetMenuBar();
-        delete mbar;
-        mbar = nullptr;
-    }
-//    if( queryType == QuerySyntaxMenu )
+    if( !m_snitialized )
         mbar = new wxMenuBar;
-/*    else
+    else
     {
         mbar = m_frame->GetMenuBar();
         for( size_t i = mbar->GetMenuCount() - 1; i >= 0; --i )
@@ -2304,7 +2298,7 @@ void DrawingView::CreateQueryMenu(const int queryType)
             if( i == 0 )
                 break;
         }
-    }*/
+    }
     auto fileMenu = new wxMenu;
     fileMenu->Append( wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
     fileMenu->AppendSeparator();
@@ -2404,8 +2398,11 @@ void DrawingView::CreateQueryMenu(const int queryType)
     }
     mbar->Insert( 0, fileMenu, _( "File" ) );
     mbar->Append( helpMenu, _( "Help" ) );
-//    if( queryType == QuerySyntaxMenu )
+    if( !m_snitialized )
+    {
         m_frame->SetMenuBar( mbar );
+        m_snitialized = true;
+    }
     if( queryType == QuerySyntaxMenu )
     {
         mbar->EnableTop( 0, false );
