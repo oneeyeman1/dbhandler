@@ -498,9 +498,9 @@ void DrawingView::CreateViewToolBar()
         };
         m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
         m_styleBar->AddControl( m_fontSize );
-        m_styleBar->AddTool( 303, _( "Bold" ), boldSVG, boldSVG, wxITEM_CHECK, _( "Bold" ), _( "Make the font bold" ) );
-        m_styleBar->AddTool( 303, _( "Italic" ), italicSVG, italicSVG, wxITEM_CHECK, _( "Italic" ), _( "Make the font italic" ) );
-        m_styleBar->AddTool( 303, _( "Underline" ), underlineSVG, underlineSVG, wxITEM_CHECK, _( "Make the font underlined" ), _( "Make the font underlined" ) );
+        m_styleBar->AddTool( wxID_BOLD, _( "Bold" ), boldSVG, boldSVG, wxITEM_CHECK, _( "Bold" ), _( "Make the font bold" ) );
+        m_styleBar->AddTool( wxID_ITALIC, _( "Italic" ), italicSVG, italicSVG, wxITEM_CHECK, _( "Italic" ), _( "Make the font italic" ) );
+        m_styleBar->AddTool( wxID_UNDERLINE, _( "Underline" ), underlineSVG, underlineSVG, wxITEM_CHECK, _( "Make the font underlined" ), _( "Make the font underlined" ) );
     }
     m_tb->Realize();
 #ifdef __WXOSX__
@@ -702,6 +702,8 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 auto designMenu = m_frame->GetMenuBar()->GetMenu( position );
                 designMenu->Check( wxID_DATASOURCE, false );
                 m_tb->ToggleTool( wxID_DATASOURCE, false );
+                m_frame->Layout();
+                sizer->Layout();
             }
         }
     }
@@ -948,6 +950,8 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
                 auto designMenu = m_frame->GetMenuBar()->GetMenu( position );
                 designMenu->Check( wxID_DATASOURCE, false );
                 m_tb->ToggleTool( wxID_DATASOURCE, false );
+                m_frame->Layout();
+                sizer->Layout();
             }
         }
     }
