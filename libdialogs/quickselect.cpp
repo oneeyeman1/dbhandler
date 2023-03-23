@@ -179,7 +179,6 @@ void QuickSelect::FillTableListBox()
     std::wstring type = m_db->GetTableVector().m_type;
     std::wstring subType = m_db->GetTableVector().m_subtype;
     std::map<std::wstring,std::vector<TableDefinition> > tables = m_db->GetTableVector().m_tableDefinitions;
-    auto size = tables.size();
     std::wstring dbName = m_db->GetTableVector().m_dbName;
     for( std::map<std::wstring,std::vector<TableDefinition> >::iterator it = tables.begin(); it != tables.end(); it++ )
     {
