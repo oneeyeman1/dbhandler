@@ -1815,7 +1815,7 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
     {
         if( event.IsChecked() )
         {
-            menuBar->Remove( 1 );
+            CreateQueryMenu( SQLSelectMenu );
             if( framePosition.y == 0 )
             {
                 parent->SetSize( parentPos.x, parentPos.y - heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() + heightStyleBar );
@@ -1830,33 +1830,6 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
             m_queryBook->Show( true );
             m_frame->Layout();
             sizer->Layout();
-            if( m_queryType == SQLSelectMenu )
-            {
-                auto *designMenu = new wxMenu;
-                designMenu->Append( wxID_DATASOURCE, _( "Data Source" ), _( "Data Source" ), wxITEM_CHECK );
-                designMenu->Append( wxID_PREVIEDWQUERY, _( "Preview" ), _( "Preview" ) );
-                designMenu->AppendSeparator();
-                designMenu->Append( wxID_SELECTTABLE, _( "Select Table..." ) );
-                designMenu->AppendSeparator();
-                designMenu->Append( wxID_RETRIEVEARGS, _( "Retieval Arguments..." ), _( "Define Retrieval Arguments" ) );
-                designMenu->Append( wxID_DISTINCT, _( "Distinct" ), _( "Return distinct rows only" ), wxITEM_CHECK );
-                designMenu->AppendSeparator();
-                designMenu->Append( wxID_CONVERTTOSYNTAX, _( "Convert To Syntax" ), _( "Convert To Syntax" ) );
-                auto show = new wxMenu;
-                show->Append( wxID_SHOWDATATYPES, _( "Datatypes" ), _( "Show Datatypes" ), wxITEM_CHECK );
-                show->Append( wxID_SHOWLABELS, _( "Labels" ), _( "Show Labels" ), wxITEM_CHECK );
-                show->Append( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Show Comments" ), wxITEM_CHECK );
-                show->Append( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ), wxITEM_CHECK );
-                show->Append( wxID_SHOWJOINS, _( "Joins" ), _( "Show Joins" ), wxITEM_CHECK );
-                designMenu->AppendSubMenu( show, _( "Show" ) );
-                designMenu->Check( wxID_DATASOURCE, true );
-                show->Check( wxID_SHOWDATATYPES, true );
-                show->Check( wxID_SHOWLABELS, true );
-                show->Check( wxID_SHOWCOMMENTS, true );
-                show->Check( wxID_SHOWSQLTOOLBOX, true );
-                show->Check( wxID_SHOWJOINS, true );
-                menuBar->Insert( 1, designMenu, _( "Design" ) );
-            }
         }
         else
         {
@@ -1883,6 +1856,7 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
                     parent->SetSize( parentPos.x, parentPos.y + heightStyleBar, parentSize.GetWidth(), parentSize.GetHeight() - heightStyleBar );
                     m_frame->SetSize( frameSize.GetWidth(), frameSize.GetHeight() - heightStyleBar - 2 );
                 }
+                CreateQueryMenu( QuickQueryMenu );
                 m_designCanvas->Show( true );
                 m_fields->Show( false );
                 m_canvas->Show( false );
@@ -1890,16 +1864,6 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
                 m_frame->Layout();
                 PopuateQueryCanvas();
                 sizer->Layout();
-                auto editMenu = new wxMenu;
-                editMenu->Append( wxID_UNDO, _( "Can't Undo\tCtrl+Z" ), _( "Undo" ) );
-                editMenu->AppendSeparator();
-                editMenu->Append( wxID_CUT, _( "Cut\tCtrl+X" ), _( "Cut" ) );
-                editMenu->Append( wxID_COPY, _( "Copy\tCtrl+C" ), _( "Copy" ) );
-                editMenu->Append( wxID_PASTE, _( "Paste\tCtrl+V" ), _( "Paste" ) );
-                editMenu->Append( wxID_DELETE, _( "Clear\tDel" ), _( "Clear" ) );
-                editMenu->AppendSeparator();
-                editMenu->Append( wxID_PROPERTIES, _( "Properties" ), _( "Properties" ) );
-                menuBar->Insert( 1, editMenu, _( "Edit" ) );
             }
         }
     }
