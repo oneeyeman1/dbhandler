@@ -598,6 +598,8 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                                 return;
                         }
                     }
+                    else
+                        return;
                 }
                 if( res == wxID_OK )
                 {
