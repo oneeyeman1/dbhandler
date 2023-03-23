@@ -6632,3 +6632,9 @@ int ODBCDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vec
     }
     return result;
 }
+
+int ODBCDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values)
+{
+    auto result = 0;
+    return result;
+}

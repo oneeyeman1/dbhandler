@@ -54,6 +54,7 @@ public:
     virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errors) override;
     virtual int AttachDatabase(const std::wstring &catalog, const std::wstring &, std::vector<std::wstring> &errorMsg) override;
     virtual int GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg) override;
+    virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;

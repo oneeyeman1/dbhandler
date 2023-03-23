@@ -2535,3 +2535,9 @@ int MySQLDatabase::GetTableId(const std::wstring &catalog, const std::wstring &s
     return result;
 }
 
+int MySQLDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values)
+{
+    auto result = 0;
+    return result;
+}
+

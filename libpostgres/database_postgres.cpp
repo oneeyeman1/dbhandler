@@ -1748,3 +1748,8 @@ int PostgresDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std:
     PQclear( res );
     return result;
 }
+int PostgresDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values)
+{
+    auto result = 0;
+    return result;
+}

@@ -2196,3 +2196,9 @@ int SQLiteDatabase::GetDatabaseNameList(std::vector<std::wstring> &, std::vector
 {
     return 0;
 }
+
+int SQLiteDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values)
+{
+    auto result = 0;
+    return result;
+}
