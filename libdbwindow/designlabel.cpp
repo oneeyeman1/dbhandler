@@ -27,6 +27,7 @@ DesignLabel::DesignLabel() : wxSFRectShape()
     SetHAlign( wxSFShapeBase::halignCENTER );
     SetVAlign( wxSFShapeBase::valignMIDDLE );
     AddStyle( sfsLOCK_CHILDREN );
+    AddStyle( sfsSIZE_CHANGE );
     AcceptChild( "GridShape" );
     m_grid = new wxSFGridShape;
     if( m_grid )
@@ -56,6 +57,7 @@ DesignLabel::DesignLabel(const wxFont font, const wxString &label, int alignment
     m_prop.m_font = font;
     m_label = label;
     AddStyle( sfsLOCK_CHILDREN );
+    AddStyle( sfsSIZE_CHANGE );
     AcceptChild( "GridShape" );
     m_text = new wxSFTextShape;
     m_grid = new wxSFGridShape;
