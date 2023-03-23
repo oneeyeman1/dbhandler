@@ -36,8 +36,8 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_panel = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( m_panel, wxID_ANY, _( "1. Click on the table to select or deselect" ) );
     m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "2. Select one or more column" ) );
-    m_label3 = new wxStaticText( m_panel, wxID_ANY, _( "3. (Optional) Enter sorting and\n\r selection criteria below" ) );
-    m_label4 = new wxStaticText( m_panel, wxID_ANY, _( "To display a comment for a\n\r table or column, click\n\r the right mouse button" ) );
+    m_label3 = new wxStaticText( m_panel, wxID_ANY, _( "3. (Optional) Enter sorting and\n selection criteria below" ) );
+    m_label4 = new wxStaticText( m_panel, wxID_ANY, _( "To display a comment for a\n table or column, click\n the right mouse button" ) );
     m_label5 = new wxStaticText( m_panel, wxID_ANY, _( "Tables:" ) );
     m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL );
     m_label6 = new wxStaticText( m_panel, wxID_ANY, _( "Columns:" ) );
