@@ -95,6 +95,7 @@ public:
     void OnShowDataTypes(wxCommandEvent &event);
     void OnShowComments(wxCommandEvent &event);
     void OnShowSQLBox(wxCommandEvent &event);
+    void OnDataSourceUpdateUI(wxUpdateUIEvent &event);
     void OnConvertToSyntaxUpdateUI(wxUpdateUIEvent &event);
     void OnConvertToSyntax(wxCommandEvent &event);
     void OnUndo(wxCommandEvent &event);

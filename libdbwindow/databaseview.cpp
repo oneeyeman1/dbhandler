@@ -160,6 +160,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_DATASOURCE, DrawingView::OnDataSource)
     EVT_MENU(wxID_DESIGNTABORDER, DrawingView::OnTabOrder)
     EVT_UPDATE_UI(wxID_PREVIEDWQUERY, DrawingView::OnQueryPreviewUpdateUI)
+    EVT_UPDATE_UI(wxID_DATASOURCE, DrawingView::OnDataSourceUpdateUI)
     EVT_MENU(wxID_SHOWSQLTOOLBOX, DrawingView::OnShowSQLBox)
     EVT_MENU(wxID_SHOWDATATYPES, DrawingView::OnShowDataTypes)
     EVT_MENU(wxID_SHOWCOMMENTS, DrawingView::OnShowComments)
@@ -2635,4 +2636,12 @@ void DrawingView::OnLabelTextChanged(wxFocusEvent &event)
 void DrawingView::OnFontNameChange(wxFocusEvent &event)
 {
     m_designCanvas->ChangeFontName( m_fontName->GetValue() );
+}
+
+void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
+{
+    if( GetDocument()->GetDBTables().size() == 0 )
+        event.Enable( false );
+    else
+        event.Enable( true );
 }
