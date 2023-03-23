@@ -60,6 +60,6 @@ private:
     std::vector<TableField *> m_queryFields;
     std::vector<FieldSorter> m_all, m_query;
     wxBoxSizer *m_sizer10;
-    int m_cols, m_column, m_oldColumn;
+    int m_cols, m_column, m_oldColumn, m_clumnWidth;
     ClientData data;
 };

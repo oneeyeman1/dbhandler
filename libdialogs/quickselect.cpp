@@ -32,6 +32,7 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_db = const_cast<Database *>( db );
     m_cols = 0;
     m_table = nullptr;
+    m_clumnWidth = 0;
     m_panel = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( m_panel, wxID_ANY, _( "1. Click on the table to select or deselect" ) );
     m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "2. Select one or more column" ) );
@@ -368,6 +369,13 @@ void QuickSelect::AddFieldToGrid(const wxString &field, bool isAdded)
         _( "Descending" ),
         _( "(not sorted)" ),
     };
+    if( m_clumnWidth == 0 )
+    {
+        auto temp = new wxComboBox( m_grid, wxID_ANY, "(not sorted)", wxDefaultPosition, wxDefaultSize, 3, choices, wxCB_READONLY );
+        m_clumnWidth = temp->GetSize().GetWidth();
+        delete temp;
+        temp = nullptr;
+    }
     if( isAdded )
     {
         for( auto i = 0; i < m_grid->GetNumberCols() && !found; i++ )
@@ -384,6 +392,7 @@ void QuickSelect::AddFieldToGrid(const wxString &field, bool isAdded)
             m_grid->SetCellValue( 0, m_cols - 1, field );
             m_grid->SetCellAlignment( 0, m_cols - 1, wxALIGN_CENTRE, wxALIGN_CENTRE );
             m_grid->SetCellEditor( 1, m_cols - 1, new wxGridCellChoiceEditor( WXSIZEOF( choices ), choices ) );
+            m_grid->SetColSize( m_cols - 1, m_clumnWidth );
         }
     }
     else
