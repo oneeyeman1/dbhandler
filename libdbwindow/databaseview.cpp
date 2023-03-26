@@ -1810,7 +1810,6 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
     wxMDIClientWindow *parent = (wxMDIClientWindow *) m_parent->GetClientWindow();
     wxSize parentSize = parent->GetSize();
     wxPoint parentPos = parent->GetPosition();
-    wxMenuBar *menuBar = m_parent->GetMenuBar();
     if( m_type == QueryView )
     {
         if( event.IsChecked() )
@@ -2457,7 +2456,7 @@ void DrawingView::ChangeTableCommentsMenu()
     showComments->Check( !showComments->IsChecked() );
 }
 
-void DrawingView::OnExportSyntax(wxCommandEvent &event)
+void DrawingView::OnExportSyntax(wxCommandEvent &WXUNUSED(event))
 {
     auto tables = dynamic_cast<DrawingDocument *>( GetDocument() )->GetDBTables();
     wxString source;
@@ -2592,14 +2591,14 @@ void DrawingView::SetFontUnderline(bool underline)
         tool->Toggle( underline );
 }
 
-void DrawingView::OnLabelTextChanged(wxFocusEvent &event)
+void DrawingView::OnLabelTextChanged(wxFocusEvent &WXUNUSED(event))
 {
     m_designCanvas->ChangeLabel( m_fieldText->GetValue() );
     m_fieldText->SetValue( "" );
     m_fieldText->Disable();
 }
 
-void DrawingView::OnFontNameChange(wxFocusEvent &event)
+void DrawingView::OnFontNameChange(wxFocusEvent &WXUNUSED(event))
 {
     m_designCanvas->ChangeFontName( m_fontName->GetValue() );
 }
