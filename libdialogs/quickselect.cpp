@@ -188,12 +188,12 @@ void QuickSelect::FillTableListBox()
             std::wstring schemaName = (*it1).schemaName;
             std::wstring catalogName = (*it1).catalogName;
             if( ( type == L"SQLite" && ( tableName.substr( 0, 6 ) == L"sqlite" || tableName.substr( 0, 3 ) == L"sys" ) ) ||
-                ( ( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" ) ) &&
-                  ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"sys" || schemaName == L"INFORMATION_SCHEMA" ) ||
-                ( ( (  type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" ) ) &&
-                  ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"information_schema" ) ||
-                ( ( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" ) ) &&
-                  ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"information_schema" || schemaName == L"pg_catalog" ) )
+                ( ( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" ) &&
+                  ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"sys" || schemaName == L"INFORMATION_SCHEMA" ) ) ||
+                ( ( (  type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" ) &&
+                  ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"information_schema" ) ) ||
+                ( ( ( type == L"ODBC" && subType == L"PostgreSQL" ) || type == L"PostgreSQL" ) &&
+                  ( tableName.substr( 0, 5 ) == L"abcat" || schemaName == L"information_schema" || schemaName == L"pg_catalog" ) ) )
             {
                 continue;
             }
