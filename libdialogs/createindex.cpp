@@ -401,11 +401,6 @@ bool CreateIndex::Verify()
 {
     bool success = true;
     std::vector<std::wstring> errors;
-    if( m_indexName->GetValue().IsEmpty() )
-    {
-        wxMessageBox( _( "Key name is required" ), _( "Database" ), wxOK | wxICON_ERROR );
-        success = false;
-    }
     if( success && m_fields.empty() )
     {
         wxMessageBox( _( "At least one index column is required" ), _( "Database" ), wxOK | wxICON_ERROR );
@@ -425,9 +420,8 @@ void CreateIndex::OnSelectDeselectField(wxMouseEvent &event)
         if( state & wxLIST_STATE_SELECTED )
         {
             m_fields.erase( std::remove_if( m_fields.begin(), m_fields.end(), 
-                           [&label](const std::wstring &e1) { return e1.find( label + " " ) != e1.npos; } ), m_fields.end() );
-            for( int i = 0; i < m_fields.size(); ++i )
-                m_indexColumns->RemoveField( m_fields.at( i ) );
+                           [&label](const std::wstring &e1) { return e1.find( label ) != e1.npos; } ), m_fields.end() );
+            m_indexColumns->RemoveField( label );
             m_table->SetItemState( item, 0, wxLIST_STATE_SELECTED );
             m_table->SetItemState( item, 0, wxLIST_STATE_FOCUSED );
         }
@@ -436,9 +430,9 @@ void CreateIndex::OnSelectDeselectField(wxMouseEvent &event)
             m_indexColumns->AddField( label );
             m_fields.push_back( label.ToStdWstring() );
             m_table->SetItemState( item, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED );
+            event.Skip();
         }
     }
-    event.Skip();
 }
 
 void CreateIndex::OnOkShowLog(wxCommandEvent &event)
