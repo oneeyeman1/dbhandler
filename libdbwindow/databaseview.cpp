@@ -336,7 +336,7 @@ DrawingView::~DrawingView()
 void DrawingView::CreateViewToolBar()
 {
     int offset;
-	long style = wxTB_HORIZONTAL | wxNO_BORDER | wxTB_FLAT;
+	long style = wxTB_HORIZONTAL | wxNO_BORDER | wxTB_FLAT | wxTB_TOP;
     wxWindow *parent = nullptr;
 #ifdef __WXMSW__
     parent = (wxMDIClientWindow *) m_parent->GetClientWindow();
@@ -350,7 +350,7 @@ void DrawingView::CreateViewToolBar()
     m_tb = m_frame->CreateToolBar();
     if( m_type == QueryView )
     {
-        m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_TOP, "StyleBar" );
+        m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
     }
 #else
     if( !m_tb )
