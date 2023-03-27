@@ -304,9 +304,16 @@ void MyErdTable::DrawHover(wxDC &dc)
 
 void MyErdTable::DrawNormal(wxDC &dc)
 {
-    if( this->m_fSelected && m_type == DatabaseView )
+    if( m_type == DatabaseView )
     {
-        m_header->SetFill( wxBrush( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) ) );
+        if( this->m_fSelected )
+        {
+            SetFill( wxBrush( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) ) );
+        }
+        else
+        {
+            SetFill( wxBrush( wxColour( 210, 225, 245 ) ) );
+        }
     }
     wxSFRoundRectShape::DrawNormal( dc );
     DrawDetail( dc );
