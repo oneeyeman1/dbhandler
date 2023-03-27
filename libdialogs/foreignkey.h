@@ -37,15 +37,13 @@ public:
     const int GetUpdateParam() const;
     const std::wstring &GetReferencedTable() const;
     void OnApplyCommand(wxCommandEvent &event);
-    void OnFieldSelection(wxListEvent &event);
-    void OnFieldsDeselection(wxListEvent &event);
     void OnPrimaryKeyTableSelection(wxCommandEvent &event);
     void OnDeleteChanges(wxCommandEvent &event);
     void OnUpdateChanges(wxCommandEvent &event);
+    void OnSelectDeselectField(wxMouseEvent &event);
 private:
     std::vector<std::wstring> m_foreignKey, m_primaryKey;
     std::wstring m_refTableName;
-    std::vector<long> m_selectedForeignKeyField;
     int m_delete, m_update;
     DatabaseTable *m_pkTable;
     bool m_isLogOnly, m_isView, m_edited;

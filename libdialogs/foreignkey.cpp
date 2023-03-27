@@ -84,11 +84,10 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     }
     m_OK->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
     m_logOnly->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
-    list_ctrl_1->Bind( wxEVT_LIST_ITEM_SELECTED, &ForeignKeyDialog::OnFieldSelection, this );
-    list_ctrl_1->Bind( wxEVT_LIST_ITEM_DESELECTED, &ForeignKeyDialog::OnFieldsDeselection, this );
     m_primaryKeyTable->Bind( wxEVT_COMBOBOX, &ForeignKeyDialog::OnPrimaryKeyTableSelection, this );
     m_onDelete->Bind( wxEVT_RADIOBOX, &ForeignKeyDialog::OnDeleteChanges, this );
     m_onUpdate->Bind( wxEVT_RADIOBOX, &ForeignKeyDialog::OnUpdateChanges, this );
+    list_ctrl_1->Bind( wxEVT_LEFT_DOWN, &ForeignKeyDialog::OnSelectDeselectField, this );
     set_properties();
     do_layout();
     // end wxGlade
@@ -286,25 +285,6 @@ void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
     }
 }
 
-void ForeignKeyDialog::OnFieldSelection(wxListEvent &event)
-{
-    wxString item = event.GetLabel();
-    m_foreignKeyColumnsFields->AddField( item );
-    m_foreignKey.push_back( item.ToStdWstring() );
-    m_selectedForeignKeyField.push_back( event.GetIndex() );
-    m_edited = true;
-}
-
-void ForeignKeyDialog::OnFieldsDeselection(wxListEvent &event)
-{
-    wxString item = event.GetLabel();
-    m_foreignKey.erase( std::remove_if( m_foreignKey.begin(), m_foreignKey.end(), 
-        [&item](const wxString &e1) { return e1.find( item ) != e1.npos; } ), m_foreignKey.end() );
-    for( int i = 0; i < m_foreignKey.size(); ++i )
-        m_foreignKeyColumnsFields->RemoveField( m_foreignKey.at( i ) );
-    m_edited = true;
-}
-
 void ForeignKeyDialog::OnPrimaryKeyTableSelection(wxCommandEvent &WXUNUSED(event))
 {
     DoChangePrimaryKeyTableName();
@@ -421,4 +401,30 @@ bool ForeignKeyDialog::IsForeignKeyEdited() const
 const int ForeignKeyDialog::GetMatchingOptions() const
 {
     return m_match;
+}
+
+void ForeignKeyDialog::OnSelectDeselectField(wxMouseEvent &event)
+{
+    int flags;
+    auto item = list_ctrl_1->HitTest( event.GetPosition(), flags );
+    if( item != wxNOT_FOUND )
+    {
+        auto label = list_ctrl_1->GetItemText( item );
+        auto state = list_ctrl_1->GetItemState( item, wxLIST_STATE_SELECTED );
+        if( state & wxLIST_STATE_SELECTED )
+        {
+            m_foreignKey.erase( std::remove_if( m_foreignKey.begin(), m_foreignKey.end(),
+                                           [&label](const std::wstring &e1) { return e1.find( label ) != e1.npos; } ), m_foreignKey.end() );
+            m_foreignKeyColumnsFields->RemoveField( label );
+            list_ctrl_1->SetItemState( item, 0, wxLIST_STATE_SELECTED );
+            list_ctrl_1->SetItemState( item, 0, wxLIST_STATE_FOCUSED );
+        }
+        else
+        {
+            m_foreignKeyColumnsFields->AddField( label );
+            m_foreignKey.push_back( label.ToStdWstring() );
+            list_ctrl_1->SetItemState( item, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED );
+            event.Skip();
+        }
+    }
 }
