@@ -41,6 +41,7 @@ public:
     void OnDeleteChanges(wxCommandEvent &event);
     void OnUpdateChanges(wxCommandEvent &event);
     void OnSelectDeselectField(wxMouseEvent &event);
+    void OnOkUpdateUI(wxUpdateUIEvent &event);
 private:
     std::vector<std::wstring> m_foreignKey, m_primaryKey;
     std::wstring m_refTableName;

@@ -1,6 +1,0 @@
-<Library>
-    <name>test1.qry</name>
-    <comment>Test application</comment>
-    <name>test2.qry</name>
-    <comment>Second test</comment>
-</Library>

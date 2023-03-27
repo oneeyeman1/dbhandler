@@ -130,7 +130,6 @@ void ForeignKeyDialog::set_properties()
     }
     if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) || m_db->GetTableVector().m_type == L"PostgreSQL" )
     {
-//        if( )
         m_matching->SetSelection( m_match );
     }
     m_OK->SetDefault();
@@ -150,6 +149,8 @@ void ForeignKeyDialog::set_properties()
         list_ctrl_1->InsertItem( row++, (*it)->GetFieldName() );
     }
     // end wxGlade
+    if( m_db->GetTableVector().GetDatabaseType() == L"SQLite" )
+        m_foreignKeyName->Disable();
 }
 
 
@@ -206,12 +207,7 @@ void ForeignKeyDialog::do_layout()
 bool ForeignKeyDialog::Verify()
 {
     bool verified = true;
-    if( m_db->GetTableVector().GetDatabaseType() != L"SQLite" && m_foreignKeyName->GetValue().IsEmpty() )
-    {
-        wxMessageBox( _( "Key name is required" ) );
-        verified = false;
-    }
-    else if( m_primaryKeyTable->GetValue().IsEmpty() )
+    if( m_primaryKeyTable->GetValue().IsEmpty() )
     {
         wxMessageBox( _( "Primary key table name is required" ) );
         verified = false;
@@ -425,6 +421,21 @@ void ForeignKeyDialog::OnSelectDeselectField(wxMouseEvent &event)
             m_foreignKey.push_back( label.ToStdWstring() );
             list_ctrl_1->SetItemState( item, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED );
             event.Skip();
+        }
+    }
+}
+
+void ForeignKeyDialog::OnOkUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_db->GetTableVector().GetDatabaseType() != L"SQLite" )
+    {
+        if( m_foreignKeyName->GetValue() == wxEmptyString )
+        {
+            event.Enable( false );
+        }
+        else
+        {
+            event.Enable( true );
         }
     }
 }
