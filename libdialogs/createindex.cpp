@@ -137,6 +137,8 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_OK->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
     m_logOnly->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
     m_table->Bind( wxEVT_LEFT_DOWN, &CreateIndex::OnSelectDeselectField, this );
+    m_OK->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnOKUpdateUI, this );
+    m_logOnly->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnOKUpdateUI, this );
 }
 
 void CreateIndex::set_properties()
@@ -781,3 +783,12 @@ const wxTextCtrl *CreateIndex::GetIndexNameCtrl()
 {
     return m_indexName;
 }
+
+void CreateIndex::OnOKUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_indexName->GetValue() == wxEmptyString )
+        event.Enable( false );
+    else
+        event.Enable( true );
+}
+

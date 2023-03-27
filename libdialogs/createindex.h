@@ -50,6 +50,7 @@ protected:
     void OnPadIndex(wxCommandEvent &event);
     void OnFillFactor(wxCommandEvent &event);
     void GenerateQuery();
+    void OnOKUpdateUI(wxUpdateUIEvent &event);
     // begin wxGlade: CreateIndex::attributes
     wxStaticText* m_label1;
     wxStaticText* m_tableName;
