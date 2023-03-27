@@ -402,12 +402,12 @@ bool CreateIndex::Verify()
     std::vector<std::wstring> errors;
     if( m_indexName->GetValue().IsEmpty() )
     {
-        wxMessageBox( _( "Key name is required" ), _( "Database" ) );
+        wxMessageBox( _( "Key name is required" ), _( "Database" ), wxOK | wxICON_ERROR );
         success = false;
     }
     if( success && m_fields.empty() )
     {
-        wxMessageBox( _( "At least one index column is required" ), _( "Database" ) );
+        wxMessageBox( _( "At least one index column is required" ), _( "Database" ), wxOK | wxICON_ERROR );
         success = false;
     }
     return success;
@@ -417,7 +417,7 @@ void CreateIndex::OnFieldSelection(wxListEvent &event)
 {
     wxString item = event.GetLabel();
     wxString sort_order = m_ascending->GetValue() ? " ASC" : " DESC";
-    m_indexColumns->AddField( item + sort_order );
+    m_indexColumns->AddField( item );
     m_fields.push_back( item.ToStdWstring() + sort_order.ToStdWstring() );
     m_selectedItems.push_back( event.GetIndex() );
 }
