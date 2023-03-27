@@ -336,6 +336,7 @@ DrawingView::~DrawingView()
 void DrawingView::CreateViewToolBar()
 {
     int offset;
+	long style = wxTB_HORIZONTAL | wxNO_BORDER | wxTB_FLAT;
     wxWindow *parent = nullptr;
 #ifdef __WXMSW__
     parent = (wxMDIClientWindow *) m_parent->GetClientWindow();
