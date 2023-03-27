@@ -496,14 +496,15 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring 
     return result;
 }
 
-bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &catalogName, const std::wstring &UNUSED(schemaName), const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &UNUSED(catalogName), const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     bool exists = false;
     int res = SQLITE_OK, result = 0;
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage, dbIndexName;
-    std::string query = "PRAGMA index_list( \"%w\" );";
-    char *z = sqlite3_mprintf( query.c_str(), tableName.c_str() );
+    std::wstring query = L"PRAGMA " + schemaName;
+    query += L".index_list( \"%w\" );";
+    char *z = sqlite3_mprintf( sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), tableName.c_str() );
     if( ( res = sqlite3_prepare_v2( m_db, z, -1, &stmt, 0 ) ) == SQLITE_OK )
     {
         for( ; ; )
