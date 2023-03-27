@@ -334,7 +334,7 @@ extern "C" WXEXPORT int QuickSelectDlg(wxWindow *parent, const Database *db, std
     return res;
 }
 
-extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField, long &type)
+extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField, int &type)
 {
     int res;
 #ifdef __WXMSW__
@@ -343,7 +343,7 @@ extern "C" WXEXPORT int SelectJoinType(wxWindow *parent, const wxString &origTab
     JointType dlg( dynamic_cast<wxDocMDIChildFrame *>( parent ), wxID_ANY, _( "Join" ), origTable, refTable, origField, refField, type );
     res = dlg.ShowModal();
     if( res == wxID_OK )
-        type = dlg.GetTypeCtrl()->GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+        type = (int) dlg.GetTypeCtrl()->GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
     return res;
 }
 

@@ -58,7 +58,7 @@
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
-typedef int (*SELECTJOINTYPE)(wxWindow *parent, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField, long &type);
+typedef int (*SELECTJOINTYPE)(wxWindow *parent, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField, int &type);
 /*
 BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
     EVT_MENU(wxID_TABLEDROPTABLE, DatabaseCanvas::OnDropTable)
@@ -144,7 +144,6 @@ void DatabaseCanvas::OnDraw(wxDC &WXUNUSED(dc))
 
 void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition> > &selections, const std::vector<TableField *> &queryFields, wxString &query, std::vector<wxString> &relations)
 {
-    auto index = 0;
     std::vector<MyErdTable *> tables = ((DrawingDocument *)m_view->GetDocument())->GetTables();
     for( std::vector<MyErdTable *>::iterator it = tables.begin(); it < tables.end(); it++ ) 
     {
@@ -1126,7 +1125,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
 #endif
             QueryConstraint *constraint = (QueryConstraint *) sign->GetConstraint();
             long oldSign = 0;
-            long constraintSign = oldSign = constraint->GetSign();
+            int constraintSign = oldSign = constraint->GetSign();
             SELECTJOINTYPE func = (SELECTJOINTYPE) lib.GetSymbol( "SelectJoinType" );
             result = func( m_view->GetFrame(), const_cast<DatabaseTable *>( constraint->GetFKTable() )->GetTableName(), constraint->GetRefTable(), constraint->GetLocalColumn(), constraint->GetRefColumn(), constraintSign );
             if( constraintSign != constraint->GetSign () )
