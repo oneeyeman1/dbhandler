@@ -27,6 +27,8 @@
   <path d="m8 563c0.04862 0.14036 0.093416 0.28211 0.14586 0.42109 0.00571 0.0151 0.032892-4e-3 0.048543 0 0.085002 0.0223 0.00806 0.0196 0.057285 0.0196 0.06512 0 0.16199 0.0229 0.2306 0.0315 0.045582 6e-3 0.11288-0.0148 0.15683 0 0.039879 0.0134 0.055096 0.0196 0.097623 0.0196 0.070648 0 0.20923 9.4e-4 0.20936 0 0.022594-0.1633 0.035941-0.32783 0.053911-0.49179"/>
  </g>
  <circle cx="12.793" cy="12.772" rx="1.7931" ry="1.7716" fill="#fff" fill-rule="evenodd" stroke="#000"/>
- <text x="3.0014715" y="12.052379" fill="#000000" font-family="sans-serif" font-size="13.333px" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:1.25" xml:space="preserve"><tspan x="3.0014715" y="12.052379">U</tspan></text>
+ <g style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal" aria-label="U">
+  <path d="m7.7605 12.183q-1.1263 0-1.9661-0.41015-0.83982-0.41015-1.3021-1.1914-0.46223-0.78123-0.46223-1.8619v-5.8397h1.2435v5.7355q0 1.2565 0.638 1.9075 0.638 0.65102 1.8424 0.65102 1.2369 0 1.9205-0.67056 0.69009-0.67707 0.69009-1.9726v-5.6509h1.2369v5.7225q0 1.1133-0.47525 1.9205-0.46874 0.80727-1.3346 1.2369-0.85935 0.42317-2.0312 0.42317z"/>
+ </g>
  <path d="m5 14.249h6" fill="none" stroke="#000" stroke-width="1px"/>
 </svg>
