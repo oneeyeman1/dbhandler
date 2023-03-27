@@ -37,8 +37,7 @@ private:
     // end wxGlade
 
 protected:
-    void OnFieldSelection(wxListEvent &event);
-    void OnFieldsDeselection(wxListEvent &event);
+    void OnSelectDeselectField(wxMouseEvent &event);
     void OnOkShowLog(wxCommandEvent &event);
     bool Verify();
     void OnFillFactorUpdateUI(wxUpdateUIEvent &event);

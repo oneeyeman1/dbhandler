@@ -134,10 +134,9 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     set_properties();
     do_layout();
     // end wxGlade
-    m_table->Bind( wxEVT_LIST_ITEM_SELECTED, &CreateIndex::OnFieldSelection, this );
-    m_table->Bind( wxEVT_LIST_ITEM_DESELECTED, &CreateIndex::OnFieldsDeselection, this );
     m_OK->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
     m_logOnly->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
+    m_table->Bind( wxEVT_LEFT_DOWN, &CreateIndex::OnSelectDeselectField, this );
 }
 
 void CreateIndex::set_properties()
@@ -413,22 +412,31 @@ bool CreateIndex::Verify()
     return success;
 }
 
-void CreateIndex::OnFieldSelection(wxListEvent &event)
+void CreateIndex::OnSelectDeselectField(wxMouseEvent &event)
 {
-    wxString item = event.GetLabel();
-    wxString sort_order = m_ascending->GetValue() ? " ASC" : " DESC";
-    m_indexColumns->AddField( item );
-    m_fields.push_back( item.ToStdWstring() + sort_order.ToStdWstring() );
-    m_selectedItems.push_back( event.GetIndex() );
-}
-
-void CreateIndex::OnFieldsDeselection(wxListEvent &event)
-{
-    wxString item = event.GetLabel();
-    m_fields.erase( std::remove_if( m_fields.begin(), m_fields.end(), 
-        [&item](const std::wstring &e1) { return e1.find( item + " " ) != e1.npos; } ), m_fields.end() );
-    for( int i = 0; i < m_fields.size(); ++i )
-        m_indexColumns->RemoveField( m_fields.at( i ) );
+    int flags;
+    auto item = m_table->HitTest( event.GetPosition(), flags );
+    if( item != wxNOT_FOUND )
+    {
+        auto label = m_table->GetItemText( item );
+        auto state = m_table->GetItemState( item, wxLIST_STATE_SELECTED );
+        if( state & wxLIST_STATE_SELECTED )
+        {
+            m_fields.erase( std::remove_if( m_fields.begin(), m_fields.end(), 
+                           [&label](const std::wstring &e1) { return e1.find( label + " " ) != e1.npos; } ), m_fields.end() );
+            for( int i = 0; i < m_fields.size(); ++i )
+                m_indexColumns->RemoveField( m_fields.at( i ) );
+            m_table->SetItemState( item, 0, wxLIST_STATE_SELECTED );
+            m_table->SetItemState( item, 0, wxLIST_STATE_FOCUSED );
+        }
+        else
+        {
+            m_indexColumns->AddField( label );
+            m_fields.push_back( label.ToStdWstring() );
+            m_table->SetItemState( item, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED );
+        }
+    }
+    event.Skip();
 }
 
 void CreateIndex::OnOkShowLog(wxCommandEvent &event)
