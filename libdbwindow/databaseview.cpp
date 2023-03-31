@@ -124,6 +124,7 @@ typedef int (*RETRIEVEARGUMENTS)(wxWindow *, std::vector<QueryArguments> &argume
 typedef int (*GOTOLINE)(wxWindow *, int &);
 typedef void (*DATAEDITWINDOW)(wxWindow *parent, wxDocManager *docManager, Database *db, const wxString &);
 typedef int (*GETDATASOURCE)(wxWindow *parent, wxString &sorce, const std::vector<Profile> &);
+typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &, const std::vector<Profile> &, const std::vector<QueryInfo> &, const std::vector<LibrariesInfo> &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
@@ -173,6 +174,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_CLEAR, DrawingView::OnClear)
     EVT_MENU(wxID_SELECTALL, DrawingView::OnSelectAll)
     EVT_MENU(wxID_FIND, DrawingView::OnFind)
+    EVT_MENU(wxID_OBJECTNEWVIEW, DrawingView::OnDatabaseCreateView)
     EVT_FIND(wxID_ANY, DrawingView::OnFindReplaceText)
     EVT_FIND_NEXT(wxID_ANY, DrawingView::OnFindReplaceText)
     EVT_MENU(wxID_REPLACE, DrawingView::OnFind)
@@ -321,6 +323,11 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 
 DrawingView::~DrawingView()
 {
+    if( m_type == DatabaseCreateView )
+    {
+        if( GetDocumentManager()->GetDocuments().Member( GetDocument() ) )
+            GetDocument()->DeleteAllViews();
+    }
     wxMenuBar *bar = m_parent->GetMenuBar();
     for( auto i = bar->GetMenuCount() - 2; i > 0; i-- )
     {
@@ -365,7 +372,11 @@ void DrawingView::CreateViewToolBar()
             m_styleBar->ClearTools();
     }
 #endif
-    if( m_type == DatabaseView )
+    if( m_type == DatabaseCreateView )
+    {
+
+    }
+    else if( m_type == DatabaseView )
     {
         CreateDBMenu();
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
@@ -2609,4 +2620,35 @@ void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
         event.Enable( false );
     else
         event.Enable( true );
+}
+
+void DrawingView::OnDatabaseCreateView(wxCommandEvent &WXUNUSED(event))
+{
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( m_parent );
+#endif
+    auto templateDoc = (wxDocTemplate *) GetDocument()->GetDocumentTemplate();
+    DrawingDocument * const doc = (DrawingDocument *)templateDoc->GetDocClassInfo()->CreateObject();
+    wxTRY
+    {
+        doc->SetFilename( "" );
+        doc->SetDocumentTemplate( templateDoc );
+        GetDocumentManager()->AddDocument( doc );
+        doc->SetDatabase( GetDocument()->GetDatabase(), true );
+        doc->SetCommandProcessor(doc->OnCreateCommandProcessor());
+        DrawingView *const view = (DrawingView *) templateDoc->GetViewClassInfo()->CreateObject();
+        if( view )
+        {
+            view->SetViewType( DatabaseCreateView );
+            view->SetDocument( doc );
+            if( !view->OnCreate( doc, 0 ) )
+                return;
+        }
+    }
+    wxCATCH_ALL
+    (
+        if( GetDocumentManager()->GetDocuments().Member( doc ) )
+            doc->DeleteAllViews();
+        throw;
+    )
 }
