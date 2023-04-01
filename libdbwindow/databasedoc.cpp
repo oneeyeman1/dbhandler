@@ -138,15 +138,6 @@ void DrawingDocument::SetDatabase(Database *db, bool isInit, const std::vector<Q
         dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db, true, queries, libPath );
 }
 
-void DrawingDocument::SetDatabase(Database *db, bool isInit)
-{
-    std::vector<QueryInfo> queries;
-    std::vector<LibrariesInfo> libPath;
-    m_db = db;
-    if( !isInit )
-        dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db, true, queries, libPath );
-}
-
 Database *DrawingDocument::GetDatabase()
 {
     return m_db;

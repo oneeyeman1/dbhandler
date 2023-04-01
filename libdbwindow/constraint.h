@@ -30,7 +30,6 @@
 enum ViewType
 {
     DatabaseView,
-    DatabaseCreateView,
     QueryView
 };
 #endif

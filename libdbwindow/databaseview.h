@@ -5,7 +5,6 @@
 enum ViewType
 {
     DatabaseView,
-    DatabaseCreateView,
     QueryView
 };
 #endif
@@ -119,7 +118,6 @@ public:
     void OnQuerySaveAsUpdateUI(wxUpdateUIEvent &event);
     void OnLabelTextChanged(wxFocusEvent &event);
     void OnFontNameChange(wxFocusEvent &event);
-    void OnDatabaseCreateView(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
