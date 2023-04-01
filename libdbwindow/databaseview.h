@@ -118,6 +118,7 @@ public:
     void OnQuerySaveAsUpdateUI(wxUpdateUIEvent &event);
     void OnLabelTextChanged(wxFocusEvent &event);
     void OnFontNameChange(wxFocusEvent &event);
+    void OnDatabaseCreateView(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
@@ -143,7 +144,7 @@ private:
     wxComboBox *m_fontSize;
     wxFrame *m_log;
     wxTextCtrl *m_text;
-    DatabaseCanvas *m_canvas;
+    DatabaseCanvas *m_canvas, *m_viewCanvas;
     bool m_isCreated;
     ViewType m_type;
     FieldWindow *m_fields;

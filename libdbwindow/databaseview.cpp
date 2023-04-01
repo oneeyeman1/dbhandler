@@ -173,6 +173,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_CLEAR, DrawingView::OnClear)
     EVT_MENU(wxID_SELECTALL, DrawingView::OnSelectAll)
     EVT_MENU(wxID_FIND, DrawingView::OnFind)
+    EVT_MENU(wxID_OBJECTNEWVIEW, DrawingView::OnDatabaseCreateView)
     EVT_FIND(wxID_ANY, DrawingView::OnFindReplaceText)
     EVT_FIND_NEXT(wxID_ANY, DrawingView::OnFindReplaceText)
     EVT_MENU(wxID_REPLACE, DrawingView::OnFind)
@@ -192,6 +193,7 @@ wxEND_EVENT_TABLE()
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
+    m_viewCanvas = nullptr;
     m_searchDirection = 1;
     m_log = nullptr;
     m_searchPos = 0;
@@ -2609,4 +2611,9 @@ void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
         event.Enable( false );
     else
         event.Enable( true );
+}
+
+void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
+{
+
 }
