@@ -270,22 +270,28 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     auto db = ((DrawingDocument *) GetDocument() )->GetDatabase();
     m_canvas = new DatabaseCanvas( this, ptCanvas, db->GetTableVector().m_dbName, db->GetTableVector().m_type );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
+    if( m_type == DatabaseView )
+    {
+        m_viewCanvas = new DatabaseCanvas( this, ptCanvas, db->GetTableVector().m_dbName, db->GetTableVector().m_type );
+        sizer->Add( m_viewCanvas, 2, wxEXPAND, 0 );
+        m_viewCanvas->Show( false );
+    }
+    m_queryBook = new wxNotebook( m_frame, wxID_ANY );
+    m_page1 = new SortGroupByPage( m_queryBook, true );
+    m_queryBook->AddPage( m_page1, _( "Sort" ) );
+    m_page2 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype(), true );
+    m_queryBook->AddPage( m_page2, _( "Where" ) );
+    m_page3 = new SortGroupByPage( m_queryBook, false );
+    m_queryBook->AddPage( m_page3, _( "Group" ) );
+    m_page4 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype(), false );
+    m_queryBook->AddPage( m_page4, _( "Having" ) );
+    m_page6 = new SyntaxPropPage( m_queryBook );
+    m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
+    sizer->Add( m_queryBook, 0, wxEXPAND, 0 );
+    m_queryBook->Show( false );
+    m_queryBook->Bind( wxEVT_NOTEBOOK_PAGE_CHANGED, &DrawingView::OnSQLNotebookPageChanged, this );
     if( m_type == QueryView )
     {
-        m_queryBook = new wxNotebook( m_frame, wxID_ANY );
-        m_page1 = new SortGroupByPage( m_queryBook, true );
-        m_queryBook->AddPage( m_page1, _( "Sort" ) );
-        m_page2 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype(), true );
-        m_queryBook->AddPage( m_page2, _( "Where" ) );
-        m_page3 = new SortGroupByPage( m_queryBook, false );
-        m_queryBook->AddPage( m_page3, _( "Group" ) );
-        m_page4 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype(), false );
-        m_queryBook->AddPage( m_page4, _( "Having" ) );
-        m_page6 = new SyntaxPropPage( m_queryBook );
-        m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
-        sizer->Add( m_queryBook, 0, wxEXPAND, 0 );
-        m_queryBook->Show( false );
-        m_queryBook->Bind( wxEVT_NOTEBOOK_PAGE_CHANGED, &DrawingView::OnSQLNotebookPageChanged, this );
         m_designCanvas = new DesignCanvas( this, ptCanvas );
         sizer->Add( m_designCanvas, 1, wxEXPAND, 0 );
         m_canvas->Show( false );
@@ -2615,5 +2621,8 @@ void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
 
 void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
 {
-
+    m_viewCanvas->Show( true );
+    m_queryBook->Show( true );
+    m_canvas->Show( false );
+    m_frame->Layout();
 }
