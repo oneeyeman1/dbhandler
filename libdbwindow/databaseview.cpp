@@ -378,12 +378,12 @@ void DrawingView::CreateViewToolBar()
     {
         CreateDBMenu();
         m_tb->AddTool( wxID_DATABASEWINDOW, _( "Database Profile" ), wxBitmap( database_profile ), wxBitmap( database_profile ), wxITEM_NORMAL, _( "DB Profile" ), _( "Select database profile" ) );
-        wxBitmapBundle tableSVG;
+        wxBitmapBundle tableSVG, createviewSVG;
 #ifdef __WXMSW__
         HANDLE gs_wxMainThread = NULL;
         const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
-        const void* dataTable = nullptr;
-        size_t sizeTable = 0;
+        const void* dataTable = nullptr, *createview = nullptr;
+        size_t sizeTable = 0, createView = 0;
         if( !wxLoadUserResource( &dataTable, &sizeTable, "table", RT_RCDATA, inst ) )
         {
             auto err = ::GetLastError();
@@ -393,12 +393,22 @@ void DrawingView::CreateViewToolBar()
         {
             tableSVG = wxBitmapBundle::FromSVG( (const char *) dataTable, wxSize( 16, 16 ) );
         }
+        if( !wxLoadUserResource( &createview, &createView, "createview", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            createviewSVG = wxBitmapBundle::FromSVG( (const char *) createview, wxSize( 16, 16 ) );
+        }
 #elif __WXOSX__
         tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
 #else
         tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
 #endif
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), tableSVG, tableSVG, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
+        m_tb->AddTool( wxID_OBJECTNEWVIEW, _( "Create View" ), createviewSVG, createviewSVG, wxITEM_NORMAL, _( "Create View" ), _( "Creatre a New View" ) );
         m_tb->AddTool( wxID_DROPOBJECT, _( "Drop" ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxITEM_NORMAL, _( "Drop" ), _( "Drop database Object" ) );
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Database View" ) );
