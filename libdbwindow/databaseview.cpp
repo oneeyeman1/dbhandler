@@ -343,15 +343,14 @@ DrawingView::~DrawingView()
 
 void DrawingView::CreateViewToolBar()
 {
-    int offset;
+    int offset, position = 0;
 	long style = wxTB_HORIZONTAL | wxNO_BORDER | wxTB_FLAT | wxTB_TOP;
     wxWindow *parent = nullptr;
-#ifdef __WXMSW__
-    parent = (wxMDIClientWindow *) m_parent->GetClientWindow();
-#elif __WXGTK__
-    parent = m_parent;
-#elif __WXOSX__
+#ifdef __WXOSX__
     parent = m_frame;
+#else
+    parent = m_parent;
+    position = dynamic_cast<wxDocMDIParentFrame *>( m_parent )->GetToolBar()->GetSize().GetWidth();
 #endif
     wxSize size = m_parent->GetClientSize();
 #ifdef __WXOSX__
@@ -362,7 +361,9 @@ void DrawingView::CreateViewToolBar()
     }
 #else
     if( !m_tb )
+    {
         m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
+    }
     else
         m_tb->ClearTools();
     if( m_type == QueryView )
@@ -522,7 +523,7 @@ void DrawingView::CreateViewToolBar()
         sizer->Add( m_styleBar, 1, wxEXPAND, 0 );
 #endif
     }
-    m_tb->SetSize( 0, 0, size.x, wxDefaultCoord );
+    m_tb->SetSize( 0, position, size.x, wxDefaultCoord );
     offset = m_tb->GetSize().y;
     auto height = size.y - offset;
     if( m_styleBar )
@@ -537,7 +538,7 @@ void DrawingView::CreateViewToolBar()
     pt.y = m_parent->GetRect().GetHeight() - m_parent->GetClientSize().GetHeight();
     m_frame->SetSize( pt.x, pt.y, m_parent->GetSize().GetWidth(), m_parent->GetClientSize().GetHeight() );
 #else
-    m_frame->SetSize( 0, offset, size.x, height );
+    m_parent->GetClientWindow()->SetSize( 0, offset, size.x, height );
 #endif
 #ifdef __WXMSW__
     m_frame->SetToolBar( m_tb );
@@ -1835,7 +1836,8 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
             m_fields->Show( true );
             m_canvas->Show( true );
             m_queryBook->Show( true );
-            m_frame->Layout();
+            parent->Layout();
+            m_parent->Layout();
             sizer->Layout();
         }
         else
@@ -1868,9 +1870,10 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
                 m_fields->Show( false );
                 m_canvas->Show( false );
                 m_queryBook->Show( false );
-                m_frame->Layout();
-                PopuateQueryCanvas();
                 sizer->Layout();
+                parent->Layout();
+                m_parent->Layout();
+                PopuateQueryCanvas();
             }
         }
     }
