@@ -404,6 +404,7 @@ void DrawingView::CreateViewToolBar()
         }
 #elif __WXOSX__
         tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
+        createviewSVG = wxBitmapBundle::FromSVGResource( "addview", wxSize( 16, 16 ) );
 #else
         tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
 #endif
