@@ -890,7 +890,7 @@ void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
     SelectTable( false, m_tables, query, false );
 }
 
-int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect)
+int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect, bool isNewView/* = false*/)
 {
     wxDynamicLibrary lib;
     int res = 0;
@@ -2634,8 +2634,12 @@ void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
 
 void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
 {
+    wxString query;
     m_viewCanvas->Show( true );
     m_queryBook->Show( true );
+    m_queryBook->ChangeSelection( 1 );
     m_canvas->Show( false );
+    sizer->Layout();
     m_frame->Layout();
+    SelectTable( false, m_tables, query, false, true );
 }
