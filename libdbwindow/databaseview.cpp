@@ -2641,5 +2641,14 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
     m_canvas->Show( false );
     sizer->Layout();
     m_frame->Layout();
-    SelectTable( false, m_tables, query, false, true );
+    auto res = SelectTable( false, m_tables, query, false, true );
+    if( res == wxID_CANCEL )
+    {
+        m_viewCanvas->Show( false );
+        m_queryBook->Show( false );
+        m_canvas->Show( true );
+        sizer->Layout();
+        m_frame->Layout();
+
+    }
 }
