@@ -15,13 +15,14 @@
 class SelectTables: public wxDialog
 {
 public:
-    SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, bool isTableView, const int type, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, bool isTableView, const int type, bool isNewView);
     void GetSelectedTableNames(std::map<wxString, std::vector<TableDefinition> > &tableNames);
 private:
     wxBoxSizer* sizer_1;
     Database *m_db;
 	std::vector<std::wstring> m_names;
     bool m_isTableView;
+    bool m_isNewView;
     // begin wxGlade: SelectTables::methods
     void set_properties();
     void do_layout();

@@ -111,7 +111,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST 
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_FIELD_SHUFFLED( wxEVT_USER_FIRST + 4 );
 
-typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::map<wxString, std::vector<TableDefinition> > &, std::vector<std::wstring> &, bool, const int);
+typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::map<wxString, std::vector<TableDefinition> > &, std::vector<std::wstring> &, bool, const int, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
@@ -906,7 +906,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     if( lib.IsLoaded() && !quickSelect )
     {
         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        res = func2( m_frame, GetDocument()->GetDatabase(), tables, GetDocument()->GetTableNames(), isTableView, m_type );
+        res = func2( m_frame, GetDocument()->GetDatabase(), tables, GetDocument()->GetTableNames(), isTableView, m_type, isNewView );
     }
     if( m_type == QueryView )
     {
@@ -2643,6 +2643,7 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
     m_canvas->Show( false );
     sizer->Layout();
     m_frame->Layout();
+    m_frame->SetTitle( _( "New View - Untitled" ) );
     auto res = SelectTable( false, m_tables, query, false, true );
     if( res == wxID_CANCEL )
     {
@@ -2651,6 +2652,6 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
         m_canvas->Show( true );
         sizer->Layout();
         m_frame->Layout();
-
+        m_frame->SetTitle( _( "Database - " + wxDynamicCast( GetDocument(), DrawingDocument )->GetDatabase()->GetTableVector().m_dbName ) );
     }
 }

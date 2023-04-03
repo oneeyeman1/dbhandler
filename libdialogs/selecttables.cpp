@@ -25,9 +25,10 @@
 #include "dialogs.h"
 #include "selecttables.h"
 
-SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, bool isTableView, const int type, const wxPoint& pos, const wxSize& size, long style):
-    wxDialog(parent, id, title, pos, size, style)
+SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::vector<std::wstring> &names, bool isTableView, const int type, bool isNewView):
+    wxDialog(parent, id, title)
 {
+    m_isNewView = isNewView;
     m_db = db;
     m_names = names;
     sizer_1 = NULL;
@@ -160,7 +161,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
             std::wstring tableName = (*it1).tableName;
             std::wstring schemaName = (*it1).schemaName;
             std::wstring catalogName = (*it1).catalogName;
-            if( std::find( m_names.begin(), m_names.end(), tableName ) == m_names.end() )
+            if( ( std::find( m_names.begin(), m_names.end(), tableName ) == m_names.end() && !m_isNewView ) || m_isNewView )
             {
                 if( type == L"SQLite" )
                 {
