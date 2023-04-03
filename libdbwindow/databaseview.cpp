@@ -407,7 +407,7 @@ void DrawingView::CreateViewToolBar()
         createviewSVG = wxBitmapBundle::FromSVGResource( "addview", wxSize( 16, 16 ) );
 #else
         tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
-        createviewSVG = wxBitmapBundle::FromSVG( createview, wxSize( 16, 16 ) );
+//        createviewSVG = wxBitmapBundle::FromSVG( createview, wxSize( 16, 16 ) );
 #endif
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), tableSVG, tableSVG, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_OBJECTNEWVIEW, _( "Create View" ), createviewSVG, createviewSVG, wxITEM_NORMAL, _( "Create View" ), _( "Creatre a New View" ) );
@@ -2643,6 +2643,10 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
     m_canvas->Show( false );
     sizer->Layout();
     m_frame->Layout();
+#ifdef __WXGTK__
+	m_parent->SendSizeEvent();
+	wxYield();
+#endif
     m_frame->SetTitle( _( "New View - Untitled" ) );
     auto res = SelectTable( false, m_tables, query, false, true );
     if( res == wxID_CANCEL )
