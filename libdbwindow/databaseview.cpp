@@ -404,8 +404,10 @@ void DrawingView::CreateViewToolBar()
         }
 #elif __WXOSX__
         tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
+        createviewSVG = wxBitmapBundle::FromSVGResource( "addview", wxSize( 16, 16 ) );
 #else
         tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
+        createviewSVG = wxBitmapBundle::FromSVG( createview, wxSize( 16, 16 ) );
 #endif
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), tableSVG, tableSVG, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_OBJECTNEWVIEW, _( "Create View" ), createviewSVG, createviewSVG, wxITEM_NORMAL, _( "Create View" ), _( "Creatre a New View" ) );
