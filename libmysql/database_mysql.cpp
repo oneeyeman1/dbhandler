@@ -2410,6 +2410,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
             else
                 return AddDropTable( catalog, schemaName, tableName, L"", tableId, true, errors );
         }
+        return AddDropTable( catalog, schemaName, tableName, L"", tableId, true, errors );
     }
     return result;
 }

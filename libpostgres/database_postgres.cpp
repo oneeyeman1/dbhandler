@@ -1701,6 +1701,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
             else
                 result = AddDropTable( catalog, schemaName, tableName, table_owner, table_id, true, errors );
         }
+        result = AddDropTable( catalog, schemaName, tableName, table_owner, table_id, true, errors );
     }
     return result;
 }

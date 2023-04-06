@@ -6430,6 +6430,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 else
                     result = AddDropTable( catalog, schemaName, tableName, owner, tableId, true, errors );
             }
+            result = AddDropTable( catalog, schemaName, tableName, owner, tableId, true, errors );
         }
     }
     return result;

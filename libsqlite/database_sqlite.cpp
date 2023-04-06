@@ -2148,7 +2148,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
         else
             return AddDropTable( catalog, schemaName, name, L"", 0, true, errors );
     }
-    return 0;
+    return AddDropTable( catalog, schemaName, name, L"", 0, true, errors );;
 }
 
 int SQLiteDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg)
