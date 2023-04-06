@@ -350,7 +350,7 @@ void DrawingView::CreateViewToolBar()
     parent = m_frame;
 #else
     parent = m_parent;
-    position = dynamic_cast<wxDocMDIParentFrame *>( m_parent )->GetToolBar()->GetSize().GetWidth();
+    position = dynamic_cast<wxDocMDIParentFrame *>( m_parent )->GetToolBar()->GetSize().GetHeight();
 #endif
     wxSize size = m_parent->GetClientSize();
 #ifdef __WXOSX__
@@ -535,7 +535,7 @@ void DrawingView::CreateViewToolBar()
         sizer->Add( m_styleBar, 1, wxEXPAND, 0 );
 #endif
     }
-    m_tb->SetSize( 0, position, size.x, wxDefaultCoord );
+    m_tb->SetSize( 0, position * 2, size.x, wxDefaultCoord );
     offset = m_tb->GetSize().y;
     auto height = size.y - offset;
     if( m_styleBar )
@@ -908,14 +908,16 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
         res = func2( m_frame, GetDocument()->GetDatabase(), tables, GetDocument()->GetTableNames(), isTableView, m_type, isNewView );
     }
-    if( m_type == QueryView )
+    if( m_type == QueryView || m_type == NewViewView )
     {
         if( res != wxID_CANCEL )
         {
             std::vector<TableField *> queryFields = GetDocument()->GetQueryFields();
             query = "SELECT ";
-            if( !quickSelect && queryFields.size() == 0 )
+            if( !quickSelect && queryFields.size() == 0 && !isNewView )
                 query += "<unknown fields>\n";
+            else if( isNewView )
+                query += "<not specoified>";
             else
             {
                 if( !quickSelect )
@@ -957,7 +959,10 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     {
         ((DrawingDocument *) GetDocument())->AddTables( m_tables );
         m_selectTableName = ((DrawingDocument *) GetDocument())->GetDBTables();
-        ((DatabaseCanvas *) m_canvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
+        if( m_type != NewViewView )
+            ((DatabaseCanvas *) m_canvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
+        else
+            ((DatabaseCanvas *) m_viewCanvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
         if( m_type == QueryView )
         {
             if( query != L"\n" )
@@ -2636,6 +2641,7 @@ void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
 
 void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
 {
+    m_type = NewViewView;
     wxString query;
     m_viewCanvas->Show( true );
     m_queryBook->Show( true );
@@ -2657,5 +2663,10 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
         sizer->Layout();
         m_frame->Layout();
         m_frame->SetTitle( _( "Database - " + wxDynamicCast( GetDocument(), DrawingDocument )->GetDatabase()->GetTableVector().m_dbName ) );
+        m_type = DatabaseView;
+    }
+    else
+    {
+
     }
 }
