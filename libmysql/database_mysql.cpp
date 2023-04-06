@@ -2399,7 +2399,17 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
         result = 1;
     else
     {
-        return AddDropTable( catalog, schemaName, tableName, L"", tableId, true, errors );
+        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
+        {
+            if( (*it).first == catalog &&
+               std::find_if( (*it).second.begin(), (*it).second.end(), [schemaName, tableName](DatabaseTable *table)
+                            {
+                                return table->GetSchemaName() == schemaName && table->GetTableName() == tableName;
+                            } ) != (*it).second.end() )
+                result = 0;
+            else
+                return AddDropTable( catalog, schemaName, tableName, L"", tableId, true, errors );
+        }
     }
     return result;
 }

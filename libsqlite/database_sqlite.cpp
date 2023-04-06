@@ -2137,7 +2137,18 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
         name = tableName.substr( tableName.find( L"." ) + 1 );
     else
         name = tableName;
-    return AddDropTable( catalog, schemaName, name, L"", 0, true, errors );
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
+    {
+        if( (*it).first == schemaName &&
+           std::find_if( (*it).second.begin(), (*it).second.end(), [tableName](DatabaseTable *table)
+                    {
+                        return table->GetTableName() == tableName;
+                    } ) != (*it).second.end() )
+            return 0;
+        else
+            return AddDropTable( catalog, schemaName, name, L"", 0, true, errors );
+    }
+    return 0;
 }
 
 int SQLiteDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg)
