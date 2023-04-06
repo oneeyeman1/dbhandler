@@ -2139,10 +2139,10 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
         name = tableName;
     for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
     {
-        if( (*it).first == schemaName &&
-           std::find_if( (*it).second.begin(), (*it).second.end(), [tableName](DatabaseTable *table)
+        if( (*it).first == catalog &&
+           std::find_if( (*it).second.begin(), (*it).second.end(), [schemaName, tableName](DatabaseTable *table)
                     {
-                        return table->GetTableName() == tableName;
+                        return table->GetSchemaName() == schemaName && table->GetTableName() == tableName;
                     } ) != (*it).second.end() )
             return 0;
         else
