@@ -219,7 +219,7 @@ void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition
                                 query += "\nWHERE ";
                                 found = true;
                             }
-                            if( ((DrawingView *) m_view)->GetViewType() == QueryView )
+                            if( ((DrawingView *) m_view)->GetViewType() == QueryView || ((DrawingView *) m_view)->GetViewType() == NewViewView )
                             {
                                 pConstr = new QueryConstraint( ((DrawingView *) m_view)->GetViewType() );
                                 pConstr->SetLocalColumn( (*it4)->GetOriginalFieldName() );
