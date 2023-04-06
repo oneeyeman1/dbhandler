@@ -82,6 +82,7 @@ private:
 enum ViewType
 {
     DatabaseView,
+    NewViewView,
     QueryView
 };
 
