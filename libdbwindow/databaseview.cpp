@@ -111,7 +111,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST 
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_FIELD_SHUFFLED( wxEVT_USER_FIRST + 4 );
 
-typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::map<wxString, std::vector<TableDefinition> > &, std::vector<std::wstring> &, bool, const int);
+typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::map<wxString, std::vector<TableDefinition> > &, std::vector<std::wstring> &, bool, const int, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
@@ -407,7 +407,7 @@ void DrawingView::CreateViewToolBar()
         createviewSVG = wxBitmapBundle::FromSVGResource( "addview", wxSize( 16, 16 ) );
 #else
         tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
-        createviewSVG = wxBitmapBundle::FromSVG( createview, wxSize( 16, 16 ) );
+//        createviewSVG = wxBitmapBundle::FromSVG( createview, wxSize( 16, 16 ) );
 #endif
         m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), tableSVG, tableSVG, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" ) );
         m_tb->AddTool( wxID_OBJECTNEWVIEW, _( "Create View" ), createviewSVG, createviewSVG, wxITEM_NORMAL, _( "Create View" ), _( "Creatre a New View" ) );
@@ -892,7 +892,7 @@ void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
     SelectTable( false, m_tables, query, false );
 }
 
-int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect)
+int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect, bool isNewView/* = false*/)
 {
     wxDynamicLibrary lib;
     int res = 0;
@@ -906,7 +906,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     if( lib.IsLoaded() && !quickSelect )
     {
         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        res = func2( m_frame, GetDocument()->GetDatabase(), tables, GetDocument()->GetTableNames(), isTableView, m_type );
+        res = func2( m_frame, GetDocument()->GetDatabase(), tables, GetDocument()->GetTableNames(), isTableView, m_type, isNewView );
     }
     if( m_type == QueryView )
     {
@@ -2636,8 +2636,26 @@ void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
 
 void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
 {
+    wxString query;
     m_viewCanvas->Show( true );
     m_queryBook->Show( true );
+    m_queryBook->ChangeSelection( 1 );
     m_canvas->Show( false );
+    sizer->Layout();
     m_frame->Layout();
+#ifdef __WXGTK__
+	m_parent->SendSizeEvent();
+	wxYield();
+#endif
+    m_frame->SetTitle( _( "New View - Untitled" ) );
+    auto res = SelectTable( false, m_tables, query, false, true );
+    if( res == wxID_CANCEL )
+    {
+        m_viewCanvas->Show( false );
+        m_queryBook->Show( false );
+        m_canvas->Show( true );
+        sizer->Layout();
+        m_frame->Layout();
+        m_frame->SetTitle( _( "Database - " + wxDynamicCast( GetDocument(), DrawingDocument )->GetDatabase()->GetTableVector().m_dbName ) );
+    }
 }
