@@ -194,6 +194,7 @@ wxEND_EVENT_TABLE()
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
     m_viewCanvas = nullptr;
+    m_edit = nullptr;
     m_searchDirection = 1;
     m_log = nullptr;
     m_searchPos = 0;
@@ -963,14 +964,15 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
             ((DatabaseCanvas *) m_canvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
         else
             ((DatabaseCanvas *) m_viewCanvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
-        if( m_type == QueryView )
+        if( m_type == QueryView || m_type == NewViewView )
         {
             if( query != L"\n" )
             {
                 std::vector<MyErdTable *> dbTables = ((DrawingDocument *)GetDocument())->GetTables();
                 m_page1->AddQuickSelectSortingFields( GetDocument()->GetAllSorted(), GetDocument()->GetQuerySorted() );
                 m_page6->SetSyntaxText( query );
-                m_edit->SetText( query );
+                if( m_edit )
+                    m_edit->SetText( query );
             }
             if( quickSelect )
             {

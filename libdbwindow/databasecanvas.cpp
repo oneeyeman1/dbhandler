@@ -172,7 +172,7 @@ void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition
     for( std::vector<MyErdTable *>::iterator it1 = m_displayedTables.begin(); it1 < m_displayedTables.end(); it1++ )
     {
         wxString name = const_cast<DatabaseTable *>( (*it1)->GetTable() )->GetTableName();
-        if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
+        if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView ||  dynamic_cast<DrawingView *>( m_view )->GetViewType() == NewViewView )
         {
             query += "\"" + (*it1)->GetTable()->GetSchemaName() + L"." + (*it1)->GetTableName() + "\"";
             if( it1 != m_displayedTables.end() - 1 )
@@ -241,7 +241,7 @@ void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition
                                 pConstr->SetFKDatabaseTable( (*it2)->GetTable() );
                                 pConstr->SetPGMatch( (*it4)->GetMatchOPtion() );
                             }
-                            if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
+                            if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView || ((DrawingView *) m_view)->GetViewType() == NewViewView )
                             {
                                 if( secondIteration )
                                     query += " AND\r      ";
