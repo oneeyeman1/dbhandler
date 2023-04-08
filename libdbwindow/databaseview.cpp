@@ -261,13 +261,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     ptCanvas.y = m_frame->GetSize().y - m_frame->GetClientSize().y;
 #endif
     wxASSERT( m_frame == GetFrame() );
-    if( m_type == QueryView )
-    {
-        m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
-        m_fields->SetCursor( wxCURSOR_HAND );
-        sizer->Add( m_fields, 0, wxEXPAND, 0 );
-        m_fields->Show( false );
-    }
+    m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
+    m_fields->SetCursor( wxCURSOR_HAND );
+    sizer->Add( m_fields, 0, wxEXPAND, 0 );
+    m_fields->Show( false );
     auto db = ((DrawingDocument *) GetDocument() )->GetDatabase();
     m_canvas = new DatabaseCanvas( this, ptCanvas, db->GetTableVector().m_dbName, db->GetTableVector().m_type );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
@@ -914,7 +911,10 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
         if( res != wxID_CANCEL )
         {
             std::vector<TableField *> queryFields = GetDocument()->GetQueryFields();
-            query = "SELECT ";
+            if( isNewView )
+                query = "CREATE VIEW \"Untitled\" AS\n\r";
+            else
+                query = "SELECT ";
             if( !quickSelect && queryFields.size() == 0 && !isNewView )
                 query += "<unknown fields>\n";
             else if( isNewView )
@@ -2647,6 +2647,7 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
     wxString query;
     m_viewCanvas->Show( true );
     m_queryBook->Show( true );
+    m_fields->Show( true );
     m_queryBook->ChangeSelection( 1 );
     m_canvas->Show( false );
     sizer->Layout();
@@ -2662,6 +2663,7 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
         m_viewCanvas->Show( false );
         m_queryBook->Show( false );
         m_canvas->Show( true );
+        m_fields->Show( false );
         sizer->Layout();
         m_frame->Layout();
         m_frame->SetTitle( _( "Database - " + wxDynamicCast( GetDocument(), DrawingDocument )->GetDatabase()->GetTableVector().m_dbName ) );
