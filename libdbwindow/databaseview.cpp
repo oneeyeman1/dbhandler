@@ -105,6 +105,7 @@
 #include "fieldpropertieshandler.h"
 #include "designpropertieshandler.h"
 #include "dividerpropertieshandler.h"
+#include "databasetemplate.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
@@ -353,7 +354,7 @@ void DrawingView::CreateViewToolBar()
     wxSize size = m_parent->GetClientSize();
 #ifdef __WXOSX__
     m_tb = m_frame->CreateToolBar();
-    if( m_type == QueryView )
+    if( m_type == QueryView || m_type == NewViewView )
     {
         m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
     }
@@ -364,7 +365,7 @@ void DrawingView::CreateViewToolBar()
     }
     else
         m_tb->ClearTools();
-    if( m_type == QueryView )
+    if( m_type == QueryView || m_type == NewViewView )
     {
         if( !m_styleBar )
             m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
@@ -2643,7 +2644,7 @@ void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
 
 void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
 {
-    m_type = NewViewView;
+/*    m_type = NewViewView;
     wxString query;
     m_viewCanvas->Show( true );
     m_queryBook->Show( true );
@@ -2672,5 +2673,12 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
     else
     {
 
-    }
+    }*/
+    std::vector<QueryInfo> queries;
+    std::vector<LibrariesInfo> path;
+    m_frame->Show( false );
+    auto docTemplate = (DatabaseTemplate *) GetDocumentManager()->FindTemplate( CLASSINFO( DrawingDocument ) );
+    docTemplate->CreateDatabaseDocument( "*.qrv", NewViewView, GetDocument()->GetDatabase(), wxDOC_NEW | wxDOC_SILENT );
+    dynamic_cast<DrawingDocument *>( GetDocumentManager()->GetCurrentDocument() )->SetDatabase( GetDocument()->GetDatabase()  );
+    dynamic_cast<DrawingView *>( GetDocumentManager()->GetCurrentDocument()->GetFirstView() )->GetTablesForView( GetDocument()->GetDatabase(), true, queries, path );
 }

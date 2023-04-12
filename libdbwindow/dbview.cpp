@@ -140,10 +140,17 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
             docTemplate = new DatabaseTemplate( docManager, "Drawing", "*.qry", "", "qry", "Drawing Doc", "Drawing View", CLASSINFO( DrawingDocument ), CLASSINFO( DrawingView ) );
     }
     if( type == DatabaseView )
+    {
         docTemplate->CreateDatabaseDocument( "*.drw", type, db, painters, queries, path, wxDOC_NEW | wxDOC_SILENT );
+        dynamic_cast<DrawingDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db );
+        dynamic_cast<DrawingView *>( docManager->GetCurrentDocument()->GetFirstView() )->GetTablesForView( db, false, queries, path );
+    }
     else
+    {
         docTemplate->CreateDatabaseDocument( "*.qry", type, db, painters, queries, path, wxDOC_NEW | wxDOC_SILENT );
-    dynamic_cast<DrawingDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db, false, queries, path );
+        dynamic_cast<DrawingDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db );
+        dynamic_cast<DrawingView *>( docManager->GetCurrentDocument()->GetFirstView() )->GetTablesForView( db, true, queries, path );
+    }
     auto view = docManager->GetCurrentView();
     if( view )
         dynamic_cast<DrawingView *>( view )->SetProfiles( profiles );

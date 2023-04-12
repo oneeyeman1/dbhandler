@@ -131,11 +131,9 @@ void DrawingDocument::DoUpdate()
     UpdateAllViews();
 }
 
-void DrawingDocument::SetDatabase(Database *db, bool isInit, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &libPath)
+void DrawingDocument::SetDatabase(Database *db)
 {
     m_db = db;
-    if( !isInit )
-        dynamic_cast<DrawingView *>( GetFirstView() )->GetTablesForView( db, true, queries, libPath );
 }
 
 Database *DrawingDocument::GetDatabase()
