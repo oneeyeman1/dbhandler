@@ -976,10 +976,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     {
         ((DrawingDocument *) GetDocument())->AddTables( m_tables );
         m_selectTableName = ((DrawingDocument *) GetDocument())->GetDBTables();
-        if( m_type != NewViewView )
-            ((DatabaseCanvas *) m_canvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
-        else
-
+        ((DatabaseCanvas *) m_canvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
         if( m_type == QueryView || m_type == NewViewView )
         {
             if( query != L"\n" )
