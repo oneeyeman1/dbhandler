@@ -91,7 +91,7 @@ public:
     std::vector<FieldSorter> &GetAllSorted() { return m_sortedFieldsAll; }
     std::vector<FieldSorter> &GetQuerySorted() { return m_sortedFields; }
 
-    void AddTables(const std::map<wxString,std::vector<TableDefinition> > &selections);
+    void AddTables(const std::map<wxString,std::vector<TableDefinition> > &selections, bool isNewView);
     std::vector<MyErdTable *> &GetTables();
     std::vector<std::wstring> &GetTableNameVector();
     std::vector<DatabaseTable *> &GetDBTables();
