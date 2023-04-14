@@ -50,7 +50,7 @@ DatabaseConstraint::~DatabaseConstraint()
 
 QueryConstraint::QueryConstraint(ViewType type)
 {
-    m_viewType = QueryView;
+    m_viewType = type;
     SetType( foreignKey );
     SetOnDelete( restrict );
     SetOnUpdate( restrict );
