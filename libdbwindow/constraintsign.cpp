@@ -128,7 +128,7 @@ ConstraintSign::ConstraintSign(ViewType type, int joinType) : wxSFRectShape()
                     delete m_fKey;
             }
         }
-        if( type == QueryView )
+        if( type == QueryView || type == NewViewView )
         {
             m_sign = new wxSFTextShape;
             if( m_sign )

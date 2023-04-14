@@ -81,7 +81,7 @@ DocumentOstream& DrawingDocument::SaveObject(DocumentOstream& ostream)
 #else
     wxTextOutputStream stream( ostream );
 #endif
-    m_querySaveSuccessfl = ((DrawingView *) GetFirstView() )->GetDatabaseCanvas()->GetDiagramManager().SerializeToXml( GetFilename(), xsWITH_ROOT );
+    m_querySaveSuccessfl = ((DrawingView *) GetFirstView() )->GetDatabaseCanvas( false )->GetDiagramManager().SerializeToXml( GetFilename(), xsWITH_ROOT );
     wxDocument::SaveObject( stream );
 
     return ostream;
@@ -95,10 +95,10 @@ DocumentIstream& DrawingDocument::LoadObject(DocumentIstream& istream)
     wxTextInputStream stream( istream );
 #endif
     std::vector<std::wstring> errors;
-    auto result = ((DrawingView *) GetFirstView() )->GetDatabaseCanvas()->GetDiagramManager().DeserializeFromXml( GetFilename() );
+    auto result = ((DrawingView *) GetFirstView() )->GetDatabaseCanvas( false )->GetDiagramManager().DeserializeFromXml( GetFilename() );
     if( result )
     {
-        auto tables = dynamic_cast<QueryRoot *>( ((DrawingView *) GetFirstView() )->GetDatabaseCanvas()->GetDiagramManager().GetRootItem() )->GetTables();
+        auto tables = dynamic_cast<QueryRoot *>( ((DrawingView *) GetFirstView() )->GetDatabaseCanvas( false )->GetDiagramManager().GetRootItem() )->GetTables();
         for( auto name : tables )
         {
             wxString catalog, schema, table;
@@ -141,7 +141,7 @@ Database *DrawingDocument::GetDatabase()
     return m_db;
 }
 
-void DrawingDocument::AddTables(const std::map<wxString,std::vector<TableDefinition> > &selections)
+void DrawingDocument::AddTables(const std::map<wxString,std::vector<TableDefinition> > &selections, bool isNewView)
 {
     bool found = false;
     std::wstring dbType = m_db->GetTableVector().m_type;
@@ -172,7 +172,7 @@ void DrawingDocument::AddTables(const std::map<wxString,std::vector<TableDefinit
                         MyErdTable *table = new MyErdTable( dbTable, dynamic_cast<DrawingView *>( GetFirstView() )->GetViewType() );
                         m_tables.push_back( table );
                         m_tableNames.push_back( table->GetTableName().ToStdWstring() );
-                        dynamic_cast<QueryRoot *>( dynamic_cast<DrawingView *>( GetFirstView() )->GetDatabaseCanvas()->GetDiagramManager().GetRootItem() )->AddQueryTable( name.ToStdWstring() );
+                        dynamic_cast<QueryRoot *>( dynamic_cast<DrawingView *>( GetFirstView() )->GetDatabaseCanvas( isNewView )->GetDiagramManager().GetRootItem() )->AddQueryTable( name.ToStdWstring() );
                         found = true;
                     }
                 }
