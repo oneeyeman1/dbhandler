@@ -194,7 +194,6 @@ wxEND_EVENT_TABLE()
 // windows for displaying the view.
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
-    m_viewCanvas = nullptr;
     m_designCanvas = nullptr;
     m_edit = nullptr;
     m_searchDirection = 1;
@@ -270,12 +269,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     auto db = ((DrawingDocument *) GetDocument() )->GetDatabase();
     m_canvas = new DatabaseCanvas( this, ptCanvas, db->GetTableVector().m_dbName, db->GetTableVector().m_type );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
-    if( m_type == DatabaseView )
-    {
-        m_viewCanvas = new DatabaseCanvas( this, ptCanvas, db->GetTableVector().m_dbName, db->GetTableVector().m_type );
-        sizer->Add( m_viewCanvas, 2, wxEXPAND, 0 );
-        m_viewCanvas->Show( false );
-    }
     m_queryBook = new wxNotebook( m_frame, wxID_ANY );
     m_page1 = new SortGroupByPage( m_queryBook, true );
     m_queryBook->AddPage( m_page1, _( "Sort" ) );
@@ -417,7 +410,10 @@ void DrawingView::CreateViewToolBar()
     }
     else
     {
-        CreateQueryMenu( QuickQueryMenu );
+        if( m_type == QueryView )
+            CreateQueryMenu( QuickQueryMenu );
+        else
+            CreateQueryMenu( SQLSelectMenu );
         m_tb->AddTool( wxID_NEW, _( "New" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
         m_tb->AddTool( wxID_OPEN, _( "Open" ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
         wxBitmapBundle save, tableSVG, boldSVG, italicSVG, underlineSVG;
@@ -2657,36 +2653,6 @@ void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
 
 void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
 {
-/*    m_type = NewViewView;
-    wxString query;
-    m_viewCanvas->Show( true );
-    m_queryBook->Show( true );
-    m_fields->Show( true );
-    m_queryBook->ChangeSelection( 1 );
-    m_canvas->Show( false );
-    sizer->Layout();
-    m_frame->Layout();
-#ifdef __WXGTK__
-	m_parent->SendSizeEvent();
-	wxYield();
-#endif
-    m_frame->SetTitle( _( "New View - Untitled" ) );
-    auto res = SelectTable( false, m_tables, query, false, true );
-    if( res == wxID_CANCEL )
-    {
-        m_viewCanvas->Show( false );
-        m_queryBook->Show( false );
-        m_canvas->Show( true );
-        m_fields->Show( false );
-        sizer->Layout();
-        m_frame->Layout();
-        m_frame->SetTitle( _( "Database - " + wxDynamicCast( GetDocument(), DrawingDocument )->GetDatabase()->GetTableVector().m_dbName ) );
-        m_type = DatabaseView;
-    }
-    else
-    {
-
-    }*/
     std::vector<QueryInfo> queries;
     std::vector<LibrariesInfo> path;
     m_frame->Show( false );

@@ -145,7 +145,7 @@ private:
     wxComboBox *m_fontSize;
     wxFrame *m_log;
     wxTextCtrl *m_text;
-    DatabaseCanvas *m_canvas, *m_viewCanvas;
+    DatabaseCanvas *m_canvas;
     bool m_isCreated;
     ViewType m_type;
     FieldWindow *m_fields;
