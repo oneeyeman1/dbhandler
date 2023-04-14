@@ -928,11 +928,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
         {
             std::vector<TableField *> queryFields = GetDocument()->GetQueryFields();
             if( isNewView )
-<<<<<<< HEAD
-                query = "CREATE VIEW \"Untitled\" AS\n\rSELECT";
-=======
                 query = "CREATE VIEW \"Untitled\" AS\n\rSELECT ";
->>>>>>> f6e0b2e3843bf4d2f42e998503f50df6c151867b
             else
                 query = "SELECT ";
             if( !quickSelect && queryFields.size() == 0 && !isNewView )
