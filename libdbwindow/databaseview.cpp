@@ -105,6 +105,7 @@
 #include "fieldpropertieshandler.h"
 #include "designpropertieshandler.h"
 #include "dividerpropertieshandler.h"
+#include "databasetemplate.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
@@ -194,6 +195,7 @@ wxEND_EVENT_TABLE()
 bool DrawingView::OnCreate(wxDocument *doc, long flags)
 {
     m_viewCanvas = nullptr;
+    m_designCanvas = nullptr;
     m_edit = nullptr;
     m_searchDirection = 1;
     m_log = nullptr;
@@ -353,7 +355,7 @@ void DrawingView::CreateViewToolBar()
     wxSize size = m_parent->GetClientSize();
 #ifdef __WXOSX__
     m_tb = m_frame->CreateToolBar();
-    if( m_type == QueryView )
+    if( m_type == QueryView || m_type == NewViewView )
     {
         m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
     }
@@ -364,7 +366,7 @@ void DrawingView::CreateViewToolBar()
     }
     else
         m_tb->ClearTools();
-    if( m_type == QueryView )
+    if( m_type == QueryView || m_type == NewViewView )
     {
         if( !m_styleBar )
             m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
@@ -586,9 +588,9 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
 #endif
     if( lib.IsLoaded() )
     {
-        if( m_type == QueryView )
+        if( m_type == QueryView || m_type == NewViewView )
         {
-            if( init )
+            if( m_type == QueryView )
             {
                 bool update;
                 CHOOSEOBJECT func = (CHOOSEOBJECT) lib.GetSymbol( "ChooseObject" );
@@ -683,7 +685,21 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
             }
             else
             {
-                SelectTable( false, m_tables, query, quickSelect );
+                m_frame->Freeze();
+                m_fields->Show( true );
+                m_canvas->Show( true );
+                m_queryBook->Show( true );
+#ifndef __WXOSX__
+                m_frame->SetSize( framePosition.x, framePosition.y - heightStyleBar, frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
+#endif
+                m_frame->Layout();
+                sizer->Layout();
+                m_frame->Thaw();
+#ifdef __WXGTK__
+                m_parent->SendSizeEvent();
+                wxYield();
+#endif
+                SelectTable( false, m_tables, query, quickSelect, true );
             }
         }
         else
@@ -912,7 +928,11 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
         {
             std::vector<TableField *> queryFields = GetDocument()->GetQueryFields();
             if( isNewView )
+<<<<<<< HEAD
                 query = "CREATE VIEW \"Untitled\" AS\n\rSELECT";
+=======
+                query = "CREATE VIEW \"Untitled\" AS\n\rSELECT ";
+>>>>>>> f6e0b2e3843bf4d2f42e998503f50df6c151867b
             else
                 query = "SELECT ";
             if( !quickSelect && queryFields.size() == 0 && !isNewView )
@@ -960,10 +980,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     {
         ((DrawingDocument *) GetDocument())->AddTables( m_tables, isNewView );
         m_selectTableName = ((DrawingDocument *) GetDocument())->GetDBTables();
-        if( m_type != NewViewView )
-            ((DatabaseCanvas *) m_canvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
-        else
-            ((DatabaseCanvas *) m_viewCanvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
+        ((DatabaseCanvas *) m_canvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
         if( m_type == QueryView || m_type == NewViewView )
         {
             if( query != L"\n" )
@@ -2630,7 +2647,8 @@ void DrawingView::OnLabelTextChanged(wxFocusEvent &WXUNUSED(event))
 
 void DrawingView::OnFontNameChange(wxFocusEvent &WXUNUSED(event))
 {
-    m_designCanvas->ChangeFontName( m_fontName->GetValue() );
+    if( m_designCanvas )
+        m_designCanvas->ChangeFontName( m_fontName->GetValue() );
 }
 
 void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
@@ -2643,7 +2661,7 @@ void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
 
 void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
 {
-    m_type = NewViewView;
+/*    m_type = NewViewView;
     wxString query;
     m_viewCanvas->Show( true );
     m_queryBook->Show( true );
@@ -2672,5 +2690,12 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
     else
     {
 
-    }
+    }*/
+    std::vector<QueryInfo> queries;
+    std::vector<LibrariesInfo> path;
+    m_frame->Show( false );
+    auto docTemplate = (DatabaseTemplate *) GetDocumentManager()->FindTemplate( CLASSINFO( DrawingDocument ) );
+    docTemplate->CreateDatabaseDocument( "*.qrv", NewViewView, GetDocument()->GetDatabase(), wxDOC_NEW | wxDOC_SILENT );
+    dynamic_cast<DrawingDocument *>( GetDocumentManager()->GetCurrentDocument() )->SetDatabase( GetDocument()->GetDatabase()  );
+    dynamic_cast<DrawingView *>( GetDocumentManager()->GetCurrentDocument()->GetFirstView() )->GetTablesForView( GetDocument()->GetDatabase(), true, queries, path );
 }

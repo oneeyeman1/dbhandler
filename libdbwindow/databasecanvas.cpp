@@ -154,7 +154,7 @@ void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition
             if( (*it) == tables.back() && dynamic_cast<DrawingView *>( m_view )->GetViewType() == DatabaseView )
                 (*it)->Select( true );
             (*it)->UpdateTable();
-            if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView )
+            if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView || dynamic_cast<DrawingView *>( m_view )->GetViewType() == NewViewView )
             {
                 for( std::vector<TableField *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
                 {
