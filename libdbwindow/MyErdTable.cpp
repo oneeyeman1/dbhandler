@@ -317,6 +317,8 @@ void MyErdTable::DrawNormal(wxDC &dc)
             SetFill( wxBrush( wxColour( 210, 225, 245 ) ) );
         }
     }
+    else
+        SetFill( wxBrush( wxColour( 210, 225, 245 ) ) );
     wxSFRoundRectShape::DrawNormal( dc );
     DrawDetail( dc );
 }
