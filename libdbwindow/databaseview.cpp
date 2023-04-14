@@ -626,7 +626,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                     GetDocument()->SetFilename( documentName + ".qry" );
                     if( GetDocument()->OnOpenDocument( documentName + ".qry" ) && ((DrawingDocument *) GetDocument() )->IsLoadSuccessful() )
                     {
-                        GetDatabaseCanvas()->LoadQuery( GetDocument()->GetDatabase()->GetTableVector().m_tables );
+                        GetDatabaseCanvas( m_type )->LoadQuery( GetDocument()->GetDatabase()->GetTableVector().m_tables );
                         m_frame->SetTitle( "Query - " + documentName );
                     }
                     else
@@ -912,7 +912,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
         {
             std::vector<TableField *> queryFields = GetDocument()->GetQueryFields();
             if( isNewView )
-                query = "CREATE VIEW \"Untitled\" AS\n\r";
+                query = "CREATE VIEW \"Untitled\" AS\n\rSELECT";
             else
                 query = "SELECT ";
             if( !quickSelect && queryFields.size() == 0 && !isNewView )
@@ -958,7 +958,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     }
     if( res != wxID_CANCEL && m_tables.size() > 0 )
     {
-        ((DrawingDocument *) GetDocument())->AddTables( m_tables );
+        ((DrawingDocument *) GetDocument())->AddTables( m_tables, isNewView );
         m_selectTableName = ((DrawingDocument *) GetDocument())->GetDBTables();
         if( m_type != NewViewView )
             ((DatabaseCanvas *) m_canvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );
@@ -1816,7 +1816,7 @@ void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
             {
                 m_page2->SetQueryArguments( arguments );
                 m_page4->SetQueryArguments( arguments );
-                GetDatabaseCanvas()->SetQueryArguments( arguments );
+                GetDatabaseCanvas( false )->SetQueryArguments( arguments );
             }
             m_arguments = arguments;
         }
