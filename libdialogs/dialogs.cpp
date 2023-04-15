@@ -77,6 +77,7 @@
 #include "attachdb.h"
 #include "detachdb.h"
 #include "datasource.h"
+#include "createviewoptions.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -462,5 +463,16 @@ extern "C" WXEXPORT int GetDataSource(wxWindow *parent, wxString &dataSource, co
     DataSorces dlg( parent, wxID_ANY, "", profiles );
     if( ( res = dlg.ShowModal() ) == wxID_OK )
         dataSource = dlg.GetDataSource();
+    return res;
+}
+
+extern "C" WXEXPORT int CreateViewOptionsFunc(wxWindow *parent, const Database *db)
+{
+    int res;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    CreateViewOptions dlg( parent );
+    res = dlg.ShowModal();
     return res;
 }

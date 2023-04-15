@@ -49,6 +49,7 @@
 		E3D139561D0D0D7100A5A0F7 /* selecttables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D1394F1D0D0D7100A5A0F7 /* selecttables.cpp */; };
 		E3D139571D0D0D7100A5A0F7 /* selecttables.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D139501D0D0D7100A5A0F7 /* selecttables.h */; };
 		E3D1397B1D0D144A00A5A0F7 /* liblibdbloader.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D1397A1D0D144A00A5A0F7 /* liblibdbloader.dylib */; };
+		E3DCD38629EADC5B007CD2A3 /* createviewoptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DCD38529EADC5B007CD2A3 /* createviewoptions.cpp */; };
 		E3E62CC91EF71830005BBB37 /* addcolumnsdialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E62CC71EF71830005BBB37 /* addcolumnsdialog.cpp */; };
 		E3E62CCA1EF71830005BBB37 /* addcolumnsdialog.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E62CC81EF71830005BBB37 /* addcolumnsdialog.h */; };
 		E3E91D3C1DC678C900675CF8 /* createindex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D3A1DC678C900675CF8 /* createindex.cpp */; };
@@ -104,6 +105,8 @@
 		E3D139581D0D100B00A5A0F7 /* liblibodbc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibodbc.dylib; path = ../Build/Products/Debug/liblibodbc.dylib; sourceTree = "<group>"; };
 		E3D139591D0D100B00A5A0F7 /* liblibsqlite.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibsqlite.dylib; path = ../Build/Products/Debug/liblibsqlite.dylib; sourceTree = "<group>"; };
 		E3D1397A1D0D144A00A5A0F7 /* liblibdbloader.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibdbloader.dylib; path = ../Build/Products/Debug/liblibdbloader.dylib; sourceTree = "<group>"; };
+		E3DCD38429EADC08007CD2A3 /* createviewoptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = createviewoptions.h; sourceTree = "<group>"; };
+		E3DCD38529EADC5B007CD2A3 /* createviewoptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = createviewoptions.cpp; sourceTree = "<group>"; };
 		E3E62CC71EF71830005BBB37 /* addcolumnsdialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = addcolumnsdialog.cpp; sourceTree = "<group>"; };
 		E3E62CC81EF71830005BBB37 /* addcolumnsdialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = addcolumnsdialog.h; sourceTree = "<group>"; };
 		E3E91D3A1DC678C900675CF8 /* createindex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = createindex.cpp; sourceTree = "<group>"; };
@@ -197,6 +200,8 @@
 				E3B8E3E4252F769600346516 /* attachdb.h */,
 				E36BCFB925D417470019E587 /* setfilter.cpp */,
 				E36BCFBA25D417470019E587 /* setfilter.h */,
+				E3DCD38429EADC08007CD2A3 /* createviewoptions.h */,
+				E3DCD38529EADC5B007CD2A3 /* createviewoptions.cpp */,
 			);
 			name = libdialogs;
 			sourceTree = "<group>";
@@ -294,6 +299,7 @@
 				E33E6F381E46EE1C003A0B92 /* foreignkey.cpp in Sources */,
 				E33E6F841EAD310A003A0B92 /* getobjectname.cpp in Sources */,
 				E3132ECC28654B2A00AD669F /* datasource.cpp in Sources */,
+				E3DCD38629EADC5B007CD2A3 /* createviewoptions.cpp in Sources */,
 				E3E62CC91EF71830005BBB37 /* addcolumnsdialog.cpp in Sources */,
 				E3D139541D0D0D7100A5A0F7 /* odbcconfigure.cpp in Sources */,
 				E3E91D3C1DC678C900675CF8 /* createindex.cpp in Sources */,
