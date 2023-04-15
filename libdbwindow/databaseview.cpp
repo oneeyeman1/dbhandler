@@ -2370,7 +2370,9 @@ void DrawingView::CreateQueryMenu(const int queryType)
         show->Check( wxID_SHOWCOMMENTS, true );
         show->Check( wxID_SHOWSQLTOOLBOX, true );
         show->Check( wxID_SHOWJOINS, true );
-        if( GetSyntaxPage()->GetSyntaxCtrl()->GetValue().find( "DISTNCT" ) != wxNOT_FOUND )
+        if( GetSyntaxPage() && GetSyntaxPage()->GetSyntaxCtrl()->GetValue().find( "DISTNCT" ) != wxNOT_FOUND )
+            design->Check( wxID_DISTINCT, true );
+        else
             design->Check( wxID_DISTINCT, true );
         mbar->Insert( 0, design, _( "Design" ) );
     }
