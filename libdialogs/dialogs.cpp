@@ -466,13 +466,13 @@ extern "C" WXEXPORT int GetDataSource(wxWindow *parent, wxString &dataSource, co
     return res;
 }
 
-extern "C" WXEXPORT int CreateViewOptionsFunc(wxWindow *parent, const Database *db)
+extern "C" WXEXPORT int CreateViewOptionsFunc(wxWindow *parent, const Database *db, NewViewOptions &options)
 {
     int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    CreateViewOptions dlg( parent );
+    CreateViewOptions dlg( parent, db );
     res = dlg.ShowModal();
     return res;
 }
