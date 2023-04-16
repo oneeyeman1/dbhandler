@@ -378,7 +378,7 @@ protected:
     virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) = 0;
 public:
     virtual ~Database() = 0;
-    Impl &GetTableVector() { return *pimpl; };
+    Impl &GetTableVector() const { return *pimpl; };
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
