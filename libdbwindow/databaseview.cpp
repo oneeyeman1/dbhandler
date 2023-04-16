@@ -125,6 +125,7 @@ typedef int (*RETRIEVEARGUMENTS)(wxWindow *, std::vector<QueryArguments> &argume
 typedef int (*GOTOLINE)(wxWindow *, int &);
 typedef void (*DATAEDITWINDOW)(wxWindow *parent, wxDocManager *docManager, Database *db, const wxString &);
 typedef int (*GETDATASOURCE)(wxWindow *parent, wxString &sorce, const std::vector<Profile> &);
+typedef int (*CREATEVIEWOPTIONS)(wxWindow *, const Database *, NewViewOptions &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
@@ -2655,11 +2656,29 @@ void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
 
 void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
 {
+    wxDynamicLibrary lib;
     std::vector<QueryInfo> queries;
     std::vector<LibrariesInfo> path;
     m_frame->Show( false );
     auto docTemplate = (DatabaseTemplate *) GetDocumentManager()->FindTemplate( CLASSINFO( DrawingDocument ) );
     docTemplate->CreateDatabaseDocument( "*.qrv", NewViewView, GetDocument()->GetDatabase(), wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<DrawingDocument *>( GetDocumentManager()->GetCurrentDocument() )->SetDatabase( GetDocument()->GetDatabase()  );
-    dynamic_cast<DrawingView *>( GetDocumentManager()->GetCurrentDocument()->GetFirstView() )->GetTablesForView( GetDocument()->GetDatabase(), true, queries, path );
+#ifdef __WXMSW__
+    lib.Load( "dialogs" );
+#elif __WXMAC__
+    lib.Load( "liblibdialogs.dylib" );
+#else
+    lib.Load( "libdialogs" );
+#endif
+    if( lib.IsLoaded() )
+    {
+        CREATEVIEWOPTIONS func = (CREATEVIEWOPTIONS) lib.GetSymbol( "CreateViewOptionsFunc" );
+        int res = func( m_parent, GetDocument()->GetDatabase(), options );
+        if( res == wxID_CANCEL )
+        {
+            m_frame->Show( true );
+        }
+        else
+            dynamic_cast<DrawingView *>( GetDocumentManager()->GetCurrentDocument()->GetFirstView() )->GetTablesForView( GetDocument()->GetDatabase(), true, queries, path );
+    }
 }

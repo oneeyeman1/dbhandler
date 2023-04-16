@@ -27,6 +27,12 @@ struct Profile
     Profile(wxString name, bool isActive) : m_name(name), m_isActive(isActive) {}
 };
 
+struct NewViewOptions
+{
+    bool isTemp;
+    wxString schema;
+};
+
 // The view using MyCanvas to show its contents
 class DrawingView : public wxView
 {
@@ -171,6 +177,7 @@ private:
     std::vector<QueryInfo> m_queries;
     std::vector<LibrariesInfo> m_path;
     std::map<wxString, std::vector<TableDefinition> > m_tables;
+    NewViewOptions options;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
