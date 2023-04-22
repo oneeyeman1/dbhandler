@@ -696,7 +696,20 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 m_parent->SendSizeEvent();
                 wxYield();
 #endif
-                SelectTable( false, m_tables, query, quickSelect, true );
+                options.isTemp = false;
+                options.schema = "";
+                options.options = 0;
+                CREATEVIEWOPTIONS func = (CREATEVIEWOPTIONS) lib.GetSymbol( "CreateViewOptionsFunc" );
+                int res = func( m_parent, GetDocument()->GetDatabase(), options );
+                if( res == wxID_CANCEL )
+                {
+                    Close();
+                    m_frame->Show( true );
+                }
+                else
+                {
+                    SelectTable( false, m_tables, query, quickSelect, true );
+                }
             }
         }
         else
@@ -925,7 +938,12 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
         {
             std::vector<TableField *> queryFields = GetDocument()->GetQueryFields();
             if( isNewView )
-                query = "CREATE VIEW \"Untitled\" AS\n\rSELECT ";
+            {
+                if( options.isTemp )
+                    query = "CREATE TEMPORARY VIEW \"Untitled\" AS\n\rSELECT ";
+                else
+                    query = "CREATE VIEW \"Untitled\" AS\n\rSELECT ";
+            }
             else
                 query = "SELECT ";
             if( !quickSelect && queryFields.size() == 0 && !isNewView )
@@ -2656,32 +2674,11 @@ void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
 
 void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
 {
-    wxDynamicLibrary lib;
     std::vector<QueryInfo> queries;
     std::vector<LibrariesInfo> path;
     m_frame->Show( false );
     auto docTemplate = (DatabaseTemplate *) GetDocumentManager()->FindTemplate( CLASSINFO( DrawingDocument ) );
     docTemplate->CreateDatabaseDocument( "*.qrv", NewViewView, GetDocument()->GetDatabase(), wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<DrawingDocument *>( GetDocumentManager()->GetCurrentDocument() )->SetDatabase( GetDocument()->GetDatabase()  );
-#ifdef __WXMSW__
-    lib.Load( "dialogs" );
-#elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
-#else
-    lib.Load( "libdialogs" );
-#endif
-    if( lib.IsLoaded() )
-    {
-        options.isTemp = false;
-        options.schema = "";
-        options.options = 0;
-        CREATEVIEWOPTIONS func = (CREATEVIEWOPTIONS) lib.GetSymbol( "CreateViewOptionsFunc" );
-        int res = func( m_parent, GetDocument()->GetDatabase(), options );
-        if( res == wxID_CANCEL )
-        {
-            m_frame->Show( true );
-        }
-        else
-            dynamic_cast<DrawingView *>( GetDocumentManager()->GetCurrentDocument()->GetFirstView() )->GetTablesForView( GetDocument()->GetDatabase(), true, queries, path );
-    }
+    dynamic_cast<DrawingView *>( GetDocumentManager()->GetCurrentDocument()->GetFirstView() )->GetTablesForView( GetDocument()->GetDatabase(), true, queries, path );
 }
