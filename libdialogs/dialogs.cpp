@@ -474,5 +474,10 @@ extern "C" WXEXPORT int CreateViewOptionsFunc(wxWindow *parent, const Database *
 #endif
     CreateViewOptions dlg( parent, db );
     res = dlg.ShowModal();
+    if( res == wxID_OK )
+    {
+        options.isTemp = dlg.GetTempCtrl()->IsChecked();
+        options.schema = dlg.GetSchemaCtrl()->GetValue();
+    }
     return res;
 }

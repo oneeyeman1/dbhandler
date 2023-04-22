@@ -31,6 +31,7 @@ struct NewViewOptions
 {
     bool isTemp;
     wxString schema;
+    int options;
 };
 
 // The view using MyCanvas to show its contents

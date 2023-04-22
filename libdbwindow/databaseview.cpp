@@ -2672,6 +2672,9 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
 #endif
     if( lib.IsLoaded() )
     {
+        options.isTemp = false;
+        options.schema = "";
+        options.options = 0;
         CREATEVIEWOPTIONS func = (CREATEVIEWOPTIONS) lib.GetSymbol( "CreateViewOptionsFunc" );
         int res = func( m_parent, GetDocument()->GetDatabase(), options );
         if( res == wxID_CANCEL )
