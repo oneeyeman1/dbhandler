@@ -478,6 +478,15 @@ extern "C" WXEXPORT int CreateViewOptionsFunc(wxWindow *parent, const Database *
     {
         options.isTemp = dlg.GetTempCtrl()->IsChecked();
         options.schema = dlg.GetSchemaCtrl()->GetValue();
+        if( db->GetTableVector().m_type == L"Microsoft SQL Server" || ( db->GetTableVector().m_type == L"ODBC" && db->GetTableVector().m_subtype == L"Microsoft SQL Server" ) )
+        {
+            if( dlg.GetEncryptionCtrl()->IsChecked() )
+                options.options = 1;
+            if( dlg.GetSchemaBindingCtrl()->IsChecked() )
+                options.options = 2;
+            if( dlg.GetViewMetadataCtrl()->IsChecked() )
+                options.options = 3;
+        }
     }
     return res;
 }

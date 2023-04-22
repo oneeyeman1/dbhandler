@@ -34,15 +34,18 @@ public:
     CreateViewOptions(wxWindow* parent, const Database *db);
     wxCheckBox *GetTempCtrl() const { return m_temp; }
     wxComboBox *GetSchemaCtrl() const { return m_schemas; }
+    wxCheckBox *GetEncryptionCtrl() const { return encryption; }
+    wxCheckBox *GetSchemaBindingCtrl() const { return schemabind; }
+    wxCheckBox *GetViewMetadataCtrl() const { return viewmetadata; }
 private:
 
 protected:
     // begin wxGlade: CreateViewOptions::attributes
     wxPanel* m_panel;
     wxCheckBox* m_temp;
-    wxCheckBox* checkbox_1;
-    wxCheckBox* checkbox_2;
-    wxCheckBox* checkbox_3;
+    wxCheckBox* encryption;
+    wxCheckBox* schemabind;
+    wxCheckBox* viewmetadata;
     wxCheckBox* checkbox_4;
     wxCheckBox* checkbox_5;
     wxCheckBox* checkbox_6;

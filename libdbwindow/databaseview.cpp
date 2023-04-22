@@ -940,9 +940,21 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
             if( isNewView )
             {
                 if( options.isTemp )
-                    query = "CREATE TEMPORARY VIEW \"Untitled\" AS\n\rSELECT ";
+                    query = "CREATE TEMPORARY VIEW ";
                 else
-                    query = "CREATE VIEW \"Untitled\" AS\n\rSELECT ";
+                    query = "CREATE VIEW ";
+                query += "\"" + options.schema + "\".\"Untitled\"";
+                if( options.options == 1 || options.options == 2 || options.options == 3)
+                {
+                    query += "\n\rWITH ";
+                    if( options.options == 1 )
+                        query += "ENCRYTION ";
+                    if( options.options == 2 )
+                        query += "SCHEMABINDING ";
+                    if( options.options == 3 )
+                        query += "VIEW_METADATA";
+                }
+                query += "\n\rAS SELECT ";
             }
             else
                 query = "SELECT ";
