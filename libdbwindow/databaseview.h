@@ -143,6 +143,7 @@ protected:
 #ifdef __WXMSW__
     static int CALLBACK EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam);
 #endif
+    void SetDatabaseChildWindow(wxDocMDIChildFrame *frame);
 private:
     bool m_isActive, m_snitialized;
     wxDocMDIParentFrame *m_parent;
@@ -156,7 +157,7 @@ private:
     bool m_isCreated;
     ViewType m_type;
     FieldWindow *m_fields;
-    wxDocMDIChildFrame *m_frame;
+    wxDocMDIChildFrame *m_frame, *m_dbFrame;
     wxNotebook *m_queryBook;
     wxBoxSizer *sizer, *mainSizer;
     WhereHavingPage *m_page2, *m_page4;

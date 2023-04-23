@@ -213,6 +213,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_fontName = nullptr;
     m_fontSize = nullptr;
     m_snitialized = false;
+    m_dbFrame = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     wxConfigBase *config = wxConfigBase::Get( false );
@@ -703,8 +704,8 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 int res = func( m_parent, GetDocument()->GetDatabase(), options );
                 if( res == wxID_CANCEL )
                 {
-                    Close();
-                    m_frame->Show( true );
+                    m_dbFrame->Show( true );
+                    m_frame->Close();
                 }
                 else
                 {
@@ -719,7 +720,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
             m_canvas->Show( true );
         }
     }
-    if( m_tables.size() > 0 )
+    if( !NewViewView && m_tables.size() > 0 )
     {
         if( m_type == QueryView )
         {
@@ -2692,5 +2693,11 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
     auto docTemplate = (DatabaseTemplate *) GetDocumentManager()->FindTemplate( CLASSINFO( DrawingDocument ) );
     docTemplate->CreateDatabaseDocument( "*.qrv", NewViewView, GetDocument()->GetDatabase(), wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<DrawingDocument *>( GetDocumentManager()->GetCurrentDocument() )->SetDatabase( GetDocument()->GetDatabase()  );
+    dynamic_cast<DrawingView *>( docTemplate->GetDocumentManager()->GetCurrentView() )->SetDatabaseChildWindow( m_frame );
     dynamic_cast<DrawingView *>( GetDocumentManager()->GetCurrentDocument()->GetFirstView() )->GetTablesForView( GetDocument()->GetDatabase(), true, queries, path );
+}
+
+void DrawingView::SetDatabaseChildWindow(wxDocMDIChildFrame *frame)
+{
+    m_dbFrame = frame;
 }
