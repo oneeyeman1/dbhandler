@@ -701,7 +701,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 options.schema = "";
                 options.options = 0;
                 CREATEVIEWOPTIONS func = (CREATEVIEWOPTIONS) lib.GetSymbol( "CreateViewOptionsFunc" );
-                int res = func( m_parent, GetDocument()->GetDatabase(), options );
+                int res = func( m_frame, GetDocument()->GetDatabase(), options );
                 if( res == wxID_CANCEL )
                 {
                     m_dbFrame->Show( true );
