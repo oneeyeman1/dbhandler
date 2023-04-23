@@ -709,7 +709,12 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 }
                 else
                 {
-                    SelectTable( false, m_tables, query, quickSelect, true );
+                    res = SelectTable( false, m_tables, query, quickSelect, true );
+                    if( res == wxID_CANCEL )
+                    {
+                        m_dbFrame->Show( true );
+                        m_frame->Close();
+                    }
                 }
             }
         }
