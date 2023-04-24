@@ -37,6 +37,7 @@ public:
     wxCheckBox *GetEncryptionCtrl() const { return encryption; }
     wxCheckBox *GetSchemaBindingCtrl() const { return schemabind; }
     wxCheckBox *GetViewMetadataCtrl() const { return viewmetadata; }
+    wxCheckBox *GetCheckOptionCtrl() const { return withcheckoption; }
 private:
 
 protected:
@@ -46,7 +47,7 @@ protected:
     wxCheckBox* encryption;
     wxCheckBox* schemabind;
     wxCheckBox* viewmetadata;
-    wxCheckBox* checkbox_4;
+    wxCheckBox* withcheckoption;
     wxCheckBox* checkbox_5;
     wxCheckBox* checkbox_6;
     wxComboBox* m_schemas;

@@ -486,6 +486,8 @@ extern "C" WXEXPORT int CreateViewOptionsFunc(wxWindow *parent, const Database *
                 options.options = 2;
             if( dlg.GetViewMetadataCtrl()->IsChecked() )
                 options.options = 3;
+            if( dlg.GetCheckOptionCtrl()->IsChecked() )
+                options.options = 4;
         }
     }
     return res;

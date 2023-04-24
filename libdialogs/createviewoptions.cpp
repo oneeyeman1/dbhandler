@@ -57,8 +57,8 @@ CreateViewOptions::CreateViewOptions(wxWindow *parent, const Database *db) : wxD
         sizer_9->Add( viewmetadata, 0, wxEXPAND, 0 );
         sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
-        checkbox_4 = new wxCheckBox(m_panel, wxID_ANY, wxT("With Check Option"));
-        sizer_8->Add(checkbox_4, 0, wxALIGN_CENTER_VERTICAL, 0);
+        withcheckoption = new wxCheckBox(m_panel, wxID_ANY, wxT("With Check Option"));
+        sizer_8->Add(withcheckoption, 0, wxALIGN_CENTER_VERTICAL, 0);
     }
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
     if( db->GetTableVector().m_type == L"mySQL" || ( db->GetTableVector().m_type == L"ODBC" && db->GetTableVector().m_subtype == L"mySQL" ) )
