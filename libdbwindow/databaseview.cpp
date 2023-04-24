@@ -960,7 +960,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
                     if( options.options == 3 )
                         query += "VIEW_METADATA";
                 }
-                query += "\n\rAS SELECT ";
+                query += "\nAS SELECT ";
             }
             else
                 query = "SELECT ";
