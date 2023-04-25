@@ -337,10 +337,12 @@ DrawingView::~DrawingView()
 #endif
 }
 
-void DrawingView::OnClose(wxCommandEvent &event)
+void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
 {
     if( m_type == NewViewView )
         m_dbFrame->Show( true );
+    else
+        m_frame->Close();
 }
 
 void DrawingView::CreateViewToolBar()
