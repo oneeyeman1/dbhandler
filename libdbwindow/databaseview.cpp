@@ -140,6 +140,7 @@ std::mutex Database::Impl::my_mutex;
 wxIMPLEMENT_DYNAMIC_CLASS(DrawingView, wxView);
 
 wxBEGIN_EVENT_TABLE(DrawingView, wxView)
+    EVT_MENU(wxID_CLOSE, DrawingView::OnClose)
     EVT_MENU(wxID_SELECTTABLE, DrawingView::OnViewSelectedTables)
     EVT_MENU(wxID_OBJECTNEWINDEX, DrawingView::OnNewIndex)
     EVT_MENU(wxID_PROPERTIES, DrawingView::OnSetProperties)
@@ -334,6 +335,12 @@ DrawingView::~DrawingView()
     delete m_styleBar;
     m_styleBar = nullptr;
 #endif
+}
+
+void DrawingView::OnClose(wxCommandEvent &event)
+{
+    if( m_type == NewViewView )
+        m_dbFrame->Show( true );
 }
 
 void DrawingView::CreateViewToolBar()
@@ -1016,6 +1023,8 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
             {
                 std::vector<MyErdTable *> dbTables = ((DrawingDocument *)GetDocument())->GetTables();
                 m_page1->AddQuickSelectSortingFields( GetDocument()->GetAllSorted(), GetDocument()->GetQuerySorted() );
+                if( options.options == 4 )
+                    query.Replace( ";", "\nWITH CHECK OPTION;" );
                 m_page6->SetSyntaxText( query );
                 if( m_edit )
                     m_edit->SetText( query );

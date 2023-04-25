@@ -127,6 +127,7 @@ public:
     void OnLabelTextChanged(wxFocusEvent &event);
     void OnFontNameChange(wxFocusEvent &event);
     void OnDatabaseCreateView(wxCommandEvent &event);
+    void OnClose(wxCommandEvent &event);
 /*#if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif*/
