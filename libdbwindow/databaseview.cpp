@@ -359,7 +359,7 @@ void DrawingView::CreateViewToolBar()
     wxSize size = m_parent->GetClientSize();
 #ifdef __WXOSX__
     m_tb = m_frame->CreateToolBar();
-    if( m_type == QueryView || m_type == NewViewView )
+    if( m_type == QueryView )
     {
         m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
     }
@@ -370,7 +370,7 @@ void DrawingView::CreateViewToolBar()
     }
     else
         m_tb->ClearTools();
-    if( m_type == QueryView || m_type == NewViewView )
+    if( m_type == QueryView )
     {
         if( !m_styleBar )
             m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
@@ -499,37 +499,40 @@ void DrawingView::CreateViewToolBar()
         m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), tableSVG, tableSVG, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
         m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( previewIcon, WXSIZEOF( previewIcon ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
         m_tb->ToggleTool( wxID_DATASOURCE, true );
-        m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-        m_fieldText->Bind( wxEVT_KILL_FOCUS, &DrawingView::OnLabelTextChanged, this );
-        m_fieldText->Disable();
-        m_styleBar->AddControl( m_fieldText );
-        m_fontName = new FontComboBox( m_styleBar );
-        m_fontName->Bind( wxEVT_KILL_FOCUS, &DrawingView::OnFontNameChange, this );
-        m_styleBar->AddControl( m_fontName );
-        const wxString fontSizes[] = 
+        if( m_styleBar )
         {
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "14",
-            "16",
-            "18",
-            "20",
-            "22",
-            "24",
-            "26",
-            "28",
-            "36",
-            "48",
-            "72"
-        };
-        m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
-        m_styleBar->AddControl( m_fontSize );
-        m_styleBar->AddTool( wxID_BOLD, _( "Bold" ), boldSVG, boldSVG, wxITEM_CHECK, _( "Bold" ), _( "Make the font bold" ) );
-        m_styleBar->AddTool( wxID_ITALIC, _( "Italic" ), italicSVG, italicSVG, wxITEM_CHECK, _( "Italic" ), _( "Make the font italic" ) );
-        m_styleBar->AddTool( wxID_UNDERLINE, _( "Underline" ), underlineSVG, underlineSVG, wxITEM_CHECK, _( "Make the font underlined" ), _( "Make the font underlined" ) );
+            m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
+            m_fieldText->Bind( wxEVT_KILL_FOCUS, &DrawingView::OnLabelTextChanged, this );
+            m_fieldText->Disable();
+            m_styleBar->AddControl( m_fieldText );
+            m_fontName = new FontComboBox( m_styleBar );
+            m_fontName->Bind( wxEVT_KILL_FOCUS, &DrawingView::OnFontNameChange, this );
+            m_styleBar->AddControl( m_fontName );
+            const wxString fontSizes[] =
+            {
+                "8",
+                "9",
+                "10",
+                "11",
+                "12",
+                "14",
+                "16",
+                "18",
+                "20",
+                "22",
+                "24",
+                "26",
+                "28",
+                "36",
+                "48",
+                "72"
+            };
+            m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
+            m_styleBar->AddControl( m_fontSize );
+            m_styleBar->AddTool( wxID_BOLD, _( "Bold" ), boldSVG, boldSVG, wxITEM_CHECK, _( "Bold" ), _( "Make the font bold" ) );
+            m_styleBar->AddTool( wxID_ITALIC, _( "Italic" ), italicSVG, italicSVG, wxITEM_CHECK, _( "Italic" ), _( "Make the font italic" ) );
+            m_styleBar->AddTool( wxID_UNDERLINE, _( "Underline" ), underlineSVG, underlineSVG, wxITEM_CHECK, _( "Make the font underlined" ), _( "Make the font underlined" ) );
+        }
     }
     m_tb->Realize();
 #ifdef __WXOSX__
