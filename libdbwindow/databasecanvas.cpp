@@ -722,7 +722,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
 void DatabaseCanvas::OnMouseMove(wxMouseEvent &event)
 {
     ViewType viewType = dynamic_cast<DrawingView *>( m_view )->GetViewType();
-    if( viewType == QueryView )
+    if( viewType == QueryView || viewType == NewViewView )
     {
         wxSFShapeBase *shape = GetShapeUnderCursor();
         FieldShape *field = wxDynamicCast( shape, FieldShape );
