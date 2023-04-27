@@ -342,19 +342,22 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
 {
     if( m_type == NewViewView )
     {
-        wxString name;
-        wxDynamicLibrary lib1;
-#ifdef __WXMSW__
-        lib1.Load( "dialogs" );
-#elif __WXOSX__
-        lib1.Load( "liblibdialogs.dylib" );
-#else
-        lib1.Load( "libdialogs" );
-#endif
-        if( lib1.IsLoaded() )
+        if( GetDocument()->GetQueryFields().size() > 0 )
         {
-            SAVENEWVIEW func = (SAVENEWVIEW) lib1.GetSymbol( "SaveNewView" );
-            int res = func( m_parent, name );
+            wxString name;
+            wxDynamicLibrary lib1;
+#ifdef __WXMSW__
+            lib1.Load( "dialogs" );
+#elif __WXOSX__
+            lib1.Load( "liblibdialogs.dylib" );
+#else
+            lib1.Load( "libdialogs" );
+#endif
+            if( lib1.IsLoaded() )
+            {
+                SAVENEWVIEW func = (SAVENEWVIEW) lib1.GetSymbol( "SaveNewView" );
+                int res = func( m_parent, name );
+            }
         }
         m_dbFrame->Show( true );
     }
