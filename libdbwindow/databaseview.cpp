@@ -126,6 +126,7 @@ typedef int (*GOTOLINE)(wxWindow *, int &);
 typedef void (*DATAEDITWINDOW)(wxWindow *parent, wxDocManager *docManager, Database *db, const wxString &);
 typedef int (*GETDATASOURCE)(wxWindow *parent, wxString &sorce, const std::vector<Profile> &);
 typedef int (*CREATEVIEWOPTIONS)(wxWindow *, const Database *, NewViewOptions &);
+typedef int (*SAVENEWVIEW)(wxWindow *, wxString &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Database::Impl::my_mutex;
@@ -340,7 +341,23 @@ DrawingView::~DrawingView()
 void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
 {
     if( m_type == NewViewView )
+    {
+        wxString name;
+        wxDynamicLibrary lib1;
+#ifdef __WXMSW__
+        lib1.Load( "dialogs" );
+#elif __WXOSX__
+        lib1.Load( "liblibdialogs.dylib" );
+#else
+        lib1.Load( "libdialogs" );
+#endif
+        if( lib1.IsLoaded() )
+        {
+            SAVENEWVIEW func = (SAVENEWVIEW) lib1.GetSymbol( "SaveNewView" );
+            int res = func( m_parent, name );
+        }
         m_dbFrame->Show( true );
+    }
     else
         m_frame->Close();
 }
@@ -979,7 +996,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
             if( !quickSelect && queryFields.size() == 0 && !isNewView )
                 query += "<unknown fields>\n";
             else if( isNewView )
-                query += "<not specoified>";
+                query += "<not specoified>\n";
             else
             {
                 if( !quickSelect )
