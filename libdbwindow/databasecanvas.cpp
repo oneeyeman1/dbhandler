@@ -367,7 +367,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         }
         Refresh();
     }
-    if( type == QueryView )
+    if( type == QueryView || type == NewViewView )
     {
         if( sign )
         {
