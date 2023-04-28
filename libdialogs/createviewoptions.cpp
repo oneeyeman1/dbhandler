@@ -78,8 +78,7 @@ CreateViewOptions::CreateViewOptions(wxWindow *parent, const Database *db) : wxD
     wxStaticText* label_1 = new wxStaticText( m_panel, wxID_ANY, "In schema:" );
     sizer_7->Add( label_1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
-    const wxString m_schemas_choices[] = {};
-    m_schemas = new wxComboBox( m_panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, m_schemas_choices, wxCB_DROPDOWN );
+    m_schemas = new wxComboBox( m_panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_DROPDOWN );
     for( auto it = db->GetTableVector().m_tables.begin(); it != db->GetTableVector().m_tables.end(); ++it )
     {
         for( auto it1 = (*it).second.begin(); it1 < (*it).second.end(); ++it1 )
