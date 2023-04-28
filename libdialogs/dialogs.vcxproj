@@ -502,6 +502,7 @@
     <ClCompile Include="attachdb.cpp" />
     <ClCompile Include="bitmappanel.cpp" />
     <ClCompile Include="createindex.cpp" />
+    <ClCompile Include="createviewoptions.cpp" />
     <ClCompile Include="databasetype.cpp" />
     <ClCompile Include="datasource.cpp" />
     <ClCompile Include="detachdb.cpp" />
@@ -516,6 +517,7 @@
     <ClCompile Include="properties.cpp" />
     <ClCompile Include="quickselect.cpp" />
     <ClCompile Include="retrievalarguments.cpp" />
+    <ClCompile Include="saveview.cpp" />
     <ClCompile Include="selecttables.cpp" />
     <ClCompile Include="typecombobox.cpp" />
   </ItemGroup>
@@ -524,6 +526,7 @@
     <ClInclude Include="attachdb.h" />
     <ClInclude Include="bitmappanel.h" />
     <ClInclude Include="createindex.h" />
+    <ClInclude Include="createviewoptions.h" />
     <ClInclude Include="databasetype.h" />
     <ClInclude Include="datasource.h" />
     <ClInclude Include="detachdb.h" />
@@ -538,6 +541,7 @@
     <ClInclude Include="properties.h" />
     <ClInclude Include="quickselect.h" />
     <ClInclude Include="retrievalarguments.h" />
+    <ClInclude Include="saveview.h" />
     <ClInclude Include="selecttables.h" />
     <ClInclude Include="typecombobox.h" />
   </ItemGroup>
