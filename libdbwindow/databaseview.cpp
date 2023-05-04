@@ -999,7 +999,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
             if( !quickSelect && queryFields.size() == 0 && !isNewView )
                 query += "<unknown fields>\n";
             else if( isNewView )
-                query += "<not specoified>\n";
+                query += "<not specified>\n";
             else
             {
                 if( !quickSelect )
@@ -1467,7 +1467,7 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAd
             if( queryFields.size() == 1 )
             {
                 query.Replace( "<not specified>", name + " " );
-                query.Replace( "\n\r", "(" + name + ")\n\r", false );
+                query.Replace( "\n", "(" + fld->GetFieldName() + ")\n", false );
             }
         }
     }
@@ -1502,7 +1502,8 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAd
 
     }
     m_page6->SetSyntaxText( query );
-    m_edit->SetText( query );
+    if( m_edit )
+        m_edit->SetText( query );
     dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->SetQuery( query );
 }
 
