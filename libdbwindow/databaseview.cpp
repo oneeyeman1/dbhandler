@@ -1469,6 +1469,11 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAd
                 query.Replace( "<not specified>", name + " " );
                 query.Replace( "\n", "(" + fld->GetFieldName() + ")\n", false );
             }
+            else
+            {
+                query.Replace( ")\n", ", " + fld->GetFieldName() + ")\n", false );
+                query.Replace( "\nFROM", ",\n          " + name + "\nFROM" );
+            }
         }
     }
     else if( isAdding == REMOVE )
