@@ -1451,13 +1451,24 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAd
         m_page1->AddRemoveSortingField( true, name );
         GetDocument()->AddRemoveField( fld, QueryFieldChange::ADD );
         std::vector<TableField *> queryFields = GetDocument()->GetQueryFields();
-        if( queryFields.size() == 1 )
-            query.Replace( "<unknown fields>", name + " " );
+        if( m_type == QueryView )
+        {
+            if( queryFields.size() == 1 )
+                query.Replace( "<unknown fields>", name + " " );
+            else
+            {
+                wxString temp = query.substr( query.Find( ' ' ) );
+                temp = temp.substr( 0, temp.Find( "FROM" ) - 1 );
+                query.Replace( temp, temp + ", " + name + " " );
+            }
+        }
         else
         {
-            wxString temp = query.substr( query.Find( ' ' ) );
-            temp = temp.substr( 0, temp.Find( "FROM" ) - 1 );
-            query.Replace( temp, temp + ", " + name + " " );
+            if( queryFields.size() == 1 )
+            {
+                query.Replace( "<not specified>", name + " " );
+                query.Replace( "\n\r", "(" + name + ")\n\r", false );
+            }
         }
     }
     else if( isAdding == REMOVE )
