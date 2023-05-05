@@ -344,6 +344,7 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
     {
         if( GetDocument()->GetQueryFields().size() > 0 )
         {
+            auto viewCommand = m_page6->GetSyntaxCtrl()->GetValue();
             wxString name;
             wxDynamicLibrary lib1;
 #ifdef __WXMSW__
@@ -357,6 +358,11 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
             {
                 SAVENEWVIEW func = (SAVENEWVIEW) lib1.GetSymbol( "SaveNewView" );
                 int res = func( m_parent, name );
+                if( res == wxID_OK )
+                {
+                    viewCommand.Replace( "Untitled", name );
+                    wxMessageBox( "Executing " + viewCommand );
+                }
             }
         }
         m_dbFrame->Show( true );
