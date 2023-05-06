@@ -358,10 +358,15 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
             {
                 SAVENEWVIEW func = (SAVENEWVIEW) lib1.GetSymbol( "SaveNewView" );
                 int res = func( m_parent, name );
+                if( !name.IsEmpty() )
+                    viewCommand.Replace( "Untitled", name );
                 if( res == wxID_OK )
                 {
-                    viewCommand.Replace( "Untitled", name );
                     wxMessageBox( "Executing " + viewCommand );
+                }
+                else if( res != wxID_CANCEL )
+                {
+                    m_text->AppendText( viewCommand );
                 }
             }
         }
@@ -2756,6 +2761,7 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
     docTemplate->CreateDatabaseDocument( "*.qrv", NewViewView, GetDocument()->GetDatabase(), wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<DrawingDocument *>( GetDocumentManager()->GetCurrentDocument() )->SetDatabase( GetDocument()->GetDatabase()  );
     dynamic_cast<DrawingView *>( docTemplate->GetDocumentManager()->GetCurrentView() )->SetDatabaseChildWindow( m_frame );
+    dynamic_cast<DrawingView *>( docTemplate->GetDocumentManager()->GetCurrentView() )->SetLogWindow( m_log );
     dynamic_cast<DrawingView *>( GetDocumentManager()->GetCurrentDocument()->GetFirstView() )->GetTablesForView( GetDocument()->GetDatabase(), true, queries, path );
 }
 

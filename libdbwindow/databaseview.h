@@ -51,6 +51,7 @@ public:
     int SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect, bool isNewView = false);
     std::map<wxString, std::vector<TableDefinition> > &GetTablesMap();
     void SetQueryArguments(const QueryArguments &args) { m_arguments.push_back( args ); }
+    void SetLogWindow(const wxFrame *log) { m_log = const_cast<wxFrame *>( log ); }
     void SetViewType(ViewType type);
     ViewType GetViewType();
     void SetFontBold(bool bold);
