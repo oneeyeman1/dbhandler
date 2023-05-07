@@ -362,18 +362,11 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     int res, result = 0, count = 0;
     MYSQL_STMT *res1 = NULL, *res2 = NULL, *res3 = NULL;
     char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
-    char fkField[64], refTableSchema[64], refTableName[64], refTableField[64], updateCon[64], deleteCon[64];
-    char colName[64], colType[64], defValue[64], nullable[3], autoInc[30], indexName[64];
-    MYSQL_RES *prepare_meta_result;
     std::vector<TableField *> fields;
     std::vector<std::wstring> fk_names, indexes;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
     std::wstring fieldName, fieldType, fieldDefaultValue, fkSchema, fkTable, fkFld, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    int fkId, charLen, charOctet, numLen, numPrec, pk;
-    bool is_nullable, autoincrement, is_pk;
-    FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
-    FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
     std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema, t.table_name, \"\" AS owner, CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW';";
     std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.extra, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ?;";
     std::wstring query3 = L"SELECT kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_catalog = ? AND kcu.table_schema = ? AND kcu.table_name = ?;";
@@ -450,7 +443,6 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     MYSQL_ROW row;
                                     while( ( row = mysql_fetch_row( results ) ) != NULL )
                                     {
-                                        char *end;
                                         char *catalog_name = row[0] ? row[0] : NULL;
                                         char *schema_name = row[1] ? row[1] : NULL;
                                         char *table_name = row[2] ? row[2] : NULL;
