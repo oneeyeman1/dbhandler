@@ -726,6 +726,14 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
             }
             else
             {
+                int heightStyleBar = 0;
+                wxPoint framePosition;
+                wxSize frameSize;
+#ifndef __WXOSX__
+                heightStyleBar = m_styleBar->GetSize().y;
+#endif
+                framePosition = m_frame->GetPosition();
+                frameSize = m_frame->GetSize();
                 m_frame->Freeze();
                 m_fields->Show( true );
                 m_canvas->Show( true );
