@@ -2764,6 +2764,9 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
 {
     std::vector<QueryInfo> queries;
     std::vector<LibrariesInfo> path;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( m_parent );
+#endif
     m_frame->Show( false );
     auto docTemplate = (DatabaseTemplate *) GetDocumentManager()->FindTemplate( CLASSINFO( DrawingDocument ) );
     docTemplate->CreateDatabaseDocument( "*.qrv", NewViewView, GetDocument()->GetDatabase(), wxDOC_NEW | wxDOC_SILENT );
