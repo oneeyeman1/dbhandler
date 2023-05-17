@@ -61,18 +61,10 @@ void SelectTables::GetSelectedTableNames(std::map<wxString, std::vector<TableDef
     m_tables->GetSelections( selections );
     for( auto i = 0; i < selections.GetCount(); i++ )
     {
-//        ClientData *data = dynamic_cast<ClientData *>( m_tables->GetClientObject( i ) );
         ClientData *data = (ClientData *) m_tables->GetClientData( i );
         auto schemaName = data->schema;
         auto tableName = m_tables->GetString( selections.Item( i ) ).ToStdWstring();
         tableNames[data->catalog].push_back( TableDefinition( data->catalog, data->schema, m_tables->GetString( selections.Item( i ) ).ToStdWstring() ) );
-        for( auto it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end(); ++it )
-            if( (*it).first == data->catalog &&
-                (  std::find_if( (*it).second.begin(), (*it).second.end(), [schemaName, tableName](DatabaseTable *table)
-            {
-                return table->GetSchemaName() == schemaName && table->GetTableName() == tableName;
-            } ) == (*it).second.end() ) )
-                tableNames[data->catalog].push_back( TableDefinition( data->catalog, data->schema, m_tables->GetString( selections.Item( i ) ).ToStdWstring() ) );
     }
     for( auto i = 0; i < m_tables->GetCount(); ++i )
     {
