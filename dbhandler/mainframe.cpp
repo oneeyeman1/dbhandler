@@ -247,6 +247,7 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxBitmapBundle(), wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );
     toolBar->SetName( "PowerBar" );
     toolBar->Realize();
+    toolBar->Bind( wxEVT_LEFT_DOWN, &MainFrame::OnCustomize, this );
 }
 
 void MainFrame::Connect()
@@ -695,4 +696,9 @@ void MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
             isQuery = false;
         }
     }
+}
+
+void MainFrame::OnCustomize(wxMouseEvent &event)
+{
+    wxMessageBox( "Customizing" );
 }
