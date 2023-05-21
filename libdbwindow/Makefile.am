@@ -64,7 +64,8 @@ libdbwindow_la_SOURCES =  \
 	italic.h \
 	underline.h \
 	nametableshape.cpp \
-	nametableshape.h
+	nametableshape.h \
+	dbview.h
 
 libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \

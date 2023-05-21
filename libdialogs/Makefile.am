@@ -43,7 +43,11 @@ libdialogs_la_SOURCES =  \
 	detachdb.cpp \
 	detachdb.h \
 	datasource.cpp \
-	datasource.h
+	datasource.h \
+	createviewoptions.cpp \
+	createviewoptions.h \
+	saveview.cpp \
+	saveview.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
