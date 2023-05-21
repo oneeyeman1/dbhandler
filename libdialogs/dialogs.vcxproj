@@ -519,6 +519,7 @@
     <ClCompile Include="retrievalarguments.cpp" />
     <ClCompile Include="saveview.cpp" />
     <ClCompile Include="selecttables.cpp" />
+    <ClCompile Include="toolbarsetup.cpp" />
     <ClCompile Include="typecombobox.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -543,6 +544,7 @@
     <ClInclude Include="retrievalarguments.h" />
     <ClInclude Include="saveview.h" />
     <ClInclude Include="selecttables.h" />
+    <ClInclude Include="toolbarsetup.h" />
     <ClInclude Include="typecombobox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
