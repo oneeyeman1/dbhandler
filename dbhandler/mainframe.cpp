@@ -105,6 +105,18 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     if( !libpath.IsEmpty() )
         m_path.push_back( LibrariesInfo( libpath, true ) );
     config->SetPath( path );
+    config->SetPath( "MainToolbar" );
+    auto visile = config->ReadBool( "Show", true );
+    auto tooltip = config->ReadBool( "ShowTooltip", true );
+    auto text = config->ReadBool( "ShowText", false );
+    auto orientation = config->ReadLong( "Orientation", 1 );
+    config->SetPath( path );
+    ToolbarSetup settings;
+    settings.m_hideShow = visile;
+    settings.m_orientation = orientation;
+    settings.m_showText = text;
+    settings.m_showTooltips = tooltip;
+    m_tbSettings["PowerBar"] = settings;
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );
@@ -118,7 +130,29 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     menubar->Append( help, wxGetStockLabel( wxID_HELP ) );
     SetMenuBar( menubar );
     CreateStatusBar();
-    CreateToolBar( wxNO_BORDER | wxTB_FLAT | wxTB_HORIZONTAL );
+    long style = wxNO_BORDER | wxTB_FLAT;
+    switch( orientation )
+    {
+    case 0:
+        style |= wxTB_VERTICAL;
+        break;
+    case 1:
+        style |= wxTB_HORIZONTAL;
+        break;
+    case 2:
+        style |= wxTB_RIGHT;
+        break;
+    case 3:
+        style |= wxTB_BOTTOM;
+        break;
+    }
+    if( !tooltip )
+        style |= wxTB_NO_TOOLTIPS;
+    if( text )
+        style |= wxTB_TEXT ;
+    CreateToolBar( style );
+    if( !visile )
+        GetToolBar()->Hide();
     InitToolBar( GetToolBar() );
 }
 
@@ -168,6 +202,12 @@ MainFrame::~MainFrame()
         std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
         result = m_db->Disconnect( errorMsg );
     }
+    config->SetPath( "MainToolbar" );
+    config->Write( "Show", m_tbSettings["Powerar"].m_hideShow );
+    config->Write( "ShowTooltip", m_tbSettings["Powerar"].m_showTooltips );
+    config->Write( "ShowText", m_tbSettings["Powerar"].m_showText );
+    config->Write( "Orientation", m_tbSettings["Powerar"].m_orientation );
+    config->SetPath( path );
     if( result )
     {
         for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
@@ -247,7 +287,7 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     toolBar->AddTool( wxID_EXIT, _( "Exit the application" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxBitmapBundle(), wxITEM_NORMAL, _( "Quit" ), _( "Quit the application" ) );
     toolBar->SetName( "PowerBar" );
     toolBar->Realize();
-    toolBar->Bind( wxEVT_LEFT_DOWN, &MainFrame::OnCustomize, this );
+//    toolBar->Bind( wxEVT_LEFT_DOWN, &MainFrame::OnCustomize, this );
 }
 
 void MainFrame::Connect()
@@ -698,7 +738,8 @@ void MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
     }
 }
 
-void MainFrame::OnCustomize(wxMouseEvent &event)
+/*void MainFrame::OnCustomize(wxMouseEvent &event)
 {
     wxMessageBox( "Customizing" );
 }
+*/

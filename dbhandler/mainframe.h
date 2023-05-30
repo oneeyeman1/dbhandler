@@ -36,6 +36,12 @@ struct LibrariesInfo
     LibrariesInfo(const wxString &path, bool active) : m_path(path), m_isActive(active) {}
 };
 
+struct ToolbarSetup
+{
+    bool m_hideShow, m_showTooltips, m_showText;
+    int m_orientation;
+};
+
 class MainFrame : public wxDocMDIParentFrame
 {
 public:
@@ -59,7 +65,7 @@ private:
     void OnDetachDatabase(wxCommandEvent &event);
     void OnUpdateUIDetachDB(wxUpdateUIEvent &event);
     void OnLibrary(wxCommandEvent &event);
-    void OnCustomize(wxMouseEvent &event);
+//    void OnCustomize(wxMouseEvent &event);
     Database *m_db;
     wxDocManager *m_manager;
 #if defined __WXMSW__ || defined __WXGTK__
@@ -75,6 +81,7 @@ private:
 #endif
     std::vector<QueryInfo> queries;
     wxXmlDocument doc;
+    std::map<wxString, ToolbarSetup> m_tbSettings;
     wxDECLARE_EVENT_TABLE();
 };
 
