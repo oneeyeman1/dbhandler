@@ -255,6 +255,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     sizer = new wxBoxSizer( wxVERTICAL );
     CreateViewToolBar();
+    sizer->Layout();
+    m_frame->Layout();
+    m_frame->Show();
     wxPoint ptCanvas;
 #ifndef __WXOSX__
     ptCanvas = wxDefaultPosition;
@@ -456,8 +459,6 @@ void DrawingView::CreateViewToolBar()
             CreateQueryMenu( QuickQueryMenu );
         else
             CreateQueryMenu( SQLSelectMenu );
-        m_tb->AddTool( wxID_NEW, _( "New" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
-        m_tb->AddTool( wxID_OPEN, _( "Open" ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
         wxBitmapBundle save, tableSVG, boldSVG, italicSVG, underlineSVG;
 #ifdef __WXMSW__
         HANDLE gs_wxMainThread = NULL;
@@ -522,14 +523,23 @@ void DrawingView::CreateViewToolBar()
         italicSVG = wxBitmapBundle::FromSVG( italic, wxSize( 16, 16 ) );
         underlineSVG = wxBitmapBundle::FromSVG( underline, wxSize( 16, 16 ) );
 #endif
-        m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), save, save, wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
-        m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
-        m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
-        m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
-        m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
-        m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), tableSVG, tableSVG, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
-        m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( previewIcon, WXSIZEOF( previewIcon ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
-        m_tb->ToggleTool( wxID_DATASOURCE, true );
+        if( m_type != NewViewView )
+        {
+            m_tb->AddTool( wxID_NEW, _( "New" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
+            m_tb->AddTool( wxID_OPEN, _( "Open" ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
+            m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), save, save, wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
+            m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
+            m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
+            m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
+            m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
+            m_tb->InsertTool( 4, wxID_SELECTTABLE, _( "Select Table" ), tableSVG, tableSVG, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
+            m_tb->InsertTool( 5, wxID_PREVIEDWQUERY, _( "Preview" ), wxBitmap::NewFromPNGData( previewIcon, WXSIZEOF( previewIcon ) ), wxNullBitmap, wxITEM_CHECK, ( "Preview" ) );
+            m_tb->ToggleTool( wxID_DATASOURCE, true );
+        }
+        else
+        {
+            // CREATE VIEW toolbar
+        }
         if( m_styleBar )
         {
             m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
@@ -576,7 +586,7 @@ void DrawingView::CreateViewToolBar()
         sizer->Add( m_styleBar, 1, wxEXPAND, 0 );
 #endif
     }
-    m_tb->SetSize( 0, position * 2, size.x, wxDefaultCoord );
+    m_tb->SetSize( 0, 0, size.x, wxDefaultCoord );
     offset = m_tb->GetSize().y;
     auto height = size.y - offset;
     if( m_styleBar )
