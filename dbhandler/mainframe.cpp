@@ -203,10 +203,10 @@ MainFrame::~MainFrame()
         result = m_db->Disconnect( errorMsg );
     }
     config->SetPath( "MainToolbar" );
-    config->Write( "Show", m_tbSettings["Powerar"].m_hideShow );
-    config->Write( "ShowTooltip", m_tbSettings["Powerar"].m_showTooltips );
-    config->Write( "ShowText", m_tbSettings["Powerar"].m_showText );
-    config->Write( "Orientation", m_tbSettings["Powerar"].m_orientation );
+    config->Write( "Show", m_tbSettings["PowerBar"].m_hideShow );
+    config->Write( "ShowTooltip", m_tbSettings["PowerBar"].m_showTooltips );
+    config->Write( "ShowText", m_tbSettings["PowerBar"].m_showText );
+    config->Write( "Orientation", m_tbSettings["PowerBar"].m_orientation );
     config->SetPath( path );
     if( result )
     {
