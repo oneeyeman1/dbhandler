@@ -106,17 +106,28 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
         m_path.push_back( LibrariesInfo( libpath, true ) );
     config->SetPath( path );
     config->SetPath( "MainToolbar" );
-    auto visile = config->ReadBool( "Show", true );
+    auto visible = config->ReadBool( "Show", true );
     auto tooltip = config->ReadBool( "ShowTooltip", true );
     auto text = config->ReadBool( "ShowText", false );
     auto orientation = config->ReadLong( "Orientation", 1 );
     config->SetPath( path );
     ToolbarSetup settings;
-    settings.m_hideShow = visile;
+    settings.m_hideShow = visible;
     settings.m_orientation = orientation;
     settings.m_showText = text;
     settings.m_showTooltips = tooltip;
     m_tbSettings["PowerBar"] = settings;
+    config->SetPath( "ViewBar" );
+    visible = config->ReadBool( "Show", true );
+    tooltip = config->ReadBool( "ShowTooltip", true );
+    text = config->ReadBool( "ShowText", false );
+    orientation = config->ReadLong( "Orientation", 1 );
+    config->SetPath( path );
+    settings.m_hideShow = visible;
+    settings.m_orientation = orientation;
+    settings.m_showText = text;
+    settings.m_showTooltips = tooltip;
+    m_tbSettings["ViewBar"] = settings;
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );
@@ -151,7 +162,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     if( text )
         style |= wxTB_TEXT ;
     CreateToolBar( style );
-    if( !visile )
+    if( !visible )
         GetToolBar()->Hide();
     InitToolBar( GetToolBar() );
 }
@@ -207,6 +218,12 @@ MainFrame::~MainFrame()
     config->Write( "ShowTooltip", m_tbSettings["PowerBar"].m_showTooltips );
     config->Write( "ShowText", m_tbSettings["PowerBar"].m_showText );
     config->Write( "Orientation", m_tbSettings["PowerBar"].m_orientation );
+    config->SetPath( path );
+    config->SetPath( "ViewBar" );
+    config->Write( "Show", m_tbSettings["ViewBar"].m_hideShow );
+    config->Write( "ShowTooltip", m_tbSettings["ViewBar"].m_showTooltips );
+    config->Write( "ShowText", m_tbSettings["ViewBar"].m_showText );
+    config->Write( "Orientation", m_tbSettings["ViewBar"].m_orientation );
     config->SetPath( path );
     if( result )
     {
