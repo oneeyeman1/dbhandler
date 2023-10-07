@@ -34,6 +34,12 @@ struct NewViewOptions
     int options;
 };
 
+struct ToolbarSetup
+{
+    bool m_hideShow, m_showTooltips, m_showText;
+    int m_orientation;
+};
+
 // The view using MyCanvas to show its contents
 class DrawingView : public wxView
 {
@@ -47,6 +53,7 @@ public:
     FontComboBox *GetFontName() const;
     wxComboBox *GetFontSize();
     wxTextCtrl *GetTextLogger() const;
+    void SetToolbarOPtions(const ToolbarSetup &tbSetup);
     void GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path);
     int SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect, bool isNewView = false);
     std::map<wxString, std::vector<TableDefinition> > &GetTablesMap();
@@ -176,6 +183,7 @@ private:
     DesignCanvas *m_designCanvas;
     wxStyledTextCtrl *m_edit;
     wxFindReplaceDialog *m_findDlg;
+    ToolbarSetup m_tbSettings;
     wxFindReplaceData m_data;
     std::vector<Profile> m_profiles;
     std::vector<QueryInfo> m_queries;

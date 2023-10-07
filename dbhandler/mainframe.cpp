@@ -42,7 +42,7 @@
 
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, std::vector<Profile> &);
-typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &, const std::vector<Profile> &, const std::vector<QueryInfo> &, const std::vector<LibrariesInfo> &);
+typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &, const std::vector<Profile> &, const std::vector<QueryInfo> &, const std::vector<LibrariesInfo> &, ToolbarSetup &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 typedef int (*ATTACHDATABASE)(wxWindow *, Database *);
@@ -106,24 +106,24 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
         m_path.push_back( LibrariesInfo( libpath, true ) );
     config->SetPath( path );
     config->SetPath( "MainToolbar" );
-    auto visible = config->ReadBool( "Show", true );
+    auto visile = config->ReadBool( "Show", true );
     auto tooltip = config->ReadBool( "ShowTooltip", true );
     auto text = config->ReadBool( "ShowText", false );
     auto orientation = config->ReadLong( "Orientation", 1 );
     config->SetPath( path );
     ToolbarSetup settings;
-    settings.m_hideShow = visible;
+    settings.m_hideShow = visile;
     settings.m_orientation = orientation;
     settings.m_showText = text;
     settings.m_showTooltips = tooltip;
     m_tbSettings["PowerBar"] = settings;
     config->SetPath( "ViewBar" );
-    visible = config->ReadBool( "Show", true );
+    visile = config->ReadBool( "Show", true );
     tooltip = config->ReadBool( "ShowTooltip", true );
     text = config->ReadBool( "ShowText", false );
     orientation = config->ReadLong( "Orientation", 1 );
     config->SetPath( path );
-    settings.m_hideShow = visible;
+    settings.m_hideShow = visile;
     settings.m_orientation = orientation;
     settings.m_showText = text;
     settings.m_showTooltips = tooltip;
@@ -162,7 +162,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     if( text )
         style |= wxTB_TEXT ;
     CreateToolBar( style );
-    if( !visible )
+    if( !visile )
         GetToolBar()->Hide();
     InitToolBar( GetToolBar() );
 }
@@ -508,7 +508,7 @@ void MainFrame::OnDatabase(wxCommandEvent &WXUNUSED(event))
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
-            func( this, m_manager, m_db, DatabaseView, m_painters, m_profiles, queries, m_path );
+            func( this, m_manager, m_db, DatabaseView, m_painters, m_profiles, queries, m_path, m_tbSettings["ViewBar"]  );
         }
         else if( !lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );
@@ -548,7 +548,7 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
-            func( this, m_manager, m_db, QueryView, m_painters, m_profiles, queries, m_path );
+            func( this, m_manager, m_db, QueryView, m_painters, m_profiles, queries, m_path, m_tbSettings["ViewBar"] );
         }
         else if( !lib->IsLoaded() )
             wxMessageBox( "Error loading the library. Please re-install the software and try again." );

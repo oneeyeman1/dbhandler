@@ -47,6 +47,7 @@ class MainFrame : public wxDocMDIParentFrame
 public:
     MainFrame(wxDocManager *manager);
     ~MainFrame();
+    ToolbarSetup GetViewToolbarSettings() { return m_tbSettings["ViewBar"]; }
     wxCriticalSection m_threadCS;
     NewTableHandler *m_handler;
 protected:

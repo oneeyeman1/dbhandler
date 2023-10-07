@@ -224,6 +224,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     config->Read( "QuerySource", &m_source, 2 );
     config->Read( "QueryPresentation", &m_presentation, 4 );
     config->SetPath( path );
+    config->SetPath( "ViewBar" );
     m_parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     wxRect clientRect = m_parent->GetClientRect();
     wxWindowList children = m_parent->GetChildren();
@@ -329,6 +330,14 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 
 DrawingView::~DrawingView()
 {
+    wxConfigBase *config = wxConfigBase::Get( "DBManager" );
+    auto path = config->GetPath();
+    config->SetPath( "ViewBar" );
+    config->Write( "Show", m_tbSettings.m_hideShow );
+    config->Write( "ShowTooltip", m_tbSettings.m_showTooltips );
+    config->Write( "ShowText", m_tbSettings.m_showText );
+    config->Write( "Orientation", m_tbSettings.m_orientation );
+    config->SetPath( path );
     wxMenuBar *bar = m_parent->GetMenuBar();
     for( auto i = bar->GetMenuCount() - 2; i > 0; i-- )
     {
@@ -382,7 +391,26 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
 void DrawingView::CreateViewToolBar()
 {
     int offset, position = 0;
-	long style = wxTB_HORIZONTAL | wxNO_BORDER | wxTB_FLAT | wxTB_TOP;
+	long style = wxNO_BORDER | wxTB_FLAT | wxTB_TOP;
+    switch( m_tbSettings.m_orientation )
+    {
+    case 0:
+        style |= wxTB_VERTICAL;
+        break;
+    case 1:
+        style |= wxTB_HORIZONTAL;
+        break;
+    case 2:
+        style |= wxTB_RIGHT;
+        break;
+    case 3:
+        style |= wxTB_BOTTOM;
+        break;
+    }
+    if( !m_tbSettings.m_showTooltips )
+        style |= wxTB_NO_TOOLTIPS;
+    if( m_tbSettings.m_showText )
+        style |= wxTB_TEXT ;
     wxWindow *parent = nullptr;
 #ifdef __WXOSX__
     parent = m_frame;
@@ -2780,7 +2808,7 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
 #endif
     m_frame->Show( false );
     auto docTemplate = (DatabaseTemplate *) GetDocumentManager()->FindTemplate( CLASSINFO( DrawingDocument ) );
-    docTemplate->CreateDatabaseDocument( "*.qrv", NewViewView, GetDocument()->GetDatabase(), wxDOC_NEW | wxDOC_SILENT );
+    docTemplate->CreateDatabaseDocument( "*.qrv", NewViewView, GetDocument()->GetDatabase(), m_tbSettings, wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<DrawingDocument *>( GetDocumentManager()->GetCurrentDocument() )->SetDatabase( GetDocument()->GetDatabase()  );
     dynamic_cast<DrawingView *>( docTemplate->GetDocumentManager()->GetCurrentView() )->SetDatabaseChildWindow( m_frame );
     dynamic_cast<DrawingView *>( docTemplate->GetDocumentManager()->GetCurrentView() )->SetLogWindow( m_log );
@@ -2790,4 +2818,12 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
 void DrawingView::SetDatabaseChildWindow(wxDocMDIChildFrame *frame)
 {
     m_dbFrame = frame;
+}
+
+void DrawingView::SetToolbarOPtions(const ToolbarSetup &tbSetup)
+{
+    m_tbSettings.m_hideShow = tbSetup.m_hideShow;
+    m_tbSettings.m_showTooltips = tbSetup.m_showTooltips;
+    m_tbSettings.m_showText = tbSetup.m_showText;
+    m_tbSettings.m_orientation = tbSetup.m_orientation;
 }
