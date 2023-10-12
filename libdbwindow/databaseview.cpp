@@ -1129,7 +1129,33 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
 
 void DrawingView::OnSetProperties(wxCommandEvent &event)
 {
-//    SetProperties();
+    ShapeList list;
+    MyErdTable *erdTable = nullptr;
+    FieldShape *erdField = nullptr;
+    ConstraintSign *sign = nullptr;
+    m_canvas->GetSelectedShapes( list );
+    for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
+    {
+        MyErdTable *tbl = wxDynamicCast( (*it), MyErdTable );
+        if( tbl )
+            erdTable = tbl;
+        else
+        {
+            FieldShape *field = wxDynamicCast( (*it), FieldShape );
+            if( field )
+                erdField = field;
+            else
+            {
+                ConstraintSign *s = wxDynamicCast( (*it), ConstraintSign );
+                if( s )
+                    sign = s;
+            }
+        }
+    }
+    if( erdTable )
+        SetProperties( erdTable );
+    else
+        SetProperties( erdField );
 }
 
 void DrawingView::SetProperties(const wxSFRectShape *shape)
