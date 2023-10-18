@@ -106,28 +106,17 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
         m_path.push_back( LibrariesInfo( libpath, true ) );
     config->SetPath( path );
     config->SetPath( "MainToolbar" );
-    auto visile = config->ReadBool( "Show", true );
-    auto tooltip = config->ReadBool( "ShowTooltip", true );
-    auto text = config->ReadBool( "ShowText", false );
-    auto orientation = config->ReadLong( "Orientation", 1 );
+    m_tbSettings["PowerBar"].m_hideShow = config->ReadBool( "Show", true );
+    m_tbSettings["PowerBar"].m_showTooltips = config->ReadBool( "ShowTooltip", true );
+    m_tbSettings["PowerBar"].m_showText = config->ReadBool( "ShowText", false );
+    m_tbSettings["PowerBar"].m_orientation = config->ReadLong( "Orientation", 1 );
     config->SetPath( path );
-    ToolbarSetup settings;
-    settings.m_hideShow = visile;
-    settings.m_orientation = orientation;
-    settings.m_showText = text;
-    settings.m_showTooltips = tooltip;
-    m_tbSettings["PowerBar"] = settings;
     config->SetPath( "ViewBar" );
-    visile = config->ReadBool( "Show", true );
-    tooltip = config->ReadBool( "ShowTooltip", true );
-    text = config->ReadBool( "ShowText", false );
-    orientation = config->ReadLong( "Orientation", 1 );
+    m_tbSettings["ViewBar"].m_hideShow = config->ReadBool( "Show", true );
+    m_tbSettings["ViewBar"].m_showTooltips = config->ReadBool( "ShowTooltip", true );
+    m_tbSettings["ViewBar"].m_showText = config->ReadBool( "ShowText", false );
+    m_tbSettings["ViewBar"].m_orientation = config->ReadLong( "Orientation", 1 );
     config->SetPath( path );
-    settings.m_hideShow = visile;
-    settings.m_orientation = orientation;
-    settings.m_showText = text;
-    settings.m_showTooltips = tooltip;
-    m_tbSettings["ViewBar"] = settings;
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );
@@ -142,7 +131,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     SetMenuBar( menubar );
     CreateStatusBar();
     long style = wxNO_BORDER | wxTB_FLAT;
-    switch( orientation )
+    switch( m_tbSettings["PowerBar"].m_orientation )
     {
     case 0:
         style |= wxTB_VERTICAL;
@@ -157,12 +146,12 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
         style |= wxTB_BOTTOM;
         break;
     }
-    if( !tooltip )
+    if( !m_tbSettings["PowerBar"].m_showTooltips )
         style |= wxTB_NO_TOOLTIPS;
-    if( text )
+    if( m_tbSettings["PowerBar"].m_showText )
         style |= wxTB_TEXT ;
     CreateToolBar( style );
-    if( !visile )
+    if( !m_tbSettings["PowerBar"].m_hideShow )
         GetToolBar()->Hide();
     InitToolBar( GetToolBar() );
 }
