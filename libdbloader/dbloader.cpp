@@ -146,8 +146,12 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
                                } ) == profiles.end() )
                 profiles.push_back( Profile( temp, false ) );
         }
-        DBPROFILE func = (DBPROFILE) lib.GetSymbol( "DatabaseProfile" );
-        result = func( parent, _( "Select Database Profile" ), name, engine, connectedUser, ask, dsn, profiles );
+        result = wxID_OK;
+        if( engine.IsEmpty() )
+        {
+            DBPROFILE func = (DBPROFILE) lib.GetSymbol( "DatabaseProfile" );
+            result = func( parent, _( "Select Database Profile" ), name, engine, connectedUser, ask, dsn, profiles );
+        }
         if( result != wxID_CANCEL )
         {
             if( engine == "SQLite" )
