@@ -52,6 +52,7 @@
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/cmdproc.h"
+#include "wx/stdpaths.h"
 #include "wx/bmpcbox.h"
 #include "wx/grid.h"
 #include "wx/stc/stc.h"
@@ -247,6 +248,10 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     {
         title = "Database - " + wxDynamicCast( GetDocument(), DrawingDocument )->GetDatabase()->GetTableVector().m_dbName;
     }
+#ifdef __WXOSX__
+    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+    m_libPath = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+#endif
     m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
 //    m_frame->SetMenuBar( parent->GetMenuBar() );
     if( m_type == DatabaseView )
@@ -362,7 +367,7 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
             lib1.Load( "dialogs" );
 #elif __WXOSX__
-            lib1.Load( "liblibdialogs.dylib" );
+            lib1.Load( m_libPath + "liblibdialogs.dylib" );
 #else
             lib1.Load( "libdialogs" );
 #endif
@@ -690,7 +695,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
+    lib.Load( m_libPath + "liblibdialogs.dylib" );
 #else
     lib.Load( "libdialogs" );
 #endif
@@ -936,7 +941,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
+    lib.Load( m_libPath + "liblibdialogs.dylib" );
 #else
     lib.Load( "libdialogs" );
 #endif
@@ -994,7 +999,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
+    lib.Load( m_libPath + "liblibdialogs.dylib" );
 #else
     lib.Load( "libdialogs" );
 #endif
@@ -1050,7 +1055,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
+    lib.Load( m_libPath + "liblibdialogs.dylib" );
 #else
     lib.Load( "libdialogs" );
 #endif
@@ -1273,7 +1278,7 @@ void DrawingView::SetProperties(const wxSFRectShape *shape)
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
+    lib.Load( m_libPath + "liblibdialogs.dylib" );
 #else
     lib.Load( "libdialogs" );
 #endif
@@ -1444,7 +1449,7 @@ void DrawingView::OnAlterTable(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
     lib1.Load( "tabledataedit" );
 #elif __WXOSX__
-    lib1.Load( "liblibtabledataedit.dylib" );
+    lib1.Load( m_libPath + "liblibtabledataedit.dylib" );
 #else
     lib1.Load( "libtabledataedit" );
 #endif
@@ -1483,7 +1488,7 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
     lib1.Load( "tabledataedit" );
 #elif __WXOSX__
-    lib1.Load( "liblibtabledataedit.dylib" );
+    lib1.Load( m_libPath + "liblibtabledataedit.dylib" );
 #else
     lib1.Load( "libtabledataedit" );
 #endif
@@ -1531,7 +1536,7 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
     lib->Load( "dbloader" );
 #elif __WXMAC__
-    lib->Load( "liblibdbloader.dylib" );
+    lib->Load( m_libPath + "liblibdbloader.dylib" );
 #else
     lib->Load( "libdbloader" );
 #endif
@@ -2010,7 +2015,7 @@ void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
     lib->Load( "dialogs" );
 #elif __WXMAC__
-    lib->Load( "liblibdialogs.dylib" );
+    lib->Load( m_libPath + "liblibdialogs.dylib" );
 #else
     lib->Load( "libdialogs" );
 #endif
@@ -2406,7 +2411,7 @@ void DrawingView::OnGotoLine(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
+    lib.Load( m_libPath + "liblibdialogs.dylib" );
 #else
     lib.Load( "libdialogs" );
 #endif
@@ -2708,7 +2713,7 @@ void DrawingView::OnExportSyntax(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
+    lib.Load( m_libPath + "liblibdialogs.dylib" );
 #else
     lib.Load( "libdialogs" );
 #endif
@@ -2736,7 +2741,7 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
+    lib.Load( m_libPath + "liblibdialogs.dylib" );
 #else
     lib.Load( "libdialogs" );
 #endif

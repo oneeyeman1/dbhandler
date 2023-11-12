@@ -11,6 +11,8 @@
 #include "wx/fontenum.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
+#include "wx/stdpaths.h"
+#include "wx/filename.h"
 #include "wx/bmpcbox.h"
 #include "wx/notebook.h"
 #include "wx/fdrepdlg.h"
@@ -238,7 +240,9 @@ void DesignCanvas::OnProperties(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
+    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+    auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+    lib.Load( path + "liblibdialogs.dylib" );
 #else
     lib.Load( "libdialogs" );
 #endif

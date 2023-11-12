@@ -147,7 +147,7 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
     }
     else
     {
-        docTemplate->CreateDatabaseDocument( "*.qry", type, db, painters, queries, path, tbSetup, wxDOC_NEW | wxDOC_SILENT );
+        docTemplate->CreateDatabaseDocument( "*.qry", type, db, painters, queries, path,  tbSetup, wxDOC_NEW | wxDOC_SILENT );
         init = true;
     }
     dynamic_cast<DrawingDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db );
