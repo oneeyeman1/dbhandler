@@ -29,6 +29,8 @@
 #include <vector>
 #include "wx/config.h"
 #include "wx/dynlib.h"
+#include "wx/stdpaths.h"
+#include "wx/filename.h"
 #include "wx/vector.h"
 #include "database.h"
 #include "odbcconfigure.h"
@@ -47,7 +49,9 @@ CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title, 
 #ifdef __WXMSW__
     m_lib->Load( "dbloader" );
 #elif __WXOSX__
-    m_lib->Load( "liblibdbloader.dylib" );
+    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+    auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+    m_lib->Load( path + "liblibdbloader.dylib" );
 #else
     m_lib->Load( "libdbloader" );
 #endif

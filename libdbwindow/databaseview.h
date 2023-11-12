@@ -190,6 +190,7 @@ private:
     std::vector<LibrariesInfo> m_path;
     std::map<wxString, std::vector<TableDefinition> > m_tables;
     NewViewOptions options;
+    wxString m_libPath;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };

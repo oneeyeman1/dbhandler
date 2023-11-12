@@ -25,6 +25,7 @@
 #include "wx/docmdi.h"
 #include "wx/config.h"
 #include "wx/dynlib.h"
+#include "wx/stdpaths.h"
 #include "wx/xml/xml.h"
 #include "wx/fswatcher.h"
 #include "database.h"
@@ -309,7 +310,9 @@ void MainFrame::Connect()
 #ifdef __WXMSW__
         loaded = lib->Load( "dbloader" );
 #elif __WXMAC__
-        loaded = lib->Load( "liblibdbloader.dylib" );
+        wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+        auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+        loaded = lib->Load( path + "liblibdbloader.dylib" );
 #else
         loaded = lib->Load( "libdbloader" );
 #endif
@@ -404,7 +407,9 @@ void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
         lib->Load( "dialogs" );
 #elif __WXMAC__
-        lib->Load( "liblibdialogs.dylib" );
+        wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+        auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+        lib->Load( path + "liblibdialogs.dylib" );
 #else
         lib->Load( "libdialogs" );
 #endif
@@ -440,7 +445,9 @@ void MainFrame::OnDatabase(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
             lib->Load( "dbwindow" );
 #elif __WXOSX__
-            lib->Load( "liblibdbwindow.dylib" );
+            wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+            auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+            lib->Load( path + "liblibdbwindow.dylib" );
 #else
             lib->Load( "libdbwindow" );
 #endif
@@ -460,7 +467,9 @@ void MainFrame::OnDatabase(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
             lib1->Load( "tabledataedit" );
 #elif __WXOSX__
-            lib1->Load( "liblibtabledataedit.dylib" );
+            wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+            auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+            lib1->Load( path + "liblibtabledataedit.dylib" );
 #else
             lib1->Load( "libtableedit" );
 #endif
@@ -480,7 +489,9 @@ void MainFrame::OnDatabase(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
             lib2->Load( "tabledataedit" );
 #elif __WXOSX__
-            lib2->Load( "liblibtabledataedit.dylib" );
+            wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+            auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+            lib2->Load( path + "liblibtabledataedit.dylib" );
 #else
             lib2->Load( "libtabledataedit" );
 #endif
@@ -517,11 +528,13 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
         {
             lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-            lib->Load("dbwindow");
+            lib->Load( "dbwindow" );
 #elif __WXOSX__
-            lib->Load("liblibdbwindow.dylib");
+            wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+            auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+            lib->Load( path + "liblibdbwindow.dylib" );
 #else
-            lib->Load("libdbwindow");
+            lib->Load( "libdbwindow" );
 #endif
             if( lib->IsLoaded() )
                 m_painters["Query"] = lib;
@@ -564,7 +577,9 @@ void MainFrame::OnTable(wxCommandEvent &WXUNUSED(event))
 #ifdef __WXMSW__
             lib->Load( "tabledataedit" );
 #elif __WXOSX__
-            lib->Load( "liblibtabledataedit.dylib" );
+            wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+            auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+            lib->Load( path + "liblibtabledataedit.dylib" );
 #else
             lib->Load( "libtabledataedit" );
 #endif
@@ -628,14 +643,16 @@ void MainFrame::OnAttachDatabase(wxCommandEvent &WXUNUSED(event))
 {
     auto lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-    lib->Load("dialogs");
+    lib->Load( "dialogs" );
 #elif __WXOSX__
-    lib->Load("liblibdialogs.dylib");
+    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+    auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+    lib->Load( path + "liblibdialogs.dylib" );
 #else
-    lib->Load("libdialogs");
+    lib->Load( "libdialogs" );
 #endif
-    ATTACHDATABASE func = (ATTACHDATABASE) lib->GetSymbol("AttachToDatabase");
-    int result = func(this, m_db);
+    ATTACHDATABASE func = (ATTACHDATABASE) lib->GetSymbol( "AttachToDatabase" );
+    int result = func( this, m_db );
     if( result == wxID_OK )
         m_countAttached++;
     delete lib;
@@ -646,14 +663,16 @@ void MainFrame::OnDetachDatabase(wxCommandEvent &WXUNUSED(event))
 {
     auto lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-    lib->Load("dialogs");
+    lib->Load( "dialogs" );
 #elif __WXOSX__
-    lib->Load("liblibdialogs.dylib");
+    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+    auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+    lib->Load( path + "liblibdialogs.dylib" );
 #else
-    lib->Load("libdialogs");
+    lib->Load( "libdialogs" );
 #endif
-    DETACHDATABASE func = (DETACHDATABASE) lib->GetSymbol("DetachDatabase");
-    int result = func(this);
+    DETACHDATABASE func = (DETACHDATABASE) lib->GetSymbol( "DetachDatabase" );
+    int result = func( this );
     if( result == wxID_OK )
         m_countAttached--;
     delete lib;
@@ -672,16 +691,18 @@ void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
 {
     auto lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-    lib->Load("dialogs");
+    lib->Load( "dialogs" );
 #elif __WXOSX__
-    lib->Load("liblibdialogs.dylib");
+    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+    auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+    lib->Load( path + "liblibdialogs.dylib" );
 #else
-    lib->Load("libdialogs");
+    lib->Load( "libdialogs" );
 #endif
     if( lib->IsLoaded() )
     {
-        CHOOSEOBJECT func = (CHOOSEOBJECT) lib->GetSymbol("ChooseObject");
-        int res = func(m_frame, 0 );
+        CHOOSEOBJECT func = (CHOOSEOBJECT) lib->GetSymbol( "ChooseObject" );
+        int res = func( m_frame, 0 );
         if( res == wxID_OK )
         {
             wxXmlDocument doc;

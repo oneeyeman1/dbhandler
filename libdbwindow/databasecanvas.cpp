@@ -17,6 +17,8 @@
 #include "wx/docmdi.h"
 #include "wx/cmdproc.h"
 #include "wx/dynlib.h"
+#include "wx/stdpaths.h"
+#include "wx/filename.h"
 #include "wx/notebook.h"
 #include "wx/fdrepdlg.h"
 #include "wx/grid.h"
@@ -119,6 +121,10 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &
     m_oldSelectedSign = NULL;
     startPoint.x = 10;
     startPoint.y = 10;
+#ifdef __WXOSX__
+    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+    m_libPath = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+#endif
     auto root = new QueryRoot();
     root->SetDbName( dbName );
     root->SetDbType( dbType );
@@ -1066,7 +1072,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
 #ifdef __WXMSW__
             lib.Load( "dialogs" );
 #elif __WXMAC__
-            lib.Load( "liblibdialogs.dylib" );
+            lib.Load( m_libPath + "liblibdialogs.dylib" );
 #else
             lib.Load( "libdialogs" );
 #endif
@@ -1119,7 +1125,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
 #ifdef __WXMSW__
             lib.Load( "dialogs" );
 #elif __WXMAC__
-            lib.Load( "liblibdialogs.dylib" );
+            lib.Load( m_libPath + "liblibdialogs.dylib" );
 #else
             lib.Load( "libdialogs" );
 #endif
