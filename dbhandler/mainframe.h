@@ -83,6 +83,7 @@ private:
     std::vector<QueryInfo> queries;
     wxXmlDocument doc;
     std::map<wxString, ToolbarSetup> m_tbSettings;
+    wxString m_libraryPath;
     wxDECLARE_EVENT_TABLE();
 };
 
