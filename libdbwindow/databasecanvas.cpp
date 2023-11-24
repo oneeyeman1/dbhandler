@@ -127,9 +127,9 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &
     fn.RemoveLastDir();
     m_libPath = fn.GetPathWithSep() + "Frameworks/";
 #elif __WXGTK__
-    m_libPath = stdPath.wxGetInstallPrefix() + "/";
+    m_libPath = stdPath.GetInstallPrefix() + "/";
 #elif __WXMSW__
-    m_libPath = stdPath.GetExecutablePath() + "/";
+    m_libPath = stdPath.GetExecutablePath() + "/lib/";
 #endif
     auto root = new QueryRoot();
     root->SetDbName( dbName );

@@ -128,7 +128,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
     auto path = fn.GetPathWithSep() + "Frameworks/";
     libName = path + "liblibdialogs.dylib";
 #else
-    libName = stdPath.wxGetInstallPrefix() + "/libdialogs";
+    libName = stdPath.GetInstallPrefix() + "/lib/libdialogs";
 #endif
     lib.Load( libName );
     if( lib.IsLoaded() )

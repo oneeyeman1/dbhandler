@@ -85,7 +85,7 @@ DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas
     fn.RemoveLastDir();
     m_libPath = fn.GetPathWithSep() + "Frameworks/";
 #else
-    m_libPath = stdPath.wxGetInstallPrefix();
+    m_libPath = stdPath.GetInstallPrefix() + "/lib/";
 #endif
     SetCanvasColour( *wxWHITE );
     Bind( wxEVT_MENU, &DesignCanvas::OnProperties, this, wxID_PROPERTIES );

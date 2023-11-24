@@ -22,6 +22,12 @@
 
 GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId, const std::vector<QueryInfo> &queries, const std::vector<LibrariesInfo> &path) : wxDialog( parent, id, title )
 {
+	long style;
+#ifdef __WXMSW__
+	style = wxTE_MULTILINE;
+#else
+	style = 0; 
+#endif
     m_path = path;
     wxVector<wxBitmapBundle> images;
 #ifdef __WXMSW__
@@ -86,7 +92,8 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     m_comments = new wxStaticText( m_panel, wxID_ANY, _( "&Comments" ) );
     sizer4->Add( m_comments, 0, wxEXPAND, 0 );
     sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_commentsText = new wxTextCtrl( m_panel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+    m_commentsText = new wxTextCtrl( m_panel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, style );
+	m_commentsText->SetMaxLength( 256 );
     sizer4->Add( m_commentsText, 1, wxEXPAND, 0 );
     auto sizer5 = new wxBoxSizer( wxVERTICAL );
     grid->Add( sizer5, 0, wxEXPAND, 0 );

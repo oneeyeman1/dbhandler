@@ -254,7 +254,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     fn.RemoveLastDir();
     m_libPath = fn.GetPathWithSep() + "Frameworks/";
 #elif __WXGTK__
-    m_libPath = stdPath.wxGetInstallPrefix() + "/";
+    m_libPath = stdPath.GetInstallPrefix() + "/lib/";
 #elif
     m_libPath = stdPath.GetExecutablePath() + "/";
 #endif
