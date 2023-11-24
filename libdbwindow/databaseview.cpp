@@ -248,9 +248,15 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     {
         title = "Database - " + wxDynamicCast( GetDocument(), DrawingDocument )->GetDatabase()->GetTableVector().m_dbName;
     }
+    auto stdPath = wxStandardPaths::Get();
 #ifdef __WXOSX__
-    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
-    m_libPath = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+    wxFileName fn( stdPath.GetExecutablePath() );
+    fn.RemoveLastDir();
+    m_libPath = fn.GetPathWithSep() + "Frameworks/";
+#elif __WXGTK__
+    m_libPath = stdPath.wxGetInstallPrefix() + "/";
+#elif
+    m_libPath = stdPath.GetExecutablePath() + "/";
 #endif
     m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
 //    m_frame->SetMenuBar( parent->GetMenuBar() );
@@ -362,15 +368,16 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
         if( GetDocument()->GetQueryFields().size() > 0 )
         {
             auto viewCommand = m_page6->GetSyntaxCtrl()->GetValue();
-            wxString name;
+            wxString name, libName;
             wxDynamicLibrary lib1;
 #ifdef __WXMSW__
-            lib1.Load( "dialogs" );
+            libName = m_libPath + "dialogs";
 #elif __WXOSX__
-            lib1.Load( m_libPath + "liblibdialogs.dylib" );
+            libName = m_libPath + "liblibdialogs.dylib" ;
 #else
-            lib1.Load( "libdialogs" );
+            libName = m_libPath + "libdialogs";
 #endif
+            lib1.Load( libName );
             if( lib1.IsLoaded() )
             {
                 SAVENEWVIEW func = (SAVENEWVIEW) lib1.GetSymbol( "SaveNewView" );
@@ -686,6 +693,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
     std::map<wxString, std::vector<TableDefinition> > tables;
     int res = -1;
     wxString query, documentName = "";
+    wxString libName;
     wxDynamicLibrary lib;
     bool quickSelect = false;
     m_queries = queries;
@@ -693,12 +701,13 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
     m_canvas->SetQueryInfo( queries );
     m_canvas->SetObjectPath( path );
 #ifdef __WXMSW__
-    lib.Load( "dialogs" );
+    libName = m_libPath + "dialogs";
 #elif __WXMAC__
-    lib.Load( m_libPath + "liblibdialogs.dylib" );
+    libName = m_libPath + "liblibdialogs.dylib";
 #else
-    lib.Load( "libdialogs" );
+    libName = m_libPath + "libdialogs";
 #endif
+    lib.Load( libName );
     auto tbPosition = m_tb->GetPosition();
     auto frameSize = m_frame->GetSize();
     if( lib.IsLoaded() )
@@ -937,14 +946,16 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
         if( (*it)->IsSelected() )
             dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) *it)->GetTable() );
     }
+    wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
-    lib.Load( "dialogs" );
+    libName = m_libPath + "dialogs";
 #elif __WXMAC__
-    lib.Load( m_libPath + "liblibdialogs.dylib" );
+    libName =  m_libPath + "liblibdialogs.dylib";
 #else
-    lib.Load( "libdialogs" );
+    libName = m_libPath + "libdialogs";
 #endif
+    lib.Load( libName );
     if( lib.IsLoaded() )
     {
         CREATEINDEX func = (CREATEINDEX) lib.GetSymbol( "CreateIndexForDatabase" );
@@ -995,14 +1006,16 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
         if( (*it)->IsSelected() )
             dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) *it)->GetTable() );
     }
+    wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
-    lib.Load( "dialogs" );
+    libName = m_libPath + "dialogs";
 #elif __WXMAC__
-    lib.Load( m_libPath + "liblibdialogs.dylib" );
+    libName = m_libPath + "liblibdialogs.dylib";
 #else
-    lib.Load( "libdialogs" );
+    libName = m_libPath + "libdialogs";
 #endif
+    lib.Load( libName );
     if( lib.IsLoaded() )
     {
         CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
@@ -1051,14 +1064,16 @@ void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
 int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect, bool isNewView/* = false*/)
 {
     int res = 0;
+    wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
-    lib.Load( "dialogs" );
+    libName = m_libPath + "dialogs";
 #elif __WXMAC__
-    lib.Load( m_libPath + "liblibdialogs.dylib" );
+    libName = m_libPath + "liblibdialogs.dylib";
 #else
-    lib.Load( "libdialogs" );
+    libName = m_libPath + "libdialogs";
 #endif
+    lib.Load( libName );
     if( lib.IsLoaded() && !quickSelect )
     {
         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
@@ -1274,14 +1289,16 @@ void DrawingView::SetProperties(const wxSFRectShape *shape)
                 }
             }
         }
+    wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
-    lib.Load( "dialogs" );
+    libName = m_libPath + "dialogs";
 #elif __WXMAC__
-    lib.Load( m_libPath + "liblibdialogs.dylib" );
+    libName = m_libPath + "liblibdialogs.dylib";
 #else
-    lib.Load( "libdialogs" );
+    libName = m_libPath + "libdialogs";
 #endif
+    lib.Load( libName );
     int res = 0;
     std::unique_ptr<PropertiesHandler> propertiesPtr;
     wxString title;
@@ -1445,14 +1462,16 @@ void DrawingView::OnAlterTable(wxCommandEvent &WXUNUSED(event))
         if( (*it)->IsSelected() )
             found = true;
     }
+    wxString libName;
     wxDynamicLibrary lib1;
 #ifdef __WXMSW__
-    lib1.Load( "tabledataedit" );
+    libName m_libPath + "tabledataedit";
 #elif __WXOSX__
-    lib1.Load( m_libPath + "liblibtabledataedit.dylib" );
+    libName = m_libPath + "liblibtabledataedit.dylib";
 #else
-    lib1.Load( "libtabledataedit" );
+    libName = m_libPath + "libtabledataedit";
 #endif
+    lib1.Load( libName );
     if( lib1.IsLoaded() )
     {
         TABLE func = (TABLE) lib1.GetSymbol( "CreateDatabaseWindow" );
@@ -1484,14 +1503,16 @@ void DrawingView::OnFieldDefinition(wxCommandEvent &WXUNUSED(event))
                 field = wxDynamicCast( (*it), FieldShape );
         }
     }
+    wxString libName;
     wxDynamicLibrary lib1;
 #ifdef __WXMSW__
-    lib1.Load( "tabledataedit" );
+    libName = m_libPath + "tabledataedit";
 #elif __WXOSX__
-    lib1.Load( m_libPath + "liblibtabledataedit.dylib" );
+    libName = m_libPath + "liblibtabledataedit.dylib";
 #else
-    lib1.Load( "libtabledataedit" );
+    libName = m_libPath + "libtabledataedit";
 #endif
+    lib1.Load( libName );
     if( lib1.IsLoaded() )
     {
         TABLE func = (TABLE) lib1.GetSymbol( "CreateDatabaseWindow" );
@@ -1532,14 +1553,16 @@ SyntaxPropPage *DrawingView::GetSyntaxPage()
 void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
 {
     Database *db = NULL, *db1 = GetDocument()->GetDatabase();
+    wxString libName;
     wxDynamicLibrary *lib = new wxDynamicLibrary();
 #ifdef __WXMSW__
-    lib->Load( "dbloader" );
+    libName = m_libPath + "dbloader";
 #elif __WXMAC__
-    lib->Load( m_libPath + "liblibdbloader.dylib" );
+    libName = m_libPath + "liblibdbloader.dylib";
 #else
-    lib->Load( "libdbloader" );
+    libName = m_libPath + "libdbloader";
 #endif
+    lib->Load( libName );
     if( lib->IsLoaded() )
     {
         DBPROFILE func = (DBPROFILE) lib->GetSymbol( "ConnectToDb" );
@@ -2011,14 +2034,16 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
 void DrawingView::OnRetrievalArguments(wxCommandEvent &WXUNUSED(event))
 {
     std::vector<QueryArguments> arguments;
+    wxString libName;
     wxDynamicLibrary *lib = new wxDynamicLibrary();
 #ifdef __WXMSW__
-    lib->Load( "dialogs" );
+    libName = m_libPath + "dialogs";
 #elif __WXMAC__
-    lib->Load( m_libPath + "liblibdialogs.dylib" );
+    libName = m_libPath + "liblibdialogs.dylib";
 #else
-    lib->Load( "libdialogs" );
+    libName = m_libPath + "libdialogs";
 #endif
+    lib->Load( libName );
     if( lib->IsLoaded() )
     {
         if( m_arguments.size() == 0 )
@@ -2407,14 +2432,16 @@ void DrawingView::FindTextInEditor()
 void DrawingView::OnGotoLine(wxCommandEvent &WXUNUSED(event))
 {
     int lineNo, res;
+    wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
-    lib.Load( "dialogs" );
+    libName = m_libPath + "dialogs";
 #elif __WXMAC__
-    lib.Load( m_libPath + "liblibdialogs.dylib" );
+    libName = m_libPath + "liblibdialogs.dylib";
 #else
-    lib.Load( "libdialogs" );
+    libName = m_libPath + "libdialogs";
 #endif
+    lib.Load( libName );
     if( lib.IsLoaded() )
     {
         GOTOLINE func = (GOTOLINE) lib.GetSymbol( "GotoLine" );
@@ -2709,14 +2736,16 @@ void DrawingView::OnExportSyntax(wxCommandEvent &WXUNUSED(event))
 {
     auto tables = dynamic_cast<DrawingDocument *>( GetDocument() )->GetDBTables();
     wxString source;
+    wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
-    lib.Load( "dialogs" );
+    libName = m_libPath + "dialogs";
 #elif __WXMAC__
-    lib.Load( m_libPath + "liblibdialogs.dylib" );
+    libName = m_libPath + "liblibdialogs.dylib";
 #else
-    lib.Load( "libdialogs" );
+    libName = m_libPath + "libdialogs";
 #endif
+    lib.Load( libName );
     if( lib.IsLoaded() )
     {
         GETDATASOURCE func = (GETDATASOURCE) lib.GetSymbol( "GetDataSource" );
@@ -2736,15 +2765,17 @@ void DrawingView::OnExportSyntax(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
 {
+    wxString libName;
     wxDynamicLibrary lib;
     wxString documentName = "";
 #ifdef __WXMSW__
-    lib.Load( "dialogs" );
+    libName = m_libPath + "dialogs";
 #elif __WXMAC__
-    lib.Load( m_libPath + "liblibdialogs.dylib" );
+    libName = m_libPath + "liblibdialogs.dylib";
 #else
-    lib.Load( "libdialogs" );
+    libName = m_libPath + "libdialogs";
 #endif
+    lib.Load( libName );
     if( lib.IsLoaded() )
     {
         bool update;
