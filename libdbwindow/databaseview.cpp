@@ -261,9 +261,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     sizer = new wxBoxSizer( wxVERTICAL );
     CreateViewToolBar();
-    sizer->Layout();
-    m_frame->Layout();
-    m_frame->Show();
+//    sizer->Layout();
+//    m_frame->Layout();
+//    m_frame->Show();
     wxPoint ptCanvas;
 #ifndef __WXOSX__
     ptCanvas = wxDefaultPosition;
@@ -324,7 +324,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_frame->Bind( wxEVT_ICONIZE, &DrawingView::OnIconise, this );
     if( m_fontName )
         m_fontName->Bind( wxEVT_COMBOBOX, &DrawingView::OnFontSeectionChange, this );
-    sizer->Layout();
+//    sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
 #ifdef __WXGTK__
@@ -396,7 +396,7 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
 void DrawingView::CreateViewToolBar()
 {
     int offsetTop = 0, offsetLeft = 0, offsetRight = 0, offsetBottom = 0, position = 0;
-	long style = wxNO_BORDER | wxTB_FLAT | wxTB_TOP;
+	long style = wxNO_BORDER | wxTB_FLAT;
     switch( m_tbSettings.m_orientation )
     {
     case 0:
@@ -609,6 +609,9 @@ void DrawingView::CreateViewToolBar()
         }
     }
     m_tb->Realize();
+#ifdef __WXMSW__
+    m_frame->SetToolBar( m_tb );
+#endif
 #ifdef __WXOSX__
     sizer->Add( m_tb, 1, wxEXPAND, 0 );
 #endif
@@ -637,10 +640,11 @@ void DrawingView::CreateViewToolBar()
             break;
         case 2:
             offsetBottom = m_tb->GetSize().y;
-            m_tb->SetSize( 0, size.y - offsetBottom, wxDefaultCoord, wxDefaultCoord );
 #if defined( __WXMSW__ ) || defined( __WXGTK__ )
             m_parent->GetClientWindow()->SetSize( 0, 0, size.x, size.y - offsetBottom );
+            m_frame->SetSize( 0, 0, size.x, size.y - offsetBottom );
 #endif
+            m_tb->SetSize( 0, size.y - offsetBottom, wxDefaultCoord, wxDefaultCoord );
             break;
         case 3:
             m_tb->SetSize( size.x - m_tb->GetSize().x, 0,  wxDefaultCoord, wxDefaultCoord );
@@ -662,9 +666,8 @@ void DrawingView::CreateViewToolBar()
     pt.y = m_parent->GetRect().GetHeight() - m_parent->GetClientSize().GetHeight();
     m_frame->SetSize( pt.x, pt.y, m_parent->GetSize().GetWidth(), m_parent->GetClientSize().GetHeight() );
 #endif
-#ifdef __WXMSW__
-    m_frame->SetToolBar( m_tb );
-#endif
+    auto tbPosition = m_tb->GetPosition();
+    auto frameSize = m_frame->GetSize();
 }
 
 // Sneakily gets used for default print/preview as well as drawing on the
@@ -696,6 +699,8 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
 #else
     lib.Load( "libdialogs" );
 #endif
+    auto tbPosition = m_tb->GetPosition();
+    auto frameSize = m_frame->GetSize();
     if( lib.IsLoaded() )
     {
         if( m_type == QueryView || m_type == NewViewView )
@@ -1045,8 +1050,8 @@ void DrawingView::OnViewSelectedTables(wxCommandEvent &WXUNUSED(event))
 
 int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect, bool isNewView/* = false*/)
 {
-    wxDynamicLibrary lib;
     int res = 0;
+    wxDynamicLibrary lib;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
@@ -1158,7 +1163,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     return res;
 }
 
-void DrawingView::OnSetProperties(wxCommandEvent &event)
+void DrawingView::OnSetProperties(wxCommandEvent &WXUNUSED(event))
 {
     ShapeList list;
     MyErdTable *erdTable = nullptr;
@@ -2346,7 +2351,7 @@ void DrawingView::OnFind(wxCommandEvent &event)
     m_data.SetFlags( wxFR_DOWN );
     m_findDlg = new wxFindReplaceDialog( m_edit, &m_data, _( "Find Text" ), event.GetId() == wxID_REPLACE ? wxFR_REPLACEDIALOG : 0 );
     m_findDlg->Show( true );
-//    if( dlg )
+//    if( dlg )*/
 }
 
 void DrawingView::OnFindReplaceText(wxFindDialogEvent &event)
@@ -2856,7 +2861,7 @@ void DrawingView::OnDataSourceUpdateUI(wxUpdateUIEvent &event)
         event.Enable( true );
 }
 
-void DrawingView::OnDatabaseCreateView(wxCommandEvent &event)
+void DrawingView::OnDatabaseCreateView(wxCommandEvent &WXUNUSED(event))
 {
     std::vector<QueryInfo> queries;
     std::vector<LibrariesInfo> path;
