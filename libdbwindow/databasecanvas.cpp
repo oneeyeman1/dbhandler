@@ -121,9 +121,15 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &
     m_oldSelectedSign = NULL;
     startPoint.x = 10;
     startPoint.y = 10;
+    auto stdPath = wxStandardPaths::Get();
 #ifdef __WXOSX__
-    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
-    m_libPath = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+    wxFileName fn( stdPath.GetExecutablePath() );
+    fn.RemoveLastDir();
+    m_libPath = fn.GetPathWithSep() + "Frameworks/";
+#elif __WXGTK__
+    m_libPath = stdPath.wxGetInstallPrefix() + "/";
+#elif __WXMSW__
+    m_libPath = stdPath.GetExecutablePath() + "/";
 #endif
     auto root = new QueryRoot();
     root->SetDbName( dbName );
@@ -1068,14 +1074,16 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                 id++;
                 it1++;
             }*/
+            wxString libName;
             wxDynamicLibrary lib;
 #ifdef __WXMSW__
-            lib.Load( "dialogs" );
+            libName = m_libPath + "dialogs";
 #elif __WXMAC__
-            lib.Load( m_libPath + "liblibdialogs.dylib" );
+            libName = m_libPath + "liblibdialogs.dylib";
 #else
-            lib.Load( "libdialogs" );
+            libName = m_libPath + "libdialogs";
 #endif
+            lib.Load( libName );
             wxString constraintName = constraint->GetName();
 //                std::wstring refTableName = constraint->GetRefTable().ToStdWstring();
             if( lib.IsLoaded() )
@@ -1121,14 +1129,16 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
         }
         else if( sign && type == QueryView )
         {
+            wxString libName;
             wxDynamicLibrary lib;
 #ifdef __WXMSW__
-            lib.Load( "dialogs" );
+            libName = m_libPath + "dialogs";
 #elif __WXMAC__
-            lib.Load( m_libPath + "liblibdialogs.dylib" );
+            libName = m_libPath + "liblibdialogs.dylib";
 #else
-            lib.Load( "libdialogs" );
+            libName = m_libPath + "libdialogs";
 #endif
+            lib.Load( libName );
             QueryConstraint *constraint = (QueryConstraint *) sign->GetConstraint();
             long oldSign = 0;
             int constraintSign = oldSign = constraint->GetSign();
