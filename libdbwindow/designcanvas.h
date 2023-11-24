@@ -31,5 +31,6 @@ private:
     wxSFShapeBase *m_menuShape;
     DesignOptions m_options;
     wxFont m_selectedFont;
+    wxString m_libPath;
 };
 

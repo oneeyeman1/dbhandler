@@ -77,6 +77,16 @@ DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas
     SetVirtualSize( 1000, 1000 );
     SetScrollRate( 10, 10 );
     m_mode = modeDESIGN;
+    auto stdPath = wxStandardPaths::Get();
+#ifdef __WXMSW__
+    m_libPath = stdPath.GetExecutablePath();
+#elif __WXMAC__
+    wxFileName fn( stdPath.GetExecutablePath() );
+    fn.RemoveLastDir();
+    m_libPath = fn.GetPathWithSep() + "Frameworks/";
+#else
+    m_libPath = stdPath.wxGetInstallPrefix();
+#endif
     SetCanvasColour( *wxWHITE );
     Bind( wxEVT_MENU, &DesignCanvas::OnProperties, this, wxID_PROPERTIES );
     m_menuShape = NULL;
@@ -236,16 +246,16 @@ void DesignCanvas::OnProperties(wxCommandEvent &WXUNUSED(event))
         type = 3;
     else
         type = -1;
+    wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
-    lib.Load( "dialogs" );
+    libName = m_libPath + "dialogs";
 #elif __WXMAC__
-    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
-    auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
-    lib.Load( path + "liblibdialogs.dylib" );
+    libName = m_libPath + "liblibdialogs.dylib";
 #else
-    lib.Load( "libdialogs" );
+    libName = m_libPath + "libdialogs";
 #endif
+    lib.Load( libName );
     int res = 0;
     if( lib.IsLoaded() )
     {
