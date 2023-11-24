@@ -116,17 +116,21 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
     bool ask = false;
     Database *pdb = NULL;
     wxDynamicLibrary lib;
+    wxString libName;
+    auto stdPath = wxStandardPaths::Get();
     if( engine == "SQLite" && !name.IsEmpty() )
         connectStr = name;
 #ifdef __WXMSW__
-    lib.Load( "dialogs" );
+    libName = stdPath.GetExecutablePath() + "/dialogs";
 #elif __WXOSX__
-    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
-    auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
-    lib.Load( path + "liblibdialogs.dylib" );
+    wxFileName fn( stdPath.GetExecutablePath() );
+    fn.RemoveLastDir();
+    auto path = fn.GetPathWithSep() + "Frameworks/";
+    libName = path + "liblibdialogs.dylib";
 #else
-    lib.Load( "libdialogs" );
+    libName = stdPath.wxGetInstallPrefix() + "/libdialogs";
 #endif
+    lib.Load( libName );
     if( lib.IsLoaded() )
     {
         pdb = new ODBCDatabase();
