@@ -29,6 +29,8 @@
 #include <sqlext.h>
 #endif
 #include "wx/dynlib.h"
+#include "wx/stdpaths.h"
+#include "wx/filename.h"
 #include "sqlite3.h"
 #include <libpq-fe.h>
 #include <mysql.h>
@@ -114,15 +116,21 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
     bool ask = false;
     Database *pdb = NULL;
     wxDynamicLibrary lib;
+    wxString libName;
+    auto stdPath = wxStandardPaths::Get();
     if( engine == "SQLite" && !name.IsEmpty() )
         connectStr = name;
 #ifdef __WXMSW__
-    lib.Load( "dialogs" );
+    libName = stdPath.GetExecutablePath() + "/dialogs";
 #elif __WXOSX__
-    lib.Load( "liblibdialogs.dylib" );
+    wxFileName fn( stdPath.GetExecutablePath() );
+    fn.RemoveLastDir();
+    auto path = fn.GetPathWithSep() + "Frameworks/";
+    libName = path + "liblibdialogs.dylib";
 #else
-    lib.Load( "libdialogs" );
+    libName = stdPath.wxGetInstallPrefix() + "/libdialogs";
 #endif
+    lib.Load( libName );
     if( lib.IsLoaded() )
     {
         pdb = new ODBCDatabase();

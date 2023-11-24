@@ -25,6 +25,8 @@
 #include "wx/docmdi.h"
 #include "wx/config.h"
 #include "wx/dynlib.h"
+#include "wx/stdpaths.h"
+#include "wx/filename.h"
 #include "wx/xml/xml.h"
 #include "wx/fswatcher.h"
 #include "database.h"
@@ -73,6 +75,16 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
 #endif
 #if defined __WXMSW__ || defined __WXGTK__
     m_tb = NULL;
+#endif
+    auto stdPath = wxStandardPaths::Get();
+#ifdef __WXOSX__
+    wxFileName fn( stdPath.GetExecutablePath() );
+    fn.RemoveLastDir();
+    m_libraryPath = fn.GetPathWithSep() + "Frameworks/";
+#elif __WXGTK__
+    m_libraryPath = stdPath.wxGetInstallPrefix() + "/";
+#elif __WXMSW__
+    m_libraryPath = stdPath.GetExecutablePath() + "/";
 #endif
     wxConfigBase *config = wxConfigBase::Get( "DBManager" );
     wxString path = config->GetPath();
@@ -306,13 +318,15 @@ void MainFrame::Connect()
     {
         bool loaded;
         lib = new wxDynamicLibrary();
+        wxString libName;
 #ifdef __WXMSW__
-        loaded = lib->Load( "dbloader" );
+        libName = m_libraryPath + "dbloader";
 #elif __WXMAC__
-        loaded = lib->Load( "liblibdbloader.dylib" );
+        libName = m_libraryPath + "liblibdbloader.dylib";
 #else
-        loaded = lib->Load( "libdbloader" );
+        libName = m_libraryPath + "libdbloader";
 #endif
+        loaded = lib->Load( libName );
         if( loaded )
             m_painters["DBloader"] = lib;
         else
@@ -398,16 +412,18 @@ void MainFrame::Connect()
 void MainFrame::OnConfigureODBC(wxCommandEvent &WXUNUSED(event))
 {
     wxDynamicLibrary *lib;
+    wxString libName;
     if( m_painters.find( "dialogs" ) == m_painters.end() )
     {
         lib = new wxDynamicLibrary();
 #ifdef __WXMSW__
-        lib->Load( "dialogs" );
+        libName = m_libraryPath + "dialogs";
 #elif __WXMAC__
-        lib->Load( "liblibdialogs.dylib" );
+        libName = m_libraryPath + "liblibdialogs.dylib";
 #else
-        lib->Load( "libdialogs" );
+        libName = m_libraryPath + "libdialogs";
 #endif
+        lib->Load( libName );
         if( lib->IsLoaded() )
             m_painters["dialogs"] = lib;
         else
@@ -436,14 +452,16 @@ void MainFrame::OnDatabase(wxCommandEvent &WXUNUSED(event))
     {
         if( m_painters.find( "Database" ) == m_painters.end() )
         {
+            wxString libName;
             lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-            lib->Load( "dbwindow" );
+            libName = m_libraryPath + "dbwindow";
 #elif __WXOSX__
-            lib->Load( "liblibdbwindow.dylib" );
+            libName = m_libraryPath + "liblibdbwindow.dylib";
 #else
-            lib->Load( "libdbwindow" );
+            libName = m_libraryPath + "libdbwindow";
 #endif
+            lib->Load( libName);
             if( lib->IsLoaded() )
                 m_painters["Database"] = lib;
             else
@@ -456,14 +474,16 @@ void MainFrame::OnDatabase(wxCommandEvent &WXUNUSED(event))
             lib = m_painters["Database"];
         if( m_painters.find( "EditData" ) == m_painters.end() )
         {
+            wxString libName;
             lib1 = new wxDynamicLibrary;
 #ifdef __WXMSW__
-            lib1->Load( "tabledataedit" );
+            libName = m_libraryPath + "tabledataedit";
 #elif __WXOSX__
-            lib1->Load( "liblibtabledataedit.dylib" );
+            libName = m_libraryPath + "liblibtabledataedit.dylib";
 #else
-            lib1->Load( "libtableedit" );
+            libName = m_libraryPath + "libtableedit";
 #endif
+            lib1->Load( libName );
             if( lib1->IsLoaded() )
                 m_painters["EditData"] = lib1;
             else
@@ -476,14 +496,16 @@ void MainFrame::OnDatabase(wxCommandEvent &WXUNUSED(event))
             lib1 = m_painters["EditData"];
         if( m_painters.find( "TableView" ) == m_painters.end() )
         {
+            wxString libName;
             lib2 = new wxDynamicLibrary;
 #ifdef __WXMSW__
-            lib2->Load( "tabledataedit" );
+            libName = m_libraryPath + "tabledataedit";
 #elif __WXOSX__
-            lib2->Load( "liblibtabledataedit.dylib" );
+            libName = m_libraryPath + "liblibtabledataedit.dylib";
 #else
-            lib2->Load( "libtabledataedit" );
+            libName = m_libraryPath + "libtabledataedit";
 #endif
+            lib2->Load( libName );
             if( lib2->IsLoaded() )
                 m_painters["TableView"] = lib2;
             else
@@ -508,6 +530,7 @@ void MainFrame::OnDatabase(wxCommandEvent &WXUNUSED(event))
 
 void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
 {
+    wxString libName;
     wxDynamicLibrary *lib = NULL;
     if( !m_db )
         Connect();
@@ -517,12 +540,13 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
         {
             lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-            lib->Load("dbwindow");
+            libName = m_libraryPath + "dbwindow";
 #elif __WXOSX__
-            lib->Load("liblibdbwindow.dylib");
+            libName = m_libraryPath + "liblibdbwindow.dylib";
 #else
-            lib->Load("libdbwindow");
+            libName = m_libraryPath + "libdbwindow";
 #endif
+            lib->Load( libName );
             if( lib->IsLoaded() )
                 m_painters["Query"] = lib;
             else
@@ -553,6 +577,7 @@ void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
 
 void MainFrame::OnTable(wxCommandEvent &WXUNUSED(event))
 {
+    wxString libName;
     wxDynamicLibrary *lib = NULL;
     if( !m_db )
         Connect();
@@ -562,12 +587,13 @@ void MainFrame::OnTable(wxCommandEvent &WXUNUSED(event))
         {
             lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-            lib->Load( "tabledataedit" );
+            libName = m_libraryPath + "tabledataedit";
 #elif __WXOSX__
-            lib->Load( "liblibtabledataedit.dylib" );
+            libName = m_libraryPath + "liblibtabledataedit.dylib";
 #else
-            lib->Load( "libtabledataedit" );
+            libName = m_libraryPath + "libtabledataedit";
 #endif
+            lib->Load( libName );
             if( lib->IsLoaded() )
                 m_painters["TableView"] = lib;
             else
@@ -627,15 +653,17 @@ void MainFrame::OnSize(wxSizeEvent &event)
 void MainFrame::OnAttachDatabase(wxCommandEvent &WXUNUSED(event))
 {
     auto lib = new wxDynamicLibrary;
+    wxString libName;
 #ifdef __WXMSW__
-    lib->Load("dialogs");
+    libName = m_libraryPath + "dialogs";
 #elif __WXOSX__
-    lib->Load("liblibdialogs.dylib");
+    libName = m_libraryPath + "liblibdialogs.dylib";
 #else
-    lib->Load("libdialogs");
+    libName = m_libraryPath + "libdialogs";
 #endif
-    ATTACHDATABASE func = (ATTACHDATABASE) lib->GetSymbol("AttachToDatabase");
-    int result = func(this, m_db);
+    lib->Load( libName );
+    ATTACHDATABASE func = (ATTACHDATABASE) lib->GetSymbol( "AttachToDatabase" );
+    int result = func( this, m_db );
     if( result == wxID_OK )
         m_countAttached++;
     delete lib;
@@ -644,16 +672,18 @@ void MainFrame::OnAttachDatabase(wxCommandEvent &WXUNUSED(event))
 
 void MainFrame::OnDetachDatabase(wxCommandEvent &WXUNUSED(event))
 {
+    wxString libName;
     auto lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-    lib->Load("dialogs");
+    libName = m_libraryPath + "dialogs";
 #elif __WXOSX__
-    lib->Load("liblibdialogs.dylib");
+    libName = m_libraryPath + "liblibdialogs.dylib";
 #else
-    lib->Load("libdialogs");
+    libName = m_libraryPath + "libdialogs";
 #endif
-    DETACHDATABASE func = (DETACHDATABASE) lib->GetSymbol("DetachDatabase");
-    int result = func(this);
+    lib->Load( libName );
+    DETACHDATABASE func = (DETACHDATABASE) lib->GetSymbol( "DetachDatabase" );
+    int result = func( this );
     if( result == wxID_OK )
         m_countAttached--;
     delete lib;
@@ -670,18 +700,20 @@ void MainFrame::OnUpdateUIDetachDB(wxUpdateUIEvent &event)
 
 void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
 {
+    wxString libName;
     auto lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-    lib->Load("dialogs");
+    libName = m_libraryPath + "dialogs";
 #elif __WXOSX__
-    lib->Load("liblibdialogs.dylib");
+    libName = m_libraryPath + "liblibdialogs.dylib";
 #else
-    lib->Load("libdialogs");
+    libName = m_libraryPath + "libdialogs";
 #endif
+    lib->Load( libName );
     if( lib->IsLoaded() )
     {
-        CHOOSEOBJECT func = (CHOOSEOBJECT) lib->GetSymbol("ChooseObject");
-        int res = func(m_frame, 0 );
+        CHOOSEOBJECT func = (CHOOSEOBJECT) lib->GetSymbol( "ChooseObject" );
+        int res = func( m_frame, 0 );
         if( res == wxID_OK )
         {
             wxXmlDocument doc;

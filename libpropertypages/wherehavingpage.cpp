@@ -13,6 +13,8 @@
 #include <math.h>
 #include <string>
 #include "wx/dynlib.h"
+#include "wx/stdpaths.h"
+#include "wx/filename.h"
 #include "wx/grid.h"
 #include "wx/headerctrl.h"
 #include "wherehavingpage.h"
@@ -217,7 +219,9 @@ void WhereHavingPage::OnMenuSelection(wxCommandEvent &event)
 #ifdef __WXMSW__
     lib->Load( "dialogs" );
 #elif __WXMAC__
-    lib->Load( "liblibdialogs.dylib" );
+    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+    auto path = fn.GetPath() + wxFileName::GetPathSeparator() + ".." + wxFileName::GetPathSeparator() + "Frameworks" + wxFileName::GetPathSeparator();
+    lib->Load( path + "liblibdialogs.dylib" );
 #else
     lib->Load( "libdialogs" );
 #endif

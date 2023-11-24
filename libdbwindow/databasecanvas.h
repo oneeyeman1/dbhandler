@@ -97,6 +97,7 @@ private:
     std::vector<LibrariesInfo> m_path;
     wxString m_dbName, m_dbType;
     std::vector<TableField *> m_queryFields;
+    wxString m_libPath;
 };
 
 #define wxID_TABLECLOSE            20

@@ -24,6 +24,8 @@
 #include "wx/grid.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
+#include "wx/stdpaths.h"
+#include "wx/filename.h"
 #include "wx/cmdproc.h"
 #include "database.h"
 #include "tablecanvas.h"
@@ -66,6 +68,16 @@ bool TableView::OnCreate(wxDocument *doc, long flags)
             height = m_tb->GetSize().GetHeight();
         }
     }
+    auto stdPath = wxStandardPaths::Get();
+#ifdef __WXOSX__
+    wxFileName fn( stdPath.GetExecutablePath() );
+    fn.RemoveLastDir();
+    m_libPath = fn.GetPathWithSe() + "Frameworks/" + wxFileName::GetPathSeparator();
+#elif __WXGTK__
+    m_libPath = stdPath.wxGetInstallPrefix() + "/";
+#elif
+    m_libPath = stdPath.GetExecutablePath() + "/";
+#endif
     wxPoint start( 0, height );
     wxRect clientRect = parent->GetClientRect();
     clientRect.height -= height;
@@ -102,13 +114,15 @@ void TableView::GetTablesForView(Database *db)
 {
     std::vector<wxString> tables;
     wxDynamicLibrary lib;
+    wxString libName;
 #ifdef __WXMSW__
-    lib.Load( "dialogs" );
+    libName = m_libPath + "dialogs";
 #elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
+    libName = m_libPath + "liblibdialogs.dylib";
 #else
-    lib.Load( "libdialogs" );
+    libName = m_libPath + "libdialogs";
 #endif
+    lib.Load( libName );
     if( lib.IsLoaded() )
     {
         TABLESELECTION func = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
@@ -190,13 +204,15 @@ void TableView::OnFieldProperties(wxCommandEvent &WXUNUSED(event))
     bool logOnly = false;
     wxString tableName, schemaName;
     wxDynamicLibrary lib;
+    wxString libName;
 #ifdef __WXMSW__
     lib.Load( "dialogs" );
 #elif __WXMAC__
-    lib.Load( "liblibdialogs.dylib" );
+    lib.Load( m_libPath + "liblibdialogs.dylib" );
 #else
     lib.Load( "libdialogs" );
 #endif
+    lib.Load( libName );
     int res = 0;
     if( lib.IsLoaded() )
     {
