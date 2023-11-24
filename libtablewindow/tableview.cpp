@@ -75,7 +75,7 @@ bool TableView::OnCreate(wxDocument *doc, long flags)
     m_libPath = fn.GetPathWithSe() + "Frameworks/" + wxFileName::GetPathSeparator();
 #elif __WXGTK__
     m_libPath = stdPath.GetInstallPrefix() + "/lib/";
-#elif
+#elif __WXMSW__
     m_libPath = stdPath.GetExecutablePath() + "/";
 #endif
     wxPoint start( 0, height );
