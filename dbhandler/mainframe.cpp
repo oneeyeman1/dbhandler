@@ -84,7 +84,8 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
 #elif __WXGTK__
     m_libraryPath = stdPath.GetInstallPrefix() + "/lib/";
 #elif __WXMSW__
-    m_libraryPath = stdPath.GetExecutablePath() + "/";
+    wxFileName fn( stdPath.GetExecutablePath() );
+    m_libraryPath = fn.GetPathWithSep();
 #endif
     wxConfigBase *config = wxConfigBase::Get( "DBManager" );
     wxString path = config->GetPath();

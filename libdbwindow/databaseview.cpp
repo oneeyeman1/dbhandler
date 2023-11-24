@@ -255,8 +255,9 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_libPath = fn.GetPathWithSep() + "Frameworks/";
 #elif __WXGTK__
     m_libPath = stdPath.GetInstallPrefix() + "/lib/";
-#elif
-    m_libPath = stdPath.GetExecutablePath() + "/";
+#elif __WXMSW__
+    wxFileName fn( stdPath.GetExecutablePath() );
+    m_libPath = fn.GetPathWithSep();
 #endif
     m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
 //    m_frame->SetMenuBar( parent->GetMenuBar() );
@@ -1465,7 +1466,7 @@ void DrawingView::OnAlterTable(wxCommandEvent &WXUNUSED(event))
     wxString libName;
     wxDynamicLibrary lib1;
 #ifdef __WXMSW__
-    libName m_libPath + "tabledataedit";
+    libName = m_libPath + "tabledataedit";
 #elif __WXOSX__
     libName = m_libPath + "liblibtabledataedit.dylib";
 #else

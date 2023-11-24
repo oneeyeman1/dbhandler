@@ -121,7 +121,8 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
     if( engine == "SQLite" && !name.IsEmpty() )
         connectStr = name;
 #ifdef __WXMSW__
-    libName = stdPath.GetExecutablePath() + "/dialogs";
+    wxFileName fn( stdPath.GetExecutablePath() );
+    libName = fn.GetPathWithSep() + "dialogs";
 #elif __WXOSX__
     wxFileName fn( stdPath.GetExecutablePath() );
     fn.RemoveLastDir();
