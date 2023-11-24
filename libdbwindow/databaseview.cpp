@@ -640,7 +640,7 @@ void DrawingView::CreateViewToolBar()
             break;
         case 1:
             m_tb->SetSize( 0, 0,  size.x, wxDefaultCoord );
-            offsetTop = m_tb->GetSize().x;
+            offsetTop = m_tb->GetSize().y;
 #if defined( _WXMSW__ ) || defined( __WXGTK__ )
             m_parent->GetClientWindow()->SetSize( 0, offsetTop, size.x, size.y - offsetTop );
 #endif
