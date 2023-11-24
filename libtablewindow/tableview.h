@@ -25,6 +25,7 @@ private:
     wxToolBar *m_tb;
     wxDocMDIChildFrame *m_frame;
     DatabaseTable *m_table;
+    wxString m_libPath;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
