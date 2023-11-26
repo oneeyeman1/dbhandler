@@ -35,7 +35,22 @@ DataEditDocTemplate::DataEditDocTemplate(wxDocManager *manager, const wxString &
 {
 }
 
-bool DataEditDocTemplate::CreateDataEditDocument(const wxString &path, int flags, Database *db, const wxString &tableName)
+TableEditView *DataEditDocTemplate::CreateDatabaseView(wxDocument *doc, ViewType type, std::map<wxString, wxDynamicLibrary *> &painters, ToolbarSetup &tbSetup, long flags)
+{
+    wxScopedPtr<TableEditView> view( (TableEditView *) DoCreateView() );
+    if( !view )
+        return NULL;
+    view->SetViewType( type );
+    view->SetDocument( doc );
+    view->SetPaintersMap( painters );
+    view->SetToolbarOPtions( tbSetup );
+    if( !view->OnCreate( doc, flags ) )
+        return NULL;
+    return view.release();
+}
+
+
+bool DataEditDocTemplate::CreateDataEditDocument(const wxString &path, int flags, Database *db)
 {
     TableEditDocument *const doc = (TableEditDocument *) DoCreateDocument();
     wxTRY
@@ -43,7 +58,7 @@ bool DataEditDocTemplate::CreateDataEditDocument(const wxString &path, int flags
         doc->SetFilename( path );
         doc->SetDocumentTemplate( this );
         GetDocumentManager()->AddDocument( doc );
-        doc->SetDatabaseAndTableName( db, tableName );
+        doc->SetDatabaseAndTableName( db );
         doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
         wxScopedPtr<TableEditView> view( (TableEditView *) DoCreateView() );
         if( !view )

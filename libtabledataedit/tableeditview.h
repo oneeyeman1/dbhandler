@@ -26,6 +26,20 @@
 
 class DBTableEdit;
 
+enum ViewType
+{
+    DatabaseView,
+    NewViewView,
+    QueryView,
+    TableView
+};
+
+struct ToolbarSetup
+{
+    bool m_hideShow, m_showTooltips, m_showText;
+    int m_orientation;
+};
+
 class TableEditView: public wxView 
 {
 public:
@@ -36,9 +50,12 @@ public:
     void DisplayRecords(const std::vector<DataEditFiield> &row);
     void CompleteRetrieval(const std::vector<std::wstring> &errorMessages);
     DBTableEdit *m_handler;
+    void GetTablesForView(Database *db, bool init);
+    void SetToolbarOption(const ToolbarSetup &tbSetup);
 protected:
     void ThreadEventHandler(wxThreadEvent &event);
     void OnCancelQuery(wxCommandEvent &event);
+    void CreateMenuAndToolbar();
 private:
     Database *m_db;
     wxBoxSizer *sizer;
@@ -50,6 +67,8 @@ private:
     DatabaseTable *m_table;
     int m_processed;
     bool m_queryexecuting;
+    wxString m_libPath;
+    ToolbarSetup m_tbSettings;
     wxDECLARE_DYNAMIC_CLASS(TableEditView);
 };
 

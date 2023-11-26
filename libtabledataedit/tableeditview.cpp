@@ -35,7 +35,10 @@
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/artprov.h"
+#include "wx/dynlib.h"
 #include "wx/grid.h"
+#include "wx/stdpaths.h"
+#include "wx/filename.h"
 #include "wx/mstream.h"
 #include "database.h"
 #include "imagecellrenderer.h"
@@ -46,6 +49,8 @@
 
 #include "res/queryexec.xpm"
 #include "res/querycancel.xpm"
+
+typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::map<wxString, std::vector<TableDefinition> > &, std::vector<std::wstring> &, bool, const int, bool);
 
 wxIMPLEMENT_DYNAMIC_CLASS(TableEditView, wxView);
 
@@ -69,6 +74,17 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
         if( tb && tb->GetName() == "StyleBar" )
             m_styleBar = tb;
     }
+    auto stdPath = wxStandardPaths::Get();
+#ifdef __WXOSX__
+    wxFileName fn( stdPath.GetExecutablePath() );
+    fn.RemoveLastDir();
+    m_libPath = fn.GetPathWithSep() + "Frameworks/";
+#elif __WXGTK__
+    m_libPath = stdPath.GetInstallPrefix() + "/lib/";
+#elif __WXMSW__
+    wxFileName fn( stdPath.GetExecutablePath() );
+    m_libPath = fn.GetPathWithSep();
+#endif
     const wxString tableName = dynamic_cast<TableEditDocument *>( doc )->GetTableName();
     wxString title = "Data Management for " + tableName;
     m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
@@ -93,8 +109,10 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
 #else
     ptCanvas = wxDefaultPosition;
 #endif
+    CreateMenuAndToolbar();
     bool found = false;
     m_db = dynamic_cast<TableEditDocument *>( doc )->GetDatabase();
+    GetTablesForView( dynamic_cast<TableEditDocument *>( doc )->GetDatabase(), true );
     for( auto it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++ it )
         for( auto it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
             if( (*it1)->GetTableName() == tableName )
@@ -257,4 +275,68 @@ void TableEditView::OnCancelQuery(wxCommandEvent &WXUNUSED(event))
         }
     }
     m_queryexecuting = !m_queryexecuting;
+}
+
+void TableEditView::GetTablesForView(Database *db, bool init)
+{
+    std::map<wxString, std::vector<TableDefinition> > tables;
+    std::vector<std::wstring> tableNames;
+    int res = -1;
+    wxString query, documentName = "";
+    wxString libName;
+    wxDynamicLibrary lib;
+    bool quickSelect = false;
+#ifdef __WXMSW__
+    libName = m_libPath + "dialogs";
+#elif __WXMAC__
+    libName = m_libPath + "liblibdialogs.dylib";
+#else
+    libName = m_libPath + "libdialogs";
+#endif
+    lib.Load( libName );
+    if( lib.IsLoaded() )
+    {
+        TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
+        res = func2( m_frame, db, tables, tableNames, true, 1, true );
+    }
+}
+
+void TableEditView::CreateMenuAndToolbar()
+{
+    int offsetTop = 0, offsetLeft = 0, offsetRight = 0, offsetBottom = 0, position = 0;
+    long style = wxNO_BORDER | wxTB_FLAT;
+    switch( m_tbSettings.m_orientation )
+    {
+    case 0:
+        style |= wxTB_VERTICAL;
+        break;
+    case 1:
+        style |= wxTB_HORIZONTAL;
+        break;
+    case 2:
+        style |= wxTB_BOTTOM;
+        break;
+    case 3:
+        style |= wxTB_RIGHT;
+        break;
+    }
+    if( !m_tbSettings.m_showTooltips )
+        style |= wxTB_NO_TOOLTIPS;
+    if( m_tbSettings.m_showText )
+        style |= wxTB_TEXT ;
+    wxWindow *parent = nullptr;
+#ifdef __WXOSX__
+    parent = m_frame;
+#else
+    parent = m_parent;
+    position = dynamic_cast<wxDocMDIParentFrame *>( m_parent )->GetToolBar()->GetSize().GetHeight();
+#endif
+}
+
+void TableEditView::SetToolbarOption( const ToolbarSetup &tbSetup )
+{
+    m_tbSettings.m_hideShow = tbSetup.m_hideShow;
+    m_tbSettings.m_showTooltips = tbSetup.m_showTooltips;
+    m_tbSettings.m_showText = tbSetup.m_showText;
+    m_tbSettings.m_orientation = tbSetup.m_orientation;
 }

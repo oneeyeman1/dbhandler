@@ -43,8 +43,15 @@ std::map<long,std::vector<int> > &TableEditDocument::GetData()
     return m_tableData;
 }
 
-void TableEditDocument::SetDatabaseAndTableName(Database *db, const wxString &tableName)
+void TableEditDocument::SetDatabaseAndTableName(Database *db)
 {
     m_db = db;
-    m_name = tableName;
+    auto found = false;
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = db->GetTableVector().m_tables.begin(); it != db->GetTableVector().m_tables.begin() && !found; ++it )
+    {
+        for( std::vector<DatabaseTable *>::iterator it1 = ( *it ).second.begin(); it1 < ( *it ).second.end() && !found; ++it1 )
+        {
+
+        }
+    }
 }

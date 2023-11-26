@@ -24,13 +24,15 @@ class TableEditDocument: public wxDocument
 {
 public:
     std::map<long,std::vector<int> > &GetData();
-    void SetDatabaseAndTableName(Database *db, const wxString &tableName);
+    void SetDatabaseAndTableName(Database *db);
     const wxString &GetTableName() const { return m_name; }
     Database *GetDatabase() const { return m_db; }
+    void SetDatabase(Database *db) { m_db = db; }
 protected:
 
 private:
     std::map<long,std::vector<int> > m_tableData;
+    DatabaseTable *m_table;
     Database *m_db;
     wxString m_name;
     wxDECLARE_DYNAMIC_CLASS(TableEditDocument);
