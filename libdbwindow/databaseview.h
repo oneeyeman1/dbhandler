@@ -6,7 +6,8 @@ enum ViewType
 {
     DatabaseView,
     NewViewView,
-    QueryView
+    QueryView,
+    TableView
 };
 #endif
 
