@@ -178,4 +178,10 @@ private:
 #define wxID_UNDOALL              336
 #define wxID_SAVEQUERY            404
 #define wxID_SAVEQUERYAS          405
+#define wxID_CUTCOLUMN            501
+#define wxID_COPYCOLUMN           502
+#define wxID_PASTECOLUMN          503
+#define wxID_INSERTCOLUMN         504
+#define wxID_DELETECOLUMN         505
+#define wxID_DESIGNSYNTAX         506
 #endif

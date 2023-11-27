@@ -175,4 +175,10 @@ wxDECLARE_APP(MyApp);
 #define wxID_BACK                 403
 #define wxID_SAVEQUERY            404
 #define wx_SAVEQUERYAS            405
+#define wxID_CUTCOLUMN            501
+#define wxID_COPYCOLUMN           502
+#define wxID_PASTECOLUMN          503
+#define wxID_INSERTCOLUMN         504
+#define wxID_DELETECOLUMN         505
+#define wxID_DESIGNSYNTAX         506
 #endif // _WX_SAMPLES_DOCVIEW_DOCVIEW_H_
