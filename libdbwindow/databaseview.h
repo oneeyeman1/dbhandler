@@ -54,7 +54,7 @@ public:
     FontComboBox *GetFontName() const;
     wxComboBox *GetFontSize();
     wxTextCtrl *GetTextLogger() const;
-    void SetToolbarOPtions(const ToolbarSetup &tbSetup);
+    void SetToolbarOptions(const ToolbarSetup &tbSetup);
     void GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path);
     int SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect, bool isNewView = false);
     std::map<wxString, std::vector<TableDefinition> > &GetTablesMap();
