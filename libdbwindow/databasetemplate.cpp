@@ -64,7 +64,7 @@ DrawingView *DatabaseTemplate::CreateDatabaseView(wxDocument *doc, ViewType type
     view->SetViewType( type );
     view->SetDocument( doc );
     view->SetPaintersMap( painters );
-    view->SetToolbarOPtions( tbSetup );
+    view->SetToolbarOptions( tbSetup );
     if( !view->OnCreate( doc, flags ) )
         return NULL;
     return view.release();
@@ -125,7 +125,7 @@ DrawingView *DatabaseTemplate::CreateDatabaseView(wxDocument *doc, ViewType type
         return NULL;
     view->SetViewType( type );
     view->SetDocument( doc );
-    view->SetToolbarOPtions( tbSetup );
+    view->SetToolbarOptions( tbSetup );
     if( !view->OnCreate( doc, flags ) )
         return NULL;
     return view.release();

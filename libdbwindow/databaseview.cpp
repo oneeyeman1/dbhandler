@@ -2914,7 +2914,7 @@ void DrawingView::SetDatabaseChildWindow(wxDocMDIChildFrame *frame)
     m_dbFrame = frame;
 }
 
-void DrawingView::SetToolbarOPtions(const ToolbarSetup &tbSetup)
+void DrawingView::SetToolbarOptions(const ToolbarSetup &tbSetup)
 {
     m_tbSettings.m_hideShow = tbSetup.m_hideShow;
     m_tbSettings.m_showTooltips = tbSetup.m_showTooltips;
