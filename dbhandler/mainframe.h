@@ -81,7 +81,7 @@ private:
     wxFileSystemWatcher *m_oldPGWatcher;
 #endif
     std::vector<QueryInfo> queries;
-    wxXmlDocument doc;
+    wxXmlDocument m_doc;
     std::map<wxString, ToolbarSetup> m_tbSettings;
     wxString m_libraryPath;
     wxDECLARE_EVENT_TABLE();

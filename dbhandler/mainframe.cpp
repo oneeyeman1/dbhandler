@@ -724,31 +724,31 @@ void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
 
 void MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
 {
-    if( doc.GetRoot() )
+    if( m_doc.GetRoot() )
         return;
     for( std::vector<LibrariesInfo>::const_iterator it = path.begin(); it < path.end(); ++it )
     {
         if( (*it).m_isActive )
         {
-            if( !doc.Load( (*it).m_path ) )
+            if( !m_doc.Load( (*it).m_path ) )
             {
                 wxMessageBox( _( "Loading failure" ) );
                 return;
             }
         }
     }
-    if( doc.GetRoot() == nullptr )
+    if( m_doc.GetRoot() == nullptr )
     {
         wxMessageBox( _( "XNK file error:" ) );
         return;
     }
-    if( !doc.GetRoot()->GetName().IsSameAs( "Library" ) )
+    if( !m_doc.GetRoot()->GetName().IsSameAs( "Library" ) )
     {
         wxMessageBox( _( "XML formatting rtot"));
         return;
     }
     QueryInfo query;
-    wxXmlNode *children = doc.GetRoot()->GetChildren();
+    wxXmlNode *children = m_doc.GetRoot()->GetChildren();
     bool isQuery = false;
     while( children )
     {
