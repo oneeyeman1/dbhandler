@@ -47,28 +47,25 @@ public:
     ~TableEditView();
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
-    void DisplayRecords(const std::vector<DataEditFiield> &row);
-    void CompleteRetrieval(const std::vector<std::wstring> &errorMessages);
-    DBTableEdit *m_handler;
     void GetTablesForView(Database *db, bool init);
     void SetToolbarOption(const ToolbarSetup &tbSetup);
+    void SetViewType(ViewType type) { m_type = type; }
 protected:
-    void ThreadEventHandler(wxThreadEvent &event);
-    void OnCancelQuery(wxCommandEvent &event);
     void CreateMenuAndToolbar();
 private:
+    wxPanel *m_panel;
     Database *m_db;
     wxBoxSizer *sizer;
     wxDocMDIParentFrame *m_parent;
     wxDocMDIChildFrame *m_frame;
     wxToolBar *m_tb, *m_styleBar;
     wxGrid *m_grid;
-    DataRetriever *m_retriever;
     DatabaseTable *m_table;
     int m_processed;
     bool m_queryexecuting;
     wxString m_libPath;
     ToolbarSetup m_tbSettings;
+    ViewType m_type;
     wxDECLARE_DYNAMIC_CLASS(TableEditView);
 };
 

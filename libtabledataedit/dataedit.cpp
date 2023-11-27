@@ -23,12 +23,12 @@
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/grid.h"
+#include "wx/dynlib.h"
 #include "database.h"
-#include "dataretriever.h"
 #include "dbtableedit.h"
+#include "tableeditview.h"
 #include "dataeditdoctemplate.h"
 #include "tableeditdocument.h"
-#include "tableeditview.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -103,6 +103,8 @@ extern "C" WXEXPORT void CreateDataEditWindow(wxWindow *parent, wxDocManager *do
         docTemplate = new DataEditDocTemplate( docManager, "TableEdit", "*.edt", "", "edt", "TableEdit Doc", "TableEdit View", CLASSINFO( TableEditDocument ), CLASSINFO( TableEditView ) );
     }
     docTemplate->CreateDataEditDocument( "*.edt", wxDOC_NEW | wxDOC_SILENT, db );
+    dynamic_cast<TableEditDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db );
+    dynamic_cast<TableEditView *>( docManager->GetCurrentDocument()->GetFirstView() )->GetTablesForView( db, true );
 //    auto view = docManager->GetCurrentView();
 //    if( view )
 //        dynamic_cast<TableEditView *>( view )->SetProfiles( profiles );

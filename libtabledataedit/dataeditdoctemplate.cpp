@@ -22,10 +22,9 @@
 #include <string>
 #include "wx/docview.h"
 #include "wx/docmdi.h"
+#include "wx/dynlib.h"
 #include "wx/grid.h"
 #include "database.h"
-#include "dataretriever.h"
-#include "dbtableedit.h"
 #include "tableeditdocument.h"
 #include "tableeditview.h"
 #include "dataeditdoctemplate.h"
@@ -42,8 +41,7 @@ TableEditView *DataEditDocTemplate::CreateDatabaseView(wxDocument *doc, ViewType
         return NULL;
     view->SetViewType( type );
     view->SetDocument( doc );
-    view->SetPaintersMap( painters );
-    view->SetToolbarOPtions( tbSetup );
+    view->SetToolbarOption( tbSetup );
     if( !view->OnCreate( doc, flags ) )
         return NULL;
     return view.release();

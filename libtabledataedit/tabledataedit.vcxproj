@@ -36,20 +36,25 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dataeditdoctemplate.h" />
-    <ClInclude Include="dataretriever.h" />
-    <ClInclude Include="dbtableedit.h" />
     <ClInclude Include="imagecellrenderer.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="tableeditcanvas.h" />
     <ClInclude Include="tableeditdocument.h" />
     <ClInclude Include="tableeditview.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dataedit.cpp" />
     <ClCompile Include="dataeditdoctemplate.cpp" />
-    <ClCompile Include="dataretriever.cpp" />
-    <ClCompile Include="dbtableedit.cpp" />
     <ClCompile Include="imagecellrenderer.cpp" />
     <ClCompile Include="tableeditdocument.cpp" />
     <ClCompile Include="tableeditview.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="libtaledataedit.rc" />
+    <ResourceCompile Include="tabledataedit.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="bitmap1.bmp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>tabledataedit</ProjectName>

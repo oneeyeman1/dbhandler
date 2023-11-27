@@ -42,10 +42,9 @@
 #include "wx/mstream.h"
 #include "database.h"
 #include "imagecellrenderer.h"
-#include "dataretriever.h"
-#include "dbtableedit.h"
 #include "tableeditdocument.h"
 #include "tableeditview.h"
+#include "tableeditcanvas.h"
 
 #include "res/queryexec.xpm"
 #include "res/querycancel.xpm"
@@ -88,6 +87,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     const wxString tableName = dynamic_cast<TableEditDocument *>( doc )->GetTableName();
     wxString title = "Data Management for " + tableName;
     m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+    m_panel = new wxPanel( m_frame );
     wxPoint ptCanvas;
     sizer = new wxBoxSizer( wxVERTICAL );
 #ifdef __WXOSX__
@@ -111,28 +111,8 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
 #endif
     CreateMenuAndToolbar();
     bool found = false;
-    m_db = dynamic_cast<TableEditDocument *>( doc )->GetDatabase();
-    GetTablesForView( dynamic_cast<TableEditDocument *>( doc )->GetDatabase(), true );
-    for( auto it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++ it )
-        for( auto it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
-            if( (*it1)->GetTableName() == tableName )
-            {
-                m_table = (*it1);
-                found = true;
-            }
     wxASSERT( m_frame == GetFrame() );
-    m_grid = new wxGrid( m_frame, wxID_ANY );
-    m_grid->CreateGrid( 0, 0 );
-    for( int i = 0; i < m_table->GetNumberOfFields(); i++ )
-    {
-        m_grid->AppendCols();
-        wxString label( m_table->GetFields().at( i )->GetFieldName() );
-        m_grid->SetColLabelValue( i, label );
-    }
-    m_grid->HideRowLabels();
-    sizer->Add( m_grid, 1, wxEXPAND, 0 );
-    m_frame->SetSizer( sizer );
-#ifndef __WXOSX__
+/*#ifndef __WXOSX__
     wxSize size = m_parent->GetClientSize();
     m_tb->ClearTools();
     m_tb->AddTool( wxID_QUERYCANCEL, _( "Cancel" ), wxBitmap( querycancel ), _( "Cancel the query" ), wxITEM_NORMAL );
@@ -144,137 +124,19 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     int offset = m_tb->GetSize().y;
     frame->SetSize( 0, offset, size.x, size.y - offset );
     m_frame->SetSize( 0, 0, size.x, size.y - offset - 2 );
-#endif
+#endif*/
     sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
-    Bind( wxEVT_THREAD, &TableEditView::ThreadEventHandler, this );
-    Bind( wxEVT_MENU, &TableEditView::OnCancelQuery, this, wxID_QUERYCANCEL );
-    m_retriever = new DataRetriever( this );
-    m_handler = new DBTableEdit( m_db, m_table->GetSchemaName(), m_table->GetTableName(), m_retriever );
-    m_grid->BeginBatch();
-    if( m_handler->Run() != wxTHREAD_NO_ERROR )
-    {
-        wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
-        delete m_handler;
-        m_handler = NULL;
-    }
     return true;
 }
 
 TableEditView::~TableEditView()
 {
-    delete m_retriever;
-    m_retriever = nullptr;
-    if( m_handler )
-    {
-        delete m_handler;
-        m_handler = nullptr;
-    }
 }
 
 void TableEditView::OnDraw(wxDC *dc)
 {
-}
-
-void TableEditView::ThreadEventHandler(wxThreadEvent &WXUNUSED(event))
-{
-    {
-#if defined __WXMSW__ && _MSC_VER < 1900
-        wxCriticalSectionLocker( pCs->m_threadCS );
-#else
-        std::lock_guard<std::mutex> locker( m_db->GetTableVector().my_mutex );
-#endif
-        if( m_handler )         // does the thread still exist?
-        {
-            if( m_handler->Delete() != wxTHREAD_NO_ERROR )
-                wxLogError( "Can't delete the thread!" );
-        }
-    }       // exit from the critical section to give the thread
-        // the possibility to enter its destructor
-        // (which is guarded with m_pThreadCS critical section!)
-    while( 1 )
-    {
-        { // was the ~MyThread() function executed?
-#if defined __WXMSW__ && _MSC_VER < 1900
-            wxCriticalSectionLocker( pCs->m_threadCS );
-#else
-            std::lock_guard<std::mutex> locker( m_db->GetTableVector().my_mutex );
-#endif
-            if( !m_handler ) break;
-        }
-    // wait for thread completion
-        wxThread::This()->Sleep( 1 );
-    }
-}
-
-void TableEditView::DisplayRecords(const std::vector<DataEditFiield> &row)
-{
-    int i = 0;
-    bool succcess = m_grid->AppendRows();
-    if( succcess )
-    {
-        for( std::vector<DataEditFiield>::const_iterator it = row.begin(); it < row.end(); ++it )
-        {
-            if( (it)->type == WSTRING_TYPE )
-            {
-                wxString temp( (it)->value.stringValue );
-                m_grid->SetCellValue( m_processed, i++, temp );
-            }
-            if( (it) ->type == STRING_TYPE )
-            {
-                wxString temp( (it)->value.strValue );
-                m_grid->SetCellValue( m_processed, i++, temp );
-            }
-            if( ( it )->type == BLOB_TYPE )
-            {
-                wxMemoryInputStream stream( (it)->value.blobValue, (it)->m_size );
-                wxImage image(  stream );
-                if( image.IsOk () )
-                {
-                    m_grid->SetCellRenderer( m_processed, i++, new ImageCellRenderer( image ) );
-                    m_grid->SetReadOnly( m_processed, i );
-                }
-            }
-        }
-        wxString temp = wxString::Format( "Press Cancel to stop retrieval. Rows retrieved: %ld", ++m_processed );
-        m_parent->SetStatusText( temp, 0 );
-    }
-}
-
-void TableEditView::CompleteRetrieval(const std::vector<std::wstring> &errorMessages)
-{
-    for( std::vector<std::wstring>::const_iterator it = errorMessages.begin(); it < errorMessages.end(); ++it )
-        wxMessageBox( (*it) );
-    m_grid->AutoSize();
-    m_grid->EndBatch();
-    m_grid->SetFocus();
-    m_queryexecuting = false;
-    m_tb->SetToolNormalBitmap( wxID_QUERYCANCEL, wxBitmap( queryexec ) );
-}
-
-void TableEditView::OnCancelQuery(wxCommandEvent &WXUNUSED(event))
-{
-    if( m_queryexecuting )
-    {
-        m_handler->CancelProcessing();
-        m_tb->SetToolNormalBitmap( wxID_QUERYCANCEL, wxBitmap( queryexec ) );
-    }
-    else
-    {
-        m_grid->ClearGrid();
-        m_grid->BeginBatch();
-        m_processed = 0;
-        m_tb->SetToolNormalBitmap( wxID_QUERYCANCEL, wxBitmap( querycancel ) );
-        m_handler = new DBTableEdit( m_db, m_table->GetSchemaName(), m_table->GetTableName(), m_retriever );
-        if( m_handler->Run() != wxTHREAD_NO_ERROR )
-        {
-            wxMessageBox( _( "Internal error. Try to clean some memory and try again!" ) );
-            delete m_handler;
-            m_handler = NULL;
-        }
-    }
-    m_queryexecuting = !m_queryexecuting;
 }
 
 void TableEditView::GetTablesForView(Database *db, bool init)
@@ -298,7 +160,32 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     {
         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
         res = func2( m_frame, db, tables, tableNames, true, 1, true );
+        if( res == wxID_CANCEL )
+        {
+            m_frame->Close();
+            return;
+        }
     }
+    auto found = false;
+    auto tableName = tableNames.at( 0 );
+    for( auto it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++ it )
+        for( auto it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
+            if( (*it1)->GetTableName() == tableName )
+            {
+                m_table = (*it1);
+                found = true;
+            }
+    m_grid = new wxGrid( m_frame, wxID_ANY );
+    m_grid->CreateGrid( 0, 0 );
+    for( int i = 0; i < m_table->GetNumberOfFields(); i++ )
+    {
+        m_grid->AppendCols();
+        wxString label( m_table->GetFields().at( i )->GetFieldName() );
+        m_grid->SetColLabelValue( i, label );
+    }
+    m_grid->HideRowLabels();
+    sizer->Add( m_grid, 1, wxEXPAND, 0 );
+    m_frame->SetSizer( sizer );
 }
 
 void TableEditView::CreateMenuAndToolbar()
@@ -331,6 +218,60 @@ void TableEditView::CreateMenuAndToolbar()
     parent = m_parent;
     position = dynamic_cast<wxDocMDIParentFrame *>( m_parent )->GetToolBar()->GetSize().GetHeight();
 #endif
+    auto mbar = new wxMenuBar;
+    auto fileMenu = new wxMenu;
+    fileMenu->Append( wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
+    fileMenu->AppendSeparator();
+    fileMenu->AppendSeparator();
+    fileMenu->Append( wxID_EXIT );
+    mbar->Insert( 0, fileMenu, _( "File" ) );
+    auto menuEdit = new wxMenu();
+    menuEdit->Append( wxID_UNDO, _( "Undo\tCtrl+Z" ), _( "Undo the action" ) );
+    menuEdit->AppendSeparator();
+    menuEdit->Append( wxID_CUTCOLUMN, _( "Cut column" ), _( "Cut Column" ) );
+    menuEdit->Append( wxID_COPYCOLUMN, _( "Copy column" ), _( "Copy Column" ) );
+    menuEdit->Append( wxID_PASTECOLUMN, _( "Paste Column" ), _( "Paste Column" ) );
+    menuEdit->Append( wxID_INSERTCOLUMN, _( "Insert Column" ), _( "Insert Column" ) );
+    menuEdit->Append( wxID_DELETECOLUMN, _( "Delete Column" ), _( "Delete Column" ) );
+    menuEdit->AppendSeparator();
+    menuEdit->Append( wxID_TABLEPROPERTIES, _( "Table Properties..." ), _( "Table Properties" ) );
+    mbar->Insert( 1, menuEdit, _( "&Edit" ) );
+    auto menuDesign = new wxMenu();
+    menuDesign->Append( wxID_DESIGNSYNTAX, _( "Syntax" ), _( "SQL Syntax View" ) );
+    mbar->Insert( 2, menuDesign, _( "&Design" ) );
+    auto helpMenu = new wxMenu;
+    helpMenu->Append( wxID_HELP, _( "Help" ), _( "Help" ) );
+    mbar->Append( helpMenu, _( "Help" ) );
+    m_frame->SetMenuBar( mbar );
+    wxBitmapBundle save;
+#ifdef __WXMSW__
+    HANDLE gs_wxMainThread = NULL;
+    const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "tabledataedit", &gs_wxMainThread );
+    const void* data = nullptr;
+    size_t sizeSave = 0;
+    if( !wxLoadUserResource( &data, &sizeSave, "save", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+    }
+    else
+    {
+        save = wxBitmapBundle::FromSVG( (const char *) data, wxSize( 16, 16 ) );
+    }
+#elif __WXOSX__
+    save = wxBitmapBundle::FromSVGResource( "save", wxSize( 16, 16 ) );
+#else
+    save = wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR );
+#endif
+    m_tb->AddTool( wxID_NEW, _( "New" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
+    m_tb->AddTool( wxID_OPEN, _( "Open" ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
+    m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), save, save, wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
+    m_tb->AddSeparator();
+    m_tb->AddTool( wxID_CUTCOLUMN, _( "Cut" ), wxArtProvider::GetBitmapBundle( wxART_CUT ), wxArtProvider::GetBitmapBundle( wxART_CUT ), wxITEM_NORMAL, _( "Cut" ), _( "Cut Column" ) );
+    m_tb->AddTool( wxID_COPYCOLUMN, _( "Copy" ), wxArtProvider::GetBitmapBundle( wxART_COPY ), wxArtProvider::GetBitmapBundle( wxART_COPY ), wxITEM_NORMAL, _( "Copy" ), _( "Copy Column" ) );
+    m_tb->AddTool( wxID_CUTCOLUMN, _( "Paste" ), wxArtProvider::GetBitmapBundle( wxART_PASTE ), wxArtProvider::GetBitmapBundle( wxART_PASTE ), wxITEM_NORMAL, _( "Paste" ), _( "Paste Column" ) );
+    m_tb->AddTool( wxID_DELETECOLUMN, _( "Delete Column" ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxITEM_NORMAL, _( "Delete Column" ), _( "Delete Column" ) );
+    m_tb->Realize();
 }
 
 void TableEditView::SetToolbarOption( const ToolbarSetup &tbSetup )
