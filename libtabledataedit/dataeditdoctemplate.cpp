@@ -25,6 +25,7 @@
 #include "wx/dynlib.h"
 #include "wx/grid.h"
 #include "database.h"
+#include "tableattributes.h"
 #include "tableeditdocument.h"
 #include "tableeditview.h"
 #include "dataeditdoctemplate.h"
@@ -34,7 +35,7 @@ DataEditDocTemplate::DataEditDocTemplate(wxDocManager *manager, const wxString &
 {
 }
 
-TableEditView *DataEditDocTemplate::CreateDatabaseView(wxDocument *doc, ViewType type, std::map<wxString, wxDynamicLibrary *> &painters, ToolbarSetup &tbSetup, long flags)
+TableEditView *DataEditDocTemplate::CreateDatabaseView(wxDocument *doc, ViewType type, ToolbarSetup &tbSetup, long flags)
 {
     wxScopedPtr<TableEditView> view( (TableEditView *) DoCreateView() );
     if( !view )
@@ -48,7 +49,7 @@ TableEditView *DataEditDocTemplate::CreateDatabaseView(wxDocument *doc, ViewType
 }
 
 
-bool DataEditDocTemplate::CreateDataEditDocument(const wxString &path, int flags, Database *db)
+bool DataEditDocTemplate::CreateDataEditDocument(const wxString &path, int flags, Database *db, ViewType type, ToolbarSetup &tbSetup)
 {
     TableEditDocument *const doc = (TableEditDocument *) DoCreateDocument();
     wxTRY
@@ -58,14 +59,10 @@ bool DataEditDocTemplate::CreateDataEditDocument(const wxString &path, int flags
         GetDocumentManager()->AddDocument( doc );
         doc->SetDatabaseAndTableName( db );
         doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
-        wxScopedPtr<TableEditView> view( (TableEditView *) DoCreateView() );
-        if( !view )
+        if( CreateDatabaseView( doc, type, tbSetup, flags ) )
             return true;
-        view->SetDocument( doc );
-        if( !view->OnCreate( doc, flags ) )
-            return true;
-        if( view.release() )
-            return true;
+        if( GetDocumentManager()->GetDocuments().Member( doc ) )
+            doc->DeleteAllViews();
         return false;
     }
     wxCATCH_ALL
