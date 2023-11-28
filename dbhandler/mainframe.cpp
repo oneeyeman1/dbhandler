@@ -45,7 +45,7 @@
 typedef void (*ODBCSETUP)(wxWindow *);
 typedef Database *(*DBPROFILE)(wxWindow *, const wxString &, wxString &, wxString &, wxString &, std::vector<Profile> &);
 typedef void (*DATABASE)(wxWindow *, wxDocManager *, Database *, ViewType, std::map<wxString, wxDynamicLibrary *> &, const std::vector<Profile> &, const std::vector<QueryInfo> &, const std::vector<LibrariesInfo> &, ToolbarSetup &);
-typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, ViewType, DatabaseTable *, const wxString &);
+typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, ViewType, ToolbarSetup &);
 typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 typedef int (*ATTACHDATABASE)(wxWindow *, Database *);
 typedef int (*DETACHDATABASE)(wxWindow *);
@@ -608,7 +608,7 @@ void MainFrame::OnTable(wxCommandEvent &WXUNUSED(event))
         if( m_db && lib->IsLoaded() )
         {
             TABLE func = (TABLE) lib->GetSymbol( "CreateDataEditWindow" );
-            func( this, m_manager, m_db, TableView, nullptr, wxEmptyString );                 // create with possible alteration table
+            func( this, m_manager, m_db, TableView, m_tbSettings["ViewBar"] );                 // create with possible alteration table
         }
         else if( !lib->IsLoaded() )
             wxMessageBox("Error loading the library. Please re-install the software and try again.");
