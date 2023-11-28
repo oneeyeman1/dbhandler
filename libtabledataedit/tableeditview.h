@@ -66,6 +66,7 @@ private:
     wxString m_libPath;
     ToolbarSetup m_tbSettings;
     ViewType m_type;
+    TableSettngs *attriutes;
     wxDECLARE_DYNAMIC_CLASS(TableEditView);
 };
 

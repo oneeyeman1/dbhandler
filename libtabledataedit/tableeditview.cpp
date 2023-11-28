@@ -41,6 +41,7 @@
 #include "wx/filename.h"
 #include "wx/mstream.h"
 #include "database.h"
+#include "tableattributes.h"
 #include "imagecellrenderer.h"
 #include "tableeditdocument.h"
 #include "tableeditview.h"
@@ -57,7 +58,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
 {
     m_processed = 0;
     m_queryexecuting = true;
-    wxToolBar *tb = nullptr;
+    m_tb = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     m_parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
@@ -65,7 +66,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     wxWindowList children = m_parent->GetChildren();
     for( wxWindowList::iterator it = children.begin(); it != children.end(); it++ )
     {
-        tb = wxDynamicCast( *it, wxToolBar );
+        auto tb = wxDynamicCast( *it, wxToolBar );
         if( tb && tb->GetName() == "ViewBar" )
         {
             m_tb = tb;
@@ -167,25 +168,56 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         }
     }
     auto found = false;
-    auto tableName = tableNames.at( 0 );
-    for( auto it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++ it )
-        for( auto it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
-            if( (*it1)->GetTableName() == tableName )
-            {
-                m_table = (*it1);
-                found = true;
-            }
-    m_grid = new wxGrid( m_frame, wxID_ANY );
-    m_grid->CreateGrid( 0, 0 );
-    for( int i = 0; i < m_table->GetNumberOfFields(); i++ )
+    DatabaseTable *table = nullptr;
+    for( std::map<wxString, std::vector<TableDefinition> >::iterator it = tables.begin(); it != tables.end() && !found; ++it )
     {
-        m_grid->AppendCols();
-        wxString label( m_table->GetFields().at( i )->GetFieldName() );
-        m_grid->SetColLabelValue( i, label );
+        for( auto it1 = db->GetTableVector().m_tables.begin(); it1 != db->GetTableVector().m_tables.end() && !found; ++ it1 )
+            for( auto it2 = ( *it1 ).second.begin(); it2 < ( *it1 ).second.end() && !found; ++it2 )
+            {
+                if( (*it).first == (*it1).first &&
+                    (*it).second.at( 0 ).schemaName == (*it2)->GetSchemaName() &&
+                    (*it).second.at( 0 ).tableName == (*it2)->GetTableName() )
+                {
+                    dynamic_cast<TableEditDocument *>( GetDocument() )->SetTable( (*it2) );
+                    table = (*it2);
+                    found = true;
+                }
+            }
     }
-    m_grid->HideRowLabels();
+    auto sizer = new wxBoxSizer( wxVERTICAL );
+    m_grid = new wxGrid( m_panel, wxID_ANY );
+    m_grid->CreateGrid( 0, 6 );
+    m_grid->SetColLabelValue( 0, _( "Column Name" ) );
+    m_grid->SetColLabelValue( 1, _( "Data Type" ) );
+    m_grid->SetColLabelValue( 2, _( "Width" ) );
+    m_grid->SetColLabelValue( 3, _( "Dec" ) );
+    m_grid->SetColLabelValue( 4, _( "Null" ) );
+    m_grid->SetColLabelValue( 5, _( "Default" ) );
+    const wxString choices[] = 
+    {
+        "(None)",
+        "autoincrement",
+        "current date",
+        "current tiime",
+        "current timestamp",
+        "timestamp",
+        "null",
+        "user"
+    };
+    for( int i = 0; i < table->GetNumberOfFields(); i++ )
+    {
+        m_grid->AppendRows();
+        wxString label( table->GetFields().at( i )->GetFieldName() );
+        m_grid->SetCellValue( i, 0, label );
+        m_grid->SetCellEditor( i, 1, new wxGridCellChoiceEditor( 8, choices ) );
+        m_grid->SetCellEditor( i, 5, new wxGridCellChoiceEditor( 8, choices ) );
+    }
+    m_grid->SetBackgroundColour( m_panel->GetBackgroundColour() );
     sizer->Add( m_grid, 1, wxEXPAND, 0 );
-    m_frame->SetSizer( sizer );
+    attriutes = new TableSettngs( m_panel, wxID_ANY );
+    sizer->Add( attriutes, 0, wxEXPAND, 0 );
+    m_panel->SetSizer( sizer );
+    m_frame->Layout();
 }
 
 void TableEditView::CreateMenuAndToolbar()
@@ -217,6 +249,20 @@ void TableEditView::CreateMenuAndToolbar()
 #else
     parent = m_parent;
     position = dynamic_cast<wxDocMDIParentFrame *>( m_parent )->GetToolBar()->GetSize().GetHeight();
+#endif
+#ifdef __WXOSX__
+    m_tb = m_frame->CreateToolBar();
+    if( m_type == QueryView )
+    {
+        m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
+    }
+#else
+    if( !m_tb )
+    {
+        m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
+    }
+    else
+        m_tb->ClearTools();
 #endif
     auto mbar = new wxMenuBar;
     auto fileMenu = new wxMenu;
