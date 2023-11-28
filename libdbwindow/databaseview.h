@@ -41,6 +41,12 @@ struct ToolbarSetup
     int m_orientation;
 };
 
+struct Configuration
+{
+    std::map<wxString, ToolbarSetup> m_tbSettings;
+    int m_querySource, m_queryPresentation;
+};
+
 // The view using MyCanvas to show its contents
 class DrawingView : public wxView
 {
@@ -54,7 +60,7 @@ public:
     FontComboBox *GetFontName() const;
     wxComboBox *GetFontSize();
     wxTextCtrl *GetTextLogger() const;
-    void SetToolbarOptions(const ToolbarSetup &tbSetup);
+    void SetToolbarOptions(Configuration *conf);
     void GetTablesForView(Database *db, bool init, const std::vector<QueryInfo> &queries, std::vector<LibrariesInfo> &path);
     int SelectTable(bool isTableView, std::map<wxString, std::vector<TableDefinition> > &tables, wxString &query, bool quickSelect, bool isNewView = false);
     std::map<wxString, std::vector<TableDefinition> > &GetTablesMap();
@@ -184,7 +190,6 @@ private:
     DesignCanvas *m_designCanvas;
     wxStyledTextCtrl *m_edit;
     wxFindReplaceDialog *m_findDlg;
-    ToolbarSetup m_tbSettings;
     wxFindReplaceData m_data;
     std::vector<Profile> m_profiles;
     std::vector<QueryInfo> m_queries;
@@ -192,6 +197,8 @@ private:
     std::map<wxString, std::vector<TableDefinition> > m_tables;
     NewViewOptions options;
     wxString m_libPath;
+    ToolbarSetup m_tbSetup;
+    Configuration *m_conf;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };

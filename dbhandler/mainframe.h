@@ -42,12 +42,18 @@ struct ToolbarSetup
     int m_orientation;
 };
 
+struct Configuration
+{
+    std::map<wxString, ToolbarSetup> m_tbSettings;
+    int m_querySource, m_queryPresentation;
+};
+
 class MainFrame : public wxDocMDIParentFrame
 {
 public:
     MainFrame(wxDocManager *manager);
     ~MainFrame();
-    ToolbarSetup GetViewToolbarSettings() { return m_tbSettings["ViewBar"]; }
+    ToolbarSetup GetViewToolbarSettings() { return m_conf->m_tbSettings["ViewBar"]; }
     wxCriticalSection m_threadCS;
     NewTableHandler *m_handler;
 protected:
@@ -82,8 +88,9 @@ private:
 #endif
     std::vector<QueryInfo> queries;
     wxXmlDocument m_doc;
-    std::map<wxString, ToolbarSetup> m_tbSettings;
     wxString m_libraryPath;
+    wxConfigBase *m_config;
+    Configuration *m_conf;
     wxDECLARE_EVENT_TABLE();
 };
 
