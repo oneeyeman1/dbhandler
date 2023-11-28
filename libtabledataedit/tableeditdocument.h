@@ -24,6 +24,7 @@ class TableEditDocument: public wxDocument
 {
 public:
     std::map<long,std::vector<int> > &GetData();
+    void SetTable(DatabaseTable *table) { m_table = table; }
     void SetDatabaseAndTableName(Database *db);
     const wxString &GetTableName() const { return m_name; }
     Database *GetDatabase() const { return m_db; }
