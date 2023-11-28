@@ -25,7 +25,7 @@
 #include "wx/grid.h"
 #include "wx/dynlib.h"
 #include "database.h"
-#include "dbtableedit.h"
+#include "tableattributes.h"
 #include "tableeditview.h"
 #include "dataeditdoctemplate.h"
 #include "tableeditdocument.h"
@@ -91,7 +91,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT void CreateDataEditWindow(wxWindow *parent, wxDocManager *docManager, Database *db)
+extern "C" WXEXPORT void CreateDataEditWindow(wxWindow *parent, wxDocManager *docManager, Database *db, ViewType type, ToolbarSetup &tbSettiongs)
 {
     DataEditDocTemplate *docTemplate;
 #ifdef __WXMSW__
@@ -102,7 +102,7 @@ extern "C" WXEXPORT void CreateDataEditWindow(wxWindow *parent, wxDocManager *do
     {
         docTemplate = new DataEditDocTemplate( docManager, "TableEdit", "*.edt", "", "edt", "TableEdit Doc", "TableEdit View", CLASSINFO( TableEditDocument ), CLASSINFO( TableEditView ) );
     }
-    docTemplate->CreateDataEditDocument( "*.edt", wxDOC_NEW | wxDOC_SILENT, db );
+    docTemplate->CreateDataEditDocument( "*.edt", wxDOC_NEW | wxDOC_SILENT, db, type, tbSettiongs );
     dynamic_cast<TableEditDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db );
     dynamic_cast<TableEditView *>( docManager->GetCurrentDocument()->GetFirstView() )->GetTablesForView( db, true );
 //    auto view = docManager->GetCurrentView();
