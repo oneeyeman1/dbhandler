@@ -7,15 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E31C1A3C261A46F000CFD640 /* dbtableedit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E31C1A3A261A46F000CFD640 /* dbtableedit.cpp */; };
-		E31C1A3D261A46F000CFD640 /* dbtableedit.h in Headers */ = {isa = PBXBuildFile; fileRef = E31C1A3B261A46F000CFD640 /* dbtableedit.h */; };
 		E31C1A402633CB2000CFD640 /* imagecellrenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = E31C1A3E2633CB2000CFD640 /* imagecellrenderer.h */; };
 		E31C1A412633CB2000CFD640 /* imagecellrenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E31C1A3F2633CB2000CFD640 /* imagecellrenderer.cpp */; };
+		E322AA8E2B15A2FE00ECD88D /* tableattributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322AA8C2B15A2FD00ECD88D /* tableattributes.cpp */; };
+		E322AA8F2B15A2FE00ECD88D /* tableattributes.h in Headers */ = {isa = PBXBuildFile; fileRef = E322AA8D2B15A2FE00ECD88D /* tableattributes.h */; };
 		E36BCFBF25DCED440019E587 /* dataeditdoctemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E36BCFBD25DCED440019E587 /* dataeditdoctemplate.cpp */; };
 		E36BCFC025DCED440019E587 /* dataeditdoctemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = E36BCFBE25DCED440019E587 /* dataeditdoctemplate.h */; };
 		E3F4768E25ABF48F0083800D /* dataedit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3F4768725ABF48F0083800D /* dataedit.cpp */; };
-		E3F4768F25ABF48F0083800D /* dataretriever.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3F4768825ABF48F0083800D /* dataretriever.cpp */; };
-		E3F4769025ABF48F0083800D /* dataretriever.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F4768925ABF48F0083800D /* dataretriever.h */; };
 		E3F4769125ABF48F0083800D /* tableeditdocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3F4768A25ABF48F0083800D /* tableeditdocument.cpp */; };
 		E3F4769225ABF48F0083800D /* tableeditdocument.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F4768B25ABF48F0083800D /* tableeditdocument.h */; };
 		E3F4769325ABF48F0083800D /* tableeditview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3F4768C25ABF48F0083800D /* tableeditview.cpp */; };
@@ -23,16 +21,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E31C1A3A261A46F000CFD640 /* dbtableedit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbtableedit.cpp; sourceTree = "<group>"; };
-		E31C1A3B261A46F000CFD640 /* dbtableedit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dbtableedit.h; sourceTree = "<group>"; };
 		E31C1A3E2633CB2000CFD640 /* imagecellrenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imagecellrenderer.h; sourceTree = "<group>"; };
 		E31C1A3F2633CB2000CFD640 /* imagecellrenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imagecellrenderer.cpp; sourceTree = "<group>"; };
+		E322AA8C2B15A2FD00ECD88D /* tableattributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tableattributes.cpp; sourceTree = "<group>"; };
+		E322AA8D2B15A2FE00ECD88D /* tableattributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tableattributes.h; sourceTree = "<group>"; };
 		E36BCFBD25DCED440019E587 /* dataeditdoctemplate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = dataeditdoctemplate.cpp; sourceTree = "<group>"; };
 		E36BCFBE25DCED440019E587 /* dataeditdoctemplate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dataeditdoctemplate.h; sourceTree = "<group>"; };
 		E3F4767925ABE9A30083800D /* liblibtabledataedit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibtabledataedit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3F4768725ABF48F0083800D /* dataedit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dataedit.cpp; sourceTree = "<group>"; };
-		E3F4768825ABF48F0083800D /* dataretriever.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dataretriever.cpp; sourceTree = "<group>"; };
-		E3F4768925ABF48F0083800D /* dataretriever.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dataretriever.h; sourceTree = "<group>"; };
 		E3F4768A25ABF48F0083800D /* tableeditdocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tableeditdocument.cpp; sourceTree = "<group>"; };
 		E3F4768B25ABF48F0083800D /* tableeditdocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tableeditdocument.h; sourceTree = "<group>"; };
 		E3F4768C25ABF48F0083800D /* tableeditview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tableeditview.cpp; sourceTree = "<group>"; };
@@ -69,13 +65,11 @@
 		E3F4768625ABE9CD0083800D /* libtabledataedit */ = {
 			isa = PBXGroup;
 			children = (
+				E322AA8C2B15A2FD00ECD88D /* tableattributes.cpp */,
+				E322AA8D2B15A2FE00ECD88D /* tableattributes.h */,
 				E31C1A3F2633CB2000CFD640 /* imagecellrenderer.cpp */,
 				E31C1A3E2633CB2000CFD640 /* imagecellrenderer.h */,
-				E31C1A3A261A46F000CFD640 /* dbtableedit.cpp */,
-				E31C1A3B261A46F000CFD640 /* dbtableedit.h */,
 				E3F4768725ABF48F0083800D /* dataedit.cpp */,
-				E3F4768825ABF48F0083800D /* dataretriever.cpp */,
-				E3F4768925ABF48F0083800D /* dataretriever.h */,
 				E3F4768A25ABF48F0083800D /* tableeditdocument.cpp */,
 				E3F4768B25ABF48F0083800D /* tableeditdocument.h */,
 				E3F4768C25ABF48F0083800D /* tableeditview.cpp */,
@@ -94,11 +88,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3F4769225ABF48F0083800D /* tableeditdocument.h in Headers */,
-				E3F4769025ABF48F0083800D /* dataretriever.h in Headers */,
-				E31C1A3D261A46F000CFD640 /* dbtableedit.h in Headers */,
 				E31C1A402633CB2000CFD640 /* imagecellrenderer.h in Headers */,
 				E3F4769425ABF48F0083800D /* tableeditview.h in Headers */,
 				E36BCFC025DCED440019E587 /* dataeditdoctemplate.h in Headers */,
+				E322AA8F2B15A2FE00ECD88D /* tableattributes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,10 +147,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				E36BCFBF25DCED440019E587 /* dataeditdoctemplate.cpp in Sources */,
-				E3F4768F25ABF48F0083800D /* dataretriever.cpp in Sources */,
 				E31C1A412633CB2000CFD640 /* imagecellrenderer.cpp in Sources */,
-				E31C1A3C261A46F000CFD640 /* dbtableedit.cpp in Sources */,
 				E3F4769125ABF48F0083800D /* tableeditdocument.cpp in Sources */,
+				E322AA8E2B15A2FE00ECD88D /* tableattributes.cpp in Sources */,
 				E3F4768E25ABF48F0083800D /* dataedit.cpp in Sources */,
 				E3F4769325ABF48F0083800D /* tableeditview.cpp in Sources */,
 			);
