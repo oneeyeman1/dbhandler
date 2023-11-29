@@ -35,21 +35,21 @@ DataEditDocTemplate::DataEditDocTemplate(wxDocManager *manager, const wxString &
 {
 }
 
-TableEditView *DataEditDocTemplate::CreateDatabaseView(wxDocument *doc, ViewType type, ToolbarSetup &tbSetup, long flags)
+TableEditView *DataEditDocTemplate::CreateDatabaseView(wxDocument *doc, ViewType type, Configuration *conf, long flags)
 {
     wxScopedPtr<TableEditView> view( (TableEditView *) DoCreateView() );
     if( !view )
         return NULL;
     view->SetViewType( type );
     view->SetDocument( doc );
-    view->SetToolbarOption( tbSetup );
+    view->SetToolbarOption( conf );
     if( !view->OnCreate( doc, flags ) )
         return NULL;
     return view.release();
 }
 
 
-bool DataEditDocTemplate::CreateDataEditDocument(const wxString &path, int flags, Database *db, ViewType type, ToolbarSetup &tbSetup)
+bool DataEditDocTemplate::CreateDataEditDocument(const wxString &path, int flags, Database *db, ViewType type, Configuration *conf)
 {
     TableEditDocument *const doc = (TableEditDocument *) DoCreateDocument();
     wxTRY
@@ -59,7 +59,7 @@ bool DataEditDocTemplate::CreateDataEditDocument(const wxString &path, int flags
         GetDocumentManager()->AddDocument( doc );
         doc->SetDatabaseAndTableName( db );
         doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
-        if( CreateDatabaseView( doc, type, tbSetup, flags ) )
+        if( CreateDatabaseView( doc, type, conf, flags ) )
             return true;
         if( GetDocumentManager()->GetDocuments().Member( doc ) )
             doc->DeleteAllViews();
