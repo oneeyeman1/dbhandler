@@ -111,7 +111,6 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     ptCanvas = wxDefaultPosition;
 #endif
     CreateMenuAndToolbar();
-    bool found = false;
     wxASSERT( m_frame == GetFrame() );
 /*#ifndef __WXOSX__
     wxSize size = m_parent->GetClientSize();
@@ -148,7 +147,6 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     wxString query, documentName = "";
     wxString libName;
     wxDynamicLibrary lib;
-    bool quickSelect = false;
 #ifdef __WXMSW__
     libName = m_libPath + "dialogs";
 #elif __WXMAC__
@@ -212,10 +210,10 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         m_grid->SetCellEditor( i, 1, new wxGridCellChoiceEditor( 8, choices ) );
         m_grid->SetCellEditor( i, 5, new wxGridCellChoiceEditor( 8, choices ) );
     }
-    m_grid->SetBackgroundColour( m_panel->GetBackgroundColour() );
+    m_grid->GetGridWindow()->SetBackgroundColour( m_panel->GetBackgroundColour() );
     sizer->Add( m_grid, 1, wxEXPAND, 0 );
-    attriutes = new TableSettngs( m_panel, wxID_ANY );
-    sizer->Add( attriutes, 0, wxEXPAND, 0 );
+    attributes = new TableSettngs( m_panel, wxID_ANY );
+    sizer->Add( attributes, 0, wxEXPAND, 0 );
     m_panel->SetSizer( sizer );
     m_frame->Layout();
 }
@@ -320,10 +318,10 @@ void TableEditView::CreateMenuAndToolbar()
     m_tb->Realize();
 }
 
-void TableEditView::SetToolbarOption( const ToolbarSetup &tbSetup )
+void TableEditView::SetToolbarOption(Configuration *conf)
 {
-    m_tbSettings.m_hideShow = tbSetup.m_hideShow;
-    m_tbSettings.m_showTooltips = tbSetup.m_showTooltips;
-    m_tbSettings.m_showText = tbSetup.m_showText;
-    m_tbSettings.m_orientation = tbSetup.m_orientation;
+    m_tbSettings.m_hideShow = conf->m_tbSettings["ViewBar"].m_hideShow;
+    m_tbSettings.m_showTooltips = conf->m_tbSettings["ViewBar"].m_showTooltips;
+    m_tbSettings.m_showText = conf->m_tbSettings["ViewBar"].m_showText;
+    m_tbSettings.m_orientation = conf->m_tbSettings["ViewBar"].m_orientation;
 }

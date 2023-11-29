@@ -40,7 +40,13 @@ struct ToolbarSetup
     int m_orientation;
 };
 
-class TableEditView: public wxView 
+struct Configuration
+{
+    std::map<wxString, ToolbarSetup> m_tbSettings;
+    int m_querySource, m_queryPresentation;
+};
+
+class TableEditView: public wxView
 {
 public:
     TableEditView() : wxView() {}
@@ -48,7 +54,7 @@ public:
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
     void GetTablesForView(Database *db, bool init);
-    void SetToolbarOption(const ToolbarSetup &tbSetup);
+    void SetToolbarOption(Configuration *conf);
     void SetViewType(ViewType type) { m_type = type; }
 protected:
     void CreateMenuAndToolbar();
@@ -66,7 +72,7 @@ private:
     wxString m_libPath;
     ToolbarSetup m_tbSettings;
     ViewType m_type;
-    TableSettngs *attriutes;
+    TableSettngs *attributes;
     wxDECLARE_DYNAMIC_CLASS(TableEditView);
 };
 
