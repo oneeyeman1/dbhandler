@@ -77,10 +77,11 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     fgs->Add( dummy_2 );
     fgs->Add( dummy_3 );
     fgs->Add( dummy_4 );
-
+    auto line = 1;
     for( std::vector<QueryArguments>::iterator it = arguments.begin(); it < arguments.end(); ++it )
     {
-        AddArgumentsLine( (*it) );
+        AddArgumentsLine( QueryArguments( line, (*it).m_name, (*it).m_type ) );
+        line++;
     }
     fgs->AddGrowableCol( 2 );
 
