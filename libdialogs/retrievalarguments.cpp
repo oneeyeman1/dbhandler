@@ -175,7 +175,7 @@ void RetrievalArguments::OnInsertArgument(wxCommandEvent &WXUNUSED(event))
         position++;
         (*it).m_number->SetLabel( wxString::Format( "%d", position ) );
     }
-    fgs->Layout();
+    sizer->Layout();
     Thaw();
 }
 
