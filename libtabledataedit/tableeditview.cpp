@@ -255,7 +255,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
 
 void TableEditView::CreateMenuAndToolbar()
 {
-    int offsetTop = 0, offsetLeft = 0, offsetRight = 0, offsetBottom = 0, position = 0;
+    int offset = 0, position = 0;
     long style = wxNO_BORDER | wxTB_FLAT;
     switch( m_tbSettings.m_orientation )
     {
@@ -280,9 +280,10 @@ void TableEditView::CreateMenuAndToolbar()
 #ifdef __WXOSX__
     parent = m_frame;
 #else
-    parent = m_parent;
+    parent = m_parent->GetClientWindow();
     position = dynamic_cast<wxDocMDIParentFrame *>( m_parent )->GetToolBar()->GetSize().GetHeight();
 #endif
+    wxSize size = m_parent->GetClientSize();
 #ifdef __WXOSX__
     m_tb = m_frame->CreateToolBar();
     if( m_type == QueryView )
@@ -351,6 +352,37 @@ void TableEditView::CreateMenuAndToolbar()
     m_tb->AddTool( wxID_CUTCOLUMN, _( "Paste" ), wxArtProvider::GetBitmapBundle( wxART_PASTE ), wxArtProvider::GetBitmapBundle( wxART_PASTE ), wxITEM_NORMAL, _( "Paste" ), _( "Paste Column" ) );
     m_tb->AddTool( wxID_DELETECOLUMN, _( "Delete Column" ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxITEM_NORMAL, _( "Delete Column" ), _( "Delete Column" ) );
     m_tb->Realize();
+    switch( m_tbSettings.m_orientation )
+    {
+    case 0:
+        m_tb->SetSize( 0, 0,  wxDefaultCoord, size.y );
+        offset = m_tb->GetSize().x;
+#if defined( __WXMSW__ ) || defined( __WXGTK__ )
+        m_frame->SetSize( offset, 0, size.x - offset, size.y );
+#endif
+        break;
+    case 1:
+        m_tb->SetSize( 0, 0,  size.x, wxDefaultCoord );
+        offset = m_tb->GetSize().y;
+#if defined( _WXMSW__ ) || defined( __WXGTK__ )
+        m_frame->SetSize( 0, offset, size.x, size.y - offset );
+#endif
+        break;
+    case 2:
+        offset = m_tb->GetSize().x;
+        m_tb->SetSize( size.x - offset, 0,  wxDefaultCoord, size.y );
+#if defined( _WXMSW__ ) || defined( __WXGTK__ )
+        m_frame->SetSize( 0, 0, size.x - offset, size.y );
+#endif
+        break;
+    case 3:
+        offset = m_tb->GetSize().y;
+#if defined( __WXMSW__ ) || defined( __WXGTK__ )
+        m_frame->SetSize( 0, 0, size.x, size.y - offset );
+#endif
+        m_tb->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
+        break;
+    }
 }
 
 void TableEditView::SetToolbarOption(Configuration *conf)
