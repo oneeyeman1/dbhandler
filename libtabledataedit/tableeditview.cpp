@@ -364,14 +364,14 @@ void TableEditView::CreateMenuAndToolbar()
     case 1:
         m_tb->SetSize( 0, 0,  size.x, wxDefaultCoord );
         offset = m_tb->GetSize().y;
-#if defined( _WXMSW__ ) || defined( __WXGTK__ )
+#if defined( __WXMSW__ ) || defined( __WXGTK__ )
         m_frame->SetSize( 0, offset, size.x, size.y - offset );
 #endif
         break;
     case 2:
         offset = m_tb->GetSize().x;
-        m_tb->SetSize( size.x - offset, 0,  wxDefaultCoord, size.y );
-#if defined( _WXMSW__ ) || defined( __WXGTK__ )
+        m_tb->SetSize( size.x - offset, 0,  offset, size.y );
+#if defined( __WXMSW__ ) || defined( __WXGTK__ )
         m_frame->SetSize( 0, 0, size.x - offset, size.y );
 #endif
         break;
