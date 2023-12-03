@@ -389,26 +389,45 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
 void DrawingView::CreateViewToolBar()
 {
     int position = 0, offset = 0;
-	long style = wxNO_BORDER | wxTB_FLAT;
-    switch( m_tbSetup.m_orientation )
+	long styleViewBar = wxNO_BORDER | wxTB_FLAT, styleStyleBar = wxNO_BORDER | wxTB_FLAT;
+    switch( m_tbSetup[0].m_orientation )
     {
     case 0:
-        style |= wxTB_VERTICAL;
+        styleViewBar |= wxTB_VERTICAL;
         break;
     case 1:
-        style |= wxTB_HORIZONTAL;
+        styleViewBar |= wxTB_HORIZONTAL;
         break;
     case 2:
-        style |= wxTB_BOTTOM;
+        styleViewBar |= wxTB_RIGHT;
         break;
     case 3:
-        style |= wxTB_RIGHT;
+        styleViewBar |= wxTB_BOTTOM;
         break;
     }
-    if( !m_tbSetup.m_showTooltips )
-        style |= wxTB_NO_TOOLTIPS;
-    if( m_tbSetup.m_showText )
-        style |= wxTB_TEXT ;
+    if( !m_tbSetup[0].m_showTooltips )
+        styleViewBar |= wxTB_NO_TOOLTIPS;
+    if( m_tbSetup[0].m_showText )
+        styleViewBar |= wxTB_TEXT ;
+    switch( m_tbSetup[1].m_orientation )
+    {
+    case 0:
+        styleStyleBar |= wxTB_VERTICAL;
+        break;
+    case 1:
+        styleStyleBar |= wxTB_HORIZONTAL;
+        break;
+    case 2:
+        styleStyleBar |= wxTB_RIGHT;
+        break;
+    case 3:
+        styleStyleBar |= wxTB_BOTTOM;
+        break;
+    }
+    if( !m_tbSetup[1].m_showTooltips )
+        styleStyleBar |= wxTB_NO_TOOLTIPS;
+    if( m_tbSetup[1].m_showText )
+        styleStyleBar |= wxTB_TEXT ;
     wxWindow *parent = nullptr;
 #ifdef __WXOSX__
     parent = m_frame;
@@ -416,24 +435,27 @@ void DrawingView::CreateViewToolBar()
     parent = m_parent->GetClientWindow();
     position = dynamic_cast<wxDocMDIParentFrame *>( m_parent )->GetToolBar()->GetSize().GetHeight();
 #endif
-    wxSize size = m_parent->GetClientSize();
+    auto size = m_parent->GetClientSize();
+    auto posFrame = wxPoint( 0, 0 );
+    auto sizeFrame = wxSize( size.x, size.y );
 #ifdef __WXOSX__
     m_tb = m_frame->CreateToolBar();
+    m_tb->SetName( "ViewBar" );
     if( m_type == QueryView )
     {
-        m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
+        m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, styleStyleBar, "StyleBar" );
     }
 #else
     if( !m_tb )
     {
-        m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "ViewBar" );
+        m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, styleViewBar, "ViewBar" );
     }
     else
         m_tb->ClearTools();
     if( m_type == QueryView )
     {
         if( !m_styleBar )
-            m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
+            m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, styleStyleBar, "StyleBar" );
         else
             m_styleBar->ClearTools();
     }
@@ -568,34 +590,44 @@ void DrawingView::CreateViewToolBar()
         }
         if( m_styleBar )
         {
-            m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-            m_fieldText->Bind( wxEVT_KILL_FOCUS, &DrawingView::OnLabelTextChanged, this );
-            m_fieldText->Disable();
-            m_styleBar->AddControl( m_fieldText );
-            m_fontName = new FontComboBox( m_styleBar );
-            m_fontName->Bind( wxEVT_KILL_FOCUS, &DrawingView::OnFontNameChange, this );
-            m_styleBar->AddControl( m_fontName );
-            const wxString fontSizes[] =
+            if( m_tbSetup[1].m_orientation == 1 || m_tbSetup[1].m_orientation == 3  )
             {
-                "8",
-                "9",
-                "10",
-                "11",
-                "12",
-                "14",
-                "16",
-                "18",
-                "20",
-                "22",
-                "24",
-                "26",
-                "28",
-                "36",
-                "48",
-                "72"
-            };
-            m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
-            m_styleBar->AddControl( m_fontSize );
+                m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
+                m_fieldText->Bind( wxEVT_KILL_FOCUS, &DrawingView::OnLabelTextChanged, this );
+                m_fieldText->Disable();
+                m_styleBar->AddControl( m_fieldText );
+                m_fontName = new FontComboBox( m_styleBar );
+                m_fontName->Bind( wxEVT_KILL_FOCUS, &DrawingView::OnFontNameChange, this );
+                m_styleBar->AddControl( m_fontName );
+                const wxString fontSizes[] =
+                {
+                    "8",
+                    "9",
+                    "10",
+                    "11",
+                    "12",
+                    "14",
+                    "16",
+                    "18",
+                    "20",
+                    "22",
+                    "24",
+                    "26",
+                    "28",
+                    "36",
+                    "48",
+                    "72"
+                };
+                m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
+                m_styleBar->AddControl( m_fontSize );
+            }
+            else
+            {
+                m_styleBar->AddSeparator();
+                m_styleBar->AddSeparator();
+                m_styleBar->AddSeparator();
+            }
+            m_styleBar->AddSeparator();
             m_styleBar->AddTool( wxID_BOLD, _( "Bold" ), boldSVG, boldSVG, wxITEM_CHECK, _( "Bold" ), _( "Make the font bold" ) );
             m_styleBar->AddTool( wxID_ITALIC, _( "Italic" ), italicSVG, italicSVG, wxITEM_CHECK, _( "Italic" ), _( "Make the font italic" ) );
             m_styleBar->AddTool( wxID_UNDERLINE, _( "Underline" ), underlineSVG, underlineSVG, wxITEM_CHECK, _( "Make the font underlined" ), _( "Make the font underlined" ) );
@@ -612,7 +644,7 @@ void DrawingView::CreateViewToolBar()
         sizer->Add( m_styleBar, 1, wxEXPAND, 0 );
 #endif
     }
-    switch( m_tbSetup.m_orientation )
+    switch( m_tbSetup[0].m_orientation )
     {
         case 0:
             m_tb->SetSize( 0, 0,  wxDefaultCoord, size.y );
@@ -624,14 +656,14 @@ void DrawingView::CreateViewToolBar()
         case 1:
             m_tb->SetSize( 0, 0,  size.x, wxDefaultCoord );
             offset = m_tb->GetSize().y;
-#if defined( _WXMSW__ ) || defined( __WXGTK__ )
+#if defined( __WXMSW__ ) || defined( __WXGTK__ )
             m_frame->SetSize( 0, offset, size.x, size.y - offset );
 #endif
             break;
         case 2:
             offset = m_tb->GetSize().x;
-            m_tb->SetSize( size.x - offset, 0,  wxDefaultCoord, size.y );
-#if defined( _WXMSW__ ) || defined( __WXGTK__ )
+            m_tb->SetSize( size.x - offset, 0,  offset, size.y );
+#if defined( __WXMSW__ ) || defined( __WXGTK__ )
             m_frame->SetSize( 0, 0, size.x - offset, size.y );
 #endif
             break;
@@ -645,16 +677,44 @@ void DrawingView::CreateViewToolBar()
     }
     if( m_styleBar )
     {
-/*        m_styleBar->SetSize( 0, offset, size.x, wxDefaultCoord );
-        offset += m_styleBar->GetSize().y;
-        height -= m_styleBar->GetSize().y;*/
+        switch( m_tbSetup[1].m_orientation )
+        {
+        case 0:
+            m_styleBar->SetSize( 0, 0,  wxDefaultCoord, size.y );
+            offset += m_tb->GetSize().x;
+#if defined( __WXMSW__ ) || defined( __WXGTK__ )
+            m_frame->SetSize( offset, 0, size.x - offset, size.y );
+#endif
+            break;
+        case 1:
+            m_styleBar->SetSize( 0, 0,  size.x, wxDefaultCoord );
+            offset += m_tb->GetSize().y;
+#if defined( _WXMSW__ ) || defined( __WXGTK__ )
+            m_frame->SetSize( 0, offset, size.x, size.y - offset );
+#endif
+            break;
+        case 2:
+            offset += m_tb->GetSize().x;
+            m_styleBar->SetSize( size.x - offset, 0,  wxDefaultCoord, size.y );
+#if defined( _WXMSW__ ) || defined( __WXGTK__ )
+            m_frame->SetSize( 0, 0, size.x - offset, size.y );
+#endif
+            break;
+        case 3:
+            offset += m_tb->GetSize().y;
+#if defined( __WXMSW__ ) || defined( __WXGTK__ )
+            m_frame->SetSize( 0, 0, size.x, size.y - offset );
+#endif
+            m_styleBar->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
+            break;
+        }
     }
-#ifdef __WXOSX__
+/*#ifdef __WXOSX__
     wxPoint pt;
     pt.x = -1;
     pt.y = m_parent->GetRect().GetHeight() - m_parent->GetClientSize().GetHeight();
     m_frame->SetSize( pt.x, pt.y, m_parent->GetSize().GetWidth(), m_parent->GetClientSize().GetHeight() );
-#endif
+#endif*/
 }
 
 // Sneakily gets used for default print/preview as well as drawing on the
@@ -750,7 +810,6 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
 //                        wxPoint parentPos = parent->GetPosition();
 #ifndef __WXOSX__
                         int heightStyleBar = m_styleBar->GetSize().y;
-                        wxSize frameSize = m_frame->GetSize();
 #endif
                         wxPoint framePosition = m_frame->GetPosition();
                         if( framePosition.y == 0 )
@@ -791,14 +850,12 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
             {
                 int heightStyleBar = 0;
                 wxPoint framePosition;
-                wxSize frameSize;
 #ifndef __WXOSX__
                 if( m_styleBar )
                     heightStyleBar = m_styleBar->GetSize().y;
 #endif
                 framePosition = m_frame->GetPosition();
                 frameSize = m_frame->GetSize();
-                m_frame->Freeze();
                 m_fields->Show( true );
                 m_canvas->Show( true );
                 m_queryBook->Show( true );
@@ -816,7 +873,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 options.schema = "";
                 options.options = 0;
                 CREATEVIEWOPTIONS func = (CREATEVIEWOPTIONS) lib.GetSymbol( "CreateViewOptionsFunc" );
-                int res = func( m_frame, GetDocument()->GetDatabase(), options );
+                res = func( m_frame, GetDocument()->GetDatabase(), options );
                 if( res == wxID_CANCEL )
                 {
                     m_dbFrame->Show( true );
@@ -2763,13 +2820,13 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
         int res = func( m_frame, -1, m_queries, documentName, m_path, update );
         if( res == wxID_OK )
         {
-            wxString libName;
+            wxString libraryName;
             auto found = false;
             for( std::vector<LibrariesInfo>::iterator it = m_path.begin(); it < m_path.end() && !found; ++it )
             {
                 if( (*it).m_isActive )
                 {
-                    libName = (*it).m_path;
+                    libraryName = (*it).m_path;
                     found = true;
                 }
             }
@@ -2791,7 +2848,7 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
                 dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->AddWhereLines( wxString::Format( "%d,%s,%s,%s,%s", i, var, sign, value, condition ) );
             }
             GetDocument()->SetFilename( documentName + ".qry" );
-            if( GetDocument()->SaveNewQuery( libName, m_queries, documentName + ".qry", update ) ) 
+            if( GetDocument()->SaveNewQuery( libraryName, m_queries, documentName + ".qry", update ) ) 
             {
 
             }
@@ -2896,10 +2953,14 @@ void DrawingView::SetDatabaseChildWindow(wxDocMDIChildFrame *frame)
 void DrawingView::SetToolbarOptions(Configuration *conf)
 {
     m_conf = conf;
-    m_tbSetup.m_hideShow = conf->m_tbSettings["ViewBar"].m_hideShow;
-    m_tbSetup.m_showTooltips = conf->m_tbSettings["ViewBar"].m_showTooltips;
-    m_tbSetup.m_showText = conf->m_tbSettings["ViewBar"].m_showText;
-    m_tbSetup.m_orientation = conf->m_tbSettings["ViewBar"].m_orientation;
+    m_tbSetup[0].m_hideShow = conf->m_tbSettings["ViewBar"].m_hideShow;
+    m_tbSetup[0].m_showTooltips = conf->m_tbSettings["ViewBar"].m_showTooltips;
+    m_tbSetup[0].m_showText = conf->m_tbSettings["ViewBar"].m_showText;
+    m_tbSetup[0].m_orientation = conf->m_tbSettings["ViewBar"].m_orientation;
+    m_tbSetup[1].m_hideShow = conf->m_tbSettings["StyleBar"].m_hideShow;
+    m_tbSetup[1].m_showTooltips = conf->m_tbSettings["StyleBar"].m_showTooltips;
+    m_tbSetup[1].m_showText = conf->m_tbSettings["StyleBar"].m_showText;
+    m_tbSetup[1].m_orientation = conf->m_tbSettings["StyleBar"].m_orientation;
     m_source = conf->m_querySource;
     m_presentation = conf->m_queryPresentation;
 }
