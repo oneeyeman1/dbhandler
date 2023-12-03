@@ -131,6 +131,12 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_conf->m_tbSettings["ViewBar"].m_showText = m_config->ReadBool( "ShowText", false );
     m_conf->m_tbSettings["ViewBar"].m_orientation = m_config->ReadLong( "Orientation", 1 );
     m_config->SetPath( path );
+    m_config->SetPath( "StyleBar" );
+    m_conf->m_tbSettings["StyleBar"].m_hideShow = m_config->ReadBool( "Show", true );
+    m_conf->m_tbSettings["StyleBar"].m_showTooltips = m_config->ReadBool( "ShowTooltip", true );
+    m_conf->m_tbSettings["StyleBar"].m_showText = m_config->ReadBool( "ShowText", false );
+    m_conf->m_tbSettings["StyleBar"].m_orientation = m_config->ReadLong( "Orientation", 1 );
+    m_config->SetPath( path );
     m_config->SetPath( "Query" );
     m_config->Read( "QuerySource", &m_conf->m_querySource, 2 );
     m_config->Read( "QueryPresentation", &m_conf->m_queryPresentation, 4 );
