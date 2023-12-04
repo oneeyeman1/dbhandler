@@ -388,7 +388,7 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::CreateViewToolBar()
 {
-    int offsetTop = 0, offsetLeft = 0, offsetRight = 0, offsetBottom = 0, position = 0;
+    int offset = 0;
 	long style = wxNO_BORDER | wxTB_FLAT;
     switch( m_tbSetup.m_orientation )
     {
@@ -412,9 +412,12 @@ void DrawingView::CreateViewToolBar()
     wxWindow *parent = nullptr;
 #ifdef __WXOSX__
     parent = m_frame;
-#else
-    parent = m_parent;
-    position = dynamic_cast<wxDocMDIParentFrame *>( m_parent )->GetToolBar()->GetSize().GetHeight();
+#endif
+#ifdef __WXMSW__
+    parent = m_parent->GetClientWindow();
+#endif
+#ifdef __WXGTK__
+	parent = m_parent;
 #endif
     wxSize size = m_parent->GetClientSize();
 #ifdef __WXOSX__
@@ -619,31 +622,30 @@ void DrawingView::CreateViewToolBar()
     {
         case 0:
             m_tb->SetSize( 0, 0,  wxDefaultCoord, size.y );
-            offsetLeft = m_tb->GetSize().x;
+            offset = m_tb->GetSize().x;
 #if defined( __WXMSW__ ) || defined( __WXGTK__ )
-            m_parent->GetClientWindow()->SetSize( offsetLeft, 0, size.x - offsetLeft, size.y );
+            m_frame->SetSize( offset, 0, size.x - offset, size.y );
 #endif
             break;
         case 1:
             m_tb->SetSize( 0, 0,  size.x, wxDefaultCoord );
-            offsetTop = m_tb->GetSize().y;
+            offset = m_tb->GetSize().y;
 #if defined( _WXMSW__ ) || defined( __WXGTK__ )
-            m_parent->GetClientWindow()->SetSize( 0, offsetTop, size.x, size.y - offsetTop );
+            m_frame->SetSize( 0, offset, size.x, size.y - offset );
 #endif
             break;
         case 2:
-            offsetBottom = m_tb->GetSize().y;
-#if defined( __WXMSW__ ) || defined( __WXGTK__ )
-            m_parent->GetClientWindow()->SetSize( 0, 0, size.x, size.y - offsetBottom );
-            m_frame->SetSize( 0, 0, size.x, size.y - offsetBottom );
+            offset = m_tb->GetSize().x;
+            m_tb->SetSize( size.x - offset, 0,  wxDefaultCoord, size.y );
+#if defined( _WXMSW__ ) || defined( __WXGTK__ )
+            m_frame->SetSize( 0, 0, size.x - offset, size.y );
 #endif
-            m_tb->SetSize( 0, size.y - offsetBottom, wxDefaultCoord, wxDefaultCoord );
             break;
         case 3:
-            m_tb->SetSize( size.x - m_tb->GetSize().x, 0,  wxDefaultCoord, wxDefaultCoord );
-            offsetRight = m_tb->GetSize().x;
-#if defined( _WXMSW__ ) || defined( __WXGTK__ )
-            m_parent->GetClientWindow()->SetSize( 0, 0, size.x - offsetRight, size.y );
+            offset = m_tb->GetSize().y;
+            m_tb->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
+#if defined( __WXMSW__ ) || defined( __WXGTK__ )
+            m_frame->SetSize( 0, 0, size.x, size.y - offset );
 #endif
             break;
     }
