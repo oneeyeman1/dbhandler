@@ -82,6 +82,7 @@ libdialogs/Makefile
 libdbloader/Makefile
 libdbwindow/Makefile
 dbhandler/Makefile
+libhelpers/Makefile
 libtabledataedit/Makefile
 libpropertieshandlers/Makefile
 libmysql/Makefile

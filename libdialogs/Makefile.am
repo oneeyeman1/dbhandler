@@ -34,8 +34,6 @@ libdialogs_la_SOURCES =  \
 	quickselect.h \
 	retrievalarguments.cpp \
 	retrievalarguments.h \
-	typecombobox.cpp \
-	typecombobox.h \
 	gotoline.cpp \
 	gotoline.h \
 	attachdb.cpp \
@@ -57,6 +55,7 @@ libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	`pkg-config \
 	--cflags \
 	gtk+-3.0` \
+	-I../../libhelpers \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
@@ -67,6 +66,8 @@ libdialogs_la_LDFLAGS = -L../libsqlite \
 	-L../libodbc \
 	-L../libpostgres \
 	-L../libpropertypages \
+	-L../libhelpers \
+	-lhelpers \
 	-ldbinterface \
 	-lsqlite_lib \
 	-lodbc_lib \
