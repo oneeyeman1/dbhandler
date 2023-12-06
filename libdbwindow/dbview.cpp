@@ -142,12 +142,12 @@ extern "C" WXEXPORT void CreateDatabaseWindow(wxWindow *parent, wxDocManager *do
     bool init;
     if( type == DatabaseView )
     {
-        docTemplate->CreateDatabaseDocument( "*.drw", type, db, painters, queries, path, conf, wxDOC_NEW | wxDOC_SILENT );
+        docTemplate->CreateDatabaseDocument( parent, "*.drw", type, db, painters, queries, path, conf, wxDOC_NEW | wxDOC_SILENT );
         init = false;
     }
     else
     {
-        docTemplate->CreateDatabaseDocument( "*.qry", type, db, painters, queries, path,  conf, wxDOC_NEW | wxDOC_SILENT );
+        docTemplate->CreateDatabaseDocument( parent, "*.qry", type, db, painters, queries, path,  conf, wxDOC_NEW | wxDOC_SILENT );
         init = true;
     }
     dynamic_cast<DrawingDocument *>( docManager->GetCurrentDocument() )->SetDatabase( db );
