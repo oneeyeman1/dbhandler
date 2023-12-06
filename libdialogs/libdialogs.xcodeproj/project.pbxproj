@@ -10,6 +10,7 @@
 		E3132ECC28654B2A00AD669F /* datasource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3132ECA28654B2A00AD669F /* datasource.cpp */; };
 		E3132ECD28654B2A00AD669F /* datasource.h in Headers */ = {isa = PBXBuildFile; fileRef = E3132ECB28654B2A00AD669F /* datasource.h */; };
 		E3132EDC2879084C00AD669F /* dialogs.h in Headers */ = {isa = PBXBuildFile; fileRef = E3132EDB2879084B00AD669F /* dialogs.h */; };
+		E322AAC22B1FF99400ECD88D /* liblibhelpers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E322AAC12B1FF99400ECD88D /* liblibhelpers.a */; };
 		E322B82229FA116500BE3A94 /* saveview.h in Headers */ = {isa = PBXBuildFile; fileRef = E322B82029FA116400BE3A94 /* saveview.h */; };
 		E322B82329FA116500BE3A94 /* saveview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322B82129FA116500BE3A94 /* saveview.cpp */; };
 		E32A5006223469AE00A57BD1 /* bitmappanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A5002223469AE00A57BD1 /* bitmappanel.cpp */; };
@@ -30,8 +31,6 @@
 		E33E6F851EAD310A003A0B92 /* getobjectname.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F811EAD310A003A0B92 /* getobjectname.h */; };
 		E33E6F861EAD310A003A0B92 /* jointype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F821EAD310A003A0B92 /* jointype.cpp */; };
 		E33E6F871EAD310A003A0B92 /* jointype.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F831EAD310A003A0B92 /* jointype.h */; };
-		E3607DCA23A6E19200267C14 /* typecombobox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3607DC823A6E19200267C14 /* typecombobox.cpp */; };
-		E3607DCB23A6E19200267C14 /* typecombobox.h in Headers */ = {isa = PBXBuildFile; fileRef = E3607DC923A6E19200267C14 /* typecombobox.h */; };
 		E3607DCE23C4417E00267C14 /* gotoline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3607DCC23C4417E00267C14 /* gotoline.cpp */; };
 		E3607DCF23C4417F00267C14 /* gotoline.h in Headers */ = {isa = PBXBuildFile; fileRef = E3607DCD23C4417E00267C14 /* gotoline.h */; };
 		E362C40220F475990089E44E /* odbccredentials.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E362C40020F475990089E44E /* odbccredentials.cpp */; };
@@ -65,6 +64,7 @@
 		E3132ECA28654B2A00AD669F /* datasource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = datasource.cpp; sourceTree = "<group>"; };
 		E3132ECB28654B2A00AD669F /* datasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = datasource.h; sourceTree = "<group>"; };
 		E3132EDB2879084B00AD669F /* dialogs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dialogs.h; sourceTree = "<group>"; };
+		E322AAC12B1FF99400ECD88D /* liblibhelpers.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblibhelpers.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E322B82029FA116400BE3A94 /* saveview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saveview.h; sourceTree = "<group>"; };
 		E322B82129FA116500BE3A94 /* saveview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = saveview.cpp; sourceTree = "<group>"; };
 		E32A5002223469AE00A57BD1 /* bitmappanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bitmappanel.cpp; sourceTree = "<group>"; };
@@ -85,8 +85,6 @@
 		E33E6F811EAD310A003A0B92 /* getobjectname.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = getobjectname.h; sourceTree = "<group>"; };
 		E33E6F821EAD310A003A0B92 /* jointype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jointype.cpp; sourceTree = "<group>"; };
 		E33E6F831EAD310A003A0B92 /* jointype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jointype.h; sourceTree = "<group>"; };
-		E3607DC823A6E19200267C14 /* typecombobox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = typecombobox.cpp; sourceTree = "<group>"; };
-		E3607DC923A6E19200267C14 /* typecombobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = typecombobox.h; sourceTree = "<group>"; };
 		E3607DCC23C4417E00267C14 /* gotoline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gotoline.cpp; sourceTree = "<group>"; };
 		E3607DCD23C4417E00267C14 /* gotoline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gotoline.h; sourceTree = "<group>"; };
 		E362C40020F475990089E44E /* odbccredentials.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = odbccredentials.cpp; sourceTree = "<group>"; };
@@ -125,6 +123,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E322AAC22B1FF99400ECD88D /* liblibhelpers.a in Frameworks */,
 				E39501D31DF3C4730046E51B /* liblibpropertypages.dylib in Frameworks */,
 				E3E91D791DCC333900675CF8 /* liblibfieldswindow.dylib in Frameworks */,
 				E3D1397B1D0D144A00A5A0F7 /* liblibdbloader.dylib in Frameworks */,
@@ -134,6 +133,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E322AAC02B1FF99400ECD88D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E322AAC12B1FF99400ECD88D /* liblibhelpers.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E3D139331D0D0CD100A5A0F7 = {
 			isa = PBXGroup;
 			children = (
@@ -144,6 +151,7 @@
 				E3D139591D0D100B00A5A0F7 /* liblibsqlite.dylib */,
 				E3D139491D0D0CDE00A5A0F7 /* libdialogs */,
 				E3D1393D1D0D0CD100A5A0F7 /* Products */,
+				E322AAC02B1FF99400ECD88D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -167,8 +175,6 @@
 				E3B8E3E725487B7800346516 /* detachdb.h */,
 				E3607DCC23C4417E00267C14 /* gotoline.cpp */,
 				E3607DCD23C4417E00267C14 /* gotoline.h */,
-				E3607DC823A6E19200267C14 /* typecombobox.cpp */,
-				E3607DC923A6E19200267C14 /* typecombobox.h */,
 				E32A5016223F243C00A57BD1 /* quickselect.cpp */,
 				E32A5017223F243C00A57BD1 /* quickselect.h */,
 				E32A500A223F1AE600A57BD1 /* createdatabase.cpp */,
@@ -234,7 +240,6 @@
 				E3D139551D0D0D7100A5A0F7 /* odbcconfigure.h in Headers */,
 				E33E6F391E46EE1C003A0B92 /* foreignkey.h in Headers */,
 				E32A5011223F1AE600A57BD1 /* createdatabase.h in Headers */,
-				E3607DCB23A6E19200267C14 /* typecombobox.h in Headers */,
 				E3607DCF23C4417F00267C14 /* gotoline.h in Headers */,
 				E3132EDC2879084C00AD669F /* dialogs.h in Headers */,
 				E322B82229FA116500BE3A94 /* saveview.h in Headers */,
@@ -311,7 +316,6 @@
 				E3D139541D0D0D7100A5A0F7 /* odbcconfigure.cpp in Sources */,
 				E3E91D3C1DC678C900675CF8 /* createindex.cpp in Sources */,
 				E3D139511D0D0D7100A5A0F7 /* databasetype.cpp in Sources */,
-				E3607DCA23A6E19200267C14 /* typecombobox.cpp in Sources */,
 				E3607DCE23C4417E00267C14 /* gotoline.cpp in Sources */,
 				E32A5008223469AE00A57BD1 /* newquery.cpp in Sources */,
 				E32A5018223F243C00A57BD1 /* quickselect.cpp in Sources */,
@@ -423,6 +427,7 @@
 					../libshapeframework,
 					../libpropertypages,
 					../libpropertieshandlers,
+					../libhelpers,
 				);
 				"HEADER_SEARCH_PATHS[arch=*]" = (
 					"$(inherited)",
