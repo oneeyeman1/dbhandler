@@ -92,6 +92,7 @@ public:
 #if defined __WXMSW__ || defined __WXGTK__
     virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif
+    void SetParentWindow(wxWindow *window);
     void OnViewSelectedTables(wxCommandEvent &event);
     void OnNewIndex(wxCommandEvent &event);
     void OnFieldDefinition(wxCommandEvent &event);
@@ -197,7 +198,7 @@ private:
     std::map<wxString, std::vector<TableDefinition> > m_tables;
     NewViewOptions options;
     wxString m_libPath;
-    ToolbarSetup m_tbSetup;
+    ToolbarSetup m_tbSetup[2];
     Configuration *m_conf;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
