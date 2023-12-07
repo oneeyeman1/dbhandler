@@ -266,10 +266,10 @@ void TableEditView::CreateMenuAndToolbar()
         style |= wxTB_HORIZONTAL;
         break;
     case 2:
-        style |= wxTB_BOTTOM;
+        style |= wxTB_RIGHT;
         break;
     case 3:
-        style |= wxTB_RIGHT;
+        style |= wxTB_BOTTOM;
         break;
     }
     if( !m_tbSettings.m_showTooltips )
