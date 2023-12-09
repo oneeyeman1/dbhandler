@@ -564,7 +564,7 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
         else
             lib = m_painters["Query"];
         if( LoadApplication( m_path ) )
-			return;
+            return;
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
