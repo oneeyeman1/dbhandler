@@ -391,7 +391,7 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
 void DrawingView::CreateViewToolBar()
 {
     int offset = 0;
-	long styleViewBar = wxNO_BORDER | wxTB_FLAT, styleStyleBar = wxNO_BORDER | wxTB_FLAT;
+    long styleViewBar = wxNO_BORDER | wxTB_FLAT, styleStyleBar = wxNO_BORDER | wxTB_FLAT;
     switch( m_tbSetup[0].m_orientation )
     {
     case 0:
@@ -433,8 +433,12 @@ void DrawingView::CreateViewToolBar()
     wxWindow *parent = nullptr;
 #ifdef __WXOSX__
     parent = m_frame;
-#else
-    parent = m_parent;
+#endif
+#ifdef __WXMSW__
+    parent = m_parent->GetClientWindow();
+#endif
+#ifdef __WXGTK__
+	parent = m_parent;
 #endif
     auto size = m_parent->GetClientSize();
     auto posFrame = wxPoint( 0, 0 );
@@ -643,34 +647,26 @@ void DrawingView::CreateViewToolBar()
         case 0:
             m_tb->SetSize( 0, 0,  wxDefaultCoord, size.y );
             offset = m_tb->GetSize().x;
-//#if defined( __WXMSW__ ) || defined( __WXGTK__ )
             posFrame.x = offset;
             sizeFrame.SetWidth( size.x - offset );
-//#endif
             break;
         case 1:
             m_tb->SetSize( 0, 0,  size.x, wxDefaultCoord );
             offset = m_tb->GetSize().y;
-//#if defined( __WXMSW__ ) || defined( __WXGTK__ )
             posFrame.y = offset;
             sizeFrame.SetHeight( size.y - offset );
-//#endif
             break;
         case 2:
             offset = m_tb->GetSize().y;
             m_tb->SetSize( size.x - offset, 0, offset, size.y );
-//#if defined( __WXMSW__ ) || defined( __WXGTK__ )
             sizeFrame.SetWidth( size.x - offset );
             sizeFrame.SetHeight( size.y );
-//#endif
             break;
         case 3:
             offset = m_tb->GetSize().y;
-//#if defined( __WXMSW__ ) || defined( __WXGTK__ )
             sizeFrame.SetWidth( size.x );
             sizeFrame.SetHeight( size.y - offset );
-//#endif
-            m_tb->SetSize( 0, size.y - offset, size.x,  wxDefaultCoord );
+            break;
             break;
     }
     if( m_styleBar )
@@ -681,34 +677,26 @@ void DrawingView::CreateViewToolBar()
                 m_styleBar->SetSize( 0, 0,  wxDefaultCoord, size.y );
                 if( m_tbSetup[0].m_orientation == 0 )
                     offset += m_styleBar->GetSize().x;
-//#if defined( __WXMSW__ ) || defined( __WXGTK__ )
                 posFrame.x = offset;
                 sizeFrame.SetWidth( sizeFrame.GetWidth() - posFrame.x );
-//#endif
                 break;
             case 1:
                 m_styleBar->SetSize( 0, 0,  size.x, wxDefaultCoord );
                 if( m_tbSetup[0].m_orientation == 1 )
                     offset += m_styleBar->GetSize().y;
-//#if defined( __WXMSW__ ) || defined( __WXGTK__ )
                 posFrame.y = offset;
                 sizeFrame.SetHeight( sizeFrame.GetHeight() - posFrame.y );
-//#endif
                 break;
             case 2:
                 if( m_tbSetup[0].m_orientation == 2 )
                     offset += m_styleBar->GetSize().x;
                 m_styleBar->SetSize( size.x - offset, 0, wxDefaultCoord, size.y );
-//#if defined( __WXMSW__ ) || defined( __WXGTK__ )
                 sizeFrame.SetWidth( size.x - offset );
-//#endif
                 break;
             case 3:
                 if( m_tbSetup[0].m_orientation == 3 )
                     offset = m_styleBar->GetSize().y;
-//#if defined( __WXMSW__ ) || defined( __WXGTK__ )
                 sizeFrame.SetHeight( sizeFrame.GetHeight() - ( size.y - offset ) );
-//#endif
                 m_styleBar->SetSize( 0, size.y - offset, size.x,  wxDefaultCoord );
                 break;
         }
@@ -724,8 +712,6 @@ void DrawingView::CreateViewToolBar()
     pt.y = m_parent->GetRect().GetHeight() - m_parent->GetClientSize().GetHeight();
     m_frame->SetSize( pt.x, pt.y, m_parent->GetSize().GetWidth(), m_parent->GetClientSize().GetHeight() );
 #endif
-    auto tbPosition = m_tb->GetPosition();
-    auto frameSize = m_frame->GetSize();
 }
 
 // Sneakily gets used for default print/preview as well as drawing on the

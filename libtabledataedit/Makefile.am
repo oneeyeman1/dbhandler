@@ -10,10 +10,6 @@ libtableedit_la_SOURCES =  \
 	tableeditdocument.cpp \
 	tableeditdocument.h \
 	dataedit.cpp \
-	dataretriever.cpp \
-	dataretriever.h \
-	dbtableedit.cpp \
-	dbtableedit.h \
 	dataeditdoctemplate.cpp \
 	dataeditdoctemplate.h \
 	imagecellrenderer.cpp \

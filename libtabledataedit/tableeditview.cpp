@@ -36,13 +36,11 @@
 #include "wx/docmdi.h"
 #include "wx/artprov.h"
 #include "wx/dynlib.h"
-#include "wx/grid.h"
 #include "wx/stdpaths.h"
 #include "wx/filename.h"
 #include "wx/mstream.h"
 #include "database.h"
 #include "tableattributes.h"
-#include "imagecellrenderer.h"
 #include "tableeditdocument.h"
 #include "tableeditview.h"
 #include "tableeditcanvas.h"
@@ -182,16 +180,53 @@ void TableEditView::GetTablesForView(Database *db, bool init)
                 }
             }
     }
-    auto sizer = new wxBoxSizer( wxVERTICAL );
-    m_grid = new wxGrid( m_panel, wxID_ANY );
-    m_grid->CreateGrid( 0, 6 );
-    m_grid->SetColLabelValue( 0, _( "Column Name" ) );
-    m_grid->SetColLabelValue( 1, _( "Data Type" ) );
-    m_grid->SetColLabelValue( 2, _( "Width" ) );
-    m_grid->SetColLabelValue( 3, _( "Dec" ) );
-    m_grid->SetColLabelValue( 4, _( "Null" ) );
-    m_grid->SetColLabelValue( 5, _( "Default" ) );
-    const wxString choices[] = 
+    m_grid = new wxScrolled<wxPanel>( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxALWAYS_SHOW_SB | wxVSCROLL );
+    wxFlexGridSizer *gridSizer = new wxFlexGridSizer( 6, 0, 0 );
+    gridSizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Column Name" ) ) );
+    gridSizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Data Type" ) ) );
+    gridSizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Width" ) ) );
+    gridSizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Dec" ) ) );
+    gridSizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Null" ) ) );
+    gridSizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Default" ) ) );
+    const wxString nullChoices[] =
+    {
+        "Yes",
+        "No"
+    };
+    const wxString defaultChoices[] = 
+    {
+        "None",
+        "autoincrement",
+        "current date",
+        "current time",
+        "current tmestamp",
+        "timestamp",
+        "null",
+        "user"
+    };
+    if( table && !table->GetFields().empty() )
+    {
+        for( std::vector<TableField *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); ++it )
+        {
+            gridSizer->Add( new wxTextCtrl( m_grid, wxID_ANY, (*it)->GetFieldName() ) );
+            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->GetFieldType() ) );
+            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetFieldSize() ) ) );
+            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetPrecision() ) ) );
+//            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->Get ) );
+            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->GetDefaultValue(), wxDefaultPosition, wxDefaultSize, 8, defaultChoices  ) );
+        }
+    }
+    else
+    {
+        gridSizer->Add( new wxTextCtrl( m_grid, wxID_ANY, "" ) );
+        gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
+        gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
+        gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
+        //            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->Get ) );
+        gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
+    }
+    m_grid->SetSizer( gridSizer );
+/*    const wxString choices[] = 
     {
         "(None)",
         "autoincrement",
@@ -209,9 +244,9 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         m_grid->SetCellValue( i, 0, label );
         m_grid->SetCellEditor( i, 1, new wxGridCellChoiceEditor( 8, choices ) );
         m_grid->SetCellEditor( i, 5, new wxGridCellChoiceEditor( 8, choices ) );
-    }
-    m_grid->GetGridWindow()->SetBackgroundColour( m_panel->GetBackgroundColour() );
-    sizer->Add( m_grid, 1, wxEXPAND, 0 );
+    }*/
+//    m_grid->GetGridWindow()->SetBackgroundColour( m_panel->GetBackgroundColour() );
+    sizer->Add( gridSizer, 1, wxEXPAND, 0 );
     attributes = new TableSettngs( m_panel, wxID_ANY );
     sizer->Add( attributes, 0, wxEXPAND, 0 );
     m_panel->SetSizer( sizer );
