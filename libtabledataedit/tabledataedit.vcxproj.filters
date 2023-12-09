@@ -18,9 +18,6 @@
     <ClInclude Include="dataeditdoctemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imagecellrenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="tableeditcanvas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -40,9 +37,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dataeditdoctemplate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imagecellrenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tableattributes.cpp">

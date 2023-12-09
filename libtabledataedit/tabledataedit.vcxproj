@@ -36,7 +36,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dataeditdoctemplate.h" />
-    <ClInclude Include="imagecellrenderer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="tableattributes.h" />
     <ClInclude Include="tableeditcanvas.h" />
@@ -46,7 +45,6 @@
   <ItemGroup>
     <ClCompile Include="dataedit.cpp" />
     <ClCompile Include="dataeditdoctemplate.cpp" />
-    <ClCompile Include="imagecellrenderer.cpp" />
     <ClCompile Include="tableattributes.cpp" />
     <ClCompile Include="tableeditdocument.cpp" />
     <ClCompile Include="tableeditview.cpp" />

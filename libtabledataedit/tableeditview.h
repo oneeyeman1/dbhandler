@@ -65,7 +65,7 @@ private:
     wxDocMDIParentFrame *m_parent;
     wxDocMDIChildFrame *m_frame;
     wxToolBar *m_tb, *m_styleBar;
-    wxGrid *m_grid;
+    wxScrolled<wxPanel> *m_grid;
     DatabaseTable *m_table;
     int m_processed;
     bool m_queryexecuting;
