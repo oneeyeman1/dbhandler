@@ -219,6 +219,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_dbFrame = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
+    m_parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     wxRect clientRect = m_parent->GetClientRect();
     wxWindowList children = m_parent->GetChildren();
     for( wxWindowList::iterator it = children.begin(); it != children.end(); it++ )
@@ -263,42 +264,39 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 //    m_frame->Layout();
 //    m_frame->Show();
     wxPoint ptCanvas;
-//#ifndef __WXOSX__
+#ifndef __WXOSX__
     ptCanvas = wxDefaultPosition;
-/*#else
+#else
     ptCanvas.x = 0;
     ptCanvas.y = m_tb->GetSize().y;
     if( m_styleBar )
         ptCanvas.y += m_styleBar->GetSize().y;
     ptCanvas.y = m_frame->GetSize().y - m_frame->GetClientSize().y;
-#endif*/
+#endif
     wxASSERT( m_frame == GetFrame() );
-    if( m_type == QueryView )
-    {
-        m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
-        m_fields->SetCursor( wxCURSOR_HAND );
-        sizer->Add( m_fields, 0, wxEXPAND, 0 );
-        m_fields->Show( false );
-    }
+    m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
+    m_fields->SetCursor( wxCURSOR_HAND );
+    sizer->Add( m_fields, 0, wxEXPAND, 0 );
+    m_fields->Show( false );
     auto db = ((DrawingDocument *) GetDocument() )->GetDatabase();
     m_canvas = new DatabaseCanvas( this, ptCanvas, db->GetTableVector().m_dbName, db->GetTableVector().m_type );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
+    m_queryBook = new wxNotebook( m_frame, wxID_ANY );
+    m_page1 = new SortGroupByPage( m_queryBook, true );
+    m_queryBook->AddPage( m_page1, _( "Sort" ) );
+    m_page2 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype(), true );
+    m_queryBook->AddPage( m_page2, _( "Where" ) );
+    m_page3 = new SortGroupByPage( m_queryBook, false );
+    m_queryBook->AddPage( m_page3, _( "Group" ) );
+    m_page4 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype(), false );
+    m_queryBook->AddPage( m_page4, _( "Having" ) );
+    m_page6 = new SyntaxPropPage( m_queryBook );
+    m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
+    sizer->Add( m_queryBook, 0, wxEXPAND, 0 );
+    m_queryBook->Show( false );
+    m_queryBook->Bind( wxEVT_NOTEBOOK_PAGE_CHANGED, &DrawingView::OnSQLNotebookPageChanged, this );
     if( m_type == QueryView )
     {
-        m_queryBook = new wxNotebook( m_frame, wxID_ANY );
-        m_page1 = new SortGroupByPage( m_queryBook, true );
-        m_queryBook->AddPage( m_page1, _( "Sort" ) );
-        m_page2 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype(), true );
-        m_queryBook->AddPage( m_page2, _( "Where" ) );
-        m_page3 = new SortGroupByPage( m_queryBook, false );
-        m_queryBook->AddPage( m_page3, _( "Group" ) );
-        m_page4 = new WhereHavingPage( m_queryBook, GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType(), GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype(), false );
-        m_queryBook->AddPage( m_page4, _( "Having" ) );
-        m_page6 = new SyntaxPropPage( m_queryBook );
-        m_queryBook->AddPage( m_page6, _( "Syntax" ), true );
-        sizer->Add( m_queryBook, 0, wxEXPAND, 0 );
-        m_queryBook->Show( false );
-        m_queryBook->Bind( wxEVT_NOTEBOOK_PAGE_CHANGED, &DrawingView::OnSQLNotebookPageChanged, this );
         m_designCanvas = new DesignCanvas( this, ptCanvas );
         sizer->Add( m_designCanvas, 1, wxEXPAND, 0 );
         m_canvas->Show( false );
@@ -426,21 +424,6 @@ void DrawingView::CreateViewToolBar()
         styleStyleBar |= wxTB_BOTTOM;
         break;
     }
-    switch( m_tbSetup[1].m_orientation )
-    {
-        case 0:
-            styleStyleBar |= wxTB_VERTICAL;
-            break;
-        case 1:
-            styleStyleBar |= wxTB_HORIZONTAL;
-            break;
-        case 2:
-            styleStyleBar |= wxTB_RIGHT;
-            break;
-        case 3:
-            styleStyleBar |= wxTB_BOTTOM;
-            break;
-    }
     if( !m_tbSetup[1].m_showTooltips )
         styleStyleBar |= wxTB_NO_TOOLTIPS;
     if( m_tbSetup[1].m_showText )
@@ -448,12 +431,8 @@ void DrawingView::CreateViewToolBar()
     wxWindow *parent = nullptr;
 #ifdef __WXOSX__
     parent = m_frame;
-#endif
-#ifdef __WXMSW__
+#else
     parent = m_parent->GetClientWindow();
-#endif
-#ifdef __WXGTK__
-	parent = m_parent;
 #endif
     auto size = m_parent->GetClientSize();
     auto posFrame = wxPoint( 0, 0 );
@@ -656,10 +635,9 @@ void DrawingView::CreateViewToolBar()
     m_tb->Realize();
 #ifdef __WXOSX__
     sizer->Add( m_tb, 1, wxEXPAND, 0 );
-#ifdef __WXMSW__
-    m_frame->SetToolBar( m_tb );
 #endif
     if( m_styleBar )
+    {
         m_styleBar->Realize();
 #ifdef __WXOSX__
         sizer->Add( m_styleBar, 1, wxEXPAND, 0 );
@@ -671,17 +649,17 @@ void DrawingView::CreateViewToolBar()
             m_tb->SetSize( 0, 0,  wxDefaultCoord, size.y );
             offset = m_tb->GetSize().x;
             posFrame.x = offset;
-            sizeFrame.SetWidth( size.x - offset );
+            sizeFrame.SetWidth ( ( size.x - offset ) );
             break;
         case 1:
             m_tb->SetSize( 0, 0,  size.x, wxDefaultCoord );
             offset = m_tb->GetSize().y;
             posFrame.y = offset;
-            sizeFrame.SetHeight( size.y - offset );
+            sizeFrame.SetHeight( ( size.y - offset ) );
             break;
         case 2:
-            offset = m_tb->GetSize().y;
-            m_tb->SetSize( size.x - offset, 0, offset, size.y );
+            offset = m_tb->GetSize().x;
+            m_tb->SetSize( size.x - offset, 0,  offset, size.y );
             sizeFrame.SetWidth( size.x - offset );
             sizeFrame.SetHeight( size.y );
             break;
@@ -728,12 +706,6 @@ void DrawingView::CreateViewToolBar()
     m_frame->SetSize( posFrame.x, posFrame.y, sizeFrame.GetWidth(), sizeFrame.GetHeight() );
 #else
     m_canvas->SetSize( posFrame.x, posFrame.y, sizeFrame.GetWidth(), sizeFrame.GetHeight() );
-#endif
-#ifdef __WXOSX__
-    wxPoint pt;
-    pt.x = -1;
-    pt.y = m_parent->GetRect().GetHeight() - m_parent->GetClientSize().GetHeight();
-    m_frame->SetSize( pt.x, pt.y, m_parent->GetSize().GetWidth(), m_parent->GetClientSize().GetHeight() );
 #endif
 }
 
