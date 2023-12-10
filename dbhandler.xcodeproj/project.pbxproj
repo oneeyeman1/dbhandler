@@ -27,6 +27,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		E322AABA2B1FF70A00ECD88D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E322AAB62B1FF6FC00ECD88D /* libhelpers.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E322AAAF2B1FF6FC00ECD88D;
+			remoteInfo = libhelpers;
+		};
 		E329057225B0D36500DD7070 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E3F4768025ABE9A30083800D /* libtabledataedit.xcodeproj */;
@@ -142,6 +149,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E322AAB62B1FF6FC00ECD88D /* libhelpers.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libhelpers.xcodeproj; path = libhelpers/libhelpers.xcodeproj; sourceTree = "<group>"; };
 		E33E6F531E6A9A6A003A0B92 /* libtablewindow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libtablewindow.xcodeproj; path = libtablewindow/libtablewindow.xcodeproj; sourceTree = "<group>"; };
 		E33E6F9C1EBC26B6003A0B92 /* libpostgres.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libpostgres.xcodeproj; path = libpostgres/libpostgres.xcodeproj; sourceTree = "<group>"; };
 		E35B7788280BB5B600B64425 /* svgs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svgs.h; sourceTree = "<group>"; };
@@ -219,6 +227,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E322AAB72B1FF6FC00ECD88D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E322AABB2B1FF70A00ECD88D /* liblibhelpers.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		E33E6F541E6A9A6A003A0B92 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -270,6 +286,7 @@
 		E3D05D311CA4AB1D002CB677 = {
 			isa = PBXGroup;
 			children = (
+				E322AAB62B1FF6FC00ECD88D /* libhelpers.xcodeproj */,
 				E3F4768025ABE9A30083800D /* libtabledataedit.xcodeproj */,
 				E3B8E39B24E2821600346516 /* libpropertieshandlers.xcodeproj */,
 				E3E6643924A47893008CA090 /* build_app */,
@@ -551,6 +568,10 @@
 					ProjectRef = E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */;
 				},
 				{
+					ProductGroup = E322AAB72B1FF6FC00ECD88D /* Products */;
+					ProjectRef = E322AAB62B1FF6FC00ECD88D /* libhelpers.xcodeproj */;
+				},
+				{
 					ProductGroup = E3D8595F1EEA09030093FB1C /* Products */;
 					ProjectRef = E3D8595E1EEA09030093FB1C /* libmysql.xcodeproj */;
 				},
@@ -597,6 +618,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		E322AABB2B1FF70A00ECD88D /* liblibhelpers.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = liblibhelpers.a;
+			remoteRef = E322AABA2B1FF70A00ECD88D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		E33E6F581E6A9A6B003A0B92 /* liblibtablewindow.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";

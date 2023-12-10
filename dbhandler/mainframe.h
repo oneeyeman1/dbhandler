@@ -57,7 +57,7 @@ public:
     wxCriticalSection m_threadCS;
     NewTableHandler *m_handler;
 protected:
-    void LoadApplication(const std::vector<LibrariesInfo> &path);
+    bool LoadApplication(const std::vector<LibrariesInfo> &path);
     void Connect();
 private:
     void InitToolBar(wxToolBar* toolBar);

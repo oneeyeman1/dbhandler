@@ -11,6 +11,7 @@
 		E31C1A412633CB2000CFD640 /* imagecellrenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E31C1A3F2633CB2000CFD640 /* imagecellrenderer.cpp */; };
 		E322AA8E2B15A2FE00ECD88D /* tableattributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322AA8C2B15A2FD00ECD88D /* tableattributes.cpp */; };
 		E322AA8F2B15A2FE00ECD88D /* tableattributes.h in Headers */ = {isa = PBXBuildFile; fileRef = E322AA8D2B15A2FE00ECD88D /* tableattributes.h */; };
+		E322AAC52B1FFD7000ECD88D /* liblibhelpers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E322AAC42B1FFD7000ECD88D /* liblibhelpers.a */; };
 		E36BCFBF25DCED440019E587 /* dataeditdoctemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E36BCFBD25DCED440019E587 /* dataeditdoctemplate.cpp */; };
 		E36BCFC025DCED440019E587 /* dataeditdoctemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = E36BCFBE25DCED440019E587 /* dataeditdoctemplate.h */; };
 		E3F4768E25ABF48F0083800D /* dataedit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3F4768725ABF48F0083800D /* dataedit.cpp */; };
@@ -25,6 +26,7 @@
 		E31C1A3F2633CB2000CFD640 /* imagecellrenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imagecellrenderer.cpp; sourceTree = "<group>"; };
 		E322AA8C2B15A2FD00ECD88D /* tableattributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tableattributes.cpp; sourceTree = "<group>"; };
 		E322AA8D2B15A2FE00ECD88D /* tableattributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tableattributes.h; sourceTree = "<group>"; };
+		E322AAC42B1FFD7000ECD88D /* liblibhelpers.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblibhelpers.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E36BCFBD25DCED440019E587 /* dataeditdoctemplate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = dataeditdoctemplate.cpp; sourceTree = "<group>"; };
 		E36BCFBE25DCED440019E587 /* dataeditdoctemplate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dataeditdoctemplate.h; sourceTree = "<group>"; };
 		E3F4767925ABE9A30083800D /* liblibtabledataedit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibtabledataedit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -40,17 +42,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E322AAC52B1FFD7000ECD88D /* liblibhelpers.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E322AAC32B1FFD6F00ECD88D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E322AAC42B1FFD7000ECD88D /* liblibhelpers.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E3F4767025ABE9A30083800D = {
 			isa = PBXGroup;
 			children = (
 				E3F4768625ABE9CD0083800D /* libtabledataedit */,
 				E3F4767A25ABE9A30083800D /* Products */,
+				E322AAC32B1FFD6F00ECD88D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -249,6 +261,7 @@
 					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.2",
 					/Users/igorkorot/wxWidgets/include,
 					../dbinterface,
+					../libhelpers,
 				);
 				LIBRARY_SEARCH_PATHS = /Users/igorkorot/wxWidgets/buildC11/lib;
 				OTHER_LDFLAGS = (

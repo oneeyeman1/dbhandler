@@ -577,7 +577,8 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
         }
         else
             lib = m_painters["Query"];
-        LoadApplication( m_path );
+        if( LoadApplication( m_path ) )
+            return;
         if( m_db && lib->IsLoaded() )
         {
             DATABASE func = (DATABASE) lib->GetSymbol( "CreateDatabaseWindow" );
@@ -741,10 +742,15 @@ void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
+bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
 {
     if( m_doc.GetRoot() )
-        return;
+        return true;
+	if( path.empty() )
+	{
+		wxMessageBox( _( "Need to create a library first" ) );
+		return true;
+	}
     for( std::vector<LibrariesInfo>::const_iterator it = path.begin(); it < path.end(); ++it )
     {
         if( (*it).m_isActive )
@@ -752,19 +758,19 @@ void MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
             if( !m_doc.Load( (*it).m_path ) )
             {
                 wxMessageBox( _( "Loading failure" ) );
-                return;
+                return true;
             }
         }
     }
     if( m_doc.GetRoot() == nullptr )
     {
-        wxMessageBox( _( "XNK file error:" ) );
-        return;
+        wxMessageBox( _( "XNL file error:" ) );
+        return true;
     }
     if( !m_doc.GetRoot()->GetName().IsSameAs( "Library" ) )
     {
         wxMessageBox( _( "XML formatting rtot"));
-        return;
+        return true;
     }
     QueryInfo query;
     wxXmlNode *children = m_doc.GetRoot()->GetChildren();
@@ -794,6 +800,7 @@ void MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
             isQuery = false;
         }
     }
+	return false;
 }
 
 /*void MainFrame::OnCustomize(wxMouseEvent &event)
