@@ -238,6 +238,12 @@ MainFrame::~MainFrame()
     config->Write( "ShowText", m_conf->m_tbSettings["ViewBar"].m_showText );
     config->Write( "Orientation", m_conf->m_tbSettings["ViewBar"].m_orientation );
     config->SetPath( path );
+    config->SetPath( "StyleBar" );
+    config->Write( "Show", m_conf->m_tbSettings["StyleBar"].m_hideShow );
+    config->Write( "ShowTooltip", m_conf->m_tbSettings["StyleBar"].m_showTooltips );
+    config->Write( "ShowText", m_conf->m_tbSettings["StyleBar"].m_showText );
+    config->Write( "Orientation", m_conf->m_tbSettings["StyleBar"].m_orientation );
+    config->SetPath( path );
     if( result )
     {
         for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )

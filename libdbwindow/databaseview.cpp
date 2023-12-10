@@ -391,7 +391,7 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
 void DrawingView::CreateViewToolBar()
 {
     int offset = 0;
-    long styleViewBar = wxNO_BORDER | wxTB_FLAT, styleStyleBar = wxNO_BORDER | wxTB_FLAT;
+	long styleViewBar = wxNO_BORDER | wxTB_FLAT, styleStyleBar = wxNO_BORDER | wxTB_FLAT;
     switch( m_tbSetup[0].m_orientation )
     {
     case 0:
@@ -411,6 +411,21 @@ void DrawingView::CreateViewToolBar()
         styleViewBar |= wxTB_NO_TOOLTIPS;
     if( m_tbSetup[0].m_showText )
         styleViewBar |= wxTB_TEXT ;
+    switch( m_tbSetup[1].m_orientation )
+    {
+    case 0:
+        styleStyleBar |= wxTB_VERTICAL;
+        break;
+    case 1:
+        styleStyleBar |= wxTB_HORIZONTAL;
+        break;
+    case 2:
+        styleStyleBar |= wxTB_RIGHT;
+        break;
+    case 3:
+        styleStyleBar |= wxTB_BOTTOM;
+        break;
+    }
     switch( m_tbSetup[1].m_orientation )
     {
         case 0:
@@ -445,6 +460,7 @@ void DrawingView::CreateViewToolBar()
     auto sizeFrame = wxSize( size.x, size.y );
 #ifdef __WXOSX__
     m_tb = m_frame->CreateToolBar();
+    m_tb->SetName( "ViewBar" );
     if( m_type == QueryView )
     {
         m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, styleStyleBar, "StyleBar" );
@@ -459,7 +475,7 @@ void DrawingView::CreateViewToolBar()
     if( m_type == QueryView )
     {
         if( !m_styleBar )
-            m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, styleViewBar, "StyleBar" );
+            m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, styleStyleBar, "StyleBar" );
         else
             m_styleBar->ClearTools();
     }
@@ -594,7 +610,7 @@ void DrawingView::CreateViewToolBar()
         }
         if( m_styleBar )
         {
-            if( m_tbSetup[1].m_orientation == 1 || m_tbSetup[1].m_orientation == 3 )
+            if( m_tbSetup[1].m_orientation == 1 || m_tbSetup[1].m_orientation == 3  )
             {
                 m_fieldText = new wxTextCtrl( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
                 m_fieldText->Bind( wxEVT_KILL_FOCUS, &DrawingView::OnLabelTextChanged, this );
@@ -631,17 +647,24 @@ void DrawingView::CreateViewToolBar()
                 m_styleBar->AddSeparator();
                 m_styleBar->AddSeparator();
             }
+            m_styleBar->AddSeparator();
             m_styleBar->AddTool( wxID_BOLD, _( "Bold" ), boldSVG, boldSVG, wxITEM_CHECK, _( "Bold" ), _( "Make the font bold" ) );
             m_styleBar->AddTool( wxID_ITALIC, _( "Italic" ), italicSVG, italicSVG, wxITEM_CHECK, _( "Italic" ), _( "Make the font italic" ) );
             m_styleBar->AddTool( wxID_UNDERLINE, _( "Underline" ), underlineSVG, underlineSVG, wxITEM_CHECK, _( "Make the font underlined" ), _( "Make the font underlined" ) );
         }
     }
     m_tb->Realize();
+#ifdef __WXOSX__
+    sizer->Add( m_tb, 1, wxEXPAND, 0 );
 #ifdef __WXMSW__
     m_frame->SetToolBar( m_tb );
 #endif
     if( m_styleBar )
         m_styleBar->Realize();
+#ifdef __WXOSX__
+        sizer->Add( m_styleBar, 1, wxEXPAND, 0 );
+#endif
+    }
     switch( m_tbSetup[0].m_orientation )
     {
         case 0:
@@ -665,40 +688,40 @@ void DrawingView::CreateViewToolBar()
         case 3:
             offset = m_tb->GetSize().y;
             sizeFrame.SetWidth( size.x );
-            sizeFrame.SetHeight( size.y - offset );
-            break;
+            sizeFrame.SetHeight( ( size.y - offset ) );
+            m_tb->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
             break;
     }
     if( m_styleBar )
     {
         switch( m_tbSetup[1].m_orientation )
         {
-            case 0:
-                m_styleBar->SetSize( 0, 0,  wxDefaultCoord, size.y );
-                if( m_tbSetup[0].m_orientation == 0 )
-                    offset += m_styleBar->GetSize().x;
-                posFrame.x = offset;
-                sizeFrame.SetWidth( sizeFrame.GetWidth() - posFrame.x );
-                break;
-            case 1:
-                m_styleBar->SetSize( 0, 0,  size.x, wxDefaultCoord );
-                if( m_tbSetup[0].m_orientation == 1 )
-                    offset += m_styleBar->GetSize().y;
-                posFrame.y = offset;
-                sizeFrame.SetHeight( sizeFrame.GetHeight() - posFrame.y );
-                break;
-            case 2:
-                if( m_tbSetup[0].m_orientation == 2 )
-                    offset += m_styleBar->GetSize().x;
-                m_styleBar->SetSize( size.x - offset, 0, wxDefaultCoord, size.y );
-                sizeFrame.SetWidth( size.x - offset );
-                break;
-            case 3:
-                if( m_tbSetup[0].m_orientation == 3 )
-                    offset = m_styleBar->GetSize().y;
-                sizeFrame.SetHeight( sizeFrame.GetHeight() - ( size.y - offset ) );
-                m_styleBar->SetSize( 0, size.y - offset, size.x,  wxDefaultCoord );
-                break;
+        case 0:
+            m_styleBar->SetSize( 0, 0,  wxDefaultCoord, size.y );
+            if( m_tbSetup[0].m_orientation == 0 )
+                offset += m_styleBar->GetSize().x;
+            posFrame.x = offset;
+            sizeFrame.SetWidth( sizeFrame.GetWidth() - posFrame.x );
+            break;
+        case 1:
+            m_styleBar->SetSize( 0, 0,  size.x, wxDefaultCoord );
+            if( m_tbSetup[0].m_orientation == 1 )
+                offset += m_styleBar->GetSize().y;
+            posFrame.y = offset;
+            sizeFrame.SetHeight( sizeFrame.GetHeight() - posFrame.y );
+            break;
+        case 2:
+            if( m_tbSetup[0].m_orientation == 2 )
+                offset += m_styleBar->GetSize().x;
+            m_styleBar->SetSize( size.x - offset, 0,  wxDefaultCoord, size.y );
+            sizeFrame.SetWidth(  size.x - offset );
+            break;
+        case 3:
+            if( m_tbSetup[0].m_orientation == 3 )
+                offset += m_styleBar->GetSize().y;
+            sizeFrame.SetHeight( sizeFrame.GetHeight() - ( size.y - offset ) );
+            m_styleBar->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
+            break;
         }
     }
 #if defined( __WXMSW__ ) || defined( __WXGTK__ )
@@ -807,7 +830,6 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
 //                        wxPoint parentPos = parent->GetPosition();
 #ifndef __WXOSX__
                         int heightStyleBar = m_styleBar->GetSize().y;
-                        wxSize frameSize = m_frame->GetSize();
 #endif
                         wxPoint framePosition = m_frame->GetPosition();
                         if( framePosition.y == 0 )
@@ -848,14 +870,12 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
             {
                 int heightStyleBar = 0;
                 wxPoint framePosition;
-                wxSize frameSize;
 #ifndef __WXOSX__
                 if( m_styleBar )
                     heightStyleBar = m_styleBar->GetSize().y;
 #endif
                 framePosition = m_frame->GetPosition();
                 frameSize = m_frame->GetSize();
-                m_frame->Freeze();
                 m_fields->Show( true );
                 m_canvas->Show( true );
                 m_queryBook->Show( true );
@@ -873,7 +893,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 options.schema = "";
                 options.options = 0;
                 CREATEVIEWOPTIONS func = (CREATEVIEWOPTIONS) lib.GetSymbol( "CreateViewOptionsFunc" );
-                int res = func( m_frame, GetDocument()->GetDatabase(), options );
+                res = func( m_frame, GetDocument()->GetDatabase(), options );
                 if( res == wxID_CANCEL )
                 {
                     m_dbFrame->Show( true );
@@ -2820,13 +2840,13 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
         int res = func( m_frame, -1, m_queries, documentName, m_path, update );
         if( res == wxID_OK )
         {
-            wxString libName;
+            wxString libraryName;
             auto found = false;
             for( std::vector<LibrariesInfo>::iterator it = m_path.begin(); it < m_path.end() && !found; ++it )
             {
                 if( (*it).m_isActive )
                 {
-                    libName = (*it).m_path;
+                    libraryName = (*it).m_path;
                     found = true;
                 }
             }
@@ -2848,7 +2868,7 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
                 dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->AddWhereLines( wxString::Format( "%d,%s,%s,%s,%s", i, var, sign, value, condition ) );
             }
             GetDocument()->SetFilename( documentName + ".qry" );
-            if( GetDocument()->SaveNewQuery( libName, m_queries, documentName + ".qry", update ) ) 
+            if( GetDocument()->SaveNewQuery( libraryName, m_queries, documentName + ".qry", update ) ) 
             {
 
             }
