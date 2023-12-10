@@ -15,7 +15,6 @@
 #define wxID_CREATEDATABASE       100
 #define wxID_DELETEDATABASE       101
 #define wxID_SELECTTABLE          102
-#define wxID_OBJECTNEWTABLE       103
 #define wxID_OBJECTNEWINDEX       104
 #define wxID_OBJECTNEWVIEW        105
 #define wxID_OBJECTNEWFF          106

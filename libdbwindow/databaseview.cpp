@@ -2539,7 +2539,7 @@ void DrawingView::CreateDBMenu()
     auto menuObject = new wxMenu();
     menuObject->Append( wxID_SELECTTABLE, _( "Select Table..." ), _( "Select tables" ) );
     auto menuNewObject = new wxMenu();
-    menuNewObject->Append( wxID_OBJECTNEWTABLE, _( "Table..." ), _( "New Table" ) );
+    menuNewObject->Append( wxID_SELECTTABLE, _( "Table..." ), _( "New Table" ) );
     menuNewObject->Append( wxID_OBJECTNEWINDEX, _( "Index..." ), _( "New Index" ) );
     menuNewObject->Append( wxID_OBJECTNEWVIEW, _( "View" ), _( "New View" ) );
     menuNewObject->Append( wxID_OBJECTNEWFF, _( "Foreign Key..." ), _( "New Foreign Key" ) );
