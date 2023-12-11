@@ -82,3 +82,4 @@ dbhandler/memory_leak_report.txt
 aclocal*
 Makefile.in
 *.abl
+libhelpers/vc_mswuddll
