@@ -431,8 +431,10 @@ void DrawingView::CreateViewToolBar()
     wxWindow *parent = nullptr;
 #ifdef __WXOSX__
     parent = m_frame;
-#else
+#elif __WXMSW__
     parent = m_parent->GetClientWindow();
+#else
+	parent = m_parent;
 #endif
     auto size = m_parent->GetClientSize();
     auto posFrame = wxPoint( 0, 0 );

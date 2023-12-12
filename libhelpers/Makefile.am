@@ -9,7 +9,8 @@ libhelpers_a_SOURCES =  \
 	typecombobox.h
 
 libhelpers_a_CXXFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
-	--cxxflags` 
+	--cxxflags` \
+	-fPIC 
 
 libhelpers_a_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` 
