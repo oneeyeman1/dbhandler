@@ -84,7 +84,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     m_libPath = fn.GetPathWithSep();
 #endif
     const wxString tableName = dynamic_cast<TableEditDocument *>( doc )->GetTableName();
-    wxString title = "Data Management for " + tableName;
+    wxString title = _( "Create/Alter Table" );
     m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
     m_panel = new wxPanel( m_frame );
     wxPoint ptCanvas;
