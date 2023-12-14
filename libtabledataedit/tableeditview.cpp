@@ -217,7 +217,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             gridsizer->Add( new TypeComboBox( m_grid, db->GetTableVector().m_type, db->GetTableVector().m_type, (*it)->GetFieldType() ) );
             gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetFieldSize() ) ) );
             gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetPrecision() ) ) );
-            //            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->Get ) );
+            gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->IsNullAllowed() ? "Yes" : "No" ) );
             gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->GetDefaultValue(), wxDefaultPosition, wxDefaultSize, 8, defaultChoices  ) );
         }
     }
@@ -227,7 +227,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         gridsizer->Add( new TypeComboBox( m_grid, db->GetTableVector().m_type, db->GetTableVector().m_type, L"" ) );
         gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
         gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
-        //            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->Get ) );
+        gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, "Yes" ) );
         gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
     }
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
