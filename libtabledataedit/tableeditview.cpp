@@ -238,37 +238,6 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     m_panel->SetSizer( sizer_2 );
     m_frame->SetSizer( sizer_1 );
     m_frame->Layout();
-
-
-
-
-/*
-    m_grid->SetSizer( gridSizer );
-/*    const wxString choices[] = 
-    {
-        "(None)",
-        "autoincrement",
-        "current date",
-        "current tiime",
-        "current timestamp",
-        "timestamp",
-        "null",
-        "user"
-    };
-    for( int i = 0; i < table->GetNumberOfFields(); i++ )
-    {
-        m_grid->AppendRows();
-        wxString label( table->GetFields().at( i )->GetFieldName() );
-        m_grid->SetCellValue( i, 0, label );
-        m_grid->SetCellEditor( i, 1, new wxGridCellChoiceEditor( 8, choices ) );
-        m_grid->SetCellEditor( i, 5, new wxGridCellChoiceEditor( 8, choices ) );
-    }
-//    m_grid->GetGridWindow()->SetBackgroundColour( m_panel->GetBackgroundColour() );
-    sizer->Add( gridSizer, 1, wxEXPAND, 0 );
-    attributes = new TableSettngs( m_panel, wxID_ANY );
-    sizer->Add( attributes, 0, wxEXPAND, 0 );
-    m_panel->SetSizer( sizer );
-    m_frame->Layout();*/
 }
 
 void TableEditView::CreateMenuAndToolbar()
