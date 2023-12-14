@@ -13,11 +13,16 @@ libtableedit_la_SOURCES =  \
 	dataeditdoctemplate.cpp \
 	dataeditdoctemplate.h \
 	imagecellrenderer.cpp \
-	imagecellrenderer.h
+	imagecellrenderer.h \
+	tableattributes.cpp \
+	tableattributes.h
 
-libtableedit_la_CXXFLAGS = -I../../dbinterface \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--cxxflags` 
+libtableedit_la_CXXFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
+	--cxxflags` \
+	-I../../dbinterface \
+	-I../../libhelpers 
 
 libtableedit_la_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs` 
+	--libs` \
+	-L../../libhelpers \
+	-lhelpers 
