@@ -297,9 +297,11 @@ void TableEditView::CreateMenuAndToolbar()
     wxWindow *parent = nullptr;
 #ifdef __WXOSX__
     parent = m_frame;
-#else
+#elif __WXMSW__
     parent = m_parent->GetClientWindow();
     position = dynamic_cast<wxDocMDIParentFrame *>( m_parent )->GetToolBar()->GetSize().GetHeight();
+#else __WXGTK__
+	parent = m_parent;
 #endif
     wxSize size = m_parent->GetClientSize();
 #ifdef __WXOSX__
