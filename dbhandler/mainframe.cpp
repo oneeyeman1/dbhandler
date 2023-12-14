@@ -612,7 +612,7 @@ void MainFrame::OnTable(wxCommandEvent &WXUNUSED(event))
 #elif __WXOSX__
             libName = m_libraryPath + "liblibtabledataedit.dylib";
 #else
-            libName = m_libraryPath + "libtabledataedit";
+            libName = m_libraryPath + "libtableedit";
 #endif
             lib->Load( libName );
             if( lib->IsLoaded() )
