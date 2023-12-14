@@ -59,6 +59,7 @@ public:
 protected:
     void CreateMenuAndToolbar();
 private:
+    wxBoxSizer *sizer_1;
     wxPanel *m_panel;
     Database *m_db;
     wxBoxSizer *sizer;

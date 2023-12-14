@@ -39,6 +39,7 @@
 #include "wx/stdpaths.h"
 #include "wx/filename.h"
 #include "wx/mstream.h"
+#include "typecombobox.h"
 #include "database.h"
 #include "tableattributes.h"
 #include "tableeditdocument.h"
@@ -86,7 +87,9 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     const wxString tableName = dynamic_cast<TableEditDocument *>( doc )->GetTableName();
     wxString title = _( "Create/Alter Table" );
     m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+    sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     m_panel = new wxPanel( m_frame );
+    sizer_1->Add( m_panel, 1, wxEXPAND, 0 );
     wxPoint ptCanvas;
     sizer = new wxBoxSizer( wxVERTICAL );
 #ifdef __WXOSX__
@@ -180,14 +183,16 @@ void TableEditView::GetTablesForView(Database *db, bool init)
                 }
             }
     }
+    auto sizer_2 = new wxBoxSizer( wxVERTICAL );
     m_grid = new wxScrolled<wxPanel>( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxALWAYS_SHOW_SB | wxVSCROLL );
-    wxFlexGridSizer *gridSizer = new wxFlexGridSizer( 6, 0, 0 );
-    gridSizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Column Name" ) ) );
-    gridSizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Data Type" ) ) );
-    gridSizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Width" ) ) );
-    gridSizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Dec" ) ) );
-    gridSizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Null" ) ) );
-    gridSizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Default" ) ) );
+    sizer_2->Add( m_grid, 1, wxEXPAND, 0 );
+    auto gridsizer = new wxFlexGridSizer( 6, 0, 0 );
+    gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Field Name" ) ), 0, wxEXPAND, 0 );
+    gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Field Type" ) ), 0, wxEXPAND, 0 );
+    gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Width" ) ), 0, wxEXPAND, 0 );
+    gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Dec" ) ), 0, wxEXPAND, 0 );
+    gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Null" ) ), 0, wxEXPAND, 0 );
+    gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Default Value" ) ), 0, wxEXPAND, 0 );
     const wxString nullChoices[] =
     {
         "Yes",
@@ -208,23 +213,36 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     {
         for( std::vector<TableField *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); ++it )
         {
-            gridSizer->Add( new wxTextCtrl( m_grid, wxID_ANY, (*it)->GetFieldName() ) );
-            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->GetFieldType() ) );
-            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetFieldSize() ) ) );
-            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetPrecision() ) ) );
-//            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->Get ) );
-            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->GetDefaultValue(), wxDefaultPosition, wxDefaultSize, 8, defaultChoices  ) );
+            gridsizer->Add( new wxTextCtrl( m_grid, wxID_ANY, (*it)->GetFieldName() ) );
+            gridsizer->Add( new TypeComboBox( m_grid, db->GetTableVector().m_type, db->GetTableVector().m_type, (*it)->GetFieldType() ) );
+            gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetFieldSize() ) ) );
+            gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetPrecision() ) ) );
+            //            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->Get ) );
+            gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->GetDefaultValue(), wxDefaultPosition, wxDefaultSize, 8, defaultChoices  ) );
         }
     }
     else
     {
-        gridSizer->Add( new wxTextCtrl( m_grid, wxID_ANY, "" ) );
-        gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
-        gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
-        gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
+        gridsizer->Add( new wxTextCtrl( m_grid, wxID_ANY, "" ) );
+        gridsizer->Add( new TypeComboBox( m_grid, db->GetTableVector().m_type, db->GetTableVector().m_type, L"" ) );
+        gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
+        gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
         //            gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->Get ) );
-        gridSizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
+        gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ) );
     }
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    attributes = new TableSettngs( m_panel, wxID_ANY );
+    sizer_2->Add( attributes, 1, wxEXPAND, 0 );
+
+    m_grid->SetSizer( gridsizer );
+    m_panel->SetSizer( sizer_2 );
+    m_frame->SetSizer( sizer_1 );
+    m_frame->Layout();
+
+
+
+
+/*
     m_grid->SetSizer( gridSizer );
 /*    const wxString choices[] = 
     {
@@ -244,13 +262,13 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         m_grid->SetCellValue( i, 0, label );
         m_grid->SetCellEditor( i, 1, new wxGridCellChoiceEditor( 8, choices ) );
         m_grid->SetCellEditor( i, 5, new wxGridCellChoiceEditor( 8, choices ) );
-    }*/
+    }
 //    m_grid->GetGridWindow()->SetBackgroundColour( m_panel->GetBackgroundColour() );
     sizer->Add( gridSizer, 1, wxEXPAND, 0 );
     attributes = new TableSettngs( m_panel, wxID_ANY );
     sizer->Add( attributes, 0, wxEXPAND, 0 );
     m_panel->SetSizer( sizer );
-    m_frame->Layout();
+    m_frame->Layout();*/
 }
 
 void TableEditView::CreateMenuAndToolbar()
