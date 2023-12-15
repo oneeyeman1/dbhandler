@@ -92,6 +92,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     sizer_1->Add( m_panel, 1, wxEXPAND, 0 );
     wxPoint ptCanvas;
     sizer = new wxBoxSizer( wxVERTICAL );
+    CreateMenuAndToolbar();
 #ifdef __WXOSX__
     wxRect parentRect = m_parent->GetRect();
     wxSize parentClientSize = m_parent->GetClientSize();
@@ -100,18 +101,12 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     pt.x = -1;
     pt.y = parentRect.height - parentClientSize.GetHeight();
     m_frame->SetSize( pt.x, pt.y, parentRect.GetWidth(), parentClientSize.GetHeight() );
-    m_tb = m_frame->CreateToolBar();
-    m_tb->AddTool( wxID_QUERYCANCEL, _( "Cancel" ), wxBitmap( querycancel ), _( "Cancel the query" ), wxITEM_NORMAL );
-    m_tb->AddTool( wxID_TOP, _( "Top" ), wxArtProvider::GetBitmap( wxART_GOTO_FIRST ), _( "Top" ), wxITEM_NORMAL );
-    m_tb->AddTool( wxID_BACK, _( "Back" ), wxArtProvider::GetBitmap( wxART_GO_BACK ), _( "Back" ), wxITEM_NORMAL );
-    m_tb->Realize();
     int offset = m_tb->GetSize().y;
     ptCanvas.x = 0;
     ptCanvas.y = offset;
 #else
     ptCanvas = wxDefaultPosition;
 #endif
-    CreateMenuAndToolbar();
     wxASSERT( m_frame == GetFrame() );
 /*#ifndef __WXOSX__
     wxSize size = m_parent->GetClientSize();
@@ -276,10 +271,6 @@ void TableEditView::CreateMenuAndToolbar()
 #ifdef __WXOSX__
     if( !m_tb )
         m_tb = m_frame->CreateToolBar();
-    if( m_type == QueryView )
-    {
-        m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, "StyleBar" );
-    }
 #else
     if( !m_tb )
     {
