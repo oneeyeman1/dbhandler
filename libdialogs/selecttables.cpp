@@ -40,10 +40,12 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
     m_showSystem = new wxCheckBox( m_panel, wxID_ANY, _( "&Show system tables" ) );
     if( m_isTableView )
         m_readOnly = new wxCheckBox( m_panel, wxID_ANY, _( "&Read-Only" ) );
-    m_open = new wxButton( m_panel, wxID_ANY, _( "&Open" ) );
+    m_open = new wxButton( m_panel, wxID_OK, _( "&Open" ) );
     m_new = new wxButton( m_panel, wxID_ANY, _( "&New..." ) );
     if( type == 1 )
         m_new->Enable( false );
+    if( isTableView )
+        m_new->Enable( true );
     m_cancel = new wxButton( m_panel, wxID_CANCEL, _( "&Cancel" ) );
     m_help = new wxButton( m_panel, wxID_ANY, _( "&Help" ) );
 
@@ -53,6 +55,7 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
     m_open->Bind( wxEVT_BUTTON, &SelectTables::OnOpenTables, this );
     m_cancel->Bind( wxEVT_BUTTON, &SelectTables::OnCancel, this );
     m_showSystem->Bind( wxEVT_CHECKBOX, &SelectTables::OnShowSystemTables, this );
+    m_tables->Bind( wxEVT_LISTBOX_DCLICK, &SelectTables::OnListDClick, this );
 }
 
 void SelectTables::GetSelectedTableNames(std::map<wxString, std::vector<TableDefinition> > &tableNames)
@@ -226,4 +229,9 @@ void SelectTables::OnCancel(wxCommandEvent &WXUNUSED(event))
     for( auto i = 0; i < m_tables->GetCount(); ++i )
         delete (ClientData *) m_tables->GetClientData( i );
     EndModal( wxID_CANCEL );
+}
+
+void SelectTables::OnListDClick(wxCommandEvent &event)
+{
+    EndModal( wxID_OK );
 }
