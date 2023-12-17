@@ -508,12 +508,12 @@ void DrawingView::CreateViewToolBar()
             CreateQueryMenu( QuickQueryMenu );
         else
             CreateQueryMenu( SQLSelectMenu );
-        wxBitmapBundle save, tableSVG, boldSVG, italicSVG, underlineSVG;
+        wxBitmapBundle save, tableSVG, boldSVG, italicSVG, underlineSVG, leftalignSVG, centeralignSVG, rightalignSVG;
 #ifdef __WXMSW__
         HANDLE gs_wxMainThread = NULL;
         const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
-        const void* data = nullptr, * dataTable = nullptr, * data1 = nullptr, *data2 = nullptr, *data3 = nullptr;;
-        size_t sizeSave = 0, sizeTable = 0, size1 = 0, size2 = 0, size3 = 0;
+        const void* data = nullptr, * dataTable = nullptr, * data1 = nullptr, *data2 = nullptr, *data3 = nullptr, *data4 = nullptr, *data5 = nullptr, *data6 = nullptr;
+        size_t sizeSave = 0, sizeTable = 0, size1 = 0, size2 = 0, size3 = 0, size4 = 0, size5 = 0, size6 = 0;
         if( !wxLoadUserResource( &data, &sizeSave, "save", RT_RCDATA, inst ) )
         {
             auto err = ::GetLastError();
@@ -559,18 +559,51 @@ void DrawingView::CreateViewToolBar()
         {
             underlineSVG = wxBitmapBundle::FromSVG( (const char *) data3, wxSize( 16, 16 ) );
         }
+        if( !wxLoadUserResource( &data4, &size4, "leftalign", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            leftalignSVG = wxBitmapBundle::FromSVG( (const char *) data4, wxSize( 16, 16 ) );
+        }
+        if( !wxLoadUserResource( &data5, &size5, "centeralign", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            centeralignSVG = wxBitmapBundle::FromSVG( (const char *) data5, wxSize( 16, 16 ) );
+        }
+        if( !wxLoadUserResource( &data6, &size6, "rightalign", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            rightalignSVG = wxBitmapBundle::FromSVG( (const char *) data6, wxSize( 16, 16 ) );
+        }
 #elif __WXOSX__
         save = wxBitmapBundle::FromSVGResource( "save", wxSize( 16, 16 ) );
         tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
         boldSVG = wxBitmapBundle::FromSVGResource( "bold", wxSize( 16, 16 ) );
         italicSVG = wxBitmapBundle::FromSVGResource( "italic", wxSize( 16, 16 ) );
         underlineSVG = wxBitmapBundle::FromSVGResource( "underline", wxSize( 16, 16 ) );
+        leftalignSVG = wxBitmapBundle::FromSVGResource( "leftalign", wxSize( 16, 16 ) );
+        centeralignSVG = wxBitmapBundle::FromSVGResource( "centeralign", wxSize( 16, 16 ) );
+        rightalignSVG = wxBitmapBundle::FromSVGResource( "rightalign", wxSize( 16, 16 ) );
 #else
         save = wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR );
         tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
         boldSVG = wxBitmapBundle::FromSVG( bold, wxSize( 16, 16 ) );
         italicSVG = wxBitmapBundle::FromSVG( italic, wxSize( 16, 16 ) );
         underlineSVG = wxBitmapBundle::FromSVG( underline, wxSize( 16, 16 ) );
+        leftalignSVG = wxBitmapBundle::FromSVG( leftalign, wxSize( 16, 16 ) );
+        centeralignSVG = wxBitmapBundle::FromSVG( centeralign, wxSize( 16, 16 ) );
+        rightalignSVG = wxBitmapBundle::FromSVG( rightalign, wxSize( 16, 16 ) );
 #endif
         if( m_type != NewViewView )
         {
@@ -632,6 +665,9 @@ void DrawingView::CreateViewToolBar()
             m_styleBar->AddTool( wxID_BOLD, _( "Bold" ), boldSVG, boldSVG, wxITEM_CHECK, _( "Bold" ), _( "Make the font bold" ) );
             m_styleBar->AddTool( wxID_ITALIC, _( "Italic" ), italicSVG, italicSVG, wxITEM_CHECK, _( "Italic" ), _( "Make the font italic" ) );
             m_styleBar->AddTool( wxID_UNDERLINE, _( "Underline" ), underlineSVG, underlineSVG, wxITEM_CHECK, _( "Make the font underlined" ), _( "Make the font underlined" ) );
+            m_styleBar->AddTool( wxID_LEFTALIGN, _( "LeftAlign" ),  leftalignSVG, leftalignSVG, wxITEM_CHECK, _( "" ), _( "" ) );
+            m_styleBar->AddTool( wxID_CENTERALIGN, _( "CenterAlign" ),  centeralignSVG, centeralignSVG, wxITEM_CHECK, _( "" ), _( "" ) );
+            m_styleBar->AddTool( wxID_RIGHTALIGN, _( "RightAlign" ),  rightalignSVG, rightalignSVG, wxITEM_CHECK, _( "" ), _( "" ) );
         }
     }
     m_tb->Realize();
