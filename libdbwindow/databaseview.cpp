@@ -26,6 +26,9 @@
 #include "bold.h"
 #include "italic.h"
 #include "underline.h"
+#include "centeralign.h"
+#include "leftalign.h"
+#include "rightalign.h"
 #include "table_svg.h"
 #endif
 #include "res/gui/preview.c"
