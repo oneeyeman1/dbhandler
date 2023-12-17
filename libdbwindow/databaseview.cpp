@@ -264,7 +264,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 //    m_frame->Layout();
 //    m_frame->Show();
     wxPoint ptCanvas;
-#ifndef __WXOSX__
+/*#ifndef __WXOSX__
     ptCanvas = wxDefaultPosition;
 #else
     ptCanvas.x = 0;
@@ -272,7 +272,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     if( m_styleBar )
         ptCanvas.y += m_styleBar->GetSize().y;
     ptCanvas.y = m_frame->GetSize().y - m_frame->GetClientSize().y;
-#endif
+#endif*/
     wxASSERT( m_frame == GetFrame() );
     m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
     m_fields->SetCursor( wxCURSOR_HAND );
