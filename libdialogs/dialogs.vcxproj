@@ -280,6 +280,7 @@
       <ProgramDatabaseFile>vc_mswuddll\dialogs.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
       <ManifestFile>vc_mswuddll\$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
+      <ShowProgress>LinkVerboseLib</ShowProgress>
     </Link>
     <Bscmake>
       <OutputFile>vc_mswuddll\dll_vc9_my_dll.bsc</OutputFile>

@@ -47,6 +47,7 @@ protected:
     void OnOpenTables(wxCommandEvent &event);
     void OnCancel(wxCommandEvent &event);
     void OnShowSystemTables(wxCommandEvent &event);
+    void OnListDClick(wxCommandEvent &event);
 }; // wxGlade: end class
 
 

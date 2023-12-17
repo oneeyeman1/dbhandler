@@ -2,10 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{f4b9b359-cc80-4d92-bb28-f0ff8c6cc165}</UniqueIdentifier>
+      <UniqueIdentifier>{c31ff3e8-4aec-4b9a-b131-446810fde901}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{3229e443-e7a5-46aa-b98d-8337e085e733}</UniqueIdentifier>
+    <Filter Include="Source Fles">
+      <UniqueIdentifier>{9971f219-da08-4586-80d4-3bac4e70ecfe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -15,7 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="typecombobox.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Fles</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

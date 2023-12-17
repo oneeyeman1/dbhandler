@@ -53,11 +53,13 @@ public:
     ~TableEditView();
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *dc) wxOVERRIDE;
+    virtual bool OnClose(bool deletedWndow = true) wxOVERRIDE;
     void GetTablesForView(Database *db, bool init);
     void SetToolbarOption(Configuration *conf);
     void SetViewType(ViewType type) { m_type = type; }
 protected:
     void CreateMenuAndToolbar();
+    void OnClose(wxCommandEvent &event);
 private:
     wxBoxSizer *sizer_1;
     wxPanel *m_panel;
@@ -74,7 +76,9 @@ private:
     ToolbarSetup m_tbSettings;
     ViewType m_type;
     TableSettngs *attributes;
+    int m_currentRow;
     wxDECLARE_DYNAMIC_CLASS(TableEditView);
+    wxDECLARE_EVENT_TABLE();
 };
 
 #endif // _TABLEEDITVIEW_H_
