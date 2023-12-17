@@ -6,6 +6,8 @@
 #else
 #define HELPERS_EXPORT __declspec(dllexport)
 #endif
+#else
+#define HELPERS_EXPORT
 #endif
 
 class HELPERS_EXPORT TypeComboBox : public wxComboBox
