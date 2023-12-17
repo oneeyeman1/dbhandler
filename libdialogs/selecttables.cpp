@@ -233,5 +233,6 @@ void SelectTables::OnCancel(wxCommandEvent &WXUNUSED(event))
 
 void SelectTables::OnListDClick(wxCommandEvent &event)
 {
-    EndModal( wxID_OK );
+    if( m_isTableView )
+        EndModal( wxID_OK );
 }
