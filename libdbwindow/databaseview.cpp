@@ -222,7 +222,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_dbFrame = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
-    m_parent = wxStaticCast( wxTheApp->GetTopWindow(), wxDocMDIParentFrame );
     wxRect clientRect = m_parent->GetClientRect();
     wxWindowList children = m_parent->GetChildren();
     for( wxWindowList::iterator it = children.begin(); it != children.end(); it++ )
