@@ -259,7 +259,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 #endif
     wxPoint pos;
 #ifdef __WXOSX__
-    pos.y = m_parent->GetToolBar()->GetRect().GetHeight();
+    pos.y = ( m_parent->GetClientWindow()->GetClientRect().GetHeight() - m_parent->GetClientRect().GetHeight() );
 #else
     pos = wxDefaultPosition;
 #endif
