@@ -30,6 +30,9 @@
 #include "leftalign.h"
 #include "rightalign.h"
 #include "table_svg.h"
+#include "commenttext.h"
+#include "fontname.h"
+#include "fontsize.h"
 #endif
 #include "res/gui/preview.c"
 #include "res/gui/sql.h"
@@ -439,8 +442,8 @@ void DrawingView::CreateViewToolBar()
 	parent = m_parent;
 #endif
     auto size = m_parent->GetClientSize();
-    auto posFrame = wxPoint( 0, 0 );
-    auto sizeFrame = wxSize( size.x, size.y );
+//    auto posFrame = wxPoint( 0, 0 );
+//    auto sizeFrame = wxSize( size.x, size.y );
 #ifdef __WXOSX__
     m_tb = m_frame->CreateToolBar();
     m_tb->SetName( "ViewBar" );
@@ -510,12 +513,14 @@ void DrawingView::CreateViewToolBar()
             CreateQueryMenu( QuickQueryMenu );
         else
             CreateQueryMenu( SQLSelectMenu );
-        wxBitmapBundle save, tableSVG, boldSVG, italicSVG, underlineSVG, leftalignSVG, centeralignSVG, rightalignSVG;
+        wxBitmapBundle save, tableSVG, boldSVG, italicSVG, underlineSVG, leftalignSVG, centeralignSVG, rightalignSVG, commentSVG, fontnameSVG, fontsizeSVG;
 #ifdef __WXMSW__
         HANDLE gs_wxMainThread = NULL;
         const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
-        const void* data = nullptr, * dataTable = nullptr, * data1 = nullptr, *data2 = nullptr, *data3 = nullptr, *data4 = nullptr, *data5 = nullptr, *data6 = nullptr;
+        const void *data = nullptr, *dataTable = nullptr, *data1 = nullptr, *data2 = nullptr, *data3 = nullptr, *data4 = nullptr, *data5 = nullptr, *data6 = nullptr;
+        const void *data7 = nullptr, *data8 = nullptr, *data9 = nullptr;
         size_t sizeSave = 0, sizeTable = 0, size1 = 0, size2 = 0, size3 = 0, size4 = 0, size5 = 0, size6 = 0;
+        size_t size7 = 0, size8 = 0, size9 = 0;
         if( !wxLoadUserResource( &data, &sizeSave, "save", RT_RCDATA, inst ) )
         {
             auto err = ::GetLastError();
@@ -588,6 +593,33 @@ void DrawingView::CreateViewToolBar()
         {
             rightalignSVG = wxBitmapBundle::FromSVG( (const char *) data6, wxSize( 16, 16 ) );
         }
+        if( !wxLoadUserResource( &data7, &size7, "comment", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            commentSVG = wxBitmapBundle::FromSVG( (const char *) data7, wxSize( 16, 16 ) );
+        }
+        if( !wxLoadUserResource( &data8, &size8, "fontname", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            fontnameSVG = wxBitmapBundle::FromSVG( (const char *) data8, wxSize( 16, 16 ) );
+        }
+        if( !wxLoadUserResource( &data9, &size9, "fontsize", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            fontsizeSVG = wxBitmapBundle::FromSVG( (const char *) data9, wxSize( 16, 16 ) );
+        }
 #elif __WXOSX__
         save = wxBitmapBundle::FromSVGResource( "save", wxSize( 16, 16 ) );
         tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
@@ -597,6 +629,9 @@ void DrawingView::CreateViewToolBar()
         leftalignSVG = wxBitmapBundle::FromSVGResource( "leftalign", wxSize( 16, 16 ) );
         centeralignSVG = wxBitmapBundle::FromSVGResource( "centeralign", wxSize( 16, 16 ) );
         rightalignSVG = wxBitmapBundle::FromSVGResource( "rightalign", wxSize( 16, 16 ) );
+        commentSVG = wxBitmapBundle::FromSVGResource( "comment", wxSize( 16, 16 ) );
+        fontnameSVG = wxBitmapBundle::FromSVGResource( "fontname", wxSize( 16, 16 ) );
+        fontsizeSVG = wxBitmapBundle::FromSVGResource( "fontsize", wxSize( 16, 16 ) );
 #else
         save = wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR );
         tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
@@ -606,6 +641,9 @@ void DrawingView::CreateViewToolBar()
         leftalignSVG = wxBitmapBundle::FromSVG( leftalign, wxSize( 16, 16 ) );
         centeralignSVG = wxBitmapBundle::FromSVG( centeralign, wxSize( 16, 16 ) );
         rightalignSVG = wxBitmapBundle::FromSVG( rightalign, wxSize( 16, 16 ) );
+        commentSVG = wxBitmapBundle::FromSVGResource( comment, wxSize( 16, 16 ) );
+        fontnameSVG = wxBitmapBundle::FromSVGResource( fontname, wxSize( 16, 16 ) );
+        fontsizeSVG = wxBitmapBundle::FromSVGResource( fontsize, wxSize( 16, 16 ) );
 #endif
         if( m_type != NewViewView )
         {
@@ -659,9 +697,9 @@ void DrawingView::CreateViewToolBar()
             }
             else
             {
-                m_styleBar->AddSeparator();
-                m_styleBar->AddSeparator();
-                m_styleBar->AddSeparator();
+                m_styleBar->AddTool( wxID_COMMENTFIELD, _( "Comment" ), commentSVG, commentSVG, wxITEM_NORMAL, _( "" ), _( "" ) );
+                m_styleBar->AddTool( wxID_FONTNAME, _( "FontName" ), fontnameSVG, fontnameSVG, wxITEM_NORMAL, _( "" ), _( "" ) );
+                m_styleBar->AddTool( wxID_FONTSIZE, _( "FontSize" ), fontsizeSVG, fontsizeSVG, wxITEM_NORMAL, _( "" ), _( "" ) );
             }
             m_styleBar->AddSeparator();
             m_styleBar->AddTool( wxID_BOLD, _( "Bold" ), boldSVG, boldSVG, wxITEM_CHECK, _( "Bold" ), _( "Make the font bold" ) );
@@ -683,7 +721,7 @@ void DrawingView::CreateViewToolBar()
         sizer->Add( m_styleBar, 1, wxEXPAND, 0 );
 #endif
     }
-    switch( m_tbSetup[0].m_orientation )
+/*    switch( m_tbSetup[0].m_orientation )
     {
         case 0:
             m_tb->SetSize( 0, 0,  wxDefaultCoord, size.y );
@@ -711,6 +749,78 @@ void DrawingView::CreateViewToolBar()
             break;
     }
     if( m_styleBar )
+    {
+        switch( m_tbSetup[1].m_orientation )
+        {
+        case 0:
+            m_styleBar->SetSize( 0, 0,  wxDefaultCoord, size.y );
+            if( m_tbSetup[0].m_orientation == 0 )
+                offset += m_styleBar->GetSize().x;
+            posFrame.x = offset;
+            sizeFrame.SetWidth( sizeFrame.GetWidth() - posFrame.x );
+            break;
+        case 1:
+            m_styleBar->SetSize( 0, 0,  size.x, wxDefaultCoord );
+            if( m_tbSetup[0].m_orientation == 1 )
+                offset += m_styleBar->GetSize().y;
+            posFrame.y = offset;
+            sizeFrame.SetHeight( sizeFrame.GetHeight() - posFrame.y );
+            break;
+        case 2:
+            if( m_tbSetup[0].m_orientation == 2 )
+                offset += m_styleBar->GetSize().x;
+            m_styleBar->SetSize( size.x - offset, 0,  wxDefaultCoord, size.y );
+            sizeFrame.SetWidth(  size.x - offset );
+            break;
+        case 3:
+            if( m_tbSetup[0].m_orientation == 3 )
+                offset += m_styleBar->GetSize().y;
+            sizeFrame.SetHeight( sizeFrame.GetHeight() - ( size.y - offset ) );
+            m_styleBar->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
+            break;
+        }
+    }
+#if defined( __WXMSW__ ) || defined( __WXGTK__ )
+    m_frame->SetSize( posFrame.x, posFrame.y, sizeFrame.GetWidth(), sizeFrame.GetHeight() );
+#else
+    m_canvas->SetSize( posFrame.x, posFrame.y, sizeFrame.GetWidth(), sizeFrame.GetHeight() );
+#endif*/
+    LayoutChildren( size );;
+}
+
+void DrawingView::LayoutChildren(const wxSize &size)
+{
+    int offset = 0;
+    auto posFrame = wxPoint( 0, 0 );
+    auto sizeFrame = wxSize( size.x, size.y );
+    switch( m_tbSetup[0].m_orientation )
+    {
+    case 0:
+        m_tb->SetSize( 0, 0,  wxDefaultCoord, size.y );
+        offset = m_tb->GetSize().x;
+        posFrame.x = offset;
+        sizeFrame.SetWidth ( ( size.x - offset ) );
+        break;
+    case 1:
+        m_tb->SetSize( 0, 0,  size.x, wxDefaultCoord );
+        offset = m_tb->GetSize().y;
+        posFrame.y = offset;
+        sizeFrame.SetHeight( ( size.y - offset ) );
+        break;
+    case 2:
+        offset = m_tb->GetSize().x;
+        m_tb->SetSize( size.x - offset, 0,  offset, size.y );
+        sizeFrame.SetWidth( size.x - offset );
+        sizeFrame.SetHeight( size.y );
+        break;
+    case 3:
+        offset = m_tb->GetSize().y;
+        sizeFrame.SetWidth( size.x );
+        sizeFrame.SetHeight( ( size.y - offset ) );
+        m_tb->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
+        break;
+    }
+    if( m_styleBar && m_styleBar->IsShown() )
     {
         switch( m_tbSetup[1].m_orientation )
         {
@@ -868,6 +978,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                         m_parent->SendSizeEvent();
                         wxYield();
 #endif
+                        LayoutChildren( m_parent->GetClientSize() );
                     }
                     else
                     {
@@ -1234,7 +1345,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
             }
             if( quickSelect )
             {
-//                PopuateQueryCanvas();
+                PopuateQueryCanvas();
                 auto position = m_frame->GetMenuBar()->FindMenu( _( "Design" ) );
                 auto designMenu = m_frame->GetMenuBar()->GetMenu( position );
                 designMenu->Check( wxID_DATASOURCE, false );
