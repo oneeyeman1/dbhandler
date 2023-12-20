@@ -257,7 +257,13 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxFileName fn( stdPath.GetExecutablePath() );
     m_libPath = fn.GetPathWithSep();
 #endif
-    m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+    wxPoint pos;
+#ifdef __WXOSX__
+    pos.y = m_parent->GetToolBar()->GetRect().GetHeight();
+#else
+    pos = wxDefaultPosition;
+#endif
+    m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, pos, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
 //    m_frame->SetMenuBar( parent->GetMenuBar() );
     if( m_type == DatabaseView )
     {
@@ -269,15 +275,15 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 //    m_frame->Layout();
 //    m_frame->Show();
     wxPoint ptCanvas;
-/*#ifndef __WXOSX__
+#ifndef __WXOSX__
     ptCanvas = wxDefaultPosition;
 #else
     ptCanvas.x = 0;
-    ptCanvas.y = m_tb->GetSize().y;
+    ptCanvas.y = ( m_parent->GetClientWindow()->GetClientRect().GetWidth() - m_parent->GetClientRect().GetWidth() );
     if( m_styleBar )
         ptCanvas.y += m_styleBar->GetSize().y;
-    ptCanvas.y = m_frame->GetSize().y - m_frame->GetClientSize().y;
-#endif*/
+//    ptCanvas.y = m_frame->GetSize().y - m_frame->GetClientSize().y;
+#endif
     wxASSERT( m_frame == GetFrame() );
     m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
     m_fields->SetCursor( wxCURSOR_HAND );
@@ -629,7 +635,7 @@ void DrawingView::CreateViewToolBar()
         leftalignSVG = wxBitmapBundle::FromSVGResource( "leftalign", wxSize( 16, 16 ) );
         centeralignSVG = wxBitmapBundle::FromSVGResource( "centeralign", wxSize( 16, 16 ) );
         rightalignSVG = wxBitmapBundle::FromSVGResource( "rightalign", wxSize( 16, 16 ) );
-        commentSVG = wxBitmapBundle::FromSVGResource( "comment", wxSize( 16, 16 ) );
+        commentSVG = wxBitmapBundle::FromSVGResource( "commenttext", wxSize( 16, 16 ) );
         fontnameSVG = wxBitmapBundle::FromSVGResource( "fontname", wxSize( 16, 16 ) );
         fontsizeSVG = wxBitmapBundle::FromSVGResource( "fontsize", wxSize( 16, 16 ) );
 #else
