@@ -30,7 +30,7 @@
 #include "leftalign.h"
 #include "rightalign.h"
 #include "table_svg.h"
-#include "comment.h"
+#include "commenttext.h"
 #include "fontname.h"
 #include "fontsize.h"
 #endif
@@ -629,7 +629,7 @@ void DrawingView::CreateViewToolBar()
         leftalignSVG = wxBitmapBundle::FromSVGResource( "leftalign", wxSize( 16, 16 ) );
         centeralignSVG = wxBitmapBundle::FromSVGResource( "centeralign", wxSize( 16, 16 ) );
         rightalignSVG = wxBitmapBundle::FromSVGResource( "rightalign", wxSize( 16, 16 ) );
-        commentnSVG = wxBitmapBundle::FromSVGResource( "comment", wxSize( 16, 16 ) );
+        commentSVG = wxBitmapBundle::FromSVGResource( "comment", wxSize( 16, 16 ) );
         fontnameSVG = wxBitmapBundle::FromSVGResource( "fontname", wxSize( 16, 16 ) );
         fontsizeSVG = wxBitmapBundle::FromSVGResource( "fontsize", wxSize( 16, 16 ) );
 #else
@@ -641,7 +641,7 @@ void DrawingView::CreateViewToolBar()
         leftalignSVG = wxBitmapBundle::FromSVG( leftalign, wxSize( 16, 16 ) );
         centeralignSVG = wxBitmapBundle::FromSVG( centeralign, wxSize( 16, 16 ) );
         rightalignSVG = wxBitmapBundle::FromSVG( rightalign, wxSize( 16, 16 ) );
-        commentnSVG = wxBitmapBundle::FromSVGResource( comment, wxSize( 16, 16 ) );
+        commentSVG = wxBitmapBundle::FromSVGResource( comment, wxSize( 16, 16 ) );
         fontnameSVG = wxBitmapBundle::FromSVGResource( fontname, wxSize( 16, 16 ) );
         fontsizeSVG = wxBitmapBundle::FromSVGResource( fontsize, wxSize( 16, 16 ) );
 #endif
