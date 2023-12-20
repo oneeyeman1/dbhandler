@@ -131,6 +131,9 @@ private:
 #define wxID_LEFTALIGN            1000
 #define wxID_CENTERALIGN          1001 
 #define wxID_RIGHTALIGN           1002
+#define wxID_COMMENTFIELD         1003
+#define wxID_FONTNAME             1004
+#define wxID_FONTSIZE             1005
 #endif
 
 #endif // _TABLE_CANVAS_H_
