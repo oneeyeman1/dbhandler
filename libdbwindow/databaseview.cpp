@@ -731,33 +731,38 @@ void DrawingView::LayoutChildren(const wxSize &size)
     int offset = 0;
     auto posFrame = wxPoint( 0, 0 );
     auto sizeFrame = wxSize( size.x, size.y );
-    switch( m_tbSetup[0].m_orientation )
+    if( m_tbSetup[0].m_hideShow )
     {
-    case 0:
-        m_tb->SetSize( 0, 0,  wxDefaultCoord, size.y );
-        offset = m_tb->GetSize().x;
-        posFrame.x = offset;
-        sizeFrame.SetWidth ( ( size.x - offset ) );
-        break;
-    case 1:
-        m_tb->SetSize( 0, 0,  size.x, wxDefaultCoord );
-        offset = m_tb->GetSize().y;
-        posFrame.y = offset;
-        sizeFrame.SetHeight( ( size.y - offset ) );
-        break;
-    case 2:
-        offset = m_tb->GetSize().x;
-        m_tb->SetSize( size.x - offset, 0,  offset, size.y );
-        sizeFrame.SetWidth( size.x - offset );
-        sizeFrame.SetHeight( size.y );
-        break;
-    case 3:
-        offset = m_tb->GetSize().y;
-        sizeFrame.SetWidth( size.x );
-        sizeFrame.SetHeight( ( size.y - offset ) );
-        m_tb->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
-        break;
+        switch( m_tbSetup[0].m_orientation )
+        {
+        case 0:
+            m_tb->SetSize( 0, 0,  wxDefaultCoord, size.y );
+            offset = m_tb->GetSize().x;
+            posFrame.x = offset;
+            sizeFrame.SetWidth ( ( size.x - offset ) );
+            break;
+        case 1:
+            m_tb->SetSize( 0, 0,  size.x, wxDefaultCoord );
+            offset = m_tb->GetSize().y;
+            posFrame.y = offset;
+            sizeFrame.SetHeight( ( size.y - offset ) );
+            break;
+        case 2:
+            offset = m_tb->GetSize().x;
+            m_tb->SetSize( size.x - offset, 0,  offset, size.y );
+            sizeFrame.SetWidth( size.x - offset );
+            sizeFrame.SetHeight( size.y );
+            break;
+        case 3:
+            offset = m_tb->GetSize().y;
+            sizeFrame.SetWidth( size.x );
+            sizeFrame.SetHeight( ( size.y - offset ) );
+            m_tb->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
+            break;
+        }
     }
+    else
+        m_tb->Hide();
     if( m_styleBar && m_styleBar->IsShown() )
     {
         switch( m_tbSetup[1].m_orientation )
