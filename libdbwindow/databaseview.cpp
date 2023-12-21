@@ -282,7 +282,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     ptCanvas.y = ( m_parent->GetClientWindow()->GetClientRect().GetWidth() - m_parent->GetClientRect().GetWidth() );
     if( m_styleBar )
         ptCanvas.y += m_styleBar->GetSize().y;
-//    ptCanvas.y = m_frame->GetSize().y - m_frame->GetClientSize().y;
 #endif
     wxASSERT( m_frame == GetFrame() );
     m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
