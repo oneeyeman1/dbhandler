@@ -641,9 +641,9 @@ void DrawingView::CreateViewToolBar()
         leftalignSVG = wxBitmapBundle::FromSVG( leftalign, wxSize( 16, 16 ) );
         centeralignSVG = wxBitmapBundle::FromSVG( centeralign, wxSize( 16, 16 ) );
         rightalignSVG = wxBitmapBundle::FromSVG( rightalign, wxSize( 16, 16 ) );
-        commentSVG = wxBitmapBundle::FromSVGResource( comment, wxSize( 16, 16 ) );
-        fontnameSVG = wxBitmapBundle::FromSVGResource( fontname, wxSize( 16, 16 ) );
-        fontsizeSVG = wxBitmapBundle::FromSVGResource( fontsize, wxSize( 16, 16 ) );
+        commentSVG = wxBitmapBundle::FromSVG( comment, wxSize( 16, 16 ) );
+        fontnameSVG = wxBitmapBundle::FromSVG( fontname, wxSize( 16, 16 ) );
+        fontsizeSVG = wxBitmapBundle::FromSVG( fontsize, wxSize( 16, 16 ) );
 #endif
         if( m_type != NewViewView )
         {
