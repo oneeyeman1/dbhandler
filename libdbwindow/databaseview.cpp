@@ -30,7 +30,7 @@
 #include "leftalign.h"
 #include "rightalign.h"
 #include "table_svg.h"
-#include "comment.h"
+#include "commenttext.h"
 #include "fontname.h"
 #include "fontsize.h"
 #endif
@@ -257,8 +257,14 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxFileName fn( stdPath.GetExecutablePath() );
     m_libPath = fn.GetPathWithSep();
 #endif
-    m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, wxDefaultPosition, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
-//    m_frame->SetMenuBar( parent->GetMenuBar() );
+    wxPoint pos;
+#ifdef __WXOSX__
+    pos.y = ( m_parent->GetClientWindow()->GetClientRect().GetHeight() - m_parent->GetClientRect().GetHeight() );
+#else
+    pos = wxDefaultPosition;
+#endif
+    m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, pos, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+//    m_frame->SetMenuBar( m_parent->GetMenuBar() );
     if( m_type == DatabaseView )
     {
         m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
@@ -269,15 +275,14 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 //    m_frame->Layout();
 //    m_frame->Show();
     wxPoint ptCanvas;
-/*#ifndef __WXOSX__
+#ifndef __WXOSX__
     ptCanvas = wxDefaultPosition;
 #else
     ptCanvas.x = 0;
-    ptCanvas.y = m_tb->GetSize().y;
+    ptCanvas.y = ( m_parent->GetClientWindow()->GetClientRect().GetWidth() - m_parent->GetClientRect().GetWidth() );
     if( m_styleBar )
         ptCanvas.y += m_styleBar->GetSize().y;
-    ptCanvas.y = m_frame->GetSize().y - m_frame->GetClientSize().y;
-#endif*/
+#endif
     wxASSERT( m_frame == GetFrame() );
     m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
     m_fields->SetCursor( wxCURSOR_HAND );
@@ -393,7 +398,6 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::CreateViewToolBar()
 {
-    int offset = 0;
 	long styleViewBar = wxNO_BORDER | wxTB_FLAT, styleStyleBar = wxNO_BORDER | wxTB_FLAT;
     switch( m_tbSetup[0].m_orientation )
     {
@@ -442,8 +446,6 @@ void DrawingView::CreateViewToolBar()
 	parent = m_parent;
 #endif
     auto size = m_parent->GetClientSize();
-//    auto posFrame = wxPoint( 0, 0 );
-//    auto sizeFrame = wxSize( size.x, size.y );
 #ifdef __WXOSX__
     m_tb = m_frame->CreateToolBar();
     m_tb->SetName( "ViewBar" );
@@ -629,7 +631,7 @@ void DrawingView::CreateViewToolBar()
         leftalignSVG = wxBitmapBundle::FromSVGResource( "leftalign", wxSize( 16, 16 ) );
         centeralignSVG = wxBitmapBundle::FromSVGResource( "centeralign", wxSize( 16, 16 ) );
         rightalignSVG = wxBitmapBundle::FromSVGResource( "rightalign", wxSize( 16, 16 ) );
-        commentnSVG = wxBitmapBundle::FromSVGResource( "comment", wxSize( 16, 16 ) );
+        commentSVG = wxBitmapBundle::FromSVGResource( "commenttext", wxSize( 16, 16 ) );
         fontnameSVG = wxBitmapBundle::FromSVGResource( "fontname", wxSize( 16, 16 ) );
         fontsizeSVG = wxBitmapBundle::FromSVGResource( "fontsize", wxSize( 16, 16 ) );
 #else
@@ -641,7 +643,7 @@ void DrawingView::CreateViewToolBar()
         leftalignSVG = wxBitmapBundle::FromSVG( leftalign, wxSize( 16, 16 ) );
         centeralignSVG = wxBitmapBundle::FromSVG( centeralign, wxSize( 16, 16 ) );
         rightalignSVG = wxBitmapBundle::FromSVG( rightalign, wxSize( 16, 16 ) );
-        commentnSVG = wxBitmapBundle::FromSVGResource( comment, wxSize( 16, 16 ) );
+        commentSVG = wxBitmapBundle::FromSVGResource( comment, wxSize( 16, 16 ) );
         fontnameSVG = wxBitmapBundle::FromSVGResource( fontname, wxSize( 16, 16 ) );
         fontsizeSVG = wxBitmapBundle::FromSVGResource( fontsize, wxSize( 16, 16 ) );
 #endif
@@ -721,8 +723,18 @@ void DrawingView::CreateViewToolBar()
         sizer->Add( m_styleBar, 1, wxEXPAND, 0 );
 #endif
     }
-/*    switch( m_tbSetup[0].m_orientation )
+    LayoutChildren( size );;
+}
+
+void DrawingView::LayoutChildren(const wxSize &size)
+{
+    int offset = 0;
+    auto posFrame = wxPoint( 0, 0 );
+    auto sizeFrame = wxSize( size.x, size.y );
+    if( m_tbSetup[0].m_hideShow )
     {
+        switch( m_tbSetup[0].m_orientation )
+        {
         case 0:
             m_tb->SetSize( 0, 0,  wxDefaultCoord, size.y );
             offset = m_tb->GetSize().x;
@@ -747,84 +759,11 @@ void DrawingView::CreateViewToolBar()
             sizeFrame.SetHeight( ( size.y - offset ) );
             m_tb->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
             break;
-    }
-    if( m_styleBar )
-    {
-        switch( m_tbSetup[1].m_orientation )
-        {
-        case 0:
-            m_styleBar->SetSize( 0, 0,  wxDefaultCoord, size.y );
-            if( m_tbSetup[0].m_orientation == 0 )
-                offset += m_styleBar->GetSize().x;
-            posFrame.x = offset;
-            sizeFrame.SetWidth( sizeFrame.GetWidth() - posFrame.x );
-            break;
-        case 1:
-            m_styleBar->SetSize( 0, 0,  size.x, wxDefaultCoord );
-            if( m_tbSetup[0].m_orientation == 1 )
-                offset += m_styleBar->GetSize().y;
-            posFrame.y = offset;
-            sizeFrame.SetHeight( sizeFrame.GetHeight() - posFrame.y );
-            break;
-        case 2:
-            if( m_tbSetup[0].m_orientation == 2 )
-                offset += m_styleBar->GetSize().x;
-            m_styleBar->SetSize( size.x - offset, 0,  wxDefaultCoord, size.y );
-            sizeFrame.SetWidth(  size.x - offset );
-            break;
-        case 3:
-            if( m_tbSetup[0].m_orientation == 3 )
-                offset += m_styleBar->GetSize().y;
-            sizeFrame.SetHeight( sizeFrame.GetHeight() - ( size.y - offset ) );
-            m_styleBar->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
-            break;
         }
     }
-#if defined( __WXMSW__ ) || defined( __WXGTK__ )
-    m_frame->SetSize( posFrame.x, posFrame.y, sizeFrame.GetWidth(), sizeFrame.GetHeight() );
-#else
-    m_canvas->SetSize( posFrame.x, posFrame.y, sizeFrame.GetWidth(), sizeFrame.GetHeight() );
-#endif*/
-    LayoutChildren( size );;
-}
-
-void DrawingView::LayoutChildren(const wxSize &size)
-{
-    int offset = 0;
-    auto posFrame = wxPoint( 0, 0 );
-    auto sizeFrame = wxSize( size.x, size.y );
-    if( !m_tbSetup[0].m_hideShow )
+    else
         m_tb->Hide();
-    if( m_styleBar && !m_tbSetup[1].m_hideShow )
-        m_styleBar->Hide();
-    switch( m_tbSetup[0].m_orientation )
-    {
-    case 0:
-        m_tb->SetSize( 0, 0,  wxDefaultCoord, size.y );
-        offset = m_tb->GetSize().x;
-        posFrame.x = offset;
-        sizeFrame.SetWidth ( ( size.x - offset ) );
-        break;
-    case 1:
-        m_tb->SetSize( 0, 0,  size.x, wxDefaultCoord );
-        offset = m_tb->GetSize().y;
-        posFrame.y = offset;
-        sizeFrame.SetHeight( ( size.y - offset ) );
-        break;
-    case 2:
-        offset = m_tb->GetSize().x;
-        m_tb->SetSize( size.x - offset, 0,  offset, size.y );
-        sizeFrame.SetWidth( size.x - offset );
-        sizeFrame.SetHeight( size.y );
-        break;
-    case 3:
-        offset = m_tb->GetSize().y;
-        sizeFrame.SetWidth( size.x );
-        sizeFrame.SetHeight( ( size.y - offset ) );
-        m_tb->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
-        break;
-    }
-    if( m_styleBar && m_styleBar->IsShown() )
+    if( m_styleBar && m_tbSetup[1].m_hideShow )
     {
         switch( m_tbSetup[1].m_orientation )
         {
@@ -856,6 +795,8 @@ void DrawingView::LayoutChildren(const wxSize &size)
             break;
         }
     }
+    else if( m_styleBar && !m_tbSetup[1].m_hideShow )
+        m_styleBar->Hide();
 #if defined( __WXMSW__ ) || defined( __WXGTK__ )
     m_frame->SetSize( posFrame.x, posFrame.y, sizeFrame.GetWidth(), sizeFrame.GetHeight() );
 #else
