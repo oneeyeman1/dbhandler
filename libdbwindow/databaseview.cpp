@@ -793,6 +793,10 @@ void DrawingView::LayoutChildren(const wxSize &size)
     int offset = 0;
     auto posFrame = wxPoint( 0, 0 );
     auto sizeFrame = wxSize( size.x, size.y );
+    if( !m_tbSetup[0].m_hideShow )
+        m_tb->Hide();
+    if( m_styleBar && !m_tbSetup[1].m_hideShow )
+        m_styleBar->Hide();
     switch( m_tbSetup[0].m_orientation )
     {
     case 0:
