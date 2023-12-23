@@ -12,9 +12,15 @@
     <ClInclude Include="typecombobox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="colorcombobox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="typecombobox.cpp">
+      <Filter>Source Fles</Filter>
+    </ClCompile>
+    <ClCompile Include="colorcombobox.cpp">
       <Filter>Source Fles</Filter>
     </ClCompile>
   </ItemGroup>

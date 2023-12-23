@@ -55,9 +55,6 @@
     <ClInclude Include="designgeneral.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="colorcombobox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="objectproperties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -104,9 +101,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="designgeneral.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="colorcombobox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="printspec.cpp">

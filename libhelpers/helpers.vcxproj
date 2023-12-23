@@ -35,9 +35,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="colorcombobox.h" />
     <ClInclude Include="typecombobox.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="colorcombobox.cpp" />
     <ClCompile Include="typecombobox.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
