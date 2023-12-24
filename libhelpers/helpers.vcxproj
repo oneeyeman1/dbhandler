@@ -286,6 +286,9 @@
       <OutputFile>vc_mswuddll\dll_vc9_my_dll.bsc</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
+    <Manifest>
+      <AdditionalManifestFiles>$(WXWIN)\include\wx\msw\wx_dpi_aware_pmv2.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">
     <Midl>
