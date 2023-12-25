@@ -468,6 +468,7 @@
 					../libpropertypages,
 					../libdialogs,
 					../libpropertieshandlers,
+					../libhelpers,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

@@ -9,12 +9,16 @@
 /* Begin PBXBuildFile section */
 		E322AABE2B1FF7B400ECD88D /* typecombobox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322AABC2B1FF7B300ECD88D /* typecombobox.cpp */; };
 		E322AABF2B1FF7B400ECD88D /* typecombobox.h in Headers */ = {isa = PBXBuildFile; fileRef = E322AABD2B1FF7B400ECD88D /* typecombobox.h */; };
+		E322AAC82B37447600ECD88D /* colorcombobox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322AAC62B37447400ECD88D /* colorcombobox.cpp */; };
+		E322AAC92B37447600ECD88D /* colorcombobox.h in Headers */ = {isa = PBXBuildFile; fileRef = E322AAC72B37447500ECD88D /* colorcombobox.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		E322AAAF2B1FF6FC00ECD88D /* liblibhelpers.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibhelpers.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E322AABC2B1FF7B300ECD88D /* typecombobox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = typecombobox.cpp; sourceTree = "<group>"; };
 		E322AABD2B1FF7B400ECD88D /* typecombobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = typecombobox.h; sourceTree = "<group>"; };
+		E322AAC62B37447400ECD88D /* colorcombobox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = colorcombobox.cpp; sourceTree = "<group>"; };
+		E322AAC72B37447500ECD88D /* colorcombobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = colorcombobox.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +36,8 @@
 			isa = PBXGroup;
 			children = (
 				E322AAB02B1FF6FC00ECD88D /* Products */,
+				E322AAC62B37447400ECD88D /* colorcombobox.cpp */,
+				E322AAC72B37447500ECD88D /* colorcombobox.h */,
 				E322AABC2B1FF7B300ECD88D /* typecombobox.cpp */,
 				E322AABD2B1FF7B400ECD88D /* typecombobox.h */,
 			);
@@ -53,6 +59,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E322AABF2B1FF7B400ECD88D /* typecombobox.h in Headers */,
+				E322AAC92B37447600ECD88D /* colorcombobox.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +119,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E322AAC82B37447600ECD88D /* colorcombobox.cpp in Sources */,
 				E322AABE2B1FF7B400ECD88D /* typecombobox.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
