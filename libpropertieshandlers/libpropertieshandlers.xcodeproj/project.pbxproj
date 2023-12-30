@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E322AACD2B3871D700ECD88D /* liblibhelpers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E322AACC2B3871D700ECD88D /* liblibhelpers.a */; };
 		E3B8E3B524E2EAED00346516 /* propertieshandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3B324E2EAEC00346516 /* propertieshandler.cpp */; };
 		E3B8E3B624E2EAED00346516 /* propertieshandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3B424E2EAEC00346516 /* propertieshandler.h */; };
 		E3B8E3BB24E2FB9C00346516 /* liblibpropertypages.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3B8E3BA24E2FB9C00346516 /* liblibpropertypages.dylib */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E322AACC2B3871D700ECD88D /* liblibhelpers.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblibhelpers.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3B8E39424E2821600346516 /* liblibpropertieshandlers.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibpropertieshandlers.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3B8E3B324E2EAEC00346516 /* propertieshandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = propertieshandler.cpp; sourceTree = SOURCE_ROOT; };
 		E3B8E3B424E2EAEC00346516 /* propertieshandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = propertieshandler.h; sourceTree = SOURCE_ROOT; };
@@ -38,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E322AACD2B3871D700ECD88D /* liblibhelpers.a in Frameworks */,
 				E3B8E3BB24E2FB9C00346516 /* liblibpropertypages.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -81,6 +84,7 @@
 		E3B8E3B924E2FB9C00346516 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E322AACC2B3871D700ECD88D /* liblibhelpers.a */,
 				E3B8E3BA24E2FB9C00346516 /* liblibpropertypages.dylib */,
 			);
 			name = Frameworks;
@@ -301,6 +305,7 @@
 					../libpropertypages,
 					../libshapeframework,
 					../libfieldswindow,
+					../libhelpers,
 				);
 				"HEADER_SEARCH_PATHS[arch=*]" = (
 					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.2",

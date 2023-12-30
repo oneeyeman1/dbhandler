@@ -12,6 +12,7 @@
 		E305643D2217CB4C00F5576C /* fieldgeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E30564392217CB4C00F5576C /* fieldgeneral.h */; };
 		E305643E2217CB4C00F5576C /* fieldheader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E305643A2217CB4C00F5576C /* fieldheader.cpp */; };
 		E30564402217CB5F00F5576C /* propertypagebase.h in Headers */ = {isa = PBXBuildFile; fileRef = E305643F2217CB5F00F5576C /* propertypagebase.h */; };
+		E322AACB2B386DA600ECD88D /* liblibhelpers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E322AACA2B386DA600ECD88D /* liblibhelpers.a */; };
 		E32A502C22A3A71500A57BD1 /* designlabelgeneral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A502A22A3A71500A57BD1 /* designlabelgeneral.cpp */; };
 		E32A502D22A3A71500A57BD1 /* designlabelgeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E32A502B22A3A71500A57BD1 /* designlabelgeneral.h */; };
 		E33E6F7C1EAD3067003A0B92 /* syntaxproppage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33E6F781EAD3067003A0B92 /* syntaxproppage.cpp */; };
@@ -30,7 +31,6 @@
 		E3B8E3CD24F2DE6400346516 /* liblibfieldswindow.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3B8E3CC24F2DE6400346516 /* liblibfieldswindow.dylib */; };
 		E3B8E3D02513AF9600346516 /* designgeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3CE2513AF9500346516 /* designgeneral.h */; };
 		E3B8E3D12513AF9600346516 /* designgeneral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3CF2513AF9500346516 /* designgeneral.cpp */; };
-		E3B8E3D42513B64D00346516 /* colorcombobox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3D32513B64D00346516 /* colorcombobox.cpp */; };
 		E3B8E3DB2518E69000346516 /* printspec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E3D92518E69000346516 /* printspec.cpp */; };
 		E3B8E3DC2518E69000346516 /* printspec.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E3DA2518E69000346516 /* printspec.h */; };
 		E3B92D6D24CA0DF60035428C /* bandgeneral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B92D6B24CA0DF50035428C /* bandgeneral.cpp */; };
@@ -46,6 +46,7 @@
 		E30564392217CB4C00F5576C /* fieldgeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fieldgeneral.h; sourceTree = "<group>"; };
 		E305643A2217CB4C00F5576C /* fieldheader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fieldheader.cpp; sourceTree = "<group>"; };
 		E305643F2217CB5F00F5576C /* propertypagebase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = propertypagebase.h; sourceTree = "<group>"; };
+		E322AACA2B386DA600ECD88D /* liblibhelpers.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblibhelpers.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E32A502A22A3A71500A57BD1 /* designlabelgeneral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = designlabelgeneral.cpp; sourceTree = "<group>"; };
 		E32A502B22A3A71500A57BD1 /* designlabelgeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = designlabelgeneral.h; sourceTree = "<group>"; };
 		E33E6F781EAD3067003A0B92 /* syntaxproppage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = syntaxproppage.cpp; sourceTree = "<group>"; };
@@ -65,8 +66,6 @@
 		E3B8E3CC24F2DE6400346516 /* liblibfieldswindow.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = liblibfieldswindow.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3B8E3CE2513AF9500346516 /* designgeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = designgeneral.h; sourceTree = "<group>"; };
 		E3B8E3CF2513AF9500346516 /* designgeneral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = designgeneral.cpp; sourceTree = "<group>"; };
-		E3B8E3D22513B61800346516 /* colorcombobox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = colorcombobox.h; sourceTree = "<group>"; };
-		E3B8E3D32513B64D00346516 /* colorcombobox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = colorcombobox.cpp; sourceTree = "<group>"; };
 		E3B8E3D92518E69000346516 /* printspec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = printspec.cpp; sourceTree = "<group>"; };
 		E3B8E3DA2518E69000346516 /* printspec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = printspec.h; sourceTree = "<group>"; };
 		E3B92D6B24CA0DF50035428C /* bandgeneral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bandgeneral.cpp; sourceTree = "<group>"; };
@@ -81,6 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E322AACB2B386DA600ECD88D /* liblibhelpers.a in Frameworks */,
 				E3B8E3CD24F2DE6400346516 /* liblibfieldswindow.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -137,8 +137,6 @@
 				E3AC9DD61E176AB80083DD62 /* fontpropertypage.h */,
 				E39501CE1DF3C2300046E51B /* tablegeneral.cpp */,
 				E39501CF1DF3C2300046E51B /* tablegeneral.h */,
-				E3B8E3D22513B61800346516 /* colorcombobox.h */,
-				E3B8E3D32513B64D00346516 /* colorcombobox.cpp */,
 			);
 			name = libpropertypages;
 			sourceTree = "<group>";
@@ -146,6 +144,7 @@
 		E3B8E3CB24F2DE6400346516 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E322AACA2B386DA600ECD88D /* liblibhelpers.a */,
 				E3B8E3CC24F2DE6400346516 /* liblibfieldswindow.dylib */,
 			);
 			name = Frameworks;
@@ -240,7 +239,6 @@
 				E3B92D8B24E1AB860035428C /* fontpropertypage.cpp in Sources */,
 				E3B8E3D12513AF9600346516 /* designgeneral.cpp in Sources */,
 				E32A502C22A3A71500A57BD1 /* designlabelgeneral.cpp in Sources */,
-				E3B8E3D42513B64D00346516 /* colorcombobox.cpp in Sources */,
 				E3B92D7124CDC6DC0035428C /* pointerproperty.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -341,6 +339,7 @@
 					../dbinterface,
 					../libshapeframework,
 					../libfieldswindow,
+					../libhelpers,
 				);
 				"HEADER_SEARCH_PATHS[arch=*]" = (
 					"$(inherited)",
