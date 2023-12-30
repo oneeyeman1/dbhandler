@@ -30,7 +30,7 @@ Divider::Divider() : wxSFRectShape()
     m_props.m_color = "Transparent";
     m_props.m_height = 80;
     m_props.m_cursorFile = wxEmptyString;
-    m_props.m_stockCursor = -1;
+    m_props.m_cursor = -1;
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );
     m_grid = new wxSFGridShape;
@@ -74,7 +74,7 @@ Divider::Divider(const wxString &text, const wxString &cursorFile, int stockCurs
     m_props.m_color = "Transparent";
     m_props.m_height = 80;
     m_props.m_cursorFile = cursorFile;
-    m_props.m_stockCursor = stockCursor;
+    m_props.m_cursor = stockCursor;
     wxString upArrow( L"\x2191" );
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );

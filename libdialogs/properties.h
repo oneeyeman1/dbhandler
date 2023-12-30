@@ -20,9 +20,12 @@ public:
     void GetTableProperties();
 
 private:
-    FieldGeneral *m_page5;
-    FieldHeader *m_page6;
-    DesignLabelGeneral *m_page7;
+    TableGeneralProperty *m_page1;
+    CFontPropertyPage *m_page2, *m_page3, *m_page4;
+    TablePrimaryKey *m_page5;
+    FieldGeneral *m_page6;
+    FieldHeader *m_page7;
+//    DesignLabelGeneral *m_page7;
     BandGeneralProperties *m_page8;
     PointerPropertiesPanel *m_page9;
     int m_type;

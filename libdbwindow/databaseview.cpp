@@ -73,7 +73,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
 #include "dbview.h"
-#include "objectproperties.h"
+//#include "objectproperties.h"
 #include "colorcombobox.h"
 #include "designlabel.h"
 #include "constraint.h"
@@ -93,17 +93,12 @@
 #include "wherehavingpage.h"
 #include "databasedoc.h"
 #include "databasecanvas.h"
-#include "designcanvas.h"
-#include "databaseview.h"
-#include "divider.h"
 #include "propertypagebase.h"
 #include "printspec.h"
-#include "bandgeneral.h"
 #include "tablegeneral.h"
 #include "pointerproperty.h"
 #include "tableprimarykey.h"
 #include "fieldgeneral.h"
-#include "designgeneral.h"
 #include "fontpropertypagebase.h"
 #include "fieldheader.h"
 #include "propertieshandlerbase.h"
@@ -112,6 +107,11 @@
 #include "fieldpropertieshandler.h"
 #include "designpropertieshandler.h"
 #include "dividerpropertieshandler.h"
+#include "divider.h"
+#include "designgeneral.h"
+#include "bandgeneral.h"
+#include "designcanvas.h"
+#include "databaseview.h"
 #include "databasetemplate.h"
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
@@ -1427,68 +1427,64 @@ void DrawingView::SetProperties(const wxSFRectShape *shape)
     int res = 0;
     std::unique_ptr<PropertiesHandler> propertiesPtr;
     wxString title;
+    if( type == DatabaseTableProperties )
+    {
+        //#if _MSC_VER >= 1900
+        std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
+        res = GetDocument()->GetDatabase()->GetTableProperties( dbTable, errors );
+#if __cplusplus > 201300
+        auto ptr = std::make_unique<DatabasePropertiesHandler>( GetDocument()->GetDatabase(), dbTable, m_text );
+#else
+        auto ptr = std::unique_ptr<DatabasePropertiesHandler>( new DatabasePropertiesHandler( GetDocument()->GetDatabase(), dbTable, m_text ) );
+#endif
+        propertiesPtr = std::move( ptr );
+        propertiesPtr->SetType( DatabaseTableProperties );
+        title = _( "Table " );
+        title += schemaName + L"." + tableName;
+    }
+    if( type == DatabaseFieldProperties )
+    {
+        {
+            //#if _MSC_VER >= 1900
+            std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
+            res = GetDocument()->GetDatabase()->GetFieldProperties( tableName.ToStdWstring(), field, errors );
+        }
+#if __cplusplus > 201300
+        auto ptr = std::make_unique<FieldPropertiesHandler>( GetDocument()->GetDatabase(), tableName, ownerName, field, m_text );
+#else
+        auto ptr = std::unique_ptr<FieldPropertiesHandler>( new FieldPropertiesHandler( GetDocument()->GetDatabase(), tableName, ownerName, field, m_text ) );
+#endif
+        propertiesPtr = std::move( ptr );
+        propertiesPtr->SetType( DatabaseFieldProperties );
+        title = _( "Column " );
+        title += tableName + ".";
+        title += field->GetFieldName();
+    }
+    if( type == DividerProperties )
+    {
+#if __cplusplus > 201300
+        auto ptr = std::make_unique<DividerPropertiesHander>( divider->GetDividerProperties() );
+#else
+        auto ptr = std::unique_ptr<DividerPropertiesHander>( new DividerPropertiesHander( divider->GetDividerProperties() ) );
+#endif
+        propertiesPtr = std::move( ptr );
+        propertiesPtr->SetType( DividerProperties );
+        title = _( "Band Object" );
+    }
+    if( type == DesignProperties )
+    {
+#if __cplusplus > 201300
+        auto ptr = std::make_unique<DesignPropertiesHander>( m_designCanvas->GetOptions() );
+#else
+        auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
+#endif
+        propertiesPtr = std::move( ptr );
+        propertiesPtr->SetType( DesignProperties );
+        title = _( "Query Object" );
+    }
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-        if( type == DatabaseTableProperties )
-        {
-#if defined __WXMSW__ && _MSC_VER < 1900
-            wxCriticalSectionLocker( *pcs );
-#else
-            //#if _MSC_VER >= 1900
-            std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
-#endif
-            res = GetDocument()->GetDatabase()->GetTableProperties( dbTable, errors );
-#if __cplusplus > 201300
-            auto ptr = std::make_unique<DatabasePropertiesHandler>( GetDocument()->GetDatabase(), dbTable, m_text );
-#else
-            auto ptr = std::unique_ptr<DatabasePropertiesHandler>( new DatabasePropertiesHandler( GetDocument()->GetDatabase(), dbTable, m_text ) );
-#endif
-            propertiesPtr = std::move( ptr );
-            title = _( "Table " );
-            title += schemaName + L"." + tableName;
-        }
-        if( type == DatabaseFieldProperties )
-        {
-            {
-#if defined __WXMSW__ && _MSC_VER < 1900
-                wxCriticalSectionLocker( *pcs );
-#else
-                //#if _MSC_VER >= 1900
-                std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
-#endif
-                res = GetDocument()->GetDatabase()->GetFieldProperties( tableName.ToStdWstring(), field, errors );
-            }
-#if __cplusplus > 201300
-            auto ptr = std::make_unique<FieldPropertiesHandler>( GetDocument()->GetDatabase(), tableName, ownerName, field, m_text );
-#else
-            auto ptr = std::unique_ptr<FieldPropertiesHandler>( new FieldPropertiesHandler( GetDocument()->GetDatabase(), tableName, ownerName, field, m_text ) );
-#endif
-            propertiesPtr = std::move( ptr );
-            title = _( "Column " );
-            title += tableName + ".";
-            title += field->GetFieldName();
-        }
-        if( type == DividerProperties )
-        {
-#if __cplusplus > 201300
-            auto ptr = std::make_unique<DividerPropertiesHander>( divider->GetDividerProperties() );
-#else
-            auto ptr = std::unique_ptr<DividerPropertiesHander>( new DividerPropertiesHander( divider->GetDividerProperties() ) );
-#endif
-            propertiesPtr = std::move( ptr );
-            title = _( "Band Object" );
-        }
-        if( type == DesignProperties )
-        {
-#if __cplusplus > 201300
-            auto ptr = std::make_unique<DesignPropertiesHander>( m_designCanvas->GetOptions() );
-#else
-            auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
-#endif
-            propertiesPtr = std::move( ptr );
-            title = _( "Query Object" );
-        }
 //        TableProperties props = *static_cast<TableProperties *>( properties );
         res = func( m_frame, propertiesPtr, title, command, logOnly, *pcs );
     }

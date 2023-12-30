@@ -68,7 +68,74 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_handler = handler;
     // begin wxGlade: PropertiesDialog::PropertiesDialog
     m_properties = new wxNotebook( this, wxID_ANY );
-    handler->EditProperies( m_properties );
+    switch( handler->GetType() )
+    {
+        case DatabaseTableProperties:
+        {
+            TableProperties *prop = dynamic_cast<TableProperties *>( handler );
+            wxFont data_font( prop->m_dataFontSize, wxFONTFAMILY_DEFAULT, prop->m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->m_dataFontUnderline, prop->m_dataFontName );
+            if( prop->m_dataFontStrikethrough )
+                data_font.SetStrikethrough( true );
+            wxFont heading_font( prop->m_headingFontSize, wxFONTFAMILY_DEFAULT, prop->m_headingFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->m_headingFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->m_headingFontUnderline, prop->m_headingFontName );
+            if( prop->m_headingFontStrikethrough )
+                heading_font.SetStrikethrough( true );
+            wxFont label_font( prop->m_labelFontSize, wxFONTFAMILY_DEFAULT, prop->m_labelFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->m_labelFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->m_labelFontUnderline, prop->m_labelFontName );
+            if( prop->m_labelFontStrikethrough )
+                label_font.SetStrikethrough( true );
+            FontPropertyPage dataFont;
+            dataFont.font = data_font;
+            dataFont.text = wxColour( *wxBLACK );
+            dataFont.back = wxColour( *wxWHITE );
+            FontPropertyPage headingFont;
+            headingFont.font = heading_font;
+            headingFont.text = wxColour( *wxBLACK );
+            headingFont.back = wxColour( *wxWHITE );
+            FontPropertyPage labelFont;
+            labelFont.font = label_font;
+            labelFont.text = wxColour( *wxBLACK );
+            labelFont.back = wxColour( *wxWHITE );
+            m_page1 = new TableGeneralProperty( parent, prop->table_name, prop->m_owner, prop->m_comment, DatabaseTableProperties );
+            m_properties->AddPage( m_page1, _( "General" ) );
+            m_page2 = new CFontPropertyPage( parent, dataFont, false );
+            m_page3 = new CFontPropertyPage( parent, headingFont, false );
+            m_page4 = new CFontPropertyPage( parent, labelFont, false );
+//            m_page5 = new TablePrimaryKey( parent, m_table );
+            m_properties->AddPage( m_page2, _( "Data Font" ) );
+            m_properties->AddPage( m_page3, _( "Heading Font" ) );
+            m_properties->AddPage( m_page4, _( "Label Font" ) );
+            m_properties->AddPage( m_page5, _( "Primary Key" ) );
+        }
+        break;
+        case DatabaseFieldProperties:
+        {
+            FieldProperties *prop = dynamic_cast<FieldProperties *>( handler );
+            m_page6 = new FieldGeneral( parent, prop->m_comment );
+            m_properties->AddPage( m_page6, _( "General" ) );
+            m_page7 = new FieldHeader( parent, prop->m_label, prop->m_heading, prop->m_labelPosition, prop->m_headingPosition );
+            m_properties->AddPage( m_page7, _( "Data Font" ) );
+        }
+        break;
+        case DividerProperties:
+        {
+            BandProperties *prop = dynamic_cast<BandProperties *>( handler );
+//            m_page8 = new BandGeneralProperties( m_properties, prop );
+            m_properties->AddPage( m_page1, _( "General" ) );
+            m_page9 = new PointerPropertiesPanel( m_properties, prop->m_cursorFile, prop->m_cursor );
+            m_properties->AddPage( m_page9, _( "Pointer" ) );
+        }
+        break;
+        case DesignProperties:
+        {
+/*            m_page9 = new DesignGeneral( parent, m_options );
+            parent->AddPage( m_page1, _( "General" ) );
+            m_page2 = new PointerPropertiesPanel( parent, m_options.cursorName, m_options.cursor );
+            parent->AddPage( m_page2, _( "Pointer" ) );
+            m_page3 = new PrintSpec( parent );
+            parent->AddPage( m_page3, _( "Print Specification" ) );*/
+        }
+        break;
+    }
+//    handler->EditProperies( m_properties );
     set_properties();
     do_layout();
     // end wxGlade
