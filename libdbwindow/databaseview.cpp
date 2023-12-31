@@ -713,15 +713,9 @@ void DrawingView::CreateViewToolBar()
         }
     }
     m_tb->Realize();
-#ifdef __WXOSX__
-    sizer->Add( m_tb, 1, wxEXPAND, 0 );
-#endif
     if( m_styleBar )
     {
         m_styleBar->Realize();
-#ifdef __WXOSX__
-        sizer->Add( m_styleBar, 1, wxEXPAND, 0 );
-#endif
     }
     LayoutChildren( size );;
 }
