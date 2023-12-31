@@ -1303,38 +1303,14 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     return res;
 }
 
-void DrawingView::OnSetProperties(wxCommandEvent &WXUNUSED(event))
+void DrawingView::OnSetProperties(wxCommandEvent &event)
 {
     ShapeList list;
-    MyErdTable *erdTable = nullptr;
-    FieldShape *erdField = nullptr;
-    ConstraintSign *sign = nullptr;
-    m_canvas->GetSelectedShapes( list );
-    for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
-    {
-        MyErdTable *tbl = wxDynamicCast( (*it), MyErdTable );
-        if( tbl )
-            erdTable = tbl;
-        else
-        {
-            FieldShape *field = wxDynamicCast( (*it), FieldShape );
-            if( field )
-                erdField = field;
-            else
-            {
-                ConstraintSign *s = wxDynamicCast( (*it), ConstraintSign );
-                if( s )
-                    sign = s;
-            }
-        }
-    }
-    if( erdTable )
-        SetProperties( erdTable );
-    else
-        SetProperties( erdField );
+    auto shape = dynamic_cast<wxSFShapeBase *>( event.GetEventObject() );
+    SetProperties( shape );
 }
 
-void DrawingView::SetProperties(const wxSFRectShape *shape)
+void DrawingView::SetProperties(const wxSFShapeBase *shape)
 {
     ShapeList selections;
     std::vector<std::wstring> errors;
