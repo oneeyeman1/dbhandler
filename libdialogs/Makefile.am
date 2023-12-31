@@ -57,7 +57,7 @@ libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	gtk+-3.0` \
 	-I../../libhelpers \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--cxxflags` 
+	--cxxflags`
 
 libdialogs_la_LDFLAGS = -L../libsqlite \
 	-L../libshapeframework \
@@ -77,5 +77,3 @@ libdialogs_la_LDFLAGS = -L../libsqlite \
 	-lpostgres \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs`
-	
-	 

@@ -30,8 +30,6 @@ libpropertypages_la_SOURCES =  \
 	tableprimarykey.h \
 	designgeneral.cpp \
 	designgeneral.h \
-	colorcombobox.cpp \
-	colorcombobox.h \
 	printspec.cpp \
 	printspec.h \
 	qt/fontpropertypageQt.cpp \
@@ -42,14 +40,17 @@ libpropertypages_la_SOURCES =  \
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
 	-I../../libfieldswindow \
+	-I../../libhelpers \
 	`pkg-config \
 	--cflags \
 	gtk+-3.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--cxxflags` 
+	--cxxflags`
 
 libpropertypages_la_LDFLAGS = `pkg-config \
 	--libs \
 	gtk+-3.0` \
+	-L../../libhelpers \
+	-lhelpers \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs` 
+	--libs`

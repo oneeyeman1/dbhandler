@@ -6,7 +6,9 @@ lib_LIBRARIES =  \
 
 libhelpers_a_SOURCES =  \
 	typecombobox.cpp \
-	typecombobox.h
+	typecombobox.h \
+	colorcombobox.cpp \
+	colorcombobox.h
 
 libhelpers_a_CXXFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` \

@@ -20,6 +20,7 @@ libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libdbwindow \
 	-I../../libshapeframework \
 	-I../../libfieldswindow \
+	-I../../libhelpers \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--cxxflags` 
 
