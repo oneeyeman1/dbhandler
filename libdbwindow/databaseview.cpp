@@ -766,14 +766,14 @@ void DrawingView::LayoutChildren(const wxSize &size)
             if( m_tbSetup[0].m_orientation == 0 )
                 offset += m_styleBar->GetSize().x;
             posFrame.x = offset;
-            sizeFrame.SetWidth( sizeFrame.GetWidth() - posFrame.x );
+            sizeFrame.SetWidth( size.x - offset );
             break;
         case 1:
             m_styleBar->SetSize( 0, offset,  size.x, wxDefaultCoord );
             if( m_tbSetup[0].m_orientation == 1 )
                 offset += m_styleBar->GetSize().y;
             posFrame.y = offset;
-            sizeFrame.SetHeight( sizeFrame.GetHeight() - posFrame.y );
+            sizeFrame.SetHeight( size.y - offset );
             break;
         case 2:
             if( m_tbSetup[0].m_orientation == 2 )
