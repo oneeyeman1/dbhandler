@@ -137,3 +137,7 @@ TypeComboBox::TypeComboBox(wxWindow *parent, const std::wstring &type, const std
     }
     SetValue( selString );
 }
+
+TypeComboBox::~TypeComboBox()
+{
+}

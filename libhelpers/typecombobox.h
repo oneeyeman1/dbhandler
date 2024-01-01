@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TYPECOMBOBOX_H
+#define TYPECOMBOBOX_H
 
 #ifdef __WXMSW__
 #ifndef HELPERS_EXPORT
@@ -14,5 +15,7 @@ class HELPERS_EXPORT TypeComboBox : public wxComboBox
 {
 public:
     TypeComboBox(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, const std::wstring &argType);
+    ~TypeComboBox();
 };
 
+#endif
