@@ -725,7 +725,7 @@ void DrawingView::LayoutChildren(const wxSize &size)
     int offset = 0;
     auto posFrame = wxPoint( 0, 0 );
     auto sizeFrame = wxSize( size.x, size.y );
-    if( m_tbSetup[0].m_hideShow )
+    if( m_tbSetup[0].m_hideShow && m_tb->IsShown() )
     {
         switch( m_tbSetup[0].m_orientation )
         {
@@ -753,11 +753,13 @@ void DrawingView::LayoutChildren(const wxSize &size)
             sizeFrame.SetHeight( ( size.y - offset ) );
             m_tb->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
             break;
+        default:
+            break;
         }
     }
     else
         m_tb->Hide();
-    if( m_styleBar && m_tbSetup[1].m_hideShow )
+    if( m_styleBar && ( m_tbSetup[1].m_hideShow && m_styleBar->IsShown() ) )
     {
         switch( m_tbSetup[1].m_orientation )
         {
@@ -786,6 +788,8 @@ void DrawingView::LayoutChildren(const wxSize &size)
                 offset += m_styleBar->GetSize().y;
             sizeFrame.SetHeight( sizeFrame.GetHeight() - ( size.y - offset ) );
             m_styleBar->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
+            break;
+        default:
             break;
         }
     }
@@ -2229,6 +2233,7 @@ void DrawingView::OnDataSource(wxCommandEvent &event)
             }
         }
     }
+    LayoutChildren( m_parent->GetClientSize() );
     if( !GetDocument()->GetQueryFields().empty() )
     {
         wxMenuItem *dataSourceMenu = m_frame->GetMenuBar()->FindItem( wxID_DATASOURCE );
