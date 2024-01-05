@@ -15,7 +15,7 @@
 #include "propertieshandlerbase.h"
 #include "dividerpropertieshandler.h"
 
-DividerPropertiesHander::DividerPropertiesHander(BandProperties props) : PropertiesHandler()
+DividerPropertiesHander::DividerPropertiesHander(BandProperties *props) : PropertiesHandler()
 {
     m_props = props;
 }

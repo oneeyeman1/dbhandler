@@ -27,10 +27,7 @@ XS_IMPLEMENT_CLONABLE_CLASS(Divider, wxSFRectShape);
 Divider::Divider() : wxSFRectShape()
 {
     m_Fill = wxBrush( *wxGREY_BRUSH );
-    m_props.m_color = "Transparent";
-    m_props.m_height = 80;
-    m_props.m_cursorFile = wxEmptyString;
-    m_props.m_cursor = -1;
+    m_props = new BandProperties;
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );
     m_grid = new wxSFGridShape;
@@ -62,19 +59,16 @@ Divider::Divider() : wxSFRectShape()
                 delete m_text;
         }
     }
-    XS_SERIALIZE( m_props.m_color, "color" );
-    XS_SERIALIZE( m_props.m_cursorFile, "cursor-file" );
-    XS_SERIALIZE( m_props.m_height, "height" );
-    XS_SERIALIZE( m_props.m_stockCursor, "stock-cursor" );
+    XS_SERIALIZE( m_props->m_color, "color" );
+    XS_SERIALIZE( m_props->m_cursorFile, "cursor-file" );
+    XS_SERIALIZE( m_props->m_height, "height" );
+    XS_SERIALIZE( m_props->m_stockCursor, "stock-cursor" );
+    XS_SERIALIZE_BOOL( m_props->m_autosize, "auto-height" );
 }
 
 Divider::Divider(const wxString &text, const wxString &cursorFile, int stockCursor, wxSFDiagramManager *manager) : wxSFRectShape( wxRealPoint( 1, 1 ), wxRealPoint( 5000, -1 ), manager )
 {
-    m_props.m_type = text;
-    m_props.m_color = "Transparent";
-    m_props.m_height = 80;
-    m_props.m_cursorFile = cursorFile;
-    m_props.m_cursor = stockCursor;
+    m_props = new BandProperties;
     wxString upArrow( L"\x2191" );
     AddStyle( sfsLOCK_CHILDREN );
     AcceptChild( "GridShape" );
@@ -156,14 +150,16 @@ Divider::Divider(const wxString &text, const wxString &cursorFile, int stockCurs
     m_nRectSize.y = GetBoundingBox().GetHeight();
     m_nRectSize.x = 5000;
     m_Fill = *wxGREY_BRUSH;
-    XS_SERIALIZE( m_props.m_color, "color" );
-    XS_SERIALIZE( m_props.m_cursorFile, "cursor-file" );
-    XS_SERIALIZE( m_props.m_height, "height" );
-    XS_SERIALIZE( m_props.m_stockCursor, "stock-cursor" );
+    XS_SERIALIZE( m_props->m_color, "color" );
+    XS_SERIALIZE( m_props->m_cursorFile, "cursor-file" );
+    XS_SERIALIZE( m_props->m_height, "height" );
+    XS_SERIALIZE( m_props->m_stockCursor, "stock-cursor" );
+    XS_SERIALIZE_BOOL( m_props->m_autosize, "auto-height" );
 }
 
 Divider::~Divider()
 {
+    delete m_props;
 }
 
 void Divider::DrawNormal(wxDC &dc)
@@ -198,10 +194,10 @@ void Divider::OnDragging(const wxPoint& pos)
 
 const wxString &Divider::GetDividerType()
 {
-    return m_props.m_type;
+    return m_props->m_type;
 }
 
-BandProperties Divider::GetDividerProperties()
+BandProperties *Divider::GetDividerProperties() const
 {
     return m_props;
 }

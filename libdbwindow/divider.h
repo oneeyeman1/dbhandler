@@ -9,7 +9,7 @@ public:
     virtual ~Divider();
     virtual wxRect GetBoundingBox() wxOVERRIDE;
     const wxString &GetDividerType();
-    BandProperties GetDividerProperties();
+    BandProperties *GetDividerProperties() const;
     virtual void OnDragging(const wxPoint& pos) wxOVERRIDE;
 protected:    
     virtual void DrawNormal(wxDC &dc) wxOVERRIDE;
@@ -18,5 +18,5 @@ protected:
 private:
     wxSFGridShape *m_grid;
     wxSFTextShape *m_text, *m_arrow;
-    BandProperties m_props;
+    BandProperties *m_props;
 };

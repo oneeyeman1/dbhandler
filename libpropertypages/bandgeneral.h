@@ -24,7 +24,7 @@ public:
     // begin wxGlade: BandGeneralProperties::ids
     // end wxGlade
 
-    BandGeneralProperties(wxWindow* parent, const BandProperties &props);
+    BandGeneralProperties(wxWindow* parent, const BandProperties *props);
     virtual ~BandGeneralProperties() {};
 
 private:
@@ -36,9 +36,10 @@ private:
 
 protected:
     // begin wxGlade: BandGeneralProperties::attributes
-    wxBitmapComboBox *m_colors;
+    CColorComboBox *m_colors;
     wxTextCtrl *m_height;
     wxStaticText *m_label1, *m_label2;
+    wxCheckBox *m_autosize;
     // end wxGlade
     void OnPageModified(wxCommandEvent &event);
 }; // wxGlade: end class
