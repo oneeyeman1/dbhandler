@@ -66,6 +66,7 @@ Divider::Divider() : wxSFRectShape()
     XS_SERIALIZE( m_props.m_cursorFile, "cursor-file" );
     XS_SERIALIZE( m_props.m_height, "height" );
     XS_SERIALIZE( m_props.m_stockCursor, "stock-cursor" );
+    XS_SERIALIZE_BOOL( m_props.m_autosize, "auto-size" );
 }
 
 Divider::Divider(const wxString &text, const wxString &cursorFile, int stockCursor, wxSFDiagramManager *manager) : wxSFRectShape( wxRealPoint( 1, 1 ), wxRealPoint( 5000, -1 ), manager )
@@ -160,6 +161,7 @@ Divider::Divider(const wxString &text, const wxString &cursorFile, int stockCurs
     XS_SERIALIZE( m_props.m_cursorFile, "cursor-file" );
     XS_SERIALIZE( m_props.m_height, "height" );
     XS_SERIALIZE( m_props.m_stockCursor, "stock-cursor" );
+    XS_SERIALIZE_BOOL( m_props.m_autosize, "auto-size" );
 }
 
 Divider::~Divider()
@@ -196,12 +198,12 @@ void Divider::OnDragging(const wxPoint& pos)
     MoveTo( 1, pos.y );
 }
 
-const wxString &Divider::GetDividerType()
+const wxString &Divider::GetDividerType() const
 {
     return m_props.m_type;
 }
 
-BandProperties Divider::GetDividerProperties()
+BandProperties Divider::GetDividerProperties() const
 {
     return m_props;
 }

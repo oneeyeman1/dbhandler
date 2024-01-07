@@ -8,8 +8,8 @@ public:
     Divider(const wxString &text, const wxString &cursorFile, int stocCursor, wxSFDiagramManager *manager);
     virtual ~Divider();
     virtual wxRect GetBoundingBox() wxOVERRIDE;
-    const wxString &GetDividerType();
-    BandProperties GetDividerProperties();
+    const wxString &GetDividerType() const;
+    BandProperties GetDividerProperties() const;
     virtual void OnDragging(const wxPoint& pos) wxOVERRIDE;
 protected:    
     virtual void DrawNormal(wxDC &dc) wxOVERRIDE;

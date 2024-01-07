@@ -1456,6 +1456,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         propertiesPtr->SetType( DesignProperties );
         title = _( "Query Object" );
     }
+    propertiesPtr.get()->SetType( type );
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );

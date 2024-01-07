@@ -12,12 +12,6 @@
 #ifndef BANDGENERAL_H
 #define BANDGENERAL_H
 
-struct BandColor
-{
-    wxColour m_color;
-    wxString m_colorName;
-};
-
 class WXEXPORT BandGeneralProperties: public PropertyPageBase
 {
 public:
@@ -36,9 +30,10 @@ private:
 
 protected:
     // begin wxGlade: BandGeneralProperties::attributes
-    wxBitmapComboBox *m_colors;
+    CColorComboBox *m_colors;
     wxTextCtrl *m_height;
     wxStaticText *m_label1, *m_label2;
+    wxCheckBox *m_autosize;
     // end wxGlade
     void OnPageModified(wxCommandEvent &event);
 }; // wxGlade: end class

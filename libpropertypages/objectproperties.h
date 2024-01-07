@@ -10,9 +10,10 @@ struct DesignOptions
 
 struct BandProperties
 {
-    wxString m_color;
+    wxString m_color = "Transparent";
     wxString m_cursorFile, m_stockCursor;
     wxString m_type;
-    int m_height, m_cursor;
+    int m_height = 200, m_cursor = -1;
+    bool m_autosize = false;
 };
 

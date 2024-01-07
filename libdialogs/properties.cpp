@@ -36,7 +36,10 @@
 #endif
 #include "wxsf/ShapeCanvas.h"
 #include "database.h"
-#include "objectproperties.h"
+//#include "objectproperties.h"
+#include "propertieshandlerbase.h"
+#include "propertieshandler.h"
+#include "dividerpropertieshandler.h"
 #include "field.h"
 #include "fieldwindow.h"
 #include "colorcombobox.h"
@@ -49,8 +52,6 @@
 #include "pointerproperty.h"
 #include "bandgeneral.h"
 #include "fieldheader.h"
-#include "propertieshandlerbase.h"
-#include "propertieshandler.h"
 #include "properties.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -117,10 +118,10 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         break;
         case DividerProperties:
         {
-            BandProperties *prop = dynamic_cast<BandProperties *>( handler );
-//            m_page8 = new BandGeneralProperties( m_properties, prop );
-            m_properties->AddPage( m_page1, _( "General" ) );
-            m_page9 = new PointerPropertiesPanel( m_properties, prop->m_cursorFile, prop->m_cursor );
+            BandProperties prop = dynamic_cast<DividerPropertiesHander *>( handler )->GetObjectProperties();
+            m_page8 = new BandGeneralProperties( m_properties, prop );
+            m_properties->AddPage( m_page8, _( "General" ) );
+            m_page9 = new PointerPropertiesPanel( m_properties, prop.m_cursorFile, prop.m_cursor );
             m_properties->AddPage( m_page9, _( "Pointer" ) );
         }
         break;
