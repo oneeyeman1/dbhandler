@@ -223,7 +223,7 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
         m_view->ProcessEvent( evt );
     }
 }
-/**
+
 void DesignCanvas::OnMouseMove(wxMouseEvent &event)
 {
     wxSFShapeBase *shape = GetShapeUnderCursor();
@@ -234,7 +234,7 @@ void DesignCanvas::OnMouseMove(wxMouseEvent &event)
         SetCursor( *wxSTANDARD_CURSOR );
     wxSFShapeCanvas::OnMouseMove( event );
 }
-*/
+
 void DesignCanvas::OnProperties(wxCommandEvent &WXUNUSED(event))
 {
     wxCriticalSection pcs;
