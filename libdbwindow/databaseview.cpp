@@ -225,6 +225,22 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_dbFrame = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
+    m_fontSizes.push_back( "8" );
+    m_fontSizes.push_back( "9" );
+    m_fontSizes.push_back( "10" );
+    m_fontSizes.push_back( "11" );
+    m_fontSizes.push_back( "12" );
+    m_fontSizes.push_back( "14" );
+    m_fontSizes.push_back( "16" );
+    m_fontSizes.push_back( "18" );
+    m_fontSizes.push_back( "20" );
+    m_fontSizes.push_back( "22" );
+    m_fontSizes.push_back( "24" );
+    m_fontSizes.push_back( "26" );
+    m_fontSizes.push_back( "28" );
+    m_fontSizes.push_back( "36" );
+    m_fontSizes.push_back( "48" );
+    m_fontSizes.push_back( "72" );
     wxRect clientRect = m_parent->GetClientRect();
     wxWindowList children = m_parent->GetChildren();
     for( wxWindowList::iterator it = children.begin(); it != children.end(); it++ )
@@ -675,26 +691,13 @@ void DrawingView::CreateViewToolBar()
                 m_fontName = new FontComboBox( m_styleBar );
                 m_fontName->Bind( wxEVT_KILL_FOCUS, &DrawingView::OnFontNameChange, this );
                 m_styleBar->AddControl( m_fontName );
-                const wxString fontSizes[] =
+                m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "" );
+                if( (int) m_fontName->GetClientData( m_fontName->GetSelection() ) != RASTER_FONTTYPE )
                 {
-                    "8",
-                    "9",
-                    "10",
-                    "11",
-                    "12",
-                    "14",
-                    "16",
-                    "18",
-                    "20",
-                    "22",
-                    "24",
-                    "26",
-                    "28",
-                    "36",
-                    "48",
-                    "72"
-                };
-                m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 16, fontSizes );
+                    for( auto it = m_fontSizes.begin(); it < m_fontSizes.end(); ++it )
+                        m_fontSize->Append( (*it) );
+                }
+                m_fontSize->SetSelection( 0 );
                 m_styleBar->AddControl( m_fontSize );
             }
             else
@@ -2343,33 +2346,19 @@ void DrawingView::ChangeFontEement()
 {
 #ifdef __WXMSW__
     m_fontSize->Clear();
-    wxArrayInt ttSizes;
-    ttSizes.Add( 8 );
-    ttSizes.Add( 9 );
-    ttSizes.Add( 10 );
-    ttSizes.Add( 11 );
-    ttSizes.Add( 12 );
-    ttSizes.Add( 14 );
-    ttSizes.Add( 16 );
-    ttSizes.Add( 18 );
-    ttSizes.Add( 20 );
-    ttSizes.Add( 22 );
-    ttSizes.Add( 24 );
-    ttSizes.Add( 26 );
-    ttSizes.Add( 28 );
-    ttSizes.Add( 36 );
-    ttSizes.Add( 48 );
-    ttSizes.Add( 72 );
     wxString strFaceName = m_fontName->GetStringSelection();
-    HDC dc = ::GetDC( NULL );
-    EnumFontFamilies( dc, strFaceName, (FONTENUMPROC) DrawingView::EnumFontFamiliesCallback2, (LPARAM) this );
-    ::ReleaseDC( NULL, dc );
     if( (int) m_fontName->GetClientData( m_fontName->GetSelection() ) != RASTER_FONTTYPE )
     {
-        for( unsigned int i = 0; i < ttSizes.GetCount(); i++ )
+        for( auto it = m_fontSizes.begin(); it < m_fontSizes.end(); ++it )
         {
-            AddSize( ttSizes[i], 0 );
+            AddSize( std::stoi( (*it) ), 0 );
         }
+    }
+    else
+    {
+        HDC dc = ::GetDC( NULL );
+        EnumFontFamilies( dc, strFaceName, (FONTENUMPROC) DrawingView::EnumFontFamiliesCallback2, (LPARAM) this );
+        ::ReleaseDC( NULL, dc );
     }
 #endif
 }
