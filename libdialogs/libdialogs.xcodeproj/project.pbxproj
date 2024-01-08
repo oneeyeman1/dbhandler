@@ -11,6 +11,7 @@
 		E3132ECD28654B2A00AD669F /* datasource.h in Headers */ = {isa = PBXBuildFile; fileRef = E3132ECB28654B2A00AD669F /* datasource.h */; };
 		E3132EDC2879084C00AD669F /* dialogs.h in Headers */ = {isa = PBXBuildFile; fileRef = E3132EDB2879084B00AD669F /* dialogs.h */; };
 		E322AAC22B1FF99400ECD88D /* liblibhelpers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E322AAC12B1FF99400ECD88D /* liblibhelpers.a */; };
+		E322AB102B4BCB5A00ECD88D /* liblibpropertieshandlers.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E322AB0F2B4BCB5900ECD88D /* liblibpropertieshandlers.dylib */; };
 		E322B82229FA116500BE3A94 /* saveview.h in Headers */ = {isa = PBXBuildFile; fileRef = E322B82029FA116400BE3A94 /* saveview.h */; };
 		E322B82329FA116500BE3A94 /* saveview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322B82129FA116500BE3A94 /* saveview.cpp */; };
 		E32A5006223469AE00A57BD1 /* bitmappanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32A5002223469AE00A57BD1 /* bitmappanel.cpp */; };
@@ -65,6 +66,7 @@
 		E3132ECB28654B2A00AD669F /* datasource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = datasource.h; sourceTree = "<group>"; };
 		E3132EDB2879084B00AD669F /* dialogs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dialogs.h; sourceTree = "<group>"; };
 		E322AAC12B1FF99400ECD88D /* liblibhelpers.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblibhelpers.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		E322AB0F2B4BCB5900ECD88D /* liblibpropertieshandlers.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = liblibpropertieshandlers.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E322B82029FA116400BE3A94 /* saveview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saveview.h; sourceTree = "<group>"; };
 		E322B82129FA116500BE3A94 /* saveview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = saveview.cpp; sourceTree = "<group>"; };
 		E32A5002223469AE00A57BD1 /* bitmappanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bitmappanel.cpp; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E322AB102B4BCB5A00ECD88D /* liblibpropertieshandlers.dylib in Frameworks */,
 				E322AAC22B1FF99400ECD88D /* liblibhelpers.a in Frameworks */,
 				E39501D31DF3C4730046E51B /* liblibpropertypages.dylib in Frameworks */,
 				E3E91D791DCC333900675CF8 /* liblibfieldswindow.dylib in Frameworks */,
@@ -136,6 +139,7 @@
 		E322AAC02B1FF99400ECD88D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E322AB0F2B4BCB5900ECD88D /* liblibpropertieshandlers.dylib */,
 				E322AAC12B1FF99400ECD88D /* liblibhelpers.a */,
 			);
 			name = Frameworks;
