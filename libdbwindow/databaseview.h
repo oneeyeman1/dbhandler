@@ -201,6 +201,7 @@ private:
     wxString m_libPath;
     ToolbarSetup m_tbSetup[2];
     Configuration *m_conf;
+    std::vector<std::string> m_fontSizes;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };
