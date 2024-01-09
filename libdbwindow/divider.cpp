@@ -28,7 +28,7 @@ Divider::Divider() : wxSFRectShape()
 {
     m_Fill = wxBrush( *wxGREY_BRUSH );
     m_props.m_color = "Transparent";
-    m_props.m_height = 80;
+    m_props.m_height = 200;
     m_props.m_cursorFile = wxEmptyString;
     m_props.m_cursor = -1;
     AddStyle( sfsLOCK_CHILDREN );
@@ -73,7 +73,7 @@ Divider::Divider(const wxString &text, const wxString &cursorFile, int stockCurs
 {
     m_props.m_type = text;
     m_props.m_color = "Transparent";
-    m_props.m_height = 80;
+    m_props.m_height = 200;
     m_props.m_cursorFile = cursorFile;
     m_props.m_cursor = stockCursor;
     wxString upArrow( L"\x2191" );
