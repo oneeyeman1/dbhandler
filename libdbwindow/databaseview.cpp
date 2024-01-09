@@ -75,7 +75,9 @@
 #include "dbview.h"
 //#include "objectproperties.h"
 #include "colorcombobox.h"
+#include "taborder.h"
 #include "designlabel.h"
+#include "designfield.h"
 #include "constraint.h"
 #include "constraintsign.h"
 #include "table.h"
@@ -692,11 +694,7 @@ void DrawingView::CreateViewToolBar()
                 m_fontName->Bind( wxEVT_KILL_FOCUS, &DrawingView::OnFontNameChange, this );
                 m_styleBar->AddControl( m_fontName );
                 m_fontSize = new wxComboBox( m_styleBar, wxID_ANY, "" );
-                if( (int) m_fontName->GetClientData( m_fontName->GetSelection() ) != RASTER_FONTTYPE )
-                {
-                    for( auto it = m_fontSizes.begin(); it < m_fontSizes.end(); ++it )
-                        m_fontSize->Append( (*it) );
-                }
+                ChangeFontEement();
                 m_fontSize->SetSelection( 0 );
                 m_styleBar->AddControl( m_fontSize );
             }
@@ -2344,6 +2342,44 @@ int DrawingView::AddSize(int size, int lfHeight)
 
 void DrawingView::ChangeFontEement()
 {
+    ShapeList list;
+    wxFont font = wxNullFont, f;
+    m_designCanvas->GetSelectedShapes( list );
+    if( list.GetCount() == 0 )
+        m_fontName->SetSelection( 0 );
+    else
+    {
+        auto multiple = false;
+        for( ShapeList::iterator it = list.begin(); it != list.end(); ++it )
+        {
+            auto label = wxDynamicCast( (*it), DesignLabel );
+            if( label )
+                f = label->GetProperties().m_font;
+            else
+            {
+                auto field = wxDynamicCast( (*it), DesignField );
+                if( field )
+                    f = field->GetProperties().m_font;
+            }
+            if( font != f )
+            {
+                if( font != wxNullFont )
+                    multiple = true;
+                font = f;
+            }
+        }
+        if( multiple )
+        {
+            m_fontName->Disable();
+            m_fontSize->Disable();
+        }
+        else
+        {
+            m_fontName->SetValue( font.GetFaceName() );
+            m_fontSize->SetValue( wxString::Format( "%d", font.GetPointSize() ) );
+        }
+        return;
+    }
 #ifdef __WXMSW__
     m_fontSize->Clear();
     wxString strFaceName = m_fontName->GetStringSelection();
