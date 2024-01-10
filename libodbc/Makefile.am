@@ -11,8 +11,8 @@ libodbc_lib_la_SOURCES =  \
 libodbc_lib_la_CXXFLAGS = -I../../dbinterface \
 	-DUNICODE \
 	-DUNIXODBC \
-	@ODBC_CFLAGS@
+	`odbc_config --cflags`@ODBC_CFLAGS@
 
 libodbc_lib_la_LDFLAGS = -L../dbinterface \
 	-ldbinterface \
-	@ODBC_LIBS@
+	`odbc+config --libs`@ODBC_LIBS@
