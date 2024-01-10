@@ -1438,7 +1438,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
     if( type == DividerProperties )
     {
 #if __cplusplus > 201300
-        auto ptr = std::make_unique<DividerPropertiesHander>( divider->GetDividerProperties() );
+        auto ptr = std::make_unique<DividerPropertiesHandler>( divider->GetDividerProperties() );
 #else
         auto ptr = std::unique_ptr<DividerPropertiesHander>( new DividerPropertiesHander( divider->GetDividerProperties() ) );
 #endif
