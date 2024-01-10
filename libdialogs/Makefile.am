@@ -67,13 +67,14 @@ libdialogs_la_LDFLAGS = -L../libsqlite \
 	-L../libpostgres \
 	-L../libpropertypages \
 	-L../libhelpers \
-	-lhelpers \
+	-L../libpropertieshandlers \
 	-ldbinterface \
 	-lsqlite_lib \
 	-lodbc_lib \
 	-lshapeframework \
+	-lhelpers \
 	-lfieldswindow \
 	-lpropertypages \
+	-lpropertieshandlers \
 	-lpostgres \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs`
+	`/home/igor/wxWidgets/buildGTK/wx-config --libs`
