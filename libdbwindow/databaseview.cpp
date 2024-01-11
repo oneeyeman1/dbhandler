@@ -2397,6 +2397,23 @@ void DrawingView::ChangeFontEement()
         ::ReleaseDC( NULL, dc );
     }
 #endif
+#ifdef __WXOSX__
+    m_fontSize->Append( "9" );
+    m_fontSize->Append( "10" );
+    m_fontSize->Append( "11" );
+    m_fontSize->Append( "12" );
+    m_fontSize->Append( "13" );
+    m_fontSize->Append( "14" );
+    m_fontSize->Append( "18" );
+    m_fontSize->Append( "24" );
+    m_fontSize->Append( "36" );
+    m_fontSize->Append( "48" );
+    m_fontSize->Append( "64" );
+    m_fontSize->Append( "72" );
+    m_fontSize->Append( "96" );
+    m_fontSize->Append( "144" );
+    m_fontSize->Append( "288" );
+#endif
 }
 
 void DrawingView::OnQueryPreviewUpdateUI(wxUpdateUIEvent &event)
