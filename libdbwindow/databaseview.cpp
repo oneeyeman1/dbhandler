@@ -1367,22 +1367,34 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
                     }
                     else
                     {
-                        field = ((FieldShape *) shape)->GetField();
-                        MyErdTable *my_table = dynamic_cast<MyErdTable *>( ((FieldShape *) shape)->GetParentShape()->GetParentShape() );
-                        if( my_table )
+                        auto field = ((FieldShape *) shape)->GetField();
+                        if( field )
                         {
-                            erdTable = my_table;
-                            tableName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName();
-                            schemaName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetSchemaName();
-                            ownerName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableOwner();
-                            type = DatabaseFieldProperties;
+                            MyErdTable *my_table = dynamic_cast<MyErdTable *>( ((FieldShape *) shape)->GetParentShape()->GetParentShape() );
+                            if( my_table )
+                            {
+                                erdTable = my_table;
+                                tableName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName();
+                                schemaName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetSchemaName();
+                                ownerName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableOwner();
+                                type = DatabaseFieldProperties;
+                            }
                         }
                         else
                         {
-                            sign = wxDynamicCast( shape, ConstraintSign );
-                            if( sign )
+                            auto designField = wxDynamicCast( shape, DesignField );
+                            if( designField )
                             {
-                                type = SignProperties;
+                                type = DesignFieldProperties;
+                                dbTable = nullptr;
+                            }
+                            else
+                            {
+                                sign = wxDynamicCast( shape, ConstraintSign );
+                                if( sign )
+                                {
+                                    type = SignProperties;
+                                }
                             }
                         }
                     }
@@ -1456,6 +1468,17 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         propertiesPtr = std::move( ptr );
         propertiesPtr->SetType( DesignProperties );
         title = _( "Query Object" );
+    }
+    if( type == DesignFieldProperties )
+    {
+        title = _( "Column Object" );
+#if __cplusplus > 201300
+        auto ptr = std::make_unique<DesignPropertiesHander>( m_designCanvas->GetOptions() );
+#else
+        auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
+#endif
+        propertiesPtr = std::move( ptr );
+        propertiesPtr->SetType( DesignProperties );
     }
     propertiesPtr.get()->SetType( type );
     if( lib.IsLoaded() )

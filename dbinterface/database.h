@@ -53,8 +53,9 @@ struct TableDefinition
 
 struct FieldVisualAttributes
 {
-    std::wstring format, edit, validator, header, label;
-    int justify, height, width, initial;
+    std::wstring format, edit, validator, header, label, name, tag, border, slideUp, layer, cursor;
+    int justify, height, width, initial, posX, posY, wddth, heght, stockCursor;
+    bool prntSuppress, equallyRequired, overrideEdit, displayAsPicture, slideLeft, resizale, moveable, autosize;
 };
 
 struct DataEditFiield
@@ -247,6 +248,7 @@ public:
     const std::wstring &GetFullName() const { return full_name; }
     FieldProperties &GetFieldProperties() { return m_props; }
     void SetFieldProperties(const FieldProperties &props) { m_props = props; }
+    FieldVisualAttributes &GetVisualAttributes() { return m_visual; }
 private:
     std::wstring column_name, column_type, column_defaultValue, full_type, full_name;
     bool autoIncrement, column_isNull, column_pk, column_fk;
