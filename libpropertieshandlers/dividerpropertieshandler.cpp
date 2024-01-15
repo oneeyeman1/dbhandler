@@ -15,12 +15,12 @@
 #include "propertieshandlerbase.h"
 #include "dividerpropertieshandler.h"
 
-DividerPropertiesHander::DividerPropertiesHander(BandProperties props) : PropertiesHandler()
+DividerPropertiesHandler::DividerPropertiesHandler(BandProperties props) : PropertiesHandler()
 {
     m_props = props;
 }
 
-int DividerPropertiesHander::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
+int DividerPropertiesHandler::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
 {
     return 0;
 }

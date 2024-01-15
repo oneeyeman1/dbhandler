@@ -1450,9 +1450,9 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
     if( type == DividerProperties )
     {
 #if __cplusplus > 201300
-        auto ptr = std::make_unique<DividerPropertiesHander>( divider->GetDividerProperties() );
+        auto ptr = std::make_unique<DividerPropertiesHandler>( divider->GetDividerProperties() );
 #else
-        auto ptr = std::unique_ptr<DividerPropertiesHander>( new DividerPropertiesHander( divider->GetDividerProperties() ) );
+        auto ptr = std::unique_ptr<DividerPropertiesHandler>( new DividerPropertiesHandler( divider->GetDividerProperties() ) );
 #endif
         propertiesPtr = std::move( ptr );
         propertiesPtr->SetType( DividerProperties );
@@ -2419,6 +2419,23 @@ void DrawingView::ChangeFontEement()
         EnumFontFamilies( dc, strFaceName, (FONTENUMPROC) DrawingView::EnumFontFamiliesCallback2, (LPARAM) this );
         ::ReleaseDC( NULL, dc );
     }
+#endif
+#ifdef __WXOSX__
+    m_fontSize->Append( "9" );
+    m_fontSize->Append( "10" );
+    m_fontSize->Append( "11" );
+    m_fontSize->Append( "12" );
+    m_fontSize->Append( "13" );
+    m_fontSize->Append( "14" );
+    m_fontSize->Append( "18" );
+    m_fontSize->Append( "24" );
+    m_fontSize->Append( "36" );
+    m_fontSize->Append( "48" );
+    m_fontSize->Append( "64" );
+    m_fontSize->Append( "72" );
+    m_fontSize->Append( "96" );
+    m_fontSize->Append( "144" );
+    m_fontSize->Append( "288" );
 #endif
 }
 
