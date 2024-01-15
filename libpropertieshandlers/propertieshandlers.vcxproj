@@ -38,6 +38,7 @@
     <ClInclude Include="designpropertieshandler.h" />
     <ClInclude Include="dividerpropertieshandler.h" />
     <ClInclude Include="fieldpropertieshandler.h" />
+    <ClInclude Include="labelpropertieshandler.h" />
     <ClInclude Include="propertieshandler.h" />
     <ClInclude Include="propertieshandlerbase.h" />
   </ItemGroup>
@@ -45,6 +46,7 @@
     <ClCompile Include="designpropertieshandler.cpp" />
     <ClCompile Include="dividerpropertieshandler.cpp" />
     <ClCompile Include="fieldpropertieshandler.cpp" />
+    <ClCompile Include="labelpropertieshandler.cpp" />
     <ClCompile Include="propertieshandler.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
