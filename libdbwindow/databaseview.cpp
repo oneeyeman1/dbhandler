@@ -1367,7 +1367,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
                     }
                     else
                     {
-                        auto field = ((FieldShape *) shape)->GetField();
+                        field = ((FieldShape *) shape)->GetField();
                         if( field )
                         {
                             MyErdTable *my_table = dynamic_cast<MyErdTable *>( ((FieldShape *) shape)->GetParentShape()->GetParentShape() );

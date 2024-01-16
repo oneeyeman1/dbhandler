@@ -471,7 +471,8 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                     table->Select( true );
                 tableRect = table->GetBoundingBox();
                 erdTable = table;
-                found = true;
+                if( list.GetCount() == 1 )
+                    found = true;
             }
             else
             {
@@ -696,9 +697,9 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             break;
         case wxID_PROPERTIES:
             {
-                if( erdTable )
+                if( erdTable && !erdField )
                     dynamic_cast<DrawingView *>( m_view )->SetProperties( erdTable );
-                else
+                else if( erdTable && erdField )
                     dynamic_cast<DrawingView *>( m_view )->SetProperties( erdField );
             }
             break;

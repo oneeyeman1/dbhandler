@@ -38,6 +38,7 @@
 #include "database.h"
 //#include "objectproperties.h"
 #include "propertieshandlerbase.h"
+#include "fieldpropertieshandler.h"
 #include "propertieshandler.h"
 #include "dividerpropertieshandler.h"
 #include "field.h"
@@ -109,10 +110,10 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         break;
         case DatabaseFieldProperties:
         {
-            FieldProperties *prop = dynamic_cast<FieldProperties *>( handler );
-            m_page6 = new FieldGeneral( parent, prop->m_comment );
+            FieldPropertiesHandler *prop = dynamic_cast<FieldPropertiesHandler *>( handler );
+            m_page6 = new FieldGeneral( m_properties, prop->GetProperty().m_comment );
             m_properties->AddPage( m_page6, _( "General" ) );
-            m_page7 = new FieldHeader( parent, prop->m_label, prop->m_heading, prop->m_labelPosition, prop->m_headingPosition );
+            m_page7 = new FieldHeader( m_properties, prop->GetProperty().m_label, prop->GetProperty().m_heading, prop->GetProperty().m_labelPosition, prop->GetProperty().m_headingPosition );
             m_properties->AddPage( m_page7, _( "Data Font" ) );
         }
         break;

@@ -22,6 +22,7 @@ public:
 private:
     TableField *m_field;
     FieldProperties m_prop;
+    FieldVisualAttributes m_vsual;
     const Database *m_db;
     std::wstring m_command;
     wxString m_tableName, m_ownerName;
