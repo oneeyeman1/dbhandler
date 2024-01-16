@@ -21,6 +21,8 @@
 		E33E6F7F1EAD3067003A0B92 /* wherehavingpage.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E6F7B1EAD3067003A0B92 /* wherehavingpage.h */; };
 		E3607DD623C4427300267C14 /* sortgroupbypage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3607DD423C4427300267C14 /* sortgroupbypage.cpp */; };
 		E3607DD723C4427300267C14 /* sortgroupbypage.h in Headers */ = {isa = PBXBuildFile; fileRef = E3607DD523C4427300267C14 /* sortgroupbypage.h */; };
+		E391643C2B56386800374887 /* databasefielddisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E391643A2B56386700374887 /* databasefielddisplay.cpp */; };
+		E391643D2B56386800374887 /* databasefielddisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = E391643B2B56386800374887 /* databasefielddisplay.h */; };
 		E39501D01DF3C2300046E51B /* tablegeneral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39501CE1DF3C2300046E51B /* tablegeneral.cpp */; };
 		E39501D11DF3C2300046E51B /* tablegeneral.h in Headers */ = {isa = PBXBuildFile; fileRef = E39501CF1DF3C2300046E51B /* tablegeneral.h */; };
 		E3AC9DD81E176AB80083DD62 /* fontpropertypage.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AC9DD61E176AB80083DD62 /* fontpropertypage.h */; };
@@ -55,6 +57,8 @@
 		E33E6F7B1EAD3067003A0B92 /* wherehavingpage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wherehavingpage.h; sourceTree = "<group>"; };
 		E3607DD423C4427300267C14 /* sortgroupbypage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sortgroupbypage.cpp; sourceTree = "<group>"; };
 		E3607DD523C4427300267C14 /* sortgroupbypage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sortgroupbypage.h; sourceTree = "<group>"; };
+		E391643A2B56386700374887 /* databasefielddisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = databasefielddisplay.cpp; sourceTree = "<group>"; };
+		E391643B2B56386800374887 /* databasefielddisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = databasefielddisplay.h; sourceTree = "<group>"; };
 		E39501B81DF3B99C0046E51B /* liblibpropertypages.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibpropertypages.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E39501CE1DF3C2300046E51B /* tablegeneral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tablegeneral.cpp; sourceTree = "<group>"; };
 		E39501CF1DF3C2300046E51B /* tablegeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tablegeneral.h; sourceTree = "<group>"; };
@@ -108,6 +112,8 @@
 		E39501CD1DF3BA080046E51B /* libpropertypages */ = {
 			isa = PBXGroup;
 			children = (
+				E391643A2B56386700374887 /* databasefielddisplay.cpp */,
+				E391643B2B56386800374887 /* databasefielddisplay.h */,
 				E3B8E3D92518E69000346516 /* printspec.cpp */,
 				E3B8E3DA2518E69000346516 /* printspec.h */,
 				E3B8E3CF2513AF9500346516 /* designgeneral.cpp */,
@@ -168,6 +174,7 @@
 				E30564402217CB5F00F5576C /* propertypagebase.h in Headers */,
 				E3B8E3D02513AF9600346516 /* designgeneral.h in Headers */,
 				E3B92D7224CDC6DC0035428C /* pointerproperty.h in Headers */,
+				E391643D2B56386800374887 /* databasefielddisplay.h in Headers */,
 				E305643C2217CB4C00F5576C /* fieldheader.h in Headers */,
 				E3B8E3CA24F2DD6900346516 /* tableprimarykey.h in Headers */,
 				E3B8E3DC2518E69000346516 /* printspec.h in Headers */,
@@ -233,6 +240,7 @@
 				E33E6F7E1EAD3067003A0B92 /* wherehavingpage.cpp in Sources */,
 				E305643B2217CB4C00F5576C /* fieldgeneral.cpp in Sources */,
 				E3B8E3DB2518E69000346516 /* printspec.cpp in Sources */,
+				E391643C2B56386800374887 /* databasefielddisplay.cpp in Sources */,
 				E3607DD623C4427300267C14 /* sortgroupbypage.cpp in Sources */,
 				E3B92D6D24CA0DF60035428C /* bandgeneral.cpp in Sources */,
 				E39501D01DF3C2300046E51B /* tablegeneral.cpp in Sources */,
