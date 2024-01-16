@@ -64,6 +64,7 @@
 #include "getobjectname.h"
 #include "jointype.h"
 #include "designlabelgeneral.h"
+#include "databasefielddisplay.h"
 #include "propertieshandlerbase.h"
 #include "propertieshandler.h"
 #include "properties.h"

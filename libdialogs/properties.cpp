@@ -53,6 +53,7 @@
 #include "pointerproperty.h"
 #include "bandgeneral.h"
 #include "fieldheader.h"
+#include "databasefielddisplay.h"
 #include "properties.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -115,14 +116,16 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_properties->AddPage( m_page6, _( "General" ) );
             m_page7 = new FieldHeader( m_properties, prop->GetProperty().m_label, prop->GetProperty().m_heading, prop->GetProperty().m_labelPosition, prop->GetProperty().m_headingPosition );
             m_properties->AddPage( m_page7, _( "Data Font" ) );
+            m_page8 = new DatabaseFieldDisplay( m_properties, wxID_ANY );
+            m_properties->AddPage( m_page8, _( "Display" ) );
         }
         break;
         case DividerProperties:
         {
             BandProperties prop = dynamic_cast<DividerPropertiesHandler *>( handler )->GetObjectProperties();
-            m_page8 = new BandGeneralProperties( m_properties, prop );
+            m_page9 = new BandGeneralProperties( m_properties, prop );
             m_properties->AddPage( m_page8, _( "General" ) );
-            m_page9 = new PointerPropertiesPanel( m_properties, prop.m_cursorFile, prop.m_cursor );
+            m_page10 = new PointerPropertiesPanel( m_properties, prop.m_cursorFile, prop.m_cursor );
             m_properties->AddPage( m_page9, _( "Pointer" ) );
         }
         break;
