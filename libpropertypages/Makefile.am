@@ -35,7 +35,9 @@ libpropertypages_la_SOURCES =  \
 	qt/fontpropertypageQt.cpp \
 	qt/fontpropertypageQt.h \
 	gtk/fontpropertypageGTK.cpp \
-	gtk/fontpropertypageGTK.h
+	gtk/fontpropertypageGTK.h \
+	databasefielddisplay.cpp \
+	databasefielddisplay.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
