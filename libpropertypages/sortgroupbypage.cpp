@@ -452,7 +452,14 @@ void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
     m_draggedItem = event.GetItem();
     wxVariant value = event.GetValue();
     m_sortDragSource = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
+#ifdef __WXMSW__
     m_sortDragSource->SetCursor( wxCursor( "handdrag" ) );
+#elif __WXOSX__
+    m_sortDragSource->SetCursor( wxCursor( "handdrag" ) );
+#else
+    m_sortDragSource->SetCursor( wxCursor( (const char *) handdrag, 32, 32, 16, 0, nullptr, wxWHITE, wxBLACK ) );
+#endif
+//    m_sortDragSource->SetCursor( wxCursor( "handdrag" ) );
     if( m_sortDragSource == m_sortSource && m_draggedItem.IsOk())
         m_itemPos = m_sortDragSource->ItemToRow( m_draggedItem );
     else if( m_draggedItem.IsOk() )
