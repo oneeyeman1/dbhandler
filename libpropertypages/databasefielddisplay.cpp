@@ -31,7 +31,7 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, wxWindowID id):  Pr
     wxBoxSizer* sizer_3 = new wxBoxSizer( wxVERTICAL );
     sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
     wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer( 3, 3, 5, 5 );
-    sizer_3->Add( grid_sizer_1, 0, wxEXPAND, 0 );
+    sizer_3->Add( grid_sizer_1, 1, wxEXPAND, 0 );
     wxStaticText* label_1 = new wxStaticText( this, wxID_ANY, _( "Display Format:" ) );
     grid_sizer_1->Add( label_1, 0, wxEXPAND, 0 );
     grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -63,8 +63,8 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, wxWindowID id):  Pr
     sizer_6->Add( label_2, 0, wxEXPAND, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
     const wxString m_justify_choices[] = {
-        wxEmptyString,
-        wxEmptyString,
+        "left",
+        "rght",
     };
     m_justify = new wxComboBox( this, wxID_ANY, wxT( "" ), wxDefaultPosition, wxDefaultSize, 2, m_justify_choices, wxCB_DROPDOWN );
     sizer_6->Add( m_justify, 0, wxEXPAND, 0 );
