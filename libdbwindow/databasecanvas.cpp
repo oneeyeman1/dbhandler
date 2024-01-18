@@ -634,6 +634,11 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         }
     }
     int rc = GetPopupMenuSelectionFromUser( mnu, pt );
+    if( type == DatabaseView && erdField )
+    {
+        erdField->Select( false );
+        Refresh();
+    }
     switch( rc )
     {
         case wxID_NONE:
