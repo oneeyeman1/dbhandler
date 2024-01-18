@@ -94,5 +94,13 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, wxWindowID id):  Pr
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     // end wxGlade
+    m_justify->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
+    m_height->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
+    m_width->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
 }
 
+void DatabaseFieldDisplay::OnPageModified( wxCommandEvent &event )
+{
+    dynamic_cast<wxButton *>( GetParent()->GetParent()->FindWindowById( wxID_APPLY ) )->Enable( true );
+    m_isModified = true;
+}

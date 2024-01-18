@@ -43,6 +43,7 @@ protected:
     wxTextCtrl* m_height;
     wxTextCtrl* m_width;
     // end wxGlade
+    void OnPageModified(wxCommandEvent &event);
 }; // wxGlade: end class
 
 
