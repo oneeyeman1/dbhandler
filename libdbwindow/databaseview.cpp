@@ -984,7 +984,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
             m_canvas->Show( true );
         }
     }
-    if( !NewViewView && m_tables.size() > 0 )
+    if( m_type != NewViewView && m_tables.size() > 0 )
     {
         if( m_type == QueryView )
         {
