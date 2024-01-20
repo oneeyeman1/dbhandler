@@ -145,6 +145,5 @@ DesignLabelProperties DesignLabel::GetProperties()
 void DesignLabel::Select(bool selected)
 {
     m_fSelected = selected;
-    m_text->Select( selected );
-    Select( selected );
+    wxSFRectShape::Select( selected );
 }
