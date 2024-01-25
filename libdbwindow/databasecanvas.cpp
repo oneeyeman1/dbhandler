@@ -672,6 +672,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                     if( fld )
                     {
                         tableName = fld->GetField()->GetFullName();
+                        tableName = tableName.substr( tableName.find( '.' ) + 1 );
                         tableName = tableName.substr( 0, tableName.find( '.' ) );
                         if( tableName == erdTable->GetTable()->GetTableName() )
                         {
