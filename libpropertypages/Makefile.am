@@ -52,7 +52,7 @@ libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 libpropertypages_la_LDFLAGS = `pkg-config \
 	--libs \
 	gtk+-3.0` \
-	-L../../libhelpers \
+	-L../libhelpers \
 	-lhelpers \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs`

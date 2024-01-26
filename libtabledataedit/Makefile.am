@@ -24,5 +24,5 @@ libtableedit_la_CXXFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
 
 libtableedit_la_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
 	--libs` \
-	-L../../libhelpers \
+	-L../libhelpers \
 	-lhelpers 
