@@ -33,6 +33,7 @@
 #include "commenttext.h"
 #include "fontname.h"
 #include "fontsize.h"
+#include "joins.h"
 #endif
 #include "res/gui/preview.c"
 #include "res/gui/sql.h"
@@ -533,12 +534,12 @@ void DrawingView::CreateViewToolBar()
             CreateQueryMenu( QuickQueryMenu );
         else
             CreateQueryMenu( SQLSelectMenu );
-        wxBitmapBundle save, tableSVG, boldSVG, italicSVG, underlineSVG, leftalignSVG, centeralignSVG, rightalignSVG, commentSVG, fontnameSVG, fontsizeSVG;
+        wxBitmapBundle save, tableSVG, boldSVG, italicSVG, underlineSVG, leftalignSVG, centeralignSVG, rightalignSVG, commentSVG, fontnameSVG, fontsizeSVG, joinsSVG;
 #ifdef __WXMSW__
         HANDLE gs_wxMainThread = NULL;
         const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
         const void *data = nullptr, *dataTable = nullptr, *data1 = nullptr, *data2 = nullptr, *data3 = nullptr, *data4 = nullptr, *data5 = nullptr, *data6 = nullptr;
-        const void *data7 = nullptr, *data8 = nullptr, *data9 = nullptr;
+        const void *data7 = nullptr, *data8 = nullptr, *data9 = nullptr -data10 = nullptr;
         size_t sizeSave = 0, sizeTable = 0, size1 = 0, size2 = 0, size3 = 0, size4 = 0, size5 = 0, size6 = 0;
         size_t size7 = 0, size8 = 0, size9 = 0;
         if( !wxLoadUserResource( &data, &sizeSave, "save", RT_RCDATA, inst ) )
@@ -640,6 +641,15 @@ void DrawingView::CreateViewToolBar()
         {
             fontsizeSVG = wxBitmapBundle::FromSVG( (const char *) data9, wxSize( 16, 16 ) );
         }
+        if( !wxLoadUserResource( &data10, &size10, "joins", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            joinsSVG = wxBitmapBundle::FromSVG( (const char *) data10, wxSize( 16, 16 ) );
+        }
 #elif __WXOSX__
         save = wxBitmapBundle::FromSVGResource( "save", wxSize( 16, 16 ) );
         tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
@@ -652,6 +662,7 @@ void DrawingView::CreateViewToolBar()
         commentSVG = wxBitmapBundle::FromSVGResource( "commenttext", wxSize( 16, 16 ) );
         fontnameSVG = wxBitmapBundle::FromSVGResource( "fontname", wxSize( 16, 16 ) );
         fontsizeSVG = wxBitmapBundle::FromSVGResource( "fontsize", wxSize( 16, 16 ) );
+        joinsSVG = wxBitmapBundle::FromSVGResource( "joins", wxSize( 16, 16 ) );
 #else
         save = wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR );
         tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
@@ -664,6 +675,7 @@ void DrawingView::CreateViewToolBar()
         commentSVG = wxBitmapBundle::FromSVG( comment, wxSize( 16, 16 ) );
         fontnameSVG = wxBitmapBundle::FromSVG( fontname, wxSize( 16, 16 ) );
         fontsizeSVG = wxBitmapBundle::FromSVG( fontsize, wxSize( 16, 16 ) );
+        joinsSVG = wxBitmapBundle::FromSVG( joins, wxSize( 16, 16 ) );
 #endif
         if( m_type != NewViewView )
         {
@@ -671,6 +683,7 @@ void DrawingView::CreateViewToolBar()
             m_tb->AddTool( wxID_OPEN, _( "Open" ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
             m_tb->AddTool( wxID_SAVEQUERY, _( "Save" ), save, save, wxITEM_NORMAL, _( "Save" ), _( "Save Query" ) );
             m_tb->AddTool( wxID_SHOWSQLTOOLBOX, _( "Show ToolBox" ), wxBitmap( toolbox), wxBitmap( toolbox ), wxITEM_CHECK, _( "Toolbox" ), _( "Hide/Show SQL Toolbox" ) );
+			m_tb->AddTool( wxID_JOINS, _( "Joins" ), joinsSVG, joinsSVG, wxITEM_NORMAL, _( "Joins" ), _( "Jois" ) );
             m_tb->AddTool( wxID_DATASOURCE, _( "Preview SQL" ), wxBitmap::NewFromPNGData( sql, WXSIZEOF( sql ) ), wxNullBitmap, wxITEM_CHECK, _( "Data Source" ), _( "" ) );
             m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Query View" ) );
             m_tb->ToggleTool( wxID_SHOWSQLTOOLBOX, true );
@@ -1479,8 +1492,8 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
 #endif
         propertiesPtr = std::move( ptr );
         propertiesPtr->SetType( DesignProperties );
+        propertiesPtr.get()->SetType( type );
     }
-    propertiesPtr.get()->SetType( type );
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
