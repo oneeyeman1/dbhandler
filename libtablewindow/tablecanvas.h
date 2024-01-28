@@ -134,6 +134,7 @@ private:
 #define wxID_COMMENTFIELD         1003
 #define wxID_FONTNAME             1004
 #define wxID_FONTSIZE             1005
+#define wxID_JOINS                1006
 #endif
 
 #endif // _TABLE_CANVAS_H_
