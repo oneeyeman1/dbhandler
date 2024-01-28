@@ -2437,6 +2437,15 @@ void DrawingView::ChangeFontEement()
     m_fontSize->Append( "144" );
     m_fontSize->Append( "288" );
 #endif
+#ifdef __WXGTK__
+    auto context = pango_context_new();
+    auto fontMap = pango_context_get_font_map( context );
+    if( fontMap )
+    {
+
+    }
+    g_object_free( context );
+#endif
 }
 
 void DrawingView::OnQueryPreviewUpdateUI(wxUpdateUIEvent &event)
