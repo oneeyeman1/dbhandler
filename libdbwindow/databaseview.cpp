@@ -23,6 +23,7 @@
 //#endif
 
 #ifdef __WXGTK__
+#include "pango/pango.h"
 #include "bold.h"
 #include "italic.h"
 #include "underline.h"
