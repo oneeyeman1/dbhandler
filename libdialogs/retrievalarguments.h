@@ -43,7 +43,7 @@ private:
     void AddArgumentsLine(const QueryArguments &args);
     wxPanel *m_panel, *argPanel, *m_mainPanel, *dummy_1, *dummy_2, *dummy_3, *dummy_4;
     wxBoxSizer *sizer;
-    wxBitmap bmp;
+    wxBitmapBundle bmp;
     wxScrolledWindow *scroller;
     wxFlexGridSizer *fgs;
 ///    MySubScrolledWindow *m_arguments;

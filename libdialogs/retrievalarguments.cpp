@@ -25,6 +25,10 @@
 #include "wx/wx.h"
 #endif
 
+#ifdef __WXGTK__
+#include "pointer.h"
+#endif
+
 #include <list>
 #include "dialogs.h"
 #include "arguments.c"
@@ -62,8 +66,10 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     scroller = new wxScrolledWindow( main_sizer->GetStaticBox(), wxID_ANY );
     scroller->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
 
-    bmp = wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) );
-
+//    bmp = wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) );
+#ifdef __WXGTK__
+	bmp = wxBitmapBundle::FromSVG( pointer, wxSize( 16, 16 ) );
+#endif
     fgs = new wxFlexGridSizer( 4, 0, 0 );
     dummy_1 = new wxPanel( scroller, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
     dummy_1->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
