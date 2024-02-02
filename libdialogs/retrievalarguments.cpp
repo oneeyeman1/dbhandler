@@ -82,9 +82,10 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     {
         bmp = wxBitmapBundle::FromSVG( (const char *) data, wxSize( 24, 24 ) );
     }
-#endif
-#ifdef __WXGTK__
+#elif __WXGTK__
 	bmp = wxBitmapBundle::FromSVG( pointer, wxSize( 24, 24 ) );
+#elif __WXOSX__
+    bmp = wxBitmapBundle::FromSVGResource( "pointer", wxSize( 24, 24 ) );
 #endif
     fgs = new wxFlexGridSizer( 4, 0, 0 );
     dummy_1 = new wxPanel( scroller, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
