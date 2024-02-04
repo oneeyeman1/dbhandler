@@ -2082,11 +2082,11 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     }
     if( event.GetEventObject() == m_page1 || event.GetEventObject() == m_page3 )
     {
-        SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query, (Positions *)( event.GetClientData() ) );
+        SortGroupByHandling( event.GetInt(), event.GetString(), m_queryBook->GetSelection(), query, (Positions *)( event.GetClientData() ), event.GetExtraLong() );
     }
 }
 
-void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const Positions *pos)
+void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const Positions *pos, long operation)
 {
     size_t start, end;
     bool isInserting = false;
@@ -2156,6 +2156,27 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
     }
     else
     {
+        if( queryType == 0 )
+        {
+            wxString fieldReplace;
+            auto fieldCut = str.substr( str.find( fieldName ) );
+            if( operation == 0 )
+                fieldReplace = fieldName + " DESC";
+            else
+                fieldReplace = fieldName + " ASC";
+            auto pos = fieldCut.find( ',' );
+            if( pos == wxNOT_FOUND )
+            {
+                fieldReplace += ";";
+                fieldCut += ";";
+            }
+            else
+            {
+                fieldReplace += ",";
+                fieldCut = fieldCut.substr( 0, pos );
+            }
+            query.Replace( fieldCut, fieldReplace );
+        }
         if( queryType == 2 )
             GetDocument()->ShuffleGroupByFields( fieldName, pos->position, replace );
     }
