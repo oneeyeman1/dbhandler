@@ -388,12 +388,16 @@ void DrawingDocument::AddSortedField(const wxString &name, long original_positio
     for( std::vector<FieldSorter>::iterator it = m_sortedFields.begin(); it < m_sortedFields.end(); ++it )
     {
         if( it == m_sortedFields.begin() )
+        {
             replace += (*it).m_name;
+            replace += " ASC";
+        }
         else
         {
             replace += ",\n";
             replace += "         ";
             replace += (*it).m_name;
+            replace += " ASC";
         }
     }
     Modify( true );
