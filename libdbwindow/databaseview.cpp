@@ -23,6 +23,7 @@
 //#endif
 
 #ifdef __WXGTK__
+#include "pango/pango.h"
 #include "bold.h"
 #include "italic.h"
 #include "underline.h"
@@ -539,9 +540,9 @@ void DrawingView::CreateViewToolBar()
         HANDLE gs_wxMainThread = NULL;
         const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
         const void *data = nullptr, *dataTable = nullptr, *data1 = nullptr, *data2 = nullptr, *data3 = nullptr, *data4 = nullptr, *data5 = nullptr, *data6 = nullptr;
-        const void *data7 = nullptr, *data8 = nullptr, *data9 = nullptr, *data10 = nullptr;
+        const void *data7 = nullptr, *data8 = nullptr, *data9 = nullptr -data10 = nullptr;
         size_t sizeSave = 0, sizeTable = 0, size1 = 0, size2 = 0, size3 = 0, size4 = 0, size5 = 0, size6 = 0;
-        size_t size7 = 0, size8 = 0, size9 = 0, size10 = 0;
+        size_t size7 = 0, size8 = 0, size9 = 0;
         if( !wxLoadUserResource( &data, &sizeSave, "save", RT_RCDATA, inst ) )
         {
             auto err = ::GetLastError();

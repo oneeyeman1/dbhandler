@@ -74,7 +74,10 @@ libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libpropertieshandlers \
 	-I../../libhelpers \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--cxxflags` 
+	--cxxflags` \
+	`pkg-config \
+	--cflags \
+	pango` 
 
 libdbwindow_la_LDFLAGS = -L../libpropertypages \
 	-lpropertypages \

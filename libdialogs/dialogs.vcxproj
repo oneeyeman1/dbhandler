@@ -544,14 +544,10 @@
     <ClInclude Include="odbccredentials.h" />
     <ClInclude Include="properties.h" />
     <ClInclude Include="quickselect.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="retrievalarguments.h" />
     <ClInclude Include="saveview.h" />
     <ClInclude Include="selecttables.h" />
     <ClInclude Include="toolbarsetup.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="libdialogs.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
