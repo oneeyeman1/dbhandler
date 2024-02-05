@@ -2734,8 +2734,7 @@ void DrawingView::CreateDBMenu()
 void DrawingView::CreateQueryMenu(const int queryType)
 {
     wxMenu *edit = nullptr, *object = nullptr, *design = nullptr, *rows = nullptr;
-    wxMenuBar *mbar = nullptr;
-    mbar = new wxMenuBar;
+    auto mbar = new wxMenuBar;
     auto fileMenu = new wxMenu;
     fileMenu->Append( wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
     fileMenu->AppendSeparator();
