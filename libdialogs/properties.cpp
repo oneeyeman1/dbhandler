@@ -118,7 +118,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         break;
         case DividerProperties:
         {
-            DividerPropertiesHander *prop = dynamic_cast<DividerPropertiesHander *>( handler );
+            DividerPropertiesHandler *prop = dynamic_cast<DividerPropertiesHandler *>( handler );
             m_page8 = new BandGeneralProperties( m_properties, prop->GetObjectProperties() );
             m_properties->AddPage( m_page8, _( "General" ) );
             m_page9 = new PointerPropertiesPanel( m_properties, prop->GetObjectProperties()->m_cursorFile, prop->GetObjectProperties()->m_cursor );

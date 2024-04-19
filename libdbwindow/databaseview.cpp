@@ -1437,9 +1437,9 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
     if( type == DividerProperties )
     {
 #if __cplusplus > 201300
-        auto ptr = std::make_unique<DividerPropertiesHander>( divider->GetDividerProperties() );
+        auto ptr = std::make_unique<DividerPropertiesHandler>( divider->GetDividerProperties() );
 #else
-        auto ptr = std::unique_ptr<DividerPropertiesHander>( new DividerPropertiesHander( divider->GetDividerProperties() ) );
+        auto ptr = std::unique_ptr<DividerPropertiesHandler>( new DividerPropertiesHander( divider->GetDividerProperties() ) );
 #endif
         propertiesPtr = std::move( ptr );
         propertiesPtr->SetType( DividerProperties );
@@ -1448,9 +1448,9 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
     if( type == DesignProperties )
     {
 #if __cplusplus > 201300
-        auto ptr = std::make_unique<DesignPropertiesHander>( m_designCanvas->GetOptions() );
+        auto ptr = std::make_unique<DesignPropertiesHandler>( m_designCanvas->GetOptions() );
 #else
-        auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
+        auto ptr = std::unique_ptr<DesignPropertiesHandler>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
 #endif
         propertiesPtr = std::move( ptr );
         propertiesPtr->SetType( DesignProperties );
