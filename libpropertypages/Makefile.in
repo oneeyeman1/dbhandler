@@ -141,7 +141,6 @@ am_libpropertypages_la_OBJECTS = libpropertypages_la-tablegeneral.lo \
 	libpropertypages_la-pointerproperty.lo \
 	libpropertypages_la-tableprimarykey.lo \
 	libpropertypages_la-designgeneral.lo \
-	libpropertypages_la-colorcombobox.lo \
 	libpropertypages_la-printspec.lo \
 	qt/libpropertypages_la-fontpropertypageQt.lo \
 	gtk/libpropertypages_la-fontpropertypageGTK.lo
@@ -170,7 +169,6 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/libpropertypages_la-bandgeneral.Plo \
-	./$(DEPDIR)/libpropertypages_la-colorcombobox.Plo \
 	./$(DEPDIR)/libpropertypages_la-designgeneral.Plo \
 	./$(DEPDIR)/libpropertypages_la-designlabelgeneral.Plo \
 	./$(DEPDIR)/libpropertypages_la-fieldgeneral.Plo \
@@ -284,6 +282,7 @@ EGREP = @EGREP@
 ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FILECMD = @FILECMD@
 GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
 GMOFILES = @GMOFILES@
 GMSGFMT = @GMSGFMT@
@@ -437,8 +436,6 @@ libpropertypages_la_SOURCES = \
 	tableprimarykey.h \
 	designgeneral.cpp \
 	designgeneral.h \
-	colorcombobox.cpp \
-	colorcombobox.h \
 	printspec.cpp \
 	printspec.h \
 	qt/fontpropertypageQt.cpp \
@@ -449,17 +446,20 @@ libpropertypages_la_SOURCES = \
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
 	-I../../libfieldswindow \
+	-I../../libhelpers \
 	`pkg-config \
 	--cflags \
 	gtk+-3.0` \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--cxxflags` 
+	--cxxflags`
 
 libpropertypages_la_LDFLAGS = `pkg-config \
 	--libs \
 	gtk+-3.0` \
+	-L../../libhelpers \
+	-lhelpers \
 	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs` 
+	--libs`
 
 all: all-am
 
@@ -560,7 +560,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-bandgeneral.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-colorcombobox.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-designgeneral.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-designlabelgeneral.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpropertypages_la-fieldgeneral.Plo@am__quote@ # am--include-marker
@@ -689,13 +688,6 @@ libpropertypages_la-designgeneral.lo: designgeneral.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='designgeneral.cpp' object='libpropertypages_la-designgeneral.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-designgeneral.lo `test -f 'designgeneral.cpp' || echo '$(srcdir)/'`designgeneral.cpp
-
-libpropertypages_la-colorcombobox.lo: colorcombobox.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertypages_la-colorcombobox.lo -MD -MP -MF $(DEPDIR)/libpropertypages_la-colorcombobox.Tpo -c -o libpropertypages_la-colorcombobox.lo `test -f 'colorcombobox.cpp' || echo '$(srcdir)/'`colorcombobox.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libpropertypages_la-colorcombobox.Tpo $(DEPDIR)/libpropertypages_la-colorcombobox.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='colorcombobox.cpp' object='libpropertypages_la-colorcombobox.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -c -o libpropertypages_la-colorcombobox.lo `test -f 'colorcombobox.cpp' || echo '$(srcdir)/'`colorcombobox.cpp
 
 libpropertypages_la-printspec.lo: printspec.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libpropertypages_la_CXXFLAGS) $(CXXFLAGS) -MT libpropertypages_la-printspec.lo -MD -MP -MF $(DEPDIR)/libpropertypages_la-printspec.Tpo -c -o libpropertypages_la-printspec.lo `test -f 'printspec.cpp' || echo '$(srcdir)/'`printspec.cpp
@@ -858,7 +850,6 @@ clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/libpropertypages_la-bandgeneral.Plo
-	-rm -f ./$(DEPDIR)/libpropertypages_la-colorcombobox.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-designgeneral.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-designlabelgeneral.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-fieldgeneral.Plo
@@ -919,7 +910,6 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/libpropertypages_la-bandgeneral.Plo
-	-rm -f ./$(DEPDIR)/libpropertypages_la-colorcombobox.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-designgeneral.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-designlabelgeneral.Plo
 	-rm -f ./$(DEPDIR)/libpropertypages_la-fieldgeneral.Plo
