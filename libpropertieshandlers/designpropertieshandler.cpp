@@ -17,12 +17,12 @@
 #include "propertieshandlerbase.h"
 #include "designpropertieshandler.h"
 
-DesignPropertiesHander::DesignPropertiesHander(DesignOptions canvas)
+DesignPropertiesHandler::DesignPropertiesHandler(DesignOptions canvas)
 {
     m_options = canvas;
 }
 
-int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
+int DesignPropertiesHandler::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
 {
 //    m_options->GetOptions().units = m_page1->GetUnitsCtrl()->GetSelection();
 /*    wxColour color = m_page1->GetColorCtrl()->GetColourValue();
