@@ -19,7 +19,7 @@
 SyntaxPropPage::SyntaxPropPage(wxWindow *parent) : wxPanel( parent )
 {
     m_syntax = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
-    m_syntax->Enable( false );
+    m_syntax->SetBackgroundColour( GetBackgroundColour() );
     wxFont font = m_syntax->GetFont();
     font.SetFamily( wxFONTFAMILY_TELETYPE );
     m_syntax->SetFont( font );

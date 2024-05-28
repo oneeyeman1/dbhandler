@@ -539,9 +539,9 @@ void DrawingView::CreateViewToolBar()
         HANDLE gs_wxMainThread = NULL;
         const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
         const void *data = nullptr, *dataTable = nullptr, *data1 = nullptr, *data2 = nullptr, *data3 = nullptr, *data4 = nullptr, *data5 = nullptr, *data6 = nullptr;
-        const void *data7 = nullptr, *data8 = nullptr, *data9 = nullptr -data10 = nullptr;
+        const void *data7 = nullptr, *data8 = nullptr, *data9 = nullptr, *data10 = nullptr;
         size_t sizeSave = 0, sizeTable = 0, size1 = 0, size2 = 0, size3 = 0, size4 = 0, size5 = 0, size6 = 0;
-        size_t size7 = 0, size8 = 0, size9 = 0;
+        size_t size7 = 0, size8 = 0, size9 = 0, size10 = 0;
         if( !wxLoadUserResource( &data, &sizeSave, "save", RT_RCDATA, inst ) )
         {
             auto err = ::GetLastError();
@@ -2733,21 +2733,7 @@ void DrawingView::CreateDBMenu()
 void DrawingView::CreateQueryMenu(const int queryType)
 {
     wxMenu *edit = nullptr, *object = nullptr, *design = nullptr, *rows = nullptr;
-    wxMenuBar *mbar = nullptr;
-    if( !m_snitialized )
-        mbar = new wxMenuBar;
-    else
-    {
-        mbar = m_frame->GetMenuBar();
-        for( size_t i = mbar->GetMenuCount() - 1; i >= 0; --i )
-        {
-            wxMenu *tmp = mbar->Remove( i );
-            delete tmp;
-            tmp = nullptr;
-            if( i == 0 )
-                break;
-        }
-    }
+    auto mbar = new wxMenuBar;
     auto fileMenu = new wxMenu;
     fileMenu->Append( wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
     fileMenu->AppendSeparator();
@@ -2851,7 +2837,6 @@ void DrawingView::CreateQueryMenu(const int queryType)
     mbar->Append( helpMenu, _( "Help" ) );
     if( !m_snitialized )
     {
-        m_frame->SetMenuBar( mbar );
         m_snitialized = true;
     }
     if( queryType == QuerySyntaxMenu )
@@ -2862,6 +2847,7 @@ void DrawingView::CreateQueryMenu(const int queryType)
         mbar->EnableTop( 3, false );
         mbar->EnableTop( 4, false );
     }
+    m_frame->SetMenuBar( mbar );
 }
 
 void DrawingView::OnFieldShuffle(wxCommandEvent &event)
