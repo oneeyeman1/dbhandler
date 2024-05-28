@@ -149,6 +149,9 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     m_ok->Bind( wxEVT_UPDATE_UI, &GetObjectName::OnOKButtonUpdateUI, this );
     m_objectList->Bind( wxEVT_LIST_ITEM_SELECTED, &GetObjectName::OnNameSelected, this );
     m_objectList->Bind( wxEVT_LIST_ITEM_ACTIVATED, &GetObjectName::OnNameActivated, this );
+    if( m_objectList->GetItemCount() > 0 )
+        m_objectList->SetItemState( 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED );
+    m_painterName->SetFocus();
 }
 
 void GetObjectName::set_properties()
