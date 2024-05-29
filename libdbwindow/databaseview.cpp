@@ -283,7 +283,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 #else
     pos = wxDefaultPosition;
 #endif
-    m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, pos, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
+    m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, pos, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ), wxNO_FULL_REPAINT_ON_RESIZE | wxCLIP_CHILDREN );
 //    m_frame->SetMenuBar( m_parent->GetMenuBar() );
     if( m_type == DatabaseView )
     {
@@ -1498,7 +1498,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-//        TableProperties props = *static_cast<TableProperties *>( properties );
+//        TableProperties *props = *static_cast<TableProperties *>( properties );
         res = func( m_frame, propertiesPtr, title, command, logOnly, *pcs );
     }
 }
@@ -2155,6 +2155,14 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
                 str = "\n" + str;
         }
     }
+    else if( type == CHANGEFIELD )
+    {
+        if( queryType == 2 )
+        {
+            replace = "GROUP BY ";
+            GetDocument()->ShuffleGroupByFields( fieldName, pos->position, replace );
+        }
+    }
     else
     {
         if( queryType == 0 )
@@ -2178,8 +2186,6 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
             }
             query.Replace( fieldCut, fieldReplace );
         }
-        if( queryType == 2 )
-            GetDocument()->ShuffleGroupByFields( fieldName, pos->position, replace );
     }
     query.Replace( str, replace );
     m_page6->GetSyntaxCtrl()->SetValue( query );
@@ -2800,7 +2806,7 @@ void DrawingView::CreateQueryMenu(const int queryType)
         if( GetSyntaxPage() && GetSyntaxPage()->GetSyntaxCtrl()->GetValue().find( "DISTNCT" ) != wxNOT_FOUND )
             design->Check( wxID_DISTINCT, true );
         else
-            design->Check( wxID_DISTINCT, true );
+            design->Check( wxID_DISTINCT, false );
         mbar->Insert( 0, design, _( "Design" ) );
     }
     if( queryType == QuerySyntaxMenu )
