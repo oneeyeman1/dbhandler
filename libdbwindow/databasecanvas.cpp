@@ -321,11 +321,10 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
 {
     ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
     wxSFShapeBase* pShape = NULL;
-    ShapeList shapes, list, allTableShapes;
+    ShapeList shapes, list;
     ConstraintSign *sign = NULL;
     GetSelectedShapes( shapes );
     GetShapesAtPosition( event.GetPosition(), list );
-    GetDiagramManager().GetShapes( CLASSINFO( MyErdTable), allTableShapes );
     int count = 0;
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); it++ )
     {
