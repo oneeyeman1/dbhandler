@@ -25,6 +25,9 @@ struct DesignLabelProperties : public Properties
 
 struct DesignFieldProperties : public Properties
 {
+    wxString m_name, m_tag;
+    bool m_suppressPrint, m_required, m_override, m_picture, m_rtl;
+    int m_border, m_alignment;
 };
 
 #endif /* dbview_h */
