@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E322947E2C0D0B0800BF2BBB /* maskededit.h in Headers */ = {isa = PBXBuildFile; fileRef = E322947C2C0D0B0800BF2BBB /* maskededit.h */; };
+		E322947F2C0D0B0900BF2BBB /* maskededit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322947D2C0D0B0800BF2BBB /* maskededit.cpp */; };
 		E322AABE2B1FF7B400ECD88D /* typecombobox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322AABC2B1FF7B300ECD88D /* typecombobox.cpp */; };
 		E322AABF2B1FF7B400ECD88D /* typecombobox.h in Headers */ = {isa = PBXBuildFile; fileRef = E322AABD2B1FF7B400ECD88D /* typecombobox.h */; };
 		E322AAC82B37447600ECD88D /* colorcombobox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322AAC62B37447400ECD88D /* colorcombobox.cpp */; };
@@ -14,6 +16,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E322947C2C0D0B0800BF2BBB /* maskededit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maskededit.h; sourceTree = "<group>"; };
+		E322947D2C0D0B0800BF2BBB /* maskededit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maskededit.cpp; sourceTree = "<group>"; };
 		E322AAAF2B1FF6FC00ECD88D /* liblibhelpers.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibhelpers.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E322AABC2B1FF7B300ECD88D /* typecombobox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = typecombobox.cpp; sourceTree = "<group>"; };
 		E322AABD2B1FF7B400ECD88D /* typecombobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = typecombobox.h; sourceTree = "<group>"; };
@@ -36,6 +40,8 @@
 			isa = PBXGroup;
 			children = (
 				E322AAB02B1FF6FC00ECD88D /* Products */,
+				E322947D2C0D0B0800BF2BBB /* maskededit.cpp */,
+				E322947C2C0D0B0800BF2BBB /* maskededit.h */,
 				E322AAC62B37447400ECD88D /* colorcombobox.cpp */,
 				E322AAC72B37447500ECD88D /* colorcombobox.h */,
 				E322AABC2B1FF7B300ECD88D /* typecombobox.cpp */,
@@ -59,6 +65,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E322AABF2B1FF7B400ECD88D /* typecombobox.h in Headers */,
+				E322947E2C0D0B0800BF2BBB /* maskededit.h in Headers */,
 				E322AAC92B37447600ECD88D /* colorcombobox.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -120,6 +127,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E322AAC82B37447600ECD88D /* colorcombobox.cpp in Sources */,
+				E322947F2C0D0B0900BF2BBB /* maskededit.cpp in Sources */,
 				E322AABE2B1FF7B400ECD88D /* typecombobox.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
