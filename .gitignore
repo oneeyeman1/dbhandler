@@ -83,3 +83,4 @@ aclocal*
 Makefile.in
 *.abl
 libhelpers/vc_mswuddll
+*.aps
