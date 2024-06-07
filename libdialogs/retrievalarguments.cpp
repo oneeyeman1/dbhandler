@@ -30,6 +30,7 @@
 #endif
 
 #include <list>
+#include "wx/dynlib.h"
 #include "dialogs.h"
 #include "arguments.c"
 #include "typecombobox.h"
@@ -67,7 +68,21 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     scroller->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
 
 //    bmp = wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) );
-#ifdef __WXGTK__
+#ifdef __WXMSW__
+    HANDLE gs_wxMainThread = NULL;
+    const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dialogs", &gs_wxMainThread );
+    const void *data = nullptr;
+    size_t sizeCursor = 0;
+    if( !wxLoadUserResource( &data, &sizeCursor, "pointer", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+    }
+    else
+    {
+        bmp = wxBitmapBundle::FromSVG( (const char *) data, wxSize( 16, 16 ) );
+    }
+#elif __WXGTK__
 	bmp = wxBitmapBundle::FromSVG( pointer, wxSize( 16, 16 ) );
 #endif
     fgs = new wxFlexGridSizer( 4, 0, 0 );
