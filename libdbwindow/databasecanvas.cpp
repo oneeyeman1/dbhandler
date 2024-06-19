@@ -1290,16 +1290,25 @@ bool DatabaseCanvas::UpdateCanvasWithQuery()
     if( root )
     {
         if( root->GetDbType() != m_dbType )
-            wxMessageBox( _( wxString::Format( "The database type you are connected to does not match the database type of the qery you are loading. Connected to %s, loading %s", m_dbType, root->GetDbType() ) ) );
-        if( root->GetDbName() != m_dbName )
-            wxMessageBox( _( wxString::Format( "The name of the database you are connected to does not match the name of the database of the qery you are loading. Connected to %s, loading %s", m_dbName, root->GetDbName() ) ) );
-        ShapeList lstShapes;
-        GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), lstShapes );
-        for( ShapeList::iterator it = lstShapes.begin(); it != lstShapes.end(); ++it )
         {
-            (( MyErdTable*) *it )->UpdateTable();
+            wxMessageBox( _( wxString::Format( "The database type you are connected to does not match the database type of the qery you are loading. Connected to %s, loading %s", m_dbType, root->GetDbType() ) ) );
+            success = false;
         }
-        Refresh( false );
+        else if( root->GetDbName() != m_dbName )
+        {
+            wxMessageBox( _( wxString::Format( "The name of the database you are connected to does not match the name of the database of the query you are loading. Connected to %s, loading %s", m_dbName, root->GetDbName() ) ) );
+            success = false;
+        }
+        else
+        {
+            ShapeList lstShapes;
+            GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), lstShapes );
+            for( ShapeList::iterator it = lstShapes.begin(); it != lstShapes.end(); ++it )
+            {
+                (( MyErdTable*) *it )->UpdateTable();
+            }
+            Refresh( false );
+        }
     }
     Refresh();
     return success;
