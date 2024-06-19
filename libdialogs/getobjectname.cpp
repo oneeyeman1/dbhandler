@@ -9,6 +9,7 @@
 #include "wx/dir.h"
 #include "wx/listctrl.h"
 #include "wx/dynlib.h"
+#include "wx/filename.h"
 #ifdef __WXGTK__
 #include "gtk/gtk.h"
 #include "library.h"
@@ -169,6 +170,7 @@ void GetObjectName::set_properties()
             res = dir.GetNext( &fileName );
         }
     }
+    m_librariesList->SetItemState( 0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
     m_ok->SetDefault();
 }
 
@@ -216,6 +218,9 @@ void GetObjectName::OnOKButton(wxCommandEvent &event)
             return;;
         }
     }
+    auto folder = m_librariesList->GetItemText( m_librariesList->GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED ) );
+    wxFileName name( folder );
+    m_objectFileName = name.GetPathWithSep()+ m_painterName->GetValue();
     EndModal( wxID_OK );
 }
 
@@ -241,9 +246,9 @@ void GetObjectName::OnNameActivated(wxListEvent &event)
     EndModal( wxID_OK );
 }
 
-const wxTextCtrl *GetObjectName::GetDocumentName() const
+const wxString &GetObjectName::GetDocumentName() const
 {
-    return m_painterName;
+    return m_objectFileName;
 }
 
 const wxTextCtrl *GetObjectName::GetCommentObject() const

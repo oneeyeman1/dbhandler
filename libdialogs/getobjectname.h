@@ -27,7 +27,7 @@ public:
     const wxString &GetFileName();
     const int GetSource() const;
     const int GetPresentation() const;
-    const wxTextCtrl *GetDocumentName() const;
+    const wxString &GetDocumentName() const;
     const wxTextCtrl *GetCommentObject() const;
     std::vector<LibrariesInfo> &GetLibrariesVector() { return m_path; }
     bool isUpdating();
@@ -48,5 +48,6 @@ private:
     int m_id, m_source, m_presentation;
     wxString m_fileName, m_title;
     std::vector<LibrariesInfo> m_path;
+    wxString m_objectFileName;
 };
 #endif

@@ -272,7 +272,7 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
 extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId, std::vector<QueryInfo> &queries, wxString &documentName, std::vector<LibrariesInfo> &path, bool &update)
 {
     int res;
-    wxString title;
+    wxString title, ext;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
@@ -280,6 +280,7 @@ extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId, std::vector
     {
     case 1:
         title = _( "Query" );
+        ext = "qry";
         break;
     case -1:
         title = _( "Save Query" );
@@ -292,9 +293,9 @@ extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId, std::vector
     res = dlg.ShowModal();
     if( res == wxID_OK )
     {
-        documentName = dlg.GetDocumentName()->GetValue();
+        documentName = dlg.GetDocumentName() + "." + ext;
         QueryInfo info;
-        info.name = dlg.GetDocumentName()->GetValue();
+        info.name = documentName;
         info.comment = dlg.GetCommentObject()->GetValue();
         queries.push_back( info );
         update = dlg.isUpdating();

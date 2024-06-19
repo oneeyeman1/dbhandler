@@ -897,8 +897,8 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 if( res == wxID_OK )
                 {
                     wxBusyCursor wait;
-                    GetDocument()->SetFilename( documentName + ".qry" );
-                    if( GetDocument()->OnOpenDocument( documentName + ".qry" ) && ((DrawingDocument *) GetDocument() )->IsLoadSuccessful() )
+                    GetDocument()->SetFilename( documentName );
+                    if( GetDocument()->OnOpenDocument( documentName ) && ((DrawingDocument *) GetDocument() )->IsLoadSuccessful() )
                     {
                         GetDatabaseCanvas()->LoadQuery( GetDocument()->GetDatabase()->GetTableVector().m_tables );
                         m_frame->SetTitle( "Query - " + documentName );
