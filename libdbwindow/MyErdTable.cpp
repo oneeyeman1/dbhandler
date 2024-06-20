@@ -26,15 +26,14 @@ XS_IMPLEMENT_CLONABLE_CLASS(MyErdTable, wxSFRoundRectShape);
 
 MyErdTable::MyErdTable() : wxSFRoundRectShape()
 {
+    m_type = QueryView;
     m_table = nullptr;
     m_columns = 3; 
-    m_headerColumns = 2;
     if( !m_displayTypes )
         m_columns--;
     if( !m_displayComments )
     {
         m_columns--;
-        m_headerColumns--;
     }
     SetFill( wxBrush( wxColour( 254, 253, 211 ) ) );
     AcceptConnection( wxT( "All" ) );
@@ -59,7 +58,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         // set table header
         m_header->SetRelativePosition( 0, 1 );
         m_header->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-        m_header->SetDimensions( 1, m_headerColumns );
+        m_header->SetDimensions( 1, 1 );
         m_header->SetFill( *wxTRANSPARENT_BRUSH );
         m_header->SetBorder( *wxTRANSPARENT_PEN );
         m_header->AcceptChild( wxT( "NameTableShape" ) );
@@ -74,16 +73,6 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
             m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
             m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
 //            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
-        }
-        // table comment
-        if( m_displayComments && m_header->InsertToGrid( 0, 1, m_comment ) )
-        {
-            m_comment->SetVAlign( wxSFShapeBase::valignTOP );
-            m_comment->SetHAlign( wxSFShapeBase::halignRIGHT );
-            m_comment->GetFont().SetPointSize( 8 );
-            m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
-            m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-//            SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
         }
         // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
@@ -113,13 +102,11 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
     m_tableName = table->GetTableName();
     m_displayTypes = m_displayComments = true;
     m_columns = 3; 
-    m_headerColumns = 2;
     if( !m_displayTypes )
         m_columns--;
     if( !m_displayComments )
     {
         m_columns--;
-        m_headerColumns--;
     }
     m_type = type;
     m_table = table;
@@ -146,7 +133,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         m_header->SetRelativePosition( 0, 1 );
         m_header->SetVAlign( wxSFShapeBase::valignTOP );
         m_header->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-        m_header->SetDimensions( 1, m_headerColumns );
+        m_header->SetDimensions( 1, 1 );
         m_header->SetFill( *wxTRANSPARENT_BRUSH );
         m_header->SetBorder( *wxTRANSPARENT_PEN);
         m_header->AcceptChild( wxT( "NameTableShape" ) );
@@ -156,25 +143,16 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         //table name
         if( m_header->InsertToGrid( 0, 0, m_pLabel ) )
         {
+            auto temp = m_table->GetTableName();
+            if( m_displayComments )
+                temp += " " + m_table->GetTableProperties().m_comment;
             m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
             m_pLabel->GetFont().SetPointSize( 8 );
             m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
-            m_pLabel->SetText( m_table->GetTableName() );
+            m_pLabel->SetText( temp );
             m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
             m_pLabel->Activate( false );
 //            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
-        }
-        // table comment
-        if( m_displayComments && m_header->InsertToGrid( 0, 1, m_comment ) )
-        {
-            m_comment->SetVAlign( wxSFShapeBase::valignTOP );
-            m_comment->SetHAlign( wxSFShapeBase::halignLEFT );
-            m_comment->GetFont().SetPointSize( 8 );
-            m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
-            m_comment->SetText( m_table->GetTableProperties().m_comment );
-            m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-            m_comment->Activate( false );
-//            SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
         }
         // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
@@ -231,24 +209,16 @@ void MyErdTable::UpdateTable()
     }
     if( m_header->InsertToGrid( 0, 0, m_pLabel ) )
     {
+        auto temp = m_table->GetTableName();
+        if( m_displayComments )
+            temp += " " + m_table->GetTableProperties().m_comment;
         m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
         m_pLabel->GetFont().SetPointSize( 8 );
         m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
-        m_pLabel->SetText( m_table->GetTableName() );
+        m_pLabel->SetText( temp );
         m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
         m_pLabel->Activate( false );
         //            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
-    }
-    if( m_displayComments && m_header->InsertToGrid( 0, 1, m_comment ) )
-    {
-        m_comment->SetVAlign( wxSFShapeBase::valignTOP );
-        m_comment->SetHAlign( wxSFShapeBase::halignLEFT );
-        m_comment->GetFont().SetPointSize( 8 );
-        m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
-        m_comment->SetText( m_table->GetTableProperties().m_comment );
-        m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
-        m_comment->Activate( false );
-        //            SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
     }
     for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
@@ -271,7 +241,7 @@ void MyErdTable::ClearGrid()
 {
     m_header->RemoveChildren();
     m_header->ClearGrid();
-    m_header->SetDimensions( 1, m_headerColumns );
+    m_header->SetDimensions( 1, 1 );
     m_header->SetCellSpace( 1 );
     m_pGrid->RemoveChildren();
     // re-initialize grid control
