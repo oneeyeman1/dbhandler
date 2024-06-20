@@ -111,7 +111,6 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
     m_type = type;
     m_table = table;
     std::vector<TableField *> fields = m_table->GetFields();
-    GetMaxFieldLength( fields );
     SetBorder( wxPen( wxColour( 70, 125, 170 ), 1, wxPENSTYLE_SOLID ) );
     SetFill( wxBrush( wxColour( 210, 225, 245 ) ) );
     AcceptConnection( wxT( "All" ) );
@@ -189,19 +188,6 @@ void MyErdTable::MarkSerializableDataMembers()
     XS_SERIALIZE( m_tableName, "table_name" );
     XS_SERIALIZE( m_displayTypes, "display_types" );
     XS_SERIALIZE( m_displayComments, "display_comments" );
-    XS_SERIALIZE_INT( m_maxFieldLength, "max_field_width" );
-}
-
-void MyErdTable::GetMaxFieldLength(const std::vector<TableField *> &fields)
-{
-    for( std::vector<TableField *>::const_iterator it = fields.begin(); it < fields.end(); ++it )
-    {
-        auto len = (*it)->GetFieldName().length();
-        if( it == fields.begin() )
-            m_maxFieldLength = len;
-        else if( m_maxFieldLength < len )
-            m_maxFieldLength = len;
-    }
 }
 
 void MyErdTable::UpdateTable()
@@ -215,7 +201,6 @@ void MyErdTable::UpdateTable()
     wxSFDiagramManager *manager = GetShapeManager();
     if( manager )
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
-    GetMaxFieldLength( fields );
     m_pLabel = new NameTableShape();
     if( m_displayComments )
     {

@@ -25,7 +25,6 @@ protected:
     void DrawDetail(wxDC &dc);
     void AddColumn(TableField *field, int id, Constraint::constraintType type);
     void SetCommonProps(wxSFShapeBase* shape);
-    void GetMaxFieldLength(const std::vector<TableField *> &fields);
 //    virtual void DrawHighlighted(wxDC &dc);
     virtual void DrawHover(wxDC &dc);
     virtual void DrawNormal(wxDC &dc);
@@ -41,7 +40,6 @@ private:
     bool m_displayTypes, m_displayComments;
     int m_columns;
     wxString m_catalogName, m_schemaName, m_tableName;
-    unsigned short m_maxFieldLength;
 };
 
 #endif
