@@ -33,6 +33,8 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/ShapeCanvas.h"
+#include "commentfieldshape.h"
+#include "fieldtypeshape.h"
 #include "objectproperties.h"
 #include "constraint.h"
 #include "constraintsign.h"
@@ -40,7 +42,6 @@
 #include "HeaderGrid.h"
 #include "nametableshape.h"
 #include "commenttableshape.h"
-#include "fieldtypeshape.h"
 #include "fontcombobox.h"
 #include "MyErdTable.h"
 #include "field.h"
@@ -54,8 +55,6 @@
 #include "databasecanvas.h"
 #include "designcanvas.h"
 #include "databaseview.h"
-#include "commentfieldshape.h"
-#include "commenttableshape.h"
 #include "ErdForeignKey.h"
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
@@ -379,6 +378,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         }
         Refresh();
     }
+    wxSFTextShape *shape = nullptr;
     if( type == QueryView || type == NewViewView )
     {
         if( sign )
@@ -388,9 +388,17 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         {
             for( ShapeList::iterator it1 = shapes.begin(); it1 != shapes.end(); it1++ )
             {
-                FieldShape *shape = wxDynamicCast( (*it1), FieldShape );
-                if( shape )
-                    shape->Select( true );
+                FieldShape *field = wxDynamicCast( (*it1), FieldShape );
+                if( field )
+                {
+                    field->Select( true );
+                    shape = field->GetCommentShape();
+                    if( shape )
+                        shape->Select( true );
+                    shape = field->GetTypeShape();
+                    if( shape )
+                        shape->Select( true );
+                }
             }
             FieldShape *fld = NULL;
             MyErdTable *tbl = NULL;
@@ -408,6 +416,38 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
                     {
                         fld = field;
                         field->Select( !field->IsSelected() );
+                        shape = field->GetCommentShape();
+                        if( shape )
+                            shape->Select( !field->IsSelected() );
+                        shape = field->GetTypeShape();
+                        if( shape )
+                            shape->Select( !field->IsSelected() );
+                    }
+                    else
+                    {
+                        FieldTypeShape *type = wxDynamicCast( (*it), FieldTypeShape );
+                        if( type )
+                        {
+                            shape = type->GetFieldShape();
+                            type->Select( !shape->IsSelected() );
+                            shape->Select( !shape->IsSelected() );
+                            shape = type->GetCommentShape();
+                            if( shape )
+                                shape->Select( type->IsSelected() );
+                        }
+                        else
+                        {
+                            CommentFieldShape *comment = wxDynamicCast( (*it), CommentFieldShape );
+                            if( comment )
+                            {
+                                shape = comment->GetFieldShape();
+                                comment->Select( !shape->IsSelected() );
+                                shape->Select( !shape->IsSelected() );
+                                shape = comment->GetTypeShape();
+                                if( shape )
+                                    shape->Select( !comment->IsSelected() );
+                            }
+                        }
                     }
                 }
             }
@@ -767,7 +807,13 @@ void DatabaseCanvas::OnMouseMove(wxMouseEvent &event)
                     return;
                 }
                 else
-                    SetCursor( *wxSTANDARD_CURSOR );
+                {
+                    MyErdTable *table = wxDynamicCast( shape, MyErdTable );
+                    if( table )
+                        SetCursor( wxCURSOR_HAND );
+                    else
+                        SetCursor( *wxSTANDARD_CURSOR );
+                }
             }
         }
     }
@@ -1216,18 +1262,12 @@ void DatabaseCanvas::ShowHideTablePart(int part, bool show)
         {
             case 1:
                 m_showDataTypes = !m_showDataTypes;
-                if( show )
-                    shape->DisplayTypes( true );
-                else
-                    shape->DisplayTypes( false );
+                shape->DisplayTypes( show );
                 dynamic_cast<DrawingView *>( m_view )->ChangeTableTypeMMenu();
                 break;
             case 4:
                 m_showComments = !m_showComments;
-                if( show )
-                    shape->DisplayComments( true );
-                else
-                    shape->DisplayComments( false );
+                shape->DisplayComments( show );
                 dynamic_cast<DrawingView *>( m_view )->ChangeTableCommentsMenu();
                 break;
         }

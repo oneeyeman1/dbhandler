@@ -2,6 +2,8 @@
 #include <algorithm>
 #include "database.h"
 #include "wxsf/TextShape.h"
+#include "FieldShape.h"
+#include "commentfieldshape.h"
 #include "fieldtypeshape.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(FieldTypeShape, wxSFTextShape);
@@ -34,14 +36,18 @@ void FieldTypeShape::SetField(TableField *field)
 {
     m_field = field;
 }
-/*
+
 void FieldTypeShape::DrawNormal(wxDC &dc)
 {
-    wxRect rect = this->GetBoundingBox();
-    wxSFShapeBase *parentShape = GetParentShape()->GetParentShape();
-    wxRect rectParent = parentShape->GetBoundingBox();
-    m_parentRect.x = rectParent.x;
-    m_parentRect.width = rectParent.width;
+    auto rect = GetBoundingBox();
+    auto tableRect = GetParentShape()->GetParentShape()->GetBoundingBox();
+    auto fieldRect = m_fieldShape->GetBoundingBox();
+    if( m_comment && !m_comment->GetText().IsEmpty() )
+    {
+        rect.width = m_comment->GetBoundingBox().GetLeft();
+    }
+    else
+        rect.width = tableRect.GetWidth() - fieldRect.GetWidth();
     wxString line;
     int i = 0;
     dc.SetTextForeground( m_TextColor );
@@ -57,7 +63,7 @@ void FieldTypeShape::DrawNormal(wxDC &dc)
         dc.SetPen( m_Border );
         dc.SetBackgroundMode( wxTRANSPARENT );
     }
-    dc.DrawRectangle( m_parentRect.x, rect.y, m_parentRect.width, rect.height );
+    dc.DrawRectangle( rect.x, rect.y, rect.width, rect.height );
     dc.SetFont( m_Font );
     wxRealPoint pos = GetAbsolutePosition();
     // draw all text lines
@@ -72,7 +78,7 @@ void FieldTypeShape::DrawNormal(wxDC &dc)
     dc.SetFont( wxNullFont );
     dc.SetBrush( wxNullBrush );
 }
-*/
+
 void FieldTypeShape::DrawSelected(wxDC& dc)
 {
     DrawNormal( dc );
