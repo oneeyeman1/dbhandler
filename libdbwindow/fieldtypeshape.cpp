@@ -42,12 +42,10 @@ void FieldTypeShape::DrawNormal(wxDC &dc)
     auto rect = GetBoundingBox();
     auto tableRect = GetParentShape()->GetParentShape()->GetBoundingBox();
     auto fieldRect = m_fieldShape->GetBoundingBox();
-    if( m_comment && !m_comment->GetText().IsEmpty() )
+    if( m_comment && m_comment->GetText().IsEmpty() )
     {
-        rect.width = m_comment->GetBoundingBox().GetLeft();
+        rect.width = tableRect.GetWidth() - rect.GetLeft();
     }
-    else
-        rect.width = tableRect.GetWidth() - fieldRect.GetWidth();
     wxString line;
     int i = 0;
     dc.SetTextForeground( m_TextColor );
