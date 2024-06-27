@@ -295,6 +295,9 @@ void MyErdTable::DrawNormal(wxDC &dc)
 
 void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType type)
 {
+    FieldShape *pCol = nullptr;
+    FieldTypeShape *type_shape = nullptr;
+    CommentFieldShape *comment_shape = nullptr;
     int connter = 2;
     if( m_type == DatabaseView )
     {
@@ -342,7 +345,7 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             }
         }
         // label
-        FieldShape *pCol = new FieldShape();
+        pCol = new FieldShape();
         if( pCol )
         {
             pCol->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
@@ -358,7 +361,7 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             else
                 delete pCol;
         }
-        CommentFieldShape *comment_shape = new CommentFieldShape();
+        comment_shape = new CommentFieldShape();
         if( comment_shape )
         {
             comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
@@ -378,7 +381,7 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
     else
     {
         // label
-        FieldShape *pCol = new FieldShape();
+        pCol = new FieldShape();
         if( pCol )
         {
             pCol->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
@@ -396,7 +399,7 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
         }
         if( m_displayTypes )
         {
-            FieldTypeShape *type_shape = new FieldTypeShape();
+            type_shape = new FieldTypeShape();
             if( type_shape )
             {
                 type_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
@@ -415,9 +418,9 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
         }
         else
             connter = 1;
-        if( m_displayComments )
+        if( m_displayComments/* && !field->GetFieldProperties().m_comment.Empty()*/ )
         {
-            CommentFieldShape *comment_shape = new CommentFieldShape();
+            comment_shape = new CommentFieldShape();
             if( comment_shape )
             {
                 comment_shape->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
@@ -433,6 +436,18 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
                 else
                     delete comment_shape;
             }
+        }
+        pCol->SetCommentShape( comment_shape );
+        pCol->SetTypeShape( type_shape );
+        if( type_shape )
+        {
+            type_shape->SetCommentShape( comment_shape );
+            type_shape->SetFieldShape( pCol );
+        }
+        if( comment_shape )
+        {
+            comment_shape->SetTypeShape( type_shape );
+            comment_shape->SetFieldShape( pCol );
         }
     }
 }
