@@ -17,7 +17,8 @@ public:
     ~GridTableShape(void);
     bool InsertToTableGrid(wxSFShapeBase *shape);
     void ShowDataTypes(bool show, int type);
-    void ShowComments(bool show) { m_showcomments = show; }
+protected:
+    void DoChildrenLayout();
 private:
     wxColour m_colour;
     ViewType m_type;
