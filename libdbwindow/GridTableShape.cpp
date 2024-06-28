@@ -12,6 +12,7 @@ GridTableShape::GridTableShape(ViewType type) : wxSFGridShape()
 {
     m_type = type;
     m_showdatatypes = m_showcomments = true;
+    m_columns = 3;
 }
 
 GridTableShape::~GridTableShape(void)
@@ -167,4 +168,18 @@ void GridTableShape::DoChildrenLayout()
                                                maxRect1.GetWidth(), maxRect1.GetHeight() ) );
 		}
 	}
+}
+
+void GridTableShape::ShowDataTypes(bool show, int type)
+{
+    int rows, cols;
+    m_showdatatypes = show;
+    GetDimensions( &rows, &cols );
+    ClearGrid();
+    if( !show )
+        m_columns--;
+    else
+        m_columns++;
+    SetDimensions( rows, m_columns );
+
 }

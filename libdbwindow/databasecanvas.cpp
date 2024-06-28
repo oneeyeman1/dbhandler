@@ -1262,12 +1262,12 @@ void DatabaseCanvas::ShowHideTablePart(int part, bool show)
         {
             case 1:
                 m_showDataTypes = !m_showDataTypes;
-                shape->DisplayTypes( show );
+                shape->DisplayTypes( show, DISPLAYTYPES );
                 dynamic_cast<DrawingView *>( m_view )->ChangeTableTypeMMenu();
                 break;
             case 4:
                 m_showComments = !m_showComments;
-                shape->DisplayComments( show );
+                shape->DisplayTypes( show, DISPLAYCOMMENTS );
                 dynamic_cast<DrawingView *>( m_view )->ChangeTableCommentsMenu();
                 break;
         }

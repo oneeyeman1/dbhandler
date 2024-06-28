@@ -16,13 +16,13 @@ public:
     GridTableShape(ViewType type);
     ~GridTableShape(void);
     bool InsertToTableGrid(wxSFShapeBase *shape);
-    void ShowDataTypes(bool show) { m_showdatatypes = show; }
+    void ShowDataTypes(bool show, int type);
     void ShowComments(bool show) { m_showcomments = show; }
-    virtual void DoChildrenLayout();
 private:
     wxColour m_colour;
     ViewType m_type;
     bool m_showdatatypes, m_showcomments;
+    int m_columns;
 };
 
 #endif
