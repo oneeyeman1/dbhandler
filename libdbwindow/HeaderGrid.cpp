@@ -54,3 +54,12 @@ void HeaderGrid::DoChildrenLayout()
         }
     }
 }
+
+void HeaderGrid::ShowComments( bool show )
+{
+    ClearGrid();
+    if( show )
+        SetDimensions( 1, 2 );
+    else
+        SetDimensions( 1, 1 );
+}
