@@ -10,6 +10,8 @@ XS_IMPLEMENT_CLONABLE_CLASS(FieldShape,wxSFTextShape);
 
 FieldShape::FieldShape() : wxSFTextShape()
 {
+    m_typeShape = nullptr;
+    m_comment = nullptr;
     SetHAlign(wxSFShapeBase::halignCENTER );
     SetVAlign(wxSFShapeBase::valignMIDDLE );
     m_name = wxEmptyString;
