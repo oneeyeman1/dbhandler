@@ -22,7 +22,6 @@ public:
             m_displayTypes = display;
         else
             m_displayComments = display;
-        m_pGrid->ShowDataTypes( display, type );
         if( type == DISPLAYCOMMENTS )
             m_header->ShowComments( display );
         if( display ) m_columns++; else m_columns--;

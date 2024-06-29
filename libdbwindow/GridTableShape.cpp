@@ -179,12 +179,14 @@ void GridTableShape::ShowDataTypes(bool show, int type)
         m_showdatatypes = show;
     else
         m_showcomments = show;
+    if( !m_showdatatypes && !m_showcomments )
+        m_columns = 1;
+    else if( ( !m_showcomments && m_showdatatypes  ) || ( !m_showdatatypes && m_showcomments ) )
+        m_columns = 2;
+    else
+        m_columns = 3;
     GetDimensions( &rows, &cols );
     ClearGrid();
-    if( !show )
-        m_columns--;
-    else
-        m_columns++;
     SetDimensions( rows, m_columns );
 
 }
