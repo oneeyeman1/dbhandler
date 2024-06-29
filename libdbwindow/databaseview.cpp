@@ -260,7 +260,11 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxString title;
     if( m_type == QueryView )
     {
-        title = "Query - (untitled)";
+        title = _( "Query - (untitled)" ));
+    }
+    else if( m_type == NewViewView )
+    {
+        title = _( "View -" );
     }
     else
     {
