@@ -2880,6 +2880,18 @@ void DrawingView::CreateQueryMenu(const int queryType)
     m_frame->SetMenuBar( mbar );
 }
 
+void DrawingView::CreateViewMenu()
+{
+    auto mbar = new wxMenuBar;
+    auto filemenu = new wxMenu;
+    filemenu->Append( wxID_NEW, _( "&New...\tCtrl+N" ) );
+    filemenu->Append( wxID_OPEN, _( "&Open Query..\tCtrl+O" ) );
+    filemenu->Append( wxID_CLOSE, _( "&Close\tCtrl+W" ) );
+    filemenu->AppendSeparator();
+    mbar->Append( filemenu, _( "File" ) );
+    m_frame->SetMenuBar( mbar );
+}
+
 void DrawingView::OnFieldShuffle(wxCommandEvent &event)
 {
     wxString replacement = " ";

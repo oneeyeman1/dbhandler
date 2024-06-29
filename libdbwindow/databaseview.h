@@ -151,6 +151,7 @@ public:
 protected:
     void CreateDBMenu();
     void CreateQueryMenu(const int queryType);
+    void CreateViewMenu();
     void SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const Positions *sortType, long operation);
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);
     void CreateViewToolBar();
