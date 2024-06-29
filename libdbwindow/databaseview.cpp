@@ -999,6 +999,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 {
                     m_dbFrame->Show( true );
                     m_frame->Close();
+                    return;
                 }
                 else
                 {
