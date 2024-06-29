@@ -144,6 +144,8 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &
 //    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_DROPOBJECT );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnCloseTable, this, wxID_TABLECLOSE );
+    Bind( wxEVT_UPDATE_UI, &DatabaseCanvas::nUpdateTableParam, this, wxID_SHOWDATATYPES );
+    Bind(  wxEVT_UPDATE_UI, &DatabaseCanvas::nUpdateTableParam, this, wxID_SHOWCOMMENTS );
 }
 
 DatabaseCanvas::~DatabaseCanvas()
@@ -1528,4 +1530,17 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
 void DatabaseCanvas::SetQueryArguments(const std::vector<QueryArguments> arguments)
 {
     dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->AddQueryArgument( arguments );
+}
+
+void DatabaseCanvas::nUpdateTableParam( wxUpdateUIEvent &event )
+{
+    switch( event.GetId() )
+    {
+    case wxID_SHOWDATATYPES:
+        event.Check( m_showDataTypes );
+        break;
+    case wxID_SHOWCOMMENTS:
+        event.Check( m_showComments );
+        break;
+    }
 }

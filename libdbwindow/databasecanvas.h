@@ -83,6 +83,7 @@ public:
     void SetQueryArguments(const std::vector<QueryArguments> arguments);
 protected:
     bool IsTableDisplayed(const std::wstring &name);
+    void nUpdateTableParam(wxUpdateUIEvent &event);
 private:
     std::vector<MyErdTable *> m_displayedTables;
     wxView *m_view;
