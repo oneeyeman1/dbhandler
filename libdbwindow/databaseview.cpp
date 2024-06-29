@@ -308,7 +308,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         ptCanvas.y += m_styleBar->GetSize().y;
 #endif
     wxASSERT( m_frame == GetFrame() );
-    if( m_type == QueryView )
+    if( m_type != DatabaseView )
     {
         m_fields = new FieldWindow( m_frame, 1, wxDefaultPosition, wxDefaultCoord );
         m_fields->SetCursor( wxCURSOR_HAND );
@@ -317,7 +317,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     auto db = ((DrawingDocument *) GetDocument() )->GetDatabase();
     m_canvas = new DatabaseCanvas( this, ptCanvas, db->GetTableVector().m_dbName, db->GetTableVector().m_type );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
-    if( m_type != QueryView )
+    if( m_type != DatabaseView )
     {
         m_queryBook = new wxNotebook( m_frame, wxID_ANY );
         m_page1 = new SortGroupByPage( m_queryBook, true );
@@ -978,6 +978,8 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                 framePosition = m_frame->GetPosition();
                 frameSize = m_frame->GetSize();
                 m_canvas->Show( true );
+                if( m_fields )
+                    m_fields->Show( true );
                 if( m_queryBook )
                     m_queryBook->Show( true );
 #ifndef __WXOSX__
