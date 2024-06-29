@@ -940,9 +940,11 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                         m_frame->Freeze();
                         m_styleBar->Show( false );
                         m_designCanvas->Show( false );
-                        m_fields->Show( true );
+                        if( m_fields )
+                            m_fields->Show( true );
                         m_canvas->Show( true );
-                        m_queryBook->Show( true );
+                        if( m_queryBook )
+                            m_queryBook->Show( true );
 #ifndef __WXOSX__
                         m_frame->SetSize( framePosition.x, framePosition.y - heightStyleBar, frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
 #endif
@@ -967,6 +969,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
             else
             {
                 int heightStyleBar = 0;
+                m_frame->Freeze();
                 wxPoint framePosition;
 #ifndef __WXOSX__
                 if( m_styleBar )
@@ -974,9 +977,9 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
 #endif
                 framePosition = m_frame->GetPosition();
                 frameSize = m_frame->GetSize();
-                m_fields->Show( true );
                 m_canvas->Show( true );
-                m_queryBook->Show( true );
+                if( m_queryBook )
+                    m_queryBook->Show( true );
 #ifndef __WXOSX__
                 m_frame->SetSize( framePosition.x, framePosition.y - heightStyleBar, frameSize.GetWidth(), frameSize.GetHeight() + heightStyleBar );
 #endif
