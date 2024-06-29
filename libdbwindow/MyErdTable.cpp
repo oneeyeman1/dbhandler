@@ -192,6 +192,14 @@ void MyErdTable::MarkSerializableDataMembers()
 
 void MyErdTable::UpdateTable()
 {
+    if( !m_displayTypes && !m_displayComments )
+        m_columns = 1;
+    else if( ( !m_displayComments && m_displayTypes  ) || ( !m_displayTypes && m_displayComments ) )
+        m_columns = 2;
+    else
+        m_columns = 3;
+    m_pGrid->ShowDataTypes( m_displayTypes, DISPLAYTYPES );
+    m_pGrid->ShowDataTypes( m_displayComments, DISPLAYCOMMENTS );
     std::vector<TableField *> fields = m_table->GetFields();
     int i = 0;
     ClearGrid();

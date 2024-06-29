@@ -16,8 +16,17 @@ public:
     const DatabaseTable *GetTable();
     wxSFTextShape *GetLabel();
     GridTableShape *GetFieldGrid();
-    void DisplayTypes(bool display, int type) { m_displayTypes = display; m_pGrid->ShowDataTypes( display, type ); if( display ) m_columns++; else m_columns--;  }
-//    void DisplayComments(bool display) { m_displayComments = display; m_pGrid->ShowComments( display ); m_header->ShowComments( display ); if( display ) { m_columns++; } else { m_columns--; } }
+    void DisplayTypes(bool display, int type)
+    {
+        if( type == DISPLAYTYPES )
+            m_displayTypes = display;
+        else
+            m_displayComments = display;
+        m_pGrid->ShowDataTypes( display, type );
+        if( type == DISPLAYCOMMENTS )
+            m_header->ShowComments( display );
+        if( display ) m_columns++; else m_columns--;
+    }
     void SetDataaseTable(const DatabaseTable *table) { m_table = const_cast<DatabaseTable *>( table ); }
     const wxString &GetCatalogName() const { return m_catalogName; }
     const wxString &GetSchemaName() const { return m_schemaName; }

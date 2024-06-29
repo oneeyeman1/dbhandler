@@ -8,6 +8,8 @@
 #include "commentfieldshape.h"
 #include "GridTableShape.h"
 
+#define DISPLAYTYPES 1
+
 GridTableShape::GridTableShape(ViewType type) : wxSFGridShape()
 {
     m_type = type;
@@ -173,7 +175,10 @@ void GridTableShape::DoChildrenLayout()
 void GridTableShape::ShowDataTypes(bool show, int type)
 {
     int rows, cols;
-    m_showdatatypes = show;
+    if( type == DISPLAYTYPES )
+        m_showdatatypes = show;
+    else
+        m_showcomments = show;
     GetDimensions( &rows, &cols );
     ClearGrid();
     if( !show )
