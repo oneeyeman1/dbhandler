@@ -202,6 +202,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_SAVEQUERY, DrawingView::OnQuerySave)
     EVT_UPDATE_UI(wxID_SAVEQUERY, DrawingView::OnQuerySaveUpdateUI)
     EVT_UPDATE_UI(wxID_SAVEQUERYAS, DrawingView::OnQuerySaveAsUpdateUI)
+    EVT_MENU(wxID_CUSTOMCOLORS, DrawingView::OnCustmColors)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -246,7 +247,12 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_fontSizes.push_back( "48" );
     m_fontSizes.push_back( "72" );
     wxRect clientRect = m_parent->GetClientRect();
-    wxWindowList children = m_parent->GetChildren();
+    wxWindowList children;
+#ifndef __WXMSW__
+    children = m_parent->GetChildren();
+#else
+    children = m_parent->GetClientWindow()->GetChildren();
+#endif
     for( wxWindowList::iterator it = children.begin(); it != children.end(); it++ )
     {
         tb = wxDynamicCast( *it, wxToolBar );
@@ -483,18 +489,25 @@ void DrawingView::CreateViewToolBar()
         m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, styleStyleBar, "StyleBar" );
     }
 #else
-    if( !m_tb )
+    if( m_type != NewViewView )
     {
-        m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, styleViewBar, "ViewBar" );
+        if( !m_tb )
+        {
+            m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, styleViewBar, "ViewBar" );
+        }
+        else
+            m_tb->ClearTools();
     }
-    else
-        m_tb->ClearTools();
     if( m_type == QueryView )
     {
         if( !m_styleBar )
             m_styleBar = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, styleStyleBar, "StyleBar" );
         else
             m_styleBar->ClearTools();
+    }
+    if( m_type == NewViewView )
+    {
+        m_tb->ClearTools();
     }
 #endif
     if( m_type == DatabaseView )
@@ -538,7 +551,7 @@ void DrawingView::CreateViewToolBar()
         m_tb->AddTool( wxID_PROPERTIES, _( "Properties" ), wxBitmap( properties ), wxBitmap( properties ), wxITEM_NORMAL, _( "Properties" ), _( "Proerties" ) );
         m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxBitmap( quit_xpm ), wxBitmap( quit_xpm ), wxITEM_NORMAL, _( "Close" ), _( "Close Database View" ) );
     }
-    else
+    else if( m_type == QueryView )
     {
         if( m_type == QueryView )
             CreateQueryMenu( QuickQueryMenu );
@@ -735,6 +748,43 @@ void DrawingView::CreateViewToolBar()
             m_styleBar->AddTool( wxID_CENTERALIGN, _( "CenterAlign" ),  centeralignSVG, centeralignSVG, wxITEM_CHECK, _( "" ), _( "" ) );
             m_styleBar->AddTool( wxID_RIGHTALIGN, _( "RightAlign" ),  rightalignSVG, rightalignSVG, wxITEM_CHECK, _( "" ), _( "" ) );
         }
+    }
+    else
+    {
+        CreateViewMenu();
+        wxBitmapBundle tableSVG, joinsSVG;
+#ifdef __WXMSW__
+        HANDLE gs_wxMainThread = NULL;
+        const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
+        const void *dataTable = nullptr, *data10 = nullptr;
+        size_t sizeTable = 0, size10 = 0;
+        if( !wxLoadUserResource( &dataTable, &sizeTable, "table", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            tableSVG = wxBitmapBundle::FromSVG( (const char *) dataTable, wxSize( 16, 16 ) );
+        }
+        if( !wxLoadUserResource( &data10, &size10, "joins", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            joinsSVG = wxBitmapBundle::FromSVG( (const char *) data10, wxSize( 16, 16 ) );
+        }
+#elif __WXSX__
+        tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
+        joinsSVG = wxBitmapBundle::FromSVGResource( "joins", wxSize( 16, 16 ) );
+#elif
+        tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
+        joinsSVG = wxBitmapBundle::FromSVG( joins, wxSize( 16, 16 ) );
+#endif
+        m_tb->AddTool( wxID_SELECTTABLE, _( "Select Table" ), tableSVG, tableSVG, wxITEM_NORMAL, _( "Select Table" ), _( "Select Table" )  );
+        m_tb->AddTool( wxID_JOINS, _( "Joins" ), joinsSVG, joinsSVG, wxITEM_NORMAL, _( "Joins" ), _( "Jois" ) );
     }
     m_tb->Realize();
     if( m_styleBar )
@@ -1079,10 +1129,10 @@ bool DrawingView::OnClose(bool deleteWindow)
     wxMDIClientWindow *frame = (wxMDIClientWindow *) mainWin->GetClientWindow();
     if( GetDocument()->GetViewsVector().size() == 1 )
     {
-//        int y = m_tb->GetHeight();
-        frame->SetPosition( wxPoint( 0, 0 ) );
+///        int y = m_tb->GetHeight();
+/*        frame->SetPosition( wxPoint( 0, 0 ) );
         delete m_tb;
-        m_tb = nullptr;
+        m_tb = nullptr;*/
     }
     else
         m_tb->ClearTools();
@@ -2888,7 +2938,30 @@ void DrawingView::CreateViewMenu()
     filemenu->Append( wxID_OPEN, _( "&Open Query..\tCtrl+O" ) );
     filemenu->Append( wxID_CLOSE, _( "&Close\tCtrl+W" ) );
     filemenu->AppendSeparator();
+    filemenu->Append( wxID_SAVE, _( "&Save Query...\tCtrl+S" ) );
+    filemenu->Append( wxID_SAVEAS, _( "Save Query &As..." ) );
+    filemenu->AppendSeparator();
+    filemenu->Append( wxID_EXIT, "E&xit\tCtrl+Q" );
     mbar->Append( filemenu, _( "File" ) );
+    auto design = new wxMenu;
+    design->Append( wxID_SELECTTABLE, _( "Select Table..." ) );
+    design->Append( wxID_ARRANGETABLES, _( "Arrange Tables" ) );
+    design->AppendSeparator();
+    design->AppendCheckItem( wxID_CHECKOPTION, _( "Check Option" ), _( "Check Option" ) );
+    design->AppendCheckItem( wxID_DISTINCT, _( "Distinct" ), _( "Distinct" ) );
+    design->AppendSeparator();
+    auto show = new wxMenu;
+    show->Append( wxID_SHOWDATATYPES, _( "Datatypes" ), _( "Show Datatypes" ), wxITEM_CHECK );
+    show->Append( wxID_SHOWLABELS, _( "Labels" ), _( "Show Labels" ), wxITEM_CHECK );
+    show->Append( wxID_SHOWCOMMENTS, _( "Comments" ), _( "Show Comments" ), wxITEM_CHECK );
+    show->Append( wxID_SHOWSQLTOOLBOX, _( "SQL Toolbox" ), _( "SQL Toolbox" ), wxITEM_CHECK );
+    show->Append( wxID_SHOWJOINS, _( "Joins" ), _( "Show Joins" ), wxITEM_CHECK );
+    design->AppendSubMenu( show, _( "Show" ) );
+    design->AppendSeparator();
+    design->Append( wxD_PREVIEW, _( "&Preview" ) );
+    design->Append( wxID_CUSTOMCOLORS, _( "C&ustom Colors..." ) );
+    design->Append( wxID_DATABASEOPTIONS, _( "&Options..." ) );
+    mbar->Append( design, _( "&Design" ) );
     m_frame->SetMenuBar( mbar );
 }
 
@@ -3164,4 +3237,9 @@ void DrawingView::SetToolbarOptions(Configuration *conf)
 void DrawingView::SetParentWindow(wxWindow *window)
 {
     m_parent = wxStaticCast( window, wxDocMDIParentFrame );;
+}
+
+void DrawingView::OnCustmColors( wxCommandEvent &event )
+{
+
 }
