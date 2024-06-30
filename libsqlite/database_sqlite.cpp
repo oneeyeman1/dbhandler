@@ -1038,7 +1038,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     return result;
 }
 
-int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &UNUSED(foreignKeyFields), const std::wstring &refTableName, const std::vector<std::wstring> &UNUSED(refKeyFields), int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage, sql;
@@ -1286,6 +1286,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
 int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+//    result = DropForeignKey( tableName, , command, )
     return result;
 }
 
@@ -1499,7 +1500,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
     std::string query2 = "SELECT count(name) FROM sqlite_master WHERE type = 'table' OR type = 'view';";
     std::vector<TableDefinition> temp;
-    if( sqlite3_prepare_v2( m_db, "PRAGMA schema_version", -1, &m_stmt1, NULL ) == SQLITE_OK )
+    if( ( res = sqlite3_prepare_v2( m_db, "PRAGMA schema_version", -1, &m_stmt1, NULL ) ) == SQLITE_OK )
     {
         if( ( res = sqlite3_step( m_stmt1 ) ) == SQLITE_ROW )
         {
@@ -1541,13 +1542,35 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     m_numOfTables = count;
                 } 
                 else
+                {
                     result = 1;
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                }
                 sqlite3_finalize( m_stmt3 );
                 m_stmt3 = NULL;
+            }
+            else
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
             }
             sqlite3_finalize( m_stmt3 );
             m_stmt3 = nullptr; 
         }
+        else
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        result = 1;
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
     }
     sqlite3_finalize( m_stmt1 );
     m_stmt1 = NULL;
