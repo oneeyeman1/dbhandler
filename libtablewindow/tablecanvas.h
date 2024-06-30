@@ -76,6 +76,9 @@ private:
 #define wxID_DROPOBJECT           123
 #define wxID_ATTACHDATABASE       124
 #define wxID_DETACHDATABASE       125
+#define wxID_PREVIEW              126
+#define wxID_CUSTMCOLORS          127
+#define wxID_DATABASEOOPTIONS     128
 #define WHEREPAGECOLUMNS          194
 #define WHEREPAGEFUNCTIONS        195
 #define WHEREPAGEARGUMENTS        196
@@ -90,6 +93,7 @@ private:
 #define wxID_EDITTABLEPROPERTY    205
 #define wxID_DESIGNSYNTAX         206
 #define wxID_DATASOURCE           301
+#define wxID_PREVIEW              302
 #define wxID_UNIONS               303
 #define wxID_RETRIEVEARGS         304
 #define wxID_CHECKOPTION          305

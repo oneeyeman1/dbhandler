@@ -38,6 +38,8 @@
 #define wxID_DROPOBJECT           123
 #define wxID_ATTACHDATABASE       124
 #define wxID_DETACHDATABASE       125
+#define wxID_CUSTMCOLORS          127
+#define wxID_DATABASEOOPTIONS     128
 #define WHEREPAGECOLUMNS          194
 #define WHEREPAGEFUNCTIONS        195
 #define WHEREPAGEARGUMENTS        196
