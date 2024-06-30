@@ -4251,7 +4251,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         return result;
     SQLHSTMT stmt = 0;
     std::wstring query, query1;
-    auto count = 0, bufferSize = 1024;
+    unsigned int count = 0;
+    auto bufferSize = 1024;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
     {
         query = L"SELECT count(*) table_cont FROM (SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.system_views UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.tables UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.views UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.objects WHERE type = \'S\' ) d";
@@ -4416,7 +4417,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &UNUSED(ownerName), long UNUSED(tableId), bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     SQLRETURN ret;
     SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + 2], *schema_name = new SQLWCHAR[schemaName.length() + 2], *catalog_name = new SQLWCHAR[catalog.size() + 2];
@@ -4547,7 +4548,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             else
                             {
                                 SQLSMALLINT lenUsed;
-                                int bufferSize = 1024;
+                                SQLSMALLINT bufferSize = 1024;
                                 ret = SQLNumResultCols( stmt_colattr, &numCols );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
@@ -4561,11 +4562,11 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 {
                                     columnNames = new SQLWCHAR *[numCols];
                                     SQLLEN autoincrement;
-                                    for( int i = 0; i < numCols; i++ )
+                                    for( unsigned short i = 0; i < numCols; i++ )
                                     {
                                         autoincrement = 0;
                                         columnNames[i] = new SQLWCHAR[sizeof( SQLWCHAR ) * SQL_MAX_COLUMN_NAME_LEN + 1];
-                                        ret = SQLColAttribute( stmt_colattr, (SQLUSMALLINT) i + 1, SQL_DESC_LABEL, columnNames[i], bufferSize, &lenUsed, NULL );
+                                        ret = SQLColAttribute( stmt_colattr, i + 1, SQL_DESC_LABEL, columnNames[i], bufferSize, &lenUsed, NULL );
                                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                         {
                                             GetErrorMessage( errorMsg, 1, stmt_colattr );
@@ -6090,7 +6091,7 @@ int ODBCDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<st
             decimal = new SQLSMALLINT[m_fieldsInRecordSet];
             nullable = new SQLSMALLINT[m_fieldsInRecordSet];
             columnDataLen = new SQLLEN[m_fieldsInRecordSet];
-            for( int i = 0; i < m_fieldsInRecordSet; i++ )
+            for( unsigned short i = 0; i < m_fieldsInRecordSet; i++ )
             {
                 SQLSMALLINT ctype;
                 int valueType;
@@ -6387,6 +6388,38 @@ int ODBCDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstr
                 }
                 else
                 {
+                    SQLLEN cSyntax;
+                    SQLSMALLINT dataTypePtr, decimalDigitsPtr, isNullable, nameLengthPtr;
+                    SQLULEN columnSizePtr;
+                    ret = SQLDescribeCol( stmt, 1, NULL, 0, &nameLengthPtr, &dataTypePtr, &columnSizePtr, &decimalDigitsPtr, &isNullable );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, stmt );
+                        result = 1;
+                    }
+                    else
+                    {
+                        SQLWCHAR *tableCreation = new SQLWCHAR[columnSizePtr + 1];
+                        ret = SQLBindCol( stmt, 1, SQL_C_WCHAR, &tableCreation, columnSizePtr, &cSyntax );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, stmt );
+                            result = 1;
+                        }
+                        else
+                        {
+                            ret = SQLFetch( stmt );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt );
+                                result = 1;
+                            }
+                            else
+                            {
+                                str_to_uc_cpy( syntax, tableCreation );
+                            }
+                        }
+                    }
                 }
             }
             ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
