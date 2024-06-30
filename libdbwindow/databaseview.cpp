@@ -2958,7 +2958,7 @@ void DrawingView::CreateViewMenu()
     show->Append( wxID_SHOWJOINS, _( "Joins" ), _( "Show Joins" ), wxITEM_CHECK );
     design->AppendSubMenu( show, _( "Show" ) );
     design->AppendSeparator();
-    design->Append( wxD_PREVIEW, _( "&Preview" ) );
+    design->Append( wxID_PREVIEW, _( "&Preview" ) );
     design->Append( wxID_CUSTOMCOLORS, _( "C&ustom Colors..." ) );
     design->Append( wxID_DATABASEOPTIONS, _( "&Options..." ) );
     mbar->Append( design, _( "&Design" ) );
