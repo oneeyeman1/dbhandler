@@ -81,6 +81,7 @@ public:
     void SetQueryFields(const std::vector<TableField *> queryFields) { m_queryFields = queryFields; }
     void LoadQuery(const std::map<std::wstring, std::vector<DatabaseTable *> >&tables);
     void SetQueryArguments(const std::vector<QueryArguments> arguments);
+    void UnselectAllTables();
 protected:
     bool IsTableDisplayed(const std::wstring &name);
     void nUpdateTableParam(wxUpdateUIEvent &event);

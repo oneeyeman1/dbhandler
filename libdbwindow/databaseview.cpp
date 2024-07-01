@@ -1359,6 +1359,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     }
     if( res != wxID_CANCEL && m_tables.size() > 0 )
     {
+        ((DatabaseCanvas *) m_canvas)->UnselectAllTables();
         ((DrawingDocument *) GetDocument())->AddTables( m_tables );
         m_selectTableName = ((DrawingDocument *) GetDocument())->GetDBTables();
         ((DatabaseCanvas *) m_canvas)->DisplayTables( m_tables, GetDocument()->GetQueryFields(), query, m_whereRelatons );

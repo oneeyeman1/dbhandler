@@ -1544,3 +1544,13 @@ void DatabaseCanvas::nUpdateTableParam( wxUpdateUIEvent &event )
         break;
     }
 }
+
+void DatabaseCanvas::UnselectAllTables()
+{
+    ShapeList selected;
+    m_pManager.GetShapes( CLASSINFO( MyErdTable ), selected );
+    for( ShapeList::iterator it1 = selected.begin(); it1 != selected.end(); ++it1 )
+    {
+        (*it1)->Select( false );
+    }
+}
