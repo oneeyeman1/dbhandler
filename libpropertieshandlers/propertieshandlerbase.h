@@ -9,6 +9,8 @@
 #ifndef propertieshandlerbase_h
 #define propertieshandlerbase_h
 
+#define UNUSED(str)
+
 class WXEXPORT PropertiesHandler
 {
 public:
