@@ -163,7 +163,7 @@ protected:
     static int CALLBACK EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam);
 #endif
     void SetDatabaseChildWindow(wxDocMDIChildFrame *frame);
-    void OnCustmColors( wxCommandEvent &event )
+    void OnCustmColors( wxCommandEvent &event );
 private:
     bool m_isActive, m_snitialized;
     wxDocMDIParentFrame *m_parent;
