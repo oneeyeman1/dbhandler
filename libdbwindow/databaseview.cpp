@@ -1393,7 +1393,17 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
 void DrawingView::OnSetProperties(wxCommandEvent &event)
 {
     ShapeList list;
-    auto shape = dynamic_cast<wxSFShapeBase *>( event.GetEventObject() );
+    MyErdTable *shape = nullptr;
+    auto found = false;;
+    ((DatabaseCanvas *) m_canvas)->GetDiagramManager().GetShapes(  CLASSINFO( MyErdTable ), list );
+    for( ShapeList::iterator it = list.begin(); it != list.end() && !found; ++it )
+    {
+        if( ( *it )->IsSelected() )
+        {
+            shape = dynamic_cast<MyErdTable *>(*it);
+            found = true;
+        }
+    }
     SetProperties( shape );
 }
 

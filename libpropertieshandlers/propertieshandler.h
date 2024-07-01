@@ -7,7 +7,7 @@ public:
     virtual int GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
     TableProperties &GetProperty() { return m_prop; }
     virtual const std::wstring &GetCommand() const wxOVERRIDE { return m_command; }
-
+    DatabaseTable *GetTable() { return m_table; }
 private:
     wxTextCtrl *m_log;
     DatabaseTable *m_table;

@@ -75,15 +75,15 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     {
         case DatabaseTableProperties:
         {
-            TableProperties *prop = dynamic_cast<TableProperties *>( handler );
-            wxFont data_font( prop->m_dataFontSize, wxFONTFAMILY_DEFAULT, prop->m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->m_dataFontUnderline, prop->m_dataFontName );
-            if( prop->m_dataFontStrikethrough )
+            DatabasePropertiesHandler *prop = dynamic_cast<DatabasePropertiesHandler *>( handler );
+            wxFont data_font( prop->GetProperty().m_dataFontSize, wxFONTFAMILY_DEFAULT, prop->GetProperty().m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->GetProperty().m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->GetProperty().m_dataFontUnderline, prop->GetProperty().m_dataFontName );
+            if( prop->GetProperty().m_dataFontStrikethrough )
                 data_font.SetStrikethrough( true );
-            wxFont heading_font( prop->m_headingFontSize, wxFONTFAMILY_DEFAULT, prop->m_headingFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->m_headingFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->m_headingFontUnderline, prop->m_headingFontName );
-            if( prop->m_headingFontStrikethrough )
+            wxFont heading_font( prop->GetProperty().m_headingFontSize, wxFONTFAMILY_DEFAULT, prop->GetProperty().m_headingFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->GetProperty().m_headingFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->GetProperty().m_headingFontUnderline, prop->GetProperty().m_headingFontName );
+            if( prop->GetProperty().m_headingFontStrikethrough )
                 heading_font.SetStrikethrough( true );
-            wxFont label_font( prop->m_labelFontSize, wxFONTFAMILY_DEFAULT, prop->m_labelFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->m_labelFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->m_labelFontUnderline, prop->m_labelFontName );
-            if( prop->m_labelFontStrikethrough )
+            wxFont label_font( prop->GetProperty().m_labelFontSize, wxFONTFAMILY_DEFAULT, prop->GetProperty().m_labelFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->GetProperty().m_labelFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->GetProperty().m_labelFontUnderline, prop->GetProperty().m_labelFontName );
+            if( prop->GetProperty().m_labelFontStrikethrough )
                 label_font.SetStrikethrough( true );
             FontPropertyPage dataFont;
             dataFont.font = data_font;
@@ -97,12 +97,12 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             labelFont.font = label_font;
             labelFont.text = wxColour( *wxBLACK );
             labelFont.back = wxColour( *wxWHITE );
-            m_page1 = new TableGeneralProperty( parent, prop->table_name, prop->m_owner, prop->m_comment, DatabaseTableProperties );
+            m_page1 = new TableGeneralProperty( m_properties, prop->GetProperty().table_name, prop->GetProperty().m_owner, prop->GetProperty().m_comment, DatabaseTableProperties );
             m_properties->AddPage( m_page1, _( "General" ) );
-            m_page2 = new CFontPropertyPage( parent, dataFont, false );
-            m_page3 = new CFontPropertyPage( parent, headingFont, false );
-            m_page4 = new CFontPropertyPage( parent, labelFont, false );
-//            m_page5 = new TablePrimaryKey( parent, m_table );
+            m_page2 = new CFontPropertyPage( m_properties, dataFont, false );
+            m_page3 = new CFontPropertyPage( m_properties, headingFont, false );
+            m_page4 = new CFontPropertyPage( m_properties, labelFont, false );
+            m_page5 = new TablePrimaryKey( m_properties, prop->GetTable() );
             m_properties->AddPage( m_page2, _( "Data Font" ) );
             m_properties->AddPage( m_page3, _( "Heading Font" ) );
             m_properties->AddPage( m_page4, _( "Label Font" ) );
