@@ -76,8 +76,8 @@ private:
 #define wxID_DROPOBJECT           123
 #define wxID_ATTACHDATABASE       124
 #define wxID_DETACHDATABASE       125
-#define wxID_CUSTOMCOLORS         127
-#define wxID_DATABASEOPTIONS      128
+#define wxID_CUSTOMCOLORS         126
+#define wxID_DATABASEOPTIONS      127
 #define WHEREPAGECOLUMNS          194
 #define WHEREPAGEFUNCTIONS        195
 #define WHEREPAGEARGUMENTS        196
@@ -130,7 +130,6 @@ private:
 #define wxID_PASTECOLUMN          503
 #define wxID_INSERTCOLUMN         504
 #define wxID_DELETECOLUMN         505
-#define wxID_DESIGNSYNTAX         506
 #define wxID_LEFTALIGN            1000
 #define wxID_CENTERALIGN          1001 
 #define wxID_RIGHTALIGN           1002
