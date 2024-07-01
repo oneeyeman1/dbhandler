@@ -2255,7 +2255,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
             else
             {
                 fieldReplace += ",";
-                fieldCut = fieldCut.substr( 0, pos );
+                fieldCut = fieldCut.substr( 0, dotPos );
             }
             query.Replace( fieldCut, fieldReplace );
         }
@@ -3236,10 +3236,10 @@ void DrawingView::SetToolbarOptions(Configuration *conf)
 
 void DrawingView::SetParentWindow(wxWindow *window)
 {
-    m_parent = wxStaticCast( window, wxDocMDIParentFrame );;
+    m_parent = wxStaticCast( window, wxDocMDIParentFrame );
 }
 
-void DrawingView::OnCustmColors( wxCommandEvent &WXNUSED(event))
+void DrawingView::OnCustmColors(wxCommandEvent &WXUNUSED(event))
 {
 
 }
