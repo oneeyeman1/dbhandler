@@ -99,7 +99,7 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, wxWindowID id):  Pr
     m_width->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
 }
 
-void DatabaseFieldDisplay::OnPageModified( wxCommandEvent &event )
+void DatabaseFieldDisplay::OnPageModified( wxCommandEvent &WXUNUSED(event ))
 {
     dynamic_cast<wxButton *>( GetParent()->GetParent()->FindWindowById( wxID_APPLY ) )->Enable( true );
     m_isModified = true;

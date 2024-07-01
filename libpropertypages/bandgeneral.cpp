@@ -76,7 +76,7 @@ void BandGeneralProperties::do_layout()
     // end wxGlade
 }
 
-void BandGeneralProperties::OnPageModified(wxCommandEvent &event)
+void BandGeneralProperties::OnPageModified(wxCommandEvent &WXUNUSED(event))
 {
     dynamic_cast<wxButton *>( GetParent()->GetParent()->FindWindowById( wxID_APPLY ) )->Enable( true );
     m_isModified = true;
