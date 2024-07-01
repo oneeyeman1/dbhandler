@@ -27,7 +27,7 @@
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_FIELD_SHUFFLED( wxEVT_USER_FIRST + 4 );
 
-FieldWindow::FieldWindow(wxWindow *parent, int type, const wxPoint &pos, int width) : wxSFShapeCanvas()
+FieldWindow::FieldWindow(wxWindow *parent, const wxPoint &pos, int width) : wxSFShapeCanvas()
 {
     m_draggingField = nullptr;
     m_isDragging = false;
@@ -67,7 +67,7 @@ void FieldWindow::RemoveField(const wxString &name)
                            {
                                return element == name;
                            } ) );
-    for( auto it = 0; it < m_selectedFields.size(); ++it )
+    for( size_t it = 0; it < m_selectedFields.size(); ++it )
     {
         FieldWin *field = new FieldWin( wxRealPoint( m_startPoint.x, m_startPoint.y ), ( m_selectedFields.at( it ) ), m_manager );
         m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
@@ -176,11 +176,11 @@ void FieldWindow::OnLeftUp(wxMouseEvent &event)
                 if( event.GetPosition().x < shapeMiddle && event.GetPosition().x > shapeRect.GetLeft() - 5 )
                     dirs = FieldWindow::BEFORE;
                 m_selectedFields.erase( std::remove( m_selectedFields.begin(), m_selectedFields.end(), m_draggingField->GetFieldName() ), m_selectedFields.end() );
-                std::vector<wxString>::iterator it = std::find( m_selectedFields.begin(), m_selectedFields.end(), shape->GetFieldName() );
+                std::vector<wxString>::iterator itFind = std::find( m_selectedFields.begin(), m_selectedFields.end(), shape->GetFieldName() );
                 if( dirs == FieldWindow::AFTER )
-                    m_selectedFields.insert( it + 1, m_draggingField->GetFieldName() );
+                    m_selectedFields.insert( itFind + 1, m_draggingField->GetFieldName() );
                 if( dirs == FieldWindow::BEFORE )
-                    m_selectedFields.insert( it - 1, m_draggingField->GetFieldName() );
+                    m_selectedFields.insert( itFind - 1, m_draggingField->GetFieldName() );
                 m_startPoint.x = 10;
                 m_manager.Clear();
                 for( std::vector<wxString>::iterator it = m_selectedFields.begin (); it < m_selectedFields.end (); ++it )
@@ -192,9 +192,9 @@ void FieldWindow::OnLeftUp(wxMouseEvent &event)
             }
 //            shape->Select( false );
         }
-        wxCommandEvent event( wxEVT_FIELD_SHUFFLED );
-        event.SetClientObject( (wxClientData *) &m_selectedFields );
-        ProcessEvent( event );
+        wxCommandEvent myEvent( wxEVT_FIELD_SHUFFLED );
+        myEvent.SetClientObject( (wxClientData *) &m_selectedFields );
+        ProcessEvent( myEvent );
         m_isDragging = false;
         m_draggingField = nullptr;
     }

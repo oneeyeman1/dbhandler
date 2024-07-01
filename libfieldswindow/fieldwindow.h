@@ -8,7 +8,7 @@ class WXEXPORT FieldWindow : public wxSFShapeCanvas
         AFTER = 1
     };
 public:
-    FieldWindow(wxWindow *parent, int type, const wxPoint &pos = wxDefaultPosition, int width = -1);
+    FieldWindow(wxWindow *parent, const wxPoint &pos = wxDefaultPosition, int width = -1);
     virtual ~FieldWindow();
     void AddField(const wxString &fieldName);
     void RemoveField(const wxString &fieldName);
