@@ -11,8 +11,8 @@
 #include <wx/wx.h>
 #include "odbccredentials.h"
 
-ODBCCredentials::ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString& title, const wxString &dsn, const wxString &userID, const wxString &password, const wxPoint& pos, const wxSize& size, long style):
-    wxDialog(parent, id, title, pos, size, wxCAPTION)
+ODBCCredentials::ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString& title, const wxString &dsn, const wxString &userID, const wxString &password):
+    wxDialog(parent, id, title, wxDefaultPosition, wxDefaultSize, wxCAPTION)
 {
     m_dsn = dsn;
     // begin wxGlade: ODBCCredentials::ODBCCredentials

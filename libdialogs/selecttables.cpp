@@ -62,14 +62,14 @@ void SelectTables::GetSelectedTableNames(std::map<wxString, std::vector<TableDef
 {
     wxArrayInt selections;
     m_tables->GetSelections( selections );
-    for( auto i = 0; i < selections.GetCount(); i++ )
+    for( size_t i = 0; i < selections.GetCount(); i++ )
     {
         ClientData *data = (ClientData *) m_tables->GetClientData( i );
         auto schemaName = data->schema;
         auto tableName = m_tables->GetString( selections.Item( i ) ).ToStdWstring();
         tableNames[data->catalog].push_back( TableDefinition( data->catalog, data->schema, m_tables->GetString( selections.Item( i ) ).ToStdWstring() ) );
     }
-    for( auto i = 0; i < m_tables->GetCount(); ++i )
+    for( size_t i = 0; i < m_tables->GetCount(); ++i )
     {
         delete (ClientData *) m_tables->GetClientData( i );
     }
@@ -216,7 +216,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
 
 void SelectTables::OnShowSystemTables(wxCommandEvent &WXUNUSED(event))
 {
-    for( auto i = 0; i < m_tables->GetCount(); ++i )
+    for( size_t i = 0; i < m_tables->GetCount(); ++i )
         delete (ClientData *) m_tables->GetClientData( i );
     if( m_showSystem->IsChecked() )
         FillTableList( true );
@@ -226,12 +226,12 @@ void SelectTables::OnShowSystemTables(wxCommandEvent &WXUNUSED(event))
 
 void SelectTables::OnCancel(wxCommandEvent &WXUNUSED(event))
 {
-    for( auto i = 0; i < m_tables->GetCount(); ++i )
+    for( size_t i = 0; i < m_tables->GetCount(); ++i )
         delete (ClientData *) m_tables->GetClientData( i );
     EndModal( wxID_CANCEL );
 }
 
-void SelectTables::OnListDClick(wxCommandEvent &event)
+void SelectTables::OnListDClick(wxCommandEvent &WXUNUSED(event))
 {
     if( m_isTableView )
         EndModal( wxID_OK );

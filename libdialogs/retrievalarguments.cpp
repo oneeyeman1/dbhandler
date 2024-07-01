@@ -289,7 +289,7 @@ int RetrievalArguments::FindLineNumberFromControl( wxWindow *win )
 
 void RetrievalArguments::SetActiveLine( int line )
 {
-    int index = line - 1;
+    size_t index = line - 1;
     if( index < 0 || index >= m_lines.size() )
       return;
 
@@ -314,7 +314,7 @@ void RetrievalArguments::SetIndicatorLine( int activeLine )
 
 void RetrievalArguments::OnSetFocus(wxFocusEvent &event)
 {
-    int focus_line = FindLineNumberFromControl( wxDynamicCast( event.GetEventObject(), wxWindow ) );
+    size_t focus_line = FindLineNumberFromControl( wxDynamicCast( event.GetEventObject(), wxWindow ) );
     if( focus_line >= 1 && focus_line <= m_lines.size() )
     {
         SetIndicatorLine( focus_line );
@@ -368,7 +368,7 @@ void RetrievalArguments::OnTextEntered(wxCommandEvent &event)
         m_lines.clear();
 }
 
-void RetrievalArguments::OnOkVerify(wxCommandEvent &event)
+void RetrievalArguments::OnOkVerify(wxCommandEvent &WXUNUSED(event))
 {
     auto success = true;
     auto line = 1;

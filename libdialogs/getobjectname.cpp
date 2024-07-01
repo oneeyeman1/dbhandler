@@ -35,8 +35,8 @@ GetObjectName::GetObjectName(wxWindow *parent, int id, const wxString &title, in
     wxBitmapBundle library;
     HANDLE gs_wxMainThread = NULL;
     const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "diakigs", &gs_wxMainThread );
-    const void* data1 = nullptr, *data2 = nullptr, *data3 = nullptr;
-    size_t size1 = 0, size2 = 0, size3 = 0;
+    const void* data1 = nullptr;
+    size_t size1 = 0;
     if( !wxLoadUserResource( &data1, &size1, "library", RT_RCDATA, inst ) )
     {
         auto err = ::GetLastError();
@@ -207,7 +207,7 @@ const int GetObjectName::GetPresentation() const
     return m_presentation;
 }
 
-void GetObjectName::OnOKButton(wxCommandEvent &event)
+void GetObjectName::OnOKButton(wxCommandEvent &WXUNUSED(event))
 {
     if( m_id > 0 )
     {

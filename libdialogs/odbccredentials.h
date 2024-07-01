@@ -22,7 +22,7 @@ public:
     // begin wxGlade: ODBCCredentials::ids
     // end wxGlade
 
-    ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString& title, const wxString &dsn, const wxString &userID, const wxString &password, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString& title, const wxString &dsn, const wxString &userID, const wxString &password);
     const wxTextCtrl &GetUserIDControl();
     const wxTextCtrl &GetPasswordControl();
 

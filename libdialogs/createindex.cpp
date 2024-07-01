@@ -115,7 +115,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         m_lockExclusive = new wxRadioButton( panel_1, wxID_ANY, _( "Lock: Exclusive" ) );
     }
     m_label3 = new wxStaticText( panel_1, wxID_ANY, _( "Index Columns:" ) );
-    m_indexColumns = new FieldWindow( panel_1, 1 );
+    m_indexColumns = new FieldWindow( panel_1 );
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         m_label4 = new wxStaticText( panel_1, wxID_ANY, _( "FILLFACTOR:" ) );

@@ -54,7 +54,7 @@ QuickSelect::QuickSelect(wxWindow *parent, const Database *db) : wxDialog(parent
     m_label12 = new wxStaticText( m_panel, wxID_ANY, _( "Criteria:" ) );
     set_properties();
     do_layout();
-    for( auto i = 0; i < m_sizer10->GetItemCount(); ++i )
+    for( size_t i = 0; i < m_sizer10->GetItemCount(); ++i )
     {
         m_sizer10->SetItemMinSize( i, -1, m_grid->GetRowSize( i ) );
     }
@@ -260,7 +260,7 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
                     }
                 }
             }
-            for( auto i = 0; i < m_tables->GetCount(); ++i )
+            for( size_t i = 0; i < m_tables->GetCount(); ++i )
             {
                 delete (ClientData *) m_tables->GetClientData( i );
             }
@@ -326,7 +326,7 @@ void QuickSelect::OnDisplayComment(wxMouseEvent &event)
 
 void QuickSelect::OnGridRowLines(wxGridSizeEvent &event)
 {
-    for( auto i = 0; i < m_sizer10->GetItemCount(); ++i )
+    for( size_t i = 0; i < m_sizer10->GetItemCount(); ++i )
     {
         m_sizer10->SetItemMinSize( i, -1, m_grid->GetRowSize( i ) );
     }
@@ -596,7 +596,7 @@ void QuickSelect::OnCancelQuickSelect(wxCommandEvent &WXUNUSED(event))
 {
     if( m_tables->GetCount() > 1 )
     {
-        for( auto i = 0; i < m_tables->GetCount(); ++i )
+        for( size_t i = 0; i < m_tables->GetCount(); ++i )
         {
             delete (ClientData *) m_tables->GetClientData( i );
         }

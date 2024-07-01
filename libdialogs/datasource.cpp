@@ -87,7 +87,7 @@ void DataSorces::do_layout()
     // end wxGlade
 }
 
-void DataSorces::OnOK(wxCommandEvent &event)
+void DataSorces::OnOK(wxCommandEvent &WXUNUSED(event))
 {
     m_dataSource = m_dataSources->GetValue();
     EndModal( wxID_OK );

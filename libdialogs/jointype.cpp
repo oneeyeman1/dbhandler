@@ -45,7 +45,7 @@ JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, con
     set_properties();
     do_layout();
     m_joinType->Bind( wxEVT_LIST_ITEM_ACTIVATED, &JointType::OnListItemActivated, this );
-    m_joinType->Bind( wxEVT_LISTBOX_DCLICK, [&](wxCommandEvent &event) { EndModal( wxID_OK ); });
+    m_joinType->Bind( wxEVT_LISTBOX_DCLICK, [&](wxCommandEvent &WXUNUSED(event)) { EndModal( wxID_OK ); });
     // end wxGlade
 }
 

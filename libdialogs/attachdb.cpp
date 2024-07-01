@@ -33,14 +33,14 @@ AttachDB::AttachDB(wxWindow *parent, Database *db, const std::vector<std::wstrin
     sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
     auto sizer_6 = new wxBoxSizer( wxVERTICAL );
     sizer_4->Add( sizer_6, 0, wxEXPAND, 0 );
-    auto m_label1 = new wxStaticText( m_panel, wxID_ANY, _( "Attach database" ) );
+    m_label1 = new wxStaticText( m_panel, wxID_ANY, _( "Attach database" ) );
     sizer_6->Add( m_label1, 0, 0, 0 );
     m_picker = new wxFilePickerCtrl( m_panel, wxID_ANY, _( "" ), _( "Choose the DB file" ), "*.db" );
     sizer_6->Add( m_picker, 0, wxEXPAND, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer_7 = new wxBoxSizer( wxHORIZONTAL );
     sizer_6->Add( sizer_7, 0, wxEXPAND, 0 );
-    auto m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "AS" ) );
+    m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "AS" ) );
     sizer_7->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
     m_schemaName = new wxTextCtrl( m_panel, wxID_ANY, wxEmptyString );
@@ -88,13 +88,13 @@ AttachDB::AttachDB(wxWindow *parent, Database *db, const std::vector<std::wstrin
     FindWindowById( wxID_OK )->Bind( wxEVT_BUTTON, &AttachDB::OnOk, this );
 }
 
-void AttachDB::OnFileSelected(wxCommandEvent &event)
+void AttachDB::OnFileSelected(wxCommandEvent &WXUNUSED(event))
 {
     wxFileName name = m_picker->GetFileName();
     m_schemaName->SetValue( name.GetName() );
 }
 
-void AttachDB::OnOk(wxCommandEvent &event)
+void AttachDB::OnOk(wxCommandEvent &WXUNUSED(event))
 {
     wxString schema = m_schemaName->GetValue();
     if( schema == "master" || schema == "temp" )

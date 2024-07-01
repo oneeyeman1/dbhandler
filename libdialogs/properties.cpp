@@ -201,7 +201,7 @@ bool PropertiesDialog::ApplyProperties()
     int res = m_handler->GetProperties( errors );
     if( !res )
     {
-        for( int i = 0; i < m_properties->GetPageCount(); ++i )
+        for( size_t i = 0; i < m_properties->GetPageCount(); ++i )
         {
             PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
             page->SetModified( false );
@@ -250,7 +250,7 @@ const std::wstring &PropertiesDialog::GetCommand()
 
 void PropertiesDialog::OnApplyUpdateUI (wxUpdateUIEvent &event)
 {
-    for( int i = 0; i < m_properties->GetPageCount(); ++i )
+    for( size_t i = 0; i < m_properties->GetPageCount(); ++i )
     {
         PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
         if( page->IsModified() )
