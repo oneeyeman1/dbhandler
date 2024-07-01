@@ -587,7 +587,7 @@ void DesignCanvas::ChangeFontName(const wxString &name)
     }
 }
 
-void DesignCanvas::OnLeftDoubleClick( wxMouseEvent &event )
+void DesignCanvas::OnLeftDoubleClick( wxMouseEvent &WXUNSED(event))
 {
 
 }

@@ -2246,8 +2246,8 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
                 fieldReplace = fieldName + " DESC";
             else
                 fieldReplace = fieldName + " ASC";
-            auto pos = fieldCut.find( ',' );
-            if( pos == wxNOT_FOUND )
+            auto dotPos = fieldCut.find( ',' );
+            if( dotPos == wxNOT_FOUND )
             {
                 fieldReplace += ";";
                 fieldCut += ";";
@@ -3239,7 +3239,7 @@ void DrawingView::SetParentWindow(wxWindow *window)
     m_parent = wxStaticCast( window, wxDocMDIParentFrame );;
 }
 
-void DrawingView::OnCustmColors( wxCommandEvent &event )
+void DrawingView::OnCustmColors( wxCommandEvent &WXNUSED(event))
 {
 
 }

@@ -427,15 +427,15 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
                     }
                     else
                     {
-                        FieldTypeShape *type = wxDynamicCast( (*it), FieldTypeShape );
-                        if( type )
+                        FieldTypeShape *typeShape = wxDynamicCast( (*it), FieldTypeShape );
+                        if( typeShape )
                         {
-                            shape = type->GetFieldShape();
-                            type->Select( !shape->IsSelected() );
+                            shape = typeShape->GetFieldShape();
+                            typeShape->Select( !shape->IsSelected() );
                             shape->Select( !shape->IsSelected() );
-                            shape = type->GetCommentShape();
+                            shape = typeShape->GetCommentShape();
                             if( shape )
-                                shape->Select( type->IsSelected() );
+                                shape->Select( typeShape->IsSelected() );
                         }
                         else
                         {
