@@ -122,8 +122,8 @@ wxDECLARE_APP(MyApp);
 #define wxID_DROPOBJECT           123
 #define wxID_ATTACHDATABASE       124
 #define wxID_DETACHDATABASE       125
-#define wxID_CUSTOMCOLORS         127
-#define wxID_DATABASEOPTIONS      128
+#define wxID_CUSTOMCOLORS         126
+#define wxID_DATABASEOPTIONS      127
 #define WHEREPAGECOLUMNS          194
 #define WHEREPAGEFUNCTIONS        195
 #define WHEREPAGEARGUMENTS        196
@@ -143,7 +143,6 @@ wxDECLARE_APP(MyApp);
 #define wxID_RETRIEVEARGS         304
 #define wxID_CHECKOPTION          305
 #define wxID_DISTINCT             306
-#define wxID_CUSTOMCOLORS         308
 #define wxID_OPTIONS              309
 #define wxID_SELECTALL            310
 #define wxID_SELECTABOVE          311
@@ -182,7 +181,6 @@ wxDECLARE_APP(MyApp);
 #define wxID_PASTECOLUMN          503
 #define wxID_INSERTCOLUMN         504
 #define wxID_DELETECOLUMN         505
-#define wxID_DESIGNSYNTAX         506
 #define wxID_LEFTALIGN            1000
 #define wxID_CENTERALIGN          1001 
 #define wxID_RIGHTALIGN           1002
