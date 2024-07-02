@@ -141,6 +141,16 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->Read( "QuerySource", &m_conf->m_querySource, 2 );
     m_config->Read( "QueryPresentation", &m_conf->m_queryPresentation, 4 );
     m_config->SetPath( path );
+    m_config->SetPath( "Database/General" );
+    m_config->Read( "Shared Profiles", &m_conf->m_dbOptions.m_general.m_sharedProfile );
+    m_config->Read( "Display Table List", &m_conf->m_dbOptions.m_general.m_tableLst );
+    m_config->Read( "se Repsitory", &m_conf->m_dbOptions.m_general.m_useRepo );
+    m_config->Read( "Eead Only", &m_conf->m_dbOptions.m_general.m_readOnly );
+    m_config->Read( "Keep Alive", &m_conf->m_dbOptions.m_general.m_keepAlive );
+    m_config->Read( "SQL Terminator Character", &m_conf->m_dbOptions.m_general.m_sqlTerminator );
+    m_config->Read( "Refresh Table List", &m_conf->m_dbOptions.m_general.m_tableRefresh );
+    m_config->Read( "Columns in Table", &m_conf->m_dbOptions.m_general.m_tableColumns );
+    m_config->SetPath( path );
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );

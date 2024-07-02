@@ -204,6 +204,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_UPDATE_UI(wxID_SAVEQUERY, DrawingView::OnQuerySaveUpdateUI)
     EVT_UPDATE_UI(wxID_SAVEQUERYAS, DrawingView::OnQuerySaveAsUpdateUI)
     EVT_MENU(wxID_CUSTOMCOLORS, DrawingView::OnCustmColors)
+    EVT_MENU(wxID_DATABASEOPTIONS, DrawingView::OnDatabasePreferences)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -2816,6 +2817,7 @@ void DrawingView::CreateDBMenu()
     menuDesign->Append( wxID_CLEARLOG, _( "Clear Log" ), _( "Discard content of the log" ) );
     menuDesign->AppendSeparator();
     menuDesign->Append( wxID_CUSTOMCOLORS, _( "Custom Colors.." ) );
+    menuDesign->Append( wxID_DATABASEOPTIONS, _( "Options..." ), _( "Database preferences" ) );
     mbar->Insert( 2, menuDesign, _( "&Design" ) );
     auto helpMenu = new wxMenu;
     helpMenu->Append( wxID_HELP, _( "Help" ), _( "Help" ) );
@@ -3262,4 +3264,9 @@ void DrawingView::OnCustmColors(wxCommandEvent &WXUNUSED(event))
     wxColourDialog dlg( m_parent, &clrData );
     dlg.SetTitle( _( "Color" ) );
     dlg.ShowModal();
+}
+
+void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
+{
+
 }

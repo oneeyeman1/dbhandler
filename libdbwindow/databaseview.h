@@ -164,6 +164,7 @@ protected:
 #endif
     void SetDatabaseChildWindow(wxDocMDIChildFrame *frame);
     void OnCustmColors( wxCommandEvent &event );
+    void OnDatabasePreferences(wxCommandEvent &event);
 private:
     bool m_isActive, m_snitialized;
     wxDocMDIParentFrame *m_parent;
