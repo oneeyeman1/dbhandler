@@ -68,6 +68,7 @@
 #include "wx/dataview.h"
 #include "wx/renderer.h"
 #include "wx/config.h"
+#include "wx/colordlg.h"
 #include "wx/filepicker.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/BitmapShape.h"
@@ -2814,6 +2815,7 @@ void DrawingView::CreateDBMenu()
     menuDesign->Append( wxID_SAVELOG, _( "Save Log As..." ), _( "Save log to disk file" ) );
     menuDesign->Append( wxID_CLEARLOG, _( "Clear Log" ), _( "Discard content of the log" ) );
     menuDesign->AppendSeparator();
+    menuDesign->Append( wxID_CUSTOMCOLORS, _( "Custom Colors.." ) );
     mbar->Insert( 2, menuDesign, _( "&Design" ) );
     auto helpMenu = new wxMenu;
     helpMenu->Append( wxID_HELP, _( "Help" ), _( "Help" ) );
@@ -3252,5 +3254,12 @@ void DrawingView::SetParentWindow(wxWindow *window)
 
 void DrawingView::OnCustmColors(wxCommandEvent &WXUNUSED(event))
 {
+    wxColourData clrData;
+    clrData.SetColour( m_canvas->GetBackgroundColour() );
+    clrData.SetChooseAlpha( true );
+    clrData.SetChooseFull( true );
 
+    wxColourDialog dlg( m_parent, &clrData );
+    dlg.SetTitle( _( "Color" ) );
+    dlg.ShowModal();
 }
