@@ -42,6 +42,8 @@
 #include "propertieshandler.h"
 #include "dividerpropertieshandler.h"
 #include "field.h"
+#include "databaseoptionsgeneral.h"
+#include "databaseoptionshandler.h"
 #include "fieldwindow.h"
 #include "colorcombobox.h"
 #include "propertypagebase.h"
@@ -137,6 +139,13 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             parent->AddPage( m_page2, _( "Pointer" ) );
             m_page3 = new PrintSpec( parent );
             parent->AddPage( m_page3, _( "Print Specification" ) );*/
+        }
+        break;
+        case DatabaseProperties:
+        {
+            DatabaseProperties prop = dynamic_cast<DatabaseOptionsHandler *>( handler )->GetObjectProperties();
+            m_page11 = new DatabaseOptionGeneral( m_properties/**/ );
+            m_properties->AddPage( m_page11, _( "General" );
         }
         break;
     }

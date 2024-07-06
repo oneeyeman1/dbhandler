@@ -29,6 +29,7 @@ private:
 //    DesignLabelGeneral *m_page7;
     BandGeneralProperties *m_page9;
     PointerPropertiesPanel *m_page10;
+    DatabaseOptionGeneral *m_page11;
     int m_type;
     std::wstring m_dbType, m_command;
     bool m_isApplied;
