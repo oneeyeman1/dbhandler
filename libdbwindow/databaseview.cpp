@@ -3268,5 +3268,28 @@ void DrawingView::OnCustmColors(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
 {
-
+    std::unique_ptr<PropertiesHandler> propertiesPtr;
+#if __cplusplus > 201300
+    auto ptr = std::make_unique<DesignPropertiesHander>( m_designCanvas->GetOptions() );
+#else
+    auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
+#endif
+    propertiesPtr = std::move( ptr );
+    propertiesPtr->SetType( DatabaseProperties );
+    auto title = _( "Database Properties" );
+    wxString libName;
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    libName = m_libPath + "dialogs";
+#elif __WXMAC__
+    libName = m_libPath + "liblibdialogs.dylib";
+#else
+    libName = m_libPath + "libdialogs";
+#endif
+    lib.Load( libName );
+/*    if( lib.IsLoaded() )
+    {
+        CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
+        res = func( m_frame, propertiesPtr, title, command, logOnly, *pcs );
+    }*/
 }

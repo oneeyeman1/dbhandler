@@ -35,6 +35,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="databaseoptionshandler.h" />
     <ClInclude Include="designpropertieshandler.h" />
     <ClInclude Include="dividerpropertieshandler.h" />
     <ClInclude Include="fieldpropertieshandler.h" />
@@ -43,6 +44,7 @@
     <ClInclude Include="propertieshandlerbase.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="databaseoptionshandler.cpp" />
     <ClCompile Include="designpropertieshandler.cpp" />
     <ClCompile Include="dividerpropertieshandler.cpp" />
     <ClCompile Include="fieldpropertieshandler.cpp" />

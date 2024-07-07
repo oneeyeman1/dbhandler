@@ -68,6 +68,9 @@
     <ClInclude Include="designfieldgeneral.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="databaseoptionsgeneral.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tablegeneral.cpp">
@@ -119,6 +122,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="designfieldgeneral.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="databaseoptiongeneral.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
