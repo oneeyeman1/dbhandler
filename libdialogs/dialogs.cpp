@@ -50,6 +50,7 @@
 #include "field.h"
 #include "fieldwindow.h"
 #include "propertypagebase.h"
+#include "databaseoptionsgeneral.h"
 #include "tablegeneral.h"
 #include "tableprimarykey.h"
 #include "odbcconfigure.h"
