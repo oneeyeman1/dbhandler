@@ -10,9 +10,9 @@ libhelpers_a_SOURCES =  \
 	colorcombobox.cpp \
 	colorcombobox.h
 
-libhelpers_a_CXXFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
+libhelpers_a_CXXFLAGS = `wx-config \
 	--cxxflags` \
 	-fPIC 
 
-libhelpers_a_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
+libhelpers_a_LDFLAGS = `wx-config \
 	--libs` 

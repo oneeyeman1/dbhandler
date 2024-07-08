@@ -21,10 +21,10 @@ libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
 	-I../../libfieldswindow \
 	-I../../libhelpers \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+	`wx-config \
 	--cxxflags` 
 
 libpropertieshandlers_la_LDFLAGS = -L../libpropertypages \
 	-lpropertypages \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+	`wx-config \
 	--libs` 
