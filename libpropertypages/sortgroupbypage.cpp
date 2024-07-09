@@ -28,7 +28,7 @@
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 
-#ifdef __WXGTK__
+#if defined __WXGTK__ || defined __WXQT__
 /* handdrag.cur - 326 bytes */
 static const unsigned char handdrag[] = {
 
@@ -299,13 +299,15 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
     else
         list = m_source;
     list->SetCursor( wxCursor( "handdrag" ) );
-#else
+#elIf __WXGTK__
 	m_dragSource->SetCursor( wxCursor( (const char *) handdrag, 32, 32, 16, 0, nullptr, wxWHITE, wxBLACK ) );
     if( m_dragSource == m_source )
         list = m_dest;
     else
         list = m_source;
     list->SetCursor( wxCursor( (const char *) handdrag, 32, 32, 16, 0, nullptr, wxWHITE, wxBLACK ) );
+#elif __WXQT__
+    m_dragSource->SetCursor( wxCursor( (const char *) handdrag ) );
 #endif
     if( m_dragSource == m_source )
         m_itemPos = m_dragSource->HitTest( pt, flags );
@@ -456,8 +458,10 @@ void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
     m_sortDragSource->SetCursor( wxCursor( "handdrag" ) );
 #elif __WXOSX__
     m_sortDragSource->SetCursor( wxCursor( "handdrag" ) );
-#else
+#elif __WXGTK__
     m_sortDragSource->SetCursor( wxCursor( (const char *) handdrag, 32, 32, 16, 0, nullptr, wxWHITE, wxBLACK ) );
+#elif __WXQT__
+    m_sortDragSource->SetCursor( wxCursor( (const char *) handdrag ) );
 #endif
     if( m_sortDragSource == m_sortSource && m_draggedItem.IsOk())
         m_itemPos = m_sortDragSource->ItemToRow( m_draggedItem );
