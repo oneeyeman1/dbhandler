@@ -36,13 +36,12 @@
 #include "colorcombobox.h"
 #include "propertypagebase.h"
 #include "fontpropertypagebase.h"
-#include "wx/gtk/private.h"
 
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bool colorEnabled)
  : CFontPropertyPageBase(parent, font, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 {
     fontInfo = font;
-    m_panel = new QAFontDialog( font.font, parent );
+    m_panel = new QFontDialog( font.font, parent );
     m_panel->setOptions( QFontDialog::NoButtons );
 }
 
@@ -50,7 +49,7 @@ CFontPropertyPage::~CFontPropertyPage()
 {
 }
 
-FontPropertyPage &CFontPropertyPage::GetFont()
+CFontPropertyPage &CFontPropertyPage::GetFont()
 {
     fontInfo.font = m_panel->getFont();
     return fontInfo;
