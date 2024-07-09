@@ -40,7 +40,14 @@ else
     AC_MSG_RESULT([not found])
     AC_MSG_ERROR([wxWidgets is required. Try --with-wx-config.])
 fi
- 
+
+AX_HAVE_QT()
+if have_qt=yes ; then
+    USE_QT=1
+else
+    USE_QT=
+fi
+
 WX_CPPFLAGS="`$WXCONFIG --cppflags`"
 WX_CXXFLAGS="`$WXCONFIG --cxxflags`"
 WX_LIBS="`$WXCONFIG --libs`"
