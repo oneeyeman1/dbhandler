@@ -21,7 +21,7 @@ class WXEXPORT DatabaseOptionsHandler : public PropertiesHandler
 {
 public:
     DatabaseOptionsHandler(DatabaseProperties options);
-    const DatabaseProperties GetObjectProperties() const { return m_options; }
+    const DatabaseProperties &GetObjectProperties() const { return m_options; }
     virtual int GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
 private:
     DatabaseProperties m_options;

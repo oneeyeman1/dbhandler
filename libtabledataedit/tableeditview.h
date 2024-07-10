@@ -40,10 +40,28 @@ struct ToolbarSetup
     int m_orientation;
 };
 
+struct DatabasePropertiesGeneral
+{
+    wxString m_sharedProfile, m_sqlTerminator, m_tableRefresh, m_tableColumns;
+    bool m_tableLst, m_useRepo, m_readOnly, m_keepAlive;
+};
+
+struct DatabasePropertiesColors
+{
+
+};
+
+struct DatabaseProperties
+{
+    DatabasePropertiesGeneral m_general;
+    DatabasePropertiesColors m_colors;
+};
+
 struct Configuration
 {
     std::map<wxString, ToolbarSetup> m_tbSettings;
     int m_querySource, m_queryPresentation;
+    DatabaseProperties m_dbOptions;
 };
 
 class TableEditView: public wxView

@@ -112,6 +112,7 @@
 #include "fieldpropertieshandler.h"
 #include "designpropertieshandler.h"
 #include "dividerpropertieshandler.h"
+#include "databaseoptionshandler.h"
 #include "divider.h"
 #include "designgeneral.h"
 #include "bandgeneral.h"
@@ -3268,13 +3269,14 @@ void DrawingView::OnCustmColors(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
 {
+    wxString command;
     std::unique_ptr<PropertiesHandler> propertiesPtr;
 #if __cplusplus > 201300
-    auto ptr = std::make_unique<DesignPropertiesHander>( m_designCanvas->GetOptions() );
+    auto ptr = std::make_unique<DatabaseOptionsHandler>( m_conf->m_dbOptions );
 #else
-    auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
+    auto ptr = std::unique_ptr<DatabaseOptionsHandler>( new DatabaseOptionsHandler( m_conf->m_dbOptions ) );
 #endif
-    propertiesPtr = std::move( ptr );
+//    propertiesPtr = std::move( ptr );
     propertiesPtr->SetType( DatabaseProperties );
     auto title = _( "Database Properties" );
     wxString libName;
@@ -3287,9 +3289,9 @@ void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
     libName = m_libPath + "libdialogs";
 #endif
     lib.Load( libName );
-/*    if( lib.IsLoaded() )
+    if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-        res = func( m_frame, propertiesPtr, title, command, logOnly, *pcs );
-    }*/
+        auto res = func( m_frame, propertiesPtr, title, command, false, *pcs );
+    }
 }
