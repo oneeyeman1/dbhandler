@@ -88,7 +88,7 @@ struct DataEditFiield
         ~ValuueType() noexcept {}
     } value;
 
-    DataEditFiield(int myvalue) : type( INTEGER_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) { }
+    DataEditFiield(int myvalue) : type( INTEGER_TYPE ), m_precision( 0 ), m_size( 0 ), value( myvalue ) { }
 
     DataEditFiield(double myvalue, unsigned long size, int precision) : type( DOUBLE_TYPE ), m_size( size ), m_precision( precision ), value( myvalue ) { }
 
