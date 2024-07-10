@@ -1,5 +1,13 @@
 ## Process this file with automake to produce Makefile.in
 
+QT_CXXFLAGS = @QT_CXXFLAGS@
+QT_DIR = @QT_DIR@
+QT_LIBS = @QT_LIBS@
+QT_LRELEASE = @QT_LRELEASE@
+QT_LUPDATE = @QT_LUPDATE@
+QT_MOC = @QT_MOC@
+QT_RCC = @QT_RCC@
+QT_UIC = @QT_UIC@
 
 lib_LTLIBRARIES =  \
 	libpropertypages.la
@@ -48,7 +56,7 @@ libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	gtk+-3.0` \
 	`wx-config \
 	--cxxflags` \
-	-I/usr/include/qt5/
+	$(QT_CXXFLAGS)
 
 libpropertypages_la_LDFLAGS = `pkg-config \
 	--libs \
@@ -56,4 +64,4 @@ libpropertypages_la_LDFLAGS = `pkg-config \
 	-L../libhelpers \
 	-lhelpers \
 	`wx-config \
-	--libs`
+	--libs`  $(QT_LIBS)
