@@ -18,6 +18,8 @@ public:
 #define GRIDROW_ADJUSTMENT 6
 #elif __WXGTK__
 #define GRIDROW_ADJUSTMENT 8
+#elif __WXQT__
+#define GRIDROW_ADJUSTMENT 8
 #endif
 
 class QueryArguments

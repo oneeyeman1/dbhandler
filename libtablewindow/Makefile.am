@@ -16,9 +16,9 @@ libtablewindow_la_SOURCES =  \
 	typecombobox.h
 
 libtablewindow_la_CXXFLAGS = -I../../dbinterface \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+	`wx-config \
 	--cxxflags` 
 
 libtablewindow_la_LDFLAGS = -L../dbinterface \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+	`wx-config \
 	--libs` 

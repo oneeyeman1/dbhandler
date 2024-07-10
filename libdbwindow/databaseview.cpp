@@ -779,10 +779,10 @@ void DrawingView::CreateViewToolBar()
         {
             joinsSVG = wxBitmapBundle::FromSVG( (const char *) data10, wxSize( 16, 16 ) );
         }
-#elif __WXSX__
+#elif __WXOSX__
         tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
         joinsSVG = wxBitmapBundle::FromSVGResource( "joins", wxSize( 16, 16 ) );
-#elif
+#else
         tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
         joinsSVG = wxBitmapBundle::FromSVG( joins, wxSize( 16, 16 ) );
 #endif

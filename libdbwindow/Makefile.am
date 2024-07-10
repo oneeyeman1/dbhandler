@@ -73,7 +73,7 @@ libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libpropertypages \
 	-I../../libpropertieshandlers \
 	-I../../libhelpers \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+	`wx-config \
 	--cxxflags` \
 	`pkg-config \
 	--cflags \
@@ -89,7 +89,7 @@ libdbwindow_la_LDFLAGS = -L../libpropertypages \
 	-lshapeframework \
 	-L../libhelpers \
 	-lhelpers \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+	`wx-config \
 	--libs \
 	stc`
 	

@@ -46,13 +46,14 @@ libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	`pkg-config \
 	--cflags \
 	gtk+-3.0` \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--cxxflags`
+	`wx-config \
+	--cxxflags` \
+	-I/usr/include/qt5/
 
 libpropertypages_la_LDFLAGS = `pkg-config \
 	--libs \
 	gtk+-3.0` \
 	-L../libhelpers \
 	-lhelpers \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+	`wx-config \
 	--libs`

@@ -22,8 +22,8 @@ dbhandler_SOURCES =  \
 
 dbhandler_CXXFLAGS = -I../../dbinterface \
 	-I../../libdbwindow/res/gui \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
+	`wx-config \
 	--cxxflags` 
 
-dbhandler_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
+dbhandler_LDFLAGS = `wx-config \
 	--libs` 
