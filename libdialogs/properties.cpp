@@ -34,6 +34,9 @@
 #ifdef __WXOSX__
 #include "wx/fontpicker.h"
 #endif
+#ifdef __WXQT__
+#include <QFontDialog>
+#endif
 #include "wxsf/ShapeCanvas.h"
 #include "database.h"
 //#include "objectproperties.h"

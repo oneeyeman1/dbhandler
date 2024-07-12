@@ -38,10 +38,10 @@
 #include "fontpropertypagebase.h"
 
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bool colorEnabled)
- : CFontPropertyPageBase(parent, font, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+ : CFontPropertyPageBase(parent, font, wxID_ANY)
 {
     fontInfo = font;
-    m_panel = new QFontDialog( font.font, parent );
+    m_panel = new QFontDialog( font.font.GetHandle(), parent->GetHandle() );
     m_panel->setOptions( QFontDialog::NoButtons );
 }
 
@@ -49,9 +49,10 @@ CFontPropertyPage::~CFontPropertyPage()
 {
 }
 
-CFontPropertyPage &CFontPropertyPage::GetFont()
+FontPropertyPage &CFontPropertyPage::GetFont()
 {
-    fontInfo.font = m_panel->getFont();
+    wxFont propertiesFont( m_panel->selectedFont() );
+    fontInfo.font = propertiesFont;
     return fontInfo;
 }
 
