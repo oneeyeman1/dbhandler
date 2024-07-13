@@ -8,12 +8,15 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
+#include <map>
 #include <wx/wx.h>
 #include "wx/filepicker.h"
 #include "wx/valnum.h"
+#include "configuration.h"
+#include "propertypagebase.h"
 #include "databaseoptionsgeneral.h"
 
-DatabaseOptionGeneral::DatabaseOptionGeneral(wxWindow *parent) : wxPanel( parent, wxID_ANY )
+DatabaseOptionGeneral::DatabaseOptionGeneral(wxWindow *parent) : PropertyPageBase( parent, wxID_ANY )
 {
     m_defaults.m_keepAlive = true;
     m_defaults.m_readOnly = false;

@@ -3277,7 +3277,7 @@ void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
 #else
     auto ptr = std::unique_ptr<DatabaseOptionsHandler>( new DatabaseOptionsHandler( m_conf->m_dbOptions ) );
 #endif
-//    propertiesPtr = std::move( ptr );
+    propertiesPtr = std::move( ptr );
     propertiesPtr->SetType( DatabaseProperties );
     auto title = _( "Database Properties" );
     wxString libName;
