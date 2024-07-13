@@ -268,13 +268,12 @@ void CSizeComboBox::DoSetSize( int x, int y, int width, int height, int sizeFlag
 }
 
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage &font, bool colorEnabled)
- : CFontPropertyPageBase(parent, font, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+ : CFontPropertyPageBase(parent, font)
 {
     m_bUnderline = false;
     m_bStrikethrough = false;
     wxString text;
     text = "AaBbYyZz";
-    style = style;
     m_font = font;
     if( m_font.font.IsOk() )
     {

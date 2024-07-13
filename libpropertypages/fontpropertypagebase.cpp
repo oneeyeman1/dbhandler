@@ -59,8 +59,8 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
 }
 #endif
 
-CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, const FontPropertyPage &font, int id)
- : PropertyPageBase(parent, id)
+CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, const FontPropertyPage &font)
+ : PropertyPageBase(parent, wxID_ANY )
 {
     m_dirty = false;
     m_faceName = font.font.GetFaceName();
