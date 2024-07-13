@@ -39,6 +39,7 @@
 #endif
 #include "wxsf/ShapeCanvas.h"
 #include "database.h"
+#include "configuration.h"
 //#include "objectproperties.h"
 #include "propertieshandlerbase.h"
 #include "fieldpropertieshandler.h"

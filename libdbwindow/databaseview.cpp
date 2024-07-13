@@ -75,6 +75,7 @@
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "configuration.h"
 #include "dbview.h"
 //#include "objectproperties.h"
 #include "colorcombobox.h"

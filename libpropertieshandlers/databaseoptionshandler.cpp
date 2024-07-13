@@ -9,10 +9,12 @@
 #include "wx/wx.h"
 #include "wx/stockitem.h"
 #endif
+#include <map>
+#include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "databaseoptionshandler.h"
 
-DatabaseOptionsHandler::DatabaseOptionsHandler(DatabaseProperties options)
+DatabaseOptionsHandler::DatabaseOptionsHandler(DatabaseOptions options)
 {
     m_options = options;
 }

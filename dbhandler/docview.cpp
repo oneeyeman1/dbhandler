@@ -44,6 +44,7 @@
 #include "wx/xml/xml.h"
 #include "wx/fswatcher.h"
 #include "database.h"
+#include "configuration.h"
 #include "newtablehandler.h"
 #include "mainframe.h"
 #include "docview.h"

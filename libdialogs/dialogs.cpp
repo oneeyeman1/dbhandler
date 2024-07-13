@@ -46,6 +46,7 @@
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wx/fontenum.h"
+#include "configuration.h"
 #include "dialogs.h"
 #include "objectproperties.h"
 #include "colorcombobox.h"

@@ -30,6 +30,7 @@
 #include "wx/xml/xml.h"
 #include "wx/fswatcher.h"
 #include "database.h"
+#include "configuration.h"
 #include "docview.h"
 #include "newtablehandler.h"
 

@@ -36,36 +36,6 @@ struct LibrariesInfo
     LibrariesInfo(const wxString &path, bool active) : m_path(path), m_isActive(active) {}
 };
 
-struct ToolbarSetup
-{
-    bool m_hideShow, m_showTooltips, m_showText;
-    int m_orientation;
-};
-
-struct DatabaseOptionGeneral
-{
-    wxString m_sharedProfile, m_sqlTerminator, m_tableRefresh, m_tableColumns;
-    bool m_tableLst, m_useRepo, m_readOnly, m_keepAlive;
-};
-
-struct DatabaseptionColors
-{
-
-};
-
-struct DatabaseOptions
-{
-    DatabaseOptionGeneral m_general;
-    DatabaseptionColors m_colors;
-};
-
-struct Configuration
-{
-    std::map<wxString, ToolbarSetup> m_tbSettings;
-    int m_querySource, m_queryPresentation;
-    DatabaseOptions m_dbOptions;
-};
-
 class MainFrame : public wxDocMDIParentFrame
 {
 public:

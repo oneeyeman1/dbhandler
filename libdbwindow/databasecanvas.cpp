@@ -33,6 +33,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/ShapeCanvas.h"
+#include "configuration.h"
 #include "commentfieldshape.h"
 #include "fieldtypeshape.h"
 #include "objectproperties.h"

@@ -22,6 +22,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/GridShape.h"
+#include "configuration.h"
 #include "objectproperties.h"
 #include "constraint.h"
 #include "constraintsign.h"
