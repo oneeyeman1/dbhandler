@@ -244,12 +244,12 @@ void NewQuery::OnOptionsUpdateUI(wxUpdateUIEvent &event)
         event.Enable( true );
 }
 
-const int NewQuery::GetSource()
+int NewQuery::GetSource() const
 {
     return m_source;
 }
 
-const int NewQuery::GetPresentation()
+int NewQuery::GetPresentation() const
 {
     return m_presentation;
 }

@@ -321,7 +321,7 @@ wxTextCtrl *ForeignKeyDialog::GetKeyNameCtrl() const
     return m_foreignKeyName;
 }
 
-const std::vector<FKField *> &ForeignKeyDialog::GetForeignKeyVector()
+std::vector<FKField *> &ForeignKeyDialog::GetForeignKeyVector()
 {
     return m_fkfield;
 }
@@ -341,12 +341,12 @@ const std::wstring &ForeignKeyDialog::GetReferencedTable() const
     return m_refTableName;
 }
 
-const int ForeignKeyDialog::GetDeleteParam() const
+int ForeignKeyDialog::GetDeleteParam() const
 {
     return m_delete;
 }
 
-const int ForeignKeyDialog::GetUpdateParam() const
+int ForeignKeyDialog::GetUpdateParam() const
 {
     return m_update;
 }
@@ -394,7 +394,7 @@ bool ForeignKeyDialog::IsForeignKeyEdited() const
     return m_edited;
 }
 
-const int ForeignKeyDialog::GetMatchingOptions() const
+int ForeignKeyDialog::GetMatchingOptions() const
 {
     return m_match;
 }
