@@ -267,8 +267,8 @@ void CSizeComboBox::DoSetSize( int x, int y, int width, int height, int sizeFlag
         m_pendingSize = wxSize( width, heightOrig );
 }
 
-CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage &font, bool colorEnabled, int id, const wxPoint& pos, const wxSize& size, long style)
- : CFontPropertyPageBase(parent, font, id, pos, size, wxTAB_TRAVERSAL)
+CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage &font, bool colorEnabled)
+ : CFontPropertyPageBase(parent, font, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 {
     m_bUnderline = false;
     m_bStrikethrough = false;
