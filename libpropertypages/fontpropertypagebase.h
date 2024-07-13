@@ -61,7 +61,7 @@ public:
     ~CFontPropertyPageBase();
     bool IsDirty();
     virtual void SetFont(const std::wstring &WXUNUSED(name), int WXUNUSED(size), bool WXUNUSED(italic), bool WXUNUSED(bold), bool WXUNUSED(underline), bool WXUNUSED(strikethrough));
-    FontPropertyPage &GetFont();
+    virtual FontPropertyPage &GetFont();
     wxString &GetFaceName() const;
     void SetFaceName(const wxString &name);
     wxFontWeight &GetWeight() const;
