@@ -1,5 +1,14 @@
 ## Process this file with automake to produce Makefile.in
 
+QT_CXXFLAGS = @QT_CXXFLAGS@
+QT_DIR = @QT_DIR@
+QT_LIBS = @QT_LIBS@
+QT_LRELEASE = @QT_LRELEASE@
+QT_LUPDATE = @QT_LUPDATE@
+QT_MOC = @QT_MOC@
+QT_RCC = @QT_RCC@
+QT_UIC = @QT_UIC@
+
 
 lib_LTLIBRARIES =  \
 	libpropertieshandlers.la
@@ -22,9 +31,10 @@ libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
 	-I../../libhelpers \
 	`wx-config \
-	--cxxflags` 
+	--cxxflags` \
+	$(QT_CXXFLAGS)
 
 libpropertieshandlers_la_LDFLAGS = -L../libpropertypages \
 	-lpropertypages \
 	`wx-config \
-	--libs` 
+	--libs`    $(QT_LIBS)
