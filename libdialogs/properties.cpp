@@ -210,7 +210,6 @@ bool PropertiesDialog::ApplyProperties()
 {
     std::vector<std::wstring> errors;
     bool result = true;
-    bool isModified = false;
     int res = m_handler->GetProperties( errors );
     if( !res )
     {
@@ -219,7 +218,6 @@ bool PropertiesDialog::ApplyProperties()
             PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
             page->SetModified( false );
         }
-        isModified = false;
         m_isApplied = true;
     }
     else
