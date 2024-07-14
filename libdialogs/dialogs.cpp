@@ -200,7 +200,9 @@ extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std:
 #endif
     SelectTables dlg( parent, wxID_ANY, "", db, names, isTableView, type, isNewView );
     if( isTableView )
+    {
         dlg.Center();
+    }
 	res = dlg.ShowModal();
     std::wstring catalog;
     if( db->GetTableVector().GetDatabaseType() == L"SQLite" )
