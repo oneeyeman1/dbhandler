@@ -148,7 +148,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         case DatabaseProperties:
         {
             auto prop = dynamic_cast<DatabaseOptionsHandler *>( handler )->GetObjectProperties();
-            m_page11 = new DatabaseOptionGeneral( m_properties/**/ );
+            m_page11 = new DatabaseOptionGeneral( m_properties, prop.m_general );
             m_properties->AddPage( m_page11, _( "General" ) );
         }
         break;

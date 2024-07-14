@@ -10,6 +10,22 @@ struct DBOptionGeneral
 {
     wxString m_sharedProfile, m_sqlTerminator, m_tableRefresh, m_tableColumns;
     bool m_tableLst, m_useRepo, m_readOnly, m_keepAlive;
+    DBOptionGeneral &operator=( const DBOptionGeneral &right )
+    {
+        if( this == &right )
+            return *this;
+        else
+        {
+            m_sharedProfile = right.m_sharedProfile;
+            m_sqlTerminator = right.m_sqlTerminator;
+            m_tableRefresh = right.m_tableRefresh;
+            m_tableColumns = right.m_tableColumns;
+            m_tableLst = right.m_tableLst;
+            m_useRepo = right.m_useRepo;
+            m_readOnly = right.m_readOnly;
+            m_keepAlive = right.m_keepAlive;
+        }
+    }
 };
 
 struct DatabaseptionColors

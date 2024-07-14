@@ -16,7 +16,7 @@
 #include "propertypagebase.h"
 #include "databaseoptionsgeneral.h"
 
-DatabaseOptionGeneral::DatabaseOptionGeneral(wxWindow *parent) : PropertyPageBase( parent, wxID_ANY )
+DatabaseOptionGeneral::DatabaseOptionGeneral(wxWindow *parent, DBOptionGeneral &current) : PropertyPageBase( parent, wxID_ANY )
 {
     m_defaults.m_keepAlive = true;
     m_defaults.m_readOnly = false;
@@ -79,12 +79,63 @@ DatabaseOptionGeneral::DatabaseOptionGeneral(wxWindow *parent) : PropertyPageBas
     sizerMain->Add( controlsSizer, 0, wxEXPAND, 0 );
     sizerMain->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( sizerMain );
-    m_sharedFolder->Bind( wxEVT_FILEPICKER_CHANGED, &DatabaseOptionGeneral::Modified, this );
-    m_displayTableList->Bind( wxEVT_CHECKBOX, &DatabaseOptionGeneral::Modified, this );
-    m_terminator->Bind( wxEVT_TEXT, &DatabaseOptionGeneral::Modified, this );
+    m_sharedFolder->Bind( wxEVT_FILEPICKER_CHANGED, &DatabaseOptionGeneral::FileNameChanged, this );
+    m_displayTableList->Bind( wxEVT_CHECKBOX, &DatabaseOptionGeneral::OnCheckBox, this );
+    m_terminator->Bind( wxEVT_TEXT, &DatabaseOptionGeneral::OnText, this );
+    m_useRepository->Bind( wxEVT_CHECKBOX, &DatabaseOptionGeneral::OnCheckBox, this );
+    m_refreshTables->Bind( wxEVT_TEXT, &DatabaseOptionGeneral::OnText, this );
+    m_readOnly->Bind( wxEVT_CHECKBOX, &DatabaseOptionGeneral::OnCheckBox, this );
+    m_colmnsInTable->Bind( wxEVT_TEXT, &DatabaseOptionGeneral::OnText, this );
+    m_keepAlive->Bind( wxEVT_CHECKBOX, &DatabaseOptionGeneral::OnCheckBox, this );
+    m_restore->Bind( wxEVT_BUTTON, &DatabaseOptionGeneral::OnRestoreDefaults, this );
 }
 
-void DatabaseOptionGeneral::Modified(wxCommandEvent &WXUNUSED(event))
+void DatabaseOptionGeneral::FileNameChanged(wxFileDirPickerEvent &event)
 {
+    m_current.m_sharedProfile = m_sharedFolder->GetPath();
+    m_isModified = true;
+}
+
+void DatabaseOptionGeneral::OnCheckBox(wxCommandEvent &event)
+{
+    if( event.GetEventObject() == m_displayTableList )
+        m_current.m_tableLst = m_displayTableList->GetValue();
+    if( event.GetEventObject() == m_useRepository )
+        m_current.m_useRepo = m_useRepository->GetValue();
+    if( event.GetEventObject() == m_readOnly )
+        m_current.m_readOnly = m_readOnly->GetValue();
+    if( event.GetEventObject() == m_keepAlive )
+        m_current.m_keepAlive = m_keepAlive->GetValue();
+    m_isModified = true;
+}
+
+void DatabaseOptionGeneral::OnText(wxCommandEvent &event)
+{
+    if( event.GetEventObject() == m_terminator )
+        m_current.m_sqlTerminator = m_terminator->GetValue();
+    if( event.GetEventObject() == m_refreshTables )
+        m_current.m_tableRefresh = m_refreshTables->GetValue();
+    if( event.GetEventObject() == m_colmnsInTable )
+        m_current.m_tableColumns = m_colmnsInTable->GetValue();
+    m_isModified = true;
+}
+void DatabaseOptionGeneral::OnRestoreDefaults(wxCommandEvent &WXUNUSED(event))
+{
+    m_current.m_sharedProfile = m_defaults.m_sharedProfile;
+    m_sharedFolder->SetPath( m_current.m_sharedProfile );
+    m_current.m_tableLst = m_defaults.m_tableLst;
+    m_displayTableList->SetValue( m_current.m_tableLst );
+    m_current.m_sqlTerminator = m_defaults.m_sqlTerminator;
+    m_terminator->SetValue( m_current.m_sqlTerminator );
+    m_current.m_useRepo = m_defaults.m_useRepo;
+    m_useRepository->SetValue( m_current.m_useRepo );
+    m_current.m_tableRefresh = m_defaults.m_tableRefresh;
+    m_refreshTables->SetValue( m_current.m_tableRefresh );
+    m_current.m_readOnly = m_defaults.m_readOnly;
+    m_readOnly->SetValue( m_current.m_readOnly );
+    m_current.m_tableColumns = m_defaults.m_tableColumns;
+    m_colmnsInTable->SetValue( m_current.m_tableColumns );
+    m_current.m_keepAlive = m_defaults.m_keepAlive;
+    m_keepAlive->SetValue( m_current.m_keepAlive );
     m_isModified = true;
 }

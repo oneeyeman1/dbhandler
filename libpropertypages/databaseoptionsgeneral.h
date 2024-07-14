@@ -11,20 +11,21 @@
 
 #pragma once
 
-struct DBOptionGeneral
-{
-    wxString m_sharedProfile, m_sqlTerminator, m_tableRefresh, m_tableColumns;
-    bool m_tableLst, m_useRepo, m_readOnly, m_keepAlive;
-};
-
-class WXEXPORT DatabaseOptionGeneral : public wxPanel
+class WXEXPORT DatabaseOptionGeneral : public PropertyPageBase
 {
 public:
-    DatabaseOptionGeneral(wxWindow *parent);
+    DatabaseOptionGeneral(wxWindow *parent, DBOptionGeneral &current);
+    const DBOptionGeneral &GetOption() const { return m_current; }
+protected:
+    void FileNameChanged(wxFileDirPickerEvent &event);
+    void OnCheckBox(wxCommandEvent &event);
+    void OnText(wxCommandEvent &event);
+    void OnRestoreDefaults(wxCommandEvent &event);
 private:
     wxFilePickerCtrl *m_sharedFolder;
     wxCheckBox *m_displayTableList, *m_useRepository, *m_readOnly, *m_keepAlive;
     wxTextCtrl *m_terminator, *m_refreshTables, *m_colmnsInTable;
     unsigned long m_value;
-    DBOptionGeneral m_defaults;
+    DBOptionGeneral m_defaults, m_current;
+    wxButton *m_restore;
 };
