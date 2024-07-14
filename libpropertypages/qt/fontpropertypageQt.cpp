@@ -38,11 +38,38 @@
 #include "fontpropertypagebase.h"
 
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bool colorEnabled)
- : CFontPropertyPageBase(parent, font, wxID_ANY)
+ : CFontPropertyPageBase(parent, font)
 {
+    auto foreground = new CColorComboBox( this, wxID_ANY );
+    auto background = new CColorComboBox( this, wxID_ANY );
     fontInfo = font;
+/*    auto sizerMain = new wxBoxSizer( wxHORIZONTAL );
+    sizerMain->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizerPage = new wxBoxSizer( wxVERTICAL );
+    sizerPage->Add( 5, 5, 0, wxEXPAND, 0 );*/
     m_panel = new QFontDialog( font.font.GetHandle(), parent->GetHandle() );
     m_panel->setOptions( QFontDialog::NoButtons );
+//    sizerPage->Add( m_panel, 0, wxEXPAND, 0 );
+    if( colorEnabled )
+    {
+/*        sizerPage->Add( 5, 5, 0, wxEXPAND, 0 );
+        auto colorSizer = new wxBoxSizer( wxHORIZONTAL );*/
+        foreground->Enable() ;
+/*        colorSizer->Add( foreground, 0, wxEXPAND, 0 );
+        colorSizer->Add( 5, 5, 0, wxEXPAND, 0 );*/
+        background->Enable();
+/*        colorSizer->Add( background, 0, wxEXPAND, 0 );
+        sizerPage->Add( colorSizer, 0, wxEXPAND, 0 );*/
+    }
+    else
+    {
+        foreground->Disable();
+        background->Disable();
+    }
+/*    sizerMain->Add( sizerPage, 0, wxEXPAND, 0 );
+    sizerMain->Add( 5, 5, 0, wxEXPAND, 0 );
+    SetSizer( sizerMain );
+    Layout();*/
 }
 
 CFontPropertyPage::~CFontPropertyPage()
