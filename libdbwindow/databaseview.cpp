@@ -22,7 +22,7 @@
 //#include "./res/gui/bold_png.c"
 //#endif
 
-#ifdef __WXGTK__
+#if defined( __WXGTK__ ) || defined( __WXQT__ )
 #include "pango/pango.h"
 #include "bold.h"
 #include "italic.h"
@@ -113,7 +113,6 @@
 #include "fieldpropertieshandler.h"
 #include "designpropertieshandler.h"
 #include "dividerpropertieshandler.h"
-#include "databaseoptionshandler.h"
 #include "divider.h"
 #include "designgeneral.h"
 #include "bandgeneral.h"
@@ -2177,20 +2176,20 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
 
 void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const Positions *pos, long operation)
 {
-    size_t start, end;
+    int start, end;
     bool isInserting = false;
     wxString queryString;
     if( queryType == 2 )
     {
-        start = query.find( "GROUP BY" );
-        end = query.find( "HAVING" );
+        start = query.Find( "GROUP BY" );
+        end = query.Find( "HAVING" );
         if( end == wxNOT_FOUND )
-            end = query.find( "ORDER BY" );
+            end = query.Find( "ORDER BY" );
         queryString = "GROUP BY ";
     }
     else
     {
-        start = query.find( "ORDER BY" );
+        start = query.Find( "ORDER BY" );
         end = query.length() - 1;
         queryString = "ORDER BY ";
     }
@@ -2261,7 +2260,7 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
                 fieldReplace = fieldName + " DESC";
             else
                 fieldReplace = fieldName + " ASC";
-            auto dotPos = fieldCut.find( ',' );
+            auto dotPos = fieldCut.Find( ',' );
             if( dotPos == wxNOT_FOUND )
             {
                 fieldReplace += ";";
@@ -2893,7 +2892,7 @@ void DrawingView::CreateQueryMenu(const int queryType)
         show->Check( wxID_SHOWCOMMENTS, true );
         show->Check( wxID_SHOWSQLTOOLBOX, true );
         show->Check( wxID_SHOWJOINS, true );
-        if( GetSyntaxPage() && GetSyntaxPage()->GetSyntaxCtrl()->GetValue().find( "DISTNCT" ) != wxNOT_FOUND )
+        if( GetSyntaxPage() && GetSyntaxPage()->GetSyntaxCtrl()->GetValue().Find( "DISTNCT" ) != wxNOT_FOUND )
             design->Check( wxID_DISTINCT, true );
         else
             design->Check( wxID_DISTINCT, false );
@@ -3270,29 +3269,5 @@ void DrawingView::OnCustmColors(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
 {
-    wxString command;
-    std::unique_ptr<PropertiesHandler> propertiesPtr;
-#if __cplusplus > 201300
-    auto ptr = std::make_unique<DatabaseOptionsHandler>( m_conf->m_dbOptions );
-#else
-    auto ptr = std::unique_ptr<DatabaseOptionsHandler>( new DatabaseOptionsHandler( m_conf->m_dbOptions ) );
-#endif
-    propertiesPtr = std::move( ptr );
-    propertiesPtr->SetType( DatabaseProperties );
-    auto title = _( "Database Properties" );
-    wxString libName;
-    wxDynamicLibrary lib;
-#ifdef __WXMSW__
-    libName = m_libPath + "dialogs";
-#elif __WXMAC__
-    libName = m_libPath + "liblibdialogs.dylib";
-#else
-    libName = m_libPath + "libdialogs";
-#endif
-    lib.Load( libName );
-    if( lib.IsLoaded() )
-    {
-        CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-        auto res = func( m_frame, propertiesPtr, title, command, false, *pcs );
-    }
+
 }
