@@ -2486,6 +2486,7 @@ int DrawingView::AddSize(int size, int lfHeight)
         i = m_fontSize->Insert( str, i, &lfHeight );
     return i;
 #else
+    lfHeight = lfHeight;
 	return 1;
 #endif
 }
