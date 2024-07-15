@@ -16,7 +16,6 @@
 //#ifdef __WXOSX__
 #include "../dbhandler/res/database_profile.xpm"
 #include "../dbhandler/res/properties.xpm"
-#include "res/gui/key-f1.xpm"
 #include "../dbhandler/res/quit.xpm"
 #include "res/gui/toolbox.xpm"
 //#include "./res/gui/bold_png.c"
