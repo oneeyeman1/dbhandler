@@ -457,7 +457,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
             Refresh();
             if( fld )
             {
-                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, const_cast<DatabaseTable *>( tbl->GetTable() )->GetFullName(), false );
+                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, const_cast<DatabaseTable *>( tbl->GetTable() )->GetFullName() );
                 if( fld->IsSelected() )
                     dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->AddQueryField( fld->GetField()->GetFullName() );
                 else
@@ -719,7 +719,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                         if( tableName == erdTable->GetTable()->GetTableName() )
                         {
                             fld->Select( true );
-                            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, ADD, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName(), false );
+                            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, ADD, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName() );
                             dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->AddQueryField( fld->GetField()->GetFullName() );
                         }
                     }
@@ -737,7 +737,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                     if( fld )
                     {
                         fld->Select( false );
-                        dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, REMOVE, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName(), false );
+                        dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, REMOVE, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName() );
                     }
                     Refresh();
                 }
@@ -1247,7 +1247,7 @@ void DatabaseCanvas::AddQuickQueryFields(const wxString &tbl, std::vector<TableF
             {
                 found = true;
                 (*it)->Select( true );
-                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, tbl.ToStdWstring(), quickSelect );
+                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, tbl.ToStdWstring() );
             }
         }
     }
@@ -1300,7 +1300,7 @@ void DatabaseCanvas::OnCloseTable(wxCommandEvent &WXUNUSED(event))
         {
             FieldShape *field = wxDynamicCast( (*it), FieldShape );
             if( children.Find( field ) )
-                view->AddFieldToQuery( *field, REMOVE, tbl.ToStdWstring(), true );
+                view->AddFieldToQuery( *field, REMOVE, tbl.ToStdWstring() );
         }
         view->GetSortPage()->RemoveTable( tbl );
 
@@ -1472,7 +1472,7 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
                             if( dynamic_cast<FieldShape *>( (*it6) )->GetField()->GetFullName() == field )
                             {
                                 (*it6)->Select( true );
-                                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *( dynamic_cast<FieldShape *>( (*it6) ) ), ADD, const_cast<DatabaseTable *>( table->GetTable() )->GetFullName(), false );
+                                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *( dynamic_cast<FieldShape *>( (*it6) ) ), ADD, const_cast<DatabaseTable *>( table->GetTable() )->GetFullName() );
                             }
                         }
                     }

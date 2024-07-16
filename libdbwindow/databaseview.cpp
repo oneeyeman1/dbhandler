@@ -1801,7 +1801,7 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
     delete lib;
 }
 
-void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAdding, const std::wstring &tableName, bool quickSelect)
+void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAdding, const std::wstring &tableName)
 {
     TableField *fld = const_cast<FieldShape &>( field ).GetField();
     wxString name = tableName + "." + fld->GetFieldName();
@@ -1904,7 +1904,7 @@ void DrawingView::AddDeleteFields(MyErdTable *field, bool isAdd, const std::wstr
             if( field2add && isAdd ? !field2add->IsSelected() : field2add->IsSelected() )
             {
                 field2add->Select( isAdd );
-                AddFieldToQuery( *field2add, isAdd ? ADD : REMOVE, tableName, false );
+                AddFieldToQuery( *field2add, isAdd ? ADD : REMOVE, tableName );
             }
             node = node->GetNext();
         }

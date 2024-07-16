@@ -64,7 +64,7 @@ public:
     WhereHavingPage *GetWherePage();
     WhereHavingPage *GetHavingPage();
     SyntaxPropPage *GetSyntaxPage();
-    void AddFieldToQuery(const FieldShape &field, QueryFieldChange isAdding, const std::wstring &tableName, bool quickSelect);
+    void AddFieldToQuery(const FieldShape &field, QueryFieldChange isAdding, const std::wstring &tableName);
     void HideShowSQLBox(bool show);
     void SetPaintersMap(std::map<wxString, wxDynamicLibrary *> &painters);
     void ChangeFontEement();
