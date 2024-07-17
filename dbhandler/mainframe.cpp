@@ -34,7 +34,7 @@
 #include "docview.h"
 #include "newtablehandler.h"
 
-#ifdef __WXGTK__
+#if defined( __WXGTK__ ) || defined( __WXQT__ )
 #include "query.h"
 #include "odbc.h"
 #include "library.h"

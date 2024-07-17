@@ -21,6 +21,7 @@ dbhandler_SOURCES =  \
 	table.h
 
 dbhandler_CXXFLAGS = -I../../dbinterface \
+	-I../../libhelpers \
 	-I../../libdbwindow/res/gui \
 	`wx-config \
 	--cxxflags` 
