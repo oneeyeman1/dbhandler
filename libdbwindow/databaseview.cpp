@@ -1392,7 +1392,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     return res;
 }
 
-void DrawingView::OnSetProperties(wxCommandEvent &event)
+void DrawingView::OnSetProperties(wxCommandEvent &WXUNUSED(event))
 {
     ShapeList list;
     MyErdTable *shape = nullptr;
@@ -2007,14 +2007,14 @@ void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type, const l
         query = query.substr( query.find( "WHERE" ) );
         if( m_whereRelatons.size() == 1 && m_whereCondition.size() == 0 )
         {
-            size_t pos;
-            pos = query.find( "GROUP BY" );
+            int pos;
+            pos = query.Find( "GROUP BY" );
             if( pos == wxNOT_FOUND )
             {
-                pos = query.find( "HAVING" );
+                pos = query.Find( "HAVING" );
                 if( pos == wxNOT_FOUND )
                 {
-                    pos = query.find( "ORDER BY" );
+                    pos = query.Find( "ORDER BY" );
                     if( pos == wxNOT_FOUND )
                         pos = query.length() - 1;
                 }
@@ -2106,17 +2106,17 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     if( event.GetEventObject() == m_page2 )
     {
         wxString wherePart;
-        size_t pos = query.find( "WHERE" );
+        int pos = query.Find( "WHERE" );
         if( pos != wxNOT_FOUND )
         {
             wherePart = query.substr( pos + 6 );
-            pos = wherePart.find( "GROUP BY" );
+            pos = wherePart.Find( "GROUP BY" );
             if( pos == wxNOT_FOUND )
             {
-                pos = wherePart.find( "HAVING " );
+                pos = wherePart.Find( "HAVING " );
                 if( pos == wxNOT_FOUND )
                 {
-                    pos = wherePart.find( "ORDER BY" );
+                    pos = wherePart.Find( "ORDER BY" );
                     if( pos == wxNOT_FOUND )
                         pos = wherePart.length() - 1;
                 }
@@ -2127,13 +2127,13 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
         }
         else
         {
-            pos = query.find( "GROUP BY" );
+            pos = query.Find( "GROUP BY" );
             if( pos == wxNOT_FOUND )
             {
-                pos = query.find( "HAVING " );
+                pos = query.Find( "HAVING " );
                 if( pos == wxNOT_FOUND )
                 {
-                    pos = query.find( "ORDER BY" );
+                    pos = query.Find( "ORDER BY" );
                     if( pos == wxNOT_FOUND )
                         wherePart = ";";
                 }
@@ -2155,11 +2155,11 @@ void DrawingView::OnQueryChange(wxCommandEvent &event)
     }
     if( event.GetEventObject () == m_page4 )
     {
-        size_t pos = query.find( "HAVING " );
+        int pos = query.Find( "HAVING " );
         if( pos != wxNOT_FOUND )
         {
             wxString havingPart = query.substr( pos + 7 );
-            havingPart = havingPart.substr( 0, ( pos = havingPart.find( "ORDER BY" ) ) == wxNOT_FOUND ? havingPart.length() - 1 : pos );
+            havingPart = havingPart.substr( 0, ( pos = havingPart.Find( "ORDER BY" ) ) == wxNOT_FOUND ? havingPart.length() - 1 : pos );
             m_havingCondition[event.GetInt()] = event.GetString();
         }
         else
