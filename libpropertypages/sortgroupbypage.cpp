@@ -83,7 +83,7 @@ wxSize MyListCtrl::DoGetBestClientSize () const
 SortColumnRenderer::SortColumnRenderer(wxCheckBoxState state, wxDataViewCellMode mode, int align)
     : wxDataViewCustomRenderer( GetDefaultType(), mode, align )
 {
-    m_toggle = true;
+    m_toggle = state;
     m_allow3rdStateForUser = false;
 }
 
@@ -143,7 +143,7 @@ bool SortColumnRenderer::Render(wxRect cell, wxDC* dc, int state)
     return true;
 }
 
-bool SortColumnRenderer::ActivateCell (const wxRect& cell, wxDataViewModel *model, const wxDataViewItem & item, unsigned int col, const wxMouseEvent *mouseEvent)
+bool SortColumnRenderer::ActivateCell (const wxRect &WXUNUSED(cell), wxDataViewModel *model, const wxDataViewItem & item, unsigned int col, const wxMouseEvent *mouseEvent)
 {
     if( mouseEvent )
     {
@@ -288,7 +288,6 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
 {
     int flags;
     const wxPoint& pt = event.m_pointDrag;
-    wxListCtrl *list = nullptr;
     m_dragSource = dynamic_cast<MyListCtrl *>( event.GetEventObject() );
 #ifdef __WXMSW__
     m_dragSource->SetCursor( wxCursor( "handdrag" ) );
@@ -576,7 +575,7 @@ void SortGroupByPage::RemoveTable(const wxString tbl)
         while( itemSource > 0 )
         {
             auto field = m_sortSource->GetTextValue( itemSource - 1, 0 );
-            if( field.find( tbl ) != -1 )
+            if( field.Find( tbl ) != wxNOT_FOUND )
                 m_sortSource->DeleteItem( itemSource - 1 );
             itemSource--;
         }
@@ -584,7 +583,7 @@ void SortGroupByPage::RemoveTable(const wxString tbl)
         while( itemDest > 0 )
         {
             auto field = m_sortDest->GetTextValue( itemDest - 1, 0 );
-            if( field.find( tbl ) != -1 )
+            if( field.Find( tbl ) != wxNOT_FOUND )
                 m_sortDest->DeleteItem( itemDest - 1 );
             itemDest--;
         }
@@ -595,7 +594,7 @@ void SortGroupByPage::RemoveTable(const wxString tbl)
         while( itemSource > 0 )
         {
             auto field = m_source->GetItemText( itemSource - 1, 0 );
-            if( field.find( tbl ) != -1 )
+            if( field.Find( tbl ) != wxNOT_FOUND )
                 m_source->DeleteItem( itemSource - 1 );
             itemSource--;
         }
@@ -603,7 +602,7 @@ void SortGroupByPage::RemoveTable(const wxString tbl)
         while( itemDest > 0 )
         {
             auto field = m_dest->GetItemText( itemDest - 1, 0 );
-            if( field.find( tbl ) != -1 )
+            if( field.Find( tbl ) != wxNOT_FOUND )
                 m_dest->DeleteItem( itemDest - 1 );
             itemDest--;
         }
