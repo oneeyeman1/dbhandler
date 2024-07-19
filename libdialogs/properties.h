@@ -30,6 +30,7 @@ private:
     BandGeneralProperties *m_page9;
     PointerPropertiesPanel *m_page10;
     DatabaseOptionGeneral *m_page11;
+    DatabaseptionsColours *m_page12;
     int m_type;
     std::wstring m_dbType, m_command;
     bool m_isApplied;

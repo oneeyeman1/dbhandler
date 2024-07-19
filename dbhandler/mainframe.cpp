@@ -152,6 +152,11 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->Read( "Refresh Table List", &m_conf->m_dbOptions.m_general.m_tableRefresh );
     m_config->Read( "Columns in Table", &m_conf->m_dbOptions.m_general.m_tableColumns );
     m_config->SetPath( path );
+    m_config->SetPath( "Database/Colors" );
+    m_config->Read( "Background", &m_conf->m_dbOptions.m_colors.m_background );
+    m_config->Read( "TableColumns", &m_conf->m_dbOptions.m_colors.m_tabbleCol);
+    m_config->Read( "IndexKeyLiine", &m_conf->m_dbOptions.m_colors.m_indexLine );
+    m_config->SetPath( path );
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );
@@ -255,6 +260,21 @@ MainFrame::~MainFrame()
     config->Write( "ShowText", m_conf->m_tbSettings["StyleBar"].m_showText );
     config->Write( "Orientation", m_conf->m_tbSettings["StyleBar"].m_orientation );
     config->SetPath( path );
+    m_config->SetPath( "Database/General" );
+    m_config->Write( "Shared Profiles", m_conf->m_dbOptions.m_general.m_sharedProfile );
+    m_config->Write( "Display Table List", m_conf->m_dbOptions.m_general.m_tableLst );
+    m_config->Write( "se Repsitory", m_conf->m_dbOptions.m_general.m_useRepo );
+    m_config->Write( "Eead Only", m_conf->m_dbOptions.m_general.m_readOnly );
+    m_config->Write( "Keep Alive", m_conf->m_dbOptions.m_general.m_keepAlive );
+    m_config->Write( "SQL Terminator Character", m_conf->m_dbOptions.m_general.m_sqlTerminator );
+    m_config->Write( "Refresh Table List", m_conf->m_dbOptions.m_general.m_tableRefresh );
+    m_config->Write( "Columns in Table", m_conf->m_dbOptions.m_general.m_tableColumns );
+    m_config->SetPath( path );
+    m_config->SetPath( "Database/Colors" );
+    m_config->Write( "Background", m_conf->m_dbOptions.m_colors.m_background );
+    m_config->Write( "TableColumns", m_conf->m_dbOptions.m_colors.m_tabbleCol);
+    m_config->Write( "IndexKeyLiine", m_conf->m_dbOptions.m_colors.m_indexLine );
+    m_config->SetPath( path );
     if( result )
     {
         for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )

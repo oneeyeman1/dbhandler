@@ -28,6 +28,7 @@ wxBitmapComboBox( parent, id, selection, pos, size, n, choices, style )
     m_colors.push_back( ColorStruct( 0x70DB93, "Aqua" ) );
     m_colors.push_back( ColorStruct( 0x8E236B, "Maroon" ) );
     m_colors.push_back( ColorStruct( 0x8000FF, "Purple" ) );
+    m_colors.push_back( ColorStruct( 0xC0C0C0, "Silver" ) );
     for( std::vector<ColorStruct>::iterator it = m_colors.begin(); it < m_colors.end(); ++it )
     {
         int w = 20, h = 10;

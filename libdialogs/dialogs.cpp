@@ -55,6 +55,7 @@
 #include "fieldwindow.h"
 #include "propertypagebase.h"
 #include "databaseoptionsgeneral.h"
+#include "databaseoptioncolours.h"
 #include "tablegeneral.h"
 #include "tableprimarykey.h"
 #include "odbcconfigure.h"
@@ -244,6 +245,15 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, std::unique_ptr
     int res = 0;
     PropertiesDialog dlg( parent, wxID_ANY, title, handler.get(), cs );
 	dlg.Center();
+    res = dlg.ShowModal();
+    return res;
+}
+
+extern "C" WXEXPORT int CreatePropertiesDialogForObject(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title, wxCriticalSection &cs)
+{
+    int res = 0;
+    PropertiesDialog dlg( parent, wxID_ANY, title, handler.get(), cs );
+    dlg.Center();
     res = dlg.ShowModal();
     return res;
 }

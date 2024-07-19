@@ -51,6 +51,7 @@
 #include "colorcombobox.h"
 #include "propertypagebase.h"
 #include "databaseoptionsgeneral.h"
+#include "databaseoptioncolours.h"
 #include "tablegeneral.h"
 #include "fontpropertypagebase.h"
 #include "tableprimarykey.h"
@@ -150,6 +151,8 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             auto prop = dynamic_cast<DatabaseOptionsHandler *>( handler )->GetObjectProperties();
             m_page11 = new DatabaseOptionGeneral( m_properties, prop.m_general );
             m_properties->AddPage( m_page11, _( "General" ) );
+            m_page12 = new DatabaseptionsColours( m_properties, prop.m_colors );
+            m_properties->AddPage( m_page12, _( "Colors" ) );
         }
         break;
     }
