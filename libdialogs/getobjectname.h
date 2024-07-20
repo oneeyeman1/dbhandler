@@ -24,9 +24,15 @@ class GetObjectName : public wxDialog
 {
 public:
     GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId, const std::vector<QueryInfo> &queries, const std::vector<LibrariesInfo> &path);
+<<<<<<< HEAD
     const wxString &GetFileName()const;
     int GetSource() const;
     int GetPresentation() const;
+=======
+    const wxString &GetFileName();
+    const int GetSource() const;
+    const int GetPresentation() const;
+>>>>>>> a876f781bb (Committing changes to the GTK build)
     const wxString &GetDocumentName() const;
     const wxTextCtrl *GetCommentObject() const;
     std::vector<LibrariesInfo> &GetLibrariesVector() { return m_path; }

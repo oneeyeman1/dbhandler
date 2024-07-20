@@ -783,10 +783,17 @@ void DrawingView::CreateViewToolBar()
         {
             joinsSVG = wxBitmapBundle::FromSVG( (const char *) data10, wxSize( 16, 16 ) );
         }
+<<<<<<< HEAD
 #elif __WXOSX__
         tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
         joinsSVG = wxBitmapBundle::FromSVGResource( "joins", wxSize( 16, 16 ) );
 #else
+=======
+#elif __WXSX__
+        tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
+        joinsSVG = wxBitmapBundle::FromSVGResource( "joins", wxSize( 16, 16 ) );
+#elif
+>>>>>>> a876f781bb (Committing changes to the GTK build)
         tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
         joinsSVG = wxBitmapBundle::FromSVG( joins, wxSize( 16, 16 ) );
 #endif
@@ -2264,7 +2271,11 @@ void DrawingView::SortGroupByHandling(const int type, const wxString &fieldName,
                 fieldReplace = fieldName + " DESC";
             else
                 fieldReplace = fieldName + " ASC";
+<<<<<<< HEAD
             auto dotPos = fieldCut.Find( ',' );
+=======
+            auto dotPos = fieldCut.find( ',' );
+>>>>>>> a876f781bb (Committing changes to the GTK build)
             if( dotPos == wxNOT_FOUND )
             {
                 fieldReplace += ";";
@@ -3274,6 +3285,7 @@ void DrawingView::OnCustmColors(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
 {
+<<<<<<< HEAD
     wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -3301,4 +3313,7 @@ void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
         CREATEPROPERTIESDIALOGFRPRJECT func = (CREATEPROPERTIESDIALOGFRPRJECT) lib.GetSymbol( "CreatePropertiesDialogForObject" );
         res = func( m_frame, propertiesPtr, title, *pcs );
     }
+=======
+
+>>>>>>> a876f781bb (Committing changes to the GTK build)
 }

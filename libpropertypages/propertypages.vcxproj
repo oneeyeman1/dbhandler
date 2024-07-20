@@ -37,8 +37,11 @@
   <ItemGroup>
     <ClInclude Include="bandgeneral.h" />
     <ClInclude Include="databasefielddisplay.h" />
+<<<<<<< HEAD
     <ClInclude Include="databaseoptioncolours.h" />
     <ClInclude Include="databaseoptionsgeneral.h" />
+=======
+>>>>>>> a876f781bb (Committing changes to the GTK build)
     <ClInclude Include="designfieldgeneral.h" />
     <ClInclude Include="designgeneral.h" />
     <ClInclude Include="designlabelgeneral.h" />
@@ -60,8 +63,11 @@
   <ItemGroup>
     <ClCompile Include="bandgeneral.cpp" />
     <ClCompile Include="databasefielddisplay.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="databaseoptioncolurs.cpp" />
     <ClCompile Include="databaseoptiongeneral.cpp" />
+=======
+>>>>>>> a876f781bb (Committing changes to the GTK build)
     <ClCompile Include="designfieldgeneral.cpp" />
     <ClCompile Include="designgeneral.cpp" />
     <ClCompile Include="designlabelgeneral.cpp" />

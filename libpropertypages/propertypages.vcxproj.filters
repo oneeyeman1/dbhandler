@@ -68,12 +68,15 @@
     <ClInclude Include="designfieldgeneral.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="databaseoptionsgeneral.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="databaseoptioncolours.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+=======
+>>>>>>> a876f781bb (Committing changes to the GTK build)
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tablegeneral.cpp">
@@ -127,12 +130,15 @@
     <ClCompile Include="designfieldgeneral.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="databaseoptiongeneral.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="databaseoptioncolurs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+=======
+>>>>>>> a876f781bb (Committing changes to the GTK build)
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="propertypages.rc" />
