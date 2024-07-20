@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="docview_vc9">
+</Property><Property Name="Solution File" Value="C:\Users\Igor\OneDrive\Documents\docview\docview_vc9.sln">
+</Property><Property Name="Date" Value="Tuesday, December 15, 2015">
+</Property><Property Name="Time" Value="23:47:21 PM">
+</Property></Properties><Event ErrorLevel="0" Project="docview_vc9" Source="docview_vc9.vcproj" Description="Converting project file 'C:\Users\Igor\OneDrive\Documents\docview\docview_vc9.vcproj'.">
+</Event><Event ErrorLevel="1" Project="docview_vc9" Source="docview_vc9.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="0" Project="docview_vc9" Source="docview_vc9.vcproj" Description="Done converting to new project file 'C:\Users\Igor\OneDrive\Documents\docview\docview_vc9.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="docview_vc9" Source="docview_vc9.vcproj" Description="Converted">
+</Event></UpgradeLog>

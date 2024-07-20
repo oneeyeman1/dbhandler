@@ -1,0 +1,1106 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E362C3F320DEC4A00089E44E /* newtablehandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E362C3F120DEC4A00089E44E /* newtablehandler.cpp */; };
+		E3D05D3E1CA4AB1D002CB677 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D05D3D1CA4AB1D002CB677 /* Cocoa.framework */; };
+		E3D05D481CA4AB1D002CB677 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E3D05D461CA4AB1D002CB677 /* InfoPlist.strings */; };
+		E3D05D4E1CA4AB1D002CB677 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E3D05D4C1CA4AB1D002CB677 /* Credits.rtf */; };
+		E3D05D561CA4AB1E002CB677 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E3D05D551CA4AB1E002CB677 /* Images.xcassets */; };
+		E3D05D5D1CA4AB1E002CB677 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D05D5C1CA4AB1E002CB677 /* XCTest.framework */; };
+		E3D05D5E1CA4AB1E002CB677 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D05D3D1CA4AB1D002CB677 /* Cocoa.framework */; };
+		E3D05D661CA4AB1E002CB677 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E3D05D641CA4AB1E002CB677 /* InfoPlist.strings */; };
+		E3D05D681CA4AB1E002CB677 /* dbhandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E3D05D671CA4AB1E002CB677 /* dbhandlerTests.m */; };
+		E3D05D7B1CA564F5002CB677 /* doc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D05D711CA564F5002CB677 /* doc.cpp */; };
+		E3D05D7C1CA564F5002CB677 /* docview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D05D731CA564F5002CB677 /* docview.cpp */; };
+		E3D05D7D1CA564F5002CB677 /* mainframe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D05D751CA564F5002CB677 /* mainframe.cpp */; };
+		E3D05D7E1CA564F5002CB677 /* view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D05D771CA564F5002CB677 /* view.cpp */; };
+		E3D05D7F1CA564F5002CB677 /* viewbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D05D791CA564F5002CB677 /* viewbase.cpp */; };
+		E3D1395C1D0D102B00A5A0F7 /* liblibdialogs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3D139481D0D0CD200A5A0F7 /* liblibdialogs.dylib */; };
+		E3E91D291D6EA40F00675CF8 /* liblibdbwindow.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E38708CA1D2B61D7004EF478 /* liblibdbwindow.dylib */; };
+		E3F4769525ABF5170083800D /* liblibtabledataedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3F4768525ABE9A40083800D /* liblibtabledataedit.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E322AB012B3BCB7500ECD88D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E322AAFD2B3BCB6300ECD88D /* libhelpers.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E322AAF62B3BCB6300ECD88D;
+			remoteInfo = libhelpers;
+		};
+		E329057225B0D36500DD7070 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3F4768025ABE9A30083800D /* libtabledataedit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E3F4767825ABE9A30083800D;
+			remoteInfo = libtabledataedit;
+		};
+		E33E6F571E6A9A6B003A0B92 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E33E6F531E6A9A6A003A0B92 /* libtablewindow.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E33E6F4C1E6A9A6A003A0B92;
+			remoteInfo = libtablewindow;
+		};
+		E33E6FA01EBC26B7003A0B92 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E33E6F9C1EBC26B6003A0B92 /* libpostgres.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E33E6F951EBC26B6003A0B92;
+			remoteInfo = libpostgres;
+		};
+		E38708C91D2B61D7004EF478 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E38708C51D2B61D7004EF478 /* libdbwindow.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E38708BE1D2B61D7004EF478;
+			remoteInfo = libdbwindow;
+		};
+		E38708EC1D431E9C004EF478 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E38708E81D431E9B004EF478 /* libshapeframework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E38708E11D431E9B004EF478;
+			remoteInfo = libshapeframework;
+		};
+		E39501C91DF3B99D0046E51B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E39501BF1DF3B99C0046E51B /* libpropertypages.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E39501B81DF3B99C0046E51B;
+			remoteInfo = libpropertypages;
+		};
+		E3B8E3A724E2821800346516 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3B8E39B24E2821600346516 /* libpropertieshandlers.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3B8E39424E2821600346516;
+			remoteInfo = libpropertieshandlers;
+		};
+		E3D05D5F1CA4AB1E002CB677 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3D05D321CA4AB1D002CB677 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E3D05D391CA4AB1D002CB677;
+			remoteInfo = dbhandler;
+		};
+		E3D138EC1D051EE200A5A0F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3D138E81D051EE100A5A0F7 /* dbinterface.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3D138E11D051EE100A5A0F7;
+			remoteInfo = dbinterface;
+		};
+		E3D139051D05248B00A5A0F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3D139011D05248A00A5A0F7 /* libsqlite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3D138FA1D05248A00A5A0F7;
+			remoteInfo = libsqlite;
+		};
+		E3D139281D0C42FF00A5A0F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3D139241D0C42FF00A5A0F7 /* libodbc.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3D1391D1D0C42FF00A5A0F7;
+			remoteInfo = libodbc;
+		};
+		E3D139471D0D0CD200A5A0F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3D139431D0D0CD100A5A0F7 /* libdialogs.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3D1393C1D0D0CD100A5A0F7;
+			remoteInfo = libdialogs;
+		};
+		E3D139711D0D110A00A5A0F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3D1396D1D0D110A00A5A0F7 /* libdbloader.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3D139661D0D110A00A5A0F7;
+			remoteInfo = libdbloader;
+		};
+		E3D859671EEA09030093FB1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3D8595E1EEA09030093FB1C /* libmysql.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3D859571EEA09030093FB1C;
+			remoteInfo = libmysql;
+		};
+		E3E91D6F1DCC2E8A00675CF8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3E91D641DCC2E8900675CF8;
+			remoteInfo = libfieldswindow;
+		};
+		E3F4768425ABE9A40083800D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3F4768025ABE9A30083800D /* libtabledataedit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E3F4767925ABE9A30083800D;
+			remoteInfo = libtabledataedit;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		E322AAFD2B3BCB6300ECD88D /* libhelpers.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libhelpers.xcodeproj; path = libhelpers/libhelpers.xcodeproj; sourceTree = "<group>"; };
+		E33E6F531E6A9A6A003A0B92 /* libtablewindow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libtablewindow.xcodeproj; path = libtablewindow/libtablewindow.xcodeproj; sourceTree = "<group>"; };
+		E33E6F9C1EBC26B6003A0B92 /* libpostgres.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libpostgres.xcodeproj; path = libpostgres/libpostgres.xcodeproj; sourceTree = "<group>"; };
+		E35B7788280BB5B600B64425 /* svgs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svgs.h; sourceTree = "<group>"; };
+		E362C3F120DEC4A00089E44E /* newtablehandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = newtablehandler.cpp; sourceTree = "<group>"; };
+		E362C3F220DEC4A00089E44E /* newtablehandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = newtablehandler.h; sourceTree = "<group>"; };
+		E38708C51D2B61D7004EF478 /* libdbwindow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdbwindow.xcodeproj; path = libdbwindow/libdbwindow.xcodeproj; sourceTree = "<group>"; };
+		E38708E81D431E9B004EF478 /* libshapeframework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libshapeframework.xcodeproj; path = libshapeframework/libshapeframework.xcodeproj; sourceTree = "<group>"; };
+		E39501BF1DF3B99C0046E51B /* libpropertypages.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libpropertypages.xcodeproj; path = libpropertypages/libpropertypages.xcodeproj; sourceTree = "<group>"; };
+		E3B8E39B24E2821600346516 /* libpropertieshandlers.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libpropertieshandlers.xcodeproj; path = libpropertieshandlers/libpropertieshandlers.xcodeproj; sourceTree = "<group>"; };
+		E3D05D3A1CA4AB1D002CB677 /* dbhandler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dbhandler.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3D05D3D1CA4AB1D002CB677 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		E3D05D401CA4AB1D002CB677 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		E3D05D411CA4AB1D002CB677 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		E3D05D421CA4AB1D002CB677 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		E3D05D451CA4AB1D002CB677 /* dbhandler-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "dbhandler-Info.plist"; sourceTree = "<group>"; };
+		E3D05D471CA4AB1D002CB677 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E3D05D4B1CA4AB1D002CB677 /* dbhandler-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "dbhandler-Prefix.pch"; sourceTree = "<group>"; };
+		E3D05D4D1CA4AB1D002CB677 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		E3D05D551CA4AB1E002CB677 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		E3D05D5B1CA4AB1E002CB677 /* dbhandlerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dbhandlerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3D05D5C1CA4AB1E002CB677 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		E3D05D631CA4AB1E002CB677 /* dbhandlerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "dbhandlerTests-Info.plist"; sourceTree = "<group>"; };
+		E3D05D651CA4AB1E002CB677 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E3D05D671CA4AB1E002CB677 /* dbhandlerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = dbhandlerTests.m; sourceTree = "<group>"; };
+		E3D05D711CA564F5002CB677 /* doc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = doc.cpp; sourceTree = "<group>"; };
+		E3D05D721CA564F5002CB677 /* doc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = doc.h; sourceTree = "<group>"; };
+		E3D05D731CA564F5002CB677 /* docview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = docview.cpp; sourceTree = "<group>"; };
+		E3D05D741CA564F5002CB677 /* docview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = docview.h; sourceTree = "<group>"; };
+		E3D05D751CA564F5002CB677 /* mainframe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mainframe.cpp; sourceTree = "<group>"; };
+		E3D05D761CA564F5002CB677 /* mainframe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mainframe.h; sourceTree = "<group>"; };
+		E3D05D771CA564F5002CB677 /* view.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = view.cpp; sourceTree = "<group>"; };
+		E3D05D781CA564F5002CB677 /* view.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = view.h; sourceTree = "<group>"; };
+		E3D05D791CA564F5002CB677 /* viewbase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = viewbase.cpp; sourceTree = "<group>"; };
+		E3D05D7A1CA564F5002CB677 /* viewbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = viewbase.h; sourceTree = "<group>"; };
+		E3D138E81D051EE100A5A0F7 /* dbinterface.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = dbinterface.xcodeproj; path = dbinterface/dbinterface.xcodeproj; sourceTree = "<group>"; };
+		E3D139011D05248A00A5A0F7 /* libsqlite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libsqlite.xcodeproj; path = libsqlite/libsqlite.xcodeproj; sourceTree = "<group>"; };
+		E3D139241D0C42FF00A5A0F7 /* libodbc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libodbc.xcodeproj; path = libodbc/libodbc.xcodeproj; sourceTree = "<group>"; };
+		E3D139431D0D0CD100A5A0F7 /* libdialogs.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdialogs.xcodeproj; path = libdialogs/libdialogs.xcodeproj; sourceTree = "<group>"; };
+		E3D1396D1D0D110A00A5A0F7 /* libdbloader.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libdbloader.xcodeproj; path = libdbloader/libdbloader.xcodeproj; sourceTree = "<group>"; };
+		E3D8595E1EEA09030093FB1C /* libmysql.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libmysql.xcodeproj; path = libmysql/libmysql.xcodeproj; sourceTree = "<group>"; };
+		E3E5BE9025ABDCF20037E70F /* liblibtabledataedit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibtabledataedit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3E6643924A47893008CA090 /* build_app */ = {isa = PBXFileReference; lastKnownFileType = text; path = build_app; sourceTree = "<group>"; };
+		E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libfieldswindow.xcodeproj; path = libfieldswindow/libfieldswindow.xcodeproj; sourceTree = "<group>"; };
+		E3F4768025ABE9A30083800D /* libtabledataedit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libtabledataedit.xcodeproj; path = libtabledataedit/libtabledataedit.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E3D05D371CA4AB1D002CB677 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3F4769525ABF5170083800D /* liblibtabledataedit.dylib in Frameworks */,
+				E3E91D291D6EA40F00675CF8 /* liblibdbwindow.dylib in Frameworks */,
+				E3D1395C1D0D102B00A5A0F7 /* liblibdialogs.dylib in Frameworks */,
+				E3D05D3E1CA4AB1D002CB677 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3D05D581CA4AB1E002CB677 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3D05D5E1CA4AB1E002CB677 /* Cocoa.framework in Frameworks */,
+				E3D05D5D1CA4AB1E002CB677 /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3E5BE8D25ABDCF20037E70F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E322AAFE2B3BCB6300ECD88D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E322AB022B3BCB7500ECD88D /* liblibhelpers.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E33E6F541E6A9A6A003A0B92 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E33E6F581E6A9A6B003A0B92 /* liblibtablewindow.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E33E6F9D1EBC26B6003A0B92 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E33E6FA11EBC26B7003A0B92 /* liblibpostgres.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E38708C61D2B61D7004EF478 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E38708CA1D2B61D7004EF478 /* liblibdbwindow.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E38708E91D431E9B004EF478 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E38708ED1D431E9C004EF478 /* liblibshapeframework.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E39501C01DF3B99C0046E51B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E39501CA1DF3B99D0046E51B /* liblibpropertypages.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3B8E39C24E2821600346516 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3B8E3A824E2821800346516 /* liblibpropertieshandlers.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3D05D311CA4AB1D002CB677 = {
+			isa = PBXGroup;
+			children = (
+				E322AAFD2B3BCB6300ECD88D /* libhelpers.xcodeproj */,
+				E3F4768025ABE9A30083800D /* libtabledataedit.xcodeproj */,
+				E3B8E39B24E2821600346516 /* libpropertieshandlers.xcodeproj */,
+				E3E6643924A47893008CA090 /* build_app */,
+				E3D8595E1EEA09030093FB1C /* libmysql.xcodeproj */,
+				E33E6F9C1EBC26B6003A0B92 /* libpostgres.xcodeproj */,
+				E33E6F531E6A9A6A003A0B92 /* libtablewindow.xcodeproj */,
+				E39501BF1DF3B99C0046E51B /* libpropertypages.xcodeproj */,
+				E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */,
+				E38708E81D431E9B004EF478 /* libshapeframework.xcodeproj */,
+				E38708C51D2B61D7004EF478 /* libdbwindow.xcodeproj */,
+				E3D1396D1D0D110A00A5A0F7 /* libdbloader.xcodeproj */,
+				E3D139431D0D0CD100A5A0F7 /* libdialogs.xcodeproj */,
+				E3D139241D0C42FF00A5A0F7 /* libodbc.xcodeproj */,
+				E3D139011D05248A00A5A0F7 /* libsqlite.xcodeproj */,
+				E3D138E81D051EE100A5A0F7 /* dbinterface.xcodeproj */,
+				E3D05D431CA4AB1D002CB677 /* dbhandler */,
+				E3D05D611CA4AB1E002CB677 /* dbhandlerTests */,
+				E3D05D3C1CA4AB1D002CB677 /* Frameworks */,
+				E3D05D3B1CA4AB1D002CB677 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E3D05D3B1CA4AB1D002CB677 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3D05D3A1CA4AB1D002CB677 /* dbhandler.app */,
+				E3D05D5B1CA4AB1E002CB677 /* dbhandlerTests.xctest */,
+				E3E5BE9025ABDCF20037E70F /* liblibtabledataedit.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3D05D3C1CA4AB1D002CB677 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E3D05D3D1CA4AB1D002CB677 /* Cocoa.framework */,
+				E3D05D5C1CA4AB1E002CB677 /* XCTest.framework */,
+				E3D05D3F1CA4AB1D002CB677 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E3D05D3F1CA4AB1D002CB677 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E3D05D401CA4AB1D002CB677 /* AppKit.framework */,
+				E3D05D411CA4AB1D002CB677 /* CoreData.framework */,
+				E3D05D421CA4AB1D002CB677 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		E3D05D431CA4AB1D002CB677 /* dbhandler */ = {
+			isa = PBXGroup;
+			children = (
+				E35B7788280BB5B600B64425 /* svgs.h */,
+				E362C3F120DEC4A00089E44E /* newtablehandler.cpp */,
+				E362C3F220DEC4A00089E44E /* newtablehandler.h */,
+				E3D05D711CA564F5002CB677 /* doc.cpp */,
+				E3D05D721CA564F5002CB677 /* doc.h */,
+				E3D05D731CA564F5002CB677 /* docview.cpp */,
+				E3D05D741CA564F5002CB677 /* docview.h */,
+				E3D05D751CA564F5002CB677 /* mainframe.cpp */,
+				E3D05D761CA564F5002CB677 /* mainframe.h */,
+				E3D05D771CA564F5002CB677 /* view.cpp */,
+				E3D05D781CA564F5002CB677 /* view.h */,
+				E3D05D791CA564F5002CB677 /* viewbase.cpp */,
+				E3D05D7A1CA564F5002CB677 /* viewbase.h */,
+				E3D05D551CA4AB1E002CB677 /* Images.xcassets */,
+				E3D05D441CA4AB1D002CB677 /* Supporting Files */,
+			);
+			path = dbhandler;
+			sourceTree = "<group>";
+		};
+		E3D05D441CA4AB1D002CB677 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				E3D05D451CA4AB1D002CB677 /* dbhandler-Info.plist */,
+				E3D05D461CA4AB1D002CB677 /* InfoPlist.strings */,
+				E3D05D4B1CA4AB1D002CB677 /* dbhandler-Prefix.pch */,
+				E3D05D4C1CA4AB1D002CB677 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E3D05D611CA4AB1E002CB677 /* dbhandlerTests */ = {
+			isa = PBXGroup;
+			children = (
+				E3D05D671CA4AB1E002CB677 /* dbhandlerTests.m */,
+				E3D05D621CA4AB1E002CB677 /* Supporting Files */,
+			);
+			path = dbhandlerTests;
+			sourceTree = "<group>";
+		};
+		E3D05D621CA4AB1E002CB677 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				E3D05D631CA4AB1E002CB677 /* dbhandlerTests-Info.plist */,
+				E3D05D641CA4AB1E002CB677 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E3D138E91D051EE100A5A0F7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3D138ED1D051EE200A5A0F7 /* libdbinterface.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3D139021D05248A00A5A0F7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3D139061D05248B00A5A0F7 /* liblibsqlite.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3D139251D0C42FF00A5A0F7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3D139291D0C42FF00A5A0F7 /* liblibodbc.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3D139441D0D0CD100A5A0F7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3D139481D0D0CD200A5A0F7 /* liblibdialogs.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3D1396E1D0D110A00A5A0F7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3D139721D0D110A00A5A0F7 /* liblibdbloader.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3D8595F1EEA09030093FB1C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3D859681EEA09030093FB1C /* liblibmysql.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3E91D6C1DCC2E8900675CF8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3E91D701DCC2E8A00675CF8 /* liblibfieldswindow.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3F4768125ABE9A30083800D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3F4768525ABE9A40083800D /* liblibtabledataedit.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		E3E5BE8E25ABDCF20037E70F /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		E3D05D391CA4AB1D002CB677 /* dbhandler */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E3D05D6B1CA4AB1E002CB677 /* Build configuration list for PBXNativeTarget "dbhandler" */;
+			buildPhases = (
+				E3D05D361CA4AB1D002CB677 /* Sources */,
+				E3D05D371CA4AB1D002CB677 /* Frameworks */,
+				E3D05D381CA4AB1D002CB677 /* Resources */,
+				E3E6643824A46D2F008CA090 /* InstallLibraries */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E329057325B0D36500DD7070 /* PBXTargetDependency */,
+			);
+			name = dbhandler;
+			productName = dbhandler;
+			productReference = E3D05D3A1CA4AB1D002CB677 /* dbhandler.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E3D05D5A1CA4AB1E002CB677 /* dbhandlerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E3D05D6E1CA4AB1E002CB677 /* Build configuration list for PBXNativeTarget "dbhandlerTests" */;
+			buildPhases = (
+				E3D05D571CA4AB1E002CB677 /* Sources */,
+				E3D05D581CA4AB1E002CB677 /* Frameworks */,
+				E3D05D591CA4AB1E002CB677 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E3D05D601CA4AB1E002CB677 /* PBXTargetDependency */,
+			);
+			name = dbhandlerTests;
+			productName = dbhandlerTests;
+			productReference = E3D05D5B1CA4AB1E002CB677 /* dbhandlerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E3E5BE8F25ABDCF20037E70F /* libtabledataedit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E3E5BEA025ABDCF20037E70F /* Build configuration list for PBXNativeTarget "libtabledataedit" */;
+			buildPhases = (
+				E3E5BE8C25ABDCF20037E70F /* Sources */,
+				E3E5BE8D25ABDCF20037E70F /* Frameworks */,
+				E3E5BE8E25ABDCF20037E70F /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libtabledataedit;
+			productName = libtabledataedit;
+			productReference = E3E5BE9025ABDCF20037E70F /* liblibtabledataedit.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E3D05D321CA4AB1D002CB677 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Igor Korot";
+				TargetAttributes = {
+					E3D05D5A1CA4AB1E002CB677 = {
+						TestTargetID = E3D05D391CA4AB1D002CB677;
+					};
+				};
+			};
+			buildConfigurationList = E3D05D351CA4AB1D002CB677 /* Build configuration list for PBXProject "dbhandler" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E3D05D311CA4AB1D002CB677;
+			productRefGroup = E3D05D3B1CA4AB1D002CB677 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = E3D138E91D051EE100A5A0F7 /* Products */;
+					ProjectRef = E3D138E81D051EE100A5A0F7 /* dbinterface.xcodeproj */;
+				},
+				{
+					ProductGroup = E3D1396E1D0D110A00A5A0F7 /* Products */;
+					ProjectRef = E3D1396D1D0D110A00A5A0F7 /* libdbloader.xcodeproj */;
+				},
+				{
+					ProductGroup = E38708C61D2B61D7004EF478 /* Products */;
+					ProjectRef = E38708C51D2B61D7004EF478 /* libdbwindow.xcodeproj */;
+				},
+				{
+					ProductGroup = E3D139441D0D0CD100A5A0F7 /* Products */;
+					ProjectRef = E3D139431D0D0CD100A5A0F7 /* libdialogs.xcodeproj */;
+				},
+				{
+					ProductGroup = E3E91D6C1DCC2E8900675CF8 /* Products */;
+					ProjectRef = E3E91D6B1DCC2E8900675CF8 /* libfieldswindow.xcodeproj */;
+				},
+				{
+					ProductGroup = E322AAFE2B3BCB6300ECD88D /* Products */;
+					ProjectRef = E322AAFD2B3BCB6300ECD88D /* libhelpers.xcodeproj */;
+				},
+				{
+					ProductGroup = E3D8595F1EEA09030093FB1C /* Products */;
+					ProjectRef = E3D8595E1EEA09030093FB1C /* libmysql.xcodeproj */;
+				},
+				{
+					ProductGroup = E3D139251D0C42FF00A5A0F7 /* Products */;
+					ProjectRef = E3D139241D0C42FF00A5A0F7 /* libodbc.xcodeproj */;
+				},
+				{
+					ProductGroup = E33E6F9D1EBC26B6003A0B92 /* Products */;
+					ProjectRef = E33E6F9C1EBC26B6003A0B92 /* libpostgres.xcodeproj */;
+				},
+				{
+					ProductGroup = E3B8E39C24E2821600346516 /* Products */;
+					ProjectRef = E3B8E39B24E2821600346516 /* libpropertieshandlers.xcodeproj */;
+				},
+				{
+					ProductGroup = E39501C01DF3B99C0046E51B /* Products */;
+					ProjectRef = E39501BF1DF3B99C0046E51B /* libpropertypages.xcodeproj */;
+				},
+				{
+					ProductGroup = E38708E91D431E9B004EF478 /* Products */;
+					ProjectRef = E38708E81D431E9B004EF478 /* libshapeframework.xcodeproj */;
+				},
+				{
+					ProductGroup = E3D139021D05248A00A5A0F7 /* Products */;
+					ProjectRef = E3D139011D05248A00A5A0F7 /* libsqlite.xcodeproj */;
+				},
+				{
+					ProductGroup = E3F4768125ABE9A30083800D /* Products */;
+					ProjectRef = E3F4768025ABE9A30083800D /* libtabledataedit.xcodeproj */;
+				},
+				{
+					ProductGroup = E33E6F541E6A9A6A003A0B92 /* Products */;
+					ProjectRef = E33E6F531E6A9A6A003A0B92 /* libtablewindow.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				E3D05D391CA4AB1D002CB677 /* dbhandler */,
+				E3D05D5A1CA4AB1E002CB677 /* dbhandlerTests */,
+				E3E5BE8F25ABDCF20037E70F /* libtabledataedit */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		E322AB022B3BCB7500ECD88D /* liblibhelpers.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = liblibhelpers.a;
+			remoteRef = E322AB012B3BCB7500ECD88D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E33E6F581E6A9A6B003A0B92 /* liblibtablewindow.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibtablewindow.dylib;
+			remoteRef = E33E6F571E6A9A6B003A0B92 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E33E6FA11EBC26B7003A0B92 /* liblibpostgres.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibpostgres.dylib;
+			remoteRef = E33E6FA01EBC26B7003A0B92 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E38708CA1D2B61D7004EF478 /* liblibdbwindow.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibdbwindow.dylib;
+			remoteRef = E38708C91D2B61D7004EF478 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E38708ED1D431E9C004EF478 /* liblibshapeframework.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibshapeframework.dylib;
+			remoteRef = E38708EC1D431E9C004EF478 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E39501CA1DF3B99D0046E51B /* liblibpropertypages.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibpropertypages.dylib;
+			remoteRef = E39501C91DF3B99D0046E51B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E3B8E3A824E2821800346516 /* liblibpropertieshandlers.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibpropertieshandlers.dylib;
+			remoteRef = E3B8E3A724E2821800346516 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E3D138ED1D051EE200A5A0F7 /* libdbinterface.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdbinterface.a;
+			remoteRef = E3D138EC1D051EE200A5A0F7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E3D139061D05248B00A5A0F7 /* liblibsqlite.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibsqlite.dylib;
+			remoteRef = E3D139051D05248B00A5A0F7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E3D139291D0C42FF00A5A0F7 /* liblibodbc.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibodbc.dylib;
+			remoteRef = E3D139281D0C42FF00A5A0F7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E3D139481D0D0CD200A5A0F7 /* liblibdialogs.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibdialogs.dylib;
+			remoteRef = E3D139471D0D0CD200A5A0F7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E3D139721D0D110A00A5A0F7 /* liblibdbloader.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibdbloader.dylib;
+			remoteRef = E3D139711D0D110A00A5A0F7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E3D859681EEA09030093FB1C /* liblibmysql.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibmysql.dylib;
+			remoteRef = E3D859671EEA09030093FB1C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E3E91D701DCC2E8A00675CF8 /* liblibfieldswindow.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibfieldswindow.dylib;
+			remoteRef = E3E91D6F1DCC2E8A00675CF8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E3F4768525ABE9A40083800D /* liblibtabledataedit.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = liblibtabledataedit.dylib;
+			remoteRef = E3F4768425ABE9A40083800D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E3D05D381CA4AB1D002CB677 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3D05D481CA4AB1D002CB677 /* InfoPlist.strings in Resources */,
+				E3D05D561CA4AB1E002CB677 /* Images.xcassets in Resources */,
+				E3D05D4E1CA4AB1D002CB677 /* Credits.rtf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3D05D591CA4AB1E002CB677 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3D05D661CA4AB1E002CB677 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E3E6643824A46D2F008CA090 /* InstallLibraries */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = InstallLibraries;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks\"\n\nmkdir -p \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\n# Copy resources\necho “Copying resources”\ncp -f ~/dbhandler/dbhandler/dbhandler/res/query.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources/query.svg\"\n\ncp -f ~/dbhandler/dbhandler/dbhandler/res/odbc.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/dbhandler/res/profile_16x16.png \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/dbhandler/res/profile_32x32.png \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/dbhandler/res/profile_64x64.png \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/dbhandler/res/table.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/dbhandler/res/database_16x16.png \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/dbhandler/res/database_32x32.png \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/dbhandler/res/database_64x64.png \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libpropertypages/res/handdrag.png \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources/handdrag.png\"\n\ncp -f ~/dbhandler/dbhandler/libdbwindow/res/gui/bold.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libdbwindow/res/gui/italic.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libdbwindow/res/gui/underline.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libdbwindow/res/gui/leftalign.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libdbwindow/res/gui/centeralign.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libdbwindow/res/gui/rightalign.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libdbwindow/res/gui/table.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\n\ncp -f ~/dbhandler/dbhandler/dbhandler/res/library.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libdbwindow/res/gui/save.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libpropertypages/res/handdrag.png \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libdbwindow/res/gui/addview.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libdbwindow/res/gui/commenttext.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libdbwindow/res/gui/fontname.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libdbwindow/res/gui/fontsize.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libdbwindow/res/gui/joins.svg  \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\ncp -f ~/dbhandler/dbhandler/libdialogs/res/pointer.svg \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Resources\"\n\n#Copy and relink wxWidgets base library\necho “Copy wxWidgets base library”\ncp -f ~/wxWidgets/buildC11/lib/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_baseu-3.2.dylib\"\n\ninstall_name_tool -id '@rpath/Frameworks/libwx_baseu-3.2.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_baseu-3.2.dylib\"\n\n# Copy and relink network library\necho “Copy and relink wxWidgets network library”\ncp -f ~/wxWidgets/buildC11/lib/libwx_baseu_net-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_baseu_net-3.2.dylib\"\n\ninstall_name_tool -id '@rpath/Frameworks/libwx_baseu_net-3.2.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_baseu_net-3.2.dylib\"\n\ninstall_name_tool -change '/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib' '@executable_path/../Frameworks/libwx_baseu-3.2.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_baseu_net-3.2.dylib\"\n\n# Copy and relink XML library\necho “Copy and relink wxWidgets XML library”\ncp -f ~/wxWidgets/buildC11/lib/libwx_baseu_xml-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_baseu_xml-3.2.dylib\"\n\ninstall_name_tool -id '@rpath/Frameworks/libwx_baseu_xml-3.2.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_baseu_xml-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_baseu_xml-3.2.dylib\"\n\n# Copy the core library\necho \"Copy core library\"\ncp -f ~/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_core-3.2.dylib\"\n\ninstall_name_tool -id '@rpath/Frameworks/libwx_osx_cocoau_core-3.2.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_core-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_core-3.2.dylib\"\n\n# Copy the adv library\necho \"Copy adv library\"\ncp -f ~/wxWidgets/buildC11/lib/libwx_osx_cocoau_adv-3.2.0.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_adv-3.2.dylib\"\n\ninstall_name_tool -id '@rpath/Frameworks/libwx_osx_cocoau_adv-3.2.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_adv-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_adv-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_adv-3.2.dylib\"\n\n# Copy the qa library\necho \"Copy QA library\"\ncp -f ~/wxWidgets/buildC11/lib/libwx_osx_cocoau_qa-3.2.0.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_qa-3.2.dylib\"\n\ninstall_name_tool -id '@rpath/Frameworks/libwx_osx_cocoau_qa-3.2.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_qa-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_qa-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_xml-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_xml-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_qa-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_qa-3.2.dylib\"\n\n# Copy the html library\necho \"Copy HTML library\"\ncp -f ~/wxWidgets/buildC11/lib/libwx_osx_cocoau_html-3.2.0.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_html-3.2.dylib\"\n\ninstall_name_tool -id '@rpath/Frameworks/libwx_osx_cocoau_html-3.2.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_html-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_html-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_html-3.2.dylib\"\n\n# Copy the xrc library\necho \"Copy XRC library\"\ncp -f ~/wxWidgets/buildC11/lib/libwx_osx_cocoau_xrc-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_xrc-3.2.dylib\"\n\ninstall_name_tool -id '@rpath/Frameworks/libwx_osx_cocoau_xrc-3.2.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_xrc-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_xrc-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_xrc-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_html-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_html-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_xrc-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_xml-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_xml-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_xrc-3.2.dylib\"\n\n# Copy STC library\necho \"Copy STC library\"\ncp -f ~/wxWidgets/buildC11/lib/libwx_osx_cocoau_stc-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_stc-3.2.dylib\"\n\ninstall_name_tool -id '@rpath/Frameworks/libwx_osx_cocoau_stc-3.2.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_stc-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_stc-3.2.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libwx_osx_cocoau_stc-3.2.dylib\"\n\n\n# Copy SQLite library\ncp ~/dbhandler/dbhandler/Build/Products/Debug/liblibsqlite.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibsqlite.dylib\"\n\ninstall_name_tool -id '@rpath/Framework/liblibsqlite.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibsqlite.dylib\"\n\n# Copy ODBC library\ncp ~/dbhandler/dbhandler/Build/Products/Debug/liblibodbc.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibodbc.dylib\"\n\ninstall_name_tool -id '@rpath/Framework/liblibodbc.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibodbc.dylib\"\n\n# Copy and relink PostgreSQL library\ncp ~/dbhandler/dbhandler/Build/Products/Debug/liblibpostgres.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpostgres.dylib\"\n\ninstall_name_tool -id '@rpath/Frameworks/liblibpostgres.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpostgres.dylib\"\n\n# Copy and relink mySQL library\ncp -f ~/dbhandler/dbhandler/mysql-server/BuildOSX/libmysql/libmysqlclient.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libmysqlclient.dylib\"\n\ninstall_name_tool -id \"@rpath/Frameworks/libmysqlclient.dylib\" \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/libmysqlclient.dylib\"\n\ncp ~/dbhandler/dbhandler/Build/Products/Debug/liblibmysql.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibmysql.dylib\"\n\ninstall_name_tool -id '@rpath/Frameworks/liblibmysql.dylib' \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibmysql.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/dbhandler/dbhandler/mysql-server/buildOSX/libmysql/libmysqlclient.21.dylib\" @executable_path/../Frameworks/libmysqlclient.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibmysql.dylib\"\n\n# Copy ShapeFramework library\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibshapeframework.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibshapeframework.dylib\"\n\ninstall_name_tool -id \"@rpath/Framework/liblibshapeframework.dylib\" \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibshapeframework.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibshapeframework.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_net-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_net-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibshapeframework.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_xml-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_xml-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibshapeframework.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibshapeframework.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_adv-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_adv-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibshapeframework.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_qa-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_qa-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibshapeframework.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_html-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_html-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibshapeframework.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_xrc-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_xrc-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibshapeframework.dylib\"\n\n# Copy and relink fieldswindow library\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibfieldswindow.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibfieldswindow.dylib\"\n\ninstall_name_tool -id \"@rpath/Framework/liblibfieldswindow.dylib\" \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibfieldswindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibfieldswindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_net-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_net-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibfieldswindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_xml-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_xml-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibfieldswindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibfieldswindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_adv-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_adv-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibfieldswindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_qa-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_qa-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibfieldswindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_html-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_html-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibfieldswindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_xrc-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_xrc-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibfieldswindow.dylib\"\n\ninstall_name_tool -change /usr/local/lib/liblibshapeframework.dylib @executable_path/../Frameworks/liblibshapeframework.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibfieldswindow.dylib\"\n\n# Copy and relink dbloader library\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibdbloader.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -id \"@rpath/Framework/liblibdbloader.dylib\" \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_net-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_net-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_xml-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_xml-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_adv-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_adv-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_qa-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_qa-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_html-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_html-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_xrc-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_xrc-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibmysql.dylib\" @executable_path/../Frameworks/liblibmysql.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibpostgres.dylib\" @executable_path/../Frameworks/liblibpostgres.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibodbc.dylib\" @executable_path/../Frameworks/liblibodbc.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibsqlite.dylib\" @executable_path/../Frameworks/liblibsqlite.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbloader.dylib\"\n\n# Copy and relink property pages library\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibpropertypages.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertypages.dylib\"\n\ninstall_name_tool -id \"@rpath/Framework/liblibpropertypages.dylib\" \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertypages.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertypages.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_net-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_net-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertypages.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_xml-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_xml-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertypages.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertypages.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_adv-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_adv-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertypages.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_qa-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_qa-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertypages.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_html-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_html-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertypages.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_xrc-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_xrc-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertypages.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_xrc-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_xrc-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertypages.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibfieldswindow.dylib\" @executable_path/../Frameworks/liblibfieldswindow.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertypages.dylib\"\n\n# Copy and relink dialogs library\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibdialogs.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdialogs.dylib\"\n\ninstall_name_tool -id \"@rpath/Framework/liblibdialogs.dylib\" \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdialogs.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdialogs.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdialogs.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_adv-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_adv-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdialogs.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibpropertypages.dylib\" @executable_path/../Frameworks/liblibpropertypages.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdialogs.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibfieldswindow.dylib\" @executable_path/../Frameworks/liblibfieldswindow.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdialogs.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibdbloader.dylib\" @executable_path/../Frameworks/liblibdbloader.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdialogs.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibpropertieshandlers.dylib\" @executable_path/../Frameworks/liblibpropertieshandlers.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdialogs.dylib\"\n\n# Copy and relink properties handlers librry\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibpropertieshandlers.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertieshandlers.dylib\"\n\ninstall_name_tool -id \"@rpath/Framework/liblibpropertieshandlers\" \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertieshandlers.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertieshandlers.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_net-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_net-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertieshandlers.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_xml-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_xml-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertieshandlers.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertieshandlers.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_adv-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_adv-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertieshandlers.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_qa-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_qa-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertieshandlers.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_html-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_html-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertieshandlers.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_xrc-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_xrc-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertieshandlers.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibpropertypages.dylib\" @executable_path/../Frameworks/liblibpropertypages.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibpropertieshandlers.dylib\"\n\n# Copy and relink table data edit\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibtabledataedit.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibtabledataedit.dylib\"\n\ninstall_name_tool -id \"@rpath/Framework/liblibtabledataedit.dylib\" \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibtabledataedit.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibtabledataedit.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_net-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_net-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibtabledataedit.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_xml-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_xml-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibtabledataedit.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibtabledataedit.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_adv-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_adv-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibtabledataedit.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_qa-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_qa-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibtabledataedit.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_html-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_html-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibtabledataedit.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_xrc-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_xrc-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibtabledataedit.dylib\"\n\n# Copy and relink dbwindow library\ncp -f ~/dbhandler/dbhandler/Build/Products/Debug/liblibdbwindow.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -id \"@rpath/Framework/liblibdbwindow.dylib\" \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_net-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_net-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_xml-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_xml-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_adv-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_adv-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_qa-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_qa-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_html-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_html-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_xrc-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_xrc-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_stc-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_stc-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibpropertieshandlers.dylib\" @executable_path/../Frameworks/liblibpropertieshandlers.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibpropertypages.dylib\" @executable_path/../Frameworks/liblibpropertypages.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibfieldswindow.dylib\" @executable_path/../Frameworks/liblibfieldswindow.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibshapeframework.dylib\" @executable_path/../Frameworks/liblibshapeframework.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/Frameworks/liblibdbwindow.dylib\"\n\n# Copy and relink table window\n\n# Relink the main binary\necho \"Relinking the application\"\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/dbhandler\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_net-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_net-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/dbhandler\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_baseu_xml-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_baseu_xml-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/dbhandler\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_core-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_core-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/dbhandler\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_adv-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_adv-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/dbhandler\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_qa-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_qa-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/dbhandler\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_html-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_html-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/dbhandler\"\n\ninstall_name_tool -change \"/Users/igorkorot/wxWidgets/buildC11/lib/libwx_osx_cocoau_xrc-3.2.0.0.0.dylib\" @executable_path/../Frameworks/libwx_osx_cocoau_xrc-3.2.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/dbhandler\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibtabledataedit.dylib\" @executable_path/../Frameworks/liblibtabledataedit.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/dbhandler\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibdbwindow.dylib\" @executable_path/../Frameworks/liblibdbwindow.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/dbhandler\"\n\ninstall_name_tool -change \"/usr/local/lib/liblibdialogs.dylib\" @executable_path/../Frameworks/liblibdialogs.dylib \"$TARGET_BUILD_DIR/$TARGET_NAME.app/Contents/MacOS/dbhandler\"\n\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E3D05D361CA4AB1D002CB677 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3D05D7F1CA564F5002CB677 /* viewbase.cpp in Sources */,
+				E3D05D7D1CA564F5002CB677 /* mainframe.cpp in Sources */,
+				E3D05D7B1CA564F5002CB677 /* doc.cpp in Sources */,
+				E3D05D7E1CA564F5002CB677 /* view.cpp in Sources */,
+				E362C3F320DEC4A00089E44E /* newtablehandler.cpp in Sources */,
+				E3D05D7C1CA564F5002CB677 /* docview.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3D05D571CA4AB1E002CB677 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3D05D681CA4AB1E002CB677 /* dbhandlerTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3E5BE8C25ABDCF20037E70F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E329057325B0D36500DD7070 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libtabledataedit;
+			targetProxy = E329057225B0D36500DD7070 /* PBXContainerItemProxy */;
+		};
+		E3D05D601CA4AB1E002CB677 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E3D05D391CA4AB1D002CB677 /* dbhandler */;
+			targetProxy = E3D05D5F1CA4AB1E002CB677 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		E3D05D461CA4AB1D002CB677 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E3D05D471CA4AB1D002CB677 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		E3D05D4C1CA4AB1D002CB677 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E3D05D4D1CA4AB1D002CB677 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		E3D05D641CA4AB1E002CB677 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E3D05D651CA4AB1E002CB677 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		E3D05D691CA4AB1E002CB677 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				"DEBUG_INFORMATION_FORMAT[sdk=*]" = "";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		E3D05D6A1CA4AB1E002CB677 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		E3D05D6C1CA4AB1E002CB677 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "dbhandler/dbhandler-Prefix.pch";
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					"DEBUG=1",
+					"$(inherited)",
+					"_FILE_OFFSET_BITS=64",
+					WXUSINGDLL,
+					__WXMAC__,
+					__WXOSX__,
+					__WXOSX_COCOA__,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					./dbinterface,
+					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.2",
+					/Users/igorkorot/wxWidgets/include,
+					./libdbwindow/res/gui/,
+				);
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					./dbinterface,
+					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.2",
+					/Users/igorkorot/wxWidgets/include,
+					./libdbwindow/res/gui/,
+				);
+				INFOPLIST_FILE = "dbhandler/dbhandler-Info.plist";
+				LIBRARY_SEARCH_PATHS = /Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++11",
+					"-stdlib=libc++",
+				);
+				OTHER_LDFLAGS = (
+					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
+					"-framework",
+					IOKit,
+					"-framework",
+					Carbon,
+					"-framework",
+					Cocoa,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					System,
+					"-framework",
+					OpenGL,
+					"-lwx_osx_cocoau_xrc-3.2",
+					"-lwx_osx_cocoau_html-3.2",
+					"-lwx_osx_cocoau_qa-3.2",
+					"-lwx_osx_cocoau_adv-3.2",
+					"-lwx_osx_cocoau_core-3.2",
+					"-lwx_baseu_xml-3.2",
+					"-lwx_baseu_net-3.2",
+					"-lwx_baseu-3.2",
+					"-L/Users/igorkorot/dbhandler/dbhandler/Build/Products/Debug",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		E3D05D6D1CA4AB1E002CB677 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "dbhandler/dbhandler-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/Users/igorkorot/wxWidgets/buildMac/lib/wx/include/osx_cocoa-unicode-3.2",
+					/Users/igorkorot/wxWidgets/include,
+				);
+				INFOPLIST_FILE = "dbhandler/dbhandler-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		E3D05D6F1CA4AB1E002CB677 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/dbhandler.app/Contents/MacOS/dbhandler";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "dbhandler/dbhandler-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "dbhandlerTests/dbhandlerTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		E3D05D701CA4AB1E002CB677 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/dbhandler.app/Contents/MacOS/dbhandler";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "dbhandler/dbhandler-Prefix.pch";
+				INFOPLIST_FILE = "dbhandlerTests/dbhandlerTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+		E3E5BE9125ABDCF20037E70F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E3E5BE9225ABDCF20037E70F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E3D05D351CA4AB1D002CB677 /* Build configuration list for PBXProject "dbhandler" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3D05D691CA4AB1E002CB677 /* Debug */,
+				E3D05D6A1CA4AB1E002CB677 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E3D05D6B1CA4AB1E002CB677 /* Build configuration list for PBXNativeTarget "dbhandler" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3D05D6C1CA4AB1E002CB677 /* Debug */,
+				E3D05D6D1CA4AB1E002CB677 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E3D05D6E1CA4AB1E002CB677 /* Build configuration list for PBXNativeTarget "dbhandlerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3D05D6F1CA4AB1E002CB677 /* Debug */,
+				E3D05D701CA4AB1E002CB677 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E3E5BEA025ABDCF20037E70F /* Build configuration list for PBXNativeTarget "libtabledataedit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3E5BE9125ABDCF20037E70F /* Debug */,
+				E3E5BE9225ABDCF20037E70F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E3D05D321CA4AB1D002CB677 /* Project object */;
+}

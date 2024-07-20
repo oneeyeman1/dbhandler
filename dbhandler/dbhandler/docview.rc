@@ -1,0 +1,16 @@
+#include "./sample.rc"
+
+doc                 ICON    "doc.ico"
+chrt                ICON    "chart.ico"
+notepad             ICON    "notepad.ico"
+
+query               RCDATA  "res/query.svg"
+odbc                RCDATA  "res/odbc.svg"
+profile_16x16       RCDATA  "res/profile_16x16.png"
+profile_32x32       RCDATA  "res/profile_32x32.png"
+profile_64x64       RCDATA  "res/profile_64x64.png"
+table               RCDATA  "res/table.svg"
+database_16x16      RCDATA  "res/database_16x16.png"
+database_32x32      RCDATA  "res/database_32x32.png"
+database_64x64      RCDATA  "res/database_64x64.png"
+library             RCDATA  "res/library.svg"

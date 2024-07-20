@@ -1,0 +1,316 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E3E91D761DCC310600675CF8 /* fieldwindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D731DCC310600675CF8 /* fieldwindow.cpp */; };
+		E3E91D771DCC310600675CF8 /* fieldwindow.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D741DCC310600675CF8 /* fieldwindow.h */; };
+		E3E91D7B1DCC3AFE00675CF8 /* fieldswindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D7A1DCC3AFE00675CF8 /* fieldswindow.cpp */; };
+		E3E91D801DCECEF300675CF8 /* field.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E91D7E1DCECEF300675CF8 /* field.cpp */; };
+		E3E91D811DCECEF300675CF8 /* field.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E91D7F1DCECEF300675CF8 /* field.h */; };
+		E3F2B2EE219E856200FBFF69 /* liblibshapeframework.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E3F2B2ED219E856200FBFF69 /* liblibshapeframework.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		E3E91D641DCC2E8900675CF8 /* liblibfieldswindow.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibfieldswindow.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3E91D731DCC310600675CF8 /* fieldwindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fieldwindow.cpp; sourceTree = "<group>"; };
+		E3E91D741DCC310600675CF8 /* fieldwindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fieldwindow.h; sourceTree = "<group>"; };
+		E3E91D7A1DCC3AFE00675CF8 /* fieldswindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fieldswindow.cpp; sourceTree = "<group>"; };
+		E3E91D7C1DCDA0DA00675CF8 /* liblibshapeframework.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblibshapeframework.dylib; path = ../libshapeframework/build/Debug/liblibshapeframework.dylib; sourceTree = "<group>"; };
+		E3E91D7E1DCECEF300675CF8 /* field.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = field.cpp; sourceTree = "<group>"; };
+		E3E91D7F1DCECEF300675CF8 /* field.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = field.h; sourceTree = "<group>"; };
+		E3F2B2ED219E856200FBFF69 /* liblibshapeframework.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = liblibshapeframework.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E3E91D611DCC2E8900675CF8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3F2B2EE219E856200FBFF69 /* liblibshapeframework.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E3E91D5B1DCC2E8900675CF8 = {
+			isa = PBXGroup;
+			children = (
+				E3E91D7C1DCDA0DA00675CF8 /* liblibshapeframework.dylib */,
+				E3E91D711DCC30AB00675CF8 /* libfieldswindow */,
+				E3E91D651DCC2E8900675CF8 /* Products */,
+				E3F2B2EC219E856200FBFF69 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		E3E91D651DCC2E8900675CF8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3E91D641DCC2E8900675CF8 /* liblibfieldswindow.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3E91D711DCC30AB00675CF8 /* libfieldswindow */ = {
+			isa = PBXGroup;
+			children = (
+				E3E91D7E1DCECEF300675CF8 /* field.cpp */,
+				E3E91D7F1DCECEF300675CF8 /* field.h */,
+				E3E91D7A1DCC3AFE00675CF8 /* fieldswindow.cpp */,
+				E3E91D731DCC310600675CF8 /* fieldwindow.cpp */,
+				E3E91D741DCC310600675CF8 /* fieldwindow.h */,
+			);
+			name = libfieldswindow;
+			sourceTree = "<group>";
+		};
+		E3F2B2EC219E856200FBFF69 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E3F2B2ED219E856200FBFF69 /* liblibshapeframework.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		E3E91D621DCC2E8900675CF8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3E91D771DCC310600675CF8 /* fieldwindow.h in Headers */,
+				E3E91D811DCECEF300675CF8 /* field.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		E3E91D631DCC2E8900675CF8 /* libfieldswindow */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E3E91D681DCC2E8900675CF8 /* Build configuration list for PBXNativeTarget "libfieldswindow" */;
+			buildPhases = (
+				E3E91D601DCC2E8900675CF8 /* Sources */,
+				E3E91D611DCC2E8900675CF8 /* Frameworks */,
+				E3E91D621DCC2E8900675CF8 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libfieldswindow;
+			productName = libfieldswindow;
+			productReference = E3E91D641DCC2E8900675CF8 /* liblibfieldswindow.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E3E91D5C1DCC2E8900675CF8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Igor Korot";
+			};
+			buildConfigurationList = E3E91D5F1DCC2E8900675CF8 /* Build configuration list for PBXProject "libfieldswindow" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = E3E91D5B1DCC2E8900675CF8;
+			productRefGroup = E3E91D651DCC2E8900675CF8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E3E91D631DCC2E8900675CF8 /* libfieldswindow */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E3E91D601DCC2E8900675CF8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3E91D801DCECEF300675CF8 /* field.cpp in Sources */,
+				E3E91D7B1DCC3AFE00675CF8 /* fieldswindow.cpp in Sources */,
+				E3E91D761DCC310600675CF8 /* fieldwindow.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		E3E91D661DCC2E8900675CF8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		E3E91D671DCC2E8900675CF8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		E3E91D691DCC2E8900675CF8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"_FILE_OFFSET_BITS=64",
+					WXUSINGDLL,
+					__WXMAC__,
+					__WXOSX__,
+					__WXOSX_COCOA__,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.2",
+					/Users/igorkorot/wxWidgets/include,
+					../dbinterface,
+					../libshapeframework,
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = (
+					"-L/Users/igorkorot/wxWidgets/buildC11/lib",
+					"-framework",
+					IOKit,
+					"-framework",
+					Carbon,
+					"-framework",
+					Cocoa,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					System,
+					"-framework",
+					OpenGL,
+					"-lwx_osx_cocoau_xrc-3.2",
+					"-lwx_osx_cocoau_html-3.2",
+					"-lwx_osx_cocoau_qa-3.2",
+					"-lwx_osx_cocoau_adv-3.2",
+					"-lwx_osx_cocoau_core-3.2",
+					"-lwx_baseu_xml-3.2",
+					"-lwx_baseu_net-3.2",
+					"-lwx_baseu-3.2",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E3E91D6A1DCC2E8900675CF8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				EXECUTABLE_PREFIX = lib;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"/Users/igorkorot/wxWidgets/buildC11/lib/wx/include/osx_cocoa-unicode-3.2",
+					/Users/igorkorot/wxWidgets/include,
+					../dbinterface,
+					../libshapeframework,
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E3E91D5F1DCC2E8900675CF8 /* Build configuration list for PBXProject "libfieldswindow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3E91D661DCC2E8900675CF8 /* Debug */,
+				E3E91D671DCC2E8900675CF8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E3E91D681DCC2E8900675CF8 /* Build configuration list for PBXNativeTarget "libfieldswindow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3E91D691DCC2E8900675CF8 /* Debug */,
+				E3E91D6A1DCC2E8900675CF8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E3E91D5C1DCC2E8900675CF8 /* Project object */;
+}
