@@ -34,7 +34,7 @@
 #include "docview.h"
 #include "newtablehandler.h"
 
-#ifdef __WXGTK__
+#if defined( __WXGTK__ ) || defined( __WXQT__ )
 #include "query.h"
 #include "odbc.h"
 #include "library.h"
@@ -145,8 +145,8 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->SetPath( "Database/General" );
     m_config->Read( "Shared Profiles", &m_conf->m_dbOptions.m_general.m_sharedProfile );
     m_config->Read( "Display Table List", &m_conf->m_dbOptions.m_general.m_tableLst );
-    m_config->Read( "se Repsitory", &m_conf->m_dbOptions.m_general.m_useRepo );
-    m_config->Read( "Eead Only", &m_conf->m_dbOptions.m_general.m_readOnly );
+    m_config->Read( "Use Repsitory", &m_conf->m_dbOptions.m_general.m_useRepo );
+    m_config->Read( "Read Only", &m_conf->m_dbOptions.m_general.m_readOnly );
     m_config->Read( "Keep Alive", &m_conf->m_dbOptions.m_general.m_keepAlive );
     m_config->Read( "SQL Terminator Character", &m_conf->m_dbOptions.m_general.m_sqlTerminator );
     m_config->Read( "Refresh Table List", &m_conf->m_dbOptions.m_general.m_tableRefresh );
@@ -334,7 +334,7 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[4].push_back( wxBITMAP_PNG( database_16x16 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_32x32 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_64x64 ) );
-#ifdef __WXGTK__
+#if defined( __WXGTK__ ) || defined( __WXQT__ )
     toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ) ),  wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ) ), wxITEM_NORMAL,_( "Query" ), _( "Run the query" ) );
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVG( odbc, wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( odbc, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Configre ODBC" ), _( "Configre ODBC" ));
 #else
@@ -342,13 +342,13 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVGResource( "odbc", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "odbc", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Configure ODBC" ), _( "Configure ODBC" ) );
 #endif
     toolBar->AddTool( wxID_DATABASEWINDOWPROFILE, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ), wxBitmapBundle::FromBitmaps( bitmaps[2] ), wxITEM_NORMAL, _( "DB Profile" ), _( "DB Profile" ) );
-#ifdef __WXGTK__
+#if defined( __WXGTK__ ) || defined( __WXQT__ )
     toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Table" ), _( "Add/Modify Table definition" ) );
 #else
     toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Table" ), _( "Add/Modify Table definition" ) );
 #endif
     toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ), wxBitmapBundle::FromBitmaps( bitmaps[4] ), wxITEM_NORMAL, _( "Database" ), _( "Perform database operations") );
-#ifdef __WXGTK__
+#if defined( __WXGTK__ ) || defined( __WXQT__ )
     toolBar->AddTool( wxID_LIBRARY, _( "Library" ), wxBitmapBundle::FromSVG( "library", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( "library", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Library selector" ) );
 #else
     toolBar->AddTool( wxID_LIBRARY, _( "Library" ), wxBitmapBundle::FromSVGResource( "library", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "library", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Library selector" ) );

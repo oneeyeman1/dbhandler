@@ -52,6 +52,9 @@
 #elif defined __WXOSX__
 #include "wx/fontpicker.h"
 #endif
+#ifdef __WXQT__
+#include <QFontDialog>
+#endif
 #include "wx/artprov.h"
 #include "wx/fontenum.h"
 #include "wx/notebook.h"
