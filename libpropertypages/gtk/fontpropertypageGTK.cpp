@@ -91,7 +91,7 @@ static void font_name_change(GtkFontChooser *view, CFontPropertyPage *page)
 #endif
 
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bool colorEnabled)
- : CFontPropertyPageBase(parent, font, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+ : CFontPropertyPageBase(parent, font)
 {
     m_font = font;
     m_isUnderlined = m_font.font.GetUnderlined();
