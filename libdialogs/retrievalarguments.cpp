@@ -289,17 +289,12 @@ int RetrievalArguments::FindLineNumberFromControl( wxWindow *win )
 
 void RetrievalArguments::SetActiveLine( int line )
 {
-<<<<<<< HEAD
     size_t index;
     if( line == 1 )
         index = 9;
     else
         index = line - 1;
     if( index >= m_lines.size() )
-=======
-    size_t index = line - 1;
-    if( index < 0 || index >= m_lines.size() )
->>>>>>> a876f781bb (Committing changes to the GTK build)
       return;
 
     // just set focus to the first control in that line

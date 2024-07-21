@@ -38,13 +38,8 @@
 #define wxID_DROPOBJECT           123
 #define wxID_ATTACHDATABASE       124
 #define wxID_DETACHDATABASE       125
-<<<<<<< HEAD
 #define wxID_CUSTOMCOLORS         126
 #define wxID_DATABASEOPTIONS      127
-=======
-#define wxID_CUSTOMCOLORS         127
-#define wxID_DATABASEOPTIONS      128
->>>>>>> a876f781bb (Committing changes to the GTK build)
 #define WHEREPAGECOLUMNS          194
 #define WHEREPAGEFUNCTIONS        195
 #define WHEREPAGEARGUMENTS        196

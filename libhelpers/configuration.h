@@ -25,6 +25,7 @@ struct DBOptionGeneral
             m_readOnly = right.m_readOnly;
             m_keepAlive = right.m_keepAlive;
         }
+        return *this;
     }
 };
 
