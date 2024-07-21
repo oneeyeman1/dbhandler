@@ -147,11 +147,12 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         }
         break;
         case DatabaseProperties:
+        case QueryProperties:
         {
             auto prop = dynamic_cast<DatabaseOptionsHandler *>( handler )->GetObjectProperties();
             m_page11 = new DatabaseOptionGeneral( m_properties, prop.m_general );
             m_properties->AddPage( m_page11, _( "General" ) );
-            m_page12 = new DatabaseptionsColours( m_properties, prop.m_colors );
+            m_page12 = new DatabaseptionsColours( m_properties, prop.m_colors, handler->GetType() == DatabaseProperties ? true : false );
             m_properties->AddPage( m_page12, _( "Colors" ) );
         }
         break;
