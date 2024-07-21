@@ -304,7 +304,7 @@ void TableEditView::CreateMenuAndToolbar()
     parent = m_frame;
 #elif __WXMSW__
     parent = m_parent->GetClientWindow();
-#else __WXGTK__
+#elif __WXGTK__
 	parent = m_parent;
 #endif
     wxSize size = m_parent->GetClientSize();

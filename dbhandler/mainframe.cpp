@@ -146,13 +146,19 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->SetPath( "Database/General" );
     m_config->Read( "Shared Profiles", &m_conf->m_dbOptions.m_general.m_sharedProfile );
     m_config->Read( "Display Table List", &m_conf->m_dbOptions.m_general.m_tableLst );
+<<<<<<< HEAD
     m_config->Read( "Use Repsitory", &m_conf->m_dbOptions.m_general.m_useRepo );
     m_config->Read( "Read Only", &m_conf->m_dbOptions.m_general.m_readOnly );
+=======
+    m_config->Read( "se Repsitory", &m_conf->m_dbOptions.m_general.m_useRepo );
+    m_config->Read( "Eead Only", &m_conf->m_dbOptions.m_general.m_readOnly );
+>>>>>>> a876f781bb (Committing changes to the GTK build)
     m_config->Read( "Keep Alive", &m_conf->m_dbOptions.m_general.m_keepAlive );
     m_config->Read( "SQL Terminator Character", &m_conf->m_dbOptions.m_general.m_sqlTerminator );
     m_config->Read( "Refresh Table List", &m_conf->m_dbOptions.m_general.m_tableRefresh );
     m_config->Read( "Columns in Table", &m_conf->m_dbOptions.m_general.m_tableColumns );
     m_config->SetPath( path );
+<<<<<<< HEAD
     m_config->SetPath( "Database/Colors" );
     wxString temp = "";
     m_config->Read( "Background", &temp, "WHITE" );
@@ -174,6 +180,8 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->Read( "ForeignKeyLine", &temp, "BLUE" );
     m_conf->m_dbOptions.m_colors.m_foreignKeyLine = wxColour( temp );
     m_config->SetPath( path );
+=======
+>>>>>>> a876f781bb (Committing changes to the GTK build)
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );

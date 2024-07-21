@@ -33,7 +33,10 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/ShapeCanvas.h"
+<<<<<<< HEAD
 #include "configuration.h"
+=======
+>>>>>>> a876f781bb (Committing changes to the GTK build)
 #include "commentfieldshape.h"
 #include "fieldtypeshape.h"
 #include "objectproperties.h"
