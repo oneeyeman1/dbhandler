@@ -25,12 +25,13 @@ struct DBOptionGeneral
             m_readOnly = right.m_readOnly;
             m_keepAlive = right.m_keepAlive;
         }
+        return *this;
     }
 };
 
 struct DatabaseOptionColors
 {
-    wxColor m_background, m_tabbleCol, m_indexLine, m_tableHeader, m_tableColText, m_primaryKeyLine, m_tableHeaderText, m_tableCommentText;
+    wxColor m_background, m_tableCol, m_indexLine, m_tableHeader, m_tableColText, m_primaryKeyLine, m_tableHeaderText, m_tableCommentText, m_foreignKeyLine;
 };
 
 struct DatabaseOptions

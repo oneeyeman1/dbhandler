@@ -89,6 +89,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     wxFileName fn( stdPath.GetExecutablePath() );
     m_libraryPath = fn.GetPathWithSep();
 #endif
+    wxTheColourDatabase->AddColour( "SILVER", wxColour( 0xC0C0C0 ) );
     m_config = wxConfigBase::Get( "DBManager" );
     wxString path = m_config->GetPath();
     m_config->SetPath( "CurrentDB" );
@@ -153,9 +154,25 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->Read( "Columns in Table", &m_conf->m_dbOptions.m_general.m_tableColumns );
     m_config->SetPath( path );
     m_config->SetPath( "Database/Colors" );
-    m_config->Read( "Background", &m_conf->m_dbOptions.m_colors.m_background );
-    m_config->Read( "TableColumns", &m_conf->m_dbOptions.m_colors.m_tabbleCol);
-    m_config->Read( "IndexKeyLiine", &m_conf->m_dbOptions.m_colors.m_indexLine );
+    wxString temp = "";
+    m_config->Read( "Background", &temp, "WHITE" );
+    m_conf->m_dbOptions.m_colors.m_background = wxColour( temp );
+    m_config->Read( "TableColumns", &temp, "SILVER" );
+    m_conf->m_dbOptions.m_colors.m_tableCol = wxColor( temp );
+    m_config->Read( "IndexKeyLiine", &temp, "RED" );
+    m_conf->m_dbOptions.m_colors.m_indexLine = wxColour( temp );
+    m_config->Read( "TableHeader", &temp, "GREY" );
+    m_conf->m_dbOptions.m_colors.m_tableHeader = wxColour( temp );
+    m_config->Read( "TableColumnText", &temp, "BLACK" );
+    m_conf->m_dbOptions.m_colors.m_tableColText = wxColour( temp );
+    m_config->Read( "PrimaryKeyLine", &temp, "GREEN" );
+    m_conf->m_dbOptions.m_colors.m_tableHeader = wxColour( temp );
+    m_config->Read( "TableHeaderText", &temp, "BLACK" );
+    m_conf->m_dbOptions.m_colors.m_tableHeaderText = wxColour( temp );
+    m_config->Read( "TableCommentText", &temp, "NAV" );
+    m_conf->m_dbOptions.m_colors.m_tableHeaderText = wxColour( temp );
+    m_config->Read( "ForeignKeyLine", &temp, "BLUE" );
+    m_conf->m_dbOptions.m_colors.m_foreignKeyLine = wxColour( temp );
     m_config->SetPath( path );
     m_manager = manager;
     auto menuFile = new wxMenu;
@@ -272,8 +289,14 @@ MainFrame::~MainFrame()
     m_config->SetPath( path );
     m_config->SetPath( "Database/Colors" );
     m_config->Write( "Background", m_conf->m_dbOptions.m_colors.m_background );
-    m_config->Write( "TableColumns", m_conf->m_dbOptions.m_colors.m_tabbleCol);
+    m_config->Write( "TableColumns", m_conf->m_dbOptions.m_colors.m_tableCol);
     m_config->Write( "IndexKeyLiine", m_conf->m_dbOptions.m_colors.m_indexLine );
+    m_config->Write( "PrimaryKeyLine", m_conf->m_dbOptions.m_colors.m_tableHeader );
+    m_config->Write( "TableHeader", m_conf->m_dbOptions.m_colors.m_tableHeader );
+    m_config->Write( "TableColumnText", m_conf->m_dbOptions.m_colors.m_tableColText );
+    m_config->Write( "TableHeaderText", m_conf->m_dbOptions.m_colors.m_tableHeaderText );
+    m_config->Write( "TableCommentText", m_conf->m_dbOptions.m_colors.m_tableCommentText );
+    m_config->Write( "ForeignKeyLine", m_conf->m_dbOptions.m_colors.m_foreignKeyLine );
     m_config->SetPath( path );
     if( result )
     {

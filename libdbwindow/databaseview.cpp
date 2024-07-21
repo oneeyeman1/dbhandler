@@ -786,7 +786,7 @@ void DrawingView::CreateViewToolBar()
 #elif __WXOSX__
         tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
         joinsSVG = wxBitmapBundle::FromSVGResource( "joins", wxSize( 16, 16 ) );
-#else
+#elif
         tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
         joinsSVG = wxBitmapBundle::FromSVG( joins, wxSize( 16, 16 ) );
 #endif
@@ -2901,6 +2901,9 @@ void DrawingView::CreateQueryMenu(const int queryType)
             design->Check( wxID_DISTINCT, true );
         else
             design->Check( wxID_DISTINCT, false );
+        design->AppendSeparator();
+        design->Append( wxID_CUSTOMCOLORS, _( "Custom Colors.." ) );
+        design->Append( wxID_DATABASEOPTIONS, _( "Options..." ), _( "Database preferences" ) );
         mbar->Insert( 0, design, _( "Design" ) );
     }
     if( queryType == QuerySyntaxMenu )
@@ -2930,6 +2933,9 @@ void DrawingView::CreateQueryMenu(const int queryType)
         designMenu->Append( wxID_CONVERTTOGRAPHICS, _( "Convert To Graphics" ), _( "Convert To Graphics" ) );
         designMenu->AppendSeparator();
         designMenu->Append( wxID_PROPERTIES, _( "Options..."), _( "Options" ) );
+        designMenu->AppendSeparator();
+        designMenu->Append( wxID_CUSTOMCOLORS, _( "Custom Colors.." ) );
+        designMenu->Append( wxID_DATABASEOPTIONS, _( "Options..." ), _( "Database preferences" ) );
         mbar->Append( editMenu, _( "Edit" ) );
         mbar->Append( searchMenu, _( "Search" ) );
         mbar->Append( designMenu, _( "Design" ) );
@@ -3294,7 +3300,7 @@ void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
     auto ptr = std::unique_ptr<DatabaseOptionsHandler>( new DatabaseOptionsHandler( m_conf->m_dbOptions ) );
 #endif
     propertiesPtr = std::move( ptr );
-    propertiesPtr->SetType( DatabaseProperties );
+    propertiesPtr->SetType( m_type == DatabaseView ? DatabaseProperties : QueryProperties );
     title = _( "Database Preferences" );
     if( lib.IsLoaded() )
     {
