@@ -30,7 +30,7 @@ struct DBOptionGeneral
 
 struct DatabaseOptionColors
 {
-    wxColor m_background, m_tabbleCol, m_indexLine, m_tableHeader, m_tableColText, m_primaryKeyLine, m_tableHeaderText, m_tableCommentText;
+    wxColor m_background, m_tableCol, m_indexLine, m_tableHeader, m_tableColText, m_primaryKeyLine, m_tableHeaderText, m_tableCommentText, m_foreignKeyLine;
 };
 
 struct DatabaseOptions

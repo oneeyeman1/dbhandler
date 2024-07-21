@@ -17,6 +17,7 @@ public:
     DatabaseptionsColours(wxWindow *parent, const DatabaseOptionColors &colors);
 private:
     wxButton *restore;
-    CColorComboBox *m_bacground, *m_textCol;
+    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7, *m_label8, *m_label9;
+    CColorComboBox *m_bacground, *m_textCol, *m_indexLine, *m_tableHeader, *m_tableColumnText, *m_primaryKeyLine, *m_tableHeaderText, *m_tableCommentText, *m_foreignKey;
     DatabaseOptionColors m_defaults, m_current;
 };
