@@ -1,14 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-QT_CXXFLAGS = @QT_CXXFLAGS@
-QT_DIR = @QT_DIR@
-QT_LIBS = @QT_LIBS@
-QT_LRELEASE = @QT_LRELEASE@
-QT_LUPDATE = @QT_LUPDATE@
-QT_MOC = @QT_MOC@
-QT_RCC = @QT_RCC@
-QT_UIC = @QT_UIC@
-
 lib_LTLIBRARIES =  \
 	libdbwindow.la
 
@@ -81,12 +72,7 @@ libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libpropertypages \
 	-I../../libpropertieshandlers \
 	-I../../libhelpers \
-	`wx-config \
-	--cxxflags` \
-	`pkg-config \
-	--cflags \
-	pango`  \
-	$(QT_CXXFLAGS)
+	@WX_CXXFLAGS@
 
 libdbwindow_la_LDFLAGS = -L../libpropertypages \
 	-lpropertypages \
@@ -98,8 +84,6 @@ libdbwindow_la_LDFLAGS = -L../libpropertypages \
 	-lshapeframework \
 	-L../libhelpers \
 	-lhelpers \
-	`wx-config \
-	--libs \
-	stc`   $(QT_LIBS)
+	@QT_LIBS@
 	
 
