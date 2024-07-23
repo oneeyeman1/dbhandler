@@ -23,8 +23,6 @@ dbhandler_SOURCES =  \
 dbhandler_CXXFLAGS = -I../../dbinterface \
 	-I../../libhelpers \
 	-I../../libdbwindow/res/gui \
-	`wx-config \
-	--cxxflags` 
+	@WX_CPPFLAGS@
 
-dbhandler_LDFLAGS = `wx-config \
-	--libs` 
+dbhandler_LDFLAGS = @WX_LIBS@
