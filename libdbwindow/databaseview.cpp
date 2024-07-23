@@ -786,7 +786,7 @@ void DrawingView::CreateViewToolBar()
 #elif __WXOSX__
         tableSVG = wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) );
         joinsSVG = wxBitmapBundle::FromSVGResource( "joins", wxSize( 16, 16 ) );
-#elif
+#else
         tableSVG = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
         joinsSVG = wxBitmapBundle::FromSVG( joins, wxSize( 16, 16 ) );
 #endif
@@ -2577,7 +2577,7 @@ void DrawingView::ChangeFontEement()
     {
 
     }
-    g_object_free( context );
+    g_object_unref( context );
 #endif
 }
 
