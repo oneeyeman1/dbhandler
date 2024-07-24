@@ -37,7 +37,11 @@ libpropertypages_la_SOURCES =  \
 	gtk/fontpropertypageGTK.cpp \
 	gtk/fontpropertypageGTK.h \
 	databasefielddisplay.cpp \
-	databasefielddisplay.h
+	databasefielddisplay.h \
+	databaseoptioncolours.cpp \
+	databaseoptioncolours.h \
+	databaseoptiongeneral.cpp \
+	databaseoptiongeneral.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
