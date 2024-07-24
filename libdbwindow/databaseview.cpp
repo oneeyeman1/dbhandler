@@ -22,7 +22,9 @@
 //#endif
 
 #if defined( __WXGTK__ ) || defined( __WXQT__ )
+#ifndef __WXQT__
 #include "pango/pango.h"
+#endif
 #include "bold.h"
 #include "italic.h"
 #include "underline.h"
