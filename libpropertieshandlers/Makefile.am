@@ -12,7 +12,10 @@ libpropertieshandlers_la_SOURCES =  \
 	designpropertieshandler.cpp \
 	designpropertieshandler.h \
 	dividerpropertieshandler.cpp \
-	dividerpropertieshandler.h
+	dividerpropertieshandler.h \
+	databaseoptionshandler.cpp \
+	databaseoptionshandler.h
+
 
 libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libpropertypages \
