@@ -1,15 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-QT_CXXFLAGS = @QT_CXXFLAGS@
-QT_DIR = @QT_DIR@
-QT_LIBS = @QT_LIBS@
-QT_LRELEASE = @QT_LRELEASE@
-QT_LUPDATE = @QT_LUPDATE@
-QT_MOC = @QT_MOC@
-QT_RCC = @QT_RCC@
-QT_UIC = @QT_UIC@
-
-
 lib_LTLIBRARIES =  \
 	libdialogs.la
 
@@ -61,13 +51,8 @@ libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
 	-I../../libpropertypages \
 	-I../../libpropertieshandlers \
-	`pkg-config \
-	--cflags \
-	gtk+-3.0` \
 	-I../../libhelpers \
-	`wx-config \
-	--cxxflags` \
-	$(QT_CXXFLAGS)
+	@WX_CXXFLAGS@
 
 libdialogs_la_LDFLAGS = -L../libsqlite \
 	-L../libshapeframework \
@@ -87,5 +72,4 @@ libdialogs_la_LDFLAGS = -L../libsqlite \
 	-lpropertypages \
 	-lpropertieshandlers \
 	-lpostgres \
-	`wx-config \
-	--libs` $(QT_LIBS)
+	@WX_LIBS@

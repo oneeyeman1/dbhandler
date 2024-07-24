@@ -95,11 +95,9 @@ libshapeframework_la_SOURCES =  \
 	wxsf/Thumbnail.h \
 	wxsf/wxShapeFramework.h
 
-libshapeframework_la_CXXFLAGS = `wx-config \
-	--cxxflags` \
+libshapeframework_la_CXXFLAGS = @WX_CXXFLAGS@ \
 	-DWXUSINGDLL \
 	-DWXUSINGDLL_CL \
 	-DWXUSINGDLL_SDK 
 
-libshapeframework_la_LDFLAGS = `wx-config \
-	--libs` 
+libshapeframework_la_LDFLAGS = @WX_LIBS@ 
