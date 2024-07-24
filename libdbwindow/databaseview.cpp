@@ -3295,7 +3295,7 @@ void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
     wxString title;
     std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
 #if __cplusplus > 201300
-    auto ptr = std::make_unique<DatabaseOptionsHandler>();
+    auto ptr = std::make_unique<DatabaseOptionsHandler>( m_conf->m_dbOptions);
 #else
     auto ptr = std::unique_ptr<DatabaseOptionsHandler>( new DatabaseOptionsHandler( m_conf->m_dbOptions ) );
 #endif
