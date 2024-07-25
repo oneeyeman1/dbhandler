@@ -84,6 +84,6 @@ libdbwindow_la_LDFLAGS = -L../libpropertypages \
 	-lshapeframework \
 	-L../libhelpers \
 	-lhelpers \
-	@QT_LIBS@
+	@WX_LIBS@
 	
 
