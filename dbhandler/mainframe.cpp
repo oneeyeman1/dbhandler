@@ -372,7 +372,7 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 #endif
     toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ), wxBitmapBundle::FromBitmaps( bitmaps[4] ), wxITEM_NORMAL, _( "Database" ), _( "Perform database operations") );
 #if defined( __WXGTK__ ) || defined( __WXQT__ )
-    toolBar->AddTool( wxID_LIBRARY, _( "Library" ), wxBitmapBundle::FromSVG( "library", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( "library", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Library selector" ) );
+    toolBar->AddTool( wxID_LIBRARY, _( "Library" ), wxBitmapBundle::FromSVG( library, wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( library, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Library selector" ) );
 #else
     toolBar->AddTool( wxID_LIBRARY, _( "Library" ), wxBitmapBundle::FromSVGResource( "library", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "library", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Library selector" ) );
 #endif
