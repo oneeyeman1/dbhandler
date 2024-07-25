@@ -84,7 +84,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     wxFileName fn( stdPath.GetExecutablePath() );
     fn.RemoveLastDir();
     m_libPath = fn.GetPathWithSep() + "Frameworks/";
-#elif __WXGTK__
+#elif __WXGTK__ || __WXQT__
     m_libPath = stdPath.GetInstallPrefix() + "/lib/";
 #elif __WXMSW__
     wxFileName fn( stdPath.GetExecutablePath() );

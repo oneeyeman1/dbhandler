@@ -83,7 +83,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     wxFileName fn( stdPath.GetExecutablePath() );
     fn.RemoveLastDir();
     m_libraryPath = fn.GetPathWithSep() + "Frameworks/";
-#elif __WXGTK__
+#elif __WXGTK__ || __WXQT__
     m_libraryPath = stdPath.GetInstallPrefix() + "/lib/";
 #elif __WXMSW__
     wxFileName fn( stdPath.GetExecutablePath() );
