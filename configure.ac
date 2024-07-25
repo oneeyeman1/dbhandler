@@ -43,7 +43,7 @@ fi
 
 WX_CPPFLAGS="`$WXCONFIG --cppflags`"
 WX_CXXFLAGS="`$WXCONFIG --cxxflags`"
-WX_LIBS="`$WXCONFIG --libs`"
+WX_LIBS="`$WXCONFIG --libs std,stc`"
 
 if wx-config --list | grep -i default | grep -i qt ; then
     AC_MSG_NOTICE([Qt build found])
