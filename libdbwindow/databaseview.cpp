@@ -331,7 +331,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         sizer->Add( m_fields, 0, wxEXPAND, 0 );
     }
     auto db = ((DrawingDocument *) GetDocument() )->GetDatabase();
-    m_canvas = new DatabaseCanvas( this, ptCanvas, db->GetTableVector().m_dbName, db->GetTableVector().m_type );
+    m_canvas = new DatabaseCanvas( this, ptCanvas, db->GetTableVector().m_dbName, db->GetTableVector().m_type, m_conf, m_type );
     sizer->Add( m_canvas, 2, wxEXPAND, 0 );
     if( m_type != DatabaseView )
     {
