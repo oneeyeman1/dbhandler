@@ -59,7 +59,7 @@ class WXEXPORT DatabaseCanvas : public wxSFShapeCanvas
 {
 public:
     enum MODE { modeDESIGN, modeTABLE, modeVIEW, modeLine };
-    DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, wxWindow *parent = NULL);
+    DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, Configuration *conf, ViewType type, wxWindow *parent = NULL);
     void DisplayTables(std::map<wxString,std::vector<TableDefinition> > &selections, const std::vector<TableField *> &queryFields, wxString &query, std::vector<wxString> &relations);
     virtual ~DatabaseCanvas();
     void CreateFKConstraint(const DatabaseTable *fkTable, const std::vector<FKField *> &foreignKeyField);
@@ -100,6 +100,7 @@ private:
     wxString m_dbName, m_dbType;
     std::vector<TableField *> m_queryFields;
     wxString m_libPath;
+    Configuration *m_conf;
 };
 
 #define wxID_TABLECLOSE            20

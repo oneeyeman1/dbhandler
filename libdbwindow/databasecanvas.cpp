@@ -112,7 +112,7 @@ QueryRoot::QueryRoot(const QueryRoot &root)
     XS_SERIALIZE( m_groupbyDest, "groupby_dest" );
 }
 
-DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, wxWindow *parent) : wxSFShapeCanvas()
+DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, Configuration *conf, ViewType type, wxWindow *parent) : wxSFShapeCanvas()
 {
     m_view = view;
     m_dbName = dbName;
@@ -121,6 +121,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &
     m_oldSelectedSign = NULL;
     startPoint.x = 10;
     startPoint.y = 10;
+    m_conf = conf;
     auto stdPath = wxStandardPaths::Get();
 #ifdef __WXOSX__
     wxFileName fn( stdPath.GetExecutablePath() );
@@ -141,8 +142,11 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &
     SetVirtualSize( 1000, 1000 );
     SetScrollRate( 20, 20 );
     m_mode = modeDESIGN;
-    SetCanvasColour( *wxWHITE );
-//    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
+    if( type == DatabaseView )
+        SetCanvasColour( m_conf->m_dbOptions.m_colors.m_background );
+    else
+        SetCanvasColour( *wxWHITE );
+    //    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_DROPOBJECT );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnCloseTable, this, wxID_TABLECLOSE );
     Bind( wxEVT_UPDATE_UI, &DatabaseCanvas::nUpdateTableParam, this, wxID_SHOWDATATYPES );
