@@ -1,15 +1,6 @@
 #ifndef __GRIDTABLESHAPE_H__
 #define __GRIDTABLESHAPE_H__
 
-#if !defined CONSTRAINT_H && !defined __DATABASEVIEW__H
-enum ViewType
-{
-    DatabaseView,
-    NewViewView,
-    QueryView
-};
-#endif
-
 class GridTableShape :	public wxSFGridShape
 {
 public:

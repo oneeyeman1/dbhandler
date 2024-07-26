@@ -1,5 +1,13 @@
 #pragma once
 
+enum ViewType
+{
+    DatabaseView,
+    NewViewView,
+    QueryView,
+    TableView
+};
+
 struct ToolbarSetup
 {
     bool m_hideShow, m_showTooltips, m_showText;

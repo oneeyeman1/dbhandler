@@ -26,14 +26,6 @@
 
 class DBTableEdit;
 
-enum ViewType
-{
-    DatabaseView,
-    NewViewView,
-    QueryView,
-    TableView
-};
-
 class TableEditView: public wxView
 {
 public:

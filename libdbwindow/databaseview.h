@@ -1,16 +1,6 @@
 #ifndef __DATABASEVIEW__H
 #define __DATABASEVIEW__H
 
-#if !defined CONSTRAINT_H && !defined __GRIDTABLESHAPE_H__
-enum ViewType
-{
-    DatabaseView,
-    NewViewView,
-    QueryView,
-    TableView
-};
-#endif
-
 enum DrawinViewMenu
 {
     QuickQueryMenu,
