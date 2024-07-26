@@ -60,7 +60,7 @@
   <ItemGroup>
     <ClCompile Include="bandgeneral.cpp" />
     <ClCompile Include="databasefielddisplay.cpp" />
-    <ClCompile Include="databaseoptioncolurs.cpp" />
+    <ClCompile Include="databaseoptioncolours.cpp" />
     <ClCompile Include="databaseoptiongeneral.cpp" />
     <ClCompile Include="designfieldgeneral.cpp" />
     <ClCompile Include="designgeneral.cpp" />
