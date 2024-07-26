@@ -166,11 +166,11 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->Read( "TableColumnText", &temp, "BLACK" );
     m_conf->m_dbOptions.m_colors.m_tableColText = wxColour( temp );
     m_config->Read( "PrimaryKeyLine", &temp, "GREEN" );
-    m_conf->m_dbOptions.m_colors.m_tableHeader = wxColour( temp );
+    m_conf->m_dbOptions.m_colors.m_primaryKeyLine = wxColour( temp );
     m_config->Read( "TableHeaderText", &temp, "BLACK" );
     m_conf->m_dbOptions.m_colors.m_tableHeaderText = wxColour( temp );
     m_config->Read( "TableCommentText", &temp, "NAV" );
-    m_conf->m_dbOptions.m_colors.m_tableHeaderText = wxColour( temp );
+    m_conf->m_dbOptions.m_colors.m_tableCommentText = wxColour( temp );
     m_config->Read( "ForeignKeyLine", &temp, "BLUE" );
     m_conf->m_dbOptions.m_colors.m_foreignKeyLine = wxColour( temp );
     m_config->SetPath( path );
@@ -291,7 +291,7 @@ MainFrame::~MainFrame()
     m_config->Write( "Background", m_conf->m_dbOptions.m_colors.m_background );
     m_config->Write( "TableColumns", m_conf->m_dbOptions.m_colors.m_tableCol);
     m_config->Write( "IndexKeyLiine", m_conf->m_dbOptions.m_colors.m_indexLine );
-    m_config->Write( "PrimaryKeyLine", m_conf->m_dbOptions.m_colors.m_tableHeader );
+    m_config->Write( "PrimaryKeyLine", m_conf->m_dbOptions.m_colors.m_primaryKeyLine );
     m_config->Write( "TableHeader", m_conf->m_dbOptions.m_colors.m_tableHeader );
     m_config->Write( "TableColumnText", m_conf->m_dbOptions.m_colors.m_tableColText );
     m_config->Write( "TableHeaderText", m_conf->m_dbOptions.m_colors.m_tableHeaderText );
