@@ -288,15 +288,15 @@ MainFrame::~MainFrame()
     m_config->Write( "Columns in Table", m_conf->m_dbOptions.m_general.m_tableColumns );
     m_config->SetPath( path );
     m_config->SetPath( "Database/Colors" );
-    m_config->Write( "Background", m_conf->m_dbOptions.m_colors.m_background );
-    m_config->Write( "TableColumns", m_conf->m_dbOptions.m_colors.m_tableCol);
-    m_config->Write( "IndexKeyLiine", m_conf->m_dbOptions.m_colors.m_indexLine );
-    m_config->Write( "PrimaryKeyLine", m_conf->m_dbOptions.m_colors.m_primaryKeyLine );
-    m_config->Write( "TableHeader", m_conf->m_dbOptions.m_colors.m_tableHeader );
-    m_config->Write( "TableColumnText", m_conf->m_dbOptions.m_colors.m_tableColText );
-    m_config->Write( "TableHeaderText", m_conf->m_dbOptions.m_colors.m_tableHeaderText );
-    m_config->Write( "TableCommentText", m_conf->m_dbOptions.m_colors.m_tableCommentText );
-    m_config->Write( "ForeignKeyLine", m_conf->m_dbOptions.m_colors.m_foreignKeyLine );
+    m_config->Write( "Background", m_conf->m_dbOptions.m_colors.m_background.GetAsString( wxC2S_NAME ) );
+    m_config->Write( "TableColumns", m_conf->m_dbOptions.m_colors.m_tableCol.GetAsString( wxC2S_NAME ) );
+    m_config->Write( "IndexKeyLiine", m_conf->m_dbOptions.m_colors.m_indexLine.GetAsString( wxC2S_NAME ) );
+    m_config->Write( "PrimaryKeyLine", m_conf->m_dbOptions.m_colors.m_primaryKeyLine.GetAsString( wxC2S_NAME ) );
+    m_config->Write( "TableHeader", m_conf->m_dbOptions.m_colors.m_tableHeader.GetAsString( wxC2S_NAME ) );
+    m_config->Write( "TableColumnText", m_conf->m_dbOptions.m_colors.m_tableColText.GetAsString( wxC2S_NAME ) );
+    m_config->Write( "TableHeaderText", m_conf->m_dbOptions.m_colors.m_tableHeaderText.GetAsString( wxC2S_NAME ) );
+    m_config->Write( "TableCommentText", m_conf->m_dbOptions.m_colors.m_tableCommentText.GetAsString( wxC2S_NAME ) );
+    m_config->Write( "ForeignKeyLine", m_conf->m_dbOptions.m_colors.m_foreignKeyLine.GetAsString( wxC2S_NAME ) );
     m_config->SetPath( path );
     if( result )
     {
