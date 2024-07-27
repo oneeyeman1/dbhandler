@@ -1,6 +1,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "configuration.h"
 #include "GridTableShape.h"
 #include "commentfieldshape.h"
 #include "fieldtypeshape.h"

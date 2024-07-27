@@ -3,6 +3,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/ShapeBase.h"
 #include "database.h"
+#include "configuration.h"
 #include "FieldShape.h"
 #include "fieldtypeshape.h"
 #include "commentfieldshape.h"

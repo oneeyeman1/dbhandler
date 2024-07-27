@@ -3,6 +3,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/TextShape.h"
 #include "database.h"
+#include "configuration.h"
 #include "XmlSerializer.h"
 #include "constraint.h"
 #include "constraintsign.h"
