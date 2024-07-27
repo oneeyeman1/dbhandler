@@ -19,23 +19,6 @@ struct Profile
     Profile(wxString name, bool isCurrent) : m_name( name ), m_isCurrent( isCurrent ) {}
 };
 
-struct QueryInfo
-{
-    wxString name, comment;
-    void operator=(const QueryInfo &info)
-    {
-        name = info.name;
-        comment = info.comment;
-    }
-};
-
-struct LibrariesInfo
-{
-    wxString m_path;
-    bool m_isActive;
-    LibrariesInfo(const wxString &path, bool active) : m_path(path), m_isActive(active) {}
-};
-
 class MainFrame : public wxDocMDIParentFrame
 {
 public:

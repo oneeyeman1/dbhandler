@@ -3,23 +3,6 @@
 
 #define wxID_NEWOBJECT 1000
 
-struct QueryInfo
-{
-    wxString name, comment;
-    void operator=(const QueryInfo &info)
-    {
-        name = info.name;
-        comment = info.comment;
-    }
-};
-
-struct LibrariesInfo
-{
-    wxString m_path;
-    bool m_isActive;
-    LibrariesInfo(const wxString &path, bool active) : m_path(path), m_isActive(active) {}
-};
-
 class GetObjectName : public wxDialog
 {
 public:

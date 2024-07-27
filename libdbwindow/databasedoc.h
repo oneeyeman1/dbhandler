@@ -19,23 +19,6 @@ enum QueryFieldChange
     SHUFFLE
 };
 
-struct QueryInfo
-{
-    wxString name, comment;
-    void operator=(const QueryInfo &info)
-    {
-        name = info.name;
-        comment = info.comment;
-    }
-};
-
-struct LibrariesInfo
-{
-    wxString m_path;
-    bool m_isActive;
-    LibrariesInfo(const wxString &path, bool active) : m_path(path), m_isActive(active) {}
-};
-
 struct GroupFields
 {
     wxString fieldName;
