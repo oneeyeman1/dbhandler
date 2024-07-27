@@ -6,6 +6,7 @@
 #include "wx/wx.h"
 #endif
 
+#include <map>
 #include "wx/dir.h"
 #include "wx/listctrl.h"
 #include "wx/dynlib.h"
@@ -17,6 +18,7 @@
 #include "wx/generic/stattextg.h"
 #endif
 #endif
+#include "configuration.h"
 #include "bitmappanel.h"
 #include "newquery.h"
 #include "getobjectname.h"
