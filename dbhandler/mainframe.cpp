@@ -146,7 +146,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->SetPath( "Database/General" );
     m_config->Read( "Shared Profiles", &m_conf->m_dbOptions.m_general.m_sharedProfile, "" );
     m_config->Read( "Display Table List", &m_conf->m_dbOptions.m_general.m_tableLst, 1 );
-    m_config->Read( "Use Repsitory", &m_conf->m_dbOptions.m_general.m_useRepo, 1 );
+    m_config->Read( "Use Repository", &m_conf->m_dbOptions.m_general.m_useRepo, 1 );
     m_config->Read( "Read Only", &m_conf->m_dbOptions.m_general.m_readOnly, 0 );
     m_config->Read( "Keep Alive", &m_conf->m_dbOptions.m_general.m_keepAlive, 1 );
     m_config->Read( "SQL Terminator Character", &m_conf->m_dbOptions.m_general.m_sqlTerminator, ';' );
@@ -280,8 +280,8 @@ MainFrame::~MainFrame()
     m_config->SetPath( "Database/General" );
     m_config->Write( "Shared Profiles", m_conf->m_dbOptions.m_general.m_sharedProfile );
     m_config->Write( "Display Table List", m_conf->m_dbOptions.m_general.m_tableLst );
-    m_config->Write( "se Repsitory", m_conf->m_dbOptions.m_general.m_useRepo );
-    m_config->Write( "Eead Only", m_conf->m_dbOptions.m_general.m_readOnly );
+    m_config->Write( "Use Repository", m_conf->m_dbOptions.m_general.m_useRepo );
+    m_config->Write( "Read Only", m_conf->m_dbOptions.m_general.m_readOnly );
     m_config->Write( "Keep Alive", m_conf->m_dbOptions.m_general.m_keepAlive );
     m_config->Write( "SQL Terminator Character", m_conf->m_dbOptions.m_general.m_sqlTerminator );
     m_config->Write( "Refresh Table List", m_conf->m_dbOptions.m_general.m_tableRefresh );
