@@ -34,42 +34,46 @@ DatabaseOptionGeneral::DatabaseOptionGeneral(wxWindow *parent, DBOptionGeneral &
     auto label1 = new wxStaticText( this, wxID_ANY, _( "&Shared Database Folder" ) );
     fileSizer->Add( label1, 0, wxEXPAND, 0 );
     fileSizer->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_sharedFolder = new wxFilePickerCtrl( this, wxID_ANY );
+    m_sharedFolder = new wxFilePickerCtrl( this, wxID_ANY, current.m_sharedProfile, _( "Select shared in file" ), "DBHandler Shared ini Files (*.ini)|*.ini" );
     fileSizer->Add( m_sharedFolder, 1, wxEXPAND, 0 );
     controlsSizer->Add( fileSizer, 0, wxEXPAND, 0 );
     controlsSizer->Add( 5, 5, 0, wxEXPAND, 0 );
     auto grid = new wxFlexGridSizer( 4, 4, 5, 5 );
     m_displayTableList = new wxCheckBox( this, wxID_ANY, _( "&Display Table List" ) );
+    m_displayTableList->SetValue( current.m_tableLst );
     grid->Add( m_displayTableList, 0, wxEXPAND, 0 );
     auto label2 = new wxStaticText( this, wxID_ANY, _( "SQL Terminator Character" ) );
     grid->Add( label2, 0, wxEXPAND, 0 );
-    m_terminator = new wxTextCtrl( this, wxID_ANY, ';' );
-    wxSize size = m_terminator->GetSizeFromText( ";" );
+    m_terminator = new wxTextCtrl( this, wxID_ANY, current.m_sqlTerminator );
+    wxSize size = m_terminator->GetSizeFromText( m_terminator->GetValue() );
     m_terminator->SetMaxLength( 1 );
     m_terminator->SetMaxSize( FromDIP( size ) );
     grid->Add( m_terminator, 0, 0, 0 );
     m_restore = new wxButton( this, wxID_ANY, _( "Default" ) );
     grid->Add( m_restore, 0, wxEXPAND, 0 );
     m_useRepository = new wxCheckBox( this, wxID_ANY, _( "&Use Repository" ) );
+    m_useRepository->SetValue( current.m_useRepo );
     grid->Add( m_useRepository, 0, wxEXPAND, 0 );
     auto label3 = new wxStaticText( this, wxID_ANY, _( "Resresh Table List" ) );
     grid->Add( label3, 0, wxEXPAND, 0 );
     wxIntegerValidator<unsigned long> validator( &m_value, wxNUM_VAL_THOUSANDS_SEPARATOR );
-    m_refreshTables = new wxTextCtrl( this, wxID_ANY, _( "" ), wxDefaultPosition, wxDefaultSize, 0, validator );
+    m_refreshTables = new wxTextCtrl( this, wxID_ANY, current.m_tableRefresh, wxDefaultPosition, wxDefaultSize, 0, validator );
     grid->Add( m_refreshTables, 0, wxEXPAND, 0 );
     auto label4 = new wxStaticText( this, wxID_ANY, _( "Seconds" ) );
     grid->Add( label4, 0, wxEXPAND, 0 );
     m_readOnly = new wxCheckBox( this, wxID_ANY, _( "&Read Only" ) );
+    m_readOnly->SetValue( current.m_readOnly );
     grid->Add( m_readOnly, 0, wxEXPAND, 0 );
     auto label5 = new wxStaticText( this, wxID_ANY, _( "&Columns In Tale Display" ) );
     grid->Add( label5, 0, wxEXPAND, 0 );
-    m_colmnsInTable = new wxTextCtrl( this, wxID_ANY, _( "" ) );
+    m_colmnsInTable = new wxTextCtrl( this, wxID_ANY, current.m_tableColumns );
     m_colmnsInTable->SetMaxLength( 2 );
     size = m_colmnsInTable->GetSizeFromText( "333" );
     m_colmnsInTable->SetMaxSize( size );
     grid->Add( m_colmnsInTable, 0, 0, 0 );
     grid->Add( 5, 5, 0, wxEXPAND, 0 );
     m_keepAlive = new wxCheckBox( this, wxID_ANY, _( "&Keep Connection Open" ) );
+    m_keepAlive->SetValue( current.m_keepAlive );
     grid->Add( m_keepAlive, 0, wxEXPAND, 0 );
     grid->Add( 5, 5, 0, wxEXPAND, 0 );
     grid->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -83,11 +87,12 @@ DatabaseOptionGeneral::DatabaseOptionGeneral(wxWindow *parent, DBOptionGeneral &
     m_displayTableList->Bind( wxEVT_CHECKBOX, &DatabaseOptionGeneral::OnCheckBox, this );
     m_terminator->Bind( wxEVT_TEXT, &DatabaseOptionGeneral::OnText, this );
     m_useRepository->Bind( wxEVT_CHECKBOX, &DatabaseOptionGeneral::OnCheckBox, this );
-    m_refreshTables->Bind( wxEVT_TEXT, &DatabaseOptionGeneral::OnText, this );
+/*    m_refreshTables->Bind( wxEVT_TEXT, &DatabaseOptionGeneral::OnText, this );*/
     m_readOnly->Bind( wxEVT_CHECKBOX, &DatabaseOptionGeneral::OnCheckBox, this );
     m_colmnsInTable->Bind( wxEVT_TEXT, &DatabaseOptionGeneral::OnText, this );
     m_keepAlive->Bind( wxEVT_CHECKBOX, &DatabaseOptionGeneral::OnCheckBox, this );
     m_restore->Bind( wxEVT_BUTTON, &DatabaseOptionGeneral::OnRestoreDefaults, this );
+    m_isModified = false;
 }
 
 void DatabaseOptionGeneral::FileNameChanged(wxFileDirPickerEvent &event)
