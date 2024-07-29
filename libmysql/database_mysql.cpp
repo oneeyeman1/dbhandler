@@ -26,7 +26,7 @@ MySQLDatabase::MySQLDatabase() : Database()
 {
     m_db = NULL;
     pimpl = new Impl;
-    pimpl->m_type = L"MySQL";
+    pimpl->m_type = L"mySQL";
     pimpl->m_subtype = L"";
     m_pimpl = new MySQLImpl;
     connectToDatabase = false;

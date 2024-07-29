@@ -167,7 +167,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             {
                 pdb = new SQLiteDatabase();
             }
-            if( engine == "ODBC" )
+            else if( engine == "ODBC" )
             {
                 pdb = new ODBCDatabase();
                 dynamic_cast<ODBCDatabase *>( pdb )->SetWindowHandle( parent->GetHandle() );
@@ -182,12 +182,17 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
                 name = name + L";" + user_wx + L";" + password_wx;
 #endif
             }
-            if( engine == "PostgreSQL" )
+            else if( engine == "PostgreSQL" )
             {
                 pdb = new PostgresDatabase();
             }
-            if( engine == "mySQL" )
+            else if( engine == "mySQL" || engine == "MySQL" )
                 pdb = new MySQLDatabase();
+            else
+            {
+                wxMessageBox( _( "Unknown engine. Please try to reinstall the program!" ) );
+                return nullptr;
+            }
             wxBeginBusyCursor();
             result = pdb->Connect( name.ToStdWstring(), dsn, errorMsg );
             wxEndBusyCursor();
