@@ -30,7 +30,7 @@ wxBitmapComboBox( parent, id, selection, pos, size, n, choices, style )
     m_colors.push_back( ColorStruct( 0x8000FF, "Purple" ) );
     m_colors.push_back( ColorStruct( *wxGREEN, "Green" ) );
     m_colors.push_back( ColorStruct( wxColour( 186, 184, 108 ), "Olive" ) );
-    m_colors.push_back( ColorStruct( wxTheColourDatabase->Find( "NAVY" ), "Navy" ) );
+    m_colors.push_back( ColorStruct( wxColour( 00, 00, 128 ), "Navy" ) );
     m_colors.push_back( ColorStruct( wxTheColourDatabase->Find( "TEAL" ), "Teal" ) );
     m_colors.push_back( ColorStruct( wxTheColourDatabase->Find( "GREY" ), "Grey" ) );
     m_colors.push_back( ColorStruct( 0xC0C0C0, "Silver" ) );
