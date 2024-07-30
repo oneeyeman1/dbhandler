@@ -485,8 +485,6 @@ void DrawingView::CreateViewToolBar()
     wxWindow *parent = nullptr;
 #ifdef __WXOSX__
     parent = m_frame;
-#elif __WXMSW__
-    parent = m_parent->GetClientWindow();
 #else
 	parent = m_parent;
 #endif
