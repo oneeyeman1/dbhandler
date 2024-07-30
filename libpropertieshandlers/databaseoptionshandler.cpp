@@ -10,6 +10,7 @@
 #include "wx/stockitem.h"
 #endif
 #include <map>
+#include "wx/any.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "databaseoptionshandler.h"
@@ -22,4 +23,9 @@ DatabaseOptionsHandler::DatabaseOptionsHandler(DatabaseOptions options)
 int DatabaseOptionsHandler::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
 {
     return 0;
+}
+
+int DatabaseOptionsHandler::ApplyProperties()
+{
+    return 0; 
 }

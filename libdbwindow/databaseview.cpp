@@ -59,6 +59,7 @@
 #include <QFontDialog>
 #endif
 #include "wx/artprov.h"
+#include "wx/any.h"
 #include "wx/fontenum.h"
 #include "wx/notebook.h"
 #include "wx/fdrepdlg.h"
@@ -1420,6 +1421,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
     ShapeList selections;
     std::vector<std::wstring> errors;
     int type = 0;
+    wxAny any;
     DatabaseTable *dbTable = nullptr;
     Divider *divider = nullptr;
     DesignLabel *label = nullptr;
@@ -1525,12 +1527,14 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         //#if _MSC_VER >= 1900
         std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
         res = GetDocument()->GetDatabase()->GetTableProperties( dbTable, errors );
+        any = erdTable;
 #if __cplusplus > 201300
         auto ptr = std::make_unique<DatabasePropertiesHandler>( GetDocument()->GetDatabase(), dbTable, m_text );
 #else
         auto ptr = std::unique_ptr<DatabasePropertiesHandler>( new DatabasePropertiesHandler( GetDocument()->GetDatabase(), dbTable, m_text ) );
 #endif
         propertiesPtr = std::move( ptr );
+        propertiesPtr->SetHandlerObject( any );
         propertiesPtr->SetType( DatabaseTableProperties );
         title = _( "Table " );
         title += schemaName + L"." + tableName;
@@ -1548,6 +1552,8 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         auto ptr = std::unique_ptr<FieldPropertiesHandler>( new FieldPropertiesHandler( GetDocument()->GetDatabase(), tableName, ownerName, field, m_text ) );
 #endif
         propertiesPtr = std::move( ptr );
+        any = field;
+        propertiesPtr->SetHandlerObject( any );
         propertiesPtr->SetType( DatabaseFieldProperties );
         title = _( "Column " );
         title += tableName + ".";
@@ -1561,6 +1567,8 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         auto ptr = std::unique_ptr<DividerPropertiesHandler>( new DividerPropertiesHandler( divider->GetDividerProperties() ) );
 #endif
         propertiesPtr = std::move( ptr );
+        any = divider;
+        propertiesPtr->SetHandlerObject( any );
         propertiesPtr->SetType( DividerProperties );
         title = _( "Band Object" );
     }
@@ -1572,6 +1580,8 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
 #endif
         propertiesPtr = std::move( ptr );
+        any = m_designCanvas;
+        propertiesPtr->SetHandlerObject( any );
         propertiesPtr->SetType( DesignProperties );
         title = _( "Query Object" );
     }
@@ -1584,6 +1594,8 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
 #endif
         propertiesPtr = std::move( ptr );
+        any = field;
+        propertiesPtr->SetHandlerObject( any );
         propertiesPtr->SetType( DesignProperties );
         propertiesPtr.get()->SetType( type );
     }
@@ -3296,11 +3308,13 @@ void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
     wxString title;
     std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
 #if __cplusplus > 201300
-    auto ptr = std::make_unique<DatabaseOptionsHandler>( m_conf->m_dbOptions, m_canvas );
+    auto ptr = std::make_unique<DatabaseOptionsHandler>( m_conf->m_dbOptions );
 #else
-    auto ptr = std::unique_ptr<DatabaseOptionsHandler>( new DatabaseOptionsHandler( m_conf->m_dbOptions, m_canvas ) );
+    auto ptr = std::unique_ptr<DatabaseOptionsHandler>( new DatabaseOptionsHandler( m_conf->m_dbOptions ) );
 #endif
     propertiesPtr = std::move( ptr );
+    wxAny any = m_canvas;
+    propertiesPtr->SetHandlerObject( any );
     propertiesPtr->SetType( m_type == DatabaseView ? DatabaseProperties : QueryProperties );
     title = _( "Database Preferences" );
     if( lib.IsLoaded() )

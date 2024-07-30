@@ -17,6 +17,7 @@ public:
     const BandProperties &GetObjectProperties() const { return m_props; }
 //    virtual void EditProperies(wxNotebook *parent)  wxOVERRIDE;
     virtual int GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
+    virtual int ApplyProperties() wxOVERRIDE;
 
 private:
     BandProperties m_props;

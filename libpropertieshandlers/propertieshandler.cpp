@@ -29,6 +29,7 @@
 #include "wx/fontutil.h"
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
+#include "wx/any.h"
 #include "wx/fontenum.h"
 #include "propertieshandlerbase.h"
 #include "propertieshandler.h"
@@ -91,4 +92,9 @@ int DatabasePropertiesHandler::GetProperties(std::vector<std::wstring> &errors)
             m_log->AppendText( m_command );
     }*/
     return result;
+}
+
+int DatabasePropertiesHandler::ApplyProperties()
+{
+    return 0;
 }

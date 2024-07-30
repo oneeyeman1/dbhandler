@@ -16,6 +16,7 @@ public:
     virtual ~FieldPropertiesHandler() { }
 //    virtual void EditProperies(wxNotebook *parent) wxOVERRIDE;
     virtual int GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
+    virtual int ApplyProperties() wxOVERRIDE;
     FieldProperties &GetProperty() { return m_prop; }
     virtual const std::wstring &GetCommand() const wxOVERRIDE { return m_command; }
     

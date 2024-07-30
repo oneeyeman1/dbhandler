@@ -19,6 +19,7 @@
 #include <vector>
 #include <map>
 #include "wx/notebook.h"
+#include "wx/any.h"
 #include "database.h"
 #include "propertieshandlerbase.h"
 #include "fieldpropertieshandler.h"
@@ -54,5 +55,10 @@ int FieldPropertiesHandler::GetProperties(std::vector<std::wstring> &errors)
         if( isLogOnly )
             m_log->AppendText( m_command );
     }*/
+    return 0;
+}
+
+int FieldPropertiesHandler::ApplyProperties()
+{
     return 0;
 }

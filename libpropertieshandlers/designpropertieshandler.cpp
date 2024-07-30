@@ -10,6 +10,7 @@
 #include "wx/stockitem.h"
 #endif
 #include "database.h"
+#include "wx/any.h"
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
 #include "wx/filepicker.h"
@@ -30,5 +31,10 @@ int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &WXUNUSED(er
     {
         m_options.colorBackground = color;
     }*/
+    return 0;
+}
+
+int DesignPropertiesHander::ApplyProperties()
+{
     return 0;
 }

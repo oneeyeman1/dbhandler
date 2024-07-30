@@ -12,6 +12,7 @@
 
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
+#include "wx/any.h"
 #include "propertieshandlerbase.h"
 #include "dividerpropertieshandler.h"
 
@@ -25,3 +26,7 @@ int DividerPropertiesHandler::GetProperties(std::vector<std::wstring> &WXUNUSED(
     return 0;
 }
 
+int DividerPropertiesHandler::ApplyProperties()
+{
+    return 0;
+}
