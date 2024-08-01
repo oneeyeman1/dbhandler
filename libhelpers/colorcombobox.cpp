@@ -50,7 +50,7 @@ wxBitmapComboBox( parent, id, selection, pos, size, n, choices, style )
         dc.SetPen( *wxBLACK_PEN );
         dc.DrawRectangle( dc.FromDIP( 0 ), dc.FromDIP( 0 ), dc.FromDIP( w ), dc.FromDIP( h ) );
         dc.SetBrush( wxBrush( (*it).m_color ) );
-        dc.DrawRectangle( dec.FromDIP( 0 ), dc.FromDip( 0 ), dc.FromDIP( w ), dc.FromDIP( h ) );
+        dc.DrawRectangle( dc.FromDIP( 0 ), dc.FromDIP( 0 ), dc.FromDIP( w ), dc.FromDIP( h ) );
         dc.SelectObject( wxNullBitmap );
         Append( (*it).m_name, bmp, &(*it).m_color );
     }
