@@ -130,5 +130,17 @@ void DatabaseptionsColours::OnColorChanged(wxCommandEvent &event)
 
 void DatabaseptionsColours::OnRestore(wxCommandEvent &event)
 {
-    m_current = m_defaults;
+    if( m_isModified )
+    {
+        m_current = m_defaults;
+        m_background->SetColourValue( m_current.m_background );
+        m_textCol->SetColourValue( m_current.m_tableCol );
+        m_indexLine->SetColourValue( m_current.m_indexLine );
+        m_tableHeader->SetColourValue( m_current.m_tableHeader );
+        m_tableColumnText->SetColourValue( m_current.m_tableColText );
+        m_primaryKeyLine->SetColourValue( m_current.m_primaryKeyLine );
+        m_tableHeaderText->SetColourValue( m_current.m_tableHeaderText );
+        m_tableCommentText->SetColourValue( m_current.m_tableCommentText );
+        m_foreignKey->SetColourValue( m_current.m_foreignKeyLine );
+    }
 }
