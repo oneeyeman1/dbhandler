@@ -57,7 +57,7 @@ struct DBOptionGeneral
 struct DatabaseOptionColors
 {
     wxColor m_background, m_tableCol, m_indexLine, m_tableHeader, m_tableColText, m_primaryKeyLine, m_tableHeaderText, m_tableCommentText, m_foreignKeyLine;
-    DatabaseptionsColours &operator=( const DatabaseOptionColors &right )
+    DatabaseOptionColors &operator=(const DatabaseOptionColors &right)
     {
         m_background = right.m_background;
         m_tableCol = right.m_tableCol;
