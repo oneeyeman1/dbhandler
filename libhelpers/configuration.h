@@ -59,16 +59,21 @@ struct DatabaseOptionColors
     wxColor m_background, m_tableCol, m_indexLine, m_tableHeader, m_tableColText, m_primaryKeyLine, m_tableHeaderText, m_tableCommentText, m_foreignKeyLine;
     DatabaseOptionColors &operator=(const DatabaseOptionColors &right)
     {
-        m_background = right.m_background;
-        m_tableCol = right.m_tableCol;
-        m_indexLine = right.m_indexLine;
-        m_tableHeader = right.m_tableHeader;
-        m_tableColText = right.m_tableColText;
-        m_primaryKeyLine = right.m_primaryKeyLine;
-        m_tableHeaderText = right.m_tableHeaderText;
-        m_tableCommentText = right.m_tableCommentText;
-        m_foreignKeyLine = right.m_foreignKeyLine;
-
+        if( this == &right )
+            return *this;
+        else
+        {
+            m_background = right.m_background;
+            m_tableCol = right.m_tableCol;
+            m_indexLine = right.m_indexLine;
+            m_tableHeader = right.m_tableHeader;
+            m_tableColText = right.m_tableColText;
+            m_primaryKeyLine = right.m_primaryKeyLine;
+            m_tableHeaderText = right.m_tableHeaderText;
+            m_tableCommentText = right.m_tableCommentText;
+            m_foreignKeyLine = right.m_foreignKeyLine;
+            return *this;
+        }
     }
 };
 
