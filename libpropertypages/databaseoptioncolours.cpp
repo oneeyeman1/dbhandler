@@ -25,6 +25,12 @@ DatabaseptionsColours::DatabaseptionsColours(wxWindow *parent, const DatabaseOpt
     m_defaults.m_background = wxTheColourDatabase->Find( "WHITE" );
     m_defaults.m_tableCol = wxColour( 182, 192, 192 );
     m_defaults.m_indexLine = wxColour( 255, 0, 0 );
+    m_defaults.m_tableHeader = wxColour( 0x808080 );
+    m_defaults.m_tableColText = wxColour( 0, 0, 0 );
+    m_defaults.m_primaryKeyLine = wxColour( 0, 255, 0 );
+    m_defaults.m_tableHeaderText = wxColour( 0, 0, 0 );
+    m_defaults.m_tableCommentText = wxColour( 0x000080 );
+    m_defaults.m_foreignKeyLine = wxColour( 0, 0, 255 );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Backgrund" ) );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Table Columns" ) );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Index Key Line" ) );
@@ -79,8 +85,10 @@ DatabaseptionsColours::DatabaseptionsColours(wxWindow *parent, const DatabaseOpt
     grid->Add( m_tableCommentText, 0, wxEXPAND, 0 );
     grid->Add( m_foreignKey, 0, wxEXPAND, 0 );
     controls->Add( grid, 0, wxEXPAND, 0 );
+    auto buttinSizer = new wxBoxSizer( wxVERTICAL );
     controls->Add( 5, 5, 0, wxEXPAND, 0 );
-    controls->Add( restore, 0, wxEXPAND, 0 );
+    buttinSizer->Add( restore, 0, wxEXPAND, 0 );
+    controls->Add( buttinSizer, 0, wxEXPAND, 0 );
     controls->Add( 5, 5, 0, wxEXPAND, 0 );
     mainSizer->Add( controls, 0, wxEXPAND, 0 );
     mainSizer->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -88,6 +96,13 @@ DatabaseptionsColours::DatabaseptionsColours(wxWindow *parent, const DatabaseOpt
     m_background->Bind( wxEVT_COMBOBOX, &DatabaseptionsColours::OnColorChanged, this );
     m_textCol->Bind( wxEVT_COMBOBOX, &DatabaseptionsColours::OnColorChanged, this );
     m_indexLine->Bind( wxEVT_COMBOBOX, &DatabaseptionsColours::OnColorChanged, this );
+    m_tableHeader->Bind( wxEVT_COMBOBOX, &DatabaseptionsColours::OnColorChanged, this );
+    m_tableColumnText->Bind( wxEVT_COMBOBOX, &DatabaseptionsColours::OnColorChanged, this );
+    m_primaryKeyLine->Bind( wxEVT_COMBOBOX, &DatabaseptionsColours::OnColorChanged, this );
+    m_tableHeaderText->Bind( wxEVT_COMBOBOX, &DatabaseptionsColours::OnColorChanged, this );
+    m_tableCommentText->Bind( wxEVT_COMBOBOX, &DatabaseptionsColours::OnColorChanged, this );
+    m_foreignKey->Bind( wxEVT_COMBOBOX, &DatabaseptionsColours::OnColorChanged, this );
+    restore->Bind( wxEVT_BUTTON, &DatabaseptionsColours::OnRestore, this );
 }
 
 void DatabaseptionsColours::OnColorChanged(wxCommandEvent &event)
@@ -98,5 +113,22 @@ void DatabaseptionsColours::OnColorChanged(wxCommandEvent &event)
         m_current.m_tableCol = wxColor( m_textCol->GetValue() );
     else if( event.GetEventObject() == m_indexLine )
         m_current.m_indexLine = wxColor( m_indexLine->GetValue() );
+    else if( event.GetEventObject() == m_tableHeader )
+        m_current.m_tableHeader = wxColor( m_tableHeader->GetValue() );
+    else if( event.GetEventObject() == m_tableColumnText )
+        m_current.m_tableColText = wxColor( m_tableColumnText->GetValue() );
+    else if( event.GetEventObject() == m_primaryKeyLine )
+        m_current.m_primaryKeyLine = wxColor( m_primaryKeyLine->GetValue() );
+    else if( event.GetEventObject() == m_tableHeaderText )
+        m_current.m_tableHeaderText = wxColor( m_tableHeaderText->GetValue() );
+    else if( event.GetEventObject() == m_tableCommentText )
+        m_current.m_tableCommentText = wxColor( m_tableCommentText->GetValue() );
+    else if( event.GetEventObject() == m_foreignKey )
+        m_current.m_foreignKeyLine = wxColor( m_foreignKey->GetValue() );
     m_isModified = true;
+}
+
+void DatabaseptionsColours::OnRestore(wxCommandEvent &event)
+{
+    m_current = m_defaults;
 }

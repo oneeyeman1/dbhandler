@@ -17,6 +17,7 @@ public:
     DatabaseptionsColours(wxWindow *parent, const DatabaseOptionColors &colors, bool sDatabase);
 protected:
     void OnColorChanged(wxCommandEvent &event);
+    void OnRestore(wxCommandEvent &event);
 private:
     wxButton *restore;
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7, *m_label8, *m_label9;
