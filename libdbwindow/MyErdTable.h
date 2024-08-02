@@ -13,7 +13,7 @@ public:
     virtual ~MyErdTable();
     void UpdateTable();
     void SetTableComment(const wxString &comment);
-    const DatabaseTable *GetTable();
+    const WXEXPORT DatabaseTable *GetTable();
     wxSFTextShape *GetLabel();
     GridTableShape *GetFieldGrid();
     void DisplayTypes(bool display, int type)

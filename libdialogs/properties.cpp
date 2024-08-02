@@ -83,7 +83,8 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         case DatabaseTableProperties:
         {
             DatabasePropertiesHandler *prop = dynamic_cast<DatabasePropertiesHandler *>( handler );
-            wxFont data_font( prop->GetProperty().m_dataFontSize, wxFONTFAMILY_DEFAULT, prop->GetProperty().m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->GetProperty().m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->GetProperty().m_dataFontUnderline, prop->GetProperty().m_dataFontName );
+            int tableProp = prop->GetProperties( errors );
+/*            wxFont data_font( prop->GetProperty().m_dataFontSize, wxFONTFAMILY_DEFAULT, prop->GetProperty().m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->GetProperty().m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->GetProperty().m_dataFontUnderline, prop->GetProperty().m_dataFontName );
             if( prop->GetProperty().m_dataFontStrikethrough )
                 data_font.SetStrikethrough( true );
             wxFont heading_font( prop->GetProperty().m_headingFontSize, wxFONTFAMILY_DEFAULT, prop->GetProperty().m_headingFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->GetProperty().m_headingFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->GetProperty().m_headingFontUnderline, prop->GetProperty().m_headingFontName );
@@ -113,7 +114,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_properties->AddPage( m_page2, _( "Data Font" ) );
             m_properties->AddPage( m_page3, _( "Heading Font" ) );
             m_properties->AddPage( m_page4, _( "Label Font" ) );
-            m_properties->AddPage( m_page5, _( "Primary Key" ) );
+            m_properties->AddPage( m_page5, _( "Primary Key" ) );*/
         }
         break;
         case DatabaseFieldProperties:

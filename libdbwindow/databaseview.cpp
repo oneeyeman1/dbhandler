@@ -1529,9 +1529,9 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         res = GetDocument()->GetDatabase()->GetTableProperties( dbTable, errors );
         any = erdTable;
 #if __cplusplus > 201300
-        auto ptr = std::make_unique<DatabasePropertiesHandler>( GetDocument()->GetDatabase(), dbTable, m_text );
+        auto ptr = std::make_unique<DatabasePropertiesHandler>( GetDocument()->GetDatabase(), m_text );
 #else
-        auto ptr = std::unique_ptr<DatabasePropertiesHandler>( new DatabasePropertiesHandler( GetDocument()->GetDatabase(), dbTable, m_text ) );
+        auto ptr = std::unique_ptr<DatabasePropertiesHandler>( new DatabasePropertiesHandler( GetDocument()->GetDatabase(), m_text ) );
 #endif
         propertiesPtr = std::move( ptr );
         propertiesPtr->SetHandlerObject( any );
