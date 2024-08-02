@@ -20,9 +20,9 @@ DatabaseOptionsHandler::DatabaseOptionsHandler(DatabaseOptions options)
     m_options = options;
 }
 
-int DatabaseOptionsHandler::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
+wxAny DatabaseOptionsHandler::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
 {
-    return 0;
+    return wxAny( 0 );
 }
 
 int DatabaseOptionsHandler::ApplyProperties()

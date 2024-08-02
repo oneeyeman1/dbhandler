@@ -21,9 +21,9 @@ DividerPropertiesHandler::DividerPropertiesHandler(BandProperties props) : Prope
     m_props = props;
 }
 
-int DividerPropertiesHandler::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
+wxAny DividerPropertiesHandler::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
 {
-    return 0;
+    return wxAny( 0 );
 }
 
 int DividerPropertiesHandler::ApplyProperties()

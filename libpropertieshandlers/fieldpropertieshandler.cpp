@@ -34,7 +34,7 @@ FieldPropertiesHandler::FieldPropertiesHandler(const Database *db, const wxStrin
     m_prop = m_field->GetFieldProperties();
 }
 
-int FieldPropertiesHandler::GetProperties(std::vector<std::wstring> &errors)
+wxAny FieldPropertiesHandler::GetProperties(std::vector<std::wstring> &errors)
 {
 /*    m_prop.m_comment = m_page1->GetCommentCtrl()->GetValue();
     m_prop.m_label = m_page2->GetLabelCtrl()->GetValue();
@@ -55,7 +55,7 @@ int FieldPropertiesHandler::GetProperties(std::vector<std::wstring> &errors)
         if( isLogOnly )
             m_log->AppendText( m_command );
     }*/
-    return 0;
+    return wxAny( 0 );
 }
 
 int FieldPropertiesHandler::ApplyProperties()

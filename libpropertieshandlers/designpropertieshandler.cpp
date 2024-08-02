@@ -23,7 +23,7 @@ DesignPropertiesHander::DesignPropertiesHander(DesignOptions canvas)
     m_options = canvas;
 }
 
-int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
+wxAny DesignPropertiesHander::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
 {
 //    m_options->GetOptions().units = m_page1->GetUnitsCtrl()->GetSelection();
 /*    wxColour color = m_page1->GetColorCtrl()->GetColourValue();
@@ -31,7 +31,7 @@ int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &WXUNUSED(er
     {
         m_options.colorBackground = color;
     }*/
-    return 0;
+    return wxAny( 0 );
 }
 
 int DesignPropertiesHander::ApplyProperties()

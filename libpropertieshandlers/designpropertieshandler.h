@@ -15,7 +15,7 @@ public:
     DesignPropertiesHander(DesignOptions canvas);
     virtual ~DesignPropertiesHander() { }
 //    virtual void EditProperies(wxNotebook *parent) wxOVERRIDE;
-    virtual int GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
+    virtual wxAny GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
     virtual int ApplyProperties() wxOVERRIDE;
 private:
     DesignOptions m_options;

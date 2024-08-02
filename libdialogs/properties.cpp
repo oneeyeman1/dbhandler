@@ -83,7 +83,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         case DatabaseTableProperties:
         {
             DatabasePropertiesHandler *prop = dynamic_cast<DatabasePropertiesHandler *>( handler );
-            int tableProp = prop->GetProperties( errors );
+            TableProperties tableProp = prop->GetProperties( errors ).As<TableProperties>();
 /*            wxFont data_font( prop->GetProperty().m_dataFontSize, wxFONTFAMILY_DEFAULT, prop->GetProperty().m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->GetProperty().m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->GetProperty().m_dataFontUnderline, prop->GetProperty().m_dataFontName );
             if( prop->GetProperty().m_dataFontStrikethrough )
                 data_font.SetStrikethrough( true );
@@ -104,10 +104,10 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             FontPropertyPage labelFont;
             labelFont.font = label_font;
             labelFont.text = wxColour( *wxBLACK );
-            labelFont.back = wxColour( *wxWHITE );
-            m_page1 = new TableGeneralProperty( m_properties, prop->GetProperty().table_name, prop->GetProperty().m_owner, prop->GetProperty().m_comment, DatabaseTableProperties );
+            labelFont.back = wxColour( *wxWHITE );*/
+            m_page1 = new TableGeneralProperty( m_properties, tableProp.table_name, tableProp.m_owner, tableProp.m_comment, DatabaseTableProperties );
             m_properties->AddPage( m_page1, _( "General" ) );
-            m_page2 = new CFontPropertyPage( m_properties, dataFont, false );
+/*            m_page2 = new CFontPropertyPage( m_properties, dataFont, false );
             m_page3 = new CFontPropertyPage( m_properties, headingFont, false );
             m_page4 = new CFontPropertyPage( m_properties, labelFont, false );
             m_page5 = new TablePrimaryKey( m_properties, prop->GetTable() );
@@ -215,7 +215,7 @@ bool PropertiesDialog::ApplyProperties()
 {
     std::vector<std::wstring> errors;
     bool result = true;
-    int res = m_handler->GetProperties( errors );
+/*    int res = m_handler->GetProperties( errors );
     if( !res )
     {
         for( size_t i = 0; i < m_properties->GetPageCount(); ++i )

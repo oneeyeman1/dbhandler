@@ -18,9 +18,9 @@ LabelPropertiesHandler::LabelPropertiesHandler(DesignLabelProperties *prop)
     m_prop = prop;
 }
 
-int LabelPropertiesHandler::GetProperties(std::vector<std::wstring> &UNUSED(errors))
+wxAny LabelPropertiesHandler::GetProperties(std::vector<std::wstring> &UNUSED(errors))
 {
-    return 0;
+    return wxAny( 0 );
 }
 
 int LabelPropertiesHandler::ApplyProperties()

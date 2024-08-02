@@ -14,7 +14,7 @@ class LabelPropertiesHandler :  public PropertiesHandler
 {
 public:
     LabelPropertiesHandler(DesignLabelProperties *prop);
-    int GetProperties(std::vector<std::wstring> &errors);
+    wxAny GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
     DesignLabelProperties *GetOptions() { return m_prop; }
     virtual int ApplyProperties() wxOVERRIDE;
 private:
