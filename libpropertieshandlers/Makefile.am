@@ -14,7 +14,9 @@ libpropertieshandlers_la_SOURCES =  \
 	dividerpropertieshandler.cpp \
 	dividerpropertieshandler.h \
 	databaseoptionshandler.cpp \
-	databaseoptionshandler.h
+	databaseoptionshandler.h \
+	labelpropertieshandler.cpp \
+	labelpropertieshandler.h
 
 
 libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
@@ -26,5 +28,7 @@ libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	@WX_CXXFLAGS@
 
 libpropertieshandlers_la_LDFLAGS = -L../libpropertypages \
+	-L../libdbwindow \
+	-ldbwindow \
 	-lpropertypages \
 	@WX_LIBS@
