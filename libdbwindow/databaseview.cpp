@@ -439,7 +439,10 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
         m_dbFrame->Show( true );
     }
     else
-        m_frame->Close();
+    {
+        if( OnClose( true ) );
+            m_frame->Close();
+    }
 }
 
 void DrawingView::CreateViewToolBar()
@@ -1138,18 +1141,16 @@ bool DrawingView::OnClose(bool deleteWindow)
     wxMDIClientWindow *frame = (wxMDIClientWindow *) mainWin->GetClientWindow();
     if( GetDocument()->GetViewsVector().size() == 1 )
     {
-///        int y = m_tb->GetHeight();
-/*        frame->SetPosition( wxPoint( 0, 0 ) );
         delete m_tb;
-        m_tb = nullptr;*/
+        m_tb = nullptr;
+        delete m_styleBar;
+        m_styleBar = nullptr;
+        frame->SetSize( 0, 0, mainWin->GetClientSize().GetWidth(), mainWin->GetClientSize().GetHeight() );
     }
     else
         m_tb->ClearTools();
     if( !wxView::OnClose( deleteWindow ) )
         return false;
-
-//    Activate( false );
-
     return true;
 }
 
