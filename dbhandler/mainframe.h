@@ -62,6 +62,7 @@ private:
     wxString m_libraryPath;
     wxConfigBase *m_config;
     Configuration *m_conf;
+    bool m_libraryLoaded;
     wxDECLARE_EVENT_TABLE();
 };
 

@@ -68,6 +68,7 @@ END_EVENT_TABLE()
 
 MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL, wxID_ANY, "DB Handler" )
 {
+    m_libraryLoaded = false;
     m_conf = new Configuration;
     m_db = NULL;
     m_countAttached = 0;
@@ -640,7 +641,7 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
         }
         else
             lib = m_painters["Query"];
-        if( LoadApplication( m_path ) )
+        if( !m_libraryLoaded && LoadApplication( m_path ) )
             return;
         if( m_db && lib->IsLoaded() )
         {
@@ -863,6 +864,7 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
             isQuery = false;
         }
     }
+    m_libraryLoaded = true;
 	return false;
 }
 
