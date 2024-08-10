@@ -1,5 +1,4 @@
 #pragma once
-#include "C:\wxWidgets\include\wx\docview.h"
 
 class LibraryView :  public wxView
 {
