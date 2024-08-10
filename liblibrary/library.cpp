@@ -105,7 +105,7 @@ extern "C" WXEXPORT void CreateLibraryWindow(wxWindow *parent, wxDocManager *doc
     docTemplate = (wxDocTemplate *) docManager->FindTemplate( CLASSINFO( wxDocTemplate ) );
     if( !docTemplate )
     {
-        docTemplate = new wxDocTemplate( docManager, "Library", "*.abl", "", "abl", "Library Doc", "Library View", CLASSINFO( LibraryDocument ), CLASSINFO( LibraryView ) );
+        docTemplate = new wxDocTemplate( docManager, "Library", "*.abl", "", "abl", "Library Doc", "Library View", CLASSINFO( LibraryDocument ), CLASSINFO( LibraryViewPainter ) );
         path = conf->m_currentLibrary;
         LibraryDocument * const doc = (LibraryDocument *) docTemplate->CreateDocument( path );
         wxTRY
@@ -115,26 +115,28 @@ extern "C" WXEXPORT void CreateLibraryWindow(wxWindow *parent, wxDocManager *doc
             docManager->AddDocument( doc );
             doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
 
-            wxScopedPtr<LibraryView> view( (LibraryView *) docTemplate->CreateView( doc ) );
+            wxScopedPtr<LibraryViewPainter> view( (LibraryViewPainter *) docTemplate->CreateView( doc ) );
             if( !view )
                 return;
             view->SetViewType( LibraryView );
             view->SetParentWindow( parent );
             view->SetDocument( doc );
-            view->SetPaintersMap( painters );
-            view->SetToolbarOptions( conf );
-            if( !view->OnCreate( doc, flags ) )
-                return NULL;
-            return view.release();
-            if( docTemplate->CreateView( parent, doc, painter, conf, wxDOC_NEW | wxDOC_SILENT ) )
-                return true;
-            if( GetDocumentManager()->GetDocuments().Member( doc ) )
-                doc->DeleteAllViews();
-            return false;
+            view->SetConfiguration( conf );
+            if( !view->OnCreate( doc, wxDOC_NEW | wxDOC_SILENT ) )
+            {
+                if( docManager->GetDocuments().Member( doc ) )
+                    doc->DeleteAllViews();
+                return;
+            }
+            else
+            {
+                view.release();
+                return;
+            }
         }
         wxCATCH_ALL
         (
-            if( GetDocumentManager()->GetDocuments().Member( doc ) )
+            if( docManager->GetDocuments().Member( doc ) )
                 doc->DeleteAllViews();
             throw;
         )

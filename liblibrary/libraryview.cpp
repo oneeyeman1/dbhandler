@@ -17,7 +17,7 @@
 #include "configuration.h"
 #include "libraryview.h"
 
-bool LibraryView::OnCreate(wxDocument *doc, long flags)
+bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
 {
     return true;
 }
