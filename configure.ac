@@ -104,5 +104,6 @@ libmysql/Makefile
 libpostgres/Makefile
 libtablewindow/Makefile
 libpropertypages/Makefile
+liblibrary/Makefile
 ])
 AC_OUTPUT
