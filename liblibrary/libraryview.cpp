@@ -14,7 +14,10 @@
 #endif
 
 #include <map>
+#include "wx/docview.h"
+#include "wx/docmdi.h"
 #include "configuration.h"
+#include "librarydocument.h"
 #include "libraryview.h"
 
 bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
