@@ -84,14 +84,14 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         {
             DatabasePropertiesHandler *prop = dynamic_cast<DatabasePropertiesHandler *>( handler );
             TableProperties tableProp = prop->GetProperties( errors ).As<TableProperties>();
-/*            wxFont data_font( prop->GetProperty().m_dataFontSize, wxFONTFAMILY_DEFAULT, prop->GetProperty().m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->GetProperty().m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->GetProperty().m_dataFontUnderline, prop->GetProperty().m_dataFontName );
-            if( prop->GetProperty().m_dataFontStrikethrough )
+            wxFont data_font( tableProp.m_dataFontSize, wxFONTFAMILY_DEFAULT, tableProp.m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, tableProp.m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, tableProp.m_dataFontUnderline, tableProp.m_dataFontName );
+            if( tableProp.m_dataFontStrikethrough )
                 data_font.SetStrikethrough( true );
-            wxFont heading_font( prop->GetProperty().m_headingFontSize, wxFONTFAMILY_DEFAULT, prop->GetProperty().m_headingFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->GetProperty().m_headingFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->GetProperty().m_headingFontUnderline, prop->GetProperty().m_headingFontName );
-            if( prop->GetProperty().m_headingFontStrikethrough )
+            wxFont heading_font( tableProp.m_headingFontSize, wxFONTFAMILY_DEFAULT, tableProp.m_headingFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, tableProp.m_headingFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, tableProp.m_headingFontUnderline, tableProp.m_headingFontName );
+            if( tableProp.m_headingFontStrikethrough )
                 heading_font.SetStrikethrough( true );
-            wxFont label_font( prop->GetProperty().m_labelFontSize, wxFONTFAMILY_DEFAULT, prop->GetProperty().m_labelFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->GetProperty().m_labelFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->GetProperty().m_labelFontUnderline, prop->GetProperty().m_labelFontName );
-            if( prop->GetProperty().m_labelFontStrikethrough )
+            wxFont label_font( tableProp.m_labelFontSize, wxFONTFAMILY_DEFAULT, tableProp.m_labelFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, tableProp.m_labelFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, tableProp.m_labelFontUnderline, tableProp.m_labelFontName );
+            if( tableProp.m_labelFontStrikethrough )
                 label_font.SetStrikethrough( true );
             FontPropertyPage dataFont;
             dataFont.font = data_font;
@@ -104,17 +104,17 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             FontPropertyPage labelFont;
             labelFont.font = label_font;
             labelFont.text = wxColour( *wxBLACK );
-            labelFont.back = wxColour( *wxWHITE );*/
+            labelFont.back = wxColour( *wxWHITE );
             m_page1 = new TableGeneralProperty( m_properties, tableProp.table_name, tableProp.m_owner, tableProp.m_comment, DatabaseTableProperties );
             m_properties->AddPage( m_page1, _( "General" ) );
-/*            m_page2 = new CFontPropertyPage( m_properties, dataFont, false );
+            m_page2 = new CFontPropertyPage( m_properties, dataFont, false );
             m_page3 = new CFontPropertyPage( m_properties, headingFont, false );
             m_page4 = new CFontPropertyPage( m_properties, labelFont, false );
-            m_page5 = new TablePrimaryKey( m_properties, prop->GetTable() );
+/*            m_page5 = new TablePrimaryKey( m_properties, prop->GetTable() );*/
             m_properties->AddPage( m_page2, _( "Data Font" ) );
             m_properties->AddPage( m_page3, _( "Heading Font" ) );
             m_properties->AddPage( m_page4, _( "Label Font" ) );
-            m_properties->AddPage( m_page5, _( "Primary Key" ) );*/
+/*            m_properties->AddPage( m_page5, _( "Primary Key" ) );*/
         }
         break;
         case DatabaseFieldProperties:
