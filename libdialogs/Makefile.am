@@ -61,6 +61,7 @@ libdialogs_la_LDFLAGS = -L../libsqlite \
 	-L../libodbc \
 	-L../libpostgres \
 	-L../libpropertypages \
+	-L../libpropertieshandlers \
 	-L../libhelpers \
 	-L../libpropertieshandlers \
 	-ldbinterface \

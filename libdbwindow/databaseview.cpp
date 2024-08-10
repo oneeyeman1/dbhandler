@@ -440,7 +440,7 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
     }
     else
     {
-        if( OnClose( true ) );
+        if( OnClose( true ) )
             m_frame->Close();
     }
 }
@@ -1576,9 +1576,9 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
     if( type == DesignProperties )
     {
 #if __cplusplus > 201300
-        auto ptr = std::make_unique<DesignPropertiesHander>( m_designCanvas->GetOptions() );
+        auto ptr = std::make_unique<DesignPropertiesHandler>( m_designCanvas->GetOptions() );
 #else
-        auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
+        auto ptr = std::unique_ptr<DesignPropertiesHandler>( new DesignPropertiesHandler( m_designCanvas->GetOptions() ) );
 #endif
         propertiesPtr = std::move( ptr );
         any = m_designCanvas;
@@ -1590,9 +1590,9 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
     {
         title = _( "Column Object" );
 #if __cplusplus > 201300
-        auto ptr = std::make_unique<DesignPropertiesHander>( m_designCanvas->GetOptions() );
+        auto ptr = std::make_unique<DesignPropertiesHandler>( m_designCanvas->GetOptions() );
 #else
-        auto ptr = std::unique_ptr<DesignPropertiesHander>( new DesignPropertiesHander( m_designCanvas->GetOptions() ) );
+        auto ptr = std::unique_ptr<DesignPropertiesHandler>( new DesignPropertiesHandler( m_designCanvas->GetOptions() ) );
 #endif
         propertiesPtr = std::move( ptr );
         any = field;

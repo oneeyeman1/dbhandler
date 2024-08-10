@@ -9,11 +9,11 @@ struct DesignOptions
     wxString cursorName;
 };
 
-class WXEXPORT DesignPropertiesHander : public PropertiesHandler
+class WXEXPORT DesignPropertiesHandler : public PropertiesHandler
 {
 public:
-    DesignPropertiesHander(DesignOptions canvas);
-    virtual ~DesignPropertiesHander() { }
+    DesignPropertiesHandler(DesignOptions canvas);
+    virtual ~DesignPropertiesHandler() { }
 //    virtual void EditProperies(wxNotebook *parent) wxOVERRIDE;
     virtual wxAny GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
     virtual int ApplyProperties() wxOVERRIDE;
