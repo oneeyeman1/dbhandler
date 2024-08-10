@@ -9,14 +9,16 @@ struct BandProperties
     bool m_autosize = false;
 };
 
-class WXEXPORT DividerPropertiesHander : public PropertiesHandler
+class WXEXPORT DividerPropertiesHandler : public PropertiesHandler
 {
 public:
-    DividerPropertiesHander(BandProperties *props);
-    virtual ~DividerPropertiesHander() { }
+    DividerPropertiesHandler(BandProperties props);
+    virtual ~DividerPropertiesHandler() { }
+    const BandProperties &GetObjectProperties() const { return m_props; }
 //    virtual void EditProperies(wxNotebook *parent)  wxOVERRIDE;
-    virtual int GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
-    BandProperties *GetObjectProperties() const { return m_props; }
+    virtual wxAny GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
+    virtual int ApplyProperties() wxOVERRIDE;
+
 private:
-    BandProperties *m_props;
+    BandProperties m_props;
 };

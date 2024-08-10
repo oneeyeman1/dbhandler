@@ -94,11 +94,11 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     wxPoint pt1 = m_foreignKeyColumns->GetPosition();
     int width1 = m_foreignKeyColumns->GetSize().GetWidth();
     m_foreignKeyColumns->Hide();
-    m_foreignKeyColumnsFields = new FieldWindow( this, 0, pt1, width1 );
+    m_foreignKeyColumnsFields = new FieldWindow( this, pt1, width1 );
     wxPoint pt2 = m_primaryKeyColumns->GetPosition();
     int width2 = m_primaryKeyColumns->GetSize().GetWidth();
     m_primaryKeyColumns->Hide();
-    m_primaryKeyColumnsFields = new FieldWindow( this, 0, pt2, width2 );
+    m_primaryKeyColumnsFields = new FieldWindow( this, pt2, width2 );
     if( m_isView )
     {
         m_foreignKeyName->SetValue( keyName );
@@ -275,7 +275,7 @@ void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
                 updateProp = SET_DEFAULT_UPDATE;
                 break;
         }
-        for( int i = 0; i < m_foreignKey.size(); i++ )
+        for( size_t i = 0; i < m_foreignKey.size(); i++ )
             m_fkfield.push_back( new FKField( i, m_foreignKeyName->GetValue().ToStdWstring(), m_table->GetSchemaName(), m_table->GetTableName(), m_foreignKey.at( i ), m_table->GetSchemaName(), m_primaryKeyTable->GetValue().ToStdWstring(), m_primaryKey.at( i ), GetForeignKeyFields(), GetPrimaryKeyFields(), updateProp, deleteProp ) );
         EndModal( event.GetId() );
     }
@@ -321,7 +321,7 @@ wxTextCtrl *ForeignKeyDialog::GetKeyNameCtrl() const
     return m_foreignKeyName;
 }
 
-const std::vector<FKField *> &ForeignKeyDialog::GetForeignKeyVector()
+std::vector<FKField *> &ForeignKeyDialog::GetForeignKeyVector()
 {
     return m_fkfield;
 }
@@ -341,12 +341,12 @@ const std::wstring &ForeignKeyDialog::GetReferencedTable() const
     return m_refTableName;
 }
 
-const int ForeignKeyDialog::GetDeleteParam() const
+int ForeignKeyDialog::GetDeleteParam() const
 {
     return m_delete;
 }
 
-const int ForeignKeyDialog::GetUpdateParam() const
+int ForeignKeyDialog::GetUpdateParam() const
 {
     return m_update;
 }
@@ -394,7 +394,7 @@ bool ForeignKeyDialog::IsForeignKeyEdited() const
     return m_edited;
 }
 
-const int ForeignKeyDialog::GetMatchingOptions() const
+int ForeignKeyDialog::GetMatchingOptions() const
 {
     return m_match;
 }

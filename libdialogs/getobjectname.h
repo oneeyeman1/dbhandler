@@ -3,31 +3,14 @@
 
 #define wxID_NEWOBJECT 1000
 
-struct QueryInfo
-{
-    wxString name, comment;
-    void operator=(const QueryInfo &info)
-    {
-        name = info.name;
-        comment = info.comment;
-    }
-};
-
-struct LibrariesInfo
-{
-    wxString m_path;
-    bool m_isActive;
-    LibrariesInfo(const wxString &path, bool active) : m_path(path), m_isActive(active) {}
-};
-
 class GetObjectName : public wxDialog
 {
 public:
     GetObjectName(wxWindow *parent, int id, const wxString &title, int objectId, const std::vector<QueryInfo> &queries, const std::vector<LibrariesInfo> &path);
-    const wxString &GetFileName();
+    const wxString &GetFileName() const;
     const int GetSource() const;
     const int GetPresentation() const;
-    const wxTextCtrl *GetDocumentName() const;
+    const wxString &GetDocumentName() const;
     const wxTextCtrl *GetCommentObject() const;
     std::vector<LibrariesInfo> &GetLibrariesVector() { return m_path; }
     bool isUpdating();
@@ -48,5 +31,6 @@ private:
     int m_id, m_source, m_presentation;
     wxString m_fileName, m_title;
     std::vector<LibrariesInfo> m_path;
+    wxString m_objectFileName;
 };
 #endif

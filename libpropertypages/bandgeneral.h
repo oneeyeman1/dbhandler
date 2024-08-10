@@ -12,19 +12,13 @@
 #ifndef BANDGENERAL_H
 #define BANDGENERAL_H
 
-struct BandColor
-{
-    wxColour m_color;
-    wxString m_colorName;
-};
-
 class WXEXPORT BandGeneralProperties: public PropertyPageBase
 {
 public:
     // begin wxGlade: BandGeneralProperties::ids
     // end wxGlade
 
-    BandGeneralProperties(wxWindow* parent, const BandProperties *props);
+    BandGeneralProperties(wxWindow* parent, const BandProperties &props);
     virtual ~BandGeneralProperties() {};
 
 private:

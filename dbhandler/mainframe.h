@@ -19,35 +19,6 @@ struct Profile
     Profile(wxString name, bool isCurrent) : m_name( name ), m_isCurrent( isCurrent ) {}
 };
 
-struct QueryInfo
-{
-    wxString name, comment;
-    void operator=(const QueryInfo &info)
-    {
-        name = info.name;
-        comment = info.comment;
-    }
-};
-
-struct LibrariesInfo
-{
-    wxString m_path;
-    bool m_isActive;
-    LibrariesInfo(const wxString &path, bool active) : m_path(path), m_isActive(active) {}
-};
-
-struct ToolbarSetup
-{
-    bool m_hideShow, m_showTooltips, m_showText;
-    int m_orientation;
-};
-
-struct Configuration
-{
-    std::map<wxString, ToolbarSetup> m_tbSettings;
-    int m_querySource, m_queryPresentation;
-};
-
 class MainFrame : public wxDocMDIParentFrame
 {
 public:
@@ -91,6 +62,7 @@ private:
     wxString m_libraryPath;
     wxConfigBase *m_config;
     Configuration *m_conf;
+    bool m_libraryLoaded;
     wxDECLARE_EVENT_TABLE();
 };
 

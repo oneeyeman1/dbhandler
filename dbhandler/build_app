@@ -1,0 +1,8 @@
+cd ~/dbhandler/Debug
+rm -rf *
+../configure CFLAGS='-g -O0' CXXFLAGS='-g -O0 -std=c++11' --with-wx-config=/home/igor/wxWidgets/buildGTK/wx-config
+make
+sudo make install
+cd /usr/local/lib
+sudo ldconfig
+

@@ -41,6 +41,7 @@
 #include "wx/mstream.h"
 #include "typecombobox.h"
 #include "database.h"
+#include "configuration.h"
 #include "tableattributes.h"
 #include "tableeditdocument.h"
 #include "tableeditview.h"
@@ -83,7 +84,7 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     wxFileName fn( stdPath.GetExecutablePath() );
     fn.RemoveLastDir();
     m_libPath = fn.GetPathWithSep() + "Frameworks/";
-#elif __WXGTK__
+#elif __WXGTK__ || __WXQT__
     m_libPath = stdPath.GetInstallPrefix() + "/lib/";
 #elif __WXMSW__
     wxFileName fn( stdPath.GetExecutablePath() );
@@ -304,7 +305,7 @@ void TableEditView::CreateMenuAndToolbar()
     parent = m_frame;
 #elif __WXMSW__
     parent = m_parent->GetClientWindow();
-#else __WXGTK__
+#elif __WXGTK__
 	parent = m_parent;
 #endif
     wxSize size = m_parent->GetClientSize();

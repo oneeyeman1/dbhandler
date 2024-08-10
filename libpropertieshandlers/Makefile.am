@@ -1,6 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-
 lib_LTLIBRARIES =  \
 	libpropertieshandlers.la
 
@@ -13,7 +12,12 @@ libpropertieshandlers_la_SOURCES =  \
 	designpropertieshandler.cpp \
 	designpropertieshandler.h \
 	dividerpropertieshandler.cpp \
-	dividerpropertieshandler.h
+	dividerpropertieshandler.h \
+	databaseoptionshandler.cpp \
+	databaseoptionshandler.h \
+	labelpropertieshandler.cpp \
+	labelpropertieshandler.h
+
 
 libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libpropertypages \
@@ -21,10 +25,10 @@ libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
 	-I../../libfieldswindow \
 	-I../../libhelpers \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--cxxflags` 
+	@WX_CXXFLAGS@
 
 libpropertieshandlers_la_LDFLAGS = -L../libpropertypages \
+	-L../libdbwindow \
+	-ldbwindow \
 	-lpropertypages \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs` 
+	@WX_LIBS@

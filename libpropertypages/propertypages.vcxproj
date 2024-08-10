@@ -36,6 +36,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bandgeneral.h" />
+    <ClInclude Include="databasefielddisplay.h" />
+    <ClInclude Include="databaseoptioncolours.h" />
+    <ClInclude Include="databaseoptionsgeneral.h" />
+    <ClInclude Include="designfieldgeneral.h" />
     <ClInclude Include="designgeneral.h" />
     <ClInclude Include="designlabelgeneral.h" />
     <ClInclude Include="fieldgeneral.h" />
@@ -55,6 +59,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bandgeneral.cpp" />
+    <ClCompile Include="databasefielddisplay.cpp" />
+    <ClCompile Include="databaseoptioncolours.cpp" />
+    <ClCompile Include="databaseoptiongeneral.cpp" />
+    <ClCompile Include="designfieldgeneral.cpp" />
     <ClCompile Include="designgeneral.cpp" />
     <ClCompile Include="designlabelgeneral.cpp" />
     <ClCompile Include="fieldgeneral.cpp" />

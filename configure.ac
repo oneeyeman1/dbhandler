@@ -40,11 +40,26 @@ else
     AC_MSG_RESULT([not found])
     AC_MSG_ERROR([wxWidgets is required. Try --with-wx-config.])
 fi
- 
+
 WX_CPPFLAGS="`$WXCONFIG --cppflags`"
 WX_CXXFLAGS="`$WXCONFIG --cxxflags`"
-WX_LIBS="`$WXCONFIG --libs`"
- 
+WX_LIBS="`$WXCONFIG --libs std,stc`"
+
+if wx-config --list | grep -i default | grep -i qt ; then
+    AC_MSG_NOTICE([Qt build found])
+    AX_HAVE_QT()
+    AS_IF([test "$have_qt" = yes], [
+        WX_CXXFLAGS="$WX_CXXFLAGS $QT_CXXFLAGS"
+        WX_LIBS="$WX_LIBS $QT_LIBS"
+    ])
+fi 
+
+if wx-config --list | grep -i default | grep -i gtk ; then
+    AC_MSG_NOTICE([GTK build found])
+    WX_CXXFLAGS="$WX_CXXFLAGS `pkg-config --cflags gtk+-3.0`"
+    WX_LIBS="$WX_LIBS `pkg-config --libs gtk+-3.9`"
+fi
+
 AC_SUBST(WX_CPPFLAGS)
 AC_SUBST(WX_CXXFLAGS)
 AC_SUBST(WX_LIBS)

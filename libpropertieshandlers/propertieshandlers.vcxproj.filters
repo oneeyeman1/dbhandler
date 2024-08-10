@@ -25,6 +25,12 @@
     <ClInclude Include="dividerpropertieshandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="labelpropertieshandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="databaseoptionshandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="propertieshandler.cpp">
@@ -37,6 +43,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dividerpropertieshandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="labelpropertieshandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="databaseoptionshandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

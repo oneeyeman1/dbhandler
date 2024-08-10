@@ -4,8 +4,8 @@ class NewQuery : public wxDialog
 public:
     NewQuery(wxWindow *parent, const wxString &title, int source, int presentation);
     ~NewQuery();
-    const int GetSource();
-    const int GetPresentation();
+    int GetSource() const;
+    int GetPresentation() const;
     void OnPanelSourceClicked(wxMouseEvent &event);
     void OnPanelPresentationClicked(wxMouseEvent &event);
     void OnOptionsUpdateUI(wxUpdateUIEvent &event);

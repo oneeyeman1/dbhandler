@@ -1,13 +1,18 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "configuration.h"
 #include "GridTableShape.h"
+#include "commentfieldshape.h"
+#include "fieldtypeshape.h"
 #include "FieldShape.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(FieldShape,wxSFTextShape);
 
 FieldShape::FieldShape() : wxSFTextShape()
 {
+    m_typeShape = nullptr;
+    m_comment = nullptr;
     SetHAlign(wxSFShapeBase::halignCENTER );
     SetVAlign(wxSFShapeBase::valignMIDDLE );
     m_name = wxEmptyString;
@@ -71,17 +76,32 @@ FieldShape::~FieldShape(void)
 void FieldShape::DrawNormal(wxDC &dc)
 {
     wxRect rect = this->GetBoundingBox();
+    rect.x = GetParentShape()->GetParentShape()->GetBoundingBox().GetLeft();
+    rect.width = GetParentShape()->GetParentShape()->GetBoundingBox().GetWidth();
+/*    if( m_typeShape && !m_typeShape->GetText().IsEmpty() )
+    {
+        rect.width = m_typeShape->GetBoundingBox().GetLeft();
+    }
+    else if( m_comment && !m_comment->GetText().IsEmpty() )
+    {
+        rect.width = m_comment->GetBoundingBox().GetLeft();
+    }
+    else
+        rect.width = GetParentShape()->GetParentShape()->GetBoundingBox().GetWidth();
     wxSFShapeBase *parentShape = GetParentShape()->GetParentShape();
     wxRect rectParent = parentShape->GetBoundingBox();
     m_parentRect.x = rectParent.x;
-    m_parentRect.width = rectParent.width;
+    m_parentRect.width = rectParent.width;*/
     wxString line;
     int i = 0;
-    dc.SetTextForeground( m_TextColor );
     if( this->m_fSelected )
     {
         m_backColour = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
         dc.SetBrush( m_backColour );
+        if( m_typeShape )
+            m_typeShape->Select( true );
+        if( m_comment )
+            m_comment->Select( true );
     }
     else
     {
@@ -89,8 +109,12 @@ void FieldShape::DrawNormal(wxDC &dc)
         dc.SetBrush( m_Fill );
         dc.SetPen( m_Border );
         dc.SetBackgroundMode( wxTRANSPARENT );
+        if( m_typeShape )
+            m_typeShape->Select( false );
+        if( m_comment )
+            m_comment->Select( false );
     }
-    dc.DrawRectangle( m_parentRect.x, rect.y, m_parentRect.width, rect.height );
+    dc.DrawRectangle( rect.x, rect.y, rect.width + sfdvGRIDSHAPE_CELLSPACE * 3, rect.height );
     dc.SetFont( m_Font );
     wxRealPoint pos = GetAbsolutePosition();
     // draw all text lines
@@ -98,7 +122,7 @@ void FieldShape::DrawNormal(wxDC &dc)
     while( tokens.HasMoreTokens() )
     {
         line = tokens.GetNextToken();
-        dc.DrawText( line, (int)pos.x, (int)pos.y + i * 12 );
+        dc.DrawText( line, (int )pos.x, (int) pos.y + i * 12 );
         i++;
     }
     dc.SetPen( wxNullPen );
@@ -120,7 +144,7 @@ TableField *FieldShape::GetField()
 {
     return m_field;
 }
-
+/*
 bool FieldShape::Contains(const wxPoint& pos)
 {
     bool result = false;
@@ -131,7 +155,7 @@ bool FieldShape::Contains(const wxPoint& pos)
         result = true;
     return result;
 }
-
+*/
 void FieldShape::DrawSelected(wxDC& dc)
 {
     DrawNormal( dc );
@@ -142,10 +166,23 @@ void FieldShape::Select(bool state)
     m_fSelected = state;
 }
 
-wxRect FieldShape::GetBoundingBox()
+/*wxRect FieldShape::GetBoundingBox()
 {
     wxRect rect = wxSFRectShape::GetBoundingBox();
     wxRect parentRect = this->GetParentShape()->GetParentShape()->GetBoundingBox();
     rect.SetLeft( parentRect.GetLeft() );
+    if( m_typeShape )
+    {
+        rect.width = m_typeShape->GetBoundingBox().GetLeft();
+    }
+    else if( m_comment && !m_comment->GetText().IsEmpty() )
+    {
+        rect.width = m_comment->GetBoundingBox().GetLeft();
+    }
+    else
+    {
+        rect.width = parentRect.GetRight();
+    }
     return rect;
 }
+*/

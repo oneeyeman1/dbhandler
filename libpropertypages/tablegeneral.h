@@ -9,7 +9,9 @@ enum
     DesignLabelProperties,
     DesignFieldProperties,
     DividerProperties,
-    SignProperties
+    SignProperties,
+    DatabaseProperties,
+    QueryProperties
 };
 
 class WXEXPORT TableGeneralProperty : public PropertyPageBase

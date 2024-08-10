@@ -3,15 +3,19 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/ShapeBase.h"
 #include "database.h"
+#include "configuration.h"
 #include "FieldShape.h"
 #include "fieldtypeshape.h"
 #include "commentfieldshape.h"
 #include "GridTableShape.h"
 
+#define DISPLAYTYPES 1
+
 GridTableShape::GridTableShape(ViewType type) : wxSFGridShape()
 {
     m_type = type;
     m_showdatatypes = m_showcomments = true;
+    m_columns = 3;
 }
 
 GridTableShape::~GridTableShape(void)
@@ -167,4 +171,23 @@ void GridTableShape::DoChildrenLayout()
                                                maxRect1.GetWidth(), maxRect1.GetHeight() ) );
 		}
 	}
+}
+
+void GridTableShape::ShowDataTypes(bool show, int type)
+{
+    int rows, cols;
+    if( type == DISPLAYTYPES )
+        m_showdatatypes = show;
+    else
+        m_showcomments = show;
+    if( !m_showdatatypes && !m_showcomments )
+        m_columns = 1;
+    else if( ( !m_showcomments && m_showdatatypes  ) || ( !m_showdatatypes && m_showcomments ) )
+        m_columns = 2;
+    else
+        m_columns = 3;
+    GetDimensions( &rows, &cols );
+    ClearGrid();
+    SetDimensions( rows, m_columns );
+
 }

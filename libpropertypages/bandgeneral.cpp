@@ -14,6 +14,7 @@
 #include "wx/bmpcbox.h"
 #include "wx/valnum.h"
 #include "objectproperties.h"
+#include "colorcombobox.h"
 #include "propertypagebase.h"
 #include "colorcombobox.h"
 #include "bandgeneral.h"
@@ -21,24 +22,24 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-BandGeneralProperties::BandGeneralProperties(wxWindow* parent,  const BandProperties *props):
+BandGeneralProperties::BandGeneralProperties(wxWindow* parent,  const BandProperties &props):
     PropertyPageBase(parent)
 {
-    wxIntegerValidator<unsigned int> val( &m_heightValue );
     // begin wxGlade: BandGeneralProperties::BandGeneralProperties
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Color" ) );
     m_colors = new CColorComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_DROPDOWN );
-    m_colors->SetValue( props->m_color );
+    m_colors->SetValue( props.m_color );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Height" ) );
-    m_height = new wxTextCtrl( this, wxID_ANY, wxString::Format( "%d", props->m_height ) );
+    m_height = new wxTextCtrl( this, wxID_ANY, wxString::Format( "%d", props.m_height ) );
     m_autosize = new wxCheckBox( this, wxID_ANY, _( "Autosize Height" ) );
 
     set_properties();
-    m_autosize->SetValue( props->m_autosize );
+//    m_autosize->SetValue( props.m_autosize );
     do_layout();
     // end wxGlade
     m_colors->Bind( wxEVT_COMBOBOX, &BandGeneralProperties::OnPageModified, this );
     m_height->Bind( wxEVT_TEXT, &BandGeneralProperties::OnPageModified, this );
+    m_autosize->Bind( wxEVT_CHECKBOX, &BandGeneralProperties::OnPageModified, this );
 }
 
 void BandGeneralProperties::set_properties()
@@ -76,7 +77,7 @@ void BandGeneralProperties::do_layout()
     // end wxGlade
 }
 
-void BandGeneralProperties::OnPageModified(wxCommandEvent &event)
+void BandGeneralProperties::OnPageModified(wxCommandEvent &WXUNUSED(event))
 {
     dynamic_cast<wxButton *>( GetParent()->GetParent()->FindWindowById( wxID_APPLY ) )->Enable( true );
     m_isModified = true;

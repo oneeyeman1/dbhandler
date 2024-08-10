@@ -15,13 +15,15 @@ public:
     FieldPropertiesHandler(const Database *db, const wxString &tableName, const wxString &ownerName, TableField *field, wxTextCtrl *log);
     virtual ~FieldPropertiesHandler() { }
 //    virtual void EditProperies(wxNotebook *parent) wxOVERRIDE;
-    virtual int GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
+    virtual wxAny GetProperties(std::vector<std::wstring> &errors) wxOVERRIDE;
+    virtual int ApplyProperties() wxOVERRIDE;
     FieldProperties &GetProperty() { return m_prop; }
     virtual const std::wstring &GetCommand() const wxOVERRIDE { return m_command; }
     
 private:
     TableField *m_field;
     FieldProperties m_prop;
+    FieldVisualAttributes m_vsual;
     const Database *m_db;
     std::wstring m_command;
     wxString m_tableName, m_ownerName;

@@ -10,6 +10,7 @@
 #include "wx/stockitem.h"
 #endif
 #include "database.h"
+#include "wx/any.h"
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
 #include "wx/filepicker.h"
@@ -22,7 +23,7 @@ DesignPropertiesHander::DesignPropertiesHander(DesignOptions canvas)
     m_options = canvas;
 }
 
-int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
+wxAny DesignPropertiesHander::GetProperties(std::vector<std::wstring> &WXUNUSED(errors))
 {
 //    m_options->GetOptions().units = m_page1->GetUnitsCtrl()->GetSelection();
 /*    wxColour color = m_page1->GetColorCtrl()->GetColourValue();
@@ -30,5 +31,10 @@ int DesignPropertiesHander::GetProperties(std::vector<std::wstring> &WXUNUSED(er
     {
         m_options.colorBackground = color;
     }*/
+    return wxAny( 0 );
+}
+
+int DesignPropertiesHander::ApplyProperties()
+{
     return 0;
 }

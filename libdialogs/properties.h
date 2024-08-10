@@ -25,9 +25,12 @@ private:
     TablePrimaryKey *m_page5;
     FieldGeneral *m_page6;
     FieldHeader *m_page7;
+    DatabaseFieldDisplay *m_page8;
 //    DesignLabelGeneral *m_page7;
-    BandGeneralProperties *m_page8;
-    PointerPropertiesPanel *m_page9;
+    BandGeneralProperties *m_page9;
+    PointerPropertiesPanel *m_page10;
+    DatabaseOptionGeneral *m_page11;
+    DatabaseptionsColours *m_page12;
     int m_type;
     std::wstring m_dbType, m_command;
     bool m_isApplied;

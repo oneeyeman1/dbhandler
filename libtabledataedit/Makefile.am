@@ -17,12 +17,12 @@ libtableedit_la_SOURCES =  \
 	tableattributes.cpp \
 	tableattributes.h
 
-libtableedit_la_CXXFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
+libtableedit_la_CXXFLAGS = `wx-config \
 	--cxxflags` \
 	-I../../dbinterface \
 	-I../../libhelpers 
 
-libtableedit_la_LDFLAGS = `/home/igor/wxWidgets/buildGTK/wx-config \
+libtableedit_la_LDFLAGS = `wx-config \
 	--libs` \
-	-L../../libhelpers \
+	-L../libhelpers \
 	-lhelpers 

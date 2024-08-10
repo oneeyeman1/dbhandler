@@ -44,6 +44,7 @@
 #include "wx/xml/xml.h"
 #include "wx/fswatcher.h"
 #include "database.h"
+#include "configuration.h"
 #include "newtablehandler.h"
 #include "mainframe.h"
 #include "docview.h"
@@ -249,7 +250,7 @@ wxFrame *MyApp::CreateChildFrame(wxView *view, bool isCanvas)
 
 void MyApp::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-    const unsigned long docsCount = wxDocManager::GetDocumentManager()->GetDocumentsVector().size();
+    const int docsCount = wxDocManager::GetDocumentManager()->GetDocumentsVector().size();
 
     wxLogMessage( "This is the DB Handler Application\n%d open documents.\n\n", docsCount );
 }

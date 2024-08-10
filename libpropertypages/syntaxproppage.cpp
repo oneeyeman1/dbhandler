@@ -19,7 +19,7 @@
 SyntaxPropPage::SyntaxPropPage(wxWindow *parent) : wxPanel( parent )
 {
     m_syntax = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
-    m_syntax->Enable( false );
+    m_syntax->SetBackgroundColour( GetBackgroundColour() );
     wxFont font = m_syntax->GetFont();
     font.SetFamily( wxFONTFAMILY_TELETYPE );
     m_syntax->SetFont( font );
@@ -52,22 +52,22 @@ void SyntaxPropPage::RemoveTableSort(const wxString tbl)
     auto query = m_syntax->GetValue();
     auto pos = query.find( "ORDER BY");
     auto subp = query.substr( 0, pos );
-    if( pos != wxNOT_FOUND )
+    if( pos != std::string::npos )
     {
         wxString replacer = "ORDER BY ";
         auto stringToReplace = query.substr( pos );
         auto tablePos = stringToReplace.find( "," );
-        while( tablePos != wxNOT_FOUND )
+        while( tablePos != std::string::npos )
         {
             auto str = stringToReplace.substr( 8, tablePos );
             auto tablecheck = str.find( tbl );
-            if( tablecheck == wxNOT_FOUND )
+            if( tablecheck == std::string::npos )
                 replacer += str;
             stringToReplace = stringToReplace.substr( tablePos + 1 );
             tablePos = stringToReplace.find( "," );
         }
         auto tablecheck = stringToReplace.find( tbl );
-        if( tablecheck == wxNOT_FOUND )
+        if( tablecheck == std::string::npos )
             replacer += stringToReplace + ";";
         else
         {

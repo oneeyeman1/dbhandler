@@ -59,8 +59,8 @@ void wxFontPreviewer::OnPaint(wxPaintEvent& WXUNUSED(event))
 }
 #endif
 
-CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, const FontPropertyPage &font, int id, const wxPoint& pos, const wxSize& size, long style)
- : PropertyPageBase(parent, id)
+CFontPropertyPageBase::CFontPropertyPageBase(wxWindow* parent, const FontPropertyPage &font)
+ : PropertyPageBase(parent, wxID_ANY )
 {
     m_dirty = false;
     m_faceName = font.font.GetFaceName();
@@ -75,7 +75,7 @@ CFontPropertyPageBase::~CFontPropertyPageBase()
 {
 }
 
-void CFontPropertyPageBase::SetFont(const std::wstring &name, int size, bool italic, bool bold, bool underline, bool strikethrough)
+void CFontPropertyPageBase::SetFont(const std::wstring &WXUNUSED(name), int WXUNUSED(size), bool WXUNUSED(italic), bool WXUNUSED(bold), bool WXUNUSED(underline), bool WXUNUSED(strikethrough))
 {
 }
 

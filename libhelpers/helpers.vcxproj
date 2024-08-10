@@ -36,10 +36,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="colorcombobox.h" />
+    <ClInclude Include="configuration.h" />
+    <ClInclude Include="maskededit.h" />
     <ClInclude Include="typecombobox.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="colorcombobox.cpp" />
+    <ClCompile Include="maskededit.cpp" />
     <ClCompile Include="typecombobox.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

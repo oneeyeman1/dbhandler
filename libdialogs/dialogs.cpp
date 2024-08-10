@@ -40,9 +40,13 @@
 #ifndef __WXMSW__
 #include "odbccredentials.h"
 #endif
+#ifdef __WXQT__
+#include <QFontDialog>
+#endif
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wx/fontenum.h"
+#include "configuration.h"
 #include "dialogs.h"
 #include "objectproperties.h"
 #include "colorcombobox.h"
@@ -50,6 +54,8 @@
 #include "field.h"
 #include "fieldwindow.h"
 #include "propertypagebase.h"
+#include "databaseoptionsgeneral.h"
+#include "databaseoptioncolours.h"
 #include "tablegeneral.h"
 #include "tableprimarykey.h"
 #include "odbcconfigure.h"
@@ -64,6 +70,7 @@
 #include "getobjectname.h"
 #include "jointype.h"
 #include "designlabelgeneral.h"
+#include "databasefielddisplay.h"
 #include "propertieshandlerbase.h"
 #include "propertieshandler.h"
 #include "properties.h"
@@ -194,7 +201,9 @@ extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std:
 #endif
     SelectTables dlg( parent, wxID_ANY, "", db, names, isTableView, type, isNewView );
     if( isTableView )
+    {
         dlg.Center();
+    }
 	res = dlg.ShowModal();
     std::wstring catalog;
     if( db->GetTableVector().GetDatabaseType() == L"SQLite" )
@@ -240,6 +249,15 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, std::unique_ptr
     return res;
 }
 
+extern "C" WXEXPORT int CreatePropertiesDialogForObject(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title, wxCriticalSection &cs)
+{
+    int res = 0;
+    PropertiesDialog dlg( parent, wxID_ANY, title, handler.get(), cs );
+    dlg.Center();
+    res = dlg.ShowModal();
+    return res;
+}
+
 extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, DatabaseTable *table, std::vector<std::wstring> &foreignKeyFields, std::vector<std::wstring> &refKeyFields, std::wstring &refTableName, int &deleteProp, int &updateProp, Database *db, bool &logOnly, bool isView, std::vector<FKField *> &newFK, int &match)
 {
     int res;
@@ -271,7 +289,7 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
 extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId, std::vector<QueryInfo> &queries, wxString &documentName, std::vector<LibrariesInfo> &path, bool &update)
 {
     int res;
-    wxString title;
+    wxString title, ext;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
@@ -279,6 +297,7 @@ extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId, std::vector
     {
     case 1:
         title = _( "Query" );
+        ext = "qry";
         break;
     case -1:
         title = _( "Save Query" );
@@ -291,9 +310,9 @@ extern "C" WXEXPORT int ChooseObject(wxWindow *parent, int objectId, std::vector
     res = dlg.ShowModal();
     if( res == wxID_OK )
     {
-        documentName = dlg.GetDocumentName()->GetValue();
+        documentName = dlg.GetDocumentName() + "." + ext;
         QueryInfo info;
-        info.name = dlg.GetDocumentName()->GetValue();
+        info.name = documentName;
         info.comment = dlg.GetCommentObject()->GetValue();
         queries.push_back( info );
         update = dlg.isUpdating();

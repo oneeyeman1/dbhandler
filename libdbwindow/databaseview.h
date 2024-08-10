@@ -1,16 +1,6 @@
 #ifndef __DATABASEVIEW__H
 #define __DATABASEVIEW__H
 
-#if !defined CONSTRAINT_H && !defined __GRIDTABLESHAPE_H__
-enum ViewType
-{
-    DatabaseView,
-    NewViewView,
-    QueryView,
-    TableView
-};
-#endif
-
 enum DrawinViewMenu
 {
     QuickQueryMenu,
@@ -33,18 +23,6 @@ struct NewViewOptions
     bool isTemp;
     wxString schema;
     int options;
-};
-
-struct ToolbarSetup
-{
-    bool m_hideShow, m_showTooltips, m_showText;
-    int m_orientation;
-};
-
-struct Configuration
-{
-    std::map<wxString, ToolbarSetup> m_tbSettings;
-    int m_querySource, m_queryPresentation;
 };
 
 // The view using MyCanvas to show its contents
@@ -76,7 +54,7 @@ public:
     WhereHavingPage *GetWherePage();
     WhereHavingPage *GetHavingPage();
     SyntaxPropPage *GetSyntaxPage();
-    void AddFieldToQuery(const FieldShape &field, QueryFieldChange isAdding, const std::wstring &tableName, bool quickSelect);
+    void AddFieldToQuery(const FieldShape &field, QueryFieldChange isAdding, const std::wstring &tableName);
     void HideShowSQLBox(bool show);
     void SetPaintersMap(std::map<wxString, wxDynamicLibrary *> &painters);
     void ChangeFontEement();
@@ -151,7 +129,8 @@ public:
 protected:
     void CreateDBMenu();
     void CreateQueryMenu(const int queryType);
-    void SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const Positions *sortType);
+    void CreateViewMenu();
+    void SortGroupByHandling(const int type, const wxString &fieldName, const int queryType, wxString &query, const Positions *sortType, long operation);
     void AddDeleteFields(MyErdTable *table, bool isAdd, const std::wstring &tableName);
     void CreateViewToolBar();
     int AddSize(int size, int lfHeight);
@@ -162,6 +141,8 @@ protected:
     static int CALLBACK EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int FontType, LPARAM lParam);
 #endif
     void SetDatabaseChildWindow(wxDocMDIChildFrame *frame);
+    void OnCustmColors( wxCommandEvent &event );
+    void OnDatabasePreferences(wxCommandEvent &event);
 private:
     bool m_isActive, m_snitialized;
     wxDocMDIParentFrame *m_parent;
@@ -201,6 +182,7 @@ private:
     wxString m_libPath;
     ToolbarSetup m_tbSetup[2];
     Configuration *m_conf;
+    std::vector<std::string> m_fontSizes;
     wxDECLARE_EVENT_TABLE();
     wxDECLARE_DYNAMIC_CLASS(DrawingView);
 };

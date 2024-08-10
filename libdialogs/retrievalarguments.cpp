@@ -25,7 +25,12 @@
 #include "wx/wx.h"
 #endif
 
+#ifdef __WXGTK__
+#include "pointer.h"
+#endif
+
 #include <list>
+#include "wx/dynlib.h"
 #include "dialogs.h"
 #include "arguments.c"
 #include "typecombobox.h"
@@ -62,8 +67,26 @@ RetrievalArguments::RetrievalArguments(wxWindow *parent, std::vector<QueryArgume
     scroller = new wxScrolledWindow( main_sizer->GetStaticBox(), wxID_ANY );
     scroller->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
 
-    bmp = wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) );
-
+//    bmp = wxBitmap::NewFromPNGData( arguments_pointer_png, WXSIZEOF( arguments_pointer_png ) );
+#ifdef __WXMSW__
+    HANDLE gs_wxMainThread = NULL;
+    const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dialogs", &gs_wxMainThread );
+    const void *data = nullptr;
+    size_t sizeCursor = 0;
+    if( !wxLoadUserResource( &data, &sizeCursor, "pointer", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+    }
+    else
+    {
+        bmp = wxBitmapBundle::FromSVG( (const char *) data, wxSize( 16, 16 ) );
+    }
+#elif __WXGTK__
+	bmp = wxBitmapBundle::FromSVG( pointer, wxSize( 16, 16 ) );
+#else
+    bmp = wxBitmapBundle::FromSVGResource( "pointer", wxSize( 16, 16 ) );
+#endif
     fgs = new wxFlexGridSizer( 4, 0, 0 );
     dummy_1 = new wxPanel( scroller, wxID_ANY, wxDefaultPosition, wxSize( 1, 1 ) );
     dummy_1->Bind( wxEVT_SET_FOCUS, &RetrievalArguments::OnSetFocus, this );
@@ -266,8 +289,12 @@ int RetrievalArguments::FindLineNumberFromControl( wxWindow *win )
 
 void RetrievalArguments::SetActiveLine( int line )
 {
-    int index = line - 1;
-    if( index < 0 || index >= m_lines.size() )
+    size_t index;
+    if( line == 1 )
+        index = 9;
+    else
+        index = line - 1;
+    if( index >= m_lines.size() )
       return;
 
     // just set focus to the first control in that line
@@ -291,7 +318,7 @@ void RetrievalArguments::SetIndicatorLine( int activeLine )
 
 void RetrievalArguments::OnSetFocus(wxFocusEvent &event)
 {
-    int focus_line = FindLineNumberFromControl( wxDynamicCast( event.GetEventObject(), wxWindow ) );
+    size_t focus_line = FindLineNumberFromControl( wxDynamicCast( event.GetEventObject(), wxWindow ) );
     if( focus_line >= 1 && focus_line <= m_lines.size() )
     {
         SetIndicatorLine( focus_line );
@@ -345,7 +372,7 @@ void RetrievalArguments::OnTextEntered(wxCommandEvent &event)
         m_lines.clear();
 }
 
-void RetrievalArguments::OnOkVerify(wxCommandEvent &event)
+void RetrievalArguments::OnOkVerify(wxCommandEvent &WXUNUSED(event))
 {
     auto success = true;
     auto line = 1;

@@ -28,13 +28,13 @@ public:
     ~ForeignKeyDialog();
     bool IsLogOnlyI();
     wxTextCtrl *GetKeyNameCtrl() const;
-    const std::vector<FKField *> &GetForeignKeyVector();
+    std::vector<FKField *> &GetForeignKeyVector();
     const std::vector<std::wstring> &GetForeignKeyFields() const;
     const std::vector<std::wstring> &GetPrimaryKeyFields() const;
-    const int GetMatchingOptions() const;
+    int GetMatchingOptions() const;
     bool IsForeignKeyEdited() const;
-    const int GetDeleteParam() const;
-    const int GetUpdateParam() const;
+    int GetDeleteParam() const;
+    int GetUpdateParam() const;
     const std::wstring &GetReferencedTable() const;
     void OnApplyCommand(wxCommandEvent &event);
     void OnPrimaryKeyTableSelection(wxCommandEvent &event);

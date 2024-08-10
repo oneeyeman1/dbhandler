@@ -33,6 +33,9 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/ShapeCanvas.h"
+#include "configuration.h"
+#include "commentfieldshape.h"
+#include "fieldtypeshape.h"
 #include "objectproperties.h"
 #include "constraint.h"
 #include "constraintsign.h"
@@ -40,7 +43,6 @@
 #include "HeaderGrid.h"
 #include "nametableshape.h"
 #include "commenttableshape.h"
-#include "fieldtypeshape.h"
 #include "fontcombobox.h"
 #include "MyErdTable.h"
 #include "field.h"
@@ -54,8 +56,6 @@
 #include "databasecanvas.h"
 #include "designcanvas.h"
 #include "databaseview.h"
-#include "commentfieldshape.h"
-#include "commenttableshape.h"
 #include "ErdForeignKey.h"
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
@@ -112,7 +112,7 @@ QueryRoot::QueryRoot(const QueryRoot &root)
     XS_SERIALIZE( m_groupbyDest, "groupby_dest" );
 }
 
-DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, wxWindow *parent) : wxSFShapeCanvas()
+DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, Configuration *conf, ViewType type, wxWindow *parent) : wxSFShapeCanvas()
 {
     m_view = view;
     m_dbName = dbName;
@@ -121,6 +121,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &
     m_oldSelectedSign = NULL;
     startPoint.x = 10;
     startPoint.y = 10;
+    m_conf = conf;
     auto stdPath = wxStandardPaths::Get();
 #ifdef __WXOSX__
     wxFileName fn( stdPath.GetExecutablePath() );
@@ -141,10 +142,15 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &
     SetVirtualSize( 1000, 1000 );
     SetScrollRate( 20, 20 );
     m_mode = modeDESIGN;
-    SetCanvasColour( *wxWHITE );
-//    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
+    if( type == DatabaseView )
+        SetCanvasColour( m_conf->m_dbOptions.m_colors.m_background );
+    else
+        SetCanvasColour( *wxWHITE );
+    //    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_DROPOBJECT );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnCloseTable, this, wxID_TABLECLOSE );
+    Bind( wxEVT_UPDATE_UI, &DatabaseCanvas::nUpdateTableParam, this, wxID_SHOWDATATYPES );
+    Bind(  wxEVT_UPDATE_UI, &DatabaseCanvas::nUpdateTableParam, this, wxID_SHOWCOMMENTS );
 }
 
 DatabaseCanvas::~DatabaseCanvas()
@@ -321,11 +327,10 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
 {
     ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
     wxSFShapeBase* pShape = NULL;
-    ShapeList shapes, list, allTableShapes;
+    ShapeList shapes, list;
     ConstraintSign *sign = NULL;
     GetSelectedShapes( shapes );
     GetShapesAtPosition( event.GetPosition(), list );
-    GetDiagramManager().GetShapes( CLASSINFO( MyErdTable), allTableShapes );
     int count = 0;
     for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); it++ )
     {
@@ -380,6 +385,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         }
         Refresh();
     }
+    wxSFTextShape *shape = nullptr;
     if( type == QueryView || type == NewViewView )
     {
         if( sign )
@@ -389,9 +395,17 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         {
             for( ShapeList::iterator it1 = shapes.begin(); it1 != shapes.end(); it1++ )
             {
-                FieldShape *shape = wxDynamicCast( (*it1), FieldShape );
-                if( shape )
-                    shape->Select( true );
+                FieldShape *field = wxDynamicCast( (*it1), FieldShape );
+                if( field )
+                {
+                    field->Select( true );
+                    shape = field->GetCommentShape();
+                    if( shape )
+                        shape->Select( true );
+                    shape = field->GetTypeShape();
+                    if( shape )
+                        shape->Select( true );
+                }
             }
             FieldShape *fld = NULL;
             MyErdTable *tbl = NULL;
@@ -409,13 +423,45 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
                     {
                         fld = field;
                         field->Select( !field->IsSelected() );
+                        shape = field->GetCommentShape();
+                        if( shape )
+                            shape->Select( !field->IsSelected() );
+                        shape = field->GetTypeShape();
+                        if( shape )
+                            shape->Select( !field->IsSelected() );
+                    }
+                    else
+                    {
+                        FieldTypeShape *typeShape = wxDynamicCast( (*it), FieldTypeShape );
+                        if( typeShape )
+                        {
+                            shape = typeShape->GetFieldShape();
+                            typeShape->Select( !shape->IsSelected() );
+                            shape->Select( !shape->IsSelected() );
+                            shape = typeShape->GetCommentShape();
+                            if( shape )
+                                shape->Select( typeShape->IsSelected() );
+                        }
+                        else
+                        {
+                            CommentFieldShape *comment = wxDynamicCast( (*it), CommentFieldShape );
+                            if( comment )
+                            {
+                                shape = comment->GetFieldShape();
+                                comment->Select( !shape->IsSelected() );
+                                shape->Select( !shape->IsSelected() );
+                                shape = comment->GetTypeShape();
+                                if( shape )
+                                    shape->Select( !comment->IsSelected() );
+                            }
+                        }
                     }
                 }
             }
             Refresh();
             if( fld )
             {
-                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, const_cast<DatabaseTable *>( tbl->GetTable() )->GetFullName(), false );
+                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, const_cast<DatabaseTable *>( tbl->GetTable() )->GetFullName() );
                 if( fld->IsSelected() )
                     dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->AddQueryField( fld->GetField()->GetFullName() );
                 else
@@ -471,7 +517,8 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                     table->Select( true );
                 tableRect = table->GetBoundingBox();
                 erdTable = table;
-                found = true;
+                if( list.GetCount() == 1 )
+                    found = true;
             }
             else
             {
@@ -633,6 +680,11 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         }
     }
     int rc = GetPopupMenuSelectionFromUser( mnu, pt );
+    if( type == DatabaseView && erdField )
+    {
+        erdField->Select( false );
+        Refresh();
+    }
     switch( rc )
     {
         case wxID_NONE:
@@ -666,11 +718,12 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                     if( fld )
                     {
                         tableName = fld->GetField()->GetFullName();
+                        tableName = tableName.substr( tableName.find( '.' ) + 1 );
                         tableName = tableName.substr( 0, tableName.find( '.' ) );
                         if( tableName == erdTable->GetTable()->GetTableName() )
                         {
                             fld->Select( true );
-                            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, ADD, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName(), false );
+                            dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, ADD, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName() );
                             dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->AddQueryField( fld->GetField()->GetFullName() );
                         }
                     }
@@ -688,7 +741,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                     if( fld )
                     {
                         fld->Select( false );
-                        dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, REMOVE, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName(), false );
+                        dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, REMOVE, const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName() );
                     }
                     Refresh();
                 }
@@ -696,9 +749,9 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             break;
         case wxID_PROPERTIES:
             {
-                if( erdTable )
+                if( erdTable && !erdField )
                     dynamic_cast<DrawingView *>( m_view )->SetProperties( erdTable );
-                else
+                else if( erdTable && erdField )
                     dynamic_cast<DrawingView *>( m_view )->SetProperties( erdField );
             }
             break;
@@ -761,7 +814,13 @@ void DatabaseCanvas::OnMouseMove(wxMouseEvent &event)
                     return;
                 }
                 else
-                    SetCursor( *wxSTANDARD_CURSOR );
+                {
+                    MyErdTable *table = wxDynamicCast( shape, MyErdTable );
+                    if( table )
+                        SetCursor( wxCURSOR_HAND );
+                    else
+                        SetCursor( *wxSTANDARD_CURSOR );
+                }
             }
         }
     }
@@ -1192,7 +1251,7 @@ void DatabaseCanvas::AddQuickQueryFields(const wxString &tbl, std::vector<TableF
             {
                 found = true;
                 (*it)->Select( true );
-                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, tbl.ToStdWstring(), quickSelect );
+                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, tbl.ToStdWstring() );
             }
         }
     }
@@ -1210,18 +1269,12 @@ void DatabaseCanvas::ShowHideTablePart(int part, bool show)
         {
             case 1:
                 m_showDataTypes = !m_showDataTypes;
-                if( show )
-                    shape->DisplayTypes( true );
-                else
-                    shape->DisplayTypes( false );
+                shape->DisplayTypes( show, DISPLAYTYPES );
                 dynamic_cast<DrawingView *>( m_view )->ChangeTableTypeMMenu();
                 break;
             case 4:
                 m_showComments = !m_showComments;
-                if( show )
-                    shape->DisplayComments( true );
-                else
-                    shape->DisplayComments( false );
+                shape->DisplayTypes( show, DISPLAYCOMMENTS );
                 dynamic_cast<DrawingView *>( m_view )->ChangeTableCommentsMenu();
                 break;
         }
@@ -1251,7 +1304,7 @@ void DatabaseCanvas::OnCloseTable(wxCommandEvent &WXUNUSED(event))
         {
             FieldShape *field = wxDynamicCast( (*it), FieldShape );
             if( children.Find( field ) )
-                view->AddFieldToQuery( *field, REMOVE, tbl.ToStdWstring(), true );
+                view->AddFieldToQuery( *field, REMOVE, tbl.ToStdWstring() );
         }
         view->GetSortPage()->RemoveTable( tbl );
 
@@ -1284,16 +1337,25 @@ bool DatabaseCanvas::UpdateCanvasWithQuery()
     if( root )
     {
         if( root->GetDbType() != m_dbType )
-            wxMessageBox( _( wxString::Format( "The database type you are connected to does not match the database type of the qery you are loading. Connected to %s, loading %s", m_dbType, root->GetDbType() ) ) );
-        if( root->GetDbName() != m_dbName )
-            wxMessageBox( _( wxString::Format( "The name of the database you are connected to does not match the name of the database of the qery you are loading. Connected to %s, loading %s", m_dbName, root->GetDbName() ) ) );
-        ShapeList lstShapes;
-        GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), lstShapes );
-        for( ShapeList::iterator it = lstShapes.begin(); it != lstShapes.end(); ++it )
         {
-            (( MyErdTable*) *it )->UpdateTable();
+            wxMessageBox( _( wxString::Format( "The database type you are connected to does not match the database type of the qery you are loading. Connected to %s, loading %s", m_dbType, root->GetDbType() ) ) );
+            success = false;
         }
-        Refresh( false );
+        else if( root->GetDbName() != m_dbName )
+        {
+            wxMessageBox( _( wxString::Format( "The name of the database you are connected to does not match the name of the database of the query you are loading. Connected to %s, loading %s", m_dbName, root->GetDbName() ) ) );
+            success = false;
+        }
+        else
+        {
+            ShapeList lstShapes;
+            GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), lstShapes );
+            for( ShapeList::iterator it = lstShapes.begin(); it != lstShapes.end(); ++it )
+            {
+                (( MyErdTable*) *it )->UpdateTable();
+            }
+            Refresh( false );
+        }
     }
     Refresh();
     return success;
@@ -1414,7 +1476,7 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
                             if( dynamic_cast<FieldShape *>( (*it6) )->GetField()->GetFullName() == field )
                             {
                                 (*it6)->Select( true );
-                                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *( dynamic_cast<FieldShape *>( (*it6) ) ), ADD, const_cast<DatabaseTable *>( table->GetTable() )->GetFullName(), false );
+                                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *( dynamic_cast<FieldShape *>( (*it6) ) ), ADD, const_cast<DatabaseTable *>( table->GetTable() )->GetFullName() );
                             }
                         }
                     }
@@ -1473,4 +1535,27 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
 void DatabaseCanvas::SetQueryArguments(const std::vector<QueryArguments> arguments)
 {
     dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->AddQueryArgument( arguments );
+}
+
+void DatabaseCanvas::nUpdateTableParam( wxUpdateUIEvent &event )
+{
+    switch( event.GetId() )
+    {
+    case wxID_SHOWDATATYPES:
+        event.Check( m_showDataTypes );
+        break;
+    case wxID_SHOWCOMMENTS:
+        event.Check( m_showComments );
+        break;
+    }
+}
+
+void DatabaseCanvas::UnselectAllTables()
+{
+    ShapeList selected;
+    m_pManager.GetShapes( CLASSINFO( MyErdTable ), selected );
+    for( ShapeList::iterator it1 = selected.begin(); it1 != selected.end(); ++it1 )
+    {
+        (*it1)->Select( false );
+    }
 }

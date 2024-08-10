@@ -26,26 +26,6 @@
 
 class DBTableEdit;
 
-enum ViewType
-{
-    DatabaseView,
-    NewViewView,
-    QueryView,
-    TableView
-};
-
-struct ToolbarSetup
-{
-    bool m_hideShow, m_showTooltips, m_showText;
-    int m_orientation;
-};
-
-struct Configuration
-{
-    std::map<wxString, ToolbarSetup> m_tbSettings;
-    int m_querySource, m_queryPresentation;
-};
-
 class TableEditView: public wxView
 {
 public:

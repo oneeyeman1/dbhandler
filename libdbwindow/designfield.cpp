@@ -36,7 +36,7 @@ DesignField::DesignField() : wxSFRectShape()
     if( m_grid )
     {
         m_grid->SetRelativePosition( 0, 1 );
-        m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN | sfsSHOW_HANDLES );
         m_grid->SetDimensions( 0, 1 );
         m_grid->SetFill( *wxTRANSPARENT_BRUSH );
         m_grid->SetBorder( *wxTRANSPARENT_PEN );
@@ -59,7 +59,7 @@ DesignField::DesignField(const wxFont font, const wxString &label, int alignment
     if( m_grid && m_text )
     {
         m_grid->SetRelativePosition( 0, 1 );
-        m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        m_grid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN | sfsSHOW_HANDLES );
         m_grid->SetDimensions( 1, 1 );
         m_grid->SetFill( *wxTRANSPARENT_BRUSH );
         m_grid->SetBorder( *wxTRANSPARENT_PEN );

@@ -30,6 +30,7 @@
 #include "wxsf/FlexGridShape.h"
 //#include "XmlSerializer.h"
 #include "database.h"
+#include "configuration.h"
 #include "dbview.h"
 #include "objectproperties.h"
 #include "constraint.h"
@@ -182,8 +183,9 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
     wxPoint pt = event.GetPosition();
     ShapeList list;
     GetShapesAtPosition( pt, list );
-    DesignLabel *label = NULL;
-    Divider *divider = NULL;
+    DesignLabel *label = nullptr;
+    DesignField *field = nullptr;
+    Divider *divider = nullptr;
     bool found = false;
     for( ShapeList::iterator it = list.begin(); it != list.end() && !found; ++it )
     {
@@ -196,6 +198,15 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
                 m_menuShape = divider;
                 found = true;
             }
+            else
+            {
+                field = wxDynamicCast( (*it), DesignField );
+                if( field )
+                {
+                    m_menuShape = field;
+                    found = true;
+                }
+            }
         }
         else
         {
@@ -204,13 +215,17 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
         }
     }
     wxMenu menu;
-    if( label )
-    {
-        menu.Append( wxID_PROPERTIES, _( "Properties..." ), "", false );
-    }
-    else if( divider )
+    if( divider )
     {
         menu.Append( wxID_PROPERTIES, _( "Properties..." ), "Table Properties", false );
+    }
+    else if( field || label )
+    {
+        menu.Append( wxID_PROPERTIES, _( "Properties..." ), "Table Properties", false );
+        menu.AppendSeparator();
+        menu.Append( wxID_CUT, _( "Cut\tCtrl+X"), _( "Cut selected object to clipboard" ), false );
+        menu.Append( wxID_COPY, _( "Copy\tCtrl+C"), _( "Copy selected object to clipboard" ), false );
+        menu.Append( wxID_CLEAR, _( "Clear\tDel"), _( "Clear selected object" ), false );
     }
     int rc = GetPopupMenuSelectionFromUser( menu, pt );
     if( rc != wxID_NONE )
@@ -220,10 +235,12 @@ void DesignCanvas::OnRightDown(wxMouseEvent &event)
             evt.SetEventObject( divider );
         if( label )
             evt.SetEventObject( label );
+        if( field )
+            evt.SetEventObject( field );
         m_view->ProcessEvent( evt );
     }
 }
-/**
+
 void DesignCanvas::OnMouseMove(wxMouseEvent &event)
 {
     wxSFShapeBase *shape = GetShapeUnderCursor();
@@ -234,7 +251,7 @@ void DesignCanvas::OnMouseMove(wxMouseEvent &event)
         SetCursor( *wxSTANDARD_CURSOR );
     wxSFShapeCanvas::OnMouseMove( event );
 }
-*/
+
 void DesignCanvas::OnProperties(wxCommandEvent &WXUNUSED(event))
 {
     wxCriticalSection pcs;
@@ -569,4 +586,9 @@ void DesignCanvas::ChangeFontName(const wxString &name)
             }
         }
     }
+}
+
+void DesignCanvas::OnLeftDoubleClick( wxMouseEvent &WXUNUSED(event))
+{
+
 }

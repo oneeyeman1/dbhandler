@@ -26,15 +26,6 @@
 #ifndef CONSTRAINT_H
 #define CONSTRAINT_H
 
-#if !defined __DATABASEVIEW__H && !defined __GRIDTABLESHAPE_H__
-enum ViewType
-{
-    DatabaseView,
-    NewViewView,
-    QueryView
-};
-#endif
-
 class Constraint : public xsSerializable
 {
 public:

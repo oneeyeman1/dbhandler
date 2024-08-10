@@ -59,7 +59,7 @@ class WXEXPORT DatabaseCanvas : public wxSFShapeCanvas
 {
 public:
     enum MODE { modeDESIGN, modeTABLE, modeVIEW, modeLine };
-    DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, wxWindow *parent = NULL);
+    DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &dbName, const wxString &dbType, Configuration *conf, ViewType type, wxWindow *parent = NULL);
     void DisplayTables(std::map<wxString,std::vector<TableDefinition> > &selections, const std::vector<TableField *> &queryFields, wxString &query, std::vector<wxString> &relations);
     virtual ~DatabaseCanvas();
     void CreateFKConstraint(const DatabaseTable *fkTable, const std::vector<FKField *> &foreignKeyField);
@@ -81,8 +81,10 @@ public:
     void SetQueryFields(const std::vector<TableField *> queryFields) { m_queryFields = queryFields; }
     void LoadQuery(const std::map<std::wstring, std::vector<DatabaseTable *> >&tables);
     void SetQueryArguments(const std::vector<QueryArguments> arguments);
+    void UnselectAllTables();
 protected:
     bool IsTableDisplayed(const std::wstring &name);
+    void nUpdateTableParam(wxUpdateUIEvent &event);
 private:
     std::vector<MyErdTable *> m_displayedTables;
     wxView *m_view;
@@ -98,6 +100,7 @@ private:
     wxString m_dbName, m_dbType;
     std::vector<TableField *> m_queryFields;
     wxString m_libPath;
+    Configuration *m_conf;
 };
 
 #define wxID_TABLECLOSE            20
@@ -138,6 +141,8 @@ private:
 #define wxID_DROPOBJECT           123
 #define wxID_ATTACHDATABASE       124
 #define wxID_DETACHDATABASE       125
+#define wxID_CUSTOMCOLORS         126
+#define wxID_DATABASEOPTIONS      127
 #define WHEREPAGECOLUMNS          194
 #define WHEREPAGEFUNCTIONS        195
 #define WHEREPAGEARGUMENTS        196
@@ -190,4 +195,5 @@ private:
 #define wxID_COMMENTFIELD         1003
 #define wxID_FONTNAME             1004
 #define wxID_FONTSIZE             1005
+#define wxID_JOINS                1006
 #endif

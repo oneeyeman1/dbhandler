@@ -30,10 +30,11 @@
 #include "wx/xml/xml.h"
 #include "wx/fswatcher.h"
 #include "database.h"
+#include "configuration.h"
 #include "docview.h"
 #include "newtablehandler.h"
 
-#ifdef __WXGTK__
+#if defined( __WXGTK__ ) || defined( __WXQT__ )
 #include "query.h"
 #include "odbc.h"
 #include "library.h"
@@ -67,6 +68,7 @@ END_EVENT_TABLE()
 
 MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL, wxID_ANY, "DB Handler" )
 {
+    m_libraryLoaded = false;
     m_conf = new Configuration;
     m_db = NULL;
     m_countAttached = 0;
@@ -82,12 +84,13 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     wxFileName fn( stdPath.GetExecutablePath() );
     fn.RemoveLastDir();
     m_libraryPath = fn.GetPathWithSep() + "Frameworks/";
-#elif __WXGTK__
+#elif __WXGTK__ || __WXQT__
     m_libraryPath = stdPath.GetInstallPrefix() + "/lib/";
 #elif __WXMSW__
     wxFileName fn( stdPath.GetExecutablePath() );
     m_libraryPath = fn.GetPathWithSep();
 #endif
+    wxTheColourDatabase->AddColour( "SILVER", wxColour( 0xC0C0C0 ) );
     m_config = wxConfigBase::Get( "DBManager" );
     wxString path = m_config->GetPath();
     m_config->SetPath( "CurrentDB" );
@@ -117,7 +120,10 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->SetPath( "CurrentLibraries" );
     auto libpath = m_config->Read( "Active", "" );
     if( !libpath.IsEmpty() )
+    {
+        m_conf->m_currentLibrary = libpath;
         m_path.push_back( LibrariesInfo( libpath, true ) );
+    }
     m_config->SetPath( path );
     m_config->SetPath( "MainToolbar" );
     m_conf->m_tbSettings["PowerBar"].m_hideShow = m_config->ReadBool( "Show", true );
@@ -140,6 +146,46 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->SetPath( "Query" );
     m_config->Read( "QuerySource", &m_conf->m_querySource, 2 );
     m_config->Read( "QueryPresentation", &m_conf->m_queryPresentation, 4 );
+    m_config->SetPath( path );
+    m_config->SetPath( "Database/General" );
+    m_config->Read( "Shared Profiles", &m_conf->m_dbOptions.m_general.m_sharedProfile, "" );
+    m_config->Read( "Display Table List", &m_conf->m_dbOptions.m_general.m_tableLst, 1 );
+    m_config->Read( "Use Repository", &m_conf->m_dbOptions.m_general.m_useRepo, 1 );
+    m_config->Read( "Read Only", &m_conf->m_dbOptions.m_general.m_readOnly, 0 );
+    m_config->Read( "Keep Alive", &m_conf->m_dbOptions.m_general.m_keepAlive, 1 );
+    m_config->Read( "SQL Terminator Character", &m_conf->m_dbOptions.m_general.m_sqlTerminator, ';' );
+    m_config->Read( "Refresh Table List", &m_conf->m_dbOptions.m_general.m_tableRefresh, "1800" );
+    m_config->Read( "Columns in Table", &m_conf->m_dbOptions.m_general.m_tableColumns, "8" );
+    m_config->SetPath( path );
+    m_config->SetPath( "Database/Colors" );
+    long defaultVal = 0xFFFFFF;
+    long temp = 0x000000;
+    m_config->Read( "Background", &temp, defaultVal );
+    m_conf->m_dbOptions.m_colors.m_background = wxColour( ( temp & 0xFF0000 ) >> 16, ( temp & 0x00FF00 ) >> 8, ( temp & 0x0000FF ) );
+    defaultVal = 0xC0C0C0;
+    m_config->Read( "TableColumns", &temp, defaultVal );
+    m_conf->m_dbOptions.m_colors.m_tableCol = wxColor( ( temp & 0xFF0000 ) >> 16, ( temp & 0x00FF00 ) >> 8, ( temp & 0x0000FF ) );
+    defaultVal = 0xFF0000;
+    m_config->Read( "IndexKeyLiine", &temp, defaultVal );
+    m_conf->m_dbOptions.m_colors.m_indexLine = wxColour( ( temp & 0xFF0000 ) >> 16, ( temp & 0x00FF00 ) >> 8, ( temp & 0x0000FF ) );
+    defaultVal = 0x808080;
+    m_config->Read( "TableHeader", &temp, defaultVal );
+    m_conf->m_dbOptions.m_colors.m_tableHeader = wxColour( ( temp & 0xFF0000 ) >> 16, ( temp & 0x00FF00 ) >> 8, ( temp & 0x0000FF ) );
+    defaultVal = 0x000000;
+    m_config->Read( "TableColumnText", &temp, defaultVal );
+    m_conf->m_dbOptions.m_colors.m_tableColText = wxColour( ( temp & 0xFF0000 ) >> 16, ( temp & 0x00FF00 ) >> 8, ( temp & 0x0000FF ) );
+    defaultVal = 0x00FF00;
+    m_config->Read( "PrimaryKeyLine", &temp, defaultVal );
+    m_conf->m_dbOptions.m_colors.m_primaryKeyLine = wxColour( ( temp & 0xFF0000 ) >> 16, ( temp & 0x00FF00 ) >> 8, ( temp & 0x0000FF ) );
+    defaultVal = 0x000000;
+    m_config->Read( "TableHeaderText", &temp, defaultVal );
+    m_conf->m_dbOptions.m_colors.m_tableHeaderText = wxColour( ( temp & 0xFF0000 ) >> 16, ( temp & 0x00FF00 ) >> 8, ( temp & 0x0000FF ) );
+    defaultVal = 0x000080;
+    m_config->Read( "TableCommentText", &temp, defaultVal );
+    m_conf->m_dbOptions.m_colors.m_tableCommentText = wxColour( ( temp & 0xFF0000 ) >> 16, ( temp & 0x00FF00 ) >> 8, ( temp & 0x0000FF ) );
+    defaultVal = 0x0000FF;
+    m_config->Read( "ForeignKeyLine", &temp, defaultVal );
+    m_conf->m_dbOptions.m_colors.m_foreignKeyLine = wxColour( ( temp & 0xFF0000 ) >> 16, ( temp & 0x00FF00 ) >> 8, ( temp & 0x0000FF ) );
     m_config->SetPath( path );
     m_manager = manager;
     auto menuFile = new wxMenu;
@@ -244,6 +290,27 @@ MainFrame::~MainFrame()
     config->Write( "ShowText", m_conf->m_tbSettings["StyleBar"].m_showText );
     config->Write( "Orientation", m_conf->m_tbSettings["StyleBar"].m_orientation );
     config->SetPath( path );
+    m_config->SetPath( "Database/General" );
+    m_config->Write( "Shared Profiles", m_conf->m_dbOptions.m_general.m_sharedProfile );
+    m_config->Write( "Display Table List", m_conf->m_dbOptions.m_general.m_tableLst );
+    m_config->Write( "Use Repository", m_conf->m_dbOptions.m_general.m_useRepo );
+    m_config->Write( "Read Only", m_conf->m_dbOptions.m_general.m_readOnly );
+    m_config->Write( "Keep Alive", m_conf->m_dbOptions.m_general.m_keepAlive );
+    m_config->Write( "SQL Terminator Character", m_conf->m_dbOptions.m_general.m_sqlTerminator );
+    m_config->Write( "Refresh Table List", m_conf->m_dbOptions.m_general.m_tableRefresh );
+    m_config->Write( "Columns in Table", m_conf->m_dbOptions.m_general.m_tableColumns );
+    m_config->SetPath( path );
+    m_config->SetPath( "Database/Colors" );
+    m_config->Write( "Background", m_conf->m_dbOptions.m_colors.m_background.GetRed() * 65536 + m_conf->m_dbOptions.m_colors.m_background.GetGreen() * 256 + m_conf->m_dbOptions.m_colors.m_background.GetBlue() );
+    m_config->Write( "TableColumns", m_conf->m_dbOptions.m_colors.m_tableCol.GetRed() * 65536 + m_conf->m_dbOptions.m_colors.m_tableCol.GetGreen() * 256 + m_conf->m_dbOptions.m_colors.m_tableCol.GetBlue() );
+    m_config->Write( "IndexKeyLiine", m_conf->m_dbOptions.m_colors.m_indexLine.GetRed() * 65536 + m_conf->m_dbOptions.m_colors.m_indexLine.GetGreen() * 256 + m_conf->m_dbOptions.m_colors.m_indexLine.GetBlue() );
+    m_config->Write( "PrimaryKeyLine", m_conf->m_dbOptions.m_colors.m_primaryKeyLine.GetRed() * 65536 + m_conf->m_dbOptions.m_colors.m_primaryKeyLine.GetGreen() * 256 + m_conf->m_dbOptions.m_colors.m_primaryKeyLine.GetBlue() );
+    m_config->Write( "TableHeader", m_conf->m_dbOptions.m_colors.m_tableHeader.GetRed() * 65536 + m_conf->m_dbOptions.m_colors.m_tableHeader.GetGreen() * 256 + m_conf->m_dbOptions.m_colors.m_tableHeader.GetBlue() );
+    m_config->Write( "TableColumnText", m_conf->m_dbOptions.m_colors.m_tableColText.GetRed() * 65536 + m_conf->m_dbOptions.m_colors.m_tableColText.GetGreen() * 256 + m_conf->m_dbOptions.m_colors.m_tableColText.GetBlue() );
+    m_config->Write( "TableHeaderText", m_conf->m_dbOptions.m_colors.m_tableHeaderText.GetRed() * 65536 + m_conf->m_dbOptions.m_colors.m_tableHeaderText.GetGreen() * 256 + m_conf->m_dbOptions.m_colors.m_tableHeaderText.GetBlue() );
+    m_config->Write( "TableCommentText", m_conf->m_dbOptions.m_colors.m_tableCommentText.GetRed() * 65536 + m_conf->m_dbOptions.m_colors.m_tableCommentText.GetGreen() * 256 + m_conf->m_dbOptions.m_colors.m_tableCommentText.GetBlue() );
+    m_config->Write( "ForeignKeyLine", m_conf->m_dbOptions.m_colors.m_foreignKeyLine.GetRed() * 65536 + m_conf->m_dbOptions.m_colors.m_foreignKeyLine.GetGreen() * 256 + m_conf->m_dbOptions.m_colors.m_foreignKeyLine.GetBlue() );
+    m_config->SetPath( path );
     if( result )
     {
         for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )
@@ -303,7 +370,7 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     bitmaps[4].push_back( wxBITMAP_PNG( database_16x16 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_32x32 ) );
     bitmaps[4].push_back( wxBITMAP_PNG( database_64x64 ) );
-#ifdef __WXGTK__
+#if defined( __WXGTK__ ) || defined( __WXQT__ )
     toolBar->AddTool( wxID_QUERY, _( "Query" ), wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ) ),  wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ) ), wxITEM_NORMAL,_( "Query" ), _( "Run the query" ) );
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVG( odbc, wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( odbc, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Configre ODBC" ), _( "Configre ODBC" ));
 #else
@@ -311,14 +378,14 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
     toolBar->AddTool( wxID_CONFIGUREODBC, _( "ODBC" ), wxBitmapBundle::FromSVGResource( "odbc", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "odbc", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Configure ODBC" ), _( "Configure ODBC" ) );
 #endif
     toolBar->AddTool( wxID_DATABASEWINDOWPROFILE, _( "Profile" ), wxBitmapBundle::FromBitmaps( bitmaps[2] ), wxBitmapBundle::FromBitmaps( bitmaps[2] ), wxITEM_NORMAL, _( "DB Profile" ), _( "DB Profile" ) );
-#ifdef __WXGTK__
+#if defined( __WXGTK__ ) || defined( __WXQT__ )
     toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Table" ), _( "Add/Modify Table definition" ) );
 #else
     toolBar->AddTool( wxID_TABLE, _( "Table" ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "table", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Table" ), _( "Add/Modify Table definition" ) );
 #endif
     toolBar->AddTool( wxID_DATABASE, _( "Database" ), wxBitmapBundle::FromBitmaps( bitmaps[4] ), wxBitmapBundle::FromBitmaps( bitmaps[4] ), wxITEM_NORMAL, _( "Database" ), _( "Perform database operations") );
-#ifdef __WXGTK__
-    toolBar->AddTool( wxID_LIBRARY, _( "Library" ), wxBitmapBundle::FromSVG( "library", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( "library", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Library selector" ) );
+#if defined( __WXGTK__ ) || defined( __WXQT__ )
+    toolBar->AddTool( wxID_LIBRARY, _( "Library" ), wxBitmapBundle::FromSVG( library, wxSize( 16, 16 ) ), wxBitmapBundle::FromSVG( library, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Library selector" ) );
 #else
     toolBar->AddTool( wxID_LIBRARY, _( "Library" ), wxBitmapBundle::FromSVGResource( "library", wxSize( 16, 16 ) ), wxBitmapBundle::FromSVGResource( "library", wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Library selector" ) );
 #endif
@@ -577,7 +644,7 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
         }
         else
             lib = m_painters["Query"];
-        if( LoadApplication( m_path ) )
+        if( !m_libraryLoaded && LoadApplication( m_path ) )
             return;
         if( m_db && lib->IsLoaded() )
         {
@@ -800,6 +867,7 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
             isQuery = false;
         }
     }
+    m_libraryLoaded = true;
 	return false;
 }
 

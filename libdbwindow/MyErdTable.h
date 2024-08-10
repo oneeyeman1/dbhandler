@@ -1,6 +1,9 @@
 #ifndef _MYERDTABLE_H
 #define _MYERDTABLE_H
 
+#define DISPLAYTYPES 1
+#define DISPLAYCOMMENTS 2
+
 class MyErdTable : public wxSFRoundRectShape
 {
 public:
@@ -10,11 +13,19 @@ public:
     virtual ~MyErdTable();
     void UpdateTable();
     void SetTableComment(const wxString &comment);
-    const DatabaseTable *GetTable();
+    const WXEXPORT DatabaseTable *GetTable();
     wxSFTextShape *GetLabel();
     GridTableShape *GetFieldGrid();
-    void DisplayTypes(bool display) { m_displayTypes = display; m_pGrid->ShowDataTypes( display ); if( display ) m_columns++; else m_columns--;  }
-    void DisplayComments(bool display) { m_displayComments = display; m_pGrid->ShowComments( display ); if( display ) { m_columns++; m_headerColumns++; } else { m_columns--; m_headerColumns--; } }
+    void DisplayTypes(bool display, int type)
+    {
+        if( type == DISPLAYTYPES )
+            m_displayTypes = display;
+        else
+            m_displayComments = display;
+        if( type == DISPLAYCOMMENTS )
+            m_header->ShowComments( display );
+        if( display ) m_columns++; else m_columns--;
+    }
     void SetDataaseTable(const DatabaseTable *table) { m_table = const_cast<DatabaseTable *>( table ); }
     const wxString &GetCatalogName() const { return m_catalogName; }
     const wxString &GetSchemaName() const { return m_schemaName; }
@@ -38,7 +49,7 @@ private:
     GridTableShape* m_pGrid;
     DatabaseTable *m_table;
     bool m_displayTypes, m_displayComments;
-    int m_columns, m_headerColumns;
+    int m_columns;
     wxString m_catalogName, m_schemaName, m_tableName;
 };
 

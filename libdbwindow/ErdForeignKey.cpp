@@ -17,6 +17,7 @@
 #include "wxsf/BitmapShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "configuration.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "constraint.h"

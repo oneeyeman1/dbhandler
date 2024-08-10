@@ -35,22 +35,20 @@ libpropertypages_la_SOURCES =  \
 	qt/fontpropertypageQt.cpp \
 	qt/fontpropertypageQt.h \
 	gtk/fontpropertypageGTK.cpp \
-	gtk/fontpropertypageGTK.h
+	gtk/fontpropertypageGTK.h \
+	databasefielddisplay.cpp \
+	databasefielddisplay.h \
+	databaseoptioncolours.cpp \
+	databaseoptioncolours.h \
+	databaseoptiongeneral.cpp \
+	databaseoptiongeneral.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
 	-I../../libfieldswindow \
 	-I../../libhelpers \
-	`pkg-config \
-	--cflags \
-	gtk+-3.0` \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--cxxflags`
+	@WX_CXXFLAGS@
 
-libpropertypages_la_LDFLAGS = `pkg-config \
-	--libs \
-	gtk+-3.0` \
-	-L../../libhelpers \
+libpropertypages_la_LDFLAGS = -L../libhelpers \
 	-lhelpers \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs`
+	@WX_LIBS@

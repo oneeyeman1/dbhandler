@@ -29,7 +29,18 @@
 #include "wx/fontutil.h"
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
+#include "wx/any.h"
 #include "wx/fontenum.h"
+#include "wxsf/RoundRectShape.h"
+#include "wxsf/TextShape.h"
+#include "wxsf/GridShape.h"
+#include "configuration.h"
+#include "constraint.h"
+#include "nametableshape.h"
+#include "commenttableshape.h"
+#include "HeaderGrid.h"
+#include "GridTableShape.h"
+#include "MyErdTable.h"
 #include "propertieshandlerbase.h"
 #include "propertieshandler.h"
 
@@ -37,17 +48,16 @@
 std::mutex Database::Impl::my_mutex;
 #endif
 
-DatabasePropertiesHandler::DatabasePropertiesHandler(const Database *db, DatabaseTable *table, wxTextCtrl *log) : PropertiesHandler()
+DatabasePropertiesHandler::DatabasePropertiesHandler(const Database *db, wxTextCtrl *log) : PropertiesHandler()
 {
     m_db = db;
-    m_table = table;
     m_log = log;
-    m_prop = table->GetTableProperties();
 }
 
-int DatabasePropertiesHandler::GetProperties(std::vector<std::wstring> &errors)
+wxAny DatabasePropertiesHandler::GetProperties(std::vector<std::wstring> &errors)
 {
-   int result = 0;
+    int result = 0;
+    m_prop = const_cast<DatabaseTable *>( m_obj.As<MyErdTable *>()->GetTable() )->GetTableProperties();
 /*    m_prop.m_comment = m_page1->GetCommentCtrl()->GetValue();
     m_prop.m_dataFontItalic = m_page2->GetFont().font.GetNativeFontInfo()->GetStyle() == wxFONTSTYLE_ITALIC;
     m_prop.m_dataFontCharacterSet = m_page2->GetFont().font.GetNativeFontInfo()->GetEncoding();
@@ -90,5 +100,10 @@ int DatabasePropertiesHandler::GetProperties(std::vector<std::wstring> &errors)
         if( isLogOnly )
             m_log->AppendText( m_command );
     }*/
-    return result;
+    return wxAny( m_prop );
+}
+
+int DatabasePropertiesHandler::ApplyProperties()
+{
+    return 0;
 }

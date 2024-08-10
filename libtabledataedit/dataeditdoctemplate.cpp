@@ -25,6 +25,7 @@
 #include "wx/dynlib.h"
 #include "wx/grid.h"
 #include "database.h"
+#include "configuration.h"
 #include "tableattributes.h"
 #include "tableeditdocument.h"
 #include "tableeditview.h"

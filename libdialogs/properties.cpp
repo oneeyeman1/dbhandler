@@ -34,13 +34,24 @@
 #ifdef __WXOSX__
 #include "wx/fontpicker.h"
 #endif
+#ifdef __WXQT__
+#include <QFontDialog>
+#endif
 #include "wxsf/ShapeCanvas.h"
 #include "database.h"
+#include "configuration.h"
 //#include "objectproperties.h"
+#include "propertieshandlerbase.h"
+#include "fieldpropertieshandler.h"
+#include "propertieshandler.h"
+#include "dividerpropertieshandler.h"
 #include "field.h"
+#include "databaseoptionshandler.h"
 #include "fieldwindow.h"
 #include "colorcombobox.h"
 #include "propertypagebase.h"
+#include "databaseoptionsgeneral.h"
+#include "databaseoptioncolours.h"
 #include "tablegeneral.h"
 #include "fontpropertypagebase.h"
 #include "tableprimarykey.h"
@@ -48,10 +59,8 @@
 #include "designlabelgeneral.h"
 #include "pointerproperty.h"
 #include "fieldheader.h"
-#include "propertieshandlerbase.h"
-#include "dividerpropertieshandler.h"
 #include "bandgeneral.h"
-#include "propertieshandler.h"
+#include "databasefielddisplay.h"
 #include "properties.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -73,15 +82,16 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     {
         case DatabaseTableProperties:
         {
-            TableProperties *prop = dynamic_cast<TableProperties *>( handler );
-            wxFont data_font( prop->m_dataFontSize, wxFONTFAMILY_DEFAULT, prop->m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->m_dataFontUnderline, prop->m_dataFontName );
-            if( prop->m_dataFontStrikethrough )
+            DatabasePropertiesHandler *prop = dynamic_cast<DatabasePropertiesHandler *>( handler );
+            TableProperties tableProp = prop->GetProperties( errors ).As<TableProperties>();
+            wxFont data_font( tableProp.m_dataFontSize, wxFONTFAMILY_DEFAULT, tableProp.m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, tableProp.m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, tableProp.m_dataFontUnderline, tableProp.m_dataFontName );
+            if( tableProp.m_dataFontStrikethrough )
                 data_font.SetStrikethrough( true );
-            wxFont heading_font( prop->m_headingFontSize, wxFONTFAMILY_DEFAULT, prop->m_headingFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->m_headingFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->m_headingFontUnderline, prop->m_headingFontName );
-            if( prop->m_headingFontStrikethrough )
+            wxFont heading_font( tableProp.m_headingFontSize, wxFONTFAMILY_DEFAULT, tableProp.m_headingFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, tableProp.m_headingFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, tableProp.m_headingFontUnderline, tableProp.m_headingFontName );
+            if( tableProp.m_headingFontStrikethrough )
                 heading_font.SetStrikethrough( true );
-            wxFont label_font( prop->m_labelFontSize, wxFONTFAMILY_DEFAULT, prop->m_labelFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop->m_labelFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop->m_labelFontUnderline, prop->m_labelFontName );
-            if( prop->m_labelFontStrikethrough )
+            wxFont label_font( tableProp.m_labelFontSize, wxFONTFAMILY_DEFAULT, tableProp.m_labelFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, tableProp.m_labelFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, tableProp.m_labelFontUnderline, tableProp.m_labelFontName );
+            if( tableProp.m_labelFontStrikethrough )
                 label_font.SetStrikethrough( true );
             FontPropertyPage dataFont;
             dataFont.font = data_font;
@@ -95,34 +105,36 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             labelFont.font = label_font;
             labelFont.text = wxColour( *wxBLACK );
             labelFont.back = wxColour( *wxWHITE );
-            m_page1 = new TableGeneralProperty( parent, prop->table_name, prop->m_owner, prop->m_comment, DatabaseTableProperties );
+            m_page1 = new TableGeneralProperty( m_properties, tableProp.table_name, tableProp.m_owner, tableProp.m_comment, DatabaseTableProperties );
             m_properties->AddPage( m_page1, _( "General" ) );
-            m_page2 = new CFontPropertyPage( parent, dataFont, false );
-            m_page3 = new CFontPropertyPage( parent, headingFont, false );
-            m_page4 = new CFontPropertyPage( parent, labelFont, false );
-//            m_page5 = new TablePrimaryKey( parent, m_table );
+            m_page2 = new CFontPropertyPage( m_properties, dataFont, false );
+            m_page3 = new CFontPropertyPage( m_properties, headingFont, false );
+            m_page4 = new CFontPropertyPage( m_properties, labelFont, false );
+/*            m_page5 = new TablePrimaryKey( m_properties, prop->GetTable() );*/
             m_properties->AddPage( m_page2, _( "Data Font" ) );
             m_properties->AddPage( m_page3, _( "Heading Font" ) );
             m_properties->AddPage( m_page4, _( "Label Font" ) );
-            m_properties->AddPage( m_page5, _( "Primary Key" ) );
+/*            m_properties->AddPage( m_page5, _( "Primary Key" ) );*/
         }
         break;
         case DatabaseFieldProperties:
         {
-            FieldProperties *prop = dynamic_cast<FieldProperties *>( handler );
-            m_page6 = new FieldGeneral( parent, prop->m_comment );
+            FieldPropertiesHandler *prop = dynamic_cast<FieldPropertiesHandler *>( handler );
+            m_page6 = new FieldGeneral( m_properties, prop->GetProperty().m_comment );
             m_properties->AddPage( m_page6, _( "General" ) );
-            m_page7 = new FieldHeader( parent, prop->m_label, prop->m_heading, prop->m_labelPosition, prop->m_headingPosition );
+            m_page7 = new FieldHeader( m_properties, prop->GetProperty().m_label, prop->GetProperty().m_heading, prop->GetProperty().m_labelPosition, prop->GetProperty().m_headingPosition );
             m_properties->AddPage( m_page7, _( "Data Font" ) );
+            m_page8 = new DatabaseFieldDisplay( m_properties, wxID_ANY );
+            m_properties->AddPage( m_page8, _( "Display" ) );
         }
         break;
         case DividerProperties:
         {
-            DividerPropertiesHander *prop = dynamic_cast<DividerPropertiesHander *>( handler );
-            m_page8 = new BandGeneralProperties( m_properties, prop->GetObjectProperties() );
-            m_properties->AddPage( m_page8, _( "General" ) );
-            m_page9 = new PointerPropertiesPanel( m_properties, prop->GetObjectProperties()->m_cursorFile, prop->GetObjectProperties()->m_cursor );
-            m_properties->AddPage( m_page9, _( "Pointer" ) );
+            BandProperties prop = dynamic_cast<DividerPropertiesHandler *>( handler )->GetObjectProperties();
+            m_page9 = new BandGeneralProperties( m_properties, prop );
+            m_properties->AddPage( m_page9, _( "General" ) );
+            m_page10 = new PointerPropertiesPanel( m_properties, prop.m_cursorFile, prop.m_cursor );
+            m_properties->AddPage( m_page10, _( "Pointer" ) );
         }
         break;
         case DesignProperties:
@@ -133,6 +145,16 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             parent->AddPage( m_page2, _( "Pointer" ) );
             m_page3 = new PrintSpec( parent );
             parent->AddPage( m_page3, _( "Print Specification" ) );*/
+        }
+        break;
+        case DatabaseProperties:
+        case QueryProperties:
+        {
+            auto prop = dynamic_cast<DatabaseOptionsHandler *>( handler )->GetObjectProperties();
+            m_page11 = new DatabaseOptionGeneral( m_properties, prop.m_general );
+            m_properties->AddPage( m_page11, _( "General" ) );
+            m_page12 = new DatabaseptionsColours( m_properties, prop.m_colors, handler->GetType() == DatabaseProperties ? true : false );
+            m_properties->AddPage( m_page12, _( "Colors" ) );
         }
         break;
     }
@@ -193,16 +215,14 @@ bool PropertiesDialog::ApplyProperties()
 {
     std::vector<std::wstring> errors;
     bool result = true;
-    bool isModified = false;
-    int res = m_handler->GetProperties( errors );
+/*    int res = m_handler->GetProperties( errors );
     if( !res )
     {
-        for( int i = 0; i < m_properties->GetPageCount(); ++i )
+        for( size_t i = 0; i < m_properties->GetPageCount(); ++i )
         {
             PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
             page->SetModified( false );
         }
-        isModified = false;
         m_isApplied = true;
     }
     else
@@ -246,7 +266,7 @@ const std::wstring &PropertiesDialog::GetCommand()
 
 void PropertiesDialog::OnApplyUpdateUI (wxUpdateUIEvent &event)
 {
-    for( int i = 0; i < m_properties->GetPageCount(); ++i )
+    for( size_t i = 0; i < m_properties->GetPageCount(); ++i )
     {
         PropertyPageBase *page = dynamic_cast<PropertyPageBase *>( m_properties->GetPage( i ) );
         if( page->IsModified() )

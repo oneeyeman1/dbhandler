@@ -1,114 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{22ed181d-cf8e-4031-9b52-8cb3e8b4346b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resorce Files">
-      <UniqueIdentifier>{e5854c7a-e5ed-45fe-a5fe-6685546f371c}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="bandgeneral.cpp" />
+    <ClCompile Include="databasefielddisplay.cpp" />
+    <ClCompile Include="databaseoptiongeneral.cpp" />
+    <ClCompile Include="designfieldgeneral.cpp" />
+    <ClCompile Include="designgeneral.cpp" />
+    <ClCompile Include="designlabelgeneral.cpp" />
+    <ClCompile Include="fieldgeneral.cpp" />
+    <ClCompile Include="fieldheader.cpp" />
+    <ClCompile Include="fontpropertypagebase.cpp" />
+    <ClCompile Include="msw\fontpropertypage.cpp" />
+    <ClCompile Include="pointerproperty.cpp" />
+    <ClCompile Include="printspec.cpp" />
+    <ClCompile Include="propertypages.cpp" />
+    <ClCompile Include="sortgroupbypage.cpp" />
+    <ClCompile Include="syntaxproppage.cpp" />
+    <ClCompile Include="tablegeneral.cpp" />
+    <ClCompile Include="tableprimarykey.cpp" />
+    <ClCompile Include="wherehavingpage.cpp" />
+    <ClCompile Include="databaseoptioncolours.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tablegeneral.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="msw\fontpropertypage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fontpropertypagebase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fieldheader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="syntaxproppage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="wherehavingpage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fieldgeneral.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="propertypagebase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="designlabelgeneral.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="sortgroupbypage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="bandgeneral.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pointerproperty.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tableprimarykey.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="designgeneral.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="objectproperties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="printspec.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClInclude Include="bandgeneral.h" />
+    <ClInclude Include="databasefielddisplay.h" />
+    <ClInclude Include="databaseoptioncolours.h" />
+    <ClInclude Include="databaseoptionsgeneral.h" />
+    <ClInclude Include="designfieldgeneral.h" />
+    <ClInclude Include="designgeneral.h" />
+    <ClInclude Include="designlabelgeneral.h" />
+    <ClInclude Include="fieldgeneral.h" />
+    <ClInclude Include="fieldheader.h" />
+    <ClInclude Include="fontpropertypagebase.h" />
+    <ClInclude Include="msw\fontpropertypage.h" />
+    <ClInclude Include="objectproperties.h" />
+    <ClInclude Include="pointerproperty.h" />
+    <ClInclude Include="printspec.h" />
+    <ClInclude Include="propertypagebase.h" />
     <ClInclude Include="resource.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="tablegeneral.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fontpropertypagebase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="msw\fontpropertypage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fieldheader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="syntaxproppage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="wherehavingpage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fieldgeneral.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="designlabelgeneral.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sortgroupbypage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="bandgeneral.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pointerproperty.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tableprimarykey.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="designgeneral.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="printspec.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="propertypages.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="sortgroupbypage.h" />
+    <ClInclude Include="syntaxproppage.h" />
+    <ClInclude Include="tablegeneral.h" />
+    <ClInclude Include="tableprimarykey.h" />
+    <ClInclude Include="wherehavingpage.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="propertypages.rc" />

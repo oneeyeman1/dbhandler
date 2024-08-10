@@ -1,6 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-
 lib_LTLIBRARIES =  \
 	libdbwindow.la
 
@@ -73,8 +72,7 @@ libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libpropertypages \
 	-I../../libpropertieshandlers \
 	-I../../libhelpers \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--cxxflags` 
+	@WX_CXXFLAGS@
 
 libdbwindow_la_LDFLAGS = -L../libpropertypages \
 	-lpropertypages \
@@ -86,8 +84,6 @@ libdbwindow_la_LDFLAGS = -L../libpropertypages \
 	-lshapeframework \
 	-L../libhelpers \
 	-lhelpers \
-	`/home/igor/wxWidgets/buildGTK/wx-config \
-	--libs \
-	stc`
+	@WX_LIBS@
 	
 

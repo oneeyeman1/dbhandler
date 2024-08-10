@@ -28,7 +28,7 @@
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 
-#ifdef __WXGTK__
+#if defined __WXGTK__ || defined __WXQT__
 /* handdrag.cur - 326 bytes */
 static const unsigned char handdrag[] = {
 
@@ -83,7 +83,7 @@ wxSize MyListCtrl::DoGetBestClientSize () const
 SortColumnRenderer::SortColumnRenderer(wxCheckBoxState state, wxDataViewCellMode mode, int align)
     : wxDataViewCustomRenderer( GetDefaultType(), mode, align )
 {
-    m_toggle = true;
+    m_toggle = state;
     m_allow3rdStateForUser = false;
 }
 
@@ -143,7 +143,7 @@ bool SortColumnRenderer::Render(wxRect cell, wxDC* dc, int state)
     return true;
 }
 
-bool SortColumnRenderer::ActivateCell (const wxRect& cell, wxDataViewModel *model, const wxDataViewItem & item, unsigned int col, const wxMouseEvent *mouseEvent)
+bool SortColumnRenderer::ActivateCell (const wxRect &WXUNUSED(cell), wxDataViewModel *model, const wxDataViewItem & item, unsigned int col, const wxMouseEvent *mouseEvent)
 {
     if( mouseEvent )
     {
@@ -288,7 +288,6 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
 {
     int flags;
     const wxPoint& pt = event.m_pointDrag;
-    wxListCtrl *list = nullptr;
     m_dragSource = dynamic_cast<MyListCtrl *>( event.GetEventObject() );
 #ifdef __WXMSW__
     m_dragSource->SetCursor( wxCursor( "handdrag" ) );
@@ -299,13 +298,15 @@ void SortGroupByPage::OnBeginDrag(wxListEvent &event)
     else
         list = m_source;
     list->SetCursor( wxCursor( "handdrag" ) );
-#else
+#elIf __WXGTK__
 	m_dragSource->SetCursor( wxCursor( (const char *) handdrag, 32, 32, 16, 0, nullptr, wxWHITE, wxBLACK ) );
     if( m_dragSource == m_source )
         list = m_dest;
     else
         list = m_source;
     list->SetCursor( wxCursor( (const char *) handdrag, 32, 32, 16, 0, nullptr, wxWHITE, wxBLACK ) );
+#elif __WXQT__
+    m_dragSource->SetCursor( wxCursor( (const char *) handdrag ) );
 #endif
     if( m_dragSource == m_source )
         m_itemPos = m_dragSource->HitTest( pt, flags );
@@ -452,7 +453,15 @@ void SortGroupByPage::OnSortBeginDrag(wxDataViewEvent &event)
     m_draggedItem = event.GetItem();
     wxVariant value = event.GetValue();
     m_sortDragSource = dynamic_cast<wxDataViewListCtrl *>( event.GetEventObject() );
+#ifdef __WXMSW__
     m_sortDragSource->SetCursor( wxCursor( "handdrag" ) );
+#elif __WXOSX__
+    m_sortDragSource->SetCursor( wxCursor( "handdrag" ) );
+#elif __WXGTK__
+    m_sortDragSource->SetCursor( wxCursor( (const char *) handdrag, 32, 32, 16, 0, nullptr, wxWHITE, wxBLACK ) );
+#elif __WXQT__
+    m_sortDragSource->SetCursor( wxCursor( (const char *) handdrag ) );
+#endif
     if( m_sortDragSource == m_sortSource && m_draggedItem.IsOk())
         m_itemPos = m_sortDragSource->ItemToRow( m_draggedItem );
     else if( m_draggedItem.IsOk() )
@@ -566,7 +575,7 @@ void SortGroupByPage::RemoveTable(const wxString tbl)
         while( itemSource > 0 )
         {
             auto field = m_sortSource->GetTextValue( itemSource - 1, 0 );
-            if( field.find( tbl ) != -1 )
+            if( field.Find( tbl ) != wxNOT_FOUND )
                 m_sortSource->DeleteItem( itemSource - 1 );
             itemSource--;
         }
@@ -574,7 +583,7 @@ void SortGroupByPage::RemoveTable(const wxString tbl)
         while( itemDest > 0 )
         {
             auto field = m_sortDest->GetTextValue( itemDest - 1, 0 );
-            if( field.find( tbl ) != -1 )
+            if( field.Find( tbl ) != wxNOT_FOUND )
                 m_sortDest->DeleteItem( itemDest - 1 );
             itemDest--;
         }
@@ -585,7 +594,7 @@ void SortGroupByPage::RemoveTable(const wxString tbl)
         while( itemSource > 0 )
         {
             auto field = m_source->GetItemText( itemSource - 1, 0 );
-            if( field.find( tbl ) != -1 )
+            if( field.Find( tbl ) != wxNOT_FOUND )
                 m_source->DeleteItem( itemSource - 1 );
             itemSource--;
         }
@@ -593,7 +602,7 @@ void SortGroupByPage::RemoveTable(const wxString tbl)
         while( itemDest > 0 )
         {
             auto field = m_dest->GetItemText( itemDest - 1, 0 );
-            if( field.find( tbl ) != -1 )
+            if( field.Find( tbl ) != wxNOT_FOUND )
                 m_dest->DeleteItem( itemDest - 1 );
             itemDest--;
         }

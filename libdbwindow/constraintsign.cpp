@@ -23,6 +23,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/BitmapShape.h"
 #include "database.h"
+#include "configuration.h"
 #include "constraint.h"
 #include "constraintsign.h"
 #include "res/gui/key-f.xpm"

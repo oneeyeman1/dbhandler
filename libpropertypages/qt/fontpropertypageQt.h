@@ -27,6 +27,7 @@ class WXEXPORT CFontPropertyPage: public CFontPropertyPageBase
 public:
     CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bool colorEnabled);
     virtual ~CFontPropertyPage();
+    FontPropertyPage &GetFont();
 private:
     QFontDialog *m_panel;
     FontPropertyPage fontInfo;

@@ -53,8 +53,9 @@ struct TableDefinition
 
 struct FieldVisualAttributes
 {
-    std::wstring format, edit, validator, header, label;
-    int justify, height, width, initial;
+    std::wstring format, edit, validator, header, label, name, tag, border, slideUp, layer, cursor;
+    int justify, height, width, initial, posX, posY, wddth, heght, stockCursor;
+    bool prntSuppress, equallyRequired, overrideEdit, displayAsPicture, slideLeft, resizale, moveable, autosize;
 };
 
 struct DataEditFiield
@@ -87,18 +88,18 @@ struct DataEditFiield
         ~ValuueType() noexcept {}
     } value;
 
-    DataEditFiield(int myvalue) : type( INTEGER_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) { }
+    DataEditFiield(int myvalue) : type( INTEGER_TYPE ), m_precision( 0 ), m_size( 0 ), value( myvalue ) { }
 
-    DataEditFiield(double myvalue, unsigned long size, int precision) : type( DOUBLE_TYPE ), m_size( size ), m_precision( precision ), value( myvalue ) { }
+    DataEditFiield(double myvalue, unsigned long size, int precision) : type( DOUBLE_TYPE ), m_precision( precision ), m_size( size ), value( myvalue ) { }
 
-    DataEditFiield(const std::wstring &myvalue) : type( WSTRING_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
+    DataEditFiield(const std::wstring &myvalue) : type( WSTRING_TYPE ), m_precision( 0 ), m_size( 0 ), value( myvalue ) {}
 
-    DataEditFiield(const void *myvalue, int size) : type( BLOB_TYPE ), m_size( size ), m_precision( 0 ), value( myvalue ) {}
+    DataEditFiield(const void *myvalue, int size) : type( BLOB_TYPE ), m_precision( 0 ), m_size( size ), value( myvalue ) {}
 
-    DataEditFiield(const std::string &myvalue) : type( STRING_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
+    DataEditFiield(const std::string &myvalue) : type( STRING_TYPE ), m_precision( 0 ), m_size( 0 ), value( myvalue ) {}
 
 #if defined _MSC_VER
-    DataEditFiield(__int64 myvalue) : type( INTEGER_TYPE ), m_size( 0 ), m_precision( 0 ), value( myvalue ) {}
+    DataEditFiield(__int64 myvalue) : type( INTEGER_TYPE ), m_precision( 0 ), m_size( 0 ), value( myvalue ) {}
 #else
 	DataEditFiield(long long int myvalue) : type( 1 ), value( myvalue ) {}
 #endif
@@ -247,6 +248,7 @@ public:
     const std::wstring &GetFullName() const { return full_name; }
     FieldProperties &GetFieldProperties() { return m_props; }
     void SetFieldProperties(const FieldProperties &props) { m_props = props; }
+    FieldVisualAttributes &GetVisualAttributes() { return m_visual; }
 private:
     std::wstring column_name, column_type, column_defaultValue, full_type, full_name;
     bool autoIncrement, column_isNull, column_pk, column_fk;
@@ -274,7 +276,7 @@ public:
         this->refFields = refFields;
         this->match = match;
     }
-    const int GetForeignKeyId() const { return fkId; }
+    int GetForeignKeyId() const { return fkId; }
     const std::wstring &GetFKName() const { return fkName; }
     const std::wstring &GetReferencedTableName() const { return refTable; }
     const std::wstring &GetReferentialSchemaName() const { return refSchema; }
@@ -282,9 +284,9 @@ public:
     const std::vector<std::wstring> &GetOriginalFields() const { return origFields; }
     const std::wstring &GetReferencedFieldName() const { return referencedField; }
     const std::vector<std::wstring> &GetReferencedFields() const { return refFields; }
-    const FK_ONUPDATE GetOnUpdateConstraint() const { return updateConstraint; }
-    const FK_ONDELETE GetOnDeleteConstraint() const { return deleteConstraint; }
-    const int GetMatchOPtion() const { return match; }
+    FK_ONUPDATE GetOnUpdateConstraint() const { return updateConstraint; }
+    FK_ONDELETE GetOnDeleteConstraint() const { return deleteConstraint; }
+    int GetMatchOPtion() const { return match; }
 private:
     int fkId;
     std::wstring tableName, originalField, referencedField, refTable, origSchema, refSchema, fkName;
@@ -335,7 +337,7 @@ public:
     void SetTableProperties(const TableProperties &props) { m_props = props; }
     const std::vector<TableField *> &GetFields() const { return table_fields; }
     std::map<unsigned long,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
-    const unsigned long GetTableId() const { return m_objectId; }
+    unsigned long GetTableId() const { return m_objectId; }
     void SetTableId(unsigned long id) { m_objectId = id; }
     const std::wstring &GetTableOwner() const { return m_props.m_owner; }
     void SetTableOwner(const std::wstring &owner) { m_props.m_owner = owner; }
