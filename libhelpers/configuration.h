@@ -5,7 +5,8 @@ enum ViewType
     DatabaseView,
     NewViewView,
     QueryView,
-    TableView
+    TableView,
+    LibraryView
 };
 
 struct QueryInfo
@@ -88,6 +89,7 @@ struct Configuration
     std::map<wxString, ToolbarSetup> m_tbSettings;
     int m_querySource, m_queryPresentation;
     DatabaseOptions m_dbOptions;
+    wxString m_currentLibrary;
 };
 
 

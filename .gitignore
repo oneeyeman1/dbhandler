@@ -85,3 +85,4 @@ Makefile.in
 libhelpers/vc_mswuddll
 *.aps
 confogure
+liblibrary/vc_mswuddll

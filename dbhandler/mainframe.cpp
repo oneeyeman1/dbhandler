@@ -120,7 +120,10 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->SetPath( "CurrentLibraries" );
     auto libpath = m_config->Read( "Active", "" );
     if( !libpath.IsEmpty() )
+    {
+        m_conf->m_currentLibrary = libpath;
         m_path.push_back( LibrariesInfo( libpath, true ) );
+    }
     m_config->SetPath( path );
     m_config->SetPath( "MainToolbar" );
     m_conf->m_tbSettings["PowerBar"].m_hideShow = m_config->ReadBool( "Show", true );
