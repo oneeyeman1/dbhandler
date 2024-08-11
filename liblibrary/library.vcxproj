@@ -502,6 +502,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="library.h" />
+    <ClInclude Include="librarydoctemplate.h" />
     <ClInclude Include="librarydocument.h" />
     <ClInclude Include="librarytemplate.h" />
     <ClInclude Include="libraryview.h" />
@@ -512,6 +513,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="library.cpp" />
+    <ClCompile Include="librarydoctemplate.cpp" />
     <ClCompile Include="librarydocument.cpp" />
     <ClCompile Include="librarytemplate.cpp" />
     <ClCompile Include="libraryview.cpp" />
