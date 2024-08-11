@@ -264,11 +264,13 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 #else
     children = m_parent->GetClientWindow()->GetChildren();
 #endif
-    for( wxWindowList::iterator it = children.begin(); it != children.end(); it++ )
+    auto found = false;
+    for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
     {
         tb = wxDynamicCast( *it, wxToolBar );
         if( tb && tb->GetName() == "ViewBar" )
         {
+            found = true;
             m_tb = tb;
         }
         if( tb && tb->GetName() == "StyleBar" )
