@@ -110,7 +110,7 @@ extern "C" WXEXPORT void CreateLibraryWindow(wxWindow *parent, wxDocManager *doc
         LibraryDocument * const doc = (LibraryDocument *) docTemplate->CreateDocument( path );
         wxTRY
         {
-            doc->SetFilename( path );
+            doc->SetFilename( path.IsEmpty() ? wxGetCwd() + "/library1.abl" : path );
             doc->SetDocumentTemplate( docTemplate );
             docManager->AddDocument( doc );
             doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
