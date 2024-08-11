@@ -106,11 +106,11 @@ extern "C" WXEXPORT void CreateLibraryWindow(wxWindow *parent, wxDocManager *doc
     if( !docTemplate )
     {
         docTemplate = new wxDocTemplate( docManager, "Library", "*.abl", "", "abl", "Library Doc", "Library View", CLASSINFO( LibraryDocument ), CLASSINFO( LibraryViewPainter ) );
-        path = conf->m_currentLibrary;
+        path = conf->m_currentLibrary.IsEmpty() ? wxGetCwd() + "/library1.abl" : conf->m_currentLibrary;
         LibraryDocument * const doc = (LibraryDocument *) docTemplate->CreateDocument( path );
         wxTRY
         {
-            doc->SetFilename( path.IsEmpty() ? wxGetCwd() + "/library1.abl" : path );
+            doc->SetFilename( path );
             doc->SetDocumentTemplate( docTemplate );
             docManager->AddDocument( doc );
             doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
