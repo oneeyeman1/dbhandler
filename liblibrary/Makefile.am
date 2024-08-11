@@ -8,8 +8,7 @@ liblibrary_la_SOURCES =  \
 	libraryview.cpp \
 	libraryview.h \
 	librarydocument.cpp \
-	librarydocument.h \
-	library.cpp
+	librarydocument.h
 
 liblibrary_la_CXXFLAGS = -I../../libhelpers \
 	@WX_CXXFLAGS@
