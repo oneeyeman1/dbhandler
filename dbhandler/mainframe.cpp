@@ -51,6 +51,7 @@ typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 typedef int (*ATTACHDATABASE)(wxWindow *, Database *);
 typedef int (*DETACHDATABASE)(wxWindow *);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
+typedef void (*LIBRARYPAINTER)(wxWindow *, wxDocManager *, std::map<wxString, wxDynamicLibrary *> &, Configuration *);
 
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_CONFIGUREODBC, MainFrame::OnConfigureODBC)
@@ -791,21 +792,17 @@ void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
     wxString libName;
     auto lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
-    libName = m_libraryPath + "dialogs";
+    libName = m_libraryPath + "library";
 #elif __WXOSX__
-    libName = m_libraryPath + "liblibdialogs.dylib";
+    libName = m_libraryPath + "libliblibrary.dylib";
 #else
-    libName = m_libraryPath + "libdialogs";
+    libName = m_libraryPath + "liblibrary";
 #endif
     lib->Load( libName );
     if( lib->IsLoaded() )
     {
-        CHOOSEOBJECT func = (CHOOSEOBJECT) lib->GetSymbol( "ChooseObject" );
-        int res = func( m_frame, 0 );
-        if( res == wxID_OK )
-        {
-            wxXmlDocument doc;
-        }
+        LIBRARYPAINTER func = (LIBRARYPAINTER) lib->GetSymbol( "CreateLibraryWindow" );
+        func( this, m_manager, m_painters, m_conf );
     }
 }
 
