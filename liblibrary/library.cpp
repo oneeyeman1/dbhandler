@@ -33,6 +33,7 @@
 #include "configuration.h"
 #include "librarydocument.h"
 #include "libraryview.h"
+#include "librarydoctemplate.h"
 
 #ifdef __WXMSW__
 WXDLLIMPEXP_BASE void wxSetInstance( HINSTANCE hInst );
@@ -95,51 +96,19 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT void CreateLibraryWindow(wxWindow *parent, wxDocManager *docManager, std::map<wxString, wxDynamicLibrary *> &painter, Configuration *conf)
+extern "C" WXEXPORT void CreateLibraryWindow(wxWindow *parent, wxDocManager *docManager, ViewType type, std::map<wxString, wxDynamicLibrary *> &painter, Configuration *conf)
 {
-    wxDocTemplate *docTemplate;
+    LibraryDocTemplate *docTemplate;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
     wxString path;
-    docTemplate = (wxDocTemplate *) docManager->FindTemplate( CLASSINFO( wxDocTemplate ) );
+    docTemplate = (LibraryDocTemplate *) docManager->FindTemplate( CLASSINFO( wxDocTemplate ) );
     if( !docTemplate )
     {
-        docTemplate = new wxDocTemplate( docManager, "Library", "*.abl", "", "abl", "Library Doc", "Library View", CLASSINFO( LibraryDocument ), CLASSINFO( LibraryViewPainter ) );
+        docTemplate = new LibraryDocTemplate( docManager, "Library", "*.abl", "", "abl", "Library Doc", "Library View", CLASSINFO( LibraryDocument ), CLASSINFO( LibraryViewPainter ), wxDOC_NEW | wxDOC_SILENT );
         path = conf->m_currentLibrary.IsEmpty() ? wxGetCwd() + "/library1.abl" : conf->m_currentLibrary;
-        LibraryDocument * const doc = (LibraryDocument *) docTemplate->CreateDocument( path );
-        wxTRY
-        {
-            doc->SetFilename( path );
-            doc->SetDocumentTemplate( docTemplate );
-            docManager->AddDocument( doc );
-            doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
-
-            wxScopedPtr<LibraryViewPainter> view( (LibraryViewPainter *) docTemplate->CreateView( doc ) );
-            if( !view )
-                return;
-            view->SetViewType( LibraryView );
-            view->SetParentWindow( parent );
-            view->SetDocument( doc );
-            view->SetConfiguration( conf );
-            if( !view->OnCreate( doc, wxDOC_NEW | wxDOC_SILENT ) )
-            {
-                if( docManager->GetDocuments().Member( doc ) )
-                    doc->DeleteAllViews();
-                return;
-            }
-            else
-            {
-                view.release();
-                return;
-            }
-        }
-        wxCATCH_ALL
-        (
-            if( docManager->GetDocuments().Member( doc ) )
-                doc->DeleteAllViews();
-            throw;
-        )
+        docTemplate->CreateLibraryDocument( parent, path, type, painter, conf, wxDOC_NEW | wxDOC_SILENT );
     }
 }
 

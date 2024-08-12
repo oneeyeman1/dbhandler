@@ -1,6 +1,7 @@
 #include <map>
 #include "wx/docview.h"
 #include "wx/docmdi.h"
+#include "wx/dynlib.h"
 #include "configuration.h"
 #include "librarydocument.h"
 #include "libraryview.h"
@@ -11,7 +12,7 @@ LibraryDocTemplate::LibraryDocTemplate(wxDocManager *manager, const wxString &de
 {
 }
 
-LibraryViewPainter *LibraryDocTemplate::CreateLibraryView(wxWindow *parent, wxDocument *doc, ViewType type,  Configuration *conf, long flags)
+LibraryViewPainter *LibraryDocTemplate::CreateLibraryView(wxWindow *parent, wxDocument *doc, ViewType type, std::map<wxString, wxDynamicLibrary *> &painter, Configuration *conf, long flags)
 {
     wxScopedPtr<LibraryViewPainter> view( (LibraryViewPainter *) DoCreateView() );
     if( !view )
@@ -25,7 +26,7 @@ LibraryViewPainter *LibraryDocTemplate::CreateLibraryView(wxWindow *parent, wxDo
     return view.release();
 }
 
-bool LibraryDocTemplate::CreateDatabaseDocument(wxWindow *parent, const wxString &path, ViewType type, Configuration *conf, long flags)
+bool LibraryDocTemplate::CreateLibraryDocument(wxWindow *parent, const wxString &path, ViewType type, std::map<wxString, wxDynamicLibrary *> &painter, Configuration *conf, long flags)
 {
     LibraryDocument * const doc = (LibraryDocument *) DoCreateDocument();
     wxTRY
@@ -34,7 +35,7 @@ bool LibraryDocTemplate::CreateDatabaseDocument(wxWindow *parent, const wxString
         doc->SetDocumentTemplate( this );
         GetDocumentManager()->AddDocument( doc );
         doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
-        if( CreateLibraryView( parent, doc, type, conf, flags ) )
+        if( CreateLibraryView( parent, doc, type, painter, conf, flags ) )
             return true;
         if( GetDocumentManager()->GetDocuments().Member( doc ) )
             doc->DeleteAllViews();
