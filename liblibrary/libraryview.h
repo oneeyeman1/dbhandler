@@ -14,5 +14,8 @@ private:
     Configuration *m_conf;
     wxToolBar *m_tb;
     wxString m_libPath;
+    wxDocMDIChildFrame *m_frame;
+    wxBitmapComboBox *m_drive;
+    wxTreeCtrl *m_tree;
     wxDECLARE_DYNAMIC_CLASS(LibraryViewPainter);
 };
