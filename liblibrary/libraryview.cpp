@@ -14,6 +14,7 @@
 #endif
 
 #include <map>
+#include "wx/artprov.h"
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/stdpaths.h"
@@ -29,7 +30,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(LibraryViewPainter, wxView);
 
 bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
 {
-    wxToolBar *tb = nullptr;
+    m_tb = nullptr;
     wxWindowList children;
     wxRect clientRect = m_parent->GetClientRect();
     if( !wxView::OnCreate( doc, flags ) )
@@ -42,7 +43,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     auto found = false;
     for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
     {
-        tb = wxDynamicCast( *it, wxToolBar );
+        auto tb = wxDynamicCast( *it, wxToolBar );
         if( tb && tb->GetName() == "ViewBar" )
         {
             found = true;
@@ -90,11 +91,61 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     m_tree = new wxTreeCtrl( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_NO_BUTTONS | wxTR_LINES_AT_ROOT );
     sizer->Add( m_tree, 1, wxEXPAND, 0 );
     m_frame->SetSizer( sizer );
+    CreateViewToolBar();
     m_frame->Layout();
     m_frame->Show();
     return true;
 }
 
 void LibraryViewPainter::OnDraw( wxDC * )
+{
+}
+
+void LibraryViewPainter::CreateViewToolBar()
+{
+    long styleViewBar = wxNO_BORDER | wxTB_FLAT, styleStyleBar = wxNO_BORDER | wxTB_FLAT;
+    switch( m_conf->m_tbSettings["ViewBar"].m_orientation )
+    {
+    case 0:
+        styleViewBar |= wxTB_VERTICAL;
+        break;
+    case 1:
+        styleViewBar |= wxTB_HORIZONTAL;
+        break;
+    case 2:
+        styleViewBar |= wxTB_RIGHT;
+        break;
+    case 3:
+        styleViewBar |= wxTB_BOTTOM;
+        break;
+    }
+    if( !m_conf->m_tbSettings["ViewBar"].m_showTooltips )
+        styleViewBar |= wxTB_NO_TOOLTIPS;
+    if( m_conf->m_tbSettings["ViewBar"].m_showText )
+        styleViewBar |= wxTB_TEXT ;
+    wxWindow *parent = nullptr;
+#ifdef __WXOSX__
+    parent = m_frame;
+#else
+    parent = m_parent;
+#endif
+    auto size = m_parent->GetClientSize();
+#ifdef __WXOSX__
+    m_tb = m_frame->CreateToolBar();
+    m_tb->SetName( "ViewBar" );
+#else
+    if( !m_tb )
+    {
+        m_tb = new wxToolBar( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, styleViewBar, "ViewBar" );
+    }
+    else
+        m_tb->ClearTools();
+#endif
+    m_tb->AddTool( wxID_LIBRARYNEW, _( "New Library" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
+    m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
+    m_tb->Realize();
+}
+
+void LibraryViewPainter::CreateLibraryMenu()
 {
 }
