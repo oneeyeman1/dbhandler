@@ -3958,7 +3958,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     {
         query = L"SELECT @@version_number AS version, @@version_as_integer / 1000 AS major";
     }
-    if( pimpl->m_subtype == L"Sybase SQL Anywhere" )
+    if( pimpl->m_subtype == L"Sybase SQL Anywhere" || pimpl->m_subtype == L"SQL Anywhere" )
     {
         query = L"SELECT @@version AS version";
     }
@@ -4028,8 +4028,18 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                             if( pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_subtype != L"Oracle" )
                             {
                                 str_to_uc_cpy( pimpl->m_serverVersion, version );
-                                pimpl->m_versionMajor = (int) versionMajor;
-                                pimpl->m_versionMinor = (int) versionMinor;
+                                if( pimpl->m_subtype == L"SQL Anywhere" )
+                                {
+                                    std::string::size_type pos = pimpl->m_serverVersion.find( L"." );
+                                    pimpl->m_versionMajor = std::stoi( pimpl->m_serverVersion.substr( 0, pos ) );
+                                    std::string::size_type posSec = pimpl->m_serverVersion.find( L".", pos );
+                                    pimpl->m_versionMinor = std::stoi( pimpl->m_serverVersion.substr( pos, posSec ) );
+                                }
+                                else
+                                {
+                                    pimpl->m_versionMajor = (int) versionMajor;
+                                    pimpl->m_versionMinor = (int) versionMinor;
+                                }
                             }
                             else
                             {
