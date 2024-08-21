@@ -27,5 +27,5 @@ sample ICON "res/sample.ico"
 
 // this is not always needed but doesn't hurt (except making the executable
 // very slightly larger): this file contains the standard icons, cursors, ...
-#include "./wx.rc"
+#include <wx/msw/wx.rc>
 

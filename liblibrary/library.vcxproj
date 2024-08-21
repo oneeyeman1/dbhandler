@@ -37,7 +37,7 @@
   <PropertyGroup Label="Globals">
     <ProjectName>library</ProjectName>
     <ProjectGuid>{CDFF3BFC-6233-4BCF-852C-96749E830276}</ProjectGuid>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">
