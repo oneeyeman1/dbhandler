@@ -14,6 +14,7 @@
 #endif
 
 #include "wx/docview.h"
+#include "painterobjects.h"
 #include "librarydocument.h"
 
 // ----------------------------------------------------------------------------

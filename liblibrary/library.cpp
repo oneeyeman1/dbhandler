@@ -25,12 +25,15 @@
 #include <string>
 #include <memory>
 #include "wx/docmdi.h"
+#include "wx/dir.h"
+#include "wx/filename.h"
 #include "wx/dynlib.h"
 #include "wx/docview.h"
 #include "wx/cmdproc.h"
 #include "wx/bmpcbox.h"
 #include "wx/treectrl.h"
 #include "configuration.h"
+#include "painterobjects.h"
 #include "librarydocument.h"
 #include "libraryview.h"
 #include "librarydoctemplate.h"

@@ -12,7 +12,15 @@ protected:
     void CreateViewToolBar();
     void CreateLibraryMenu();
     void GetIconFromArtProvider( int id);
+    void ExpandRoot(const wxString &path);
+    void ExpandDir(wxTreeItemId parent);
+    bool ExpandPath(const wxString &path);
+    void PopulateNode(wxTreeItemId parent);
+    const wxTreeItemId AddSection(const wxString& path, const wxString& name, int imageId);
+    wxTreeItemId FindChild(wxTreeItemId parentId, const wxString& path, bool& done);
 private:
+    size_t GetAvailableDrives(wxArrayString &paths, wxArrayString &names, wxArrayInt &icons);
+    bool IsDriveAvailable(const wxString& dirName);
     ViewType m_type;
     wxDocMDIParentFrame *m_parent;
     Configuration *m_conf;
@@ -21,6 +29,8 @@ private:
     wxDocMDIChildFrame *m_frame;
     wxBitmapComboBox *m_drive;
     wxTreeCtrl *m_tree;
+    wxTreeItemId m_rootId;
+    wxBitmapBundle libraryOpen, libraryClosed;
     wxDECLARE_DYNAMIC_CLASS(LibraryViewPainter);
 };
 

@@ -21,6 +21,9 @@
     <ClInclude Include="configuration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="painterobjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="typecombobox.cpp">

@@ -1,10 +1,13 @@
 #include <map>
 #include "wx/docview.h"
+#include "wx/filename.h"
+#include "wx/dir.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/bmpcbox.h"
 #include "wx/treectrl.h"
 #include "configuration.h"
+#include "painterobjects.h"
 #include "librarydocument.h"
 #include "libraryview.h"
 #include "librarydoctemplate.h"

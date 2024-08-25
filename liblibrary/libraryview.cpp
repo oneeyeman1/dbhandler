@@ -14,6 +14,7 @@
 #endif
 
 #include <map>
+#include "wx/dynlib.h"
 #include "wx/artprov.h"
 #include "wx/docview.h"
 #include "wx/docmdi.h"
@@ -21,8 +22,11 @@
 #include "wx/filename.h"
 #include "wx/bmpcbox.h"
 #include "wx/volume.h"
+#include "wx/generic/dirctrlg.h"
 #include "wx/treectrl.h"
+#include "wx/dir.h"
 #include "configuration.h"
+#include "painterobjects.h"
 #include "librarydocument.h"
 #include "libraryview.h"
 
@@ -89,11 +93,56 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     m_drive->SetStringSelection( str );
     sizer->Add( m_drive, 0 , wxEXPAND, 0 );
     m_tree = new wxTreeCtrl( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_NO_BUTTONS | wxTR_LINES_AT_ROOT );
+#ifdef __WXMSW__
+    HANDLE gs_wxMainThread = NULL;
+    const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "library", &gs_wxMainThread );
+    const void *dataLibOOpen = nullptr, *dataLibClosed = nullptr;
+    size_t libOpen, libClosed;
+    if( !wxLoadUserResource( &dataLibOOpen, &libOpen, "libOpen", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+}
+    else
+    {
+        libraryOpen = wxBitmapBundle::FromSVG( (const char *) dataLibOOpen, wxSize( 16, 16 ) );
+    }
+    if( !wxLoadUserResource( &dataLibClosed, &libClosed, "libClosed", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+    }
+    else
+    {
+        libraryClosed = wxBitmapBundle::FromSVG( (const char *) dataLibClosed, wxSize( 16, 16 ) );
+    }
+#elif __WXOSX__
+    libraryOpen = wxBitmapBundle::FromSVGResource( "libOpen", wxSize( 16, 16 ) );
+    libraryClosed = libraryClosed = wxBitmapBundle::FromSVGResource( "libClosed", wxSize( 16, 16 ) );
+#else
+    libraryOpen = wxBitmapBundle::FromSVG( libOpen, wxSize( 16, 16 ) );
+    libraryClosed = wxBitmapBundle::FromSVG( libClosed, wxSize( 16, 16 ) );
+#endif
+    auto imageList = wxTheFileIconsTable->GetSmallImageList();
+/*    imageList->Add( libraryOpen.GetBitmap( wxSize( 16, 16 ) ) );
+    imageList->Add( libraryClosed.GetBitmap( wxSize( 16, 16 ) ) );*/
+    m_tree->SetImageList( imageList );
+    wxString rootName = "";
+    wxDirItemData *rootData = new wxDirItemData( str, str, true );
+#if defined(__WINDOWS__)
+    rootName = _("Computer");
+#else
+    rootName = _("Sections");
+#endif
+    m_rootId = m_tree->AddRoot( str, 3, -1, rootData );
+    m_tree->SetItemHasChildren( m_rootId );
+    ExpandRoot( path );
     sizer->Add( m_tree, 1, wxEXPAND, 0 );
     m_frame->SetSizer( sizer );
     CreateViewToolBar();
     m_frame->Layout();
     m_frame->Show();
+    m_tree->SetFocus();
     return true;
 }
 
@@ -148,4 +197,341 @@ void LibraryViewPainter::CreateViewToolBar()
 
 void LibraryViewPainter::CreateLibraryMenu()
 {
+}
+
+void LibraryViewPainter::ExpandRoot(const wxString &path)
+{
+    if( !path.IsEmpty() )
+        ExpandPath( path );
+#ifdef __UNIX__
+    else
+    {
+        // On Unix, there's only one node under the (hidden) root node. It
+        // represents the / path, so the user would always have to expand it;
+        // let's do it ourselves
+        ExpandPath( "/" );
+    }
+#endif
+}
+
+void LibraryViewPainter::ExpandDir(wxTreeItemId parent)
+{
+    PopulateNode( parent );
+}
+
+void LibraryViewPainter::PopulateNode(wxTreeItemId parent)
+{
+    wxDirItemData *data = (wxDirItemData *) m_tree->GetItemData( parent );
+    if( m_tree->IsExpanded( parent ) )
+        return;
+    wxASSERT( data );
+
+    wxString path;
+
+    wxString dirName( data->m_path );
+
+#if defined(__WINDOWS__)
+    // Check if this is a root directory and if so,
+    // whether the drive is available.
+    if( !IsDriveAvailable( dirName ) )
+    {
+        data->m_isExpanded = false;
+        //wxMessageBox(wxT("Sorry, this drive is not available."));
+        return;
+    }
+#endif
+    // This may take a longish time. Go to busy cursor
+    wxBusyCursor busy;
+#if defined(__WINDOWS__)
+    if( dirName.Last() == ':' )
+        dirName += wxString( wxFILE_SEP_PATH );
+#endif
+    wxArrayString files, dirs;
+    wxDir d;
+    wxString eachFilename;
+    wxLogNull log;
+    int style;
+    d.Open( dirName );
+    if( d.IsOpened() )
+    {
+        style = wxDIR_DIRS;
+        if( d.GetFirst( &eachFilename, wxEmptyString, style ) )
+        {
+            do
+            {
+                wxFileName name( eachFilename );
+                if( ( eachFilename != "." ) && ( eachFilename != ".." ) )
+                {
+                    dirs.Add( eachFilename );
+                }
+            }
+            while( d.GetNext( &eachFilename ) );
+        }
+        style = wxDIR_FILES;
+        if( d.GetFirst( &eachFilename, "*.abl", style ) )
+        {
+            do
+            {
+                if( ( eachFilename != "." ) && ( eachFilename != ".." ) )
+                {
+                    files.Add( eachFilename );
+                }
+            }
+            while( d.GetNext( &eachFilename ) );
+        }
+    }
+    // Now we really know whether we have any children so tell the tree control
+    // about it.
+    m_tree->SetItemHasChildren( parent, !dirs.empty() || !files.empty());
+
+    // Add the sorted files
+    size_t i;
+    for( i = 0; i < files.GetCount(); i++ )
+    {
+        eachFilename = files[i];
+        path = dirName;
+        if( !wxEndsWithPathSeparator( path ) )
+            path += wxString( wxFILE_SEP_PATH );
+        path += eachFilename;
+
+        wxDirItemData *dir_item = new wxDirItemData( path, eachFilename, false );
+        wxTreeItemId treeid = m_tree->AppendItem( parent, eachFilename, wxFileIconsTable::folder, -1, dir_item );
+        m_tree->SetItemImage( treeid, /*libraryOpen*/1, wxTreeItemIcon_Expanded );
+        m_tree->SetItemImage( treeid, /*libraryClosed*/2, wxTreeItemIcon_Normal );
+    }
+    // And the dirs
+    for (i = 0; i < dirs.GetCount(); i++)
+    {
+        eachFilename = dirs[i];
+        path = dirName;
+        if( !wxEndsWithPathSeparator( path ) )
+            path += wxString( wxFILE_SEP_PATH );
+        path += eachFilename;
+
+        wxDirItemData *dir_item = new wxDirItemData( path, eachFilename, true );
+        wxTreeItemId treeid = m_tree->AppendItem( parent, eachFilename, wxFileIconsTable::folder, -1, dir_item );
+        m_tree->SetItemImage( treeid, wxFileIconsTable::folder_open, wxTreeItemIcon_Expanded );
+
+        // assume that it does have children by default as it can take a long
+        // time to really check for this (think remote drives...)
+        //
+        // and if we're wrong, we'll correct the icon later if
+        // the user really tries to open this item
+        m_tree->SetItemHasChildren(treeid);
+    }
+}
+
+const wxTreeItemId LibraryViewPainter::AddSection(const wxString& path, const wxString& name, int imageId)
+{
+    wxDirItemData *dir_item = new wxDirItemData( path, name, true );
+    wxTreeItemId treeid = m_tree->AppendItem( m_rootId, name, imageId, -1, dir_item );
+    m_tree->SetItemHasChildren( treeid );
+    return treeid;
+}
+
+size_t LibraryViewPainter::GetAvailableDrives(wxArrayString &paths, wxArrayString &names, wxArrayInt &icon_ids)
+{
+#if defined(wxHAS_FILESYSTEM_VOLUMES) || defined(__APPLE__)
+
+#if (defined(__WIN32__) || defined(__WXOSX__)) && wxUSE_FSVOLUME
+    // TODO: this code (using wxFSVolumeBase) should be used for all platforms
+    //       but unfortunately wxFSVolumeBase is not implemented everywhere
+    const wxArrayString as = wxFSVolumeBase::GetVolumes();
+
+    for( size_t i = 0; i < as.GetCount(); i++ )
+    {
+        wxString path = as[i];
+        wxFSVolume vol( path );
+        int imageId;
+        switch( vol.GetKind() )
+        {
+        case wxFS_VOL_FLOPPY:
+            if( ( path == wxT( "a:\\" ) ) || ( path == wxT( "b:\\" ) ) )
+                imageId = wxFileIconsTable::floppy;
+            else
+                imageId = wxFileIconsTable::removeable;
+            break;
+        case wxFS_VOL_DVDROM:
+        case wxFS_VOL_CDROM:
+            imageId = wxFileIconsTable::cdrom;
+            break;
+        case wxFS_VOL_NETWORK:
+            if( path[0] == wxT( '\\' ) )
+                continue; // skip "\\computer\folder"
+            imageId = wxFileIconsTable::drive;
+            break;
+        case wxFS_VOL_DISK:
+        case wxFS_VOL_OTHER:
+        default:
+            imageId = wxFileIconsTable::drive;
+            break;
+        }
+        paths.Add( path );
+        names.Add( vol.GetDisplayName() );
+        icon_ids.Add( imageId );
+    }
+#else // !__WIN32__
+    /* If we can switch to the drive, it exists. */
+    for( char drive = 'A'; drive <= 'Z'; drive++ )
+    {
+        const wxString
+            path = wxFileName::GetVolumeString( drive, wxPATH_GET_SEPARATOR );
+
+        if( wxIsDriveAvailable( path ) )
+        {
+            paths.Add( path );
+            names.Add( wxFileName::GetVolumeString( drive, wxPATH_NO_SEPARATOR ) );
+            icon_ids.Add( drive <= 2 ? wxFileIconsTable::floppy : wxFileIconsTable::drive );
+        }
+    }
+#endif // __WIN32__/!__WIN32__
+
+#elif defined(__UNIX__)
+    paths.Add( wxT( "/" ) );
+    names.Add( wxT( "/" ) );
+    icon_ids.Add( wxFileIconsTable::computer );
+#else
+#error "Unsupported platform in wxGenericDirCtrl!"
+#endif
+    wxASSERT_MSG( ( paths.GetCount() == names.GetCount() ), wxT( "The number of paths and their human readable names should be equal in number." ) );
+    wxASSERT_MSG( ( paths.GetCount() == icon_ids.GetCount() ), wxT( "Wrong number of icons for available drives." ) );
+    return paths.GetCount();
+}
+
+bool LibraryViewPainter::ExpandPath(const wxString &path)
+{
+    bool done = false;
+    wxTreeItemId treeid = FindChild( m_rootId, path, done );
+    wxTreeItemId lastId = treeid; // The last non-zero treeid
+    while( treeid.IsOk() && !done )
+    {
+        ExpandDir( treeid );
+        treeid = FindChild( treeid, path, done );
+        if( treeid.IsOk() )
+            lastId = treeid;
+    }
+    if( !lastId.IsOk() )
+        return false;
+    wxDirItemData *data = (wxDirItemData *) m_tree->GetItemData( lastId );
+    if( data->m_isDir )
+    {
+        m_tree->Expand( lastId );
+    }
+    if( data->m_isDir )
+    {
+        // Find the first file in this directory
+        wxTreeItemIdValue cookie;
+        wxTreeItemId childId = m_tree->GetFirstChild( lastId, cookie );
+        bool selectedChild = false;
+        while( childId.IsOk() )
+        {
+            data = (wxDirItemData *) m_tree->GetItemData( childId );
+
+            if (data && !data->m_path.empty() && !data->m_isDir)
+            {
+                m_tree->SelectItem( childId );
+                m_tree->EnsureVisible( childId );
+                selectedChild = true;
+                break;
+            }
+            childId = m_tree->GetNextChild( lastId, cookie );
+        }
+        if( !selectedChild )
+        {
+            m_tree->SelectItem( lastId );
+            m_tree->EnsureVisible( lastId );
+        }
+    }
+    else
+    {
+        m_tree->SelectItem( lastId );
+        m_tree->EnsureVisible( lastId );
+    }
+
+    return true;
+}
+
+wxTreeItemId LibraryViewPainter::FindChild(wxTreeItemId parentId, const wxString &path, bool &done)
+{
+    wxString path2( path );
+
+    // Make sure all separators are as per the current platform
+    path2.Replace( "\\", wxString( wxFILE_SEP_PATH ) );
+    path2.Replace( "/", wxString( wxFILE_SEP_PATH ) );
+
+    // Append a separator to foil bogus substring matching
+    path2 += wxString( wxFILE_SEP_PATH );
+
+    // In MSW case is not significant
+#if defined(__WINDOWS__)
+    path2.MakeLower();
+#endif
+
+    wxTreeItemIdValue cookie;
+    wxTreeItemId childId = m_tree->GetFirstChild( parentId, cookie );
+    while( childId.IsOk() )
+    {
+        wxDirItemData* data = (wxDirItemData *) m_tree->GetItemData( childId );
+        if( data && !data->m_path.empty() )
+        {
+            wxString childPath( data->m_path );
+            if( !wxEndsWithPathSeparator( childPath ) )
+                childPath += wxString( wxFILE_SEP_PATH );
+            // In MSW case is not significant
+#if defined(__WINDOWS__)
+            childPath.MakeLower();
+#endif
+            if( childPath.length() <= path2.length() )
+            {
+                wxString path3 = path2.Mid( 0, childPath.length() );
+                if( childPath == path3 )
+                {
+                    if( path3.length() == path2.length() )
+                        done = true;
+                    else
+                        done = false;
+                    return childId;
+                }
+            }
+        }
+        childId = m_tree->GetNextChild( parentId, cookie );
+    }
+    wxTreeItemId invalid;
+    if( parentId == m_rootId )
+        return m_rootId;
+    else
+        return invalid;
+}
+
+bool LibraryViewPainter::IsDriveAvailable(const wxString& dirName)
+{
+#ifdef __WIN32__
+    UINT errorMode = SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX);
+#endif
+    bool success = true;
+
+    // Check if this is a root directory and if so,
+    // whether the drive is available.
+    if (dirName.length() == 3 && dirName[(size_t)1] == wxT(':'))
+    {
+        wxString dirNameLower(dirName.Lower());
+#ifndef wxHAS_DRIVE_FUNCTIONS
+        success = wxDirExists(dirNameLower);
+#else
+        int currentDrive = _getdrive();
+        int thisDrive = (int) (dirNameLower[(size_t)0] - 'a' + 1) ;
+        int err = setdrive( thisDrive ) ;
+        setdrive( currentDrive );
+
+        if (err == -1)
+        {
+            success = false;
+        }
+#endif
+    }
+#ifdef __WIN32__
+    (void) SetErrorMode(errorMode);
+#endif
+
+    return success;
 }

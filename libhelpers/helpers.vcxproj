@@ -38,6 +38,7 @@
     <ClInclude Include="colorcombobox.h" />
     <ClInclude Include="configuration.h" />
     <ClInclude Include="maskededit.h" />
+    <ClInclude Include="painterobjects.h" />
     <ClInclude Include="typecombobox.h" />
   </ItemGroup>
   <ItemGroup>
