@@ -45,6 +45,7 @@
 #include "wx/fswatcher.h"
 #include "database.h"
 #include "configuration.h"
+#include "painterobjects.h"
 #include "newtablehandler.h"
 #include "mainframe.h"
 #include "docview.h"

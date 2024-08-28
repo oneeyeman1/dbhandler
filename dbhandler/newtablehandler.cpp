@@ -11,6 +11,7 @@
 #include "wx/xml/xml.h"
 #include "database.h"
 #include "configuration.h"
+#include "painterobjects.h"
 #include "newtablehandler.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
