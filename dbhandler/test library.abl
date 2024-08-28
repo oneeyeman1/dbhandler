@@ -1,6 +1,12 @@
 <Library>
-    <name>test1.qry</name>
-    <comment>Test application</comment>
-    <name>test2.qry</name>
-    <comment>Second test</comment>
+    <Header>
+        <Created>02-23-1969 23:59:59</Created>
+        <Comment>Test Library</Comment>
+    </Header>
+    <Body>
+        <name>test1.qry</name>
+        <comment>Test application</comment>
+        <name>test2.qry</name>
+        <comment>Second test</comment>
+    </Body>
 </Library>
