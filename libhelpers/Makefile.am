@@ -5,6 +5,7 @@ lib_LIBRARIES =  \
 	libhelpers.a
 
 libhelpers_a_SOURCES =  \
+	painterobjects.h \
 	typecombobox.cpp \
 	typecombobox.h \
 	colorcombobox.cpp \

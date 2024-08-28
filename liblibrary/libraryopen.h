@@ -1,4 +1,4 @@
-static const char libClosed[] = 
+static const char libOpen[] = 
 R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    id="SVGRoot"
@@ -6,7 +6,7 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
    height="16px"
    version="1.1"
    viewBox="0 0 16 16"
-   sodipodi:docname="libraryclosed.svg"
+   sodipodi:docname="libraryopen.svg"
    inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -183,7 +183,7 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
      x="3.7816076"
      y="6.6820664" />
   <rect
-     style="fill:#666666;stroke:url(#linearGradient36);stroke-width:1;stroke-dasharray:none"
+     style="fill:#ffff00;stroke:url(#linearGradient36);stroke-width:1;stroke-dasharray:none"
      id="rect33-5"
      width="3.2292044"
      height="5.642982"
@@ -197,7 +197,7 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
      x="8.8841591"
      y="6.7525625" />
   <rect
-     style="fill:#666666;stroke:url(#linearGradient34);stroke-width:1;stroke-dasharray:none"
+     style="fill:#ffff00;stroke:url(#linearGradient34);stroke-width:1;stroke-dasharray:none"
      id="rect33-6"
      width="3.2292044"
      height="5.642982"
