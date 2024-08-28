@@ -63,6 +63,7 @@ private:
     wxConfigBase *m_config;
     Configuration *m_conf;
     bool m_libraryLoaded;
+    LibraryObject *m_library;
     wxDECLARE_EVENT_TABLE();
 };
 

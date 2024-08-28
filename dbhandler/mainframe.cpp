@@ -31,6 +31,7 @@
 #include "wx/fswatcher.h"
 #include "database.h"
 #include "configuration.h"
+#include "painterobjects.h"
 #include "docview.h"
 #include "newtablehandler.h"
 
@@ -837,32 +838,50 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
         return true;
     }
     QueryInfo query;
-    wxXmlNode *children = m_doc.GetRoot()->GetChildren();
-    bool isQuery = false;
+    wxXmlNode *children = m_doc.GetRoot()->GetChildren(), *bodyChildren, *queryChildren;
     while( children )
     {
-        if( children->GetName().IsSameAs("name") )
+        if( children->GetName().IsSameAs( "Header" ) )
         {
-            wxString widthStr = children->GetNodeContent();
-            if( widthStr.substr( widthStr.size() - 3 ) == "qry" )
+            children = children->GetNext();
+            continue;
+        }
+        if( children->GetName().IsSameAs( "Body" ) )
+        {
+            bodyChildren = children->GetChildren();
+            while( bodyChildren )
             {
-                isQuery = true;
-                query.name = widthStr.substr( 0, widthStr.length() - 4 );
+                if( bodyChildren->GetName().IsSameAs( "Query" ) )
+                {
+                    queryChildren = bodyChildren->GetChildren();
+                    while( queryChildren )
+                    {
+                        if( queryChildren->GetName().IsSameAs( "name" ) )
+                        {
+                            wxString widthStr = queryChildren->GetNodeContent();
+                            if( widthStr.substr( widthStr.size() - 3 ) == "qry" )
+                            {
+                                query.name = widthStr.substr( 0, widthStr.length() - 4 );
+                            }
+                        }
+                        if( queryChildren->GetName().IsSameAs( "comment" ) )
+                        {
+                            wxString widthStr = children->GetNodeContent();
+                            query.comment = widthStr;
+                        }
+                        queryChildren = queryChildren->GetNext();
+                    }
+                }
+                if( query.name != "" )
+                {
+                    queries.push_back( query );
+                    query.name = "";
+                    query.comment = "";
+                }
+                bodyChildren = bodyChildren->GetNext();
             }
         }
-        if( children->GetName().IsSameAs("comment") )
-        {
-            wxString widthStr = children->GetNodeContent();
-            query.comment = widthStr;
-        }
         children = children->GetNext();
-        if( query.name != "" && isQuery )
-        {
-            queries.push_back( query );
-            query.name = "";
-            query.comment = "";
-            isQuery = false;
-        }
     }
     m_libraryLoaded = true;
 	return false;
