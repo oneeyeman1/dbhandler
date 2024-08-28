@@ -124,7 +124,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     libraryClosed = wxBitmapBundle::FromSVG( libClosed, wxSize( 16, 16 ) );
 #endif
     auto imageList = wxTheFileIconsTable->GetSmallImageList();
-/*    imageList->Add( libraryOpen.GetBitmap( wxSize( 16, 16 ) ) );
+/*    imageList->Add( libraryOpen, wxNullBitmap );
     imageList->Add( libraryClosed.GetBitmap( wxSize( 16, 16 ) ) );*/
     m_tree->SetImageList( imageList );
     wxString rootName = "";
@@ -134,7 +134,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
 #else
     rootName = _("Sections");
 #endif
-    m_rootId = m_tree->AddRoot( str, 3, -1, rootData );
+    m_rootId = m_tree->AddRoot( str, wxFileIconsTable::folder_open, -1, rootData );
     m_tree->SetItemHasChildren( m_rootId );
     ExpandRoot( path );
     sizer->Add( m_tree, 1, wxEXPAND, 0 );
