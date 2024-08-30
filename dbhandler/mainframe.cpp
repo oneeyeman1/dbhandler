@@ -20,6 +20,7 @@
 
 #include <vector>
 #include <map>
+#include <memory>
 #include <wx/artprov.h>
 #include "wx/docview.h"
 #include "wx/docmdi.h"
@@ -809,6 +810,7 @@ void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
 
 bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
 {
+    m_library = std::make_shared<LibraryObject>();
     if( m_doc.GetRoot() )
         return true;
 	if( path.empty() )
@@ -820,6 +822,7 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
     {
         if( (*it).m_isActive )
         {
+            m_library->m_name = (*it).m_path;
             if( !m_doc.Load( (*it).m_path ) )
             {
                 wxMessageBox( _( "Loading failure" ) );
@@ -838,13 +841,33 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
         return true;
     }
     QueryInfo query;
-    wxXmlNode *children = m_doc.GetRoot()->GetChildren(), *bodyChildren, *queryChildren;
+    wxString widthStr, objectComment, objectName;
+    wxDateTime lastmodified = wxDateTime::Now(), lastcompiled = wxDateTime::Now();
+    wxXmlNode *children = m_doc.GetRoot()->GetChildren(), *bodyChildren, *queryChildren, *headerChildren;
     while( children )
     {
         if( children->GetName().IsSameAs( "Header" ) )
         {
+            headerChildren = children->GetChildren();
+            while( headerChildren )
+            {
+                if( headerChildren->GetName().IsSameAs( "Created" ) )
+                {
+                    wxDateTime dt;
+                    wxString::const_iterator end;
+                    widthStr = headerChildren->GetNodeContent();
+                    auto res = dt.ParseISOCombined( widthStr );
+                    if( res )
+                        m_library->m_created = dt;
+                }
+                if( headerChildren->GetName().IsSameAs( "Comment" ) )
+                {
+                    widthStr = headerChildren->GetNodeContent();
+                    m_library->m_comment = widthStr;
+                }
+                headerChildren = headerChildren->GetNext();
+            }
             children = children->GetNext();
-            continue;
         }
         if( children->GetName().IsSameAs( "Body" ) )
         {
@@ -858,26 +881,32 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
                     {
                         if( queryChildren->GetName().IsSameAs( "name" ) )
                         {
-                            wxString widthStr = queryChildren->GetNodeContent();
+                            widthStr = queryChildren->GetNodeContent();
                             if( widthStr.substr( widthStr.size() - 3 ) == "qry" )
                             {
-                                query.name = widthStr.substr( 0, widthStr.length() - 4 );
+                                objectName = widthStr.substr( 0, widthStr.length() - 4 );
                             }
+                        }
+                        if( queryChildren->GetName().IsSameAs( "lastmodified" ) )
+                        {
+                            wxString::const_iterator end;
+                            widthStr = queryChildren->GetNodeContent();
+                            lastmodified.ParseISOCombined( widthStr );
+                        }
+                        if( queryChildren->GetName().IsSameAs( "lastcompiled" ) )
+                        {
+                            wxString::const_iterator end;
+                            widthStr = queryChildren->GetNodeContent();
+                            lastcompiled.ParseISOCombined( widthStr );
                         }
                         if( queryChildren->GetName().IsSameAs( "comment" ) )
                         {
-                            wxString widthStr = children->GetNodeContent();
-                            query.comment = widthStr;
+                            objectComment = queryChildren->GetNodeContent();
                         }
                         queryChildren = queryChildren->GetNext();
                     }
                 }
-                if( query.name != "" )
-                {
-                    queries.push_back( query );
-                    query.name = "";
-                    query.comment = "";
-                }
+                m_library->m_objects.push_back( Object( m_library->m_name, objectName, lastmodified, lastcompiled, objectComment ) );
                 bodyChildren = bodyChildren->GetNext();
             }
         }

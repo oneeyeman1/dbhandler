@@ -63,7 +63,7 @@ private:
     wxConfigBase *m_config;
     Configuration *m_conf;
     bool m_libraryLoaded;
-    LibraryObject *m_library;
+    std::shared_ptr<LibraryObject> m_library{ nullptr };
     wxDECLARE_EVENT_TABLE();
 };
 
