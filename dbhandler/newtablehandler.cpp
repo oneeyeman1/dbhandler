@@ -1,5 +1,6 @@
 #include <string>
 #include <algorithm>
+#include <memory>
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 #include <mutex>
 #endif

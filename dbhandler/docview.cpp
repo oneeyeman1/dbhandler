@@ -37,6 +37,7 @@
 #endif
 
 #include <vector>
+#include <memory>
 #include <map>
 #include "wx/docview.h"
 #include "wx/docmdi.h"
