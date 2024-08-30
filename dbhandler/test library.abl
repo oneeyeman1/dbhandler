@@ -1,12 +1,22 @@
 <Library>
     <Header>
-        <Created>02-23-1969 23:59:59</Created>
+        <Created>1986-02-23T23:59:59</Created>
         <Comment>Test Library</Comment>
     </Header>
     <Body>
-        <name>test1.qry</name>
-        <comment>Test application</comment>
-        <name>test2.qry</name>
-        <comment>Second test</comment>
+        <Query>
+            <name>test1.qry</name>
+            <lastmodified>2024-08-27T23:59:59</lastmodified>
+            <lastcompiled>2024-08-27T23:59:59</lastcompiled>
+            <sizeinbytes>1000</sizeinbytes>
+            <comment>Test application</comment>
+        </Query>
+        <Query>
+            <name>test2.qry</name>
+            <lastmodified>2024-08-27T23:59:59</lastmodified>
+            <lastcompiled>2024-08-27T23:59:59</lastcompiled>
+            <sizeinbytes>1000</sizeinbytes>
+            <comment>Second test</comment>
+        </Query>
     </Body>
 </Library>
