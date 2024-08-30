@@ -45,6 +45,7 @@
     <ClInclude Include="fieldgeneral.h" />
     <ClInclude Include="fieldheader.h" />
     <ClInclude Include="fontpropertypagebase.h" />
+    <ClInclude Include="libraryobjectpropertypage.h" />
     <ClInclude Include="msw\fontpropertypage.h" />
     <ClInclude Include="objectproperties.h" />
     <ClInclude Include="pointerproperty.h" />
@@ -68,6 +69,7 @@
     <ClCompile Include="fieldgeneral.cpp" />
     <ClCompile Include="fieldheader.cpp" />
     <ClCompile Include="fontpropertypagebase.cpp" />
+    <ClCompile Include="libraryobjectpropertypage.cpp" />
     <ClCompile Include="msw\fontpropertypage.cpp" />
     <ClCompile Include="pointerproperty.cpp" />
     <ClCompile Include="printspec.cpp" />
@@ -84,7 +86,7 @@
   <PropertyGroup Label="Globals">
     <ProjectName>propertypages</ProjectName>
     <ProjectGuid>{22017CA3-FB1B-44E4-AC21-E02576A36937}</ProjectGuid>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">
