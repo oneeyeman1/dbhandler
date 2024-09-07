@@ -585,7 +585,9 @@ void LibraryViewPainter::OnItemContextMenu(wxTreeEvent &event)
 
 void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
 {
-
+    auto id = m_tree->GetSelection();
+    auto data = (wxDirItemData *) m_tree->GetItemData( id );
+    wxFileDialog dlg( m_parent, _( "Create Library" ), wxEmptyString );
 }
 
 void LibraryViewPainter::OnLibraryDelete(wxCommandEvent &WXUNUSED(event))
