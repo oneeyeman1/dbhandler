@@ -42,6 +42,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(LibraryViewPainter, wxView);
 
 wxBEGIN_EVENT_TABLE(LibraryViewPainter, wxView)
     EVT_MENU(wxID_LIBRARYDELETE, LibraryViewPainter::OnLibraryDelete)
+    EVT_UPDATE_UI(wxID_LIBRARYSELECTALL, LibraryViewPainter::OnSelectAllpdateUI)
 wxEND_EVENT_TABLE()
 
 bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
@@ -230,7 +231,7 @@ void LibraryViewPainter::CreateViewToolBar()
         selectall = wxBitmapBundle::FromSVGResource( "selectall", wxSize( 16, 16 ) );
 #endif
     m_tb->AddTool( wxID_LIBRARYNEW, _( "New Library" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
-    m_tb->AddTool( wxID_CLOSE, _( "Select All" ), selectall, selectall, wxITEM_NORMAL, _( "Select All" ), _( "Select all library entries within selected library" ) );
+    m_tb->AddTool( wxID_LIBRARYSELECTALL, _( "Select All" ), selectall, selectall, wxITEM_NORMAL, _( "Select All" ), _( "Select all library entries within selected library" ) );
     m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
     m_tb->Realize();
 }
@@ -612,4 +613,13 @@ void LibraryViewPainter::OnLibraryDelete(wxCommandEvent &WXUNUSED(event))
     auto res = wxMessageBox( _( "Delete library" ), _( "Delete Library" ), wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT );
     if( res == wxYES )
         wxMessageBox( "Deleting" );
+}
+
+void LibraryViewPainter::OnSelectAllpdateUI(wxUpdateUIEvent &event)
+{
+    wxDirItemData *data = dynamic_cast<wxDirItemData *>( m_tree->GetItemData( m_tree->GetSelection() ) );
+    if( data->m_isDir )
+        event.Enable( false );
+    else
+        event.Enable( true );
 }
