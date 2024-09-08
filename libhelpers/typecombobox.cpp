@@ -30,19 +30,19 @@
 TypeComboBox::TypeComboBox(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, const std::wstring &argType) : wxComboBox(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_SORT)
 {
     wxString selString;
-    if( type == "SQLite" )
+    if( type == L"SQLite" )
     {
         Append( "NULL" );
         Append( "Text" );
         Append( "Integer" );
         Append( "Real" );
         Append( "BLOB" );
-        if( argType == "" )
+        if( argType == L"" )
             selString = "Integer";
         else
             selString = argType;
     }
-    if( ( type == "ODBC" && subtype == "Microsoft SQL Server" ) || type == "Microsoft SQL Server" )
+    if( ( type == L"ODBC" && subtype == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
     {
         Append( "bigint" );
         Append( "binary" );
@@ -77,12 +77,12 @@ TypeComboBox::TypeComboBox(wxWindow *parent, const std::wstring &type, const std
         Append( "varbinary" );
         Append( "varchar" );
         Append( "xml" );
-        if( argType == "" )
+        if( argType == L"" )
             selString = "numerc";
         else
             selString = argType;
     }
-    if( ( type == "ODBC" && subtype == "PostgreSQL" ) || type == "PostgreSQL" )
+    if( ( type == L"ODBC" && subtype == L"PostgreSQL" ) || type == L"PostgreSQL" )
     {
         Append( "JSON" );
         Append( "UUID" );
@@ -130,7 +130,7 @@ TypeComboBox::TypeComboBox(wxWindow *parent, const std::wstring &type, const std
         Append( "tsvector" );
         Append( "tsquery" );
         Append( "varchar" );
-        if( argType == "" )
+        if( argType == L"" )
             selString = "numerc";
         else
             selString = argType;
