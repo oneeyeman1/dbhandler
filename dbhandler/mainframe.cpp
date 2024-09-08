@@ -275,6 +275,9 @@ MainFrame::~MainFrame()
         std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
         result = m_db->Disconnect( errorMsg );
     }
+    config->Set( "CurrentLibraries" );
+    config->Write( "Active", m_currentLibrary );
+    config->SetPath( path );
     config->SetPath( "MainToolbar" );
     config->Write( "Show", m_conf->m_tbSettings["PowerBar"].m_hideShow );
     config->Write( "ShowTooltip", m_conf->m_tbSettings["PowerBar"].m_showTooltips );
