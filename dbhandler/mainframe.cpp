@@ -250,7 +250,7 @@ MainFrame::~MainFrame()
         wxString currentProfile;
         temp1 = m_db->GetTableVector().m_dbName;
         config->Write( "DatabaseName", temp1 );
-        if( m_db->GetTableVector().m_type == "SQLite" )
+        if( m_db->GetTableVector().m_type == L"SQLite" )
 #ifdef __WXMSW__
             currentProfile = temp1.Mid( temp1.find_last_of( '\\' ) + 1 );
 #else
@@ -476,11 +476,11 @@ void MainFrame::Connect()
             auto clientMinor = wxString::Format( "%lu", m_db->GetTableVector().m_clientVersionMinor );
             auto clientRevision = wxString::Format( "%lu", m_db->GetTableVector().m_clientVersionRevision );
             if( m_db && m_db->GetTableVector().m_type == L"ODBC" )
-                title = "Connected to " + m_db->GetTableVector().m_subtype + " version " + m_db->GetTableVector().m_serverVersion + " thru the ODBC";
+                title = L"Connected to " + m_db->GetTableVector().m_subtype + L" version " + m_db->GetTableVector().m_serverVersion + L" thru the ODBC";
             else if( m_db && m_db->GetTableVector().m_type == L"SQLite" )
-                title = wxString::Format( "Connected to " + m_db->GetTableVector().m_type + " version " + major + "." + minor + "." + revision );
+                title = wxString::Format( L"Connected to " + m_db->GetTableVector().m_type + L" version " + major + L"." + minor + L"." + revision );
             else if( m_db )
-                title = wxString::Format( "Connected to " + m_db->GetTableVector().m_type + " version " + major + "." + minor + "." + revision + " with the client library " + clientMajor + "." + clientMinor + "." + clientRevision );
+                title = wxString::Format( L"Connected to " + m_db->GetTableVector().m_type + L" version " + major + L"." + minor + L"." + revision + L" with the client library " + clientMajor + L"." + clientMinor + L"." + clientRevision );
             SetTitle( title );
             if( m_db )
             {
