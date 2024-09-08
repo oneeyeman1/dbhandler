@@ -21,6 +21,7 @@ protected:
     void OnItemContextMenu(wxTreeEvent &event);
 /*    void OnLibraryCreate(wxCommandEvent &event);*/
     void OnLibraryDelete(wxCommandEvent &event);
+    void OnSelectAllpdateUI(wxUpdateUIEvent &event);
 private:
     size_t GetAvailableDrives(wxArrayString &paths, wxArrayString &names, wxArrayInt &icons);
     bool IsDriveAvailable(const wxString& dirName);
@@ -133,6 +134,7 @@ private:
 #define wxID_LIBRARYNEW           601
 #define wxID_LIBRARYDELETE        602
 #define wxID_IMPORTLIBRARY        603
+#define wxID_LIBRARYSELECTALL     604
 #define wxID_LEFTALIGN            1000
 #define wxID_CENTERALIGN          1001 
 #define wxID_RIGHTALIGN           1002
