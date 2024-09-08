@@ -20,6 +20,8 @@
 #include <vector>
 #include <map>
 #include <string>
+#include "wx/except.h"
+#include "wx/scopedptr.h"
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
