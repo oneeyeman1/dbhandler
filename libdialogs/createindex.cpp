@@ -478,7 +478,7 @@ void CreateIndex::GenerateQuery()
         if( m_indextypeHash->GetValue() )
             m_command += L"USING HASH ";
     }
-    m_command += "ON " + m_dbTable->GetTableName() + " ";
+    m_command += L"ON " + m_dbTable->GetTableName() + L" ";
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         if( m_indextypeBtree->GetValue() )
