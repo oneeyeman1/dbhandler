@@ -1,4 +1,4 @@
-static const char selectall[] = 
+static const char selectAll[] = 
 R"xxx(<?xml version="1.0" encoding="UTF-8"?>
 <svg id="SVGRoot" width="16" height="16" version="1.1" viewBox="0 0 17 17" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
  <defs>

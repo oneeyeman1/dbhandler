@@ -16,6 +16,7 @@
 #ifdef __WXGTK__
 #include "libraryopen.h"
 #include "libraryclosed.h"
+#include "selectall.h"
 #endif
 
 #include <map>
@@ -113,7 +114,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     {
         auto err = ::GetLastError();
         wxMessageBox( wxString::Format( "Error: %d!!", err ) );
-}
+    }
     else
     {
         libraryOpen = wxBitmapBundle::FromSVG( (const char *) dataLibOOpen, wxSize( 16, 16 ) );
@@ -201,7 +202,28 @@ void LibraryViewPainter::CreateViewToolBar()
     else
         m_tb->ClearTools();
 #endif
+        wxBitmapBundle selectall;
+#ifdef __WXMSW__
+        HANDLE gs_wxMainThread = NULL;
+        const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
+        const void* selectAll = nullptr, *createview = nullptr;
+        size_t sizeTable = 0, createView = 0;
+        if( !wxLoadUserResource( &dataTable, &sizeTable, "table", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            selectall = wxBitmapBundle::FromSVG( (const char *) dataTable, wxSize( 16, 16 ) );
+        }
+#elif __WXGTK__
+        selectall = wxBitmapBundle::FromSVG( selectAll, wxSize( 16, 16 ) );
+#else
+        selectall = wxBitmapBundle::FromSVGResource( "selectall", wxSize( 16, 16 ) );
+#endif
     m_tb->AddTool( wxID_LIBRARYNEW, _( "New Library" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
+    m_tb->AddTool( wxID_CLOSE, _( "Select All" ), selectall, selectall, wxITEM_NORMAL, _( "Select All" ), _( "Select All" ) );
     m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
     m_tb->Realize();
 }
