@@ -27,7 +27,6 @@
 #include "wx/stdpaths.h"
 #include "wx/filename.h"
 #include "wx/bmpcbox.h"
-#include "wx/volume.h"
 #include "wx/generic/dirctrlg.h"
 #include "wx/treectrl.h"
 #include "wx/dir.h"
