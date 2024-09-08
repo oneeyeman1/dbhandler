@@ -84,12 +84,12 @@ ErdLineShape::ErdLineShape(Constraint *pConstraint, ViewType type, const wxSFDia
         if( dynamic_cast<MyErdTable *>( (*it) )->GetTableName() == const_cast<DatabaseTable *>( m_constraint->GetFKTable() )->GetTableName() )
         {
             m_sourceTbl = dynamic_cast<MyErdTable *>( (*it) );
-            m_source = m_sourceTbl->GetTable()->GetSchemaName() + "." + m_sourceTbl->GetTable()->GetTableName();
+            m_source = m_sourceTbl->GetTable()->GetSchemaName() + L"." + m_sourceTbl->GetTable()->GetTableName();
         }
         if( dynamic_cast<MyErdTable *>( (*it) )->GetTableName() == m_constraint->GetRefTable() )
         {
             m_targetTbl = dynamic_cast<MyErdTable *>( (*it) );
-            m_target = m_targetTbl->GetTable()->GetSchemaName() + "." + m_targetTbl->GetTable()->GetTableName();
+            m_target = m_targetTbl->GetTable()->GetSchemaName() + L"." + m_targetTbl->GetTable()->GetTableName();
         }
         if( m_sourceTbl && m_targetTbl )
             found = true;

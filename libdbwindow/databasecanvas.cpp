@@ -193,7 +193,7 @@ void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition
         wxString name = const_cast<DatabaseTable *>( (*it1)->GetTable() )->GetTableName();
         if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView ||  dynamic_cast<DrawingView *>( m_view )->GetViewType() == NewViewView )
         {
-            query += "\"" + (*it1)->GetTable()->GetSchemaName() + L"." + (*it1)->GetTableName() + "\"";
+            query += L"\"" + (*it1)->GetTable()->GetSchemaName() + L"." + (*it1)->GetTableName() + L"\"";
             if( it1 != m_displayedTables.end() - 1 )
                 query += ",\r     ";
         }
@@ -235,7 +235,7 @@ void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition
                                 secondIteration = true;
                             if( !found )
                             {
-                                query += "\nWHERE ";
+                                query += L"\nWHERE ";
                                 found = true;
                             }
                             if( ((DrawingView *) m_view)->GetViewType() == QueryView || ((DrawingView *) m_view)->GetViewType() == NewViewView )
@@ -1410,9 +1410,9 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
             ErdLineShape *connection = ((ErdLineShape *) *it0);
             if( m_dbType == L"SQLite" )
             {
-                if( connection->GetSourceName() == table->GetTable()->GetSchemaName() + "." + table->GetTable()->GetTableName() )
+                if( connection->GetSourceName() == table->GetTable()->GetSchemaName() + L"." + table->GetTable()->GetTableName() )
                     connection->SetSourceTable( table );
-                if( connection->GetTargetName() == table->GetTable()->GetSchemaName() + "." + table->GetTable()->GetTableName() )
+                if( connection->GetTargetName() == table->GetTable()->GetSchemaName() + L"." + table->GetTable()->GetTableName() )
                     connection->SetTargetTable( table );
             }
             else

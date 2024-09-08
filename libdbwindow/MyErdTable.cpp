@@ -29,7 +29,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
 {
     m_type = QueryView;
     m_table = nullptr;
-    m_columns = 3; 
+    m_columns = 3;
     if( !m_displayTypes )
         m_columns--;
     if( !m_displayComments )
@@ -102,7 +102,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
     m_schemaName = table->GetSchemaName();
     m_tableName = table->GetTableName();
     m_displayTypes = m_displayComments = true;
-    m_columns = 3; 
+    m_columns = 3;
     if( !m_displayTypes )
         m_columns--;
     if( !m_displayComments )
@@ -146,7 +146,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         {
             auto temp = m_table->GetTableName();
             if( m_displayComments )
-                temp += " " + m_table->GetTableProperties().m_comment;
+                temp += L" " + m_table->GetTableProperties().m_comment;
             m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
             m_pLabel->GetFont().SetPointSize( 8 );
             m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
@@ -220,7 +220,7 @@ void MyErdTable::UpdateTable()
     {
         auto temp = m_table->GetTableName();
         if( m_displayComments )
-            temp += " " + m_table->GetTableProperties().m_comment;
+            temp += L" " + m_table->GetTableProperties().m_comment;
         m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
         m_pLabel->GetFont().SetPointSize( 8 );
         m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
