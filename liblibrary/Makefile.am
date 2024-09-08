@@ -10,8 +10,7 @@ liblibrary_la_SOURCES =  \
 	librarydocument.cpp \
 	librarydocument.h \
 	librarydoctemplate.cpp \
-	librarydoctemplate.h \
-	volume.cpp
+	librarydoctemplate.h
 
 liblibrary_la_CXXFLAGS = -I../../libhelpers \
 	@WX_CXXFLAGS@
