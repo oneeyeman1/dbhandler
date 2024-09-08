@@ -28,7 +28,5 @@ libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	@WX_CXXFLAGS@
 
 libpropertieshandlers_la_LDFLAGS = -L../libpropertypages \
-	-L../libdbwindow \
-	-ldbwindow \
 	-lpropertypages \
 	@WX_LIBS@
