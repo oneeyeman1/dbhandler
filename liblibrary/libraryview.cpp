@@ -20,6 +20,9 @@
 #endif
 
 #include <map>
+#ifndef __WXGTK__
+#include "wx/volume.h"
+#endif
 #include "wx/dynlib.h"
 #include "wx/artprov.h"
 #include "wx/docview.h"
@@ -589,13 +592,13 @@ void LibraryViewPainter::OnItemContextMenu(wxTreeEvent &event)
 
 }
 
-void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
+/*void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
 {
     auto id = m_tree->GetSelection();
     auto data = (wxDirItemData *) m_tree->GetItemData( id );
     wxFileDialog dlg( m_parent, _( "Create Library" ), wxEmptyString );
 }
-
+*/
 void LibraryViewPainter::OnLibraryDelete(wxCommandEvent &WXUNUSED(event))
 {
     auto res = wxMessageBox( _( "Delete library" ), _( "Delete Library" ), wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT );

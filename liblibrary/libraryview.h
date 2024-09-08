@@ -19,7 +19,7 @@ protected:
     const wxTreeItemId AddSection(const wxString& path, const wxString& name, int imageId);
     wxTreeItemId FindChild(wxTreeItemId parentId, const wxString& path, bool& done);
     void OnItemContextMenu(wxTreeEvent &event);
-    void OnLibraryCreate(wxCommandEvent &event);
+/*    void OnLibraryCreate(wxCommandEvent &event);*/
     void OnLibraryDelete(wxCommandEvent &event);
 private:
     size_t GetAvailableDrives(wxArrayString &paths, wxArrayString &names, wxArrayInt &icons);
