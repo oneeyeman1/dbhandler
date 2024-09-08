@@ -11,6 +11,8 @@
 #endif
 
 #include <memory>
+#include "wx/scopedptr.h"
+#include "wx/except.h"
 #include "wx/docview.h"
 #include "wx/dynlib.h"
 #include "wx/fontenum.h"
