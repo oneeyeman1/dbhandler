@@ -18,6 +18,9 @@ protected:
     void PopulateNode(wxTreeItemId parent);
     const wxTreeItemId AddSection(const wxString& path, const wxString& name, int imageId);
     wxTreeItemId FindChild(wxTreeItemId parentId, const wxString& path, bool& done);
+    void OnItemContextMenu(wxTreeEvent &event);
+    void OnLibraryCreate(wxCommandEvent &event);
+    void OnLibraryDelete(wxCommandEvent &event);
 private:
     size_t GetAvailableDrives(wxArrayString &paths, wxArrayString &names, wxArrayInt &icons);
     bool IsDriveAvailable(const wxString& dirName);
@@ -32,6 +35,7 @@ private:
     wxTreeItemId m_rootId;
     wxBitmapBundle libraryOpen, libraryClosed;
     wxDECLARE_DYNAMIC_CLASS(LibraryViewPainter);
+    wxDECLARE_EVENT_TABLE();
 };
 
 #define wxID_CONFIGUREODBC          1
@@ -126,7 +130,8 @@ private:
 #define wxID_PASTECOLUMN          503
 #define wxID_INSERTCOLUMN         504
 #define wxID_DELETECOLUMN         505
-#define wxID_LIBRARYNEW            601
+#define wxID_LIBRARYNEW           601
+#define wxID_LIBRARYDELETE        602
 #define wxID_LEFTALIGN            1000
 #define wxID_CENTERALIGN          1001 
 #define wxID_RIGHTALIGN           1002

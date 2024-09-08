@@ -131,6 +131,7 @@ private:
 #define wxID_INSERTCOLUMN         504
 #define wxID_DELETECOLUMN         505
 #define wxID_LIBRARYNEW           601
+#define wxID_LIBRARYDELETE        602
 #define wxID_LEFTALIGN            1000
 #define wxID_CENTERALIGN          1001 
 #define wxID_RIGHTALIGN           1002

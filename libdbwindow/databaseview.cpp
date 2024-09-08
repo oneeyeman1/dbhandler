@@ -1530,7 +1530,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         //#if _MSC_VER >= 1900
         std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
         res = GetDocument()->GetDatabase()->GetTableProperties( dbTable, errors );
-        any = erdTable;
+        any = erdTable->GetTable();
 #if __cplusplus > 201300
         auto ptr = std::make_unique<DatabasePropertiesHandler>( GetDocument()->GetDatabase(), m_text );
 #else

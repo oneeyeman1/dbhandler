@@ -57,7 +57,7 @@ DatabasePropertiesHandler::DatabasePropertiesHandler(const Database *db, wxTextC
 wxAny DatabasePropertiesHandler::GetProperties(std::vector<std::wstring> &errors)
 {
     int result = 0;
-    m_prop = const_cast<DatabaseTable *>( m_obj.As<MyErdTable *>()->GetTable() )->GetTableProperties();
+    m_prop = const_cast<DatabaseTable *>( m_obj.As<DatabaseTable *>() )->GetTableProperties();
 /*    m_prop.m_comment = m_page1->GetCommentCtrl()->GetValue();
     m_prop.m_dataFontItalic = m_page2->GetFont().font.GetNativeFontInfo()->GetStyle() == wxFONTSTYLE_ITALIC;
     m_prop.m_dataFontCharacterSet = m_page2->GetFont().font.GetNativeFontInfo()->GetEncoding();

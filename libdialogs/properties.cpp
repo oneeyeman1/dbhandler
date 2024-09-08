@@ -215,6 +215,7 @@ bool PropertiesDialog::ApplyProperties()
 {
     std::vector<std::wstring> errors;
     bool result = true;
+    m_handler->ApplyProperties();
 /*    int res = m_handler->GetProperties( errors );
     if( !res )
     {
