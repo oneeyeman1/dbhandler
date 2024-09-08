@@ -243,20 +243,20 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
             {
                 for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
                 {
-                    if( ( type == L"SQLite" && dataItem->schema + "." + name == (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() ) ||
-                        ( type != L"SQLite" && dataItem->catalog + "." + dataItem->schema + "." + name == (*it).first + "." + (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() ) )
+                    if( ( type == L"SQLite" && dataItem->schema + L"." + name == (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() ) ||
+                        ( type != L"SQLite" && dataItem->catalog + L"." + dataItem->schema + L"." + name == (*it).first + L"." + (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() ) )
                     {
                         found = true;
                         m_queryFields = (*it1)->GetFields();
                         for( std::vector<TableField *>::iterator it2 = m_queryFields.begin(); it2 < m_queryFields.end(); ++it2 )
-                            m_fields->Append( (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() + "." + (*it2)->GetFieldName() );
+                            m_fields->Append( (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() + L"." + (*it2)->GetFieldName() );
                     }
                     else
                     {
                         found = true;
                         m_queryFields = (*it1)->GetFields();
                         for( std::vector<TableField *>::iterator it2 = m_queryFields.begin(); it2 < m_queryFields.end(); ++it2 )
-                            m_fields->Append( (*it1)->GetCatalog() + "." + (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() + "." + (*it2)->GetFieldName() );
+                            m_fields->Append( (*it1)->GetCatalog() + L"." + (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() + L"." + (*it2)->GetFieldName() );
                     }
                 }
             }
@@ -312,7 +312,7 @@ void QuickSelect::OnDisplayComment(wxMouseEvent &event)
                 wxString name( (*it).first );
                 for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
                 {
-                    if( stringClicked == name + "." + (*it1)->GetTableName() )
+                    if( stringClicked == name + L"." + (*it1)->GetTableName() )
                     {
                         found = true;
                         m_comments->SetLabel( (*it1)->GetTableProperties().m_comment );
@@ -527,7 +527,7 @@ void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
                 if( (*it1)->GetSchemaName() == data.schema )
                 {
                     catalogFound = true;
-                    if( (*it1)->GetSchemaName() + "." + (*it1)->GetTableName() == data.schema + "." + name )
+                    if( (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() == data.schema + L"." + name )
                     {
                         m_table = (*it1);
                         schemaFound = true;
