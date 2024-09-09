@@ -142,10 +142,19 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     libraryOpen = wxBitmapBundle::FromSVG( libOpen, wxSize( 16, 16 ) );
     libraryClosed = wxBitmapBundle::FromSVG( libClosed, wxSize( 16, 16 ) );
 #endif
-    auto imageList = wxTheFileIconsTable->GetSmallImageList();
+#if wxCHECK_VERSION( 3, 3, 0 )
+    wxVector<wxBitmapBundle> images;
+    images.push_back( wxArtProvider::GetBitmapBundle( wxART_FOLDER ) );
+    images.push_back( wxArtProvider::GetBitmapBundle( wxART_FOLDER_OPEN ) );
+    m_tree->SetStateImages( images );
+#else
+    wxImageList *images = new wxImageList( 16, 16 );
+    images->Add( wxArtProvider::GetBitmap( wxART_FOLDER ) );
+    images->Add( wxArtProvider::GetBitmap( wxART_FOLDER_OPEN ) );
 /*    imageList->Add( libraryOpen, wxNullBitmap );
     imageList->Add( libraryClosed.GetBitmap( wxSize( 16, 16 ) ) );*/
-    m_tree->SetImageList( imageList );
+    m_tree->SetImageList( images );
+#endif
     wxString rootName = "";
     wxDirItemData *rootData = new wxDirItemData( str, str, true );
 #if defined(__WINDOWS__)
@@ -350,9 +359,9 @@ void LibraryViewPainter::PopulateNode(wxTreeItemId parent)
         path += eachFilename;
 
         wxDirItemData *dir_item = new wxDirItemData( path, eachFilename, false );
-        wxTreeItemId treeid = m_tree->AppendItem( parent, eachFilename, wxFileIconsTable::folder, -1, dir_item );
-        m_tree->SetItemImage( treeid, /*libraryOpen*/1, wxTreeItemIcon_Expanded );
-        m_tree->SetItemImage( treeid, /*libraryClosed*/2, wxTreeItemIcon_Normal );
+        wxTreeItemId treeid = m_tree->AppendItem( parent, eachFilename, 0, 1, dir_item );
+        m_tree->SetItemImage( treeid, /*libraryOpen*/0, wxTreeItemIcon_Expanded );
+        m_tree->SetItemImage( treeid, /*libraryClosed*/1, wxTreeItemIcon_Normal );
     }
     // And the dirs
     for (i = 0; i < dirs.GetCount(); i++)
@@ -364,8 +373,8 @@ void LibraryViewPainter::PopulateNode(wxTreeItemId parent)
         path += eachFilename;
 
         wxDirItemData *dir_item = new wxDirItemData( path, eachFilename, true );
-        wxTreeItemId treeid = m_tree->AppendItem( parent, eachFilename, wxFileIconsTable::folder, -1, dir_item );
-        m_tree->SetItemImage( treeid, wxFileIconsTable::folder_open, wxTreeItemIcon_Expanded );
+        wxTreeItemId treeid = m_tree->AppendItem( parent, eachFilename, 0, 1, dir_item );
+//        m_tree->SetItemImage( treeid, 0, wxTreeItemIcon_Expanded );
 
         // assume that it does have children by default as it can take a long
         // time to really check for this (think remote drives...)
