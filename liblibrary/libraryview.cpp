@@ -31,6 +31,10 @@
 #include "wx/filename.h"
 #include "wx/bmpcbox.h"
 #include "wx/generic/dirctrlg.h"
+#if wxCHECK_VERSION( 3, 3, 0 )
+#else
+#include "wx/imaglist.h"
+#endif
 #include "wx/treectrl.h"
 #include "wx/dir.h"
 #include "configuration.h"
@@ -41,6 +45,7 @@
 wxIMPLEMENT_DYNAMIC_CLASS(LibraryViewPainter, wxView);
 
 wxBEGIN_EVENT_TABLE(LibraryViewPainter, wxView)
+    EVT_MENU(wxID_LIBRARYNEW, LibraryViewPainter::OnLibraryCreate)
     EVT_MENU(wxID_LIBRARYDELETE, LibraryViewPainter::OnLibraryDelete)
     EVT_UPDATE_UI(wxID_LIBRARYSELECTALL, LibraryViewPainter::OnSelectAllpdateUI)
 wxEND_EVENT_TABLE()
@@ -219,26 +224,27 @@ void LibraryViewPainter::CreateViewToolBar()
     else
         m_tb->ClearTools();
 #endif
-        wxBitmapBundle selectall;
+    wxBitmapBundle selectall;
 #ifdef __WXMSW__
-        HANDLE gs_wxMainThread = NULL;
-        const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "library", &gs_wxMainThread );
-        const void* dataSelectAll = nullptr;
-        size_t sizeSelectAll = 0;
-        if( !wxLoadUserResource( &dataSelectAll, &sizeSelectAll, "selectAll", RT_RCDATA, inst ) )
-        {
-            auto err = ::GetLastError();
-            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
-        }
-        else
-        {
-            selectall = wxBitmapBundle::FromSVG( (const char *) dataSelectAll, wxSize( 16, 16 ) );
-        }
+    HANDLE gs_wxMainThread = NULL;
+    const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "library", &gs_wxMainThread );
+    const void* dataSelectAll = nullptr;
+    size_t sizeSelectAll = 0;
+    if( !wxLoadUserResource( &dataSelectAll, &sizeSelectAll, "selectAll", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+    }
+    else
+    {
+        selectall = wxBitmapBundle::FromSVG( (const char *) dataSelectAll, wxSize( 16, 16 ) );
+    }
 #elif __WXGTK__
-        selectall = wxBitmapBundle::FromSVG( selectAll, wxSize( 16, 16 ) );
+    selectall = wxBitmapBundle::FromSVG( selectAll, wxSize( 16, 16 ) );
 #else
-        selectall = wxBitmapBundle::FromSVGResource( "selectall", wxSize( 16, 16 ) );
+    selectall = wxBitmapBundle::FromSVGResource( "selectall", wxSize( 16, 16 ) );
 #endif
+    CreateLibraryMenu();
     m_tb->AddTool( wxID_LIBRARYNEW, _( "New Library" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
     m_tb->AddTool( wxID_LIBRARYSELECTALL, _( "Select All" ), selectall, selectall, wxITEM_NORMAL, _( "Select All" ), _( "Select all library entries within selected library" ) );
     m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
@@ -255,7 +261,9 @@ void LibraryViewPainter::CreateLibraryMenu()
     mbar->Insert( 0, fileMenu, _( "&File" ) );
     auto libraryMenu = new wxMenu;
     libraryMenu->Append( wxID_LIBRARYNEW, _( "&Create..." ), _( "Create mew library" ) );
-    libraryMenu->Append( wxID_LIBRARYDELETE, _( "Delete" ), _( "Delete library" ) );
+    libraryMenu->Append( wxID_LIBRARYDELETE, _( "&Delete" ), _( "Delete library" ) );
+    libraryMenu->Append( wxID_LIBRARYSELECTALL, _( "Select &All" ), _( "Select all library entries wth selected library" ) );
+    libraryMenu->AppendSeparator();
     mbar->Insert( 1, libraryMenu, _( "&Library" ) );
     auto entryMenu = new wxMenu;
     entryMenu->Append( wxID_IMPORTLIBRARY, _( "Import..." ), _( "Import library entry from a file" ) );
@@ -602,21 +610,40 @@ bool LibraryViewPainter::IsDriveAvailable(const wxString& dirName)
 
 void LibraryViewPainter::OnItemContextMenu(wxTreeEvent &event)
 {
-    wxMenu menu;
+/*    wxMenu menu;
     auto item = event.GetItem();
     wxDirItemData *data = dynamic_cast<wxDirItemData *>( m_tree->GetItemData( item ) );
     if( data->m_isDir )
         menu.Append( wxID_IMPORTLIBRARY, _( "Import..." ) );
-    int rc = m_frame->GetPopupMenuSelectionFromUser( menu, event.GetPoint() );
+    int rc = m_frame->GetPopupMenuSelectionFromUser( menu, event.GetPoint() );**/
 }
 
-/*void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
+void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
 {
+    auto failed = false;
     auto id = m_tree->GetSelection();
     auto data = (wxDirItemData *) m_tree->GetItemData( id );
-    wxFileDialog dlg( m_parent, _( "Create Library" ), wxEmptyString );
+    while( !failed )
+    {
+        wxFileDialog dlg( m_parent, _( "Create Library" ), wxEmptyString, wxEmptyString, "AB Library (*.abl)|*.abl", wxFD_SAVE );
+        if( dlg.ShowModal() == wxID_CANCEL )
+        {
+            failed = true;
+            return;
+        }
+        else
+        {
+            auto name = dlg.GetPath();
+            if( wxFile::Exists( name ) )
+                wxMessageBox( _( "Create failed. Possible cases:\n\r1.Library a;ready exist.\n\r2.Invalid library name.\n\r3.Invalid path name,\n\r4.Ot of disk space" ),
+                              _( "Library creation failed" ),
+                              wxOK | wxCENTRE | wxICON_EXCLAMATION );
+            else
+                failed = true;
+        }
+    }
 }
-*/
+
 void LibraryViewPainter::OnLibraryDelete(wxCommandEvent &WXUNUSED(event))
 {
     auto res = wxMessageBox( _( "Delete library" ), _( "Delete Library" ), wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT );
