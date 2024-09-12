@@ -103,7 +103,7 @@
   <PropertyGroup Label="Globals">
     <ProjectName>dbwindow</ProjectName>
     <ProjectGuid>{43FB2FA3-ADA4-498B-9B95-7A80056DA7BD}</ProjectGuid>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">
