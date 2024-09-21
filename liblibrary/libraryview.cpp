@@ -160,10 +160,8 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
 #else
     wxImageList *images = new wxImageList( 16, 16 );
     auto size = wxArtProvider::GetSizeHint( wxART_OTHER, m_frame );
-    images->Add( wxArtProvider::GetBitmap( wxART_FOLDER, wxART_OTHER, size ) );
-    images->Add( wxArtProvider::GetBitmap( wxART_FOLDER_OPEN, wxART_OTHER, size ) );
-/*    imageList->Add( libraryOpen, wxNullBitmap );
-    imageList->Add( libraryClosed.GetBitmap( wxSize( 16, 16 ) ) );*/
+    images->Add( wxArtProvider::GetBitmap( wxART_FOLDER, wxART_OTHER, wxSize( 16, 16 ) ) );
+    images->Add( wxArtProvider::GetBitmap( wxART_FOLDER_OPEN, wxART_OTHER, wxSize( 16, 16 ) ) );
     m_tree->SetImageList( images );
 #endif
     wxString rootName = "";
