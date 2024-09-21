@@ -31,6 +31,9 @@
     <ClInclude Include="databaseoptionshandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="librarypropertieshandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="propertieshandler.cpp">
@@ -49,6 +52,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="databaseoptionshandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="librarypropertieshandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

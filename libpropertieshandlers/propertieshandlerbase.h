@@ -11,6 +11,20 @@
 
 #define UNUSED(str)
 
+enum
+{
+    DatabaseTablePropertiesType,
+    DatabaseFieldPropertiesType,
+    DesignPropertiesType,
+    DesignLabelPropertiesType,
+    DesignFieldPropertiesType,
+    DividerPropertiesType,
+    SignPropertiesType,
+    DatabasePropertiesType,
+    QueryPropertiesType,
+    LibraryPropertiesType
+};
+
 class WXEXPORT PropertiesHandler
 {
 public:

@@ -18,7 +18,7 @@ protected:
     void PopulateNode(wxTreeItemId parent);
     const wxTreeItemId AddSection(const wxString& path, const wxString& name, int imageId);
     wxTreeItemId FindChild(wxTreeItemId parentId, const wxString& path, bool& done);
-    void OnItemContextMenu(wxTreeEvent &event);
+//    void OnItemContextMenu(wxTreeEvent &event);
     void OnLibraryCreate(wxCommandEvent &event);
     void OnLibraryDelete(wxCommandEvent &event);
     void OnSelectAllpdateUI(wxUpdateUIEvent &event);

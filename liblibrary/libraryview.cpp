@@ -20,6 +20,7 @@
 #endif
 
 #include <map>
+#include <mutex>
 #ifndef __WXGTK__
 #include "wx/volume.h"
 #endif
@@ -39,8 +40,12 @@
 #include "wx/dir.h"
 #include "configuration.h"
 #include "painterobjects.h"
+#include "propertieshandlerbase.h"
+#include "librarypropertieshandler.h"
 #include "librarydocument.h"
 #include "libraryview.h"
+
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
 
 wxIMPLEMENT_DYNAMIC_CLASS(LibraryViewPainter, wxView);
 
@@ -77,7 +82,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     wxFileName fn( stdPath.GetExecutablePath() );
     fn.RemoveLastDir();
     m_libPath = fn.GetPathWithSep() + "Frameworks/";
-#elif __WXGTK__ || __WXGTK__
+#elif __WXGTK__ || __WXQT__
     m_libPath = stdPath.GetInstallPrefix() + "/lib/";
 #elif __WXMSW__
     wxFileName fn( stdPath.GetExecutablePath() );
@@ -154,8 +159,9 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     m_tree->SetStateImages( images );
 #else
     wxImageList *images = new wxImageList( 16, 16 );
-    images->Add( wxArtProvider::GetBitmap( wxART_FOLDER ) );
-    images->Add( wxArtProvider::GetBitmap( wxART_FOLDER_OPEN ) );
+    auto size = wxArtProvider::GetSizeHint( wxART_OTHER, m_frame );
+    images->Add( wxArtProvider::GetBitmap( wxART_FOLDER, wxART_OTHER, size ) );
+    images->Add( wxArtProvider::GetBitmap( wxART_FOLDER_OPEN, wxART_OTHER, size ) );
 /*    imageList->Add( libraryOpen, wxNullBitmap );
     imageList->Add( libraryClosed.GetBitmap( wxSize( 16, 16 ) ) );*/
     m_tree->SetImageList( images );
@@ -176,7 +182,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     m_frame->Layout();
     m_frame->Show();
     m_tree->SetFocus();
-    m_tree->Bind( wxEVT_TREE_ITEM_MENU, &LibraryViewPainter::OnItemContextMenu, this );
+//    m_tree->Bind( wxEVT_TREE_ITEM_MENU, &LibraryViewPainter::OnItemContextMenu, this );
     return true;
 }
 
@@ -186,7 +192,7 @@ void LibraryViewPainter::OnDraw( wxDC * )
 
 void LibraryViewPainter::CreateViewToolBar()
 {
-    long styleViewBar = wxNO_BORDER | wxTB_FLAT, styleStyleBar = wxNO_BORDER | wxTB_FLAT;
+    long styleViewBar = wxNO_BORDER | wxTB_FLAT;
     switch( m_conf->m_tbSettings["ViewBar"].m_orientation )
     {
     case 0:
@@ -246,7 +252,7 @@ void LibraryViewPainter::CreateViewToolBar()
 #endif
     CreateLibraryMenu();
     m_tb->AddTool( wxID_LIBRARYNEW, _( "New Library" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
-    m_tb->AddTool( wxID_LIBRARYSELECTALL, _( "Select All" ), selectall, selectall, wxITEM_NORMAL, _( "Select All" ), _( "Select all library entries within selected library" ) );
+//    m_tb->AddTool( wxID_LIBRARYSELECTALL, _( "Select All" ), selectall, selectall, wxITEM_NORMAL, _( "Select All" ), _( "Select all library entries within selected library" ) );
     m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
     m_tb->Realize();
 }
@@ -608,19 +614,22 @@ bool LibraryViewPainter::IsDriveAvailable(const wxString& dirName)
     return success;
 }
 
-void LibraryViewPainter::OnItemContextMenu(wxTreeEvent &event)
+/*void LibraryViewPainter::OnItemContextMenu(wxTreeEvent &event)
 {
-/*    wxMenu menu;
+    wxMenu menu;
     auto item = event.GetItem();
     wxDirItemData *data = dynamic_cast<wxDirItemData *>( m_tree->GetItemData( item ) );
     if( data->m_isDir )
         menu.Append( wxID_IMPORTLIBRARY, _( "Import..." ) );
-    int rc = m_frame->GetPopupMenuSelectionFromUser( menu, event.GetPoint() );**/
+    int rc = m_frame->GetPopupMenuSelectionFromUser( menu, event.GetPoint() );
 }
-
+**/
 void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
 {
+    LibraryObject *library = new LibraryObject;
+    std::unique_ptr<PropertiesHandler> propertiesPtr;
     auto failed = false;
+    auto title = _( "Properties" );
     auto id = m_tree->GetSelection();
     auto data = (wxDirItemData *) m_tree->GetItemData( id );
     while( !failed )
@@ -639,7 +648,34 @@ void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
                               _( "Library creation failed" ),
                               wxOK | wxCENTRE | wxICON_EXCLAMATION );
             else
+            {
+                library->SetLibraryName( name );
+                library->SetCreationTime( wxDateTime::Now() );
                 failed = true;
+                wxDynamicLibrary lib;
+                lib.Load( m_libPath + "dialogs" );
+                if( lib.IsLoaded() )
+                {
+                    wxAny any = library;
+#if __cplusplus > 201300
+                    auto ptr = std::make_unique<LibraryPropertiesHandler>( library->GetProperties() );
+#else
+                    auto ptr = std::unique_ptr<LibraryPropertiesHandler>( new LibraryPropertiesHandler( library->GetProperties() ) );
+#endif
+                    propertiesPtr = std::move( ptr );
+                    wxCriticalSection *pcs;
+                    propertiesPtr->SetHandlerObject( any );
+                    wxString command = wxEmptyString;
+                    propertiesPtr->SetType( LibraryPropertiesType );
+                    CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
+                    auto res = func( m_frame, propertiesPtr, title, command, false, *pcs );
+                    wxMessageBox( "Dialogs library loaded" );
+                }
+                else
+                {
+                    wxMessageBox( "Error loading dialogs library!!" );
+                }
+            }
         }
     }
 }

@@ -31,6 +31,7 @@ private:
     PointerPropertiesPanel *m_page10;
     DatabaseOptionGeneral *m_page11;
     DatabaseptionsColours *m_page12;
+    LibraryObjectPropertyPage *m_page13;
     int m_type;
     std::wstring m_dbType, m_command;
     bool m_isApplied;

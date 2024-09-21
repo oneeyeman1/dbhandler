@@ -40,6 +40,7 @@
     <ClInclude Include="dividerpropertieshandler.h" />
     <ClInclude Include="fieldpropertieshandler.h" />
     <ClInclude Include="labelpropertieshandler.h" />
+    <ClInclude Include="librarypropertieshandler.h" />
     <ClInclude Include="propertieshandler.h" />
     <ClInclude Include="propertieshandlerbase.h" />
   </ItemGroup>
@@ -49,12 +50,13 @@
     <ClCompile Include="dividerpropertieshandler.cpp" />
     <ClCompile Include="fieldpropertieshandler.cpp" />
     <ClCompile Include="labelpropertieshandler.cpp" />
+    <ClCompile Include="librarypropertieshandler.cpp" />
     <ClCompile Include="propertieshandler.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>propertieshanders</ProjectName>
     <ProjectGuid>{0D6C16AE-8E63-445E-9A46-0D3524E0F184}</ProjectGuid>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">

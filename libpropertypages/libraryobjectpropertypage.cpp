@@ -16,7 +16,7 @@
 
 #include "libraryobjectpropertypage.h"
 
-LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, LibraryObject *object) : PropertyPageBase( parent )
+LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, const LibraryProperty &object) : PropertyPageBase( parent )
 {
     wxFlexGridSizer *mainSizer;
     auto main = new wxBoxSizer( wxHORIZONTAL );
@@ -26,17 +26,17 @@ LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, LibraryOb
     mainSizer = new wxFlexGridSizer( 2, 3, 5, 5 );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Name" ) );
     mainSizer->Add( m_label1, 0, wxEXPAND, 0 );
-    m_objectName = new wxStaticText( this, wxID_ANY, object->m_name );
+    m_objectName = new wxStaticText( this, wxID_ANY, object.m_name );
     mainSizer->Add( m_objectName, 0, wxEXPAND, 0 );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Created" ) );
     mainSizer->Add( m_label2, 0, wxEXPAND, 0 );
-    m_dateCreated = new wxStaticText( this, wxID_ANY, object->m_created.FormatDate() );
+    m_dateCreated = new wxStaticText( this, wxID_ANY, object.m_created.FormatDate() );
     mainSizer->Add( m_dateCreated, 0, wxEXPAND, 0 );
     controls->Add( mainSizer, 0, wxEXPAND, 0 );
     auto commentSizer = new wxBoxSizer( wxVERTICAL );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Comment" ) );
     commentSizer->Add( m_label3, 0, wxEXPAND, 0 );
-    m_comment = new wxTextCtrl( this, wxID_ANY, object->m_comment, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+    m_comment = new wxTextCtrl( this, wxID_ANY, object.m_comment, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
     commentSizer->Add( m_comment, wxID_ANY, wxEXPAND, 0 );
     controls->Add( commentSizer, 0, wxEXPAND, 0 );
     controls->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -44,7 +44,7 @@ LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, LibraryOb
     SetSizer( main );
 }
 
-LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, Object *object) : PropertyPageBase( parent )
+LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, LibraryObjectProperty *object) : PropertyPageBase( parent )
 {
     wxFlexGridSizer *mainSizer;
     auto main = new wxBoxSizer( wxHORIZONTAL );

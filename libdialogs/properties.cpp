@@ -61,6 +61,9 @@
 #include "fieldheader.h"
 #include "bandgeneral.h"
 #include "databasefielddisplay.h"
+#include "painterobjects.h"
+#include "libraryobjectpropertypage.h"
+#include "librarypropertieshandler.h"
 #include "properties.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -80,7 +83,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_properties = new wxNotebook( this, wxID_ANY );
     switch( handler->GetType() )
     {
-        case DatabaseTableProperties:
+        case DatabaseTablePropertiesType:
         {
             DatabasePropertiesHandler *prop = dynamic_cast<DatabasePropertiesHandler *>( handler );
             TableProperties tableProp = prop->GetProperties( errors ).As<TableProperties>();
@@ -105,7 +108,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             labelFont.font = label_font;
             labelFont.text = wxColour( *wxBLACK );
             labelFont.back = wxColour( *wxWHITE );
-            m_page1 = new TableGeneralProperty( m_properties, tableProp.table_name, tableProp.m_owner, tableProp.m_comment, DatabaseTableProperties );
+            m_page1 = new TableGeneralProperty( m_properties, tableProp.table_name, tableProp.m_owner, tableProp.m_comment, DatabaseTablePropertiesType );
             m_properties->AddPage( m_page1, _( "General" ) );
             m_page2 = new CFontPropertyPage( m_properties, dataFont, false );
             m_page3 = new CFontPropertyPage( m_properties, headingFont, false );
@@ -117,7 +120,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
 /*            m_properties->AddPage( m_page5, _( "Primary Key" ) );*/
         }
         break;
-        case DatabaseFieldProperties:
+        case DatabaseFieldPropertiesType:
         {
             FieldPropertiesHandler *prop = dynamic_cast<FieldPropertiesHandler *>( handler );
             m_page6 = new FieldGeneral( m_properties, prop->GetProperty().m_comment );
@@ -128,7 +131,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_properties->AddPage( m_page8, _( "Display" ) );
         }
         break;
-        case DividerProperties:
+        case DividerPropertiesType:
         {
             BandProperties prop = dynamic_cast<DividerPropertiesHandler *>( handler )->GetObjectProperties();
             m_page9 = new BandGeneralProperties( m_properties, prop );
@@ -137,7 +140,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_properties->AddPage( m_page10, _( "Pointer" ) );
         }
         break;
-        case DesignProperties:
+        case DesignPropertiesType:
         {
 /*            m_page9 = new DesignGeneral( parent, m_options );
             parent->AddPage( m_page1, _( "General" ) );
@@ -147,14 +150,21 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             parent->AddPage( m_page3, _( "Print Specification" ) );*/
         }
         break;
-        case DatabaseProperties:
-        case QueryProperties:
+        case DatabasePropertiesType:
+        case QueryPropertiesType:
         {
             auto prop = dynamic_cast<DatabaseOptionsHandler *>( handler )->GetObjectProperties();
             m_page11 = new DatabaseOptionGeneral( m_properties, prop.m_general );
             m_properties->AddPage( m_page11, _( "General" ) );
-            m_page12 = new DatabaseptionsColours( m_properties, prop.m_colors, handler->GetType() == DatabaseProperties ? true : false );
+            m_page12 = new DatabaseptionsColours( m_properties, prop.m_colors, handler->GetType() == DatabasePropertiesType ? true : false );
             m_properties->AddPage( m_page12, _( "Colors" ) );
+        }
+        break;
+        case LibraryPropertiesType:
+        {
+            auto prop = dynamic_cast<LibraryPropertiesHandler *>( handler )->GetLibraryProperties();
+            m_page13 = new LibraryObjectPropertyPage( m_properties, prop );
+            m_properties->AddPage( m_page13, _( "General" ) );
         }
         break;
     }
