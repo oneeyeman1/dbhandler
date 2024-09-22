@@ -11,9 +11,7 @@ libhelpers_a_SOURCES =  \
 	colorcombobox.cpp \
 	colorcombobox.h
 
-libhelpers_a_CXXFLAGS = `wx-config \
-	--cxxflags` \
-	-fPIC 
+libhelpers_a_CXXFLAGS = -fPIC \
+	@WX_CXXFLAGS@
 
-libhelpers_a_LDFLAGS = `wx-config \
-	--libs` 
+libhelpers_a_LDFLAGS = @WX_LDFLAGS@
