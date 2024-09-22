@@ -20,6 +20,7 @@
 #endif
 
 #include <map>
+#include <memory>
 #include <mutex>
 #ifndef __WXGTK__
 #include "wx/volume.h"

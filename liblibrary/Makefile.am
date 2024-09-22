@@ -13,9 +13,12 @@ liblibrary_la_SOURCES =  \
 	librarydoctemplate.h
 
 liblibrary_la_CXXFLAGS = -I../../libhelpers \
+	-I../../libpropertieshandlers \
 	@WX_CXXFLAGS@
 
 liblibrary_la_LDFLAGS = -L../libhelpers \
+	-L../libpropertieshandlers \
+	-lpropertieshandlers \
 	-lhelpers \
 	@WX_LIBS@
 
