@@ -6,6 +6,8 @@
 #endif
 
 #include <vector>
+#include "wx/any.h"
+#include "wx/datetime.h"
 #include "painterobjects.h"
 #include "propertieshandlerbase.h"
 #include "librarypropertieshandler.h"
