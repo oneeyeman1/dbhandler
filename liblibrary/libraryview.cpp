@@ -162,6 +162,8 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     auto size = wxArtProvider::GetSizeHint( wxART_OTHER, m_frame );
     images->Add( wxArtProvider::GetBitmap( wxART_FOLDER, wxART_OTHER, wxSize( 16, 16 ) ) );
     images->Add( wxArtProvider::GetBitmap( wxART_FOLDER_OPEN, wxART_OTHER, wxSize( 16, 16 ) ) );
+    images->Add( libraryClosed.GetBitmap( wxSize( 16, 16 ) ), wxNullBitmap );
+    images->Add( libraryOpen.GetBitmap( wxSize( 16, 16 ) ), wxNullBitmap );
     m_tree->SetImageList( images );
 #endif
     wxString rootName = "";
@@ -180,7 +182,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     m_frame->Layout();
     m_frame->Show();
     m_tree->SetFocus();
-//    m_tree->Bind( wxEVT_TREE_ITEM_MENU, &LibraryViewPainter::OnItemContextMenu, this );
+    m_tree->Bind( wxEVT_TREE_ITEM_MENU, &LibraryViewPainter::OnItemContextMenu, this );
     return true;
 }
 
@@ -372,8 +374,8 @@ void LibraryViewPainter::PopulateNode(wxTreeItemId parent)
 
         wxDirItemData *dir_item = new wxDirItemData( path, eachFilename, false );
         wxTreeItemId treeid = m_tree->AppendItem( parent, eachFilename, 0, 1, dir_item );
-        m_tree->SetItemImage( treeid, /*libraryOpen*/0, wxTreeItemIcon_Expanded );
-        m_tree->SetItemImage( treeid, /*libraryClosed*/1, wxTreeItemIcon_Normal );
+        m_tree->SetItemImage( treeid, 1, wxTreeItemIcon_Expanded );
+        m_tree->SetItemImage( treeid, 0, wxTreeItemIcon_Normal );
     }
     // And the dirs
     for (i = 0; i < dirs.GetCount(); i++)
@@ -612,16 +614,22 @@ bool LibraryViewPainter::IsDriveAvailable(const wxString& dirName)
     return success;
 }
 
-/*void LibraryViewPainter::OnItemContextMenu(wxTreeEvent &event)
+void LibraryViewPainter::OnItemContextMenu(wxTreeEvent &event)
 {
     wxMenu menu;
     auto item = event.GetItem();
     wxDirItemData *data = dynamic_cast<wxDirItemData *>( m_tree->GetItemData( item ) );
     if( data->m_isDir )
         menu.Append( wxID_IMPORTLIBRARY, _( "Import..." ) );
+    else
+    {
+        auto text = m_tree->GetItemText( m_tree->GetSelection() );
+        if( text.EndsWith( "abl" ) )
+            wxMessageBox( "Library" );
+    }
     int rc = m_frame->GetPopupMenuSelectionFromUser( menu, event.GetPoint() );
 }
-**/
+
 void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
 {
     LibraryObject *library = new LibraryObject;
