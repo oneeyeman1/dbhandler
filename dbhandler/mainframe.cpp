@@ -825,7 +825,7 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
     {
         if( (*it).m_isActive )
         {
-            m_library->m_name = (*it).m_path;
+            m_library->SetLibraryName( (*it).m_path );
             if( !m_doc.Load( (*it).m_path ) )
             {
                 wxMessageBox( _( "Loading failure" ) );
@@ -861,12 +861,12 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
                     widthStr = headerChildren->GetNodeContent();
                     auto res = dt.ParseISOCombined( widthStr );
                     if( res )
-                        m_library->m_created = dt;
+                        m_library->SetCreationTime( dt );
                 }
                 if( headerChildren->GetName().IsSameAs( "Comment" ) )
                 {
                     widthStr = headerChildren->GetNodeContent();
-                    m_library->m_comment = widthStr;
+                    m_library->SetComment( widthStr );
                 }
                 headerChildren = headerChildren->GetNext();
             }
@@ -909,7 +909,7 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
                         queryChildren = queryChildren->GetNext();
                     }
                 }
-                m_library->m_objects.push_back( Object( m_library->m_name, objectName, lastmodified, lastcompiled, objectComment ) );
+                m_library->GetObjects().push_back( LibraryObjects( m_library->GetLibraryName(), objectName, lastmodified, lastcompiled, objectComment ) );
                 bodyChildren = bodyChildren->GetNext();
             }
         }

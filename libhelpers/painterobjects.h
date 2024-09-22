@@ -78,10 +78,17 @@ public:
         m_prop.m_created.SetSecond( stamp.sec );
         m_prop.m_created.SetMillisecond( stamp.msec );
     }
+    void SetCreationTime(const wxString &dt)
+    {
+        wxDateTime timeStamp;
+        auto res = timeStamp.ParseISOCombined( dt );
+        if( res )
+            SetCreationTime( timeStamp );
+    }
     const wxString &GetComment() const { return m_prop.m_comment; }
     void SetComment(const wxString &comment) { m_prop.m_comment = comment; }
     const LibraryProperty &GetProperties() { return m_prop; }
-    const std::vector<LibraryObjects> &GetObjects() const { return  m_objects; }
+    std::vector<LibraryObjects> &GetObjects() { return  m_objects; }
 private:
     LibraryProperty m_prop;
     std::vector<LibraryObjects> m_objects;
