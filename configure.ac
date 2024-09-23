@@ -3,6 +3,8 @@ dnl Created by Anjuta application wizard.
 
 AC_INIT([dbhandler],[0.1])
 
+AM_MAINTAINER_MODE([enable])
+
 AC_CONFIG_HEADERS([config.h])
 
 AM_INIT_AUTOMAKE([1.11 subdir-objects])
