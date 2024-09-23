@@ -26,12 +26,6 @@
     #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
 
-/*#if defined __WXMSW__ && defined __MEMORYLEAKS__
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
-#endif
-*/
 #if defined __WXMSW__ && defined __MEMORYLEAKS__
 #include <vld.h>
 #endif
@@ -100,9 +94,6 @@ void MyApp::MacNewFile()
 
 bool MyApp::OnInit()
 {
-#if defined __WXMSW__ && defined __MEMORYLEAKS__
-    _CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-#endif
     if( !wxApp::OnInit() )
         return false;
 
