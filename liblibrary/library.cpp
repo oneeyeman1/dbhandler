@@ -90,7 +90,7 @@ public:
 
 IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
-extern "C" WXEXPORT void CreateLibraryWindow(wxWindow *parent, wxDocManager *docManager, ViewType type, std::map<wxString, wxDynamicLibrary *> &painter, Configuration *conf)
+extern "C" WXEXPORT void CreateLibraryWindow(wxWindow *parent, wxDocManager *docManager, ViewType type, std::map<wxString, wxDynamicLibrary *> &painter, Configuration *conf, LibraryObject *library)
 {
     LibraryDocTemplate *docTemplate;
 #ifdef __WXMSW__
@@ -105,14 +105,3 @@ extern "C" WXEXPORT void CreateLibraryWindow(wxWindow *parent, wxDocManager *doc
         docTemplate->CreateLibraryDocument( parent, path, type, painter, conf, wxDOC_NEW | wxDOC_SILENT );
     }
 }
-
-/*
-extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
-{
-#ifdef __WXMSW__
-    wxTheApp->SetTopWindow( pParent );
-#endif
-    CODBCConfigure dlg( pParent, wxID_ANY, _T( "Configure ODBC" ) );
-    dlg.ShowModal();
-}
-*/

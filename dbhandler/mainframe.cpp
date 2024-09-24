@@ -53,7 +53,7 @@ typedef void (*DISCONNECTFROMDB)(void *, const wxString &);
 typedef int (*ATTACHDATABASE)(wxWindow *, Database *);
 typedef int (*DETACHDATABASE)(wxWindow *);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int);
-typedef void (*LIBRARYPAINTER)(wxWindow *, wxDocManager *, ViewType , std::map<wxString, wxDynamicLibrary *> &, Configuration *);
+typedef void (*LIBRARYPAINTER)(wxWindow *, wxDocManager *, ViewType , std::map<wxString, wxDynamicLibrary *> &, Configuration *, LibraryObject *);
 
 BEGIN_EVENT_TABLE(MainFrame, wxDocMDIParentFrame)
     EVT_MENU(wxID_CONFIGUREODBC, MainFrame::OnConfigureODBC)
@@ -809,7 +809,7 @@ void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
     if( lib->IsLoaded() )
     {
         LIBRARYPAINTER func = (LIBRARYPAINTER) lib->GetSymbol( "CreateLibraryWindow" );
-        func( this, m_manager, LibraryView, m_painters, m_conf );
+        func( this, m_manager, LibraryView, m_painters, m_conf, m_library.get() );
     }
 }
 
