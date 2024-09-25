@@ -126,6 +126,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     {
         m_conf->m_currentLibrary = libpath;
         m_path.push_back( LibrariesInfo( libpath, true ) );
+        libpath = m_config->Read( "Dependency", "" );
     }
     m_config->SetPath( path );
     m_config->SetPath( "MainToolbar" );
@@ -795,6 +796,7 @@ void MainFrame::OnUpdateUIDetachDB(wxUpdateUIEvent &event)
 void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
 {
     wxString libName;
+    LoadApplication( m_path );
     auto lib = new wxDynamicLibrary;
 #ifdef __WXMSW__
     libName = m_libraryPath + "library";
