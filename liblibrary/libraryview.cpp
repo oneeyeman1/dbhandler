@@ -626,7 +626,11 @@ void LibraryViewPainter::OnItemContextMenu(wxTreeEvent &event)
     {
         auto text = m_tree->GetItemText( m_tree->GetSelection() );
         if( text.EndsWith( "abl" ) )
-            wxMessageBox( "Library" );
+        {
+            menu.Append( wxID_SELECTALL, _( "Select All"), _( "Select all library entries within selected library" ) );
+            menu.Append( wxID_PROPERTIES, _( "Propreties..."), _( "Specify the library properties" ) );
+            menu.AppendSeparator();
+        }
     }
     int rc = m_frame->GetPopupMenuSelectionFromUser( menu, event.GetPoint() );
 }
