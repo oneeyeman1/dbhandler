@@ -157,6 +157,8 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     wxVector<wxBitmapBundle> images;
     images.push_back( wxArtProvider::GetBitmapBundle( wxART_FOLDER ) );
     images.push_back( wxArtProvider::GetBitmapBundle( wxART_FOLDER_OPEN ) );
+    images.push_back( libraryClosed );
+    images.push_back( libraryOpen );
     m_tree->SetStateImages( images );
 #else
     wxImageList *images = new wxImageList( 16, 16 );
@@ -374,9 +376,9 @@ void LibraryViewPainter::PopulateNode(wxTreeItemId parent)
         path += eachFilename;
 
         wxDirItemData *dir_item = new wxDirItemData( path, eachFilename, false );
-        wxTreeItemId treeid = m_tree->AppendItem( parent, eachFilename, 0, 1, dir_item );
-        m_tree->SetItemImage( treeid, 1, wxTreeItemIcon_Expanded );
-        m_tree->SetItemImage( treeid, 0, wxTreeItemIcon_Normal );
+        wxTreeItemId treeid = m_tree->AppendItem( parent, eachFilename, 2, 3, dir_item );
+        m_tree->SetItemImage( treeid, 3, wxTreeItemIcon_Expanded );
+        m_tree->SetItemImage( treeid, 2, wxTreeItemIcon_Normal );
     }
     // And the dirs
     for (i = 0; i < dirs.GetCount(); i++)
