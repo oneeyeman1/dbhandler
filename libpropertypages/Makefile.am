@@ -41,7 +41,9 @@ libpropertypages_la_SOURCES =  \
 	databaseoptioncolours.cpp \
 	databaseoptioncolours.h \
 	databaseoptiongeneral.cpp \
-	databaseoptiongeneral.h
+	databaseoptiongeneral.h \
+	libraryobjectpropertypage.cpp \
+	libraryobjectpropertypage.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
@@ -50,5 +52,7 @@ libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	@WX_CXXFLAGS@
 
 libpropertypages_la_LDFLAGS = -L../libhelpers \
+	-L../libfieldswindow \
 	-lhelpers \
+	-lfieldswindow \
 	@WX_LIBS@
