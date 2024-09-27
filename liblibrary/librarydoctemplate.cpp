@@ -33,12 +33,13 @@ LibraryViewPainter *LibraryDocTemplate::CreateLibraryView(wxWindow *parent, wxDo
     return view.release();
 }
 
-bool LibraryDocTemplate::CreateLibraryDocument(wxWindow *parent, const wxString &path, ViewType type, std::map<wxString, wxDynamicLibrary *> &painter, Configuration *conf, long flags)
+bool LibraryDocTemplate::CreateLibraryDocument(wxWindow *parent, const wxString &path, ViewType type, std::map<wxString, wxDynamicLibrary *> &painter, Configuration *conf, LibraryObject *library, long flags)
 {
     LibraryDocument * const doc = (LibraryDocument *) DoCreateDocument();
     wxTRY
     {
         doc->SetFilename( path );
+        doc->SetLibraryObject( library );
         doc->SetDocumentTemplate( this );
         GetDocumentManager()->AddDocument( doc );
         doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );

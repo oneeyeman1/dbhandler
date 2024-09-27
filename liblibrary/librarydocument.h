@@ -20,7 +20,9 @@ public:
     ~LibraryDocument();
     DocumentOstream& SaveObject(DocumentOstream& stream) wxOVERRIDE;
     DocumentIstream& LoadObject(DocumentIstream& stream) wxOVERRIDE;
+    void SetLibraryObject(LibraryObject *library) { m_libraryObject = library; }
+    LibraryObject *GetLibraryObject() const { return m_libraryObject; }
 private:
-    LibraryObject m_libraryObject;
+    LibraryObject *m_libraryObject;
     wxDECLARE_DYNAMIC_CLASS(LibraryDocument);
 };
