@@ -18,10 +18,10 @@ class LibraryDocument :  public wxDocument
 public:
     LibraryDocument() : wxDocument() { }
     ~LibraryDocument();
-    void SetLiraryObject(const LibraryObject *library) { m_libraryObject = const_cast<LibraryObject *>( library ); }
-    LibraryObject *GetLibraryObject() const { return m_libraryObject; }
     DocumentOstream& SaveObject(DocumentOstream& stream) wxOVERRIDE;
     DocumentIstream& LoadObject(DocumentIstream& stream) wxOVERRIDE;
+    void SetLibraryObject(LibraryObject *library) { m_libraryObject = library; }
+    LibraryObject *GetLibraryObject() const { return m_libraryObject; }
 private:
     LibraryObject *m_libraryObject;
     wxDECLARE_DYNAMIC_CLASS(LibraryDocument);

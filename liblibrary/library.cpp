@@ -24,8 +24,9 @@
 #include "wx/dynlib.h"
 #include "wx/docview.h"
 #include "wx/cmdproc.h"
+#include "wx/generic/dirctrlg.h"
 #include "wx/bmpcbox.h"
-#include "wx/treectrl.h"
+#include "wx/treelist.h"
 #include "configuration.h"
 #include "painterobjects.h"
 #include "librarydocument.h"
@@ -102,6 +103,6 @@ extern "C" WXEXPORT void CreateLibraryWindow(wxWindow *parent, wxDocManager *doc
     {
         docTemplate = new LibraryDocTemplate( docManager, "Library", "*.abl", "", "abl", "Library Doc", "Library View", CLASSINFO( LibraryDocument ), CLASSINFO( LibraryViewPainter ), wxDOC_NEW | wxDOC_SILENT );
         path = conf->m_currentLibrary.IsEmpty() ? wxGetCwd() + "/library1.abl" : conf->m_currentLibrary;
-        docTemplate->CreateLibraryDocument( parent, path, type, painter, conf, wxDOC_NEW | wxDOC_SILENT );
+        docTemplate->CreateLibraryDocument( parent, path, type, painter, conf, library, wxDOC_NEW | wxDOC_SILENT );
     }
 }

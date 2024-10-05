@@ -40,8 +40,8 @@ bool LibraryDocTemplate::CreateLibraryDocument(wxWindow *parent, const wxString 
     wxTRY
     {
         doc->SetFilename( path );
+        doc->SetLibraryObject( library );
         doc->SetDocumentTemplate( this );
-        doc->SetLiraryObject( library );
         GetDocumentManager()->AddDocument( doc );
         doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
         if( CreateLibraryView( parent, doc, type, painter, conf, flags ) )

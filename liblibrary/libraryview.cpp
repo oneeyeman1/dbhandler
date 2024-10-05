@@ -37,7 +37,7 @@
 #else
 #include "wx/imaglist.h"
 #endif
-#include "wx/treectrl.h"
+#include "wx/treelist.h"
 #include "wx/dir.h"
 #include "configuration.h"
 #include "painterobjects.h"
@@ -122,7 +122,12 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
 #endif
     m_drive->SetStringSelection( str );
     sizer->Add( m_drive, 0 , wxEXPAND, 0 );
-    m_tree = new wxTreeCtrl( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_NO_BUTTONS | wxTR_LINES_AT_ROOT );
+    m_tree = new wxTreeListCtrl( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTL_NO_HEADER | wxTL_SINGLE );
+    m_tree->AppendColumn( "Name" );
+    m_tree->AppendColumn( "Last Modified" );
+    m_tree->AppendColumn( "Date Compiled" );
+    m_tree->AppendColumn( "Size (in Bytes)" );
+    m_tree->AppendColumn( "Comments" );
 #ifdef __WXMSW__
     HANDLE gs_wxMainThread = NULL;
     const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "library", &gs_wxMainThread );
@@ -174,8 +179,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
 #else
     rootName = _("Sections");
 #endif
-    m_rootId = m_tree->AddRoot( str, wxFileIconsTable::folder_open, -1, rootData );
-    m_tree->SetItemHasChildren( m_rootId );
+    m_rootId = m_tree->AppendItem( m_tree->GetRootItem(), str, 1, 2, rootData );
     ExpandRoot( path );
     sizer->Add( m_tree, 1, wxEXPAND, 0 );
     m_frame->SetSizer( sizer );
@@ -183,7 +187,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     m_frame->Layout();
     m_frame->Show();
     m_tree->SetFocus();
-    m_tree->Bind( wxEVT_TREE_ITEM_MENU, &LibraryViewPainter::OnItemContextMenu, this );
+    m_tree->Bind( wxEVT_TREELIST_ITEM_CONTEXT_MENU, &LibraryViewPainter::OnItemContextMenu, this );
     return true;
 }
 
@@ -293,12 +297,12 @@ void LibraryViewPainter::ExpandRoot(const wxString &path)
 #endif
 }
 
-void LibraryViewPainter::ExpandDir(wxTreeItemId parent)
+void LibraryViewPainter::ExpandDir(wxTreeListItem parent)
 {
     PopulateNode( parent );
 }
 
-void LibraryViewPainter::PopulateNode(wxTreeItemId parent)
+void LibraryViewPainter::PopulateNode(wxTreeListItem parent)
 {
     wxDirItemData *data = (wxDirItemData *) m_tree->GetItemData( parent );
     if( m_tree->IsExpanded( parent ) )
@@ -359,10 +363,6 @@ void LibraryViewPainter::PopulateNode(wxTreeItemId parent)
             while( d.GetNext( &eachFilename ) );
         }
     }
-    // Now we really know whether we have any children so tell the tree control
-    // about it.
-    m_tree->SetItemHasChildren( parent, !dirs.empty() || !files.empty());
-
     // Add the sorted files
     size_t i;
     for( i = 0; i < files.GetCount(); i++ )
@@ -374,9 +374,8 @@ void LibraryViewPainter::PopulateNode(wxTreeItemId parent)
         path += eachFilename;
 
         wxDirItemData *dir_item = new wxDirItemData( path, eachFilename, false );
-        wxTreeItemId treeid = m_tree->AppendItem( parent, eachFilename, 0, 1, dir_item );
-        m_tree->SetItemImage( treeid, 1, wxTreeItemIcon_Expanded );
-        m_tree->SetItemImage( treeid, 0, wxTreeItemIcon_Normal );
+        wxTreeListItem treeid = m_tree->AppendItem( parent, eachFilename, 1, 2, dir_item );
+        m_tree->SetItemImage( treeid, 1, 2 );
     }
     // And the dirs
     for (i = 0; i < dirs.GetCount(); i++)
@@ -388,23 +387,14 @@ void LibraryViewPainter::PopulateNode(wxTreeItemId parent)
         path += eachFilename;
 
         wxDirItemData *dir_item = new wxDirItemData( path, eachFilename, true );
-        wxTreeItemId treeid = m_tree->AppendItem( parent, eachFilename, 0, 1, dir_item );
-//        m_tree->SetItemImage( treeid, 0, wxTreeItemIcon_Expanded );
-
-        // assume that it does have children by default as it can take a long
-        // time to really check for this (think remote drives...)
-        //
-        // and if we're wrong, we'll correct the icon later if
-        // the user really tries to open this item
-        m_tree->SetItemHasChildren(treeid);
+        wxTreeListItem treeid = m_tree->AppendItem( parent, eachFilename, 0, 1, dir_item );
     }
 }
 
-const wxTreeItemId LibraryViewPainter::AddSection(const wxString& path, const wxString& name, int imageId)
+const wxTreeListItem LibraryViewPainter::AddSection(const wxString& path, const wxString& name)
 {
     wxDirItemData *dir_item = new wxDirItemData( path, name, true );
-    wxTreeItemId treeid = m_tree->AppendItem( m_rootId, name, imageId, -1, dir_item );
-    m_tree->SetItemHasChildren( treeid );
+    wxTreeListItem treeid = m_tree->AppendItem( m_rootId, name, 1, 2, dir_item );
     return treeid;
 }
 
@@ -480,8 +470,8 @@ size_t LibraryViewPainter::GetAvailableDrives(wxArrayString &paths, wxArrayStrin
 bool LibraryViewPainter::ExpandPath(const wxString &path)
 {
     bool done = false;
-    wxTreeItemId treeid = FindChild( m_rootId, path, done );
-    wxTreeItemId lastId = treeid; // The last non-zero treeid
+    wxTreeListItem treeid = FindChild( m_rootId, path, done );
+    wxTreeListItem lastId = treeid; // The last non-zero treeid
     while( treeid.IsOk() && !done )
     {
         ExpandDir( treeid );
@@ -499,8 +489,7 @@ bool LibraryViewPainter::ExpandPath(const wxString &path)
     if( data->m_isDir )
     {
         // Find the first file in this directory
-        wxTreeItemIdValue cookie;
-        wxTreeItemId childId = m_tree->GetFirstChild( lastId, cookie );
+        wxTreeListItem childId = m_tree->GetFirstChild( lastId );
         bool selectedChild = false;
         while( childId.IsOk() )
         {
@@ -508,29 +497,29 @@ bool LibraryViewPainter::ExpandPath(const wxString &path)
 
             if (data && !data->m_path.empty() && !data->m_isDir)
             {
-                m_tree->SelectItem( childId );
+                m_tree->Select( childId );
                 m_tree->EnsureVisible( childId );
                 selectedChild = true;
                 break;
             }
-            childId = m_tree->GetNextChild( lastId, cookie );
+            childId = m_tree->GetNextItem( childId );
         }
         if( !selectedChild )
         {
-            m_tree->SelectItem( lastId );
+            m_tree->Select( lastId );
             m_tree->EnsureVisible( lastId );
         }
     }
     else
     {
-        m_tree->SelectItem( lastId );
+        m_tree->Select( lastId );
         m_tree->EnsureVisible( lastId );
     }
 
     return true;
 }
 
-wxTreeItemId LibraryViewPainter::FindChild(wxTreeItemId parentId, const wxString &path, bool &done)
+wxTreeListItem LibraryViewPainter::FindChild(wxTreeListItem parentId, const wxString &path, bool &done)
 {
     wxString path2( path );
 
@@ -546,8 +535,7 @@ wxTreeItemId LibraryViewPainter::FindChild(wxTreeItemId parentId, const wxString
     path2.MakeLower();
 #endif
 
-    wxTreeItemIdValue cookie;
-    wxTreeItemId childId = m_tree->GetFirstChild( parentId, cookie );
+    wxTreeListItem childId = m_tree->GetFirstChild( parentId );
     while( childId.IsOk() )
     {
         wxDirItemData* data = (wxDirItemData *) m_tree->GetItemData( childId );
@@ -573,9 +561,9 @@ wxTreeItemId LibraryViewPainter::FindChild(wxTreeItemId parentId, const wxString
                 }
             }
         }
-        childId = m_tree->GetNextChild( parentId, cookie );
+        childId = m_tree->GetNextItem( childId );
     }
-    wxTreeItemId invalid;
+    wxTreeListItem invalid;
     if( parentId == m_rootId )
         return m_rootId;
     else
@@ -615,7 +603,7 @@ bool LibraryViewPainter::IsDriveAvailable(const wxString& dirName)
     return success;
 }
 
-void LibraryViewPainter::OnItemContextMenu(wxTreeEvent &event)
+void LibraryViewPainter::OnItemContextMenu(wxTreeListEvent &event)
 {
     wxMenu menu;
     auto item = event.GetItem();
@@ -632,7 +620,7 @@ void LibraryViewPainter::OnItemContextMenu(wxTreeEvent &event)
             menu.AppendSeparator();
         }
     }
-    int rc = m_frame->GetPopupMenuSelectionFromUser( menu, event.GetPoint() );
+    int rc = m_frame->GetPopupMenuSelectionFromUser( menu );
 }
 
 void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
