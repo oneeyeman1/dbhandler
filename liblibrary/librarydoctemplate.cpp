@@ -7,7 +7,8 @@
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/bmpcbox.h"
-#include "wx/treectrl.h"
+#include "wx/treelist.h"
+#include "wx/generic/dirctrlg.h"
 #include "configuration.h"
 #include "painterobjects.h"
 #include "librarydocument.h"
@@ -33,13 +34,14 @@ LibraryViewPainter *LibraryDocTemplate::CreateLibraryView(wxWindow *parent, wxDo
     return view.release();
 }
 
-bool LibraryDocTemplate::CreateLibraryDocument(wxWindow *parent, const wxString &path, ViewType type, std::map<wxString, wxDynamicLibrary *> &painter, Configuration *conf, long flags)
+bool LibraryDocTemplate::CreateLibraryDocument(wxWindow *parent, const wxString &path, ViewType type, std::map<wxString, wxDynamicLibrary *> &painter, Configuration *conf, LibraryObject *library, long flags)
 {
     LibraryDocument * const doc = (LibraryDocument *) DoCreateDocument();
     wxTRY
     {
         doc->SetFilename( path );
         doc->SetDocumentTemplate( this );
+        doc->SetLiraryObject( library );
         GetDocumentManager()->AddDocument( doc );
         doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
         if( CreateLibraryView( parent, doc, type, painter, conf, flags ) )
