@@ -7,7 +7,7 @@
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/bmpcbox.h"
-#include "wx/treectrl.h"
+#include "wx/treelist.h"
 #include "configuration.h"
 #include "painterobjects.h"
 #include "librarydocument.h"

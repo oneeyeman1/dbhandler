@@ -13,12 +13,12 @@ protected:
     void CreateLibraryMenu();
     void GetIconFromArtProvider( int id);
     void ExpandRoot(const wxString &path);
-    void ExpandDir(wxTreeItemId parent);
+    void ExpandDir(wxTreeListItem parent);
     bool ExpandPath(const wxString &path);
-    void PopulateNode(wxTreeItemId parent);
-    const wxTreeItemId AddSection(const wxString& path, const wxString& name, int imageId);
-    wxTreeItemId FindChild(wxTreeItemId parentId, const wxString& path, bool& done);
-    void OnItemContextMenu(wxTreeEvent &event);
+    void PopulateNode(wxTreeListItem parent);
+    const wxTreeListItem AddSection(const wxString& path, const wxString& name);
+    wxTreeListItem FindChild(wxTreeListItem parentId, const wxString& path, bool& done);
+    void OnItemContextMenu(wxTreeListEvent &event);
     void OnLibraryCreate(wxCommandEvent &event);
     void OnLibraryDelete(wxCommandEvent &event);
     void OnSelectAllpdateUI(wxUpdateUIEvent &event);
@@ -32,8 +32,8 @@ private:
     wxString m_libPath;
     wxDocMDIChildFrame *m_frame;
     wxBitmapComboBox *m_drive;
-    wxTreeCtrl *m_tree;
-    wxTreeItemId m_rootId;
+    wxTreeListCtrl *m_tree;
+    wxTreeListItem m_rootId;
     wxBitmapBundle libraryOpen, libraryClosed;
     wxDECLARE_DYNAMIC_CLASS(LibraryViewPainter);
     wxDECLARE_EVENT_TABLE();
