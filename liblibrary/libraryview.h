@@ -29,6 +29,7 @@ protected:
     void OnLibraryDelete(wxCommandEvent &event);
     void OnSelectAllpdateUI(wxUpdateUIEvent &event);
 private:
+    bool LoadApplicationOject(const wxString &fileName, std::unique_ptr<LibraryObject> &library);
     size_t GetAvailableDrives(wxArrayString &paths, wxArrayString &names, wxArrayInt &icons);
     bool IsDriveAvailable(const wxString& dirName);
     ViewType m_type;

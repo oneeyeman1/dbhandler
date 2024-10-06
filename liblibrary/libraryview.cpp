@@ -22,6 +22,8 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <vector>
+#include "wx/xml/xml.h"
 #ifndef __WXGTK__
 #include "wx/volume.h"
 #endif
@@ -329,7 +331,8 @@ void LibraryViewPainter::PopulateNode(wxTreeListItem parent)
     if( dirName.Last() == ':' )
         dirName += wxString( wxFILE_SEP_PATH );
 #endif
-    wxArrayString files, dirs;
+    wxArrayString dirs;
+    std::vector<std::unique_ptr<LibraryObject> > files;
     wxDir d;
     wxString eachFilename;
     wxLogNull log;
@@ -355,9 +358,11 @@ void LibraryViewPainter::PopulateNode(wxTreeListItem parent)
         {
             do
             {
+                std::unique_ptr<LibraryObject> library;
                 if( ( eachFilename != "." ) && ( eachFilename != ".." ) )
                 {
-                    files.Add( eachFilename );
+                    LoadApplicationOject( eachFilename, library );
+                    files.push_back( std::move( library ) );
                 }
             }
             while( d.GetNext( &eachFilename ) );
@@ -365,9 +370,9 @@ void LibraryViewPainter::PopulateNode(wxTreeListItem parent)
     }
     // Add the sorted files
     size_t i;
-    for( i = 0; i < files.GetCount(); i++ )
+    for( std::vector<std::unique_ptr<LibraryObject> >::iterator it = files.begin(); it < files.end(); ++it )
     {
-        eachFilename = files[i];
+        eachFilename = (*it)->GetLibraryName();
         path = dirName;
         if( !wxEndsWithPathSeparator( path ) )
             path += wxString( wxFILE_SEP_PATH );
@@ -694,4 +699,95 @@ void LibraryViewPainter::OnSelectAllpdateUI(wxUpdateUIEvent &event)
         event.Enable( false );
     else
         event.Enable( true );
+}
+
+bool LibraryViewPainter::LoadApplicationOject(const wxString &fileName, std::unique_ptr<LibraryObject> &library)
+{
+    wxXmlDocument doc;
+    library = std::make_unique<LibraryObject>();
+    if( !doc.Load( fileName ) )
+    {
+        wxMessageBox( wxString::Format( _( "Failed to load library file: %s" ) ), fileName );
+        return false;
+    }
+    if( doc.GetRoot()->GetName().IsSameAs( "Library" ) )
+    {
+        QueryInfo query;
+        wxString widthStr, objectComment, objectName;
+        wxDateTime lastmodified = wxDateTime::Now(), lastcompiled = wxDateTime::Now();
+        wxXmlNode *children = doc.GetRoot()->GetChildren(), *bodyChildren, *queryChildren, *headerChildren;
+        while( children )
+        {
+            if( children->GetName().IsSameAs( "Header" ) )
+            {
+                headerChildren = children->GetChildren();
+                while( headerChildren )
+                {
+                    if( headerChildren->GetName().IsSameAs( "Created" ) )
+                    {
+                        wxDateTime dt;
+                        wxString::const_iterator end;
+                        widthStr = headerChildren->GetNodeContent();
+                        auto res = dt.ParseISOCombined( widthStr );
+                        if( res )
+                            library->SetCreationTime( dt );
+                    }
+                    if( headerChildren->GetName().IsSameAs( "Comment" ) )
+                    {
+                        widthStr = headerChildren->GetNodeContent();
+                        library->SetComment( widthStr );
+                    }
+                    headerChildren = headerChildren->GetNext();
+                }
+                children = children->GetNext();
+            }
+            if( children->GetName().IsSameAs( "Body" ) )
+            {
+                bodyChildren = children->GetChildren();
+                while( bodyChildren )
+                {
+                    if( bodyChildren->GetName().IsSameAs( "Query" ) )
+                    {
+                        queryChildren = bodyChildren->GetChildren();
+                        while( queryChildren )
+                        {
+                            if( queryChildren->GetName().IsSameAs( "name" ) )
+                            {
+                                widthStr = queryChildren->GetNodeContent();
+                                if( widthStr.substr( widthStr.size() - 3 ) == "qry" )
+                                {
+                                    objectName = widthStr.substr( 0, widthStr.length() - 4 );
+                                }
+                            }
+                            if( queryChildren->GetName().IsSameAs( "lastmodified" ) )
+                            {
+                                wxString::const_iterator end;
+                                widthStr = queryChildren->GetNodeContent();
+                                lastmodified.ParseISOCombined( widthStr );
+                            }
+                            if( queryChildren->GetName().IsSameAs( "lastcompiled" ) )
+                            {
+                                wxString::const_iterator end;
+                                widthStr = queryChildren->GetNodeContent();
+                                lastcompiled.ParseISOCombined( widthStr );
+                            }
+                            if( queryChildren->GetName().IsSameAs( "comment" ) )
+                            {
+                                objectComment = queryChildren->GetNodeContent();
+                            }
+                            queryChildren = queryChildren->GetNext();
+                        }
+                    }
+                    library->GetObjects().push_back( LibraryObjects( library->GetLibraryName(), objectName, lastmodified, lastcompiled, objectComment ) );
+                    bodyChildren = bodyChildren->GetNext();
+                }
+            }
+            children = children->GetNext();
+        }
+    }
+    else
+    {
+        wxMessageBox( wxString::Format( _( "Invalid library file: %s" ) ), fileName );
+        return false;
+    }
 }

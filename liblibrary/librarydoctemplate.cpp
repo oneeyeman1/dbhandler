@@ -8,6 +8,7 @@
 #include "wx/dynlib.h"
 #include "wx/bmpcbox.h"
 #include "wx/treelist.h"
+#include "wx/generic/dirctrlg.h"
 #include "configuration.h"
 #include "painterobjects.h"
 #include "librarydocument.h"
