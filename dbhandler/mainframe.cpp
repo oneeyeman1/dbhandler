@@ -818,11 +818,11 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
     m_library = std::make_shared<LibraryObject>();
     if( m_doc.GetRoot() )
         return true;
-	if( path.empty() )
-	{
-		wxMessageBox( _( "Need to create a library first" ) );
-		return true;
-	}
+    if( path.empty() )
+    {
+        wxMessageBox( _( "Need to create a library first" ) );
+        return true;
+    }
     for( std::vector<LibrariesInfo>::const_iterator it = path.begin(); it < path.end(); ++it )
     {
         if( (*it).m_isActive )
@@ -847,6 +847,7 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
     }
     QueryInfo query;
     wxString widthStr, objectComment, objectName;
+    unsigned int size;
     wxDateTime lastmodified = wxDateTime::Now(), lastcompiled = wxDateTime::Now();
     wxXmlNode *children = m_doc.GetRoot()->GetChildren(), *bodyChildren, *queryChildren, *headerChildren;
     while( children )
@@ -904,6 +905,10 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
                             widthStr = queryChildren->GetNodeContent();
                             lastcompiled.ParseISOCombined( widthStr );
                         }
+                        if( queryChildren->GetName().IsSameAs( "sizeinbytes" ) )
+                        {
+                            size = wxAtoi( queryChildren->GetNodeContent() );
+                        }
                         if( queryChildren->GetName().IsSameAs( "comment" ) )
                         {
                             objectComment = queryChildren->GetNodeContent();
@@ -911,7 +916,7 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
                         queryChildren = queryChildren->GetNext();
                     }
                 }
-                m_library->GetObjects().push_back( LibraryObjects( m_library->GetLibraryName(), objectName, lastmodified, lastcompiled, objectComment ) );
+                m_library->GetObjects().push_back( LibraryObjects( m_library->GetLibraryName(), objectName, lastmodified, lastcompiled, size, objectComment ) );
                 bodyChildren = bodyChildren->GetNext();
             }
         }
