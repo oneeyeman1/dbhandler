@@ -1,4 +1,5 @@
 #include <map>
+#include <memory>
 #include "wx/scopedptr.h"
 #include "wx/except.h"
 #include "wx/docview.h"

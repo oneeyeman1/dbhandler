@@ -361,7 +361,7 @@ void LibraryViewPainter::PopulateNode(wxTreeListItem parent)
                 std::unique_ptr<LibraryObject> library;
                 if( ( eachFilename != "." ) && ( eachFilename != ".." ) )
                 {
-                    LoadApplicationOject( eachFilename, library );
+                    LoadApplicationOject( d.GetName() + wxString( wxFILE_SEP_PATH ) + eachFilename, library );
                     files.push_back( std::move( library ) );
                 }
             }
@@ -372,7 +372,6 @@ void LibraryViewPainter::PopulateNode(wxTreeListItem parent)
     size_t i;
     for( std::vector<std::unique_ptr<LibraryObject> >::iterator it = files.begin(); it < files.end(); ++it )
     {
-        eachFilename = (*it)->GetLibraryName();
         path = dirName;
         if( !wxEndsWithPathSeparator( path ) )
             path += wxString( wxFILE_SEP_PATH );
@@ -380,7 +379,11 @@ void LibraryViewPainter::PopulateNode(wxTreeListItem parent)
 
         wxDirItemData *dir_item = new wxDirItemData( path, eachFilename, false );
         wxTreeListItem treeid = m_tree->AppendItem( parent, eachFilename, 3, 4, dir_item );
-        m_tree->SetItemText( treeid, COL_COMMENT, "Comment" );
+        m_tree->SetItemText( treeid, COL_COMMENT, (*it)->GetComment() );
+        for( std::vector<LibraryObjects>::iterator it1 = (*it)->GetObjects().begin(); it1 < (*it)->GetObjects().end(); ++it1 )
+        {
+            wxTreeListItem treeidobj = m_tree->AppendItem( treeid, (*it1).m_properties.m_name );
+        }
     }
     // And the dirs
     for (i = 0; i < dirs.GetCount(); i++)
@@ -705,6 +708,7 @@ bool LibraryViewPainter::LoadApplicationOject(const wxString &fileName, std::uni
 {
     wxXmlDocument doc;
     library = std::make_unique<LibraryObject>();
+    library->SetLibraryName( fileName );
     if( !doc.Load( fileName ) )
     {
         wxMessageBox( wxString::Format( _( "Failed to load library file: %s" ) ), fileName );
@@ -714,6 +718,7 @@ bool LibraryViewPainter::LoadApplicationOject(const wxString &fileName, std::uni
     {
         QueryInfo query;
         wxString widthStr, objectComment, objectName;
+        unsigned int size;
         wxDateTime lastmodified = wxDateTime::Now(), lastcompiled = wxDateTime::Now();
         wxXmlNode *children = doc.GetRoot()->GetChildren(), *bodyChildren, *queryChildren, *headerChildren;
         while( children )
@@ -771,14 +776,18 @@ bool LibraryViewPainter::LoadApplicationOject(const wxString &fileName, std::uni
                                 widthStr = queryChildren->GetNodeContent();
                                 lastcompiled.ParseISOCombined( widthStr );
                             }
+                            if( queryChildren->GetName().IsSameAs( "" ) )
+                            {
+                                size = wxAtoi( queryChildren->GetNodeContent() );
+                            }
                             if( queryChildren->GetName().IsSameAs( "comment" ) )
                             {
                                 objectComment = queryChildren->GetNodeContent();
                             }
                             queryChildren = queryChildren->GetNext();
                         }
+                        library->GetObjects().push_back( LibraryObjects( library->GetLibraryName(), objectName, lastmodified, lastcompiled, objectComment ) );
                     }
-                    library->GetObjects().push_back( LibraryObjects( library->GetLibraryName(), objectName, lastmodified, lastcompiled, objectComment ) );
                     bodyChildren = bodyChildren->GetNext();
                 }
             }
@@ -790,4 +799,5 @@ bool LibraryViewPainter::LoadApplicationOject(const wxString &fileName, std::uni
         wxMessageBox( wxString::Format( _( "Invalid library file: %s" ) ), fileName );
         return false;
     }
+    return true;
 }
