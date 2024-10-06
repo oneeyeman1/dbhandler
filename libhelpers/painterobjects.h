@@ -8,7 +8,7 @@ struct LibraryProperty
 
 struct LibraryObjectProperty
 {
-    wxDateTime m_compiled, m_modifiied;
+    wxDateTime m_compiled, m_modified;
     int m_size;
     wxString m_name, m_comment, m_libName, m_checkedOutBy;
 
@@ -22,7 +22,7 @@ public:
         m_properties.m_libName   = libName;
         m_properties.m_name      = name;
         m_properties.m_compiled  = created;
-        m_properties.m_modifiied = modified;
+        m_properties.m_modified = modified;
         m_properties.m_size      = size;
         m_properties.m_comment   = comment; 
     }
@@ -30,7 +30,7 @@ public:
     LibraryObjects()
     {
         m_properties.m_compiled     = wxDateTime::Now();
-        m_properties.m_modifiied    = wxDateTime::Now();
+        m_properties.m_modified    = wxDateTime::Now();
         m_properties.m_size         = 0;
         m_properties.m_name         = "";
         m_properties.m_comment      = "";
