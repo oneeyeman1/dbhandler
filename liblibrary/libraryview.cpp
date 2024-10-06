@@ -385,6 +385,10 @@ void LibraryViewPainter::PopulateNode(wxTreeListItem parent)
         for( std::vector<LibraryObjects>::iterator it1 = (*it)->GetObjects().begin(); it1 < (*it)->GetObjects().end(); ++it1 )
         {
             wxTreeListItem treeidobj = m_tree->AppendItem( treeid, (*it1).m_properties.m_name );
+            m_tree->SetItemText( treeidobj, COL_MODIFIED, (*it1).m_properties.m_modified.FormatDate() + " " + (*it1).m_properties.m_modified.FormatTime() );
+            m_tree->SetItemText( treeidobj, COL_COMPILED, (*it1).m_properties.m_compiled.FormatDate() + " " + (*it1).m_properties.m_compiled.FormatTime() );
+            m_tree->SetItemText( treeidobj, COL_SIZE,     wxString::Format( "%d", (*it1).m_properties.m_size ) );
+            m_tree->SetItemText( treeidobj, COL_COMMENT, (*it1).m_properties.m_comment );
         }
     }
     // And the dirs
