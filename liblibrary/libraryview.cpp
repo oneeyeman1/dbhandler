@@ -374,8 +374,8 @@ void LibraryViewPainter::PopulateNode(wxTreeListItem parent)
         path += eachFilename;
 
         wxDirItemData *dir_item = new wxDirItemData( path, eachFilename, false );
-        wxTreeListItem treeid = m_tree->AppendItem( parent, eachFilename, 1, 2, dir_item );
-        m_tree->SetItemImage( treeid, 1, 2 );
+        wxTreeListItem treeid = m_tree->AppendItem( parent, eachFilename, 3, 4, dir_item );
+        m_tree->SetItemText( treeid, COL_COMMENT, "Comment" );
     }
     // And the dirs
     for (i = 0; i < dirs.GetCount(); i++)

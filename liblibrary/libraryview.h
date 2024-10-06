@@ -1,5 +1,11 @@
 #pragma once
 
+#define COL_NAME     0
+#define COL_MODIFIED 1
+#define COL_COMPILED 2
+#define COL_SIZE     3
+#define COL_COMMENT  4
+ 
 class LibraryViewPainter :  public wxView
 {
 public:
