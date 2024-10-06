@@ -56,6 +56,7 @@ wxBEGIN_EVENT_TABLE(LibraryViewPainter, wxView)
     EVT_MENU(wxID_LIBRARYNEW, LibraryViewPainter::OnLibraryCreate)
     EVT_MENU(wxID_LIBRARYDELETE, LibraryViewPainter::OnLibraryDelete)
     EVT_UPDATE_UI(wxID_LIBRARYSELECTALL, LibraryViewPainter::OnSelectAllUpdateUI)
+    EVT_MENU(wxID_LIBRARYSELECTALL, LibraryViewPainter::OnSelectAll)
 wxEND_EVENT_TABLE()
 
 bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
@@ -124,7 +125,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
 #endif
     m_drive->SetStringSelection( str );
     sizer->Add( m_drive, 0 , wxEXPAND, 0 );
-    m_tree = new wxTreeListCtrl( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTL_NO_HEADER | wxTL_SINGLE );
+    m_tree = new wxTreeListCtrl( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTL_NO_HEADER | wxTL_MULTIPLE );
     m_tree->AppendColumn( "Name" );
     m_tree->AppendColumn( "Last Modified" );
     m_tree->AppendColumn( "Date Compiled" );
@@ -626,7 +627,9 @@ void LibraryViewPainter::OnItemContextMenu(wxTreeListEvent &event)
         menu.Append( wxID_IMPORTLIBRARY, _( "Import..." ) );
     else
     {
-        auto text = m_tree->GetItemText( m_tree->GetSelection() );
+        wxTreeListItems items;
+        m_tree->GetSelections( items );
+        auto text = m_tree->GetItemText( items[0] );
         if( text.EndsWith( "abl" ) )
         {
             menu.Append( wxID_SELECTALL, _( "Select All"), _( "Select all library entries within selected library" ) );
@@ -635,6 +638,12 @@ void LibraryViewPainter::OnItemContextMenu(wxTreeListEvent &event)
         }
     }
     int rc = m_frame->GetPopupMenuSelectionFromUser( menu );
+    switch( rc )
+    {
+        case wxID_SELECTALL:
+            SelectAllLibraryObjects( item );
+            break;
+    }
 }
 
 void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
@@ -807,3 +816,22 @@ bool LibraryViewPainter::LoadApplicationOject(const wxString &fileName, std::uni
     }
     return true;
 }
+
+void LibraryViewPainter::OnSelectAll(wxCommandEvent &event)
+{
+    wxTreeListItems items;
+    auto count = m_tree->GetSelections( items );
+    SelectAllLibraryObjects( items[0] );
+}
+
+void LibraryViewPainter::SelectAllLibraryObjects(wxTreeListItem item)
+{
+    m_tree->Unselect( item );
+    auto child = m_tree->GetFirstChild( item );
+    while( child.IsOk() )
+    {
+        m_tree->Select( child );
+        child = m_tree->GetNextSibling( child );
+    }
+}
+

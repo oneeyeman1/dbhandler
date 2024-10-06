@@ -24,10 +24,14 @@ protected:
     void PopulateNode(wxTreeListItem parent);
     const wxTreeListItem AddSection(const wxString& path, const wxString& name);
     wxTreeListItem FindChild(wxTreeListItem parentId, const wxString& path, bool& done);
+
+    void SelectAllLibraryObjects(wxTreeListItem item);
+
     void OnItemContextMenu(wxTreeListEvent &event);
     void OnLibraryCreate(wxCommandEvent &event);
     void OnLibraryDelete(wxCommandEvent &event);
     void OnSelectAllUpdateUI(wxUpdateUIEvent &event);
+    void OnSelectAll(wxCommandEvent &event);
 private:
     bool LoadApplicationOject(const wxString &fileName, std::unique_ptr<LibraryObject> &library);
     size_t GetAvailableDrives(wxArrayString &paths, wxArrayString &names, wxArrayInt &icons);
