@@ -55,7 +55,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(LibraryViewPainter, wxView);
 wxBEGIN_EVENT_TABLE(LibraryViewPainter, wxView)
     EVT_MENU(wxID_LIBRARYNEW, LibraryViewPainter::OnLibraryCreate)
     EVT_MENU(wxID_LIBRARYDELETE, LibraryViewPainter::OnLibraryDelete)
-    EVT_UPDATE_UI(wxID_LIBRARYSELECTALL, LibraryViewPainter::OnSelectAllpdateUI)
+    EVT_UPDATE_UI(wxID_LIBRARYSELECTALL, LibraryViewPainter::OnSelectAllUpdateUI)
 wxEND_EVENT_TABLE()
 
 bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
@@ -701,10 +701,10 @@ void LibraryViewPainter::OnLibraryDelete(wxCommandEvent &WXUNUSED(event))
         wxMessageBox( "Deleting" );
 }
 
-void LibraryViewPainter::OnSelectAllpdateUI(wxUpdateUIEvent &event)
+void LibraryViewPainter::OnSelectAllUpdateUI(wxUpdateUIEvent &event)
 {
     wxDirItemData *data = dynamic_cast<wxDirItemData *>( m_tree->GetItemData( m_tree->GetSelection() ) );
-    if( data->m_isDir )
+    if( ( data && data->m_isDir ) || !data )
         event.Enable( false );
     else
         event.Enable( true );

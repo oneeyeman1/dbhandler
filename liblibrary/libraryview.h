@@ -27,7 +27,7 @@ protected:
     void OnItemContextMenu(wxTreeListEvent &event);
     void OnLibraryCreate(wxCommandEvent &event);
     void OnLibraryDelete(wxCommandEvent &event);
-    void OnSelectAllpdateUI(wxUpdateUIEvent &event);
+    void OnSelectAllUpdateUI(wxUpdateUIEvent &event);
 private:
     bool LoadApplicationOject(const wxString &fileName, std::unique_ptr<LibraryObject> &library);
     size_t GetAvailableDrives(wxArrayString &paths, wxArrayString &names, wxArrayInt &icons);
