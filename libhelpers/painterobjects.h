@@ -17,23 +17,24 @@ struct LibraryObjectProperty
 struct LibraryObjects
 {
 public:
-    LibraryObjects(const wxString &libName, const wxString &name, const wxDateTime &created, const wxDateTime &modified, const wxString &comment)
+    LibraryObjects(const wxString &libName, const wxString &name, const wxDateTime &created, const wxDateTime &modified, int size, const wxString &comment)
     {
-        m_properties.m_libName = libName;
-        m_properties.m_name = name;
-        m_properties.m_compiled = created;
+        m_properties.m_libName   = libName;
+        m_properties.m_name      = name;
+        m_properties.m_compiled  = created;
         m_properties.m_modifiied = modified;
-        m_properties.m_comment = comment; 
+        m_properties.m_size      = size;
+        m_properties.m_comment   = comment; 
     }
 
     LibraryObjects()
     {
-        m_properties.m_compiled = wxDateTime::Now();
-        m_properties.m_modifiied = wxDateTime::Now();
-        m_properties.m_size = 0;
-        m_properties.m_name = "";
-        m_properties.m_comment = "";
-        m_properties.m_libName = "";
+        m_properties.m_compiled     = wxDateTime::Now();
+        m_properties.m_modifiied    = wxDateTime::Now();
+        m_properties.m_size         = 0;
+        m_properties.m_name         = "";
+        m_properties.m_comment      = "";
+        m_properties.m_libName      = "";
         m_properties.m_checkedOutBy = "";
     }
 
