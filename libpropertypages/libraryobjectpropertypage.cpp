@@ -62,7 +62,7 @@ LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, LibraryOb
     mainSizer->Add( m_library, 0, wxEXPAND, 0 );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Last Modified" ) );
     mainSizer->Add( m_label3, 0, wxEXPAND, 0 );
-    m_dateModified = new wxStaticText( this, wxID_ANY, object->m_modifiied.FormatDate() + " " + object->m_modifiied.FormatTime() );
+    m_dateModified = new wxStaticText( this, wxID_ANY, object->m_modified.FormatDate() + " " + object->m_modified.FormatTime() );
     mainSizer->Add( m_dateModified, 0, wxEXPAND, 0 );
     m_label4 = new wxStaticText( this, wxID_ANY, _( "Last Compiled" ) );
     mainSizer->Add( m_label4, 0, wxEXPAND, 0 );
