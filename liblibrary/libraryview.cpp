@@ -264,7 +264,7 @@ void LibraryViewPainter::CreateViewToolBar()
 #endif
     CreateLibraryMenu();
     m_tb->AddTool( wxID_LIBRARYNEW, _( "New Library" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
-//    m_tb->AddTool( wxID_LIBRARYSELECTALL, _( "Select All" ), selectall, selectall, wxITEM_NORMAL, _( "Select All" ), _( "Select all library entries within selected library" ) );
+    m_tb->AddTool( wxID_LIBRARYSELECTALL, _( "Select All" ), selectall, selectall, wxITEM_NORMAL, _( "Select All" ), _( "Select all library entries within selected library" ) );
     m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
     m_tb->Realize();
 }
@@ -512,7 +512,7 @@ bool LibraryViewPainter::ExpandPath(const wxString &path)
         {
             data = (wxDirItemData *) m_tree->GetItemData( childId );
 
-            if (data && !data->m_path.empty() && !data->m_isDir)
+            if( data && !data->m_path.empty() && !data->m_isDir )
             {
                 m_tree->Select( childId );
                 m_tree->EnsureVisible( childId );
@@ -529,6 +529,8 @@ bool LibraryViewPainter::ExpandPath(const wxString &path)
     }
     else
     {
+        if( path == data->m_path )
+            m_tree->Expand( lastId );
         m_tree->Select( lastId );
         m_tree->EnsureVisible( lastId );
     }
