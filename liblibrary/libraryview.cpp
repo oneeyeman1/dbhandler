@@ -650,15 +650,18 @@ void LibraryViewPainter::OnItemContextMenu(wxTreeListEvent &event)
 
 void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
 {
+    wxTreeListItems items;
     LibraryObject *library = new LibraryObject;
     std::unique_ptr<PropertiesHandler> propertiesPtr;
     auto failed = false;
     auto title = _( "Properties" );
-    auto id = m_tree->GetSelection();
-    auto data = (wxDirItemData *) m_tree->GetItemData( id );
+    auto id = m_tree->GetSelections( items );
+    auto data = (wxDirItemData *) m_tree->GetItemData( items[0] );
+    wxFileName name( data->m_path );
+    auto dir = name.GetPath();
     while( !failed )
     {
-        wxFileDialog dlg( m_parent, _( "Create Library" ), wxEmptyString, wxEmptyString, "AB Library (*.abl)|*.abl", wxFD_SAVE );
+        wxFileDialog dlg( m_parent, _( "Create Library" ), dir, wxEmptyString, "AB Library (*.abl)|*.abl", wxFD_SAVE );
         if( dlg.ShowModal() == wxID_CANCEL )
         {
             failed = true;
@@ -677,7 +680,15 @@ void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
                 library->SetCreationTime( wxDateTime::Now() );
                 failed = true;
                 wxDynamicLibrary lib;
-                lib.Load( m_libPath + "dialogs" );
+                wxString name;
+#ifdef __WXMSW__
+                name = m_libPath + "dialogs";
+#elif __WXOSX__
+                name = m_libPath + "liblibdialogs.dylib" ;
+#else
+                name = m_libPath + "libdialogs";
+#endif
+                lib.Load( name );
                 if( lib.IsLoaded() )
                 {
                     wxAny any = library;
@@ -693,7 +704,6 @@ void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
                     propertiesPtr->SetType( LibraryPropertiesType );
                     CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
                     auto res = func( m_frame, propertiesPtr, title, command, false, *pcs );
-                    wxMessageBox( "Dialogs library loaded" );
                 }
                 else
                 {
