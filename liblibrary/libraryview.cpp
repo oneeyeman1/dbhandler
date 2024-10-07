@@ -56,6 +56,7 @@ wxBEGIN_EVENT_TABLE(LibraryViewPainter, wxView)
     EVT_MENU(wxID_LIBRARYNEW, LibraryViewPainter::OnLibraryCreate)
     EVT_MENU(wxID_LIBRARYDELETE, LibraryViewPainter::OnLibraryDelete)
     EVT_UPDATE_UI(wxID_LIBRARYSELECTALL, LibraryViewPainter::OnSelectAllUpdateUI)
+    EVT_UPDATE_UI(wxID_LIBRARYDELETE, LibraryViewPainter::OnDeleteLibraryUpdateUI)
     EVT_MENU(wxID_LIBRARYSELECTALL, LibraryViewPainter::OnSelectAll)
 wxEND_EVENT_TABLE()
 
@@ -847,5 +848,15 @@ void LibraryViewPainter::OnSelectionChanged(wxTreeListEvent &event)
 {
     m_tree->UnselectAll();
     m_tree->Select( event.GetItem() );
+}
+
+void LibraryViewPainter::OnDeleteLibraryUpdateUI(wxUpdateUIEvent &event)
+{
+    wxTreeListItems items;
+    m_tree->GetSelections( items );
+    if( m_tree->GetItemText( items[0], 0 ).Right( 4 ) == ".abl" )
+        event.Enable( true );
+    else
+        event.Enable( false );
 }
 
