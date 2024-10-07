@@ -193,6 +193,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     m_frame->Show();
     m_tree->SetFocus();
     m_tree->Bind( wxEVT_TREELIST_ITEM_CONTEXT_MENU, &LibraryViewPainter::OnItemContextMenu, this );
+    m_tree->Bind( wxEVT_TREELIST_SELECTION_CHANGED, &LibraryViewPainter::OnSelectionChanged, this );
     return true;
 }
 
@@ -712,11 +713,18 @@ void LibraryViewPainter::OnLibraryDelete(wxCommandEvent &WXUNUSED(event))
 
 void LibraryViewPainter::OnSelectAllUpdateUI(wxUpdateUIEvent &event)
 {
-    wxDirItemData *data = dynamic_cast<wxDirItemData *>( m_tree->GetItemData( m_tree->GetSelection() ) );
-    if( ( data && data->m_isDir ) || !data )
+    wxTreeListItems items;
+    auto count = m_tree->GetSelections( items );
+    if( count > 1 )
         event.Enable( false );
     else
-        event.Enable( true );
+    {
+        wxDirItemData *data = dynamic_cast<wxDirItemData *>( m_tree->GetItemData( items[0]) );
+        if( ( data && data->m_isDir ) || !data )
+            event.Enable( false );
+        else
+            event.Enable( true );
+    }
 }
 
 bool LibraryViewPainter::LoadApplicationOject(const wxString &fileName, std::unique_ptr<LibraryObject> &library)
@@ -833,5 +841,11 @@ void LibraryViewPainter::SelectAllLibraryObjects(wxTreeListItem item)
         m_tree->Select( child );
         child = m_tree->GetNextSibling( child );
     }
+}
+
+void LibraryViewPainter::OnSelectionChanged(wxTreeListEvent &event)
+{
+    m_tree->UnselectAll();
+    m_tree->Select( event.GetItem() );
 }
 

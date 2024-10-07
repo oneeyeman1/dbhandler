@@ -28,6 +28,7 @@ protected:
     void SelectAllLibraryObjects(wxTreeListItem item);
 
     void OnItemContextMenu(wxTreeListEvent &event);
+    void OnSelectionChanged(wxTreeListEvent &event);
     void OnLibraryCreate(wxCommandEvent &event);
     void OnLibraryDelete(wxCommandEvent &event);
     void OnSelectAllUpdateUI(wxUpdateUIEvent &event);
