@@ -673,7 +673,7 @@ void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
         {
             auto name = dlg.GetPath();
             if( wxFile::Exists( name ) )
-                wxMessageBox( _( "Create failed. Possible cases:\n\r1.Library a;ready exist.\n\r2.Invalid library name.\n\r3.Invalid path name,\n\r4.Ot of disk space" ),
+                wxMessageBox( _( "Create failed. Possible cases:\n\r1.Library already exist.\n\r2.Invalid library name.\n\r3.Invalid path name,\n\r4.Out of disk space" ),
                               _( "Library creation failed" ),
                               wxOK | wxCENTRE | wxICON_EXCLAMATION );
             else
@@ -706,6 +706,10 @@ void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
                     propertiesPtr->SetType( LibraryPropertiesType );
                     CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
                     auto res = func( m_frame, propertiesPtr, title, command, false, *pcs );
+                    if( res == wxID_OK )
+                    {
+                        wxMessageBox( "Creating new library!!" );
+                    }
                 }
                 else
                 {
