@@ -23,7 +23,7 @@ LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, const Lib
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     auto controls = new wxBoxSizer( wxVERTICAL );
     controls->Add( 5, 5, 0, wxEXPAND, 0 );
-    mainSizer = new wxFlexGridSizer( 2, 3, 5, 5 );
+    mainSizer = new wxFlexGridSizer( 2, 2, 10, 10 );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Name" ) );
     mainSizer->Add( m_label1, 0, wxEXPAND, 0 );
     m_objectName = new wxStaticText( this, wxID_ANY, object.m_name );
@@ -37,11 +37,14 @@ LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, const Lib
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Comment" ) );
     commentSizer->Add( m_label3, 0, wxEXPAND, 0 );
     m_comment = new wxTextCtrl( this, wxID_ANY, object.m_comment, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
-    commentSizer->Add( m_comment, wxID_ANY, wxEXPAND, 0 );
+    commentSizer->Add( m_comment, 0, wxEXPAND, 0 );
     controls->Add( commentSizer, 0, wxEXPAND, 0 );
     controls->Add( 5, 5, 0, wxEXPAND, 0 );
+    main->Add( controls, 0, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( main );
+    main->Fit( this );
+    m_comment->SetFocus();
 }
 
 LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, LibraryObjectProperty *object) : PropertyPageBase( parent )
@@ -51,7 +54,7 @@ LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, LibraryOb
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     auto controls = new wxBoxSizer( wxVERTICAL );
     controls->Add( 5, 5, 0, wxEXPAND, 0 );
-    mainSizer = new wxFlexGridSizer( 6, 3, 5, 5 );
+    mainSizer = new wxFlexGridSizer( 6, 2, 10, 10 );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Object Name" ) );
     mainSizer->Add( m_label1, 0, wxEXPAND, 0 );
     m_objectName = new wxStaticText( this, wxID_ANY, object->m_name );
@@ -77,9 +80,12 @@ LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, LibraryOb
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Comment" ) );
     commentSizer->Add( m_label3, 0, wxEXPAND, 0 );
     m_comment = new wxTextCtrl( this, wxID_ANY, object->m_comment, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
-    commentSizer->Add( m_comment, wxID_ANY, wxEXPAND, 0 );
+    commentSizer->Add( m_comment, 0, wxEXPAND, 0 );
     controls->Add( commentSizer, 0, wxEXPAND, 0 );
     controls->Add( 5, 5, 0, wxEXPAND, 0 );
+    main->Add( controls, 0, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( main );
+    main->Fit( this );
+    m_comment->SetFocus();
 }
