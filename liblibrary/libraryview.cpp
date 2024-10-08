@@ -23,6 +23,7 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+#include "wx/xml/xml.h"
 #ifndef __WXGTK__
 #include "wx/volume.h"
 #endif
@@ -658,8 +659,8 @@ void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
     auto title = _( "Properties" );
     auto id = m_tree->GetSelections( items );
     auto data = (wxDirItemData *) m_tree->GetItemData( items[0] );
-    wxFileName name( data->m_path );
-    auto dir = name.GetPath();
+    wxFileName path( data->m_path );
+    auto dir = path.GetPath();
     while( !failed )
     {
         wxFileDialog dlg( m_parent, _( "Create Library" ), dir, wxEmptyString, "AB Library (*.abl)|*.abl", wxFD_SAVE );
@@ -815,7 +816,7 @@ bool LibraryViewPainter::LoadApplicationOject(const wxString &fileName, std::uni
                                 widthStr = queryChildren->GetNodeContent();
                                 lastcompiled.ParseISOCombined( widthStr );
                             }
-                            if( queryChildren->GetName().IsSameAs( "" ) )
+                            if( queryChildren->GetName().IsSameAs( "sizeinbytes" ) )
                             {
                                 size = wxAtoi( queryChildren->GetNodeContent() );
                             }
