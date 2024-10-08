@@ -23,7 +23,6 @@
 #include <memory>
 #include <mutex>
 #include <vector>
-#include "wx/xml/xml.h"
 #ifndef __WXGTK__
 #include "wx/volume.h"
 #endif
@@ -278,7 +277,7 @@ void LibraryViewPainter::CreateLibraryMenu()
     fileMenu->Append( wxID_EXIT );
     mbar->Insert( 0, fileMenu, _( "&File" ) );
     auto libraryMenu = new wxMenu;
-    libraryMenu->Append( wxID_LIBRARYNEW, _( "&Create..." ), _( "Create mew library" ) );
+    libraryMenu->Append( wxID_LIBRARYNEW, _( "&Create..." ), _( "Create new library" ) );
     libraryMenu->Append( wxID_LIBRARYDELETE, _( "&Delete" ), _( "Delete library" ) );
     libraryMenu->Append( wxID_LIBRARYSELECTALL, _( "Select &All" ), _( "Select all library entries wth selected library" ) );
     libraryMenu->AppendSeparator();
@@ -671,7 +670,7 @@ void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
         }
         else
         {
-            auto name = dlg.GetPath();
+            auto name = dlg.GetPath() + ".abl";
             if( wxFile::Exists( name ) )
                 wxMessageBox( _( "Create failed. Possible cases:\n\r1.Library already exist.\n\r2.Invalid library name.\n\r3.Invalid path name,\n\r4.Out of disk space" ),
                               _( "Library creation failed" ),
@@ -682,15 +681,15 @@ void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
                 library->SetCreationTime( wxDateTime::Now() );
                 failed = true;
                 wxDynamicLibrary lib;
-                wxString name;
+                wxString libName;
 #ifdef __WXMSW__
-                name = m_libPath + "dialogs";
+                libName = m_libPath + "dialogs";
 #elif __WXOSX__
-                name = m_libPath + "liblibdialogs.dylib" ;
+                libName = m_libPath + "liblibdialogs.dylib" ;
 #else
-                name = m_libPath + "libdialogs";
+                libName = m_libPath + "libdialogs";
 #endif
-                lib.Load( name );
+                lib.Load( libName );
                 if( lib.IsLoaded() )
                 {
                     wxAny any = library;
