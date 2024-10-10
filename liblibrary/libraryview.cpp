@@ -57,7 +57,9 @@ wxBEGIN_EVENT_TABLE(LibraryViewPainter, wxView)
     EVT_MENU(wxID_LIBRARYDELETE, LibraryViewPainter::OnLibraryDelete)
     EVT_UPDATE_UI(wxID_LIBRARYSELECTALL, LibraryViewPainter::OnSelectAllUpdateUI)
     EVT_UPDATE_UI(wxID_LIBRARYDELETE, LibraryViewPainter::OnDeleteLibraryUpdateUI)
+    EVT_UPDATE_UI(wxID_EXPANDCOLLAPS, LibraryViewPainter::OnExpandCollapsUpdateUI)
     EVT_MENU(wxID_LIBRARYSELECTALL, LibraryViewPainter::OnSelectAll)
+    EVT_MENU(wxID_EXPANDCOLLAPS, LibraryViewPainter::OnExpandCollapse)
 wxEND_EVENT_TABLE()
 
 bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
@@ -135,16 +137,16 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
 #ifdef __WXMSW__
     HANDLE gs_wxMainThread = NULL;
     const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "library", &gs_wxMainThread );
-    const void *dataLibOOpen = nullptr, *dataLibClosed = nullptr;
+    const void *dataLibOpen = nullptr, *dataLibClosed = nullptr;
     size_t libOpen, libClosed;
-    if( !wxLoadUserResource( &dataLibOOpen, &libOpen, "libOpen", RT_RCDATA, inst ) )
+    if( !wxLoadUserResource( &dataLibOpen, &libOpen, "libOpen", RT_RCDATA, inst ) )
     {
         auto err = ::GetLastError();
         wxMessageBox( wxString::Format( "Error: %d!!", err ) );
     }
     else
     {
-        libraryOpen = wxBitmapBundle::FromSVG( (const char *) dataLibOOpen, wxSize( 16, 16 ) );
+        libraryOpen = wxBitmapBundle::FromSVG( (const char *) dataLibOpen, wxSize( 16, 16 ) );
     }
     if( !wxLoadUserResource( &dataLibClosed, &libClosed, "libClosed", RT_RCDATA, inst ) )
     {
@@ -155,6 +157,10 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     {
         libraryClosed = wxBitmapBundle::FromSVG( (const char *) dataLibClosed, wxSize( 16, 16 ) );
     }
+    if( libraryClosed.IsOk() )
+        wxMessageBox( "Bundle is good" );
+    if( libraryOpen.IsOk() )
+        wxMessageBox( "Bundle is good" );
 #elif __WXOSX__
     libraryOpen = wxBitmapBundle::FromSVGResource( "libOpen", wxSize( 16, 16 ) );
     libraryClosed = libraryClosed = wxBitmapBundle::FromSVGResource( "libClosed", wxSize( 16, 16 ) );
@@ -174,7 +180,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     auto size = wxArtProvider::GetSizeHint( wxART_OTHER, m_frame );
     images->Add( wxArtProvider::GetBitmap( wxART_FOLDER, wxART_OTHER, wxSize( 16, 16 ) ) );
     images->Add( wxArtProvider::GetBitmap( wxART_FOLDER_OPEN, wxART_OTHER, wxSize( 16, 16 ) ) );
-    images->Add( libraryClosed.GetBitmap( wxSize( 16, 16 ) ), wxNullBitmap );
+    images->Add( libraryClosed.GetBitmap( wxDefaultSize ), wxNullBitmap );
     images->Add( libraryOpen.GetBitmap( wxSize( 16, 16 ) ), wxNullBitmap );
     m_tree->SetImageList( images );
 #endif
@@ -286,6 +292,9 @@ void LibraryViewPainter::CreateLibraryMenu()
     auto entryMenu = new wxMenu;
     entryMenu->Append( wxID_IMPORTLIBRARY, _( "Import..." ), _( "Import library entry from a file" ) );
     mbar->Insert( 2, entryMenu, _( "&Entry" ) );
+    auto designMenu = new wxMenu;
+    designMenu->Append( wxID_EXPANDCOLLAPS, _( "Expand/Collapse Branch\tEnter" ), _("Expand or collapse branch" ) );
+    mbar->Insert( 3, designMenu, _( "&Design" ) );
     m_frame->SetMenuBar( mbar );
 }
 
@@ -876,3 +885,23 @@ void LibraryViewPainter::OnDeleteLibraryUpdateUI(wxUpdateUIEvent &event)
         event.Enable( false );
 }
 
+void LibraryViewPainter::OnExpandCollapsUpdateUI(wxUpdateUIEvent &event)
+{
+    wxTreeListItems items;
+    m_tree->GetSelections( items );
+    auto item = m_tree->GetFirstChild( items[0] );
+    if( item.IsOk() )
+        event.Enable( true );
+    else
+        event.Enable( false );
+}
+
+void LibraryViewPainter::OnExpandCollapse(wxCommandEvent &event)
+{
+    wxTreeListItems items;
+    m_tree->GetSelections( items );
+    if( m_tree->IsExpanded( items[0] ) )
+        m_tree->Collapse( items[0] );
+    else
+        m_tree->Expand( items[0] );
+}
