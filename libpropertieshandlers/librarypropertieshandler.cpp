@@ -34,7 +34,7 @@ int LibraryPropertiesHandler::ApplyProperties()
     libCreated->AddChild( new wxXmlNode( wxXML_TEXT_NODE, "", m_properties.m_created.FormatISOCombined() ) );
     wxXmlNode *comment = new wxXmlNode( header, wxXML_ELEMENT_NODE, "Comment" );
     comment->AddChild( new wxXmlNode( wxXML_TEXT_NODE, "", m_properties.m_comment ) );
-    wxFileOutputStream stream( m_name );
+    wxFileOutputStream stream( m_properties.m_name );
     doc.Save( stream );
     return 0;
 }
