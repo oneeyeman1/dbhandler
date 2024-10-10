@@ -847,7 +847,7 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
     }
     QueryInfo query;
     wxString widthStr, objectComment, objectName;
-    unsigned int size;
+    unsigned int size = 0;
     wxDateTime lastmodified = wxDateTime::Now(), lastcompiled = wxDateTime::Now();
     wxXmlNode *children = m_doc.GetRoot()->GetChildren(), *bodyChildren, *queryChildren, *headerChildren;
     while( children )
