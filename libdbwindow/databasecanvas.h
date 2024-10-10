@@ -194,6 +194,7 @@ private:
 #define wxID_IMPORTLIBRARY        603
 #define wxID_LIBRARYSELECTALL     604
 #define wxID_EXPANDCOLLAPS        605
+#define wxID_SELECTDEVICE         606
 #define wxID_LEFTALIGN            1000
 #define wxID_CENTERALIGN          1001 
 #define wxID_RIGHTALIGN           1002

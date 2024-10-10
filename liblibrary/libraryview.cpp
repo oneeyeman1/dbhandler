@@ -60,6 +60,7 @@ wxBEGIN_EVENT_TABLE(LibraryViewPainter, wxView)
     EVT_UPDATE_UI(wxID_EXPANDCOLLAPS, LibraryViewPainter::OnExpandCollapsUpdateUI)
     EVT_MENU(wxID_LIBRARYSELECTALL, LibraryViewPainter::OnSelectAll)
     EVT_MENU(wxID_EXPANDCOLLAPS, LibraryViewPainter::OnExpandCollapse)
+    EVT_MENU(wxID_SELECTDEVICE, LibraryViewPainter::OnSelectDevice)
 wxEND_EVENT_TABLE()
 
 bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
@@ -294,6 +295,8 @@ void LibraryViewPainter::CreateLibraryMenu()
     mbar->Insert( 2, entryMenu, _( "&Entry" ) );
     auto designMenu = new wxMenu;
     designMenu->Append( wxID_EXPANDCOLLAPS, _( "Expand/Collapse Branch\tEnter" ), _("Expand or collapse branch" ) );
+    designMenu->Append( wxID_SELECTDEVICE, _( "Select Devce" ), _( "Select devce" ) );
+    designMenu->AppendSeparator();
     mbar->Insert( 3, designMenu, _( "&Design" ) );
     m_frame->SetMenuBar( mbar );
 }
@@ -904,4 +907,9 @@ void LibraryViewPainter::OnExpandCollapse(wxCommandEvent &event)
         m_tree->Collapse( items[0] );
     else
         m_tree->Expand( items[0] );
+}
+
+void LibraryViewPainter::OnSelectDevice(wxCommandEvent &event)
+{
+    m_drive->Popup();
 }
