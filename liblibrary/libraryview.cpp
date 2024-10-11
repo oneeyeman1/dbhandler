@@ -202,6 +202,9 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     m_tree->SetFocus();
     m_tree->Bind( wxEVT_TREELIST_ITEM_CONTEXT_MENU, &LibraryViewPainter::OnItemContextMenu, this );
     m_tree->Bind( wxEVT_TREELIST_SELECTION_CHANGED, &LibraryViewPainter::OnSelectionChanged, this );
+#ifdef __WXGTK__
+    m_parent->SendSizeEvent();
+#endif
     return true;
 }
 
