@@ -16,6 +16,7 @@
 #ifdef __WXGTK__
 #include "libraryopen.h"
 #include "libraryclosed.h"
+#include "query.h"
 #include "selectall.h"
 #endif
 
@@ -135,11 +136,12 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     m_tree->AppendColumn( "Date Compiled" );
     m_tree->AppendColumn( "Size (in Bytes)" );
     m_tree->AppendColumn( "Comments" );
+    wxBitmapBundle queryIcon;
 #ifdef __WXMSW__
     HANDLE gs_wxMainThread = NULL;
     const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "library", &gs_wxMainThread );
-    const void *dataLibOpen = nullptr, *dataLibClosed = nullptr;
-    size_t libOpen, libClosed;
+    const void *dataLibOpen = nullptr, *dataLibClosed = nullptr, *dataQuery = nullptr;
+    size_t libOpen, libClosed, querySize;
     if( !wxLoadUserResource( &dataLibOpen, &libOpen, "libOpen", RT_RCDATA, inst ) )
     {
         auto err = ::GetLastError();
@@ -158,16 +160,23 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     {
         libraryClosed = wxBitmapBundle::FromSVG( (const char *) dataLibClosed, wxSize( 16, 16 ) );
     }
-    if( libraryClosed.IsOk() )
-        wxMessageBox( "Bundle is good" );
-    if( libraryOpen.IsOk() )
-        wxMessageBox( "Bundle is good" );
+    if( !wxLoadUserResource( &dataQuery, &querySize, "query", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+    }
+    else
+    {
+        queryIcon = wxBitmapBundle::FromSVG( (const char *) dataQuery, wxSize( 16, 16 ) );
+    }
 #elif __WXOSX__
     libraryOpen = wxBitmapBundle::FromSVGResource( "libOpen", wxSize( 16, 16 ) );
-    libraryClosed = libraryClosed = wxBitmapBundle::FromSVGResource( "libClosed", wxSize( 16, 16 ) );
+    libraryClosed = wxBitmapBundle::FromSVGResource( "libClosed", wxSize( 16, 16 ) );
+    queryIcon = wxBitmapBundle::FromSVGREsource( "query", wxSize( 16, 16 ) );
 #else
     libraryOpen = wxBitmapBundle::FromSVG( libOpen, wxSize( 16, 16 ) );
     libraryClosed = wxBitmapBundle::FromSVG( libClosed, wxSize( 16, 16 ) );
+    queryIcon = wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ) );
 #endif
 #if wxCHECK_VERSION( 3, 3, 0 )
     wxVector<wxBitmapBundle> images;
@@ -175,6 +184,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     images.push_back( wxArtProvider::GetBitmapBundle( wxART_FOLDER_OPEN ) );
     images.push_back( libraryClosed );
     images.push_back( libraryOpen );
+    images.push_back( queryIcon );
     m_tree->SetStateImages( images );
 #else
     wxImageList *images = new wxImageList( 16, 16 );
@@ -183,6 +193,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     images->Add( wxArtProvider::GetBitmap( wxART_FOLDER_OPEN, wxART_OTHER, wxSize( 16, 16 ) ) );
     images->Add( libraryClosed.GetBitmap( wxDefaultSize ), wxNullBitmap );
     images->Add( libraryOpen.GetBitmap( wxSize( 16, 16 ) ), wxNullBitmap );
+    images->Add( queryIcon.GetBitmap( wxSize( 16, 16 ) ), wxNullBitmap );
     m_tree->SetImageList( images );
 #endif
     wxString rootName = "";
