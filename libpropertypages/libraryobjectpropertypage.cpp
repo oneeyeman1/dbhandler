@@ -45,6 +45,7 @@ LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, const Lib
     SetSizer( main );
     main->Fit( this );
     m_comment->SetFocus();
+    m_comment->Bind( wxEVT_TEXT, &LibraryObjectPropertyPage::OnCommentChange, this );
 }
 
 LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, LibraryObjectProperty *object) : PropertyPageBase( parent )
@@ -88,4 +89,13 @@ LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, LibraryOb
     SetSizer( main );
     main->Fit( this );
     m_comment->SetFocus();
+    m_comment->Bind( wxEVT_TEXT, &LibraryObjectPropertyPage::OnCommentChange, this );
 }
+
+void LibraryObjectPropertyPage::OnCommentChange(wxCommandEvent &event)
+{
+    auto btn = GetParent()->GetParent()->FindWindowById( wxID_APPLY );
+    if( btn )
+        btn->Enable( true );
+}
+
