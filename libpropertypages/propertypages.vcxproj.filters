@@ -21,6 +21,7 @@
     <ClCompile Include="wherehavingpage.cpp" />
     <ClCompile Include="databaseoptioncolours.cpp" />
     <ClCompile Include="libraryobjectpropertypage.cpp" />
+    <ClCompile Include="librarypainteroptionsgeneral.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bandgeneral.h" />
@@ -45,6 +46,7 @@
     <ClInclude Include="tableprimarykey.h" />
     <ClInclude Include="wherehavingpage.h" />
     <ClInclude Include="libraryobjectpropertypage.h" />
+    <ClInclude Include="librarypainteroptionsgeneral.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="propertypages.rc" />
