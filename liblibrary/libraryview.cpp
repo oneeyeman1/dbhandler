@@ -187,6 +187,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     images.push_back( queryIcon );
     m_tree->SetStateImages( images );
 #else
+    auto bmp = queryIcon.GetBitmap( wxSize( 16, 16 ) );
     wxImageList *images = new wxImageList( 16, 16 );
     auto size = wxArtProvider::GetSizeHint( wxART_OTHER, m_frame );
     images->Add( wxArtProvider::GetBitmap( wxART_FOLDER, wxART_OTHER, wxSize( 16, 16 ) ) );
