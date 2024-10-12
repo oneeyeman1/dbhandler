@@ -132,6 +132,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     sizer->Add( m_drive, 0 , wxEXPAND, 0 );
     m_tree = new wxTreeListCtrl( m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTL_NO_HEADER | wxTL_MULTIPLE );
     m_tree->AppendColumn( "Name" );
+    m_tree->AppendColumn( "Checked Out By" );
     m_tree->AppendColumn( "Last Modified" );
     m_tree->AppendColumn( "Date Compiled" );
     m_tree->AppendColumn( "Size (in Bytes)" );
