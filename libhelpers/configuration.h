@@ -84,11 +84,24 @@ struct DatabaseOptions
     DatabaseOptionColors m_colors;
 };
 
+struct LibraryPainterOptionsGeneral
+{
+    bool m_showCheckedOut, m_showModification, m_showCompilation, m_showSizes, m_showComments;
+    bool m_compWarning, m_comObsolete;
+    bool m_saveBackups, m_confirmDelete;
+};
+
+struct LibraryPainterOptions
+{
+    LibraryPainterOptionsGeneral m_general;
+};
+
 struct Configuration
 {
     std::map<wxString, ToolbarSetup> m_tbSettings;
     int m_querySource, m_queryPresentation;
     DatabaseOptions m_dbOptions;
+    LibraryPainterOptions m_libPainterOptions;
     wxString m_currentLibrary;
 };
 

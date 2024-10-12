@@ -43,7 +43,9 @@ libpropertypages_la_SOURCES =  \
 	databaseoptiongeneral.cpp \
 	databaseoptiongeneral.h \
 	libraryobjectpropertypage.cpp \
-	libraryobjectpropertypage.h
+	libraryobjectpropertypage.h \
+	librarypainteroptionsgeneral.cpp \
+	librarypainteroptionsgeneral.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \

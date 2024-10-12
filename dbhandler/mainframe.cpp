@@ -191,6 +191,8 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->Read( "ForeignKeyLine", &temp, defaultVal );
     m_conf->m_dbOptions.m_colors.m_foreignKeyLine = wxColour( ( temp & 0xFF0000 ) >> 16, ( temp & 0x00FF00 ) >> 8, ( temp & 0x0000FF ) );
     m_config->SetPath( path );
+    m_config->SetPath( "Library/General" );
+    m_config->Read( "ShowCheckedOut", &m_conf->m_libPainterOptions.m_general.m_showCheckedOut, 1 );
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );
