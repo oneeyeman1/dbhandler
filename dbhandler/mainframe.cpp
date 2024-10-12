@@ -191,8 +191,17 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->Read( "ForeignKeyLine", &temp, defaultVal );
     m_conf->m_dbOptions.m_colors.m_foreignKeyLine = wxColour( ( temp & 0xFF0000 ) >> 16, ( temp & 0x00FF00 ) >> 8, ( temp & 0x0000FF ) );
     m_config->SetPath( path );
-    m_config->SetPath( "Library/General" );
+    m_config->SetPath( "LibraryPanter/General" );
     m_config->Read( "ShowCheckedOut", &m_conf->m_libPainterOptions.m_general.m_showCheckedOut, 1 );
+    m_config->Read( "ShowModification", &m_conf->m_libPainterOptions.m_general.m_showModification, 1 );
+    m_config->Read( "ShowCompilation", &m_conf->m_libPainterOptions.m_general.m_showCompilation, 1 );
+    m_config->Read( "ShowSizes", &m_conf->m_libPainterOptions.m_general.m_showSizes, 1 );
+    m_config->Read( "ShowComments", &m_conf->m_libPainterOptions.m_general.m_showComments, 1 );
+    m_config->Read( "Information", &m_conf->m_libPainterOptions.m_general.m_compInformation, 1 );
+    m_config->Read( "Obsolete", &m_conf->m_libPainterOptions.m_general.m_comObsolete, 1 );
+    m_config->Read( "SaveBackups", &m_conf->m_libPainterOptions.m_general.m_saveBackups, 1 );
+    m_config->Read( "ConfirmDelete", &m_conf->m_libPainterOptions.m_general.m_confirmDelete, 1 );
+    m_config->SetPath( path );
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );
@@ -319,6 +328,17 @@ MainFrame::~MainFrame()
     m_config->Write( "TableHeaderText", m_conf->m_dbOptions.m_colors.m_tableHeaderText.GetRed() * 65536 + m_conf->m_dbOptions.m_colors.m_tableHeaderText.GetGreen() * 256 + m_conf->m_dbOptions.m_colors.m_tableHeaderText.GetBlue() );
     m_config->Write( "TableCommentText", m_conf->m_dbOptions.m_colors.m_tableCommentText.GetRed() * 65536 + m_conf->m_dbOptions.m_colors.m_tableCommentText.GetGreen() * 256 + m_conf->m_dbOptions.m_colors.m_tableCommentText.GetBlue() );
     m_config->Write( "ForeignKeyLine", m_conf->m_dbOptions.m_colors.m_foreignKeyLine.GetRed() * 65536 + m_conf->m_dbOptions.m_colors.m_foreignKeyLine.GetGreen() * 256 + m_conf->m_dbOptions.m_colors.m_foreignKeyLine.GetBlue() );
+    m_config->SetPath( path );
+    m_config->SetPath( "LibraryPanter/General" );
+    m_config->Write( "ShowCheckedOut", m_conf->m_libPainterOptions.m_general.m_showCheckedOut );
+    m_config->Write( "ShowModification", m_conf->m_libPainterOptions.m_general.m_showModification );
+    m_config->Write( "ShowCompilation", m_conf->m_libPainterOptions.m_general.m_showCompilation );
+    m_config->Write( "ShowSizes", m_conf->m_libPainterOptions.m_general.m_showSizes );
+    m_config->Write( "ShowComments", m_conf->m_libPainterOptions.m_general.m_showComments );
+    m_config->Write( "Information", m_conf->m_libPainterOptions.m_general.m_compInformation );
+    m_config->Write( "Obsolete", m_conf->m_libPainterOptions.m_general.m_comObsolete );
+    m_config->Write( "SaveBackups", m_conf->m_libPainterOptions.m_general.m_saveBackups );
+    m_config->Write( "ConfirmDelete", m_conf->m_libPainterOptions.m_general.m_confirmDelete );
     m_config->SetPath( path );
     if( result )
     {

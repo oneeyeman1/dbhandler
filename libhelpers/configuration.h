@@ -87,7 +87,7 @@ struct DatabaseOptions
 struct LibraryPainterOptionsGeneral
 {
     bool m_showCheckedOut, m_showModification, m_showCompilation, m_showSizes, m_showComments;
-    bool m_compWarning, m_comObsolete;
+    bool m_compInformation, m_comObsolete;
     bool m_saveBackups, m_confirmDelete;
 };
 
