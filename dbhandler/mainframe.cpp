@@ -202,6 +202,20 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->Read( "SaveBackups", &m_conf->m_libPainterOptions.m_general.m_saveBackups, 1 );
     m_config->Read( "ConfirmDelete", &m_conf->m_libPainterOptions.m_general.m_confirmDelete, 1 );
     m_config->SetPath( path );
+    m_config->SetPath( "LibraryPainter/Include" );
+    m_config->Read( "Name", &m_conf->m_libPainterOptions.m_include.m_name, "*" );
+    m_config->Read( "Applcation", &m_conf->m_libPainterOptions.m_include.m_app, 1 );
+    m_config->Read( "DataPipeline", &m_conf->m_libPainterOptions.m_include.m_pipeline, 1 );
+    m_config->Read( "DataWindow", &m_conf->m_libPainterOptions.m_include.m_datawin, 1 );
+    m_config->Read( "Function", &m_conf->m_libPainterOptions.m_include.m_function, 1 );
+    m_config->Read( "Menu", &m_conf->m_libPainterOptions.m_include.m_menu, 1 );
+    m_config->Read( "Project", &m_conf->m_libPainterOptions.m_include.m_project, 1 );
+    m_config->Read( "Proxy", &m_conf->m_libPainterOptions.m_include.m_proxy, 1 );
+    m_config->Read( "Query", &m_conf->m_libPainterOptions.m_include.m_query, 1 );
+    m_config->Read( "Structure", &m_conf->m_libPainterOptions.m_include.m_structure, 1 );
+    m_config->Read( "UserObject", &m_conf->m_libPainterOptions.m_include.m_userobject, 1 );
+    m_config->Read( "Window", &m_conf->m_libPainterOptions.m_include.m_wndow, 1 );
+    m_config->SetPath( path );
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );
@@ -339,6 +353,20 @@ MainFrame::~MainFrame()
     m_config->Write( "Obsolete", m_conf->m_libPainterOptions.m_general.m_comObsolete );
     m_config->Write( "SaveBackups", m_conf->m_libPainterOptions.m_general.m_saveBackups );
     m_config->Write( "ConfirmDelete", m_conf->m_libPainterOptions.m_general.m_confirmDelete );
+    m_config->SetPath( path );
+    m_config->SetPath( "LibraryPainter/Include" );
+    m_config->Write( "Name", m_conf->m_libPainterOptions.m_include.m_name );
+    m_config->Write( "Applcation", m_conf->m_libPainterOptions.m_include.m_app );
+    m_config->Write( "DataPipeline", m_conf->m_libPainterOptions.m_include.m_pipeline );
+    m_config->Write( "DataWindow", m_conf->m_libPainterOptions.m_include.m_datawin );
+    m_config->Write( "Function", m_conf->m_libPainterOptions.m_include.m_function );
+    m_config->Write( "Menu", m_conf->m_libPainterOptions.m_include.m_menu );
+    m_config->Write( "Project", m_conf->m_libPainterOptions.m_include.m_project );
+    m_config->Write( "Proxy", m_conf->m_libPainterOptions.m_include.m_proxy );
+    m_config->Write( "Query", m_conf->m_libPainterOptions.m_include.m_query );
+    m_config->Write( "Structure", m_conf->m_libPainterOptions.m_include.m_structure );
+    m_config->Write( "UserObject", m_conf->m_libPainterOptions.m_include.m_userobject );
+    m_config->Write( "Window", m_conf->m_libPainterOptions.m_include.m_wndow );
     m_config->SetPath( path );
     if( result )
     {

@@ -22,6 +22,7 @@
     <ClCompile Include="databaseoptioncolours.cpp" />
     <ClCompile Include="libraryobjectpropertypage.cpp" />
     <ClCompile Include="librarypainteroptionsgeneral.cpp" />
+    <ClCompile Include="librarypainteroptionsinclude.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bandgeneral.h" />
@@ -47,6 +48,7 @@
     <ClInclude Include="wherehavingpage.h" />
     <ClInclude Include="libraryobjectpropertypage.h" />
     <ClInclude Include="librarypainteroptionsgeneral.h" />
+    <ClInclude Include="librarypainteroptionsinclude.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="propertypages.rc" />

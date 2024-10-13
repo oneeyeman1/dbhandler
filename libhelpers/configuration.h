@@ -91,9 +91,16 @@ struct LibraryPainterOptionsGeneral
     bool m_saveBackups, m_confirmDelete;
 };
 
+struct LibraryPanterOptionsInclude
+{
+    wxString m_name;
+    bool m_app, m_pipeline, m_datawin, m_function, m_menu, m_project, m_proxy, m_query, m_structure, m_userobject, m_wndow;
+};
+
 struct LibraryPainterOptions
 {
     LibraryPainterOptionsGeneral m_general;
+    LibraryPanterOptionsInclude m_include;
 };
 
 struct Configuration
