@@ -179,7 +179,6 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     libraryClosed = wxBitmapBundle::FromSVG( libClosed, wxSize( 16, 16 ) );
     queryIcon = wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ) );
 #endif
-//#if wxCHECK_VERSION( 3, 2, 7 )
     wxVector<wxBitmapBundle> images;
     images.push_back( wxArtProvider::GetBitmapBundle( wxART_FOLDER ) );
     images.push_back( wxArtProvider::GetBitmapBundle( wxART_FOLDER_OPEN ) );
@@ -187,16 +186,6 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     images.push_back( libraryOpen );
     images.push_back( queryIcon );
     m_tree->SetImages( images );
-/*#else
-    wxImageList *images = new wxImageList( 16, 16 );
-    auto size = wxArtProvider::GetSizeHint( wxART_OTHER, m_frame );
-    images->Add( wxArtProvider::GetBitmap( wxART_FOLDER, wxART_OTHER, wxSize( 16, 16 ) ) );
-    images->Add( wxArtProvider::GetBitmap( wxART_FOLDER_OPEN, wxART_OTHER, wxSize( 16, 16 ) ) );
-    images->Add( libraryClosed.GetBitmap( wxDefaultSize ), wxNullBitmap );
-    images->Add( libraryOpen.GetBitmap( wxSize( 16, 16 ) ), wxNullBitmap );
-    images->Add( queryIcon.GetBitmap( wxSize( 16, 16 ) ), wxNullBitmap );
-    m_tree->SetImageList( images );
-#endif*/
     wxString rootName = "";
     wxDirItemData *rootData = new wxDirItemData( str, str, true );
 #if defined(__WINDOWS__)
