@@ -676,7 +676,7 @@ void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
     std::unique_ptr<PropertiesHandler> propertiesPtr;
     auto failed = false;
     auto title = _( "Properties" );
-    auto id = m_tree->GetSelections( items );
+    m_tree->GetSelections( items );
     auto data = (wxDirItemData *) m_tree->GetItemData( items[0] );
     wxFileName path( data->m_path );
     auto dir = path.GetPath();
@@ -777,7 +777,7 @@ bool LibraryViewPainter::LoadApplicationOject(const wxString &fileName, std::uni
     {
         QueryInfo query;
         wxString widthStr, objectComment, objectName;
-        unsigned int size;
+        unsigned int size = 0;
         wxDateTime lastmodified = wxDateTime::Now(), lastcompiled = wxDateTime::Now();
         wxXmlNode *children = doc.GetRoot()->GetChildren(), *bodyChildren, *queryChildren, *headerChildren;
         while( children )
@@ -861,10 +861,10 @@ bool LibraryViewPainter::LoadApplicationOject(const wxString &fileName, std::uni
     return true;
 }
 
-void LibraryViewPainter::OnSelectAll(wxCommandEvent &event)
+void LibraryViewPainter::OnSelectAll(wxCommandEvent &WXUNUSED(event))
 {
     wxTreeListItems items;
-    auto count = m_tree->GetSelections( items );
+    m_tree->GetSelections( items );
     SelectAllLibraryObjects( items[0] );
 }
 
@@ -906,7 +906,7 @@ void LibraryViewPainter::OnExpandCollapsUpdateUI(wxUpdateUIEvent &event)
         event.Enable( false );
 }
 
-void LibraryViewPainter::OnExpandCollapse(wxCommandEvent &event)
+void LibraryViewPainter::OnExpandCollapse(wxCommandEvent &WXUNUSED(event))
 {
     wxTreeListItems items;
     m_tree->GetSelections( items );
@@ -916,7 +916,7 @@ void LibraryViewPainter::OnExpandCollapse(wxCommandEvent &event)
         m_tree->Expand( items[0] );
 }
 
-void LibraryViewPainter::OnSelectDevice(wxCommandEvent &event)
+void LibraryViewPainter::OnSelectDevice(wxCommandEvent &WXUNUSED(event))
 {
     m_drive->Popup();
 }
