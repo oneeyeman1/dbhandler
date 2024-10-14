@@ -9,5 +9,6 @@ protected:
 private:
     wxCheckBox *m_logEverything, *m_requireComments;
     wxFilePickerCtrl *m_logFile;
+    wxRadioBox *m_options;
 };
 

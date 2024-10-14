@@ -28,6 +28,7 @@
 #include "wx/dynlib.h"
 #include "wx/stdpaths.h"
 #include "wx/filename.h"
+#include "wx/stdpaths.h"
 #include "wx/xml/xml.h"
 #include "wx/fswatcher.h"
 #include "database.h"
@@ -71,6 +72,7 @@ END_EVENT_TABLE()
 
 MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL, wxID_ANY, "DB Handler" )
 {
+    const wxString managementLogFile = wxStandardPaths::Get().GetAppDocumentsDir() + wxPATH_SEP + "absms.log";
     m_libraryLoaded = false;
     m_conf = new Configuration;
     m_db = NULL;
@@ -215,6 +217,12 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->Read( "Structure", &m_conf->m_libPainterOptions.m_include.m_structure, 1 );
     m_config->Read( "UserObject", &m_conf->m_libPainterOptions.m_include.m_userobject, 1 );
     m_config->Read( "Window", &m_conf->m_libPainterOptions.m_include.m_wndow, 1 );
+    m_config->SetPath( path );
+    m_config->SetPath( "LibraryPainter/SourceManagement" );
+    m_config->Read( "LogEverything", &m_conf->m_libPainterOptions.m_management.m_logEverything, 0 );
+    m_config->Read( "FileName", &m_conf->m_libPainterOptions.m_management.m_logFile, managementLogFile );
+    m_config->Read( "LogOptions", &m_conf->m_libPainterOptions.m_management.m_options, 1 );
+    m_config->Read( "RequireCommentOnCheckin", &m_conf->m_libPainterOptions.m_management.m_requireComment, 0 );
     m_config->SetPath( path );
     m_manager = manager;
     auto menuFile = new wxMenu;
@@ -367,6 +375,12 @@ MainFrame::~MainFrame()
     m_config->Write( "Structure", m_conf->m_libPainterOptions.m_include.m_structure );
     m_config->Write( "UserObject", m_conf->m_libPainterOptions.m_include.m_userobject );
     m_config->Write( "Window", m_conf->m_libPainterOptions.m_include.m_wndow );
+    m_config->SetPath( path );
+    m_config->SetPath( "LibraryPainter/SourceManagement" );
+    m_config->Write( "LogEverything", m_conf->m_libPainterOptions.m_management.m_logEverything );
+    m_config->Write( "FileName", m_conf->m_libPainterOptions.m_management.m_logFile );
+    m_config->Write( "LogOptions", m_conf->m_libPainterOptions.m_management.m_options );
+    m_config->Write( "RequireCommentOnCheckin", m_conf->m_libPainterOptions.m_management.m_requireComment );
     m_config->SetPath( path );
     if( result )
     {

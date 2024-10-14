@@ -97,10 +97,18 @@ struct LibraryPanterOptionsInclude
     bool m_app, m_pipeline, m_datawin, m_function, m_menu, m_project, m_proxy, m_query, m_structure, m_userobject, m_wndow;
 };
 
+struct LibraryPainterOptionsManagement
+{
+    bool m_logEverything, m_requireComment;
+    wxString m_logFile;
+    int m_options;
+};
+
 struct LibraryPainterOptions
 {
     LibraryPainterOptionsGeneral m_general;
     LibraryPanterOptionsInclude m_include;
+    LibraryPainterOptionsManagement m_management;
 };
 
 struct Configuration
