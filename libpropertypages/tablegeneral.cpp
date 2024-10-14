@@ -23,15 +23,16 @@
 #endif
 
 #include "database.h"
+#include "configuration.h"
 #include "propertypagebase.h"
 #include "tablegeneral.h"
 
-TableGeneralProperty::TableGeneralProperty(wxWindow *parent, const wxString &name, const wxString &owner, const wxString &comment, int type) : PropertyPageBase( parent )
+TableGeneralProperty::TableGeneralProperty(wxWindow *parent, const wxString &name, const wxString &owner, const wxString &comment, bool isTable) : PropertyPageBase( parent )
 {
     m_commentText = comment;
     m_nameText = name;
     m_ownerText = owner;
-    m_type = type;
+    m_isTable = isTable;
     m_isModified = false;
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Owner" ) );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Table" ) );
@@ -48,7 +49,7 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, const wxString &nam
         ok->SetDefault();
     m_comment->Bind( wxEVT_CHAR, &TableGeneralProperty::OnCommentKeyEntered, this );
     m_comment->Bind( wxEVT_TEXT, &TableGeneralProperty::OnEditComment, this );
-    if( m_type == DatabaseFieldProperties )
+    if( m_isTable )
     {
         m_owner->Hide();
         m_tableName->Hide();
@@ -63,7 +64,7 @@ TableGeneralProperty::~TableGeneralProperty()
 
 void TableGeneralProperty::set_properties()
 {
-    if( m_type == DatabaseTableProperties )
+    if( m_isTable )
     {
         m_owner->Enable( false );
         m_owner->SetValue( m_ownerText );
