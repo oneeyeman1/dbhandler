@@ -59,7 +59,7 @@
   <PropertyGroup Label="Globals">
     <ProjectName>tabledataedit</ProjectName>
     <ProjectGuid>{20EE2CF1-151F-4ABB-B49B-77F15D0C42DC}</ProjectGuid>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">
