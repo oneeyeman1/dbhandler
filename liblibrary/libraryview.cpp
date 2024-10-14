@@ -179,16 +179,15 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     libraryClosed = wxBitmapBundle::FromSVG( libClosed, wxSize( 16, 16 ) );
     queryIcon = wxBitmapBundle::FromSVG( query, wxSize( 16, 16 ) );
 #endif
-#if wxCHECK_VERSION( 3, 3, 0 )
+//#if wxCHECK_VERSION( 3, 2, 7 )
     wxVector<wxBitmapBundle> images;
     images.push_back( wxArtProvider::GetBitmapBundle( wxART_FOLDER ) );
     images.push_back( wxArtProvider::GetBitmapBundle( wxART_FOLDER_OPEN ) );
     images.push_back( libraryClosed );
     images.push_back( libraryOpen );
     images.push_back( queryIcon );
-    m_tree->SetStateImages( images );
-#else
-    auto bmp = queryIcon.GetBitmap( wxSize( 16, 16 ) );
+    m_tree->SetImages( images );
+/*#else
     wxImageList *images = new wxImageList( 16, 16 );
     auto size = wxArtProvider::GetSizeHint( wxART_OTHER, m_frame );
     images->Add( wxArtProvider::GetBitmap( wxART_FOLDER, wxART_OTHER, wxSize( 16, 16 ) ) );
@@ -197,7 +196,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     images->Add( libraryOpen.GetBitmap( wxSize( 16, 16 ) ), wxNullBitmap );
     images->Add( queryIcon.GetBitmap( wxSize( 16, 16 ) ), wxNullBitmap );
     m_tree->SetImageList( images );
-#endif
+#endif*/
     wxString rootName = "";
     wxDirItemData *rootData = new wxDirItemData( str, str, true );
 #if defined(__WINDOWS__)
@@ -279,6 +278,8 @@ void LibraryViewPainter::CreateViewToolBar()
     else
     {
         selectall = wxBitmapBundle::FromSVG( (const char *) dataSelectAll, wxSize( 16, 16 ) );
+        if( selectall.IsOk() )
+            wxMessageBox( "Select All Bundle is good" );
     }
 #elif __WXGTK__
     selectall = wxBitmapBundle::FromSVG( selectAll, wxSize( 16, 16 ) );
@@ -286,9 +287,10 @@ void LibraryViewPainter::CreateViewToolBar()
     selectall = wxBitmapBundle::FromSVGResource( "selectall", wxSize( 16, 16 ) );
 #endif
     CreateLibraryMenu();
-    m_tb->AddTool( wxID_LIBRARYNEW, _( "New Library" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_NEW, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
-    m_tb->AddTool( wxID_LIBRARYSELECTALL, _( "Select All" ), selectall, selectall, wxITEM_NORMAL, _( "Select All" ), _( "Select all library entries within selected library" ) );
-    m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxArtProvider::GetIcon( wxART_QUIT, wxART_TOOLBAR, wxSize( 16, 16 ) ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
+    m_tb->AddTool( wxID_LIBRARYNEW, _( "New Library" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetIcon( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
+    if( selectall.IsOk() )
+        m_tb->AddTool( wxID_LIBRARYSELECTALL, _( "Select All" ), selectall, selectall, wxITEM_NORMAL, _( "Select All" ), _( "Select all library entries within selected library" ) );
+    m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxArtProvider::GetIcon( wxART_QUIT, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
     m_tb->Realize();
 }
 
