@@ -67,9 +67,3 @@ void LibraryPainterOptionsInclude::OnEntryChanged(wxCommandEvent &WXUNUSED(event
 {
     PageEdited();
 }
-
-void LibraryPainterOptionsInclude::PageEdited()
-{
-    GetParent()->GetParent()->FindWindowById( wxID_APPLY )->Enable( true );
-    m_isModified = true;
-}

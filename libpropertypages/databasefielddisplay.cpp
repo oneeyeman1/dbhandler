@@ -101,6 +101,5 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, wxWindowID id):  Pr
 
 void DatabaseFieldDisplay::OnPageModified( wxCommandEvent &WXUNUSED(event ))
 {
-    dynamic_cast<wxButton *>( GetParent()->GetParent()->FindWindowById( wxID_APPLY ) )->Enable( true );
-    m_isModified = true;
+    PageEdited();
 }

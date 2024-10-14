@@ -62,6 +62,5 @@ LibraryPainterOptionsGeneral::LibraryPainterOptionsGeneral(wxWindow *parent) : P
 
 void LibraryPainterOptionsGeneral::OnPageChange(wxCommandEvent &event)
 {
-    GetParent()->GetParent()->FindWindowById( wxID_APPLY )->Enable( true );
-    m_isModified = true;
+    PageEdited();
 }

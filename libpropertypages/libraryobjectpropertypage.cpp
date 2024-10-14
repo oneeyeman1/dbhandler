@@ -94,9 +94,6 @@ LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, LibraryOb
 
 void LibraryObjectPropertyPage::OnCommentChange(wxCommandEvent &event)
 {
-    auto btn = GetParent()->GetParent()->FindWindowById( wxID_APPLY );
-    if( btn )
-        btn->Enable( true );
-    SetModified( true );
+    PageEdited();
 }
 

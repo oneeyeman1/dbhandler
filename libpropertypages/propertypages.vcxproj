@@ -48,6 +48,7 @@
     <ClInclude Include="libraryobjectpropertypage.h" />
     <ClInclude Include="librarypainteroptionsgeneral.h" />
     <ClInclude Include="librarypainteroptionsinclude.h" />
+    <ClInclude Include="librarypainteroptionsmgmt.h" />
     <ClInclude Include="msw\fontpropertypage.h" />
     <ClInclude Include="objectproperties.h" />
     <ClInclude Include="pointerproperty.h" />
@@ -74,6 +75,7 @@
     <ClCompile Include="libraryobjectpropertypage.cpp" />
     <ClCompile Include="librarypainteroptionsgeneral.cpp" />
     <ClCompile Include="librarypainteroptionsinclude.cpp" />
+    <ClCompile Include="librarypainteroptionsmgmt.cpp" />
     <ClCompile Include="msw\fontpropertypage.cpp" />
     <ClCompile Include="pointerproperty.cpp" />
     <ClCompile Include="printspec.cpp" />

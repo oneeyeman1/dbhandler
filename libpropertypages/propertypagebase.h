@@ -12,6 +12,12 @@ public:
     bool IsModified() { return m_isModified; };
     void SetModified(bool modified) { m_isModified = modified; }
 protected:
+    void PageEdited()
+    {
+        GetParent()->GetParent()->FindWindowById( wxID_APPLY )->Enable( true );
+        m_isModified = true;
+    }
+protected:
     bool m_isModified;
 };
 

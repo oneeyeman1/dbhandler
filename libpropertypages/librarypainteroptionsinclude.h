@@ -1,12 +1,11 @@
 #pragma once
-class LibraryPainterOptionsInclude : public PropertyPageBase
+class WXEXPORT LibraryPainterOptionsInclude : public PropertyPageBase
 {
 public:
     LibraryPainterOptionsInclude(wxWindow *parent);
 protected:
     void OnName(wxCommandEvent &event);
     void OnEntryChanged(wxCommandEvent &event);
-    void PageEdited();
 private:
     wxStaticText *m_label;
     wxTextCtrl *m_name;
