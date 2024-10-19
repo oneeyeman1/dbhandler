@@ -22,7 +22,8 @@ enum
     SignPropertiesType,
     DatabasePropertiesType,
     QueryPropertiesType,
-    LibraryPropertiesType
+    LibraryPropertiesType,
+    LibraryPainterPropertiesType
 };
 
 class WXEXPORT PropertiesHandler

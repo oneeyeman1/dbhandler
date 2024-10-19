@@ -200,7 +200,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->Read( "ShowSizes", &m_conf->m_libPainterOptions.m_general.m_showSizes, 1 );
     m_config->Read( "ShowComments", &m_conf->m_libPainterOptions.m_general.m_showComments, 1 );
     m_config->Read( "Information", &m_conf->m_libPainterOptions.m_general.m_compInformation, 1 );
-    m_config->Read( "Obsolete", &m_conf->m_libPainterOptions.m_general.m_comObsolete, 1 );
+    m_config->Read( "Obsolete", &m_conf->m_libPainterOptions.m_general.m_compObsolete, 1 );
     m_config->Read( "SaveBackups", &m_conf->m_libPainterOptions.m_general.m_saveBackups, 1 );
     m_config->Read( "ConfirmDelete", &m_conf->m_libPainterOptions.m_general.m_confirmDelete, 1 );
     m_config->SetPath( path );
@@ -358,7 +358,7 @@ MainFrame::~MainFrame()
     m_config->Write( "ShowSizes", m_conf->m_libPainterOptions.m_general.m_showSizes );
     m_config->Write( "ShowComments", m_conf->m_libPainterOptions.m_general.m_showComments );
     m_config->Write( "Information", m_conf->m_libPainterOptions.m_general.m_compInformation );
-    m_config->Write( "Obsolete", m_conf->m_libPainterOptions.m_general.m_comObsolete );
+    m_config->Write( "Obsolete", m_conf->m_libPainterOptions.m_general.m_compObsolete );
     m_config->Write( "SaveBackups", m_conf->m_libPainterOptions.m_general.m_saveBackups );
     m_config->Write( "ConfirmDelete", m_conf->m_libPainterOptions.m_general.m_confirmDelete );
     m_config->SetPath( path );

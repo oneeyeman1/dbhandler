@@ -34,6 +34,9 @@
     <ClInclude Include="librarypropertieshandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="librarypainterpropertieshandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="propertieshandler.cpp">
@@ -55,6 +58,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="librarypropertieshandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="librarypainterpopertieshandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

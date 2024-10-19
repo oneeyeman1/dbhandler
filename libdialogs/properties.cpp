@@ -42,6 +42,7 @@
 #include "configuration.h"
 //#include "objectproperties.h"
 #include "propertieshandlerbase.h"
+#include "librarypainterpropertieshandler.h"
 #include "fieldpropertieshandler.h"
 #include "propertieshandler.h"
 #include "dividerpropertieshandler.h"
@@ -64,6 +65,9 @@
 #include "painterobjects.h"
 #include "libraryobjectpropertypage.h"
 #include "librarypropertieshandler.h"
+#include "librarypainteroptionsgeneral.h"
+#include "librarypainteroptionsinclude.h"
+#include "librarypainteroptionsmgmt.h"
 #include "properties.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -165,6 +169,17 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             auto prop = dynamic_cast<LibraryPropertiesHandler *>( handler )->GetLibraryProperties();
             m_page13 = new LibraryObjectPropertyPage( m_properties, prop );
             m_properties->AddPage( m_page13, _( "General" ) );
+        }
+        break;
+        case LibraryPainterPropertiesType:
+        {
+            auto prop = dynamic_cast<LibraryPainterPropertiesHandler *>( handler )->GetOptions();
+            m_page14 = new LibraryPainterOptionsGeneralPage( m_properties, prop->m_general );
+            m_properties->AddPage( m_page14, _( "General" ) );
+            m_page15 = new LibraryPainterOptionsIncludePage( m_properties, prop->m_include );
+            m_properties->AddPage( m_page15, _( "Include" ) );
+            m_page16 = new LibraryPainterOptionsMgmtPage( m_properties, prop->m_management );
+            m_properties->AddPage( m_page16, _( "Source Mgmt" ) );
         }
         break;
     }

@@ -1,9 +1,9 @@
 #pragma once
 
-class WXEXPORT  LibraryPainterOptionsMgmt :  public PropertyPageBase
+class WXEXPORT  LibraryPainterOptionsMgmtPage :  public PropertyPageBase
 {
 public:
-    LibraryPainterOptionsMgmt(wxWindow *parent);
+    LibraryPainterOptionsMgmtPage(wxWindow *parent, LibraryPainterOptionsManagement mgmt);
 protected:
     void OnLogFileUpdateUI(wxUpdateUIEvent &event);
 private:

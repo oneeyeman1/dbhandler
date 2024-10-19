@@ -45,6 +45,7 @@
 #include "configuration.h"
 #include "painterobjects.h"
 #include "propertieshandlerbase.h"
+#include "librarypainterpropertieshandler.h"
 #include "librarypropertieshandler.h"
 #include "librarydocument.h"
 #include "libraryview.h"
@@ -62,6 +63,7 @@ wxBEGIN_EVENT_TABLE(LibraryViewPainter, wxView)
     EVT_MENU(wxID_LIBRARYSELECTALL, LibraryViewPainter::OnSelectAll)
     EVT_MENU(wxID_EXPANDCOLLAPS, LibraryViewPainter::OnExpandCollapse)
     EVT_MENU(wxID_SELECTDEVICE, LibraryViewPainter::OnSelectDevice)
+    EVT_MENU(wxID_PROPERTIES, LibraryViewPainter::OnPainterProperties)
 wxEND_EVENT_TABLE()
 
 bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
@@ -304,6 +306,8 @@ void LibraryViewPainter::CreateLibraryMenu()
     designMenu->Append( wxID_EXPANDCOLLAPS, _( "Expand/Collapse Branch\tEnter" ), _("Expand or collapse branch" ) );
     designMenu->Append( wxID_SELECTDEVICE, _( "Select Devce" ), _( "Select devce" ) );
     designMenu->AppendSeparator();
+    designMenu->AppendSeparator();
+    designMenu->Append( wxID_PROPERTIES, _( "Options..." ), _("Library painter options" ) );
     mbar->Insert( 3, designMenu, _( "&Design" ) );
     m_frame->SetMenuBar( mbar );
 }
@@ -919,4 +923,60 @@ void LibraryViewPainter::OnExpandCollapse(wxCommandEvent &WXUNUSED(event))
 void LibraryViewPainter::OnSelectDevice(wxCommandEvent &WXUNUSED(event))
 {
     m_drive->Popup();
+}
+
+void LibraryViewPainter::OnPainterProperties(wxCommandEvent &event)
+{
+    std::unique_ptr<PropertiesHandler> propertiesPtr;
+    wxDynamicLibrary lib;
+    wxString libName;
+#ifdef __WXMSW__
+    libName = m_libPath + "dialogs";
+#elif __WXOSX__
+    libName = m_libPath + "liblibdialogs.dylib" ;
+#else
+    libName = m_libPath + "libdialogs";
+#endif
+    lib.Load( libName );
+    if( lib.IsLoaded() )
+    {
+        wxString title = _( "Options" );
+        wxAny any = this;
+#if __cplusplus > 201300
+        auto ptr = std::make_unique<LibraryPainterPropertiesHandler>( &m_conf->m_libPainterOptions );
+#else
+        auto ptr = std::unique_ptr<LibraryPainterPropertiesHandler>( new LibraryPainterPropertiesHandler( &m_conf->m_libPainterOptions ) );
+#endif
+        propertiesPtr = std::move( ptr );
+        wxCriticalSection *pcs;
+        propertiesPtr->SetHandlerObject( any );
+        wxString command = wxEmptyString;
+        propertiesPtr->SetType( LibraryPainterPropertiesType );
+        CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
+        auto res = func( m_frame, propertiesPtr, title, command, false, *pcs );
+    }
+}
+
+void LibraryViewPainter::ApplyOptions()
+{
+    if( !m_conf->m_libPainterOptions.m_general.m_showCheckedOut )
+        m_tree->SetColumnWidth( COL_CHECKEDOUT, 0 );
+    else
+        m_tree->SetColumnWidth( COL_CHECKEDOUT, wxCOL_WIDTH_AUTOSIZE );
+    if( !m_conf->m_libPainterOptions.m_general.m_showModification )
+        m_tree->SetColumnWidth( COL_MODIFIED, 0 );
+    else
+        m_tree->SetColumnWidth( COL_MODIFIED, wxCOL_WIDTH_AUTOSIZE );
+    if( !m_conf->m_libPainterOptions.m_general.m_showCompilation )
+        m_tree->SetColumnWidth( COL_COMPILED, 0 );
+    else
+        m_tree->SetColumnWidth( COL_COMPILED, wxCOL_WIDTH_AUTOSIZE );
+    if( !m_conf->m_libPainterOptions.m_general.m_showSizes )
+        m_tree->SetColumnWidth( COL_SIZE, 0 );
+    else
+        m_tree->SetColumnWidth( COL_SIZE, wxCOL_WIDTH_AUTOSIZE );
+    if( !m_conf->m_libPainterOptions.m_general.m_showComments )
+        m_tree->SetColumnWidth( COL_COMMENT, 0 );
+    else
+        m_tree->SetColumnWidth( COL_COMMENT, wxCOL_WIDTH_AUTOSIZE );
 }

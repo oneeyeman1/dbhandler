@@ -40,6 +40,7 @@
     <ClInclude Include="dividerpropertieshandler.h" />
     <ClInclude Include="fieldpropertieshandler.h" />
     <ClInclude Include="labelpropertieshandler.h" />
+    <ClInclude Include="librarypainterpropertieshandler.h" />
     <ClInclude Include="librarypropertieshandler.h" />
     <ClInclude Include="propertieshandler.h" />
     <ClInclude Include="propertieshandlerbase.h" />
@@ -50,6 +51,7 @@
     <ClCompile Include="dividerpropertieshandler.cpp" />
     <ClCompile Include="fieldpropertieshandler.cpp" />
     <ClCompile Include="labelpropertieshandler.cpp" />
+    <ClCompile Include="librarypainterpopertieshandler.cpp" />
     <ClCompile Include="librarypropertieshandler.cpp" />
     <ClCompile Include="propertieshandler.cpp" />
   </ItemGroup>

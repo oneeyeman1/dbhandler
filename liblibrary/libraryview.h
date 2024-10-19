@@ -17,6 +17,7 @@ public:
     void SetConfiguration(Configuration *conf) { m_conf = conf; }
 protected:
     void CreateViewToolBar();
+    void ApplyOptions();
     void CreateLibraryMenu();
     void GetIconFromArtProvider( int id);
     void ExpandRoot(const wxString &path);
@@ -38,6 +39,7 @@ protected:
     void OnSelectAll(wxCommandEvent &event);
     void OnExpandCollapse(wxCommandEvent &event);
     void OnSelectDevice(wxCommandEvent &event);
+    void OnPainterProperties(wxCommandEvent &event);
 private:
     bool LoadApplicationOject(const wxString &fileName, std::unique_ptr<LibraryObject> &library);
     size_t GetAvailableDrives(wxArrayString &paths, wxArrayString &names, wxArrayInt &icons);

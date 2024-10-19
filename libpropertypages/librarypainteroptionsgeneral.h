@@ -1,14 +1,14 @@
 #pragma once
 
-class WXEXPORT LibraryPainterOptionsGeneral :  public PropertyPageBase
+class WXEXPORT LibraryPainterOptionsGeneralPage :  public PropertyPageBase
 {
 public:
-    LibraryPainterOptionsGeneral(wxWindow *parent);
+    LibraryPainterOptionsGeneralPage(wxWindow *parent, LibraryPainterOptionsGeneral general);
 protected:
     void OnPageChange(wxCommandEvent &event);
 private:
     wxCheckBox *m_showStatus, *m_showModification, *m_showCompilation, *m_showSizes, *m_showComment;
     wxCheckBox *m_information, *m_obsolete;
-    wxCheckBox *m_saveBacups, *m_confirmDelete;
+    wxCheckBox *m_saveBackups, *m_confirmDelete;
 };
 

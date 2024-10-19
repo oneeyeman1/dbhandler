@@ -10,11 +10,13 @@
 //
 #include <wx/wx.h>
 
+#include <map>
 #include "wx/checkbox.h"
+#include "configuration.h"
 #include "propertypagebase.h"
 #include "librarypainteroptionsgeneral.h"
 
-LibraryPainterOptionsGeneral::LibraryPainterOptionsGeneral(wxWindow *parent) : PropertyPageBase( parent )
+LibraryPainterOptionsGeneralPage::LibraryPainterOptionsGeneralPage(wxWindow *parent, LibraryPainterOptionsGeneral general) : PropertyPageBase( parent )
 {
     auto sizer = new wxBoxSizer( wxHORIZONTAL );
     sizer->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -22,45 +24,54 @@ LibraryPainterOptionsGeneral::LibraryPainterOptionsGeneral(wxWindow *parent) : P
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     auto statbox1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( "Display" ) ), wxVERTICAL );
     m_showStatus = new wxCheckBox( this, wxID_ANY, _( "Check Out Status" ) );
+    m_showStatus->SetValue( general.m_showCheckedOut );
     statbox1->Add( m_showStatus, 0, wxEXPAND, 0 );
     m_showModification = new wxCheckBox( this, wxID_ANY, _( "Modification Date" ) );
+    m_showModification->SetValue( general.m_showModification );
     statbox1->Add( m_showModification, 0, wxID_ANY, 0 );
     m_showCompilation = new wxCheckBox( this, wxID_ANY, _( "Compilation Date" ) );
+    m_showCompilation->SetValue( general.m_showCompilation );
     statbox1->Add( m_showCompilation, 0, wxEXPAND, 0 );
     m_showSizes = new wxCheckBox( this, wxID_ANY, _( "Sizes" ) );
+    m_showSizes->SetValue( general.m_showSizes );
     statbox1->Add( m_showSizes, 0, wxEXPAND, 0 );
     m_showComment = new wxCheckBox( this, wxID_ANY, _( "Comments" ) );
+    m_showComment->SetValue( general.m_showComments );
     statbox1->Add( m_showComment, 0, wxEXPAND, 0 );
     sizer1->Add( statbox1, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     auto statbox2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( "Compile Messages" ) ), wxVERTICAL );
     m_information = new wxCheckBox( this, wxID_ANY, _( "Information" ) );
+    m_information->SetValue( general.m_compInformation );
     statbox2->Add( m_information, 0, wxEXPAND, 0 );
     m_obsolete = new wxCheckBox( this, wxID_ANY, _( "Obsolete" ) );
+    m_obsolete->SetValue( general.m_compObsolete );
     statbox2->Add( m_obsolete, 0, wxEXPAND, 0 );
     sizer1->Add( statbox2, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_saveBacups = new wxCheckBox( this, wxID_ANY, _( "Save Optimized Backus" ) );
-    sizer1->Add( m_saveBacups, 0, wxEXPAND, 0 );
+    m_saveBackups = new wxCheckBox( this, wxID_ANY, _( "Save Optimized Backus" ) );
+    m_saveBackups->SetValue( general.m_saveBackups );
+    sizer1->Add( m_saveBackups, 0, wxEXPAND, 0 );
     m_confirmDelete = new wxCheckBox( this, wxID_ANY, _( "Confirm on Delete" ) );
+    m_confirmDelete->SetValue( general.m_confirmDelete );
     sizer1->Add( m_confirmDelete, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer->Add( sizer1, 0, wxEXPAND, 0 );
     sizer->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( sizer );
     sizer->Fit( this );
-    m_showStatus->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneral::OnPageChange, this );
-    m_showModification->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneral::OnPageChange, this );
-    m_showCompilation->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneral::OnPageChange, this );
-    m_showSizes->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneral::OnPageChange, this );
-    m_showComment->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneral::OnPageChange, this );
-    m_information->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneral::OnPageChange, this );
-    m_obsolete->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneral::OnPageChange, this );
-    m_saveBacups->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneral::OnPageChange, this );
-    m_confirmDelete->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneral::OnPageChange, this );
+    m_showStatus->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneralPage::OnPageChange, this );
+    m_showModification->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneralPage::OnPageChange, this );
+    m_showCompilation->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneralPage::OnPageChange, this );
+    m_showSizes->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneralPage::OnPageChange, this );
+    m_showComment->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneralPage::OnPageChange, this );
+    m_information->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneralPage::OnPageChange, this );
+    m_obsolete->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneralPage::OnPageChange, this );
+    m_saveBackups->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneralPage::OnPageChange, this );
+    m_confirmDelete->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneralPage::OnPageChange, this );
 }
 
-void LibraryPainterOptionsGeneral::OnPageChange(wxCommandEvent &event)
+void LibraryPainterOptionsGeneralPage::OnPageChange(wxCommandEvent &event)
 {
     PageEdited();
 }

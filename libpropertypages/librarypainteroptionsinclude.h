@@ -1,8 +1,8 @@
 #pragma once
-class WXEXPORT LibraryPainterOptionsInclude : public PropertyPageBase
+class WXEXPORT LibraryPainterOptionsIncludePage : public PropertyPageBase
 {
 public:
-    LibraryPainterOptionsInclude(wxWindow *parent);
+    LibraryPainterOptionsIncludePage(wxWindow *parent, LibraryPanterOptionsInclude include);
 protected:
     void OnName(wxCommandEvent &event);
     void OnEntryChanged(wxCommandEvent &event);

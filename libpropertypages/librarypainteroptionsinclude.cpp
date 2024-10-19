@@ -10,11 +10,13 @@
 //
 #include <wx/wx.h>
 
+#include <map>
 #include "wx/checkbox.h"
+#include "configuration.h"
 #include "propertypagebase.h"
 #include "librarypainteroptionsinclude.h"
 
-LibraryPainterOptionsInclude::LibraryPainterOptionsInclude(wxWindow *parent) : PropertyPageBase( parent )
+LibraryPainterOptionsIncludePage::LibraryPainterOptionsIncludePage(wxWindow *parent, LibraryPanterOptionsInclude include) : PropertyPageBase( parent )
 {
     const wxString labels[] =
     {
@@ -38,7 +40,7 @@ LibraryPainterOptionsInclude::LibraryPainterOptionsInclude(wxWindow *parent) : P
     m_label = new wxStaticText( this, wxID_ANY, _( "&Name:" ) );
     sizer2->Add( m_label, 0, wxEXPAND, 0 );
     m_name = new wxTextCtrl( this, wxID_ANY, "" );
-    m_name->Bind( wxEVT_TEXT, &LibraryPainterOptionsInclude::OnName, this );
+    m_name->Bind( wxEVT_TEXT, &LibraryPainterOptionsIncludePage::OnName, this );
     sizer2->Add( m_name, 0, wxEXPAND, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -48,7 +50,7 @@ LibraryPainterOptionsInclude::LibraryPainterOptionsInclude(wxWindow *parent) : P
     {
         m_objects[i] = new wxCheckBox( this, wxID_ANY, labels[i] );
         sizer4->Add( m_objects[i], 0, wxEXPAND, 0 );
-        m_objects[i]->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsInclude::OnEntryChanged, this );
+        m_objects[i]->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsIncludePage::OnEntryChanged, this );
     }
     sizer3->Add( sizer4, 0, wxEXPAND, 0 );
     sizer1->Add( sizer3, 0, wxEXPAND, 0 );
@@ -58,12 +60,12 @@ LibraryPainterOptionsInclude::LibraryPainterOptionsInclude(wxWindow *parent) : P
     SetSizer( sizer );
     sizer->Fit( this );
 }
-void LibraryPainterOptionsInclude::OnName(wxCommandEvent &WXUNUSED(event))
+void LibraryPainterOptionsIncludePage::OnName(wxCommandEvent &WXUNUSED(event))
 {
     PageEdited();
 }
 
-void LibraryPainterOptionsInclude::OnEntryChanged(wxCommandEvent &WXUNUSED(event))
+void LibraryPainterOptionsIncludePage::OnEntryChanged(wxCommandEvent &WXUNUSED(event))
 {
     PageEdited();
 }
