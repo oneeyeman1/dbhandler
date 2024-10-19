@@ -245,7 +245,7 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     return res;
 }
 
-extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title, wxString &command, bool logOnly, wxCriticalSection &cs)
+extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title, wxString &command, wxCriticalSection &cs)
 {
     int res = 0;
     PropertiesDialog dlg( parent, wxID_ANY, title, handler.get(), cs );
@@ -399,6 +399,11 @@ extern "C" WXEXPORT int GetODBCCredentails(wxWindow *parent, const wxString &dsn
         userID = dlg.GetUserIDControl().GetValue();
         password = dlg.GetPasswordControl().GetValue();
     }
+#else
+    (void) parent;
+    (void) dsn;
+    (void) userID;
+    (void) password;
 #endif
     return res;
 }
