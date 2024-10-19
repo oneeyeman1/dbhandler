@@ -9,17 +9,6 @@
 #ifndef colorcombobox_h
 #define colorcombobox_h
 
-#ifdef __WXMSW__
-#ifndef HELPERS_EXPORT
-#define HELPERS_EXPORT __declspec(dllimport)
-#else
-#define HELPERS_EXPORT __declspec(dllexport)
-#endif
-#else
-#define HELPERS_EXPORT
-#endif
-
-
 struct ColorStruct
 {
     ColorStruct()
@@ -37,7 +26,7 @@ struct ColorStruct
     wxString m_name;
 };
 
-class HELPERS_EXPORT CColorComboBox : public wxBitmapComboBox
+class WXEXPORT CColorComboBox : public wxBitmapComboBox
 {
 public:
     CColorComboBox( wxWindow *parent, wxWindowID = wxID_ANY, wxString selection = wxEmptyString, const wxPoint &pos =  wxDefaultPosition, const wxSize &size = wxDefaultSize, int n = 0, const wxString choices[] = NULL, long style = wxCB_READONLY );
