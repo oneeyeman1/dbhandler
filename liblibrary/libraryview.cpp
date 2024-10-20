@@ -269,8 +269,6 @@ void LibraryViewPainter::CreateViewToolBar()
     else
     {
         selectall = wxBitmapBundle::FromSVG( (const char *) dataSelectAll, wxSize( 16, 16 ) );
-        if( selectall.IsOk() )
-            wxMessageBox( "Select All Bundle is good" );
     }
 #elif __WXGTK__
     selectall = wxBitmapBundle::FromSVG( selectAll, wxSize( 16, 16 ) );
@@ -278,11 +276,57 @@ void LibraryViewPainter::CreateViewToolBar()
     selectall = wxBitmapBundle::FromSVGResource( "selectall", wxSize( 16, 16 ) );
 #endif
     CreateLibraryMenu();
-    m_tb->AddTool( wxID_LIBRARYNEW, _( "New Library" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetIcon( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
-    if( selectall.IsOk() )
-        m_tb->AddTool( wxID_LIBRARYSELECTALL, _( "Select All" ), selectall, selectall, wxITEM_NORMAL, _( "Select All" ), _( "Select all library entries within selected library" ) );
-    m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxArtProvider::GetIcon( wxART_QUIT, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
+    m_tb->AddTool( wxID_LIBRARYNEW, _( "New Library" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
+/*    m_tb->AddTool( wxID_LIBRARYSELECTALL, _( "Select All" ), selectall, selectall, wxITEM_NORMAL, _( "Select All" ), _( "Select all library entries within selected library" ) );*/
+    m_tb->AddTool( wxID_CLOSE, _( "Close View" ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_QUIT, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Close" ), _( "Close Library View" ) );
     m_tb->Realize();
+    LayoutChildren( size );
+}
+
+void LibraryViewPainter::LayoutChildren(const wxSize &size)
+{
+    int offset = 0;
+    auto posFrame = wxPoint( 0, 0 );
+    auto sizeFrame = wxSize( size.x, size.y );
+    if( m_conf->m_tbSettings["ViewBar"].m_hideShow && m_tb->IsShown() )
+    {
+        switch( m_conf->m_tbSettings["ViewBar"].m_orientation )
+        {
+        case 0:
+            m_tb->SetSize( 0, 0,  wxDefaultCoord, size.y );
+            offset = m_tb->GetSize().x;
+            posFrame.x = offset;
+            sizeFrame.SetWidth ( ( size.x - offset ) );
+            break;
+        case 1:
+            m_tb->SetSize( 0, 0,  size.x, wxDefaultCoord );
+            offset = m_tb->GetSize().y;
+            posFrame.y = offset;
+            sizeFrame.SetHeight( ( size.y - offset ) );
+            break;
+        case 2:
+            offset = m_tb->GetSize().x;
+            m_tb->SetSize( size.x - offset, 0,  offset, size.y );
+            sizeFrame.SetWidth( size.x - offset );
+            sizeFrame.SetHeight( size.y );
+            break;
+        case 3:
+            offset = m_tb->GetSize().y;
+            sizeFrame.SetWidth( size.x );
+            sizeFrame.SetHeight( ( size.y - offset ) );
+            m_tb->SetSize( 0, size.y - offset, size.x, wxDefaultCoord );
+            break;
+        default:
+            break;
+        }
+    }
+    else
+        m_tb->Hide();
+#if defined( __WXMSW__ ) || defined( __WXGTK__ )
+    m_frame->SetSize( posFrame.x, posFrame.y, sizeFrame.GetWidth(), sizeFrame.GetHeight() );
+#else
+    m_canvas->SetSize( posFrame.x, posFrame.y, sizeFrame.GetWidth(), sizeFrame.GetHeight() );
+#endif
 }
 
 void LibraryViewPainter::CreateLibraryMenu()
@@ -925,7 +969,7 @@ void LibraryViewPainter::OnSelectDevice(wxCommandEvent &WXUNUSED(event))
     m_drive->Popup();
 }
 
-void LibraryViewPainter::OnPainterProperties(wxCommandEvent &event)
+void LibraryViewPainter::OnPainterProperties(wxCommandEvent &WXUNUSED(event))
 {
     std::unique_ptr<PropertiesHandler> propertiesPtr;
     wxDynamicLibrary lib;

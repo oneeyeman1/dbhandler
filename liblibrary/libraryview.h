@@ -26,6 +26,7 @@ protected:
     void PopulateNode(wxTreeListItem parent);
     const wxTreeListItem AddSection(const wxString& path, const wxString& name);
     wxTreeListItem FindChild(wxTreeListItem parentId, const wxString& path, bool& done);
+    void LayoutChildren(const wxSize &size);
 
     void SelectAllLibraryObjects(wxTreeListItem item);
 
