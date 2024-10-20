@@ -174,11 +174,11 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         case LibraryPainterPropertiesType:
         {
             auto prop = dynamic_cast<LibraryPainterPropertiesHandler *>( handler )->GetOptions();
-            m_page14 = new LibraryPainterOptionsGeneralPage( m_properties, prop->m_general );
+            m_page14 = new LibraryPainterOptionsGeneralPage( m_properties, prop.m_general );
             m_properties->AddPage( m_page14, _( "General" ) );
-            m_page15 = new LibraryPainterOptionsIncludePage( m_properties, prop->m_include );
+            m_page15 = new LibraryPainterOptionsIncludePage( m_properties, prop.m_include );
             m_properties->AddPage( m_page15, _( "Include" ) );
-            m_page16 = new LibraryPainterOptionsMgmtPage( m_properties, prop->m_management );
+            m_page16 = new LibraryPainterOptionsMgmtPage( m_properties, prop.m_management );
             m_properties->AddPage( m_page16, _( "Source Mgmt" ) );
         }
         break;
