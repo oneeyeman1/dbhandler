@@ -18,7 +18,9 @@ libpropertieshandlers_la_SOURCES =  \
 	labelpropertieshandler.cpp \
 	labelpropertieshandler.h \
 	librarypropertieshandler.cpp \
-	librarypropertieshandler.h
+	librarypropertieshandler.h \
+	librarypainterpropertieshandler.cpp \
+	librarypainterpropertieshandler.h
 
 libpropertieshandlers_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libpropertypages \
