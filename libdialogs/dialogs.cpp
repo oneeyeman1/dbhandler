@@ -245,19 +245,19 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     return res;
 }
 
-extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title, wxString &command, wxCriticalSection &cs)
+extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title, wxString &command)
 {
     int res = 0;
-    PropertiesDialog dlg( parent, wxID_ANY, title, handler.get(), cs );
+    PropertiesDialog dlg( parent, wxID_ANY, title, handler.get() );
 	dlg.Center();
     res = dlg.ShowModal();
     return res;
 }
 
-extern "C" WXEXPORT int CreatePropertiesDialogForObject(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title, wxCriticalSection &cs)
+extern "C" WXEXPORT int CreatePropertiesDialogForObject(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title)
 {
     int res = 0;
-    PropertiesDialog dlg( parent, wxID_ANY, title, handler.get(), cs );
+    PropertiesDialog dlg( parent, wxID_ANY, title, handler.get() );
     dlg.Center();
     res = dlg.ShowModal();
     return res;

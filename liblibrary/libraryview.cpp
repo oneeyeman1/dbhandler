@@ -50,7 +50,7 @@
 #include "librarydocument.h"
 #include "libraryview.h"
 
-typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool);
 
 wxIMPLEMENT_DYNAMIC_CLASS(LibraryViewPainter, wxView);
 
@@ -196,7 +196,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     rootName = _("Sections");
 #endif
     m_rootId = m_tree->AppendItem( m_tree->GetRootItem(), str, 1, 2, rootData );
-    ExpandRoot( path );
+//    ExpandRoot( path );
     sizer->Add( m_tree, 1, wxEXPAND, 0 );
     m_frame->SetSizer( sizer );
     CreateViewToolBar();
@@ -767,12 +767,11 @@ void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
                     auto ptr = std::unique_ptr<LibraryPropertiesHandler>( new LibraryPropertiesHandler( library->GetProperties() ) );
 #endif
                     propertiesPtr = std::move( ptr );
-                    wxCriticalSection *pcs;
                     propertiesPtr->SetHandlerObject( any );
                     wxString command = wxEmptyString;
                     propertiesPtr->SetType( LibraryPropertiesType );
                     CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-                    auto res = func( m_frame, propertiesPtr, title, command, false, *pcs );
+                    auto res = func( m_frame, propertiesPtr, title, command, false );
                     if( res == wxID_OK )
                     {
                         wxMessageBox( "Creating new library!!" );
@@ -947,11 +946,14 @@ void LibraryViewPainter::OnExpandCollapsUpdateUI(wxUpdateUIEvent &event)
 {
     wxTreeListItems items;
     m_tree->GetSelections( items );
-    auto item = m_tree->GetFirstChild( items[0] );
-    if( item.IsOk() )
-        event.Enable( true );
-    else
-        event.Enable( false );
+    if( items.size() > 0 )
+    {
+        auto item = m_tree->GetFirstChild( items[0] );
+        if( item.IsOk() )
+            event.Enable( true );
+        else
+            event.Enable( false );
+    }
 }
 
 void LibraryViewPainter::OnExpandCollapse(wxCommandEvent &WXUNUSED(event))
@@ -985,19 +987,19 @@ void LibraryViewPainter::OnPainterProperties(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         wxString title = _( "Options" );
-        wxAny any = this;
+        LibraryPainterPropertiesHandler *handler = new LibraryPainterPropertiesHandler( &m_conf->m_libPainterOptions );
+        wxAny any = handler;
 #if __cplusplus > 201300
         auto ptr = std::make_unique<LibraryPainterPropertiesHandler>( &m_conf->m_libPainterOptions );
 #else
         auto ptr = std::unique_ptr<LibraryPainterPropertiesHandler>( new LibraryPainterPropertiesHandler( &m_conf->m_libPainterOptions ) );
 #endif
         propertiesPtr = std::move( ptr );
-        wxCriticalSection *pcs;
         propertiesPtr->SetHandlerObject( any );
         wxString command = wxEmptyString;
         propertiesPtr->SetType( LibraryPainterPropertiesType );
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-        auto res = func( m_frame, propertiesPtr, title, command, false, *pcs );
+        auto res = func( m_frame, propertiesPtr, title, command, false );
     }
 }
 

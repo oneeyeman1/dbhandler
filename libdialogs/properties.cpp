@@ -76,11 +76,10 @@ std::mutex Database::Impl::my_mutex;
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
 
-PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler, wxCriticalSection &cs):
+PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler):
     wxDialog(parent, id, title)
 {
     std::vector<std::wstring> errors;
-    pcs = &cs;
     m_isApplied = false;
     m_handler = handler;
     // begin wxGlade: PropertiesDialog::PropertiesDialog

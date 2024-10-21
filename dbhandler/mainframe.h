@@ -25,7 +25,6 @@ public:
     MainFrame(wxDocManager *manager);
     ~MainFrame();
     ToolbarSetup GetViewToolbarSettings() { return m_conf->m_tbSettings["ViewBar"]; }
-    wxCriticalSection m_threadCS;
     NewTableHandler *m_handler;
 protected:
     bool LoadApplication(const std::vector<LibrariesInfo> &path);

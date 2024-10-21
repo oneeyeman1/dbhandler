@@ -56,7 +56,7 @@
 #include "designcanvas.h"
 #include "databaseview.h"
 
-typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, const wxString &, wxCriticalSection &);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, const wxString &);
 
 DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas()
 {
@@ -254,7 +254,6 @@ void DesignCanvas::OnMouseMove(wxMouseEvent &event)
 
 void DesignCanvas::OnProperties(wxCommandEvent &WXUNUSED(event))
 {
-    wxCriticalSection pcs;
     wxString command = "";
     int type;
     if( wxDynamicCast( m_menuShape, DesignLabel ) )
@@ -280,10 +279,10 @@ void DesignCanvas::OnProperties(wxCommandEvent &WXUNUSED(event))
         if( type == 2 )
 		{
 			Properties prop = dynamic_cast<DesignLabel *>( m_menuShape )->GetProperties();
-            res = func( m_view->GetFrame(), ((DrawingDocument *) m_view->GetDocument())->GetDatabase(), type, &prop, command, false, wxEmptyString, wxEmptyString, wxEmptyString, pcs );
+            res = func( m_view->GetFrame(), ((DrawingDocument *) m_view->GetDocument())->GetDatabase(), type, &prop, command, false, wxEmptyString, wxEmptyString, wxEmptyString );
 		}
         if( type == 3 )
-            res = func( m_view->GetFrame(), ((DrawingDocument *) m_view->GetDocument())->GetDatabase(), type, m_menuShape, command, false, wxEmptyString, wxEmptyString, wxEmptyString, pcs );
+            res = func( m_view->GetFrame(), ((DrawingDocument *) m_view->GetDocument())->GetDatabase(), type, m_menuShape, command, false, wxEmptyString, wxEmptyString, wxEmptyString );
         if( res != wxID_CANCEL )
         {
 /*            m_text->AppendText( command );

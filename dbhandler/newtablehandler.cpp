@@ -27,11 +27,7 @@ NewTableHandler::NewTableHandler(MainFrame *frame, Database *db)
 
 NewTableHandler::~NewTableHandler(void)
 {
-#if defined __WXMSW__ && _MSC_VER < 1900
-    wxCriticalSectionLocker enter( pCs->m_threadCS );
-#else
     std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
-#endif
     pCs->m_handler = NULL;
 }
 
@@ -43,11 +39,7 @@ wxThread::ExitCode NewTableHandler::Entry()
     while( !TestDestroy() && loop )
     {
         {
-#if defined __WXMSW__ && _MSC_VER < 1900
-            wxCriticalSectionLocker( pCs->m_threadCS );
-#else
             std::lock_guard<std::mutex> locker( m_db->GetTableVector().my_mutex );
-#endif
             res = m_db->NewTableCreation( errorMsg );
             if( res )
                 loop = false;

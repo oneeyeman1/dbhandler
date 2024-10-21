@@ -15,7 +15,7 @@
 class PropertiesDialog: public wxDialog
 {
 public:
-    PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler, wxCriticalSection &cs);
+    PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler);
     const std::wstring &GetCommand();
     void GetTableProperties();
 
@@ -40,7 +40,6 @@ private:
     bool m_isApplied;
 //    TableProperties m_tableProperties;
     PropertiesHandler *m_handler;
-    wxCriticalSection *pcs;
     // begin wxGlade: PropertiesDialog::methods
     void set_properties();
     void do_layout();
