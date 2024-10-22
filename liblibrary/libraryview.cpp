@@ -196,7 +196,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     rootName = _("Sections");
 #endif
     m_rootId = m_tree->AppendItem( m_tree->GetRootItem(), str, 1, 2, rootData );
-//    ExpandRoot( path );
+    ExpandRoot( path );
     sizer->Add( m_tree, 1, wxEXPAND, 0 );
     m_frame->SetSizer( sizer );
     CreateViewToolBar();
