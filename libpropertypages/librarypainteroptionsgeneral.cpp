@@ -28,7 +28,7 @@ LibraryPainterOptionsGeneralPage::LibraryPainterOptionsGeneralPage(wxWindow *par
     statbox1->Add( m_showStatus, 0, wxEXPAND, 0 );
     m_showModification = new wxCheckBox( this, wxID_ANY, _( "Modification Date" ) );
     m_showModification->SetValue( general.m_showModification );
-    statbox1->Add( m_showModification, 0, wxID_ANY, 0 );
+    statbox1->Add( m_showModification, 0, wxEXPAND, 0 );
     m_showCompilation = new wxCheckBox( this, wxID_ANY, _( "Compilation Date" ) );
     m_showCompilation->SetValue( general.m_showCompilation );
     statbox1->Add( m_showCompilation, 0, wxEXPAND, 0 );

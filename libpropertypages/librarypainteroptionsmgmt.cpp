@@ -37,7 +37,7 @@ LibraryPainterOptionsMgmtPage::LibraryPainterOptionsMgmtPage(wxWindow *parent, L
     };
     m_options = new wxRadioBox( this, wxID_ANY, _( "Log Options" ), wxDefaultPosition, wxDefaultSize, choices, 2, wxRA_SPECIFY_ROWS );
     m_options->SetSelection( mgmt.m_options );
-    sizer2->Add( m_options, 0, wxEXPAND | wxALIGN_CENTER_HORIZONTAL, 0 );
+    sizer2->Add( m_options, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND, 0 );
     m_requireComments = new wxCheckBox( this, wxID_ANY, _( "Require comment on Checkin" ) );
     m_requireComments->SetValue( mgmt.m_requireComment );
