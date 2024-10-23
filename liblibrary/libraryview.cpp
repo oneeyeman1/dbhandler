@@ -987,15 +987,13 @@ void LibraryViewPainter::OnPainterProperties(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         wxString title = _( "Options" );
-        LibraryPainterPropertiesHandler *handler = new LibraryPainterPropertiesHandler( &m_conf->m_libPainterOptions );
-        wxAny any = handler;
 #if __cplusplus > 201300
         auto ptr = std::make_unique<LibraryPainterPropertiesHandler>( &m_conf->m_libPainterOptions );
 #else
         auto ptr = std::unique_ptr<LibraryPainterPropertiesHandler>( new LibraryPainterPropertiesHandler( &m_conf->m_libPainterOptions ) );
 #endif
         propertiesPtr = std::move( ptr );
-        propertiesPtr->SetHandlerObject( any );
+        propertiesPtr->SetHandlerObject( nullptr );
         wxString command = wxEmptyString;
         propertiesPtr->SetType( LibraryPainterPropertiesType );
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
