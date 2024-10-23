@@ -859,22 +859,34 @@ void MainFrame::OnUpdateUIDetachDB(wxUpdateUIEvent &event)
 
 void MainFrame::OnLibrary(wxCommandEvent &WXUNUSED(event))
 {
+    wxDynamicLibrary *lib;
     wxString libName;
     LoadApplication( m_path );
-    auto lib = new wxDynamicLibrary;
-#ifdef __WXMSW__
-    libName = m_libraryPath + "library";
-#elif __WXOSX__
-    libName = m_libraryPath + "libliblibrary.dylib";
-#else
-    libName = m_libraryPath + "liblibrary";
-#endif
-    lib->Load( libName );
-    if( lib->IsLoaded() )
+    if( m_painters.find( "Library" ) == m_painters.end() )
     {
-        LIBRARYPAINTER func = (LIBRARYPAINTER) lib->GetSymbol( "CreateLibraryWindow" );
-        func( this, m_manager, LibraryView, m_painters, m_conf, m_library.get() );
+        lib = new wxDynamicLibrary;
+#ifdef __WXMSW__
+        libName = m_libraryPath + "library";
+#elif __WXOSX__
+        libName = m_libraryPath + "libliblibrary.dylib";
+#else
+        libName = m_libraryPath + "liblibrary";
+#endif
+        lib->Load( libName );
+        if( lib->IsLoaded() )
+        {
+            m_painters["Library"] = lib;
+            LIBRARYPAINTER func = (LIBRARYPAINTER) lib->GetSymbol( "CreateLibraryWindow" );
+            func( this, m_manager, LibraryView, m_painters, m_conf, m_library.get() );
+        }
+        else
+        {
+            delete lib;
+            lib = nullptr;
+        }
     }
+    else
+        lib = m_painters["Library"];
 }
 
 bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
