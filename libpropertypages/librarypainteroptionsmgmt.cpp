@@ -23,13 +23,17 @@ LibraryPainterOptionsMgmtPage::LibraryPainterOptionsMgmtPage(wxWindow *parent, L
     sizer->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer1 = new wxBoxSizer( wxVERTICAL );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( "Source Management Log" ) ), wxVERTICAL );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     m_logEverything = new wxCheckBox( this, wxID_ANY, _( "Log all source management activity" ) );
     m_logEverything->SetValue( mgmt.m_logEverything );
     sizer2->Add( m_logEverything, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     m_logFile = new wxFilePickerCtrl( this, wxID_ANY, mgmt.m_logFile, _( "File Name:" ) );
     m_logFile->Bind( wxEVT_UPDATE_UI, &LibraryPainterOptionsMgmtPage::OnLogFileUpdateUI, this );
     sizer2->Add( m_logFile, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     const wxArrayString choices =
     {
         _( "Append to log file" ),
@@ -38,7 +42,9 @@ LibraryPainterOptionsMgmtPage::LibraryPainterOptionsMgmtPage(wxWindow *parent, L
     m_options = new wxRadioBox( this, wxID_ANY, _( "Log Options" ), wxDefaultPosition, wxDefaultSize, choices, 2, wxRA_SPECIFY_ROWS );
     m_options->SetSelection( mgmt.m_options );
     sizer2->Add( m_options, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( sizer2, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_requireComments = new wxCheckBox( this, wxID_ANY, _( "Require comment on Checkin" ) );
     m_requireComments->SetValue( mgmt.m_requireComment );
     sizer1->Add( m_requireComments, 0, wxEXPAND, 0 );
