@@ -330,11 +330,11 @@
       <AdditionalIncludeDirectories>.\..\..\lib\vc_dll\mswud;.\..\..\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>vld.lib;fieldswindow.lib;propertypages.lib;shapeframework.lib;propertieshandlers.lib;wxmsw32ud_core.lib;wxmsw32ud_stc.lib;wxbase32ud.lib;wxbase32ud_xml.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies) </AdditionalDependencies>
+      <AdditionalDependencies>vld.lib;fieldswindow.lib;propertypages.lib;shapeframework.lib;propertieshandlers.lib;helpers.lib;wxmsw32ud_core.lib;wxmsw32ud_stc.lib;wxbase32ud.lib;wxbase32ud_xml.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;shlwapi.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;version.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>..\dbhandler\vc_mswuddll\dbwindow.dll</OutputFile>
       <ImportLibrary>vc_mswuddll\dbwindow.lib</ImportLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;..\libpropertypages\vc_mswuddll;..\libshapeframework\vc_mswuddll;..\libfieldswindow\vc_mswuddll;..\libpropertieshandlers\vc_mswuddll;$(WXWIN)\lib\vc_dll;%(AdditionalLibraryDirectories) </AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;..\libpropertypages\vc_mswuddll;..\libshapeframework\vc_mswuddll;..\libfieldswindow\vc_mswuddll;..\libpropertieshandlers\vc_mswuddll;..\libhelpers\vc_mswuddll;$(WXWIN)\lib\vc_dll;%(AdditionalLibraryDirectories) </AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>vc_mswuddll\dbwindowl.pdb</ProgramDatabaseFile>
       <TargetMachine>MachineX86</TargetMachine>
