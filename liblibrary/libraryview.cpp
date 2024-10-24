@@ -44,6 +44,7 @@
 #include "wx/dir.h"
 #include "configuration.h"
 #include "painterobjects.h"
+#include "ablbaseview.h"
 #include "propertieshandlerbase.h"
 #include "librarypainterpropertieshandler.h"
 #include "librarypropertieshandler.h"
@@ -52,9 +53,9 @@
 
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool);
 
-wxIMPLEMENT_DYNAMIC_CLASS(LibraryViewPainter, wxView);
+wxIMPLEMENT_DYNAMIC_CLASS(LibraryViewPainter, ABLBaseView);
 
-wxBEGIN_EVENT_TABLE(LibraryViewPainter, wxView)
+wxBEGIN_EVENT_TABLE(LibraryViewPainter, ABLBaseView)
     EVT_MENU(wxID_LIBRARYNEW, LibraryViewPainter::OnLibraryCreate)
     EVT_MENU(wxID_LIBRARYDELETE, LibraryViewPainter::OnLibraryDelete)
     EVT_UPDATE_UI(wxID_LIBRARYSELECTALL, LibraryViewPainter::OnSelectAllUpdateUI)
@@ -71,34 +72,8 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     m_tb = nullptr;
     wxWindowList children;
     wxRect clientRect = m_parent->GetClientRect();
-    if( !wxView::OnCreate( doc, flags ) )
+    if( !ABLBaseView::OnCreate( doc, flags ) )
         return false;
-#ifndef __WXMSW__
-    children = m_parent->GetChildren();
-#else
-    children = m_parent->GetClientWindow()->GetChildren();
-#endif
-    auto found = false;
-    for( wxWindowList::iterator it = children.begin(); it != children.end() && !found; it++ )
-    {
-        auto tb = wxDynamicCast( *it, wxToolBar );
-        if( tb && tb->GetName() == "ViewBar" )
-        {
-            found = true;
-            m_tb = tb;
-        }
-    }
-    auto stdPath = wxStandardPaths::Get();
-#ifdef __WXOSX__
-    wxFileName fn( stdPath.GetExecutablePath() );
-    fn.RemoveLastDir();
-    m_libPath = fn.GetPathWithSep() + "Frameworks/";
-#elif __WXGTK__ || __WXQT__
-    m_libPath = stdPath.GetInstallPrefix() + "/lib/";
-#elif __WXMSW__
-    wxFileName fn( stdPath.GetExecutablePath() );
-    m_libPath = fn.GetPathWithSep();
-#endif
     wxPoint pos;
 #ifdef __WXOSX__
     pos.y = ( m_parent->GetClientWindow()->GetClientRect().GetHeight() - m_parent->GetClientRect().GetHeight() ) - m_parent->GetToolBar()->GetRect().GetHeight();

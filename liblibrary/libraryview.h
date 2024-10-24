@@ -7,7 +7,7 @@
 #define COL_SIZE       4
 #define COL_COMMENT    5
  
-class LibraryViewPainter :  public wxView
+class LibraryViewPainter :  public ABLBaseView
 {
 public:
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
@@ -48,8 +48,6 @@ private:
     ViewType m_type;
     wxDocMDIParentFrame *m_parent;
     Configuration *m_conf;
-    wxToolBar *m_tb;
-    wxString m_libPath;
     wxDocMDIChildFrame *m_frame;
     wxBitmapComboBox *m_drive;
     wxTreeListCtrl *m_tree;

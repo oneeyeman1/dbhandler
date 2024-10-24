@@ -24,6 +24,9 @@
     <ClInclude Include="painterobjects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ablbaseview.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="typecombobox.cpp">
@@ -33,6 +36,9 @@
       <Filter>Source Fles</Filter>
     </ClCompile>
     <ClCompile Include="maskededit.cpp">
+      <Filter>Source Fles</Filter>
+    </ClCompile>
+    <ClCompile Include="ablbaseview.cpp">
       <Filter>Source Fles</Filter>
     </ClCompile>
   </ItemGroup>

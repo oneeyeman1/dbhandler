@@ -29,6 +29,7 @@
 #include "wx/treelist.h"
 #include "configuration.h"
 #include "painterobjects.h"
+#include "ablbaseview.h"
 #include "librarydocument.h"
 #include "libraryview.h"
 #include "librarydoctemplate.h"
