@@ -31,6 +31,7 @@
 //#include "XmlSerializer.h"
 #include "database.h"
 #include "configuration.h"
+#include "ablbaseview.h"
 #include "dbview.h"
 #include "objectproperties.h"
 #include "constraint.h"

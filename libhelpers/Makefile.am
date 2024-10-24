@@ -9,7 +9,9 @@ libhelpers_a_SOURCES =  \
 	typecombobox.cpp \
 	typecombobox.h \
 	colorcombobox.cpp \
-	colorcombobox.h
+	colorcombobox.h \
+	ablbaseview.cpp \
+	ablbaseview.h
 
 libhelpers_a_CXXFLAGS = -fPIC \
 	@WX_CXXFLAGS@

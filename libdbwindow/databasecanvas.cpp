@@ -34,6 +34,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/ShapeCanvas.h"
 #include "configuration.h"
+#include "ablbaseview.h"
 #include "commentfieldshape.h"
 #include "fieldtypeshape.h"
 #include "objectproperties.h"

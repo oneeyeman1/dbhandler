@@ -82,6 +82,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
 #include "configuration.h"
+#include "ablbaseview.h"
 #include "dbview.h"
 //#include "objectproperties.h"
 #include "colorcombobox.h"
@@ -159,9 +160,9 @@ std::mutex Database::Impl::my_mutex;
 // DrawingView implementation
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(DrawingView, wxView);
+wxIMPLEMENT_DYNAMIC_CLASS(DrawingView, ABLBaseView);
 
-wxBEGIN_EVENT_TABLE(DrawingView, wxView)
+wxBEGIN_EVENT_TABLE(DrawingView, ABLBaseView)
     EVT_MENU(wxID_CLOSE, DrawingView::OnClose)
     EVT_MENU(wxID_SELECTTABLE, DrawingView::OnViewSelectedTables)
     EVT_MENU(wxID_OBJECTNEWINDEX, DrawingView::OnNewIndex)
@@ -239,7 +240,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_fontSize = nullptr;
     m_snitialized = false;
     m_dbFrame = nullptr;
-    if( !wxView::OnCreate( doc, flags ) )
+    if( !ABLBaseView::OnCreate( doc, flags ) )
         return false;
     m_fontSizes.push_back( "8" );
     m_fontSizes.push_back( "9" );
@@ -258,7 +259,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_fontSizes.push_back( "48" );
     m_fontSizes.push_back( "72" );
     wxRect clientRect = m_parent->GetClientRect();
-    wxWindowList children;
+/*    wxWindowList children;
 #ifndef __WXMSW__
     children = m_parent->GetChildren();
 #else
@@ -275,7 +276,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         }
         if( tb && tb->GetName() == "StyleBar" )
             m_styleBar = tb;
-    }
+    }*/
     wxString title;
     if( m_type == QueryView )
     {
@@ -289,7 +290,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     {
         title = "Database - " + wxDynamicCast( GetDocument(), DrawingDocument )->GetDatabase()->GetTableVector().m_dbName;
     }
-    auto stdPath = wxStandardPaths::Get();
+/*    auto stdPath = wxStandardPaths::Get();
 #ifdef __WXOSX__
     wxFileName fn( stdPath.GetExecutablePath() );
     fn.RemoveLastDir();
@@ -299,7 +300,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 #elif __WXMSW__
     wxFileName fn( stdPath.GetExecutablePath() );
     m_libPath = fn.GetPathWithSep();
-#endif
+#endif*/
     wxPoint pos;
 #ifdef __WXOSX__
     pos.y = ( m_parent->GetClientWindow()->GetClientRect().GetHeight() - m_parent->GetClientRect().GetHeight() ) - m_parent->GetToolBar()->GetRect().GetHeight();

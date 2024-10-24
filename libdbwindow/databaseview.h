@@ -14,7 +14,7 @@ struct Profile
 {
     wxString m_name;
     bool m_isActive;
-    
+
     Profile(wxString name, bool isActive) : m_name(name), m_isActive(isActive) {}
 };
 
@@ -26,10 +26,10 @@ struct NewViewOptions
 };
 
 // The view using MyCanvas to show its contents
-class DrawingView : public wxView
+class DrawingView : public ABLBaseView
 {
 public:
-    DrawingView() : wxView(), m_canvas(NULL) {}
+    DrawingView() : ABLBaseView(), m_canvas(NULL) {}
     ~DrawingView();
     void UpdateQueryFromSignChange(const QueryConstraint *type, const long oldSign);
     void DropTableFromQeury(const wxString &name = "" );
