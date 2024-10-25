@@ -46,7 +46,6 @@ private:
     size_t GetAvailableDrives(wxArrayString &paths, wxArrayString &names, wxArrayInt &icons);
     bool IsDriveAvailable(const wxString& dirName);
     ViewType m_type;
-    wxDocMDIParentFrame *m_parent;
     Configuration *m_conf;
     wxDocMDIChildFrame *m_frame;
     wxBitmapComboBox *m_drive;

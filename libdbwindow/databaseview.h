@@ -14,7 +14,7 @@ struct Profile
 {
     wxString m_name;
     bool m_isActive;
-
+    
     Profile(wxString name, bool isActive) : m_name(name), m_isActive(isActive) {}
 };
 
@@ -145,8 +145,6 @@ protected:
     void OnDatabasePreferences(wxCommandEvent &event);
 private:
     bool m_isActive, m_snitialized;
-    wxDocMDIParentFrame *m_parent;
-    wxToolBar *m_tb, *m_styleBar;
     wxTextCtrl *m_fieldText;
     FontComboBox *m_fontName;
     wxComboBox *m_fontSize;
@@ -178,7 +176,6 @@ private:
     std::vector<LibrariesInfo> m_path;
     std::map<wxString, std::vector<TableDefinition> > m_tables;
     NewViewOptions options;
-    wxString m_libPath;
     ToolbarSetup m_tbSetup[2];
     Configuration *m_conf;
     std::vector<std::string> m_fontSizes;
@@ -192,13 +189,4 @@ wxDECLARE_EVENT(wxEVT_CHANGE_QUERY, wxCommandEvent);
 
 #define wxID_DATABASEWINDOW 2
 
-#if __cplusplus < 201300
-template<typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args&&... args)
-{
-    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-}
 #endif
-
-#endif
-
