@@ -40,6 +40,7 @@ LibraryPainterOptionsMgmtPage::LibraryPainterOptionsMgmtPage(wxWindow *parent, L
         _( "Overwrite log file" )
     };
     m_options = new wxRadioBox( this, wxID_ANY, _( "Log Options" ), wxDefaultPosition, wxDefaultSize, choices, 2, wxRA_SPECIFY_ROWS );
+    m_options->Bind( wxEVT_UPDATE_UI, &LibraryPainterOptionsMgmtPage::OnLogFileUpdateUI, this );
     m_options->SetSelection( mgmt.m_options );
     sizer2->Add( m_options, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
