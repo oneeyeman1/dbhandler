@@ -12,10 +12,6 @@
 #include <vld.h>
 #endif
 
-#ifdef __WXMSW__
-#import <C:\Program Files\Common Files\System\ado\msado15.dll> no_namespace rename( "EOF", "EndOfFile" )
-#include <Ole2.h>
-#endif
 #include <map>
 #include <set>
 #include <vector>
