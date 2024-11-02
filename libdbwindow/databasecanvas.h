@@ -55,7 +55,7 @@ private:
     wxArrayString m_groupbyDest;
 };
 
-class WXEXPORT DatabaseCanvas : public wxSFShapeCanvas
+class WXEXPORT DatabaseCanvas : public wxSFShapeCanvas, public PropertiesHandler
 {
 public:
     enum MODE { modeDESIGN, modeTABLE, modeVIEW, modeLine };
@@ -82,6 +82,8 @@ public:
     void LoadQuery(const std::map<std::wstring, std::vector<DatabaseTable *> >&tables);
     void SetQueryArguments(const std::vector<QueryArguments> arguments);
     void UnselectAllTables();
+    virtual int ApplyProperties() wxOVERRIDE;
+    virtual wxAny &GetProperties() wxOVERRIDE;
 protected:
     bool IsTableDisplayed(const std::wstring &name);
     void nUpdateTableParam(wxUpdateUIEvent &event);

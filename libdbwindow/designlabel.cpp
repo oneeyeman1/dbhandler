@@ -17,6 +17,8 @@
 #include "wxsf/RectShape.h"
 #include "wxsf/GridShape.h"
 #include "XmlSerializer.h"
+#include "propertieshandlerbase.h"
+#include "guiojectsproperties.h"
 #include "dbview.h"
 #include "designlabel.h"
 
@@ -24,6 +26,8 @@ XS_IMPLEMENT_CLONABLE_CLASS(DesignLabel, wxSFRectShape);
 
 DesignLabel::DesignLabel() : wxSFRectShape()
 {
+    m_object = DesignLabelPropertiesType;
+    auto prop = any.As<DesignLabelProperties>();
     SetHAlign( wxSFShapeBase::halignCENTER );
     SetVAlign( wxSFShapeBase::valignMIDDLE );
     AddStyle( sfsLOCK_CHILDREN );
@@ -41,20 +45,23 @@ DesignLabel::DesignLabel() : wxSFRectShape()
         m_grid->Activate( true );
         SF_ADD_COMPONENT( m_grid, wxT( "grid" ) );
     }
-    m_prop.m_font = wxNullFont;
+    prop.m_font = wxNullFont;
     m_label = "";
+    InitSerializable();
 }
 
 DesignLabel::DesignLabel(const wxFont font, const wxString &label, int alignment) : wxSFRectShape()
 {
-    m_prop.m_name = label + "_t";
-    m_prop.m_tag = "";
-    m_prop.m_supressPrint = false;
-    m_prop.m_border = 0;
-    m_prop.m_alignment = alignment;
-    m_prop.m_text = label;
-    m_prop.m_text.Replace( "_", " " );
-    m_prop.m_font = font;
+    auto prop = any.As<DesignLabelProperties>();
+    m_object = DesignLabelPropertiesType;
+    prop.m_general.m_name = label + "_t";
+    prop.m_general.m_tag = "";
+    prop.m_general.m_supressPrint = false;
+    prop.m_general.m_border = 0;
+    prop.m_general.m_alignment = alignment;
+    prop.m_general.m_text = label;
+    prop.m_general.m_text.Replace( "_", " " );
+    prop.m_font = font;
     m_label = label;
     AddStyle( sfsLOCK_CHILDREN );
     AddStyle( sfsSIZE_CHANGE );
@@ -114,10 +121,11 @@ DesignLabel::DesignLabel(const wxFont font, const wxString &label, int alignment
     RemoveStyle( sfsSHOW_HANDLES );
     m_grid->Update();
     Update();
-    m_prop.m_position.x = GetBoundingBox().GetX();
-    m_prop.m_position.y = GetBoundingBox().GetY();
-    m_prop.m_size.SetWidth( GetBoundingBox().GetWidth() );
-    m_prop.m_size.SetHeight( GetBoundingBox().GetHeight() );
+    prop.m_position.m_position.x = GetBoundingBox().GetX();
+    prop.m_position.m_position.y = GetBoundingBox().GetY();
+    prop.m_position.m_size.SetWidth( GetBoundingBox().GetWidth() );
+    prop.m_position.m_size.SetHeight( GetBoundingBox().GetHeight() );
+    InitSerializable();
 }
 
 DesignLabel::~DesignLabel()
@@ -126,24 +134,30 @@ DesignLabel::~DesignLabel()
 
 void DesignLabel::InitSerializable()
 {
-    XS_SERIALIZE( m_prop.m_name, "LabelName" );
-    XS_SERIALIZE( m_prop.m_tag, "Tag" );
-    XS_SERIALIZE( m_prop.m_supressPrint, "SuppressPrint" );
-    XS_SERIALIZE( m_prop.m_border, "Border" );
-    XS_SERIALIZE( m_prop.m_alignment, "Alignment" );
-    XS_SERIALIZE( m_prop.m_text, "Text" );
-    XS_SERIALIZE( m_prop.m_font, "LabelFont" );
-    XS_SERIALIZE( m_prop.m_position, "LabelPosition" );
-    XS_SERIALIZE( m_prop.m_size, "LabelSize" );
+    auto prop = any.As<DesignLabelProperties>();
+    XS_SERIALIZE( prop.m_general.m_name, "LabelName" );
+    XS_SERIALIZE( prop.m_general.m_tag, "Tag" );
+    XS_SERIALIZE( prop.m_general.m_supressPrint, "SuppressPrint" );
+    XS_SERIALIZE( prop.m_general.m_border, "Border" );
+    XS_SERIALIZE( prop.m_general.m_alignment, "Alignment" );
+    XS_SERIALIZE( prop.m_general.m_text, "Text" );
+    XS_SERIALIZE( prop.m_font, "LabelFont" );
+    XS_SERIALIZE( prop.m_position.m_position, "LabelPosition" );
+    XS_SERIALIZE( prop.m_position.m_size, "LabelSize" );
 }
 
-DesignLabelProperties DesignLabel::GetProperties()
+wxAny &DesignLabel::GetProperties()
 {
-    return m_prop;
+    return any;
 }
 
 void DesignLabel::Select(bool selected)
 {
     m_fSelected = selected;
     wxSFRectShape::Select( selected );
+}
+
+int DesignLabel::ApplyProperties()
+{
+    return 0;
 }

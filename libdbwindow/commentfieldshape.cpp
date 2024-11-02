@@ -2,6 +2,8 @@
 #include <algorithm>
 #include "database.h"
 #include "wxsf/TextShape.h"
+#include "propertieshandlerbase.h"
+#include "guiojectsproperties.h"
 #include "commentfieldshape.h"
 #include "FieldShape.h"
 #include "fieldtypeshape.h"

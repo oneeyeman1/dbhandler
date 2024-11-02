@@ -19,6 +19,7 @@
 #else
 #include "wx/txtstrm.h"
 #endif
+#include "propertieshandlerbase.h"
 #include "painterobjects.h"
 #include "librarydocument.h"
 

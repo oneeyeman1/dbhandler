@@ -14,7 +14,6 @@
 #include "wx/bmpcbox.h"
 #include "wx/gdicmn.h"
 #include "configuration.h"
-#include "objectproperties.h"
 #include "colorcombobox.h"
 #include "propertypagebase.h"
 #include "databaseoptioncolours.h"

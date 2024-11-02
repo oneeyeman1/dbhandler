@@ -32,8 +32,9 @@
 #include "database.h"
 #include "configuration.h"
 #include "ablbaseview.h"
+#include "guiojectsproperties.h"
+#include "propertieshandlerbase.h"
 #include "dbview.h"
-#include "objectproperties.h"
 #include "constraint.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
@@ -57,22 +58,25 @@
 #include "designcanvas.h"
 #include "databaseview.h"
 
-typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, Database *, int type, void *object, wxString &, bool, const wxString &, const wxString &, const wxString &);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
+typedef int (*CREATEPROPERTIESDIALOGFOROBJECT)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &);
 
 DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas()
 {
+    m_object = DesignPropertiesType;
     m_view = view;
     startPoint.x = 1;
     startPoint.y = 1;
-    m_options.colorBackground = *wxWHITE;
-    m_options.customMove = true;
-    m_options.interval = 0;
-    m_options.mouseSelect = true;
-    m_options.rowResize = false;
-    m_options.units = 3;
-    m_options.cursor = -1;
-    m_options.display = 2;
-    m_options.cursorName = wxEmptyString;
+    DesignProperties options = any.As<DesignProperties>();
+    options.m_general.colorBackground = *wxWHITE;
+//    m_options.customMove = true;
+    options.m_general.interval = 0;
+//    m_options.mouseSelect = true;
+//    m_options.rowResize = false;
+    options.m_general.units = 3;
+    options.cursor = -1;
+//    m_options.display = 2;
+    options.cursorName = wxEmptyString;
     m_pManager.SetRootItem( new xsSerializable() );
     SetDiagramManager( &m_pManager );
     Create( view->GetFrame(), wxID_ANY, point, wxDefaultSize, wxHSCROLL | wxVSCROLL | wxALWAYS_SHOW_SB );
@@ -255,14 +259,6 @@ void DesignCanvas::OnMouseMove(wxMouseEvent &event)
 
 void DesignCanvas::OnProperties(wxCommandEvent &WXUNUSED(event))
 {
-    wxString command = "";
-    int type;
-    if( wxDynamicCast( m_menuShape, DesignLabel ) )
-        type = 2;
-    if( wxDynamicCast( m_menuShape, Divider ) )
-        type = 3;
-    else
-        type = -1;
     wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -273,23 +269,35 @@ void DesignCanvas::OnProperties(wxCommandEvent &WXUNUSED(event))
     libName = m_libPath + "libdialogs";
 #endif
     lib.Load( libName );
+    wxString command = "";
+    int type;
+    if( wxDynamicCast( m_menuShape, DesignLabel ) )
+        type = 2;
+    if( wxDynamicCast( m_menuShape, Divider ) )
+        type = 3;
+    else
+        type = -1;
     int res = 0;
     if( lib.IsLoaded() )
     {
-        CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-        if( type == 2 )
-		{
-			Properties prop = dynamic_cast<DesignLabel *>( m_menuShape )->GetProperties();
-            res = func( m_view->GetFrame(), ((DrawingDocument *) m_view->GetDocument())->GetDatabase(), type, &prop, command, false, wxEmptyString, wxEmptyString, wxEmptyString );
-		}
-        if( type == 3 )
-            res = func( m_view->GetFrame(), ((DrawingDocument *) m_view->GetDocument())->GetDatabase(), type, m_menuShape, command, false, wxEmptyString, wxEmptyString, wxEmptyString );
-        if( res != wxID_CANCEL )
+        CREATEPROPERTIESDIALOGFOROBJECT func = (CREATEPROPERTIESDIALOGFOROBJECT) lib.GetSymbol( "CreatePropertiesDialogForObject" );
+        wxString title;
+        switch( type )
         {
-/*            m_text->AppendText( command );
-            m_text->AppendText( "\n\r\n\r" );
-            if( !m_log->IsShown() )
-                m_log->Show();*/
+            case 2:
+	    	{
+                DesignLabel *label = (DesignLabel *) m_menuShape;
+                std::unique_ptr<PropertiesHandler> ptr( label );
+                title = _( "Text Object" );
+                res = func( m_view->GetFrame(), ptr, title );
+		    }
+            case 3:
+            {
+                Divider *div = (Divider *) m_menuShape;
+                std::unique_ptr<PropertiesHandler> ptr( div );
+                title = _( "Band Object" );
+                res = func( m_view->GetFrame(), ptr, title );
+            }
         }
     }
     m_menuShape = NULL;
@@ -351,14 +359,18 @@ void DesignCanvas::OnLeftDown(wxMouseEvent &event)
             if( label )
             {
                 dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->Enable();
-                dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->SetValue( label->GetProperties().m_name );
+                dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->SetValue( label->GetProperties().As<DesignLabelProperties>().m_general.m_name );
+                dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->SetValue( label->GetProperties().As<DesignLabelProperties>().m_general.m_name );
             }
             else
             {
                 dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->Disable();
                 dynamic_cast<DrawingView *>( m_view )->GetFieldTextCtrl()->SetValue( "" );
             }
-            m_selectedFont = label ? label->GetProperties().m_font : field->GetProperties().m_font;
+            if( label )
+                m_selectedFont = label->GetProperties().As<DesignLabelProperties>().m_font;
+            else
+                m_selectedFont = field->GetProperties().As<DesignFieldProperties>().m_font;
             dynamic_cast<DrawingView *>( m_view )->GetFontName()->SetValue( m_selectedFont.GetFaceName() );
             dynamic_cast<DrawingView *>( m_view )->GetFontSize()->SetValue( wxString::Format( "%d", m_selectedFont.GetPointSize() ) );
             if( m_selectedFont.GetStyle() <= wxFONTSTYLE_NORMAL )
@@ -538,7 +550,7 @@ void DesignCanvas::ChangeLabel(const wxString &label)
         labelShape = wxDynamicCast( (*it), DesignLabel );
         if( labelShape )
         {
-            labelShape->GetProperties().m_text = label;
+            labelShape->GetProperties().As<DesignLabelProperties>().m_general.m_text = label;
         }
         shape = wxDynamicCast( (*it), wxSFTextShape );
         if( shape )
@@ -563,16 +575,16 @@ void DesignCanvas::ChangeFontName(const wxString &name)
         labelShape = wxDynamicCast( (*it), DesignLabel );
         if( labelShape )
         {
-            shapeFont = labelShape->GetProperties().m_font;
-            labelShape->GetProperties().m_font.SetFaceName( name );
+            shapeFont = labelShape->GetProperties().As<DesignLabelProperties>().m_font;
+            labelShape->GetProperties().As<DesignLabelProperties>().m_font.SetFaceName( name );
         }
         else
         {
             fieldShape = wxDynamicCast( (*it), DesignField );
             if( fieldShape )
             {
-                shapeFont = fieldShape->GetProperties().m_font;
-                labelShape->GetProperties().m_font.SetFaceName( name );
+                shapeFont = fieldShape->GetProperties().As<DesignFieldProperties>().m_font;
+                labelShape->GetProperties().As<DesignFieldProperties>().m_font.SetFaceName( name );
             }
             else
             {
@@ -591,4 +603,9 @@ void DesignCanvas::ChangeFontName(const wxString &name)
 void DesignCanvas::OnLeftDoubleClick( wxMouseEvent &WXUNUSED(event))
 {
 
+}
+
+int DesignCanvas::ApplyProperties()
+{
+    return 0;
 }

@@ -17,15 +17,15 @@
 #endif
 
 #include "wx/bmpcbox.h"
-#include "objectproperties.h"
 #include "propertypagebase.h"
+#include "guiojectsproperties.h"
 #include "colorcombobox.h"
 #include "designgeneral.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
-DesignGeneral::DesignGeneral(wxWindow* parent, DesignOptions options):
+DesignGeneral::DesignGeneral(wxWindow* parent, DesignCanvasGeneralProperties options):
     PropertyPageBase(parent, wxID_ANY)
 {
     m_isModified = false;
@@ -44,7 +44,7 @@ DesignGeneral::DesignGeneral(wxWindow* parent, DesignOptions options):
         _( "Pixel" ),
         _( "Units" )
     };
-    m_units = new wxComboBox( this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 4, m_units_choices, wxCB_DROPDOWN);
+    m_units = new wxComboBox( this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 4, m_units_choices, wxCB_DROPDOWN );
     sizer_2->Add( m_units, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     auto m_label2 = new wxStaticText( this, wxID_ANY, _( "&Timer interval:" ) );
@@ -97,10 +97,6 @@ DesignGeneral::DesignGeneral(wxWindow* parent, DesignOptions options):
     m_units->SetSelection( options.units );
     m_interval->SetValue( wxString::Format( "%d", options.interval ) );
     m_color->SetColourValue( options.colorBackground );
-    m_display->SetSelection( options.display );
-    m_custommove->SetValue( options.customMove );
-    m_mouseSelect->SetValue( options.mouseSelect );
-    m_rowresize->SetValue( options.rowResize );
     m_units->Bind( wxEVT_COMBOBOX, &DesignGeneral::Modified, this );
 }
 

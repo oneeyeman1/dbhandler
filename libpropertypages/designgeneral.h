@@ -18,7 +18,7 @@ public:
     // begin wxGlade: MyDialog::ids
     // end wxGlade
 
-    DesignGeneral(wxWindow* parent, DesignOptions options);
+    DesignGeneral(wxWindow* parent, DesignCanvasGeneralProperties options);
     virtual ~DesignGeneral() { }
     wxComboBox *GetUnitsCtrl() { return m_units; }
     CColorComboBox *GetColorCtrl() { return m_color; }
@@ -30,7 +30,6 @@ protected:
     wxTextCtrl* m_interval;
     CColorComboBox* m_color;
     wxCheckBox *m_custommove, *m_mouseSelect, *m_rowresize;
-    DesignOptions m_options;
     // end wxGlade
 }; // wxGlade: end class
 

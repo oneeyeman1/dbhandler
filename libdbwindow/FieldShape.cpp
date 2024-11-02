@@ -2,6 +2,8 @@
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
 #include "configuration.h"
+#include "guiojectsproperties.h"
+#include "propertieshandlerbase.h"
 #include "GridTableShape.h"
 #include "commentfieldshape.h"
 #include "fieldtypeshape.h"
@@ -11,8 +13,10 @@ XS_IMPLEMENT_CLONABLE_CLASS(FieldShape,wxSFTextShape);
 
 FieldShape::FieldShape() : wxSFTextShape()
 {
+    m_object = DatabaseFieldPropertiesType;
     m_typeShape = nullptr;
-    m_comment = nullptr;
+    FieldTableProperties prop = any.As<FieldTableProperties>();
+    prop.m_comment = "";
     SetHAlign(wxSFShapeBase::halignCENTER );
     SetVAlign(wxSFShapeBase::valignMIDDLE );
     m_name = wxEmptyString;
@@ -35,6 +39,7 @@ FieldShape::FieldShape() : wxSFTextShape()
 
 FieldShape::FieldShape(const TableField *field) : wxSFTextShape()
 {
+    m_object = DatabaseFieldPropertiesType;
     SetHAlign(wxSFShapeBase::halignCENTER );
     SetVAlign(wxSFShapeBase::valignMIDDLE );
     m_name = field->GetFieldName();
@@ -186,3 +191,12 @@ void FieldShape::Select(bool state)
     return rect;
 }
 */
+int FieldShape::ApplyProperties()
+{
+    return 0;
+}
+
+wxAny &FieldShape::GetProperties()
+{
+    return any;
+}

@@ -8,6 +8,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/DiagramManager.h"
 #include "configuration.h"
+#include "propertieshandlerbase.h"
 #include "constraint.h"
 #include "constraintsign.h"
 #include "HeaderGrid.h"
@@ -27,6 +28,7 @@ XS_IMPLEMENT_CLONABLE_CLASS(MyErdTable, wxSFRoundRectShape);
 
 MyErdTable::MyErdTable() : wxSFRoundRectShape()
 {
+    m_object = DatabaseTablePropertiesType;
     m_type = QueryView;
     m_table = nullptr;
     m_columns = 3;
@@ -98,6 +100,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
 
 MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape()
 {
+    m_object = DatabaseTablePropertiesType;
     m_catalogName = table->GetCatalog();
     m_schemaName = table->GetSchemaName();
     m_tableName = table->GetTableName();
@@ -491,3 +494,14 @@ void MyErdTable::DrawSelected(wxDC& dc)
     if( m_type == DatabaseView )
         wxSFRoundRectShape::DrawSelected( dc );
 }
+
+int MyErdTable::ApplyProperties()
+{
+    return 0;
+}
+
+wxAny &MyErdTable::GetProperties()
+{
+    return any;
+}
+

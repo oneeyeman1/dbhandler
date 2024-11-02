@@ -18,6 +18,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
 #include "configuration.h"
+#include "propertieshandlerbase.h"
 #include "GridTableShape.h"
 #include "HeaderGrid.h"
 #include "constraint.h"

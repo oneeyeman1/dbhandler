@@ -42,12 +42,8 @@
 #include "configuration.h"
 //#include "objectproperties.h"
 #include "propertieshandlerbase.h"
-#include "librarypainterpropertieshandler.h"
-#include "fieldpropertieshandler.h"
-#include "propertieshandler.h"
-#include "dividerpropertieshandler.h"
+#include "guiojectsproperties.h"
 #include "field.h"
-#include "databaseoptionshandler.h"
 #include "fieldwindow.h"
 #include "colorcombobox.h"
 #include "propertypagebase.h"
@@ -64,7 +60,6 @@
 #include "databasefielddisplay.h"
 #include "painterobjects.h"
 #include "libraryobjectpropertypage.h"
-#include "librarypropertieshandler.h"
 #include "librarypainteroptionsgeneral.h"
 #include "librarypainteroptionsinclude.h"
 #include "librarypainteroptionsmgmt.h"
@@ -88,7 +83,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     {
         case DatabaseTablePropertiesType:
         {
-            DatabasePropertiesHandler *prop = dynamic_cast<DatabasePropertiesHandler *>( handler );
+/*            PropertiesHandler *prop = dynamic_cast<PropertiesHandler *>( handler );
             TableProperties tableProp = prop->GetProperties( errors ).As<TableProperties>();
             wxFont data_font( tableProp.m_dataFontSize, wxFONTFAMILY_DEFAULT, tableProp.m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, tableProp.m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, tableProp.m_dataFontUnderline, tableProp.m_dataFontName );
             if( tableProp.m_dataFontStrikethrough )
@@ -116,7 +111,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_page2 = new CFontPropertyPage( m_properties, dataFont, false );
             m_page3 = new CFontPropertyPage( m_properties, headingFont, false );
             m_page4 = new CFontPropertyPage( m_properties, labelFont, false );
-/*            m_page5 = new TablePrimaryKey( m_properties, prop->GetTable() );*/
+            m_page5 = new TablePrimaryKey( m_properties, prop->GetTable() );*/
             m_properties->AddPage( m_page2, _( "Data Font" ) );
             m_properties->AddPage( m_page3, _( "Heading Font" ) );
             m_properties->AddPage( m_page4, _( "Label Font" ) );
@@ -125,22 +120,22 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         break;
         case DatabaseFieldPropertiesType:
         {
-            FieldPropertiesHandler *prop = dynamic_cast<FieldPropertiesHandler *>( handler );
-            m_page6 = new FieldGeneral( m_properties, prop->GetProperty().m_comment );
+            FieldTableProperties prop = ( handler )->GetProperties().As<FieldTableProperties>();
+            m_page6 = new FieldGeneral( m_properties, prop.m_comment );
             m_properties->AddPage( m_page6, _( "General" ) );
-            m_page7 = new FieldHeader( m_properties, prop->GetProperty().m_label, prop->GetProperty().m_heading, prop->GetProperty().m_labelPosition, prop->GetProperty().m_headingPosition );
-            m_properties->AddPage( m_page7, _( "Data Font" ) );
+            m_page7 = new FieldHeader( m_properties, prop.m_heading );
+            m_properties->AddPage( m_page7, _( "Headers" ) );
             m_page8 = new DatabaseFieldDisplay( m_properties, wxID_ANY );
             m_properties->AddPage( m_page8, _( "Display" ) );
         }
         break;
         case DividerPropertiesType:
         {
-            BandProperties prop = dynamic_cast<DividerPropertiesHandler *>( handler )->GetObjectProperties();
+/*            BandProperties prop = dynamic_cast<DividerPropertiesHandler *>( handler )->GetObjectProperties();
             m_page9 = new BandGeneralProperties( m_properties, prop );
             m_properties->AddPage( m_page9, _( "General" ) );
             m_page10 = new PointerPropertiesPanel( m_properties, prop.m_cursorFile, prop.m_cursor );
-            m_properties->AddPage( m_page10, _( "Pointer" ) );
+            m_properties->AddPage( m_page10, _( "Pointer" ) );*/
         }
         break;
         case DesignPropertiesType:
@@ -156,29 +151,29 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         case DatabasePropertiesType:
         case QueryPropertiesType:
         {
-            auto prop = dynamic_cast<DatabaseOptionsHandler *>( handler )->GetObjectProperties();
+/*            auto prop = dynamic_cast<DatabaseOptionsHandler *>( handler )->GetObjectProperties();
             m_page11 = new DatabaseOptionGeneral( m_properties, prop.m_general );
             m_properties->AddPage( m_page11, _( "General" ) );
             m_page12 = new DatabaseptionsColours( m_properties, prop.m_colors, handler->GetType() == DatabasePropertiesType ? true : false );
-            m_properties->AddPage( m_page12, _( "Colors" ) );
+            m_properties->AddPage( m_page12, _( "Colors" ) );*/
         }
         break;
         case LibraryPropertiesType:
         {
-            auto prop = dynamic_cast<LibraryPropertiesHandler *>( handler )->GetLibraryProperties();
+/*            auto prop = dynamic_cast<PropertiesHandler *>( handler )->GetLibraryProperties();
             m_page13 = new LibraryObjectPropertyPage( m_properties, prop );
-            m_properties->AddPage( m_page13, _( "General" ) );
+            m_properties->AddPage( m_page13, _( "General" ) );*/
         }
         break;
         case LibraryPainterPropertiesType:
         {
-            auto prop = dynamic_cast<LibraryPainterPropertiesHandler *>( handler )->GetOptions();
+/*            auto prop = dynamic_cast<PropertiesHandler *>( handler )->GetOptions();
             m_page14 = new LibraryPainterOptionsGeneralPage( m_properties, prop->m_general );
             m_properties->AddPage( m_page14, _( "General" ) );
             m_page15 = new LibraryPainterOptionsIncludePage( m_properties, prop->m_include );
             m_properties->AddPage( m_page15, _( "Include" ) );
             m_page16 = new LibraryPainterOptionsMgmtPage( m_properties, prop->m_management );
-            m_properties->AddPage( m_page16, _( "Source Mgmt" ) );
+            m_properties->AddPage( m_page16, _( "Source Mgmt" ) );*/
         }
         break;
     }

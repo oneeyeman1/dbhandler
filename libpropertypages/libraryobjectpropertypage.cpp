@@ -9,9 +9,8 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 #include <wx/wx.h>
-
+#include "propertieshandlerbase.h"
 #include "painterobjects.h"
-#include "objectproperties.h"
 #include "propertypagebase.h"
 
 #include "libraryobjectpropertypage.h"

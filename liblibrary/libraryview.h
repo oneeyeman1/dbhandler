@@ -7,11 +7,13 @@
 #define COL_SIZE       4
 #define COL_COMMENT    5
  
-class LibraryViewPainter :  public ABLBaseView
+class LibraryViewPainter :  public ABLBaseView, public PropertiesHandler
 {
 public:
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *) wxOVERRIDE;
+    virtual int ApplyProperties() wxOVERRIDE;
+    virtual wxAny &GetProperties() wxOVERRIDE;
     void SetViewType(ViewType type) { m_type = type; }
     void SetParentWindow(wxWindow *window) { m_parent = wxStaticCast( window, wxDocMDIParentFrame ); }
     void SetConfiguration(Configuration *conf) { m_conf = conf; }

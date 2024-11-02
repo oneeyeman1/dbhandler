@@ -1,5 +1,6 @@
 #pragma once
-class DesignCanvas : public wxSFShapeCanvas
+
+class DesignCanvas : public wxSFShapeCanvas, public PropertiesHandler
 {
 public:
     enum MODE { modeDESIGN, modeTABLE, modeVIEW, modeLine };
@@ -18,8 +19,9 @@ public:
     virtual void OnLeftDown(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnMouseMove(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnLeftDoubleClick(wxMouseEvent &event) wxOVERRIDE;
-    DesignOptions GetOptions() { return m_options; }
-    void SetOptions(DesignOptions options) { m_options = options; }
+
+    virtual int ApplyProperties() wxOVERRIDE;
+    virtual wxAny &GetProperties() wxOVERRIDE { return any; }
     void PopulateQueryCanvas(const std::vector<TableField *> &queryFields, const std::vector<GroupFields> &groupByFields);
 protected:
     void OnProperties(wxCommandEvent &event);
@@ -30,7 +32,6 @@ private:
     wxView *m_view;
     std::vector<wxString> m_quickQueryFields;
     wxSFShapeBase *m_menuShape;
-    DesignOptions m_options;
     wxFont m_selectedFont;
     wxString m_libPath;
 };

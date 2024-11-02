@@ -2,7 +2,7 @@
 class WXEXPORT FieldHeader :	public PropertyPageBase
 {
 public:
-    FieldHeader(wxWindow *parent, const wxString &label, const wxString &heading, int labelAlignment, int headingAlignment);
+    FieldHeader(wxWindow *parent, const FieldTableHeadingProperties &prop);
     ~FieldHeader(void);
     wxTextCtrl *GetLabelCtrl();
     wxTextCtrl *GetHeadingCtrl();

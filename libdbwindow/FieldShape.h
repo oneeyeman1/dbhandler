@@ -3,7 +3,7 @@
 class FieldTypeShape;
 class CommentFieldShape;
 
-class FieldShape :	public wxSFTextShape
+class FieldShape :	public wxSFTextShape, public PropertiesHandler
 {
 public:
     XS_DECLARE_CLONABLE_CLASS(FieldShape);
@@ -21,6 +21,8 @@ public:
     CommentFieldShape *GetCommentShape() const { return m_comment; }
     void SetTypeShape(FieldTypeShape *shape) { m_typeShape = shape; }
     void SetCommentShape(CommentFieldShape *shape) { m_comment = shape; }
+    virtual int ApplyProperties() wxOVERRIDE;
+    virtual wxAny &GetProperties() wxOVERRIDE;
 protected:    
     virtual void DrawNormal(wxDC &dc) wxOVERRIDE;
     virtual void DrawSelected(wxDC& dc) wxOVERRIDE;

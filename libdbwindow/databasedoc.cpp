@@ -21,6 +21,7 @@
 #else
     #include "wx/txtstrm.h"
 #endif
+#include "wx/any.h"
 #include "wx/wfstream.h"
 #include "wx/docview.h"
 #include "wx/dynlib.h"
@@ -43,7 +44,8 @@
 #include "database.h"
 #include "configuration.h"
 #include "ablbaseview.h"
-#include "objectproperties.h"
+#include "guiojectsproperties.h"
+#include "propertieshandlerbase.h"
 #include "column.h"
 #include "constraint.h"
 #include "constraintsign.h"

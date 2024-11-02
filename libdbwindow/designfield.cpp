@@ -16,6 +16,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/RectShape.h"
 #include "wxsf/GridShape.h"
+#include "propertieshandlerbase.h"
 #include "dbview.h"
 #include "taborder.h"
 #include "designfield.h"
@@ -24,6 +25,7 @@ XS_IMPLEMENT_CLONABLE_CLASS(DesignField, wxSFRectShape);
 
 DesignField::DesignField() : wxSFRectShape()
 {
+    m_object = DesignFieldPropertiesType;
     SetHAlign( wxSFShapeBase::halignCENTER );
     SetVAlign( wxSFShapeBase::valignMIDDLE );
     AddStyle( sfsLOCK_CHILDREN );
@@ -49,6 +51,7 @@ DesignField::DesignField() : wxSFRectShape()
 
 DesignField::DesignField(const wxFont font, const wxString &label, int alignment) : wxSFRectShape()
 {
+    m_object = DesignFieldPropertiesType;
     m_properties.m_font = font;
     m_label = label;
     AddStyle( sfsLOCK_CHILDREN );
@@ -105,4 +108,9 @@ DesignField::~DesignField()
 DesignFieldProperties DesignField::GetProperties()
 {
     return m_properties;
+}
+
+int DesignField::ApplyProperties()
+{
+    return 0;
 }

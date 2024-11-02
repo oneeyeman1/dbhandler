@@ -8,32 +8,29 @@
 #include <string>
 #include <algorithm>
 #include "propertypagebase.h"
+#include "guiojectsproperties.h"
 #include "fieldheader.h"
 
-FieldHeader::FieldHeader(wxWindow *parent, const wxString &label, const wxString &heading, int labelAlignment, int headingAlignment) : PropertyPageBase( parent, wxID_ANY )
+FieldHeader::FieldHeader(wxWindow *parent, const FieldTableHeadingProperties &prop) : PropertyPageBase( parent, wxID_ANY )
 {
-    m_labelText = label;
-    m_headingText = heading;
-    m_labelAlignment = labelAlignment;
-    m_headingAlignment = headingAlignment;
     m_layout = parent->GetLayoutDirection();
     m_label1 = new wxStaticText( this, wxID_ANY, _( "&Label:" ) );
-    m_label = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    m_label = new wxTextCtrl( this, wxID_ANY, prop.m_label );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "&Position: " ) );
     wxString choices[2];
     if( m_layout == wxLayout_RightToLeft )
     {
         choices[0] = _( "right" );
         choices[0] = _( "left" );
-        m_labelPos = new wxComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 2, choices, wxCB_DROPDOWN | wxCB_READONLY );
+        m_labelPos = new wxComboBox( this, wxID_ANY, choices[prop.m_labelAlignment], wxDefaultPosition, wxDefaultSize, 2, choices, wxCB_DROPDOWN | wxCB_READONLY );
     }
     else
     {
         choices[0] = _( "left" );
-        m_labelPos = new wxComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 1, choices, wxCB_DROPDOWN | wxCB_READONLY );
+        m_labelPos = new wxComboBox( this, wxID_ANY, choices[prop.m_labelAlignment], wxDefaultPosition, wxDefaultSize, 1, choices, wxCB_DROPDOWN | wxCB_READONLY );
     }
     m_label3 = new wxStaticText( this, wxID_ANY, _( "&Heading:" ) );
-    m_heading = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+    m_heading = new wxTextCtrl( this, wxID_ANY, prop.m_heading, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
     m_label4 = new wxStaticText( this, wxID_ANY, wxEmptyString );
     wxString choices2[] =
     {
@@ -41,7 +38,7 @@ FieldHeader::FieldHeader(wxWindow *parent, const wxString &label, const wxString
         _( "right" ),
         _( "center" )
     };
-    m_headingPos = new wxComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 3, choices2, wxCB_DROPDOWN | wxCB_READONLY );
+    m_headingPos = new wxComboBox( this, wxID_ANY, choices2[prop.m_headingAlignment], wxDefaultPosition, wxDefaultSize, 3, choices2, wxCB_DROPDOWN | wxCB_READONLY );
     set_properties();
     do_layout();
 }

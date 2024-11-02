@@ -4,7 +4,7 @@
 #define DISPLAYTYPES 1
 #define DISPLAYCOMMENTS 2
 
-class MyErdTable : public wxSFRoundRectShape
+class MyErdTable : public wxSFRoundRectShape, public PropertiesHandler
 {
 public:
     XS_DECLARE_CLONABLE_CLASS(MyErdTable);
@@ -30,6 +30,8 @@ public:
     const wxString &GetCatalogName() const { return m_catalogName; }
     const wxString &GetSchemaName() const { return m_schemaName; }
     const wxString &GetTableName() const { return m_tableName; }
+    virtual int ApplyProperties() wxOVERRIDE;
+    virtual wxAny &GetProperties() wxOVERRIDE;
 protected:
     void ClearGrid();
     void ClearConnections();

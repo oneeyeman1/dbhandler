@@ -36,18 +36,13 @@
 #include "wx/filename.h"
 #include "wx/bmpcbox.h"
 #include "wx/generic/dirctrlg.h"
-#if wxCHECK_VERSION( 3, 3, 0 )
-#else
-#include "wx/imaglist.h"
-#endif
 #include "wx/treelist.h"
 #include "wx/dir.h"
 #include "configuration.h"
+#include "propertieshandlerbase.h"
 #include "painterobjects.h"
 #include "ablbaseview.h"
 #include "propertieshandlerbase.h"
-#include "librarypainterpropertieshandler.h"
-#include "librarypropertieshandler.h"
 #include "librarydocument.h"
 #include "libraryview.h"
 
@@ -71,6 +66,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
 {
     m_tb = nullptr;
     wxWindowList children;
+    m_object = LibraryPainterPropertiesType;
     wxRect clientRect = m_parent->GetClientRect();
     if( !ABLBaseView::OnCreate( doc, flags ) )
         return false;
@@ -696,7 +692,6 @@ void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
 {
     wxTreeListItems items;
     LibraryObject *library = new LibraryObject;
-    std::unique_ptr<PropertiesHandler> propertiesPtr;
     auto failed = false;
     auto title = _( "Properties" );
     m_tree->GetSelections( items );
@@ -735,18 +730,10 @@ void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
                 lib.Load( libName );
                 if( lib.IsLoaded() )
                 {
-                    wxAny any = library;
-#if __cplusplus > 201300
-                    auto ptr = std::make_unique<LibraryPropertiesHandler>( library->GetProperties() );
-#else
-                    auto ptr = std::unique_ptr<LibraryPropertiesHandler>( new LibraryPropertiesHandler( library->GetProperties() ) );
-#endif
-                    propertiesPtr = std::move( ptr );
-                    propertiesPtr->SetHandlerObject( any );
+                    std::unique_ptr<PropertiesHandler> ptr( library );
                     wxString command = wxEmptyString;
-                    propertiesPtr->SetType( LibraryPropertiesType );
                     CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-                    auto res = func( m_frame, propertiesPtr, title, command, false );
+                    auto res = func( m_frame, ptr, title, command, false );
                     if( res == wxID_OK )
                     {
                         wxMessageBox( "Creating new library!!" );
@@ -961,22 +948,17 @@ void LibraryViewPainter::OnPainterProperties(wxCommandEvent &WXUNUSED(event))
     lib.Load( libName );
     if( lib.IsLoaded() )
     {
+        std::unique_ptr<PropertiesHandler> ptr( this );
         wxString title = _( "Options" );
-#if __cplusplus > 201300
-        auto ptr = std::make_unique<LibraryPainterPropertiesHandler>( &m_conf->m_libPainterOptions );
-#else
-        auto ptr = std::unique_ptr<LibraryPainterPropertiesHandler>( new LibraryPainterPropertiesHandler( &m_conf->m_libPainterOptions ) );
-#endif
-        propertiesPtr = std::move( ptr );
-        propertiesPtr->SetHandlerObject( nullptr );
+        any = this;
         wxString command = wxEmptyString;
-        propertiesPtr->SetType( LibraryPainterPropertiesType );
+        SetType( LibraryPainterPropertiesType );
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
-        auto res = func( m_frame, propertiesPtr, title, command, false );
+        auto res = func( m_frame, ptr, title, command, false );
     }
 }
 
-void LibraryViewPainter::ApplyOptions()
+int LibraryViewPainter::ApplyProperties()
 {
     if( !m_conf->m_libPainterOptions.m_general.m_showCheckedOut )
         m_tree->SetColumnWidth( COL_CHECKEDOUT, 0 );
@@ -998,4 +980,10 @@ void LibraryViewPainter::ApplyOptions()
         m_tree->SetColumnWidth( COL_COMMENT, 0 );
     else
         m_tree->SetColumnWidth( COL_COMMENT, wxCOL_WIDTH_AUTOSIZE );
+    return 0;;
+}
+
+wxAny &LibraryViewPainter::GetProperties()
+{
+    return any;
 }

@@ -38,8 +38,10 @@
     <ClInclude Include="ablbaseview.h" />
     <ClInclude Include="colorcombobox.h" />
     <ClInclude Include="configuration.h" />
+    <ClInclude Include="guiojectsproperties.h" />
     <ClInclude Include="maskededit.h" />
     <ClInclude Include="painterobjects.h" />
+    <ClInclude Include="propertieshandlerbase.h" />
     <ClInclude Include="typecombobox.h" />
   </ItemGroup>
   <ItemGroup>

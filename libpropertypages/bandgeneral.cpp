@@ -13,7 +13,7 @@
 
 #include "wx/bmpcbox.h"
 #include "wx/valnum.h"
-#include "objectproperties.h"
+#include "guiojectsproperties.h"
 #include "colorcombobox.h"
 #include "propertypagebase.h"
 #include "colorcombobox.h"
@@ -22,33 +22,33 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-BandGeneralProperties::BandGeneralProperties(wxWindow* parent,  const BandProperties &props):
+BandGeneralPropertiesPage::BandGeneralPropertiesPage(wxWindow* parent,  const BandProperties &props):
     PropertyPageBase(parent)
 {
     // begin wxGlade: BandGeneralProperties::BandGeneralProperties
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Color" ) );
     m_colors = new CColorComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_DROPDOWN );
-    m_colors->SetValue( props.m_color );
+    m_colors->SetValue( props.m_general.m_color );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Height" ) );
-    m_height = new wxTextCtrl( this, wxID_ANY, wxString::Format( "%d", props.m_height ) );
+    m_height = new wxTextCtrl( this, wxID_ANY, wxString::Format( "%d", props.m_general.m_height ) );
     m_autosize = new wxCheckBox( this, wxID_ANY, _( "Autosize Height" ) );
 
     set_properties();
 //    m_autosize->SetValue( props.m_autosize );
     do_layout();
     // end wxGlade
-    m_colors->Bind( wxEVT_COMBOBOX, &BandGeneralProperties::OnPageModified, this );
-    m_height->Bind( wxEVT_TEXT, &BandGeneralProperties::OnPageModified, this );
-    m_autosize->Bind( wxEVT_CHECKBOX, &BandGeneralProperties::OnPageModified, this );
+    m_colors->Bind( wxEVT_COMBOBOX, &BandGeneralPropertiesPage::OnPageModified, this );
+    m_height->Bind( wxEVT_TEXT, &BandGeneralPropertiesPage::OnPageModified, this );
+    m_autosize->Bind( wxEVT_CHECKBOX, &BandGeneralPropertiesPage::OnPageModified, this );
 }
 
-void BandGeneralProperties::set_properties()
+void BandGeneralPropertiesPage::set_properties()
 {
     // begin wxGlade: BandGeneralProperties::set_properties
     // end wxGlade
 }
 
-void BandGeneralProperties::do_layout()
+void BandGeneralPropertiesPage::do_layout()
 {
     // begin wxGlade: BandGeneralProperties::do_layout
     wxBoxSizer* sizer_1 = new wxBoxSizer( wxHORIZONTAL );
@@ -77,7 +77,7 @@ void BandGeneralProperties::do_layout()
     // end wxGlade
 }
 
-void BandGeneralProperties::OnPageModified(wxCommandEvent &WXUNUSED(event))
+void BandGeneralPropertiesPage::OnPageModified(wxCommandEvent &WXUNUSED(event))
 {
     PageEdited();
 }

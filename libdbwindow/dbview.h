@@ -19,10 +19,6 @@ struct Properties
     wxSize m_size;
 };
  
-struct DesignLabelProperties : public Properties
-{
-};
-
 struct DesignFieldProperties : public Properties
 {
     wxString m_name, m_tag;

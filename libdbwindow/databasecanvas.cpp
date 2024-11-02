@@ -12,6 +12,7 @@
 #else
     #include "wx/txtstrm.h"
 #endif
+#include "wx/any.h"
 #include "wx/docview.h"
 #include "wx/fontenum.h"
 #include "wx/docmdi.h"
@@ -35,9 +36,10 @@
 #include "wxsf/ShapeCanvas.h"
 #include "configuration.h"
 #include "ablbaseview.h"
+#include "propertieshandlerbase.h"
+#include "guiojectsproperties.h"
 #include "commentfieldshape.h"
 #include "fieldtypeshape.h"
-#include "objectproperties.h"
 #include "constraint.h"
 #include "constraintsign.h"
 #include "GridTableShape.h"
@@ -1559,4 +1561,14 @@ void DatabaseCanvas::UnselectAllTables()
     {
         (*it1)->Select( false );
     }
+}
+
+int DatabaseCanvas::ApplyProperties()
+{
+    return 0;
+}
+
+wxAny &DatabaseCanvas::GetProperties()
+{
+    return any;
 }

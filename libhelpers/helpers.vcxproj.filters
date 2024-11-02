@@ -27,6 +27,12 @@
     <ClInclude Include="ablbaseview.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="propertieshandlerbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="guiojectsproperties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="typecombobox.cpp">

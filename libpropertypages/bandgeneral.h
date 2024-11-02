@@ -12,14 +12,14 @@
 #ifndef BANDGENERAL_H
 #define BANDGENERAL_H
 
-class WXEXPORT BandGeneralProperties: public PropertyPageBase
+class WXEXPORT BandGeneralPropertiesPage: public PropertyPageBase
 {
 public:
     // begin wxGlade: BandGeneralProperties::ids
     // end wxGlade
 
-    BandGeneralProperties(wxWindow* parent, const BandProperties &props);
-    virtual ~BandGeneralProperties() {};
+    BandGeneralPropertiesPage(wxWindow* parent, const BandProperties &props);
+    virtual ~BandGeneralPropertiesPage() {};
 
 private:
     // begin wxGlade: BandGeneralProperties::methods

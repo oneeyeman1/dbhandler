@@ -82,8 +82,10 @@
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
 #include "configuration.h"
+#include "propertieshandlerbase.h"
+#include "guiojectsproperties.h"
+#include "ablbaseview.h"
 #include "dbview.h"
-//#include "objectproperties.h"
 #include "colorcombobox.h"
 #include "taborder.h"
 #include "designlabel.h"
@@ -114,12 +116,6 @@
 #include "fontpropertypagebase.h"
 #include "fieldheader.h"
 #include "propertieshandlerbase.h"
-#include "propertieshandler.h"
-#include "fieldpropertieshandler.h"
-#include "fieldpropertieshandler.h"
-#include "designpropertieshandler.h"
-#include "dividerpropertieshandler.h"
-#include "databaseoptionshandler.h"
 #include "divider.h"
 #include "designgeneral.h"
 #include "bandgeneral.h"
@@ -134,8 +130,8 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_FIELD_SHUFFLED( wxEVT_USER_FIRST + 4 
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::map<wxString, std::vector<TableDefinition> > &, std::vector<std::wstring> &, bool, const int, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
-typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
-typedef int (*CREATEPROPERTIESDIALOGFRPRJECT)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxCriticalSection &);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool);
+typedef int (*CREATEPROPERTIESDIALOGFRPRJECT)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int, std::vector<QueryInfo> &, wxString &, std::vector<LibrariesInfo> &path, bool &update);
@@ -227,7 +223,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_searchPos = 0;
     m_isActive = false;
     m_tb = m_styleBar = nullptr;
-    wxToolBar *tb = nullptr;
     m_isCreated = false;
     m_fields = nullptr;
     m_queryBook = nullptr;
@@ -1397,8 +1392,10 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
     int type = 0;
     wxAny any;
     DatabaseTable *dbTable = nullptr;
+    FieldShape *dbField = nullptr;
     Divider *divider = nullptr;
     DesignLabel *label = nullptr;
+    DesignField *designField = nullptr;
     MyErdTable *erdTable = NULL;
     ConstraintSign *sign = NULL;
     TableField *field = NULL;
@@ -1416,73 +1413,63 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         }
     }
     wxString tableName, schemaName, ownerName;
-        if( !shape )
+    if( !shape )
+    {
+        type = DesignPropertiesType;
+        dbTable = nullptr;
+    }
+    else
+    {
+        erdTable = wxDynamicCast( shape, MyErdTable );
+        if( erdTable )
         {
-            type = DesignProperties;
-            dbTable = nullptr;
+            dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) shape)->GetTable() );
+            tableName = dbTable->GetTableName();
+            schemaName = dbTable->GetSchemaName();
+            type = DatabaseTablePropertiesType;
         }
         else
         {
-            erdTable = wxDynamicCast( shape, MyErdTable );
-            if( erdTable )
+            divider = wxDynamicCast( shape, Divider );
+            if( divider )
             {
-                dbTable = const_cast<DatabaseTable *>( ((MyErdTable *) shape)->GetTable() );
-                tableName = dbTable->GetTableName();
-                schemaName = dbTable->GetSchemaName();
-                type = DatabaseTableProperties;
+                type = DividerPropertiesType;
+                dbTable = nullptr;
             }
             else
             {
-                divider = wxDynamicCast( shape, Divider );
-                if( divider )
+                label = wxDynamicCast( shape, DesignLabel );
+                if( label )
                 {
-                    type = DividerProperties;
+                    type = DesignLabelPropertiesType;
                     dbTable = nullptr;
                 }
                 else
                 {
-                    label = wxDynamicCast( shape, DesignLabel );
-                    if( label )
-                    {
-                        type = DesignLabelProperties;
-                        dbTable = nullptr;
-                    }
+                    dbField = wxDynamicCast( shape, FieldShape );
+                    if( dbField )
+                        type = DatabaseFieldPropertiesType;
                     else
                     {
-                        field = ((FieldShape *) shape)->GetField();
-                        if( field )
+                        designField = wxDynamicCast( shape, DesignField );
+                        if( designField )
                         {
-                            MyErdTable *my_table = dynamic_cast<MyErdTable *>( ((FieldShape *) shape)->GetParentShape()->GetParentShape() );
-                            if( my_table )
-                            {
-                                erdTable = my_table;
-                                tableName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableName();
-                                schemaName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetSchemaName();
-                                ownerName = const_cast<DatabaseTable *>( erdTable->GetTable() )->GetTableOwner();
-                                type = DatabaseFieldProperties;
-                            }
+                            type = DesignFieldPropertiesType;
+                            dbTable = nullptr;
                         }
                         else
                         {
-                            auto designField = wxDynamicCast( shape, DesignField );
-                            if( designField )
+                            sign = wxDynamicCast( shape, ConstraintSign );
+                            if( sign )
                             {
-                                type = DesignFieldProperties;
-                                dbTable = nullptr;
-                            }
-                            else
-                            {
-                                sign = wxDynamicCast( shape, ConstraintSign );
-                                if( sign )
-                                {
-                                    type = SignProperties;
-                                }
+                                type = SignPropertiesType;
                             }
                         }
                     }
                 }
             }
         }
+    }
     wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -1496,88 +1483,58 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
     int res = 0;
     std::unique_ptr<PropertiesHandler> propertiesPtr;
     wxString title;
-    if( type == DatabaseTableProperties )
+    if( type == DatabaseTablePropertiesType )
     {
-        //#if _MSC_VER >= 1900
         std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
         res = GetDocument()->GetDatabase()->GetTableProperties( dbTable, errors );
-        any = erdTable;
-#if __cplusplus > 201300
-        auto ptr = std::make_unique<DatabasePropertiesHandler>( GetDocument()->GetDatabase(), m_text );
-#else
-        auto ptr = std::unique_ptr<DatabasePropertiesHandler>( new DatabasePropertiesHandler( GetDocument()->GetDatabase(), m_text ) );
-#endif
-        propertiesPtr = std::move( ptr );
-        propertiesPtr->SetHandlerObject( any );
-        propertiesPtr->SetType( DatabaseTableProperties );
+        std::unique_ptr<PropertiesHandler> ptr( erdTable );
+        erdTable->SetType( DatabaseTablePropertiesType );
         title = _( "Table " );
         title += schemaName + L"." + tableName;
     }
-    if( type == DatabaseFieldProperties )
+    if( type == DatabaseFieldPropertiesType )
     {
         {
             //#if _MSC_VER >= 1900
             std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
             res = GetDocument()->GetDatabase()->GetFieldProperties( tableName.ToStdWstring(), field, errors );
         }
-#if __cplusplus > 201300
-        auto ptr = std::make_unique<FieldPropertiesHandler>( GetDocument()->GetDatabase(), tableName, ownerName, field, m_text );
-#else
-        auto ptr = std::unique_ptr<FieldPropertiesHandler>( new FieldPropertiesHandler( GetDocument()->GetDatabase(), tableName, ownerName, field, m_text ) );
-#endif
-        propertiesPtr = std::move( ptr );
-        any = field;
-        propertiesPtr->SetHandlerObject( any );
-        propertiesPtr->SetType( DatabaseFieldProperties );
+        std::unique_ptr<PropertiesHandler> ptr( dbField );
+//        any = field->;
+        dbField->SetType( DatabaseFieldPropertiesType );
         title = _( "Column " );
         title += tableName + ".";
         title += field->GetFieldName();
     }
-    if( type == DividerProperties )
+    if( type == DividerPropertiesType )
     {
-#if __cplusplus > 201300
-        auto ptr = std::make_unique<DividerPropertiesHandler>( divider->GetDividerProperties() );
-#else
-        auto ptr = std::unique_ptr<DividerPropertiesHandler>( new DividerPropertiesHandler( divider->GetDividerProperties() ) );
-#endif
-        propertiesPtr = std::move( ptr );
-        any = divider;
-        propertiesPtr->SetHandlerObject( any );
-        propertiesPtr->SetType( DividerProperties );
+        std::unique_ptr<PropertiesHandler> ptr( divider );
+        divider->SetType( DividerPropertiesType );
         title = _( "Band Object" );
     }
-    if( type == DesignProperties )
+    if( type == DesignPropertiesType )
     {
-#if __cplusplus > 201300
-        auto ptr = std::make_unique<DesignPropertiesHandler>( m_designCanvas->GetOptions() );
-#else
-        auto ptr = std::unique_ptr<DesignPropertiesHandler>( new DesignPropertiesHandler( m_designCanvas->GetOptions() ) );
-#endif
-        propertiesPtr = std::move( ptr );
+        auto ptr = std::unique_ptr<PropertiesHandler>( m_designCanvas );
         any = m_designCanvas;
-        propertiesPtr->SetHandlerObject( any );
-        propertiesPtr->SetType( DesignProperties );
+        m_designCanvas->SetType( DesignPropertiesType );
         title = _( "Query Object" );
     }
-    if( type == DesignFieldProperties )
+    if( type == DesignFieldPropertiesType )
     {
         title = _( "Column Object" );
-#if __cplusplus > 201300
-        auto ptr = std::make_unique<DesignPropertiesHandler>( m_designCanvas->GetOptions() );
-#else
-        auto ptr = std::unique_ptr<DesignPropertiesHandler>( new DesignPropertiesHandler( m_designCanvas->GetOptions() ) );
-#endif
-        propertiesPtr = std::move( ptr );
+        designField->SetType( DesignFieldPropertiesType );
+        auto ptr = std::unique_ptr<PropertiesHandler>( designField );
         any = field;
-        propertiesPtr->SetHandlerObject( any );
-        propertiesPtr->SetType( DesignProperties );
-        propertiesPtr.get()->SetType( type );
+    }
+    if( type == DesignLabelPropertiesType )
+    {
+
     }
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
 //        TableProperties *props = *static_cast<TableProperties *>( properties );
-        res = func( m_frame, propertiesPtr, title, command, logOnly, *pcs );
+        res = func( m_frame, propertiesPtr, title, command, logOnly );
     }
 }
 
@@ -2497,12 +2454,12 @@ void DrawingView::ChangeFontEement()
         {
             auto label = wxDynamicCast( (*it), DesignLabel );
             if( label )
-                f = label->GetProperties().m_font;
+                f = label->GetProperties().As<DesignLabelProperties>().m_font;
             else
             {
                 auto field = wxDynamicCast( (*it), DesignField );
                 if( field )
-                    f = field->GetProperties().m_font;
+                    f = field->GetProperties().As<DesignFieldProperties>().m_font;
             }
             if( font != f )
             {
@@ -3278,22 +3235,20 @@ void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
 #endif
     lib.Load( libName );
     int res = 0;
-    std::unique_ptr<PropertiesHandler> propertiesPtr;
     wxString title;
+    PropertiesHandler *handler;
+    if( m_type == DatabaseView )
+        handler = m_canvas;
+    else
+        handler = m_designCanvas;
     std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
-#if __cplusplus > 201300
-    auto ptr = std::make_unique<DatabaseOptionsHandler>( m_conf->m_dbOptions );
-#else
-    auto ptr = std::unique_ptr<DatabaseOptionsHandler>( new DatabaseOptionsHandler( m_conf->m_dbOptions ) );
-#endif
-    propertiesPtr = std::move( ptr );
+    auto ptr = std::unique_ptr<PropertiesHandler>( handler );
     wxAny any = m_canvas;
-    propertiesPtr->SetHandlerObject( any );
-    propertiesPtr->SetType( m_type == DatabaseView ? DatabaseProperties : QueryProperties );
+    handler->SetType( m_type == DatabaseView ? DatabasePropertiesType : QueryPropertiesType );
     title = _( "Database Preferences" );
     if( lib.IsLoaded() )
     {
         CREATEPROPERTIESDIALOGFRPRJECT func = (CREATEPROPERTIESDIALOGFRPRJECT) lib.GetSymbol( "CreatePropertiesDialogForObject" );
-        res = func( m_frame, propertiesPtr, title, *pcs );
+        res = func( m_frame, ptr, title );
     }
 }

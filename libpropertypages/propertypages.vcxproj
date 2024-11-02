@@ -50,7 +50,6 @@
     <ClInclude Include="librarypainteroptionsinclude.h" />
     <ClInclude Include="librarypainteroptionsmgmt.h" />
     <ClInclude Include="msw\fontpropertypage.h" />
-    <ClInclude Include="objectproperties.h" />
     <ClInclude Include="pointerproperty.h" />
     <ClInclude Include="printspec.h" />
     <ClInclude Include="propertypagebase.h" />

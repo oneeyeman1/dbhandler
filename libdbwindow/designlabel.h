@@ -9,21 +9,21 @@
     wxSize m_size;
 };
 */
-class DesignLabel : public wxSFRectShape
+class DesignLabel : public wxSFRectShape, public PropertiesHandler
 {
 public:
     XS_DECLARE_CLONABLE_CLASS(DesignLabel);
     DesignLabel();
     DesignLabel(const wxFont font, const wxString &label, int alignment);
     virtual ~DesignLabel();
-    DesignLabelProperties GetProperties();
+    virtual wxAny &GetProperties() wxOVERRIDE;
     void Select(bool selected);
+    virtual int ApplyProperties() wxOVERRIDE;
 protected:
     void InitSerializable();
 private:
     wxString m_label;
     wxSFTextShape *m_text;
     wxSFGridShape *m_grid;
-    DesignLabelProperties m_prop;
 };
 

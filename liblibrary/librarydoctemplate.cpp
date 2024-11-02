@@ -11,6 +11,7 @@
 #include "wx/treelist.h"
 #include "wx/generic/dirctrlg.h"
 #include "configuration.h"
+#include "propertieshandlerbase.h"
 #include "painterobjects.h"
 #include "ablbaseview.h"
 #include "librarydocument.h"

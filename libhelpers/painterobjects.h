@@ -14,11 +14,12 @@ struct LibraryObjectProperty
 
 };
 
-struct LibraryObjects
+struct LibraryObjects : PropertiesHandler
 {
 public:
     LibraryObjects(const wxString &libName, const wxString &name, const wxDateTime &created, const wxDateTime &modified, int size, const wxString &comment)
     {
+        m_object = LibraryObjectsProperties;
         m_properties.m_libName   = libName;
         m_properties.m_name      = name;
         m_properties.m_compiled  = created;
@@ -29,6 +30,7 @@ public:
 
     LibraryObjects()
     {
+        m_object = LibraryObjectsProperties;
         m_properties.m_compiled     = wxDateTime::Now();
         m_properties.m_modified    = wxDateTime::Now();
         m_properties.m_size         = 0;
@@ -38,14 +40,17 @@ public:
         m_properties.m_checkedOutBy = "";
     }
 
+    virtual int ApplyProperties() wxOVERRIDE { return 0; }
+    virtual wxAny &GetProperties() wxOVERRIDE { any = m_properties; return any; }
     LibraryObjectProperty m_properties;
 };
 
-struct LibraryObject
+struct LibraryObject : public PropertiesHandler
 {
 public:
     LibraryObject(const wxString &name, const wxDateTime &timestamp, const wxString &comment)
     {
+        m_object = LibraryPropertiesType;
         m_prop.m_name = name;
         auto stamp = timestamp.GetTm();
         m_prop.m_created.SetDay( stamp.mday );
@@ -60,6 +65,7 @@ public:
 
     LibraryObject()
     {
+        m_object = LibraryPropertiesType;
         m_prop.m_created = wxDateTime::Now();
         m_prop.m_name = wxEmptyString;
         m_prop.m_comment = wxEmptyString;
@@ -88,8 +94,10 @@ public:
     }
     const wxString &GetComment() const { return m_prop.m_comment; }
     void SetComment(const wxString &comment) { m_prop.m_comment = comment; }
-    const LibraryProperty &GetProperties() { return m_prop; }
+    virtual wxAny &GetProperties() wxOVERRIDE { any = m_prop; return any; }
     std::vector<LibraryObjects> &GetObjects() { return  m_objects; }
+
+    virtual int ApplyProperties() wxOVERRIDE { return 0; }
 private:
     LibraryProperty m_prop;
     std::vector<LibraryObjects> m_objects;
