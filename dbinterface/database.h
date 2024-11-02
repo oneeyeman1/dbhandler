@@ -193,6 +193,7 @@ public:
     }
     std::wstring m_comment, m_label, m_heading;
     int m_labelPosition, m_headingPosition;
+    std::vector<std::wstring> m_format;
 };
 
 class TableField

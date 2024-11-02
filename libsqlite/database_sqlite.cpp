@@ -967,6 +967,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     std::wstring errorMessage;
     int result = 0;
     std::wstring query = L"SELECT * FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
+    std::wstring query1 = L"SELECT * FROM \"sys.abcatfmt\" WHERE \"abc_type\" = ?";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
@@ -1019,6 +1020,56 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 result = 1;
                 GetErrorMessage( res, errorMessage );
                 errorMsg.push_back( errorMessage );
+            }
+        }
+        else
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        result = 1;
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    sqlite3_finalize( stmt );
+    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), (int) query1.length(), &stmt, 0 );
+    int type;
+    if( res == SQLITE_OK )
+    {
+        if( field->GetFieldType() == L"date" )
+            type = 82;
+        if( field->GetFieldType() == L"datetime" || field->GetFieldType() == L"time" || field->GetFieldType() == L"timestamp" )
+            type = 84;
+        if( field->GetFieldType() == L"real" )
+            type = 81;
+        else
+            type = 80;
+        res = sqlite3_bind_int( stmt, 1, type );
+        if( res == SQLITE_OK )
+        {
+            for( ; ; )
+            {
+                res = sqlite3_step( stmt );
+                if( res == SQLITE_ROW )
+                {
+                    const char *format = (const char *) sqlite3_column_text( stmt, 1 );
+                    if( format )
+                    {
+                        field->GetFieldProperties().m_format.push_back( sqlite_pimpl->m_myconv.from_bytes( format ) );
+                    }
+                }
+                else if( res == SQLITE_DONE )
+                    break;
+                else if( res != SQLITE_DONE )
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                }
             }
         }
         else

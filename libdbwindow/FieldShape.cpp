@@ -13,10 +13,9 @@ XS_IMPLEMENT_CLONABLE_CLASS(FieldShape,wxSFTextShape);
 
 FieldShape::FieldShape() : wxSFTextShape()
 {
+    m_comment = nullptr;
     m_object = DatabaseFieldPropertiesType;
     m_typeShape = nullptr;
-    FieldTableProperties prop = any.As<FieldTableProperties>();
-    prop.m_comment = "";
     SetHAlign(wxSFShapeBase::halignCENTER );
     SetVAlign(wxSFShapeBase::valignMIDDLE );
     m_name = wxEmptyString;
@@ -39,6 +38,7 @@ FieldShape::FieldShape() : wxSFTextShape()
 
 FieldShape::FieldShape(const TableField *field) : wxSFTextShape()
 {
+    m_comment = nullptr;
     m_object = DatabaseFieldPropertiesType;
     SetHAlign(wxSFShapeBase::halignCENTER );
     SetVAlign(wxSFShapeBase::valignMIDDLE );
@@ -143,6 +143,15 @@ void FieldShape::SetParentRect(const wxRect &rect)
 void FieldShape::SetField(TableField *field)
 {
     m_field = field;
+    FieldTableProperties prop;
+    prop.m_comment = field->GetFieldProperties().m_comment;
+    prop.m_heading.m_label = field->GetFieldProperties().m_label;
+    prop.m_heading.m_heading = field->GetFieldProperties().m_heading;
+    prop.m_heading.m_labelAlignment = field->GetFieldProperties().m_labelPosition;
+    prop.m_heading.m_headingAlignment = field->GetFieldProperties().m_headingPosition;
+    for( std::vector<std::wstring>::iterator it = field->GetFieldProperties().m_format.begin(); it != field->GetFieldProperties().m_format.end(); ++it )
+        prop.m_display.m_format.push_back( (*it) );
+    any = prop;
 }
 
 TableField *FieldShape::GetField()
