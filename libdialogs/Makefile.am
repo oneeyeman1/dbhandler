@@ -50,7 +50,6 @@ libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
 	-I../../libshapeframework \
 	-I../../libpropertypages \
-	-I../../libpropertieshandlers \
 	-I../../libhelpers \
 	@WX_CXXFLAGS@
 
@@ -61,7 +60,6 @@ libdialogs_la_LDFLAGS = -L../libsqlite \
 	-L../libodbc \
 	-L../libpostgres \
 	-L../libpropertypages \
-	-L../libpropertieshandlers \
 	-L../libhelpers \
 	-ldbinterface \
 	-lsqlite_lib \
@@ -70,6 +68,5 @@ libdialogs_la_LDFLAGS = -L../libsqlite \
 	-lhelpers \
 	-lfieldswindow \
 	-lpropertypages \
-	-lpropertieshandlers \
 	-lpostgres \
 	@WX_LIBS@

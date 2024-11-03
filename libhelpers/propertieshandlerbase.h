@@ -27,7 +27,11 @@ enum
     LibraryPainterPropertiesType
 };
 
-class __declspec(dllexport) PropertiesHandler
+class
+#ifdef __WXMSW__
+ __declspec(dllexport)
+#endif
+ PropertiesHandler
 {
 public:
     PropertiesHandler() { }
