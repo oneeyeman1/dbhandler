@@ -3021,7 +3021,8 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLHDBC hdbc_fieldProp;
     SQLHSTMT stmt_fieldProp;
     int result = 0;
-    SQLWCHAR *commentField, *label = nullptr, *heading = nullptr;
+    short justify;
+    SQLWCHAR *commentField, *label = nullptr, *heading = nullptr, *formatNameField = nullptr, *formatField = nullptr;
     SQLWCHAR *qry = NULL;
     unsigned short labelAlignment = 0, headingAlignment = 0;
     SQLWCHAR *table = new SQLWCHAR[schemaName.length() + tableName.length() + 3], *owner = new SQLWCHAR[ownerName.length() + 2], *fieldNameReq = new SQLWCHAR[fieldName.length() + 2];
@@ -3034,9 +3035,10 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     uc_to_str_cpy( owner, ownerName );
     uc_to_str_cpy( fieldNameReq, fieldName );
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbCommentField = SQL_NTS, cbLabelField = SQL_NTS, cbHeadingField = SQL_NTS;
-    SQLLEN cbLabelAlignment = 0, cbHeadingAlignment = 0;
+    SQLLEN cbLabelAlignment = 0, cbHeadingAlignment = 0, cbJustify = 0, cbFormatName = 0, cbFormat = 0;
     SQLSMALLINT OutConnStrLen;
     std::wstring query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
+    std::wstring query1 = L"SELECT * FROM \"acatfmt\" WHERE \"abc_type\" = ?";
     qry = new SQLWCHAR[query.length() + 2];
     memset( qry, '\0', query.length() + 2 );
     uc_to_str_cpy( qry, query );
@@ -3174,6 +3176,10 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                                 }
                                                 if( !ret )
                                                 {
+                                                    ret = SQLBindCol( stmt_fieldProp, 10, SQL_C_SHORT, &justify, 0, &cbJustify );
+                                                }
+                                                if( !ret )
+                                                {
                                                     ret = SQLFetch( stmt_fieldProp );
                                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                                                     {
@@ -3191,6 +3197,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                                         field->GetFieldProperties().m_heading = head;
                                                         field->GetFieldProperties().m_labelPosition = labelAlignment;
                                                         field->GetFieldProperties().m_headingPosition = headingAlignment;
+                                                        field->GetFieldProperties().m_justify = justify;
                                                     }
                                                     ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fieldProp );
                                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3221,6 +3228,103 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                             }
                                         }
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    delete[] qry;
+    qry = NULL;
+    qry = new SQLWCHAR[query1.length() + 2];
+    memset( qry, '\0', query1.length() + 2 );
+    uc_to_str_cpy( qry, query1 );
+    ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc_fieldProp );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, 0, m_env );
+        result = 1;
+    }
+    else
+    {
+        ret = SQLDriverConnect( hdbc_fieldProp, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 2, m_env );
+            result = 1;
+        }
+        else
+        {
+            ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc_fieldProp, &stmt_fieldProp );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, 2, m_hdbc );
+                result = 1;
+            }
+            else
+            {
+                int type;
+                if( field->GetFieldType() == L"date" )
+                    type = 82;
+                if( field->GetFieldType() == L"datetime" || 
+                    field->GetFieldType() == L"datwtime2" || 
+                    field->GetFieldType() == L"smalldatetime" ||
+                    field->GetFieldType() == L"timestamp" )
+                    type = 84;
+                if( field->GetFieldType() == L"real" ||
+                    field->GetFieldType() == L"float" ||
+                    field->GetFieldType() == L"numeric" )
+                    type = 81;
+                if( field->GetFieldType() == L"mpney" )
+                    type = 81;
+                else
+                    type = 80;
+                ret = SQLBindParameter( stmt_fieldProp, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_TINYINT, 0, 0, &type, 0, &cbTableName );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                    result = 1;
+                }
+                ret = SQLPrepare( stmt_fieldProp, qry, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                    result = 1;
+                }
+                else
+                {
+                    ret = SQLExecute( stmt_fieldProp );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                        result = 1;
+                    }
+                    else
+                    {
+                        ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &formatNameField, 30, &cbFormatName );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                            result = 1;
+                        }
+                        else
+                        {
+                            ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, &formatField, 254, &cbFormat );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                result = 1;
+                            }
+                            else
+                            {
+                                for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ); ret = SQLFetch( m_hstmt ) )
+                                {
+                                    std::wstring formatName, format;
+                                    str_to_uc_cpy( formatName, formatNameField );
+                                    str_to_uc_cpy( format, formatField );
+                                    field->GetFieldProperties().m_format.push_back( std::make_pair( formatName, format ) );
                                 }
                             }
                         }

@@ -988,6 +988,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                         const char *heading = (const char *) sqlite3_column_text( stmt, 7 );
                         int headingAlignment = sqlite3_column_int( stmt, 8 );
                         const char *comment = (const char *) sqlite3_column_text( stmt, 17 );
+                        short justify = sqlite3_column_int( stmt, 9 );
                         if( label )
                         {
                             field->GetFieldProperties().m_label = sqlite_pimpl->m_myconv.from_bytes( label );
@@ -1000,6 +1001,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                         }
                         if( comment )
                             field->GetFieldProperties().m_comment = sqlite_pimpl->m_myconv.from_bytes( comment );
+                        field->GetFieldProperties().m_justify = justify;
                     }
                     else if( res != SQLITE_DONE )
                     {
@@ -1057,9 +1059,10 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 if( res == SQLITE_ROW )
                 {
                     const char *format = (const char *) sqlite3_column_text( stmt, 1 );
+                    const char *formatName = (const char *) sqlite3_column_text( stmt, 2 );
                     if( format )
                     {
-                        field->GetFieldProperties().m_format.push_back( sqlite_pimpl->m_myconv.from_bytes( format ) );
+                        field->GetFieldProperties().m_format.push_back( std::make_pair( sqlite_pimpl->m_myconv.from_bytes( formatName ), sqlite_pimpl->m_myconv.from_bytes( format ) ) );
                     }
                 }
                 else if( res == SQLITE_DONE )

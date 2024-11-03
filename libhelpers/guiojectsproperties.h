@@ -29,7 +29,7 @@ struct FieldTableHeadingProperties
 
 struct FieldTableDisplayProperties
 {
-    wxArrayString m_format;
+    std::vector<std::pair<wxString,wxString> > m_format;
     int m_justify, m_height, m_width;
 };
 
