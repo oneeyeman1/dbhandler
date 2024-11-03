@@ -149,7 +149,7 @@ void FieldShape::SetField(TableField *field)
     prop.m_heading.m_heading = field->GetFieldProperties().m_heading;
     prop.m_heading.m_labelAlignment = field->GetFieldProperties().m_labelPosition;
     prop.m_heading.m_headingAlignment = field->GetFieldProperties().m_headingPosition;
-    for( std::vector<std::wstring>::iterator it = field->GetFieldProperties().m_format.begin(); it != field->GetFieldProperties().m_format.end(); ++it )
+    for( std::vector<std::pair<std::wstring,std::wstring> >::iterator it = field->GetFieldProperties().m_format.begin(); it != field->GetFieldProperties().m_format.end(); ++it )
         prop.m_display.m_format.push_back( (*it) );
     any = prop;
 }

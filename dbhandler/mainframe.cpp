@@ -33,6 +33,7 @@
 #include "wx/fswatcher.h"
 #include "database.h"
 #include "configuration.h"
+#include "propertieshandlerbase.h"
 #include "painterobjects.h"
 #include "docview.h"
 #include "newtablehandler.h"

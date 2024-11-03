@@ -105,9 +105,9 @@ DesignField::~DesignField()
 {
 }
 
-DesignFieldProperties DesignField::GetProperties()
+wxAny &DesignField::GetProperties()
 {
-    return m_properties;
+    return any;
 }
 
 int DesignField::ApplyProperties()
