@@ -85,8 +85,6 @@ void FieldHeader::do_layout()
 
 void FieldHeader::set_properties()
 {
-    m_label->SetValue( m_labelText );
-    m_heading->SetValue( m_headingText );
     if( ( m_layout == wxLayout_LeftToRight || m_layout == wxLayout_Default ) && m_labelAlignment == 1 )
         m_labelAlignment = 0;
     m_labelPos->SetSelection( m_labelAlignment );
