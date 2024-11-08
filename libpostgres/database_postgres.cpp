@@ -911,6 +911,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     std::string schema = m_pimpl->m_myconv.to_bytes( schemaName.c_str() );
     std::string owner = m_pimpl->m_myconv.to_bytes( ownerName.c_str() );
     std::string fieldNameReq = m_pimpl->m_myconv.to_bytes( fieldName.c_str() );
+    std::wstring fieldFormat;
     size_t len = strlen( schema.c_str() );
     len++;
     len += strlen( table.c_str() );
@@ -945,10 +946,12 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
         for( int i = 0; i < PQntuples( res ); i++ )
         {
             field->GetFieldProperties().m_comment = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 18 ) );
-            field->GetFieldProperties().m_heading = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 8 ) );
-            field->GetFieldProperties().m_headingPosition = atoi( PQgetvalue( res, i, 9 ) );
-            field->GetFieldProperties().m_label = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 6 ) );
-            field->GetFieldProperties().m_labelPosition = atoi( PQgetvalue( res, i, 7 ) );
+            field->GetFieldProperties().m_heading.m_heading = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 8 ) );
+            field->GetFieldProperties().m_heading.m_headingAlignment = atoi( PQgetvalue( res, i, 9 ) );
+            field->GetFieldProperties().m_heading.m_label = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 6 ) );
+            field->GetFieldProperties().m_heading.m_labelAlignment = atoi( PQgetvalue( res, i, 7 ) );
+            field->GetFieldProperties().m_display.m_justify = atoi( PQgetvalue( res, i, 10 ) );
+            fieldFormat = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 11 ) );
         }
     }
     delete values[0];
@@ -959,6 +962,42 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     values[2] = NULL;
     delete[] tname;
     tname = NULL;
+    int type;
+    if( field->GetFieldType() == L"date" )
+        type = 82;
+    if( field->GetFieldType() == L"datetime" || field->GetFieldType() == L"time" || field->GetFieldType() == L"timestamp" )
+        type = 84;
+    if( field->GetFieldType() == L"real" )
+        type = 81;
+    else
+        type = 80;
+    uint32_t binaryIntVal;
+    const char *paramValues[1];
+    int paramLengths[1];
+    int paramFormats[1];
+    binaryIntVal = htonl( (uint32_t) type );
+    paramValues[0] = (char *) &binaryIntVal;
+    paramLengths[0] = sizeof( binaryIntVal );
+    paramFormats[0] = 1;
+    res = PQexecParams( m_db, "SELECT * FROM abccatfmt WHERE abf_type = $1", 1, nullptr, paramValues, paramLengths, paramFormats, 1 );
+    if (PQresultStatus(res) != PGRES_TUPLES_OK)
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Error executing query: " + err );
+        result = 1;
+    }
+    else
+    {
+        for( int i = 0; i < PQntuples( res ); i++ )
+        {
+            auto temp1 = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
+            auto temp2 = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
+            if( temp1 == fieldFormat )
+                field->GetFieldProperties().m_display.m_format[1].push_back( std::make_pair( temp1, temp2 ) );
+            else
+                field->GetFieldProperties().m_display.m_format[0].push_back( std::make_pair( temp1, temp2 ) );
+        }
+    }
     return result;
 }
 
@@ -1123,19 +1162,19 @@ int PostgresDatabase::SetFieldProperties(const std::wstring &tableName, const st
         command += tableName;
         command += L", " + ownerName;
         command += L", " + fieldName;
-        command += L", " + prop.m_label;
-        command += L", " + std::to_wstring( prop.m_labelPosition );
-        command += L", " + prop.m_heading;
-        command += L", " + std::to_wstring( prop.m_headingPosition );
+        command += L", " + prop.m_heading.m_label;
+        command += L", " + std::to_wstring( prop.m_heading.m_labelAlignment );
+        command += L", " + prop.m_heading.m_heading;
+        command += L", " + std::to_wstring( prop.m_heading.m_headingAlignment );
         command += L", " + prop.m_comment + L");";
     }
     else
     {
         command = L"UPDATE abcatcol SET abc_labl = ";
-        command += prop.m_label + L", abc_lpos = ";
-        command += std::to_wstring( prop.m_labelPosition ) + L", abc_hdr = ";
-        command += prop.m_heading + L", abc_hpos = ";
-        command += std::to_wstring( prop.m_headingPosition ) + L", abc_cmnt = ";
+        command += prop.m_heading.m_label + L", abc_lpos = ";
+        command += std::to_wstring( prop.m_heading.m_labelAlignment ) + L", abc_hdr = ";
+        command += prop.m_heading.m_heading + L", abc_hpos = ";
+        command += std::to_wstring( prop.m_heading.m_headingAlignment ) + L", abc_cmnt = ";
         command += prop.m_comment + L"WHERE abc_tnam = ";
         command += tableName + L" AND abc_ownr = ";
         command += ownerName + L" AND abc_cnam = ";

@@ -120,12 +120,12 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         break;
         case DatabaseFieldPropertiesType:
         {
-            FieldTableProperties prop = ( handler )->GetProperties().As<FieldTableProperties>();
+            FieldProperties prop = ( handler )->GetProperties().As<FieldProperties>();
             m_page6 = new FieldGeneral( m_properties, prop.m_comment );
             m_properties->AddPage( m_page6, _( "General" ) );
             m_page7 = new FieldHeader( m_properties, prop.m_heading );
             m_properties->AddPage( m_page7, _( "Headers" ) );
-            m_page8 = new DatabaseFieldDisplay( m_properties, wxID_ANY );
+            m_page8 = new DatabaseFieldDisplay( m_properties, prop.m_display );
             m_properties->AddPage( m_page8, _( "Display" ) );
         }
         break;

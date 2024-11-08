@@ -51,13 +51,6 @@ struct TableDefinition
     };
 };
 
-struct FieldVisualAttributes
-{
-    std::wstring format, edit, validator, header, label, name, tag, border, slideUp, layer, cursor;
-    int justify, height, width, initial, posX, posY, wddth, heght, stockCursor;
-    bool prntSuppress, equallyRequired, overrideEdit, displayAsPicture, slideLeft, resizale, moveable, autosize;
-};
-
 struct DataEditFiield
 {
     int type, m_precision;
@@ -183,18 +176,24 @@ public:
     std::vector<std::wstring> m_pkFields;
 };
 
+struct FieldTableHeadingProperties
+{
+    std::wstring m_label, m_heading;
+    int m_labelAlignment, m_headingAlignment;
+};
+
+struct FieldTableDisplayProperties
+{
+    std::map<int, std::vector<std::pair<std::wstring,std::wstring> > > m_format;
+    int m_justify, m_height, m_width;
+};
+
 class FieldProperties
 {
 public:
-    FieldProperties()
-    {
-        m_comment = m_label = m_heading = L"";
-        m_labelPosition = m_headingPosition = 0;
-    }
-    std::wstring m_comment, m_label, m_heading;
-    int m_labelPosition, m_headingPosition;
-    std::vector<std::pair<std::wstring, std::wstring> > m_format;
-    int m_justify;
+    FieldTableHeadingProperties m_heading;
+    FieldTableDisplayProperties m_display;
+    std::wstring m_comment;
 };
 
 class TableField
@@ -206,13 +205,6 @@ public:
         field_size = -1;
         decimal_size = -1;
         column_isNull = autoIncrement = column_pk = column_fk = false;
-        m_props.m_label = m_props.m_heading = L"";
-        m_props.m_labelPosition = m_props.m_headingPosition = 0;
-        m_visual.edit = L"None";
-        m_visual.format = L"None";
-        m_visual.justify = 2;
-        m_visual.validator = L"None";
-        m_visual.initial = 0;
     }
 
     TableField(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &fullName, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false, const bool columnFK = false)
@@ -229,12 +221,12 @@ public:
         full_name = fullName;
         std::wstring temp = columnName;
         std::replace( temp.begin(), temp.end(), L'_', L'.' );
-        m_props.m_label = temp;
+        m_props.m_heading.m_label = temp;
         temp = columnName;
         std::replace( temp.begin(), temp.end(), L'_', L'\n' );
-        m_props.m_heading = temp;
-        m_props.m_labelPosition = DEFAULTLABELALIGNMENT;
-        m_props.m_headingPosition = DEFAULTHEADINGALIGNMENT;
+        m_props.m_heading.m_heading = temp;
+        m_props.m_heading.m_labelAlignment = DEFAULTLABELALIGNMENT;
+        m_props.m_heading.m_headingAlignment = DEFAULTHEADINGALIGNMENT;
     }
     const std::wstring &GetFieldName() const { return column_name; }
     const std::wstring &GetFieldType() const { return column_type; }
@@ -250,13 +242,11 @@ public:
     const std::wstring &GetFullName() const { return full_name; }
     FieldProperties &GetFieldProperties() { return m_props; }
     void SetFieldProperties(const FieldProperties &props) { m_props = props; }
-    FieldVisualAttributes &GetVisualAttributes() { return m_visual; }
 private:
     std::wstring column_name, column_type, column_defaultValue, full_type, full_name;
     bool autoIncrement, column_isNull, column_pk, column_fk;
     int field_size, decimal_size;
     FieldProperties m_props;
-    FieldVisualAttributes m_visual;
 };
 
 class FKField

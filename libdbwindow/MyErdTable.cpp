@@ -8,6 +8,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/DiagramManager.h"
 #include "configuration.h"
+#include "guiojectsproperties.h"
 #include "propertieshandlerbase.h"
 #include "constraint.h"
 #include "constraintsign.h"

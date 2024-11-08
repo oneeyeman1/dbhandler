@@ -37,6 +37,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
 #include "configuration.h"
+#include "guiojectsproperties.h"
 #include "propertieshandlerbase.h"
 #include "ablbaseview.h"
 #include "constraint.h"

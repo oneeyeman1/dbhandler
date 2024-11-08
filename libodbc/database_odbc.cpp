@@ -3022,7 +3022,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLHSTMT stmt_fieldProp;
     int result = 0;
     short justify;
-    SQLWCHAR *commentField, *label = nullptr, *heading = nullptr, *formatNameField = nullptr, *formatField = nullptr;
+    SQLWCHAR *commentField, *label = nullptr, *heading = nullptr, *formatNameField = nullptr, *formatField = nullptr, *fieldFormat = nullptr;
     SQLWCHAR *qry = NULL;
     unsigned short labelAlignment = 0, headingAlignment = 0;
     SQLWCHAR *table = new SQLWCHAR[schemaName.length() + tableName.length() + 3], *owner = new SQLWCHAR[ownerName.length() + 2], *fieldNameReq = new SQLWCHAR[fieldName.length() + 2];
@@ -3035,7 +3035,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     uc_to_str_cpy( owner, ownerName );
     uc_to_str_cpy( fieldNameReq, fieldName );
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbCommentField = SQL_NTS, cbLabelField = SQL_NTS, cbHeadingField = SQL_NTS;
-    SQLLEN cbLabelAlignment = 0, cbHeadingAlignment = 0, cbJustify = 0, cbFormatName = 0, cbFormat = 0;
+    SQLLEN cbLabelAlignment = 0, cbHeadingAlignment = 0, cbJustify = 0, cbFormatName = 0, cbFormat = 0, cbFieldFormat = 0;
     SQLSMALLINT OutConnStrLen;
     std::wstring query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     std::wstring query1 = L"SELECT * FROM \"acatfmt\" WHERE \"abc_type\" = ?";
@@ -3177,6 +3177,21 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                                 if( !ret )
                                                 {
                                                     ret = SQLBindCol( stmt_fieldProp, 10, SQL_C_SHORT, &justify, 0, &cbJustify );
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                    {
+                                                        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                                        result = 1;
+                                                    }
+                                                }
+                                                if( !ret )
+                                                {
+                                                    ret = SQLBindCol( stmt_fieldProp, 11, SQL_C_WCHAR, &fieldFormat, 31, &cbFieldFormat );
+                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                                    {
+                                                        GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+                                                        result = 1;
+                                                    }
+
                                                 }
                                                 if( !ret )
                                                 {
@@ -3193,11 +3208,11 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                                         str_to_uc_cpy( lbl, label );
                                                         str_to_uc_cpy( head, heading );
                                                         field->GetFieldProperties().m_comment = comment;
-                                                        field->GetFieldProperties().m_label = lbl;
-                                                        field->GetFieldProperties().m_heading = head;
-                                                        field->GetFieldProperties().m_labelPosition = labelAlignment;
-                                                        field->GetFieldProperties().m_headingPosition = headingAlignment;
-                                                        field->GetFieldProperties().m_justify = justify;
+                                                        field->GetFieldProperties().m_heading.m_label = lbl;
+                                                        field->GetFieldProperties().m_heading.m_heading = head;
+                                                        field->GetFieldProperties().m_heading.m_labelAlignment = labelAlignment;
+                                                        field->GetFieldProperties().m_heading.m_headingAlignment = headingAlignment;
+                                                        field->GetFieldProperties().m_display.m_justify = justify;
                                                     }
                                                     ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt_fieldProp );
                                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3324,7 +3339,10 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                     std::wstring formatName, format;
                                     str_to_uc_cpy( formatName, formatNameField );
                                     str_to_uc_cpy( format, formatField );
-                                    field->GetFieldProperties().m_format.push_back( std::make_pair( formatName, format ) );
+                                    if( !wcscmp( fieldFormat, formatNameField ) )
+                                        field->GetFieldProperties().m_display.m_format[1].push_back( std::make_pair( formatName, format ) );
+                                    else
+                                        field->GetFieldProperties().m_display.m_format[0].push_back( std::make_pair( formatName, format ) );
                                 }
                             }
                         }
@@ -3572,22 +3590,22 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::w
             command += tableName;
             command += L", " + ownerName;
             command += L", " + fieldName;
-            command += L", " + prop.m_label;
-            command += L", " + std::to_wstring( prop.m_labelPosition );
-            command += L", " + prop.m_heading;
-            command += L", " + std::to_wstring( prop.m_headingPosition );
+            command += L", " + prop.m_heading.m_label;
+            command += L", " + std::to_wstring( prop.m_heading.m_labelAlignment );
+            command += L", " + prop.m_heading.m_heading;
+            command += L", " + std::to_wstring( prop.m_heading.m_headingAlignment );
             command += L", " + prop.m_comment + L");";
         }
         else
         {
             command = L"UPDATE abcatcol SET abc_labl = ";
-            command += prop.m_label + L", abc_hdr = ";
-            command += prop.m_heading + L", abc_cmnt = ";
+            command += prop.m_heading.m_label + L", abc_hdr = ";
+            command += prop.m_heading.m_heading + L", abc_cmnt = ";
             command += prop.m_comment + L", abc_labl = ";
-            command += prop.m_label + L", abc_lpos = ";
-            command += std::to_wstring( prop.m_labelPosition ) + L", abc_hdr = ";
-            command += prop.m_heading + L", abc_hpos = ";
-            command += std::to_wstring( prop.m_headingPosition ) + L"WHERE abc_tnam = ";
+            command += prop.m_heading.m_label + L", abc_lpos = ";
+            command += std::to_wstring( prop.m_heading.m_labelAlignment ) + L", abc_hdr = ";
+            command += prop.m_heading.m_heading + L", abc_hpos = ";
+            command += std::to_wstring( prop.m_heading.m_headingAlignment ) + L"WHERE abc_tnam = ";
             command += tableName + L" AND abc_ownr = ";
             command += ownerName + L" AND abc_cnam = ";
             command += fieldName + L";";

@@ -963,11 +963,14 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
 
 int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &UNUSED(schemaName), const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg)
 {
+    const char *fieldFormat = nullptr;
     sqlite3_stmt *stmt;
     std::wstring errorMessage;
     int result = 0;
+    const char *label = nullptr, *heading = nullptr;
+    int labelAlignment = 0;
     std::wstring query = L"SELECT * FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
-    std::wstring query1 = L"SELECT * FROM \"sys.abcatfmt\" WHERE \"abc_type\" = ?";
+    std::wstring query1 = L"SELECT * FROM \"sys.abcatfmt\" WHERE \"abf_type\" = ?";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
@@ -983,31 +986,42 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                     res = sqlite3_step( stmt );
                     if( res == SQLITE_ROW )
                     {
-                        const char *label = (const char *) sqlite3_column_text( stmt, 5 );
-                        int labelAlignment = sqlite3_column_int( stmt, 6 );
-                        const char *heading = (const char *) sqlite3_column_text( stmt, 7 );
+                        label = (const char *) sqlite3_column_text( stmt, 5 );
+                        labelAlignment = sqlite3_column_int( stmt, 6 );
+                        heading = (const char *) sqlite3_column_text( stmt, 7 );
                         int headingAlignment = sqlite3_column_int( stmt, 8 );
                         const char *comment = (const char *) sqlite3_column_text( stmt, 17 );
-                        short justify = sqlite3_column_int( stmt, 9 );
+                        short justify = (short) sqlite3_column_int( stmt, 9 );
+                        fieldFormat = (const char *) sqlite3_column_text( stmt, 10 );
                         if( label )
                         {
-                            field->GetFieldProperties().m_label = sqlite_pimpl->m_myconv.from_bytes( label );
-                            field->GetFieldProperties().m_labelPosition = labelAlignment;
+                            field->GetFieldProperties().m_heading.m_label = sqlite_pimpl->m_myconv.from_bytes( label );
+                            field->GetFieldProperties().m_heading.m_labelAlignment = labelAlignment;
                         }
                         if( heading )
                         {
-                            field->GetFieldProperties().m_heading = sqlite_pimpl->m_myconv.from_bytes( heading );
-                            field->GetFieldProperties().m_headingPosition = headingAlignment;
+                            field->GetFieldProperties().m_heading.m_heading = sqlite_pimpl->m_myconv.from_bytes( heading );
+                            field->GetFieldProperties().m_heading.m_headingAlignment = headingAlignment;
                         }
                         if( comment )
                             field->GetFieldProperties().m_comment = sqlite_pimpl->m_myconv.from_bytes( comment );
-                        field->GetFieldProperties().m_justify = justify;
+                        field->GetFieldProperties().m_display.m_justify = justify;
                     }
                     else if( res != SQLITE_DONE )
                     {
                         result = 1;
                         GetErrorMessage( res, errorMessage );
                         errorMsg.push_back( errorMessage );
+                    }
+                    else
+                    {
+                        field->GetFieldProperties().m_heading.m_label = fieldName;
+                        field->GetFieldProperties().m_heading.m_labelAlignment = 0;
+                        field->GetFieldProperties().m_heading.m_heading = fieldName;
+                        field->GetFieldProperties().m_heading.m_headingAlignment = 1;
+                        field->GetFieldProperties().m_comment = L"";
+                        field->GetFieldProperties().m_display.m_justify = 0;
+                        field->GetFieldProperties().m_display.m_format[0].push_back( std::make_pair( L"", L"" ) );
                     }
                 }
                 else
@@ -1058,11 +1072,14 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 res = sqlite3_step( stmt );
                 if( res == SQLITE_ROW )
                 {
-                    const char *format = (const char *) sqlite3_column_text( stmt, 1 );
-                    const char *formatName = (const char *) sqlite3_column_text( stmt, 2 );
+                    const char *format = (const char *) sqlite3_column_text( stmt, 2 );
+                    const char *formatName = (const char *) sqlite3_column_text( stmt, 1 );
                     if( format )
                     {
-                        field->GetFieldProperties().m_format.push_back( std::make_pair( sqlite_pimpl->m_myconv.from_bytes( formatName ), sqlite_pimpl->m_myconv.from_bytes( format ) ) );
+                        if( fieldFormat && !strcmp( fieldFormat, formatName ) )
+                            field->GetFieldProperties().m_display.m_format[1].push_back( std::make_pair( sqlite_pimpl->m_myconv.from_bytes( formatName ), sqlite_pimpl->m_myconv.from_bytes( format ) ) );
+                        else
+                            field->GetFieldProperties().m_display.m_format[0].push_back( std::make_pair( sqlite_pimpl->m_myconv.from_bytes( formatName ), sqlite_pimpl->m_myconv.from_bytes( format ) ) );
                     }
                 }
                 else if( res == SQLITE_DONE )
@@ -1485,19 +1502,19 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
             command += tableName;
             command += L", " + ownerName;
             command += L", " + fieldName;
-            command += L", " + props.m_label;
-            command += L", " + std::to_wstring( props.m_labelPosition );
-            command += L", " + props.m_heading;
-            command += L", " + std::to_wstring( props.m_headingPosition );
+            command += L", " + props.m_heading.m_label;
+            command += L", " + std::to_wstring( props.m_heading.m_labelAlignment );
+            command += L", " + props.m_heading.m_heading;
+            command += L", " + std::to_wstring( props.m_heading.m_headingAlignment );
             command += L", " + props.m_comment + L");";
         }
         else
         {
             command = L"UPDATE \"sys.abcatcol\" SET \"abc_labl\" = ";
-            command += props.m_label + L", \"abc_lpos\" = ";
-            command += std::to_wstring( props.m_labelPosition ) + L", \"abc_hdr\" = ";
-            command += props.m_heading + L", \"abc_hpos\" = ";
-            command += std::to_wstring( props.m_headingPosition ) + L", \"abc_cmnt\" = ";
+            command += props.m_heading.m_label + L", \"abc_lpos\" = ";
+            command += std::to_wstring( props.m_heading.m_labelAlignment ) + L", \"abc_hdr\" = ";
+            command += props.m_heading.m_heading + L", \"abc_hpos\" = ";
+            command += std::to_wstring( props.m_heading.m_headingAlignment ) + L", \"abc_cmnt\" = ";
             command += props.m_comment + L"WHERE \"abc_tnam\" = ";
             command += tableName + L" AND \"abc_ownr\" = ";
             command += ownerName + L" AND \"abc_cnam\" = ";

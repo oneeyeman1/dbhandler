@@ -145,12 +145,13 @@ void FieldShape::SetField(TableField *field)
     m_field = field;
     FieldTableProperties prop;
     prop.m_comment = field->GetFieldProperties().m_comment;
-    prop.m_heading.m_label = field->GetFieldProperties().m_label;
-    prop.m_heading.m_heading = field->GetFieldProperties().m_heading;
-    prop.m_heading.m_labelAlignment = field->GetFieldProperties().m_labelPosition;
-    prop.m_heading.m_headingAlignment = field->GetFieldProperties().m_headingPosition;
-    for( std::vector<std::pair<std::wstring,std::wstring> >::iterator it = field->GetFieldProperties().m_format.begin(); it != field->GetFieldProperties().m_format.end(); ++it )
-        prop.m_display.m_format.push_back( (*it) );
+    prop.m_heading.m_label = field->GetFieldProperties().m_heading.m_label;
+    prop.m_heading.m_heading = field->GetFieldProperties().m_heading.m_heading;
+    prop.m_heading.m_labelAlignment = field->GetFieldProperties().m_heading.m_labelAlignment;
+    prop.m_heading.m_headingAlignment = field->GetFieldProperties().m_heading.m_headingAlignment;
+    for( std::map<int, std::vector<std::pair<std::wstring,std::wstring> > >::iterator it = field->GetFieldProperties().m_display.m_format.begin(); it != field->GetFieldProperties().m_display.m_format.end(); ++it )
+        for( std::vector<std::pair<std::wstring,std::wstring> >::iterator it1 = (*it).second.begin(); it1 != (*it).second.end(); ++it1 )
+            prop.m_display.m_format[(*it).first].push_back( (*it1) );
     any = prop;
 }
 
@@ -208,4 +209,9 @@ int FieldShape::ApplyProperties()
 wxAny &FieldShape::GetProperties()
 {
     return any;
+}
+
+void FieldShape::SetProperties(FieldProperties prop)
+{
+    any = prop;
 }

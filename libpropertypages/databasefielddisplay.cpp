@@ -12,6 +12,7 @@
 #include <wx/wx.h>
 #include <wx/image.h>
 #include <wx/intl.h>
+#include "database.h"
 #include "propertypagebase.h"
 #include "databasefielddisplay.h"
 
@@ -20,7 +21,7 @@
 
 
 
-DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, wxWindowID id):  PropertyPageBase( parent, id )
+DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDisplayProperties &prop):  PropertyPageBase( parent )
 {
     // begin wxGlade: DatabaseFieldDisplay::DatabaseFieldDisplay
     wxBoxSizer* sizer_1 = new wxBoxSizer( wxHORIZONTAL );
@@ -39,10 +40,16 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, wxWindowID id):  Pr
     grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-    const wxString m_formats_choices[] = {
-        _( "choice 1" ),
-    };
-    m_formats = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 1, m_formats_choices, wxLB_ALWAYS_SB | wxLB_SINGLE );
+    m_formats = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_ALWAYS_SB | wxLB_SINGLE );
+    for( std::map<int, std::vector<std::pair<std::wstring,std::wstring> > >::const_iterator it = prop.m_format.begin(); it != prop.m_format.begin(); ++it )
+    {
+        for( std::vector<std::pair<std::wstring, std::wstring> >::const_iterator it1 = (*it).second.begin(); it1 < ( *it ).second.end(); ++it1 )
+        {
+            auto item = m_formats->Append( (*it1).first, (wxClientData *) &(*it1).second );
+            if( (*it).first == 1 )
+                m_formats->Select( item );
+        }
+    }
     grid_sizer_1->Add( m_formats, 0, wxEXPAND, 0 );
     grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_4 = new wxBoxSizer( wxVERTICAL );

@@ -14,7 +14,7 @@ FieldGeneral::FieldGeneral(wxWindow *parent, const wxString &comment) : Property
 {
     m_commentText = comment;
     m_label = new wxStaticText( this, wxID_ANY, _( "&Column comment:" ) );
-    m_comment = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+    m_comment = new wxTextCtrl( this, wxID_ANY, comment, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
     m_log = new wxCheckBox( this, wxID_ANY, _( "&Log Only" ) );
     set_properties();
     do_layout();

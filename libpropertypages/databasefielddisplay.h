@@ -16,21 +16,13 @@
 #define APP_CATALOG "app"  // replace with the appropriate catalog name
 #endif
 
-
-// begin wxGlade: ::dependencies
-// end wxGlade
-
-// begin wxGlade: ::extracode
-// end wxGlade
-
-
 class WXEXPORT DatabaseFieldDisplay: public PropertyPageBase
 {
 public:
     // begin wxGlade: DatabaseFieldDisplay::ids
     // end wxGlade
 
-    DatabaseFieldDisplay(wxWindow* parent, wxWindowID id);
+    DatabaseFieldDisplay(wxWindow* parent, const FieldTableDisplayProperties &prop);
 
 private:
 

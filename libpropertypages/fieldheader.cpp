@@ -7,6 +7,7 @@
 
 #include <string>
 #include <algorithm>
+#include "database.h"
 #include "propertypagebase.h"
 #include "guiojectsproperties.h"
 #include "fieldheader.h"

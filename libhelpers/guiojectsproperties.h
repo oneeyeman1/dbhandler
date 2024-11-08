@@ -21,18 +21,6 @@ struct BandProperties
     wxString m_type;
 };
 
-struct FieldTableHeadingProperties
-{
-    wxString m_label, m_heading;
-    int m_labelAlignment, m_headingAlignment;
-};
-
-struct FieldTableDisplayProperties
-{
-    std::vector<std::pair<wxString,wxString> > m_format;
-    int m_justify, m_height, m_width;
-};
-
 struct FieldTableValidationProperties
 {
     wxArrayString m_rules;

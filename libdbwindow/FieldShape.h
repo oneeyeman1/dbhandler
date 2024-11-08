@@ -21,6 +21,7 @@ public:
     CommentFieldShape *GetCommentShape() const { return m_comment; }
     void SetTypeShape(FieldTypeShape *shape) { m_typeShape = shape; }
     void SetCommentShape(CommentFieldShape *shape) { m_comment = shape; }
+    void SetProperties(FieldProperties prop);
     virtual int ApplyProperties() wxOVERRIDE;
     virtual wxAny &GetProperties() wxOVERRIDE;
 protected:    

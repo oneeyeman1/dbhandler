@@ -13,6 +13,7 @@
 
 #include "wx/bmpcbox.h"
 #include "wx/valnum.h"
+#include "database.h"
 #include "guiojectsproperties.h"
 #include "colorcombobox.h"
 #include "propertypagebase.h"

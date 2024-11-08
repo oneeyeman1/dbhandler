@@ -1879,10 +1879,10 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                             else
                             {
                                 field->GetFieldProperties().m_comment = m_pimpl->m_myconv.from_bytes( comment );
-                                field->GetFieldProperties().m_label = m_pimpl->m_myconv.from_bytes( label );
-                                field->GetFieldProperties().m_heading = m_pimpl->m_myconv.from_bytes( heading );
-                                field->GetFieldProperties().m_labelPosition = labelAlignment;
-                                field->GetFieldProperties().m_headingPosition = headingAlignment;
+                                field->GetFieldProperties().m_heading.m_label = m_pimpl->m_myconv.from_bytes( label );
+                                field->GetFieldProperties().m_heading.m_heading = m_pimpl->m_myconv.from_bytes( heading );
+                                field->GetFieldProperties().m_heading.m_labelAlignment = labelAlignment;
+                                field->GetFieldProperties().m_heading.m_headingAlignment = headingAlignment;
                             }
                         }
                     }
@@ -2055,19 +2055,19 @@ int MySQLDatabase::SetFieldProperties(const std::wstring &tableName, const std::
         command += tableName;
         command += L", " + ownerName;
         command += L", " + fieldName;
-        command += L", " + prop.m_label;
-        command += L", " + std::to_wstring( prop.m_labelPosition );
-        command += L", " + prop.m_heading;
-        command += L", " + std::to_wstring( prop.m_headingPosition );
+        command += L", " + prop.m_heading.m_label;
+        command += L", " + std::to_wstring( prop.m_heading.m_labelAlignment );
+        command += L", " + prop.m_heading.m_heading;
+        command += L", " + std::to_wstring( prop.m_heading.m_headingAlignment );
         command += L", " + prop.m_comment + L");";
     }
     else
     {
         command = L"UPDATE abcatcol SET abc_labl = ";
-        command += prop.m_label + L", abc_lpos = ";
-        command += std::to_wstring( prop.m_labelPosition ) + L", abc_hdr = ";
-        command += prop.m_heading + L", abc_hpos = ";
-        command += std::to_wstring( prop.m_headingPosition ) + L", abc_cmnt = ";
+        command += prop.m_heading.m_label + L", abc_lpos = ";
+        command += std::to_wstring( prop.m_heading.m_labelAlignment ) + L", abc_hdr = ";
+        command += prop.m_heading.m_heading + L", abc_hpos = ";
+        command += std::to_wstring( prop.m_heading.m_headingAlignment ) + L", abc_cmnt = ";
         command += prop.m_comment + L"WHERE abc_tnam = ";
         command += tableName + L" AND abc_ownr = ";
         command += ownerName + L" AND abc_cnam = ";

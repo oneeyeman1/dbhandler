@@ -17,6 +17,7 @@
 #include "wxsf/RectShape.h"
 #include "wxsf/GridShape.h"
 #include "XmlSerializer.h"
+#include "database.h"
 #include "propertieshandlerbase.h"
 #include "guiojectsproperties.h"
 #include "dbview.h"

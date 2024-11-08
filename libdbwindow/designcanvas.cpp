@@ -110,7 +110,7 @@ void DesignCanvas::SetQuickQueryFields(const std::vector<wxString> &fields)
 void DesignCanvas::AddFieldLabelToCanvas(const wxFont labelFont, const TableField *label)
 {
     wxRect rectLabel, rectField;
-    auto labelShape = new DesignLabel( labelFont, const_cast<TableField *>( label )->GetFieldProperties().m_heading, const_cast<TableField *>( label )->GetFieldProperties().m_headingPosition );
+    auto labelShape = new DesignLabel( labelFont, const_cast<TableField *>( label )->GetFieldProperties().m_heading.m_heading, const_cast<TableField *>( label )->GetFieldProperties().m_heading.m_headingAlignment );
     m_pManager.AddShape( labelShape, NULL, wxPoint( startPoint.x, startPoint.y ), sfINITIALIZE, sfDONT_SAVE_STATE );
     rectLabel = labelShape->GetBoundingBox();
     startPoint.x += rectLabel.GetWidth() + 2;
@@ -134,7 +134,7 @@ void DesignCanvas::AddFieldToCanvas(const wxFont dataFont, const TableField *lab
     }
     startPoint.y = ypos;
     wxRect rectLabel, rectField;
-    auto labelShape = new DesignField( dataFont, const_cast<TableField *>( label )->GetFieldProperties().m_label, const_cast<TableField *>( label )->GetFieldProperties().m_labelPosition );
+    auto labelShape = new DesignField( dataFont, const_cast<TableField *>( label )->GetFieldProperties().m_heading.m_label, const_cast<TableField *>( label )->GetFieldProperties().m_heading.m_labelAlignment );
     m_pManager.AddShape( labelShape, NULL, wxPoint( startPoint.x, startPoint.y ), sfINITIALIZE, sfDONT_SAVE_STATE );
     rectLabel = labelShape->GetBoundingBox();
     startPoint.x += rectLabel.GetWidth() + 2;

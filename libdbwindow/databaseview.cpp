@@ -1497,14 +1497,14 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         {
             //#if _MSC_VER >= 1900
             std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
-            res = GetDocument()->GetDatabase()->GetFieldProperties( tableName.ToStdWstring(), field, errors );
+            res = GetDocument()->GetDatabase()->GetFieldProperties( tableName.ToStdWstring(), dbField->GetField(), errors );
         }
-        std::unique_ptr<PropertiesHandler> ptr( dbField );
-//        any = field->;
+        dbField->SetProperties( dbField->GetField()->GetFieldProperties() );
         dbField->SetType( DatabaseFieldPropertiesType );
+        std::unique_ptr<PropertiesHandler> ptr( dbField );
+        propertiesPtr = std::move( ptr );
         title = _( "Column " );
-        title += tableName + ".";
-        title += field->GetFieldName();
+        title += dbField->GetField()->GetFullName();
     }
     if( type == DividerPropertiesType )
     {

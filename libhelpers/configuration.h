@@ -118,6 +118,7 @@ struct Configuration
     DatabaseOptions m_dbOptions;
     LibraryPainterOptions m_libPainterOptions;
     wxString m_currentLibrary;
+    wxLayoutDirection m_textDirection;
 };
 
 

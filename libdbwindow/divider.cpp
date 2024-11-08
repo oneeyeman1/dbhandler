@@ -19,6 +19,7 @@
 #include "wxsf/RectShape.h"
 #include "wxsf/DiagramManager.h"
 #include "wx/image.h"
+#include "database.h"
 #include "guiojectsproperties.h"
 #include "propertieshandlerbase.h"
 #include "divider.h"
