@@ -70,14 +70,11 @@ libdbwindow_la_CXXFLAGS = -I../../libshapeframework \
 	-I../../libfieldswindow \
 	-I../../dbinterface \
 	-I../../libpropertypages \
-	-I../../libpropertieshandlers \
 	-I../../libhelpers \
 	@WX_CXXFLAGS@
 
 libdbwindow_la_LDFLAGS = -L../libpropertypages \
 	-lpropertypages \
-	-L../libpropertieshandlers \
-	-lpropertieshandlers \
 	-L../libshapeframework \
 	-L../libfieldswindow \
 	-lfieldswindow \

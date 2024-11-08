@@ -101,7 +101,6 @@ libdbwindow/Makefile
 dbhandler/Makefile
 libhelpers/Makefile
 libtabledataedit/Makefile
-libpropertieshandlers/Makefile
 libmysql/Makefile
 libpostgres/Makefile
 libtablewindow/Makefile
