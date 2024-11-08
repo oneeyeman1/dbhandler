@@ -225,6 +225,7 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
     m_config->Read( "LogOptions", &m_conf->m_libPainterOptions.m_management.m_options, 1 );
     m_config->Read( "RequireCommentOnCheckin", &m_conf->m_libPainterOptions.m_management.m_requireComment, 0 );
     m_config->SetPath( path );
+    m_conf->m_textDirection = wxGetApp().GetLayoutDirection();
     m_manager = manager;
     auto menuFile = new wxMenu;
     menuFile->Append( wxID_NEW );
