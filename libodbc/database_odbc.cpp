@@ -3022,7 +3022,8 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLHSTMT stmt_fieldProp;
     int result = 0;
     short justify;
-    SQLWCHAR *commentField, *label = nullptr, *heading = nullptr, *formatNameField = nullptr, *formatField = nullptr, *fieldFormat = nullptr;
+    std::wstring fieldFormat = L"";
+    SQLWCHAR *commentField, *label = nullptr, *heading = nullptr, *formatNameField = nullptr, *formatField = nullptr, *fF = nullptr;
     SQLWCHAR *qry = NULL;
     unsigned short labelAlignment = 0, headingAlignment = 0;
     SQLWCHAR *table = new SQLWCHAR[schemaName.length() + tableName.length() + 3], *owner = new SQLWCHAR[ownerName.length() + 2], *fieldNameReq = new SQLWCHAR[fieldName.length() + 2];
@@ -3185,7 +3186,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                                 }
                                                 if( !ret )
                                                 {
-                                                    ret = SQLBindCol( stmt_fieldProp, 11, SQL_C_WCHAR, &fieldFormat, 31, &cbFieldFormat );
+                                                    ret = SQLBindCol( stmt_fieldProp, 11, SQL_C_WCHAR, &fF, 31, &cbFieldFormat );
                                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                                     {
                                                         GetErrorMessage( errorMsg, 1, stmt_fieldProp );
@@ -3196,7 +3197,16 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                                 if( !ret )
                                                 {
                                                     ret = SQLFetch( stmt_fieldProp );
-                                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                                                    if( ret == SQL_NO_DATA )
+                                                    {
+                                                        field->GetFieldProperties().m_comment = L"";
+                                                        field->GetFieldProperties().m_heading.m_label = fieldName;
+                                                        field->GetFieldProperties().m_heading.m_heading = fieldName;
+                                                        field->GetFieldProperties().m_heading.m_labelAlignment = 0;
+                                                        field->GetFieldProperties().m_heading.m_headingAlignment = 1;
+                                                        field->GetFieldProperties().m_display.m_justify = false;
+                                                     }
+                                                    else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                                                     {
                                                         GetErrorMessage( errorMsg, 1, stmt_fieldProp );
                                                         result = 1;
@@ -3207,6 +3217,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                                         str_to_uc_cpy( comment, commentField );
                                                         str_to_uc_cpy( lbl, label );
                                                         str_to_uc_cpy( head, heading );
+                                                        str_to_uc_cpy( fieldFormat, fF );
                                                         field->GetFieldProperties().m_comment = comment;
                                                         field->GetFieldProperties().m_heading.m_label = lbl;
                                                         field->GetFieldProperties().m_heading.m_heading = head;
@@ -3339,7 +3350,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                     std::wstring formatName, format;
                                     str_to_uc_cpy( formatName, formatNameField );
                                     str_to_uc_cpy( format, formatField );
-                                    if( !wcscmp( fieldFormat, formatNameField ) )
+                                    if( fieldFormat == formatName )
                                         field->GetFieldProperties().m_display.m_format[1].push_back( std::make_pair( formatName, format ) );
                                     else
                                         field->GetFieldProperties().m_display.m_format[0].push_back( std::make_pair( formatName, format ) );
