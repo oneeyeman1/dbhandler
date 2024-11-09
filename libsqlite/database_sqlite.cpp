@@ -963,6 +963,7 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
 
 int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &UNUSED(schemaName), const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg)
 {
+    field->GetFieldProperties().m_display.m_format.clear();
     const char *fieldFormat = nullptr;
     sqlite3_stmt *stmt;
     std::wstring errorMessage;
@@ -1072,8 +1073,8 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 res = sqlite3_step( stmt );
                 if( res == SQLITE_ROW )
                 {
-                    const char *format = (const char *) sqlite3_column_text( stmt, 2 );
-                    const char *formatName = (const char *) sqlite3_column_text( stmt, 1 );
+                    const char *format = (const char *) sqlite3_column_text( stmt, 1 );
+                    const char *formatName = (const char *) sqlite3_column_text( stmt, 0 );
                     if( format )
                     {
                         if( fieldFormat && !strcmp( fieldFormat, formatName ) )
