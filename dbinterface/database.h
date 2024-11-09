@@ -205,6 +205,7 @@ public:
         field_size = -1;
         decimal_size = -1;
         column_isNull = autoIncrement = column_pk = column_fk = false;
+        m_props.m_display.m_format.clear();
     }
 
     TableField(const std::wstring &columnName, const std::wstring &columnType, int size, int decimalsize, const std::wstring &fullName, const std::wstring &columnDefaultValue = L"", const bool columnIsNull = false, bool autoincrement = false, const bool columnPK = false, const bool columnFK = false)
@@ -227,6 +228,7 @@ public:
         m_props.m_heading.m_heading = temp;
         m_props.m_heading.m_labelAlignment = DEFAULTLABELALIGNMENT;
         m_props.m_heading.m_headingAlignment = DEFAULTHEADINGALIGNMENT;
+        m_props.m_display.m_format.clear();
     }
     const std::wstring &GetFieldName() const { return column_name; }
     const std::wstring &GetFieldType() const { return column_type; }

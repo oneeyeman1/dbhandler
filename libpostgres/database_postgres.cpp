@@ -954,6 +954,16 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
             fieldFormat = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 11 ) );
         }
     }
+    else
+    {
+        field->GetFieldProperties().m_comment = L"";
+        field->GetFieldProperties().m_heading.m_heading = fieldName;
+        field->GetFieldProperties().m_heading.m_headingAlignment = 1;
+        field->GetFieldProperties().m_heading.m_label = fieldName;
+        field->GetFieldProperties().m_heading.m_labelAlignment = 0;
+        field->GetFieldProperties().m_display.m_justify = 0;
+        fieldFormat = L"";
+    }
     delete values[0];
     values[0] = NULL;
     delete values[1];

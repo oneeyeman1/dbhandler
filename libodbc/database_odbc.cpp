@@ -3204,7 +3204,8 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                                                         field->GetFieldProperties().m_heading.m_heading = fieldName;
                                                         field->GetFieldProperties().m_heading.m_labelAlignment = 0;
                                                         field->GetFieldProperties().m_heading.m_headingAlignment = 1;
-                                                        field->GetFieldProperties().m_display.m_justify = false;
+                                                        field->GetFieldProperties().m_display.m_justify = 0;
+                                                        fieldFormat = L"";
                                                      }
                                                     else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                                                     {

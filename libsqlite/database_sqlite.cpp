@@ -1022,7 +1022,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                         field->GetFieldProperties().m_heading.m_headingAlignment = 1;
                         field->GetFieldProperties().m_comment = L"";
                         field->GetFieldProperties().m_display.m_justify = 0;
-                        field->GetFieldProperties().m_display.m_format[0].push_back( std::make_pair( L"", L"" ) );
+                        fieldFormat = "";
                     }
                 }
                 else
