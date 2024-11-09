@@ -247,6 +247,9 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
 extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title, wxString &command)
 {
     int res = 0;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
     PropertiesDialog dlg( parent, wxID_ANY, title, handler.get() );
 	dlg.Center();
     res = dlg.ShowModal();
