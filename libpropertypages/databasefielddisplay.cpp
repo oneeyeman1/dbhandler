@@ -45,7 +45,7 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     {
         for( std::vector<std::pair<std::wstring, std::wstring> >::const_iterator it1 = (*it).second.begin(); it1 < ( *it ).second.end(); ++it1 )
         {
-            auto item = m_formats->Append( (*it1).first, (wxClientData *) &(*it1).second );
+            auto item = m_formats->Append( (*it1).first, new wxStringClientData( (*it1).second ) );
             if( (*it).first == 1 )
                 m_formats->Select( item );
         }
