@@ -49,7 +49,9 @@ libpropertypages_la_SOURCES =  \
 	librarypainteroptionsinclude.cpp \
 	librarypainteroptionsinclude.h \
 	librarypainteroptionsmgmt.cpp \
-	librarypainteroptionsmgmt.h
+	librarypainteroptionsmgmt.h \
+	fieldstyles.cpp \
+	fieldstyles.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
