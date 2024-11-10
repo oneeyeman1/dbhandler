@@ -68,6 +68,7 @@
 #include "pointerproperty.h"
 #include "fieldgeneral.h"
 #include "fieldheader.h"
+#include "fieldstyles.h"
 #include "foreignkey.h"
 #include "getobjectname.h"
 #include "jointype.h"
@@ -244,7 +245,7 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     return res;
 }
 
-extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title, wxString &command)
+extern "C" WXEXPORT void CreatePropertiesDialog(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title, wxString &command)
 {
     int res = 0;
 #ifdef __WXMSW__
@@ -252,8 +253,7 @@ extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, std::unique_ptr
 #endif
     PropertiesDialog dlg( parent, wxID_ANY, title, handler.get() );
 	dlg.Center();
-    res = dlg.ShowModal();
-    return res;
+    dlg.ShowModal();
 }
 
 extern "C" WXEXPORT int CreatePropertiesDialogForObject(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title)

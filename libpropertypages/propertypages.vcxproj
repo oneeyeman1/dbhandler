@@ -44,6 +44,7 @@
     <ClInclude Include="designlabelgeneral.h" />
     <ClInclude Include="fieldgeneral.h" />
     <ClInclude Include="fieldheader.h" />
+    <ClInclude Include="fieldstyles.h" />
     <ClInclude Include="fontpropertypagebase.h" />
     <ClInclude Include="libraryobjectpropertypage.h" />
     <ClInclude Include="librarypainteroptionsgeneral.h" />
@@ -70,6 +71,7 @@
     <ClCompile Include="designlabelgeneral.cpp" />
     <ClCompile Include="fieldgeneral.cpp" />
     <ClCompile Include="fieldheader.cpp" />
+    <ClCompile Include="fieldstyles.cpp" />
     <ClCompile Include="fontpropertypagebase.cpp" />
     <ClCompile Include="libraryobjectpropertypage.cpp" />
     <ClCompile Include="librarypainteroptionsgeneral.cpp" />

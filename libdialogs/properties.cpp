@@ -63,6 +63,7 @@
 #include "librarypainteroptionsgeneral.h"
 #include "librarypainteroptionsinclude.h"
 #include "librarypainteroptionsmgmt.h"
+#include "fieldstyles.h"
 #include "properties.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
@@ -127,6 +128,8 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_properties->AddPage( m_page7, _( "Headers" ) );
             m_page8 = new DatabaseFieldDisplay( m_properties, prop.m_display );
             m_properties->AddPage( m_page8, _( "Display" ) );
+            m_page17 = new FieldStyles( m_properties );
+            m_properties->AddPage( m_page17, _( "Edit Style" ) );
         }
         break;
         case DividerPropertiesType:

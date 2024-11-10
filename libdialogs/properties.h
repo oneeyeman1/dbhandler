@@ -35,6 +35,7 @@ private:
     LibraryPainterOptionsGeneralPage *m_page14;
     LibraryPainterOptionsIncludePage *m_page15;
     LibraryPainterOptionsMgmtPage *m_page16;
+    FieldStyles *m_page17;
     int m_type;
     std::wstring m_dbType, m_command;
     bool m_isApplied;
