@@ -117,6 +117,11 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     queries.push_back( "CREATE TABLE IF NOT EXISTS \"sys.abcatvld\"(\"abv_name\" char(30) NOT NULL, \"abv_vald\" char(254), \"abv_type\" smallint, \"abv_cntr\" integer, \"abv_msg\" char(254), PRIMARY KEY( \"abv_name\" ));" );
     queries.push_back( "CREATE INDEX IF NOT EXISTS \"abcattbl_tnam_ownr\" ON \"sys.abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);" );
     queries.push_back( "CREATE INDEX IF NOT EXISTS \"abcatcol_tnam_ownr_cnam\" ON \"sys.abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);" );
+    queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatvld\" VALUES( \'Multple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \');" );
+    queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatvld\" VALUES( \'Positive_number\', \'CHECK( @column > 0 )\', 81, 6, \'Sorry! The value must be greater than 0\');");
+    queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatvld\" VALUES( \'Y_or_N\', \'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )\', 81, 6, '');");
+    queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatvld\" VALUES( \'must_be_numer\', \'CHECK( isNumer( @column )\', 80, 0, \'\');");
+    queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatvld\" VALUES( \'valid status\', \'CHECK( @status == \"ALT*\" )\', 80, 3, \'\');");
     std::wstring errorMessage;
     if( !pimpl )
     {
