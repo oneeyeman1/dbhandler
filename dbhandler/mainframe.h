@@ -28,7 +28,7 @@ public:
     NewTableHandler *m_handler;
 protected:
     bool LoadApplication(const std::vector<LibrariesInfo> &path);
-    void Connect();
+    void Connect(bool atomatic);
 private:
     void InitToolBar(wxToolBar* toolBar);
     void OnConfigureODBC(wxCommandEvent &event);
