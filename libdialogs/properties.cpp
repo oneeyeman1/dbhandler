@@ -56,6 +56,7 @@
 #include "designlabelgeneral.h"
 #include "pointerproperty.h"
 #include "fieldheader.h"
+#include "fieldvalidation.h"
 #include "bandgeneral.h"
 #include "databasefielddisplay.h"
 #include "painterobjects.h"
@@ -128,6 +129,8 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_properties->AddPage( m_page7, _( "Headers" ) );
             m_page8 = new DatabaseFieldDisplay( m_properties, prop.m_display );
             m_properties->AddPage( m_page8, _( "Display" ) );
+            m_page18 = new FieldValidation( m_properties );
+            m_properties->AddPage( m_page18, _( "Validation" ) );
             m_page17 = new FieldStyles( m_properties );
             m_properties->AddPage( m_page17, _( "Edit Style" ) );
         }

@@ -68,6 +68,7 @@
 #include "pointerproperty.h"
 #include "fieldgeneral.h"
 #include "fieldheader.h"
+#include "fieldvalidation.h"
 #include "fieldstyles.h"
 #include "foreignkey.h"
 #include "getobjectname.h"
