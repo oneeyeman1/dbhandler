@@ -997,740 +997,220 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
 int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12, query13, query14;
+    std::vector<std::wstring> queries;
     SQLWCHAR *query = NULL;
     if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
-        query1 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE \"abcatcol\"(abc_tnam varchar(129) NOT NULL, abc_tid integer, abc_ownr varchar(129) NOT NULL, abc_cnam varchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn varchar(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt varchar(254), abc_edit varchar(31), abc_tag varchar(254) PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
-        query2 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatedt' AND xtype='U') CREATE TABLE \"abcatedt\"(abe_name varchar(30) NOT NULL, abe_edit varchar(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work varchar(32) PRIMARY KEY( abe_name, abe_seqn ));";
-        query3 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatfmt' AND xtype='U') CREATE TABLE \"abcatfmt\"(abf_name varchar(30) NOT NULL, abf_frmt varchar(254), abf_type smallint, abf_cntr integer PRIMARY KEY( abf_name ));";
-        query4 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE \"abcattbl\"(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254) PRIMARY KEY( abt_tnam, abt_ownr ));";
-        query5 = L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatvld' AND xtype='U') CREATE TABLE \"abcatvld\"(abv_name varchar(30) NOT NULL, abv_vald varchar(254), abv_type smallint, abv_cntr integer, abv_msg varchar(254) PRIMARY KEY( abv_name ));";
-        query6 = L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='abcattbl_tnam_ownr' AND object_id = OBJECT_ID('abcattbl')) CREATE INDEX \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
-        query7 = L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='abcatcol_tnam_ownr_cnam' AND object_id = OBJECT_ID('abcatcol')) CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
+        queries.push_back( L"BEGIN TRANSACTION sysobjects" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE \"abcatcol\"(abc_tnam varchar(129) NOT NULL, abc_tid integer, abc_ownr varchar(129) NOT NULL, abc_cnam varchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn varchar(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt varchar(254), abc_edit varchar(31), abc_tag varchar(254) PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatedt' AND xtype='U') CREATE TABLE \"abcatedt\"(abe_name varchar(30) NOT NULL, abe_edit varchar(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work varchar(32) PRIMARY KEY( abe_name, abe_seqn ));" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatfmt' AND xtype='U') CREATE TABLE \"abcatfmt\"(abf_name varchar(30) NOT NULL, abf_frmt varchar(254), abf_type smallint, abf_cntr integer PRIMARY KEY( abf_name ));" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE \"abcattbl\"(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254) PRIMARY KEY( abt_tnam, abt_ownr ));" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatvld' AND xtype='U') CREATE TABLE \"abcatvld\"(abv_name varchar(30) NOT NULL, abv_vald varchar(254), abv_type smallint, abv_cntr integer, abv_msg varchar(254) PRIMARY KEY( abv_name ));" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='abcattbl_tnam_ownr' AND object_id = OBJECT_ID('abcattbl')) CREATE INDEX \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name='abcatcol_tnam_ownr_cnam' AND object_id = OBJECT_ID('abcatcol')) CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);" );
     }
     if( pimpl->m_subtype == L"ACCESS" )
     {
-        query1 = L"SELECT name FROM MSysObjects WHERE type IN (1, 4, 6) AND name = 'abcatcol';";
-        query2 = L"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
-        query3 = L"SELECT name FROM MSysObjects WHERE type IN (1, 4, 6) AND name = 'abcatedt';";
-        query4 = L"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));";
+        queries.push_back( L"SELECT name FROM MSysObjects WHERE type IN (1, 4, 6) AND name = 'abcatcol';" );
+        queries.push_back( L"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
+        queries.push_back( L"SELECT name FROM MSysObjects WHERE type IN (1, 4, 6) AND name = 'abcatedt';" );
+        queries.push_back( L"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
     }
     if( pimpl->m_subtype == L"MySQL" || pimpl->m_subtype == L"PostgreSQL" )
     {
-        query1 = L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
-        query2 = L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));";
-        query3 = L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));";
-        query4 = L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
-        query5 = L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));";
+        queries.push_back( L"BEGN" );
+        queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
+        queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
+        queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
+        queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
+        queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));" );
         if( pimpl->m_subtype == L"MySQL" )
         {
-            query6 = L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcattbl_tnam_ownr\' AND table_name=\'abcattbl\' ) > 0, \"SELECT 0\", \"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC)\"));";
-            query7 = L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatcol_tnam_ownr_cnam\' AND table_name=\'abcatcol\' ) > 0, \"SELECT 0\", \"CREATE INDEX abcatcol_tnam_ownr_cnam ON abcatcoll(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\"));";
+            queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcattbl_tnam_ownr\' AND table_name=\'abcattbl\' ) > 0, \"SELECT 0\", \"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC)\"));" );
+            queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatcol_tnam_ownr_cnam\' AND table_name=\'abcatcol\' ) > 0, \"SELECT 0\", \"CREATE INDEX abcatcol_tnam_ownr_cnam ON abcatcoll(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\"));" );
         }
         else
         {
             if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 5 )
             {
-                query6 = L"CREATE INDEX IF NOT EXISTS \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);";
-                query7 = L"CREATE INDEX IF NOT EXISTS \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);";
+                queries.push_back( L"CREATE INDEX IF NOT EXISTS \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);" );
+                queries.push_back( L"CREATE INDEX IF NOT EXISTS \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);" );
             }
             else
             {
-                query6 = L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcattbl_tnam_ownr\' AND n.nspname = \'public\' ) THEN CREATE INDEX  \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC); END IF; END;";
-                query7 = L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatcol_tnam_ownr_cnam\' AND n.nspname = \'public\' ) THEN CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC); END IF; END;";
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcattbl_tnam_ownr\' AND n.nspname = \'public\' ) THEN CREATE INDEX  \"abcattbl_tnam_ownr\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatcol_tnam_ownr_cnam\' AND n.nspname = \'public\' ) THEN CREATE INDEX \"abcatcol_tnam_ownr_cnam\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC); END IF; END;" );
             }
         }
     }
     if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
     {
-        query1 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatcol' AND type = 'U') EXECUTE(\"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))\")";
-        query2 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatedt' AND type = 'U') EXECUTE(\"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ))\")";
-        query3 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatfmt' AND type = 'U') EXECUTE(\"CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ))\")";
-        query4 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcattbl' AND type = 'U') EXECUTE(\"CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))\")";
-        query5 = L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatvld' AND type = 'U') EXECUTE(\"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))\")";
-        query6 = L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name='abcattbl' AND i.name='abcattbl_tnam_ownr') EXECUTE(\"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC)\")";
-        query7 = L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name='abcatcol' AND i.name='abcatcol_tnam_ownr_cnam') EXECUTE(\"CREATE INDEX abcatcol_tnam_ownr_cnam ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\")";
+        queries.push_back( L"BEGIN TRANSACTION sysobjects" );
+        queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatcol' AND type = 'U') EXECUTE(\"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))\")" );
+        queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatedt' AND type = 'U') EXECUTE(\"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ))\")" );
+        queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatfmt' AND type = 'U') EXECUTE(\"CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ))\")" );
+        queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcattbl' AND type = 'U') EXECUTE(\"CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))\")" );
+        queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatvld' AND type = 'U') EXECUTE(\"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))\")" );
+        queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name='abcattbl' AND i.name='abcattbl_tnam_ownr') EXECUTE(\"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC)\")" );
+        queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name='abcatcol' AND i.name='abcatcol_tnam_ownr_cnam') EXECUTE(\"CREATE INDEX abcatcol_tnam_ownr_cnam ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\")" );
     }
     if( pimpl->m_subtype == L"Sybase SQL Anywhere" )
     {
         if( pimpl->m_versionMajor >= 12 )
         {
             // According to the Sybase (SAP) documentation "IF NOT EXIST" is supported from version 12 up.
-            query1 = L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))";
-            query2 = L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ))";
-            query3 = L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ))";
-            query4 = L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))";
-            query5 = L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))";
-            query6 = L"CREATE INDEX IF NOT EXISTS abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC)";
-            query7 = L"CREATE INDEX IF NOT EXISTS abcatcol_tnam_ownr_cnam ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)";
+            queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))" );
+            queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ))" );
+            queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ))" );
+            queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))" );
+            queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))" );
+            queries.push_back( L"CREATE INDEX IF NOT EXISTS abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC)" );
+            queries.push_back( L"CREATE INDEX IF NOT EXISTS abcatcol_tnam_ownr_cnam ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)" );
         }
         else
         {
-            query1 = L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcatcol'";
-            query2 = L"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))";
-            query3 = L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcatedt'";
-            query4 = L"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ))";
-            query5 = L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcatfmt'";
-            query6 = L"CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ))";
-            query7 = L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcattbl'";
-            query8 = L"CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))";
-            query9 = L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcatvld'";
-            query10 = L"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))";
-            query11 = L"SELECT 1 FROM dbo.sysobjects o, dbo.sysindexes i WHERE o.id = i.id AND o.name = 'abcattbl' AND i.name = 'abcattbl_tnam_ownr'";
-            query12 = L"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC)";
-            query13 = L"SELECT 1 FROM dbo.sysobjects o, dbo.sysindexes i WHERE o.id = i.id AND o.name = 'abcatcol' AND i.name = 'abcatcol_tnam_ownr_cnam'";
-            query14 = L"CREATE INDEX abcatcol_tnam_ownr_cnam ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)";
+            queries.push_back( L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcatcol'" );
+            queries.push_back( L"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))" );
+            queries.push_back( L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcatedt'" );
+            queries.push_back( L"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ))" );
+            queries.push_back( L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcatfmt'" );
+            queries.push_back( L"CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ))" );
+            queries.push_back( L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcattbl'" );
+            queries.push_back( L"CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))" );
+            queries.push_back( L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcatvld'" );
+            queries.push_back( L"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))" );
+            queries.push_back( L"SELECT 1 FROM dbo.sysobjects o, dbo.sysindexes i WHERE o.id = i.id AND o.name = 'abcattbl' AND i.name = 'abcattbl_tnam_ownr'" );
+            queries.push_back( L"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC)" );
+            queries.push_back( L"SELECT 1 FROM dbo.sysobjects o, dbo.sysindexes i WHERE o.id = i.id AND o.name = 'abcatcol' AND i.name = 'abcatcol_tnam_ownr_cnam'" );
+            queries.push_back( L"CREATE INDEX abcatcol_tnam_ownr_cnam ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)" );
         }
     }
     if( pimpl->m_subtype == L"Oracle" )
     {
-        query1 = L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatcol' )";
-        query2 = L"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));";
-        query3 = L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatedt' )";
-        query4 = L"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));";
-        query5 = L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatfmt' )";
-        query6 = L"CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));";
-        query7 = L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcattbl' )";
-        query8 = L"CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));";
-        query9 = L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatvld' )";
-        query10 = L"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));";
-        query11 = L"SELECT 1 FROM all_indexes WHERE table_name = UPPER( 'abcattbl' ) AND index_name = UPPER( 'abcattbl_tnam_ownr' );";
-        query12 = L"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam, abt_ownr);";
+        queries.push_back( L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatcol' )" );
+        queries.push_back( L"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
+        queries.push_back( L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatedt' )" );
+        queries.push_back( L"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
+        queries.push_back( L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatfmt' )" );
+        queries.push_back( L"CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
+        queries.push_back( L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcattbl' )" );
+        queries.push_back( L"CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
+        queries.push_back( L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatvld' )" );
+        queries.push_back( L"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));" );
+        queries.push_back( L"SELECT 1 FROM all_indexes WHERE table_name = UPPER( 'abcattbl' ) AND index_name = UPPER( 'abcattbl_tnam_ownr' );" );
+        queries.push_back( L"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam, abt_ownr);" );
     }
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        if( ( pimpl->m_subtype != L"ACCESS" && pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_subtype != L"Oracle" ) || ( pimpl->m_subtype == L"Sybase SQL Anywhere" && pimpl->m_versionMajor > 12 ) )
+        if( pimpl->m_subtype != L"Oracle" || ( pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_versionMajor >= 12 ) )
         {
-            query = new SQLWCHAR[query1.length() + 2];
-            memset( query, '\0', query1.size() + 2 );
-            uc_to_str_cpy( query, query1 );
-            ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-            delete[] query;
-            query = NULL;
-            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
+            for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
             {
-                query = new SQLWCHAR[query2.length() + 2];
-                memset( query, '\0', query2.size() + 2 );
-                uc_to_str_cpy( query, query2 );
+                query = new SQLWCHAR[(*it).length() + 2];
+                memset( query, '\0', (*it).length() + 2 );
+                uc_to_str_cpy( query, (*it) );
                 ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
                 delete[] query;
-                query = NULL;
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
+                query = nullptr;
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    query = new SQLWCHAR[query3.length() + 2];
-                    memset( query, '\0', query3.size() + 2 );
-                    uc_to_str_cpy( query, query3 );
-                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                    delete[] query;
-                    query = NULL;
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
-                    {
-                        query = new SQLWCHAR[query4.length() + 2];
-                        memset( query, '\0', query4.size() + 2 );
-                        uc_to_str_cpy( query, query4 );
-                        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                        delete[] query;
-                        query = NULL;
-                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
-                        {
-                            query = new SQLWCHAR[query5.length() + 2];
-                            memset( query, '\0', query5.size() + 2 );
-                            uc_to_str_cpy( query, query5 );
-                            ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                            delete[] query;
-                            query = NULL;
-                        }
-                    }
+                    GetErrorMessage( errorMsg, 1 );
+                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                    result = 1;
+                    SQLEndTran( SQL_HANDLE_STMT, m_hstmt, SQL_ROLLBACK );
+                    break;
                 }
             }
         }
         else
         {
-            query = new SQLWCHAR[query1.length() + 2];
-            memset( query, '\0', query1.size() + 2 );
-            uc_to_str_cpy( query, query1 );
-            ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-            delete[] query;
-            query = NULL;
-            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+            int i = 0;
+            for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
             {
-                ret = SQLFetch( m_hstmt );
-                if( ret == SQL_NO_DATA )
+                query = new SQLWCHAR[(*it).length() + 2];
+                memset( query, '\0', (*it).size() + 2 );
+                uc_to_str_cpy( query, (*it) );
+                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
+                delete[] query;
+                query = nullptr;
+                if( i % 2 != 0 )
                 {
-                    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO || ret != SQL_NO_DATA )
                     {
                         GetErrorMessage( errorMsg, 1 );
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                         result = 1;
+                        break;
                     }
-                    else
+                    else if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
-                        m_hstmt = 0;
-                        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        ret = SQLFetch( m_hstmt );
+                        if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO || ret != SQL_NO_DATA )
                         {
                             GetErrorMessage( errorMsg, 1 );
                             ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                             result = 1;
+                            break;
+                        }
+                        else if( ret == SQL_NO_DATA )
+                        {
+                            i++;
+                            continue;
                         }
                         else
                         {
-                            query = new SQLWCHAR[query2.length() + 2];
-                            memset( query, '\0', query2.length() + 2 );
-                            uc_to_str_cpy( query, query2 );
-                            ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                            delete[] query;
-                            query = nullptr;
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, 1 );
-                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                result = 1;
-                            }
-                        }
-                    }
-                }
-                else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    result = 1;
-                }
-            }
-            else
-            {
-                GetErrorMessage( errorMsg, 1 );
-                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                result = 1;
-            }
-            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 1 );
-                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                result = 1;
-            }
-            m_hstmt = 0;
-            if( !result )
-            {
-                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                {
-                    query = new SQLWCHAR[query3.length() + 2];
-                    memset( query, '\0', query3.length() + 2 );
-                    uc_to_str_cpy( query, query3 );
-                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                    delete[] query;
-                    query = nullptr;
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        ret = SQLFetch( m_hstmt );
-                        if( ret == SQL_NO_DATA )
-                        {
-                            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, 1 );
-                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                result = 1;
-                            }
-                            else
-                            {
-                                m_hstmt = 0;
-                                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, 1 );
-                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                    result = 1;
-                                }
-                                else
-                                {
-                                    query = new SQLWCHAR[query4.length() + 2];
-                                    memset( query, '\0', query4.length() + 2 );
-                                    uc_to_str_cpy( query, query4 );
-                                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                    delete[] query;
-                                    query = nullptr;
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, 1 );
-                                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                        result = 1;
-                                    }
-                                }
-                            }
-                        }
-                        else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1 );
-                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                            result = 1;
+                            ++it;
+                            i += 2;
+                            continue;
                         }
                     }
                     else
                     {
-                        GetErrorMessage( errorMsg, 1 );
-                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                        result = 1;
+                        ++it;
+                        continue;
                     }
-                    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, 1 );
-                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                        result = 1;
-                    }
-                    m_hstmt = 0;
-                }
-            }
-            if( !result )
-            {
-                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    result = 1;
                 }
                 else
-                {
-                    query = new SQLWCHAR[query5.length() + 2];
-                    memset( query, '\0', query5.length() + 2 );
-                    uc_to_str_cpy( query, query5 );
-                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                    delete[] query;
-                    query = nullptr;
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        ret = SQLFetch( m_hstmt );
-                        if( ret == SQL_NO_DATA )
-                        {
-                            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, 1 );
-                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                result = 1;
-                            }
-                            else
-                            {
-                                m_hstmt = 0;
-                                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, 1 );
-                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                    result = 1;
-                                }
-                                else
-                                {
-                                    query = new SQLWCHAR[query6.length() + 2];
-                                    memset( query, '\0', query6.length() + 2 );
-                                    uc_to_str_cpy( query, query6 );
-                                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                    delete[] query;
-                                    query = nullptr;
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, 1 );
-                                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                        result = 1;
-                                    }
-                                }
-                            }
-                        }
-                        else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1 );
-                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                            result = 1;
-                        }
-                    }
-                    else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO || ret != SQL_NO_DATA )
                     {
                         GetErrorMessage( errorMsg, 1 );
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                         result = 1;
+                        break;
                     }
-                }
-                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    result = 1;
-                }
-                m_hstmt = 0;
-            }
-            if( !result )
-            {
-                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    result = 1;
-                }
-                else
-                {
-                    query = new SQLWCHAR[query7.length() + 2];
-                    memset( query, '\0', query7.length() + 2 );
-                    uc_to_str_cpy( query, query7 );
-                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                    delete[] query;
-                    query = nullptr;
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        ret = SQLFetch( m_hstmt );
-                        if( ret == SQL_NO_DATA )
-                        {
-                            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, 1 );
-                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                result = 1;
-                            }
-                            else
-                            {
-                                m_hstmt = 0;
-                                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, 1 );
-                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                    result = 1;
-                                }
-                                else
-                                {
-                                    query = new SQLWCHAR[query8.length() + 2];
-                                    memset( query, '\0', query8.length() + 2 );
-                                    uc_to_str_cpy( query, query8 );
-                                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                    delete[] query;
-                                    query = nullptr;
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, 1 );
-                                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                        result = 1;
-                                    }
-                                }
-                            }
-                        }
-                        else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1 );
-                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                            result = 1;
-                        }
-                    }
-                }
-                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    result = 1;
-                }
-                m_hstmt = 0;
-            }
-            if( !result )
-            {
-                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    result = 1;
-                }
-                else
-                {
-                    query = new SQLWCHAR[query9.length() + 2];
-                    memset( query, '\0', query9.length() + 2 );
-                    uc_to_str_cpy( query, query9 );
-                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                    delete[] query;
-                    query = nullptr;
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        ret = SQLFetch( m_hstmt );
-                        if( ret == SQL_NO_DATA )
-                        {
-                            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, 1 );
-                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                result = 1;
-                            }
-                            else
-                            {
-                                m_hstmt = 0;
-                                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, 1 );
-                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                    result = 1;
-                                }
-                                else
-                                {
-                                    query = new SQLWCHAR[query10.length() + 2];
-                                    memset( query, '\0', query10.length() + 2 );
-                                    uc_to_str_cpy( query, query10 );
-                                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                    delete[] query;
-                                    query = nullptr;
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, 1 );
-                                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                        result = 1;
-                                    }
-                                }
-                            }
-                        }
-                        else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1 );
-                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                            result = 1;
-                        }
-                    }
-                    else
-                    {
-                        GetErrorMessage( errorMsg, 1 );
-                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                        result = 1;
-                    }
-                }
-                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    result = 1;
-                }
-                m_hstmt = 0;
-            }
-            if( !result )
-            {
-                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    result = 1;
-                }
-                else
-                {
-                    query = new SQLWCHAR[query11.length() + 2];
-                    memset( query, '\0', query11.length() + 2 );
-                    uc_to_str_cpy( query, query11 );
-                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                    delete[] query;
-                    query = nullptr;
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        if( ret == SQL_NO_DATA )
-                        {
-                            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, 1 );
-                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                result = 1;
-                            }
-                            else
-                            {
-                                m_hstmt = 0;
-                                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, 1 );
-                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                    result = 1;
-                                }
-                                else
-                                {
-                                    query = new SQLWCHAR[query12.length() + 2];
-                                    memset( query, '\0', query12.length() + 2 );
-                                    uc_to_str_cpy( query, query12 );
-                                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                    delete[] query;
-                                    query = nullptr;
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, 1 );
-                                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                        result = 1;
-                                    }
-                                }
-                            }
-                        }
-                        else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, 1 );
-                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                            result = 1;
-                        }
-                    }
-                    else
-                    {
-                        GetErrorMessage( errorMsg, 1 );
-                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                        result = 1;
-                    }
-                }
-                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    result = 1;
-                }
-                m_hstmt = 0;
-            }
-            if( !result && pimpl->m_subtype != L"Oracle" )
-            {
-                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, 1 );
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    result = 1;
-                }
-                else
-                {
-                    query = new SQLWCHAR[query13.length() + 2];
-                    memset( query, '\0', query13.length() + 2 );
-                    uc_to_str_cpy( query, query13 );
-                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                    delete[] query;
-                    query = nullptr;
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        ret = SQLFetch( m_hstmt );
-                        if( ret == SQL_NO_DATA )
-                        {
-                            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, 1 );
-                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                result = 1;
-                            }
-                            else
-                            {
-                                m_hstmt = 0;
-                                ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, 1 );
-                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                    result = 1;
-                                }
-                                else
-                                {
-                                    query = new SQLWCHAR[query14.length() + 2];
-                                    memset( query, '\0', query14.length() + 2 );
-                                    uc_to_str_cpy( query, query14 );
-                                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                                    delete[] query;
-                                    query = nullptr;
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, 1 );
-                                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                        result = 1;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, 1 );
-                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                        result = 1;
-                    }
-                    ret = SQLFreeHandle(SQL_HANDLE_STMT, m_hstmt);
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage(errorMsg, 1);
-                        ret = SQLEndTran(SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK);
-                        result = 1;
-                    }
-                    m_hstmt = 0;
-                }
             }
         }
-        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
-        {
-            if( ( pimpl->m_subtype == L"PostgreSQL" && pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 5 ) || ( pimpl->m_subtype != L"PostgreSQL" && pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_subtype != L"Oracle" ) )
-            {
-                query = new SQLWCHAR[query6.length() + 2];
-                memset( query, '\0', query6.size() + 2 );
-                uc_to_str_cpy( query, query6 );
-                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                delete[] query;
-                query = NULL;
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
-                {
-                    query = new SQLWCHAR[query7.length() + 2];
-                    memset( query, '\0', query7.size() + 2 );
-                    uc_to_str_cpy( query, query7 );
-                    ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                    delete[] query;
-                    query = NULL;
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO || ret == SQL_NO_DATA )
-                    {
-                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
-                    }
-                }
-            }
-            else
-            {
-                if( pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_subtype != L"Oracle" && CreateIndexesOnPostgreConnection( errorMsg ) )
-                {
-                    errorMsg.push_back( L"" );
-                    result = 1;
-                }
-                else
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
-            }
-        }
+        ret = SQLEndTran( SQL_HANDLE_STMT, m_hstmt, SQL_COMMIT );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1 );
             ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
             result = 1;
         }
-        if( m_hstmt )
+        else
         {
             ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
-                GetErrorMessage( errorMsg, 2 );
-                result = 1;
-            }
-            m_hstmt = 0;
-        }
-        if( !result )
-        {
-            ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) TRUE, 0 );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, 2 );
+                m_hstmt = 0;
+                GetErrorMessage( errorMsg, 1 );
                 result = 1;
             }
             else
-                result = GetTableListFromDb( errorMsg );
+            {
+                m_hstmt = 0;
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hdbc );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    m_hdbc = 0;
+                    GetErrorMessage( errorMsg, 2 );
+                    result = 1;
+                }
+                else
+                    m_hdbc = 0;
+            }
         }
     }
     return result;
