@@ -468,12 +468,16 @@ void MainFrame::InitToolBar(wxToolBar* toolBar)
 //    toolBar->Bind( wxEVT_LEFT_DOWN, &MainFrame::OnCustomize, this );
 }
 
-void MainFrame::Connect()
+void MainFrame::Connect(bool atomatic)
 {
     Database *db = NULL;
     wxString title;
     std::vector<std::wstring> errorMsg;
     wxDynamicLibrary *lib = NULL;
+    wxString name = "";
+    wxString engine = "";
+    wxString connectStr = "";
+    wxString connectedUser = "";
     if( m_painters.find( "DBloader" ) == m_painters.end() )
     {
         bool loaded;
@@ -500,10 +504,13 @@ void MainFrame::Connect()
     if( lib && lib->IsLoaded() )
     {
         DBPROFILE func = (DBPROFILE) lib->GetSymbol( "ConnectToDb" );
-        wxString name = wxGetApp().GetDBName();
-        wxString engine = wxGetApp().GetDBEngine();
-        wxString connectStr = wxGetApp().GetConnectString();
-        wxString connectedUser = wxGetApp().GetConnectedUser();
+        if( atomatic )
+        {
+            name = wxGetApp().GetDBName();
+            engine = wxGetApp().GetDBEngine();
+            connectStr = wxGetApp().GetConnectString();
+            connectedUser = wxGetApp().GetConnectedUser();
+        }
         db = func( this, name, engine, connectStr, connectedUser, m_profiles );
         if( db && m_db )
         {
@@ -607,7 +614,7 @@ void MainFrame::OnDatabase(wxCommandEvent &WXUNUSED(event))
 {
     wxDynamicLibrary *lib = nullptr, *lib1 = nullptr, *lib2 = nullptr;
     if( !m_db )
-        Connect();
+        Connect( true );
     if( m_db )
     {
         if( m_painters.find( "Database" ) == m_painters.end() )
@@ -693,7 +700,7 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
     wxString libName;
     wxDynamicLibrary *lib = NULL;
     if( !m_db )
-        Connect();
+        Connect( true );
     if( m_db )
     {
         if( m_painters.find( "Query" ) == m_painters.end() )
@@ -733,7 +740,7 @@ void MainFrame::OnQuery(wxCommandEvent &WXUNUSED(event))
 
 void MainFrame::OnDatabaseProfile(wxCommandEvent &WXUNUSED(event))
 {
-    Connect();
+    Connect( false );
 }
 
 void MainFrame::OnTable(wxCommandEvent &WXUNUSED(event))
@@ -741,7 +748,7 @@ void MainFrame::OnTable(wxCommandEvent &WXUNUSED(event))
     wxString libName;
     wxDynamicLibrary *lib = NULL;
     if( !m_db )
-        Connect();
+        Connect( true );
     if( m_db )
     {
         if( m_painters.find( "TableView" ) == m_painters.end() )
