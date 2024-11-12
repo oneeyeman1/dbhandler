@@ -496,7 +496,7 @@ void MyErdTable::DrawSelected(wxDC& dc)
         wxSFRoundRectShape::DrawSelected( dc );
 }
 
-int MyErdTable::ApplyProperties()
+int MyErdTable::ApplyProperties(const wxAny &any)
 {
     return 0;
 }

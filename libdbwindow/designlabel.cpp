@@ -158,7 +158,7 @@ void DesignLabel::Select(bool selected)
     wxSFRectShape::Select( selected );
 }
 
-int DesignLabel::ApplyProperties()
+int DesignLabel::ApplyProperties(const wxAny &any)
 {
     return 0;
 }

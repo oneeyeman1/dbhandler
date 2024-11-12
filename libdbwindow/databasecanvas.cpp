@@ -526,9 +526,9 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 erdTable = table;
                 if( list.GetCount() == 1 )
                     found = true;
-                SerializableList list;
-                table->GetChildrenRecursively( CLASSINFO( FieldShape ), list );
-                SerializableList::compatibility_iterator node = list.GetFirst();
+                SerializableList fieldList;
+                table->GetChildrenRecursively( CLASSINFO( FieldShape ), fieldList );
+                SerializableList::compatibility_iterator node = fieldList.GetFirst();
                 while( node )
                 {
                     FieldShape *field2add = (FieldShape *) node->GetData();
@@ -1584,7 +1584,7 @@ void DatabaseCanvas::UnselectAllTables()
     }
 }
 
-int DatabaseCanvas::ApplyProperties()
+int DatabaseCanvas::ApplyProperties(const wxAny &any)
 {
     return 0;
 }

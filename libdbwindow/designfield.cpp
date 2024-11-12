@@ -110,7 +110,7 @@ wxAny &DesignField::GetProperties()
     return any;
 }
 
-int DesignField::ApplyProperties()
+int DesignField::ApplyProperties(const wxAny &any)
 {
     return 0;
 }
