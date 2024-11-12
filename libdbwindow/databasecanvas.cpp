@@ -492,7 +492,20 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     {
         MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
         if( table )
+        {
+            SerializableList list;
+            table->GetChildrenRecursively( CLASSINFO( FieldShape ), list );
+            SerializableList::compatibility_iterator node = list.GetFirst();
+            while( node )
+            {
+                FieldShape *field2add = (FieldShape *) node->GetData();
+                auto rect = field2add->GetBoundingBox();
+                if( rect.GetTop() > event.GetY() && rect.GetBottom() < event.GetY() )
+                    ;
+                node = node->GetNext();
+            }
             m_realSelectedShape = table;
+        }
     }
     wxMenu mnu;
     int allSelected = 0;
@@ -505,7 +518,9 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         ShapeList list;
         GetShapesAtPosition( pt, list );
         if( type == DatabaseView )
-            if( m_selectedShape->IsKindOf( CLASSINFO( MyErdTable ) ) )
+            if( m_selectedShape->IsKindOf( CLASSINFO( MyErdTable ) ) ||
+                m_selectedShape->IsKindOf( CLASSINFO( FieldShape ) ) ||
+                m_selectedShape->IsKindOf( CLASSINFO( CommentFieldShape ) ) )
                 DeselectAll();
         wxRect tableRect;
         bool fieldSelected = false;
