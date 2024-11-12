@@ -493,17 +493,6 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
         if( table )
         {
-            SerializableList list;
-            table->GetChildrenRecursively( CLASSINFO( FieldShape ), list );
-            SerializableList::compatibility_iterator node = list.GetFirst();
-            while( node )
-            {
-                FieldShape *field2add = (FieldShape *) node->GetData();
-                auto rect = field2add->GetBoundingBox();
-                if( rect.GetTop() > event.GetY() && rect.GetBottom() < event.GetY() )
-                    ;
-                node = node->GetNext();
-            }
             m_realSelectedShape = table;
         }
     }
@@ -537,6 +526,23 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 erdTable = table;
                 if( list.GetCount() == 1 )
                     found = true;
+                SerializableList list;
+                table->GetChildrenRecursively( CLASSINFO( FieldShape ), list );
+                SerializableList::compatibility_iterator node = list.GetFirst();
+                while( node )
+                {
+                    FieldShape *field2add = (FieldShape *) node->GetData();
+                    auto rect = field2add->GetBoundingBox();
+                    if( rect.GetTop() < pt.y && rect.GetTop() + rect.GetHeight() > pt.y )
+                    {
+                        erdField = field2add;
+                        if( type == DatabaseView )
+                            erdField->Select( true );
+                        fieldSelected = true;
+                        found = true;
+                    }
+                    node = node->GetNext();
+                }
             }
             else
             {
