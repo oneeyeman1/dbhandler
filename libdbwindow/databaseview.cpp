@@ -83,7 +83,7 @@
 #include "database.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "ablbaseview.h"
 #include "dbview.h"
 #include "colorcombobox.h"

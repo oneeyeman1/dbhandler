@@ -19,7 +19,7 @@
 #include "XmlSerializer.h"
 #include "database.h"
 #include "propertieshandlerbase.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "dbview.h"
 #include "designlabel.h"
 

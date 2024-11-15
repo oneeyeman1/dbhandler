@@ -37,7 +37,7 @@
 #include "configuration.h"
 #include "ablbaseview.h"
 #include "propertieshandlerbase.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "commentfieldshape.h"
 #include "fieldtypeshape.h"
 #include "constraint.h"

@@ -42,7 +42,7 @@
 #include "configuration.h"
 //#include "objectproperties.h"
 #include "propertieshandlerbase.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "field.h"
 #include "fieldwindow.h"
 #include "colorcombobox.h"

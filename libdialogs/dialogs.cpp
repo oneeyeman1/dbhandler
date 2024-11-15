@@ -48,7 +48,7 @@
 #include "wx/fontenum.h"
 #include "configuration.h"
 #include "propertypagebase.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "propertieshandlerbase.h"
 #include "painterobjects.h"
 #include "dialogs.h"

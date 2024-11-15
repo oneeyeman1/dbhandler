@@ -2,7 +2,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
 #include "configuration.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "propertieshandlerbase.h"
 #include "GridTableShape.h"
 #include "commentfieldshape.h"

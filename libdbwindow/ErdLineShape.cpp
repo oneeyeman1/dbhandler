@@ -24,7 +24,7 @@
 #include "wxsf/GridShape.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "ablbaseview.h"
 #include "constraint.h"
 #include "constraintsign.h"

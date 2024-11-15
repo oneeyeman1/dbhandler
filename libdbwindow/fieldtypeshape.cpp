@@ -3,7 +3,7 @@
 #include "database.h"
 #include "wxsf/TextShape.h"
 #include "propertieshandlerbase.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "FieldShape.h"
 #include "commentfieldshape.h"
 #include "fieldtypeshape.h"
