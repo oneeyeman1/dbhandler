@@ -16,6 +16,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/RectShape.h"
 #include "wxsf/GridShape.h"
+#include "database.h"
 #include "propertieshandlerbase.h"
 #include "dbview.h"
 #include "taborder.h"

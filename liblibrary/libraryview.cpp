@@ -38,6 +38,7 @@
 #include "wx/generic/dirctrlg.h"
 #include "wx/treelist.h"
 #include "wx/dir.h"
+#include "database.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "painterobjects.h"

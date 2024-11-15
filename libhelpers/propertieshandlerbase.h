@@ -46,6 +46,7 @@ public:
 protected:
     int m_object;
     wxAny any;
+    Database *m_db;
 };
 
 
