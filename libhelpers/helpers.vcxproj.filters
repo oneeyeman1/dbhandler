@@ -30,7 +30,7 @@
     <ClInclude Include="propertieshandlerbase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="guiojectsproperties.h">
+    <ClInclude Include="guiobjectsproperties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

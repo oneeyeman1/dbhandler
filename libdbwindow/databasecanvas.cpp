@@ -37,7 +37,7 @@
 #include "configuration.h"
 #include "ablbaseview.h"
 #include "propertieshandlerbase.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "commentfieldshape.h"
 #include "fieldtypeshape.h"
 #include "constraint.h"
@@ -492,7 +492,9 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
     {
         MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
         if( table )
+        {
             m_realSelectedShape = table;
+        }
     }
     wxMenu mnu;
     int allSelected = 0;
@@ -505,7 +507,9 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
         ShapeList list;
         GetShapesAtPosition( pt, list );
         if( type == DatabaseView )
-            if( m_selectedShape->IsKindOf( CLASSINFO( MyErdTable ) ) )
+            if( m_selectedShape->IsKindOf( CLASSINFO( MyErdTable ) ) ||
+                m_selectedShape->IsKindOf( CLASSINFO( FieldShape ) ) ||
+                m_selectedShape->IsKindOf( CLASSINFO( CommentFieldShape ) ) )
                 DeselectAll();
         wxRect tableRect;
         bool fieldSelected = false;
@@ -522,6 +526,23 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                 erdTable = table;
                 if( list.GetCount() == 1 )
                     found = true;
+                SerializableList fieldList;
+                table->GetChildrenRecursively( CLASSINFO( FieldShape ), fieldList );
+                SerializableList::compatibility_iterator node = fieldList.GetFirst();
+                while( node )
+                {
+                    FieldShape *field2add = (FieldShape *) node->GetData();
+                    auto rect = field2add->GetBoundingBox();
+                    if( rect.GetTop() < pt.y && rect.GetTop() + rect.GetHeight() > pt.y )
+                    {
+                        erdField = field2add;
+                        if( type == DatabaseView )
+                            erdField->Select( true );
+                        fieldSelected = true;
+                        found = true;
+                    }
+                    node = node->GetNext();
+                }
             }
             else
             {
@@ -1563,7 +1584,7 @@ void DatabaseCanvas::UnselectAllTables()
     }
 }
 
-int DatabaseCanvas::ApplyProperties()
+int DatabaseCanvas::ApplyProperties(const wxAny &any)
 {
     return 0;
 }

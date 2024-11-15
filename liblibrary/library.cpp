@@ -27,6 +27,7 @@
 #include "wx/generic/dirctrlg.h"
 #include "wx/bmpcbox.h"
 #include "wx/treelist.h"
+#include "database.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "painterobjects.h"

@@ -14,7 +14,7 @@
 #include "wx/bmpcbox.h"
 #include "wx/valnum.h"
 #include "database.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "colorcombobox.h"
 #include "propertypagebase.h"
 #include "colorcombobox.h"

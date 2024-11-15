@@ -9,7 +9,7 @@
 #include <algorithm>
 #include "database.h"
 #include "propertypagebase.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "fieldheader.h"
 
 FieldHeader::FieldHeader(wxWindow *parent, const FieldTableHeadingProperties &prop) : PropertyPageBase( parent, wxID_ANY )

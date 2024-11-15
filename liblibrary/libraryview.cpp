@@ -38,6 +38,7 @@
 #include "wx/generic/dirctrlg.h"
 #include "wx/treelist.h"
 #include "wx/dir.h"
+#include "database.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "painterobjects.h"
@@ -958,7 +959,7 @@ void LibraryViewPainter::OnPainterProperties(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-int LibraryViewPainter::ApplyProperties()
+int LibraryViewPainter::ApplyProperties(const wxAny &any)
 {
     if( !m_conf->m_libPainterOptions.m_general.m_showCheckedOut )
         m_tree->SetColumnWidth( COL_CHECKEDOUT, 0 );

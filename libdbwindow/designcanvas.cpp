@@ -32,7 +32,7 @@
 #include "database.h"
 #include "configuration.h"
 #include "ablbaseview.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "propertieshandlerbase.h"
 #include "dbview.h"
 #include "constraint.h"
@@ -605,7 +605,7 @@ void DesignCanvas::OnLeftDoubleClick( wxMouseEvent &WXUNUSED(event))
 
 }
 
-int DesignCanvas::ApplyProperties()
+int DesignCanvas::ApplyProperties(const wxAny &any)
 {
     return 0;
 }

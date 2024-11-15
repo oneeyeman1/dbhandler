@@ -30,7 +30,7 @@ public:
     const wxString &GetCatalogName() const { return m_catalogName; }
     const wxString &GetSchemaName() const { return m_schemaName; }
     const wxString &GetTableName() const { return m_tableName; }
-    virtual int ApplyProperties() wxOVERRIDE;
+    virtual int ApplyProperties(const wxAny &any) wxOVERRIDE;
     virtual wxAny &GetProperties() wxOVERRIDE;
 protected:
     void ClearGrid();

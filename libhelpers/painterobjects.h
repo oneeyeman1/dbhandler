@@ -40,7 +40,7 @@ public:
         m_properties.m_checkedOutBy = "";
     }
 
-    virtual int ApplyProperties() wxOVERRIDE { return 0; }
+    virtual int ApplyProperties(const wxAny &any) wxOVERRIDE { return 0; }
     virtual wxAny &GetProperties() wxOVERRIDE { any = m_properties; return any; }
     LibraryObjectProperty m_properties;
 };
@@ -97,7 +97,7 @@ public:
     virtual wxAny &GetProperties() wxOVERRIDE { any = m_prop; return any; }
     std::vector<LibraryObjects> &GetObjects() { return  m_objects; }
 
-    virtual int ApplyProperties() wxOVERRIDE { return 0; }
+    virtual int ApplyProperties(const wxAny &any) wxOVERRIDE { return 0; }
 private:
     LibraryProperty m_prop;
     std::vector<LibraryObjects> m_objects;

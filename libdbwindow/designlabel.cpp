@@ -19,7 +19,7 @@
 #include "XmlSerializer.h"
 #include "database.h"
 #include "propertieshandlerbase.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "dbview.h"
 #include "designlabel.h"
 
@@ -158,7 +158,7 @@ void DesignLabel::Select(bool selected)
     wxSFRectShape::Select( selected );
 }
 
-int DesignLabel::ApplyProperties()
+int DesignLabel::ApplyProperties(const wxAny &any)
 {
     return 0;
 }

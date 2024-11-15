@@ -42,7 +42,7 @@
 #include "configuration.h"
 //#include "objectproperties.h"
 #include "propertieshandlerbase.h"
-#include "guiojectsproperties.h"
+#include "guiobjectsproperties.h"
 #include "field.h"
 #include "fieldwindow.h"
 #include "colorcombobox.h"
@@ -238,9 +238,20 @@ void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 
 bool PropertiesDialog::ApplyProperties()
 {
+    wxAny any;
+    switch( m_handler->GetType() )
+    {
+        case DatabaseFieldPropertiesType:
+        {
+            FieldProperties prop;
+            prop.m_comment = m_page6->GetCommentCtrl()->GetValue();
+            any = prop;
+        }
+        break;
+    }
     std::vector<std::wstring> errors;
     bool result = true;
-    m_handler->ApplyProperties();
+    m_handler->ApplyProperties( any );
 /*    int res = m_handler->GetProperties( errors );
     if( !res )
     {
