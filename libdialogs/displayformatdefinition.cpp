@@ -80,6 +80,7 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     sizer_7->Add( m_help, 0, 0, 0 );
     
     panel_1->SetSizer( sizer_2 );
+    sizer_2->Fit( this );
     Layout();
     // end wxGlade
 }
