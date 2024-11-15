@@ -1126,7 +1126,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         }
         else
         {
-            int i = 0;
+            int i = 1;
             for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
             {
                 query = new SQLWCHAR[(*it).length() + 2];
@@ -1137,7 +1137,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 query = nullptr;
                 if( i % 2 != 0 )
                 {
-                    if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO || ret != SQL_NO_DATA )
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                     {
                         GetErrorMessage( errorMsg, 1 );
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
@@ -1147,7 +1147,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                     else if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
                         ret = SQLFetch( m_hstmt );
-                        if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO || ret != SQL_NO_DATA )
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                         {
                             GetErrorMessage( errorMsg, 1 );
                             ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
@@ -1173,7 +1173,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                     }
                 }
                 else
-                    if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO || ret != SQL_NO_DATA )
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                     {
                         GetErrorMessage( errorMsg, 1 );
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
