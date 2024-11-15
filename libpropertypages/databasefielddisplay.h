@@ -27,6 +27,7 @@ public:
 private:
 
 protected:
+    void OnEditNewFormat(wxCommandEvent &event);
     // begin wxGlade: DatabaseFieldDisplay::attributes
     wxListBox* m_formats;
     wxButton* m_edit;

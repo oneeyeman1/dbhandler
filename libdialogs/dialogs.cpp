@@ -72,6 +72,7 @@
 #include "fieldstyles.h"
 #include "foreignkey.h"
 #include "getobjectname.h"
+#include "displayformatdefinition.h"
 #include "jointype.h"
 #include "libraryobjectpropertypage.h"
 #include "librarypainteroptionsgeneral.h"
@@ -537,4 +538,11 @@ extern "C" WXEXPORT int SaveNewView(wxWindow *parent, wxString &viewName)
     if( res == wxID_OK )
         viewName = dlg.GetNameCtrl()->GetValue();
     return res;
+}
+
+extern "C" WXEXPORT int AddEditMask(wxWindow *parent, bool isNew)
+{
+    DisplayFormatDefinition dlg( parent, wxID_ANY, "", isNew );
+    dlg.ShowModal();
+    return 0;
 }

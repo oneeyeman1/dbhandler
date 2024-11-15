@@ -10,7 +10,9 @@
 //
 
 #include <wx/wx.h>
-#include <wx/image.h>
+#include <wx/dynlib.h>
+#include "wx/filename.h"
+#include "wx/stdpaths.h"
 #include <wx/intl.h>
 #include "database.h"
 #include "propertypagebase.h"
@@ -19,7 +21,7 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-
+typedef int (*ADDEDITMASK)(wxWindow *, bool);
 
 DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDisplayProperties &prop):  PropertyPageBase( parent )
 {
@@ -104,9 +106,37 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     m_justify->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
     m_height->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
     m_width->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
+    m_new->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
+    m_edit->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
 }
 
 void DatabaseFieldDisplay::OnPageModified( wxCommandEvent &WXUNUSED(event ))
 {
     PageEdited();
+}
+
+void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
+{
+    wxDynamicLibrary lib;
+    auto stdPath = wxStandardPaths::Get();
+    wxString libName = "", libPath = "";
+#ifdef __WXOSX__
+    wxFileName fn( stdPath.GetExecutablePath() );
+    fn.RemoveLastDir();
+    libPath = fn.GetPathWithSep() + "Frameworks/";
+    libName = libPath + "liblibdialogs.dylib" ;
+#elif __WXGTK__
+    libPath = stdPath.GetInstallPrefix() + "/";
+    libName = libPath + "libdialogs";
+#elif __WXMSW__
+    wxFileName fn( stdPath.GetExecutablePath() );
+    libPath = fn.GetPathWithSep();
+    libName = libPath + "dialogs";
+#endif
+    lib.Load( libName );
+    if( lib.IsLoaded() )
+    {
+        ADDEDITMASK func = (ADDEDITMASK) lib.GetSymbol( "AddEditMask" );
+        func( nullptr, event.GetEventObject() == m_new ? true : false );
+    }
 }
