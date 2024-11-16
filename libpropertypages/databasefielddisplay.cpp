@@ -126,7 +126,7 @@ void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
     libPath = fn.GetPathWithSep() + "Frameworks/";
     libName = libPath + "liblibdialogs.dylib" ;
 #elif __WXGTK__
-    libPath = stdPath.GetInstallPrefix() + "/";
+    libPath = stdPath.GetInstallPrefix() + "/lib/";
     libName = libPath + "libdialogs";
 #elif __WXMSW__
     wxFileName fn( stdPath.GetExecutablePath() );
