@@ -13,6 +13,7 @@ liblibrary_la_SOURCES =  \
 	librarydoctemplate.h
 
 liblibrary_la_CXXFLAGS = -I../../libhelpers \
+	-I../../dbinterface \
 	@WX_CXXFLAGS@
 
 liblibrary_la_LDFLAGS = -L../libhelpers \
