@@ -10,6 +10,7 @@
 //
 
 #include <wx/wx.h>
+#include "database.h"
 #include "displayformatdefinition.h"
 
 // begin wxGlade: ::extracode
@@ -17,9 +18,14 @@
 
 
 
-DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew):
+DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, const wxString &format, Database *db):
     wxDialog(parent, id, title)
 {
+    m_isChanged = false;
+    m_isNew = isNew;
+    m_fieldType = type;
+    m_fieldFormat = format;
+    m_db = db;
     // begin wxGlade: DisplayFormatDefinition::DisplayFormatDefinition
     SetTitle( _( "Display Format Definition" ) );
     panel_1 = new wxPanel( this, wxID_ANY );
@@ -33,7 +39,7 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     m_label1 = new wxStaticText( panel_1, wxID_ANY, _( "Name" ) );
     sizer_5->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_name = new wxTextCtrl( panel_1, wxID_ANY, wxEmptyString );
+    m_name = new wxTextCtrl( panel_1, wxID_ANY, format );
     if( !isNew )
         m_name->Disable();
     sizer_5->Add( m_name, 0, wxALIGN_CENTER_VERTICAL, 0 );
@@ -45,6 +51,7 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
     const wxString *m_type_choices = NULL;
     m_type = new wxComboBox( panel_1, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0, m_type_choices, wxCB_DROPDOWN );
+    m_type->SetValue( type );
     m_type->Disable();
     sizer_6->Add( m_type, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );

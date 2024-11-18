@@ -22,12 +22,14 @@ public:
     // begin wxGlade: DatabaseFieldDisplay::ids
     // end wxGlade
 
-    DatabaseFieldDisplay(wxWindow* parent, const FieldTableDisplayProperties &prop);
+    DatabaseFieldDisplay(wxWindow* parent, const FieldTableDisplayProperties &prop, const wxString &type, Database *db);
 
 private:
-
+    wxString m_type;
+    Database *m_db;
 protected:
     void OnEditNewFormat(wxCommandEvent &event);
+    void OnUpdateUIEditButton(wxUpdateUIEvent &event);
     // begin wxGlade: DatabaseFieldDisplay::attributes
     wxListBox* m_formats;
     wxButton* m_edit;

@@ -43,10 +43,15 @@ public:
     virtual const std::wstring &GetCommand() const { return L""; };
     void SetType(int type) { m_object = type; };
     int GetType() const { return m_object; };
+    void SetDatabase(const Database *db) { m_db = const_cast<Database *>( db ); }
+    Database *GetDatabase() const { return m_db; }
+    void SetFieldType(const wxString type) { m_type = type; }
+    const wxString &GetFieldType() const { return m_type; }
 protected:
     int m_object;
     wxAny any;
     Database *m_db;
+    wxString m_type;
 };
 
 

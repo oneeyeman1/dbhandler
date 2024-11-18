@@ -24,10 +24,12 @@ public:
     // begin wxGlade: DisplayFormatDefinition::ids
     // end wxGlade
 
-    DisplayFormatDefinition(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew);
+    DisplayFormatDefinition(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, const wxString &format, Database *db);
 
 private:
-
+    bool m_isNew, m_isChanged;
+    wxString  m_fieldType, m_fieldFormat;
+    Database *m_db;
 protected:
     // begin wxGlade: DisplayFormatDefinition::attributes
     wxPanel* panel_1;

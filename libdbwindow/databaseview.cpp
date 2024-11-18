@@ -1485,24 +1485,32 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
     wxString title;
     if( type == DatabaseTablePropertiesType )
     {
-        std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
-        res = GetDocument()->GetDatabase()->GetTableProperties( dbTable, errors );
+        auto db = GetDocument()->GetDatabase();
+        {
+            std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
+            res = db->GetTableProperties( dbTable, errors );
+        }
         std::unique_ptr<PropertiesHandler> ptr( erdTable );
+        propertiesPtr = std::move( ptr );
+        propertiesPtr->SetDatabase( db );
         erdTable->SetType( DatabaseTablePropertiesType );
         title = _( "Table " );
         title += schemaName + L"." + tableName;
     }
     if( type == DatabaseFieldPropertiesType )
     {
+        auto db = GetDocument()->GetDatabase();
         {
             //#if _MSC_VER >= 1900
             std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
-            res = GetDocument()->GetDatabase()->GetFieldProperties( tableName.ToStdWstring(), dbField->GetField(), errors );
+            res = db->GetFieldProperties( tableName.ToStdWstring(), dbField->GetField(), errors );
         }
         dbField->SetProperties( dbField->GetField()->GetFieldProperties() );
         dbField->SetType( DatabaseFieldPropertiesType );
         std::unique_ptr<PropertiesHandler> ptr( dbField );
         propertiesPtr = std::move( ptr );
+        propertiesPtr->SetDatabase( db );
+        propertiesPtr->SetFieldType( dbField->GetField()->GetFieldType() );
         title = _( "Column " );
         title += dbField->GetField()->GetFullName();
     }

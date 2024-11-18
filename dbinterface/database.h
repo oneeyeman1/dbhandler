@@ -398,6 +398,7 @@ public:
     virtual int AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) = 0;
+    virtual int AddUpdateFormat() = 0;
 };
 
 struct Database::Impl

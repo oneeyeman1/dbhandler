@@ -6304,3 +6304,9 @@ int ODBCDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstrin
     auto result = 0;
     return result;
 }
+
+int ODBCDatabase::AddUpdateFormat()
+{
+    return 0;
+}
+

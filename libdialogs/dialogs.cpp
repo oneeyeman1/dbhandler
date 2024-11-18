@@ -540,9 +540,9 @@ extern "C" WXEXPORT int SaveNewView(wxWindow *parent, wxString &viewName)
     return res;
 }
 
-extern "C" WXEXPORT int AddEditMask(wxWindow *parent, bool isNew)
+extern "C" WXEXPORT int AddEditMask(wxWindow *parent, bool isNew, const wxString &type, const wxString &format, Database *db)
 {
-    DisplayFormatDefinition dlg( parent, wxID_ANY, "", isNew );
+    DisplayFormatDefinition dlg( parent, wxID_ANY, "", isNew, type, format, db );
     dlg.ShowModal();
     return 0;
 }

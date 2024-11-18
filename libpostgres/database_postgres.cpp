@@ -1813,3 +1813,9 @@ int PostgresDatabase::GetQueryRow(const std::wstring &query, std::vector<std::ws
     auto result = 0;
     return result;
 }
+
+int PostgresDatabase::AddUpdateFormat()
+{
+    return 0;
+}
+

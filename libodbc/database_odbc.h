@@ -36,7 +36,7 @@ public:
     bool GetDSNList(std::vector<std::wstring> &dsn, std::vector<std::wstring> &errorMsg);
     virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) override;
-	virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, TableField *table, std::vector<std::wstring> &errorMsg) override;
+    virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, TableField *table, std::vector<std::wstring> &errorMsg) override;
     virtual int GetFieldProperties(const std::wstring &table, TableField *field, std::vector<std::wstring> &errorMsg) override;
     virtual int SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg) override;
     virtual int SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &field, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg) override;
@@ -55,6 +55,7 @@ public:
     virtual int AttachDatabase(const std::wstring &catalog, const std::wstring &, std::vector<std::wstring> &errorMsg) override;
     virtual int GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg) override;
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
+    virtual int AddUpdateFormat() override;
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;
