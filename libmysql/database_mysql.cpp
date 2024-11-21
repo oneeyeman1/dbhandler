@@ -171,7 +171,10 @@ int MySQLDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wst
                         result = 1;
                     }
                     else
+                    {
                         GetServerVersion( errorMsg );
+                        m_isConnected = true;
+                    }
                 }
             }
         }
@@ -341,6 +344,8 @@ int MySQLDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<
 int MySQLDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 {
     int result = 0;
+    if( !m_isConnected )
+        return 0;
     mysql_close( m_db );
     m_db = NULL;
     for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )

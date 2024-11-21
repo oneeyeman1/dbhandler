@@ -566,7 +566,12 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     delete[] password;
                     password = NULL;
                     ret = SQLSetConnectAttr( m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0 );
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                    {
+                        GetErrorMessage( errorMsg, 2 );
+                        result = 1;
+                    }
+                    if( !result )
                     {
 #ifdef _WIN32
                         options = m_ask ? SQL_DRIVER_COMPLETE_REQUIRED : SQL_DRIVER_COMPLETE;
@@ -1294,6 +1299,12 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     RETCODE ret;
     long connectionAlive;
     SQLINTEGER pcbValue;
+    if( !m_isConnected )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
+        ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
+        return 0;
+    }
     ret = SQLGetConnectAttr( m_hdbc, SQL_ATTR_CONNECTION_DEAD, (SQLPOINTER) &connectionAlive, 0, &pcbValue );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
