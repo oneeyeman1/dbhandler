@@ -31,6 +31,7 @@ private:
     wxString  m_fieldType, m_fieldFormat;
     Database *m_db;
 protected:
+    void OnOK(wxCommandEvent &event);
     // begin wxGlade: DisplayFormatDefinition::attributes
     wxPanel* panel_1;
     wxTextCtrl* m_name;
