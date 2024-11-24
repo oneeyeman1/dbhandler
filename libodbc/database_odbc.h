@@ -9,6 +9,11 @@ struct SQLTablesDataBinding
     SQLLEN StrLen_or_Ind;
 };
 
+
+#define ENV_ERROR 0
+#define CONN_ERROR 1
+#define STMT_ERROR 2
+
 #ifdef UNIXODBC
 #define TRUE 1
 #define FALSE 0
@@ -46,7 +51,7 @@ public:
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg) override;
     void GetConnectedUser(const std::wstring &dsn, std::wstring &connectedUser);
     void GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword);
-    virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) override;
+    virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr, std::vector<std::wstring> &errorMsg) override;
     virtual int PrepareStatement(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;
     virtual int EditTableData(std::vector<DataEditFiield> &row, std::vector<std::wstring> &errorMsg) override;
     virtual int FinalizeStatement(std::vector<std::wstring> &errorMsg) override;

@@ -86,8 +86,11 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     sqlite3_stmt *stmt;
     std::vector<std::string> queries;
     queries.push_back( "CREATE TABLE IF NOT EXISTS \"sys.abcatcol\"(\"abc_tnam\" char(129) NOT NULL, \"abc_tid\" integer, \"abc_ownr\" char(129) NOT NULL, \"abc_cnam\" char(129) NOT NULL, \"abc_cid\" smallint, \"abc_labl\" char(254), \"abc_lpos\" smallint, \"abc_hdr\" char(254), \"abc_hpos\" smallint, \"abc_itfy\" smallint, \"abc_mask\" char(31), \"abc_case\" smallint, \"abc_hght\" smallint, \"abc_wdth\" smallint, \"abc_ptrn\" char(31), \"abc_bmap\" char(1), \"abc_init\" char(254), \"abc_cmnt\" char(254), \"abc_edit\" char(31), \"abc_tag\" char(254), PRIMARY KEY( \"abc_tnam\", \"abc_ownr\", \"abc_cnam\" ));" );
+    queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS \"pbcatc_x\" ON \"sys.abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);" );
     queries.push_back( "CREATE TABLE IF NOT EXISTS \"sys.abcatedt\"(\"abe_name\" char(30) NOT NULL, \"abe_edit\" char(254), \"abe_type\" smallint, \"abe_cntr\" integer, \"abe_seqn\" smallint NOT NULL, \"abe_flag\" integer, \"abe_work\" char(32), PRIMARY KEY( \"abe_name\", \"abe_seqn\" ));" );
+    queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS pbcate_x ON \"sys.abcatedt\"(\"abe_name\" ASC, \"abe_seqn\" ASC);" );
     queries.push_back( "CREATE TABLE IF NOT EXISTS \"sys.abcatfmt\"(\"abf_name\" char(30) NOT NULL, \"abf_frmt\" char(254), \"abf_type\" smallint, \"abf_cntr\" integer, PRIMARY KEY( \"abf_name\" ));" );
+    queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS pbcatf_x ON \"sys.abcatfmt\"(\"abf_name\" ASC);" );
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatfmt\" VALUES( \"(General)\", \"(General)\", 81, 0 );" );
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatfmt\" VALUES( \"0\", \"0\", 81, 0 );" );
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatfmt\" VALUES( \"0.00\", \"0.00\", 81, 0 );" );
@@ -113,8 +116,10 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatfmt\" VALUES( \"mm/dd/yyyy\", \"mm/dd/yyyy\", 82, 0 );" );
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatfmt\" VALUES( \"salary\", \"$###,##0.00\", 81, 0 );" );
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatfmt\" VALUES( \"mm-dd-yyyy\", \"mm-dd-yyyy\", 82, 0 );" );
-    queries.push_back( "CREATE TABLE IF NOT EXISTS \"sys.abcattbl\"(\"abt_tnam\" char(129) NOT NULL, \"abt_tid\" integer, \"abt_ownr\" char(129) NOT NULL, \"abd_fhgt\" smallint, \"abd_fwgt\" smallint, \"abd_fitl\" char(1), \"abd_funl\" integer, \"abd_fstr\" integer, \"abd_fchr\" smallint, \"abd_fptc\" smallint, \"abd_ffce\" char(18), \"abh_fhgt\" smallint, \"abh_fwgt\" smallint, \"abh_fitl\" char(1), \"abh_funl\" integer, \"abh_fstr\" integer, \"abh_fchr\" smallint, \"abh_fptc\" smallint, \"abh_ffce\" char(18), \"abl_fhgt\" smallint, \"abl_fwgt\" smallint, \"abl_fitl\" char(1), \"abl_funl\" integer, \"abl_fstr\" integer, \"abl_fchr\" smallint, \"abl_fptc\" smallint, \"abl_ffce\" char(18), \"abt_cmnt\" char(254), PRIMARY KEY( \"abt_tnam\", \"abt_ownr\" ));" );
+    queries.push_back( "CREATE TABLE IF NOT EXISTS \"sys.abcattbl\"(\"abt_tnam\" char(129) NOT NULL, \"abt_tid\" integer, \"abt_ownr\" char(129) NOT NULL, \"abd_fhgt\" smallint, \"abd_fwgt\" smallint, \"abd_fitl\" char(1), \"abd_funl\" char(1), \"abd_fstr\" integer, \"abd_fchr\" smallint, \"abd_fptc\" smallint, \"abd_ffce\" char(18), \"abh_fhgt\" smallint, \"abh_fwgt\" smallint, \"abh_fitl\" char(1), \"abh_funl\" integer, \"abh_fstr\" integer, \"abh_fchr\" smallint, \"abh_fptc\" smallint, \"abh_ffce\" char(18), \"abl_fhgt\" smallint, \"abl_fwgt\" smallint, \"abl_fitl\" char(1), \"abl_funl\" integer, \"abl_fstr\" integer, \"abl_fchr\" smallint, \"abl_fptc\" smallint, \"abl_ffce\" char(18), \"abt_cmnt\" char(254), PRIMARY KEY( \"abt_tnam\", \"abt_ownr\" ));" );
+    queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS pbcatf_x ON \"sys.abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);" );
     queries.push_back( "CREATE TABLE IF NOT EXISTS \"sys.abcatvld\"(\"abv_name\" char(30) NOT NULL, \"abv_vald\" char(254), \"abv_type\" smallint, \"abv_cntr\" integer, \"abv_msg\" char(254), PRIMARY KEY( \"abv_name\" ));" );
+    queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS abcatv_f ON \"sys.abcatvld\"(\"abv_name\" ASC);" );
     queries.push_back( "CREATE INDEX IF NOT EXISTS \"abcattbl_tnam_ownr\" ON \"sys.abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC);" );
     queries.push_back( "CREATE INDEX IF NOT EXISTS \"abcatcol_tnam_ownr_cnam\" ON \"sys.abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC);" );
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatvld\" VALUES( \'Multple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \');" );
@@ -231,8 +236,10 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
             else
                 result = 1;
         }
+        GetServerVersion( errorMsg );
     }
-    GetServerVersion( errorMsg );
+    if( result && m_db )
+        sqlite3_close( m_db );
     sqlite3_extended_result_codes( m_db, 1 );
     return result;
 }
@@ -364,39 +371,69 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> fk_names, indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
-    sqlite3_stmt *stmt = NULL;
+    sqlite3_stmt *stmt = nullptr, *stmt1 = nullptr;
     std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
     int result = 0, res = SQLITE_OK, count = 0;
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
-    if( ( res = sqlite3_prepare_v2( m_db, query1.c_str(), (int) query1.length(), &stmt, 0 ) ) == SQLITE_OK )
+    /*\"abt_tnam\", \"abt_tid\", \"abt_ownr\", \"abd_fhgt\", \"abd_fwgt\", \"abd_fitl\", \"abd_funl\", \"abd_fstr\" integer, \"abd_fchr\" smallint, \"abd_fptc\" smallint, \"abd_ffce\" char(18), \"abh_fhgt\" smallint, \"abh_fwgt\" smallint, \"abh_fitl\" char(1), \"abh_funl\" integer, \"abh_fstr\" integer, \"abh_fchr\" smallint, \"abh_fptc\" smallint, \"abh_ffce\" char(18), \"abl_fhgt\" smallint, \"abl_fwgt\" smallint, \"abl_fitl\" char(1), \"abl_funl\" integer, \"abl_fstr\" integer, \"abl_fchr\" smallint, \"abl_fptc\" smallint, \"abl_ffce\" char(18), \"abt_cmnt\" char(254), PRIMARY KEY( \"abt_tnam\", \"abt_ownr\" ))*/
+    std::wstring query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( ?, 0, "", 8, 400, \'N\', 0, );";
+    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), (int) query2.length(), &stmt1, 0 );
+    if( res != SQLITE_OK )
     {
-        for( ; ; )
-        {
-            res = sqlite3_step( stmt );
-            if( res == SQLITE_ROW  )
-            {
-                const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
-                pimpl->m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( sqlite_pimpl->m_catalog, L"main", sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
-                count++;
-            }
-            else if( res == SQLITE_DONE )
-                break;
-            else
-            {
-                result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
-                break;
-            }
-        }
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+        result = 1;
     }
     else
     {
-        result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        if( ( res = sqlite3_prepare_v2( m_db, query1.c_str(), (int) query1.length(), &stmt, 0 ) ) == SQLITE_OK )
+        {
+            for( ; ; )
+            {
+                res = sqlite3_step( stmt );
+                if( res == SQLITE_ROW  )
+                {
+                    const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
+                    res = sqlite3_bind_text( stmt1, 1, tableName, -1, SQLITE_STATIC );
+                    if( res != SQLITE_OK )
+                    {
+                        GetErrorMessage( res, errorMessage );
+                        errorMsg.push_back( errorMessage );
+                        result = 1;
+                    }
+                    else
+                    {
+                        res = sqlite3_step( stmt1 );
+                        if( res != SQLITE_OK )
+                        {
+                            GetErrorMessage( res, errorMessage );
+                            errorMsg.push_back( errorMessage );
+                            result = 1;
+                        }
+                    }
+                    pimpl->m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( sqlite_pimpl->m_catalog, L"main", sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
+                    count++;
+                }
+                else if( res == SQLITE_DONE )
+                    break;
+                else
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                    break;
+                }
+            }
+        }
+        else
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
     }
     sqlite3_finalize( stmt );
+    sqlite3_finalize( stmt1 );
     m_numOfTables = count;
     return result;
 }
@@ -2021,13 +2058,14 @@ bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const
     return exist;
 }
 
-int SQLiteDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &headerStr)
+int SQLiteDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &headerStr, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res;
     sqlite3_stmt *stmt;
     headerStr = fieldName;
+    std::wstring error;
     std::wstring query = L"SEECT pbc_hdr FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_cnam\" = ?";
-    if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &stmt, NULL ) ) == 0 )
+    if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &stmt, NULL ) ) == SQLITE_OK )
     {
         res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
         if( res == SQLITE_OK )
@@ -2044,10 +2082,27 @@ int SQLiteDatabase::GetFieldHeader(const std::wstring &tableName, const std::wst
                         break;
                     }
                     else
+                    {
+                        GetErrorMessage( res, error );
+                        errorMsg.push_back( error );
+                        result = 1;
                         break;
+                    }
                 }
             }
         }
+        else
+        {
+            GetErrorMessage( res, error );
+            errorMsg.push_back( error );
+            result = 1;
+        }
+    }
+    else
+    {
+        GetErrorMessage( res, error );
+        errorMsg.push_back( error );
+        result = 1;
     }
     sqlite3_finalize( stmt );
     return result;
