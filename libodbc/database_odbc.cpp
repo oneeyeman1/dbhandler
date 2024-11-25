@@ -1017,15 +1017,15 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     {
         queries.push_back( L"BEGIN TRANSACTION sysobjects" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE \"abcatcol\"(abc_tnam varchar(129) NOT NULL, abc_tid integer, abc_ownr varchar(129) NOT NULL, abc_cnam varchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn varchar(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt varchar(254), abc_edit varchar(31), abc_tag varchar(254) PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatc_x\' AND object_id = OBJECT_ID( \'abcatcol') ) CREATE UNIQUE INDEX abcatc_f ON abcatcol( abc_tnam ASC, abc_ownr ASC, abc_cnam ASC );" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatc_x\' AND object_id = OBJECT_ID( \'abcatcol') ) CREATE UNIQUE INDEX abcatc_f ON abcatcol( abc_tnam ASC, abc_ownr ASC, abc_cnam ASC ) WITH (IGNORE_DUP_KEY = ON);" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatedt' AND xtype='U') CREATE TABLE \"abcatedt\"(abe_name varchar(30) NOT NULL, abe_edit varchar(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work varchar(32) PRIMARY KEY( abe_name, abe_seqn ));" );
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcate_x\' AND object_id = OBJECT_ID( \'abcatedt') ) CREATE UNIQUE INDEX abcate_f ON abcatedt( abe_name ASC, abe_seqn ASC );" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcate_x\' AND object_id = OBJECT_ID( \'abcatedt') ) CREATE UNIQUE INDEX abcate_f ON abcatedt( abe_name ASC, abe_seqn ASC ) WITH (IGNORE_DUP_KEY = ON);" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatfmt' AND xtype='U') CREATE TABLE \"abcatfmt\"(abf_name varchar(30) NOT NULL, abf_frmt varchar(254), abf_type smallint, abf_cntr integer PRIMARY KEY( abf_name ));" );
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatf_x\' AND object_id = OBJECT_ID( \'abcatfmt\') ) CREATE UNIQUE INDEX abcarf_x ON abcatfmt( abf_name ASC );" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatf_x\' AND object_id = OBJECT_ID( \'abcatfmt\') ) CREATE UNIQUE INDEX abcarf_x ON abcatfmt( abf_name ASC ) WITH (IGNORE_DUP_KEY = ON);" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE \"abcattbl\"(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254) PRIMARY KEY( abt_tnam, abt_ownr ));" );
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatt_x\' AND object_id = OBJECT_ID( \'abcattbl\' )) CREATE UNIQUE INDEX abcatt_x ON abcattbl( abt_tnam ASC, abt_ownr ASC );");
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatt_x\' AND object_id = OBJECT_ID( \'abcattbl\' )) CREATE UNIQUE INDEX abcatt_x ON abcattbl( abt_tnam ASC, abt_ownr ASC ) WITH (IGNORE_DUP_KEY = ON);");
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatvld' AND xtype='U') CREATE TABLE \"abcatvld\"(abv_name varchar(30) NOT NULL, abv_vald varchar(254), abv_type smallint, abv_cntr integer, abv_msg varchar(254) PRIMARY KEY( abv_name ));" );
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatv_x\' AND object_id = OBJECT_ID( \'abcatvld\' ) ) CREATE UNIQUE INDEX abcatv_x ON abcatvld( abv_name ASC );" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatv_x\' AND object_id = OBJECT_ID( \'abcatvld\' ) ) CREATE UNIQUE INDEX abcatv_x ON abcatvld( abv_name ASC ) WITH (IGNORE_DUP_KEY = ON);" );
     }
     if( pimpl->m_subtype == L"ACCESS" )
     {
@@ -1236,6 +1236,9 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 result = 1;
             }
             m_hstmt = 0;
+            ret = GetTableListFromDb( errorMsg );
+            if( ret )
+                result = 1;
         }
     }
     else
