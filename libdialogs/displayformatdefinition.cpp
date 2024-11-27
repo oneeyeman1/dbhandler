@@ -99,3 +99,13 @@ void DisplayFormatDefinition::OnOK(wxCommandEvent &event)
     EndModal( wxID_OK );
 }
 
+void DisplayFormatDefinition::OnOK(wxCommandEvent &event)
+{
+    if( m_name->GetValue().IsEmpty() )
+        wxMessageBox( _( "Name field can't be empty" ) );
+    else
+    {
+        m_db->AddUpdateFormat();
+        EndModal( wxID_OK );
+    }
+}

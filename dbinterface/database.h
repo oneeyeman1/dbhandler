@@ -360,7 +360,7 @@ class Database
 protected:
     struct Impl;
     Impl *pimpl;
-    bool connectToDatabase;
+    bool connectToDatabase, m_isConnected;
     unsigned int m_numOfTables, m_fieldsInRecordSet;
     void ltrim(std::wstring &str) { str.erase( str.begin(), std::find_if( str.begin(), str.end(), [](int ch) { return !std::isspace( ch ); } ) ); };
     void rtrim(std::wstring &str) { str.erase( std::find_if( str.rbegin(), str.rend(), [](int ch) { return !std::isspace( ch ); } ).base(), str.end() ); };
@@ -375,6 +375,7 @@ protected:
 public:
     virtual ~Database() = 0;
     Impl &GetTableVector() const { return *pimpl; };
+    bool IsConnected() { return m_isConnected; }
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
@@ -389,7 +390,7 @@ public:
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg) = 0;
     virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr) = 0;
+    virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr, std::vector<std::wstring> &errorMsg) = 0;
     virtual int PrepareStatement(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int EditTableData(std::vector<DataEditFiield> &row, std::vector<std::wstring> &errorMsg) = 0;
     virtual int FinalizeStatement(std::vector<std::wstring> &errorMsg) = 0;
