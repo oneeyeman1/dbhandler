@@ -85,8 +85,8 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     {
         case DatabaseTablePropertiesType:
         {
-/*            PropertiesHandler *prop = dynamic_cast<PropertiesHandler *>( handler );
-            TableProperties tableProp = prop->GetProperties( errors ).As<TableProperties>();
+            TableProperties prop = ( handler )->GetProperties().As<TableProperties>();
+/*            TableProperties tableProp = prop->GetProperties( errors ).As<TableProperties>();
             wxFont data_font( tableProp.m_dataFontSize, wxFONTFAMILY_DEFAULT, tableProp.m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, tableProp.m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, tableProp.m_dataFontUnderline, tableProp.m_dataFontName );
             if( tableProp.m_dataFontStrikethrough )
                 data_font.SetStrikethrough( true );

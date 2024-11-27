@@ -413,6 +413,7 @@ void DesignCanvas::InitialFieldSizing ()
 
 void DesignCanvas::PopulateQueryCanvas(const std::vector<TableField *> &queryFields, const std::vector<GroupFields> &groupByFields)
 {
+    std::vector<std::wstring> errorMsg;
     startPoint.x = 1;
     startPoint.y = 1;
     wxBeginBusyCursor();
@@ -468,7 +469,7 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<TableField *> &queryFie
                 {
                     std::wstring headerStr;
                     found = true;
-                    ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->GetFieldHeader( tableName, (*it)->GetFieldName(), headerStr );
+                    ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->GetFieldHeader( tableName, (*it)->GetFieldName(), headerStr, errorMsg );
                     wxString headerString( headerStr );
                     headerString += "_t";
                     wxString dataString( (*it)->GetFieldName() );
