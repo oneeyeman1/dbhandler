@@ -1026,6 +1026,36 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatt_x\' AND object_id = OBJECT_ID( \'abcattbl\' )) CREATE UNIQUE INDEX abcatt_x ON abcattbl( abt_tnam ASC, abt_ownr ASC ) WITH (IGNORE_DUP_KEY = ON);");
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatvld' AND xtype='U') CREATE TABLE \"abcatvld\"(abv_name varchar(30) NOT NULL, abv_vald varchar(254), abv_type smallint, abv_cntr integer, abv_msg varchar(254) PRIMARY KEY( abv_name ));" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatv_x\' AND object_id = OBJECT_ID( \'abcatvld\' ) ) CREATE UNIQUE INDEX abcatv_x ON abcatvld( abv_name ASC ) WITH (IGNORE_DUP_KEY = ON);" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'(General)\', \'(General)\', 81, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0\', \'0\', 81, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0.00\', \'0.00\', 81, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'#.##0\', \'#.##0\', 81, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'#.##0,00\', \'#.##0,00\', 81, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;[$#.##0]\', \'$#.##0;[$#.##0]\', 81, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;|RED|[$#.##0]\', \'$#.##0;|RED|[$#.##0]\', 81, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;[$#.##0,00]\', \'$#.##0,00;[$#.##0,00]\', 81, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;|RED|[$#.##0,00]\', \'$#.##0,00;|RED|[$#.##0,00]\', 81, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0%\', \'0%\', 81, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0.00%\', \'0.00%\', 81, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0.00E+00\', \'0.00E+00\', 81, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'m/d/yy\', \'m/d/yy\', 84, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'d-mmm-yy\', \'d-mmm-yy\', 84, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'d-mmm\', \'d-mmm\', 84, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'mmm-yy\', \'mmm-yy\', 84, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'h:mm AM/PM\', \'h:mm AM/PM\', 84, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'h:mm:ss AM/PM\', \'h:mm:ss AM/PM\', 84, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'h:mm:ss\', \'h:mm:ss\', 84, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'Phone_format\', \'(@@@)) @@@-@@@@\', 80, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'m-d-yy\', \'m-d-yy\', 84, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'soc_sec_number\', \'@@@-@@-@@@@\', 80, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'mm/dd/yyyy\', \'mm/dd/yyyy\', 82, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'salary\', \'$###,##0.00\', 81, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'mm-dd-yyyy\', \'mm-dd-yyyy\', 82, 0 );" );
+        queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Multple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \');" );
+        queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Positive_number\', \'CHECK( @column > 0 )\', 81, 6, \'Sorry! The value must be greater than 0\');");
+        queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Y_or_N\', \'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )\', 81, 6, \'\');");
+        queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'must_be_numer\', \'CHECK( isNumer( @column )\', 80, 0, \'\');");
+        queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'valid status\', \'CHECK( @status == \"ALT\" )\', 80, 3, \'\');");
     }
     if( pimpl->m_subtype == L"ACCESS" )
     {
@@ -1038,7 +1068,6 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     {
         queries.push_back( L"BEGN" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
-        queries.push_back( L"" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
@@ -1060,6 +1089,36 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatf_x ON abcatfmt( abf_name );" );
                 queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl( abt_name, abt_ownr );" );
                 queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatv_x ON abcatvld( abv_name );" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'(General)\', \'(General)\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0\', \'0\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0.00\', \'0.00\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'#.##0\', \'#.##0\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'#.##0,00\', \'#.##0,00\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;[$#.##0]\', \'$#.##0;[$#.##0]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;|RED|[$#.##0]\', \'$#.##0;|RED|[$#.##0]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;[$#.##0,00]\', \'$#.##0,00;[$#.##0,00]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;|RED|[$#.##0,00]\', \'$#.##0,00;|RED|[$#.##0,00]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0%\', \'0%\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0.00%\', \'0.00%\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0.00E+00\', \'0.00E+00\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'m/d/yy\', \'m/d/yy\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'d-mmm-yy\', \'d-mmm-yy\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'d-mmm\', \'d-mmm\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'mmm-yy\', \'mmm-yy\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'h:mm AM/PM\', \'h:mm AM/PM\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'h:mm:ss AM/PM\', \'h:mm:ss AM/PM\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'h:mm:ss\', \'h:mm:ss\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'Phone_format\', \'(@@@)) @@@-@@@@\', 80, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'m-d-yy\', \'m-d-yy\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'soc_sec_number\', \'@@@-@@-@@@@\', 80, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'mm/dd/yyyy\', \'mm/dd/yyyy\', 82, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'salary\', \'$###,##0.00\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'mm-dd-yyyy\', \'mm-dd-yyyy\', 82, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Multple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \') ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Positive_number\', \'CHECK( @column > 0 )\', 81, 6, \'Sorry! The value must be greater than 0\') ON CONFLICT DO NOTHING;");
+                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Y_or_N\', \'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )\', 81, 6, \'\') ON CONFLICT DO NOTHING;");
+                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'must_be_numer\', \'CHECK( isNumer( @column )\', 80, 0, \'\') ON CONFLICT DO NOTHING;");
+                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'valid status\', \'CHECK( @status == \"ALT\" )\', 80, 3, \'\') ON CONFLICT DO NOTHING;");
             }
             else
             {
@@ -1068,6 +1127,36 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatf_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatf_x\" ON \"abcatfmt\"(\"abf_tnam\" ASC); END IF; END;" );
                 queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatt_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatt_x\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC); END IF; END;" );
                 queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatv_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatv_x\" ON \"abcatvld\"(\"abv_name\" ASC); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'(General)\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'(General)\', \'(General)\', 81, 0 ); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'0\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'0\', \'0\', 81, 0 ); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'0.00\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'0.00\', \'0.00\', 81, 0 ); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'#.##0\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'#.##0\', \'#.##0\', 81, 0 ); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'#.##0,00\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'#.##0,00\', \'#.##0,00\', 81, 0 ); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'$#.##0;[$#.##0]\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;[$#.##0]\', \'$#.##0;[$#.##0]\', 81, 0 ); END IF; END;;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'$#.##0;|RED|[$#.##0]\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;|RED|[$#.##0]\', \'$#.##0;|RED|[$#.##0]\', 81, 0 ); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'$#.##0,00;[$#.##0,00]\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;[$#.##0,00]\', \'$#.##0,00;[$#.##0,00]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;|RED|[$#.##0,00]\', \'$#.##0,00;|RED|[$#.##0,00]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0%\', \'0%\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0.00%\', \'0.00%\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0.00E+00\', \'0.00E+00\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'m/d/yy\', \'m/d/yy\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'d-mmm-yy\', \'d-mmm-yy\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'d-mmm\', \'d-mmm\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'mmm-yy\', \'mmm-yy\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'h:mm AM/PM\', \'h:mm AM/PM\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'h:mm:ss AM/PM\', \'h:mm:ss AM/PM\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'h:mm:ss\', \'h:mm:ss\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'Phone_format\', \'(@@@)) @@@-@@@@\', 80, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'m-d-yy\', \'m-d-yy\', 84, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'soc_sec_number\', \'@@@-@@-@@@@\', 80, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'mm/dd/yyyy\', \'mm/dd/yyyy\', 82, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'salary\', \'$###,##0.00\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'mm-dd-yyyy\', \'mm-dd-yyyy\', 82, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Multple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \') ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Positive_number\', \'CHECK( @column > 0 )\', 81, 6, \'Sorry! The value must be greater than 0\') ON CONFLICT DO NOTHING;");
+                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Y_or_N\', \'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )\', 81, 6, \'\') ON CONFLICT DO NOTHING;");
+                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'must_be_numer\', \'CHECK( isNumer( @column )\', 80, 0, \'\') ON CONFLICT DO NOTHING;");
+                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'valid status\', \'CHECK( @status == \"ALT\" )\', 80, 3, \'\') ON CONFLICT DO NOTHING;");
             }
         }
     }
@@ -1218,9 +1307,19 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             }
         }
         if( !result )
-            ret = SQLExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
+        {
+            if( pimpl->m_subtype == L"Microsoft SQL Server" || pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" ) // MS SQL SERVER
+                ret = SQLExecDirect( m_hstmt, L"COMMIT TRANSACTION sysobjects", SQL_NTS );
+            else
+                ret = SQLExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
+        }
         else
-            ret = SQLExecDirect( m_hstmt, L"ROLLACK", SQL_NTS );
+        {
+            if( pimpl->m_subtype == L"Microsoft SQL Server" || pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" ) // MS SQL SERVER
+                ret = SQLExecDirect( m_hstmt, L"ROLLACK TRANSACTIN sysobjects", SQL_NTS );
+            else
+                ret = SQLExecDirect( m_hstmt, L"ROLLACK", SQL_NTS );
+        }
         if( result || ( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO ) )
         {
             GetErrorMessage( errorMsg, 1 );
@@ -1452,22 +1551,66 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     RETCODE ret;
-    std::wstring query4;
+    std::wstring query4, query2, owner;
+    SQLHANDLE stmt = 0, hdbc = 0;
+    SQLSMALLINT OutConnStrLen;
     int result = 0, bufferSize = 1024, count = 0;
     std::vector<TableField *> fields;
-    std::wstring owner;
     std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol, cat;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::vector<std::wstring> indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
-    SQLWCHAR *catalogName = NULL, *schemaName = NULL, *tableName = NULL;
+#ifdef _WIN32
+    if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
+        query2 = L"INSERT INTO \"sys.abcattbl\" VALUES( ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+#endif
+    SQLWCHAR *catalogName = nullptr, *schemaName = nullptr, *tableName = nullptr, *qry2 = nullptr;
 //    SQLSMALLINT numCols = 0;
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
-    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &hdbc );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        GetErrorMessage( errorMsg, CONN_ERROR );
+        GetErrorMessage( errorMsg, ENV_ERROR );
         result = 1;
+    }
+    if( !result )
+    {
+        ret = SQLDriverConnect( hdbc, NULL, m_connectString, SQL_NTS, NULL, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc, &stmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        qry2 = new SQLWCHAR[query2.length() + 1];
+        memset( qry2, '\0', query2.length() + 1 );
+        uc_to_str_cpy( qry2, query2 );
+        ret = SQLPrepare( stmt, qry2, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR );
+            result = 1;
+        }
     }
     else
     {
@@ -1513,6 +1656,13 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     str_to_uc_cpy( cat, catalogName );
                     str_to_uc_cpy( schema, schemaName );
                     str_to_uc_cpy( table, tableName );
+                    auto param = new SQLWCHAR[cat.length() + schema.length() + table.length() + 3];
+                    memset( param, '\0', cat.length() + schema.length() + table.length() + 3 );
+                    uc_to_str_cpy( param, cat );
+                    uc_to_str_cpy( param, L"." );
+                    uc_to_str_cpy( param, schema );
+                    uc_to_str_cpy( param, L"." );
+                    uc_to_str_cpy( param, table );
                     if( schema == L"" && cat != L"" && schemaName != NULL )
                     {
                         schema = cat;
