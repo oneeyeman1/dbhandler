@@ -276,6 +276,7 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 void SQLiteDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
 {
     code = sqlite3_errcode( m_db );
+    auto error = sqlite3_errmsg( m_db );
     switch( code )
     {
     case 1:
@@ -413,6 +414,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             result = 1;
                         }
                     }
+                    res = sqlite3_reset( stmt1 );
                     pimpl->m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( sqlite_pimpl->m_catalog, L"main", sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
                     count++;
                 }
