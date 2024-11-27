@@ -85,10 +85,17 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
     m_help = new wxButton( panel_1, wxID_HELP, _( "Help" ) );
     sizer_7->Add( m_help, 0, 0, 0 );
-    
+
     panel_1->SetSizer( sizer_2 );
     sizer_2->Fit( this );
     Layout();
     // end wxGlade
+    m_ok->Bind( wxEVT_BUTTON, &DisplayFormatDefinition::OnOK, this );
+}
+
+void DisplayFormatDefinition::OnOK(wxCommandEvent &event)
+{
+    m_db->AddUpdateFormat();
+    EndModal( wxID_OK );
 }
 
