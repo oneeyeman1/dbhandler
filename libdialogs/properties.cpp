@@ -127,7 +127,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_properties->AddPage( m_page6, _( "General" ) );
             m_page7 = new FieldHeader( m_properties, prop.m_heading );
             m_properties->AddPage( m_page7, _( "Headers" ) );
-            m_page8 = new DatabaseFieldDisplay( m_properties, prop.m_display );
+            m_page8 = new DatabaseFieldDisplay( m_properties, prop.m_display, handler->GetFieldType(), handler->GetDatabase() );
             m_properties->AddPage( m_page8, _( "Display" ) );
             m_page18 = new FieldValidation( m_properties );
             m_properties->AddPage( m_page18, _( "Validation" ) );

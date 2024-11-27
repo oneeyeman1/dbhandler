@@ -21,10 +21,12 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-typedef int (*ADDEDITMASK)(wxWindow *, bool);
+typedef int (*ADDEDITMASK)(wxWindow *, bool, const wxString &, const wxString &, Database *);
 
-DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDisplayProperties &prop):  PropertyPageBase( parent )
+DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDisplayProperties &prop, const wxString &type, Database *db):  PropertyPageBase( parent )
 {
+    m_db = db;
+    m_type = type;
     // begin wxGlade: DatabaseFieldDisplay::DatabaseFieldDisplay
     wxBoxSizer* sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -76,6 +78,7 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
         "rght",
     };
     m_justify = new wxComboBox( this, wxID_ANY, wxT( "" ), wxDefaultPosition, wxDefaultSize, 2, m_justify_choices, wxCB_DROPDOWN );
+    m_justify->SetSelection( prop.m_justify );
     sizer_6->Add( m_justify, 0, wxEXPAND, 0 );
     grid_sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_7 = new wxBoxSizer( wxHORIZONTAL );
@@ -99,7 +102,7 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     sizer_8->Add( m_width, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-    
+
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     // end wxGlade
@@ -108,6 +111,8 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     m_width->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
     m_new->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
     m_edit->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
+    m_formats->SetSelection( wxNOT_FOUND );
+    m_justify->SetFocus();
 }
 
 void DatabaseFieldDisplay::OnPageModified( wxCommandEvent &WXUNUSED(event ))
@@ -118,6 +123,18 @@ void DatabaseFieldDisplay::OnPageModified( wxCommandEvent &WXUNUSED(event ))
 void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
 {
     wxDynamicLibrary lib;
+    wxString format;
+    bool isNew;
+    if( event.GetEventObject() == m_new )
+    {
+        isNew = true;
+        format = "";
+    }
+    else
+    {
+        isNew = false;
+        format = m_formats->GetString( m_formats->GetSelection() );
+    }
     auto stdPath = wxStandardPaths::Get();
     wxString libName = "", libPath = "";
 #ifdef __WXOSX__
@@ -126,7 +143,7 @@ void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
     libPath = fn.GetPathWithSep() + "Frameworks/";
     libName = libPath + "liblibdialogs.dylib" ;
 #elif __WXGTK__
-    libPath = stdPath.GetInstallPrefix() + "/";
+    libPath = stdPath.GetInstallPrefix() + "/lib/";
     libName = libPath + "libdialogs";
 #elif __WXMSW__
     wxFileName fn( stdPath.GetExecutablePath() );
@@ -137,6 +154,15 @@ void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
     if( lib.IsLoaded() )
     {
         ADDEDITMASK func = (ADDEDITMASK) lib.GetSymbol( "AddEditMask" );
-        func( nullptr, event.GetEventObject() == m_new ? true : false );
+        func( nullptr, isNew, m_type, format, m_db );
     }
 }
+
+void DatabaseFieldDisplay::OnUpdateUIEditButton(wxUpdateUIEvent &event)
+{
+    if( m_formats->GetSelection() )
+        event.Enable( false );
+    else
+        event.Enable( true );
+}
+

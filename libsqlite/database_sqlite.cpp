@@ -1082,13 +1082,15 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 {
                     const char *format = (const char *) sqlite3_column_text( stmt, 1 );
                     const char *formatName = (const char *) sqlite3_column_text( stmt, 0 );
-                    if( format )
+                    if( format && fieldFormat[0] != '\0' )
                     {
                         if( fieldFormat && !strcmp( fieldFormat, formatName ) )
                             field->GetFieldProperties().m_display.m_format[1].push_back( std::make_pair( sqlite_pimpl->m_myconv.from_bytes( formatName ), sqlite_pimpl->m_myconv.from_bytes( format ) ) );
                         else
                             field->GetFieldProperties().m_display.m_format[0].push_back( std::make_pair( sqlite_pimpl->m_myconv.from_bytes( formatName ), sqlite_pimpl->m_myconv.from_bytes( format ) ) );
                     }
+                    else if( format )
+                        field->GetFieldProperties().m_display.m_format[0].push_back( std::make_pair( sqlite_pimpl->m_myconv.from_bytes( formatName ) , sqlite_pimpl->m_myconv.from_bytes( format ) ) );
                 }
                 else if( res == SQLITE_DONE )
                     break;
@@ -2275,4 +2277,9 @@ int SQLiteDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstr
 {
     auto result = 0;
     return result;
+}
+
+int SQLiteDatabase::AddUpdateFormat()
+{
+    return 0;
 }

@@ -44,7 +44,9 @@ libdialogs_la_SOURCES =  \
 	createviewoptions.cpp \
 	createviewoptions.h \
 	saveview.cpp \
-	saveview.h
+	saveview.h \
+	displayformatdefinition.cpp \
+	displayformatdefinition.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \

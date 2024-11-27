@@ -2549,3 +2549,8 @@ int MySQLDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstri
     return result;
 }
 
+int MySQLDatabase::AddUpdateFormat()
+{
+    return 0;
+}
+
