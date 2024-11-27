@@ -284,7 +284,7 @@ MainFrame::~MainFrame()
             config->Write( "Logfile", temp3 );
         }
         wxString currentProfile;
-        temp1 = m_db->GetTableVector().m_dbName;
+        temp1 = m_db->GetTableVector().m_connectString;
         config->Write( "DatabaseName", temp1 );
         if( m_db->GetTableVector().m_type == L"SQLite" )
 #ifdef __WXMSW__
