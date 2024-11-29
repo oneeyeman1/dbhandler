@@ -48,7 +48,6 @@ protected:
     virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) override;
 private:
     PGconn *m_db;
-    bool m_isConnected;
     PGresult *queryRes;
 };
 

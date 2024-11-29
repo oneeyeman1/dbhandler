@@ -600,6 +600,34 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                 }
                 else
                 {
+                    SQLWCHAR *temp = new SQLWCHAR[13];
+                    memset( temp, '\0', 13 );
+                    uc_to_str_cpy( temp, L"PostgreSQL " );
+                    uc_to_str_cpy( connectStrIn, L"DSN=" );
+                    uc_to_str_cpy( connectStrIn, connectingDSN.c_str() );
+                    if( equal( temp, driver ) )
+                        uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1;ShowSystemTables=1;" );
+                    delete[] temp;
+                    temp = NULL;
+                    if( user && password )
+                    {
+                        uc_to_str_cpy( connectStrIn, L";UID=" );
+                        copy_uc_to_uc( connectStrIn, user );
+                        uc_to_str_cpy( connectStrIn, L";PWD=" );
+                        copy_uc_to_uc( connectStrIn, password );
+                    }
+                    delete[] user;
+                    user = NULL;
+                    delete[] password;
+                    password = NULL;
+                    ret = SQLSetConnectAttr( m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0 );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                    {
+                        GetErrorMessage( errorMsg, 2 );
+                        result = 1;
+                    }
+                    if( !result )
+                    {
 #ifdef _WIN32
                     options = m_ask ? SQL_DRIVER_COMPLETE_REQUIRED : SQL_DRIVER_COMPLETE;
 #else
@@ -1438,6 +1466,12 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     RETCODE ret;
     long connectionAlive;
     SQLINTEGER pcbValue;
+    if( !m_isConnected )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
+        ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
+        return 0;
+    }
     ret = SQLGetConnectAttr( m_hdbc, SQL_ATTR_CONNECTION_DEAD, (SQLPOINTER) &connectionAlive, 0, &pcbValue );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {

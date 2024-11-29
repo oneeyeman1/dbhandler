@@ -249,6 +249,8 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
     int result = 0, res;
     const char *query = NULL;
+    if( !m_isConnected )
+        return 0;
     std::wstring errorMessage;
     if( m_stmt1 )
         res = sqlite3_finalize( m_stmt1 );
@@ -2340,4 +2342,3 @@ int SQLiteDatabase::AddUpdateFormat()
 {
     return 0;
 }
-
