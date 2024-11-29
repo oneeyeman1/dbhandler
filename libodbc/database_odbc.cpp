@@ -629,15 +629,15 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     if( !result )
                     {
 #ifdef _WIN32
-                    options = m_ask ? SQL_DRIVER_COMPLETE_REQUIRED : SQL_DRIVER_COMPLETE;
+                        options = m_ask ? SQL_DRIVER_COMPLETE_REQUIRED : SQL_DRIVER_COMPLETE;
 #else
-                    options = SQL_DRIVER_NOPROMPT;
+                        options = SQL_DRIVER_NOPROMPT;
 #endif
-                    ret = SQLDriverConnect( m_hdbc, m_handle, connectStrIn, SQL_NTS, m_connectString, 1024, &OutConnStrLen, options );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                    {
-                        GetErrorMessage( errorMsg, CONN_ERROR );
-                        result = 1;
+                        ret = SQLDriverConnect( m_hdbc, m_handle, connectStrIn, SQL_NTS, m_connectString, 1024, &OutConnStrLen, options );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, CONN_ERROR );
+                            result = 1;
                     }
                     else
                     {
@@ -1013,11 +1013,6 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     }
                 }
             }
-            else
-            {
-                GetErrorMessage( errorMsg, CONN_ERROR );
-                result = 1;
-            }
         }
     }
     if( result )
@@ -1034,6 +1029,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     delete[] query;
     query = NULL;
     return result;
+}
 }
 
 int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg)
