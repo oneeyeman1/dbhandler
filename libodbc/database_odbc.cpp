@@ -575,13 +575,14 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                 SQLWCHAR *temp = new SQLWCHAR[13];
                 memset( temp, '\0', 13 );
                 uc_to_str_cpy( temp, L"PostgreSQL " );
-                uc_to_str_cpy( connectStrIn, L"DSN=" );
+                if( connectingDSN.empty() )
+                    uc_to_str_cpy( connectStrIn, L"DSN=" );
                 uc_to_str_cpy( connectStrIn, connectingDSN.c_str() );
                 if( equal( temp, driver ) )
                     uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1;ShowSystemTables=1;" );
                 delete[] temp;
                 temp = nullptr;
-                if( user && password )
+                if( user && password && connectStrIn[0] == '\0' )
                 {
                     uc_to_str_cpy( connectStrIn, L";UID=" );
                     copy_uc_to_uc( connectStrIn, user );
@@ -600,15 +601,18 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                 }
                 else
                 {
-                    SQLWCHAR *temp = new SQLWCHAR[13];
-                    memset( temp, '\0', 13 );
-                    uc_to_str_cpy( temp, L"PostgreSQL " );
-                    uc_to_str_cpy( connectStrIn, L"DSN=" );
-                    uc_to_str_cpy( connectStrIn, connectingDSN.c_str() );
-                    if( equal( temp, driver ) )
+                    SQLWCHAR *tempPostgres = new SQLWCHAR[13];
+                    memset( tempPostgres, '\0', 13 );
+                    uc_to_str_cpy( tempPostgres, L"PostgreSQL " );
+                    if( connectStrIn[0] == '\0' )
+                    {
+                        uc_to_str_cpy( connectStrIn, L"DSN=" );
+                        uc_to_str_cpy( connectStrIn, connectingDSN.c_str() );
+                    }
+                    if( equal( tempPostgres, driver ) )
                         uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1;ShowSystemTables=1;" );
-                    delete[] temp;
-                    temp = NULL;
+                    delete[] tempPostgres;
+                    tempPostgres = NULL;
                     if( user && password )
                     {
                         uc_to_str_cpy( connectStrIn, L";UID=" );
@@ -1028,8 +1032,8 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
         m_isConnected = true;
     delete[] query;
     query = NULL;
-    return result;
 }
+    return result;
 }
 
 int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg)
@@ -1359,9 +1363,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 result = 1;
             }
             m_hstmt = 0;
-            ret = GetTableListFromDb( errorMsg );
-            if( ret )
-                result = 1;
+            result = GetTableListFromDb( errorMsg );
         }
     }
     else
@@ -1642,7 +1644,21 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             result = 1;
         }
     }
-    else
+    if( !result )
+    {
+        auto temp = new SQLWCHAR[20];
+        memset( temp, '\0', 20 );
+        uc_to_str_cpy( temp, L"BEGIN TRANSACTION" );
+        ret = SQLExecDirect( m_hstmt, temp, SQL_NTS );
+        delete[] temp;
+        temp = nullptr;
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
     {
         auto catalogDB = new SQLWCHAR[pimpl->m_dbName.length() + 2];
         memset( catalogDB, '\0', pimpl->m_dbName.length() + 2 );
@@ -1686,8 +1702,9 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     str_to_uc_cpy( cat, catalogName );
                     str_to_uc_cpy( schema, schemaName );
                     str_to_uc_cpy( table, tableName );
-                    auto param = new SQLWCHAR[cat.length() + schema.length() + table.length() + 3];
-                    memset( param, '\0', cat.length() + schema.length() + table.length() + 3 );
+                    auto size = cat.length() + schema.length() + table.length() + 3;
+                    auto param = new SQLWCHAR[size];
+                    memset( param, '\0', size );
                     uc_to_str_cpy( param, cat );
                     uc_to_str_cpy( param, L"." );
                     uc_to_str_cpy( param, schema );
@@ -1697,6 +1714,32 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     {
                         schema = cat;
                         copy_uc_to_uc( schemaName, catalogName );
+                    }
+                    SQLSMALLINT dataType, decimalDigits, nullable;
+                    SQLINTEGER SQLLenIndicator;
+                    SQLUINTEGER paramSize;
+                    ret = SQLDescribeParam( stmt, 1, &dataType, &paramSize, &decimalDigits, &nullable );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+                        result = 1;
+                    }
+                    if( !result )
+                    {
+                        ret = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType, paramSize, decimalDigits, param, size, &SQLLenIndicator );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+                            result = 1;
+                        }
+                        ret = SQLExecute( stmt );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+                            result = 1;
+                        }
+                        delete[] param;
+                        param = nullptr;
                     }
                     pimpl->m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
                     count++;
@@ -1725,6 +1768,10 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     free( catalog );
     catalog = NULL;
+    if( !result )
+        ret = SQLEndTran( SQL_HANDLE_STMT, m_hstmt, SQL_COMMIT );
+    else
+        ret = SQLEndTran( SQL_HANDLE_STMT, m_hstmt, SQL_ROLLBACK );
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -1733,6 +1780,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     else
         m_hstmt = 0;
+    delete[] qry2;
+    qry2 = nullptr;
     if( !result )
         m_numOfTables = count;
     return result;
@@ -2745,10 +2794,8 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
 
 int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg)
 {
-    SQLHDBC hdbc_fieldProp;
-    SQLHSTMT stmt_fieldProp;
     int result = 0;
-    short justify;
+    short justify = 0;
     std::wstring fieldFormat = L"";
     SQLWCHAR *commentField, *label = nullptr, *heading = nullptr, *formatNameField = nullptr, *formatField = nullptr, *fF = nullptr;
     SQLWCHAR *qry = NULL;
@@ -2772,7 +2819,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        GetErrorMessage( errorMsg, CONN_ERROR, hdbc_fieldProp  );
+        GetErrorMessage( errorMsg, CONN_ERROR );
         result = 1;
     }
     else
@@ -2984,7 +3031,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_TINYINT, 0, 0, &type, 0, &cbTableName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
-            GetErrorMessage( errorMsg, 1, stmt_fieldProp );
+            GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
         }
         if( !result )
@@ -6114,9 +6161,6 @@ int ODBCDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
 int ODBCDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg)
 {
     std::wstring query;
-    SQLHDBC hdbc;
-    SQLHSTMT stmt;
-    SQLSMALLINT OutConnStrLen;
     if( pimpl->m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT  'CREATE TABLE [' + so.name + '] (' + o.list + ')' + CASE WHEN tc.Constraint_Name IS NULL THEN '' ELSE 'ALTER TABLE ' + so.Name + ' ADD CONSTRAINT ' + tc.Constraint_Name  + ' PRIMARY KEY ' + ' (' + LEFT(j.List, Len(j.List)-1) + ')' END " \
         "from    sysobjects so" \
