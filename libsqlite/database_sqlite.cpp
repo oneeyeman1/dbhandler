@@ -21,11 +21,10 @@
 #include "database.h"
 #include "database_sqlite.h"
 
-std::mutex Database::Impl::my_mutex;
+std::mutex Impl::my_mutex;
 
-SQLiteDatabase::SQLiteDatabase() : Database()
+SQLiteDatabase::SQLiteDatabase(const int osId, const std::wstring &desktop) : Database(osId, desktop)
 {
-    pimpl = NULL;
     sqlite_pimpl = NULL;
     m_db = NULL;
     connectToDatabase = false;
@@ -35,21 +34,16 @@ SQLiteDatabase::SQLiteDatabase() : Database()
 
 SQLiteDatabase::~SQLiteDatabase()
 {
-    if( pimpl )
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); it++ )
     {
-        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
+        std::vector<DatabaseTable *> tableVec = (*it).second;
+        for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
         {
-            std::vector<DatabaseTable *> tableVec = (*it).second;
-            for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
-            {
-                delete (*it1);
-                (*it1) = NULL;
-            }
-            (*it).second.clear();
+            delete (*it1);
+            (*it1) = NULL;
         }
+        (*it).second.clear();
     }
-    delete pimpl;
-    pimpl = NULL;
     delete sqlite_pimpl;
     sqlite_pimpl = NULL;
 }
@@ -59,15 +53,15 @@ int SQLiteDatabase::CreateDatabase(const std::wstring &name, std::vector<std::ws
     int result = 0;
     std::vector<std::wstring> dbList;
     result = Disconnect( errorMsg );
-    if( result == SQLITE_OK )
-        result = Connect( name, dbList, errorMsg );
+//    if( result == SQLITE_OK )
+//        result = Connect( name, dbList, errorMsg );
     return result;
 }
 
 int SQLiteDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    if( pimpl->m_dbName == name )
+    if( pimpl.m_dbName == name )
         result = Disconnect( errorMsg );
     if( !result )
         result = remove( sqlite_pimpl->m_myconv.to_bytes( name.c_str() ).c_str() );
@@ -128,13 +122,9 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatvld\" VALUES( \'must_be_numer\', \'CHECK( isNumer( @column )\', 80, 0, \'\');");
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatvld\" VALUES( \'valid status\', \'CHECK( @status == \"ALT*\" )\', 80, 3, \'\');");
     std::wstring errorMessage;
-    if( !pimpl )
-    {
-        pimpl = new Impl;
-        pimpl->m_type = L"SQLite";
-        pimpl->m_subtype = L"";
-        pimpl->m_connectedUser = L"";
-    }
+    pimpl.m_type = L"SQLite";
+    pimpl.m_subtype = L"";
+    pimpl.m_connectedUser = L"";
     if( !sqlite_pimpl )
     {
         sqlite_pimpl = new SQLiteImpl;
@@ -215,7 +205,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
                         if( ( res = sqlite3_step( stmt ) ) == SQLITE_ROW )
                         {
                             m_schema = sqlite3_column_int( stmt, 0 );
-                            pimpl->m_dbName = sqlite_pimpl->m_catalog;
+                            pimpl.m_dbName = sqlite_pimpl->m_catalog;
                         }
                         else
                         {
@@ -417,7 +407,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                     }
                     res = sqlite3_reset( stmt1 );
-                    pimpl->m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( sqlite_pimpl->m_catalog, L"main", sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
+                    pimpl.m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( sqlite_pimpl->m_catalog, L"main", sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
                     count++;
                 }
                 else if( res == SQLITE_DONE )
@@ -1604,12 +1594,12 @@ void SQLiteDatabase::SetFullType(TableField *field, const std::wstring &type)
 
 int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg))
 {
-    pimpl->m_serverVersion = L"3240";
-    pimpl->m_versionMajor = 3;
-    pimpl->m_versionMinor = 40;
-    pimpl->m_versionRevision = 0;
-    pimpl->m_clientVersionMajor = 0;
-    pimpl->m_clientVersionMinor = 0;
+    pimpl.m_serverVersion = L"3240";
+    pimpl.m_versionMajor = 3;
+    pimpl.m_versionMinor = 40;
+    pimpl.m_versionRevision = 0;
+    pimpl.m_clientVersionMajor = 0;
+    pimpl.m_clientVersionMinor = 0;
     return 0;
 }
 
@@ -1618,7 +1608,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     int result = 0, res, schema;
     unsigned int count;
     std::wstring errorMessage;
-    std::vector<std::wstring> tableNames = pimpl->GetTableNames();
+    std::vector<std::wstring> tableNames = pimpl.GetTableNames();
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
     std::string query2 = "SELECT count(name) FROM sqlite_master WHERE type = 'table' OR type = 'view';";
     std::vector<TableDefinition> temp;
@@ -1659,7 +1649,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     sqlite3_finalize( m_stmt2 );
                     {
                         std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
-                        pimpl->m_tableDefinitions[pimpl->m_dbName] = temp;
+                        pimpl.m_tableDefinitions[pimpl.m_dbName] = temp;
                     }
                     m_numOfTables = count;
                 } 
@@ -1966,17 +1956,17 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
             else
             {
                 table->SetIndexNames( indexes );
-                pimpl->m_tables[catalog].push_back( table );
+                pimpl.m_tables[catalog].push_back( table );
                 fields.erase( fields.begin(), fields.end() );
                 foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                 fk_names.clear();
             }
         }
-        pimpl->PushTableName( tableName );
+        pimpl.PushTableName( tableName );
     }
     else
     {
-        std::vector<DatabaseTable *> &tableVec = pimpl->m_tables[sqlite_pimpl->m_catalog];
+        std::vector<DatabaseTable *> &tableVec = pimpl.m_tables[sqlite_pimpl->m_catalog];
         for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it != tableVec.end(); )
         {
             if( (*it)->GetTableName() == tableName )
@@ -2005,7 +1995,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
             else
                 ++it;
         }
-        pimpl->m_tableNames.erase( std::remove( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ), pimpl->m_tableNames.end() );
+        pimpl.m_tableNames.erase( std::remove( pimpl.m_tableNames.begin(), pimpl.m_tableNames.end(), tableName ), pimpl.m_tableNames.end() );
     }
     return result;
 }
@@ -2260,7 +2250,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
         name = tableName.substr( tableName.find( L"." ) + 1 );
     else
         name = tableName;
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); ++it )
     {
         if( (*it).first == catalog &&
            std::find_if( (*it).second.begin(), (*it).second.end(), [schemaName, tableName](DatabaseTable *table)
@@ -2303,7 +2293,7 @@ int SQLiteDatabase::AttachDatabase(const std::wstring &catalog, const std::wstri
                 if( res == SQLITE_ROW  )
                 {
                     const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
-                    pimpl->m_tableDefinitions[catalog].push_back( TableDefinition( catalog, schema, sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
+                    pimpl.m_tableDefinitions[catalog].push_back( TableDefinition( catalog, schema, sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
                 }
                 else if( res == SQLITE_DONE )
                     break;

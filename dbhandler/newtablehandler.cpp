@@ -17,7 +17,7 @@
 #include "newtablehandler.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
-std::mutex Database::Impl::my_mutex;
+std::mutex Impl::my_mutex;
 #endif
 
 NewTableHandler::NewTableHandler(MainFrame *frame, Database *db)

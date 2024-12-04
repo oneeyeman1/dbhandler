@@ -20,14 +20,13 @@
 #include "database.h"
 #include "database_mysql.h"
 
-std::mutex Database::Impl::my_mutex;
+std::mutex Impl::my_mutex;
 
-MySQLDatabase::MySQLDatabase() : Database()
+MySQLDatabase::MySQLDatabase(const int osId, const std::wstring &desktop) : Database( osId, desktop )
 {
     m_db = NULL;
-    pimpl = new Impl;
-    pimpl->m_type = L"mySQL";
-    pimpl->m_subtype = L"";
+    pimpl.m_type = L"mySQL";
+    pimpl.m_subtype = L"";
     m_pimpl = new MySQLImpl;
     connectToDatabase = false;
     m_flags = 0;
@@ -35,9 +34,9 @@ MySQLDatabase::MySQLDatabase() : Database()
 
 MySQLDatabase::~MySQLDatabase()
 {
-    if( pimpl && m_pimpl )
+    if( m_pimpl )
     {
-        std::vector<DatabaseTable *> tableVec = pimpl->m_tables[m_pimpl->m_catalog];
+        std::vector<DatabaseTable *> tableVec = pimpl.m_tables[m_pimpl->m_catalog];
         for( std::vector<DatabaseTable *>::iterator it = tableVec.begin(); it < tableVec.end(); it++ )
         {
             std::vector<TableField *> fields = (*it)->GetFields();
@@ -59,8 +58,6 @@ MySQLDatabase::~MySQLDatabase()
             (*it) = NULL;
         }
     }
-    delete pimpl;
-    pimpl = NULL;
     delete m_pimpl;
     m_pimpl = NULL;
 }
@@ -166,7 +163,7 @@ int MySQLDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wst
                 }
                 else
                 {
-                    pimpl->m_dbName = m_pimpl->m_dbName;
+                    pimpl.m_dbName = m_pimpl->m_dbName;
                     if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
                     {
                         result = 1;
@@ -279,7 +276,7 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
                     MYSQL_ROW row;
                     while( ( row = mysql_fetch_row( results ) ) != NULL )
                     {
-                        pimpl->m_connectedUser = m_pimpl->m_myconv.from_bytes( row[0] );
+                        pimpl.m_connectedUser = m_pimpl->m_myconv.from_bytes( row[0] );
                     }
                 }
             }
@@ -334,7 +331,7 @@ int MySQLDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
         return 0;
     mysql_close( m_db );
     m_db = NULL;
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); it++ )
     {
         std::vector<DatabaseTable *> tableVec = (*it).second;
         for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
@@ -437,7 +434,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                         char *catalog_name = row[0] ? row[0] : NULL;
                                         char *schema_name = row[1] ? row[1] : NULL;
                                         char *table_name = row[2] ? row[2] : NULL;
-                                        pimpl->m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
+                                        pimpl.m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
                                         count++;
 /*                                        long table_id = row[4] ? strtol( row[4], &end, 10 ) : 0;
                                         MYSQL_BIND params[3];
@@ -1424,7 +1421,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abt_ownr\" = \'";
-                command += pimpl->m_connectedUser;
+                command += pimpl.m_connectedUser;
                 command += L"\',  \"abd_fhgt\" = ";
                 istr << properties.m_dataFontSize;
                 command += istr.str();
@@ -1513,7 +1510,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L" AND \"abt_ownr\" = \'";
-                command += pimpl->m_connectedUser;
+                command += pimpl.m_connectedUser;
                 command += L"\';";
             }
             else
@@ -1526,7 +1523,7 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 istr.clear();
                 istr.str( L"" );
                 command += L", \'";
-                command += pimpl->m_connectedUser;
+                command += pimpl.m_connectedUser;
                 command += L"\', ";
                 istr << properties.m_dataFontSize;
                 command += istr.str();
@@ -1660,7 +1657,7 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
         {
             MYSQL_BIND params[2];
             unsigned long str_length1, str_length2;
-            str_data1 = new char[tname.length()], str_data2 = new char[pimpl->m_connectedUser.length()];
+            str_data1 = new char[tname.length()], str_data2 = new char[pimpl.m_connectedUser.length()];
             memset( params, 0, sizeof( params ) );
             params[0].buffer_type = MYSQL_TYPE_STRING;
             params[0].buffer = (char *) str_data1;
@@ -1669,7 +1666,7 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
             params[0].length = &str_length1;
             params[1].buffer_type = MYSQL_TYPE_STRING;
             params[1].buffer = (char *) str_data2;
-            params[1].buffer_length = pimpl->m_connectedUser.length();
+            params[1].buffer_length = pimpl.m_connectedUser.length();
             params[1].is_null = 0;
             params[1].length = &str_length2;
             if( mysql_stmt_bind_param( stmt, params ) )
@@ -1900,9 +1897,9 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &table, TableField *fie
     int result = 0;
     bool found = false;
     std::wstring schemaName, ownerName;
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); ++it )
     {
-        if( ( *it ).first == pimpl->m_dbName )
+        if( ( *it ).first == pimpl.m_dbName )
         {
             for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() || !found; ++it1 )
             {
@@ -2169,13 +2166,13 @@ int MySQLDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg))
     unsigned long version;
     int result = 0;
     version = mysql_get_server_version( m_db );
-    pimpl->m_versionRevision = version % 100;
-    pimpl->m_versionMajor = version / 10000;
-    pimpl->m_versionRevision = ( version - pimpl->m_versionMajor ) / 100;
+    pimpl.m_versionRevision = version % 100;
+    pimpl.m_versionMajor = version / 10000;
+    pimpl.m_versionRevision = ( version - pimpl.m_versionMajor ) / 100;
     version = mysql_get_client_version();
-    pimpl->m_clientVersionMajor = version % 10000;
-    pimpl->m_clientVersionMinor = ( version - pimpl->m_clientVersionMajor ) % 100;
-    pimpl->m_clientVersionRevision = version - ( pimpl->m_clientVersionMajor * 10000 + pimpl->m_clientVersionMinor * 100 );
+    pimpl.m_clientVersionMajor = version % 10000;
+    pimpl.m_clientVersionMinor = ( version - pimpl.m_clientVersionMajor ) % 100;
+    pimpl.m_clientVersionRevision = version - ( pimpl.m_clientVersionMajor * 10000 + pimpl.m_clientVersionMinor * 100 );
     return result;
 }
 
@@ -2382,7 +2379,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
         result = 1;
     else
     {
-        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
+        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); ++it )
         {
             if( (*it).first == catalog &&
                std::find_if( (*it).second.begin(), (*it).second.end(), [schemaName, tableName](DatabaseTable *table)

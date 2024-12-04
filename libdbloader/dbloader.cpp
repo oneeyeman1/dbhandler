@@ -111,6 +111,8 @@ IMPLEMENT_APP_NO_MAIN(MyDllApp);
 
 extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxString &engine, wxString &connectStr, wxString &connectedUser, std::vector<Profile> &profiles)
 {
+    auto osId = wxPlatformInfo::Get().GetOperatingSystemId();
+    wxString desktop = wxPlatformInfo::Get().GetDesktopEnvironment();
     std::vector<std::wstring> errorMsg, dsn;
     int result = wxID_OK;
     bool ask = false;
@@ -134,7 +136,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
     lib.Load( libName );
     if( lib.IsLoaded() )
     {
-        pdb = new ODBCDatabase();
+        pdb = new ODBCDatabase( osId, desktop.ToStdWstring() );
         bool res = dynamic_cast<ODBCDatabase *>( pdb )->GetDSNList( dsn, errorMsg );
         delete pdb;
         pdb = NULL;
@@ -165,11 +167,11 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
         {
             if( engine == "SQLite" )
             {
-                pdb = new SQLiteDatabase();
+                pdb = new SQLiteDatabase(  osId, desktop.ToStdWstring() );
             }
             else if( engine == "ODBC" )
             {
-                pdb = new ODBCDatabase();
+                pdb = new ODBCDatabase( osId, desktop.ToStdWstring() );
                 dynamic_cast<ODBCDatabase *>( pdb )->SetWindowHandle( parent->GetHandle() );
 #if !defined(__WXMSW__)
                 std::wstring user, password;
@@ -184,10 +186,10 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             }
             else if( engine == "PostgreSQL" )
             {
-                pdb = new PostgresDatabase();
+                pdb = new PostgresDatabase( osId, desktop.ToStdWstring() );
             }
             else if( engine == "mySQL" || engine == "MySQL" )
-                pdb = new MySQLDatabase();
+                pdb = new MySQLDatabase( osId, desktop.ToStdWstring() );
             else
             {
                 wxMessageBox( _( "Unknown engine. Please try to reinstall the program!" ) );
@@ -216,7 +218,9 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
 
 extern "C" WXEXPORT Database *GetDriverList(std::map<std::wstring, std::vector<std::wstring> > &driversDSN, std::vector<std::wstring> &errMsg)
 {
-    Database *db = new ODBCDatabase();
+    auto osId = wxPlatformInfo::Get().GetOperatingSystemId();
+    wxString desktop = wxPlatformInfo::Get().GetDesktopEnvironment();
+    Database *db = new ODBCDatabase( osId, desktop.ToStdWstring() );
     bool result = dynamic_cast<ODBCDatabase *>( db )->GetDriverList( driversDSN, errMsg );
     if( !result )
     {

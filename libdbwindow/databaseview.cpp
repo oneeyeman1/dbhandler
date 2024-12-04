@@ -146,7 +146,7 @@ typedef int (*CREATEVIEWOPTIONS)(wxWindow *, const Database *, NewViewOptions &)
 typedef int (*SAVENEWVIEW)(wxWindow *, wxString &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
-std::mutex Database::Impl::my_mutex;
+std::mutex Impl::my_mutex;
 #endif
 
 #define wxID_NEWOBJECT 1000

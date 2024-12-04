@@ -8,7 +8,7 @@ class PostgresDatabase : public Database
 #endif
 {
 public:
-    PostgresDatabase();
+    PostgresDatabase(const int osId, const std::wstring &desktop);
     virtual ~PostgresDatabase();
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) override;

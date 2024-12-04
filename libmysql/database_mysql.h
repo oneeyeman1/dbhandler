@@ -8,7 +8,7 @@ class MySQLDatabase : public Database
 #endif
 {
 public:
-    MySQLDatabase();
+    MySQLDatabase(const int osId, const std::wstring &desktop);
     virtual ~MySQLDatabase();
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) override;

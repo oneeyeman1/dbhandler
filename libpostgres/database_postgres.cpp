@@ -23,12 +23,11 @@
 #include "database.h"
 #include "database_postgres.h"
 
-std::mutex Database::Impl::my_mutex;
+std::mutex Impl::my_mutex;
 
-PostgresDatabase::PostgresDatabase() : Database()
+PostgresDatabase::PostgresDatabase(const int osId, const std::wstring &desktop) : Database( osId, desktop )
 {
     m_db = NULL;
-    pimpl = NULL;
     m_pimpl = NULL;
     connectToDatabase = false;
     m_isConnected = false;
@@ -37,8 +36,6 @@ PostgresDatabase::PostgresDatabase() : Database()
 
 PostgresDatabase::~PostgresDatabase()
 {
-    delete pimpl;
-    pimpl = NULL;
     delete m_pimpl;
     m_pimpl = NULL;
 }
@@ -48,8 +45,8 @@ int PostgresDatabase::CreateDatabase(const std::wstring &name, std::vector<std::
     int result = 0;
     std::vector<std::wstring> dbList;
     result = Disconnect( errorMsg );
-    if( !result )
-        result = Connect( name, dbList, errorMsg );
+//    if( !result )
+//        result = Connect( name, dbList, errorMsg );
     return result;
 }
 
@@ -58,7 +55,7 @@ int PostgresDatabase::DropDatabase(const std::wstring &name, std::vector<std::ws
     int result = 0;
     PGresult *res;
     std::wstring query = L"DROP DATABASE " + name;
-    if( pimpl->m_dbName == name )
+    if( pimpl.m_dbName == name )
         result = Disconnect( errorMsg );
     if( !result )
     {
@@ -81,12 +78,8 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
     std::size_t found = selectedDSN.find( L"dbname" );
     if( found != std::wstring::npos )
         connectToDatabase = true;
-    if( !pimpl )
-    {
-        pimpl = new Impl;
-        pimpl->m_type = L"PostgreSQL";
-        pimpl->m_subtype = L"";
-    }
+    pimpl.m_type = L"PostgreSQL";
+    pimpl.m_subtype = L"";
     if( !m_pimpl )
         m_pimpl = new PostgresImpl;
     m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
@@ -107,12 +100,12 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
         }
         else
         {
-            pimpl->m_connectString = selectedDSN;
+            pimpl.m_connectString = selectedDSN;
             std::wstring temp = selectedDSN.substr( selectedDSN.find( L"user" ) );
             temp = temp.substr( temp.find( '=' ) );
             std::wstring user = temp.substr( temp.find( '=' ) + 2 );
             user = user.substr( 0, user.find( ' ' ) );
-            pimpl->m_connectedUser = user;
+            pimpl.m_connectedUser = user;
             if( !connectToDatabase )
             {
                 if( ServerConnect( dbList, errorMsg ) )
@@ -127,7 +120,7 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
                 temp = selectedDSN.substr( selectedDSN.find( L"dbname = " ) );
                 temp = temp.substr( temp.find( '=' ) + 2 );
                 std::wstring dbname = temp.substr( 0, temp.find( ' ' ) );
-                pimpl->m_dbName = dbname;
+                pimpl.m_dbName = dbname;
                 if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
                 {
                     result = 1;
@@ -173,7 +166,7 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
     queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
     queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129), abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
     queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));" );
-    if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 5 )
+    if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
     {
         queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatc_x ON abcatcol( abc_tnam, abc_ownr, abc_cnam );" );
         queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcate_x ON abcatedt( abe_name, abe_seqn );" );
@@ -250,7 +243,7 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
         Disconnect( errorMsg );
     else
     {
-        pimpl->m_dbName = pimpl->m_tableDefinitions.begin()->first;
+        pimpl.m_dbName = pimpl.m_tableDefinitions.begin()->first;
     }
     return result;
 }
@@ -264,7 +257,7 @@ int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
         PQfinish( m_db );
         m_isConnected = false;
     }
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); it++ )
     {
         std::vector<DatabaseTable *> tableVec = (*it).second;
         for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
@@ -275,8 +268,6 @@ int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
     }
     delete m_pimpl;
     m_pimpl = NULL;
-    delete pimpl;
-    pimpl = NULL;
     return result;
 }
 
@@ -363,7 +354,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 char *catalog_name = PQgetvalue( res, i, 0 );
                                 char *schema_name = PQgetvalue( res, i, 1 );
                                 char *table_name = PQgetvalue( res, i, 2 );
-                                pimpl->m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
+                                pimpl.m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
                                 count++;
 /*                                char *table_owner = PQgetvalue( res, i, 3 );
                                 char *tableId = PQgetvalue( res, i, 4 );
@@ -585,7 +576,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.clear();
                 istr.str( L"" );
                 command += L", \"abt_ownr\" = \'";
-                command += pimpl->m_connectedUser;
+                command += pimpl.m_connectedUser;
                 command += L"\',  \"abd_fhgt\" = ";
                 istr << properties.m_dataFontSize;
                 command += istr.str();
@@ -700,7 +691,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.clear();
                 istr.str( L"" );
                 command += L" AND \"abt_ownr\" = \'";
-                command += pimpl->m_connectedUser;
+                command += pimpl.m_connectedUser;
                 command += L"\';";
             }
             else
@@ -715,7 +706,7 @@ int PostgresDatabase::SetTableProperties(const DatabaseTable *table, const Table
                 istr.clear();
                 istr.str( L"" );
                 command += L", \'";
-                command += pimpl->m_connectedUser;
+                command += pimpl.m_connectedUser;
                 command += L"\', ";
                 istr << properties.m_dataFontSize;
                 command += istr.str();
@@ -1000,9 +991,9 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &table, TableField *
     int result = 0;
     bool found = false;
     std::wstring schemaName, ownerName;
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); ++it )
     {
-        if( ( *it ).first == pimpl->m_dbName )
+        if( ( *it ).first == pimpl.m_dbName )
         {
             for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() || !found; ++it1 )
             {
@@ -1200,14 +1191,14 @@ int PostgresDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     }
     else
     {
-        pimpl->m_serverVersion = m_pimpl->m_myconv.from_bytes( PQparameterStatus( m_db, "server_version" ) );
-        pimpl->m_versionMajor = versionInt / 10000;
-        pimpl->m_versionMinor = ( versionInt - pimpl->m_versionMajor * 10000 ) / 100;
-        pimpl->m_versionRevision = versionInt % 100;
+        pimpl.m_serverVersion = m_pimpl->m_myconv.from_bytes( PQparameterStatus( m_db, "server_version" ) );
+        pimpl.m_versionMajor = versionInt / 10000;
+        pimpl.m_versionMinor = ( versionInt - pimpl.m_versionMajor * 10000 ) / 100;
+        pimpl.m_versionRevision = versionInt % 100;
     }
     versionInt = PQlibVersion();
-    pimpl->m_clientVersionMajor = versionInt % 10000;
-    pimpl->m_clientVersionMinor = ( versionInt - pimpl->m_clientVersionMajor ) % 100;
+    pimpl.m_clientVersionMajor = versionInt % 10000;
+    pimpl.m_clientVersionMinor = ( versionInt - pimpl.m_clientVersionMajor ) % 100;
     return result;
 }
 
@@ -1257,7 +1248,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     int result = 0, count;
     std::wstring err, schemaName, tableName, catalogName;
-    if( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor < 3 )
+    if( pimpl.m_versionMajor <= 9 && pimpl.m_versionMinor < 3 )
     {
         std::wstring query = L"SELECT count(*) FROM information_schema.tables";
         PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
@@ -1277,7 +1268,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 if( count > m_numOfTables || count < m_numOfTables )
                 {
                     std::vector<TableDefinition> temp;
-                    query = L"SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_catalog = \'" + pimpl->m_dbName + L"\';";
+                    query = L"SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_catalog = \'" + pimpl.m_dbName + L"\';";
                     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
                     status = PQresultStatus( res );
                     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
@@ -1298,7 +1289,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         }
                         {
                             std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
-                            pimpl->m_tableDefinitions[pimpl->m_dbName] = temp;
+                            pimpl.m_tableDefinitions[pimpl.m_dbName] = temp;
                         }
                         m_numOfTables = count;
                     }
@@ -1503,7 +1494,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                         }
                         table->SetIndexNames( indexes );
                         table->SetNumberOfIndexes( numIndexes );
-                        pimpl->m_tables[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( table );
+                        pimpl.m_tables[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( table );
                         fields.erase( fields.begin(), fields.end() );
                         foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                         fk_names.clear();
@@ -1665,7 +1656,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
         result = 1;
     else
     {
-        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
+        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); ++it )
         {
             if( (*it).first == catalog &&
                 std::find_if( (*it).second.begin(), (*it).second.end(), [schemaName, tableName](DatabaseTable *table)
@@ -1705,7 +1696,7 @@ int PostgresDatabase::AttachDatabase(const std::wstring &catalog, const std::wst
             char *catalog_name = PQgetvalue( res, i, 0 );
             char *schema_name = PQgetvalue( res, i, 1 );
             char *table_name = PQgetvalue( res, i, 2 );
-            pimpl->m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
+            pimpl.m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
         }
     }
     PQclear( res );

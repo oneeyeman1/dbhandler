@@ -47,9 +47,9 @@ void TableEditDocument::SetDatabaseAndTableName(Database *db)
 {
     m_db = db;
     auto found = false;
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = db->GetTableVector().m_tables.begin(); it != db->GetTableVector().m_tables.begin() && !found; ++it )
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::const_iterator it = db->GetTableVector().m_tables.begin(); it != db->GetTableVector().m_tables.begin() && !found; ++it )
     {
-        for( std::vector<DatabaseTable *>::iterator it1 = ( *it ).second.begin(); it1 < ( *it ).second.end() && !found; ++it1 )
+        for( std::vector<DatabaseTable *>::const_iterator it1 = ( *it ).second.begin(); it1 < ( *it ).second.end() && !found; ++it1 )
         {
 
         }

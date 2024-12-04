@@ -68,8 +68,9 @@
 #include "properties.h"
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
-std::mutex Database::Impl::my_mutex;
+std::mutex Impl::my_mutex;
 #endif
+
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
 

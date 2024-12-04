@@ -26,7 +26,7 @@ class ODBCDatabase : public Database
 #endif
 {
 public:
-    ODBCDatabase();
+    ODBCDatabase(const int osId, const std::wstring &desktop);
     virtual ~ODBCDatabase();
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) override;

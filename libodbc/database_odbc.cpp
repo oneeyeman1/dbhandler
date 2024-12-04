@@ -31,14 +31,13 @@
 #include "database.h"
 #include "database_odbc.h"
 
-std::mutex Database::Impl::my_mutex;
+std::mutex Impl::my_mutex;
 
-ODBCDatabase::ODBCDatabase() : Database()
+ODBCDatabase::ODBCDatabase(const int osId, const std::wstring &desktop) : Database( osId, desktop )
 {
     m_env = 0;
     m_hdbc = 0;
     m_hstmt = 0;
-    pimpl = NULL;
     odbc_pimpl = NULL;
     m_oneStatement = false;
     m_connectString = NULL;
@@ -53,8 +52,6 @@ ODBCDatabase::~ODBCDatabase()
     std::vector<std::wstring> errorMsg;
     delete[] m_connectString;
     m_connectString = NULL;
-    delete pimpl;
-    pimpl = NULL;
     delete odbc_pimpl;
     odbc_pimpl = NULL;
     if( m_hdbc != 0 )
@@ -412,7 +409,7 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstr
     int result = 0;
     SQLWCHAR *query = NULL;
     std::wstring qry = L"CREATE DATABASE " + name + L" ";
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
         qry = L"CREATE DATABASE " + name + L"";
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
@@ -518,12 +515,8 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     SQLUSMALLINT options;
     SQLWCHAR *user = NULL, *password = NULL;
     std::wstring connectingDSN, connectingUser = L"", connectingPassword = L"";
-    if( !pimpl )
-    {
-        pimpl = new Impl;
-        pimpl->m_type = L"ODBC";
-        pimpl->m_pgLogFile = L"";
-    }
+    pimpl.m_type = L"ODBC";
+    pimpl.m_pgLogFile = L"";
     if( !odbc_pimpl )
         odbc_pimpl = new ODBCImpl;
     std::wstring::size_type pos = selectedDSN.find( L';' );
@@ -645,7 +638,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     }
                     else
                     {
-                        str_to_uc_cpy( pimpl->m_connectString, m_connectString );
+                        str_to_uc_cpy( pimpl.m_connectString, m_connectString );
                         ret = SQLGetInfo( m_hdbc, SQL_DBMS_NAME, dbType, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
@@ -654,7 +647,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                         }
                         else
                         {
-                            str_to_uc_cpy( pimpl->m_subtype, dbType );
+                            str_to_uc_cpy( pimpl.m_subtype, dbType );
                             SQLWCHAR driverName[1024];
                             ret = SQLGetInfo( m_hdbc, SQL_DRIVER_NAME, driverName, 1024, (SQLSMALLINT *) &bufferSize );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -668,7 +661,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                 bufferSize = 1024;
                                 SQLWCHAR *name = nullptr;
                                 dbName = new SQLWCHAR[1024];
-                                if( pimpl->m_subtype != L"Oracle" )
+                                if( pimpl.m_subtype != L"Oracle" )
                                 {
                                     ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -740,11 +733,11 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                 }
                             }
                             if( !result )
-                               str_to_uc_cpy( pimpl->m_dbName, dbName );
+                               str_to_uc_cpy( pimpl.m_dbName, dbName );
                             delete[] dbName;
                             dbName = nullptr;
                             SQLWCHAR userName[1024];
-                            if( pimpl->m_subtype != L"Oracle" )
+                            if( pimpl.m_subtype != L"Oracle" )
                             {
                                 ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -807,13 +800,13 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                 }
                             }
                             if( !result )
-                                str_to_uc_cpy( pimpl->m_connectedUser, userName );
-                            if( pimpl->m_subtype == L"ACCESS" )
+                                str_to_uc_cpy( pimpl.m_connectedUser, userName );
+                            if( pimpl.m_subtype == L"ACCESS" )
                             {
-                                pimpl->m_dbName = pimpl->m_dbName.substr( pimpl->m_dbName.find_last_of( L'\\' ) + 1 );
-                                pimpl->m_dbName = pimpl->m_dbName.substr( 0, pimpl->m_dbName.find( L'.' ) );
+                                pimpl.m_dbName = pimpl.m_dbName.substr( pimpl.m_dbName.find_last_of( L'\\' ) + 1 );
+                                pimpl.m_dbName = pimpl.m_dbName.substr( 0, pimpl.m_dbName.find( L'.' ) );
                             }
-                            if( !pimpl->m_dbName.empty() )
+                            if( !pimpl.m_dbName.empty() )
                                 connectToDatabase = true;
                             if( GetServerVersion( errorMsg ) )
                             {
@@ -833,14 +826,14 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                 }
                                 else
                                 {
-                                    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+                                    if( pimpl.m_subtype == L"Microsoft SQL Server" )
                                     {
-                                        query8 = L"IF EXISTS(SELECT * FROM sys.databases WHERE name = \'" +  pimpl->m_dbName + L"\' AND is_broker_enabled = 0) ALTER DATABASE " + pimpl->m_dbName + L" SET ENABLE_BROKER";
+                                        query8 = L"IF EXISTS(SELECT * FROM sys.databases WHERE name = \'" +  pimpl.m_dbName + L"\' AND is_broker_enabled = 0) ALTER DATABASE " + pimpl.m_dbName + L" SET ENABLE_BROKER";
                                         query9 = L"IF NOT EXISTS(SELECT * FROM sys.service_queues WHERE name = \'EventNotificationQueue\') CREATE QUEUE dbo.EventNotificationQueue";
-                                        query10 = L"IF NOT EXISTS(SELECT * FROM sys.services WHERE name = \'//" + pimpl->m_dbName + L"/EventNotificationService\') CREATE SERVICE [//" + pimpl->m_dbName +L"/EventNotificationService] ON QUEUE dbo.EventNotificationQueue([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])";
-                                        query11 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsTable\') CREATE EVENT NOTIFICATION SchemaChangeEventsTable ON DATABASE FOR DDL_TABLE_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
-                                        std::wstring query12 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsIndex\') CREATE EVENT NOTIFICATION SchemaChangeEventsIndex ON DATABASE FOR DDL_INDEX_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
-                                        std::wstring query13 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsView\') CREATE EVENT NOTIFICATION SchemaChangeEventsView ON DATABASE FOR DDL_VIEW_EVENTS TO SERVICE \'//" + pimpl->m_dbName + L"/EventNotificationService\' , \'current database\'";
+                                        query10 = L"IF NOT EXISTS(SELECT * FROM sys.services WHERE name = \'//" + pimpl.m_dbName + L"/EventNotificationService\') CREATE SERVICE [//" + pimpl.m_dbName +L"/EventNotificationService] ON QUEUE dbo.EventNotificationQueue([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])";
+                                        query11 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsTable\') CREATE EVENT NOTIFICATION SchemaChangeEventsTable ON DATABASE FOR DDL_TABLE_EVENTS TO SERVICE \'//" + pimpl.m_dbName + L"/EventNotificationService\' , \'current database\'";
+                                        std::wstring query12 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsIndex\') CREATE EVENT NOTIFICATION SchemaChangeEventsIndex ON DATABASE FOR DDL_INDEX_EVENTS TO SERVICE \'//" + pimpl.m_dbName + L"/EventNotificationService\' , \'current database\'";
+                                        std::wstring query13 = L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsView\') CREATE EVENT NOTIFICATION SchemaChangeEventsView ON DATABASE FOR DDL_VIEW_EVENTS TO SERVICE \'//" + pimpl.m_dbName + L"/EventNotificationService\' , \'current database\'";
                                         query = new SQLWCHAR[query8.size() + 2];
                                         memset( query, '\0', query8.size() + 2 );
                                         uc_to_str_cpy( query, query8 );
@@ -923,10 +916,10 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                             }
                                         }
                                     }
-                                    else if( pimpl->m_subtype == L"PostgreSQL" )
+                                    else if( pimpl.m_subtype == L"PostgreSQL" )
                                     {
                                         query8 = L"IF NOT EXIST(SELECT 1 FROM pg_proc AS proc, pg_namespace AS ns WHERE proc.pronamespace = ns.oid AND ns.nspname = \'public\' AND proname = \'watch_schema_changes\') CREATE FUNCTION watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
-                                        if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor > 3 )
+                                        if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor > 3 )
                                         {
                                             query8 = L"CREATE FUNCTION __watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;";
                                             query9 = L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE __watch_schema_changes();";
@@ -958,10 +951,10 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                         }
                                     }
                                 }
-                                if( pimpl->m_subtype == L"PostgreSQL" && ( pimpl->m_versionMajor <= 9 && pimpl->m_versionMinor <= 2 ) )
+                                if( pimpl.m_subtype == L"PostgreSQL" && ( pimpl.m_versionMajor <= 9 && pimpl.m_versionMinor <= 2 ) )
                                 {
                                 }
-                                if( pimpl->m_subtype == L"ACCESS" )
+                                if( pimpl.m_subtype == L"ACCESS" )
                                 {
                                     query8 = L"GRANT SELECT ON MSysObjects TO Admin;";
                                     query = new SQLWCHAR[query8.length() + 2];
@@ -985,7 +978,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                             }
                         }
 /*****************************************/
-                        if( pimpl->m_subtype != L"Sybase" && pimpl->m_subtype != L"ASE" )
+                        if( pimpl.m_subtype != L"Sybase" && pimpl.m_subtype != L"ASE" )
                         {
                             ret = SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, (SQLPOINTER) FALSE, 0 );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -998,7 +991,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                         {
                             if( !connectToDatabase )
                             {
-                                if( pimpl->m_subtype != L"Oracle" || pimpl->m_versionMajor > 11 )
+                                if( pimpl.m_subtype != L"Oracle" || pimpl.m_versionMajor > 11 )
                                 {
                                     if( ServerConnect( dbList, errorMsg ) )
                                     {
@@ -1041,7 +1034,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     int result = 0;
     std::vector<std::wstring> queries;
     SQLWCHAR *query = NULL;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
+    if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
         queries.push_back( L"BEGIN TRANSACTION sysobjects" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE \"abcatcol\"(abc_tnam varchar(129) NOT NULL, abc_tid integer, abc_ownr varchar(129) NOT NULL, abc_cnam varchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn varchar(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt varchar(254), abc_edit varchar(31), abc_tag varchar(254) PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
@@ -1085,14 +1078,14 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'must_be_numer\', \'CHECK( isNumer( @column )\', 80, 0, \'\');");
         queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'valid status\', \'CHECK( @status == \"ALT\" )\', 80, 3, \'\');");
     }
-    if( pimpl->m_subtype == L"ACCESS" )
+    if( pimpl.m_subtype == L"ACCESS" )
     {
         queries.push_back( L"SELECT name FROM MSysObjects WHERE type IN (1, 4, 6) AND name = 'abcatcol';" );
         queries.push_back( L"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
         queries.push_back( L"SELECT name FROM MSysObjects WHERE type IN (1, 4, 6) AND name = 'abcatedt';" );
         queries.push_back( L"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
     }
-    if( pimpl->m_subtype == L"MySQL" || pimpl->m_subtype == L"PostgreSQL" )
+    if( pimpl.m_subtype == L"MySQL" || pimpl.m_subtype == L"PostgreSQL" )
     {
         queries.push_back( L"BEGN" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
@@ -1100,7 +1093,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));" );
-        if( pimpl->m_subtype == L"MySQL" )
+        if( pimpl.m_subtype == L"MySQL" )
         {
             queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatc_x\' AND table_name=\'abcatcol\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\"));" );
             queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcate_x\' AND table_name=\'abcatedt\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcate_x ON abcatedt(abe_name ASC, abe_seqn ASC)\"));" );
@@ -1110,7 +1103,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         }
         else
         {
-            if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor >= 5 )
+            if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
             {
                 queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatc_x ON abcatcol( abc_tnam, abc_ownr, abc_cnam );" );
                 queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcate_x ON abcatedt( abe_name, abe_seqn );" );
@@ -1188,7 +1181,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             }
         }
     }
-    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
     {
         queries.push_back( L"BEGIN TRANSACTION sysobjects" );
         queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatcol' AND type = 'U') EXECUTE(\"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))\")" );
@@ -1199,9 +1192,9 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name='abcattbl' AND i.name='abcattbl_tnam_ownr') EXECUTE(\"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC)\")" );
         queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name='abcatcol' AND i.name='abcatcol_tnam_ownr_cnam') EXECUTE(\"CREATE INDEX abcatcol_tnam_ownr_cnam ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\")" );
     }
-    if( pimpl->m_subtype == L"Sybase SQL Anywhere" )
+    if( pimpl.m_subtype == L"Sybase SQL Anywhere" )
     {
-        if( pimpl->m_versionMajor >= 12 )
+        if( pimpl.m_versionMajor >= 12 )
         {
             // According to the Sybase (SAP) documentation "IF NOT EXIST" is supported from version 12 up.
             queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))" );
@@ -1239,7 +1232,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"CREATE UNIQUE INDEX abcatv_x ON abcatvld( abv_name ASC, abt_ownr ASC );" );
         }
     }
-    if( pimpl->m_subtype == L"Oracle" )
+    if( pimpl.m_subtype == L"Oracle" )
     {
         queries.push_back( L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatcol' )" );
         queries.push_back( L"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
@@ -1257,7 +1250,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        if( pimpl->m_subtype != L"Oracle" || ( pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_versionMajor >= 12 ) )
+        if( pimpl.m_subtype != L"Oracle" || ( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_versionMajor >= 12 ) )
         {
             for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
             {
@@ -1336,14 +1329,14 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         }
         if( !result )
         {
-            if( pimpl->m_subtype == L"Microsoft SQL Server" || pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" ) // MS SQL SERVER
+            if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" ) // MS SQL SERVER
                 ret = SQLExecDirect( m_hstmt, L"COMMIT TRANSACTION sysobjects", SQL_NTS );
             else
                 ret = SQLExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
         }
         else
         {
-            if( pimpl->m_subtype == L"Microsoft SQL Server" || pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" ) // MS SQL SERVER
+            if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" ) // MS SQL SERVER
                 ret = SQLExecDirect( m_hstmt, L"ROLLACK TRANSACTIN sysobjects", SQL_NTS );
             else
                 ret = SQLExecDirect( m_hstmt, L"ROLLACK", SQL_NTS );
@@ -1379,13 +1372,13 @@ int ODBCDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<s
     std::wstring query;
     SQLWCHAR *qry = nullptr, *dbName = nullptr;
     int result = 0;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT name AS Database FROM master.dbo.sysdatabases;";
-    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
         query = L"SELECT name FROM sp_helpdb";
-    if( pimpl->m_subtype == L"MySQL"  )
+    if( pimpl.m_subtype == L"MySQL"  )
         query = L"SELECT schema_name AS Database FROM information_schema.schemata;";
-    if( pimpl->m_subtype == L"PostgreSQL" )
+    if( pimpl.m_subtype == L"PostgreSQL" )
         query = L"SELECT datname AS Database FROM pg_database;";
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
@@ -1479,7 +1472,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     }
     if( connectionAlive == SQL_CD_FALSE )
         m_isConnected = true;
-    if( pimpl->m_subtype == L"PostgreSQL" && connectionAlive != SQL_CD_TRUE )
+    if( pimpl.m_subtype == L"PostgreSQL" && connectionAlive != SQL_CD_TRUE )
     {
         ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -1489,7 +1482,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
         }
         else
         {
-            if( pimpl->m_versionMajor >= 9 && pimpl->m_versionMinor > 3 )
+            if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor > 3 )
             {
                 std::wstring query8, query9;
                 SQLWCHAR *query = NULL;
@@ -1565,7 +1558,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
         else
             m_env = 0;
     }
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); it++ )
     {
         std::vector<DatabaseTable *> tableVec = (*it).second;
         for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
@@ -1575,8 +1568,6 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
         }
         (*it).second.clear();
     }
-    delete pimpl;
-    pimpl = NULL;
     return result;
 }
 
@@ -1593,8 +1584,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
 #ifdef _WIN32
-    if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
-        query2 = L"INSERT INTO \"sys.abcattbl\" VALUES( ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        query2 = L"INSERT INTO \"abcattbl\" VALUES( ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
 #endif
     SQLWCHAR *catalogName = nullptr, *schemaName = nullptr, *tableName = nullptr, *qry2 = nullptr;
 //    SQLSMALLINT numCols = 0;
@@ -1660,9 +1650,9 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     if( !result )
     {
-        auto catalogDB = new SQLWCHAR[pimpl->m_dbName.length() + 2];
-        memset( catalogDB, '\0', pimpl->m_dbName.length() + 2 );
-        uc_to_str_cpy( catalogDB, pimpl->m_dbName );
+        auto catalogDB = new SQLWCHAR[pimpl.m_dbName.length() + 2];
+        memset( catalogDB, '\0', pimpl.m_dbName.length() + 2 );
+        uc_to_str_cpy( catalogDB, pimpl.m_dbName );
         for( int i = 0; i < 5; i++ )
         {
             catalog[i].TargetType = SQL_C_WCHAR;
@@ -1741,7 +1731,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         delete[] param;
                         param = nullptr;
                     }
-                    pimpl->m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
+                    pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
                     count++;
                 }
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
@@ -1880,18 +1870,18 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
     std::wstring query1;
     SQLWCHAR *index_name = NULL, *table_name = NULL, *schema_name = NULL;
     SQLLEN cbIndexName = SQL_NTS, cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
         query1 = L"SELECT 1 FROM " + catalogName + L".sys.indexes WHERE name = ? AND object_id = OBJECT_ID( ? ) );";
-    if( pimpl->m_subtype == L"MySQL" )
+    if( pimpl.m_subtype == L"MySQL" )
         query1 = L"SELECT 1 FROM information_schema.statistics WHERE index_name = ? AND table_name = ? AND schema_name = ? AND table_catalog = ?;";
-    if( pimpl->m_subtype == L"PostgreSQL" )
+    if( pimpl.m_subtype == L"PostgreSQL" )
         query1 = L"SELECT 1 FROM " + catalogName + L".pg_catalog.pg_indexes WHERE indexname = $1 AND tablename = $2 AND schemaname = $3;";
-    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
         query1 = L"SELECT 1 FROM sysindexes ind, sysobjects obj WHERE obj.id = ind.id AND ind.name = ? AND obj.name = ?";
     index_name = new SQLWCHAR[indexName.length() + 2];
     memset( index_name, '\0', indexName.length() + 2 );
     uc_to_str_cpy( index_name, indexName );
-    if( pimpl->m_subtype == L"MySQL" || pimpl->m_subtype == L"PostgreSQL" )
+    if( pimpl.m_subtype == L"MySQL" || pimpl.m_subtype == L"PostgreSQL" )
     {
         table_name = new SQLWCHAR[tableName.length() + 2];
         schema_name = new SQLWCHAR[schemaName.length() + 2];
@@ -1920,7 +1910,7 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
             ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
-                if( pimpl->m_subtype == L"MySQL" || pimpl->m_subtype == L"PostgreSQL" )
+                if( pimpl.m_subtype == L"MySQL" || pimpl.m_subtype == L"PostgreSQL" )
                     ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, schema_name, 0, &cbSchemaName );
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                 {
@@ -2516,7 +2506,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                         istr.clear();
                         istr.str( L"" );
                         command += L" AND \"abt_ownr\" = \'";
-                        command += pimpl->m_connectedUser;
+                        command += pimpl.m_connectedUser;
                         command += L"\';";
                     }
                     else
@@ -3107,9 +3097,9 @@ int ODBCDatabase::GetFieldProperties (const std::wstring &table, TableField *fie
     int result = 0;
     bool found = false;
     std::wstring schemaName, ownerName;
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
+    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); ++it )
     {
-        if( ( *it ).first == pimpl->m_dbName )
+        if( ( *it ).first == pimpl.m_dbName )
         {
             for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() || !found; ++it1 )
             {
@@ -3164,7 +3154,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
         delProp = NO_ACTION_DELETE;
         break;
     case 1:
-        if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        if( pimpl.m_subtype == L"Microsoft SQL Server" )
         {
             query += L"NO ACTION ";
             delProp = NO_ACTION_DELETE;
@@ -3196,7 +3186,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
         updProp = NO_ACTION_UPDATE;
         break;
     case 1:
-        if( pimpl->m_subtype == L"Microsoft SQL Server" )
+        if( pimpl.m_subtype == L"Microsoft SQL Server" )
         {
             query += L"NO ACTION ";
             updProp = NO_ACTION_UPDATE;
@@ -3380,16 +3370,16 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
     SQLLEN cbName, cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     int result = 0;
     std::wstring query;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" || pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
         query = L"SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?";
 //        query = L"SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = 'abcatcol' AND s.name = 'dbo';";
-    if( pimpl->m_subtype == L"PostgreSQL" )
+    if( pimpl.m_subtype == L"PostgreSQL" )
         query = L"SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?;";
-    if( pimpl->m_subtype == L"MySQL" )
+    if( pimpl.m_subtype == L"MySQL" )
         query = L"SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?;";
-    if( pimpl->m_subtype == L"Oracle" )
+    if( pimpl.m_subtype == L"Oracle" )
         query = L"SELECT object_id FROM all_objects WHERE object_name = UPPER(?) AND owner = UPPER(?)";
-    if( pimpl->m_subtype == L"Sybase SQL Anywhere" )
+    if( pimpl.m_subtype == L"Sybase SQL Anywhere" )
         query = L"SELECT id FROM dbo.sysobjects WHERE name = ?";
     auto qry = new SQLWCHAR[query.length() + 2];
     auto tname = new SQLWCHAR[tableName.length() + 2];
@@ -3400,9 +3390,9 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
     uc_to_str_cpy( qry, query );
     uc_to_str_cpy( sname, schemaName );
     uc_to_str_cpy( tname, tableName );
-    auto dbName = new SQLWCHAR[pimpl->m_dbName.length() + 2];
-    memset( dbName, '\0', pimpl->m_dbName.length() + 2 );
-    uc_to_str_cpy( dbName, pimpl->m_dbName );
+    auto dbName = new SQLWCHAR[pimpl.m_dbName.length() + 2];
+    memset( dbName, '\0', pimpl.m_dbName.length() + 2 );
+    uc_to_str_cpy( dbName, pimpl.m_dbName );
     auto retcode = SQLSetConnectAttr( m_hdbc, SQL_ATTR_CURRENT_CATALOG, dbName, SQL_NTS );
     delete[]  dbName;
     dbName = nullptr;
@@ -3522,19 +3512,19 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
     SQLWCHAR *table_name = NULL, *schema_name = NULL, *qry = NULL;
     SQLWCHAR *owner = NULL;
     std::wstring query;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT cast(su.name AS nvarchar(128)) FROM sysobjects so, sysusers su, sys.tables t, sys.schemas s WHERE so.uid = su.uid AND t.object_id = so.id AND t.schema_id = s.schema_id AND so.name = ? AND s.name = ?;";
-    if( pimpl->m_subtype == L"PostgreSQL" )
+    if( pimpl.m_subtype == L"PostgreSQL" )
         query = L"SELECT u.usename FROM pg_class c, pg_user u, pg_namespace n WHERE n.oid = c.relnamespace AND u.usesysid = c.relowner AND relname = ? AND n.nspname = ?";
-    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" || pimpl->m_subtype == L"Sybase SQL Anywhere" )
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Sybase SQL Anywhere" )
         query = L"SELECT su.name FROM sysobjects so, sysusers su WHERE su.uid = so.uid AND so.name = ?";
-    if( pimpl->m_subtype == L"MySQL" )
+    if( pimpl.m_subtype == L"MySQL" )
     {
         odbc_pimpl->m_currentTableOwner = L"";
         tableOwner = L"";
         return result;
     }
-    if( pimpl->m_subtype == L"Oracle" )
+    if( pimpl.m_subtype == L"Oracle" )
     {
         odbc_pimpl->m_currentTableOwner = schemaName;
         tableOwner = schemaName;
@@ -3577,7 +3567,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
                     result = 1;
                 }
             }
-            if( !result && ( pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_subtype != L"ASE" && pimpl->m_subtype != L"Sybase" ) )
+            if( !result && ( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_subtype != L"ASE" && pimpl.m_subtype != L"Sybase" ) )
             {
                 retcode = SQLDescribeParam( m_hstmt, 2, &dataType[1], &paramSize[1], &decimalDigits[1], &nullable[1] );
                 if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
@@ -3663,7 +3653,7 @@ void ODBCDatabase::SetFullType(TableField *field)
 {
     std::wostringstream ss;
     std::wstring fieldType = field->GetFieldType();
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
     {
         if( fieldType == L"bigint" || fieldType == L"bit" || fieldType == L"int" || fieldType == L"smallint" || fieldType == L"tinyint" || fieldType == L"date" || fieldType == L"datetime" || fieldType == L"smalldatetime" || fieldType == L"text" || fieldType == L"image" || fieldType == L"ntext" )
             field->SetFullType( fieldType );
@@ -3699,31 +3689,31 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     unsigned long versionMajor = 0, versionMinor = 0;
     SQLLEN cbVersion = SQL_NTS;
     SQLWCHAR *qry = NULL, version[1024];
-    if( pimpl->m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
+    if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
         query = L"SELECT SERVERPROPERTY('productversion') AS version, COALESCE(SERVERPROPERTY('ProductMajorVersion'), PARSENAME(CAST(SERVERPROPERTY('productversion') AS varchar(20)), 4)) AS major, COALESCE(SERVERPROPERTY('ProductMinorVersion'), PARSENAME(CAST(SERVERPROPERTY('productversion') AS varchar(20)), 3)) AS minor;";
     }
-    if( pimpl->m_subtype == L"MySQL" )
+    if( pimpl.m_subtype == L"MySQL" )
     {
         query = L"SELECT version(), LEFT( version(), LOCATE( '.', version() ) - 1 ) AS major, LEFT( SUBSTR( version(), LOCATE( '.', version() ) + 1 ), LOCATE( '.', SUBSTR( version(), LOCATE( '.', version() ) + 1 ) ) - 1 ) AS minor;";
     }
-    if( pimpl->m_subtype == L"PostgreSQL" )
+    if( pimpl.m_subtype == L"PostgreSQL" )
     {
         query = L"SELECT version() AS version, split_part( split_part( version(), ' ', 2 ) , '.', 1 ) AS major, split_part( split_part( version(), ' ', 2 ), '.', 2 ) AS minor;";
     }
-    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
     {
         query = L"SELECT @@version_number AS version, @@version_as_integer / 1000 AS major";
     }
-    if( pimpl->m_subtype == L"Sybase SQL Anywhere" || pimpl->m_subtype == L"SQL Anywhere" )
+    if( pimpl.m_subtype == L"Sybase SQL Anywhere" || pimpl.m_subtype == L"SQL Anywhere" )
     {
         query = L"SELECT @@version AS version";
     }
-    if( pimpl->m_subtype == L"Oracle" )
+    if( pimpl.m_subtype == L"Oracle" )
     {
         query = L"SELECT version FROM v$instance";
     }
-    if( pimpl->m_subtype != L"ACCESS" )
+    if( pimpl.m_subtype != L"ACCESS" )
     {
         SQLRETURN retcode = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
@@ -3754,7 +3744,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                 }
                 else
                 {
-                    if( pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_subtype != L"Oracle" )
+                    if( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_subtype != L"Oracle" )
                     {
                         retcode = SQLBindCol( m_hstmt, 2, SQL_C_SLONG, &versionMajor, 0, 0 );
                         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
@@ -3782,32 +3772,32 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                         }
                         else
                         {
-                            if( pimpl->m_subtype != L"Sybase SQL Anywhere" && pimpl->m_subtype != L"Oracle" )
+                            if( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_subtype != L"Oracle" )
                             {
-                                str_to_uc_cpy( pimpl->m_serverVersion, version );
-                                if( pimpl->m_subtype == L"SQL Anywhere" )
+                                str_to_uc_cpy( pimpl.m_serverVersion, version );
+                                if( pimpl.m_subtype == L"SQL Anywhere" )
                                 {
-                                    std::string::size_type pos = pimpl->m_serverVersion.find( L"." );
-                                    pimpl->m_versionMajor = std::stoi( pimpl->m_serverVersion.substr( 0, pos ) );
-                                    std::string::size_type posSec = pimpl->m_serverVersion.find( L".", pos );
-                                    pimpl->m_versionMinor = std::stoi( pimpl->m_serverVersion.substr( pos, posSec ) );
+                                    std::string::size_type pos = pimpl.m_serverVersion.find( L"." );
+                                    pimpl.m_versionMajor = std::stoi( pimpl.m_serverVersion.substr( 0, pos ) );
+                                    std::string::size_type posSec = pimpl.m_serverVersion.find( L".", pos );
+                                    pimpl.m_versionMinor = std::stoi( pimpl.m_serverVersion.substr( pos, posSec ) );
                                 }
                                 else
                                 {
-                                    pimpl->m_versionMajor = (int) versionMajor;
-                                    pimpl->m_versionMinor = (int) versionMinor;
+                                    pimpl.m_versionMajor = (int) versionMajor;
+                                    pimpl.m_versionMinor = (int) versionMinor;
                                 }
                             }
                             else
                             {
                                 std::wstring temp;
                                 str_to_uc_cpy( temp, version );
-                                pimpl->m_serverVersion = temp;
-                                pimpl->m_versionMajor = std::stoi( temp.substr( 0, temp.find( '.' ) ) );
+                                pimpl.m_serverVersion = temp;
+                                pimpl.m_versionMajor = std::stoi( temp.substr( 0, temp.find( '.' ) ) );
                                 temp = temp.substr( temp.find( '.' ) + 1 );
-                                pimpl->m_versionMinor = std::stoi( temp.substr( 0, temp.find( '.' ) ) );
+                                pimpl.m_versionMinor = std::stoi( temp.substr( 0, temp.find( '.' ) ) );
                                 temp = temp.substr( temp.find( '.' ) + 1 );
-                                pimpl->m_versionRevision = std::stoi( temp.substr( 0, temp.find( '.' ) ) );
+                                pimpl.m_versionRevision = std::stoi( temp.substr( 0, temp.find( '.' ) ) );
                             }
                         }
                     }
@@ -3831,8 +3821,8 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         }
         else
             str_to_uc_cpy( clientVersion, version );
-        pimpl->m_clientVersionMajor = 0;
-        pimpl->m_clientVersionMinor = 0;
+        pimpl.m_clientVersionMajor = 0;
+        pimpl.m_clientVersionMinor = 0;
     }
     return result;
 }
@@ -4020,17 +4010,17 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     std::wstring query, query1;
     unsigned int count = 0;
     auto bufferSize = 1024;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
     {
         query = L"SELECT count(*) table_cont FROM (SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.system_views UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.tables UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.views UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.objects WHERE type = \'S\' ) d";
         query1 = L"SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.system_views UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.tables UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.views UNION ALL SELECT schema_name(schema_id) schema_name, name object_name, type, type_desc FROM sys.objects WHERE type = \'S\' ;";
     }
-    if( pimpl->m_subtype == L"PostgreSQL" || pimpl->m_subtype == L"MySQL" )
+    if( pimpl.m_subtype == L"PostgreSQL" || pimpl.m_subtype == L"MySQL" )
     {
         query = L"SELECT count(*) FROM information_schema.tables";
         query1 = L"SELECT table_schema, table_name FROM information_schema.table ;";
     }
-    if( pimpl->m_subtype == L"Oracle" )
+    if( pimpl.m_subtype == L"Oracle" )
     {
         query = L"SELECT count(*) FROM all_tables;";
         query1 = L"SELECT owner, table_name FROM all_tables;";
@@ -4102,9 +4092,9 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
                 SQLWCHAR *catalogName = nullptr, *schemaName = nullptr, *tableName = nullptr;
                 std::wstring cat, schema, table;
-                auto catalogDB = new SQLWCHAR[pimpl->m_dbName.length() + 2];
-                memset( catalogDB, '\0', pimpl->m_dbName.length() + 2 );
-                uc_to_str_cpy( catalogDB, pimpl->m_dbName );
+                auto catalogDB = new SQLWCHAR[pimpl.m_dbName.length() + 2];
+                memset( catalogDB, '\0', pimpl.m_dbName.length() + 2 );
+                uc_to_str_cpy( catalogDB, pimpl.m_dbName );
                 for( int i = 0; i < 5; i++ )
                 {
                     catalog[i].TargetType = SQL_C_WCHAR;
@@ -4149,15 +4139,15 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                                 copy_uc_to_uc( schemaName, catalogName );
                             }
                             schema = cat + L"." + schema;
-                            if( pimpl->m_tableDefinitions.find( cat ) != pimpl->m_tableDefinitions.end() )
+                            if( pimpl.m_tableDefinitions.find( cat ) != pimpl.m_tableDefinitions.end() )
                                 temp[cat].push_back( TableDefinition( cat, schema, table ) );
                             count++;
                         }
                         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                         {
                             std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
-                            pimpl->m_tableDefinitions.clear();
-                            pimpl->m_tableDefinitions = temp;
+                            pimpl.m_tableDefinitions.clear();
+                            pimpl.m_tableDefinitions = temp;
                             m_numOfTables = count;
                         }
                         ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
@@ -4208,17 +4198,17 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     SQLLEN cbNullable, cbRemarks, cbColumnDefault, cbSQLDataType, cbDatetimeSubtypeCode, cbCharOctetLength, cbOrdinalPosition, cbIsNullable;
     SQLSMALLINT DataType, DecimalDigits = 0, NumPrecRadix, Nullable = 0, SQLDataType, DatetimeSubtypeCode, numCols = 0;
     SQLINTEGER ColumnSize = 0, BufferLength, CharOctetLength, OrdinalPosition;
-    if( pimpl->m_subtype == L"PostgreSQL" )
+    if( pimpl.m_subtype == L"PostgreSQL" )
         query4 = L"SELECT indexname FROM " + catalog + L".pg_catalog.pg_indexes WHERE tablename = ? AND schemaname = ?";
-    if( pimpl->m_subtype == L"MySQL" )
+    if( pimpl.m_subtype == L"MySQL" )
         query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_name = ? AND table_schema = ? AND table_catalog = ?;";
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
         query4 = L"SELECT i.name FROM " + catalog + L".sys.indexes i, " + catalog + L".sys.tables t WHERE i.object_id = t.object_id AND SCHEMA_NAME(t.schema_id) = ? AND t.name = ?;";
-    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
         query4 = L"SELECT o.name, i.name FROM sysobjects o, sysindexes i, sysusers u WHERE o.id = i.id AND o.uid = u.uid AND u.name = ? AND o.name= ?";
-    if( pimpl->m_subtype == L"Sybase SQL Anywhere" )
+    if( pimpl.m_subtype == L"Sybase SQL Anywhere" )
         query4 = L"SELECT iname FROM sysindexes WHERE tname = ?";
-    if( pimpl->m_subtype == L"Oracle" )
+    if( pimpl.m_subtype == L"Oracle" )
         query4 = L"SELECT index_name FROM all_indexes WHERE table_name = UPPER(?)";
     std::wstring schema, table;
     auto pos = schemaName.rfind( '.' );
@@ -4541,7 +4531,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             if( !result )
                             {
-                                if( pimpl->m_subtype != L"Oracle" )
+                                if( pimpl.m_subtype != L"Oracle" )
                                     ret = SQLForeignKeys( stmt_fk, NULL, 0, NULL, 0, NULL, 0, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
                                 else
                                     ret = SQLForeignKeys( stmt_fk, NULL, 0, NULL, 0, NULL, 0, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
@@ -4587,7 +4577,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                         }
                                         else
                                         {
-                                            if( pimpl->m_subtype != L"Oracle" )
+                                            if( pimpl.m_subtype != L"Oracle" )
                                                 ret = SQLForeignKeys( stmt_fk, NULL, 0, NULL, 0, NULL, 0, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
                                             else
                                                 ret = SQLForeignKeys( stmt_fk, NULL, 0, NULL, 0, NULL, 0, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
@@ -4631,7 +4621,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                                             update_constraint = CASCADE_UPDATE;
                                                              break;
                                                     }
-                                                    if( pimpl->m_subtype == L"Microsoft SQL Server" && updateRule == SQL_RESTRICT )
+                                                    if( pimpl.m_subtype == L"Microsoft SQL Server" && updateRule == SQL_RESTRICT )
                                                         update_constraint = NO_ACTION_UPDATE;
                                                     switch( deleteRule )
                                                     {
@@ -4649,7 +4639,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                                             delete_constraint = CASCADE_DELETE;
                                                             break;
                                                     }
-                                                    if( pimpl->m_subtype == L"Microsoft SQL Server" && deleteRule == SQL_RESTRICT )
+                                                    if( pimpl.m_subtype == L"Microsoft SQL Server" && deleteRule == SQL_RESTRICT )
                                                         delete_constraint = NO_ACTION_DELETE;
                                                                                              //id,         name,   orig_schema,  table_name,  orig_field,  ref_schema, ref_table, ref_field, update_constraint, delete_constraint
                                                     foreign_keys[keySequence].push_back( new FKField( keySequence, fkName, origSchema, origTable, origCol, refSchema,  refTable,  refCol, origFields[keySequence], refFields[keySequence], update_constraint, delete_constraint ) );
@@ -4765,7 +4755,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             else
                             {
-                                if( pimpl->m_subtype != L"Oracle" )
+                                if( pimpl.m_subtype != L"Oracle" )
                                     ret = SQLPrimaryKeys( stmt_pk, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
                                 else
                                     ret = SQLPrimaryKeys( stmt_pk, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
@@ -4884,7 +4874,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         else
                         {
                             SQLSMALLINT numColumns;
-                            if( pimpl->m_subtype != L"Oracle" )
+                            if( pimpl.m_subtype != L"Oracle" )
                                 ret = SQLColumns( stmt_col, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, NULL, 0);
                             else
                                 ret = SQLColumns( stmt_col, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, NULL, 0 );
@@ -5055,7 +5045,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     hdbc_col = 0;
                                 }
                             }
-                            if( !result && ( pimpl->m_subtype != L"Sybase SQL Anywhere" || ( pimpl->m_subtype == L"Sybase SQL Anywhere" && pimpl->m_versionMajor > 6 ) ) )
+                            if( !result && ( pimpl.m_subtype != L"Sybase SQL Anywhere" || ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor > 6 ) ) )
                             {
                                 ret = SQLBindCol( stmt_col, 13, SQL_C_WCHAR, szColumnDefault, 256, &cbColumnDefault );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -5071,7 +5061,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     hdbc_col = 0;
                                 }
                             }
-                            if( !result  && ( pimpl->m_subtype != L"Sybase SQL Anywhere" || ( pimpl->m_subtype == L"Sybase SQL Anywhere" && pimpl->m_versionMajor > 6 ) ) )
+                            if( !result  && ( pimpl.m_subtype != L"Sybase SQL Anywhere" || ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor > 6 ) ) )
                             {
                                 ret = SQLBindCol( stmt_col, 14, SQL_C_SSHORT, &SQLDataType, 0, &cbSQLDataType );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -5087,7 +5077,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     hdbc_col = 0;
                                 }
                             }
-                            if( !result  && ( pimpl->m_subtype != L"Sybase SQL Anywhere" || ( pimpl->m_subtype == L"Sybase SQL Anywhere" && pimpl->m_versionMajor > 6 ) ) )
+                            if( !result  && ( pimpl.m_subtype != L"Sybase SQL Anywhere" || ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor > 6 ) ) )
                             {
                                 ret = SQLBindCol( stmt_col, 15, SQL_C_SSHORT, &DatetimeSubtypeCode, 0, &cbDatetimeSubtypeCode );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -5103,7 +5093,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     hdbc_col = 0;
                                 }
                             }
-                            if( !result  && ( pimpl->m_subtype != L"Sybase SQL Anywhere" || ( pimpl->m_subtype == L"Sybase SQL Anywhere" && pimpl->m_versionMajor > 6 ) ) )
+                            if( !result  && ( pimpl.m_subtype != L"Sybase SQL Anywhere" || ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor > 6 ) ) )
                             {
                                 ret = SQLBindCol( stmt_col, 16, SQL_C_SLONG, &CharOctetLength, 0, &cbCharOctetLength );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -5119,7 +5109,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     hdbc_col = 0;
                                 }
                             }
-                            if( !result  && ( pimpl->m_subtype != L"Sybase SQL Anywhere" || ( pimpl->m_subtype == L"Sybase SQL Anywhere" && pimpl->m_versionMajor > 6 ) ) )
+                            if( !result  && ( pimpl.m_subtype != L"Sybase SQL Anywhere" || ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor > 6 ) ) )
                             {
                                 ret = SQLBindCol( stmt_col, 17, SQL_C_SLONG, &OrdinalPosition, 0, &cbOrdinalPosition );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -5135,7 +5125,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     hdbc_col = 0;
                                 }
                             }
-                            if( !result  && ( pimpl->m_subtype != L"Sybase SQL Anywhere" || ( pimpl->m_subtype == L"Sybase SQL Anywhere" && pimpl->m_versionMajor > 6 ) ) )
+                            if( !result  && ( pimpl.m_subtype != L"Sybase SQL Anywhere" || ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor > 6 ) ) )
                             {
                                 ret = SQLBindCol( stmt_col, 18, SQL_C_WCHAR, szIsNullable, 256, &cbIsNullable );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -5350,7 +5340,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                         stmt_ind = 0;
                                     }
                                 }
-                                if( pimpl->m_subtype != L"Oracle" )
+                                if( pimpl.m_subtype != L"Oracle" )
                                 {
                                     if( !result )
                                     {
@@ -5494,7 +5484,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 std::wstring tempSchemaName, tempTableName;
                 str_to_uc_cpy( tempSchemaName, schema_name );
                 str_to_uc_cpy( tempTableName, table_name );
-                if( pimpl->m_subtype == L"Microsoft SQL Server" && tempSchemaName == L"sys" )
+                if( pimpl.m_subtype == L"Microsoft SQL Server" && tempSchemaName == L"sys" )
                     tempTableName = tempSchemaName + L"." + tempTableName;
                 DatabaseTable *new_table = new DatabaseTable( tempTableName, tempSchemaName, fields, foreign_keys );
                 new_table->SetCatalog( catalog );
@@ -5517,7 +5507,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     else
                     {
                         new_table->SetIndexNames( indexes );
-                        pimpl->m_tables[catalog].push_back( new_table );
+                        pimpl.m_tables[catalog].push_back( new_table );
                         fields.erase( fields.begin(), fields.end() );
                         foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                         fields.clear();
@@ -5538,8 +5528,8 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     }
     else
     {
-        pimpl->m_tableNames.erase( std::remove( pimpl->m_tableNames.begin(), pimpl->m_tableNames.end(), tableName ), pimpl->m_tableNames.end() );
-        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); it++ )
+        pimpl.m_tableNames.erase( std::remove( pimpl.m_tableNames.begin(), pimpl.m_tableNames.end(), tableName ), pimpl.m_tableNames.end() );
+        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); it++ )
         {
             std::vector<DatabaseTable *> tableVec = (*it).second;
             for( std::vector<DatabaseTable *>::iterator it1 = tableVec.begin(); it1 < tableVec.end(); it1++ )
@@ -6161,7 +6151,7 @@ int ODBCDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
 int ODBCDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg)
 {
     std::wstring query;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT  'CREATE TABLE [' + so.name + '] (' + o.list + ')' + CASE WHEN tc.Constraint_Name IS NULL THEN '' ELSE 'ALTER TABLE ' + so.Name + ' ADD CONSTRAINT ' + tc.Constraint_Name  + ' PRIMARY KEY ' + ' (' + LEFT(j.List, Len(j.List)-1) + ')' END " \
         "from    sysobjects so" \
         "cross apply" \
@@ -6199,7 +6189,7 @@ int ODBCDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstr
         "ORDINAL_POSITION  FOR XML PATH('')) j (list)" \
         "where   xtype = 'U'" \
             "AND name    NOT IN ('dtproperties')";
-    if( pimpl->m_subtype == L"MySQL" )
+    if( pimpl.m_subtype == L"MySQL" )
         query = L"SHOW CREATE TABLE " + tableName;
     int result = 0;
     auto qry = new SQLWCHAR[query.length() + 2];
@@ -6280,7 +6270,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
             result = 1;
         else
         {
-            for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl->m_tables.begin(); it != pimpl->m_tables.end(); ++it )
+            for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); ++it )
             {
                 if( (*it).first == catalog &&
                    std::find_if( (*it).second.begin(), (*it).second.end(), [schemaName, tableName](DatabaseTable *table)
@@ -6324,8 +6314,8 @@ int ODBCDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring
             ret = SQLAllocHandle( SQL_HANDLE_STMT, hdbc, &m_hstmt );
             if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
             {
-                auto catalogDB = new SQLWCHAR[pimpl->m_dbName.length() + 2];
-                memset( catalogDB, '\0', pimpl->m_dbName.length() + 2 );
+                auto catalogDB = new SQLWCHAR[pimpl.m_dbName.length() + 2];
+                memset( catalogDB, '\0', pimpl.m_dbName.length() + 2 );
                 uc_to_str_cpy( catalogDB, catalog );
                 for( int i = 0; i < 5; i++ )
                 {
@@ -6369,7 +6359,7 @@ int ODBCDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring
                                 schema = cat;
                                 copy_uc_to_uc( schemaName, catalogName );
                             }
-                            pimpl->m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
+                            pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
                         }
                     }
                 }
@@ -6410,13 +6400,13 @@ int ODBCDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vec
     std::wstring query;
     int result = 0;
     SQLWCHAR *dbName = nullptr;
-    if( pimpl->m_subtype == L"Microsoft SQL Server" )
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT name FROM sys.databases;";
-    if( pimpl->m_subtype == L"PostgreSQL" )
+    if( pimpl.m_subtype == L"PostgreSQL" )
         query = L"SELECT datname FROM pg_database;";
-    if( pimpl->m_subtype == L"Sybase" || pimpl->m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
         query = L"SELECT name FROM sp_helpdb";
-    if( pimpl->m_subtype == L"mySQL" )
+    if( pimpl.m_subtype == L"mySQL" )
         query = L"SELECT schema_name FROM information_schema.schemata;";
     auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )

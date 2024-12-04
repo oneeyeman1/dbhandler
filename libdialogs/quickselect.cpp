@@ -239,9 +239,9 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
                 name = selectedTable;
             else
                 name = selectedTable.substr( pos + 1 );
-            for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++it )
+            for( std::map<std::wstring, std::vector<DatabaseTable *> >::const_iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++it )
             {
-                for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
+                for( std::vector<DatabaseTable *>::const_iterator it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
                 {
                     if( ( type == L"SQLite" && dataItem->schema + L"." + name == (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() ) ||
                         ( type != L"SQLite" && dataItem->catalog + L"." + dataItem->schema + L"." + name == (*it).first + L"." + (*it1)->GetSchemaName() + L"." + (*it1)->GetTableName() ) )
@@ -307,10 +307,10 @@ void QuickSelect::OnDisplayComment(wxMouseEvent &event)
         }
         else
         {
-            for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++it )
+            for( std::map<std::wstring, std::vector<DatabaseTable *> >::const_iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !found; ++it )
             {
                 wxString name( (*it).first );
-                for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
+                for( std::vector<DatabaseTable *>::const_iterator it1 = (*it).second.begin(); it1 < (*it).second.end() && !found; ++it1 )
                 {
                     if( stringClicked == name + L"." + (*it1)->GetTableName() )
                     {
@@ -516,7 +516,7 @@ void QuickSelect::OnOkButton(wxCommandEvent &WXUNUSED(event))
     auto position = name.Find( '.', true );
     if( position != wxNOT_FOUND )
         name = name.substr( position + 1 );
-    std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it;
+    std::map<std::wstring, std::vector<DatabaseTable *> >::const_iterator it;
     std::vector<DatabaseTable *> schema;
     for( it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end() && !catalogFound; ++it )
     {
@@ -606,9 +606,8 @@ void QuickSelect::OnCancelQuickSelect(wxCommandEvent &WXUNUSED(event))
         for( auto it = (*iter).second.begin(); it < (*iter).second.end(); ++it )
         {
             delete (*it);
-            (*it) = nullptr;
         }
     }
-    m_db->GetTableVector().m_tables.clear();
+    const_cast<Impl &>( m_db->GetTableVector() ).m_tables.clear();
     EndModal( wxID_CANCEL );
 }

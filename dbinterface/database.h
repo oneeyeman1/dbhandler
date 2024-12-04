@@ -351,6 +351,28 @@ private:
     TableProperties m_props;
 };
 
+struct /*Database::*/Impl
+{
+    const std::wstring m_desktop;
+    static std::mutex my_mutex;
+    std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
+    std::map<std::wstring, std::vector<TableDefinition> > m_tableDefinitions;
+    std::vector<std::wstring> m_tableNames;
+    std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
+    std::wstring m_serverVersion;
+    std::wstring m_pgLogFile, m_pgLogDir;
+    unsigned long m_versionMajor, m_versionMinor, m_versionRevision;
+    unsigned long m_clientVersionMajor, m_clientVersionMinor, m_clientVersionRevision;
+    const std::wstring &GetConnectedUser() const { return m_connectedUser; };
+    void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
+    const std::wstring &GetDatabaseType() const { return m_type; };
+    const std::wstring &GetDatabaseSubtype() const { return m_subtype; };
+    void PushTableName(const std::wstring tableName) { m_tableNames.push_back( tableName ); };
+    const std::vector<std::wstring> &GetTableNames() const { return m_tableNames; };
+    const std::wstring &GetPostgreLogFile() const { return m_pgLogFile; };
+    const std::wstring &GetPostgresLogDir() const { return m_pgLogDir; };
+};
+
 #ifdef WIN32
 class __declspec(dllexport) Database
 #else
@@ -358,8 +380,8 @@ class Database
 #endif
 {
 protected:
-    struct Impl;
-    Impl *pimpl;
+    Impl pimpl;
+    const int m_osId;
     bool connectToDatabase, m_isConnected;
     unsigned int m_numOfTables, m_fieldsInRecordSet;
     void ltrim(std::wstring &str) { str.erase( str.begin(), std::find_if( str.begin(), str.end(), [](int ch) { return !std::isspace( ch ); } ) ); };
@@ -373,8 +395,8 @@ protected:
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
     virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) = 0;
 public:
-    virtual ~Database() = 0;
-    Impl &GetTableVector() const { return *pimpl; };
+    Database(const int osId, const std::wstring &desktop) : m_osId( osId ), pimpl{ desktop } { }
+    const Impl &GetTableVector() const { return pimpl; };
     bool IsConnected() { return m_isConnected; }
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
@@ -401,31 +423,5 @@ public:
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) = 0;
     virtual int AddUpdateFormat() = 0;
 };
-
-struct Database::Impl
-{
-    static std::mutex my_mutex;
-    std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
-    std::map<std::wstring, std::vector<TableDefinition> > m_tableDefinitions;
-    std::vector<std::wstring> m_tableNames;
-    std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
-    std::wstring m_serverVersion;
-    std::wstring m_pgLogFile, m_pgLogDir;
-    unsigned long m_versionMajor, m_versionMinor, m_versionRevision;
-    unsigned long m_clientVersionMajor, m_clientVersionMinor, m_clientVersionRevision;
-    const std::wstring &GetConnectedUser() const { return m_connectedUser; };
-    void SetConnectedUser(const std::wstring &user) { m_connectedUser = user; };
-    const std::wstring &GetDatabaseType() const { return m_type; };
-    const std::wstring &GetDatabaseSubtype() const { return m_subtype; };
-    void PushTableName(const std::wstring tableName) { m_tableNames.push_back( tableName ); };
-    const std::vector<std::wstring> &GetTableNames() const { return m_tableNames; };
-    const std::wstring &GetPostgreLogFile() const { return m_pgLogFile; };
-    const std::wstring &GetPostgresLogDir() const { return m_pgLogDir; };
-};
-
-inline Database::~Database()
-{
-    delete pimpl;
-}
 
 #endif
