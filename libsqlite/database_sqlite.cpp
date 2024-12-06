@@ -819,7 +819,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
             {
                 command = L"INSERT INTO \"sys.abcattbl\" VALUES( \'";
                 command += std::to_wstring( m_osId );
-                command + L"\', ";
+                command += L"\', ";
                 command += tableName;
                 command += L"\', ";
                 istr << tableId;
