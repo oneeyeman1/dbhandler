@@ -1359,17 +1359,25 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         }
         if( !result )
         {
+            SQLWCHAR temp[50];
             if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" ) // MS SQL SERVER
-                ret = SQLExecDirect( m_hstmt, L"COMMIT TRANSACTION sysobjects", SQL_NTS );
+            {
+                uc_to_str_cpy( temp, L"COMMIT TRANSACTION sysobjects" );
+            }
             else
-                ret = SQLExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
+            {
+                uc_to_str_cpy( temp, L"COMMIT" );
+            }
+            ret = SQLExecDirect( m_hstmt, temp, SQL_NTS );
         }
         else
         {
+            SQLWCHAR temp[50];
             if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" ) // MS SQL SERVER
-                ret = SQLExecDirect( m_hstmt, L"ROLLACK TRANSACTIN sysobjects", SQL_NTS );
+                uc_to_str_cpy( temp, L"ROLLBACK TRANSACTION sysobjects" );
             else
-                ret = SQLExecDirect( m_hstmt, L"ROLLACK", SQL_NTS );
+                uc_to_str_cpy( temp, L"ROLLBACK" );
+            ret = SQLExecDirect( m_hstmt, temp, SQL_NTS );
         }
         if( result || ( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO ) )
         {
@@ -1775,8 +1783,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         copy_uc_to_uc( schemaName, catalogName );
                     }
                     SQLSMALLINT dataType, decimalDigits, nullable;
-                    SQLINTEGER SQLLenIndicator;
-                    SQLUINTEGER paramSize;
+                    SQLLEN SQLLenIndicator;
+                    SQLULEN paramSize;
                     ret = SQLDescribeParam( stmt, 1, &dataType, &paramSize, &decimalDigits, &nullable );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
