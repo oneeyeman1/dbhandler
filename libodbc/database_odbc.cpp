@@ -1043,8 +1043,8 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcate_x\' AND object_id = OBJECT_ID( \'abcatedt') ) CREATE UNIQUE INDEX abcate_f ON abcatedt( abe_name ASC, abe_seqn ASC ) WITH (IGNORE_DUP_KEY = ON);" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatfmt' AND xtype='U') CREATE TABLE \"abcatfmt\"(abf_name varchar(30) NOT NULL, abf_frmt varchar(254), abf_type smallint, abf_cntr integer PRIMARY KEY( abf_name ));" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatf_x\' AND object_id = OBJECT_ID( \'abcatfmt\') ) CREATE UNIQUE INDEX abcarf_x ON abcatfmt( abf_name ASC ) WITH (IGNORE_DUP_KEY = ON);" );
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE \"abcattbl\"(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254) PRIMARY KEY( abt_tnam, abt_ownr ));" );
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatt_x\' AND object_id = OBJECT_ID( \'abcattbl\' )) CREATE UNIQUE INDEX abcatt_x ON abcattbl( abt_tnam ASC, abt_ownr ASC ) WITH (IGNORE_DUP_KEY = ON);");
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE \"abcattbl\"(abt_os integer, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254) PRIMARY KEY( abt_tnam, abt_ownr ));" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatt_x\' AND object_id = OBJECT_ID( \'abcattbl\' )) CREATE UNIQUE INDEX abcatt_x ON abcattbl( abt_os ASC, abt_tnam ASC, abt_ownr ASC ) WITH (IGNORE_DUP_KEY = ON);");
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatvld' AND xtype='U') CREATE TABLE \"abcatvld\"(abv_name varchar(30) NOT NULL, abv_vald varchar(254), abv_type smallint, abv_cntr integer, abv_msg varchar(254) PRIMARY KEY( abv_name ));" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatv_x\' AND object_id = OBJECT_ID( \'abcatvld\' ) ) CREATE UNIQUE INDEX abcatv_x ON abcatvld( abv_name ASC ) WITH (IGNORE_DUP_KEY = ON);" );
         queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'(General)\', \'(General)\', 81, 0 );" );
@@ -1091,15 +1091,45 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
-        queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
+        queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_os integer, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));" );
         if( pimpl.m_subtype == L"MySQL" )
         {
             queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatc_x\' AND table_name=\'abcatcol\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\"));" );
             queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcate_x\' AND table_name=\'abcatedt\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcate_x ON abcatedt(abe_name ASC, abe_seqn ASC)\"));" );
             queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatf_x\' AND table_name=\'abcatfmt\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatf_x ON abcatfmt(abf_name ASC)\"));" );
-            queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatt_x\' AND table_name=\'abcattbl\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatt_x ON abcattbl(abt_tnam ASC, abt_ownr ASC)\"));" );
+            queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatt_x\' AND table_name=\'abcattbl\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatt_x ON abcattbl(abt_os ASC, abt_tnam ASC, abt_ownr ASC)\"));" );
             queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatv_x\' AND table_name=\'abcatvld\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatv_x ON abcatvld(abv_name ASC)\"));" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'(General)\', \'(General)\', 81, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'0\', \'0\', 81, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'0.00\', \'0.00\', 81, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'#.##0\', \'#.##0\', 81, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'#.##0,00\', \'#.##0,00\', 81, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'$#.##0;[$#.##0]\', \'$#.##0;[$#.##0]\', 81, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'$#.##0;|RED|[$#.##0]\', \'$#.##0;|RED|[$#.##0]\', 81, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'$#.##0,00;[$#.##0,00]\', \'$#.##0,00;[$#.##0,00]\', 81, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'$#.##0,00;|RED|[$#.##0,00]\', \'$#.##0,00;|RED|[$#.##0,00]\', 81, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'0%\', \'0%\', 81, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'0.00%\', \'0.00%\', 81, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'0.00E+00\', \'0.00E+00\', 81, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'m/d/yy\', \'m/d/yy\', 84, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'d-mmm-yy\', \'d-mmm-yy\', 84, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'d-mmm\', \'d-mmm\', 84, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'mmm-yy\', \'mmm-yy\', 84, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'h:mm AM/PM\', \'h:mm AM/PM\', 84, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'h:mm:ss AM/PM\', \'h:mm:ss AM/PM\', 84, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'h:mm:ss\', \'h:mm:ss\', 84, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'Phone_format\', \'(@@@)) @@@-@@@@\', 80, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'m-d-yy\', \'m-d-yy\', 84, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'soc_sec_number\', \'@@@-@@-@@@@\', 80, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'mm/dd/yyyy\', \'mm/dd/yyyy\', 82, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'salary\', \'$###,##0.00\', 81, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'mm-dd-yyyy\', \'mm-dd-yyyy\', 82, 0 );" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatvld\" VALUES( \'Multple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \');" );
+                queries.push_back( L"INSERT IGNORE INTO \"abcatvld\" VALUES( \'Positive_number\', \'CHECK( @column > 0 )\', 81, 6, \'Sorry! The value must be greater than 0\');");
+                queries.push_back( L"INSERT IGNORE INTO \"abcatvld\" VALUES( \'Y_or_N\', \'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )\', 81, 6, \'\');");
+                queries.push_back( L"INSERT IGNORE INTO \"abcatvld\" VALUES( \'must_be_numer\', \'CHECK( isNumer( @column )\', 80, 0, \'\');");
+                queries.push_back( L"INSERT IGNORE INTO \"abcatvld\" VALUES( \'valid status\', \'CHECK( @status == \"ALT\" )\', 80, 3, \'\');");
         }
         else
         {
@@ -1108,7 +1138,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatc_x ON abcatcol( abc_tnam, abc_ownr, abc_cnam );" );
                 queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcate_x ON abcatedt( abe_name, abe_seqn );" );
                 queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatf_x ON abcatfmt( abf_name );" );
-                queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl( abt_name, abt_ownr );" );
+                queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl( abt_os, abt_name, abt_ownr );" );
                 queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatv_x ON abcatvld( abv_name );" );
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'(General)\', \'(General)\', 81, 0 ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0\', \'0\', 81, 0 ) ON CONFLICT DO NOTHING;" );
@@ -1146,7 +1176,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatc_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatc_x\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC); END IF; END;" );
                 queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcate_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcate_x\" ON \"abcatedt\"(\"abe_name\" ASC, \"abe_seqn\" ASC); END IF; END;" );
                 queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatf_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatf_x\" ON \"abcatfmt\"(\"abf_tnam\" ASC); END IF; END;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatt_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatt_x\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatt_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatt_x\" ON \"abcattbl\"(\"abt_os\" ASC, \"abt_tnam\" ASC, \"abt_ownr\" ASC); END IF; END;" );
                 queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatv_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatv_x\" ON \"abcatvld\"(\"abv_name\" ASC); END IF; END;" );
                 queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'(General)\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'(General)\', \'(General)\', 81, 0 ); END IF; END;" );
                 queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'0\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'0\', \'0\', 81, 0 ); END IF; END;" );
@@ -1187,7 +1217,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatcol' AND type = 'U') EXECUTE(\"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))\")" );
         queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatedt' AND type = 'U') EXECUTE(\"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ))\")" );
         queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatfmt' AND type = 'U') EXECUTE(\"CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ))\")" );
-        queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcattbl' AND type = 'U') EXECUTE(\"CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))\")" );
+        queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcattbl' AND type = 'U') EXECUTE(\"CREATE TABLE abcattbl(abt_os integer, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))\")" );
         queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatvld' AND type = 'U') EXECUTE(\"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))\")" );
         queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name='abcattbl' AND i.name='abcattbl_tnam_ownr') EXECUTE(\"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC)\")" );
         queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name='abcatcol' AND i.name='abcatcol_tnam_ownr_cnam') EXECUTE(\"CREATE INDEX abcatcol_tnam_ownr_cnam ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\")" );
@@ -1200,12 +1230,12 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))" );
             queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ))" );
             queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ))" );
-            queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))" );
+            queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_os integer, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))" );
             queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))" );
             queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);" );
             queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcate_x ON abcatedt(abe_tnam ASC, abe_seqn ASC);" );
             queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatf_x ON abcatfmt(abf_name ASC);" );
-            queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl(abt_tnam ASC, abt_ownr ASC);" );
+            queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl(abt_os ASC, abt_tnam ASC, abt_ownr ASC);" );
             queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatv_x ON abcatvld(abv_name ASC);" );
         }
         else
@@ -1217,7 +1247,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcatfmt'" );
             queries.push_back( L"CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ))" );
             queries.push_back( L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcattbl'" );
-            queries.push_back( L"CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))" );
+            queries.push_back( L"CREATE TABLE abcattbl(abt_os, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))" );
             queries.push_back( L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcatvld'" );
             queries.push_back( L"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))" );
             queries.push_back( L"SELECT 1 FROM dbo.sysindexes WHERE name = \'pbcatc_x\' AND tname = \'abcatcol\';" );
@@ -1227,7 +1257,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"SELECT 1 FROM dbo.sysindexes WHERE name = \'pbcatf_x\' AND tname = \'abcatfmt\';" );
             queries.push_back( L"CREATE UNIQUE INDEX abcatf_x ON abcatfmt( abf_name ASC );" );
             queries.push_back( L"SELECT 1 FROM sysindexes WHERE tname = \'abcattbl\' AND iname = \'abcatt_x\';" );
-            queries.push_back( L"CREATE UNIQUE INDEX abcatt_x ON abcattbl( abt_tnam ASC, abt_ownr ASC );" );
+            queries.push_back( L"CREATE UNIQUE INDEX abcatt_x ON abcattbl( abt_os ASC, abt_tnam ASC, abt_ownr ASC );" );
             queries.push_back( L"SELECT 1 FROM sysindexes WHERE tname = \'abcatvld\' AND iname = \'abcatv_x\';" );
             queries.push_back( L"CREATE UNIQUE INDEX abcatv_x ON abcatvld( abv_name ASC, abt_ownr ASC );" );
         }
@@ -1241,7 +1271,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatfmt' )" );
         queries.push_back( L"CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
         queries.push_back( L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcattbl' )" );
-        queries.push_back( L"CREATE TABLE abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
+        queries.push_back( L"CREATE TABLE abcattbl(abt_os integer, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
         queries.push_back( L"SELECT 1 FROM all_objects WHERE object_name = UPPER( 'abcatvld' )" );
         queries.push_back( L"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));" );
         queries.push_back( L"SELECT 1 FROM all_indexes WHERE table_name = UPPER( 'abcattbl' ) AND index_name = UPPER( 'abcattbl_tnam_ownr' );" );
@@ -1583,9 +1613,48 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::vector<std::wstring> indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
-#ifdef _WIN32
-        query2 = L"INSERT INTO \"abcattbl\" VALUES( ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
-#endif
+    if( m_osId == ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+    {
+        if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
+            query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        if( pimpl.m_subtype == L"MySQL" )
+            query2 = L"INSERT IGNORE INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        if( pimpl.m_subtype == L"PostgreSQL" )
+        {
+            if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
+                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            else
+                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        }
+    }
+    else if( m_osId == ( 1 << 0 | 1 << 1 ) ) // Mac
+    {
+        if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
+            query2 = L"INSERT INTO \'abcattbl\' VALUES( 3, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        if( pimpl.m_subtype == L"MySQL" )
+            query2 = L"INSERT IGNORE INTO \'abcattbl\' VALUES( 3, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        if( pimpl.m_subtype == L"PostgreSQL" )
+        {
+            if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
+                query2 = L"INSERT INTO \'abcattbl\' VALUES( 3, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            else
+                query2 = L"INSERT INTO \'abcattbl\' VALUES( 3, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        }
+    }
+    else // *nix
+    {
+        if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
+            query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        if( pimpl.m_subtype == L"MySQL" )
+            query2 = L"INSERT IGNORE INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        if( pimpl.m_subtype == L"PostgreSQL" )
+        {
+            if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
+                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON COMFLCT DO NOTHING;";
+            else
+                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        }
+    }
     SQLWCHAR *catalogName = nullptr, *schemaName = nullptr, *tableName = nullptr, *qry2 = nullptr;
 //    SQLSMALLINT numCols = 0;
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
@@ -1979,7 +2048,7 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
 
 int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
+    int result = 0, id;
     SQLSMALLINT OutConnStrLen;
     SQLHDBC hdbc_tableProp = 0;
     SQLHSTMT stmt_tableProp = 0;
@@ -1994,6 +2063,14 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLLEN cbDataFontCharacterSet = 0, cbHeadingFontCharacterSet = 0, cbLabelFontCharacterSet = 0, cbDataFontPixelSize = 0, cbHeadingFontPixelSize = 0, cbLabelFontPixelSize = 0;
     std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fstr, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fstr, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fstr, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE rtrim(abt_tnam) = ";
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName(), ownerName = table->GetTableOwner();
+    if( m_osId == ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+        id = 0;
+    else if( m_osId == ( 1 << 0 | 1 << 1 ) ) // Mac
+        id = 3;
+    else // *nix
+    {
+        id = 2;
+    }
     if( ownerName.empty() && !schemaName.empty() )
         ownerName = schemaName;
     std::wstring t = schemaName + L".";
@@ -2004,7 +2081,9 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     query += L" AND rtrim(abt_ownr) = ";
     query += L"\'";
     query += ownerName;
-    query += L"\';";
+    query += L"\' AND abt_os = ";
+    query += std::to_wstring( id );
+    query += L";";
     qry = new SQLWCHAR[query.length() + 2];
     memset( qry, '\0', query.size() + 2 );
     uc_to_str_cpy( qry, query );
