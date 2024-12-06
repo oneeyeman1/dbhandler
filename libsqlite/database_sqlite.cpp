@@ -366,10 +366,10 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = \'table\' OR type = \'view\';";
     /*\"abt_tnam\", \"abt_tid\", \"abt_ownr\", \"abd_fhgt\", \"abd_fwgt\", \"abd_fitl\", \"abd_funl\", \"abd_fstr\", \"abd_fchr\", \"abd_fptc\" smallint, \"abd_ffce\" char(18), \"abh_fhgt\" smallint, \"abh_fwgt\" smallint, \"abh_fitl\" char(1), \"abh_funl\" integer, \"abh_fstr\" integer, \"abh_fchr\" smallint, \"abh_fptc\" smallint, \"abh_ffce\" char(18), \"abl_fhgt\" smallint, \"abl_fwgt\" smallint, \"abl_fitl\" char(1), \"abl_funl\" integer, \"abl_fstr\" integer, \"abl_fchr\" smallint, \"abl_fptc\" smallint, \"abl_ffce\" char(18), \"abt_cmnt\" char(254), PRIMARY KEY( \"abt_tnam\", \"abt_ownr\" ))*/
     std::wstring query2;
-    if( m_osId == ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+    if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
         query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
-    else if( m_osId == ( 1 << 0 | 1 << 1 ) ) // Mac
-        query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+    else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
+        query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 3, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
     else // *nix
     {
         query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";

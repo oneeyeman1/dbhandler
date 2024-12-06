@@ -1621,7 +1621,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::vector<std::wstring> indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
-    if( m_osId == ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+    if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
     {
         if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
             query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
@@ -1635,7 +1635,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
         }
     }
-    else if( m_osId == ( 1 << 0 | 1 << 1 ) ) // Mac
+    else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
     {
         if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
             query2 = L"INSERT INTO \'abcattbl\' VALUES( 3, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
