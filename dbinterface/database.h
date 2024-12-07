@@ -20,6 +20,11 @@
 #define BLOB_TYPE    4
 #define WSTRING_TYPE 5
 
+#define WINDOWS 0
+#define GTK     1
+#define OSX     2
+#define QT      3
+
 enum FK_ONUPDATE
 {
     NO_ACTION_UPDATE,

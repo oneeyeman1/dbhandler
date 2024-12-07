@@ -372,7 +372,11 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 3, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
     else // *nix
     {
-        query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+#ifdef __WXGTK__
+        query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 2, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+#else
+        query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 4, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+#endif // __WXGTK__
     }
     res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), (int) query2.length(), &stmt1, 0 );
     if( res != SQLITE_OK )
@@ -546,12 +550,16 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
 {
     int id;
     if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
-        id = 0;
+        id = WINDOWS;
     else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
-        id = 3;
+        id = OSX;
     else // *nix
     {
-        id = 0;
+#ifdef __WXGTK__
+        id = GTK;
+#else
+        id = QT;
+#endif // __WXGTK__
     }
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
@@ -663,6 +671,19 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
 
 int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
+    int id;
+    if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+        id = WINDOWS;
+    else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
+        id = OSX;
+    else // *nix
+    {
+#ifdef __WXGTK__
+        id = GTK;
+#else
+        id = QT;
+#endif // __WXGTK__
+    }
     std::wstring errorMessage, query;
     std::wostringstream istr;
     bool exist;
@@ -690,7 +711,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
             if( exist )
             {
                 command = L"UPDATE \"sys.abcattbl\" SET \"abt_os\" =";
-                command += std::to_wstring( m_osId );
+                command += std::to_wstring( id );
                 command += L", \"abt_tnam\" = \'";
                 command += tableName;
                 command += L"\', \"abt_tid\" = ";
@@ -818,7 +839,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
             else
             {
                 command = L"INSERT INTO \"sys.abcattbl\" VALUES( \'";
-                command += std::to_wstring( m_osId );
+                command += std::to_wstring( id );
                 command += L"\', ";
                 command += tableName;
                 command += L"\', ";
@@ -973,6 +994,19 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
 
 bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
+    int id;
+    if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+        id = WINDOWS;
+    else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
+        id = OSX;
+    else // *nix
+    {
+#ifdef __WXGTK__
+        id = GTK;
+#else
+        id = QT;
+#endif // __WXGTK__
+    }
     bool result = false;
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
@@ -988,7 +1022,7 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
             res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( owner.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
             if( res == SQLITE_OK )
             {
-                res = sqlite3_bind_int( stmt, 3, m_osId );
+                res = sqlite3_bind_int( stmt, 3, id );
                 if( res == SQLITE_OK )
                 {
                     res = sqlite3_step( stmt );
