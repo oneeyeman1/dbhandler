@@ -475,7 +475,7 @@ void MyErdTable::SetCommonProps(wxSFShapeBase* shape)
     shape->SetHBorder( 0 );
 }
 
-const DatabaseTable *MyErdTable::GetTable()
+DatabaseTable *MyErdTable::GetTable()
 {
     return m_table;
 }
@@ -506,3 +506,7 @@ wxAny &MyErdTable::GetProperties()
     return any;
 }
 
+void MyErdTable::SetProperties(TableProperties properties)
+{
+    any = properties;
+}

@@ -13,7 +13,7 @@ public:
     virtual ~MyErdTable();
     void UpdateTable();
     void SetTableComment(const wxString &comment);
-    const WXEXPORT DatabaseTable *GetTable();
+    WXEXPORT DatabaseTable *GetTable();
     wxSFTextShape *GetLabel();
     GridTableShape *GetFieldGrid();
     void DisplayTypes(bool display, int type)
@@ -30,6 +30,7 @@ public:
     const wxString &GetCatalogName() const { return m_catalogName; }
     const wxString &GetSchemaName() const { return m_schemaName; }
     const wxString &GetTableName() const { return m_tableName; }
+    void SetProperties(TableProperties properties);
     virtual int ApplyProperties(const wxAny &any) wxOVERRIDE;
     virtual wxAny &GetProperties() wxOVERRIDE;
 protected:

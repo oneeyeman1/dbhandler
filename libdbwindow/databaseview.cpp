@@ -1490,6 +1490,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
             std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
             res = db->GetTableProperties( dbTable, errors );
         }
+        erdTable->SetProperties( erdTable->GetTable()->GetTableProperties() );
         std::unique_ptr<PropertiesHandler> ptr( erdTable );
         propertiesPtr = std::move( ptr );
         propertiesPtr->SetDatabase( db );
