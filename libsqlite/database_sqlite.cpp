@@ -545,9 +545,9 @@ bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wst
 int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     int id;
-    if( m_osId == ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+    if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
         id = 0;
-    else if( m_osId == ( 1 << 0 | 1 << 1 ) ) // Mac
+    else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
         id = 3;
     else // *nix
     {
@@ -575,55 +575,55 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         res = sqlite3_step( stmt );
                         if( res == SQLITE_ROW )
                         {
-                            table->GetTableProperties().m_dataFontSize = sqlite3_column_int( stmt, 3 );
-                            table->GetTableProperties().m_dataFontWeight = sqlite3_column_int( stmt, 4 );
-                            char *italic = (char *) sqlite3_column_text( stmt, 5 );
+                            table->GetTableProperties().m_dataFontSize = sqlite3_column_int( stmt, 4 );
+                            table->GetTableProperties().m_dataFontWeight = sqlite3_column_int( stmt, 5 );
+                            char *italic = (char *) sqlite3_column_text( stmt, 6 );
                             if( italic )
                                 table->GetTableProperties().m_dataFontItalic = italic[0] == 'Y';
-                            int underline = sqlite3_column_int( stmt, 6 );
+                            int underline = sqlite3_column_int( stmt, 7 );
                             if( underline > 0 )
                                 table->GetTableProperties().m_dataFontUnderline = true;
-                            int strikethrough = sqlite3_column_int( stmt, 7 );
+                            int strikethrough = sqlite3_column_int( stmt, 8 );
                             if( strikethrough > 0 )
                                 table->GetTableProperties().m_dataFontStrikethrough = true;
-                            table->GetTableProperties().m_dataFontCharacterSet = sqlite3_column_int( stmt, 8 );
-                            table->GetTableProperties().m_dataFontPixelSize = sqlite3_column_int( stmt, 9 );
-                            dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 10 );
+                            table->GetTableProperties().m_dataFontCharacterSet = sqlite3_column_int( stmt, 9 );
+                            table->GetTableProperties().m_dataFontPixelSize = sqlite3_column_int( stmt, 10 );
+                            dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 11 );
                             if( dataFontName )
                                 table->GetTableProperties().m_dataFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName );
-                            table->GetTableProperties().m_headingFontSize = sqlite3_column_int( stmt, 11 );
-                            table->GetTableProperties().m_headingFontWeight = sqlite3_column_int( stmt, 12 );
-                            italic = (char *) sqlite3_column_text( stmt, 13 );
+                            table->GetTableProperties().m_headingFontSize = sqlite3_column_int( stmt, 12 );
+                            table->GetTableProperties().m_headingFontWeight = sqlite3_column_int( stmt, 13 );
+                            italic = (char *) sqlite3_column_text( stmt, 14 );
                             if( italic )
                                 table->GetTableProperties().m_headingFontItalic = italic[0] == 'Y';
-                            underline = sqlite3_column_int( stmt, 14 );
+                            underline = sqlite3_column_int( stmt, 15 );
                             if( underline > 0 )
                                 table->GetTableProperties().m_headingFontUnderline = true;
-                            strikethrough = sqlite3_column_int( stmt, 15 );
+                            strikethrough = sqlite3_column_int( stmt, 16 );
                             if( strikethrough > 0 )
                                 table->GetTableProperties().m_headingFontStrikethrough = true;
-                            table->GetTableProperties().m_headingFontCharacterSet = sqlite3_column_int( stmt, 16 );
-                            table->GetTableProperties().m_headingFontPixelSize = sqlite3_column_int( stmt, 17 );
-                            headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 18 );
+                            table->GetTableProperties().m_headingFontCharacterSet = sqlite3_column_int( stmt, 17 );
+                            table->GetTableProperties().m_headingFontPixelSize = sqlite3_column_int( stmt, 18 );
+                            headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 19 );
                             if( headingFontName )
                                 table->GetTableProperties().m_headingFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) headingFontName );
-                            table->GetTableProperties().m_labelFontSize = sqlite3_column_int( stmt, 19 );
-                            table->GetTableProperties().m_labelFontWeight = sqlite3_column_int( stmt, 20 );
-                            italic = (char *) sqlite3_column_text( stmt, 21 );
+                            table->GetTableProperties().m_labelFontSize = sqlite3_column_int( stmt, 20 );
+                            table->GetTableProperties().m_labelFontWeight = sqlite3_column_int( stmt, 21 );
+                            italic = (char *) sqlite3_column_text( stmt, 22 );
                             if( italic )
                                 table->GetTableProperties().m_labelFontItalic = italic[0] == 'Y';
-                            underline = sqlite3_column_int( stmt, 22 );
+                            underline = sqlite3_column_int( stmt, 23 );
                             if( underline > 0 )
                                 table->GetTableProperties().m_labelFontUnderline = true;
-                            strikethrough = sqlite3_column_int( stmt, 23 );
+                            strikethrough = sqlite3_column_int( stmt, 24 );
                             if( strikethrough > 0 )
                                 table->GetTableProperties().m_labelFontStrikethrough = true;
-                            table->GetTableProperties().m_labelFontCharacterSer = sqlite3_column_int( stmt, 24 );
-                            table->GetTableProperties().m_labelFontPixelSize = sqlite3_column_int( stmt, 25 );
-                            labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 26 );
+                            table->GetTableProperties().m_labelFontCharacterSer = sqlite3_column_int( stmt, 25 );
+                            table->GetTableProperties().m_labelFontPixelSize = sqlite3_column_int( stmt, 26 );
+                            labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 27 );
                             if( labelFontName )
                                 table->GetTableProperties().m_labelFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) labelFontName );
-                            table->GetTableProperties().m_comment = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 27 ) );
+                            table->GetTableProperties().m_comment = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 28 ) );
                         }
                         else if( res == SQLITE_DONE )
                             break;

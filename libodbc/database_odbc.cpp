@@ -2127,7 +2127,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                 }
                 else
                 {
-                    ret = SQLBindCol( stmt_tableProp, 4, SQL_C_SSHORT, &dataFontSize, 0, &cbDataFontSize );
+                    ret = SQLBindCol( stmt_tableProp, 5, SQL_C_SSHORT, &dataFontSize, 0, &cbDataFontSize );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2135,7 +2135,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 5, SQL_C_SSHORT, &dataFontWeight, 0, &cbDataFontWeight );
+                        ret = SQLBindCol( stmt_tableProp, 6, SQL_C_SSHORT, &dataFontWeight, 0, &cbDataFontWeight );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2144,7 +2144,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 6, SQL_C_CHAR, &dataFontItalic, 2, &cbDataFontItalic );
+                        ret = SQLBindCol( stmt_tableProp, 7, SQL_C_CHAR, &dataFontItalic, 2, &cbDataFontItalic );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2153,7 +2153,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 7, SQL_C_SSHORT, &dataFontUnderline, 2, &cbDataFontUnderline );
+                        ret = SQLBindCol( stmt_tableProp, 8, SQL_C_SSHORT, &dataFontUnderline, 2, &cbDataFontUnderline );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2162,7 +2162,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 8, SQL_C_SSHORT, &dataFontStriken, 2, &cbDataFontStriken );
+                        ret = SQLBindCol( stmt_tableProp, 9, SQL_C_SSHORT, &dataFontStriken, 2, &cbDataFontStriken );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2171,7 +2171,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 9, SQL_C_SSHORT, &dataFontCharacterSet, 0, &cbDataFontCharacterSet );
+                        ret = SQLBindCol( stmt_tableProp, 10, SQL_C_SSHORT, &dataFontCharacterSet, 0, &cbDataFontCharacterSet );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2180,7 +2180,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 10, SQL_C_SSHORT, &dataFontPixelSize, 0, &cbDataFontPixelSize );
+                        ret = SQLBindCol( stmt_tableProp, 11, SQL_C_SSHORT, &dataFontPixelSize, 0, &cbDataFontPixelSize );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2189,7 +2189,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 11, SQL_C_WCHAR, &dataFontName, 44, &cbDataFontName );
+                        ret = SQLBindCol( stmt_tableProp, 12, SQL_C_WCHAR, &dataFontName, 44, &cbDataFontName );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2198,7 +2198,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 12, SQL_C_SSHORT, &headingFontSize, 0, &cbHeadingFontSize );
+                        ret = SQLBindCol( stmt_tableProp, 13, SQL_C_SSHORT, &headingFontSize, 0, &cbHeadingFontSize );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2207,7 +2207,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 13, SQL_C_SSHORT, &headingFontWeight, 0, &cbHeadingFontWeight );
+                        ret = SQLBindCol( stmt_tableProp, 14, SQL_C_SSHORT, &headingFontWeight, 0, &cbHeadingFontWeight );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2216,7 +2216,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 14, SQL_C_CHAR, &headingFontItalic, 2, &cbHeadingFontItalic );
+                        ret = SQLBindCol( stmt_tableProp, 15, SQL_C_CHAR, &headingFontItalic, 2, &cbHeadingFontItalic );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2225,7 +2225,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 15, SQL_C_SSHORT, &headingFontUnderline, 2, &cbHeadingFontUnderline );
+                        ret = SQLBindCol( stmt_tableProp, 16, SQL_C_SSHORT, &headingFontUnderline, 2, &cbHeadingFontUnderline );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2234,7 +2234,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 16, SQL_C_SSHORT, &headingFontStriken, 2, &cbHeadingFontStriken );
+                        ret = SQLBindCol( stmt_tableProp, 17, SQL_C_SSHORT, &headingFontStriken, 2, &cbHeadingFontStriken );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2243,7 +2243,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 17, SQL_C_SSHORT, &headingFontCharacterSet, 0, &cbHeadingFontCharacterSet );
+                        ret = SQLBindCol( stmt_tableProp, 18, SQL_C_SSHORT, &headingFontCharacterSet, 0, &cbHeadingFontCharacterSet );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2252,7 +2252,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 18, SQL_C_SSHORT, &headingFontPixelSize, 0, &cbHeadingFontPixelSize );
+                        ret = SQLBindCol( stmt_tableProp, 19, SQL_C_SSHORT, &headingFontPixelSize, 0, &cbHeadingFontPixelSize );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2261,7 +2261,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 19, SQL_C_WCHAR, &headingFontName, 44, &cbHeadingFontName );
+                        ret = SQLBindCol( stmt_tableProp, 20, SQL_C_WCHAR, &headingFontName, 44, &cbHeadingFontName );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2270,7 +2270,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 20, SQL_C_SSHORT, &labelFontSize, 0, &cbLabelFontSize );
+                        ret = SQLBindCol( stmt_tableProp, 21, SQL_C_SSHORT, &labelFontSize, 0, &cbLabelFontSize );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2279,7 +2279,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 21, SQL_C_SSHORT, &labelFontWeight, 0, &cbLabelFontWeight );
+                        ret = SQLBindCol( stmt_tableProp, 22, SQL_C_SSHORT, &labelFontWeight, 0, &cbLabelFontWeight );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2288,7 +2288,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 22, SQL_C_CHAR, &labelFontItalic, 3, &cbLabelFontItalic );
+                        ret = SQLBindCol( stmt_tableProp, 23, SQL_C_CHAR, &labelFontItalic, 3, &cbLabelFontItalic );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2297,7 +2297,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 23, SQL_C_SSHORT, &labelFontUnderline, 3, &cbLabelFontUnderline );
+                        ret = SQLBindCol( stmt_tableProp, 24, SQL_C_SSHORT, &labelFontUnderline, 3, &cbLabelFontUnderline );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2306,7 +2306,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 24, SQL_C_SSHORT, &labelFontStriken, 3, &cbLabelFontStriken );
+                        ret = SQLBindCol( stmt_tableProp, 25, SQL_C_SSHORT, &labelFontStriken, 3, &cbLabelFontStriken );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2315,7 +2315,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 25, SQL_C_SSHORT, &labelFontCharacterSet, 0, &cbLabelFontCharacterSet );
+                        ret = SQLBindCol( stmt_tableProp, 26, SQL_C_SSHORT, &labelFontCharacterSet, 0, &cbLabelFontCharacterSet );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2324,7 +2324,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 26, SQL_C_SSHORT, &labelFontPixelSize, 0, &cbLabelFontPixelSize );
+                        ret = SQLBindCol( stmt_tableProp, 27, SQL_C_SSHORT, &labelFontPixelSize, 0, &cbLabelFontPixelSize );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2333,7 +2333,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 27, SQL_C_WCHAR, &labelFontName, 44, &cbLabelFontName );
+                        ret = SQLBindCol( stmt_tableProp, 28, SQL_C_WCHAR, &labelFontName, 44, &cbLabelFontName );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
@@ -2342,7 +2342,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( stmt_tableProp, 28, SQL_C_WCHAR, &comments, 225, &cbComment );
+                        ret = SQLBindCol( stmt_tableProp, 29, SQL_C_WCHAR, &comments, 225, &cbComment );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt_tableProp );
