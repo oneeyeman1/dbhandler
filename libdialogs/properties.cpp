@@ -310,3 +310,9 @@ void PropertiesDialog::OnApplyUpdateUI (wxUpdateUIEvent &event)
             event.Enable( true );
     }
 }
+
+bool PropertiesDialog::IsLogOnly() const
+{
+    if( m_page1 )
+        return m_page1->IsLogOnly();
+}

@@ -49,6 +49,7 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, const wxString &nam
         ok->SetDefault();
     m_comment->Bind( wxEVT_CHAR, &TableGeneralProperty::OnCommentKeyEntered, this );
     m_comment->Bind( wxEVT_TEXT, &TableGeneralProperty::OnEditComment, this );
+    m_log->Bind( wxEVT_CHECKBOX, &TableGeneralProperty::OnLogOnly, this );
     if( m_isTable )
     {
         m_owner->Hide();
@@ -117,12 +118,12 @@ const std::wstring &TableGeneralProperty::GetComment()
     return m_comment->GetValue().ToStdWstring();
 }
 
-bool TableGeneralProperty::IsLogOnly()
-{
-    return m_log->GetValue();
-}
-
 wxTextCtrl *TableGeneralProperty::GetCommentCtrl()
 {
     return m_comment;
+}
+
+void TableGeneralProperty::OnLogOnly( wxCommandEvent &event )
+{
+    m_isLogOnly = event.GetInt();
 }

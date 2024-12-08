@@ -11,6 +11,7 @@ public:
     PropertyPageBase(wxWindow *parent, wxWindowID id = wxID_ANY) : wxPanel(parent, id) { m_isModified = false; }
     bool IsModified() { return m_isModified; };
     void SetModified(bool modified) { m_isModified = modified; }
+    bool IsLogOnly() const { return m_isLogOnly; }
 protected:
     void PageEdited()
     {
@@ -19,5 +20,6 @@ protected:
     }
 protected:
     bool m_isModified;
+    bool m_isLogOnly;
 };
 

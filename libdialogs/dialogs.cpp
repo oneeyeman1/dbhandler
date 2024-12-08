@@ -254,8 +254,11 @@ extern "C" WXEXPORT void CreatePropertiesDialog(wxWindow *parent, std::unique_pt
     wxTheApp->SetTopWindow( parent );
 #endif
     PropertiesDialog dlg( parent, wxID_ANY, title, handler.get(), table );
-	dlg.Center();
-    dlg.ShowModal();
+    dlg.Center();
+    if( dlg.ShowModal() == wxID_OK )
+    {
+        logOnly = dlg.IsLogOnly();
+    }
 }
 
 extern "C" WXEXPORT int CreatePropertiesDialogForObject(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title)
