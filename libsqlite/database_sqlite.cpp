@@ -360,7 +360,7 @@ void SQLiteDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
 
 int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
-    char **err;
+    char *err = nullptr;
     std::wstring errorMessage;
     sqlite3_stmt *stmt = nullptr, *stmt1 = nullptr;
     int result = 0, res = SQLITE_OK, count = 0;
@@ -379,7 +379,14 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 4, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
 #endif // __WXGTK__
     }
-    res = sqlite3_exec( m_db, "BEGIN EXCLUSIVE TRANSACTION", NULL, NULL, err );
+    res = sqlite3_busy_timeout( m_db, 6000 );
+    if( res != SQLITE_OK )
+    {
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+        result = 1;
+    }
+    res = sqlite3_exec( m_db, "BEGIN EXCLUSIVE TRANSACTION", NULL, NULL, &err );
     if( res != SQLITE_OK )
     {
         GetErrorMessage( res, errorMessage );
